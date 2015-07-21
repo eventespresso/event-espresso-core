@@ -365,6 +365,9 @@ class EE_Messages_Queue {
 	 */
 	public function execute( $save = true ) {
 		$messages_sent = 0;
+		// used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
+		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
+		$did_hook = array();
 		foreach( $this->_queue as $message ) {
 			$error_message = array();
 			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
@@ -378,8 +381,16 @@ class EE_Messages_Queue {
 			if ( ! $message_type instanceof EE_message_type ) {
 				$error_msg[] = sprintf( __( 'the %s message type is not active at the time of sending.', 'event_espresso' ), $message->message_type() );
 			}
+
 			//send using messenger
 			if ( $messenger instanceof EE_messenger && $message_type instanceof $message_type ) {
+
+				//set hook for message type.
+				if ( ! isset( $did_hook[$message_type->name] ) ) {
+					$message_type->do_messenger_hooks();
+					$did_hook[$message_type->name] = 1;
+				}
+
 				if ( $messenger->send_message( $message, $message_type ) ) {
 					$messages_sent++;
 					$message->set_STS_ID( EEM_Message::status_sent );

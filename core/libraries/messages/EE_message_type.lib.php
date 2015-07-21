@@ -382,7 +382,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	* This sets up any action/filter hooks this message type puts in place for a specific messenger.  It's called from the set_messages() method.  Note that by default this does nothing.  Child classes will need to override if they want to add specific hooks for a messenger.
+	 * This sets up any action/filter hooks this message type puts in place for a specific messenger.  Note that by
+	 * default this does nothing.  Child classes will need to override if they want to add specific hooks for a messenger.
 	*
 	* @since 1.0.0
 	*
@@ -390,6 +391,37 @@ abstract class EE_message_type extends EE_Messages_Base {
 	*/
 	protected function _do_messenger_hooks() {
 		return;
+	}
+
+
+
+
+
+	/**
+	 * This is a public wrapper for the protected _do_messenger_hooks() method.
+	 * For backward compat reasons, this was done rather than making the protected method public.
+	 * @since 4.9.0
+	 */
+	public function do_messenger_hooks() {
+		$this->_do_messenger_hooks();
+	}
+
+
+
+
+
+
+
+	/**
+	 * This runs the _set_data_handler() method for message types and then returns what got set.
+	 * @param  This sets the data property for the message type with the incoming data used for generating.
+	 * @return string (the reference for the data handler) (will be an empty string if could not be determined).
+	 */
+	public function get_data_handler( $data ) {
+		if ( empty( $this->_data_handler ) ) {
+			$this->_set_data_handler();
+		}
+		return $this->_data_handler;
 	}
 
 
@@ -607,6 +639,27 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		$this->_set_default_addressee_data();
 		return $this->_process_data();
+	}
+
+
+
+
+	/**
+	 * Accepts an incoming data handler which contains data for processing, and returns an array of EE_Messages_Addressee objects.
+	 *
+	 * @param EE_Messages_incoming_data $data
+	 * @return array   An array indexed by context where each context is an array of EE_Messages_Addressee objects for
+	 *                 that context
+	 */
+	public function get_addressees( EE_Messages_incoming_data $data ) {
+		//override _data
+		$this->_data = $data;
+		$addressees = array();
+		$this->_set_default_addressee_data();
+		if ( $this->_process_data() ) {
+			$addressees =  $this->_addressees;
+		}
+		return $addressees;
 	}
 
 
