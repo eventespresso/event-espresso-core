@@ -260,7 +260,7 @@ abstract class EE_Base_Class{
 	public function set_field_or_extra_meta( $field_name, $field_value ) {
 		if ( $this->_get_model()->has_field( $field_name ) ) {
 			$this->set( $field_name, $field_value );
-			return $this->save();
+			return true;
 		} else {
 			//ensure this object is saved first so that extra meta can be properly related.
 			$this->save();
