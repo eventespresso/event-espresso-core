@@ -50,7 +50,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param array $tasks  already existing scheduled tasks
 	 * @return array
 	 */
-	protected function register_scheduled_tasks( $tasks ) {
+	public function register_scheduled_tasks( $tasks ) {
 		$tasks['AHEE__EE_Messages_Scheduler__generation'] = 'ten_minute';
 		$tasks['AHEE__EE_Messages_Scheduler__sending'] = 'ten_minute';
 		return $tasks;
