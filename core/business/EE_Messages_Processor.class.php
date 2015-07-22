@@ -145,40 +145,64 @@ class EE_Messages_Processor {
 
 
 
-	public function batch_queue_for_generation_no_persist( $to_queue ) {}
-
-
 
 
 
 	/**
+	 * This receives an array of EE_Message_To_Generate objects, converts them to EE_Message and adds them to the generation
+	 * queue.  Does NOT persist to storage (unless there is an error.
+	 * Client code can retrieve the generated queue by calling EEM_Messages_Processor::get_queue()
 	 *
-	 * @param string    $generating_messenger   This is the slug for the messenger.
-	 * @param string    $message_type           This is the slug for the message type.
-	 * @param array     $data                   This is the data needed for generating the message.
-	 * @param string    $context                If generating a message for a specific context, then included.
-	 * @return EE_Messages_Queue
+	 * @param EE_Message_To_Generate[]  $messages_to_generate
 	 */
-	public function generate_and_queue_for_sending( $generating_messenger, $message_type, $data, $context = '' ) {}
+	public function batch_queue_for_generation_no_persist( $messages_to_generate ) {
+		$this->_queue_for_generation_loop( $messages_to_generate );
+	}
+
+
+
+
+	/**
+	 * Simply loops through the given array of EE_Message_To_Generate objects and adds them to the _queue as EE_Message
+	 * objects.
+	 *
+	 * @param $messages_to_generate
+	 */
+	protected function _queue_for_generation_loop( $messages_to_generate ) {
+		foreach ( $messages_to_generate as $mtg ) {
+			if ( $mtg instanceof EE_Message_To_Generate ) {
+				$this->queue_for_generation( $mtg );
+			}
+		}
+	}
 
 
 
 
 
 	/**
-	 * Generate for preview and return queue.
-	 * @param string    $generating_messenger   This is the slug for the messenger.
-	 * @param string    $message_type           This is the slug for the message type.
-	 * @param array     $data                   This is the data needed for generating the message.
-	 * @param string    $context                If generating a message for a specific context, then included.
+	 * Receives an array of EE_Message_To_Generate objects and generates the EE_Message objects, then persists (so its
+	 * queued for sending).
+	 * @param  EE_Message_To_Generate[]
+	 */
+	public function generate_and_queue_for_sending( $messages_to_generate ) {
+		$this->_queue_for_generation_loop( $messages_to_generate );
+		$this->_generator->generate( true );
+	}
+
+
+
+
+
+	/**
+	 * Generate for preview and execute right away.
+	 * @param  EE_Message_To_Generate $mtg
 	 * @return EE_Messages_Queue
 	 */
-	public function generate_for_preview( $generating_messenger, $message_type, $data, $context = '' ) {}
-
-
-
-
-
+	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
+		$generated_queue = $this->generate_and_return( array( $mtg ) );
+		$generated_queue->execute(false);
+	}
 
 
 
