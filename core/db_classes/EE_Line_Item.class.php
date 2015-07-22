@@ -299,6 +299,16 @@ class EE_Line_Item extends EE_Base_Class {
 
 
 	/**
+	 * Gets order
+	 * @return int
+	 */
+	function order() {
+		return $this->get( 'LIN_order' );
+	}
+
+
+
+	/**
 	 * Sets order
 	 * @param int $order
 	 */
@@ -525,10 +535,15 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Adds the line item as a child to this line item. If there is another child line
 	 * item with the same LIN_code, it is overwritten by this new one
 	 * @param EE_Line_Item $line_item
-	 * @return boolean success
+	 * @param bool         $set_order
+	 * @return bool success
+	 * @throws \EE_Error
 	 */
-	function add_child_line_item( EE_Line_Item $line_item ) {
-		$line_item->set_order( count( $this->children() ) );
+	function add_child_line_item( EE_Line_Item $line_item, $set_order = true ) {
+		// should we calculate the LIN_order for this line item ?
+		if ( $set_order || $line_item->order() === null ) {
+			$line_item->set_order( count( $this->children() ) );
+		}
 		if ( $this->ID() ) {
 			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
