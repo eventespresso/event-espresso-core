@@ -890,7 +890,7 @@ class EEH_Line_Item {
 	 * @param array 	$running_totals      				array exactly like the return value (client code usually shouldn't provide this)
 	 * @param array $billable_ticket_quantities 		array of EE_Ticket IDs and their corresponding quantity that
 	 *                                          									can be included in price calculations at this moment
-	 * @return array 		keys are ticket IDs and values are their share of the running total,
+	 * @return array 		keys are line items for tickets IDs and values are their share of the running total,
 	 *                                          plus the key 'total', and 'taxable' which also has keys of all the ticket IDs. Eg
 	 *                                          array(
 	 *                                          12 => 4.3
@@ -916,6 +916,11 @@ class EEH_Line_Item {
 			switch ( $child_line_item->type() ) {
 
 				case EEM_Line_Item::type_sub_total :
+					//					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item );
+//					//combine arrays but preserve numeric keys
+//					$running_totals = array_replace_recursive( $running_totals_from_subtotal, $running_totals );
+//					$running_totals[ 'total' ] += $running_totals_from_subtotal[ 'total' ];
+//					$running_totals[ 'taxable'][ 'total' ] += $running_totals_from_subtotal[ 'taxable' ][ 'total' ];
 
 					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $running_totals, $billable_ticket_quantities );
 					//combine arrays but preserve numeric keys
@@ -967,7 +972,7 @@ class EEH_Line_Item {
 								$running_totals[ 'taxable' ][ $child_line_item->ID() ] = $taxable_amount;
 							}
 							$running_totals[ 'taxable' ][ 'total' ] += $taxable_amount * $quantity;
-							$running_totals[ 'total' ] += $running_totals[ 'taxable' ][ 'total' ];
+							$running_totals[ 'total' ] += $child_line_item->unit_price() * $quantity;
 							//EEH_Debug_Tools::printr( $running_totals[ 'taxable' ][ $child_line_item->ID() ], 'taxable $child_line_item : ' . $child_line_item->ID(), __FILE__, __LINE__ );
 							//EEH_Debug_Tools::printr( $running_totals[ 'taxable' ][ 'total' ], 'running_totals taxable total : ' . $child_line_item->ID(), __FILE__, __LINE__ );
 							//EEH_Debug_Tools::printr( $running_totals[ 'total' ], 'running_totals total : ' . $child_line_item->ID(), __FILE__, __LINE__ );
