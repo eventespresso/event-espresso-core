@@ -887,22 +887,23 @@ class EEH_Line_Item {
 	 * when there are non-taxable items; otherwise they would be the same)
 	 *
 	 * @param EE_Line_Item $line_item
-	 * @param array        $running_totals      array exactly like the return value (client code usually shouldn't provide this)
-	 * @return array keys are ticket IDs and values are their share of the running total,
+	 * @param array $billable_ticket_quantities 		array of EE_Ticket IDs and their corresponding quantity that
+	 *                                          									can be included in price calculations at this moment
+	 * @return array 		keys are line items for tickets IDs and values are their share of the running total,
 	 *                                          plus the key 'total', and 'taxable' which also has keys of all the ticket IDs. Eg
 	 *                                          array(
 	 *                                          12 => 4.3
 	 *                                          23 => 8.0
 	 *                                          'total' => 16.6,
-	 *											'taxable' => array(
-	 *												12 => 10,
-	 *												23 => 4
+	 *                                          'taxable' => array(
+	 *                                          12 => 10,
+	 *                                          23 => 4
 	 *                                          ).
 	 *                                          So to find which registrations have which final price, we need to find which line item
 	 *                                          is theirs, which can be done with
 	 *                                          `EEM_Line_Item::instance()->get_line_item_for_registration( $registration );`
 	 */
-	public static function calculate_reg_final_prices_per_line_item( EE_Line_Item $line_item, $running_totals = array() ) {
+	public static function calculate_reg_final_prices_per_line_item( EE_Line_Item $line_item, $billable_ticket_quantities = array() ) {
 		//init running grand total if not already
 		if ( ! isset( $running_totals[ 'total' ] ) ) {
 			$running_totals[ 'total' ] = 0;
@@ -911,61 +912,83 @@ class EEH_Line_Item {
 			$running_totals[ 'taxable' ] = array( 'total' => 0 );
 		}
 		foreach ( $line_item->children() as $child_line_item ) {
-			if ( $child_line_item->type() === EEM_Line_Item::type_line_item &&
-				$child_line_item->OBJ_type() === 'Ticket'
-			) {
-				if ( isset( $running_totals[ $child_line_item->ID() ] ) ) {
-					//huh? that shouldn't happen.
-				} else {//its not in our running totals yet. great.
-					$running_totals[ $child_line_item->ID() ] = $child_line_item->unit_price();
+			switch ( $child_line_item->type() ) {
 
-					if( $child_line_item->is_taxable() ) {
-						$taxable_amount = $child_line_item->unit_price();
-					}else{
-						$taxable_amount = 0;
+				case EEM_Line_Item::type_sub_total :
+					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $billable_ticket_quantities );
+					//combine arrays but preserve numeric keys
+					$running_totals = array_replace_recursive( $running_totals_from_subtotal, $running_totals );
+					$running_totals[ 'total' ] += $running_totals_from_subtotal[ 'total' ];
+					$running_totals[ 'taxable'][ 'total' ] += $running_totals_from_subtotal[ 'taxable' ][ 'total' ];
+					break;
+
+				case EEM_Line_Item::type_tax_sub_total :
+
+					//find how much the taxes percentage is
+					if ( $child_line_item->percent() != 0 ) {
+						$tax_percent_decimal = $child_line_item->percent() / 100;
+					} else {
+						$tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
 					}
-					$running_totals[ 'taxable' ][ $child_line_item->ID() ] = $taxable_amount;
-					$running_totals[ 'taxable' ][ 'total' ] += $taxable_amount * $child_line_item->quantity();
-				}
-				$running_totals[ 'total' ] += $child_line_item->total();
-			} elseif ( $child_line_item->type() === EEM_Line_Item::type_sub_total ) {
-				$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $running_totals );
-				//combine arrays but preserve numeric keys
-				$running_totals = array_replace_recursive( $running_totals, $running_totals_from_subtotal );
-			} elseif ( $child_line_item->type() === EEM_Line_Item::type_line_item ) {
-				//it's some other type of item added to the cart
-				//it should affect the running totals
-				//basically we want to convert it into a PERCENT modifier. Because
-				//more clearly affect all registration's final price equally
-				$line_items_percent_of_running_total = $child_line_item->total() / $running_totals[ 'total' ];
-				foreach ( $running_totals as $line_item_id => $this_running_total ) {
-					//the "taxable" array key is an exception
-					if( $line_item_id === 'taxable' ) {
-						continue;
+					//and apply to all the taxable totals, and add to the pretax totals
+					foreach ( $running_totals as $line_item_id => $this_running_total ) {
+						//"total" and "taxable" array key is an exception
+						if ( $line_item_id === 'taxable' ) {
+							continue;
+						}
+						$taxable_total = $running_totals[ 'taxable' ][ $line_item_id ];
+						$running_totals[ $line_item_id ] += ( $taxable_total * $tax_percent_decimal );
 					}
-					//update the running totals
-					//yes this actually even works for the running grand total!
-					$running_totals[ $line_item_id ] = ( 1 + $line_items_percent_of_running_total ) * $this_running_total;
-					if( $child_line_item->is_taxable() ) {
-						$value = ( 1 + $line_items_percent_of_running_total ) * $running_totals[ 'taxable' ][ $line_item_id ];
-						$running_totals[ 'taxable' ][ $line_item_id ] = $value;					}
-				}
-			} elseif( $child_line_item->type() === EEM_Line_Item::type_tax_sub_total ){
-				//find how much the taxes percentage is
-				if ( $child_line_item->percent() != 0 ) {
-					$tax_percent_decimal = $child_line_item->percent() / 100;
-				} else {
-					$tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
-				}
-				//and apply to all the taxable totals, and add to the pretax totals
-				foreach( $running_totals as $line_item_id => $this_running_total ) {
-					//"total" and "taxable" array key is an exception
-					if( $line_item_id === 'taxable' ) {
-						continue;
+					break;
+
+				case EEM_Line_Item::type_line_item :
+
+					// ticket line items or ????
+					if ( $child_line_item->OBJ_type() === 'Ticket' ) {
+						// kk it's a ticket
+						if ( isset( $running_totals[ $child_line_item->ID() ] ) ) {
+							//huh? that shouldn't happen.
+							$running_totals[ 'total' ] += $child_line_item->total();
+						} else {
+							//its not in our running totals yet. great.
+							if ( $child_line_item->is_taxable() ) {
+								$taxable_amount = $child_line_item->unit_price();
+							} else {
+								$taxable_amount = 0;
+							}
+							// are we only calculating totals for some tickets?
+							if ( isset( $billable_ticket_quantities[ $child_line_item->OBJ_ID() ] ) ) {
+								$quantity = $billable_ticket_quantities[ $child_line_item->OBJ_ID() ];
+								$running_totals[ $child_line_item->ID() ] = $quantity ? $child_line_item->unit_price() : 0;
+								$running_totals[ 'taxable' ][ $child_line_item->ID() ] = $quantity ? $taxable_amount : 0;
+							} else {
+								$quantity = $child_line_item->quantity();
+								$running_totals[ $child_line_item->ID() ] = $child_line_item->unit_price();
+								$running_totals[ 'taxable' ][ $child_line_item->ID() ] = $taxable_amount;
+							}
+							$running_totals[ 'taxable' ][ 'total' ] += $taxable_amount * $quantity;
+							$running_totals[ 'total' ] += $child_line_item->unit_price() * $quantity;
+						}
+					} else {
+						// it's some other type of item added to the cart
+						// it should affect the running totals
+						// basically we want to convert it into a PERCENT modifier. Because
+						// more clearly affect all registration's final price equally
+						$line_items_percent_of_running_total = $running_totals[ 'total' ] > 0 ? ( $child_line_item->total() / $running_totals[ 'total' ] ) + 1 : 1;
+						foreach ( $running_totals as $line_item_id => $this_running_total ) {
+							//the "taxable" array key is an exception
+							if ( $line_item_id === 'taxable' ) {
+								continue;
+							}
+							// update the running totals
+							// yes this actually even works for the running grand total!
+							$running_totals[ $line_item_id ] = $line_items_percent_of_running_total * $this_running_total;
+							if ( $child_line_item->is_taxable() ) {
+								$running_totals[ 'taxable' ][ $line_item_id ] = $line_items_percent_of_running_total * $running_totals[ 'taxable' ][ $line_item_id ];
+							}
+						}
 					}
-					$taxable_total = $running_totals[ 'taxable' ][ $line_item_id ];
-					$running_totals[ $line_item_id] += ( $taxable_total * $tax_percent_decimal) ;
-				}
+					break;
 			}
 		}
 		return $running_totals;
