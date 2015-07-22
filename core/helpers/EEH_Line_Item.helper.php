@@ -916,15 +916,11 @@ class EEH_Line_Item {
 			switch ( $child_line_item->type() ) {
 
 				case EEM_Line_Item::type_sub_total :
-					//					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item );
-//					//combine arrays but preserve numeric keys
-//					$running_totals = array_replace_recursive( $running_totals_from_subtotal, $running_totals );
-//					$running_totals[ 'total' ] += $running_totals_from_subtotal[ 'total' ];
-//					$running_totals[ 'taxable'][ 'total' ] += $running_totals_from_subtotal[ 'taxable' ][ 'total' ];
-
-					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $running_totals, $billable_ticket_quantities );
+					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item );
 					//combine arrays but preserve numeric keys
-					$running_totals = array_replace_recursive( $running_totals, $running_totals_from_subtotal );
+					$running_totals = array_replace_recursive( $running_totals_from_subtotal, $running_totals );
+					$running_totals[ 'total' ] += $running_totals_from_subtotal[ 'total' ];
+					$running_totals[ 'taxable'][ 'total' ] += $running_totals_from_subtotal[ 'taxable' ][ 'total' ];
 					break;
 
 				case EEM_Line_Item::type_tax_sub_total :
