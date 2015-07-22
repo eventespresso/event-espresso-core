@@ -49,6 +49,16 @@ class EE_Messages_Processor {
 
 
 
+	/**
+	 * This returns the current set queue.
+	 * @return EE_Messages_Queue
+	 */
+	public function get_queue() {
+		return $this->_queue;
+	}
+
+
+
 
 	/**
 	 *  Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
