@@ -887,7 +887,6 @@ class EEH_Line_Item {
 	 * when there are non-taxable items; otherwise they would be the same)
 	 *
 	 * @param EE_Line_Item $line_item
-	 * @param array 	$running_totals      				array exactly like the return value (client code usually shouldn't provide this)
 	 * @param array $billable_ticket_quantities 		array of EE_Ticket IDs and their corresponding quantity that
 	 *                                          									can be included in price calculations at this moment
 	 * @return array 		keys are line items for tickets IDs and values are their share of the running total,
@@ -904,7 +903,7 @@ class EEH_Line_Item {
 	 *                                          is theirs, which can be done with
 	 *                                          `EEM_Line_Item::instance()->get_line_item_for_registration( $registration );`
 	 */
-	public static function calculate_reg_final_prices_per_line_item( EE_Line_Item $line_item, $running_totals = array(), $billable_ticket_quantities = array() ) {
+	public static function calculate_reg_final_prices_per_line_item( EE_Line_Item $line_item, $billable_ticket_quantities = array() ) {
 		//init running grand total if not already
 		if ( ! isset( $running_totals[ 'total' ] ) ) {
 			$running_totals[ 'total' ] = 0;
@@ -916,7 +915,7 @@ class EEH_Line_Item {
 			switch ( $child_line_item->type() ) {
 
 				case EEM_Line_Item::type_sub_total :
-					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item );
+					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $billable_ticket_quantities );
 					//combine arrays but preserve numeric keys
 					$running_totals = array_replace_recursive( $running_totals_from_subtotal, $running_totals );
 					$running_totals[ 'total' ] += $running_totals_from_subtotal[ 'total' ];
@@ -969,9 +968,6 @@ class EEH_Line_Item {
 							}
 							$running_totals[ 'taxable' ][ 'total' ] += $taxable_amount * $quantity;
 							$running_totals[ 'total' ] += $child_line_item->unit_price() * $quantity;
-							//EEH_Debug_Tools::printr( $running_totals[ 'taxable' ][ $child_line_item->ID() ], 'taxable $child_line_item : ' . $child_line_item->ID(), __FILE__, __LINE__ );
-							//EEH_Debug_Tools::printr( $running_totals[ 'taxable' ][ 'total' ], 'running_totals taxable total : ' . $child_line_item->ID(), __FILE__, __LINE__ );
-							//EEH_Debug_Tools::printr( $running_totals[ 'total' ], 'running_totals total : ' . $child_line_item->ID(), __FILE__, __LINE__ );
 						}
 					} else {
 						// it's some other type of item added to the cart
