@@ -43,6 +43,7 @@ class EE_Messages_Processor {
 	public function __construct( EE_messages $ee_messages ) {
 		$this->_EEMSG = $ee_messages;
 		$this->_queue = new EE_Messages_Queue();
+		$this->_generator = new EE_Messages_Generator( $this->_queue, $ee_messages );
 	}
 
 
