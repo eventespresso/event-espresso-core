@@ -27,7 +27,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 		}
 
 		//add custom schedules
-		add_filter( 'cron_schedules', array( 'EE_Messages_Scheduler', 'custom_schedules' ) );
+		add_filter( 'cron_schedules', array( $this, 'custom_schedules' ) );
 	}
 
 
