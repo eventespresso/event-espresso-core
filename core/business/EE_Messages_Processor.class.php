@@ -95,115 +95,81 @@ class EE_Messages_Processor {
 	 * EE_Message_Queue with the generated messages for the caller to work with.  Note, this does NOT save the generated
 	 * messages in the queue, leaving it up to the caller to do so.
 	 *
-	 * @param string $generating_messenger  The messenger taking care of generating the messages that will be returned.
-	 * @param string $context               The context being generated. Optional.
-	 * @param mixed  $data                  Data being sent in for parsing the message.
+	 * @param EE_Message_To_Generate $mtg
+	 * @return EE_Messages_Queue
 	 */
-	public function generate_and_return(  $generating_messenger, $data, $context = '' ) {
-
+	public function generate_and_return(  EE_Message_To_Generate $mtg ) {
+		$this->_generator->_create_and_add_message_to_queue( $mtg );
+		return $this->_generator->generate( false );
 	}
-
-
-
-
-
-
-	public function queue_ungenerated( $sending_messenger, $generating_messenger, $context, $data ) {}
 
 
 
 
 	/**
-	 * Queues messages for sending.
-	 * By default messages are queued as EEM_Message::status_incomplete which means they will not be generated on this
-	 * request.
-	 *
-	 * @param  string $type                What type of message are we sending (corresponds to message types)
-	 * @param  mixed $vars                 Data being sent for parsing in the message
-	 * @param  string $sending_messenger   if included then we ONLY use the specified messenger for delivery.
-	 *                                     Otherwise we cycle through all active messengers.
-	 * @param string $generating_messenger if included then this messenger is used for generating the message templates
-	 *                                     (but not for sending).
-	 * @param string $context              If included then only a message type for a specific context will be
-	 *                                     generated.
-	 * @param bool $queue_only             Default true.  If false, then this will just return the generated
-	 *                                     EE_Messages objects which might be used by the trigger to setup a batch
-	 *                                     message (typically html messenger uses it). This also means that the message objects
-	 *                                     will be generated right away.
-	 *
-	 * @return bool
+	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_queue()->save() if desire
+	 * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
+	 * @param EE_Message_To_Generate $mtg
+	 * @return  EE_Messages_Queue
 	 */
-	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $queue_only = true ) {
-
-		$error = FALSE;
-		$installed_message_types = $this->_EEMSG->get_installed_message_types();
-		$active_messengers = $this->_EEMSG->get_active_messengers();
-
-		// is that a real class ?
-		if ( isset(  $installed_message_types[$type] ) ) {
-			//is the messenger specified? If so then let's see if can be queued.  This is the check where its possible secondary messengers might be in use.
-			if ( $sending_messenger ) {
-				$generating_messenger =  ! empty( $generating_messenger ) && ! empty( $active_messengers[$generating_messenger] ) ? $active_messengers[$generating_messenger]: null;
-				$generating_messenger = empty( $generating_messenger ) && ! empty( $active_messengers[$sending_messenger] ) ? $active_messengers[$sending_messenger] : $generating_messenger;
-
-				if ( ! $this->_EEMSG->is_generating_messenger_and_active( $generating_messenger, $installed_message_types[$type] ) ) {
-					return false;
-				}
-				$sending_messenger = ! empty( $active_messengers[$sending_messenger] ) ? $active_messengers[$sending_messenger] : NULL;
-
-				$context = !empty( $context ) ? $context : FALSE;
-
-				//queue
-				$success = $this->_queue_messages( $generating_messenger, $installed_message_types[$type], $vars, $sending_messenger, $context, $queue_only );
-				if ( ! $queue_only ) {
-					return $success; //returning generated EE_Messages objects
-				}
-			} else {
-				//no messenger sent so let's just loop through active messengers (this method is only acceptable for generating messengers)
-				$send_messages = array();
-				foreach ( $active_messengers as $active_messenger ) {
-
-					//we ONLY continue if the given messenger is a primary messenger and is an active messenger for the given message type.  Otherwise we skip.
-					if ( ! $this->_is_generating_messenger_and_active( $active_messenger, $installed_message_types[$type] ) ) {
-						continue;
-					}
-
-					$success = $this->_queue_messages( $active_messenger, $installed_message_types[$type], $vars, $active_messenger );
-					if ( $success === FALSE  ) {
-						$error = TRUE;
-					} else {
-						$send_messages[] = $success;
-					}
-				}
-
-				//EEH_Debug_Tools::log(
-				//	__CLASS__, __FUNCTION__, __LINE__,
-				//	array(
-				//		'message_type' => $type,
-				//		'active_messenger' => $active_messengers,
-				//		'send_messages' => $send_messages,
-				//		'error' => $error
-				//		),
-				//	false,
-				//	$debug_index
-				//	);
-
-				//return generated EE_Messages objects?
-				if ( ! $queue_only ) {
-					return $send_messages;
-				}
-			}
-		} else {
-			EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-		// add a success message
-		if ( ! $error ) {
-			EE_Error::add_success( sprintf( __( 'The %s message has been successfully sent.', 'event_espresso'), $installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
+	public function queue_for_generation( EE_Message_To_Generate $mtg ) {
+		$this->_generator->_create_and_add_message_to_queue( $mtg );
 	}
+
+
+
+
+
+
+
+	/**
+	 * This receives a formatted array of argument arrays for queuing messages for generation and then persisting to storage
+	 * after the queue is prepared.
+	 *
+	 * @see EE_Messages_Processor::queue_for_generation() for phpdocs about the arguments used as
+	 *
+	 * @param EE_Message_To_Generate[]
+	 */
+	public function batch_queue_for_generation_and_persist( $to_queue ) {
+
+	}
+
+
+
+	public function batch_queue_for_generation_no_persist( $to_queue ) {}
+
+
+
+
+
+	/**
+	 *
+	 * @param string    $generating_messenger   This is the slug for the messenger.
+	 * @param string    $message_type           This is the slug for the message type.
+	 * @param array     $data                   This is the data needed for generating the message.
+	 * @param string    $context                If generating a message for a specific context, then included.
+	 * @return EE_Messages_Queue
+	 */
+	public function generate_and_queue_for_sending( $generating_messenger, $message_type, $data, $context = '' ) {}
+
+
+
+
+
+	/**
+	 * Generate for preview and return queue.
+	 * @param string    $generating_messenger   This is the slug for the messenger.
+	 * @param string    $message_type           This is the slug for the message type.
+	 * @param array     $data                   This is the data needed for generating the message.
+	 * @param string    $context                If generating a message for a specific context, then included.
+	 * @return EE_Messages_Queue
+	 */
+	public function generate_for_preview( $generating_messenger, $message_type, $data, $context = '' ) {}
+
+
+
+
+
 
 
 
