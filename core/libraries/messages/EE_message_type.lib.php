@@ -419,6 +419,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public function get_data_handler( $data ) {
 		if ( empty( $this->_data_handler ) ) {
+			$this->_data = $data;
 			$this->_set_data_handler();
 		}
 		return $this->_data_handler;
