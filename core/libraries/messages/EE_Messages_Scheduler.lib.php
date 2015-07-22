@@ -42,6 +42,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 				'interval' => 36000, //10 min in seconds
 				'display' => __( 'Once every 10 minutes', 'event_espresso' )
 		);
+		return $schedules;
 	}
 
 
