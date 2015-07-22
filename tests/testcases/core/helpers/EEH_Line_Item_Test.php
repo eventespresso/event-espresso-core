@@ -459,6 +459,90 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 //		EEH_Line_Item::visualize( $subtotal );
 	}
 
+	/**
+	 * Verifies discounts only apply to the their sibling ticket line item's REG_final_prices
+	 * @group 8541
+	 */
+	function test_calculate_reg_final_prices_per_line_item__discount_only_for_one_event_subtotal() {
+		$grand_total = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'total',
+					'LIN_type' => EEM_Line_Item::type_total,
+					'LIN_total' => 0
+				));
+		$subtotal_a = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'subtotal_a',
+					'LIN_type' => EEM_Line_Item::type_sub_total,
+					'LIN_total' => 0,
+					'LIN_unit_price' => 0,
+					'LIN_quantity' => 0,
+					'LIN_parent' => $grand_total->ID(),
+					'LIN_order' => 0,
+				));
+		$subtotal_b = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'subtotal_b',
+					'LIN_type' => EEM_Line_Item::type_sub_total,
+					'LIN_total' => 0,
+					'LIN_unit_price' => 0,
+					'LIN_quantity' => 0,
+					'LIN_parent' => $grand_total->ID(),
+					'LIN_order' => 1,
+				));
+		$ticket_line_item_a = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'ticket_line_item_a',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'LIN_total' => 10,
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $subtotal_a->ID(),
+					'LIN_order' => 1,
+					'OBJ_type' => 'Ticket',
+				));
+		$ticket_line_item_b = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'ticket_line_item_b',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'LIN_total' => 10,
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $subtotal_b->ID(),
+					'LIN_order' => 1,
+					'OBJ_type' => 'Ticket',
+				));
+		$discount_for_b = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'discount_for_b',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'LIN_total' => -5,
+					'LIN_unit_price' => 0,
+					'LIN_percent' => -50,
+					'LIN_quantity' => 1,
+					'LIN_parent' => $subtotal_b->ID(),
+					'LIN_order' => 100,
+				));
+		$taxes_subtotal = $this->new_model_obj_with_dependencies( 'Line_Item',
+				array(
+					'LIN_name' => 'taxes',
+					'LIN_type' => EEM_Line_Item::type_tax_sub_total,
+					'LIN_percent' => 0,
+					'LIN_parent' => $grand_total->ID(),
+					'LIN_order' => 1,
+				));
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $grand_total );
+//		var_dump($totals);
+//		EEH_Line_Item::visualize( $grand_total );
+		//now verify the discount only applied to event B's ticket, not event A's
+		$this->assertEquals( 10, $totals[ $ticket_line_item_a->ID() ] );
+		$this->assertEquals( 5, $totals[ $ticket_line_item_b->ID() ] );
+	}
+
 
 }
 
