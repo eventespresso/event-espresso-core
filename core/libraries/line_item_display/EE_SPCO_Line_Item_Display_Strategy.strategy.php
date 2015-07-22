@@ -151,7 +151,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				break;
 
 			case EEM_Line_Item::type_sub_total:
-				$sub_total = 0;
+				static $sub_total = 0;
+				$event_sub_total = 0;
 				$text = __( 'Sub-Total', 'event_espresso' );
 				if ( $line_item->OBJ_type() == 'Event' ) {
 					$options[ 'event_id' ] = $event_id = $line_item->OBJ_ID();
@@ -174,7 +175,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
-				$sub_total += isset( $options[ 'event_id' ] ) ? $this->_events[ $options[ 'event_id' ] ] : 0;
+				$event_sub_total += isset( $options[ 'event_id' ] ) ? $this->_events[ $options[ 'event_id' ] ] : 0;
+				$sub_total += $event_sub_total;
 				//EEH_Debug_Tools::printr( $sub_total, '$sub_total', __FILE__, __LINE__ );
 				//EEH_Debug_Tools::printr( $line_item->code(), '$line_item->code()', __FILE__, __LINE__ );
 				//EEH_Debug_Tools::printr( count( $child_line_items ), 'count( $child_line_items )', __FILE__, __LINE__ );
@@ -192,7 +194,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 						count( $this->_events ) > 1
 					)
 				) {
-					$options['sub_total'] = $sub_total;
+					$options['sub_total'] = $line_item->OBJ_type() == 'Event' ? $event_sub_total : $sub_total;
 					$html .= $this->_sub_total_row( $line_item, $text, $options );
 				}
 				break;
@@ -221,7 +223,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				break;
 
 			case EEM_Line_Item::type_total:
-				$this->_line_item_totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $line_item, array(), $this->_billable_ticket_quantities );
+				$this->_line_item_totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $line_item, $this->_billable_ticket_quantities );
 				//EEH_Debug_Tools::printr( $this->_line_item_totals, '$this->_line_item_totals ', __FILE__, __LINE__ );
 				// determine whether to display taxes or not
 				$this->_taxable_total = isset( $this->_line_item_totals[ 'taxable' ][ 'total' ] ) ? $this->_line_item_totals['taxable']['total'] : 0.00;
@@ -311,16 +313,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// quantity td
 		$html .= EEH_HTML::td( $options[ 'billable_qty' ], '', 'item_l jst-rght' );
 		// determine total for line item
-		//if ( isset( $this->_line_item_totals[ 'taxable' ][ $line_item->ID() ] ) && $this->_line_item_totals[ 'taxable' ][ $line_item->ID() ] > 0 ) {
-		//	// this line item is taxable, but we want the PRE-TAX total
-		//	$total = $this->_line_item_totals[ 'taxable' ][ $line_item->ID() ];
-		//} else if ( isset( $this->_line_item_totals[ $line_item->ID() ] ) ) {
-		//	// this line item is NOT taxable, so just grab the final total
-		//	$total = $this->_line_item_totals[ $line_item->ID() ];
-		//} else {
-			// umm err... ok... just recalculate given the next best details we have
-			$total = $line_item->unit_price() * $options[ 'billable_qty' ];
-		//}
+		$total = $line_item->unit_price() * $options[ 'billable_qty' ];
 		$this->_events[ $options[ 'event_id' ] ] += $total;
 		// total td
 		$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '',  'item_r jst-rght' );
@@ -565,6 +558,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 */
 	private function _process_billable_registrations( $registrations_requiring_payment = array() ) {
 		if ( is_array( $registrations_requiring_payment ) && self::$_process_registrations ) {
+			// these reg statuses require payment (if event is not free)
+			$requires_payment = EEM_Registration::reg_statuses_that_allow_payment();
 			foreach ( $registrations_requiring_payment as $registration ) {
 				if ( ! $registration instanceof EE_Registration ) {
 					break;
@@ -574,9 +569,15 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					$this->_billable_ticket_quantities[ $registration->ticket_ID() ] = 0;
 				}
 				// are we billing for this registration at this moment ?
-				if ( $registration->owes_monies_and_can_pay() ) {
+				if (
+					$registration->owes_monies_and_can_pay( $requires_payment ) ||
+					(
+						$registration->final_price() == 0 && in_array( $registration->status_ID(), $requires_payment )
+					)
+				) {
 					// then increment the billable ticket quantity
 					$this->_billable_ticket_quantities[ $registration->ticket_ID() ]++;
+					$this->_total_items++;
 				}
 			}
 			//EEH_Debug_Tools::printr( $this->_billable_ticket_quantities, '$this->_billable_ticket_quantities', __FILE__, __LINE__ );
