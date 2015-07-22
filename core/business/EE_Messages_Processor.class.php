@@ -101,15 +101,15 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * This immediately generates messages using the given data and returns the
+	 * This immediately generates messages using the given array of EE_Message_To_Generate objects and returns the
 	 * EE_Message_Queue with the generated messages for the caller to work with.  Note, this does NOT save the generated
 	 * messages in the queue, leaving it up to the caller to do so.
 	 *
-	 * @param EE_Message_To_Generate $mtg
+	 * @param EE_Message_To_Generate[] $messages_to_generate
 	 * @return EE_Messages_Queue
 	 */
-	public function generate_and_return(  EE_Message_To_Generate $mtg ) {
-		$this->_generator->_create_and_add_message_to_queue( $mtg );
+	public function generate_and_return(  $messages_to_generate ) {
+		$this->_queue_for_generation_loop( $messages_to_generate );
 		return $this->_generator->generate( false );
 	}
 
