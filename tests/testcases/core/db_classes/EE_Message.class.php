@@ -401,6 +401,29 @@ class EE_Message extends EE_Base_Class {
 
 
 	/**
+	 * Sets generation data for this message.
+	 * @param mixed $data
+	 */
+	public function set_generation_data( $data ) {
+		$this->set_field_or_extra_meta( 'MSG_generation_data', $data );
+	}
+
+
+
+
+
+	/**
+	 * Returns any set generation data for this message.
+	 * @return mixed|null
+	 */
+	public function get_generation_data() {
+		return $this->get_field_or_extra_meta( 'MSG_generation_data' );
+	}
+
+
+
+
+	/**
 	 * Gets any error message.
 	 * @return mixed|null
 	 */

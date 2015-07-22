@@ -30,7 +30,12 @@ class EE_Message_Repository extends EE_Object_Repository {
 		$data['preview'] = $preview;
 		if ( $info ) {
 			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
-				$data['data']['MSG_generation_data'] = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : $info;
+				$generation_data = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : array();
+				//if data isn't in $info...let's see if its available via the message object
+				$generation_data = ! $generation_data ? $message->get_generation_data() : $generation_data;
+				//still empty then let's just use info
+				$generation_data = ! $generation_data ? $info : $generation_data;
+				$data['data']['MSG_generation_data'] = $generation_data;
 			} else {
 				$data['data'] = $info;
 			}
@@ -169,7 +174,7 @@ class EE_Message_Repository extends EE_Object_Repository {
 		$info = $this->getInfo();
 		$data = isset( $info['data'] ) ? $info['data'] : array();
 		if ( $data && $this->current()->STS_ID() === EEM_Message::status_incomplete ) {
-			$this->current()->set_field_or_extra_meta( 'MSG_generation_data', $data );
+			$this->current()->set_generation_data( $data );
 		}
 	}
 
