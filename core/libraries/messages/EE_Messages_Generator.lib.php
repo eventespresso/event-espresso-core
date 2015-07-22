@@ -643,6 +643,35 @@ class EE_Messages_Generator {
 
 
 
+	/**
+	 * The queued EE_Message for generation does not save the data used for generation as objects
+	 * because serialization of those objects could be problematic if the data is saved to the db.
+	 * So this method calls the static method on the associated data_handler for the given message_type
+	 * and that preps the data for later instantiation when generating.
+	 *
+	 * @param EE_Message_To_Generate $mtg
+	 * @param bool                   $preview       Indicate whether this is being used for a preview or not.
+	 * @return mixed Prepped data for persisting to the queue.  false is returned if unable to prep data.
+	 */
+	protected function _prepare_data_for_queue( EE_Message_To_Generate $mtg, $preview ) {
+		if ( $preview ) {
+			$data_handler = 'Preview';
+		} else {
+			$message_type = $this->_EEMSG->get_active_message_type( $mtg->messenger, $mtg->message_type );
+			if ( ! $message_type instanceof EE_message_type ) {
+				false;
+			}
+			/** @type EE_Messages_incoming_data $data_handler */
+			$data_handler = $this->_verify_and_retrieve_class_name( $message_type->get_data_handler( $mtg->data ) );
+		}
+
+		return $data_handler::convert_data_for_persistent_storage( $mtg->data );
+	}
+
+
+
+
+
 
 	/**
 	 * Validates the given string as a reference for an existing, accessible data handler and returns the class name
@@ -651,16 +680,44 @@ class EE_Messages_Generator {
 	 * @return string
 	 */
 	protected function _verify_and_retrieve_class_name( $data_handler_reference ) {
-		$classname = 'EE_Messages_' . $data_handler_reference . '_incoming_data';
-		if (  ! class_exists( $classname ) ) {
+		$class_name = 'EE_Messages_' . $data_handler_reference . '_incoming_data';
+		if (  ! class_exists( $class_name ) ) {
 			$this->_error_msg[] = sprintf(
 				__('The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
 				$data_handler_reference,
-				$classname );
-			$classname = ''; //clear out classname so caller knows this isn't valid.
+				$class_name );
+			$class_name = ''; //clear out class_name so caller knows this isn't valid.
 		}
 
-		return $classname;
+		return $class_name;
+	}
+
+
+
+
+
+	/**
+	 * This sets up a EEM_Message::status_incomplete EE_Message object and adds it to the generation queue.
+	 * @param EE_Message_To_Generate    $mtg
+	 * @param bool                      $preview        Indicate whether this is going to be used for a preview or not.
+	 */
+	public function _create_and_add_message_to_queue( EE_Message_To_Generate $mtg, $preview = false ) {
+		//prep data
+		$data = $this->_prepare_data_for_queue( $mtg, $preview );
+
+		$message = $mtg->get_EE_Message();
+
+		//is there a GRP_ID in the request?
+		if ( $GRP_ID = EE_Registry::instance()->REQ->get( 'GRP_ID' ) ) {
+			$message->set_GRP_ID( $GRP_ID );
+		}
+
+		if ( $data === false ) {
+			$message->set_STS_ID( EEM_Message::status_failed );
+			$message->set_error_message( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
+		} else {
+			$this->_generation_queue->add( $message, $data, $preview );
+		}
 	}
 
 
