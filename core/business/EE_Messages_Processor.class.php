@@ -20,7 +20,7 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * @type EE_Message_Queue
+	 * @type EE_Messages_Queue
 	 */
 	protected $_queue;
 
