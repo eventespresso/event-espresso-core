@@ -455,7 +455,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
 					  KEY REG_code (REG_code)";
-		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -521,6 +521,9 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+
+
+
 
 
 
