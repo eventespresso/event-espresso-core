@@ -96,6 +96,7 @@ define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
 define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
 define( 'EE_INTERFACES', EE_CORE . 'interfaces' . DS );
 define( 'EE_BUSINESS', EE_CORE . 'business' . DS );
+define( 'EE_REPOSITORIES', EE_CORE . 'respositories' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
