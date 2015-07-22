@@ -222,7 +222,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 			case EEM_Line_Item::type_total:
 				$this->_line_item_totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $line_item, array(), $this->_billable_ticket_quantities );
-				EEH_Debug_Tools::printr( $this->_line_item_totals, '$this->_line_item_totals ', __FILE__, __LINE__ );
+				//EEH_Debug_Tools::printr( $this->_line_item_totals, '$this->_line_item_totals ', __FILE__, __LINE__ );
 				// determine whether to display taxes or not
 				$this->_taxable_total = isset( $this->_line_item_totals[ 'taxable' ][ 'total' ] ) ? $this->_line_item_totals['taxable']['total'] : 0.00;
 				$this->_show_taxes = $this->_taxable_total > 0 ? true : false;
