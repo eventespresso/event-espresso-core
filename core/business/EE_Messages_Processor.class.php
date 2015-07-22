@@ -133,15 +133,14 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * This receives a formatted array of argument arrays for queuing messages for generation and then persisting to storage
-	 * after the queue is prepared.
+	 * This receives an array of EE_Message_To_Generate objects, converts them to EE_Message adds them to the generation queue
+	 * and then persists to storage.
 	 *
-	 * @see EE_Messages_Processor::queue_for_generation() for phpdocs about the arguments used as
-	 *
-	 * @param EE_Message_To_Generate[]
+	 * @param EE_Message_To_Generate[] $messages_to_generate
 	 */
-	public function batch_queue_for_generation_and_persist( $to_queue ) {
-
+	public function batch_queue_for_generation_and_persist( $messages_to_generate ) {
+		$this->_queue_for_generation_loop( $messages_to_generate );
+		$this->_queue->save();
 	}
 
 
