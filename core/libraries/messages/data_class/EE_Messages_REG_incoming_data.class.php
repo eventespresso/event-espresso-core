@@ -78,6 +78,46 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 		parent::__construct($data);
 	}
 
+	/**
+	 * Returns database safe representation of the data later used to when instantiating this object.
+	 *
+	 * @param mixed $data The incoming data to be prepped.
+	 *
+	 * @return array   The prepped data for db
+	 */
+	static public function convert_data_for_persistent_storage( $data ) {
+		$prepped_data = array();
+
+		if ( ! is_array( $data ) && $data instanceof EE_Registration ) {
+			$prepped_data['Registration'] = $data->ID();
+			return $prepped_data;
+		} else {
+			if ( $data[0] instanceof EE_Registration ) {
+				$prepped_data['Registration'] = $data[0];
+			}
+			if ( ! empty( $data[1] ) ) {
+				$prepped_data['filter'] = $data[1];
+			}
+		}
+
+		return $prepped_data;
+	}
+
+	/**
+	 * Data that has been stored in persistent storage that was prepped by _convert_data_for_persistent_storage
+	 * can be sent into this method and converted back into the format used for instantiating with this data handler.
+	 *
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	static public function convert_data_from_persistent_storage( $data ) {
+		$prepped_data = array(
+			0 => isset( $data['Registration'] ) ? EEM_Registration::instance()->get_one_by_ID( $data['Registration'] ) : null,
+			1 => isset( $data['filter'] ) ? $data['filter'] : null
+		);
+		return $prepped_data;
+	}
 
 
 	/**

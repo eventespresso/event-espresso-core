@@ -43,11 +43,42 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	 * @param array $data
 	 */
 	public function __construct( $data = array() ) {
-
-		$data = empty($data) ? array() : $data['event_ids'];
+		$this->_data = isset( $data['event_ids'] ) ? $data['event_ids'] : array();
 		$this->_setup_attendees_events();
 		parent::__construct($data);
 	}
+
+
+
+
+
+	/**
+	 * Returns database safe representation of the data later used to when instantiating this object.
+	 *
+	 * @param array $data The incoming data to be prepped.
+	 *
+	 * @return array   The prepped data for db
+	 */
+	static public function convert_data_for_persistent_storage( $data ) {
+		return $data;
+	}
+
+
+
+
+	/**
+	 * Data that has been stored in persistent storage that was prepped by _convert_data_for_persistent_storage
+	 * can be sent into this method and converted back into the format used for instantiating with this data handler.
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	static public function convert_data_from_persistent_storage( $data ) {
+		return $data;
+	}
+
+
 
 
 

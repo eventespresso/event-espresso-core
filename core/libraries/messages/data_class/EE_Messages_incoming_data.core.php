@@ -302,6 +302,35 @@ abstract class EE_Messages_incoming_data {
 
 
 
+
+
+	/**
+	 * Returns database safe representation of the data later used to when instantiating this object.
+	 *
+	 * @param mixed $data  The incoming data to be prepped.
+	 *
+	 * @return mixed   The prepped data for db
+	 */
+	abstract static public function convert_data_for_persistent_storage( $data );
+
+
+
+
+
+
+	/**
+	 * Data that has been stored in persistent storage that was prepped by _convert_data_for_persistent_storage
+	 * can be sent into this method and converted back into the format used for instantiating with this data handler.
+	 * @param $data
+	 *
+	 * @return mixed
+	 */
+	abstract static public function convert_data_from_persistent_storage( $data );
+
+
+
+
+
 	/**
 	 * only purpose is to return the data
 	 *
