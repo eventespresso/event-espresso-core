@@ -57,8 +57,7 @@ class EE_Messages_Processor {
 	 */
 	public function batch_generate_from_queue() {
 		if ( $this->_queue->get_batch_to_generate() ) {
-			$generator = new EE_Messages_Generator( $this->_queue, $this->_EEMSG );
-			$new_queue = $generator->generate();
+			$new_queue = $this->_generator->generate();
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
 				$this->_queue->unlock();
