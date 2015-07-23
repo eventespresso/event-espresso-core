@@ -13,11 +13,30 @@ class EEM_Message extends EEM_Base {
 
 
 	/**
-	 * priority constants.
+	 * This priority indicates a message should be generated and sent ASAP
+	 * @type int
 	 */
 	const priority_high = 1;
+
+
+
+
+	/**
+	 * This priority indicates a message should be generated ASAP and queued for sending.
+	 * @type
+	 */
 	const priority_medium = 2;
+
+
+
+
+	/**
+	 * This priority indicates a message should be queued for generating.
+	 * @type int
+	 */
 	const priority_low = 3;
+
+
 
 	/**
 	 * indicates this message was sent at the time modified
