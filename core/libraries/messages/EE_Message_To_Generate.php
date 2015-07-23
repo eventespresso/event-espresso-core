@@ -96,8 +96,27 @@ class EE_Message_To_Generate {
 			'MSG_messenger' => $this->messenger,
 			'MSG_message_type' => $this->message_type,
 			'MSG_context' => $this->context,
-			'STS_ID' => EEM_Message::status_incomplete
+			'STS_ID' => EEM_Message::status_incomplete,
+			'MSG_priority' => $this->_get_priority_for_message_type()
 		) );
+	}
+
+
+
+
+
+	/**
+	 * Returns what the message type has set as a priority.
+	 * @return  int   EEM_Message priority.
+	 */
+	protected function _get_priority_for_message_type() {
+		$message_type = $this->_EEMSG->get_active_message_type( $this->messenger, $this->message_type );
+		$messenger = $this->_EEMSG->get_messenger_if_active( $this->messenger );
+		$priority = EEM_Message::priority_low;
+		if ( $messenger instanceof EE_messenger && $message_type instanceof EE_message_type ) {
+			$priority = $messenger->send_now() ? EEM_Message::priority_high : $message_type->get_priority();
+		}
+		return $priority;
 	}
 
 
