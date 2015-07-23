@@ -21,6 +21,15 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 
+	/**
+	 * @see parent::get_priority() for documentation.
+	 * @return int
+	 */
+	public function get_priority() {
+		return EEM_Message::priority_medium;
+	}
+
+
 
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array(

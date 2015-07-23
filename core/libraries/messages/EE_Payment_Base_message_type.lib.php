@@ -21,6 +21,18 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 abstract class EE_Payment_Base_message_type extends EE_message_type {
 
 
+
+	/**
+	 * @see parent::get_priority() for documentation.
+	 * @return int
+	 */
+	public function get_priority() {
+		return EEM_Message::priority_high;
+	}
+
+
+
+
 	/**
 	 * see abstract declaration in parent class for details.
 	 */

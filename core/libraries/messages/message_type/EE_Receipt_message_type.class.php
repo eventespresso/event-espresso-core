@@ -31,6 +31,16 @@ class EE_Receipt_message_type extends EE_message_type {
 	}
 
 
+
+	/**
+	 * @see parent::get_priority() for documentation.
+	 * @return int
+	 */
+	public function get_priority() {
+		return EEM_Message::priority_high;
+	}
+
+
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array( 'events_edit' => TRUE );
 	}
