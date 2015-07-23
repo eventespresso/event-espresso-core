@@ -410,6 +410,34 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * Returns the priority for the message type.
+	 *
+	 * Priorities are defined as constants on EEM_Message.  Currently there are three priorities:
+	 *
+	 * - EEM_Message::priority_high
+	 * - EEM_Message::priority_medium
+	 * - EEM_Message::priority_low
+	 *
+	 * Priority is used to determine the weight the message type is given when queuing for generation and/or sending.
+	 * @see EEM_Message for more phpdocs on priority.
+	 *
+	 * The default priority for all message_types is EEM_Message::priority_low.  Message Types wanting to give a higher
+	 * priority must override this method.
+	 *
+	 * Also note, messengers are able to override priorities queuing instructions if their "send_now" flag is set to true.
+	 * An example of this is the HTML messenger which displays things in the browser.
+	 *
+	 * @since  4.9.0
+	 * @return int
+	 */
+	public function get_priority() {
+		return EEM_Message::priority_low;
+	}
+
+
+
+
 
 
 	/**
