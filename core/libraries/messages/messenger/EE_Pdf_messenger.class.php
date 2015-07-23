@@ -61,6 +61,21 @@ class EE_Pdf_messenger extends EE_messenger  {
 	}
 
 
+
+
+	/**
+	 * PDF Messenger desires execution immediately.
+	 * @see  parent::send_now() for documentation.
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function send_now() {
+		return true;
+	}
+
+
+
+
 	/**
 	 * @see abstract declaration in EE_messenger for details.
 	 */

@@ -297,6 +297,26 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/**
+	 * This is used to indicate whether a messenger must be sent immediately or not.
+	 * eg. The HTML messenger will override this to return true because it should be displayed in user's browser right
+	 * away.  The PDF messenger is similar.
+	 *
+	 * This flag thus overrides any priorities that may be set on the message type used to generate the message.
+	 *
+	 * Default for this is false.  So children classes must override this if they want a message to be executed immediately.
+	 *
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function send_now() {
+		return false;
+	}
+
+
+
+
+
+	/**
 	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
 	 * @see property definition for info on how its formatted.
 	 *
