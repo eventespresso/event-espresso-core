@@ -311,7 +311,9 @@ abstract class EE_Messages_incoming_data {
 	 *
 	 * @return mixed   The prepped data for db
 	 */
-	abstract static public function convert_data_for_persistent_storage( $data );
+	static public function convert_data_for_persistent_storage( $data ) {
+		return $data;
+	}
 
 
 
@@ -325,7 +327,9 @@ abstract class EE_Messages_incoming_data {
 	 *
 	 * @return mixed
 	 */
-	abstract static public function convert_data_from_persistent_storage( $data );
+	static public function convert_data_from_persistent_storage( $data ) {
+		return $data;
+	}
 
 
 
