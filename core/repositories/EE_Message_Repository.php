@@ -75,7 +75,7 @@ class EE_Message_Repository extends EE_Object_Repository {
 		$save_tracking = array( 'updated' => 0, 'notupdated' => 0, 'errors' => array() );
 
 		//exit early if there is nothing to save.
-		if ( ! $this-count() > 0 ) {
+		if ( ! $this->count() > 0 ) {
 			return $save_tracking;
 		}
 
