@@ -119,7 +119,6 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 	/**
 	 * @depends test_get_generation_data
 	 * @param EE_Message_Repository $test_repo
-	 * @return EE_Message_Repository
 	 */
 	function test_is_preview( EE_Message_Repository $test_repo ) {
 		$test_repo->rewind();
@@ -129,18 +128,19 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 
 
 
-	/**
-	 * This tests the protected _maybe_persist_generation_data implicitly via
-	 * the saveAll method in the depends chain.
-	 * @depends test_is_preview
-	 * @param EE_Message_Repository $test_repo
-	 */
-	function test__maybe_persist_generation_data( EE_Message_Repository $test_repo ) {
+	function test__maybe_persist_generation_data() {
+		$test_repo = new EE_Message_Repository();
+		$message = $this->factory->message->create();
+		$actual_generation_data = array( 'MSG_generation_data' => array(
+			'REG_ID' => 14
+		) );
+		$test_repo->add( $message, $actual_generation_data );
+		$test_repo->saveAll();
 		$test_repo->rewind();
 		$message = $test_repo->current();
 		$actual_generation_data = $message->get_generation_data();
 		$this->assertTrue( isset( $actual_generation_data['REG_ID'] ) );
-		$this->assertEquals( 12, $actual_generation_data['REG_ID'] );
+		$this->assertEquals( 14, $actual_generation_data['REG_ID'] );
 	}
 
 
