@@ -6,7 +6,7 @@
  *
  * @package 	Event Espresso
  * @subpackage 	db classes
- * @author 		Mike Nelson
+ * @author 		Darren Ethier
  */
 class EE_Message extends EE_Base_Class {
 
