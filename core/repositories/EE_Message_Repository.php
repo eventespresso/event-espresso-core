@@ -172,7 +172,7 @@ class EE_Message_Repository extends EE_Object_Repository {
 		}
 
 		$info = $this->getInfo();
-		$data = isset( $info['data'] ) ? $info['data'] : array();
+		$data = isset( $info['data'] ) && isset( $info['data']['MSG_generation_data'] ) ? $info['data']['MSG_generation_data'] : array();
 		if ( $data && $this->current()->STS_ID() === EEM_Message::status_incomplete ) {
 			$this->current()->set_generation_data( $data );
 		}
