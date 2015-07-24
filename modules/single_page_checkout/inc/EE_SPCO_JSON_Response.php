@@ -64,6 +64,11 @@ class EE_SPCO_JSON_Response {
 	protected $_method_of_payment = '';
 
 	/**
+	 * @var float
+	 */
+	protected $_payment_amount;
+
+	/**
 	 * @var array
 	 */
 	protected $_return_data = array();
@@ -130,6 +135,10 @@ class EE_SPCO_JSON_Response {
 		// set registration_time_limit, IF it exists
 		if ( $this->registration_time_limit() ) {
 			$JSON_response['registration_time_limit'] = $this->registration_time_limit();
+		}
+		// set payment_amount, IF it exists
+		if ( $this->payment_amount() !== null ) {
+			$JSON_response[ 'payment_amount' ] = $this->payment_amount();
 		}
 		// grab generic return data
 		$return_data = $this->return_data();
@@ -253,6 +262,25 @@ class EE_SPCO_JSON_Response {
 	 */
 	public function method_of_payment() {
 		return $this->_method_of_payment;
+	}
+
+
+
+	/**
+	 * @return float
+	 */
+	public function payment_amount() {
+		return $this->_payment_amount;
+	}
+
+
+
+	/**
+	 * @param float $payment_amount
+	 */
+	public function set_payment_amount( $payment_amount ) {
+		EE_Registry::instance()->load_helper( 'Money' );
+		$this->_payment_amount = EEH_Money::convert_to_float_from_localized_money( $payment_amount );
 	}
 
 

@@ -484,7 +484,48 @@ final class EE_Admin {
 			}
 		}
 
+
+		/**
+		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
+		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+		 */
+		global $pagenow;
+		if ( $pagenow == 'options-reading.php' ) {
+			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
+		}
+
 	}
+
+
+	/**
+	 * Callback for wp_dropdown_pages hook to remove ee critical pages from the dropdown selection.
+	 *
+	 * @param string $output  Current output.
+	 * @return string
+	 */
+	public function modify_dropdown_pages( $output ) {
+		//get critical pages
+		$critical_pages = EE_Registry::instance()->CFG->core->get_critical_pages_array();
+
+		//split current output by line break for easier parsing.
+		$split_output = explode( "\n", $output );
+
+		//loop through to remove any critical pages from the array.
+		foreach ( $critical_pages as $page_id ) {
+			$needle = 'value="' . $page_id . '"';
+			foreach( $split_output as $key => $haystack ) {
+				if( strpos( $haystack, $needle ) !== false ) {
+					unset( $split_output[$key] );
+				}
+			}
+		}
+
+		//replace output with the new contents
+		$output = implode( "\n", $split_output );
+
+		return $output;
+	}
+
 
 
 	/**

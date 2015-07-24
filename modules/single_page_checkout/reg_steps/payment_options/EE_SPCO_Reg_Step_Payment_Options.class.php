@@ -56,6 +56,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		EED_Single_Page_Checkout::process_ajax_request( 'save_payer_details_via_ajax' );
 	}
 
+
+
 	/**
 	 * 	ajax get_transaction_details
 	 */
@@ -64,6 +66,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	}
 
 
+
+	/**
+	 * bypass_recaptcha_for_load_payment_method
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function bypass_recaptcha_for_load_payment_method() {
+		return array(
+			'EESID' 	=> EE_Registry::instance()->SSN->id(),
+			'step'   		=> 'payment_options',
+			'action' 	=> 'spco_billing_form'
+		);
+	}
 
 
 

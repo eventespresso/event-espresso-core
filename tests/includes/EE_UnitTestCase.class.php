@@ -871,7 +871,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
-			$ticket = $this->new_model_obj_with_dependencies( 'Ticket',  array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- ) );
+			$ticket = $this->new_model_obj_with_dependencies( 'Ticket',  array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false ) );
+			$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $i * 10 ) );
+			$ticket->_add_relation_to( $price, 'Price' );
 			$a_datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
 			$ticket->_add_relation_to( $a_datetime, 'Datetime');
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
@@ -881,7 +883,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 					$reg_final_price += $reg_final_price * $tax->amount() / 100;
 				}
 			}
-			$this->new_model_obj_with_dependencies( 'Registration', array('TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket->ID(), 'REG_count'=>1, 'REG_group_size'=>1, 'REG_final_price' => $reg_final_price ) );
+			$this->new_model_obj_with_dependencies(
+					'Registration',
+					array(
+						'TXN_ID' => $txn->ID(),
+						'TKT_ID' => $ticket->ID(),
+						'STS_ID' => EEM_Registration::status_id_approved,
+						'EVT_ID' => $a_datetime->get( 'EVT_ID' ),
+						'REG_count'=>1,
+						'REG_group_size'=>1,
+						'REG_final_price' => $reg_final_price ) );
 		}
 		$txn->set_total( $total_line_item->total() );
 		$txn->save();

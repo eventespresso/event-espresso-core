@@ -87,7 +87,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 	function column_CHK_in( EE_Checkin $item ) {
 		$checkinstatus = $item->get('CHK_in');
-		$checkinstatus = $checkinstatus ? 1 : 2;
+		$checkinstatus = $checkinstatus ? EE_Registration::checkin_status_in : EE_Registration::checkin_status_out;
 		return '<span class="checkin-icons checkedin-status-' . $checkinstatus . '"></span>';
 	}
 

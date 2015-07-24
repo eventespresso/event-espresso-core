@@ -808,6 +808,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				}
 			}
+			$registration_processor->fix_reg_final_price_rounding_issue( $transaction );
 		}
 		return $registrations;
 	}
@@ -1297,6 +1298,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			//	)
 			//);
 			$this->checkout->json_response->set_registration_time_limit( $this->checkout->get_registration_time_limit() );
+			$this->checkout->json_response->set_payment_amount( $this->checkout->amount_owing );
 			// just send the ajax (
 			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
 			$this->unlock_transaction();

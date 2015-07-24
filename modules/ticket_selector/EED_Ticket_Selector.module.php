@@ -526,6 +526,9 @@ class EED_Ticket_Selector extends  EED_Module {
 							// then add ticket to cart
 							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
 							$success = ! $ticket_added ? FALSE : $success;
+							if ( EE_Error::has_error() ) {
+								break;
+							}
 						} else {
 							// nothing added to cart retrieved
 							EE_Error::add_error(
@@ -554,8 +557,10 @@ class EED_Ticket_Selector extends  EED_Module {
 						exit();
 
 					} else {
-						// nothing added to cart
-						EE_Error::add_attention( __( 'No tickets were added to the cart..', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						if ( ! EE_Error::has_error() ) {
+							// nothing added to cart
+							EE_Error::add_attention( __( 'No tickets were added for the event', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						}
 					}
 
 				} else {
@@ -722,16 +727,20 @@ class EED_Ticket_Selector extends  EED_Module {
 		$available_spaces = self::_ticket_datetime_availability( $ticket );
 		// compare available spaces against the number of tickets being purchased
 		if ( $available_spaces >= $qty ) {
+			// allow addons to prevent a ticket from being added to cart
+			if ( ! apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart', true, $ticket, $qty, $available_spaces ) ) {
+				return false;
+			}
 			// add event to cart
 			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
 				self::_recalculate_ticket_datetime_availability( $ticket, $qty );
-				return TRUE;
+				return true;
 			} else {
-				return FALSE;
+				return false;
 			}
 		} else {
 			// tickets can not be purchased but let's find the exact number left for the last ticket selected PRIOR to subtracting tickets
-			$available_spaces = self::_ticket_datetime_availability( $ticket, TRUE );
+			$available_spaces = self::_ticket_datetime_availability( $ticket, true );
 			// greedy greedy greedy eh?
 			if ( $available_spaces > 0 ) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
@@ -751,7 +760,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			} else {
 				EE_Error::add_error( __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
-			return FALSE;
+			return false;
 		}
 	}
 

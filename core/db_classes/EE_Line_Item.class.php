@@ -235,6 +235,11 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function is_percent() {
+		if( $this->is_tax_sub_total() ) {
+			//tax subtotals HAVE a percent on them, that percentage only applies
+			//to taxable items, so its' an exception. Treat it like a flat line item
+			return false;
+		}
 		$unit_price = $this->get( 'LIN_unit_price' );
 		$percent = $this->get( 'LIN_percent' );
 		if ( $unit_price < .001 && $percent ) {
@@ -289,6 +294,16 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function set_total( $total ) {
 		$this->set( 'LIN_total', $total );
+	}
+
+
+
+	/**
+	 * Gets order
+	 * @return int
+	 */
+	function order() {
+		return $this->get( 'LIN_order' );
 	}
 
 
@@ -361,7 +376,10 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	public function children() {
 		if ( $this->ID() ) {
-			return $this->get_model()->get_all( array( array( 'LIN_parent' => $this->ID() ) ) );
+			return $this->get_model()->get_all(
+					array(
+						array( 'LIN_parent' => $this->ID() ),
+						'order_by' => array( 'LIN_order' => 'ASC' ) ) );
 		} else {
 			if ( ! is_array( $this->_children ) ) {
 				$this->_children = array();
@@ -517,10 +535,15 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Adds the line item as a child to this line item. If there is another child line
 	 * item with the same LIN_code, it is overwritten by this new one
 	 * @param EE_Line_Item $line_item
-	 * @return boolean success
+	 * @param bool         $set_order
+	 * @return bool success
+	 * @throws \EE_Error
 	 */
-	function add_child_line_item( EE_Line_Item $line_item ) {
-		$line_item->set_order( count( $this->children() ) );
+	function add_child_line_item( EE_Line_Item $line_item, $set_order = true ) {
+		// should we calculate the LIN_order for this line item ?
+		if ( $set_order || $line_item->order() === null ) {
+			$line_item->set_order( count( $this->children() ) );
+		}
 		if ( $this->ID() ) {
 			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
@@ -719,6 +742,7 @@ class EE_Line_Item extends EE_Base_Class {
 	function recalculate_total_including_taxes() {
 		$pre_tax_total = $this->recalculate_pre_tax_total();
 		$tax_total = $this->recalculate_taxes_and_tax_total();
+
 		$total = $pre_tax_total + $tax_total;
 		// no negative totals plz
 		$total = max( $total, 0 );
@@ -814,13 +838,16 @@ class EE_Line_Item extends EE_Base_Class {
 	private function _recalculate_tax_sub_total() {
 		if ( $this->is_tax_sub_total() ) {
 			$total = 0;
+			$total_percent = 0;
 			//simply loop through all its children (which should be taxes) and sum their total
 			foreach ( $this->children() as $child_tax ) {
 				if ( $child_tax instanceof EE_Line_Item ) {
 					$total += $child_tax->total();
+					$total_percent += $child_tax->percent();
 				}
 			}
 			$this->set_total( $total );
+			$this->set_percent( $total_percent );
 		} elseif ( $this->is_total() ) {
 			foreach ( $this->children() as $maybe_tax_subtotal ) {
 				if ( $maybe_tax_subtotal instanceof EE_Line_Item ) {
@@ -889,22 +916,29 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Returns the amount taxable among this line item's children (or if it has no children,
-	 * how much of it is taxable). Does not recalculate totals or subtotals
+	 * how much of it is taxable). Does not recalculate totals or subtotals.
+	 * If the taxable total is negative, (eg, if none of the tickets were taxable,
+	 * but there is a "Taxable" discount), returns 0.
 	 * @return float
 	 */
 	function taxable_total() {
 		$total = 0;
 		if ( $this->children() ) {
 			foreach ( $this->children() as $child_line_item ) {
-
 				if ( $child_line_item->type() == EEM_Line_Item::type_line_item && $child_line_item->is_taxable()) {
-					$total += $child_line_item->total();
+					//if it's a percent item, only take into account the percent
+					//that's taxable too (the taxable total so far)
+					if( $child_line_item->is_percent() ) {
+						$total = $total + ( $total * $child_line_item->percent() / 100 );
+					}else{
+						$total += $child_line_item->total();
+					}
 				}elseif( $child_line_item->type() == EEM_Line_Item::type_sub_total ){
 					$total += $child_line_item->taxable_total();
 				}
 			}
 		}
-		return $total;
+		return max( $total, 0 );
 	}
 
 

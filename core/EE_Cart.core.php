@@ -59,18 +59,22 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @param EE_Line_Item $grand_total
 	  * @return \EE_Cart
 	  */
-	public static function instance( EE_Line_Item $grand_total = NULL ) {
+	public static function instance( EE_Line_Item $grand_total = null ) {
 		EE_Registry::instance()->load_helper('Line_Item');
-		// check if class object is instantiated
-		if( ! empty( $grand_total ) ){
+		// rest cart with new grand total ?
+		if ( ! empty( $grand_total ) ){
 			self::$_instance = new self( $grand_total );
-		}elseif ( ! self::$_instance instanceof EE_Cart) {
-			//try getting the cart out of the session
-			$saved_cart = EE_Registry::instance()->SSN->cart();
-			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total );
-			unset( $saved_cart );
 		}
-
+		// or maybe retrieve an existing one ?
+		if ( ! self::$_instance instanceof EE_Cart ) {
+			// try getting the cart out of the session
+			self::$_instance = EE_Registry::instance()->SSN->cart();
+		}
+		// verify that cart is ok and grand total line item exists
+		if ( ! self::$_instance instanceof EE_Cart || ! self::$_instance->_grand_total instanceof EE_Line_Item ) {
+			self::$_instance = new self( $grand_total );
+		}
+		self::$_instance->get_grand_total();
 		// once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( self::$_instance, 'save_cart' ), 90 );
 		return self::$_instance;
@@ -93,7 +97,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		 if ( $grand_total instanceof EE_Line_Item ) {
 			 $this->set_grand_total_line_item( $grand_total );
 		 }
-		 $this->get_grand_total();
 	 }
 
 
@@ -288,6 +291,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$deleted = EEH_Line_Item::delete_all_child_items( $this->_grand_total );
 		if ( $deleted ) {
 			$deleted += $this->_grand_total->delete();
+			$this->_grand_total = null;
 		}
 		return $deleted;
 	}
@@ -312,7 +316,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return TRUE on success, FALSE on fail
 	  */
 	public function save_cart( $apply_taxes = TRUE ) {
-		if ( $apply_taxes ) {
+		if ( $apply_taxes && $this->_grand_total instanceof EE_Line_Item ) {
 			EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
 		}
 		return EE_Registry::instance()->SSN->set_cart( $this );

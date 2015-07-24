@@ -25,6 +25,12 @@ class EEH_Line_Item {
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item
 	 * in the correct spot in the line item tree (also verifying it doesn't add a duplicate based on the LIN_code)
+	 * beneath the pre-tax-total (alongside event subtotals).
+	 * Automatically re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 * @param EE_Line_Item $parent_line_item
 	 * @param string $name
 	 * @param float $unit_price
@@ -58,7 +64,12 @@ class EEH_Line_Item {
 
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
-	 * in the correct spot in the line item tree.
+	 * in the correct spot in the line item tree. Automatically
+	 * re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 *
 	 * @param EE_Line_Item $parent_line_item
 	 * @param string       $name
@@ -90,7 +101,13 @@ class EEH_Line_Item {
 
 	/**
 	 * Returns the new line item created by adding a purchase of the ticket
-	 * ensures that ticket line item is saved, and that cart total has been recalculated
+	 * ensures that ticket line item is saved, and that cart total has been recalculated.
+	 * If this ticket has already been purchased, just increments its count.
+	 * Automatically re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 *
 	 * @param EE_Line_Item $total_line_item grand total line item of type EEM_Line_Item::type_total
 	 * @param EE_Ticket $ticket
@@ -218,7 +235,12 @@ class EEH_Line_Item {
 
 
 	/**
-	 * Adds the specified item under the pre-tax-sub-total line item
+	 * Adds the specified item under the pre-tax-sub-total line item. Automatically
+	 * re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $item to be added
 	 * @return boolean
@@ -525,6 +547,7 @@ class EEH_Line_Item {
 				$deleted += EEH_Line_Item::delete_all_child_items( $child_line_item );
 				if ( $child_line_item->ID() ) {
 					$child_line_item->delete();
+					unset( $child_line_item );
 				} else {
 					$parent_line_item->delete_child_line_item( $child_line_item->code() );
 				}
@@ -538,7 +561,12 @@ class EEH_Line_Item {
 
 	/**
 	 * Deletes the line items as indicated by the line item code(s) provided,
-	 * regardless of where they're found in the line item tree
+	 * regardless of where they're found in the line item tree. Automatically
+	 * re-calculates the line item totals and updates the related transaction. But
+	 * DOES NOT automatically upgrade the transaction's registrations' final prices (which
+	 * should probably change because of this).
+	 * You should call EE_Registration_Processor::calculate_reg_final_prices_per_line_item()
+	 * after using this, to keep the registration final prices in-sync with the transaction's total.
 	 * @param EE_Line_Item      $total_line_item of type EEM_Line_Item::type_total
 	 * @param array|bool|string $line_item_codes
 	 * @return int number of items successfully removed
@@ -829,7 +857,7 @@ class EEH_Line_Item {
 		for( $i = 0; $i < $indentation; $i++ ){
 			echo "-";
 		}
-		echo $line_item->name() . ": " . $line_item->type() . " $" . $line_item->total();
+		echo $line_item->name() . "(" . $line_item->ID() . "): " . $line_item->type() . " $" . $line_item->total() . "($" . $line_item->unit_price() . "x" . $line_item->quantity() . ")";
 		if( $line_item->is_taxable() ){
 			echo " taxable";
 		}
@@ -838,6 +866,132 @@ class EEH_Line_Item {
 				self::visualize($child, $indentation + 1);
 			}
 		}
+	}
+
+
+
+	/**
+	 * Calculates the registration's final price, taking into account that they
+	 * need to not only help pay for their OWN ticket, but also any transaction-wide surcharges and taxes,
+	 * and receive a portion of any transaction-wide discounts.
+	 * eg1, if I buy a $1 ticket and brent buys a $9 ticket, and we receive a $5 discount
+	 * then I'll get 1/10 of that $5 discount, which is $0.50, and brent will get
+	 * 9/10ths of that $5 discount, which is $4.50. So my final price should be $0.50
+	 * and brent's final price should be $5.50.
+	 *
+	 * In order to do this, we basically need to traverse the line item tree calculating
+	 * the running totals (just as if we were recalculating the total), but when we identify
+	 * regular line items, we need to keep track of their share of the grand total.
+	 * Also, we need to keep track of the TAXABLE total for each ticket purchase, so
+	 * we can know how to apply taxes to it. (Note: "taxable total" does not equal the "pretax total"
+	 * when there are non-taxable items; otherwise they would be the same)
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @param array $billable_ticket_quantities 		array of EE_Ticket IDs and their corresponding quantity that
+	 *                                          									can be included in price calculations at this moment
+	 * @return array 		keys are line items for tickets IDs and values are their share of the running total,
+	 *                                          plus the key 'total', and 'taxable' which also has keys of all the ticket IDs. Eg
+	 *                                          array(
+	 *                                          12 => 4.3
+	 *                                          23 => 8.0
+	 *                                          'total' => 16.6,
+	 *                                          'taxable' => array(
+	 *                                          12 => 10,
+	 *                                          23 => 4
+	 *                                          ).
+	 *                                          So to find which registrations have which final price, we need to find which line item
+	 *                                          is theirs, which can be done with
+	 *                                          `EEM_Line_Item::instance()->get_line_item_for_registration( $registration );`
+	 */
+	public static function calculate_reg_final_prices_per_line_item( EE_Line_Item $line_item, $billable_ticket_quantities = array() ) {
+		//init running grand total if not already
+		if ( ! isset( $running_totals[ 'total' ] ) ) {
+			$running_totals[ 'total' ] = 0;
+		}
+		if( ! isset( $running_totals[ 'taxable' ] ) ) {
+			$running_totals[ 'taxable' ] = array( 'total' => 0 );
+		}
+		foreach ( $line_item->children() as $child_line_item ) {
+			switch ( $child_line_item->type() ) {
+
+				case EEM_Line_Item::type_sub_total :
+					$running_totals_from_subtotal = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $child_line_item, $billable_ticket_quantities );
+					//combine arrays but preserve numeric keys
+					$running_totals = array_replace_recursive( $running_totals_from_subtotal, $running_totals );
+					$running_totals[ 'total' ] += $running_totals_from_subtotal[ 'total' ];
+					$running_totals[ 'taxable'][ 'total' ] += $running_totals_from_subtotal[ 'taxable' ][ 'total' ];
+					break;
+
+				case EEM_Line_Item::type_tax_sub_total :
+
+					//find how much the taxes percentage is
+					if ( $child_line_item->percent() != 0 ) {
+						$tax_percent_decimal = $child_line_item->percent() / 100;
+					} else {
+						$tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
+					}
+					//and apply to all the taxable totals, and add to the pretax totals
+					foreach ( $running_totals as $line_item_id => $this_running_total ) {
+						//"total" and "taxable" array key is an exception
+						if ( $line_item_id === 'taxable' ) {
+							continue;
+						}
+						$taxable_total = $running_totals[ 'taxable' ][ $line_item_id ];
+						$running_totals[ $line_item_id ] += ( $taxable_total * $tax_percent_decimal );
+					}
+					break;
+
+				case EEM_Line_Item::type_line_item :
+
+					// ticket line items or ????
+					if ( $child_line_item->OBJ_type() === 'Ticket' ) {
+						// kk it's a ticket
+						if ( isset( $running_totals[ $child_line_item->ID() ] ) ) {
+							//huh? that shouldn't happen.
+							$running_totals[ 'total' ] += $child_line_item->total();
+						} else {
+							//its not in our running totals yet. great.
+							if ( $child_line_item->is_taxable() ) {
+								$taxable_amount = $child_line_item->unit_price();
+							} else {
+								$taxable_amount = 0;
+							}
+							// are we only calculating totals for some tickets?
+							if ( isset( $billable_ticket_quantities[ $child_line_item->OBJ_ID() ] ) ) {
+								$quantity = $billable_ticket_quantities[ $child_line_item->OBJ_ID() ];
+								$running_totals[ $child_line_item->ID() ] = $quantity ? $child_line_item->unit_price() : 0;
+								$running_totals[ 'taxable' ][ $child_line_item->ID() ] = $quantity ? $taxable_amount : 0;
+							} else {
+								$quantity = $child_line_item->quantity();
+								$running_totals[ $child_line_item->ID() ] = $child_line_item->unit_price();
+								$running_totals[ 'taxable' ][ $child_line_item->ID() ] = $taxable_amount;
+							}
+							$running_totals[ 'taxable' ][ 'total' ] += $taxable_amount * $quantity;
+							$running_totals[ 'total' ] += $child_line_item->unit_price() * $quantity;
+						}
+					} else {
+						// it's some other type of item added to the cart
+						// it should affect the running totals
+						// basically we want to convert it into a PERCENT modifier. Because
+						// more clearly affect all registration's final price equally
+						$line_items_percent_of_running_total = $running_totals[ 'total' ] > 0 ? ( $child_line_item->total() / $running_totals[ 'total' ] ) + 1 : 1;
+						foreach ( $running_totals as $line_item_id => $this_running_total ) {
+							//the "taxable" array key is an exception
+							if ( $line_item_id === 'taxable' ) {
+								continue;
+							}
+							// update the running totals
+							// yes this actually even works for the running grand total!
+							$running_totals[ $line_item_id ] = $line_items_percent_of_running_total * $this_running_total;
+							if ( $child_line_item->is_taxable() ) {
+								$running_totals[ 'taxable' ][ $line_item_id ] = $line_items_percent_of_running_total * $running_totals[ 'taxable' ][ $line_item_id ];
+							}
+						}
+					}
+					break;
+			}
+		}
+		return $running_totals;
 	}
 
 

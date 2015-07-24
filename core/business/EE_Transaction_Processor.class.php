@@ -425,7 +425,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
 			$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			// if a contact record for the primary registrant has been created
-			if ( $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
+			if ( $transaction->primary_registration() instanceof EE_Registration && $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			} else {
