@@ -95,9 +95,9 @@ class EEM_Message extends EEM_Base {
 		);
 
 		$allowed_priority = array(
-			self::priority_high,
-			self::priority_medium,
-			self::priority_low
+			self::priority_high => __( 'high', 'event_espresso' ),
+			self::priority_medium => __( 'medium', 'event_espresso' ),
+			self::priority_low => __( 'low', 'event_espresso' )
 		);
 
 		$this->_fields = array(
