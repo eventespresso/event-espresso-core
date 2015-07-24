@@ -81,9 +81,6 @@ class EE_Message_Repository extends EE_Object_Repository {
 
 		while( $this->valid() ) {
 
-			//maybe persist generation data if this is an incomplete EE_Message.
-			$this->_maybe_persist_generation_data();
-
 			$saved = $this->current()->save();
 			if ( $saved === false ) {
 				$save_tracking['errors'][] = $this->current()->MSG_token();
@@ -92,6 +89,9 @@ class EE_Message_Repository extends EE_Object_Repository {
 			} else {
 				$save_tracking['notupdated']++;
 			}
+			//maybe persist generation data if this is an incomplete EE_Message.
+			$this->_maybe_persist_generation_data();
+
 			$this->next();
 		}
 		return $save_tracking;
