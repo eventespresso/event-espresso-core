@@ -25,12 +25,4 @@ interface EEI_Line_Item_Object {
 	public function ID();
 
 
-
-
-	/**
-	 * Return what represents the "code" value for the object.
-	 * @return mixed
-	 */
-	public function code();
-
 } //end EEI_Line_Item_Object interface
