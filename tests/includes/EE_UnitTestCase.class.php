@@ -970,4 +970,20 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		return $ticket;
 	}
+
+
+
+
+	/**
+	 * This replaces the wp_mail method to capture calls to it and simulate a successful send (thus not actually
+	 * sending the email.
+	 *
+	 */
+	protected function _simulate_successful_email_send() {
+		if ( ! function_exists( 'wp_mail' ) ) {
+			function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
+				return true;
+			}
+		}
+	}
 }
