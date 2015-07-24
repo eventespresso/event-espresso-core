@@ -195,7 +195,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 
 		//Type Column
 		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type() . '<br />' : '';
-		$type_html .= '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $line_item->code() ) . '</span>';
+		$type_html .= $line_item_related_object instanceof EEI_Line_Item_Object && ! empty( $line_item_related_object->code() ) ? '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $line_item_related_object->code() ) . '</span>' : '';
 		$html .= EEH_HTML::td( $type_html, '', 'jst-left' );
 
 

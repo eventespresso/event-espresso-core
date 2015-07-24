@@ -181,6 +181,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function generate_reg_form() {
 		EE_Registry::instance()->load_helper( 'HTML' );
+		// reset in case someone changes their mind
+		$this->_reset_selected_method_of_payment();
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'payments_closed';
 		$registrations_requiring_payment = array();
@@ -256,6 +258,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$this->_hide_reg_step_submit_button_if_revisit();
 
 		}
+		$this->_save_selected_method_of_payment();
 		return new EE_Form_Section_Proper(
 			array(
 				'name'            => $this->reg_form_name(),
@@ -412,8 +415,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	private function _display_payment_options( $transaction_details = '' ) {
-		// reset in case someone changes their mind
-		$this->_reset_selected_method_of_payment();
 		// has method_of_payment been set by no-js user?
 		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment();
 		// build payment options form

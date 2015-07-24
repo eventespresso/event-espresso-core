@@ -1189,4 +1189,14 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			admin_url( 'admin.php' )
 		);
 	}
+
+
+	/**
+	 * Implementation for EEI_Line_Item_Object interface method
+	 * @see EEI_Line_Item_Object for comments
+	 * @return string
+	 */
+	public function code() {
+		return '';
+	}
 }
