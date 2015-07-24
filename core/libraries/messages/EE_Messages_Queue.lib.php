@@ -94,6 +94,7 @@ class EE_Messages_Queue {
 	 * Removes EE_Message from _queue that matches the given token.
 	 * @param EE_Message    $message    The message to detach from the queue
 	 * @param bool          $persist    This flag indicates whether to attempt to delete the object from the db as well.
+	 * @return bool
 	 */
 	public function remove( EE_Message $message, $persist = false ) {
 		return $this->_queue->remove( $message, $persist );
@@ -149,7 +150,7 @@ class EE_Messages_Queue {
 
 		$query_args = array(
 			0 => $where_conditions,
-			'orderby' => $this->_get_priority_orderby(),
+			'order_by' => $this->_get_priority_orderby(),
 			'limit' => $this->_batch_count
 		);
 		$messages = EEM_Message::instance()->get_all( $query_args );
@@ -175,8 +176,11 @@ class EE_Messages_Queue {
 	 * 4. Saves messages via the queue
 	 * 5. Releases lock.
 	 *
-	 * @return bool  true on success, false if something preventing sending (i.e. lock set).
-	 *
+	 * @return bool  true on success, false if something preventing sending (i.e. lock set).  Note: true does not necessarily
+	 *               mean that all messages were successfully sent.  It just means that this method successfully completed.
+	 *               On true, client may want to call $this->count_STS_in_queue( EEM_Message::status_failed ) to see if
+	 *               any failed EE_Message objects.  Each failed message object will also have a saved error message on it
+	 *               to assist with notifying user.
 	 */
 	public function get_to_send_batch_and_send() {
 		if ( $this->is_locked( 'sending' ) || $this->_rate_limit < 1 ) {
@@ -191,7 +195,7 @@ class EE_Messages_Queue {
 
 		$query_args = array(
 			0 => $where,
-			'orderby' => $this->_get_priority_orderby(),
+			'order_by' => $this->_get_priority_orderby(),
 			'limit' => $batch
 		);
 
@@ -213,6 +217,7 @@ class EE_Messages_Queue {
 
 		//release lock
 		$this->unlock_queue( 'sending' );
+		return true;
 	}
 
 
@@ -301,10 +306,8 @@ class EE_Messages_Queue {
 	 */
 	protected function _get_priority_orderby() {
 		return array(
-			array(
-				'MSG_priority' => ASC,
-				'MSG_modified' => DESC
-			)
+			'MSG_priority' => 'ASC',
+			'MSG_modified' => 'DESC'
 		);
 	}
 
@@ -314,11 +317,11 @@ class EE_Messages_Queue {
 	/**
 	 * Returns whether batch methods are "locked" or not.
 	 *
-	 * @param   string $type The type of lock being checked for.
-	 * @return int
+	 * @param  string $type The type of lock being checked for.
+	 * @return bool
 	 */
 	public function is_locked( $type = 'generation' ) {
-		return get_transient( $this->_get_lock_key( $type ) );
+		return (bool) get_transient( $this->_get_lock_key( $type ) );
 	}
 
 
