@@ -42,7 +42,15 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 			return $data;
 		}
 	}
-	
+	/**
+	 * Value returned should be unserialized. We should unserialize into an array.
+	 * @param string $value_of_field_on_model_object
+	 * @return array
+	 */
+	function prepare_for_get( $value_of_field_on_model_object ) {
+		$data = maybe_unserialize($value_of_field_on_model_object);
+		return $data;
+	}
 	/**
 	 * Gets a string representation of the array
 	 * @param type $value_on_field_to_be_outputted
