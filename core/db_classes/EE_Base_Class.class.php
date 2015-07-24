@@ -276,8 +276,6 @@ abstract class EE_Base_Class{
 	 * This sets the field value on the db column if it exists for the given $column_name or
 	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
 	 *
-	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
-	 *
 	 * @param string $field_name Must be the exact column name.
 	 * @param mixed  $field_value  The value to set.
 	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
