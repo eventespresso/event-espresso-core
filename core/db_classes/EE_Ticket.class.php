@@ -995,4 +995,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		return $event instanceof EE_Event ? $event->ID() : 0;
 	}
 
+
+
+	/**
+	 * Implementation for EEI_Line_Item_Object interface method
+	 * @see EEI_Line_Item_Object for comments
+	 * @return string
+	 */
+	public function code() {
+		return '';
+	}
+
 } //end EE_Ticket class
