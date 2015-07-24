@@ -178,7 +178,7 @@ class EE_Messages_Queue {
 	 * @return bool  true on success, false if something preventing sending (i.e. lock set).
 	 *
 	 */
-	public function get_batch_to_send() {
+	public function get_to_send_batch_and_send() {
 		if ( $this->is_locked( 'sending' ) || $this->_rate_limit < 1 ) {
 			return false;
 		}

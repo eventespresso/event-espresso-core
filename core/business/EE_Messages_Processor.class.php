@@ -83,13 +83,13 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * Calls the EE_Message_Queue::get_batch_to_send() method and then immediately just calls EE_Message_Queue::execute()
+	 * Calls the EE_Message_Queue::get_to_send_batch_and_send() method and then immediately just calls EE_Message_Queue::execute()
 	 * to iterate and send unsent messages.
 	 * @return EE_Messages_Queue
 	 */
 	public function batch_send_from_queue() {
 		//get messages to send and execute.
-		$this->_queue->get_batch_to_send();
+		$this->_queue->get_to_send_batch_and_send();
 		//note: callers can use the EE_Messages_Queue::count_STS_in_queue() method to find out if there were any failed
 		//messages in the queue and decide how to handle at that point.
 		return $this->_queue;
