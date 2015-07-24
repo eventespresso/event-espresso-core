@@ -93,20 +93,20 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 		$table_name = 'esp_message';
 		$sql="MSG_ID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-					GRP_ID INT(10) UNSIGNED NOT NULL,
-					MSG_token VARCHAR(255) NOT NULL,
-					TXN_ID INT(10) UNSIGNED NOT NULL,
+					GRP_ID INT(10) UNSIGNED NULL,
+					MSG_token VARCHAR(255) NULL,
+					TXN_ID INT(10) UNSIGNED NULL,
 					MSG_messenger VARCHAR(30) NOT NULL,
 					MSG_message_type VARCHAR(50) NOT NULL,
-					MSG_context VARCHAR(50) NOT NULL,
+					MSG_context VARCHAR(50),
 					MSG_recipient_ID BIGINT(20) NULL,
 					MSG_recipient_type VARCHAR(45) NULL,
-					MSG_content TEXT NOT NULL,
-					MSG_to VARCHAR(255) NOT NULL,
-					MSG_from VARCHAR(255) NOT NULL,
+					MSG_content TEXT NULL,
+					MSG_to VARCHAR(255) NULL,
+					MSG_from VARCHAR(255) NULL,
 					MSG_subject VARCHAR(255) NULL,
-					MSG_priority TINYINT(1) NOT NULL DEFAULT 1,
-					STS_ID VARCHAR(3) NOT NULL DEFAULT 'MID',
+					MSG_priority TINYINT(1) NOT NULL DEFAULT 3,
+					STS_ID VARCHAR(3) NOT NULL DEFAULT 'MIC',
 					MSG_created DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 					MSG_modified DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 					PRIMARY KEY  (MSG_ID),
@@ -652,13 +652,3 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 	}
 }
-
-
-
-
-
-
-
-
-
-
