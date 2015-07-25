@@ -494,8 +494,8 @@ class EE_Messages_Generator {
 		//reset error message to an empty array.
 		$this->_error_message = array();
 		$valid = true;
-		$valid = $this->_validate_messenger_and_message_type();
-		$valid = $this->_validate_and_setup_data();
+		$valid = $valid ? $this->_validate_messenger_and_message_type() : $valid;
+		$valid = $valid ? $this->_validate_and_setup_data() : $valid;
 
 		//set the verified flag so we know everything has been validated.
 		$this->_verified = $valid;
