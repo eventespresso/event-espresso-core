@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit( 'No direct script access allowed' ); }
 
 /**
  * This class is used for generating EE_Message objects with given info.
@@ -118,7 +118,7 @@ class EE_Messages_Generator {
 	 * @param EE_Messages_Queue $queue
 	 * @param EE_messages $eemsg
 	 */
-	public function __construct( EE_Messages_Queue $queue,  EE_messages $eemsg ) {
+	public function __construct( EE_Messages_Queue $queue, EE_messages $eemsg ) {
 		$this->_generation_queue = $queue;
 		$this->_ready_queue = new EE_Messages_Queue( $eemsg );
 		$this->_EEMSG = $eemsg;
@@ -147,7 +147,7 @@ class EE_Messages_Generator {
 	public function generate( $save = true ) {
 		//iterate through the messages in the queue, generate, and add to new queue.
 		$this->_generation_queue->get_queue()->rewind();
-		while( $this->_generation_queue->get_queue()->valid() ) {
+		while ( $this->_generation_queue->get_queue()->valid() ) {
 			//resent "current" properties
 			$this->_reset_current_properties();
 
@@ -156,7 +156,7 @@ class EE_Messages_Generator {
 
 			if ( $this->_verify() ) {
 				//let's get generating!
-				$generated = $this->_generate();
+				$this->_generate();
 			}
 
 			//if there are error messages then let's set the status and the error message.
@@ -170,7 +170,7 @@ class EE_Messages_Generator {
 				$msg->set_modified( time() );
 			} else {
 				//remove from db
-				$this->_generation_queue->remove( $msg->MSG_token(), true );
+				$this->_generation_queue->remove( $msg, true );
 			}
 			//next item
 			$this->_generation_queue->get_queue()->next();
@@ -216,7 +216,7 @@ class EE_Messages_Generator {
 	 */
 	protected function _generate() {
 		//doublecheck verification has run and that everything is ready to work with (saves us having to validate everything again).
-		if ( ! $this->_verfied ) {
+		if ( ! $this->_verified ) {
 			return false; //get out because we don't have a valid setup to work with.
 		}
 
@@ -280,20 +280,19 @@ class EE_Messages_Generator {
 
 		//whatcha still doing here?  Oh, no Message Template Group yet I see.  Okay let's see if we can get it for you.
 
-
 		//defaults
 		$EVT_ID = 0;
 
 		$template_qa = array(
 			'MTP_is_active' => true,
 			'MTP_messenger' => $this->_current_messenger->name,
-			'MTP_message_type' => $this->_current_message_type->name
+			'MTP_message_type' => $this->_current_message_type->name,
 		);
 
 		//in vanilla EE we're assuming there's only one event.
 		//However, if there are multiple events then we'll just use the default templates instead of different
 		// templates per event (which could create problems).
-		if ( count($this->_current_data_handler->events) === 1 ) {
+		if ( count( $this->_current_data_handler->events ) === 1 ) {
 			foreach ( $this->_current_data_handler->events as $event ) {
 				$EVT_ID = $event['ID'];
 			}
@@ -353,12 +352,12 @@ class EE_Messages_Generator {
 	protected function _get_templates( EE_Message_Template_Group $mtpg ) {
 		$templates = array();
 		$context_templates = $mtpg->context_templates();
-		foreach ( $templates as $context => $template_fields ) {
+		foreach ( $context_templates as $context => $template_fields ) {
 			foreach ( $template_fields as $template_field => $template_obj ) {
 				if ( ! $template_obj instanceof EE_Message_Template ) {
 					continue;
 				}
-				$templates[$template_field][$context] = $template_obj->get( 'MTP_content' );
+				$templates[ $template_field ][ $context ] = $template_obj->get( 'MTP_content' );
 			}
 		}
 		return $templates;
@@ -423,7 +422,7 @@ class EE_Messages_Generator {
 			'MSG_messenger' => $this->_current_messenger->name,
 			'MSG_message_type' => $this->_current_message_type->name,
 			'MSG_context' => $context,
-			'MSG_priority' => $this->_generation_queue->get_queue()->current()->priority()
+			'MSG_priority' => $this->_generation_queue->get_queue()->current()->priority(),
 		);
 
 		//recipient id and type should be on the EE_Messages_Addressee object but if this is empty, let's try to grab the
@@ -441,10 +440,9 @@ class EE_Messages_Generator {
 		$mt_shortcodes = $this->_current_message_type->get_valid_shortcodes();
 		$m_shortcodes = $this->_current_messenger->get_valid_shortcodes();
 
-
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because that means this
 		//context is turned off) EXCEPT if we're previewing
-		if ( empty( $templates['to'][$context] )
+		if ( empty( $templates['to'][ $context ] )
 		     && ! $this->_generation_queue->get_queue()->is_preview() ) {
 			return false;
 		}
@@ -452,10 +450,10 @@ class EE_Messages_Generator {
 		foreach ( $templates as $field => $ctxt ) {
 			$error_msg = array();
 			//let's setup the valid shortcodes for the incoming context.
-			$valid_shortcodes = $mt_shortcodes[$context];
+			$valid_shortcodes = $mt_shortcodes[ $context ];
 			//merge in valid shortcodes for the field.
-			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
-			if ( isset( $templates[$field][$context] ) ) {
+			$shortcodes = isset($m_shortcodes[ $field ]) ? $m_shortcodes[ $field ] : $valid_shortcodes;
+			if ( isset( $templates[ $field ][ $context ] ) ) {
 				//prefix field.
 				$column_name = 'MSG_' . $field;
 				try {
