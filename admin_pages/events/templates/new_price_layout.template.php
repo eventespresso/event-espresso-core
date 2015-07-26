@@ -148,7 +148,7 @@
 									<tfoot>
 										<tr class="price-total-row">
 											<td colspan="3">Total</td>
-											<td><input type="hidden" name="edit_tickets[1][TKT_price]" class="edit-tickets-TKT_price" value="0"><span id="price-total-amount-1">$0.00</span</td>
+											<td><input type="hidden" name="edit_tickets[1][TKT_price]" class="edit-tickets-TKT_price" value="0"><span id="price-total-amount-1">$0.00</span></td>
 											<td><input type="hidden" name="price_total_rows_ticket1" id="price-total-rows-1" value="1"></td>
 										</tr>
 									</tfoot>
@@ -300,7 +300,7 @@
 								<tfoot>
 									<tr class="price-total-row">
 										<td colspan="3">Total</td>
-										<td><span id="price-total-amount-TICKETNUM">$0.00</span</td>
+										<td><span id="price-total-amount-TICKETNUM">$0.00</span></td>
 										<td><input type="hidden" name="price_total_rows_ticket[TICKETNUM]" id="price-total-rows-TICKETNUM" value="1"></td>
 									</tr>
 								</tfoot>
