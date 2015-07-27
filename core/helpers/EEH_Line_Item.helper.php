@@ -1062,6 +1062,63 @@ class EEH_Line_Item {
 		return self::create_event_subtotal( $total_line_item, $transaction );
 	}
 
+	/**
+	 * Creates a duplicate of the line item tree, except only includes billable items
+	 * and the portion of line items attributed to billable things
+	 * @param EE_Line_Item $line_item
+	 * @param EE_Registration[] $registrations
+	 */
+	public static function billable_line_item_tree( EE_Line_Item $line_item, $registrations ) {
+		$copy_li = EEH_Line_Item::billable_line_item( $line_item, $registrations );
+		foreach($line_item->children() as $child_li ) {
+			$child_li =  EEH_Line_Item::billable_line_item_tree( $child_li, $registrations );
+			if( $child_li !== null ) {
+				$copy_li->add_child_line_item( $child_li );
+			}
+		}
+		//if this is the grand total line item, make sure the totals all add up
+		//(we could have duplicated this logic AS we copied the line items, but
+		//it seems DRYer this way)
+		if( $copy_li->type() === EEM_Line_Item::type_total ) {
+			$copy_li->recalculate_total_including_taxes();
+		}
+		return $copy_li;
+	}
+
+	/**
+	 * Creates a new, unsaved line item from $line_item that factors in the
+	 * number of billable registrations on $registrations.
+	 * @param EE_Line_Item $line_item
+	 * @return EE_Line_Item
+	 * @param EE_Registration[] $registrations
+	 */
+	public static function billable_line_item( EE_Line_Item $line_item, $registrations ) {
+
+		$new_li_fields = $line_item->model_field_array();
+		if( $line_item->type() === EEM_Line_Item::type_line_item &&
+				$line_item->OBJ_type() === 'Ticket' ) {
+			$count = 0;
+			foreach( $registrations as $registration ) {
+				if( $line_item->OBJ_ID() === $registration->ticket_ID() &&
+						in_array( $registration->status_ID(), EEM_Registration::reg_statuses_that_allow_payment() ) ) {
+					$count++;
+				}
+			}
+			if( ! $count ) {
+				return null;
+			}else{
+				$new_li_fields[ 'LIN_quantity' ] = $count;
+			}
+		}
+		//don't set the total. We'll leave that up to the code that calculates it
+		unset( $new_li_fields[ 'LIN_ID' ] );
+		unset( $new_li_fields[ 'LIN_parent' ] );
+		unset( $new_li_fields[ 'LIN_total' ] );
+		return EE_Line_Item::new_instance( $new_li_fields );
+	}
+
+
+
 
 
 
