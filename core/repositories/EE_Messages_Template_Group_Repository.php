@@ -1,6 +1,7 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 
 
 /**
@@ -37,8 +38,8 @@ class EE_Message_Template_Group_Repository extends EE_Object_Repository {
 	 */
 	public function get_by_ID( $GRP_ID ) {
 		$this->rewind();
-		while( $this->valid() ) {
-			if ( $this->current()->ID() == $GRP_ID ) {
+		while ( $this->valid() ) {
+			if ( $this->current()->ID() === $GRP_ID ) {
 				$grp = $this->current();
 				$this->rewind();
 				return $grp;
@@ -75,7 +76,7 @@ class EE_Message_Template_Group_Repository extends EE_Object_Repository {
 	 */
 	public function get_by_key( $key ) {
 		$this->rewind();
-		while( $this->valid() ) {
+		while ( $this->valid() ) {
 			$data = $this->getInfo();
 			if ( isset( $data['key'] ) && $data['key'] === $key ) {
 				$handler = $this->current();
