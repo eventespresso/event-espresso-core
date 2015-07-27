@@ -415,7 +415,8 @@ class EEH_Line_Item {
 	 * @return string
 	 */
 	public static function get_event_name( $event ) {
-		return __( 'Event', 'event_espresso' ) . ( $event instanceof EE_Event ? ': ' . $event->name() : '' );
+		$event_name = $event instanceof EE_Event ? ': ' . $event->name() : '';
+		return sprintf( __( 'Event%1$s', 'event_espresso' ), $event_name );
 	}
 
 	/**
