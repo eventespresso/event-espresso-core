@@ -39,7 +39,7 @@ class EE_Message_Template_Group_Repository extends EE_Object_Repository {
 		$this->rewind();
 		while( $this->valid() ) {
 			if ( $this->current()->ID() == $GRP_ID ) {
-				$grp = $ths->current();
+				$grp = $this->current();
 				$this->rewind();
 				return $grp;
 			}
