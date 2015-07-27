@@ -4,8 +4,9 @@
 /**
  * Class EE_Object_Repository
  *
- * abstract storage entity for unique objects
- * extends SplObjectStorage so therefore implements the
+ * abstract storage entity for unique objects with persistence
+ * extends EE_Object_Collection...
+ * which extends SplObjectStorage, so therefore implements the
  * Countable, Iterator, Serializable, and ArrayAccess interfaces
  *
  * @package 			Event Espresso
