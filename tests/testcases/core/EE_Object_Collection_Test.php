@@ -6,8 +6,8 @@
  * @subpackage 	core
  * @author 				Brent Christensen
  * @since 				4.6.31
- * @group 				objectRepository
- * @group 				8280
+ * @group 				objectCollection
+ * @group 				8565
  *
  */
 class EE_Object_Collection_Test extends EE_UnitTestCase {
