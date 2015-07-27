@@ -87,6 +87,55 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 	}
 
 	/**
+	 * Create a line item tree with an initially empty subtotal. We shouldn't
+	 * have trouble calculating its total with a percent line item.
+	 * Also, we shouldn't need to set any totals: the call to recalculate_total_including_taxes
+	 * should take care of setting them all
+	 * @group 8566
+	 */
+	function test_recalculate_total_including_taxes__unknown_subtotals_initially(){
+		$event_subtotal = EE_Line_Item::new_instance(
+				array(
+					'LIN_code'	=> 'event1',
+					'LIN_name' 	=> 'EventA',
+					'LIN_type'	=> EEM_Line_Item::type_sub_total,
+					'OBJ_type' 	=> 'Event',
+					'LIN_total' => 0,
+				));
+		$event_subtotal->save();
+		$normal_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => '12354',
+					'LIN_name' => 'ticketA',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => 'Ticket',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 2,
+					'LIN_order' => 1,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$normal_line_item->save();
+		$percent_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'dscntfry',
+					'LIN_name' => 'Discounto',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => '',
+					'LIN_unit_price' => null,
+					'LIN_quantity' => null,
+					'LIN_percent' => -25,
+					'LIN_order' => 1000,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$percent_line_item->save();
+		$event_subtotal->recalculate_total_including_taxes();
+//		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 20, $normal_line_item->total() );
+		$this->assertEquals( 15, $event_subtotal->total() );
+		$this->assertEquals( -5, $percent_line_item->total() );
+
+	}
+	/**
 	 * @group 8464
 	 * Verifies that if the line item is for a relation that isn't currently defined
 	 * (and in core there is no promotion model) that we don't get an exception or warning, just null
