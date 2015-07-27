@@ -1071,10 +1071,7 @@ class EEH_Line_Item {
 	public static function billable_line_item_tree( EE_Line_Item $line_item, $registrations ) {
 		$copy_li = EEH_Line_Item::billable_line_item( $line_item, $registrations );
 		foreach($line_item->children() as $child_li ) {
-			$child_li =  EEH_Line_Item::billable_line_item_tree( $child_li, $registrations );
-			if( $child_li !== null ) {
-				$copy_li->add_child_line_item( $child_li );
-			}
+				$copy_li->add_child_line_item(  EEH_Line_Item::billable_line_item_tree( $child_li, $registrations ) );
 		}
 		//if this is the grand total line item, make sure the totals all add up
 		//(we could have duplicated this logic AS we copied the line items, but
@@ -1104,11 +1101,7 @@ class EEH_Line_Item {
 					$count++;
 				}
 			}
-			if( ! $count ) {
-				return null;
-			}else{
-				$new_li_fields[ 'LIN_quantity' ] = $count;
-			}
+			$new_li_fields[ 'LIN_quantity' ] = $count;
 		}
 		//don't set the total. We'll leave that up to the code that calculates it
 		unset( $new_li_fields[ 'LIN_ID' ] );
@@ -1117,10 +1110,51 @@ class EEH_Line_Item {
 		return EE_Line_Item::new_instance( $new_li_fields );
 	}
 
+	/**
+	 * Returns a modified line item tree where all the subtotals which have a total of 0
+	 * are removed, and line items with a quantity of 0
+	 *
+	 * @param EE_Line_Item $line_item|null
+	 */
+	public static function non_empty_line_items( EE_Line_Item $line_item ) {
+		$copied_li = EEH_Line_Item::non_emtpy_line_item( $line_item );
+		if( $copied_li === null ) {
+			return null;
+		}
+		foreach( $line_item->children() as $child_li ) {
+			$child_li_copy = EEH_Line_Item::non_empty_line_items( $child_li );
+			if( $child_li_copy !== null ) {
+				$copied_li->add_child_line_item( $child_li_copy );
+			}
+		}
+		return $copied_li;
+	}
 
-
-
-
-
+	/**
+	 * Creates a new, unsaved line item, but if it's a ticket line item
+	 * with a total of 0, or a subtotal of 0, returnsnull instead
+	 * @param EE_Line_Item $line_item
+	 * @return EE_Line_Item
+	 * @param EE_Registration[] $registrations
+	 */
+	public static function non_emtpy_line_item( EE_Line_Item $line_item ) {
+		switch( $line_item->type() ) {
+			case EEM_Line_Item::type_line_item:
+				if( $line_item->OBJ_type() === 'Ticket' && $line_item->quantity() == 0 ) {
+					return null;
+				}
+				break;
+			case EEM_Line_Item::type_sub_total:
+				if( $line_item->OBJ_type() === 'Event' && $line_item->total() == 0 ) {
+					return null;
+				}
+				break;
+		}
+		$new_li_fields = $line_item->model_field_array();
+		//don't set the total. We'll leave that up to the code that calculates it
+		unset( $new_li_fields[ 'LIN_ID' ] );
+		unset( $new_li_fields[ 'LIN_parent' ] );
+		return EE_Line_Item::new_instance( $new_li_fields );
+	}
 }
 // End of file EEH_Line_Item.helper.php
