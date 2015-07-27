@@ -54,7 +54,7 @@ class EE_Messages_Data_Handler_Repository extends EE_Object_Repository {
 	 * @return  string      md5 hash using provided info.
 	 */
 	public function get_key( $classname, $data ) {
-		return md5( $classname . print_r( $data ) );
+		return md5( $classname . print_r( $data, true ) );
 	}
 
 
