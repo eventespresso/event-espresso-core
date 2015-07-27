@@ -1121,11 +1121,26 @@ class EEH_Line_Item {
 		if( $copied_li === null ) {
 			return null;
 		}
+		//if this is an event subtotal, we want to only include it if it
+		//has a non-zero total and at least one ticket line item child
+		$ticket_children = 0;
 		foreach( $line_item->children() as $child_li ) {
 			$child_li_copy = EEH_Line_Item::non_empty_line_items( $child_li );
 			if( $child_li_copy !== null ) {
 				$copied_li->add_child_line_item( $child_li_copy );
+				if( $child_li_copy->type() === EEM_Line_Item::type_line_item &&
+						$child_li_copy->OBJ_type() === 'Ticket' ) {
+					$ticket_children++;
+				}
 			}
+		}
+		//if this is an event subtotal with NO ticket children
+		//we basically want to ignore it
+		if( $line_item->type() === EEM_Line_Item::type_sub_total &&
+				$line_item->OBJ_type() === 'Event' &&
+				$ticket_children === 0 &&
+				$line_item->total() === 0 ) {
+			return null;
 		}
 		return $copied_li;
 	}
@@ -1138,17 +1153,10 @@ class EEH_Line_Item {
 	 * @param EE_Registration[] $registrations
 	 */
 	public static function non_emtpy_line_item( EE_Line_Item $line_item ) {
-		switch( $line_item->type() ) {
-			case EEM_Line_Item::type_line_item:
-				if( $line_item->OBJ_type() === 'Ticket' && $line_item->quantity() == 0 ) {
-					return null;
-				}
-				break;
-			case EEM_Line_Item::type_sub_total:
-				if( $line_item->OBJ_type() === 'Event' && $line_item->total() == 0 ) {
-					return null;
-				}
-				break;
+		if( $line_item->type() === EEM_Line_Item::type_line_item &&
+				$line_item->OBJ_type() === 'Ticket' &&
+				$line_item->quantity() == 0 ) {
+			return null;
 		}
 		$new_li_fields = $line_item->model_field_array();
 		//don't set the total. We'll leave that up to the code that calculates it
