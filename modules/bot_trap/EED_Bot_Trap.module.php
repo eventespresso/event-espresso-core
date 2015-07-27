@@ -2,7 +2,9 @@
 /**
  * EED_Bot_Trap Class
  *
- * 	adds a link that will import an event's details into any calendar that supports the iCal format
+ * adds an email input (honeypot) to the ticket selector form submission
+ * and also checks that the form is not being submitted either too fast or too slow
+ * which can be an indication that the form was submitted by a bot
  *
  * @package 			Event Espresso
  * @subpackage 	/modules/ical/
@@ -31,7 +33,7 @@ class EED_Bot_Trap  extends EED_Module {
 		if ( apply_filters( 'FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true ) ) {
 			define( 'EE_BOT_TRAP_BASE_URL', plugin_dir_url( __FILE__ ) . DS );
 			add_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', array( 'EED_Bot_Trap', 'generate_bot_trap' ), 10, 2 );
-			add_action( 'EED_Ticket_Selector__process_ticket_selections__before', array( 'EED_Bot_Trap', 'process_bot_trap' ), 10, 2 );
+			add_action( 'EED_Ticket_Selector__process_ticket_selections__before', array( 'EED_Bot_Trap', 'process_bot_trap' ), 1, 2 );
 			// redirect bots to bogus success page
 			EE_Config::register_route( 'ticket_selection_received', 'EED_Bot_Trap', 'display_bot_trap_success' );
 		}
@@ -86,34 +88,31 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function process_bot_trap() {
-		$suspicious_timing = '';
-		$too_fast_or_slow = __( 'We\'re sorry, but your ticket selections could not be processed due to a server timing error. Please hit the back button on your browser and try again.', 'event_espresso' );
-		$bot_caught = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] !== '' ? true : false;
-		if ( isset( $_REQUEST[ 'tkt-slctr-request-processor-timestamp' ] ) ) {
-			$bot_trap_timestamp = absint( $_REQUEST[ 'tkt-slctr-request-processor-timestamp' ] );
-			// ticket form submitted too impossibly fast ? ie: less than thirty seconds
-			$ten_seconds_ago = time() - 5;
-			$suspicious_timing = $bot_trap_timestamp > $ten_seconds_ago ? $too_fast_or_slow : $suspicious_timing;
-			// ticket form submitted more than an hour later ???
-			$one_hour_ago = time() - HOUR_IN_SECONDS;
-			$suspicious_timing = $bot_trap_timestamp < $one_hour_ago ? $too_fast_or_slow : $suspicious_timing;
+		// what's your email address Mr. Bot ?
+		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == '' ? true : false;
+		// when was the form originally displayed ?
+		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-timestamp' ] ) ? absint( $_REQUEST[ 'tkt-slctr-request-processor-timestamp' ] ) : 0;
+		// ticket form submitted too impossibly fast ( less than five seconds ) or more than an hour later ???
+		$suspicious_timing = $bot_trap_timestamp > ( time() - 5 ) || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS ) ? true : false;
+		// are we human ?
+		if ( $empty_trap && ! $suspicious_timing ) {
+			return;
 		}
-		if ( $bot_caught || $suspicious_timing != '' ) {
+		// UH OH...
+		$redirect_url = add_query_arg(
+			array( 'ee' => 'ticket_selection_received' ),
+			EE_Registry::instance()->CFG->core->reg_page_url()
+		);
+		if ( $suspicious_timing ) {
 			$redirect_url = add_query_arg(
-				array( 'ee' => 'ticket_selection_received' ),
-				EE_Registry::instance()->CFG->core->reg_page_url()
+				array( 'ee-notice' => urlencode( __( 'We\'re sorry, but your ticket selections could not be processed due to a server timing error. Please hit the back button on your browser and try again.', 'event_espresso' ) ) ),
+				$redirect_url
 			);
-			if ( $suspicious_timing != '' ) {
-				$redirect_url = add_query_arg(
-					array( 'ee-notice' => urlencode( $suspicious_timing ) ),
-					$redirect_url
-				);
-			}
-			wp_safe_redirect(
-				apply_filters( 'FHEE__EED_Bot_Trap__process_bot_trap__redirect_url', $redirect_url )
-			);
-			exit();
 		}
+		wp_safe_redirect(
+			apply_filters( 'FHEE__EED_Bot_Trap__process_bot_trap__redirect_url', $redirect_url )
+		);
+		exit();
 	}
 
 
