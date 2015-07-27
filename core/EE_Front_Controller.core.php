@@ -544,6 +544,8 @@ final class EE_Front_Controller {
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
 			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
+			// nothing to do with errors, but don't want to redo all of the above conditionals just for this line
+			setcookie( 'ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/' );
 		}
 		do_action( 'AHEE__EE_Front_Controller__display_errors__end' );
 	}
