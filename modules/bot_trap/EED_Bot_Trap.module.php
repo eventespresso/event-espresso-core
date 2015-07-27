@@ -7,7 +7,7 @@
  * which can be an indication that the form was submitted by a bot
  *
  * @package 			Event Espresso
- * @subpackage 	/modules/ical/
+ * @subpackage 	/modules/bot_trap/
  * @author 				Brent Christensen
  */
 class EED_Bot_Trap  extends EED_Module {
