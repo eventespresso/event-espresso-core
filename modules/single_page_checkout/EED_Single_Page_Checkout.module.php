@@ -1100,6 +1100,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			// add powered by EE msg
 			add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
+
+			$empty_cart = count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params ) ) < 1 ? true : false;
+			$cookies_not_set_msg = '';
+			if ( $empty_cart ) {
+				if ( ! isset( $_COOKIE[ 'ee_cookie_test' ] ) ) {
+					$cookies_not_set_msg = apply_filters(
+						'FHEE__Single_Page_Checkout__display_spco_reg_form__cookies_not_set_msg',
+						sprintf(
+							__( '%1$s%3$sIt appears your browser is not currently set to accept Cookies%4$s%5$sIn order to register for events, you need to enable cookies.%7$sIf you require assistance, then click the following link to learn how to %8$senable cookies%9$s%6$s%2$s', 'event_espresso' ),
+							'<div class="ee-attention">',
+							'</div>',
+							'<h6 class="important-notice">',
+							'</h6>',
+							'<p>',
+							'</p>',
+							'<br />',
+							'<a href="http://www.whatarecookies.com/enable.asp" target="_blank">',
+							'</a>'
+						)
+					);
+				}
+			}
 			$this->checkout->registration_form = new EE_Form_Section_Proper(
 				array(
 					'name' 	=> 'single-page-checkout',
@@ -1109,7 +1131,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							array(
 								'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
 								'template_args' => array(
-									'empty_cart' 		=> count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params )) < 1 ? TRUE : FALSE,
+									'empty_cart' 		=> $empty_cart,
 									'revisit' 				=> $this->checkout->revisit,
 									'reg_steps' 			=> $this->checkout->reg_steps,
 									'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
@@ -1117,17 +1139,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
 										sprintf(
 											__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
-											'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
+											'<a href="' . get_post_type_archive_link( 'espresso_events' ) . '" title="',
 											'">',
 											'</a>'
 										)
 									),
-									'registration_time_limit' =>
-										$this->checkout->get_registration_time_limit(),
-									'session_expiration' =>
-										gmdate( 'M d, Y H:i:s',
-											EE_Registry::instance()
-											->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+									'cookies_not_set_msg' 		=> $cookies_not_set_msg,
+									'registration_time_limit' 	=> $this->checkout->get_registration_time_limit(),
+									'session_expiration' 			=>
+										gmdate( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
 								)
 							)
 						)
