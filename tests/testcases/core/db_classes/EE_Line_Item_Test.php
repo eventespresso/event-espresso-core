@@ -135,6 +135,47 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( -5, $percent_line_item->total() );
 
 	}
+
+	/**
+	 * Verifies that we fix sub line item quantities and line item unit prices
+	 * @group 8566
+	 */
+	function test_recalculate_total_including_taxes__fix_sub_line_item_quantities() {
+		$line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_name' => 'ticket',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_quantity' => 2
+				));
+		$line_item->save();
+		$flat_sub_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_name' => 'flat',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,//it should match its parent, which is 2
+					'LIN_order' => 1,
+					'LIN_parent' => $line_item->ID(),
+				));
+		$flat_sub_line_item->save();
+		$percent_sub_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_name' => 'percent',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'LIN_quantity' => 0,
+					'LIN_percent' => -25,
+					'LIN_order' => 100,
+					'LIN_parent' => $line_item->ID()
+				));
+		$percent_sub_line_item->save();
+		$line_item->recalculate_pre_tax_total();
+		$this->assertEquals( 2, $flat_sub_line_item->quantity() );
+		$this->assertEquals( 1, $percent_sub_line_item->quantity() );
+		$this->assertEquals( 20, $flat_sub_line_item->total() );
+		$this->assertEquals( -5, $percent_sub_line_item->total() );
+		$this->assertEquals( 15, $line_item->total() );
+		$this->assertEquals( 7.5, $line_item->unit_price() );
+	}
 	/**
 	 * @group 8464
 	 * Verifies that if the line item is for a relation that isn't currently defined

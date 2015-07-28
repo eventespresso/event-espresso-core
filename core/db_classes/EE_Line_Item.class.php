@@ -783,13 +783,21 @@ class EE_Line_Item extends EE_Base_Class {
 					if ( $child_line_item->is_percent() ) {
 						$percent_total = $total * $child_line_item->percent() / 100;
 						$child_line_item->set_total( $percent_total );
+						//so far all percent line items should have a quantity of 1
+						//(ie, no double percent discounts. Although that might be requested someday)
+						$child_line_item->set_quantity( 1 );
 						$child_line_item->maybe_save();
 						$total += $percent_total;
 					} else {
+						//verify flat sub-line-item quantities match their parent
+						if( $child_line_item->is_sub_line_item() ) {
+							$child_line_item->set_quantity( $this->quantity() );
+						}
 						$total += $child_line_item->recalculate_pre_tax_total();
 					}
 				}
 			}
+
 			if( $this->is_sub_total() ){
 				// no negative totals plz
 				$total = max( $total, 0 );
@@ -800,6 +808,10 @@ class EE_Line_Item extends EE_Base_Class {
 		//so it ought to be
 		if( ! $this->is_total() ) {
 			$this->set_total( $total );
+			//if not a percent line item, make sure we keep the unit price in sync
+			if( $this->is_line_item() && ! empty( $my_children ) && ! $this->is_percent() ) {
+				$this->set_unit_price( $this->total() / $this->quantity() );
+			}
 			$this->maybe_save();
 		}
 		return $total;
