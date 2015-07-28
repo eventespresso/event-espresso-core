@@ -450,7 +450,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$this->_data = $data;
 			$this->_set_data_handler();
 		}
-		return $this->_data_handler;
+		
+		return apply_filters( 'FHEE__EE_message_type__get_data_handler', $this->_data_handler, $this );
 	}
 
 
