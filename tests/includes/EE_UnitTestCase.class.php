@@ -755,7 +755,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}
-			if( ! isset( $args[ $field_name ] ) && $value !== NULL){
+			if( ! array_key_exists( $field_name, $args ) && $value !== NULL){
 				$args[$field->get_name()] = $value;
 			}
 		}

@@ -309,7 +309,6 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group 8193
-	 * @group current
 	 */
 	public function test_calculate_reg_final_prices_per_line_item__3_taxable_tickets_with_an_event_wide_discount() {
 		$transaction = $this->new_typical_transaction(
@@ -336,8 +335,11 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 					'LIN_total' => -8,
 					'LIN_unit_price' => -8,
 					'LIN_quantity' => 1,
-					'LIN_parent' => $event_line_item->ID()
+					'LIN_parent' => $event_line_item->ID(),
+					'LIN_percent' => null,
+					'LIN_order' => count( $event_line_item->children() )
 				));
+		$transaction->total_line_item()->recalculate_pre_tax_total();
 		//and add an unrelated purchase
 		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Transaction-Wide Discount', -5 );
 
