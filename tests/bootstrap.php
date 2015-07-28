@@ -26,5 +26,5 @@ require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
 
 require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
-//save wpdb queries in case we want to know what queries ran duting a test
+//save wpdb queries in case we want to know what queries ran during a test
 define( 'SAVEQUERIES', TRUE );
