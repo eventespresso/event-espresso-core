@@ -70,11 +70,14 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function generate_bot_trap() {
+		EE_Registry::instance()->load_core( 'EE_Encryption' );
 		$do_not_enter = __( 'please do not enter anything in this input', 'event_espresso' );
 		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin-left:-999em;">';
 		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
 		$html .= '<input type="email" name="tkt-slctr-request-processor-email" placeholder="' . $do_not_enter . '" value=""/>';
-		$html .= '<input type="hidden" name="tkt-slctr-request-processor-timestamp" value="' . time() . '"/>';
+		$html .= '<input type="hidden" name="tkt-slctr-request-processor-token" value="';
+		$html .= EE_Encryption::instance()->encrypt( time() );
+		$html .= '"/>';
 		$html .= '</div>';
 		echo $html;
 	}
@@ -88,12 +91,15 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function process_bot_trap() {
+		EE_Registry::instance()->load_core( 'EE_Encryption' );
 		// what's your email address Mr. Bot ?
 		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == '' ? true : false;
-		// when was the form originally displayed ?
-		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-timestamp' ] ) ? absint( $_REQUEST[ 'tkt-slctr-request-processor-timestamp' ] ) : 0;
-		// ticket form submitted too impossibly fast ( less than five seconds ) or more than an hour later ???
-		$suspicious_timing = $bot_trap_timestamp > ( time() - 5 ) || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS ) ? true : false;
+		// get encrypted timestamp for when the form was originally displayed
+		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) : '';
+		// decrypt and convert to absolute  integer
+		$bot_trap_timestamp = absint( EE_Encryption::instance()->decrypt( $bot_trap_timestamp ) );
+		// ticket form submitted too impossibly fast ( less than a second ) or more than an hour later ???
+		$suspicious_timing = $bot_trap_timestamp > ( time() - 1 ) || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS ) ? true : false;
 		// are we human ?
 		if ( $empty_trap && ! $suspicious_timing ) {
 			return;
