@@ -995,4 +995,5 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		return $event instanceof EE_Event ? $event->ID() : 0;
 	}
 
+
 } //end EE_Ticket class

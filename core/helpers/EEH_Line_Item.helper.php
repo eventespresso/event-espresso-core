@@ -385,7 +385,8 @@ class EEH_Line_Item {
 	public static function create_event_subtotal( EE_Line_Item $pre_tax_line_item, $transaction = NULL, $event = NULL ){
 		$event_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> self::get_event_code( $event ),
-			'LIN_name' 	=> __('Event', 'event_espresso'),
+			'LIN_name' 	=> self::get_event_name( $event ),
+			'LIN_desc' 	=> self::get_event_desc( $event ),
 			'LIN_type'	=> EEM_Line_Item::type_sub_total,
 			'OBJ_type' 	=> 'Event',
 			'OBJ_ID' 		=>  $event instanceof EE_Event ? $event->ID() : 0
@@ -406,6 +407,25 @@ class EEH_Line_Item {
 	 */
 	public static function get_event_code( $event ) {
 		return 'event-' . ( $event instanceof EE_Event ? $event->ID() : '0' );
+	}
+
+	/**
+	 * Gets the event name
+	 * @param EE_Event $event
+	 * @return string
+	 */
+	public static function get_event_name( $event ) {
+		$event_name = $event instanceof EE_Event ? ': ' . $event->name() : '';
+		return sprintf( __( 'Event%1$s', 'event_espresso' ), $event_name );
+	}
+
+	/**
+	 * Gets the event excerpt
+	 * @param EE_Event $event
+	 * @return string
+	 */
+	public static function get_event_desc( $event ) {
+		return $event instanceof EE_Event ? $event->short_description() : '';
 	}
 
 	/**
@@ -465,7 +485,8 @@ class EEH_Line_Item {
 	public static function set_event_subtotal_details( EE_Line_Item $event_line_item, EE_Event $event, $transaction = NULL ){
 		if ( $event instanceof EE_Event ) {
 			$event_line_item->set_code( self::get_event_code( $event ) );
-			$event_line_item->set_desc( $event->name() );
+			$event_line_item->set_name( self::get_event_name( $event ) );
+			$event_line_item->set_desc( self::get_event_desc( $event ) );
 			$event_line_item->set_OBJ_ID( $event->ID() );
 		}
 		self::set_TXN_ID( $event_line_item, $transaction );
