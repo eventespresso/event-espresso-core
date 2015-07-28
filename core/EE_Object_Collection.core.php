@@ -54,10 +54,11 @@ abstract class EE_Object_Collection extends SplObjectStorage {
 			if ( $object == $this->current() ) {
 				$this->setInfo( $info );
 				$this->rewind();
-				return;
+				return true;
 			}
 			$this->next();
 		}
+		return false;
 	}
 
 
