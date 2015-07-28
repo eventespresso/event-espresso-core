@@ -108,7 +108,9 @@ final class EE_Front_Controller {
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
 		// for checking that browser cookies are enabled
-		setcookie( 'ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/' );
+		if ( apply_filters( 'FHEE__EE_Front_Controller____construct__set_test_cookie', true )) {
+			setcookie( 'ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/' );
+		}
 	}
 
 
