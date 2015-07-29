@@ -138,11 +138,11 @@ interface EEI_Line_Item {
 	/**
 	 * Adds the line item as a child to this line item. If there is another child line
 	 * item with the same LIN_code, it is overwritten by this new one
-	 * @param EE_Line_Item $line_item
+	 * @param EEI_Line_Item $line_item
 	 * @param bool         $set_order
 	 * @return bool true for success, false for fail
 	 */
-	function add_child_line_item( EE_Line_Item $line_item, $set_order = true );
+	function add_child_line_item( EEI_Line_Item $line_item, $set_order = true );
 
 
 
