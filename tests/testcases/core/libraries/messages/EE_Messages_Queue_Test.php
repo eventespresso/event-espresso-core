@@ -173,9 +173,6 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 
 
 	function test_get_to_send_batch_and_send() {
-		//enqueue wp_mail replacement
-		$this->_simulate_successful_email_send();
-
 		//grab a bunch of message objects and add to queue.
 		$queue = $this->_get_queue();
 		for ( $i=0;$i<5;$i++ ) {

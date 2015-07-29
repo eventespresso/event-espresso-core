@@ -28,3 +28,11 @@ require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
 //save wpdb queries in case we want to know what queries ran duting a test
 define( 'SAVEQUERIES', TRUE );
+
+/**
+ * redefining wp_mail function here as a mock for our tests.  Has to be done early
+ * to override the existing wp_mail.  Tests can use the given filter to adjust the responses as necessary.
+ */
+function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
+	return apply_filters( 'FHEE__wp_mail', true, $to, $subject, $message, $headers, $attachments );
+}
