@@ -200,6 +200,8 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 
 		//verify no messages have failed status.
 		$this->assertEquals( 0, $test_queue->count_STS_in_queue( EEM_Message::status_failed ) );
+		//verify all have been marked as sent.
+		$this->assertEquals( 5, $test_queue->count_STS_in_queue(EEM_Message::status_sent ) );
 	}
 
 
