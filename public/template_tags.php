@@ -558,7 +558,7 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @param bool   $EVT_ID
 	 * @return string
 	 */
-	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE ) {
+	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE, $echo = TRUE ) {
 		// set and filter date and time formats when a range is returned
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
@@ -570,13 +570,21 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 		$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', $single_date_format );
 		$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', $single_time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$the_event_date = EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID );
-		$the_event_end_date = EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID );
+		$the_event_date = EEH_Event_View::the_earliest_event_date( $date_format, '', $EVT_ID );
+		$the_event_end_date = EEH_Event_View::the_latest_event_date( $date_format, '', $EVT_ID );
+		$the_event_date_and_time = EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID );
+		$the_event_end_date_and_time = EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID );
+		$the_single_event_date = EEH_Event_View::the_earliest_event_date( $single_date_format, $single_time_format, $EVT_ID );
 		if ( $the_event_date != $the_event_end_date ) {
-			echo $the_event_date . __( ' - ', 'event_espresso' ) . $the_event_end_date;
+			$html = $the_event_date_and_time . __( ' - ', 'event_espresso' ) . $the_event_end_date_and_time;
 		} else {
-			echo $the_event_date;
+			$html = $the_single_event_date;
 		}
+		if ( $echo ) {
+			echo $html;
+			return '';
+		}
+		return $html;
 	}
 }
 
