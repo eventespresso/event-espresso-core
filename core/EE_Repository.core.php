@@ -2,10 +2,10 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Class EE_Object_Repository
+ * Class EE_Repository
  *
  * abstract storage entity for unique objects with persistence
- * extends EE_Object_Collection...
+ * extends EE_Collection...
  * which extends SplObjectStorage, so therefore implements the
  * Countable, Iterator, Serializable, and ArrayAccess interfaces
  *
@@ -15,7 +15,7 @@
  * @since                4.6.31
  *
  */
-abstract class EE_Object_Repository extends EE_Object_Collection {
+abstract class EE_Repository extends EE_Collection implements EEI_Repository {
 
 
 
@@ -57,5 +57,5 @@ abstract class EE_Object_Repository extends EE_Object_Collection {
 
 
 }
-// End of file EE_Object_Repository.core.php
-// Location: /core/EE_Object_Repository.core.php
+// End of file EE_Repository.core.php
+// Location: /core/EE_Repository.core.php
