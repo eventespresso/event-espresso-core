@@ -453,15 +453,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	 */
 	public function test_get_raw() {
 		$l2 = EE_Line_Item::new_instance( array( ) );
-		$this->assertTrue( 1 === $l2->get_raw( 'LIN_quantity' ) );
+		$this->assertTrue( 1 == $l2->get_raw( 'LIN_quantity' ) );
 		$l2->save();
 		$l2_from_db = EEM_Line_Item::reset()->get_one_by_ID( $l2->ID());
 		//double check its NULL in the DB
 		$qty_col_with_one_result = EEM_Line_Item::instance()->get_col( array( array( 'LIN_ID' => $l2->ID() ) ), 'LIN_quantity' );
 		$qty_col_in_db = reset( $qty_col_with_one_result );
-		$this->assertTrue( null === $qty_col_in_db );
+		$this->assertTrue( 1 == $qty_col_in_db );
 		//and now verify get_raw is returning that same value
-		$this->assertTrue( null === $l2_from_db->get_raw( 'LIN_quantity' ) );
+		$this->assertTrue( 1 == $l2_from_db->get_raw( 'LIN_quantity' ) );
 	}
 	/**
 	 * Tests when we set a field to INFINITY, it stays that way even after we re-fetch it from the db
