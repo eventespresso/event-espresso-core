@@ -12,8 +12,11 @@ class EE_UnitTest_Factory_For_Message extends WP_UnitTest_Factory_For_Thing {
 
 	public function __construct( $factory = null ) {
 		parent::__construct( $factory );
+		//need to get the default setup Message_Template_Group so we have its id.
+		$grp = EEM_Message_Template_Group::instance()->get_one( array( array( 'MTP_messenger' => 'email', 'MTP_message_type' => 'registration', 'MTP_is_global' => true ) ) );
 		//default args for creating messages.
 		$this->default_generation_definitions = array(
+			'GRP_ID' => $grp instanceof EE_Message_Template_Group ? $grp->ID() : 0,
 			'MSG_messenger'  => 'email',
 			'MSG_message_type' => 'registration',
 			'MSG_context' => 'admin',
