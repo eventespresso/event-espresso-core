@@ -253,12 +253,12 @@ abstract class EE_Base_Class{
 	 *
 	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
 	 *
-	 * @param string $column_name Must be the exact column name.
-	 * @param mixed  $column_value  The value to set.
+	 * @param string $field_name Must be the exact column name.
+	 * @param mixed  $field_value  The value to set.
 	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
 	 */
 	public function set_field_or_extra_meta( $field_name, $field_value ) {
-		if ( $this->_get_model()->has_field( $field_name ) ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
 			$this->set( $field_name, $field_value );
 			return true;
 		} else {
@@ -289,7 +289,7 @@ abstract class EE_Base_Class{
 	 * @return mixed|null  value for the field if found.  null if not found.
 	 */
 	public function get_field_or_extra_meta( $field_name ) {
-		if ( $this->_get_model()->has_field( $field_name ) ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
 			$column_value = $this->get( $field_name );
 		} else {
 			//This isn't a column in the main table, let's see if it is in the extra meta.
