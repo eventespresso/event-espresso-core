@@ -104,9 +104,6 @@ class EEH_Autoloader {
 			}
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
 				self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );
-				if ( WP_DEBUG && $debug ) {
-					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
-				}
 			}
 		}
 	}
@@ -134,6 +131,7 @@ class EEH_Autoloader {
 	 * 	@return void
 	 */
 	private function _register_custom_autoloaders() {
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'interfaces' );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, TRUE );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
