@@ -453,7 +453,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	 */
 	public function test_get_raw() {
 		$l2 = EE_Line_Item::new_instance( array( ) );
-		$this->assertTrue( null === $l2->get_raw( 'LIN_quantity' ) );
+		$this->assertTrue( 1 === $l2->get_raw( 'LIN_quantity' ) );
 		$l2->save();
 		$l2_from_db = EEM_Line_Item::reset()->get_one_by_ID( $l2->ID());
 		//double check its NULL in the DB

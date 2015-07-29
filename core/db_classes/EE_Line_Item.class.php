@@ -803,6 +803,10 @@ class EE_Line_Item extends EE_Base_Class {
 				$total = max( $total, 0 );
 			}
 		}
+		//ensure all non-line items and non-sub-line-items have a quantity of 1
+		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
+			$this->set_quantity( 1 );
+		}
 
 		//we don't want to bother saving grand totals, because that needs to factor in taxes anyways
 		//so it ought to be
