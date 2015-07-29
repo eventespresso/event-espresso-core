@@ -13,65 +13,11 @@
 class EE_Repository_Mock extends EE_Repository {
 
 	/**
-	 * @param object $object
-	 * @param mixed $info
-	 * @return bool
+	 * EE_Repository_Mock constructor.
 	 */
-	public function add_object( $object, $info = null ) {
-		return $this->addObject( $object, $info );
+	public function __construct() {
+		$this->interface = 'EE_Ticket';
 	}
-
-
-
-	/**
-	 * @param object $object
-	 * @param mixed $info
-	 * @return void
-	 */
-	public function set_object_info( $object, $info = null ) {
-		$this->setObjectInfo( $object, $info );
-	}
-
-
-
-	/**
-	 * @param mixed $info
-	 * @return null | object
-	 */
-	public function get_object_by_info( $info ) {
-		return $this->getObjectByInfo( $info );
-	}
-
-
-
-	/**
-	 * @param object $object
-	 * @return bool
-	 */
-	public function has_object( $object ) {
-		return $this->hasObject( $object );
-	}
-
-
-
-	/**
-	 * @param object $object
-	 * @return bool | int
-	 */
-	public function save_object( $object ) {
-		return $this->persistObject( $object );
-	}
-
-
-
-	/**
-	 * @param object $object
-	 * @return void
-	 */
-	public function remove_object( $object ) {
-		$this->removeObject( $object );
-	}
-
 
 
 }
