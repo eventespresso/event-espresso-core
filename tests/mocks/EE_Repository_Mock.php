@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Object_Repository_Mock
+ * Class EE_Repository_Mock
  *
  * Description
  *
@@ -10,7 +10,7 @@
  * @since 				4.6.31
  *
  */
-class EE_Object_Repository_Mock extends EE_Object_Repository {
+class EE_Repository_Mock extends EE_Repository {
 
 	/**
 	 * @param object $object
@@ -75,5 +75,5 @@ class EE_Object_Repository_Mock extends EE_Object_Repository {
 
 
 }
-// End of file EE_Object_Repository_Mock.php
-// Location: /tests/mocks/EE_Object_Repository_Mock.php
+// End of file EE_Repository_Mock.php
+// Location: /tests/mocks/EE_Repository_Mock.php
