@@ -113,8 +113,6 @@ class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 			if ( isset( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] ) && $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] > 0 ) {
 				// set quantity based on number of billable registrations for this ticket
 				$line_item->set_quantity( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] );
-			} else {
-				return null;
 			}
 		}
 		return $line_item;
