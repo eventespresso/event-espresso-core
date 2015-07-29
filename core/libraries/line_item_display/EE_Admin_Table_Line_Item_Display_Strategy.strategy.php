@@ -17,20 +17,20 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * whether to display the taxes row or not
 	 * @type bool $_show_taxes
 	 */
-	private $_show_taxes = false;
+	protected $_show_taxes = false;
 
 	/**
 	 * html for any tax rows
 	 * @type string $_show_taxes
 	 */
-	private $_taxes_html = '';
+	protected $_taxes_html = '';
 
 
 	/**
 	 * total amount including tax we can bill for at this time
 	 * @type float $_grand_total
 	 */
-	private $_grand_total = 0.00;
+	protected $_grand_total = 0.00;
 
 
 
@@ -165,7 +165,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _item_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _item_row( EE_Line_Item $line_item, $options = array() ) {
 		$line_item_related_object = $line_item->get_object();
 		$parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->get_object() : null;
 		// start of row
@@ -229,7 +229,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
 		//for now we're not showing sub-items
 		return '';
 	}
@@ -243,7 +243,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _tax_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _tax_row( EE_Line_Item $line_item, $options = array() ) {
 		// start of row
 		$html = EEH_HTML::tr( '', 'admin-primary-mbox-taxes-tr' );
 		// name th
@@ -266,7 +266,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _sub_total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
+	protected function _sub_total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
 		//currently not showing subtotal row
 		return '';
 	}
@@ -280,7 +280,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _total_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _total_row( EE_Line_Item $line_item, $options = array() ) {
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
 		// Total th label
