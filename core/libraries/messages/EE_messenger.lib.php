@@ -665,27 +665,31 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * simply validates the incoming message object and then sets up the properties for the messenger
-	 * @param  object $message message object
+	 * @param  EE_Message $message
+	 * @throws EE_Error
 	 * @return void
 	 */
-	protected function _validate_and_setup( $message ) {
+	protected function _validate_and_setup( EE_Message $message ) {
 		if ( !is_object( $message ) )
 			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
 
+		$template_pack = $message->get_template_pack();
+		$variation = $message->get_template_pack_variation();
+
 		//verify we have the required template pack value on the $message object.
-		if ( empty( $message->template_pack ) || ! $message->template_pack instanceof EE_Messages_Template_Pack ) {
-			throw new EE_Error( __('Incoming $message object must have a EE_Messages_Template_Pack object assigned to the template_pack property', 'event_espresso' ) );
+		if ( ! $template_pack instanceof EE_Messages_Template_Pack ) {
+			throw new EE_Error( __('Incoming $message object must have an EE_Messages_Template_Pack object available.', 'event_espresso' ) );
 		}
 
-		$this->_tmp_pack = $message->template_pack;
+		$this->_tmp_pack = $template_pack;
 
-		$this->_variation = !empty ( $message->variation ) ? $message->variation : 'default';
+		$this->_variation = $variation ? $variation : 'default';
 
 		$template_fields = $this->get_template_fields();
 
 		foreach ( $template_fields as $template => $value ) {
 			if ( $template !== 'extra' ) {
-				$column_value = $message->get_column_value( $template );
+				$column_value = $message->get_field_or_extra_meta( $template );
 				$message_template_value = $column_value ? $column_value : null;
 				$this->_set_template_value( $template, $message_template_value );
 			}

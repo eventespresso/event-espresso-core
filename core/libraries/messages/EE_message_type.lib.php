@@ -697,13 +697,14 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * processes the data object so we get
 	 * @throws EE_Error
-	 * @return void
+	 * @return bool  true means data was processed successfully, false means not.
 	 */
 	protected function _process_data() {
 		//at a minimum, we NEED EE_Attendee objects.
 
-		if ( empty( $this->_data->attendees ) )
-			return TRUE;  //EXIT!
+		if ( empty( $this->_data->attendees ) ) {
+			return false;  //there's no data to process!
+		}
 
 		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
 		foreach ( $this->_contexts as $context => $details ) {
@@ -712,7 +713,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
 			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) );
 		}
-		return FALSE; //DON'T EXIT
+		return true; //data was processed successfully.
 	}
 
 

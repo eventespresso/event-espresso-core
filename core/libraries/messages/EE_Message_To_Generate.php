@@ -78,11 +78,12 @@ class EE_Message_To_Generate {
 	 * @param bool|false $preview       Whether this is being used to generate a preview or not.
 	 */
 	public function __construct( $messenger, $message_type, $data,  EE_messages $ee_msg, $context = '', $preview = false ) {
-			$this->messenger = $messenger;
-			$this->message_type = $message_type;
-			$this->data = (array) $data;
-			$this->context = $context;
-			$this->preview = $preview;
+		$this->messenger = $messenger;
+		$this->message_type = $message_type;
+		$this->data = (array) $data;
+		$this->context = $context;
+		$this->preview = $preview;
+		$this->_EEMSG = $ee_msg;
 	}
 
 

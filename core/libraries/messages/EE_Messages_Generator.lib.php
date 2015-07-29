@@ -128,6 +128,8 @@ class EE_Messages_Generator {
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		$this->_shortcode_parser = new EEH_Parse_Shortcodes();
 
+		//load request handler
+		EE_Registry::instance()->load_core( 'Request_Handler' );
 	}
 
 
@@ -189,7 +191,6 @@ class EE_Messages_Generator {
 		if ( $save ) {
 			$this->_ready_queue->save();
 		}
-
 		return $this->_ready_queue;
 	}
 
@@ -307,7 +308,8 @@ class EE_Messages_Generator {
 
 		//nope still no GRP?
 		//first we get the global template in case it has an override set.
-		$global_GRP = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+		$global_template_qa = array_merge( array( 'MTP_is_global' => true ), $template_qa );
+		$global_GRP = EEM_Message_Template_Group::instance()->get_one( array( $global_template_qa ) );
 
 		//if this is an override, then we just return it.
 		if ( $global_GRP instanceof EE_Message_Template_Group && $global_GRP->get( 'MTP_is_override' ) ) {
@@ -318,7 +320,7 @@ class EE_Messages_Generator {
 		//STILL here? Okay that means we want to see if there is event specific group and if there is we return it,
 		//otherwise we return the global group we retrieved.
 		if ( $EVT_ID ) {
-			$template_qa['EVT_ID'] = $EVT_ID;
+			$template_qa['Event.EVT_ID'] = $EVT_ID;
 		}
 
 		$GRP = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
@@ -473,7 +475,7 @@ class EE_Messages_Generator {
 			}
 		}
 
-		if ( $message->STS_ID() != EEM_Message::status_failed ) {
+		if ( $message->STS_ID() === EEM_Message::status_failed ) {
 			$error_msg = __( 'There were problems generating this message:', 'event_espresso' ) . "\n" . implode( "\n", $error_msg );
 			$message->set_error_message( $error_msg );
 		} else {
@@ -557,7 +559,10 @@ class EE_Messages_Generator {
 			$this->_current_message_type = $validated_for_use['message_type'];
 		}
 
-		if ( ! $this->_generation_queue->get_queue()->get_generation_data() ) {
+		/**
+		 * Check if there is any generation data, but only if this is not for a preview.
+		 */
+		if ( ! $this->_generation_queue->get_queue()->get_generation_data() && ! $this->_generation_queue->get_queue()->is_preview() ) {
 			$this->_error_msg[] = __( 'There is no generation data for this message. Unable to generate.' );
 		}
 
@@ -654,16 +659,16 @@ class EE_Messages_Generator {
 	 */
 	protected function _prepare_data_for_queue( EE_Message_To_Generate $mtg, $preview ) {
 		if ( $preview ) {
-			$data_handler = 'Preview';
+			$data_handler_ref = 'Preview';
 		} else {
 			$message_type = $this->_EEMSG->get_active_message_type( $mtg->messenger, $mtg->message_type );
 			if ( ! $message_type instanceof EE_message_type ) {
 				false;
 			}
-			/** @type EE_Messages_incoming_data $data_handler */
-			$data_handler = $this->_verify_and_retrieve_class_name( $message_type->get_data_handler( $mtg->data ) );
+			$data_handler_ref = $message_type->get_data_handler( $mtg->data );
 		}
-
+		/** @type EE_Messages_incoming_data $data_handler */
+		$data_handler = $this->_verify_and_retrieve_class_name( $data_handler_ref );
 		return $data_handler::convert_data_for_persistent_storage( $mtg->data );
 	}
 
@@ -700,11 +705,10 @@ class EE_Messages_Generator {
 	/**
 	 * This sets up a EEM_Message::status_incomplete EE_Message object and adds it to the generation queue.
 	 * @param EE_Message_To_Generate    $mtg
-	 * @param bool                      $preview        Indicate whether this is going to be used for a preview or not.
 	 */
-	public function _create_and_add_message_to_queue( EE_Message_To_Generate $mtg, $preview = false ) {
+	public function create_and_add_message_to_queue( EE_Message_To_Generate $mtg ) {
 		//prep data
-		$data = $this->_prepare_data_for_queue( $mtg, $preview );
+		$data = $this->_prepare_data_for_queue( $mtg, $mtg->preview );
 
 		$message = $mtg->get_EE_Message();
 
@@ -717,7 +721,7 @@ class EE_Messages_Generator {
 			$message->set_STS_ID( EEM_Message::status_failed );
 			$message->set_error_message( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
 		} else {
-			$this->_generation_queue->add( $message, $data, $preview );
+			$this->_generation_queue->add( $message, $data, $mtg->preview );
 		}
 	}
 

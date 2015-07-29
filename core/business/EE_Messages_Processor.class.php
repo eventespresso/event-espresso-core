@@ -42,7 +42,7 @@ class EE_Messages_Processor {
 	 */
 	public function __construct( EE_messages $ee_messages ) {
 		$this->_EEMSG = $ee_messages;
-		$this->_queue = new EE_Messages_Queue();
+		$this->_queue = new EE_Messages_Queue( $ee_messages );
 		$this->_generator = new EE_Messages_Generator( $this->_queue, $ee_messages );
 	}
 
@@ -70,11 +70,11 @@ class EE_Messages_Processor {
 			$new_queue = $this->_generator->generate();
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
-				$this->_queue->unlock();
+				$this->_queue->unlock_queue();
 				return $new_queue;
 			}
 		} else {
-			$this->_queue->unlock();
+			$this->_queue->unlock_queue();
 			return false;
 		}
 	}
@@ -123,7 +123,7 @@ class EE_Messages_Processor {
 	 * @return  EE_Messages_Queue
 	 */
 	public function queue_for_generation( EE_Message_To_Generate $mtg ) {
-		$this->_generator->_create_and_add_message_to_queue( $mtg );
+		$this->_generator->create_and_add_message_to_queue( $mtg );
 	}
 
 
@@ -169,6 +169,11 @@ class EE_Messages_Processor {
 	 * @param $messages_to_generate
 	 */
 	protected function _queue_for_generation_loop( $messages_to_generate ) {
+		//make sure is in an array.
+		if ( ! is_array( $messages_to_generate ) ) {
+			$messages_to_generate = array( $messages_to_generate );
+		}
+
 		foreach ( $messages_to_generate as $mtg ) {
 			if ( $mtg instanceof EE_Message_To_Generate ) {
 				$this->queue_for_generation( $mtg );
@@ -200,8 +205,12 @@ class EE_Messages_Processor {
 	 * @return EE_Messages_Queue
 	 */
 	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
+		//just make sure preview is set on the $mtg (in case client forgot)
+		$mtg->preview = true;
 		$generated_queue = $this->generate_and_return( array( $mtg ) );
-		$generated_queue->execute(false);
+		if ( $generated_queue->execute( false ) ) {
+			return $generated_queue;
+		}
 	}
 
 

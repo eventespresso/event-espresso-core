@@ -441,6 +441,32 @@ class EE_Message extends EE_Base_Class {
 		return $this->set_field_or_extra_meta( 'MSG_error', $message );
 	}
 
+
+
+
+	/**
+	 * This retrieves the associated template pack with this message.
+	 * @return EE_Messages_Template_Pack | null
+	 */
+	public function get_template_pack() {
+		/** @type EE_Message_Template_Group $grp */
+		$grp = $this->get_first_related( 'Message_Template_Group' );
+		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack() : null;
+	}
+
+
+
+
+	/**
+	 * Retrieves the variation used for generating this message.
+	 * @return string
+	 */
+	public function get_template_pack_variation() {
+		/** @type EE_Message_Template_Group $grp */
+		$grp = $this->get_first_related( 'Message_Template_Group' );
+		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack_variation() : '';
+	}
+
 }
 /* End of file EE_Message.class.php */
 /* Location: /core/db_classes/EE_Message.class.php */

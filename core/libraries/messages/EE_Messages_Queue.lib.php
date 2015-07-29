@@ -366,6 +366,9 @@ class EE_Messages_Queue {
 	 *  Loops through the EE_Message objects in the _queue and calls the messenger send methods for each message.
 	 *
 	 * @param   bool    $save   Used to indicate whether to save the message queue after sending (default will save).
+	 * @return  int     Number of messages sent.  Note, 0 does not mean that no messages were processed.  Also, if the messenger
+	 *                  is an request type messenger (or a preview), its entirely possible that the messenger will exit before
+	 *                  returning here.
 	 */
 	public function execute( $save = true ) {
 		$messages_sent = 0;
@@ -375,10 +378,10 @@ class EE_Messages_Queue {
 		$this->_queue->rewind();
 		foreach( $this->_queue as $message ) {
 			//if the message in the queue does not have a send status then skip
-			if ( ! in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
+			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
 			}
-			$error_message = array();
+			$error_msg = array();
 			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
 
@@ -405,7 +408,7 @@ class EE_Messages_Queue {
 					$message->set_STS_ID( EEM_Message::status_sent );
 				} else {
 					//see if there are any error messages
-					$notices = EE_Errors::has_notices();
+					$notices = EE_Error::has_notices();
 					if ( $notices && $notices['errors'] ) {
 						$error_msg[] = implode( "\n", $notices );
 					} else {
@@ -414,7 +417,7 @@ class EE_Messages_Queue {
 				}
 			}
 
-			if ( count( $error_msg > 0 ) ) {
+			if ( count( $error_msg ) > 0 ) {
 				$msg = __( 'Message was not sent successfully.', 'event_espresso' );
 				$msg = $msg . "\n" . implode( "\n", $error_msg );
 				$message->set_STS_ID( EEM_Message::status_failed );
@@ -428,6 +431,7 @@ class EE_Messages_Queue {
 		if ( $save ) {
 			$this->save();
 		}
+		return $messages_sent;
 	}
 
 
@@ -452,4 +456,4 @@ class EE_Messages_Queue {
 		return $count;
 	}
 
-}
+} //end EE_Messages_Queue class
