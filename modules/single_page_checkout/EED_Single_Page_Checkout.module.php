@@ -988,6 +988,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public function add_styles_and_scripts() {
+		// i18n
+		$this->translate_js_strings();
 		if ( $this->checkout->admin_request ) {
 			add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10 );
 		} else {
@@ -1060,8 +1062,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// load css
 		wp_register_style( 'single_page_checkout', SPCO_CSS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'single_page_checkout' );
-		// i18n
-		$this->translate_js_strings();
 		// load JS
 		wp_register_script( 'jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array( 'jquery' ), '1.0.1', TRUE );
 		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
