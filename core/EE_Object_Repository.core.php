@@ -2,7 +2,7 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Class EE_Repository
+ * Class EE_Object_Repository
  *
  * abstract storage entity for unique objects with persistence
  * extends EE_Collection...
@@ -15,7 +15,7 @@
  * @since                4.6.31
  *
  */
-abstract class EE_Repository extends EE_Collection implements EEI_Repository {
+abstract class EE_Object_Repository extends EE_Collection implements EEI_Repository {
 
 
 
@@ -32,7 +32,6 @@ abstract class EE_Repository extends EE_Collection implements EEI_Repository {
 	 * @param string 	$persistence_callback 		name of method found on object that can be used for persisting the object
 	 * @param array 	$persistence_arguments	arrays of arguments that will be passed to the object's persistence method
 	 * @return bool | int
-	 * @throws \EE_Error
 	 */
 	public function persist( $object, $persistence_callback = '', $persistence_arguments = array() ) {
 		if ( $this->contains( $object ) ) {
@@ -40,10 +39,9 @@ abstract class EE_Repository extends EE_Collection implements EEI_Repository {
 			while ( $this->valid() ) {
 				if ( $object === $this->current() ) {
 					$success = false;
+					$persistence_callback = $object instanceof EE_Base_Class && $persistence_callback == '' ? 'save' : $persistence_callback;
 					if ( $persistence_callback !== '' && method_exists( $object, $persistence_callback ) ) {
-						$success = $object->$persistence_callback( $persistence_arguments );
-					} else if ( $object instanceof EE_Base_Class ) {
-						$success = $object->save( $persistence_arguments );
+						$success = call_user_func_array( array( $object, $persistence_callback ), $persistence_arguments );
 					}
 					$this->rewind();
 					return $success;
@@ -57,5 +55,5 @@ abstract class EE_Repository extends EE_Collection implements EEI_Repository {
 
 
 }
-// End of file EE_Repository.core.php
-// Location: /core/EE_Repository.core.php
+// End of file EE_Object_Repositoryository.core.php
+// Location: /core/EE_Object_Repositoryository.core.php
