@@ -587,6 +587,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group github-102
+	 * @group 8589
 	 */
 	public function test_get__serialized_data__once() {
 		$log_message = array(
@@ -608,12 +609,12 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$log_from_db = EEM_Change_Log::instance()->get_one_by_ID( $log_id );
 		$this->assertTrue( is_array( $log_from_db->get( 'LOG_message' ) ) );
 		$this->assertEquals( $log_message, $log_from_db->get( 'LOG_message' ) );
-
 	}
 
-		/**
-	 * @group github-102
-	 */
+	/**
+	* @group github-102
+	* @group 8589
+	*/
 	public function test_get__serialized_data__twice() {
 		$log_message = serialize( array(
 						'key1' => 'value1',
