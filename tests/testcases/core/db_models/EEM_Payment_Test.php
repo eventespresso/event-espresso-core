@@ -45,9 +45,9 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 		// and base DateTime for now
 		$now = $now instanceof DateTime ? $now : date_create_from_format( 'Y-m-d H:i:s', Date( 'Y-m-d' ) . '13:00:00', $timezone );
 		//setup some dates we'll use for testing with.
-		$two_days_ago = new DateTime( "now -2days", $timezone );
-		$one_hour_from_now = new DateTime( "now +1hour", $timezone );
-		$two_days_from_now = new DateTime( "now +2days", $timezone );
+		$two_days_ago = $now->sub( new DateInterval('P2D') );
+		$one_hour_from_now = $now->add( new DateInterval('T1H') );
+		$two_days_from_now = $now->add( new DateInterval('P2D') );
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
 
