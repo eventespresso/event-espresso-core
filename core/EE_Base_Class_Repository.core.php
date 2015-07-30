@@ -30,7 +30,10 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 * save
 	 *
 	 * calls EE_Base_Class::save() on the current object
-	 * an array of arguments can also be supplied that will be passed along to EE_Base_Class::save()
+	 * an array of arguments can also be supplied that will be passed along to EE_Base_Class::save(),
+	 * where each element of the $arguments array corresponds to a parameter for the callback method
+	 * PLZ NOTE: if the first argument of the callback requires an array, for example array( 'key' => 'value' )
+	 * then $arguments needs to be a DOUBLE array ie: array( array( 'key' => 'value' ) )
 	 *
 	 * @access public
 	 * @param array $arguments	arrays of arguments that will be passed to the object's save method
@@ -62,10 +65,15 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 * calls EE_Base_Class::delete() on the current object
 	 *
 	 * @access public
-	 * @return bool | int
+	 * @return bool
 	 */
 	public function delete() {
-		return $this->_call_user_func_array_on_current( 'delete' );
+		$success = $this->_call_user_func_array_on_current( 'delete' );
+		if ( $success ) {
+			$this->remove( $this->current() );
+			return true;
+		}
+		return false;
 	}
 
 
@@ -76,10 +84,19 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 * calls EE_Base_Class::delete() on ALL objects in the repository
 	 *
 	 * @access public
-	 * @return bool | int
+	 * @return bool
 	 */
 	public function delete_all() {
-		return $this->_call_user_func_on_all( 'delete' );
+		$success = $this->_call_user_func_on_all( 'delete' );
+		if ( $success ) {
+			$this->rewind();
+			while ( $this->valid() ) {
+				$this->remove( $this->current() );
+				$this->next();
+			}
+			return true;
+		}
+		return false;
 	}
 
 
