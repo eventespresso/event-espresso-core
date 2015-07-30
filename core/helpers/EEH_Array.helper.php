@@ -80,4 +80,21 @@ class EEH_Array extends EEH_Base {
 		return isset( $arr[ $index ] ) ? $arr[ $index ] : $default;
 	}
 
+	/**
+	 * Exactly like `maybe_unserialize`, but also accounts for a WP bug: http://core.trac.wordpress.org/ticket/26118
+	 * @param mixed $value usually a string, but could be an array or object
+	 * @return mixed the UNserialized data
+	 */
+	public static function maybe_unserialize( $value ) {
+		$data = maybe_unserialize($value);
+		//it's possible that this still has serialized data if its the session.  WP has a bug, http://core.trac.wordpress.org/ticket/26118 that doesnt' unserialize this automatically.
+		$token = 'C';
+		$data = is_string($data) ? trim($data) : $data;
+		if ( is_string($data) && strlen($data) > 1 && $data[0] == $token  && preg_match( "/^{$token}:[0-9]+:/s", $data ) ) {
+			return unserialize($data);
+		} else {
+			return $data;
+		}
+	}
+
 } //end EEH_Template class
