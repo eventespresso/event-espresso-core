@@ -27,7 +27,7 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase {
 	function test_construct() {
 		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
 		$queue = EE_Registry::instance()->load_lib( 'Messages_Queue', $ee_msg );
-		$generator = EE_Registry::instance()->load_lib( 'Messages_Generator', array( $queue, $ee_msg ) );
+		$generator = new EE_Messages_Generator( $queue, $ee_msg );
 
 		//assert $generator loaded okay
 		$this->assertInstanceOf( 'EE_Messages_Generator', $generator );
