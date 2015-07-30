@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Collection_Test
+ * Class EE_Object_Collection_Test
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -10,16 +10,16 @@
  * @group 				8565
  *
  */
-class EE_Collection_Test extends EE_UnitTestCase {
+class EE_Object_Collection_Test extends EE_UnitTestCase {
 
 	/**
-	 * @type \EE_Collection_Mock $collection
+	 * @type \EE_Object_Collection_Mock $collection
 	 */
 	protected $collection;
 
 	public function setUp() {
-		require_once EE_TESTS_DIR . 'mocks/EE_Collection_Mock.php';
-		$this->collection = new EE_Collection_Mock();
+		require_once EE_TESTS_DIR . 'mocks/EE_Object_Collection_Mock.php';
+		$this->collection = new EE_Object_Collection_Mock();
 		parent::setUp();
 	}
 
@@ -78,5 +78,5 @@ class EE_Collection_Test extends EE_UnitTestCase {
 	}
 
 }
-// End of file EE_Collection_Test.php
-// Location: /tests/testcases/core/EE_Collection_Test.php
+// End of file EE_Object_Collection_Test.php
+// Location: /tests/testcases/core/EE_Object_Collection_Test.php
