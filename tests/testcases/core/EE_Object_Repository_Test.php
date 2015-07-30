@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Repository_Test
+ * Class EE_Object_Repository_Test
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -10,16 +10,16 @@
  * @group 				8280
  *
  */
-class EE_Repository_Test extends EE_UnitTestCase {
+class EE_Object_Repository_Test extends EE_UnitTestCase {
 
 	/**
-	 * @type \EE_Repository_Mock $repository
+	 * @type \EE_Object_Repository_Mock $repository
 	 */
 	protected $repository;
 
 	public function setUp() {
-		require_once EE_TESTS_DIR . 'mocks/EE_Repository_Mock.php';
-		$this->repository = new EE_Repository_Mock();
+		require_once EE_TESTS_DIR . 'mocks/EE_Object_Repository_Mock.php';
+		$this->repository = new EE_Object_Repository_Mock();
 		parent::setUp();
 	}
 
@@ -33,5 +33,5 @@ class EE_Repository_Test extends EE_UnitTestCase {
 	}
 
 }
-// End of file EE_Repository_Test.php
-// Location: /tests/testcases/core/EE_Repository_Test.php
+// End of file EE_Object_Repository_Test.php
+// Location: /tests/testcases/core/EE_Object_Repository_Test.php
