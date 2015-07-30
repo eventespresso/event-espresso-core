@@ -270,7 +270,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				'</div>'
 			)
 		);
-		wp_localize_script( 'thank_you_page', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 
