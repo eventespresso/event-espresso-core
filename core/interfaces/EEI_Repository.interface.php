@@ -4,14 +4,14 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 
 /**
- * Object Repository Interface
+ * Repository Interface
  *
  * @package    Event Espresso
  * @subpackage interfaces
  * @since      4.8.0
  * @author     Brent Christensen
  */
-interface EEI_Object_Repository extends EEI_Object_Collection {
+interface EEI_Repository extends EEI_Collection {
 
 
 
@@ -34,5 +34,5 @@ interface EEI_Object_Repository extends EEI_Object_Collection {
 
 
 }
-// End of file EEI_Object_Repository.interface.php
-// Location: /core/interfaces/line_items/EEI_Object_Repository.interface.php
+// End of file EEI_Repository.interface.php
+// Location: /core/interfaces/line_items/EEI_Repository.interface.php

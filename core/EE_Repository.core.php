@@ -2,10 +2,10 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Class EE_Object_Repository
+ * Class EE_Repository
  *
  * abstract storage entity for unique objects with persistence
- * extends EE_Object_Collection...
+ * extends EE_Collection...
  * which extends SplObjectStorage, so therefore implements the
  * Countable, Iterator, Serializable, and ArrayAccess interfaces
  *
@@ -15,26 +15,26 @@
  * @since                4.6.31
  *
  */
-abstract class EE_Object_Repository extends EE_Object_Collection {
+abstract class EE_Repository extends EE_Collection implements EEI_Repository {
 
 
 
 	/**
-	 * persistObject
+	 * persist
 	 *
 	 * primarily used for saving EE_Base_Class classes to the database,
 	 * but can be supplied with a "persistence callback" that can be used for classes that are not instances of EE_Base_Class,
 	 * or for providing alternate ways to persist an object such as session caching, etc...
 	 * an array of arguments can also be supplied that will be passed along to the object's persistence method
 	 *
-	 * @access protected
+	 * @access public
 	 * @param object 	$object
 	 * @param string 	$persistence_callback 		name of method found on object that can be used for persisting the object
 	 * @param array 	$persistence_arguments	arrays of arguments that will be passed to the object's persistence method
 	 * @return bool | int
 	 * @throws \EE_Error
 	 */
-	protected function persistObject( $object, $persistence_callback = '', $persistence_arguments = array() ) {
+	public function persist( $object, $persistence_callback = '', $persistence_arguments = array() ) {
 		if ( $this->contains( $object ) ) {
 			$this->rewind();
 			while ( $this->valid() ) {
@@ -57,5 +57,5 @@ abstract class EE_Object_Repository extends EE_Object_Collection {
 
 
 }
-// End of file EE_Object_Repository.core.php
-// Location: /core/EE_Object_Repository.core.php
+// End of file EE_Repository.core.php
+// Location: /core/EE_Repository.core.php
