@@ -200,6 +200,7 @@ class EE_Import_Test extends EE_UnitTestCase {
 	 * that apply
 	 */
 	public function test_save_data_array_to_db__from_other_site__fks_that_point_to_multiple_models() {
+		$this->markTestSkipped('addressed on ticket 7537.');
 		//multiple types of fks that point ot multiple models: ones accompanied by a model name field and ones without
 		//using model name field: extra metas
 		//sans-model name field: term-relationships
@@ -276,6 +277,7 @@ class EE_Import_Test extends EE_UnitTestCase {
 	 * test that term relationships are migrated ok if they would conflict with something already in the db
 	 */
 	function test_save_data_array_to_db__from_other_site__no_duplicate_term_relationships() {
+		$this->markTestSkipped('addressed on ticket 7537.');
 		$event_id_from_other_db = 122;
 		$term_tax_from_other_db = 32;
 		$old_term_r_order = 3;

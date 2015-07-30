@@ -34,9 +34,11 @@ class EEM_Term_Relationship extends EEM_Base {
 		$this->_tables = array(
 			'Term_Relationship'=> new EE_Primary_Table('term_relationships')
 		);
+		$models_this_can_attach_to = array_keys( $models_this_can_attach_to = EE_Registry::instance()->cpt_models() );
 		$this->_fields = array(
 			'Term_Relationship'=>array(
-				'object_id'=> new EE_Foreign_Key_Int_Field('object_id', __('Object(Post) ID','event_espresso'), false,0,array('Event','Venue','Attendee')),
+				'object_id'=> new EE_Foreign_Key_Int_Field('object_id', __('Object(Post) ID','event_espresso'), false,0, array(  'Attendee', 'Event', 'Venue', ) ),
+//				'object_id'=> new EE_Foreign_Key_Int_Field('object_id', __('Object(Post) ID','event_espresso'), false,0, $models_this_can_attach_to ),
 				'term_taxonomy_id'=>new EE_Foreign_Key_Int_Field('term_taxonomy_id', __('Term (in context of a taxonomy) ID','event_espresso'), false, 0, 'Term_Taxonomy'),
 				'term_order'=>new EE_Integer_Field('term_order', __('Term Order','event_espresso'), false, 0)
 			));
@@ -46,6 +48,9 @@ class EEM_Term_Relationship extends EEM_Base {
 			'Attendee'=>new EE_Belongs_To_Relation(),
 			'Term_Taxonomy'=>new EE_Belongs_To_Relation()
 		);
+//		foreach( $models_this_can_attach_to as $model_name ) {
+//			$this->_model_relations[ $model_name ] = new EE_Belongs_To_Relation();
+//		}
 		$this->_indexes = array(
 			'PRIMARY'=>new EE_Primary_Key_Index(array('object_id','term_taxonomy_id'))
 		);
