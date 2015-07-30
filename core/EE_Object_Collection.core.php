@@ -131,5 +131,5 @@ abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Coll
 
 
 }
-// End of file EE_Object_Collectionlection.core.php
-// Location: /core/EE_Object_Collectionlection.core.php
+// End of file EE_Object_Collection.core.php
+// Location: /core/EE_Object_Collection.core.php
