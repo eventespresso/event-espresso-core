@@ -23,11 +23,11 @@ class EE_Object_Repository_Test extends EE_UnitTestCase {
 		parent::setUp();
 	}
 
-	public function test_persistObject() {
+	public function test_persist() {
 		$ticket_1 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'   => '5' ), false );
-		$this->repository->add_object( $ticket_1 );
+		$this->repository->add( $ticket_1 );
 		$this->assertEquals( $ticket_1->ID(), 0 );
-		$saved = $this->repository->save_object( $ticket_1 );
+		$saved = $this->repository->persist( $ticket_1 );
 		$this->assertNotEquals( $saved, false );
 		$this->assertNotEquals( $ticket_1->ID(), 0 );
 	}

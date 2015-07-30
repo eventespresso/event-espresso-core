@@ -17,7 +17,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * whether to display the taxes row or not
 	 * @type bool $_show_taxes
 	 */
-	private $_show_taxes = FALSE;
+	private $_show_taxes = false;
 
 	/**
 	 * html for any tax rows
@@ -94,7 +94,11 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 				break;
 
 			case EEM_Line_Item::type_tax_sub_total:
-				//no tax subtotal for admin table.
+				foreach( $line_item->children() as $child_line_item ) {
+					if ( $child_line_item->type() == EEM_Line_Item::type_tax ) {
+						$this->display_line_item( $child_line_item, $options );
+					}
+				}
 				break;
 
 			case EEM_Line_Item::type_total:
@@ -102,12 +106,10 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 				$this->_show_taxes = $line_item->get_total_tax() > 0 ? true : false;
 				// get all child line items
 				$children = $line_item->children();
+
 				// loop thru all non-tax child line items
 				foreach( $children as $child_line_item ) {
-					if ( $child_line_item->type() != EEM_Line_Item::type_tax_sub_total ) {
-						// recursively feed children back into this method
 						$html .= $this->display_line_item( $child_line_item, $options );
-					}
 				}
 
 				$html .= $this->_taxes_html;
