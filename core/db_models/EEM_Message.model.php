@@ -164,6 +164,20 @@ class EEM_Message extends EEM_Base {
 	}
 
 
+
+
+	/**
+	 * This retrieves an EE_Message object from the db matching the given token string.
+	 * @param string $token
+	 * @return EE_Message | null
+	 */
+	public function get_one_by_token( $token ) {
+		return $this->get_one( array( array(
+			'MSG_token' => $token
+		) ) );
+	}
+
+
 	/**
 	 * Returns stati that indicate the message HAS been sent
 	 * @return array of strings for possible stati
