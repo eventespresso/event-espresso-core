@@ -178,4 +178,25 @@ class EE_Message_Repository extends EE_Object_Repository {
 		}
 	}
 
+
+
+
+	/**
+	 * This method returns a count of messages in the repository that have a given priority.
+	 * @param int $priority the priority that is being filtered for the count.
+	 * @param bool|string $status the optional status that will also be filtered by when priority matches.
+	 * @return int  count of messages in the queue matching the conditions.
+	 */
+	public function count_by_priority_and_status( $priority, $status = false ) {
+		$count = 0;
+		$this->rewind();
+		while( $this->valid() ) {
+			if ( $this->current()->priority() == $priority && ( $status && $status == $this->current->STS_ID() ) ) {
+				$count++;
+			}
+			$this->next();
+		}
+		return $count;
+	}
+
 }
