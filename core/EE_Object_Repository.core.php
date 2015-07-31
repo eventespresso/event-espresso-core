@@ -57,7 +57,7 @@ abstract class EE_Object_Repository extends EE_Object_Collection implements EEI_
 	 * @return bool | int
 	 */
 	protected function _call_user_func_on_all( $callback = '' ) {
-		$success = 0;
+		$success = true;
 		if ( $this->valid() ) {
 			$this->rewind();
 			while ( $this->valid() ) {
