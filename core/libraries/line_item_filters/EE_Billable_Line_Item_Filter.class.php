@@ -89,12 +89,6 @@ class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 		foreach ( $line_item->children() as $child_line_item ) {
 			$billable_line_item->add_child_line_item( $this->process( $child_line_item ) );
 		}
-		// if this is the grand total line item, make sure the totals all add up
-		// (we could have duplicated this logic AS we copied the line items, but
-		// it seems DRYer this way)
-		if ( $billable_line_item->type() === EEM_Line_Item::type_total ) {
-			$billable_line_item->recalculate_total_including_taxes();
-		}
 		return $billable_line_item;
 	}
 
@@ -110,7 +104,7 @@ class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 		// is this a ticket ?
 		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
 			// if this ticket is billable at this moment, then we should have a positive quantity
-			if ( isset( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] ) && $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] > 0 ) {
+			if ( isset( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] )) {
 				// set quantity based on number of billable registrations for this ticket
 				$line_item->set_quantity( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] );
 			}
