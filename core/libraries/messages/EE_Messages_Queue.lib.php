@@ -84,20 +84,35 @@ class EE_Messages_Queue {
 	 * @return bool          Whether the message was successfully added to the repository or not.
 	 */
 	public function add( EE_Message $message, $data = array(), $preview = false ) {
-		return $this->_queue->add( $message, $data, $preview );
+		$data['preview'] = $preview;
+		return $this->_queue->add( $message, $data );
 	}
 
 
 
 
 	/**
-	 * Removes EE_Message from _queue that matches the given token.
+	 * Removes EE_Message from _queue that matches the given EE_Message if the pointer is on a matching EE_Message
 	 * @param EE_Message    $message    The message to detach from the queue
 	 * @param bool          $persist    This flag indicates whether to attempt to delete the object from the db as well.
 	 * @return bool
 	 */
 	public function remove( EE_Message $message, $persist = false ) {
-		return $this->_queue->remove( $message, $persist );
+		if ( $persist && $this->_queue->current() !== $message ) {
+			//get pointer on right message
+			if ( $this->_queue->has( $message ) ) {
+				$this->_queue->rewind();
+				while( $this->_queue->valid() ) {
+					if ( $this->_queue->current() === $message ) {
+						break;
+					}
+					$this->_queue->next();
+				}
+			} else {
+				return false;
+			}
+		}
+		return $persist ? $this->_queue->delete() : $this->_queue->remove( $message );
 	}
 
 

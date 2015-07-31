@@ -10,9 +10,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @author     Darren Ethier
  * @since      4.9.0
  */
-class EE_Message_Repository extends EE_Object_Repository {
+class EE_Message_Repository extends EE_Base_Class_Repository {
 
 
+
+	public function __construct() {
+		$this->interface = 'EE_Message';
+	}
 
 
 	/**
@@ -20,15 +24,14 @@ class EE_Message_Repository extends EE_Object_Repository {
 	 * This also ensures that the MSG_token is saves as a part of the info for retrieval.
 	 *
 	 * @param EE_Message $message
-	 * @param mixed      $info     Any included data is saved in the attached object info array indexed by 'data'
-	 * @param bool       $preview  Whether the saved EE_Message is for a preview.  Note: the preview flag is NEVER persisted
-	 *                             automatically to the database because previews are considered to be transient.  So if you
-	 *                             want the preview flag to persist it must be handled manually.
+	 * @param mixed $info Any included data is saved in the attached object info array indexed by 'data'
+	 *
 	 * @return bool
 	 */
-	public function add( EE_Message $message, $info = null, $preview = false ) {
-		$data['preview'] = $preview;
-		if ( $info ) {
+	public function add( $message, $info = null ) {
+		$attached = $this->add( $message );
+		$data['preview'] = isset( $info['preview'] ) ? $info['preview'] : false;
+		if ( $attached && $info ) {
 			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
 				$generation_data = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : array();
 				//if data isn't in $info...let's see if its available via the message object
@@ -40,24 +43,9 @@ class EE_Message_Repository extends EE_Object_Repository {
 				$data['data'] = $info;
 			}
 		}
-		return $this->addObject( $message, $data );
+		return $this->set_info( $message, $data );
 	}
 
-
-
-
-	/**
-	 * Remove given EE_Message from repository.
-	 * @param EE_Message $message
-	 * @param bool       $persist   If true then attempt to delete from db as well.
-	 * @return void
-	 */
-	public function remove( EE_Message $message, $persist = false ) {
-		if ( $persist ) {
-			$this->persistObject( $message, 'delete' );
-		}
-		$this->removeObject( $message );
-	}
 
 
 

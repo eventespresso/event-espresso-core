@@ -77,7 +77,7 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 			//verify not saved
 			$this->assertEquals( 0, $message->ID() );
 			$messages[] = $message;
-			$test_repo->add( $message, $generation_data, true );
+			$test_repo->add( $message, $generation_data );
 		}
 
 		$saved = $test_repo->saveAll();
