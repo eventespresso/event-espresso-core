@@ -93,13 +93,14 @@ class EE_Message_To_Generate {
 	 *  Returns an instantiated EE_Message object from the internal data.
 	 */
 	public function get_EE_Message() {
-		return EE_Message::new_instance( array(
+		$this->_EE_Message = $this->_EE_Message instanceof EE_Message ? $this->_EE_Message : EE_Message::new_instance( array(
 			'MSG_messenger' => $this->messenger,
 			'MSG_message_type' => $this->message_type,
 			'MSG_context' => $this->context,
 			'STS_ID' => EEM_Message::status_incomplete,
 			'MSG_priority' => $this->_get_priority_for_message_type()
 		) );
+		return $this->_EE_Message;
 	}
 
 
