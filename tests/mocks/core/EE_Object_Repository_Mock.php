@@ -2,8 +2,6 @@
 /**
  * Class EE_Object_Repository_Mock
  *
- * Description
- *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Brent Christensen
@@ -23,4 +21,4 @@ class EE_Object_Repository_Mock extends EE_Object_Repository {
 
 }
 // End of file EE_Object_Repository_Mock.php
-// Location: /tests/mocks/EE_Object_Repository_Mock.php
+// Location: /tests/mocks/core/EE_Object_Repository_Mock.php
