@@ -12,17 +12,17 @@ class EE_Messages_Generator {
 
 
 	/**
-	 * @type EE_Messages_Data_Handler_Repository
+	 * @type EE_Messages_Data_Handler_Collection
 	 */
-	protected $_data_handler_repo;
+	protected $_data_handler_collection;
 
 
 
 
 	/**
-	 * @type  EE_Message_Template_Group_Repository
+	 * @type  EE_Message_Template_Group_Collection
 	 */
-	protected $_template_repo;
+	protected $_template_collection;
 
 
 
@@ -122,8 +122,8 @@ class EE_Messages_Generator {
 		$this->_generation_queue = $queue;
 		$this->_ready_queue = new EE_Messages_Queue( $eemsg );
 		$this->_EEMSG = $eemsg;
-		$this->_data_handler_repo = new EE_Messages_Data_Handler_Repository();
-		$this->_template_repo = new EE_Message_Template_Group_Repository();
+		$this->_data_handler_collection = new EE_Messages_Data_Handler_Collection();
+		$this->_template_collection = new EE_Message_Template_Group_Collection();
 
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		$this->_shortcode_parser = new EEH_Parse_Shortcodes();
@@ -255,7 +255,7 @@ class EE_Messages_Generator {
 
 	/**
 	 * Retrieves the message template group being used for generating messages.
-	 * Note: this also utilizes the EE_Message_Template_Group_Repository to avoid having to hit the db multiple times.
+	 * Note: this also utilizes the EE_Message_Template_Group_Collection to avoid having to hit the db multiple times.
 	 *
 	 * @return EE_Message_Template_Group | null
 	 */
@@ -266,7 +266,7 @@ class EE_Messages_Generator {
 
 		if ( $GRP_ID ) {
 			//attempt to retrieve from repo first
-			$GRP = $this->_template_repo->get_by_ID( $GRP_ID );
+			$GRP = $this->_template_collection->get_by_ID( $GRP_ID );
 			if ( $GRP instanceof EE_Message_Template_Group ) {
 				return $GRP;  //got it!
 			}
@@ -274,7 +274,7 @@ class EE_Messages_Generator {
 			//nope don't have it yet.  Get from DB then add to repo
 			$GRP = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 			if ( $GRP instanceof EE_Message_Template_Group ) {
-				$this->_template_repo->add( $GRP );
+				$this->_template_collection->add( $GRP );
 			}
 			return $GRP;
 		}
@@ -300,7 +300,7 @@ class EE_Messages_Generator {
 		}
 
 		//before going any further, let's see if its in the queue
-		$GRP = $this->_template_repo->get_by_key( $this->_template_repo->get_key( $this->_current_messenger->name, $this->_current_message_type->name, $EVT_ID ) );
+		$GRP = $this->_template_collection->get_by_key( $this->_template_collection->get_key( $this->_current_messenger->name, $this->_current_message_type->name, $EVT_ID ) );
 
 		if ( $GRP instanceof EE_Message_Template_Group ) {
 			return $GRP;
@@ -313,7 +313,7 @@ class EE_Messages_Generator {
 
 		//if this is an override, then we just return it.
 		if ( $global_GRP instanceof EE_Message_Template_Group && $global_GRP->get( 'MTP_is_override' ) ) {
-			$this->_template_repo->add( $global_GRP, $EVT_ID );
+			$this->_template_collection->add( $global_GRP, $EVT_ID );
 			return $global_GRP;
 		}
 
@@ -327,7 +327,7 @@ class EE_Messages_Generator {
 		$GRP = $GRP instanceof EE_Message_Template_Group ? $GRP : $global_GRP;
 
 		if ( $GRP instanceof EE_Message_Template_Group ) {
-			$this->_template_repo->add( $GRP, $EVT_ID );
+			$this->_template_collection->add( $GRP, $EVT_ID );
 			return $GRP;
 		}
 
@@ -631,12 +631,12 @@ class EE_Messages_Generator {
 
 		//valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
 		//is already a ready datahandler in the repository.
-		$data_handler = $this->_data_handler_repo->get_by_key( $this->_data_handler_repo->get_key( $classname, $generating_data ) );
+		$data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $classname, $generating_data ) );
 		if ( ! $data_handler instanceof EE_messages_incoming_data ) {
 			//no saved data_handler in the repo so let's set one up and add it to the repo.
 			try {
 				$this->_current_data_handler = new $classname( $generating_data );
-				$this->_data_handler_repo->add( $this->_current_data_handler, $generating_data );
+				$this->_data_handler_collection->add( $this->_current_data_handler, $generating_data );
 			} catch( EE_Error $e ) {
 				$this->_error_msg[] = $e->get_error();
 			}
