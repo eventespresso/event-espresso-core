@@ -89,17 +89,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 
 	/**
-	 * Sets ID
-	 * @param int $ID
-	 * @return boolean
-	 */
-	function set_ID( $ID ) {
-		$this->set( 'LIN_ID', $ID );
-	}
-
-
-
-	/**
 	 * Gets TXN_ID
 	 * @return int
 	 */
