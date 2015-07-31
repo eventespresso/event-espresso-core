@@ -11,7 +11,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author     Darren Ethier
  * @since      4.9.0
  */
-class EE_Message_Template_Group_Repository extends EE_Object_Repository {
+class EE_Message_Template_Group_Collection extends EE_Object_Collection {
 
 
 
@@ -88,4 +88,4 @@ class EE_Message_Template_Group_Repository extends EE_Object_Repository {
 		return null;
 	}
 
-} //end EE_Message_Template_Group_Repository
+} //end EE_Message_Template_Group_Collection

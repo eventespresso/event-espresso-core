@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains test class for /core/repositories/EE_Message_Template_Group_Repository.lib.php
+ * Contains test class for /core/repositories/EE_Message_Template_Group_Collection.lib.php
  *
  * @since  		4.9.0
  * @package 	Event Espresso
@@ -8,17 +8,17 @@
  */
 
 /**
- * All tests for the EE_Message_Template_Group_Repository class.
+ * All tests for the EE_Message_Template_Group_Collection class.
  *
  * @since 		4.9.0
  * @package 	Event Espresso
  * @subpackage 	tests
  */
-class EE_Message_Template_Group_Repository_Test extends EE_UnitTestCase {
+class EE_Message_Template_Group_Collection_Test extends EE_UnitTestCase {
 
 
 	/**
-	 * @return EE_Message_Template_Group_Repository
+	 * @return EE_Message_Template_Group_Collection
 	 */
 	function test_add() {
 		//there should be a message template group in the db.  Let's get it.
@@ -32,9 +32,9 @@ class EE_Message_Template_Group_Repository_Test extends EE_UnitTestCase {
 		);
 		$this->assertInstanceOf( 'EE_Message_Template_Group', $message_template_group );
 
-		$test_repo = new EE_Message_Template_Group_Repository();
+		$test_repo = new EE_Message_Template_Group_Collection();
 
-		$this->assertInstanceOf( 'EE_Message_Template_Group_Repository', $test_repo );
+		$this->assertInstanceOf( 'EE_Message_Template_Group_Collection', $test_repo );
 
 		//add mtpg to repo with dummy evtID used for later tests.
 		$test_repo->add( $message_template_group, 22 );
@@ -50,10 +50,12 @@ class EE_Message_Template_Group_Repository_Test extends EE_UnitTestCase {
 
 	/**
 	 * @depends test_add
-	 * @param EE_Message_Template_Group_Repository $test_repo
-	 * @return EE_Message_Template_Group_Repository
+	 *
+*@param EE_Message_Template_Group_Collection $test_repo
+	 *
+*@return EE_Message_Template_Group_Collection
 	 */
-	function test_get_by_ID( EE_Message_Template_Group_Repository $test_repo ) {
+	function test_get_by_ID( EE_Message_Template_Group_Collection $test_repo ) {
 		//get the object to remove.
 		$mtpg = $test_repo->current();
 
@@ -68,9 +70,10 @@ class EE_Message_Template_Group_Repository_Test extends EE_UnitTestCase {
 
 	/**
 	 * @depends test_get_by_ID
-	 * @param EE_Message_Template_Group_Repository $test_repo
+	 *
+*@param EE_Message_Template_Group_Collection $test_repo
 	 */
-	function test_get_by_key( EE_Message_Template_Group_Repository $test_repo ) {
+	function test_get_by_key( EE_Message_Template_Group_Collection $test_repo ) {
 		$key_should_exist = $test_repo->get_key( 'email', 'registration', 22 );
 		$key_should_not_exist = $test_repo->get_key( 'email', 'registration', 15 );
 		$this->assertNotInstanceOf( 'EE_Message_Template_Group', $test_repo->get_by_key( $key_should_not_exist ) );

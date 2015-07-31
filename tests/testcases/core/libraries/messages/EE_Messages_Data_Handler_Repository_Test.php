@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains test class for /core/repositories/EE_Messages_Data_Handler_Repository.lib.php
+ * Contains test class for /core/repositories/EE_Messages_Data_Handler_Collection.lib.php
  *
  * @since  		4.9.0
  * @package 	Event Espresso
@@ -8,7 +8,7 @@
  */
 
 /**
- * All tests for the EE_Messages_Data_Handler_Repository class.
+ * All tests for the EE_Messages_Data_Handler_Collection class.
  *
  * @since 		4.9.0
  * @package 	Event Espresso
@@ -18,16 +18,16 @@ class EE_Messages_Data_Handler_Repository_Test extends EE_UnitTestCase {
 
 
 	/**
-	 * @return EE_Messages_Data_Handler_Repository
+	 * @return EE_Messages_Data_Handler_Collection
 	 */
 	function test_add() {
 		//need to add some events for previewer to use... we'll just use the event scenarios
 		$this->scenarios->get_scenarios_by_type( 'event' );
 
 		$data_handler = new EE_Messages_Preview_incoming_data();
-		$test_repo = new EE_Messages_Data_Handler_Repository();
+		$test_repo = new EE_Messages_Data_Handler_Collection();
 
-		$this->assertInstanceOf( 'EE_Messages_Data_Handler_Repository', $test_repo );
+		$this->assertInstanceOf( 'EE_Messages_Data_Handler_Collection', $test_repo );
 
 		$test_repo->add( $data_handler, array() );
 
@@ -42,10 +42,12 @@ class EE_Messages_Data_Handler_Repository_Test extends EE_UnitTestCase {
 
 	/**
 	 * @depends test_add
-	 * @param EE_Messages_Data_Handler_Repository $test_repo
-	 * @return EE_Messages_Data_Handler_Repository
+	 *
+*@param EE_Messages_Data_Handler_Collection $test_repo
+	 *
+*@return EE_Messages_Data_Handler_Collection
 	 */
-	function test_remove( EE_Messages_Data_Handler_Repository $test_repo ) {
+	function test_remove( EE_Messages_Data_Handler_Collection $test_repo ) {
 		//get the object to remove.
 		$data_handler = $test_repo->current();
 
@@ -66,9 +68,10 @@ class EE_Messages_Data_Handler_Repository_Test extends EE_UnitTestCase {
 
 	/**
 	 * @depends test_remove
-	 * @param EE_Messages_Data_Handler_Repository $test_repo
+	 *
+*@param EE_Messages_Data_Handler_Collection $test_repo
 	 */
-	function test_get_by_key( EE_Messages_Data_Handler_Repository $test_repo ) {
+	function test_get_by_key( EE_Messages_Data_Handler_Collection $test_repo ) {
 		$key_should_exist = $test_repo->get_key( 'EE_Messages_Preview_incoming_data', array() );
 		$key_should_not_exist = $test_repo->get_key( 'Some_Bogus_Class', array() );
 		$this->assertNotInstanceOf( 'EE_Messages_Preview_incoming_data', $test_repo->get_by_key( $key_should_not_exist ) );

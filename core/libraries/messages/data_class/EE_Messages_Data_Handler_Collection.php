@@ -10,7 +10,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @author     Darren Ethier
  * @since      4.9.0
  */
-class EE_Messages_Data_Handler_Repository extends EE_Object_Repository {
+class EE_Messages_Data_Handler_Collection extends EE_Object_Repository {
 
 
 
@@ -66,7 +66,7 @@ class EE_Messages_Data_Handler_Repository extends EE_Object_Repository {
 	 * This returns a saved EE_Messages_incoming_data object if there is one in the repository indexed by a key matching
 	 * the given string.
 	 *
-	 * @param string  $key  @see EE_Messages_Data_Handler_Repository::get_key() to setup a key formatted for searching.
+	 * @param string  $key  @see EE_Messages_Data_Handler_Collection::get_key() to setup a key formatted for searching.
 	 *
 	 * @return null|EE_Messages_incoming_data
 	 */
