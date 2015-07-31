@@ -244,13 +244,22 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $registrations_requiring_payment ) ) {
 			//EEH_Debug_Tools::printr( $registrations_requiring_payment, '$registrations_requiring_payment', __FILE__, __LINE__ );
 			// autoload Line_Item_Display classes
+			EEH_Autoloader::register_line_item_filter_autoloaders();
+			$line_item_filter_collection = new EE_Line_Item_Filter_Collection();
+			$line_item_filter_collection->add( new EE_Billable_Line_Item_Filter( $registrations ) );
+			$line_item_filter_collection->add( new EE_Non_Zero_Line_Item_Filter() );
+			$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
+				$line_item_filter_collection,
+				$this->checkout->cart->get_grand_total()
+			);
+			$filtered_grand_total = $line_item_filter_processor->process();
+			//echo "\n<br />";
+			//EEH_Line_Item::visualize( $filtered_grand_total );
 			EEH_Autoloader::register_line_item_display_autoloaders();
 			$this->set_Line_Item_Display( new EE_Line_Item_Display( 'spco' ) );
-			$transaction_details = $this->Line_Item_Display->display_line_item(
-				$this->checkout->cart->get_grand_total(),
-				array( 'registrations' => $registrations )
-			);
-			$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
+			$transaction_details = $this->Line_Item_Display->display_line_item( $filtered_grand_total );
+			//$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
+			$this->checkout->amount_owing = $filtered_grand_total->total();
 			if ( $this->checkout->amount_owing > 0 ) {
 				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
 			}
