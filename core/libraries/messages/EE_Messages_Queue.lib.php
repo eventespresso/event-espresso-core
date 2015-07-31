@@ -366,11 +366,12 @@ class EE_Messages_Queue {
 	 *  Loops through the EE_Message objects in the _queue and calls the messenger send methods for each message.
 	 *
 	 * @param   bool    $save   Used to indicate whether to save the message queue after sending (default will save).
+	 * @param   bool|int    $by_priority  When set, this indicates that only messages matching the given priority should be executed.
 	 * @return  int     Number of messages sent.  Note, 0 does not mean that no messages were processed.  Also, if the messenger
 	 *                  is an request type messenger (or a preview), its entirely possible that the messenger will exit before
 	 *                  returning here.
 	 */
-	public function execute( $save = true ) {
+	public function execute( $save = true, $by_priority = false ) {
 		$messages_sent = 0;
 		// used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
 		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
@@ -381,6 +382,12 @@ class EE_Messages_Queue {
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
 			}
+
+			//if $by_priority is set and does not match then continue;
+			if ( $by_priority && $by_priority != $message->priority() ) {
+				continue;
+			}
+
 			$error_msg = array();
 			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
