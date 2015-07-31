@@ -28,7 +28,10 @@ abstract class EE_Object_Repository extends EE_Object_Collection implements EEI_
 	 * _call_user_func_array_on_current
 	 *
 	 * calls the supplied callback method name on the current repository object,
-	 * an array of arguments can also be supplied that will be passed along to the callback method
+	 * an array of arguments can also be supplied that will be passed along to the callback method,
+	 * where each element of the $arguments array corresponds to a parameter for the callback method
+	 * PLZ NOTE: if the first argument of the callback requires an array, for example array( 'key' => 'value' )
+	 * then $arguments needs to be a DOUBLE array ie: array( array( 'key' => 'value' ) )
 	 *
 	 * @access public
 	 * @param string $callback 		name of method found on object to be called.
