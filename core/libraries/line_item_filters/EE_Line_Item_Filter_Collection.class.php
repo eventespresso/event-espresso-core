@@ -21,9 +21,8 @@ class EE_Line_Item_Filter_Collection extends EE_Object_Collection {
 
 	/**
 	 * EE_Line_Item_Filter_Collection constructor.
-	 * @param $interface
 	 */
-	public function __construct( $interface ) {
+	public function __construct() {
 		$this->interface = 'EEI_Line_Item_Filter';
 	}
 
