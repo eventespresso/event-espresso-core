@@ -559,26 +559,29 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @return string
 	 */
 	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE, $echo = TRUE ) {
+		EE_Registry::instance()->load_helper( 'Event_View' );
 		// set and filter date and time formats when a range is returned
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
-		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
-		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
-		// set and filter date and time formats when only a single datetime is returned
-		$single_date_format = ! empty( $single_date_format ) ? $single_date_format : get_option( 'date_format' );
-		$single_time_format = ! empty( $single_time_format ) ? $single_time_format : get_option( 'time_format' );
-		$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', $single_date_format );
-		$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', $single_time_format );
-		EE_Registry::instance()->load_helper( 'Event_View' );
+		// get the start and end date with NO time portion
 		$the_event_date = EEH_Event_View::the_earliest_event_date( $date_format, '', $EVT_ID );
 		$the_event_end_date = EEH_Event_View::the_latest_event_date( $date_format, '', $EVT_ID );
-		$the_event_date_and_time = EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID );
-		$the_event_end_date_and_time = EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID );
-		$the_single_event_date = EEH_Event_View::the_earliest_event_date( $single_date_format, $single_time_format, $EVT_ID );
+		// now we can determine if date range spans more than one day
 		if ( $the_event_date != $the_event_end_date ) {
-			$html = $the_event_date_and_time . __( ' - ', 'event_espresso' ) . $the_event_end_date_and_time;
+			$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
+			$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
+			$html = sprintf(
+				__( '%1$s - %2$s', 'event_espresso' ),
+				EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID ),
+				EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID )
+			);
 		} else {
-			$html = $the_single_event_date;
+			// set and filter date and time formats when only a single datetime is returned
+			$single_date_format = ! empty( $single_date_format ) ? $single_date_format : get_option( 'date_format' );
+			$single_time_format = ! empty( $single_time_format ) ? $single_time_format : get_option( 'time_format' );
+			$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', $single_date_format );
+			$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', $single_time_format );
+			$html = EEH_Event_View::the_earliest_event_date( $single_date_format, $single_time_format, $EVT_ID );
 		}
 		if ( $echo ) {
 			echo $html;
