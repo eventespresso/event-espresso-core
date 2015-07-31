@@ -91,8 +91,13 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 		if ( $success ) {
 			$this->rewind();
 			while ( $this->valid() ) {
-				$this->remove( $this->current() );
+				// can't remove current object because valid() requires it
+				// so just capture current object temporarily
+				$object = $this->current();
+				// advance the pointer
 				$this->next();
+				// THEN remove the object from the repository
+				$this->remove( $object );
 			}
 			return true;
 		}
