@@ -29,7 +29,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 	 * @return bool
 	 */
 	public function add( $message, $info = null ) {
-		$attached = $this->add( $message );
+		$attached = parent::add( $message );
 		$data['preview'] = isset( $info['preview'] ) ? $info['preview'] : false;
 		if ( $attached && $info ) {
 			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {

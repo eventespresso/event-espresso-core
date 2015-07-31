@@ -4,43 +4,33 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 
 
 /**
- * Serves as a repository for EE_Messages_incoming_data objects
+ * Serves as a collection for EE_Messages_incoming_data objects
  * @package    Event Espresso
- * @subpackage repository
+ * @subpackage colleciton
  * @author     Darren Ethier
  * @since      4.9.0
  */
-class EE_Messages_Data_Handler_Collection extends EE_Object_Repository {
+class EE_Messages_Data_Handler_Collection extends EE_Object_Collection {
 
 
-
+	public function __construct() {
+		$this->interface = 'EE_Messages_incoming_data';
+	}
 
 
 	/**
-	 * This adds the EE_Messages_incoming_data data handler object to the repository.
+	 * This adds the EE_Messages_incoming_data data handler object to the collection.
 	 *
 	 * @param EE_Messages_incoming_data  $data_handler
 	 * @param mixed                      $data           Usually an array of data used in combination with the $data_handler
 	 *                                                   classname to create an alternative index for retrieving data_handlers.
 	 * @return bool
 	 */
-	public function add( EE_Messages_incoming_data $data_handler, $data ) {
+	public function add( $data_handler, $data  = null) {
 		$info['key'] = $this->get_key( get_class( $data_handler ), $data );
-		return $this->addObject( $data_handler, $info );
+		return parent::add( $data_handler, $info );
 	}
-
-
-
-
-
-
-	/**
-	 * Remove given EE_Messages_incoming_data from repository.
-	 * @param EE_Messages_incoming_data $data_handler
-	 */
-	public function remove( EE_Messages_incoming_data $data_handler ) {
-		$this->removeObject( $data_handler );
-	}
+	
 
 
 

@@ -7,7 +7,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Serves as a repository for EE_Message_Template_Group objects
  * @package    Event Espresso
- * @subpackage repository
+ * @subpackage collection
  * @author     Darren Ethier
  * @since      4.9.0
  */
@@ -15,17 +15,22 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection {
 
 
 
+	public function __construct() {
+		$this->interface = 'EE_Message_Template_Group';
+	}
+
 
 	/**
 	 * Adds the Message Template Group object to the repository.
 	 *
-	 * @param EE_Message_Template_Group $mtpg
-	 * @param int                       $EVT_ID  Some templates are specific to EVT, so this is provided as a way of
-	 *                                           indexing the template by key.
+	 * @param $mtpg
+	 * @param int   $EVT_ID  Some templates are specific to EVT, so this is provided as a way of
+	 *                       indexing the template by key.
+	 * @return bool
 	 */
-	public function add( EE_Message_Template_Group $mtpg, $EVT_ID = 0 ) {
+	public function add( $mtpg, $EVT_ID = null ) {
 		$data['key'] = $this->get_key( $mtpg->messenger(), $mtpg->message_type(), $EVT_ID );
-		$this->addObject( $mtpg, $data );
+		parent::add( $mtpg, $data );
 	}
 
 
