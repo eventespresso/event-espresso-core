@@ -25,7 +25,7 @@
  * @subpackage         includes/classes/EE_Checkin.class.php
  * @author             Michael Nelson
  */
-class EE_Line_Item extends EE_Base_Class {
+class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 	/**
 	 * for children line items (currently not a normal relation)
@@ -555,12 +555,12 @@ class EE_Line_Item extends EE_Base_Class {
 	/**
 	 * Adds the line item as a child to this line item. If there is another child line
 	 * item with the same LIN_code, it is overwritten by this new one
-	 * @param EE_Line_Item $line_item
+	 * @param EEI_Line_Item $line_item
 	 * @param bool         $set_order
 	 * @return bool success
 	 * @throws \EE_Error
 	 */
-	function add_child_line_item( EE_Line_Item $line_item, $set_order = true ) {
+	function add_child_line_item( EEI_Line_Item $line_item, $set_order = true ) {
 		// should we calculate the LIN_order for this line item ?
 		if ( $set_order || $line_item->order() === null ) {
 			$line_item->set_order( count( $this->children() ) );
