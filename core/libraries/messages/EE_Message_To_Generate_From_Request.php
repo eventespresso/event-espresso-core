@@ -50,6 +50,9 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 	 */
 	protected function _instantiate_from_request( EE_messages $ee_msg, EE_Request_Handler $request ) {
 		parent::__construct( $request->get('gen_msgr'), $request->get('message_type'), array(), $ee_msg, $request->get('context') );
+		if ( ! $this->valid() ) {
+			return false;
+		}
 		$this->sending_messenger = $request->get('snd_msgr');
 		$this->token = $request->get('token');
 		$this->_validate_request();
@@ -82,7 +85,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 	 * This returns the data property according to what is expected from the request.
 	 * @param $id
 	 * @throws EE_Error
-	 * return mixed (whatever the data is returned from the message type).
+	 * @return mixed (whatever the data is returned from the message type).
 	 */
 	protected function _get_data_from_request( $id ) {
 		//get the EE_Registration from the token
@@ -106,11 +109,11 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 	 * @param int             $data_id   This is sometimes used for secondary data a message type requires.
 	 * @return mixed   Data prepared as needed for generating this message.
 	 */
-	protected function _set_data_from_url( $registration, $data_id ) {
+	protected function _get_data_to_use( $registration, $data_id ) {
 		$message_type = $this->_EEMSG->get_active_message_type( $this->messenger, $this->message_type );
 		//if no message type then it likely isn't active for this messenger.
 		if ( ! $message_type instanceof EE_message_type ) {
-			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso'), $message_type->name, $generating_messenger ) );
+			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso'), $message_type->name, $this->messenger ) );
 		}
 		//use incoming data from url to setup data for the message type requirements
 		return $message_type->get_data_for_context( $this->context, $registration, $data_id );

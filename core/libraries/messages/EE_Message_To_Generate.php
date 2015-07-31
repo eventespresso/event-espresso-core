@@ -69,6 +69,23 @@ class EE_Message_To_Generate {
 
 
 	/**
+	 * This is set by the constructor to indicate whether the incoming messenger
+	 * and message type are valid.  This can then be checked by callers to determine whether
+	 * to generate this message or not.
+	 * @type bool
+	 */
+	protected $_valid = false;
+
+
+	/**
+	 * If there are any errors (non exception errors) they get added to this array for callers to decide
+	 * how to handle.
+	 * @type array
+	 */
+	protected $_error_msg = array();
+
+
+	/**
 	 * Constructor
 	 * @param string    $messenger  Slug representing messenger
 	 * @param string    $message_type   Slug representing message type.
@@ -84,8 +101,40 @@ class EE_Message_To_Generate {
 		$this->context = $context;
 		$this->preview = $preview;
 		$this->_EEMSG = $ee_msg;
+
+		//this immediately validates whether the given messenger/messagetype are active or not
+		//and sets the valid flag.
+		$this->_set_valid();
 	}
 
+
+
+
+	protected function _set_valid() {
+		$validated_for_use = $this->_EEMSG->validate_for_use( EE_Message::new_instance( array(
+			'MSG_messenger' => $this->messenger,
+			'MST_message_type' => $this->message_type
+		) ) );
+
+		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
+			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $this->messenger );
+			$this->_valid = false;
+		}
+
+		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
+			$this->_valid = false;
+			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $this->message_type );
+		}
+	}
+
+
+	/**
+	 * Simply returns the state of the $_valid property.
+	 * @return bool
+	 */
+	public function valid() {
+		return $this->_valid;
+	}
 
 
 
@@ -93,6 +142,9 @@ class EE_Message_To_Generate {
 	 *  Returns an instantiated EE_Message object from the internal data.
 	 */
 	public function get_EE_Message() {
+		if ( ! $this->valid() ) {
+			return null;
+		}
 		$this->_EE_Message = $this->_EE_Message instanceof EE_Message ? $this->_EE_Message : EE_Message::new_instance( array(
 			'MSG_messenger' => $this->messenger,
 			'MSG_message_type' => $this->message_type,
