@@ -123,12 +123,35 @@ class EED_Messages  extends EED_Module {
 	protected static function _register_routes() {
 		EE_Config::register_route( 'msg_url_trigger', 'Messages', 'run' );
 		EE_Config::register_route( 'msg_cron_trigger', 'Messages', 'run_cron' );
+		EE_Config::register_route( 'msg_browser_trigger', 'Messages', 'browser_trigger' );
 		do_action( 'AHEE__EED_Messages___register_routes' );
 	}
 
 
 
 	/**
+	 * This is called when a browser display trigger is executed.
+	 * The browser display trigger is typically used when a already generated message is displayed directly in the browser.
+	 * @since 4.9.0
+	 * @param WP $WP
+	 */
+	public function browser_trigger( $WP ) {
+		//ensure controller is loaded
+		self::_load_controller();
+		$token = EE_Registry::instance()->REQ->get( 'token' );
+		try {
+			$mtg = new EE_Message_Generated_From_Token( $token, self::$_EEMSG );
+			self::$_MSGPROCESSOR->generate_and_send_now( $mtg );
+		} catch( EE_Error $e ) {
+			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
+			// add specific message for developers if WP_DEBUG in on
+			$error_msg .= '||' . $e->getMessage();
+			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+	}
+
+
+
 	 *  This runs when the msg_url_trigger route has initiated.
 	 *
 	 * @since 4.5.0
