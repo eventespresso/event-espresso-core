@@ -63,7 +63,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Note: The EED_Messages module has the handlers for these requests.
 	 * @param string $task  The task the request is being generated for.
 	 */
-	protected static function _initiate_scheduled_non_blocking_request( $task ) {
+	public static function initiate_scheduled_non_blocking_request( $task ) {
 		//create nonce (this ensures that only valid requests are accepted)
 		$nonce = wp_create_nonce( 'EE_Messages_Scheduler_' . $task );
 		$request_url = add_query_arg(
@@ -90,7 +90,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__generation wp cron event
 	 */
 	public static function batch_generation() {
-		EE_Messages_Scheduler::_initiate_scheduled_non_blocking_request( 'generate' );
+		EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( 'generate' );
 	}
 
 
@@ -100,7 +100,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__sending
 	 */
 	public static function batch_sending() {
-		EE_Messages_Scheduler::_initiate_scheduled_non_blocking_request( 'send' );
+		EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( 'send' );
 	}
 
 } //end EE_Messages_Scheduler
