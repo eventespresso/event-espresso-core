@@ -874,13 +874,13 @@ class EEH_Line_Item {
 	 * @return void
 	 */
 	public static function visualize( EE_Line_Item $line_item, $indentation = 0 ){
-		echo "\r\n";
+		echo "\n<br />";
 		for( $i = 0; $i < $indentation; $i++ ){
-			echo "-";
+			echo " - ";
 		}
-		echo $line_item->name() . "(" . $line_item->ID() . "): " . $line_item->type() . " $" . $line_item->total() . "($" . $line_item->unit_price() . "x" . $line_item->quantity() . ")";
+		echo $line_item->name() . "( " . $line_item->ID() . " ) : " . $line_item->type() . " $" . $line_item->total() . " ( $" . $line_item->unit_price() . " x " . $line_item->quantity() . " )";
 		if( $line_item->is_taxable() ){
-			echo " taxable";
+			echo "  * taxable";
 		}
 		if( $line_item->children() ){
 			foreach($line_item->children() as $child){
