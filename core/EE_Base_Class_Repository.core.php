@@ -113,7 +113,7 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 * @return bool | int
 	 */
 	public function update_extra_meta( $meta_key, $meta_value, $previous_value = null ) {
-		return $this->_call_user_func_array_on_current( 'delete', array( $meta_key, $meta_value, $previous_value ) );
+		return $this->_call_user_func_array_on_current( 'update_extra_meta', array( $meta_key, $meta_value, $previous_value ) );
 	}
 
 
