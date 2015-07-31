@@ -359,6 +359,24 @@ class EE_Messages_Queue {
 	}
 
 
+	/**
+	 * This method checks the queue for ANY EE_Message objects with a priority matching the given priority passed in.
+	 * If that exists, then we immediately initiate a non-blocking request to do the requested action type.
+	 *
+	 * Note: Keep in mind that there is the possibility that the request will not execute if there is already another request
+	 * running on a queue for the given task.
+	 * @param string $task This indicates what type of request is going to be initiated.
+	 * @param int    $priority  This indicates the priority that triggers initating the request.
+	 */
+	public function initiate_request_by_priority( $task = 'generate', $priority = EEM_Message::priority_high ) {
+		//determine what status is matched with the priority as part of the trigger conditions.
+		$status = $task == 'generate' ? EEM_Message::status_incomplete : EEM_Message::status_idle;
+		if ( $this->_queue->count_by_priority_and_status( $priority, $status ) ) {
+			EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( $task );
+		}
+	}
+
+
 
 
 
