@@ -380,6 +380,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _load_controller() {
 		if ( ! self::$_EEMSG instanceof EE_messages ) {
+			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
 			self::$_EEMSG = new EE_messages();
 			self::$_MSGPROCESSOR = new EE_Messages_Processor( self::$_EEMSG );
