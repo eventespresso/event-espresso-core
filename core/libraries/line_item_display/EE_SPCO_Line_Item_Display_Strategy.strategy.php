@@ -274,7 +274,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// start of row
 		$html = EEH_HTML::tr( '', 'event-cart-total-row', 'total_tr odd' );
 		// event name td
-		$html .= EEH_HTML::td( EEH_HTML::strong( $line_item->desc() ), '', 'event-header', '', ' colspan="4"' );
+		$html .= EEH_HTML::td( EEH_HTML::strong( $line_item->name() ), '', 'event-header', '', ' colspan="4"' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;

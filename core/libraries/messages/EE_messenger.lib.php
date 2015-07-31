@@ -652,11 +652,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return void
 	 */
 	public function add_preview_script() {
-		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'espresso_core' ), EVENT_ESPRESSO_VERSION, true );
 
 		//error message
 		EE_Registry::$i18n_js_strings['links_disabled'] = __('All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso');
-		wp_localize_script( 'ee-messages-preview-js', 'eei18n', EE_Registry::$i18n_js_strings );
 		wp_enqueue_script( 'ee-messages-preview-js' );
 	}
 

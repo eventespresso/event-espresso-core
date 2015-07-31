@@ -515,6 +515,20 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+	/**
+	 * @param string $expected_date  The expected date string in the given full_format date string format.
+	 * @param string $actual_date    The actual date string in the given full_format date string format.
+	 * @param $full_format
+	 */
+	public function assertDateWithinOneMinute( $expected_date, $actual_date, $full_format, $custom_error_message = '' ) {
+		//take the incoming date strings convert to datetime objects and verify they are within one minute of each other
+		$expected_date = date_create_from_format( $full_format, $expected_date );
+		$actual_date = date_create_from_format( $full_format, $actual_date );
+		$difference = $actual_date->format('U') - $expected_date->format('U');
+		$this->assertTrue( $difference < 60, $custom_error_message );
+	}
+
+
 
 	/**
 	 * This sets up some save data for use in testing updates and saves via the event editor.

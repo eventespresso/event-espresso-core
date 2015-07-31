@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Object_Repository_Mock
+ * Class EE_Object_Collection_Mock
  *
  * Description
  *
@@ -10,16 +10,15 @@
  * @since 				4.6.31
  *
  */
-class EE_Object_Repository_Mock extends EE_Object_Repository {
+class EE_Object_Collection_Mock extends EE_Object_Collection {
 
 	/**
-	 * EE_Object_Repository_Mock constructor.
+	 * EE_Object_Collection_Mock constructor.
 	 */
 	public function __construct() {
 		$this->interface = 'EE_Ticket';
 	}
 
-
 }
-// End of file EE_Object_Repository_Mock.php
-// Location: /tests/mocks/EE_Object_Repository_Mock.php
+// End of file EE_Object_Collection_Mock.php
+// Location: /tests/mocks/EE_Object_Collection_Mock.php

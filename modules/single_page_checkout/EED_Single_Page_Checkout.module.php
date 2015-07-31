@@ -1027,6 +1027,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public function add_styles_and_scripts() {
+		// i18n
+		$this->translate_js_strings();
 		if ( $this->checkout->admin_request ) {
 			add_action('admin_enqueue_scripts', array($this, 'enqueue_styles_and_scripts'), 10 );
 		} else {
@@ -1099,14 +1101,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// load css
 		wp_register_style( 'single_page_checkout', SPCO_CSS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'single_page_checkout' );
-		// i18n
-		$this->translate_js_strings();
 		// load JS
 		wp_register_script( 'jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array( 'jquery' ), '1.0.1', TRUE );
 		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
 		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
-		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 
 		/**
 		 * global action hook for enqueueing styles and scripts with
@@ -1139,33 +1138,54 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			// add powered by EE msg
 			add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
+
+			$empty_cart = count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params ) ) < 1 ? true : false;
+			$cookies_not_set_msg = '';
+			if ( $empty_cart ) {
+				if ( ! isset( $_COOKIE[ 'ee_cookie_test' ] ) ) {
+					$cookies_not_set_msg = apply_filters(
+						'FHEE__Single_Page_Checkout__display_spco_reg_form__cookies_not_set_msg',
+						sprintf(
+							__( '%1$s%3$sIt appears your browser is not currently set to accept Cookies%4$s%5$sIn order to register for events, you need to enable cookies.%7$sIf you require assistance, then click the following link to learn how to %8$senable cookies%9$s%6$s%2$s', 'event_espresso' ),
+							'<div class="ee-attention">',
+							'</div>',
+							'<h6 class="important-notice">',
+							'</h6>',
+							'<p>',
+							'</p>',
+							'<br />',
+							'<a href="http://www.whatarecookies.com/enable.asp" target="_blank">',
+							'</a>'
+						)
+					);
+				}
+			}
 			$this->checkout->registration_form = new EE_Form_Section_Proper(
 				array(
 					'name' 	=> 'single-page-checkout',
 					'html_id' 	=> 'ee-single-page-checkout-dv',
-					'layout_strategy' => new EE_Template_Layout(
-						array(
-							'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
-							'template_args' => array(
-								'empty_cart' 		=> count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params )) < 1 ? TRUE : FALSE,
-								'revisit' 				=> $this->checkout->revisit,
-								'reg_steps' 			=> $this->checkout->reg_steps,
-								'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
-								'empty_msg' 		=> apply_filters(
-									'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
-									sprintf(
-										__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
-										'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
-										'">',
-										'</a>'
-									)
-								),
-								'registration_time_limit' =>
-									$this->checkout->get_registration_time_limit(),
-								'session_expiration' => gmdate(
-									'M d, Y H:i:s',
-									EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
-								)
+					'layout_strategy' =>
+						new EE_Template_Layout(
+							array(
+								'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
+								'template_args' => array(
+									'empty_cart' 		=> $empty_cart,
+									'revisit' 				=> $this->checkout->revisit,
+									'reg_steps' 			=> $this->checkout->reg_steps,
+									'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
+									'empty_msg' 		=> apply_filters(
+										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
+										sprintf(
+											__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
+											'<a href="' . get_post_type_archive_link( 'espresso_events' ) . '" title="',
+											'">',
+											'</a>'
+										)
+									),
+									'cookies_not_set_msg' 		=> $cookies_not_set_msg,
+									'registration_time_limit' 	=> $this->checkout->get_registration_time_limit(),
+									'session_expiration' 			=>
+										gmdate( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
 							)
 						)
 					)
