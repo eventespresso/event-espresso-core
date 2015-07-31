@@ -92,6 +92,7 @@ class EE_Line_Item_Filter_Processor {
 			$this->line_item_filters->current()->process( $this->grand_total_line_item );
 			$this->line_item_filters->next();
 		}
+		$this->grand_total_line_item->recalculate_total_including_taxes();
 		return $this->grand_total_line_item;
 	}
 
