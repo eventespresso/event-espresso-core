@@ -87,7 +87,7 @@ class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 			return null;
 		}
 		foreach ( $line_item->children() as $child_line_item ) {
-			$billable_line_item->add_child_line_item( $this->process( $child_line_item ) );
+			$this->process( $child_line_item );
 		}
 		return $billable_line_item;
 	}
