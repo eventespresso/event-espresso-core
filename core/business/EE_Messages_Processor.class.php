@@ -71,6 +71,7 @@ class EE_Messages_Processor {
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
 				$this->_queue->unlock_queue();
+				$this->_queue->initiate_request_by_priority('send');
 				return $new_queue;
 			}
 		} else {
@@ -123,7 +124,9 @@ class EE_Messages_Processor {
 	 * @return  EE_Messages_Queue
 	 */
 	public function queue_for_generation( EE_Message_To_Generate $mtg ) {
-		$this->_generator->create_and_add_message_to_queue( $mtg );
+		if ( $mtg->valid() ) {
+			$this->_generator->create_and_add_message_to_queue( $mtg );
+		}
 	}
 
 
@@ -175,7 +178,7 @@ class EE_Messages_Processor {
 		}
 
 		foreach ( $messages_to_generate as $mtg ) {
-			if ( $mtg instanceof EE_Message_To_Generate ) {
+			if ( $mtg instanceof EE_Message_To_Generate && $mtg->valid() ) {
 				$this->queue_for_generation( $mtg );
 			}
 		}
@@ -189,10 +192,11 @@ class EE_Messages_Processor {
 	 * Receives an array of EE_Message_To_Generate objects and generates the EE_Message objects, then persists (so its
 	 * queued for sending).
 	 * @param  EE_Message_To_Generate[]
+	 * @return EE_Messages_Queue
 	 */
 	public function generate_and_queue_for_sending( $messages_to_generate ) {
 		$this->_queue_for_generation_loop( $messages_to_generate );
-		$this->_generator->generate( true );
+		return $this->_generator->generate( true );
 	}
 
 
@@ -202,15 +206,70 @@ class EE_Messages_Processor {
 	/**
 	 * Generate for preview and execute right away.
 	 * @param  EE_Message_To_Generate $mtg
-	 * @return EE_Messages_Queue
+	 * @return EE_Messages_Queue | null
 	 */
 	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
+		if ( ! $mtg->valid() ) {
+			return null;
+		}
 		//just make sure preview is set on the $mtg (in case client forgot)
 		$mtg->preview = true;
 		$generated_queue = $this->generate_and_return( array( $mtg ) );
 		if ( $generated_queue->execute( false ) ) {
 			return $generated_queue;
+		} else {
+			return null;
 		}
+	}
+
+
+	/**
+	 * This generates and sends from the given EE_Message_To_Generate class immediately.
+	 * @param EE_Message_To_Generate $mtg
+	 * @return bool
+	 */
+	public function generate_and_send_now( EE_Message_To_Generate $mtg ) {
+		if ( ! $mtg->valid() ) {
+			return false;
+		}
+		if ( $mtg instanceof EE_Message_Generated_From_Token ) {
+			$this->_queue->add( $mtg->get_EE_Message() );
+			$this->_set_errors( $this->_queue );
+			$this->_queue->execute(false);
+		} else {
+			$generated_queue = $this->generate_and_return( $mtg );
+			$this->_set_errors( $generated_queue );
+			$generated_queue->execute( false );
+		}
+		return false;
+	}
+
+
+
+
+	/**
+	 * This simply loops through all active messengers and takes care of setting up the
+	 * EE_Message_To_Generate objects and queueing for generation.  This method also calls the
+	 * execute by priority method on the queue which will optionally kick off a new non-blocking
+	 * request to complete the action if the priority for the message requires immediate action.
+	 * @param string $message_type
+	 * @param $data
+	 */
+	public function generate_for_all_active_messengers( $message_type, $data ) {
+		$messages_to_generate = array();
+		foreach( $this->_EEMSG->get_active_messengers() as $messenger ) {
+			$mtg = new EE_Message_To_Generate(
+				$messenger,
+				$message_type,
+				$data,
+				$this->_EEMSG
+			);
+			if ( $mtg->valid() ) {
+				$messages_to_generate[] = $mtg;
+			}
+		}
+		$this->batch_queue_for_generation_and_persist( $messages_to_generate );
+		$this->_queue->initiate_request_by_priority();
 	}
 
 
