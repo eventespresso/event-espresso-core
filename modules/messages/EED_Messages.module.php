@@ -152,6 +152,7 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
 	 *  This runs when the msg_url_trigger route has initiated.
 	 *
 	 * @since 4.5.0
@@ -160,38 +161,12 @@ class EED_Messages  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP ) {
-
-		$sending_messenger = EE_Registry::instance()->REQ->is_set('snd_msgr') ? EE_Registry::instance()->REQ->get('snd_msgr') : '';
-		$generating_messenger = EE_Registry::instance()->REQ->is_set('gen_msgr') ? EE_Registry::instance()->REQ->get('gen_msgr') : '';
-		$message_type = EE_Registry::instance()->REQ->is_set('message_type') ? EE_Registry::instance()->REQ->get('message_type') : '';
-		$context = EE_Registry::instance()->REQ->is_set('context') ? EE_Registry::instance()->REQ->get('context') : '';
-		$token = EE_Registry::instance()->REQ->is_set('token') ? EE_Registry::instance()->REQ->get('token') : '';
-		$data_id = EE_Registry::instance()->REQ->is_set('id') ? (int) EE_Registry::instance()->REQ->get('id') : 0;
-
-		//verify the needed params are present.
-		if ( empty( $sending_messenger ) || empty( $generating_messenger ) || empty( $message_type ) || empty( $context ) || empty( $token ) ) {
-			EE_Error::add_error( __( 'The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return;
-		}
-		//get the registration: the token will always be the unique REG_url_link saved with a registration.  We use that to make sure we retrieve the correct data for the given registration.
-		$registration = EEM_Registration::instance()->get_one( array( array( 'REG_url_link' => $token ) ) );
-		//if no registration then bail early.
-		if ( ! $registration instanceof EE_Registration ) {
-			EE_Error::add_error( __( 'Unable to complete the request because the token is invalid.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return;
-		}
 		//ensure controller is loaded
 		self::_load_controller();
 		// attempt to process message
 		try {
-			// retrieve the data via the handler
-			//  Depending on the context and the message type data handler, the data_id will correspond to the specific data handler item we need to retrieve for specific messages
-			// (i.e. a specific payment or specific refund).
-			$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $registration, $data_id, $context );
-			//make sure we drop generating messenger if both sending and generating are the same.
-			$generating_messenger = $sending_messenger != $generating_messenger ? $generating_messenger : NULL;
-			//now we can trigger the actual sending of the message via the message type.
-			self::$_EEMSG->send_message( $message_type, $data, $sending_messenger, $generating_messenger, $context );
+			$mtg = new EE_Message_To_Generate_From_Request( self::$_EEMSG );
+			self::$_MSGPROCESSOR->generate_and_send_now( $mtg );
 		} catch ( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
 			// add specific message for developers if WP_DEBUG in on
@@ -293,35 +268,6 @@ class EED_Messages  extends EED_Module {
 
 
 
-
-
-	/**
-	 * Given the token (reg_url_link) and (optionally) the $data_id, this returns the appropriate data object(s) for the given message_type.
-	 *
-	 * @since 4.5.0
-	 * @throws EE_Error
-	 *
-	 * @param string $generating_messenger The messenger that is used for generating templates for this message type.
-	 * @param string $message_type Used to figure out what data handler is used (which in turn enables us to know what data type is required)
-	 * @param EE_Registration $registration
-	 * @param int      $data_id Some data handlers require a specific object.  The id is used to provide that specific object.
-	 * @param string $context what context is being requested.
-	 *
-	 * @return mixed  (EE_Base_Class||EE_Base_Class[])
-	 */
-	protected function _get_messages_data_from_url( $generating_messenger, $message_type, EE_Registration $registration, $data_id, $context ) {
-		//get message type object then get the correct data setup for that message type.
-		$message_type = self::$_EEMSG->get_active_message_type( $generating_messenger, $message_type );
-		//if no message type then it likely isn't active for this messenger.
-		if ( ! $message_type instanceof EE_message_type ) {
-			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso'), $message_type->name, $generating_messenger ) );
-		}
-		//get data according to data handler requirements
-		return $message_type->get_data_for_context( $context, $registration, $data_id );
-	}
-
-
-
 	/**
 	 * This simply makes sure the autoloaders are registered for the EE_Messages system.
 	 *
@@ -395,17 +341,7 @@ class EED_Messages  extends EED_Module {
 	public static function payment_reminder( EE_Transaction $transaction ) {
 		self::_load_controller();
 		$data = array( $transaction, null );
-		if ( self::$_EEMSG->send_message( 'payment_reminder', $data ) ) {
-			//self::log(
-			//	__CLASS__, __FUNCTION__, __LINE__,
-			//	$transaction,
-			//	array(
-			//		'delivered'  			=> current_time( 'mysql' ),
-			//		'message_type' 	=> 'payment_reminder',
-			//		'txn_status' 			=> $transaction->status_obj()->code( false, 'sentence' ),
-			//	)
-			//);
-		}
+		self::$_MSGPROCESSOR->generate_for_all_active_messengers( 'payment_reminder', $data );
 	}
 
 
