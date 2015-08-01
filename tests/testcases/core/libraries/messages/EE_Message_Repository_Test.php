@@ -58,7 +58,7 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 
 		//add back to repo and then try persist remove
 		$test_repo->add( $message );
-		$test_repo->remove( $message, true );
+		$test_repo->delete();
 		$this->assertEmpty( EEM_Message::instance()->get_one_by_ID( $msgid ) );
 	}
 
@@ -71,7 +71,9 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 		$test_repo = new EE_Message_Repository();
 		$generation_data = array( 'MSG_generation_data' => array(
 			'REG_ID' => 12
-		));
+			),
+			'preview' => true
+		);
 		$messages = array();
 		for( $i=0;$i<5;$i++) {
 			$message = $this->factory->message->create( array( 'nosave' => 1 ) );
