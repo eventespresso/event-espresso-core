@@ -6,7 +6,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Class EE_Billable_Line_Item_Filter
  *
  * Filters line items to remove any that can not be billed for
- * as based on a list of EE_Registrations passed during construction
+ * as based on a list of EE_Registrations passed during construction.
+ * Also, modifies NON-ticket regular line items (eg flat discounts and percent surcharges, etc)
+ * to only show the share for the specified ticket quantities
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -14,14 +16,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since 				4.8.0
  *
  */
-class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
+class EE_Billable_Line_Item_Filter extends EE_Modified_Ticket_Quantities_Line_Item_Filter {
 
-	/**
-	 * array of ticket IDs and their corresponding quantities for
-	 * registrations that owe money and can pay at this moment
-	 * @type array $_billable_ticket_quantities
-	 */
-	protected $_billable_ticket_quantities = array();
 
 
 
@@ -30,7 +26,7 @@ class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 	 * @param EE_Registration[] $registrations
 	 */
 	public function __construct( $registrations ) {
-		$this->_billable_ticket_quantities = $this->_calculate_billable_ticket_quantities_from_registrations( $registrations );
+		parent::__construct( $this->_calculate_billable_ticket_quantities_from_registrations( $registrations ) );
 	}
 
 
@@ -72,48 +68,6 @@ class EE_Billable_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 		}
 		return $billable_ticket_quantities;
 	}
-
-
-
-	/**
-	 * Creates a duplicate of the line item tree, except only includes billable items
-	 * and the portion of line items attributed to billable things
-	 * @param EEI_Line_Item      $line_item
-	 * @return \EEI_Line_Item
-	 */
-	public function process( EEI_Line_Item $line_item ) {
-		$billable_line_item = $this->_filter_billable_line_item( $line_item );
-		if ( ! $billable_line_item instanceof EEI_Line_Item ) {
-			return null;
-		}
-		foreach ( $line_item->children() as $child_line_item ) {
-			$this->process( $child_line_item );
-		}
-		return $billable_line_item;
-	}
-
-
-
-	/**
-	 * Creates a new, unsaved line item from $line_item that factors in the
-	 * number of billable registrations on $registrations.
-	 * @param EEI_Line_Item $line_item
-	 * @return EEI_Line_Item
-	 */
-	protected function _filter_billable_line_item( EEI_Line_Item $line_item ) {
-		// is this a ticket ?
-		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
-			// if this ticket is billable at this moment, then we should have a positive quantity
-			if ( isset( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] )) {
-				// set quantity based on number of billable registrations for this ticket
-				$line_item->set_quantity( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] );
-			}
-		}
-		return $line_item;
-	}
-
-
-
 }
 // End of file EE_Billable_Line_Item_Filter.class.php
 // Location: /core/libraries/line_item_filters/EE_Billable_Line_Item_Filter.class.php

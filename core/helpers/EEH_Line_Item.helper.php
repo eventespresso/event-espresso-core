@@ -360,7 +360,8 @@ class EEH_Line_Item {
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'taxes',
 			'LIN_name' 	=> __('Taxes', 'event_espresso'),
-			'LIN_type'	=> EEM_Line_Item::type_tax_sub_total
+			'LIN_type'	=> EEM_Line_Item::type_tax_sub_total,
+			'LIN_order' => 1000,//this should always come last
 		));
 		$tax_line_item = apply_filters(
 			'FHEE__EEH_Line_Item__create_taxes_subtotal__tax_line_item',

@@ -179,6 +179,33 @@ interface EEI_Line_Item {
 	 */
 	function recalculate_total_including_taxes();
 
+	/**
+	 * Checks if this item is a percentage modifier or not
+	 * @throws EE_Error
+	 * @return boolean
+	 */
+	function is_percent();
+
+	/**
+	 * Gets percent (between 100-.001)
+	 * @return float
+	 */
+	function percent();
+
+	/**
+	 * Sets total
+	 * @param float $total
+	 * @return boolean
+	 */
+	function set_total( $total );
+
+	/**
+	 * Sets unit_price
+	 * @param float $unit_price
+	 * @return boolean
+	 */
+	function set_unit_price( $unit_price );
+
 
 
 }

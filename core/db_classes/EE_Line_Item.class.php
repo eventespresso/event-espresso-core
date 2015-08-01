@@ -250,8 +250,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			//to taxable items, so its' an exception. Treat it like a flat line item
 			return false;
 		}
-		$unit_price = $this->get( 'LIN_unit_price' );
-		$percent = $this->get( 'LIN_percent' );
+		$unit_price = abs( $this->get( 'LIN_unit_price' ) );
+		$percent = abs( $this->get( 'LIN_percent' ) );
 		if ( $unit_price < .001 && $percent ) {
 			return TRUE;
 		} elseif ( $unit_price >= .001 && !$percent ) {
