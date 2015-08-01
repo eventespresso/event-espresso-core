@@ -13,8 +13,9 @@
  * @since 		4.9.0
  * @package 	Event Espresso
  * @subpackage 	tests
+ * @group       messages
  */
-class EE_Messages_Data_Handler_Repository_Test extends EE_UnitTestCase {
+class EE_Messages_Data_Handler_Collection_Test extends EE_UnitTestCase {
 
 
 	/**
@@ -79,4 +80,4 @@ class EE_Messages_Data_Handler_Repository_Test extends EE_UnitTestCase {
 	}
 
 
-} //end EE_Messages_Data_Handler_Repository_Test
+} //end EE_Messages_Data_Handler_Collection_Test
