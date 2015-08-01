@@ -177,6 +177,11 @@ abstract class EE_Test_Scenario {
 class EE_Test_Scenario_Repository extends EE_Object_Repository {
 
 
+	public function __construct() {
+		$this->interface = 'EE_Test_Scenario';
+	}
+
+
 	public function add_test_scenario( EE_Test_Scenario $test_scenario ) {
 		return $this->add( $test_scenario, array(
 			'type' => $test_scenario->type,
