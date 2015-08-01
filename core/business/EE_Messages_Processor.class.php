@@ -248,14 +248,30 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * This simply loops through all active messengers and takes care of setting up the
-	 * EE_Message_To_Generate objects and queueing for generation.  This method also calls the
-	 * execute by priority method on the queue which will optionally kick off a new non-blocking
+	 * Creates mtg objects for all active messengers and queues for generation.
+	 * This method also calls the execute by priority method on the queue which will optionally kick off a new non-blocking
 	 * request to complete the action if the priority for the message requires immediate action.
 	 * @param string $message_type
 	 * @param $data
 	 */
 	public function generate_for_all_active_messengers( $message_type, $data ) {
+		$messages_to_generate = $this->setup_mtgs_for_all_active_messengers( $message_type, $data );
+		$this->batch_queue_for_generation_and_persist( $messages_to_generate );
+		$this->_queue->initiate_request_by_priority();
+	}
+
+
+
+
+	/**
+	 * This simply loops through all active messengers and takes care of setting up the
+	 * EE_Message_To_Generate objects.
+	 * @param $message_type
+	 * @param $data
+	 *
+	 * @return EE_Message_To_Generate[]
+	 */
+	public function setup_mtgs_for_all_active_messengers( $message_type, $data ) {
 		$messages_to_generate = array();
 		foreach( $this->_EEMSG->get_active_messengers() as $messenger ) {
 			$mtg = new EE_Message_To_Generate(
@@ -268,8 +284,33 @@ class EE_Messages_Processor {
 				$messages_to_generate[] = $mtg;
 			}
 		}
-		$this->batch_queue_for_generation_and_persist( $messages_to_generate );
-		$this->_queue->initiate_request_by_priority();
+		return $messages_to_generate;
+	}
+
+
+
+
+	/**
+	 * This accepts an array of EE_Message::MSG_ID values and will use that to retrieve the objects from the database
+	 * and send.
+	 * @param array $message_ids
+	 */
+	public function setup_messages_from_ids_and_send( $message_ids ) {
+		$messages = EEM_Message::instance()->get_all( array(
+			array(
+				'MSG_ID' => aray( 'IN', $message_ids )
+			)
+		));
+
+		//set the Messages to resend (only if their status is sent).
+		foreach ( $messages as $message ) {
+			if ( $message instanceof EE_Message && in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
+				$message->set_STS_ID( EEM_Message::status_resend );
+				$this->_queue->add( $message );
+			}
+		}
+
+		$this->_queue->initiate_request_by_priority( 'send' );
 	}
 
 
