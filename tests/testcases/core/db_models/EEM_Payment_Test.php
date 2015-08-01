@@ -45,9 +45,12 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 		// and base DateTime for now
 		$now = $now instanceof DateTime ? $now : date_create_from_format( 'Y-m-d H:i:s', Date( 'Y-m-d' ) . '13:00:00', $timezone );
 		//setup some dates we'll use for testing with.
-		$two_days_ago = new DateTime( "now -2days", $timezone );
-		$one_hour_from_now = new DateTime( "now +1hour", $timezone );
-		$two_days_from_now = new DateTime( "now +2days", $timezone );
+		$two_days_ago = clone $now;
+		$one_hour_from_now = clone $now;
+		$two_days_from_now = clone $now;
+		$two_days_ago = $two_days_ago->sub( new DateInterval('P2D') );
+		$one_hour_from_now = $one_hour_from_now->add( new DateInterval('PT1H') );
+		$two_days_from_now = $two_days_from_now->add( new DateInterval('P2D') );
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
 
@@ -55,7 +58,7 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 		$payment_args = array(
 			array( 'PAY_timestamp' => $two_days_ago->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $one_hour_from_now->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'PAY_timestamp' => $now->sub( new DateInterval( "PT2H" ) )->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
+			array( 'PAY_timestamp' => $now->sub( new DateInterval( 'PT2H' ) )->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $two_days_from_now->format( $full_format) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $two_days_ago->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 		);

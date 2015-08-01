@@ -176,9 +176,11 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 					$this->assertInstanceof( 'EE_Ticket', $tkt, $context_for_error_messages . sprintf( 'Format: %s', $full_format ) );
 
 					//verify start and date
-					//Note: currently this test sometimes fails depending on the timing of when it happens and how fast the server is. Whenever I've seen this fail its been off by 1 minute.
-					$this->assertEquals( $tkt->start_date( $date_format, $time_format ), $this->_default_dates['TKT_start']->format( $full_format ), $context_for_error_messages . sprintf( 'Start Ticket DateFormat Tested: %s', $full_format ) );
-					$this->assertEquals( $tkt->end_date( $date_format, $time_format ), $this->_default_dates['TKT_end']->format( $full_format ), $context_for_error_messages . sprintf( 'End Ticket Date Format Tested: %s', $full_format ) );
+					//Note: currently this test sometimes fails depending on the timing of when it happens and how fast
+					// the server is. Whenever I've seen this fail its been off by 1 minute and that's because when the
+					// default dates for testing were created, they likely happened at the second turnover.
+					$this->assertDateWithinOneMinute( $tkt->start_date( $date_format, $time_format ), $this->_default_dates['TKT_start']->format( $full_format ), $full_format, $context_for_error_messages . sprintf( 'Start Ticket DateFormat Tested: %s', $full_format ) );
+					$this->assertDateWithinOneMinute( $tkt->end_date( $date_format, $time_format ), $this->_default_dates['TKT_end']->format( $full_format ), $full_format, $context_for_error_messages . sprintf( 'End Ticket Date Format Tested: %s', $full_format ) );
 
 					$saved_tkts[$full_format] = $tkt;
 				}
@@ -212,10 +214,10 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 
 			//get related ticket on this $edtt
 			$evt_tkt = $edtt->get_first_related( 'Ticket' );
-			$this->assertEquals( $evt_tkt->start_date( $formats[0], $formats[1] ), $this->_default_dates['TKT_start']->format( $format ), $context_for_error_messages . sprintf( 'DB TKT/Default TKT Start Date Format Checked: %s', $format ) );
-			$this->assertEquals( $evt_tkt->end_date( $formats[0], $formats[1] ), $this->_default_dates['TKT_end']->format( $format ), $context_for_error_messages . sprintf( 'DB TKT/Default TKT End Date Format Checked: %s', $format ) );
-			$this->assertEquals( $evt_tkt->start_date( $formats[0], $formats[1] ), $saved_tkts[$format]->start_date( $formats[0], $formats[1] ), $context_for_error_messages . sprintf( 'DB TKT/Orig TKT Start Date Format Checked: %s', $format ) );
-			$this->assertEquals( $evt_tkt->end_date( $formats[0], $formats[1] ), $saved_tkts[$format]->end_date( $formats[0], $formats[1] ), $context_for_error_messages . sprintf( 'DB TKT/Orig TKT End Date Format Checked: %s', $format ) );
+			$this->assertDateWithinOneMinute( $evt_tkt->start_date( $formats[0], $formats[1] ), $this->_default_dates['TKT_start']->format( $format ), $format, $context_for_error_messages . sprintf( 'DB TKT/Default TKT Start Date Format Checked: %s', $format ) );
+			$this->assertDateWithinOneMinute( $evt_tkt->end_date( $formats[0], $formats[1] ), $this->_default_dates['TKT_end']->format( $format ), $format, $context_for_error_messages . sprintf( 'DB TKT/Default TKT End Date Format Checked: %s', $format ) );
+			$this->assertDateWithinOneMinute( $evt_tkt->start_date( $formats[0], $formats[1] ), $saved_tkts[$format]->start_date( $formats[0], $formats[1] ), $format, $context_for_error_messages . sprintf( 'DB TKT/Orig TKT Start Date Format Checked: %s', $format ) );
+			$this->assertDateWithinOneMinute( $evt_tkt->end_date( $formats[0], $formats[1] ), $saved_tkts[$format]->end_date( $formats[0], $formats[1] ), $format, $context_for_error_messages . sprintf( 'DB TKT/Orig TKT End Date Format Checked: %s', $format ) );
 		}
 	}
 
