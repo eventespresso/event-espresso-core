@@ -30,8 +30,15 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 	 */
 	public function add( $message, $info = null ) {
 		$attached = parent::add( $message );
-		$data['preview'] = isset( $info['preview'] ) ? $info['preview'] : false;
-		if ( $attached && $info ) {
+		//ensure $info is an array if not already
+		$info = $info === null ? $info = array() : (array) $info;
+		if ( isset( $info['preview'] ) ) {
+			$data['preview'] = $info['preview'];
+			unset( $info['preview'] );
+		} else {
+			$data['preview'] = false;
+		}
+		if ( $attached ) {
 			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
 				$generation_data = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : array();
 				//if data isn't in $info...let's see if its available via the message object
@@ -40,10 +47,11 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 				$generation_data = ! $generation_data ? $info : $generation_data;
 				$data['data']['MSG_generation_data'] = $generation_data;
 			} else {
-				$data['data'] = $info;
+				$data['data']['MSG_generation_data'] = array();
 			}
+			$this->set_info( $message, $data );
 		}
-		return $this->set_info( $message, $data );
+		return $attached;
 	}
 
 

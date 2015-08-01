@@ -231,7 +231,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$proc->$method_to_test( array( $mtg ) );
 
 		//queue should have $expected_message_objects EE_Message_object(s) and it/they should not be in the db and it/they
-		//should have status for sending.
+		//should have status for the sent in status.
 		$this->assertEquals( $expected_message_objects, $queue->get_queue()->count(), sprintf( 'Failed test for the %s method', $method_to_test ) );
 		if ( $expected_message_objects > 0 ) {
 			$queue->get_queue()->rewind();

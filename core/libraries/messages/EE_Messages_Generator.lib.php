@@ -172,7 +172,7 @@ class EE_Messages_Generator {
 				$msg->set_modified( time() );
 			} else {
 				//remove from db
-				$this->_generation_queue->delete();
+				$this->_generation_queue->get_queue()->delete();
 			}
 			//next item
 			$this->_generation_queue->get_queue()->next();

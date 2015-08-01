@@ -60,20 +60,18 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 
 
 	/**
-	 * delete
-	 *
-	 * calls EE_Base_Class::delete() on the current object
+	 * Calls EE_Base_Class::delete() on the current object
+	 * Keep in mind that this always detaches the object from the collection
+	 * regardless of whether the delete was successful for the db.  This is because
+	 * its possible that the object ONLY existed in the collection.
 	 *
 	 * @access public
 	 * @return bool
 	 */
 	public function delete() {
 		$success = $this->_call_user_func_array_on_current( 'delete' );
-		if ( $success ) {
-			$this->remove( $this->current() );
-			return true;
-		}
-		return false;
+		$this->remove( $this->current() );
+		return $success;
 	}
 
 

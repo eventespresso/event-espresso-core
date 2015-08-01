@@ -113,7 +113,7 @@ class EE_Message_To_Generate {
 	protected function _set_valid() {
 		$validated_for_use = $this->_EEMSG->validate_for_use( EE_Message::new_instance( array(
 			'MSG_messenger' => $this->messenger,
-			'MST_message_type' => $this->message_type
+			'MSG_message_type' => $this->message_type
 		) ) );
 
 		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
@@ -125,6 +125,7 @@ class EE_Message_To_Generate {
 			$this->_valid = false;
 			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $this->message_type );
 		}
+		$this->_valid = true;
 	}
 
 
