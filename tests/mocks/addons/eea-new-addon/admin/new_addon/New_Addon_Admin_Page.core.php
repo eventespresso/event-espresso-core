@@ -98,7 +98,6 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script( 'espresso_new_addon_admin');
 
 		EE_Registry::$i18n_js_strings['confirm_reset'] = __( 'Are you sure you want to reset ALL your Event Espresso New_Addon Information? This cannot be undone.', 'event_espresso' );
-		wp_localize_script( 'espresso_new_addon_admin', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 	public function admin_init() {}

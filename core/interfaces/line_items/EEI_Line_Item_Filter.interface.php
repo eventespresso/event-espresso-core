@@ -18,9 +18,10 @@ interface EEI_Line_Item_Filter {
 	/**
 	 * process
 	 *
-	 * @return EEI_Line_Item
+	 * @param \EEI_Line_Item $line_item
+	 * @return \EEI_Line_Item
 	 */
-	public function process();
+	public function process( EEI_Line_Item $line_item );
 
 
 
