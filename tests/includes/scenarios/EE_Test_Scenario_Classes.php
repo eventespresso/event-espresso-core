@@ -178,7 +178,7 @@ class EE_Test_Scenario_Repository extends EE_Object_Repository {
 
 
 	public function add_test_scenario( EE_Test_Scenario $test_scenario ) {
-		return $this->addObject( $test_scenario, array(
+		return $this->add( $test_scenario, array(
 			'type' => $test_scenario->type,
 			'name' => $test_scenario->name
 		) );
