@@ -13,6 +13,7 @@
  * @since 		4.5.0
  * @package 		Event Espresso
  * @subpackage 	tests
+ * @group       messages
  */
 class EE_messages_Test extends EE_UnitTestCase {
 

@@ -17,6 +17,7 @@
  * @since 		4.9.0
  * @package 	Event Espresso
  * @subpackage 	tests
+ * @group       messages
  */
 class EE_Messages_Generator_Test extends EE_UnitTestCase {
 
