@@ -85,6 +85,18 @@ class EE_Message_To_Generate {
 	protected $_error_msg = array();
 
 
+
+
+	/**
+	 * Can be accessed via the send_now() method, this is set in the validation
+	 * routine via the EE_messenger::send_now() method.
+	 * @type bool
+	 */
+	protected $_send_now = false;
+
+
+
+
 	/**
 	 * Constructor
 	 * @param string    $messenger  Slug representing messenger
@@ -119,6 +131,8 @@ class EE_Message_To_Generate {
 		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
 			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $this->messenger );
 			$this->_valid = false;
+		} else {
+			$this->_send_now = $validated_for_use['messenger']->send_now();
 		}
 
 		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
@@ -135,6 +149,12 @@ class EE_Message_To_Generate {
 	 */
 	public function valid() {
 		return $this->_valid;
+	}
+
+
+
+	public function send_now() {
+		return $this->_send_now;
 	}
 
 
