@@ -205,21 +205,52 @@ class EE_Messages_Processor {
 
 	/**
 	 * Generate for preview and execute right away.
-	 * @param  EE_Message_To_Generate $mtg
-	 * @return EE_Messages_Queue | null
+	 * @param   EE_Message_To_Generate $mtg
+	 * @return  string | bool   return a string
 	 */
 	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
 		if ( ! $mtg->valid() ) {
-			return null;
+			EE_Error::add_error(
+				__( 'Unable to generate preview because of invalid data', 'event_espresso' ),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return false;
 		}
 		//just make sure preview is set on the $mtg (in case client forgot)
 		$mtg->preview = true;
 		$generated_queue = $this->generate_and_return( array( $mtg ) );
-		if ( $generated_queue->execute( false ) ) {
-			return $generated_queue;
+		if ( $generated_queue->execute( false ) && $generated_queue->valid() ) {
+			if ( $generated_queue->get_queue()->is_test_send() ) {
+				return true;
+			} else {
+				return $generated_queue->get_queue()->current()->content();
+			}
 		} else {
-			return null;
+			return false;
 		}
+	}
+
+
+	/**
+	 * This queues for sending.
+	 * The messenger send now method is also verified to see if sending immediately is requested.
+	 * otherwise its just saved to the queue.
+	 * @param EE_Message_To_Generate $mtg
+	 * @return bool true or false for succes.
+	 */
+	public function queue_for_sending( EE_Message_To_Generate $mtg ) {
+		if ( ! $mtg->valid() ) {
+			return false;
+		}
+		$this->_queue->add( $mtg->get_EE_Message() );
+		if ( $mtg->send_now() ) {
+			$this->_queue->execute( false );
+		} else {
+			$this->_queue->save();
+		}
+		return true;
 	}
 
 
@@ -232,16 +263,15 @@ class EE_Messages_Processor {
 		if ( ! $mtg->valid() ) {
 			return false;
 		}
-		if ( $mtg instanceof EE_Message_Generated_From_Token ) {
+		if ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
 			$this->_queue->add( $mtg->get_EE_Message() );
-			$this->_set_errors( $this->_queue );
 			$this->_queue->execute(false);
-		} else {
+		} elseif ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_incomplete ) {
 			$generated_queue = $this->generate_and_return( $mtg );
-			$this->_set_errors( $generated_queue );
 			$generated_queue->execute( false );
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 
