@@ -60,6 +60,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate {
 		if ( ! $this->_EE_Message instanceof EE_Message ) {
 			throw new EE_Error( sprintf__('Unable to retrieve generated message from DB using given token: %s', 'event_espresso'), $this->token );
 		}
+		$this->_EE_Message->set_STS_ID( EEM_Message::status_idle );
 		$this->_EE_Message->set_messenger( $this->sending_messenger );
 		return $this->_EE_Message;
 	}
