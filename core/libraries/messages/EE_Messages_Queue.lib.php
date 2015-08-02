@@ -547,7 +547,7 @@ class EE_Messages_Queue {
 	 */
 	protected function _set_error_message( EE_Message $message, $error_messages ) {
 		$error_messages = array();
-		if ( $message->get_STS_ID() === EEM_Message::status_failed ) {
+		if ( $message->STS_ID() === EEM_Message::status_failed ) {
 			$notices = EE_Error::has_notices();
 			if ( $notices && $notices['errors'] ) {
 				$error_messages[] = implode( "\n", $notices['errors'] );
