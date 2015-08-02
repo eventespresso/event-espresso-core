@@ -415,7 +415,7 @@ class EE_Messages_Queue {
 		$this->_queue->rewind();
 		while ( $this->_queue->valid() ) {
 			/** @type EE_Message $message */
-			$message = $this->current();
+			$message = $this->_queue->current();
 			//if the message in the queue does not have a send status then skip
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
