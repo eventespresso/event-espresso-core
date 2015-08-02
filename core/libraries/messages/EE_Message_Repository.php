@@ -32,28 +32,47 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 		$attached = parent::add( $message );
 		//ensure $info is an array if not already
 		$info = $info === null ? $info = array() : (array) $info;
-		if ( isset( $info['preview'] ) ) {
-			$data['preview'] = $info['preview'];
-			unset( $info['preview'] );
-		} else {
-			$data['preview'] = false;
-		}
+		$data = $this->_init_data( $info, $attached, $message );
 		if ( $attached ) {
-			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
-				$generation_data = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : array();
-				//if data isn't in $info...let's see if its available via the message object
-				$generation_data = ! $generation_data ? $message->get_generation_data() : $generation_data;
-				//still empty then let's just use info
-				$generation_data = ! $generation_data ? $info : $generation_data;
-				$data['data']['MSG_generation_data'] = $generation_data;
-			} else {
-				$data['data']['MSG_generation_data'] = array();
-			}
 			$this->set_info( $message, $data );
 		}
 		return $attached;
 	}
 
+
+	/**
+	 * Initializes the data from the incoming info.
+	 * @param array $info       incoming data.
+	 * @param bool  $attached   Indicates whether the object was attached successfully.
+	 * @param EE_Message $message
+	 * @return array
+	 */
+	protected function _init_data( $info, $attached, $message ) {
+		$data = array(
+			'test_send' => false,
+			'preview' => false,
+			'data' => array(
+				'MSG_generation_data' => array()
+			)
+		);
+		if ( isset( $info['preview'] ) ) {
+			$data['preview'] = $info['preview'];
+			unset( $info['preview'] );
+		}
+		if ( isset( $info['test_send'] ) ) {
+			$data['test_send'] = $info['test_send'];
+			unset( $info['test_send'] );
+		}
+		if ( $attached && $message->STS_ID() === EEM_Message::status_incomplete ) {
+			$generation_data = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : array();
+			//if data isn't in $info...let's see if its available via the message object
+			$generation_data = ! $generation_data ? $message->get_generation_data() : $generation_data;
+			//still empty then let's just use info
+			$generation_data                     = ! $generation_data ? $info : $generation_data;
+			$data['data']['MSG_generation_data'] = $generation_data;
+		}
+		return $data;
+	}
 
 
 
@@ -154,6 +173,14 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 
 
 
+
+	public function is_test_send() {
+		if ( ! $this->valid() ) {
+			return;
+		}
+		$info = $this->getInfo();
+		return $info['test_send'];
+	}
 
 
 
