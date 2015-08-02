@@ -81,10 +81,13 @@ class EE_Messages_Queue {
 	 *                                object is persisted, this data will be saved on an extra_meta object related to
 	 *                                EE_Message.
 	 * @param  bool         $preview  Whether this EE_Message represents a preview or not.
+	 * @param  bool         $test_send This indicates whether to do a test send instead of actual send. A test send will
+	 *                                 use the messenger send method but typically is based on preview data.
 	 * @return bool          Whether the message was successfully added to the repository or not.
 	 */
-	public function add( EE_Message $message, $data = array(), $preview = false ) {
+	public function add( EE_Message $message, $data = array(), $preview = false, $test_send = false ) {
 		$data['preview'] = $preview;
+		$data['test_send'] = $test_send;
 		return $this->_queue->add( $message, $data );
 	}
 
