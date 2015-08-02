@@ -694,6 +694,61 @@ class EED_Messages  extends EED_Module {
 
 
 
+
+	/**
+	 * Use to generate and return a message preview!
+	 * @param  string $type    This should correspond with a valid message type
+	 * @param  string $context This should correspond with a valid context for the message type
+	 * @param  string $messenger This should correspond with a valid messenger.
+	 * @param bool 	  $send true we will do a test send using the messenger delivery, false we just do a regular preview
+	 * @return string          The body of the message.
+	 */
+	public static function preview_message( $type, $context, $messenger, $send = FALSE ) {
+		self::_load_controller();
+		$mtg = new EE_Message_To_Generate(
+			$messenger,
+			$type,
+			array(),
+			self::$_EEMSG,
+			$context,
+			true
+		);
+
+		return self::$_MSGPROCESSOR->generate_for_preview( $mtg );
+	}
+
+
+
+
+	/**
+	 * This is a method that allows for sending a message using a messenger matching the string given and the provided
+	 * EE_Message_Queue object.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string               $messenger a string matching a valid active messenger in the system
+	 * @param string $message_type Although it seems contrary to the name of the method, a message type name is
+	 *                             still required to send along the message type to the messenger because this is used
+	 *                             for determining what specific variations might be loaded for the generated message.
+	 * @param EE_Messages_Queue     $queue
+	 *
+	 * @return bool          success or fail.
+	 */
+	public static function send_message_with_messenger_only( $messenger, $message_type, EE_Messages_Queue $queue ) {
+		self::_load_controller();
+		//set mtg
+		$mtg = new EE_Message_To_Generate_From_Queue(
+			$messenger,
+			$message_type,
+			self::$_EEMSG,
+			$queue
+		);
+
+		return self::$_MSGPROCESSOR->queue_for_sending( $mtg );
+	}
+
+
+
 	/**
 	 * debug
 	 *
