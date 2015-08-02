@@ -259,63 +259,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 		parent::__construct();
 	}
 
-	/** METHODS **/
-
-	/**
-	 * This method simply takes care of setting up message objects and returning them in an array.
-	 *
-	 * @access public
-	 * @param  array|object $data       Data to be parsed for messenger/message_type
-	 * @param  EE_messenger $active_messenger The active messenger being used
-	 * @param  string $context if present then a message is only being generated for a specific context
-	 * @param  bool   $preview indicate whether a preview is being generated or not.
-	 * @return void
-	 */
-	public function set_messages($data, EE_messenger $active_messenger, $context = '', $preview = FALSE ) {
-
-		$this->_active_messenger = $active_messenger;
-
-		$this->_data = $data;
-		$this->_preview = $preview;
-
-		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send).
-		$exit = $this->_trigger_exit();
-		if ( $exit && ! $this->_preview ) return FALSE;
-
-		//todo: need to move require into registration hook but for now we'll require here.
-		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
-		//get shortcode_replace instance- set when _get_messages is called in child...
-		$this->_shortcode_replace = new EEH_Parse_Shortcodes();
-
-
-		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
-		$this->_set_data_handler();
-
-		$this->_data_handler = ! $this->_preview ? $this->_data_handler : 'Preview';
-
-		//if there is an incoming context then this is a preview so let's ONLY show the given context!
-		if ( !empty( $context ) ) {
-			$cntxt = ! empty( $this->_contexts[$context] ) ? $this->_contexts[$context] : '';
-			if ( ! empty( $cntxt )  ) {
-				$this->_contexts = array();
-				$this->_contexts[$context] = $cntxt;
-			}
-		}
-
-		$exit = $this->_init_data();
-
-		//final check for if we exit or not cause child objects may have run conditionals that cleared out data so no addresees generated.
-		if ( $exit ) return FALSE;
-
-		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
-		$this->_assemble_messages();
-		$this->count = count($this->messages);
-
-		//this will do any hooks that the message type sets for a specific messenger it may need to modify.
-		$this->_do_messenger_hooks();
-	}
-
-
 
 
 	/**
