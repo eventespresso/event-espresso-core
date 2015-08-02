@@ -125,6 +125,13 @@ abstract class EE_Shortcodes extends EE_Base {
 	protected $_GRP_ID;
 
 
+	/**
+	 * @since 4.9.0
+	 * @type EE_Message
+	 */
+	protected $_message;
+
+
 
 
 	/**
@@ -316,8 +323,9 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( isset( $this->_extra_data['messenger'] ) ) {
 			$this->_messenger = $this->_extra_data['messenger'];
 			$this->_message_type = $this->_extra_data['message_type'];
-			$this->_context = $this->_extra_data['context'];
-			$this->_GRP_ID = $this->_extra_data['GRP_ID'];
+			$this->_context = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message']->context() : '';
+			$this->_GRP_ID = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message']->GRP_ID() : 0;
+			$this->_message = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message'] : null;
 		}
 	}
 
@@ -357,6 +365,18 @@ abstract class EE_Shortcodes extends EE_Base {
 	 */
 	public function get_set_context() {
 		return $this->_context;
+	}
+
+
+
+
+	/**
+	 * This returns whatever the set EE_Message object is on this shortcode.
+	 * @since 4.9.0
+	 * @return EE_Message
+	 */
+	public function get_set_message() {
+		return $this->_message;
 	}
 
 

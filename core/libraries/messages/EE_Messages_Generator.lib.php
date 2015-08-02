@@ -468,8 +468,7 @@ class EE_Messages_Generator {
 						$shortcodes,
 						$this->_current_message_type,
 						$this->_current_messenger,
-						$context,
-						$mtpg->ID() );
+						$message );
 					$message->set_field_or_extra_meta( $column_name, $content );
 				} catch ( EE_Error $e ) {
 					$error_msg[] = sprintf( __( 'There was a problem generating the content for the field %s: %s', 'event_espresso' ), $field, $e->get_error() );
