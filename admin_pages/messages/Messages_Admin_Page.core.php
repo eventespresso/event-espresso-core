@@ -1361,10 +1361,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		EE_Registry::instance()->REQ->set( 'GRP_ID', $this->_req_data['GRP_ID'] );
 
-		$MSG = new EE_messages();
 
 		//get the preview!
-		$preview = $MSG->preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'], $send );
+		$preview = EED_Messages::preview_message( $this->_req_data['message_type'], $this->_req_data['context'], $this->_req_data['messenger'], $send );
 
 		if ( $send ) {
 			return $preview;
