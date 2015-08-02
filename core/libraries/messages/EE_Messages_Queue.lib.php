@@ -413,7 +413,9 @@ class EE_Messages_Queue {
 		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
 		$did_hook = array();
 		$this->_queue->rewind();
-		foreach( $this->_queue as $message ) {
+		while ( $this->_queue->valid() ) {
+			/** @type EE_Message $message */
+			$message = $this->current();
 			//if the message in the queue does not have a send status then skip
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
@@ -424,17 +426,17 @@ class EE_Messages_Queue {
 				continue;
 			}
 
-			$error_msg = array();
+			$error_messages = array();
 			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
 
 			//error checking
 			if ( ! $messenger instanceof EE_messenger ) {
-				$error_msg[] = sprintf( __( 'the %s messenger is not active at time of sending.', 'event_espresso' ), $message->messenger() );
+				$error_messages[] = sprintf( __( 'the %s messenger is not active at time of sending.', 'event_espresso' ), $message->messenger() );
 			}
 
 			if ( ! $message_type instanceof EE_message_type ) {
-				$error_msg[] = sprintf( __( 'the %s message type is not active at the time of sending.', 'event_espresso' ), $message->message_type() );
+				$error_messages[] = sprintf( __( 'the %s message type is not active at the time of sending.', 'event_espresso' ), $message->message_type() );
 			}
 
 			//send using messenger
@@ -446,29 +448,22 @@ class EE_Messages_Queue {
 					$did_hook[$message_type->name] = 1;
 				}
 
-				if ( $messenger->send_message( $message, $message_type ) ) {
-					$messages_sent++;
-					$message->set_STS_ID( EEM_Message::status_sent );
+				//if preview then use preview method
+				if ( $this->_queue->is_preview() ) {
+					$success = $this->_do_preview( $message, $messenger, $message_type );
 				} else {
-					//see if there are any error messages
-					$notices = EE_Error::has_notices();
-					if ( $notices && $notices['errors'] ) {
-						$error_msg[] = implode( "\n", $notices );
-					} else {
-						$error_msg[] = __( 'Messenger and Message Type were valid and active, but the messenger send method failed.', 'event_espresso' );
-					}
+					$success = $this->_do_send( $message, $messenger, $message_type );
+				}
+
+				if ( $success ) {
+					$messages_sent++;
 				}
 			}
 
-			if ( count( $error_msg ) > 0 ) {
-				$msg = __( 'Message was not sent successfully.', 'event_espresso' );
-				$msg = $msg . "\n" . implode( "\n", $error_msg );
-				$message->set_STS_ID( EEM_Message::status_failed );
-				$message->set_error_message( $msg );
-			}
-
+			$this->_set_error_message( $message, $error_messages );
 			//add modified time
 			$message->set_modified( time() );
+			$this->_queue->next();
 		}
 
 		if ( $save ) {
@@ -497,6 +492,74 @@ class EE_Messages_Queue {
 			}
 		}
 		return $count;
+	}
+
+
+	/**
+	 * Executes the get_preview method on the provided messenger.
+	 * @param EE_Message $message
+	 * @param EE_messenger $messenger
+	 * @param EE_message_type $message_type
+	 * @param $test_send
+	 * @return bool   true means all went well, false means, not so much.
+	 */
+	protected function _do_preview( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type, $test_send ) {
+		if ( $preview = $messenger->get_preview( $message, $message_type, $test_send ) ) {
+			if ( ! $test_send ) {
+				$message->set_content( $preview );
+			}
+			$message->set_STS_ID( EEM_Message::status_sent );
+			return true;
+		} else {
+			$message->set_STS_ID( EEM_Message::status_failed );
+			return false;
+		}
+	}
+
+
+
+
+	/**
+	 * Executes the send method on the provided messenger
+	 * @param EE_Message $message
+	 * @param EE_messenger $messenger
+	 * @param EE_message_type $message_type
+	 * @return bool true means all went well, false means, not so much.
+	 */
+	protected function _do_send( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type ) {
+		if ( $messenger->send_message( $message, $message_type ) ) {
+			$message->set_STS_ID( EEM_Message::status_sent );
+			return true;
+		} else {
+			$message->set_STS_ID( EEM_Message::status_failed );
+			return false;
+		}
+	}
+
+
+
+
+
+	/**
+	 * This sets any necessary error messages on the message object and its status to failed.
+	 * @param EE_Message $message
+	 * @param array      $error_messages
+	 */
+	protected function _set_error_message( EE_Message $message, $error_messages ) {
+		$error_messages = array();
+		if ( $message->get_STS_ID() === EEM_Message::status_failed ) {
+			$notices = EE_Error::has_notices();
+			if ( $notices && $notices['errors'] ) {
+				$error_messages[] = implode( "\n", $notices['errors'] );
+			} else {
+				$error_messages[] = __( 'Messenger and Message Type were valid and active, but the messenger send method failed.', 'event_espresso' );
+			}
+		}
+		if ( count( $error_messages > 0 ) ) {
+			$msg = __( 'Message was not executed successfully.', 'event_espresso' );
+			$msg = $msg . "\n" . implode( "\n", $error_messages );
+			$message->set_error_message( $msg );
+		}
 	}
 
 } //end EE_Messages_Queue class
