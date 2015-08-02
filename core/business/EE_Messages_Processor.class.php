@@ -206,7 +206,7 @@ class EE_Messages_Processor {
 	/**
 	 * Generate for preview and execute right away.
 	 * @param   EE_Message_To_Generate $mtg
-	 * @return  string | bool   return a string
+	 * @return  EE_Messages_Qeueue | bool   false if unable to generate otherwise the generated queue.
 	 */
 	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
 		if ( ! $mtg->valid() ) {
@@ -221,11 +221,15 @@ class EE_Messages_Processor {
 		//just make sure preview is set on the $mtg (in case client forgot)
 		$mtg->preview = true;
 		$generated_queue = $this->generate_and_return( array( $mtg ) );
-		if ( $generated_queue->execute( false ) && $generated_queue->get_queue()->valid() ) {
-			if ( $generated_queue->get_queue()->is_test_send() ) {
-				return true;
-			} else {
-				return $generated_queue->get_queue()->current()->content();
+		if ( $generated_queue->execute( false ) ) {
+			//the first queue item should be the preview
+			$generated_queue->get_queue()->rewind();
+			if ( $generated_queue->get_queue()->valid() ) {
+				if ( $generated_queue->get_queue()->is_test_send() ) {
+					return true;
+				} else {
+					return $generated_queue;
+				}
 			}
 		} else {
 			return false;
@@ -238,7 +242,7 @@ class EE_Messages_Processor {
 	 * The messenger send now method is also verified to see if sending immediately is requested.
 	 * otherwise its just saved to the queue.
 	 * @param EE_Message_To_Generate $mtg
-	 * @return bool true or false for succes.
+	 * @return bool true or false for success.
 	 */
 	public function queue_for_sending( EE_Message_To_Generate $mtg ) {
 		if ( ! $mtg->valid() ) {

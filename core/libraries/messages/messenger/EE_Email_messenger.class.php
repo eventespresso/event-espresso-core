@@ -363,7 +363,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return string html body of the message content and the related css.
 	 */
 	protected function _preview() {
-		return $this->_body( TRUE );
+		return $this->_body( true );
 	}
 
 
@@ -461,7 +461,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @param bool $preview will determine whether this is preview template or not.
 	 * @return string formatted body for email.
 	 */
-	protected function _body( $preview = FALSE ) {
+	protected function _body( $preview = false ) {
 		//setup template args!
 		$this->_template_args = array(
 			'subject' => $this->_subject,

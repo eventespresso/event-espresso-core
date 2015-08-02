@@ -713,8 +713,12 @@ class EED_Messages  extends EED_Module {
 			$context,
 			true
 		);
-
-		return self::$_MSGPROCESSOR->generate_for_preview( $mtg );
+		$generated_preview_queue = self::$_MSGPROCESSOR->generate_for_preview( $mtg );
+		if ( $generated_preview_queue instanceof EE_Messages_Queue ) {
+			return $generated_preview_queue->get_queue()->current()->content();
+		} else {
+			return $generated_preview_queue;
+		}
 	}
 
 

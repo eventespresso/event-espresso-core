@@ -611,12 +611,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * Sets up and returns message preview
-	 * @param  object $message incoming message object
+	 * @param  EE_Message $message incoming message object
 	 * @param EE_message_type $message_type This is whatever message type was used in combination with this messenger to generate the message.
 	 * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
 	 * @return string          return the message html content
 	 */
-	public function get_preview( $message, EE_message_type $message_type, $send = FALSE ) {
+	public function get_preview( EE_Message $message, EE_message_type $message_type, $send = false ) {
 		$this->_validate_and_setup( $message );
 
 		$this->_incoming_message_type = $message_type;
@@ -669,9 +669,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return void
 	 */
 	protected function _validate_and_setup( EE_Message $message ) {
-		if ( !is_object( $message ) )
-			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
-
 		$template_pack = $message->get_template_pack();
 		$variation = $message->get_template_pack_variation();
 
@@ -688,7 +685,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 		foreach ( $template_fields as $template => $value ) {
 			if ( $template !== 'extra' ) {
-				$column_value = $message->get_field_or_extra_meta( $template );
+				$column_value = $message->get_field_or_extra_meta( 'MSG_' . $template );
 				$message_template_value = $column_value ? $column_value : null;
 				$this->_set_template_value( $template, $message_template_value );
 			}

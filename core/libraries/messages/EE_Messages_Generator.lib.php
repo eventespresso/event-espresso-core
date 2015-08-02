@@ -222,7 +222,10 @@ class EE_Messages_Generator {
 		}
 
 		try {
-			$addressees = $this->_current_message_type->get_addressees( $this->_current_data_handler );
+			$addressees = $this->_current_message_type->get_addressees(
+				$this->_current_data_handler,
+				$this->_generation_queue->get_queue()->current()->context()
+			);
 		} catch ( EE_Error $e ) {
 			$this->_error_msg[] = $e->get_error();
 			return false;
@@ -395,7 +398,7 @@ class EE_Messages_Generator {
 			foreach ( $recipients as $recipient ) {
 				$message = $this->_setup_message_object( $context, $recipient, $templates, $mtpg );
 				if ( $message instanceof EE_Message ) {
-					$this->_ready_queue->add( $message );
+					$this->_ready_queue->add( $message, array(), $this->_generation_queue->get_queue()->is_preview(), $this->_generation_queue->get_queue()->is_test_send() );
 					$generated_count++;
 				}
 			}
@@ -705,8 +708,9 @@ class EE_Messages_Generator {
 	/**
 	 * This sets up a EEM_Message::status_incomplete EE_Message object and adds it to the generation queue.
 	 * @param EE_Message_To_Generate    $mtg
+	 * @param bool                      $test_send  Whether this is just a test send or not.  Typically used for previews.
 	 */
-	public function create_and_add_message_to_queue( EE_Message_To_Generate $mtg ) {
+	public function create_and_add_message_to_queue( EE_Message_To_Generate $mtg, $test_send = false ) {
 		//prep data
 		$data = $this->_prepare_data_for_queue( $mtg, $mtg->preview );
 
@@ -721,7 +725,7 @@ class EE_Messages_Generator {
 			$message->set_STS_ID( EEM_Message::status_failed );
 			$message->set_error_message( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
 		} else {
-			$this->_generation_queue->add( $message, $data, $mtg->preview );
+			$this->_generation_queue->add( $message, $data, $mtg->preview, $test_send );
 		}
 	}
 

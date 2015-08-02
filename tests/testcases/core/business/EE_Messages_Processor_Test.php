@@ -137,9 +137,10 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->assertInstanceOf( 'EE_Messages_Queue', $generated_queue );
 
 		/**
-		 * Expect 5 generated messages from the one MTG because previewer data generates 5 EE_Message object.
+		 * Expect 1 generated messages from the one MTG because there is a specific context provided (admin) that
+		 * should only result in one message.
 		 */
-		$this->assertEquals( 5, $generated_queue->count_STS_in_queue( EEM_Message::status_idle ) );
+		$this->assertEquals( 1, $generated_queue->count_STS_in_queue( EEM_Message::status_idle ) );
 
 		//messages in queue should NOT be saved.
 		$generated_queue->get_queue()->rewind();
@@ -169,7 +170,8 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 			'STS_ID' => EEM_Message::status_idle
 		)));
 
-		$this->assertEquals( 5, count( $messages ) );
+		//expecting only one message because the specific context was provided.
+		$this->assertEquals( 1, count( $messages ) );
 	}
 
 
@@ -182,7 +184,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		/** @type EE_Message_To_Generate $mtg */
 		$mtg = $test_components['mtg'];
 
-		$queue = $proc->get_queue();
+		$this->assertTrue( $mtg->preview );
 
 		try {
 			$generated_queue = $proc->generate_for_preview( $mtg );

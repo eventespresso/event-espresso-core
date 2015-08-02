@@ -449,11 +449,7 @@ class EE_Messages_Queue {
 				}
 
 				//if preview then use preview method
-				if ( $this->_queue->is_preview() ) {
-					$success = $this->_do_preview( $message, $messenger, $message_type );
-				} else {
-					$success = $this->_do_send( $message, $messenger, $message_type );
-				}
+				$success = $this->_queue->is_preview() ? $this->_do_preview( $message, $messenger, $message_type, $this->_queue->is_test_send() ) : $this->_do_send( $message, $messenger, $message_type );
 
 				if ( $success ) {
 					$messages_sent++;
@@ -546,7 +542,7 @@ class EE_Messages_Queue {
 	 * @param array      $error_messages
 	 */
 	protected function _set_error_message( EE_Message $message, $error_messages ) {
-		$error_messages = array();
+		$error_messages = (array) $error_messages;
 		if ( $message->STS_ID() === EEM_Message::status_failed ) {
 			$notices = EE_Error::has_notices();
 			if ( $notices && $notices['errors'] ) {
@@ -555,7 +551,7 @@ class EE_Messages_Queue {
 				$error_messages[] = __( 'Messenger and Message Type were valid and active, but the messenger send method failed.', 'event_espresso' );
 			}
 		}
-		if ( count( $error_messages > 0 ) ) {
+		if ( count( $error_messages ) > 0 ) {
 			$msg = __( 'Message was not executed successfully.', 'event_espresso' );
 			$msg = $msg . "\n" . implode( "\n", $error_messages );
 			$message->set_error_message( $msg );

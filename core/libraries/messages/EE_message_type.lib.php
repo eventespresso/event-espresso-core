@@ -678,13 +678,24 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * Accepts an incoming data handler which contains data for processing, and returns an array of EE_Messages_Addressee objects.
 	 *
 	 * @param EE_Messages_incoming_data $data
+	 * @param string    $context  Limit addressees to specific context.
 	 * @return array   An array indexed by context where each context is an array of EE_Messages_Addressee objects for
 	 *                 that context
 	 */
-	public function get_addressees( EE_Messages_incoming_data $data ) {
+	public function get_addressees( EE_Messages_incoming_data $data, $context = '' ) {
 		//override _data
 		$this->_data = $data;
 		$addressees = array();
+
+		//if incoming context then limit to that context
+		if ( ! empty( $context ) ) {
+			$cntxt = ! empty( $this->_contexts[$context] ) ? $this->_contexts[$context] : '';
+			if ( ! empty( $cntxt )  ) {
+				$this->_contexts = array();
+				$this->_contexts[$context] = $cntxt;
+			}
+		}
+
 		$this->_set_default_addressee_data();
 		if ( $this->_process_data() ) {
 			$addressees =  $this->_addressees;

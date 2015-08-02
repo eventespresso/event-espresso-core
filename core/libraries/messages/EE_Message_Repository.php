@@ -161,22 +161,25 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 
 
 	/**
-	 *  Returns whether this EE_Message is for a preview or not.
+	 * Returns whether this EE_Message is for a preview or not.
+	 * @return bool
 	 */
 	public function is_preview() {
 		if ( ! $this->valid() ) {
-			return;
+			return false;
 		}
 		$info = $this->getInfo();
 		return $info['preview'];
 	}
 
 
-
-
+	/**
+	 * Returns whether the current message pointed to is for a test send.
+	 * @return bool
+	 */
 	public function is_test_send() {
 		if ( ! $this->valid() ) {
-			return;
+			return false;
 		}
 		$info = $this->getInfo();
 		return $info['test_send'];
