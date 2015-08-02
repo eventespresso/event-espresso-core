@@ -408,7 +408,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @param string          $context           The message type context
 	 * @param string          $sending_messenger The sending messenger
 	 * @param EE_Registration $registration      Registration object
-	 *
+	 * @throws EE_Error
 	 * @return string          generated url
 	 */
 	public function get_url_trigger( $context, $sending_messenger, EE_Registration $registration ) {
