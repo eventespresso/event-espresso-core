@@ -354,6 +354,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
+	 * This method returns whether this message type should always generate a new copy
+	 * when requested, or if links can be to the already generated copy.
+	 * Note: this does NOT affect viewing/resending already generated messages in the EE_Message list table.
+	 * Child classes should override this if different from the default of false.
+	 * @return bool     false means can link to generated EE_Message.  true must regenerate.
+	 */
+	public function always_generate() {
+		return false;
+	}
+
+
+
+
+
+	/**
 	 * Returns the priority for the message type.
 	 *
 	 * Priorities are defined as constants on EEM_Message.  Currently there are three priorities:

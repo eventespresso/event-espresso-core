@@ -41,6 +41,19 @@ class EE_Receipt_message_type extends EE_message_type {
 	}
 
 
+
+	/**
+	 * This method returns whether this message type should always generate a new copy
+	 * when requested, or if links can be to the already generated copy.
+	 * Note: this does NOT affect viewing/resending already generated messages in the EE_Message list table.
+	 * Receipts always generate
+	 * @return bool     false means can link to generated EE_Message.  true must regenerate.
+	 */
+	public function always_generate() {
+		return true;
+	}
+
+
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array( 'events_edit' => TRUE );
 	}
