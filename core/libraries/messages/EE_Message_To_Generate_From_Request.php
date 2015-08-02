@@ -47,6 +47,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 	 * parent constructor.
 	 * @param EE_messages $ee_msg
 	 * @param EE_Request_Handler $request
+	 * @return bool
 	 */
 	protected function _instantiate_from_request( EE_messages $ee_msg, EE_Request_Handler $request ) {
 		parent::__construct( $request->get('gen_msgr'), $request->get('message_type'), array(), $ee_msg, $request->get('context') );
@@ -57,6 +58,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 		$this->token = $request->get('token');
 		$this->_validate_request();
 		$this->data = $this->_get_data_from_request( $request->get('id') );
+		return true;
 	}
 
 
