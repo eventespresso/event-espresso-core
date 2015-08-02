@@ -221,7 +221,7 @@ class EE_Messages_Processor {
 		//just make sure preview is set on the $mtg (in case client forgot)
 		$mtg->preview = true;
 		$generated_queue = $this->generate_and_return( array( $mtg ) );
-		if ( $generated_queue->execute( false ) && $generated_queue->valid() ) {
+		if ( $generated_queue->execute( false ) && $generated_queue->get_queue()->valid() ) {
 			if ( $generated_queue->get_queue()->is_test_send() ) {
 				return true;
 			} else {
