@@ -453,7 +453,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * Wrapper for _get_data_for_context() that handles some validation before calling the main class and also allows for filtering.
 	 *
-	 * This is (curently) called by the EED_Messages module.
+	 * This is (currently) called by the EED_Messages module.
 	 *
 	 * @since 4.5.0
 	 * @throws EE_Error
@@ -534,20 +534,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//we can also further refine the context by action (if present).
 		return $this->_get_admin_page_content( $page, $action, $extra, $messengers );
 	}
-
-
-
-
-
-	/**
-	 * This method can be overridden by child classes to do any special conditionals that might trigger an exit from generating messages (that might happen with delays etc).
-	 * @return bool   TRUE will trigger an exit, FALSE will continue the code execution.
-	 */
-	protected function _trigger_exit() {
-		return FALSE;
-	}
-
-
 
 
 
