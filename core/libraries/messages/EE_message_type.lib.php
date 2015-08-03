@@ -841,42 +841,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 	}
 	
 
-	/**
-	 * This function setups up and returns the message object
-	 *
-	 * @return void
-	 * @access protected
-	 *
-	 */
-	protected function _setup_message_object($context, $addressee) {
-		$message = new stdClass();
-
-		//get what shortcodes are supposed to be used
-		$mt_shortcodes = $this->get_valid_shortcodes();
-		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
-
-		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
-		if ( ( isset( $this->_templates['to'][$context] ) && empty( $this->_templates['to'][$context] ) ) && !$this->_preview )
-			return false;
-
-		if ( empty( $this->_templates ) ) {
-			//unable to setup any messages because there are no templates.  Some sort of catastrophic setup
-			//issue exists
-			return false;
-		}
-
-		foreach ( $this->_templates as $field => $ctxt ) {
-			//let's setup the valid shortcodes for the incoming context.
-			$valid_shortcodes = $mt_shortcodes[$context];
-			//merge in valid shortcodes for the field.
-			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
-			if ( isset( $this->_templates[$field][$context] ) ) {
-				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes, $this, $this->_active_messenger, $context, $this->_GRP_ID );
-			}
-		}
-		return $message;
-	}
-
 
 	protected function _get_event_admin_id($event_id) {
 		$event = EEM_Event::instance()->get_one_by_ID($event_id);
