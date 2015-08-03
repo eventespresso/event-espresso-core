@@ -174,11 +174,16 @@ abstract class EE_Test_Scenario {
  * @subpackage tests
  * @author     Darren Ethier
  */
-class EE_Test_Scenario_Repository extends EE_Object_Repository {
+class EE_Test_Scenario_Collection extends EE_Object_Collection {
+
+
+	public function __construct() {
+		$this->interface = 'EE_Test_Scenario';
+	}
 
 
 	public function add_test_scenario( EE_Test_Scenario $test_scenario ) {
-		return $this->addObject( $test_scenario, array(
+		return $this->add( $test_scenario, array(
 			'type' => $test_scenario->type,
 			'name' => $test_scenario->name
 		) );
@@ -231,10 +236,10 @@ class EE_Test_Scenario_Repository extends EE_Object_Repository {
 class EE_Test_Scenario_Factory {
 
 	/**
-	 * This will hold the repository containing all the test scenario collections.
-	 * @var EE_Test_Scenario_Repository
+	 * This will hold the collection containing all the test scenarios.
+	 * @var EE_Test_Scenario_Collection
 	 */
-	protected $_repository;
+	protected $_collection;
 
 
 	/**
@@ -258,7 +263,7 @@ class EE_Test_Scenario_Factory {
 				$class_name = str_replace( '.scenario.php', '', basename( $scenario_file ) );
 				if ( class_exists( $class_name ) ) {
 					$scenario = new $class_name( $this->_eeTest );
-					$this->_repository->add_test_scenario( $scenario );
+					$this->_collection->add_test_scenario( $scenario );
 				}
 			}
 		}
@@ -267,14 +272,14 @@ class EE_Test_Scenario_Factory {
 
 	/**
 	 * This returns the EE_Test_Scenario collection
-	 * @return EE_Test_Scenario_Repository
+	 * @return EE_Test_Scenario_Collection
 	 */
-	public function get_repository() {
-		if ( ! $this->_repository instanceof EE_Test_Scenario_Repository ) {
-			$this->_repository = new EE_Test_Scenario_Repository();
+	public function get_collection() {
+		if ( ! $this->_collection instanceof EE_Test_Scenario_Collection ) {
+			$this->_collection = new EE_Test_Scenario_Collection();
 			$this->_build_scenarios();
 		}
-		return $this->_repository;
+		return $this->_collection;
 	}
 
 
@@ -288,8 +293,8 @@ class EE_Test_Scenario_Factory {
 	 * @return EE_Test_Scenario[]
 	 */
 	public function get_scenarios_by_type( $type, $initialize = true ) {
-		$this->get_repository();
-		$scenarios = $this->_repository->get_scenarios_by_type( $type );
+		$this->get_collection();
+		$scenarios = $this->_collection->get_scenarios_by_type( $type );
 		if ( $scenarios && $initialize) {
 			foreach ( $scenarios as $scenario ) {
 				if ( $scenario instanceof EE_Test_Scenario ) {
@@ -310,8 +315,8 @@ class EE_Test_Scenario_Factory {
 	 * @return EE_Test_Scenario
 	 */
 	public function get_scenario_by_name( $name, $initialize = true ) {
-		$this->get_repository();
-		$scenario = $this->_repository->get_scenario_by_name( $name );
+		$this->get_collection();
+		$scenario = $this->_collection->get_scenario_by_name( $name );
 		if ( $scenario instanceof EE_Test_Scenario && $initialize ) {
 			$scenario->initialize();
 		}

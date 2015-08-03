@@ -80,6 +80,7 @@ abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Coll
 	 * get_by_info
 	 *
 	 * finds and returns an object in the Collection based on the info that was set using addObject()
+	 * PLZ NOTE: the pointer is reset to the beginning of the collection before returning
 	 *
 	 * @access public
 	 * @param mixed
@@ -126,6 +127,48 @@ abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Coll
 	 */
 	public function remove( $object ) {
 		$this->detach( $object );
+	}
+
+
+
+	/**
+	 * set_current
+	 *
+	 * advances pointer to the provided object
+	 *
+	 * @access public
+	 * @param $object
+	 * @return void
+	 */
+	public function set_current( $object ) {
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $this->current() === $object ) {
+				break;
+			}
+			$this->next();
+		}
+	}
+
+
+
+	/**
+	 * set_current_by_info
+	 *
+	 * advances pointer to the object whose info matches that which was provided
+	 *
+	 * @access public
+	 * @param $info
+	 * @return void
+	 */
+	public function set_current_by_info( $info ) {
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $info === $this->getInfo() ) {
+				break;
+			}
+			$this->next();
+		}
 	}
 
 
