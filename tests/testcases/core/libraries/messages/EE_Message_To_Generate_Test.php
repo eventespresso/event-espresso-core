@@ -33,8 +33,8 @@ class EE_Message_To_Generate_Test extends EE_UnitTestCase {
 		);
 
 		//verify public properties setup properly
-		$this->assertEquals( 'registration', $mtg->message_type );
-		$this->assertEquals( 'email', $mtg->messenger );
+		$this->assertInstanceOf( 'EE_Registration_message_type', $mtg->message_type );
+		$this->assertInstanceOf( 'EE_Email_messenger', $mtg->messenger );
 		$this->assertEquals( array(), $mtg->data );
 		$this->assertEquals( 'admin', $mtg->context );
 		$this->assertTrue( $mtg->preview );

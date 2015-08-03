@@ -13,17 +13,15 @@ class EE_Message_To_Generate {
 
 
 	/**
-	 * Slug representing a EE_messenger
-	 * @type string
+	 * @type EE_Messenger
 	 */
-	public $messenger = '';
+	public $messenger = null;
 
 
 	/**
-	 * Slug representing a EE_message_type
-	 * @type string
+	 * @type EE_Message_Type
 	 */
-	public $message_type = '';
+	public $message_type = null;
 
 
 
@@ -107,8 +105,8 @@ class EE_Message_To_Generate {
 	 * @param bool|false $preview       Whether this is being used to generate a preview or not.
 	 */
 	public function __construct( $messenger, $message_type, $data,  EE_messages $ee_msg, $context = '', $preview = false ) {
-		$this->messenger = $messenger;
-		$this->message_type = $message_type;
+		$messenger;
+		$message_type;
 		$this->data = (array) $data;
 		$this->context = $context;
 		$this->preview = $preview;
@@ -116,28 +114,34 @@ class EE_Message_To_Generate {
 
 		//this immediately validates whether the given messenger/messagetype are active or not
 		//and sets the valid flag.
-		$this->_set_valid();
+		$this->_set_valid( $messenger, $message_type );
 	}
 
 
-
-
-	protected function _set_valid() {
+	/**
+	 * Validates messenger and message type and sets the related properties.
+	 * @param string $messenger_slug
+	 * @param string $message_type_slug
+	 */
+	protected function _set_valid( $messenger_slug , $message_type_slug ) {
 		$validated_for_use = $this->_EEMSG->validate_for_use( EE_Message::new_instance( array(
-			'MSG_messenger' => $this->messenger,
-			'MSG_message_type' => $this->message_type
+			'MSG_messenger' => $messenger_slug,
+			'MSG_message_type' => $message_type_slug
 		) ) );
 
 		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
-			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $this->messenger );
+			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $messenger_slug );
 			$this->_valid = false;
 		} else {
+			$this->messenger = $validated_for_use['messenger'];
 			$this->_send_now = $validated_for_use['messenger']->send_now();
 		}
 
 		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
 			$this->_valid = false;
-			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $this->message_type );
+			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $message_type_slug );
+		} else {
+			$this->message_type = $validated_for_use['message_type'];
 		}
 		$this->_valid = true;
 	}
@@ -166,9 +170,12 @@ class EE_Message_To_Generate {
 		if ( ! $this->valid() ) {
 			return null;
 		}
+		if ( $this->_EE_Message instanceof EE_Message ) {
+			return $this->_EE_Message;
+		}
 		$this->_EE_Message = $this->_EE_Message instanceof EE_Message ? $this->_EE_Message : EE_Message::new_instance( array(
-			'MSG_messenger' => $this->messenger,
-			'MSG_message_type' => $this->message_type,
+			'MSG_messenger' => $this->messenger->name,
+			'MSG_message_type' => $this->message_type->name,
 			'MSG_context' => $this->context,
 			'STS_ID' => EEM_Message::status_incomplete,
 			'MSG_priority' => $this->_get_priority_for_message_type()
@@ -185,15 +192,8 @@ class EE_Message_To_Generate {
 	 * @return  int   EEM_Message priority.
 	 */
 	protected function _get_priority_for_message_type() {
-		$message_type = $this->_EEMSG->get_active_message_type( $this->messenger, $this->message_type );
-		$messenger = $this->_EEMSG->get_messenger_if_active( $this->messenger );
-		$priority = EEM_Message::priority_low;
-		if ( $messenger instanceof EE_messenger && $message_type instanceof EE_message_type ) {
-			$priority = $messenger->send_now() ? EEM_Message::priority_high : $message_type->get_priority();
-		}
-		return $priority;
+		return $this->send_now() ? EEM_Message::priority_high : $this->message_type->get_priority();
 	}
-
 
 
 } //end class EE_Message_To_Generate

@@ -39,9 +39,12 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 		if ( ! $this->valid() ) {
 			return null;
 		}
+		if ( $this->_EE_Message instanceof EE_Message ) {
+			return $this->_EE_Message;
+		}
 		$this->_EE_Message = $this->_EE_Message instanceof EE_Message ? $this->_EE_Message : EE_Message::new_instance( array(
-			'MSG_messenger' => $this->messenger,
-			'MSG_message_type' => $this->message_type,
+			'MSG_messenger' => $this->messenger->name,
+			'MSG_message_type' => $this->message_type->name,
 			'MSG_context' => $this->context,
 			'MSG_content' => $this->_get_content(),
 			'STS_ID' => EEM_Message::status_idle,

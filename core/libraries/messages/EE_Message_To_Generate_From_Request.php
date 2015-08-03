@@ -13,14 +13,14 @@
  * @author     Darren Ethier
  * @since      4.9.0
  */
-class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
+class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate implements EEI_Has_Sending_Messenger {
 
 
 	/**
-	 * This messenger is used to send the generated messenger.
-	 * @type string
+	 * This messenger is used to send the generated message.
+	 * @type EE_messenger
 	 */
-	public $sending_messenger = '';
+	protected $_sending_messenger = '';
 
 
 	/**
@@ -42,6 +42,16 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 
 
 
+
+	/**
+	 * @return EE_messenger
+	 */
+	public function sending_messenger() {
+		return $this->_sending_messenger;
+	}
+
+
+
 	/**
 	 * This instantiates the object from the given request by grabbing required arguments from the request and calling the
 	 * parent constructor.
@@ -54,7 +64,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 		if ( ! $this->valid() ) {
 			return false;
 		}
-		$this->sending_messenger = $request->get('snd_msgr');
+		$this->_sending_messenger = $this->_EEMSG->get_messenger_if_active( $request->get('snd_msgr') );
 		$this->token = $request->get('token');
 		$this->_validate_request();
 		$this->data = $this->_get_data_from_request( $request->get('id') );
@@ -70,9 +80,9 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 	 * @throws EE_Error
 	 */
 	protected function _validate_request() {
-		if ( empty( $this->sending_messenger )
-		     || empty( $this->messenger )
-		     || empty( $this->message_type )
+		if ( ! $this->_sending_messenger instanceof EE_messenger
+		     || ! $this->messenger instanceof EE_messenger
+		     || ! $this->message_type instanceof EE_message_type
 		     || empty( $this->context )
 			 || empty( $this->token ) ) {
 			throw new EE_Error( __( 'The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso' ) );
@@ -112,13 +122,8 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate {
 	 * @return mixed   Data prepared as needed for generating this message.
 	 */
 	protected function _get_data_to_use( $registration, $data_id ) {
-		$message_type = $this->_EEMSG->get_active_message_type( $this->messenger, $this->message_type );
-		//if no message type then it likely isn't active for this messenger.
-		if ( ! $message_type instanceof EE_message_type ) {
-			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso'), $message_type->name, $this->messenger ) );
-		}
 		//use incoming data from url to setup data for the message type requirements
-		return $message_type->get_data_for_context( $this->context, $registration, $data_id );
+		return $this->message_type->get_data_for_context( $this->context, $registration, $data_id );
 	}
 
 
