@@ -5,7 +5,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Line_Item_Filter_Processor
  *
- * Description
+ * Receives an EE_Collection of EE_Line_Item_Filter objects
+ * and an EEI_Line_Item grand total object upon construction
+ * clones the entire grand total line item tree so that the original will not be affected
+ * then process() applies each filter to the cloned grand total line item tree
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -75,7 +78,7 @@ class EE_Line_Item_Filter_Processor {
 		// reset the LIN_ID, LIN_parent, and LIN_total
 		$cloned_line_item->set( 'LIN_ID', null );
 		$cloned_line_item->set( 'LIN_parent', null );
-		$cloned_line_item->set( 'LIN_total', null );
+		//$cloned_line_item->set( 'LIN_total', null );
 		return $cloned_line_item;
 	}
 
@@ -89,7 +92,7 @@ class EE_Line_Item_Filter_Processor {
 	public function process() {
 		$this->line_item_filters->rewind();
 		while ( $this->line_item_filters->valid() ) {
-			$this->line_item_filters->current()->process( $this->grand_total_line_item );
+			$this->grand_total_line_item = $this->line_item_filters->current()->process( $this->grand_total_line_item );
 			$this->line_item_filters->next();
 		}
 		$this->grand_total_line_item->recalculate_total_including_taxes();
