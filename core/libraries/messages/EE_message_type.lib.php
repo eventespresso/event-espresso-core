@@ -570,52 +570,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->_templates, $this->count, and any extra stuff to the data object that can come from the message_type template options.
-	 * Child classes might overwrite this if they aren't expecting EE_Session as the incoming data object.
-	 *
-	 * @return void
-	 * @access protected
-	 * @throws EE_Error
-	 */
-	protected function _init_data() {
-
-		/**
-		 * first let's make sure that incoming data isn't empty!
-		 */
-		if ( is_array($this->_data) && empty($this->_data) && !$this->_preview ) {
-			$msg = sprintf( __( '"%s" message type incoming data is empty.  There is nothing to work with so why are you bugging me?', 'event_espresso'), $this->label['singular'] );
-			throw new EE_Error( $msg );
-		}
-
-		if ( empty( $this->_data_handler) ) {
-			$msg = sprintf( __('Hey %s hasn\'t declared a handler for the incoming data, so I\'m stuck', 'event_espresso'), __CLASS__ );
-			throw new EE_Error( $msg );
-		}
-
-
-		//setup class name for the data handler
-		$classname = 'EE_Messages_' . $this->_data_handler . '_incoming_data';
-
-		//check that the class exists
-		if ( !class_exists( $classname ) ) {
-
-			$msg[] = __('uhoh, Something went wrong and no data handler is found', 'event_espresso');
-			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class").  Looking for %s.', 'event_espresso'), __CLASS__, $this->_data_handler, $classname );
-			throw new EE_error( implode('||', $msg) );
-		}
-
-		//k lets get the prepared data object and replace existing data property with it.
-		$a = new ReflectionClass( $classname );
-		$this->_data = $a->newInstance( $this->_data );
-
-		$this->_set_default_addressee_data();
-		return $this->_process_data();
-	}
-
-
-
-
-	/**
 	 * Accepts an incoming data handler which contains data for processing, and returns an array of EE_Messages_Addressee objects.
 	 *
 	 * @param EE_Messages_incoming_data $data

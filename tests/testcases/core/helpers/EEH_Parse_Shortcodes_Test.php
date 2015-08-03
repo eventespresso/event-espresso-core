@@ -81,7 +81,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$data = new EE_Messages_Preview_incoming_data( array( 'event_ids' => array( $this->_event->ID() ) ) );
 
 		/**
-		 * @see EE_message_type::_init_data()
+		 * @see EE_message_type::_set_defautl_addressee_data()
 		 */
 		$addressee_data = array(
 			'billing' => $data->billing,
