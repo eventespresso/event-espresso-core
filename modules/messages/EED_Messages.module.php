@@ -165,7 +165,7 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		// attempt to process message
 		try {
-			$mtg = new EE_Message_To_Generate_From_Request( self::$_EEMSG );
+			$mtg = new EE_Message_To_Generate_From_Request( self::$_EEMSG, EE_Registry::instance()->REQ );
 			self::$_MSGPROCESSOR->generate_and_send_now( $mtg );
 		} catch ( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
@@ -329,7 +329,7 @@ class EED_Messages  extends EED_Module {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
 			self::$_EEMSG = new EE_messages();
-			self::$_MSGPROCESSOR = new EE_Messages_Processor( self::$_EEMSG );
+			self::$_MSGPROCESSOR = EE_Registry::instance()->load_class( 'Messages_Processor', self::$_EEMSG );
 		}
 	}
 
