@@ -90,7 +90,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 			$prepped_data['filter'] = $data[2];
 		}
 
-		return $data[2];
+		return $prepped_data;
 	}
 
 
