@@ -84,9 +84,11 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 * @return bool
 	 */
 	public function delete_all() {
-		$success = $this->_call_user_func_on_all( 'delete' );
+		$success = true;
 		$this->rewind();
 		while ( $this->valid() ) {
+			// any db error will result in false being returned
+			$success = $this->_call_user_func_array_on_current( 'delete' ) !== false ? $success : false;
 			// can't remove current object because valid() requires it
 			// so just capture current object temporarily
 			$object = $this->current();
