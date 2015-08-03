@@ -184,10 +184,10 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		//instantiate messenger and message type objects
 		$msg_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) ) . '_messenger';
 		$mt_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) ) . '_message_type';
+		/** @type EE_messenger $messenger */
 		$messenger = new $msg_class();
+		/** @type EE_message_type $message_type */
 		$message_type = new $mt_class();
-
-		$message_type->set_messages( array(), $messenger, $context, true );
 
 		//grab valid shortcodes and setup for parser.
 		$m_shortcodes = $messenger->get_valid_shortcodes();
@@ -240,9 +240,19 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$valid_shortcodes = isset( $m_shortcodes[$field] ) ? $m_shortcodes[$field] : $mt_shortcodes[$context];
 		$data = $addressee instanceof EE_Messages_Addressee ? $addressee : $this->_get_addressee();
 
+		//parser needs EE_Message object
+		$message = EE_Message::new_instance(
+			array(
+				'MSG_messenger' => $messenger->name,
+				'MSG_message_type' => $message_type->name,
+				'MSG_context' => $context,
+				'GRP_ID' => $mtpg->ID()
+			)
+		);
+
 		EE_Registry::instance()->load_helper('Parse_Shortcodes');
 		$parser = new EEH_Parse_Shortcodes();
-		return $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, $context, $mtpg->ID() );
+		return $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, $message );
 	}
 
 
