@@ -51,6 +51,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 		$data = array(
 			'test_send' => false,
 			'preview' => false,
+			'data_handler_class_name' => '',
 			'data' => array(
 				'MSG_generation_data' => array()
 			)
@@ -62,6 +63,10 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 		if ( isset( $info['test_send'] ) ) {
 			$data['test_send'] = $info['test_send'];
 			unset( $info['test_send'] );
+		}
+		if ( isset( $info['data_handler_class_name'] ) ) {
+			$data['data_handler_class_name'] = $info['data_handler_class_name'];
+			unset( $info['data_handler_class_name'] );
 		}
 		if ( $attached && $message->STS_ID() === EEM_Message::status_incomplete ) {
 			$generation_data = isset( $info['MSG_generation_data'] ) ? $info['MSG_generation_data'] : array();
@@ -105,7 +110,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 				$save_tracking['notupdated']++;
 			}
 			//maybe persist generation data if this is an incomplete EE_Message.
-			$this->_maybe_persist_generation_data();
+			$this->_maybe_persist_attached_data();
 
 			$this->next();
 		}
@@ -152,11 +157,23 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 			return array();
 		}
 		$info = $this->getInfo();
-
 		return isset( $info['data'] ) && isset( $info['data']['MSG_generation_data'] ) ? $info['data']['MSG_generation_data'] : array();
 	}
 
 
+
+
+	/**
+	 * Retrieves the data_handler_class_name or reference associated with the current EE_Message object in the iterator.
+	 * @return string
+	 */
+	public function get_data_handler() {
+		if ( ! $this->valid() ) {
+			return '';
+		}
+		$info = $this->getInfo();
+		return isset( $info['data_handler_class_name'] ) ? $info['data_handler_class_name'] : '';
+	}
 
 
 
@@ -192,15 +209,17 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 	 *  This checks if the current EE_Message in the iterator is incomplete. If it is, then
 	 *  data is attached for later retrieval (batch generation).
 	 */
-	protected function _maybe_persist_generation_data() {
+	protected function _maybe_persist_attached_data() {
 		if ( ! $this->valid() ) {
 			return;
 		}
 
 		$info = $this->getInfo();
+		$data_handler_class_name = isset( $info['data_handler_class_name'] ) ? $info['data_handler_class_name'] : '';
 		$data = isset( $info['data'] ) && isset( $info['data']['MSG_generation_data'] ) ? $info['data']['MSG_generation_data'] : array();
 		if ( $data && $this->current()->STS_ID() === EEM_Message::status_incomplete ) {
 			$this->current()->set_generation_data( $data );
+			$this->current()->set_field_or_extra_meta( 'data_handler_class_name', $data_handler_class_name );
 		}
 	}
 

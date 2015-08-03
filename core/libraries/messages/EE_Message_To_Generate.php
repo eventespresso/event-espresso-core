@@ -85,12 +85,22 @@ class EE_Message_To_Generate {
 
 
 
+
 	/**
 	 * Can be accessed via the send_now() method, this is set in the validation
 	 * routine via the EE_messenger::send_now() method.
 	 * @type bool
 	 */
 	protected $_send_now = false;
+
+
+	/**
+	 * Holds the classname for the datahandler used by the current message type.
+	 * This is set on the first call to the public `get_data_handler_class_name()` method.
+	 * @type string
+	 */
+	protected $_data_handler_class_name = '';
+
 
 
 
@@ -185,6 +195,26 @@ class EE_Message_To_Generate {
 
 
 
+	/**
+	 * This returns the data_handler class name for the internal message type set.
+	 * Note: this also verifies that the data handler class exists.  If it doesn't then $_valid is set to false
+	 * and the data_handler_class name is set to an empty string.
+	 *
+	 * @param   bool    $preview    Used to indicate that the preview datahandler is to be returned.
+	 * @return  string
+	 */
+	public function get_data_handler_class_name( $preview = false ) {
+		if ( $this->_data_handler_class_name === '' && $this->valid() ) {
+			$ref = $preview ? 'Preview' : $this->message_type->get_data_handler( $this->data );
+
+			//verify
+			$this->_data_handler_class_name = $this->_EEMSG->verify_and_retrieve_class_name_for_data_handler_reference( $ref );
+			if ( $this->_data_handler_class_name === '' ) {
+				$this->_valid = false;
+			}
+		}
+		return $this->_data_handler_class_name;
+	}
 
 
 	/**

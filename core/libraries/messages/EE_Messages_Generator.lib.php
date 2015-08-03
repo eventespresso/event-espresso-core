@@ -591,24 +591,32 @@ class EE_Messages_Generator {
 
 		$generation_data = $this->_generation_queue->get_queue()->get_generation_data();
 
-		$data_handler= $this->_current_message_type->get_data_handler( $generation_data );
+		$data_handler_class_name = $this->_generation_queue->get_queue()->get_data_handler()
+			? $this->_generation_queue->get_queue()->get_data_handler()
+			: 'EE_Messages_' .  $this->_current_message_type->get_data_handler( $generation_data ) . '_incoming_data';
+
+
 
 		//If this EE_Message is for a preview, then let's switch out to the preview data handler.
 		if ( $this->_generation_queue->get_queue()->is_preview() ) {
-			$data_handler = 'Preview';
+			$data_handler_class_name  = 'EE_Messages_Preview_incoming_data';
 		}
 
-
-		//if data handler is empty, then let's get out because the message cannot be generated.
-		if ( empty( $data_handler ) ) {
-			$this->_error_msg[] = __( 'The data handler could not be set from the generation data provided.', 'event_espresso' );
-		} else {
-			//note, this may set error messages as well.
-			$this->_set_data_handler( $generation_data, $data_handler );
+		//First get the class name for the data handler (and also verifies it exists.
+		if ( ! class_exists( $data_handler_class_name ) ) {
+			$this->_error_msg[] = sprintf(
+				__('The included data handler class name does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
+				$data_handler_class_name );
+			return false;
 		}
+
+		//convert generation_data for data_handler_instantiation.
+		$generation_data = $data_handler_class_name::convert_data_from_persistent_storage( $generation_data );
+
+		//note, this may set error messages as well.
+		$this->_set_data_handler( $generation_data, $data_handler_class_name  );
 
 		return empty( $this->_error_msg );
-
 	}
 
 
@@ -620,24 +628,20 @@ class EE_Messages_Generator {
 	 * adds it to the _data repository.
 	 *
 	 * @param mixed     $generating_data        This is data expected by the instantiated data handler.
-	 * @param string    $data_handler_reference This is the reference string indicating what data handler is being
+	 * @param string    $data_handler_class_name This is the reference string indicating what data handler is being
 	 *                                          instantiated.
+	 *
 	 * @return void.
 	 */
-	protected function _set_data_handler( $generating_data, $data_handler_reference ) {
-		//First get the class name for the data handler (and also verifies it exists.
-		if ( ! $classname = $this->_verify_and_retrieve_class_name( $data_handler_reference ) ) {
-			//invalid classname so lets just return because an error message will have already been set.
-			return;
-		}
+	protected function _set_data_handler( $generating_data, $data_handler_class_name ) {
 
 		//valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
 		//is already a ready datahandler in the repository.
-		$data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $classname, $generating_data ) );
+		$data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $data_handler_class_name, $generating_data ) );
 		if ( ! $data_handler instanceof EE_messages_incoming_data ) {
 			//no saved data_handler in the repo so let's set one up and add it to the repo.
 			try {
-				$this->_current_data_handler = new $classname( $generating_data );
+				$this->_current_data_handler = new $data_handler_class_name( $generating_data );
 				$this->_data_handler_collection->add( $this->_current_data_handler, $generating_data );
 			} catch( EE_Error $e ) {
 				$this->_error_msg[] = $e->get_error();
@@ -660,45 +664,12 @@ class EE_Messages_Generator {
 	 * @return mixed Prepped data for persisting to the queue.  false is returned if unable to prep data.
 	 */
 	protected function _prepare_data_for_queue( EE_Message_To_Generate $mtg, $preview ) {
-		if ( $preview ) {
-			$data_handler_ref = 'Preview';
-		} else {
-			$message_type = $this->_EEMSG->get_active_message_type( $mtg->messenger, $mtg->message_type );
-			if ( ! $message_type instanceof EE_message_type ) {
-				false;
-			}
-			$data_handler_ref = $message_type->get_data_handler( $mtg->data );
+		$data_handler = $mtg->get_data_handler_class_name( $preview );
+		if ( ! $mtg->valid() ) {
+			return false; //unable to get the data because the info in the EE_Message_To_Generate class is invalid.
 		}
-		/** @type EE_Messages_incoming_data $data_handler */
-		$data_handler = $this->_verify_and_retrieve_class_name( $data_handler_ref );
 		return $data_handler::convert_data_for_persistent_storage( $mtg->data );
 	}
-
-
-
-
-
-
-	/**
-	 * Validates the given string as a reference for an existing, accessible data handler and returns the class name
-	 * For the handler the reference matches.
-	 * @param string $data_handler_reference
-	 * @return string
-	 */
-	protected function _verify_and_retrieve_class_name( $data_handler_reference ) {
-		$class_name = 'EE_Messages_' . $data_handler_reference . '_incoming_data';
-		if (  ! class_exists( $class_name ) ) {
-			$this->_error_msg[] = sprintf(
-				__('The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
-				$data_handler_reference,
-				$class_name );
-			$class_name = ''; //clear out class_name so caller knows this isn't valid.
-		}
-
-		return $class_name;
-	}
-
-
 
 
 
@@ -722,10 +693,13 @@ class EE_Messages_Generator {
 
 		if ( $data === false ) {
 			$message->set_STS_ID( EEM_Message::status_failed );
-			$message->set_error_message( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
+			$this->_error_msg[] = ( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
 		} else {
-			$this->_generation_queue->add( $message, $data, $mtg->preview, $test_send );
+			//make sure that the data handler is cached on the message as well
+			$data['data_handler_class_name'] = $mtg->get_data_handler_class_name();
 		}
+		$this->_generation_queue->add( $message, $data, $mtg->preview, $test_send );
+
 	}
 
 

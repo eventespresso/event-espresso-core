@@ -810,6 +810,30 @@ class EE_messages {
 		$this->_installed_messengers = empty( $this->_installed_messengers ) ? $this->get_installed( 'messengers', true ) : $this->_installed_messengers;
 		return $this->_installed_messengers;
 	}
+
+
+
+
+	/**
+	 * Validates the given string as a reference for an existing, accessible data handler and returns the class name
+	 * For the handler the reference matches.
+	 * @param string $data_handler_reference
+	 * @return string
+	 */
+	public function verify_and_retrieve_class_name_for_data_handler_reference( $data_handler_reference ) {
+		$class_name = 'EE_Messages_' . $data_handler_reference . '_incoming_data';
+		if (  ! class_exists( $class_name ) ) {
+			EE_Error::add_error( sprintf(
+				__('The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
+				$data_handler_reference,
+				$class_name ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			$class_name = ''; //clear out class_name so caller knows this isn't valid.
+		}
+
+		return $class_name;
+	}
 }
 //end EE_messages class
 
