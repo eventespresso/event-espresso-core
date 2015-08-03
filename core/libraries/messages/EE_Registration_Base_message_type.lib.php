@@ -100,22 +100,6 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 
 
-	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
-		if ( $context == 'admin' ) {
-			//there should be a transaction and payment object in the incoming data.
-			if ( $this->_data instanceof EE_Messages_incoming_data && ! $this->_data instanceof EE_Messages_Preview_incoming_data ) {
-				$payment = $this->_data->payment;
-
-				if ( $payment instanceof EE_Payment ) {
-					return $payment->ID();
-				}
-			}
-		}
-		return 0;
-	}
-
-
-
 	/**
 	 * Setup admin settings for this message type.
 	 */
