@@ -430,7 +430,7 @@ class EEH_MSG_Template {
 
 		//valid sending messenger but only if sending messenger set.  Otherwise generating messenger is used.
 		if ( ! empty( $sending_messenger ) ) {
-			$with_messengers = $message_type->with_messenger();
+			$with_messengers = $message_type->with_messengers();
 			if ( ! isset( $with_messengers[$message->messenger()] )
 			     || ! in_array( $sending_messenger, $with_messengers[$message->messenger()] ) ) {
 				throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $message_type ) ) );
