@@ -842,27 +842,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 	
 
 	/**
-	 * This function assembles the $messages array which will contain the message objects.
-	 * @return void
-	 * @access protected
-	 */
-	protected function _assemble_messages() {
-		//make sure any set messages object is cleared
-		$this->messages = array();
-		foreach ( $this->_addressees as $context => $addressees ) {
-			foreach ( $addressees as $addressee ) {
-				$message = $this->_setup_message_object($context, $addressee);
-				//only assign message if everything went okay
-				if ( $message ) {
-					$message->template_pack = $this->_template_pack;
-					$message->variation = $this->_variation;
-					$this->messages[] = $message;
-				}
-			}
-		}
-	}
-
-	/**
 	 * This function setups up and returns the message object
 	 *
 	 * @return void
