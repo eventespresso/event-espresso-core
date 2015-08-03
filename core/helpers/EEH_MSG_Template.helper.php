@@ -414,7 +414,7 @@ class EEH_MSG_Template {
 	public static function get_url_trigger( EE_message_type $message_type, EE_Message $message, $registration = null, $sending_messenger = '' ) {
 		//first determine if the url can be to the EE_Message object.
 		if ( ! $message_type->always_generate() ) {
-			return EEH_MSG_Template::generate_message_url_trigger( $message );
+			return EEH_MSG_Template::generate_browser_trigger( $message );
 		}
 
 		//if $registration object is not valid then exit early because there's nothing that can be generated.
