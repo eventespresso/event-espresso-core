@@ -283,6 +283,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'func' => '_messages_reports',
 					'capability' => 'ee_read_messages'
 					),
+				'message_queue' => array(
+					'func' => '_message_queue_list_table',
+					'capability' => 'ee_read_messages'
+				)
 		);
 	}
 
@@ -406,7 +410,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
-					'order' => 20
+					'order' => 30
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
 				'help_tabs' => array(
@@ -425,9 +429,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
 				'require_nonce' => false
-				)
-			/*'reports' => array(
+				),
+			'message_queue' => array(
 				'nav' => array(
+					'label' => __('Message Queue', 'event_espresso'),
+					'order' => 20
+					),
+				'list_table' => 'EE_Message_List_Table',
+				'require_nonce' => false
+				),
+			/*'reports' => array(
+				'nav' => array(at
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					)
@@ -449,10 +461,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _add_screen_options_default() {
+		/**
+		 * Note: the reason for the value swap here on $this->_admin_page_title is because $this->_per_page_screen_options
+         * uses the $_admin_page_title property and we want different outputs in the different spots.
+         */
 		$page_title = $this->_admin_page_title;
 		$this->_admin_page_title = __('Global Message Templates', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
+	}
+
+
+
+
+	protected function _add_screen_options_message_queue() {
+		$this->_admin_page_title = __( 'Message Queue', 'event_espresso' );
+		$this->_per_page_screen_option();
 	}
 
 
@@ -612,8 +636,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * set views array for List Table
-	 * @access public
-	 * @return array
 	 */
 	public function _set_list_table_views_default() {
 		$this->_views = array(
@@ -630,8 +652,33 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
+
+	/**
+	 * set views array for message queue list table
+	 */
+	public function _set_list_table_views_message_queue() {
+		$this->_views = array(
+			 'all' => array(
+			    'slug' => 'all',
+			    'label' => __( 'All', 'event_espresso' ),
+			    'count' => 0,
+			    'bulk_action' => array()
+			 )
+		);
+	}
+
+
+
 	protected function _ee_default_messages_overview_list_table() {
 		$this->_admin_page_title = __('Default Message Templates', 'event_espresso');
+		$this->display_admin_list_table_page_with_no_sidebar();
+	}
+
+
+
+
+
+	protected function _message_queue_list_table() {
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
