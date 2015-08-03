@@ -89,25 +89,24 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * This method takes the incomign data and figures out from it what the message type is and evt_id/grp_id and uses that to generate the html for a button in the template.
+	 * This method takes the incoming data and figures out from it what the message type is and evt_id/grp_id and uses that to generate the html for a button in the template.
 	 *
 	 * @since 4.5.0
 	 *
 	 * @param EE_Messages_Addressee $recipient
-	 * @param string                $type      'html' or 'pdf'
+	 * @param string                $sending_messenger      'html' or 'pdf'
 	 *
 	 * @return string                Generated html
 	 */
-	private function _get_button( EE_Messages_Addressee $recipient, $type ) {
-		$download_text = $type == 'pdf' ? __('Download PDF', 'event_espresso') : __('Show HTML', 'event_espresso' );
+	private function _get_button( EE_Messages_Addressee $recipient, $sending_messenger ) {
+		$download_text = $sending_messenger == 'pdf' ? __('Download PDF', 'event_espresso') : __('Show HTML', 'event_espresso' );
 		$content = '
-<form method="post" action="' . $this->_get_url( $recipient, $type ) . '" >
+<form method="post" action="' . $this->_get_url( $recipient, $sending_messenger ) . '" >
 	<input class="print_button" type="submit" value="' . $download_text . '" />
 </form>
 		';
 		return $content;
 	}
-
 
 
 	/**
@@ -116,25 +115,27 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @since 4.5.0
 	 *
+	 * @param EE_Messages_Addressee $recipient
+	 * @param string $sending_messenger
+	 *
 	 * @return string The generated url for displaying the link.
+	 * @throws EE_Error
 	 */
-	private function _get_url( EE_Messages_Addressee $recipient, $type ) {
-
-		//get out early if the given messenger is not active!
-		if ( ! isset( $this->_active_messengers[$type]) ) {
-			return '';
-		}
+	private function _get_url( EE_Messages_Addressee $recipient, $sending_messenger ) {
 
 		$reg = $recipient->reg_obj;
 		$reg = ! $reg instanceof EE_Registration ? $recipient->primary_reg_obj : $reg;
 
-		//if no reg object then we really can't do anything at this point.
-		if ( ! $reg instanceof EE_Registration ) {
-			return '';
-		}
 
-		if ( $this->_message_type instanceof EE_message_type ) {
-			return $this->_message_type->get_url_trigger( $this->_context, $type, $reg );
+		if ( $this->_message_type instanceof EE_message_type && $this->_message instanceof EE_Message ) {
+			EE_Registry::instance()->load_helper( 'MSG_Template' );
+			try {
+				return EEH_MSG_Template::get_url_trigger( $this->_message_type, $this->_message, $reg, $sending_messenger );
+			} catch( EE_Error $e ) {
+				if ( WP_DEBUG ) {
+					$e->get_error();
+				}
+			}
 		}
 
 		return '';

@@ -398,6 +398,72 @@ class EEH_MSG_Template {
 	}
 
 
+	/**
+	 * This does some validation of incoming params, determines what type of url is being prepped and returns the
+	 * appropriate url trigger
+	 *
+	 * @param EE_message_type $message_type
+	 * @param EE_Message $message
+	 * @param EE_Registration | null $registration  The registration object must be included if this
+	 *                                              is going to be a registration trigger url.
+	 * @param string $sending_messenger             The (optional) sending messenger for the url.
+	 *
+	 * @return string
+	 * @throws EE_Error
+	 */
+	public static function get_url_trigger( EE_message_type $message_type, EE_Message $message, $registration = null, $sending_messenger = '' ) {
+		//first determine if the url can be to the EE_Message object.
+		if ( ! $message_type->always_generate() ) {
+			return EEH_MSG_Template::generate_message_url_trigger( $message );
+		}
+
+		//if $registration object is not valid then exit early because there's nothing that can be generated.
+		if ( ! $registration instanceof EE_Registration ) {
+			throw new EE_Error( __( 'Incoming value for registration is not a valid EE_Registraiton object.', 'event_espresso' ) );
+		}
+
+		//validate given context
+		$contexts = $message_type->get_contexts();
+		if ( $message->context() !== '' && ! isset( $contexts[$message->context()] ) ) {
+			throw new EE_Error( sprintf( __('The context %s is not a valid context for %s.', 'event_espresso'), $message->context(), get_class( $message_type ) ) );
+		}
+
+		//valid sending messenger but only if sending messenger set.  Otherwise generating messenger is used.
+		if ( ! empty( $sending_messenger ) ) {
+			$with_messengers = $message_type->with_messenger();
+			if ( ! isset( $with_messengers[$message->messenger()] )
+			     || ! in_array( $sending_messenger, $with_messengers[$message->messenger()] ) ) {
+				throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $message_type ) ) );
+			}
+		} else {
+			$sending_messenger = $message->messenger();
+		}
+
+		return EEH_MSG_Template::generate_url_trigger( $sending_messenger, $message->messenger(), $message->context(), $message->message_type(), $registration, $message->GRP_ID() );
+
+	}
+
+
+	/**
+	 * This returns the url for triggering a in browser view of a specific EE_Message object.
+	 * @param EE_Message $message
+	 * @return string.
+	 */
+	public static function generate_browser_trigger( EE_Message $message ) {
+		$query_args = array(
+			'ee' => 'msg_browser_trigger',
+			'token' => $message->MSG_token()
+		);
+		return apply_filters(
+			'FHEE__EEH_MSG_Template__generate_browser_trigger',
+			add_query_arg( $query_args, get_site_url() ),
+			$message
+		);
+	}
+
+
+
+
 
 
 	/**
@@ -413,7 +479,7 @@ class EEH_MSG_Template {
 	 *
 	 * @return string          The generated url.
 	 */
-	public static function generate_url_trigger( $sending_messenger, $generating_messenger, $context, $message_type, EE_Registration $registration, $message_template_group, $data_id ) {
+	public static function generate_url_trigger( $sending_messenger, $generating_messenger, $context, $message_type, EE_Registration $registration, $message_template_group, $data_id = 0 ) {
 		$query_args = array(
 			'ee' => 'msg_url_trigger',
 			'snd_msgr' => $sending_messenger,
