@@ -2,7 +2,7 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Class EE_Collection
+ * Class EE_Object_Collection
  *
  * abstract storage entity for unique objects
  * extends SplObjectStorage so therefore implements the
@@ -14,7 +14,7 @@
  * @since                4.6.31
  *
  */
-abstract class EE_Collection extends SplObjectStorage implements EEI_Collection {
+abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Collection {
 
 	/**
 	 * an interface (or class) name to be used for restricting the type of objects added to the storage
@@ -30,7 +30,7 @@ abstract class EE_Collection extends SplObjectStorage implements EEI_Collection 
 	 *
 	 * attaches an object to the Collection
 	 * and sets any supplied data associated with the current iterator entry
-	 * by calling EE_Collection::set_info()
+	 * by calling EE_Object_Collection::set_info()
 	 *
 	 * @access public
 	 * @param object $object
@@ -80,6 +80,7 @@ abstract class EE_Collection extends SplObjectStorage implements EEI_Collection 
 	 * get_by_info
 	 *
 	 * finds and returns an object in the Collection based on the info that was set using addObject()
+	 * PLZ NOTE: the pointer is reset to the beginning of the collection before returning
 	 *
 	 * @access public
 	 * @param mixed
@@ -130,6 +131,48 @@ abstract class EE_Collection extends SplObjectStorage implements EEI_Collection 
 
 
 
+	/**
+	 * set_current
+	 *
+	 * advances pointer to the provided object
+	 *
+	 * @access public
+	 * @param $object
+	 * @return void
+	 */
+	public function set_current( $object ) {
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $this->current() === $object ) {
+				break;
+			}
+			$this->next();
+		}
+	}
+
+
+
+	/**
+	 * set_current_by_info
+	 *
+	 * advances pointer to the object whose info matches that which was provided
+	 *
+	 * @access public
+	 * @param $info
+	 * @return void
+	 */
+	public function set_current_by_info( $info ) {
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $info === $this->getInfo() ) {
+				break;
+			}
+			$this->next();
+		}
+	}
+
+
+
 }
-// End of file EE_Collection.core.php
-// Location: /core/EE_Collection.core.php
+// End of file EE_Object_Collection.core.php
+// Location: /core/EE_Object_Collection.core.php

@@ -5,7 +5,7 @@
  * Class EE_Base_Class_Repository
  *
  * abstract storage entity for unique objects with persistence
- * extends EE_Collection...
+ * extends EE_Object_Collection...
  * which extends SplObjectStorage, so therefore implements the
  * Countable, Iterator, Serializable, and ArrayAccess interfaces
  *
@@ -15,35 +15,106 @@
  * @since                4.6.31
  *
  */
-abstract class EE_Base_Class_Repository extends EE_Collection implements EEI_Repository {
+abstract class EE_Base_Class_Repository extends EE_Object_Repository implements EEI_Deletable {
+
+	/**
+	 * EE_Base_Class_Repository constructor.
+	 */
+	public function __construct() {
+		$this->persist_method = 'save';
+	}
 
 
 
 	/**
-	 * persistObject
+	 * save
 	 *
-	 * used for saving EE_Base_Class classes to the database,
-	 * an array of arguments can also be supplied that will be passed along to EE_Base_Class::save()
+	 * calls EE_Base_Class::save() on the current object
+	 * an array of arguments can also be supplied that will be passed along to EE_Base_Class::save(),
+	 * where each element of the $arguments array corresponds to a parameter for the callback method
+	 * PLZ NOTE: if the first argument of the callback requires an array, for example array( 'key' => 'value' )
+	 * then $arguments needs to be a DOUBLE array ie: array( array( 'key' => 'value' ) )
 	 *
-	 * @access protected
-	 * @param object 	$object
-	 * @param array 	$persistence_arguments	arrays of arguments that will be passed to the object's persistence method
+	 * @access public
+	 * @param array $arguments	arrays of arguments that will be passed to the object's save method
 	 * @return bool | int
-	 * @throws \EE_Error
 	 */
-	protected function persistObject( $object, $persistence_arguments = array() ) {
-		if ( $this->contains( $object ) ) {
-			$this->rewind();
-			while ( $this->valid() ) {
-				if ( $object === $this->current() ) {
-					$success = $object->save( $persistence_arguments );
-					$this->rewind();
-					return $success;
-				}
-				$this->next();
-			}
+	public function save( $arguments = array() ) {
+		return $this->persist( 'save', $arguments );
+	}
+
+
+
+	/**
+	 * save_all
+	 *
+	 * calls EE_Base_Class::save() on ALL objects in the repository
+	 *
+	 * @access public
+	 * @return bool | int
+	 */
+	public function save_all() {
+		return $this->persist_all( 'save' );
+	}
+
+
+
+	/**
+	 * delete
+	 *
+	 * calls EE_Base_Class::delete() on the current object
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function delete() {
+		$success = $this->_call_user_func_array_on_current( 'delete' );
+		$this->remove( $this->current() );
+		return $success;
+	}
+
+
+
+	/**
+	 * delete_all
+	 *
+	 * calls EE_Base_Class::delete() on ALL objects in the repository
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function delete_all() {
+		$success = true;
+		$this->rewind();
+		while ( $this->valid() ) {
+			// any db error will result in false being returned
+			$success = $this->_call_user_func_array_on_current( 'delete' ) !== false ? $success : false;
+			// can't remove current object because valid() requires it
+			// so just capture current object temporarily
+			$object = $this->current();
+			// advance the pointer
+			$this->next();
+			// THEN remove the object from the repository
+			$this->remove( $object );
 		}
-		return false;
+		return $success;
+	}
+
+
+
+	/**
+	 * update_extra_meta
+	 *
+	 * calls EE_Base_Class::update_extra_meta() on the current object using the supplied values
+	 *
+	 * @access public
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @param string $previous_value
+	 * @return bool | int
+	 */
+	public function update_extra_meta( $meta_key, $meta_value, $previous_value = null ) {
+		return $this->_call_user_func_array_on_current( 'update_extra_meta', array( $meta_key, $meta_value, $previous_value ) );
 	}
 
 

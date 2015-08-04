@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class EE_Collection_Test
+ * Class EE_Object_Collection_Test
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -10,16 +10,16 @@
  * @group 				8565
  *
  */
-class EE_Collection_Test extends EE_UnitTestCase {
+class EE_Object_Collection_Test extends EE_UnitTestCase {
 
 	/**
-	 * @type \EE_Collection_Mock $collection
+	 * @type \EE_Object_Collection_Mock $collection
 	 */
 	protected $collection;
 
 	public function setUp() {
-		require_once EE_TESTS_DIR . 'mocks/EE_Collection_Mock.php';
-		$this->collection = new EE_Collection_Mock();
+		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Object_Collection_Mock.php';
+		$this->collection = new EE_Object_Collection_Mock();
 		parent::setUp();
 	}
 
@@ -77,6 +77,31 @@ class EE_Collection_Test extends EE_UnitTestCase {
 		$this->assertCount( 0, $this->collection );
 	}
 
+	public function test_set_current() {
+		$ticket_1 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_name' => 'ticket-1', 'TKT_price' => '5' ) );
+		$ticket_2 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_name' => 'ticket-2', 'TKT_price' => '6' ) );
+		$ticket_3 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_name' => 'ticket-3', 'TKT_price' => '7' ) );
+		$this->collection->add( $ticket_1 );
+		$this->collection->add( $ticket_2 );
+		$this->collection->add( $ticket_3 );
+		$this->collection->rewind();
+		$this->collection->set_current( $ticket_3 );
+		$this->assertEquals( $this->collection->current()->name(), 'ticket-3' );
+	}
+
+	public function test_set_current_by_info() {
+		$ticket_1 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_name' => 'ticket-1', 'TKT_price' => '5' ) );
+		$ticket_2 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_name' => 'ticket-2', 'TKT_price' => '6' ) );
+		$ticket_3 = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_name' => 'ticket-3', 'TKT_price' => '7' ) );
+		$this->collection->add( $ticket_1 );
+		$this->collection->add( $ticket_2 );
+		$this->collection->add( $ticket_3 );
+		$this->collection->set_info( $ticket_3, '7-dollar-ticket' );
+		$this->collection->rewind();
+		$this->collection->set_current_by_info( '7-dollar-ticket' );
+		$this->assertEquals( $this->collection->current()->name(), 'ticket-3' );
+	}
+
 }
-// End of file EE_Collection_Test.php
-// Location: /tests/testcases/core/EE_Collection_Test.php
+// End of file EE_Object_Collection_Test.php
+// Location: /tests/testcases/core/EE_Object_Collection_Test.php
