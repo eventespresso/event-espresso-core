@@ -15,9 +15,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * @access protected
-	 * @var EE_Line_Item_Display $Line_Item_Display
+	 * @var EE_Line_Item_Display $line_item_display
 	 */
-	protected $Line_Item_Display = null;
+	protected $line_item_display = null;
 
 
 
@@ -28,6 +28,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+		add_filter( 'FHEE__SPCO__EE_Line_Item_Filter_Collection', array( 'EE_SPCO_Reg_Step_Payment_Options', 'add_spco_line_item_filters' ) );
 		add_action( 'wp_ajax_switch_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'switch_spco_billing_form' ));
 		add_action( 'wp_ajax_nopriv_switch_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'switch_spco_billing_form' ));
 		add_action( 'wp_ajax_save_payer_details', array( 'EE_SPCO_Reg_Step_Payment_Options', 'save_payer_details' ));
@@ -104,17 +105,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * @return null
 	 */
-	public function Line_Item_Display() {
-		return $this->Line_Item_Display;
+	public function line_item_display() {
+		return $this->line_item_display;
 	}
 
 
 
 	/**
-	 * @param null $Line_Item_Display
+	 * @param null $line_item_display
 	 */
-	public function set_Line_Item_Display( $Line_Item_Display ) {
-		$this->Line_Item_Display = $Line_Item_Display;
+	public function set_line_item_display( $line_item_display ) {
+		$this->line_item_display = $line_item_display;
 	}
 
 
@@ -244,15 +245,25 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $registrations_requiring_payment ) ) {
 			//EEH_Debug_Tools::printr( $registrations_requiring_payment, '$registrations_requiring_payment', __FILE__, __LINE__ );
 			// autoload Line_Item_Display classes
-			EEH_Autoloader::register_line_item_display_autoloaders();
-			$this->set_Line_Item_Display( new EE_Line_Item_Display( 'spco' ) );
-			$transaction_details = $this->Line_Item_Display->display_line_item(
-				$this->checkout->cart->get_grand_total(),
-				array( 'registrations' => $registrations )
+			EEH_Autoloader::register_line_item_filter_autoloaders();
+			$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
+				apply_filters(
+					'FHEE__SPCO__EE_Line_Item_Filter_Collection',
+					new EE_Line_Item_Filter_Collection()
+				),
+				$this->checkout->cart->get_grand_total()
 			);
-			$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
+			$filtered_line_item_tree = $line_item_filter_processor->process();
+			//echo "\n<br />";
+			//EEH_Line_Item::visualize( $filtered_line_item_tree );
+			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
+			$this->checkout->amount_owing = $filtered_line_item_tree->total();
 			if ( $this->checkout->amount_owing > 0 ) {
-				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
+				EEH_Autoloader::register_line_item_display_autoloaders();
+				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
+				$subsections[ 'payment_options' ] = $this->_display_payment_options(
+					$this->line_item_display->display_line_item( $filtered_line_item_tree )
+				);
 			}
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
@@ -268,6 +279,26 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 * add line item filters required for this reg step
+	 *
+	 * @param \EE_Line_Item_Filter_Collection $line_item_filter_collection
+	 * @return \EE_Line_Item_Filter_Collection
+	 */
+	public static function add_spco_line_item_filters( EE_Line_Item_Filter_Collection $line_item_filter_collection ) {
+		$line_item_filter_collection->add(
+			new EE_Billable_Line_Item_Filter(
+				EE_Registry::instance()->SSN->checkout()->transaction->registrations(
+					EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
+				)
+			)
+		);
+		$line_item_filter_collection->add( new EE_Non_Zero_Line_Item_Filter() );
+		return $line_item_filter_collection;
 	}
 
 
@@ -444,7 +475,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 							'template_args'  				=> apply_filters(
 								'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__template_args',
 								array(
-									'reg_count' 					=> $this->Line_Item_Display->total_items(),
+									'reg_count' 					=> $this->line_item_display->total_items(),
 									'transaction_details' 	=> $transaction_details,
 									'available_payment_methods' => array()
 								)

@@ -20,9 +20,10 @@ abstract class EE_Line_Item_Filter_Base implements EEI_Line_Item_Filter {
 	/**
 	 * process
 	 *
-	 * @return EEI_Line_Item
+	 * @param \EEI_Line_Item $line_item
+	 * @return \EEI_Line_Item
 	 */
-	abstract public function process();
+	abstract public function process( EEI_Line_Item $line_item );
 
 
 }

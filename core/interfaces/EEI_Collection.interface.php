@@ -4,21 +4,21 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 
 /**
- * Object Collection Interface
+ * Collection Interface
  *
  * @package    Event Espresso
  * @subpackage interfaces
  * @since      4.8.0
  * @author     Brent Christensen
  */
-interface EEI_Object_Collection {
+interface EEI_Collection {
 
 	/**
 	 * add
 	 *
 	 * attaches an object to the Collection
 	 * and sets any supplied data associated with the current iterator entry
-	 * by calling EEI_Object_Collection::set_info()
+	 * by calling EEI_Collection::set_info()
 	 *
 	 * @access public
 	 * @param object $object
@@ -83,5 +83,5 @@ interface EEI_Object_Collection {
 
 
 }
-// End of file EEI_Object_Collection.interface.php
-// Location: /core/interfaces/line_items/EEI_Object_Collection.interface.php
+// End of file EEI_Collection.interface.php
+//Location: /core/interfaces/line_items/EEI_Collection.interface.php
