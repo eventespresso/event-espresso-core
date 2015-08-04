@@ -773,45 +773,60 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
-	 * @param \EE_Line_Item $parent_line_item
 	 * @return float
 	 * @throws \EE_Error
 	 */
-	function recalculate_pre_tax_total( EE_Line_Item $parent_line_item = null ) {
+	function recalculate_pre_tax_total() {
 		$total = 0;
-		//completely ignore tax sub-totals when calculating the pre-tax-total
-		if ( $this->is_tax_sub_total() ) {
+		$my_children = $this->children();
+		//completely ignore tax and tax sub-totals when calculating the pre-tax-total
+		if ( $this->is_tax_sub_total() || $this->is_tax() ) {
 			return 0;
-		} elseif ( $this->is_sub_line_item() ) {
-			throw new EE_Error( sprintf( __( 'Calculating the pretax-total on sub-line items doesn\'t make sense right now. You were trying to calculate it on %s', "event_espresso" ), print_r( $this, TRUE ) ) );
-		} elseif ( $this->is_line_item() ) {
-			if ( $this->is_percent() && $parent_line_item instanceof EE_Line_Item ) {
-				$total += $parent_line_item->total() * $this->percent() / 100;
-			} else {
-				$total = $this->unit_price() * $this->quantity();
-			}
-			$this->set_total( $total );
-			$this->maybe_save();
-		} elseif ( $this->is_sub_total() || $this->is_total() ) {
+		} elseif (
+				( $this->is_sub_line_item() || $this->is_line_item() ) &&
+				empty( $my_children ) ) {
+			$total = $this->unit_price() * $this->quantity();
+		} elseif ( $this->is_sub_total() || $this->is_total() || ($this->is_line_item() && ! empty( $my_children ) ) ) {
 			//get the total of all its children
-			foreach ( $this->children() as $child_line_item ) {
+			foreach ( $my_children as $child_line_item ) {
 				if ( $child_line_item instanceof EE_Line_Item ) {
-					//only recalculate sub-totals for NON-taxes
 					if ( $child_line_item->is_percent() ) {
-						$total += $total * $child_line_item->percent() / 100;
+						$percent_total = $total * $child_line_item->percent() / 100;
+						$child_line_item->set_total( $percent_total );
+						//so far all percent line items should have a quantity of 1
+						//(ie, no double percent discounts. Although that might be requested someday)
+						$child_line_item->set_quantity( 1 );
+						$child_line_item->maybe_save();
+						$total += $percent_total;
 					} else {
-						$total += $child_line_item->recalculate_pre_tax_total( $this );
+						//verify flat sub-line-item quantities match their parent
+						if( $child_line_item->is_sub_line_item() ) {
+							$child_line_item->set_quantity( $this->quantity() );
+						}
+						$total += $child_line_item->recalculate_pre_tax_total();
 					}
 				}
 			}
-			//we only want to update sub-totals if we're including non-taxable items
-			//and grand totals shouldn't be updated when calculating pre-tax totals
+
 			if( $this->is_sub_total() ){
 				// no negative totals plz
 				$total = max( $total, 0 );
-				$this->set_total( $total );
-				$this->maybe_save();
 			}
+		}
+		//ensure all non-line items and non-sub-line-items have a quantity of 1
+		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
+			$this->set_quantity( 1 );
+		}
+
+		//we don't want to bother saving grand totals, because that needs to factor in taxes anyways
+		//so it ought to be
+		if( ! $this->is_total() ) {
+			$this->set_total( $total );
+			//if not a percent line item, make sure we keep the unit price in sync
+			if( $this->is_line_item() && ! empty( $my_children ) && ! $this->is_percent() ) {
+				$this->set_unit_price( $this->total() / $this->quantity() );
+			}
+			$this->maybe_save();
 		}
 		return $total;
 	}
