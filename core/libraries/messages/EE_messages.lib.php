@@ -354,7 +354,7 @@ class EE_messages {
 			//in the legacy system, when generating and sending were different, that means all the
 			//vars are already in the request object.  So let's just use that.
 			try {
-				$mtg = new EE_Message_To_Generate_From_Request( $this );
+				$mtg = new EE_Message_To_Generate_From_Request( $this, EE_Registry::instance()->REQ );
 				$processor->generate_and_send_now( $mtg );
 			} catch ( EE_Error $e ) {
 				$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
