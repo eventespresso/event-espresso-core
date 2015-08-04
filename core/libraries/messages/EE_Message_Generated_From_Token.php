@@ -38,6 +38,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 	public function __construct( $token, $sending_messenger = 'html', EE_messages $ee_msg ) {
 		$this->token = $token;
 		$this->_sending_messenger = $sending_messenger;
+		$this->_EEMSG = $ee_msg;
 		$message = $this->get_EE_Message();
 		//set params for parent from the message object
 		parent::__construct( $message->messenger(), $message->message_type(), array(), $ee_msg, $message->context(), false );
