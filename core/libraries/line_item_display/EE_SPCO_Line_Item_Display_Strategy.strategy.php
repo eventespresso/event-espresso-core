@@ -33,37 +33,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	private $_taxes_html = '';
 
 	/**
-	 * array of ticket IDs and their corresponding quantities for
-	 * registrations that owe money and can pay at this moment
-	 * @type array $_billable_ticket_quantities
-	 */
-	private $_billable_ticket_quantities = array();
-
-	/**
-	 * whether or not registrations have been separated into billable and non-billable items
-	 * @type bool $_process_registrations
-	 */
-	private static $_process_registrations = true;
-
-	/**
-	 * tax rate to be used for tax calculations
-	 * @type float $_tax_rate
-	 */
-	private $_tax_rate = 0.00;
-
-	/**
-	 * total tax amount we can bill for at this time
-	 * @type float $_total_tax
-	 */
-	private $_total_tax = 0.00;
-
-	/**
-	 * total taxable amount being billed for at this time
-	 * @type float $_taxable_total
-	 */
-	private $_taxable_total = 0.00;
-
-	/**
 	 * total amount including tax we can bill for at this time
 	 * @type float $_grand_total
 	 */
@@ -281,6 +250,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		// quantity td
 		$html .= EEH_HTML::td( $line_item->quantity(), '', 'item_l jst-rght' );
+		$this->_total_items += $line_item->quantity();
 		// determine total for line item
 		$total = $line_item->total();
 		$this->_events[ $options[ 'event_id' ] ] += $total;
