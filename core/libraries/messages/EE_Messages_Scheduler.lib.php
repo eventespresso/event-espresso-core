@@ -10,6 +10,12 @@
  */
 class EE_Messages_Scheduler extends EE_BASE {
 
+	/**
+	 * Number of seconds between batch sends/generates on the cron job.
+	 * Defaults to 10 minutes in seconds.
+	 * @type int
+	 */
+	const message_cron_schedule = 30;
 
 	/**
 	 * Constructor
@@ -38,9 +44,9 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param $schedules
 	 */
 	public function custom_schedules( $schedules ) {
-		$schedules['ten_minute'] = array(
-				'interval' => 36000, //10 min in seconds
-				'display' => __( 'Once every 10 minutes', 'event_espresso' )
+		$schedules['ee_message_cron'] = array(
+				'interval' => self::message_cron_schedule,
+				'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
 		);
 		return $schedules;
 	}
@@ -52,8 +58,8 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @return array
 	 */
 	public function register_scheduled_tasks( $tasks ) {
-		$tasks['AHEE__EE_Messages_Scheduler__generation'] = 'ten_minute';
-		$tasks['AHEE__EE_Messages_Scheduler__sending'] = 'ten_minute';
+		$tasks['AHEE__EE_Messages_Scheduler__generation'] = 'ee_message_cron';
+		$tasks['AHEE__EE_Messages_Scheduler__sending'] = 'ee_message_cron';
 		return $tasks;
 	}
 
