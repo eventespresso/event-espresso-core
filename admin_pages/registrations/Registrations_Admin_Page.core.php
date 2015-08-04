@@ -512,7 +512,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _add_screen_options() {}
 	protected function _add_feature_pointers() {}
-	public function admin_init() {}
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'update_att_qstns' ] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
+	}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -576,7 +578,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
-		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
 	}
 
 
