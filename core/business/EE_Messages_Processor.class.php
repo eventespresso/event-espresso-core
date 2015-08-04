@@ -308,9 +308,9 @@ class EE_Messages_Processor {
 	 */
 	public function setup_mtgs_for_all_active_messengers( $message_type, $data ) {
 		$messages_to_generate = array();
-		foreach( $this->_EEMSG->get_active_messengers() as $messenger ) {
+		foreach( $this->_EEMSG->get_active_messengers() as $messenger_slug => $messenger_object  ) {
 			$mtg = new EE_Message_To_Generate(
-				$messenger,
+				$messenger_slug,
 				$message_type,
 				$data,
 				$this->_EEMSG
@@ -346,6 +346,52 @@ class EE_Messages_Processor {
 		}
 
 		$this->_queue->initiate_request_by_priority( 'send' );
+	}
+
+
+
+	/**
+	 * This method checks for registration IDs in the request via the given key and creates the messages to generate
+	 * objects from them, then returns the array of messages to generate objects.
+	 * Note, this sets up registrations for the registration family of message types.
+	 *
+	 * @param string    $key    The key for the request var holding a/the registration IDs.
+	 * @return EE_Message_To_Generate[]
+	 */
+	public function setup_messages_to_generate_from_registration_ids_in_request( $key = '_REG_ID' ) {
+		EE_Registry::instance()->load_core( 'Request_Handler' );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$regs_to_send = array();
+		$regIDs = EE_Registry::instance()->REQ->get( '_REG_ID' );
+		if ( empty( $regIDs ) ) {
+			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+
+		//make sure is an array
+		$regIDs = is_array( $regIDs ) ? $regIDs : array( $regIDs );
+
+		foreach( $regIDs as $regID ) {
+			$reg = EEM_Registration::instance()->get_one_by_ID( $regID );
+			if ( ! $reg instanceof EE_Registration ) {
+				EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+				return false;
+			}
+			$regs_to_send[$reg->transaction_ID()][$reg->status_ID()][] = $reg;
+		}
+
+		$messages_to_generate = array();
+
+		foreach( $regs_to_send as $status_group ) {
+			foreach( $status_group as $status_id => $registrations ) {
+				$messages_to_generate = $messages_to_generate + $this->setup_mtgs_for_all_active_messengers(
+						EEH_MSG_Template::convert_reg_status_to_message_type( $status_id ),
+						array( $registrations, $status_id )
+					);
+			}
+		}
+
+		return $messages_to_generate;
 	}
 
 
