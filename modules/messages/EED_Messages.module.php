@@ -140,7 +140,7 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$token = EE_Registry::instance()->REQ->get( 'token' );
 		try {
-			$mtg = new EE_Message_Generated_From_Token( $token, self::$_EEMSG );
+			$mtg = new EE_Message_Generated_From_Token( $token, 'html', self::$_EEMSG );
 			self::$_MSGPROCESSOR->generate_and_send_now( $mtg );
 		} catch( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
@@ -181,23 +181,30 @@ class EED_Messages  extends EED_Module {
 	 * @param WP $WP
 	 */
 	public function run_cron( $WP ) {
+		self::_load_controller();
 		//get required vars
 		$cron_type = EE_Registry::instance()->REQ->get( 'type' );
 		$nonce = EE_Registry::instance()->REQ->get( '_nonce' );
+		header("HTTP/1.1 200 OK");
 
 		//now let's verify nonce, if not valid exit immediately
 		if ( ! wp_verify_nonce( $nonce, 'EE_Messages_Scheduler_' . $cron_type ) ) {
-			wp_die( __( 'Invalid Nonce', 'event_espresso' ) );
+			/**
+			 * trigger error so this gets in the error logs.  This is important because it happens on a non-user request.
+			 */
+			trigger_error( __( 'Invalid Nonce', 'event_espresso' ) );
 		}
 
 		$method = 'batch_' . $cron_type . '_from_queue';
 		if ( method_exists( self::$_MSGPROCESSOR, $method ) ) {
-			self::$_MSGPROCESSOR->$method;
+			self::$_MSGPROCESSOR->$method();
 		} else {
 			//no matching task
-			wp_die( __('There is no task corresponding to this route', 'event_espresso' ) );
+			/**
+			 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
+			 */
+			trigger_error( sprintf( __('There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) );
 		}
-		header("HTTP/1.1 200 OK");
 		exit();
 	}
 
