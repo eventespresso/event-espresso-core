@@ -123,7 +123,7 @@ class EEM_Line_Item extends EEM_Base {
 				'LIN_is_taxable' 	=> new EE_Boolean_Field( 'LIN_is_taxable', __( "Taxable", "event_espresso" ), FALSE, FALSE ),
 				'LIN_order' 			=> new EE_Integer_Field( 'LIN_order', __( "Order of Application towards total of parent", "event_espresso" ), FALSE, 1 ),
 				'LIN_total' 			=> new EE_Money_Field( 'LIN_total', __( "Total (unit price x quantity)", "event_espresso" ), FALSE, 0 ),
-				'LIN_quantity' 	=> new EE_Integer_Field( 'LIN_quantity', __( "Quantity", "event_espresso" ), TRUE, NULL ),
+				'LIN_quantity' 	=> new EE_Integer_Field( 'LIN_quantity', __( "Quantity", "event_espresso" ), TRUE, 1 ),
 				'LIN_parent' 		=> new EE_Integer_Field( 'LIN_parent', __( "Parent ID (this item goes towards that Line Item's total)", "event_espresso" ), TRUE, NULL ),
 				'LIN_type' 			=> new EE_Enum_Text_Field( 'LIN_type', __( "Type", "event_espresso" ), FALSE, 'line-item', array(
 						self::type_line_item		=>  __("Line Item", "event_espresso"),
