@@ -69,11 +69,8 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 */
 	public function delete() {
 		$success = $this->_call_user_func_array_on_current( 'delete' );
-		if ( $success ) {
-			$this->remove( $this->current() );
-			return true;
-		}
-		return false;
+		$this->remove( $this->current() );
+		return $success;
 	}
 
 
@@ -87,21 +84,20 @@ abstract class EE_Base_Class_Repository extends EE_Object_Repository implements 
 	 * @return bool
 	 */
 	public function delete_all() {
-		$success = $this->_call_user_func_on_all( 'delete' );
-		if ( $success ) {
-			$this->rewind();
-			while ( $this->valid() ) {
-				// can't remove current object because valid() requires it
-				// so just capture current object temporarily
-				$object = $this->current();
-				// advance the pointer
-				$this->next();
-				// THEN remove the object from the repository
-				$this->remove( $object );
-			}
-			return true;
+		$success = true;
+		$this->rewind();
+		while ( $this->valid() ) {
+			// any db error will result in false being returned
+			$success = $this->_call_user_func_array_on_current( 'delete' ) !== false ? $success : false;
+			// can't remove current object because valid() requires it
+			// so just capture current object temporarily
+			$object = $this->current();
+			// advance the pointer
+			$this->next();
+			// THEN remove the object from the repository
+			$this->remove( $object );
 		}
-		return false;
+		return $success;
 	}
 
 
