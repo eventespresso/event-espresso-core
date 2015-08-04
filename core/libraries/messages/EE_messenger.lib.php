@@ -612,7 +612,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 		//enqueue preview js so that any links/buttons on the page are disabled.
 		if ( ! $send ) {
-			//the below may seem liks duplication.  However, typically if a messenger enqueues scripts/styles, it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			// the below may seem like duplication.  However, typically if a messenger enqueues scripts/styles,
+			// it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			//error message
+			EE_Registry::$i18n_js_strings[ 'links_disabled' ] = __( 'All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso' );
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
 			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
 		}
@@ -632,9 +635,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	public function add_preview_script() {
 		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'espresso_core' ), EVENT_ESPRESSO_VERSION, true );
-
-		//error message
-		EE_Registry::$i18n_js_strings['links_disabled'] = __('All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso');
 		wp_enqueue_script( 'ee-messages-preview-js' );
 	}
 
