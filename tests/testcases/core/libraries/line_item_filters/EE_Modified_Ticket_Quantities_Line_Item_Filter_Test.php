@@ -44,6 +44,12 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCas
 		) );
 		$pretax_total->add_child_line_item( $event_subtotal );
 
+		$ticket_quantities = array(
+			1 => array(
+				'included' => 2,
+				'not' => 3
+			)
+		);
 		$ticket_li = EE_Line_Item::new_instance( array(
 			'LIN_type' => EEM_Line_Item::type_line_item,
 			'LIN_code' => 'ticket1',
@@ -94,6 +100,12 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCas
 		) );
 		$pretax_total->add_child_line_item( $event_subtotal );
 
+		$ticket_quantities = array(
+			1 => array(
+				'included' => 4,
+				'not' => 6
+			)
+		);
 		$ticket_li = EE_Line_Item::new_instance( array(
 			'LIN_type' => EEM_Line_Item::type_line_item,
 			'LIN_code' => 'ticket1',
@@ -116,6 +128,8 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCas
 			'LIN_quantity' => 1
 		));
 		$event_subtotal->add_child_line_item( $percent_discount_li );
+		//also need to make registrations
+		$regs_to_include = $this->_create_regs( $ticket_quantities, $grand_total );
 		//ok now let's use the filter
 		$filter = new EE_Modified_Ticket_Quantities_Line_Item_Filter( array( 1 => 4 ) );
 		$filtered_total = $filter->process( $grand_total );
@@ -180,7 +194,20 @@ function test_process__2_events_some_taxed_with_discounts() {
 			'LIN_order' => 2,
 		) );
 		$pretax_total->add_child_line_item( $event_B_subtotal );
-
+		$ticket_quantities = array(
+			1 => array(
+				'included' => 4,
+				'not' => 6
+			),
+			2 => array(
+				'included' => 0,
+				'not' => 2,
+			),
+			3 => array(
+				'included' => 1,
+				'not' => 0
+			)
+		);
 		$ticket_1_li = EE_Line_Item::new_instance( array(
 			'LIN_type' => EEM_Line_Item::type_line_item,
 			'LIN_code' => 'ticket1',
@@ -188,7 +215,7 @@ function test_process__2_events_some_taxed_with_discounts() {
 			'OBJ_ID' => 1,
 			'OBJ_type' => 'Ticket',
 			'LIN_unit_price' => 10,
-			'LIN_quantity' => 10,
+			'LIN_quantity' => $ticket_quantities[1]['included'] + $ticket_quantities[1]['not'],
 			'LIN_total' => 100,
 			'LIN_is_taxable' => false,
 			'LIN_order' => 1,
@@ -202,7 +229,7 @@ function test_process__2_events_some_taxed_with_discounts() {
 			'OBJ_ID' => 2,
 			'OBJ_type' => 'Ticket',
 			'LIN_unit_price' => 50,
-			'LIN_quantity' => 2,
+			'LIN_quantity' =>  $ticket_quantities[2]['included'] + $ticket_quantities[2]['not'],
 			'LIN_total' => 50,
 			'LIN_is_taxable' => true,
 			'LIN_order' => 2,
@@ -242,14 +269,15 @@ function test_process__2_events_some_taxed_with_discounts() {
 			'OBJ_ID' => 3,
 			'OBJ_type' => 'Ticket',
 			'LIN_unit_price' => 35,
-			'LIN_quantity' => 1,
+			'LIN_quantity' => $ticket_quantities[3]['included'] + $ticket_quantities[3]['not'],
 			'LIN_total' => 35,
 			'LIN_is_taxable' => true,
 		));
-		$event_B_subtotal->add_child_line_item( $ticket_1_li );
+		$event_B_subtotal->add_child_line_item( $ticket_3_li );
 
-//		echo "beforehand tree:";
-//		EEH_Line_Item::visualize( $grand_total );
+		//also need to make registrations
+		$regs_to_include = $this->_create_regs( $ticket_quantities, $grand_total );
+
 		//ok now let's use the filter
 		$filter = new EE_Modified_Ticket_Quantities_Line_Item_Filter(
 				array(
@@ -293,6 +321,30 @@ function test_process__2_events_some_taxed_with_discounts() {
 		$this->assertEquals( 1, $ticket_3_li->quantity() );
 		$this->assertEquals( 35, $ticket_3_li->unit_price() );
 		$this->assertEquals( 35, $ticket_3_li->total() );
+	}
+
+	/**
+	 * Creates a bunch of registrations and returns an array of all the "approved" ones
+	 * @param array $ticket_quantities top-level-keys are ticket IDs,
+	 * next-level keys are either 'included' or 'not'.
+	 * @param EE_Line_Item $grand_total
+	 * @return a flat array of all the registrations that were for 'included'
+	 */
+	protected function _create_regs( $ticket_quantities, $grand_total ) {
+		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
+		$regs_to_include = array();
+		foreach( $ticket_quantities as $ticket_id => $approved_or_not_counts ) {
+			foreach( $approved_or_not_counts as $key => $count ) {
+				for( $i = 0; $i < $count; $i++ ) {
+					$r = $this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket_id ) );
+					if( $key == 'included' ) {
+						$regs_to_include[] = $r;
+					}
+				}
+			}
+		}
+		$grand_total->save_this_and_descendants_to_txn( $txn->ID() );
+		return $regs_to_include;
 	}
 
 }
