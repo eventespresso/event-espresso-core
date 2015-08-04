@@ -823,8 +823,15 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		if( ! $this->is_total() ) {
 			$this->set_total( $total );
 			//if not a percent line item, make sure we keep the unit price in sync
-			if( $this->is_line_item() && ! empty( $my_children ) && ! $this->is_percent() ) {
-				$this->set_unit_price( $this->total() / $this->quantity() );
+			if( $this->is_line_item() &&
+					! empty( $my_children ) &&
+					! $this->is_percent() ) {
+				if( $this->quantity() === 0 ){
+					$new_unit_price = 0;
+				} else {
+					$new_unit_price = $this->total() / $this->quantity();
+				}
+				$this->set_unit_price( $new_unit_price );
 			}
 			$this->maybe_save();
 		}

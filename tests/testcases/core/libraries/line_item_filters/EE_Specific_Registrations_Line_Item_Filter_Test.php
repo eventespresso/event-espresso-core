@@ -147,7 +147,7 @@ class EE_Specific_Registrations_Line_Item_Filter_Test extends EE_UnitTestCase{
 
 
 /**
- * @group current
+ * 
  */
 function test_process__2_events_some_taxed_with_discounts() {
 		$grand_total = EE_Line_Item::new_instance( array(
