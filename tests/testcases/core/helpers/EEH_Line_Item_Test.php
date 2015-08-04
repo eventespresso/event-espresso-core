@@ -335,6 +335,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 					'LIN_name' => 'event discount',
 					'LIN_total' => -8,
 					'LIN_unit_price' => -8,
+					'LIN_percent' => 0,
 					'LIN_quantity' => 1,
 					'LIN_parent' => $event_line_item->ID()
 				));
