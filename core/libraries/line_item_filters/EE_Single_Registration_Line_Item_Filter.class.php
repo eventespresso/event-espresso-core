@@ -15,14 +15,14 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since 				4.8.0
  *
  */
-class EE_Single_Registration_Line_Item_Filter extends EE_Modified_Ticket_Quantities_Line_Item_Filter {
+class EE_Single_Registration_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_Filter {
 
 	/**
 	 *
 	 * @param EE_Registration $registration
 	 */
 	public function __construct( $registration ) {
-		parent::__construct( array( $registration->ticket_ID() => 1 ) );
+		parent::__construct( array( $registration ) );
 	}
 }
 // End of file EE_Single_Registration_Line_Item_Filter.class.php

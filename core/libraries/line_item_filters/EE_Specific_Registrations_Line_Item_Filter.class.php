@@ -5,10 +5,9 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  *
- * EE_Modified_Ticket_Quantities_Line_Item_Filter
+ * EE_Specific_Registrations_Line_Item_Filter
  *
- * Modifies the ticket quantities for line items for tickets according to
- * the $billable_ticket_quantities supplied in the constructor.
+ * Modifies the line item quantities to reflect only those items for the specified registrations.
  * Also, modifies NON-ticket regular line items (eg flat discounts and percent surcharges, etc)
  * to only show the share for the specified ticket quantities
  *
@@ -17,13 +16,19 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author				Mike Nelson
  *
  */
-class EE_Modified_Ticket_Quantities_Line_Item_Filter extends EE_Line_Item_Filter_Base {
+class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 /**
-	 * array of ticket IDs and their corresponding quantities for
+	 * array of line item codes and their corresponding quantities for
 	 * registrations that owe money and can pay at this moment
-	 * @type array $_billable_ticket_quantities
+	 * @type array $_counts_per_line_item_code
 	 */
-	protected $_billable_ticket_quantities = array();
+	protected $_counts_per_line_item_code = array();
+
+	/**
+	 * Just kept in case we want it someday. Currently unused
+	 * @var EE_Registration[]
+	 */
+	protected $_registrations = array();
 
 
 
@@ -31,8 +36,27 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter extends EE_Line_Item_Filter
 	 * EE_Billable_Line_Item_Filter constructor.
 	 * @param EE_Registration[] $registrations
 	 */
-	public function __construct( $billable_ticket_quantities ) {
-		$this->_billable_ticket_quantities = $billable_ticket_quantities;
+	public function __construct( $registrations ) {
+		$this->_registrations = $registrations;
+		$this->_calculate_counts_per_line_item_code( $registrations );
+	}
+
+	/**
+	 * sets the _counts_per_line_item_code from the provided registrations
+	 * @param EE_Registration[] $registrations
+	 * @return void
+	 */
+	protected function _calculate_counts_per_line_item_code( $registrations ) {
+		foreach( $registrations as $registration ) {
+			$line_item_code = EEM_Line_Item::instance()->get_var( EEM_Line_Item::instance()->line_item_for_registration_query_params( $registration, array( 'limit' => 1 ) ), 'LIN_code' );
+			if( $line_item_code ) {
+				if( ! isset( $this->_counts_per_line_item_code[ $line_item_code ] ) ) {
+					$this->_counts_per_line_item_code[ $line_item_code ] = 1;
+				}else{
+					$this->_counts_per_line_item_code[ $line_item_code ]++;
+				}
+			}
+		}
 	}
 
 
@@ -83,8 +107,8 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter extends EE_Line_Item_Filter
 
 
 	/**
-	 * Creates a new, unsaved line item from $line_item that factors in the
-	 * number of billable registrations on $registrations.
+	 * Adjusts quantities for line items for tickets according to the registrations provided
+	 * in the constructor
 	 * @param EEI_Line_Item $line_item
 	 * @return EEI_Line_Item
 	 */
@@ -92,14 +116,17 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter extends EE_Line_Item_Filter
 		// is this a ticket ?
 		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
 			// if this ticket is billable at this moment, then we should have a positive quantity
-			if ( isset( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] )) {
+			if ( isset( $this->_counts_per_line_item_code[ $line_item->code() ] )) {
 				// set quantity based on number of billable registrations for this ticket
-				$line_item->set_quantity( $this->_billable_ticket_quantities[ $line_item->OBJ_ID() ] );
-				$line_item->set_total( $line_item->unit_price() * $line_item->quantity() );
+				$quantity = $this->_counts_per_line_item_code[ $line_item->code() ];
+			} else {
+				$quantity = 0;
 			}
+			$line_item->set_quantity( $quantity );
+			$line_item->set_total( $line_item->unit_price() * $line_item->quantity() );
 		}
 		return $line_item;
 	}
 }
 
-// End of file EE_Modified_Ticket_Quantities_Line_Item_Filter.class.php
+// End of file EE_Specific_Registrations_Line_Item_Filter.class.php

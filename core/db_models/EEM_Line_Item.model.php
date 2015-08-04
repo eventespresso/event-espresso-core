@@ -295,13 +295,23 @@ class EEM_Line_Item extends EEM_Base {
 	 * @return EEM_Line_ITem
 	 */
 	public function get_line_item_for_registration( EE_Registration $registration ) {
-		return $this->get_one( array(
+		return $this->get_one( $this->line_item_for_registration_query_params( $registration ));
+	}
+
+	/**
+	 * Gets the query params used to retrieve a specific line item for the given registration
+	 * @param EE_Registration $registration
+	 * @param array $original_query_params any extra query params you'd like to be merged with
+	 * @return array like EEM_Base::get_all()'s $query_params
+	 */
+	public function line_item_for_registration_query_params( EE_Registration $registration, $original_query_params = array() ) {
+		return array_replace_recursive( $original_query_params, array(
 			array(
 				'OBJ_ID' => $registration->ticket_ID(),
 				'OBJ_type' => 'Ticket',
 				'TXN_ID' => $registration->transaction_ID()
 			)
-		));
+		) );
 	}
 
 

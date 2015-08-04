@@ -16,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since 				4.8.0
  *
  */
-class EE_Billable_Line_Item_Filter extends EE_Modified_Ticket_Quantities_Line_Item_Filter {
+class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_Filter {
 
 
 
@@ -26,7 +26,7 @@ class EE_Billable_Line_Item_Filter extends EE_Modified_Ticket_Quantities_Line_It
 	 * @param EE_Registration[] $registrations
 	 */
 	public function __construct( $registrations ) {
-		parent::__construct( $this->_calculate_billable_ticket_quantities_from_registrations( $registrations ) );
+		parent::__construct( $this->_remove_unbillable_registrations( $registrations ) );
 	}
 
 
@@ -39,34 +39,29 @@ class EE_Billable_Line_Item_Filter extends EE_Modified_Ticket_Quantities_Line_It
 	 * @param EE_Registration[] $registrations
 	 * @return mixed
 	 */
-	protected function _calculate_billable_ticket_quantities_from_registrations( $registrations = array() ) {
-		$billable_ticket_quantities = array();
+	protected function _remove_unbillable_registrations( $registrations = array() ) {
 		if ( ! empty( $registrations ) ) {
 			// these reg statuses require payment (if event is not free)
 			$requires_payment = EEM_Registration::reg_statuses_that_allow_payment();
-			foreach ( $registrations as $registration ) {
+			foreach ( $registrations as $key => $registration ) {
 				if ( ! $registration instanceof EE_Registration ) {
 					continue;
 				}
-				// make sure ticket qty is set
-				if ( ! isset( $billable_ticket_quantities[ $registration->ticket_ID() ] ) ) {
-					$billable_ticket_quantities[ $registration->ticket_ID() ] = 0;
-				}
 				// are we billing for this registration at this moment ?
-				if (
-					$registration->owes_monies_and_can_pay( $requires_payment ) ||
-					(
+				if ( !
+					$registration->owes_monies_and_can_pay( $requires_payment ) &&
+					! (
 						// free registration with valid reg status
 						$registration->final_price() == 0 &&
 						in_array( $registration->status_ID(), $requires_payment )
 					)
 				) {
-					// then increment the billable ticket quantity
-					$billable_ticket_quantities[ $registration->ticket_ID() ]++;
+					// not billable. remove it
+					unset( $registrations[ $key ] );
 				}
 			}
 		}
-		return $billable_ticket_quantities;
+		return $registrations;
 	}
 }
 // End of file EE_Billable_Line_Item_Filter.class.php

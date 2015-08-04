@@ -5,14 +5,14 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  *
- * EE_Modified_Ticket_Quantities_Line_Item_Filter_Test
+ * EE_Specific_Registrations_Line_Item_Filter_Test
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
  *
  */
-class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCase{
+class EE_Specific_Registrations_Line_Item_Filter_Test extends EE_UnitTestCase{
 	function setUp(){
 		parent::setUp();
 		EEH_Autoloader::register_line_item_filter_autoloaders();
@@ -60,9 +60,9 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCas
 			'LIN_quantity' => 5
 		));
 		$event_subtotal->add_child_line_item( $ticket_li );
-
+		$regs_to_include = $this->_create_regs( $ticket_quantities, $grand_total);
 		//ok now let's use the filter
-		$filter = new EE_Modified_Ticket_Quantities_Line_Item_Filter( array( 1 => 2 ) );
+		$filter = new EE_Specific_Registrations_Line_Item_Filter( $regs_to_include );
 		$filtered_total = $filter->process( $grand_total );
 		//the filter doesn't recalculate totals, and it edits the inputted tree;
 		//hat's ok, the processor does both of those. But we need to manually do it here
@@ -131,7 +131,7 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCas
 		//also need to make registrations
 		$regs_to_include = $this->_create_regs( $ticket_quantities, $grand_total );
 		//ok now let's use the filter
-		$filter = new EE_Modified_Ticket_Quantities_Line_Item_Filter( array( 1 => 4 ) );
+		$filter = new EE_Specific_Registrations_Line_Item_Filter( $regs_to_include );
 		$filtered_total = $filter->process( $grand_total );
 		//the filter doesn't recalculate totals, and it edits the inputted tree;
 		//hat's ok, the processor does both of those. But we need to manually do it here
@@ -279,11 +279,8 @@ function test_process__2_events_some_taxed_with_discounts() {
 		$regs_to_include = $this->_create_regs( $ticket_quantities, $grand_total );
 
 		//ok now let's use the filter
-		$filter = new EE_Modified_Ticket_Quantities_Line_Item_Filter(
-				array(
-					1 => 4,
-					2 => 0,
-					3 => 1 ) );
+		$filter = new EE_Specific_Registrations_Line_Item_Filter(
+				$regs_to_include );
 		$filtered_total = $filter->process( $grand_total );
 //		echo "AFTER tree:";
 //		EEH_Line_Item::visualize( $grand_total );
@@ -349,4 +346,4 @@ function test_process__2_events_some_taxed_with_discounts() {
 
 }
 
-// End of file EE_Modified_Ticket_Quantities_Line_Item_Filter_Test.php
+// End of file EE_Specific_Registrations_Line_Item_Filter_Test.php
