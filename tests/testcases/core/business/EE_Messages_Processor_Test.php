@@ -115,7 +115,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->assertEquals( 5, $sent_queue->get_queue()->count() );
 
 		//verify no errors
-		$this->assertEquals( 0, $sent_queue->count_STS_in_queue( EEM_Message::status_failed ) );
+		$this->assertEquals( 0, $sent_queue->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() ) );
 
 		$this->assertEquals( 5, $sent_queue->count_STS_in_queue( EEM_Message::status_sent ) );
 	}

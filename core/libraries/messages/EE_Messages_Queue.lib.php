@@ -492,13 +492,14 @@ class EE_Messages_Queue {
 	 * After a caller calls the "EE_Message_Queue::execute()" method, the caller can check if there were any failed sends
 	 * by calling $queue->count_STS_in_queue( EEM_Message_Queue::status_failed ).
 	 *
-	 * @param string $status  The STS_ID for the status being checked.
+	 * @param array $status  Stati to check for in queue
 	 * @return int  Count of EE_Message's matching the given status.
 	 */
 	public function count_STS_in_queue( $status ) {
 		$count = 0;
+		$status = is_array( $status ) ? $status : array( $status );
 		foreach( $this->_queue as $message ) {
-			if ( $message->STS_ID() === $status ) {
+			if ( in_array( $message->STS_ID(), $status ) ) {
 				$count++;
 			}
 		}
@@ -542,7 +543,7 @@ class EE_Messages_Queue {
 			$message->set_STS_ID( EEM_Message::status_sent );
 			return true;
 		} else {
-			$message->set_STS_ID( EEM_Message::status_failed );
+			$message->set_STS_ID( EEM_Message::status_retry );
 			return false;
 		}
 	}
@@ -555,6 +556,7 @@ class EE_Messages_Queue {
 	 * This sets any necessary error messages on the message object and its status to failed.
 	 * @param EE_Message $message
 	 * @param array      $error_messages
+	 * @param mixed      This is the response from the messenger.
 	 */
 	protected function _set_error_message( EE_Message $message, $error_messages ) {
 		$error_messages = (array) $error_messages;

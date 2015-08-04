@@ -72,6 +72,15 @@ class EEM_Message extends EEM_Base {
 
 
 
+	/**
+	 * Indicates everything was generated fine for the message, however, the messenger was unable to send.
+	 * This status means that its possible to retry sending the message.
+	 */
+	const status_retry = "MRT";
+
+
+
+
 
 	/**
 	 *	Private constructor to prevent direct creation.
@@ -195,6 +204,12 @@ class EEM_Message extends EEM_Base {
 	 */
 	public function stati_indicating_to_send() {
 		return apply_filters( 'FHEE__EEM_Message__stati_indicating_to_send', array( self::status_idle, self::status_resend ) );
+	}
+
+
+
+	public function stati_indicating_failed_sending() {
+		return apply_filters( 'FHEE__EEM_Message__stati_indicating_failed_sending', array( self::status_failed, self::status_retry ) );
 	}
 
 }

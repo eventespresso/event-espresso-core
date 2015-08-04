@@ -368,9 +368,11 @@ class EE_messages {
 			//let's find out if there were any errors and how many successfully were queued.
 			$count_errors = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_failed );
 			$count_queued = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
+			$count_retry = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_retry );
+			$count_errors = $count_errors + $count_retry;
 			if ( $count_errors > 0 ) {
 				$error = true;
-				if ( $count_errors > 1 && $count_queued > 1 ) {
+				if ( $count_errors > 1 && $count_retry > 1 && $count_queued > 1  ) {
 					$message = sprintf(
 						__(
 							'There were %d errors and %d messages successfully queued for generation and sending',

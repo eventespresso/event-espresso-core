@@ -150,11 +150,18 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 */
 	public function column_action( $message ) {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		if ( $message->STS_ID() != EEM_Message::status_failed ) {
-			return '<a href="' . EEH_MSG_Template::generate_browser_trigger( $message ) . '">' . __( 'View', 'event_espresso' ) . '</a>';
-		} else {
-			return $message->error_message();
+		$browser_trigger_link = '<a href="' . EEH_MSG_Template::generate_browser_trigger( $message ) . '">' . __( 'View', 'event_espresso' ) . '</a>';
+		switch ( $message->STS_ID() ) {
+			case EEM_Message::status_sent :
+			case EEM_Message::status_resend :
+				return $browser_trigger_link;
+			case EEM_Message::status_retry :
+				return $message->error_message()
+					. $browser_trigger_link;
+			case EEM_Message::status_failed :
+				return $message->error_message();
 		}
+		return '';
 	}
 
 

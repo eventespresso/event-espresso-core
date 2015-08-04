@@ -579,7 +579,7 @@ class EED_Messages  extends EED_Module {
 			if ( $count_to_generate > 0 ) {
 				return true;
 			} else {
-				$count_failed = self::$_MSGPROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_failed );
+				$count_failed = self::$_MSGPROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() );
 				EE_Error::add_error( sprintf(
 					_n(
 						'The payment notification generation failed.',

@@ -224,7 +224,11 @@ class EEM_Status extends EEM_Base {
 	        EEM_Message::status_incomplete => array(
 		        __('incomplete', 'event_espresso'),
 		        __('incomplete', 'event_espresso'),
-	        )
+	        ),
+			EEM_Message::status_retry => array(
+				__('retry', 'event_espresso'),
+				__('retry', 'event_espresso')
+			)
 	    );
 
 		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
