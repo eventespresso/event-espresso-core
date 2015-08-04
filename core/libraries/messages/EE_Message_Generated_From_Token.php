@@ -83,7 +83,6 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 				$sending_messenger_slug )
 			);
 		}
-		$this->_EE_Message->set_messenger( $sending_messenger_slug );
 		return $this->_EE_Message;
 	}
 
