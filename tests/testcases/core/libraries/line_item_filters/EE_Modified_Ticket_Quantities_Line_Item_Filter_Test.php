@@ -132,6 +132,168 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter_Test extends EE_UnitTestCas
 	}
 
 
+/**
+ * @group current
+ */
+function test_process__2_events_some_taxed_with_discounts() {
+		$grand_total = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_total,
+			'LIN_name' => 'Total',
+		));
+		$pretax_total = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_sub_total,
+			'LIN_code' => 'pretax',
+			'LIN_name' => 'pretax',
+			'LIN_order' => 1,
+		));
+		$grand_total->add_child_line_item( $pretax_total );
+
+		$tax_total = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_tax_sub_total,
+			'LIN_code' => 'tax-total',
+			'LIN_name' => 'tax-total',
+			'LIN_order' => 1000
+		));
+		$grand_total->add_child_line_item( $tax_total );
+
+		$a_tax = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_tax,
+			'LIN_code' => 'tax',
+			'LIN_name' => 'tax',
+			'LIN_percent' => 10,
+			'LIN_order' => 1000
+		));
+		$tax_total->add_child_line_item( $a_tax );
+
+		$event_A_subtotal =  EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_sub_total,
+			'LIN_code' => 'eventA',
+			'LIN_name' => 'eventA',
+			'LIN_order' => 1,
+		) );
+		$pretax_total->add_child_line_item( $event_A_subtotal );
+
+		$event_B_subtotal =  EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_sub_total,
+			'LIN_code' => 'eventB',
+			'LIN_name' => 'eventB',
+			'LIN_order' => 2,
+		) );
+		$pretax_total->add_child_line_item( $event_B_subtotal );
+
+		$ticket_1_li = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_line_item,
+			'LIN_code' => 'ticket1',
+			'LIN_name' => 'ticket1',
+			'OBJ_ID' => 1,
+			'OBJ_type' => 'Ticket',
+			'LIN_unit_price' => 10,
+			'LIN_quantity' => 10,
+			'LIN_total' => 100,
+			'LIN_is_taxable' => false,
+			'LIN_order' => 1,
+		));
+		$event_A_subtotal->add_child_line_item( $ticket_1_li );
+
+		$ticket_2_li = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_line_item,
+			'LIN_code' => 'ticket2',
+			'LIN_name' => 'ticket2',
+			'OBJ_ID' => 2,
+			'OBJ_type' => 'Ticket',
+			'LIN_unit_price' => 50,
+			'LIN_quantity' => 2,
+			'LIN_total' => 50,
+			'LIN_is_taxable' => true,
+			'LIN_order' => 2,
+		));
+		$event_A_subtotal->add_child_line_item( $ticket_2_li );
+
+		$percent_discount_li = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_line_item,
+			'LIN_code' => 'discount-percent',
+			'LIN_name' => 'discount-percent',
+			'LIN_unit_price' => 0,
+			'LIN_percent' => -25,
+			'LIN_total' => -50,
+			'LIN_quantity' => 1,
+			'LIN_order' => 3,
+		));
+		$event_A_subtotal->add_child_line_item( $percent_discount_li );
+
+		$flat_discount_li = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_line_item,
+			'LIN_code' => 'discount-flat',
+			'LIN_name' => 'discount-flat',
+			'LIN_unit_price' => 0,
+			'LIN_percent' => 0,
+			'LIN_unit_price' => -10,
+			'LIN_total' => -10,
+			'LIN_quantity' => 1,
+			'LIN_order' => 4,
+		));
+		$event_A_subtotal->add_child_line_item( $flat_discount_li );
+
+		//and add something to event B
+		$ticket_3_li = EE_Line_Item::new_instance( array(
+			'LIN_type' => EEM_Line_Item::type_line_item,
+			'LIN_code' => 'ticket3',
+			'LIN_name' => 'ticket3',
+			'OBJ_ID' => 3,
+			'OBJ_type' => 'Ticket',
+			'LIN_unit_price' => 35,
+			'LIN_quantity' => 1,
+			'LIN_total' => 35,
+			'LIN_is_taxable' => true,
+		));
+		$event_B_subtotal->add_child_line_item( $ticket_1_li );
+
+//		echo "beforehand tree:";
+//		EEH_Line_Item::visualize( $grand_total );
+		//ok now let's use the filter
+		$filter = new EE_Modified_Ticket_Quantities_Line_Item_Filter(
+				array(
+					1 => 4,
+					2 => 0,
+					3 => 1 ) );
+		$filtered_total = $filter->process( $grand_total );
+//		echo "AFTER tree:";
+//		EEH_Line_Item::visualize( $grand_total );
+		//the filter doesn't recalculate totals, and it edits the inputted tree;
+		//hat's ok, the processor does both of those. But we need to manually do it here
+		$this->assertEquals( $grand_total, $filtered_total );
+		$grand_total->recalculate_total_including_taxes();
+		//check ticket 1
+		$this->assertEquals( 4, $ticket_1_li->quantity() );
+		$this->assertEquals( 10, $ticket_1_li->unit_price() );
+		$this->assertEquals( 40, $ticket_1_li->total() );
+		//check ticket 2
+		$this->assertEquals( 0, $ticket_2_li->quantity() );
+		$this->assertEquals( 50, $ticket_2_li->unit_price() );
+		$this->assertEquals( 0, $ticket_2_li->total() );
+		//and verify the percent line item's total has changed, but not its percent
+		$this->assertEquals( -25, $percent_discount_li->percent() );
+		$this->assertEquals( -10, $percent_discount_li->total() );
+		//flat discount is tricky. we only show the PART of the flat discount
+		//that applied to the tickets shown. To determine that, we see what
+		//percent of the original discount was of the original total, and then multiply
+		//the new total by that percent.
+		//the original total = ticket1's-total + ticket2's-total + percent-discount
+		// = 100 + 100 - 50 = 150
+		//flat discount's original percent of total = flat-discount / original total
+		// = -10 / 150 = 0.0666666
+		//new total = ticket1's-filtered-total + ticket2's-filtered-total + percent-discount-for-filtered-total
+		// = 40 + 0 - 10 = 30
+		//new flat total = flat discount's original percent of total x new total
+		// = 0.0666666 x 30 = 1.9999999
+		$this->assertEquals( 1, $flat_discount_li->quantity() );
+		$this->assertEquals( -2, $flat_discount_li->unit_price() );
+		$this->assertEquals( -2, $flat_discount_li->total() );
+		//other event's ticket purchase
+		$this->assertEquals( 1, $ticket_3_li->quantity() );
+		$this->assertEquals( 35, $ticket_3_li->unit_price() );
+		$this->assertEquals( 35, $ticket_3_li->total() );
+	}
 
 }
 

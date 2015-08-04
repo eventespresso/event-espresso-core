@@ -53,7 +53,11 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter extends EE_Line_Item_Filter
 		//the new running total (only taking the specified ticket quantities into account)
 		$runnign_total_of_children_under_consideration = 0;
 		foreach ( $line_item->children() as $child_line_item ) {
-			$original_li_total = $child_line_item->total();
+			if( $child_line_item->is_percent() ) {
+				$original_li_total = $running_total_of_children * $child_line_item->percent() / 100;
+			}else{
+				$original_li_total = $child_line_item->unit_price() * $child_line_item->quantity();
+			}
 			$this->process( $child_line_item );
 			/*
 			 * If this line item is a normal line item that isn't for a ticket
@@ -64,7 +68,7 @@ class EE_Modified_Ticket_Quantities_Line_Item_Filter extends EE_Line_Item_Filter
 			if( $child_line_item->type() === EEM_Line_Item::type_line_item &&
 					$child_line_item->OBJ_type() !== 'Ticket' ) {
 
-				$percent_of_running_total = $child_line_item->total() / $running_total_of_children;
+				$percent_of_running_total = $original_li_total / $running_total_of_children;
 				$child_line_item->set_total( $runnign_total_of_children_under_consideration * $percent_of_running_total );
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
