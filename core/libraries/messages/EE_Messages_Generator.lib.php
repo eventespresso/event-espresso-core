@@ -698,7 +698,7 @@ class EE_Messages_Generator {
 
 		if ( $data === false ) {
 			$message->set_STS_ID( EEM_Message::status_failed );
-			$this->_error_msg[] = ( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
+			$message->set_error_message( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
 		} else {
 			//make sure that the data handler is cached on the message as well
 			$data['data_handler_class_name'] = $mtg->get_data_handler_class_name();
