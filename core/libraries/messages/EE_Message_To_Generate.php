@@ -134,6 +134,7 @@ class EE_Message_To_Generate {
 	 * @param string $message_type_slug
 	 */
 	protected function _set_valid( $messenger_slug , $message_type_slug ) {
+		$this->_valid = true;
 		$validated_for_use = $this->_EEMSG->validate_for_use( EE_Message::new_instance( array(
 			'MSG_messenger' => $messenger_slug,
 			'MSG_message_type' => $message_type_slug
@@ -153,7 +154,6 @@ class EE_Message_To_Generate {
 		} else {
 			$this->message_type = $validated_for_use['message_type'];
 		}
-		$this->_valid = true;
 	}
 
 
@@ -206,6 +206,8 @@ class EE_Message_To_Generate {
 	public function get_data_handler_class_name( $preview = false ) {
 		if ( $this->_data_handler_class_name === '' && $this->valid() ) {
 			$ref = $preview ? 'Preview' : $this->message_type->get_data_handler( $this->data );
+			//make sure internal data is updated.
+			$this->data = $this->message_type->get_data();
 
 			//verify
 			$this->_data_handler_class_name = $this->_EEMSG->verify_and_retrieve_class_name_for_data_handler_reference( $ref );
