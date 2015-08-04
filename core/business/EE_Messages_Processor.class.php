@@ -267,12 +267,13 @@ class EE_Messages_Processor {
 		if ( ! $mtg->valid() ) {
 			return false;
 		}
+		$sending_messenger = $mtg instanceof EEI_Has_Sending_Messenger ? $mtg->sending_messenger()->name : '';
 		if ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
 			$this->_queue->add( $mtg->get_EE_Message() );
-			$this->_queue->execute(false);
+			$this->_queue->execute( false, $sending_messenger );
 		} elseif ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_incomplete ) {
 			$generated_queue = $this->generate_and_return( $mtg );
-			$generated_queue->execute( false );
+			$generated_queue->execute( false, $sending_messenger );
 		} else {
 			return false;
 		}
