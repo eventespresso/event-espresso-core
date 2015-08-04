@@ -408,7 +408,7 @@ class EED_Messages  extends EED_Module {
 				continue;
 			}
 
-			$message_type = self::_get_reg_status_array( $reg->status_ID() );
+			$message_type = EEH_MSG_Template::convert_reg_status_to_message_type( $reg->status_ID() );
 			$mtgs = $mtgs + self::$_MSGPROCESSOR->setup_mtgs_for_all_active_messengers( $message_type, array( $registration->transaction(), null, $reg->status_ID() ) );
 			$statuses_sent[] = $reg->status_ID();
 		}
@@ -478,18 +478,18 @@ class EED_Messages  extends EED_Module {
 	/**
 	 * Simply returns an array indexed by Registration Status ID and the related message_type name associated with that status id.
 	 *
+	 * @deprecated 4.9.0  Use EEH_MSG_Template::reg_status_to_message_type_array()
+	 *                    or EEH_MSG_Template::convert_reg_status_to_message_type
+	 *
 	 * @param string $reg_status
+	 *
 	 * @return array
 	 */
 	protected static function _get_reg_status_array( $reg_status = '' ) {
-		$reg_status_array = array(
-			EEM_Registration::status_id_approved => 'registration',
-			EEM_Registration::status_id_pending_payment => 'pending_approval',
-			EEM_Registration::status_id_not_approved => 'not_approved_registration',
-			EEM_Registration::status_id_cancelled => 'cancelled_registration',
-			EEM_Registration::status_id_declined => 'declined_registration'
-		);
-		return isset( $reg_status_array[ $reg_status ] ) ? $reg_status_array[ $reg_status ] : $reg_status_array;
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::convert_reg_status_to_message_type( $reg_status )
+			? EEH_MSG_Template::convert_reg_status_to_message_type( $reg_status )
+			: EEH_MSG_Template::reg_status_to_message_type_array();
 	}
 
 

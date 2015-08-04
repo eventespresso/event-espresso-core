@@ -498,4 +498,43 @@ class EEH_MSG_Template {
 		return $url;
 	}
 
+
+
+
+
+	/**
+	 * This returns an array with keys as reg statuses and values as the corresponding message type slug (filtered).
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	public static function reg_status_to_message_type_array() {
+		return (array) apply_filters(
+			'FHEE__EEH_MSG_Template__reg_status_to_message_type_array',
+			array(
+				EEM_Registration::status_id_approved => 'registration',
+				EEM_Registration::status_id_pending_payment => 'pending_approval',
+				EEM_Registration::status_id_not_approved => 'not_approved_registration',
+				EEM_Registration::status_id_cancelled => 'cancelled_registration',
+				EEM_Registration::status_id_declined => 'declined_registration'
+			)
+		);
+	}
+
+
+
+
+	/**
+	 * This returns the corresponding registration message type slug to the given reg status. If there isn't a
+	 * match, then returns an empty string.
+	 *
+	 * @since 4.9.0
+	 * @param $reg_status
+	 * @return string
+	 */
+	public static function convert_reg_status_to_message_type( $reg_status ) {
+		$reg_status_array = self::reg_status_to_message_type_array();
+		return isset( $reg_status_array[$reg_status] ) ? $reg_status_array[$reg_status] : '';
+	}
+
 }
