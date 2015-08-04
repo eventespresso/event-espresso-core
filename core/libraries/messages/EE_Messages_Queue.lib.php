@@ -399,7 +399,7 @@ class EE_Messages_Queue {
 	 *  Loops through the EE_Message objects in the _queue and calls the messenger send methods for each message.
 	 *
 	 * @param   bool     $save              Used to indicate whether to save the message queue after sending (default will save).
-	 * @param   string   $sending_messenger When the sending messenger is different than what is on the EE_Message object in the queue
+	 * @param   string   $sending_messenger_slug When the sending messenger is different than what is on the EE_Message object in the queue
 	 *                                      (for instance showing the browser view of an email message, or giving a pdf generated
 	 *                                      view of an html document.
 	 * @param   bool|int $by_priority       When set, this indicates that only messages matching the given priority should be executed.
@@ -407,7 +407,7 @@ class EE_Messages_Queue {
 	 * @return int Number of messages sent.  Note, 0 does not mean that no messages were processed.  Also, if the messenger
 	 *                  is an request type messenger (or a preview), its entirely possible that the messenger will exit before
 	 */
-	public function execute( $save = true, $sending_messenger = '', $by_priority = false ) {
+	public function execute( $save = true, $sending_messenger_slug = '', $by_priority = false ) {
 		$messages_sent = 0;
 		// used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
 		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
@@ -427,17 +427,31 @@ class EE_Messages_Queue {
 			}
 
 			$error_messages = array();
-			$messenger_slug = $sending_messenger ? $sending_messenger : $message->messenger();
-			$messenger = $this->_EEMSG->get_messenger_if_active( $messenger_slug );
+			$sending_messenger = $sending_messenger_slug ? $this->_EEMSG->get_messenger_if_active( $sending_messenger_slug ) : '';
+			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
 
 			//error checking
 			if ( ! $messenger instanceof EE_messenger ) {
-				$error_messages[] = sprintf( __( 'the %s messenger is not active at time of sending.', 'event_espresso' ), $message->messenger() );
+				$error_messages[] = sprintf( __( 'The %s messenger is not active at time of sending.', 'event_espresso' ), $message->messenger() );
+			}
+
+			if ( $sending_messenger_slug && ! $sending_messenger instanceof EE_messenger ) {
+				$error_messages[] = sprintf( __( 'There was a specific sending messenger requested for the send action.  However, the %s messenger is not active at time of sending.', 'event_espresso' ), $sending_messenger_slug );
 			}
 
 			if ( ! $message_type instanceof EE_message_type ) {
-				$error_messages[] = sprintf( __( 'the %s message type is not active at the time of sending.', 'event_espresso' ), $message->message_type() );
+				$error_messages[] = sprintf( __( 'The %s message type is not active at the time of sending.', 'event_espresso' ), $message->message_type() );
+			}
+
+			//do actions for sending messenger if it differs from generating messenger and swap values.
+			if ( $sending_messenger_slug
+			     && $sending_messenger instanceof EE_messenger
+			     && $messenger instanceof EE_messenger ) {
+				if ( $sending_messenger_slug != $messenger->name) {
+					$messenger->do_secondary_messenger_hooks( $sending_messenger->name );
+					$messenger = $sending_messenger;
+				}
 			}
 
 			//send using messenger
