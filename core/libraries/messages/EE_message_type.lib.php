@@ -486,6 +486,22 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
+	 * This returns the contents of the _data property.
+	 * Please note the value of the _data is highly volatile.  It was added as an interim measure ensuring EE_Message_To_Generate
+	 * objects have any changes to the _data property when `_set_data_handler` method is called.
+	 * @todo      This needs refactored along with the whole _set_data_handler() method in EE_message_types. Need to ensure
+	 *            that there is no manipulation of the _data property during run time so there's a clear expectation of what it
+	 *            is.
+	 * @internal  Plugin authors, do not implement this method, it is subject to change.
+	 * @return mixed
+	 */
+	public function get_data() {
+		return $this->_data;
+	}
+
+
+
+	/**
 	 * used to set the $_with_messengers property. (this is a default, child classes SHOULD override)
 	 * @see property definition for description of setup.
 	 *
