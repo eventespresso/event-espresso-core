@@ -530,6 +530,35 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function process_resend( $req_data ) {
 		self::_load_controller();
+
+		//if $msgID in this request then skip to the new resend_message
+		if( EE_Registry::instance()->REQ->get( 'MSG_ID' ) ) {
+			return self::resend_message();
+		}
+
+		if ( ! $messages_to_send = self::$_MSGPROCESSOR->setup_messages_to_generate_from_registration_ids_in_request() ) {
+			return false;
+		}
+
+		try {
+			self::$_MSGPROCESSOR->batch_queue_for_generation_and_persist( $messages_to_send );
+			self::$_MSGPROCESSOR->get_queue()->initiate_request_by_priority();
+		} catch( EE_Error $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+		return true; //everything got queued.
+	}
+
+
+	/**
+	 * Message triggers for a resending already sent message(s) (via EE_Message list table)
+	 * @return bool
+	 */
+	public static function resend_message() {
+		self::_load_controller();
+
+
 		$msgID = EE_Registry::instance()->REQ->get( 'MSG_ID' );
 		if ( ! $msgID ) {
 			EE_Error::add_error( __('Something went wrong because there is no "MSG_ID" value in the request', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
