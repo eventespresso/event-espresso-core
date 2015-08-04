@@ -540,7 +540,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script('event-datetime-metabox', EVENTS_ASSETS_URL . 'event-datetime-metabox.js', array('event_editor_js', 'ee-datepicker'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script('event-datetime-metabox');
 
-		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
 	}
 
 
@@ -572,8 +571,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'image_confirm' ] = __( 'Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso' );
+	}
+
+
+
 	//nothing needed for events with these methods.
-	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -1548,7 +1552,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$end = ' 23:59:59';
 			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
 		}
-		
+
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 			$where['EVT_wp_user'] =  get_current_user_id();
