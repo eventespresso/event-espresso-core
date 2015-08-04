@@ -395,19 +395,19 @@ class EE_Messages_Queue {
 	}
 
 
-
-
-
 	/**
 	 *  Loops through the EE_Message objects in the _queue and calls the messenger send methods for each message.
 	 *
-	 * @param   bool    $save   Used to indicate whether to save the message queue after sending (default will save).
-	 * @param   bool|int    $by_priority  When set, this indicates that only messages matching the given priority should be executed.
-	 * @return  int     Number of messages sent.  Note, 0 does not mean that no messages were processed.  Also, if the messenger
+	 * @param   bool     $save              Used to indicate whether to save the message queue after sending (default will save).
+	 * @param   string   $sending_messenger When the sending messenger is different than what is on the EE_Message object in the queue
+	 *                                      (for instance showing the browser view of an email message, or giving a pdf generated
+	 *                                      view of an html document.
+	 * @param   bool|int $by_priority       When set, this indicates that only messages matching the given priority should be executed.
+	 *
+	 * @return int Number of messages sent.  Note, 0 does not mean that no messages were processed.  Also, if the messenger
 	 *                  is an request type messenger (or a preview), its entirely possible that the messenger will exit before
-	 *                  returning here.
 	 */
-	public function execute( $save = true, $by_priority = false ) {
+	public function execute( $save = true, $sending_messenger = '', $by_priority = false ) {
 		$messages_sent = 0;
 		// used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
 		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
@@ -427,7 +427,8 @@ class EE_Messages_Queue {
 			}
 
 			$error_messages = array();
-			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
+			$messenger_slug = $sending_messenger ? $sending_messenger : $message->messenger();
+			$messenger = $this->_EEMSG->get_messenger_if_active( $messenger_slug );
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
 
 			//error checking
@@ -442,8 +443,8 @@ class EE_Messages_Queue {
 			//send using messenger
 			if ( $messenger instanceof EE_messenger && $message_type instanceof $message_type ) {
 
-				//set hook for message type.
-				if ( ! isset( $did_hook[$message_type->name] ) ) {
+				//set hook for message type (but only if not using another messenger to send).
+				if ( ! $sending_messenger && ! isset( $did_hook[$message_type->name] ) ) {
 					$message_type->do_messenger_hooks();
 					$did_hook[$message_type->name] = 1;
 				}
