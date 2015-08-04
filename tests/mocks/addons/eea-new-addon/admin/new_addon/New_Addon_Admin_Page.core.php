@@ -93,14 +93,16 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	protected function _add_screen_options() {}
 	protected function _add_screen_options_default() {}
 	protected function _add_feature_pointers() {}
+
 	public function load_scripts_styles() {
 		wp_register_script( 'espresso_new_addon_admin', EE_NEW_ADDON_ADMIN_ASSETS_URL . 'espresso_new_addon_admin.js', array( 'espresso_core' ), EE_NEW_ADDON_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_new_addon_admin');
-
-		EE_Registry::$i18n_js_strings['confirm_reset'] = __( 'Are you sure you want to reset ALL your Event Espresso New_Addon Information? This cannot be undone.', 'event_espresso' );
 	}
 
-	public function admin_init() {}
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'confirm_reset' ] = __( 'Are you sure you want to reset ALL your Event Espresso New_Addon Information? This cannot be undone.', 'event_espresso' );
+	}
+
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
