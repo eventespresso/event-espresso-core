@@ -537,4 +537,40 @@ class EEH_MSG_Template {
 		return isset( $reg_status_array[$reg_status] ) ? $reg_status_array[$reg_status] : '';
 	}
 
+
+	/**
+	 * This returns an array with keys as payment stati and values as the corresponding message type slug (filtered).
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	public static function payment_status_to_message_type_array() {
+		return (array) apply_filters(
+			'FHEE__EEH_MSG_Template__payment_status_to_message_type_array',
+			array(
+				EEM_Payment::status_id_approved => 'payment',
+				EEM_Payment::status_id_pending => 'payment_pending',
+				EEM_Payment::status_id_cancelled => 'payment_cancelled',
+				EEM_Payment::status_id_declined => 'payment_declined',
+				EEM_Payment::status_id_failed => 'payment_failed'
+			)
+		);
+	}
+
+
+
+
+	/**
+	 * This returns the corresponding payment message type slug to the given payment status. If there isn't a match then
+	 * an empty string is returned
+	 *
+	 * @since 4.9.0
+	 * @param $payment_status
+	 * @return string
+	 */
+	public static function convert_payment_status_to_message_type( $payment_status ) {
+		$payment_status_array = self::payment_status_to_message_type_array();
+		return isset( $payment_status_array[$payment_status] ) ? $payment_status_array[$payment_status] : '';
+	}
+
 }

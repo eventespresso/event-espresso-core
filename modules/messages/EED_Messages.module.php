@@ -497,20 +497,18 @@ class EED_Messages  extends EED_Module {
 	/**
 	 * Simply returns the payment message type for the given payment status.
 	 *
+	 * @deprecated 4.9.0 Use EEH_MSG_Template::payment_status_to_message_type_array
+	 *                   or EEH_MSG_Template::convert_payment_status_to_message_type
+	 *
 	 * @param string  $payment_status The payment status being matched.
 	 *
 	 * @return string|bool The payment message type slug matching the status or false if no match.
 	 */
 	protected static function _get_payment_message_type( $payment_status ) {
-		$matches = array(
-			EEM_Payment::status_id_approved => 'payment',
-			EEM_Payment::status_id_pending => 'payment_pending',
-			EEM_Payment::status_id_cancelled => 'payment_cancelled',
-			EEM_Payment::status_id_declined => 'payment_declined',
-			EEM_Payment::status_id_failed => 'payment_failed'
-			);
-
-		return isset( $matches[$payment_status] ) ? $matches[$payment_status] : false;
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::convert_payment_status_to_message_type( $payment_status )
+			? EEH_MSG_Template::convert_payment_status_to_message_type( $payment_status )
+			: false;
 	}
 
 
@@ -558,11 +556,12 @@ class EED_Messages  extends EED_Module {
 	 * @return bool              success/fail
 	 */
 	public static function process_admin_payment( $success = TRUE, EE_Payment $payment ) {
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
 		if ( $transaction instanceof EE_Transaction ) {
 			$data = array( $transaction, $payment );
-			$message_type = self::_get_payment_message_type( $payment->STS_ID() );
+			$message_type = EEH_MSG_Template::convert_payment_status_to_message_type( $payment->STS_ID() );
 
 			//if payment amount is less than 0 then switch to payment_refund message type.
 			$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
