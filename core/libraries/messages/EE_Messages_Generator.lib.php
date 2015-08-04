@@ -221,6 +221,7 @@ class EE_Messages_Generator {
 			return false; //get out because we don't have a valid setup to work with.
 		}
 
+
 		try {
 			$addressees = $this->_current_message_type->get_addressees(
 				$this->_current_data_handler,
@@ -230,6 +231,7 @@ class EE_Messages_Generator {
 			$this->_error_msg[] = $e->get_error();
 			return false;
 		}
+
 
 		//if no addressees then get out because there is nothing to generation (possible bad data).
 		if ( ! $this->_valid_addressees( $addressees ) ) {
@@ -247,6 +249,7 @@ class EE_Messages_Generator {
 
 		//get formatted templates for using to parse and setup EE_Message objects.
 		$templates = $this->_get_templates( $mtpg );
+
 
 		//setup new EE_Message objects (and add to _ready_queue)
 		return $this->_assemble_messages( $addressees, $templates, $mtpg );
@@ -448,7 +451,9 @@ class EE_Messages_Generator {
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because that means this
 		//context is turned off) EXCEPT if we're previewing
 		if ( empty( $templates['to'][ $context ] )
-		     && ! $this->_generation_queue->get_queue()->is_preview() ) {
+		     && ! $this->_generation_queue->get_queue()->is_preview()
+		     && ! $this->_current_messenger->allow_empty_to_field() ) {
+			//we silently exit here and do NOT record a fail because the message is "turned off" by having no "to" field.
 			return false;
 		}
 
@@ -698,8 +703,8 @@ class EE_Messages_Generator {
 			//make sure that the data handler is cached on the message as well
 			$data['data_handler_class_name'] = $mtg->get_data_handler_class_name();
 		}
-		$this->_generation_queue->add( $message, $data, $mtg->preview, $test_send );
 
+		$this->_generation_queue->add( $message, $data, $mtg->preview, $test_send );
 	}
 
 

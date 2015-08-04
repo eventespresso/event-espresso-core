@@ -74,6 +74,19 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
+	 * HTML Messenger allows an empty to field.
+	 * @see parent::allow_empty_to_field() for documentation
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function allow_empty_to_field() {
+		return true;
+	}
+
+
+
+
+	/**
 	 * @see abstract declaration in EE_messenger for details.
 	 */
 	protected function _set_admin_pages() {

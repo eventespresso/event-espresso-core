@@ -317,6 +317,20 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/**
+	 * This is a way for a messenger to indicate whether it allows an empty to field or not.
+	 * Note: If the generated message is a for a preview, this value is ignored.
+	 * @since 4.9.0
+	 * @return bool
+	 */
+	public function allow_empty_to_field() {
+		return false;
+	}
+
+
+
+
+
+	/**
 	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
 	 * @see property definition for info on how its formatted.
 	 *
