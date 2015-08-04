@@ -441,33 +441,11 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @param array 	$additional_details
 	 * @return void
 	 */
-	public function trigger_registration_update_notifications( EE_Registration $registration, $additional_details = array() ) {
-
+	public function trigger_registration_update_notifications( $registration, $additional_details = array() ) {
 		try {
-			//do_action(
-			//	'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
-			//	$registration,
-			//	apply_filters(
-			//		'FHEE__EE_Registration_Processor__trigger_registration_update_notifications__additional_conditions',
-			//		array_merge(
-			//		// defaults
-			//			array(
-			//				'checkout_or_payment' => false,
-			//				'manually_updated' 		=> false,
-			//				'payment_updates' 		=> false,
-			//				//'status_updates' 			=> $this->reg_status_updated( $registration->ID() ),
-			//				'finalized' 						=> false,
-			//				'revisit' 							=> false,
-			//				'reg_steps' 						=> $registration->transaction()->reg_steps(),
-			//				'txn_status' 						=> $registration->transaction()->status_ID(),
-			//				'last_payment'				=> null,
-			//				'old_reg_status' 				=> $this->old_reg_status( $registration->ID() ),
-			//				'new_reg_status' 			=> $this->new_reg_status( $registration->ID() )
-			//			),
-			//			$additional_details
-			//		)
-			//	)
-			//);
+			if ( ! $registration instanceof EE_Registration ) {
+				throw new EE_Error( __( 'An invalid registration was received.', 'event_espresso' ) );
+			}
 			EE_Registry::instance()->load_helper( 'Debug_Tools' );
 			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), false, 'EE_Transaction: ' . $registration->transaction()->ID() );
 			do_action(
@@ -475,7 +453,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				$registration,
 				$additional_details
 			);
-
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), $e->getFile(), 'function_added_from_exception', $e->getLine() );
 		}
