@@ -77,7 +77,7 @@ class EE_Line_Item_Filter_Processor {
 		$cloned_line_item = clone $line_item;
 		$cloned_line_item->set( 'LIN_ID', null );
 		$cloned_line_item->set( 'LIN_parent', null );
-		$cloned_line_item->clear_child_cache();
+		$cloned_line_item->clear_related_line_item_cache();
 		return $cloned_line_item;
 	}
 

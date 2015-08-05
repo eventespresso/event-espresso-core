@@ -286,6 +286,32 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		//so it should equal 5
 		$this->assertEquals( 0, $parent_li->taxable_total() );
 	}
+
+	/**
+	 * @group 8572
+	 * @group current
+	 */
+	public function test_set_parent() {
+		$li1 = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'LIN_parent' => null ), false );
+
+		$li2 = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'LIN_parent' => null), false );
+		$this->assertEquals( null, $li1->parent() );
+		$this->assertEquals( array(), $li1->children() );
+
+		//add a cached relation
+		$li1->add_child_line_item( $li2 );
+		$this->assertEquals( array( $li2->code() => $li2 ), $li1->children() );
+		$this->assertEquals( $li1, $li2->parent() );
+		//and let's change the parent
+		$li3 = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'LIN_parent' => null ), false );
+		$li3->add_child_line_item( $li2 );
+		$this->assertEquals( $li3, $li2->parent() );
+		//and let's see if the relations are preserved when we save them
+		$li3->save_this_and_descendants_to_txn();
+		$this->assertNotEquals( 0, $li3->ID() );
+		$this->assertNotEquals( 0, $li2->ID() );
+		$this->assertEquals( $li3, $li2->parent() );
+	}
 }
 
 // End of file EE_Line_Item_Test.php

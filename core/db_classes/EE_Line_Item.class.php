@@ -33,6 +33,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 */
 	protected $_children;
 
+	/**
+	 * for the parent line item
+	 * @var EE_Line_Item
+	 */
+	protected $_parent;
+
 
 
 	/**
@@ -372,10 +378,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 	/**
 	 * Gets the line item of which this item is a composite. Eg, if this is a subtotal, the parent might be a total\
+	 * If this line item is saved to the DB, fetches the parent from the DB. However, if this line item isn't in the DB
+	 * it uses its cached reference to its parent line item (which would have been set by `EE_Line_Item::set_parent()` or
+	 * indirectly by `EE_Line_item::add_child_line_item()`)
 	 * @return EE_Line_Item
 	 */
 	public function parent() {
-		return $this->get_model()->get_one_by_ID( $this->parent_ID() );
+		if( $this->ID() ) {
+			return $this->get_model()->get_one_by_ID( $this->parent_ID() );
+		} else {
+			return $this->_parent;
+		}
 	}
 
 
@@ -567,7 +580,31 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			return $line_item->save();
 		} else {
 			$this->_children[ $line_item->code() ] = $line_item;
+			if( $line_item->parent() != $this ) {
+				$line_item->set_parent( $this );
+			}
 			return TRUE;
+		}
+	}
+
+	/**
+	 * Similar to EE_Base_Class::_add_relation_to, except this isn't a normal relation.
+	 * If this line item is saved to the DB, this is just a wrapper for set_parent_ID() and save()
+	 * However, if this line item is NOT saved to the DB, this just caches the parent on
+	 * the EE_Line_Item::_parent property.
+	 * @param EE_Line_Item $line_item
+	 *
+	 */
+	public function set_parent( $line_item ) {
+		if ( $this->ID() ) {
+			if( ! $line_item->ID() ) {
+				$line_item->save();
+			}
+			$this->set_parent_ID( $line_item->ID() );
+			$this->save();
+		} else {
+			$this->_parent = $line_item;
+			$this->set_parent_ID( $line_item->ID() );
 		}
 	}
 
@@ -1052,11 +1089,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	}
 
 	/**
-	 * clears the cached children from the line item
+	 * clears the cached children and parent from the line item
 	 * @return void
 	 */
-	public function clear_child_cache() {
+	public function clear_related_line_item_cache() {
 		$this->_children = array();
+		$this->_parent = null;
 	}
 
 
