@@ -487,6 +487,7 @@ jQuery(document).ready(function($) {
 			// grab PAY ID from return data
 			var PAY_ID = response.return_data.PAY_ID;
 			update_payment_totals( response );
+			update_registration_payment_totals( response );
 		}
 		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', false );
 	}

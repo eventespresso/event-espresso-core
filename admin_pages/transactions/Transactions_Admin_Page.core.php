@@ -1203,7 +1203,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$delete_txn_reg_status_change = isset( $this->_req_data[ 'delete_txn_reg_status_change' ] ) ? $this->_req_data[ 'delete_txn_reg_status_change' ] : false;
 			$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
 			if ( $payment instanceof EE_Payment ) {
-
+				$REG_IDs = $this->_get_existing_reg_payment_REG_IDs( $payment );
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				if ( $transaction_payments->delete_payment_and_update_transaction( $payment )) {
@@ -1216,6 +1216,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'pay_status' => $payment->STS_ID(),
 						'delete_txn_reg_status_change' => $delete_txn_reg_status_change
 					);
+
+					//if non empty reg_ids lets get an array of registrations and update the values for the apply_payment/refund rows.
+					if ( ! empty( $REG_IDs ) ) {
+						EE_Registry::instance()->load_helper( 'Template' );
+						$registrations = EEM_Registration::instance()->get_all( array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) ) );
+						foreach ( $registrations as $registration ) {
+							$json_response_data[ 'return_data' ][ 'registrations' ][$registration->ID()] = array(
+								'owing' => EEH_Template::format_currency( $registration->final_price() - $registration->paid() ),
+								'paid' => $registration->pretty_paid()
+							);
+						}
+					}
+
 					if ( $delete_txn_reg_status_change ) {
 						$this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
 						//MAKE sure we also add the delete_txn_req_status_change to the
