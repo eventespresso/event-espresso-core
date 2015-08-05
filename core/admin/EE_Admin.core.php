@@ -679,14 +679,14 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-			// whether to proceed with update
-			$update_post_shortcodes = FALSE;
 			// post on frontpage ?
 			$page_for_posts = EE_Config::get_page_for_posts();
 			// critical page shortcodes that we do NOT want added to the Posts page (blog)
 			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
+			// whether to proceed with update, if an entry already exists for this post, then we want to update
+			$update_post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] ) ? true : false;
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
 			// loop thru shortcodes
