@@ -177,7 +177,8 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_link = $line_item_related_object instanceof EEI_Admin_Links ? $line_item_related_object->get_admin_details_link() : '';
 
 		//related object scope.
-		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->name() : $line_item->parent()->name();
+		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->name() : '';
+		$parent_related_object_name = empty( $parent_related_object_name ) && $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : '';
 		$parent_related_object_link = $parent_line_item_related_object instanceof EEI_Admin_Links ? $parent_line_item_related_object->get_admin_details_link() : '';
 
 		$name_html = $line_item_related_object instanceof EEI_Line_Item_Object ? $line_item_related_object->name() : $line_item->name();
