@@ -40,7 +40,12 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 		//has a non-zero total and at least one ticket line item child
 		$ticket_children = 0;
 		foreach ( $line_item->children() as $child_line_item ) {
+			$code = $child_line_item->code();
 			$child_line_item = $this->process( $child_line_item );
+			if( ! $child_line_item instanceof EEI_Line_Item ) {
+				$line_item->delete_child_line_item( $code );
+				continue;
+			}
 			if (
 				$child_line_item instanceof EEI_Line_Item &&
 				$child_line_item->type() === EEM_Line_Item::type_line_item &&

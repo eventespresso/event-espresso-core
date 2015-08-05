@@ -289,7 +289,6 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group 8572
-	 * @group current
 	 */
 	public function test_set_parent() {
 		$li1 = $this->new_model_obj_with_dependencies( 'Line_Item', array( 'LIN_parent' => null ), false );

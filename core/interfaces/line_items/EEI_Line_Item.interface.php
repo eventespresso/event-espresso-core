@@ -206,6 +206,16 @@ interface EEI_Line_Item {
 	 */
 	function set_unit_price( $unit_price );
 
+	/**
+	 * If this line item has been saved to the DB, deletes its child with LIN_code == $code. If this line
+	 * HAS NOT been saved to the DB, removes the child line item with index $code.
+	 * Also searches through the child's children for a matching line item. However, once a line item has been found
+	 * and deleted, stops searching (so if there are line items with duplicate codes, only the first one found will be deleted)
+	 * @param string $code
+	 * @param bool $stop_search_once_found
+	 * @return int count of items deleted (or simply removed from the line item's cache, if not has not been saved to the DB yet)
+	 */
+	function delete_child_line_item( $code, $stop_search_once_found = true );
 
 
 }
