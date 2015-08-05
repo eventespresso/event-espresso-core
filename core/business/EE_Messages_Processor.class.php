@@ -374,7 +374,7 @@ class EE_Messages_Processor {
 		foreach( $regIDs as $regID ) {
 			$reg = EEM_Registration::instance()->get_one_by_ID( $regID );
 			if ( ! $reg instanceof EE_Registration ) {
-				EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $req_data['_REG_ID'] ) );
+				EE_Error::add_error( sprintf( __('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $regID ) );
 				return false;
 			}
 			$regs_to_send[$reg->transaction_ID()][$reg->status_ID()][] = $reg;
