@@ -38,25 +38,31 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 		}
 		//if this is an event subtotal, we want to only include it if it
 		//has a non-zero total and at least one ticket line item child
-		$ticket_children = 0;
-		foreach ( $line_item->children() as $child_line_item ) {
-			$code = $child_line_item->code();
-			$child_line_item = $this->process( $child_line_item );
-			if( ! $child_line_item instanceof EEI_Line_Item ) {
-				$line_item->delete_child_line_item( $code );
-				continue;
+		if( $line_item->children() ) {
+			$ticket_or_subtotals_with_tkt_children_count = 0;
+			foreach ( $line_item->children() as $child_line_item ) {
+				$code = $child_line_item->code();
+				$child_line_item = $this->process( $child_line_item );
+				if( ! $child_line_item instanceof EEI_Line_Item ) {
+					$line_item->delete_child_line_item( $code );
+					continue;
+				}
+				if (
+					( $child_line_item instanceof EEI_Line_Item &&
+					$child_line_item->type() === EEM_Line_Item::type_line_item &&
+					$child_line_item->OBJ_type() === 'Ticket' ) ||
+					( $child_line_item instanceof EEI_Line_Item &&
+					 $child_line_item->type() === EEM_Line_Item::type_sub_total )
+				) {
+					$ticket_or_subtotals_with_tkt_children_count++;
+				}
 			}
-			if (
-				$child_line_item instanceof EEI_Line_Item &&
-				$child_line_item->type() === EEM_Line_Item::type_line_item &&
-				$child_line_item->OBJ_type() === 'Ticket'
-			) {
-				$ticket_children++;
-			}
+			// if this is an event subtotal with NO ticket children
+			// we basically want to ignore it
+			return $this->_filter_zero_subtotal_line_item( $non_zero_line_item, $ticket_or_subtotals_with_tkt_children_count );
+		}else{
+			return $non_zero_line_item;
 		}
-		// if this is an event subtotal with NO ticket children
-		// we basically want to ignore it
-		return $this->_filter_zero_subtotal_line_item( $non_zero_line_item, $ticket_children );
 	}
 
 
@@ -90,8 +96,6 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 	protected function _filter_zero_subtotal_line_item( EEI_Line_Item $line_item, $ticket_children = 0 ) {
 		if (
 			$line_item->type() === EEM_Line_Item::type_sub_total &&
-			$line_item->OBJ_type() === 'Event' &&
-			$line_item->total() === 0 &&
 			$ticket_children === 0
 		) {
 			return null;
