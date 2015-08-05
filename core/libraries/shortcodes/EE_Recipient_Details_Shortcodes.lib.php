@@ -197,6 +197,11 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				}
 			}
 		}
+		
+		//do we have a specific reg_obj?  Let's use it
+		if ( $this->_data instanceof EE_Messages_Addressee && $this->_data->reg_obj instanceof EE_Registration ) {
+			return $this->_data->reg_obj->reg_code();
+		}
 
 		//not able to determine the single reg code so let's return a comma delimited list of reg codes.
 		$reg_code = array();
