@@ -8,7 +8,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * EED_Mijireh_Payment_Checker
  * Adds hooks so we check for completed Mijireh payments from the transactions page
  * (because it's quite possible a user paid with Mijireh, but when they returned from Mijireh
- * the payment processing server hasn' tye tconfirmed whether or not the payment was approved.
+ * the payment processing server hasn't yet confirmed whether or not the payment was approved.
  * So when the customer arrives at the thank you page, we checked with Mijireh to see
  * if the payment was complete and Mijireh didn't know. So we need another way
  * to check with Mijireh whether or not the payment was been completed. This implementation
@@ -58,13 +58,16 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 			}
 		}
 	}
+
+
+
 	/**
-	 * 	run - initial module setup
+	 *    run - initial module setup
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP_Query $WP_Query
 	 */
-	public function run( $WP ) {
+	public function run( $WP_Query = null ) {
 	}
 }
 
