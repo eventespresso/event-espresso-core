@@ -47,6 +47,7 @@ class EEH_Line_Item {
 			'LIN_desc' => $description,
 			'LIN_unit_price' => $unit_price,
 			'LIN_quantity' => $quantity,
+			'LIN_percent' => null,
 			'LIN_is_taxable' => $taxable,
 			'LIN_order' => $items_subtotal instanceof EE_Line_Item ? count( $items_subtotal->children() ) : 0,
 			'LIN_total' => floatval( $unit_price ) * intval( $quantity ),
@@ -151,12 +152,48 @@ class EEH_Line_Item {
 			}
 		}
 		if ( $line_item instanceof EE_Line_Item ) {
-			$qty += $line_item->quantity();
-			$line_item->set_quantity( $qty );
-			$line_item->set_total( $line_item->unit_price() * $qty );
+			EEH_Line_Item::increment_quantity( $line_item, $qty );
 			return $line_item;
 		}
 		return null;
+	}
+
+	/**
+	 * Increments the line item and all its children's quantity by $qty (but percent line items are unaffected).
+	 * Does NOT save or recalculate other line items totals
+	 * @param EE_Line_Item $line_item
+	 * @param int $qty
+	 * @return void
+	 */
+	public static function increment_quantity( EE_Line_Item $line_item, $qty = 1 ) {
+		if( ! $line_item->is_percent() ) {
+			$qty += $line_item->quantity();
+			$line_item->set_quantity( $qty );
+			$line_item->set_total( $line_item->unit_price() * $qty );
+		}
+		foreach( $line_item->children() as $child ) {
+			if( $child->is_sub_line_item() ) {
+				EEH_Line_Item::update_quantity( $child, $line_item->quantity() );
+			}
+		}
+	}
+
+	/**
+	 * Updates the line item and its children's quantities to the specified number.
+	 * Does NOT save them or recalculate totals.
+	 * @param EE_Line_Item $line_item
+	 * @param int $new_quantity
+	 */
+	public static function update_quantity( EE_Line_Item $line_item, $new_quantity ) {
+		if( ! $line_item->is_percent() ) {
+			$line_item->set_quantity( $new_quantity );
+			$line_item->set_total( $line_item->unit_price() * $new_quantity );
+		}
+		foreach( $line_item->children() as $child ) {
+			if( $child->is_sub_line_item() ) {
+				EEH_Line_Item::update_quantity( $child, $new_quantity );
+			}
+		}
 	}
 
 
@@ -877,7 +914,12 @@ class EEH_Line_Item {
 		for( $i = 0; $i < $indentation; $i++ ){
 			echo " - ";
 		}
-		echo $line_item->name() . "( " . $line_item->ID() . " ) : " . $line_item->type() . " $" . $line_item->total() . " ( $" . $line_item->unit_price() . " x " . $line_item->quantity() . " )";
+		if( $line_item->is_percent() ) {
+			$breakdown = $line_item->percent() . '%';
+		} else {
+			$breakdown = '$' . $line_item->unit_price() . "x" . $line_item->quantity();
+		}
+		echo $line_item->name() . "( " . $line_item->ID() . " ) : " . $line_item->type() . " $" . $line_item->total() . "(" . $breakdown . ")";
 		if( $line_item->is_taxable() ){
 			echo "  * taxable";
 		}
