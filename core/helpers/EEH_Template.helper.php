@@ -662,7 +662,7 @@ class EEH_Template {
 			);
 		}
 
-		$total_pages = round( ceil( $total_items ) / $per_page );
+		$total_pages = ceil( $total_items  / $per_page );
 
 		if ( $total_pages <= 1)
 			return '';
