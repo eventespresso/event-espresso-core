@@ -102,7 +102,6 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			if( $primary_attendee->phone() ){
 				$shipping_address[ 'phone' ] = $primary_attendee->phone();
 			}
-			$order[ 'billing_address' ] = $shipping_address;
 			$order[ 'shipping_address' ] = $shipping_address;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );

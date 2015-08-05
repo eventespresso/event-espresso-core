@@ -85,7 +85,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * }
 	 * @return EE_Payment updated
 	 */
-	
+
 	public function do_direct_payment($payment, $billing_info = null) {
 
 			// Enable test mode if needed
@@ -156,6 +156,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				//make sure we interpret the AMT as a float, not an international string (where periods are thousand seperators)
 				$payment->set_amount( floatval( $response->amount ) );
 				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
+				$payment->set_txn_id_chq_nmbr( $txn_id );
 				$payment->set_extra_accntng($primary_registrant->reg_code());
 				$payment->set_details(print_r($response,true));
 			} else {
