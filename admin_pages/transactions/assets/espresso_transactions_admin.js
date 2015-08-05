@@ -292,7 +292,7 @@ jQuery(document).ready(function($) {
 		$('#delete-txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-delete-payment-frm').serializeFullArray();
 		var PAY_ID = $( '#delete-txn-admin-payment-payment-id-inp' ).val();
-		var delBtn = $( '.txn-admin-payment-action-delete-lnk[rel="' + PAY_ID + '"]');
+		var delBtn = $( '.txn-admin-payment-action-delete-lnk[data-payment-id="' + PAY_ID + '"]');
 		formData.ee_admin_ajax = true;
 		formData.noheader = true;
 		formData.page = 'espresso_transactions';
