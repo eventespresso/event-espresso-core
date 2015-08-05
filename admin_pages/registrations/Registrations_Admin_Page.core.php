@@ -1390,13 +1390,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	public function _reg_details_meta_box() {
 		EEH_Autoloader::register_line_item_display_autoloaders();
+		EEH_Autoloader::register_line_item_filter_autoloaders();
 		EE_Registry::instance()->load_Helper( 'Line_Item' );
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
+		$filters = new EE_Line_Item_Filter_Collection();
+		$filters->add( new EE_Single_Registration_Line_Item_Filter( $this->_registration ) );
+		$filters->add( new EE_Non_Zero_Line_Item_Filter() );
+		$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item() );
+		$filtered_line_item_tree = $line_item_filter_processor->process();
+
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
 		$line_item_display = new EE_Line_Item_Display( 'reg_admin_table', 'EE_Admin_Table_Registration_Line_Item_Display_Strategy' );
-		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $transaction->total_line_item() );
+		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $filtered_line_item_tree );
 
 
 		$attendee = $this->_registration->attendee();
