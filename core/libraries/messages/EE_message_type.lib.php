@@ -90,7 +90,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * This will hold the active messenger object that is passed to the type so the message_type knows what template files to process.  IT is possible that the active_messenger sent along actually doesn't HAVE a template (or maybe turned off) for the given message_type.
+	 * This is set via the `do_messenger_hooks` method and contains the messenger being used to send the message of this message type
+	 * at time of sending.
 	 * @var EE_Messenger
 	 */
 	protected $_active_messenger;
@@ -341,9 +342,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * This is a public wrapper for the protected _do_messenger_hooks() method.
 	 * For backward compat reasons, this was done rather than making the protected method public.
+	 * @param   EE_messenger    This is used to set the $_active_messenger property, so message types are able to know
+	 *                          what messenger is being used to send the message at the time of sending.
 	 * @since 4.9.0
 	 */
-	public function do_messenger_hooks() {
+	public function do_messenger_hooks( $messenger = null ) {
+		$this->_active_messenger = $messenger;
 		$this->_do_messenger_hooks();
 	}
 
