@@ -68,9 +68,9 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * @return \EEI_Line_Item
 	 */
 	public function process( EEI_Line_Item $line_item ) {
-		$billable_line_item = $this->_filter_billable_line_item( $line_item );
-		if ( ! $billable_line_item instanceof EEI_Line_Item ) {
-			return null;
+		$this->_filter_billable_line_item( $line_item );
+		if( ! $line_item->children() ) {
+			return $line_item;
 		}
 		//the original running total (taking ALL tickets into account)
 		$running_total_of_children = 0;
@@ -82,6 +82,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			}else{
 				$original_li_total = $child_line_item->unit_price() * $child_line_item->quantity();
 			}
+
 			$this->process( $child_line_item );
 			/*
 			 * If this line item is a normal line item that isn't for a ticket
@@ -96,15 +97,29 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				} else {
 					$percent_of_running_total = 0;
 				}
+				
 				$child_line_item->set_total( $runnign_total_of_children_under_consideration * $percent_of_running_total );
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
+				}
+			}elseif( $line_item->type() === EEM_Line_Item::type_line_item &&
+					$line_item->OBJ_type() === 'Ticket' ) {
+				//make sure this item's quantity matches its parent
+				if( ! $child_line_item->is_percent() ) {
+					$child_line_item->set_quantity( $line_item->quantity() );
+					$child_line_item->set_total( $line_item->unit_price() * $line_item->quantity() );
 				}
 			}
 			$running_total_of_children += $original_li_total;
 			$runnign_total_of_children_under_consideration += $child_line_item->total();
 		}
-		return $billable_line_item;
+		$line_item->set_total( $runnign_total_of_children_under_consideration );
+		if( $line_item->quantity() ) {
+			$line_item->set_unit_price( $runnign_total_of_children_under_consideration / $line_item->quantity() );
+		} else {
+			$line_item->set_unit_price( 0 );
+		}
+		return $line_item;
 	}
 
 

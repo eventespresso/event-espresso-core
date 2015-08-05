@@ -816,6 +816,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		//ensure all non-line items and non-sub-line-items have a quantity of 1
 		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
 			$this->set_quantity( 1 );
+			if( ! $this->is_percent() ) {
+				$this->set_unit_price( $this->total() );
+			}
 		}
 
 		//we don't want to bother saving grand totals, because that needs to factor in taxes anyways
@@ -1046,6 +1049,14 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			return $this->save();
 		}
 		return false;
+	}
+
+	/**
+	 * clears the cached children from the line item
+	 * @return void
+	 */
+	public function clear_child_cache() {
+		$this->_children = array();
 	}
 
 

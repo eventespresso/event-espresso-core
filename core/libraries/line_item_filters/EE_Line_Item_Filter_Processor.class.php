@@ -74,11 +74,10 @@ class EE_Line_Item_Filter_Processor {
 	 */
 	protected function clone_and_reset_line_item( EEI_Line_Item $line_item ) {
 		// we don't actually want to work with the original line item, so clone it
-		$cloned_line_item = clone( $line_item );
-		// reset the LIN_ID, LIN_parent, and LIN_total
+		$cloned_line_item = clone $line_item;
 		$cloned_line_item->set( 'LIN_ID', null );
 		$cloned_line_item->set( 'LIN_parent', null );
-		//$cloned_line_item->set( 'LIN_total', null );
+		$cloned_line_item->clear_child_cache();
 		return $cloned_line_item;
 	}
 
