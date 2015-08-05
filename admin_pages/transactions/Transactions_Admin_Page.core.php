@@ -770,7 +770,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$owing = $registration->final_price() - $registration->paid();
 				$taxable = $registration->ticket()->taxable() ? ' <span class="smaller-text lt-grey-text"> ' . __( '+ tax', 'event_espresso' ) . '</span>' : '';
 				$checked = empty( $existing_reg_payments ) || in_array( $registration->ID(), $existing_reg_payments ) ? ' checked="checked"' : '';
-				$registrations_to_apply_payment_to .= '<tr>';
+				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
 				// add html for checkbox input and label
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee()->full_name() . '</td>';
@@ -1038,6 +1038,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$json_response_data[ 'return_data' ][ 'txn_id_chq_nmbr' ] = $payment->txn_id_chq_nmbr();
 				$json_response_data[ 'return_data' ][ 'po_number' ] = $payment->po_number();
 				$json_response_data[ 'return_data' ][ 'extra_accntng' ] = $payment->extra_accntng();
+				$json_response_data[ 'return_data' ][ 'registrations' ] = array();
+
+				//if non empty reg_ids lets get an array of registrations and update the values for the apply_payment/refund rows.
+				if ( ! empty( $registration_query_where_params ) ) {
+					EE_Registry::instance()->load_helper( 'Template' );
+					$registrations = EEM_Registration::instance()->get_all( array( $registration_query_where_params ) );
+					foreach ( $registrations as $registration ) {
+						$json_response_data[ 'return_data' ][ 'registrations' ][$registration->ID()] = array(
+							'owing' => EEH_Template::format_currency( $registration->final_price() - $registration->paid() ),
+							'paid' => $registration->pretty_paid()
+						);
+					}
+				}
 
 			} else {
 				EE_Error::add_error( __( 'A valid Transaction for this payment could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );

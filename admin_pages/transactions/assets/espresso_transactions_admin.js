@@ -348,9 +348,36 @@ jQuery(document).ready(function($) {
 
 		update_payment( PAY_ID, response );
 		update_payment_totals( response );
+		update_registration_payment_totals( response );
 
 		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 
+	}
+
+
+
+
+	/**
+	 * update registration payment table totals from ajax response.
+	 * @param response
+	 */
+	function update_registration_payment_totals( response ) {
+		if ( ! response.return_data.registrations ) {
+			return;
+		}
+
+		for ( var regID in response.return_data.registrations ) {
+			if ( response.return_data.registrations.hasOwnProperty(regID) ) {
+				var regProps = response.return_data.registrations[regID];
+				if ( regProps.owing ) {
+					$('.txn-admin-payment-owing-td', '#apply-payment-registration-row-' + regID).html( regProps.owing );
+				}
+
+				if ( regProps.paid ) {
+					$('.txn-admin-payment-paid-td', '#apply-payment-registration-row-' + regID).html( regProps.paid );
+				}
+			}
+		}
 	}
 
 
