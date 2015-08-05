@@ -32,27 +32,56 @@ jQuery(document).ready(function($) {
 
 	txn_admin_payments_table.on( 'click', '.txn-admin-payment-action-edit-lnk', function() {
 		display_payments_and_refunds_modal_dialog();
-		$('.txn-reg-status-change-reg-status').val('NAN');
 		// grab payment ID
 		var PAY_ID = $(this).data( 'paymentId');
-		$('#admin-modal-dialog-edit-payment-h2').show();
-		$('#admin-modal-dialog-edit-payment-h2' ).find('span').html(PAY_ID);
-		// transfer values from table to modal box form
-		$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
-		$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
-		$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
-		$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
-		$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
-		$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
-		$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
-		$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
-		$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
-		$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).text() );
-		$('#txn-admin-apply-payment-to-all-registrations-inp').data( 'paymentId', PAY_ID );
-		$('#txn-admin-apply-payment-to-some-registrations-inp').data( 'paymentId', PAY_ID );
+		var payAmt = accounting.unformat( $('#payment-amount-' + PAY_ID ).text() );
 
-		$('#txn-admin-modal-dialog-edit-payment-lnk').show();
-		$('#txn-admin-modal-dialog-cancel-lnk').show();
+		//display depending on whether amount is negative (refund) or positive (payment).
+		if ( payAmt < 0 ) {
+			//refund
+			$('.txn-reg-status-change-reg-status').val('RCN');
+            $('#txn-admin-payment-type-inp').val(-1);
+			$('#admin-modal-dialog-edit-refund-h2').show();
+			$('#admin-modal-dialog-edit-refund-h2' ).find('span').html(PAY_ID);
+			// transfer values from table to modal box form
+			$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
+			$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
+			$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
+			$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+			$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
+			$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
+			$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
+			$('#txn-admin-payment-amount-inp').val( payAmt * -1 );
+			$('#txn-admin-apply-payment-to-all-registrations-inp').data( 'paymentId', PAY_ID );
+			$('#txn-admin-apply-payment-to-some-registrations-inp').data( 'paymentId', PAY_ID );
+
+			$('#txn-admin-modal-dialog-edit-refund-lnk').show();
+			$('#txn-admin-modal-dialog-cancel-lnk').show();
+		} else {
+			//payment
+			$('.txn-reg-status-change-reg-status').val('NAN');
+			$('#admin-modal-dialog-edit-payment-h2').show();
+			$('#admin-modal-dialog-edit-payment-h2' ).find('span').html(PAY_ID);
+			// transfer values from table to modal box form
+			$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
+            $('#txn-admin-payment-type-inp').val(1);
+			$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
+			$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
+			$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+			$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
+			$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
+			$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
+			$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).text() );
+			$('#txn-admin-apply-payment-to-all-registrations-inp').data( 'paymentId', PAY_ID );
+			$('#txn-admin-apply-payment-to-some-registrations-inp').data( 'paymentId', PAY_ID );
+
+			$('#txn-admin-modal-dialog-edit-payment-lnk').show();
+			$('#txn-admin-modal-dialog-cancel-lnk').show();
+		}
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -167,6 +196,16 @@ jQuery(document).ready(function($) {
 	});
 
 
+    $(document).on( 'click', '#txn-admin-modal-dialog-edit-refund-lnk', function( event ) {
+        event.preventDefault();
+        if ( validate_form_inputs() ) {
+            $('#espresso-ajax').val(1);
+            toggleaAjaxActivity();
+            apply_payment_or_refund( 'edit' );
+        }
+    });
+
+
 	$(document).on( 'click', '#txn-admin-modal-dialog-delete-lnk', function( event ) {
 		event.preventDefault();
 		$('#delete-espresso-ajax').val(1);
@@ -203,6 +242,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeIn('fast');
+            $('#txn-admin-modal-dialog-edit-refund-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-delete-lnk').fadeIn('fast');
 			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeIn('fast');
 			$('#delete-ee-ajax-processing-text').fadeOut('fast');
@@ -212,6 +252,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeOut('fast');
+            $('#txn-admin-modal-dialog-edit-refund-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-delete-lnk').fadeOut('fast');
 			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');

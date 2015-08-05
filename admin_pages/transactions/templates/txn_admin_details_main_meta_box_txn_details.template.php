@@ -282,6 +282,17 @@
 			?>
 		</h2>
 
+		<h2 id="admin-modal-dialog-edit-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
+			<div class="ee-icon ee-icon-cash-edit float-left"></div>
+			<?php
+			echo sprintf(
+				__( 'Edit Refund #%s for Transaction #%s', 'event_espresso' ),
+				'<span></span>',
+				$txn_nmbr['value']
+			);
+			?>
+		</h2>
+
 		<h2 id="admin-modal-dialog-apply-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
 			<div class="ee-icon ee-icon-cash-remove float-left"></div>
 			<?php echo __( 'Apply a Refund to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
@@ -408,6 +419,11 @@
 				<li>
 					<a id="txn-admin-modal-dialog-edit-payment-lnk" class="button-primary no-icon" style="display:none;" >
 						<?php _e( 'Save Payment Details', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<a id="txn-admin-modal-dialog-edit-refund-lnk" class="button-primary no-icon" style="display:none;" >
+						<?php _e( 'Save Refund Details', 'event_espresso' );?>
 					</a>
 				</li>
 				<li>
