@@ -165,7 +165,7 @@ class EE_Messages_Generator {
 			if ( $this->_error_msg ) {
 				$msg->set_STS_ID( EEM_Message::status_failed );
 				$msg->set_error_message(
-					__( 'Message failed to generated for the following reasons: ' )
+					__( 'Message failed to generate for the following reasons: ' )
 					. "\n"
 					. implode( "\n", $this->_error_msg )
 				);
