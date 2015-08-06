@@ -420,7 +420,7 @@ class EED_Messages  extends EED_Module {
 			$statuses_sent[] = $reg->status_ID();
 		}
 
-		$mtgs = $mtgs + self::$_MSGPROCESSOR->setup_mtgs_for_all_active_messengers( 'registration_summary', array( $registration->tansaction(), null ) );
+		$mtgs = $mtgs + self::$_MSGPROCESSOR->setup_mtgs_for_all_active_messengers( 'registration_summary', array( $registration->transaction(), null ) );
 
 		//batchqueue and initiate request
 		self::$_MSGPROCESSOR->batch_queue_for_generation_and_persist( $mtgs );
