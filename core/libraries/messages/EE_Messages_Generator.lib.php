@@ -235,7 +235,9 @@ class EE_Messages_Generator {
 
 		//if no addressees then get out because there is nothing to generation (possible bad data).
 		if ( ! $this->_valid_addressees( $addressees ) ) {
-			$this->_error_msg[] = __( 'Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.', 'event_espresso' );
+			$this->_error_msg[] = __( 'Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
+			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to
+			  approved registrations.', 'event_espresso' );
 			return false;
 		}
 
