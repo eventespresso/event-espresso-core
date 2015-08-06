@@ -456,9 +456,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$since = isset( $data['espresso_thank_you_page']['get_payments_since'] ) ? $data['espresso_thank_you_page']['get_payments_since'] : 0;
 		// then check for payments
 		$payments = $espresso_thank_you_page->get_txn_payments( $since );
-		EEH_Debug_Tools::printr( $since, '$since', __FILE__, __LINE__ );
-		EEH_Debug_Tools::printr( $espresso_thank_you_page->_is_offline_payment_method, '$espresso_thank_you_page->_is_offline_payment_method', __FILE__, __LINE__ );
-		EEH_Debug_Tools::printr( $payments, '$payments', __FILE__, __LINE__ );
 		// has a payment been processed ?
 		if ( ! empty( $payments ) || $espresso_thank_you_page->_is_offline_payment_method ) {
 			if ( $since ) {
