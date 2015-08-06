@@ -231,6 +231,7 @@ class EEH_Line_Item {
 			'FHEE__EEH_Line_Item__create_ticket_line_item__line_item',
 			$line_item
 		);
+		$events_sub_total->add_child_line_item( $line_item );
 		//now add the sub-line items
 		$running_total_for_ticket = 0;
 		foreach ( $ticket->prices( array( 'order_by' => array( 'PRC_order' => 'ASC' ) ) ) as $price ) {
@@ -259,7 +260,6 @@ class EEH_Line_Item {
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item( $sub_line_item );
 		}
-		$events_sub_total->add_child_line_item( $line_item );
 		return $line_item;
 	}
 

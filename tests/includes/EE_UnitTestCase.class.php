@@ -883,11 +883,25 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}else{
 			$taxable_tickets = INF;
 		}
+		if( isset( $options[ 'fixed_ticket_price_modifiers' ] ) ) {
+			$fixed_ticket_price_modifiers = $options[ 'fixed_ticket_price_modifiers' ];
+		} else {
+			$fixed_ticket_price_modifiers = 1;
+		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
 			$ticket = $this->new_model_obj_with_dependencies( 'Ticket',  array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false ) );
-			$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $i * 10 ) );
-			$ticket->_add_relation_to( $price, 'Price' );
+			$sum_of_sub_prices = 0;
+			for( $j=1; $j<= $fixed_ticket_price_modifiers; $j++ ) {
+				if( $j == $fixed_ticket_price_modifiers ) {
+					$price_amount = $ticket->price() - $sum_of_sub_prices;
+				} else {
+					$price_amount = $i * 10 / $fixed_ticket_price_modifiers;
+				}
+				$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $price_amount, 'PRC_order' => $j ) );
+				$sum_of_sub_prices += $price->amount();
+				$ticket->_add_relation_to( $price, 'Price' );
+			}
 			$a_datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
 			$ticket->_add_relation_to( $a_datetime, 'Datetime');
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
