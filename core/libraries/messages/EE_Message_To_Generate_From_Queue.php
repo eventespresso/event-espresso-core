@@ -63,7 +63,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	 */
 	protected function _get_content() {
 		$content = '';
-		$this->_queue->get_queue()->rewind();
+		$this->queue->get_queue()->rewind();
 		while ( $this->queue->get_queue()->valid() ) {
 			$content .= $this->queue->get_queue()->current()->content();
 			$this->queue->get_queue()->next();

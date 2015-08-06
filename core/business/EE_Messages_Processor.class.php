@@ -118,6 +118,18 @@ class EE_Messages_Processor {
 
 
 	/**
+	 * Executes the generator generate method on the current internal queue, and returns the generated queue.
+	 * @param  bool     $persist    Indicate whether to instruct the generator to persist the generated queue (true) or not (false).
+	 * @return EE_Messages_Queue
+	 */
+	public function generate_queue( $persist = true ) {
+		return $this->_generator->generate( $persist );
+	}
+
+
+
+
+	/**
 	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_queue()->save() if desire
 	 * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
 	 * @param EE_Message_To_Generate $mtg
@@ -287,12 +299,17 @@ class EE_Messages_Processor {
 	 * This method also calls the execute by priority method on the queue which will optionally kick off a new non-blocking
 	 * request to complete the action if the priority for the message requires immediate action.
 	 * @param string $message_type
-	 * @param $data
+	 * @param mixed  $data   The data being used for generation.
+	 * @param bool   $persist   Whether to persist the queued messages to the db or not.
 	 */
-	public function generate_for_all_active_messengers( $message_type, $data ) {
+	public function generate_for_all_active_messengers( $message_type, $data, $persist = true ) {
 		$messages_to_generate = $this->setup_mtgs_for_all_active_messengers( $message_type, $data );
-		$this->batch_queue_for_generation_and_persist( $messages_to_generate );
-		$this->_queue->initiate_request_by_priority();
+		if ( $persist ) {
+			$this->batch_queue_for_generation_and_persist( $messages_to_generate );
+			$this->_queue->initiate_request_by_priority();
+		} else {
+			$this->batch_queue_for_generation_no_persist( $messages_to_generate );
+		}
 	}
 
 

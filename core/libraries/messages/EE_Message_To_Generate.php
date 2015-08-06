@@ -117,7 +117,7 @@ class EE_Message_To_Generate {
 	public function __construct( $messenger, $message_type, $data,  EE_messages $ee_msg, $context = '', $preview = false ) {
 		$messenger;
 		$message_type;
-		$this->data = (array) $data;
+		$this->data = is_array( $data ) ? $data : array( $data );
 		$this->context = $context;
 		$this->preview = $preview;
 		$this->_EEMSG = $ee_msg;

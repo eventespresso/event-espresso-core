@@ -87,10 +87,11 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 	 */
 	static public function convert_data_for_persistent_storage( $data ) {
 		$prepped_data = array();
-
 		if ( ! is_array( $data ) && $data instanceof EE_Registration ) {
 			$prepped_data['Registration'] = $data->ID();
 			return $prepped_data;
+		} elseif ( ! is_array( $data ) ) {
+			return array();
 		} else {
 			if ( $data[0] instanceof EE_Registration ) {
 				$prepped_data['Registration'] = $data[0];
