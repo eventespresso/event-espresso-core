@@ -178,8 +178,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 
 		//related object scope.
 		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->name() : '';
-		$parent_related_object_name = empty( $parent_related_object_name ) && $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : '';
+		$parent_related_object_name = empty( $parent_related_object_name ) && $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : $parent_related_object_name;
 		$parent_related_object_link = $parent_line_item_related_object instanceof EEI_Admin_Links ? $parent_line_item_related_object->get_admin_details_link() : '';
+
 
 		$name_html = $line_item_related_object instanceof EEI_Line_Item_Object ? $line_item_related_object->name() : $line_item->name();
 		$name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
@@ -190,7 +191,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_html .=  sprintf(
 			_x( '%1$sfor the %2$s, %3$s%4$s', 'eg. "for the Event, My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
-			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : __( 'Item', 'event_espresso' ),
+			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type() : __( 'Item:', 'event_espresso' ),
 			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
 			'</span>'
 		);
