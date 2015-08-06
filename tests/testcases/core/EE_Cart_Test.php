@@ -134,10 +134,9 @@ class EE_Cart_Test extends EE_UnitTestCase{
 			array( 'LIN_type' => EEM_Line_Item::type_line_item ),
 			'order_by' => array( 'LIN_ID'=>'DESC' ) ) );
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
-
 		$removals = $cart->delete_items( array( $latest_line_item->code() ) );
-
-		$this->assertEquals( 1, $removals );
+		//should remove the ticket line item and its sub-line-item for the price
+		$this->assertEquals( 2, $removals );
 		$this->assertEquals( $ticket_types - 1, $cart->all_ticket_quantity_count() );
 		$cart_items = $cart->get_tickets();
 		$this->assertArrayDoesNotContain( $latest_line_item, $cart_items );
