@@ -208,13 +208,7 @@ class EEH_Line_Item {
 	 */
 	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$datetimes = $ticket->datetimes();
-		$event_names = array();
-		foreach ( $datetimes as $datetime ) {
-			$event = $datetime->event();
-			$event_names[ $event->ID() ] = $event->name();
-		}
-		$description_addition = sprintf( __( ' (For %1$s)', 'event_espresso' ), implode(", ",$event_names) );
-		$full_description = $ticket->description() . $description_addition;
+		$event = sprintf( __( '(For %1$s)', 'event_espresso' ), reset( $datetimes )->event()->name() );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
 		if ( ! $events_sub_total instanceof EE_Line_Item ) {
@@ -223,7 +217,7 @@ class EEH_Line_Item {
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance( array(
 			'LIN_name'       	=> $ticket->name(),
-			'LIN_desc'       		=> $full_description,
+			'LIN_desc'       		=> $ticket->description() != '' ? $ticket->description() . ' ' . $event : $event,
 			'LIN_unit_price' 	=> $ticket->price(),
 			'LIN_quantity'   	=> $qty,
 			'LIN_is_taxable' 	=> $ticket->taxable(),
@@ -453,7 +447,7 @@ class EEH_Line_Item {
 	 * @return string
 	 */
 	public static function get_event_name( $event ) {
-		return $event instanceof EE_Event ? sprintf( __( 'Event: %s', 'event_espresso' ), $event->name() ) : __( 'Event', 'event_espresso' );
+		return $event instanceof EE_Event ? $event->name() : __( 'Event', 'event_espresso' );
 	}
 
 	/**

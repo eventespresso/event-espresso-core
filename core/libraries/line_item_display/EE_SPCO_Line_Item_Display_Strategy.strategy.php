@@ -277,7 +277,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// name && desc
 		$name_and_desc = apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
-			$line_item->name(),
+			sprintf( __( '%1$s: %2$s', 'event_espresso' ), $line_item->OBJ_type(), $line_item->name() ),
 			$line_item
 		);
 		$name_and_desc .= apply_filters(
