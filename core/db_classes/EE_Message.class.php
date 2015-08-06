@@ -11,6 +11,29 @@
 class EE_Message extends EE_Base_Class {
 
 	/**
+	 * @deprecated 4.9.0  Added for backward compat with add-on's
+	 * @type null
+	 */
+	public $template_pack;
+
+
+
+	/**
+	 * @deprecated 4.9.0 Added for backward compat with add-on's
+	 * @type null
+	 */
+	public $template_variation;
+
+
+
+
+	/**
+	 * @deprecated 4.9.0 Added for backward compat with add-on's
+	 * @type string
+	 */
+	public $content = '';
+
+	/**
 	 *
 	 * @param array  $props_n_values
 	 * @param string $timezone
@@ -449,8 +472,23 @@ class EE_Message extends EE_Base_Class {
 	 * @return EE_Messages_Template_Pack | null
 	 */
 	public function get_template_pack() {
+		/**
+		 * This is deprecated functionality that will be removed eventually but included here now for backward compat.
+		 */
+		if ( ! empty( $this->template_pack ) ) {
+			return $this->template_pack;
+		}
 		/** @type EE_Message_Template_Group $grp */
 		$grp = $this->get_first_related( 'Message_Template_Group' );
+		//if no group then let's try to get the first related group by internal messenger and message type (will use global grp).
+		if ( ! $grp instanceof EE_Message_Template_Group ) {
+			$grp = EEM_Message_Template_Group::instance()->get_one( array( array(
+				'MTP_messenger' => $this->messenger(),
+				'MTP_message_type' => $this->message_type(),
+				'MTP_is_global' => true
+			) ) );
+		}
+
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack() : null;
 	}
 
@@ -462,8 +500,25 @@ class EE_Message extends EE_Base_Class {
 	 * @return string
 	 */
 	public function get_template_pack_variation() {
+		/**
+		 * This is deprecated functionality that will be removed eventually but included here now for backward compat.
+		 */
+		if ( ! empty( $this->template_variation ) ) {
+			return $this->template_variation;
+		}
+
 		/** @type EE_Message_Template_Group $grp */
 		$grp = $this->get_first_related( 'Message_Template_Group' );
+
+		//if no group then let's try to get the first related group by internal messenger and message type (will use global grp).
+		if ( ! $grp instanceof EE_Message_Template_Group ) {
+			$grp = EEM_Message_Template_Group::instance()->get_one( array( array(
+				'MTP_messenger' => $this->messenger(),
+				'MTP_message_type' => $this->message_type(),
+				'MTP_is_global' => true
+			) ) );
+		}
+
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack_variation() : '';
 	}
 

@@ -350,7 +350,7 @@ class EE_messages {
 
 		//try to intelligently determine what method we'll call based on the incoming data.
 		//if generating and sending are different then generate and send immediately.
-		if ( ! empty( $sending_messenger ) && $sending_messenger != $generating_messenger ) {
+		if ( ! empty( $sending_messenger ) && $sending_messenger != $generating_messenger && $send ) {
 			//in the legacy system, when generating and sending were different, that means all the
 			//vars are already in the request object.  So let's just use that.
 			try {
@@ -364,7 +364,7 @@ class EE_messages {
 				$error = true;
 			}
 		} else {
-			$processor->generate_for_all_active_messengers( $type, $vars );
+			$processor->generate_for_all_active_messengers( $type, $vars, $send );
 			//let's find out if there were any errors and how many successfully were queued.
 			$count_errors = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_failed );
 			$count_queued = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
@@ -430,7 +430,26 @@ class EE_messages {
 				EE_Error::add_success( $message );
 			}
 		}
+		//if no error then return the generated message(s).
+		if ( ! $error && ! $send ) {
+			$generated_queue = $processor->generate_queue( false );
+			//get message and return.
+			$generated_queue->get_queue()->rewind();
+			$messages = array();
+			while( $generated_queue->get_queue()->valid() ) {
+				$message = $generated_queue->get_queue()->current();
+				if ( $message instanceof EE_Message ) {
+					//set properties that might be expected by add-ons (backward compat)
+					$message->content = $message->content();
+					$message->template_pack = $message->get_template_pack();
+					$message->template_variation = $message->get_template_pack_variation();
+					$messages[] = $message;
+				}
+				$generated_queue->get_queue()->next();
+			}
 
+			return $messages;
+		}
 		return $error ? false : true; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
 	}
 
@@ -466,17 +485,25 @@ class EE_messages {
 		//setup for sending to new method.
 		$queue = new EE_Messages_Queue( $this );
 		//make sure we have a proper message object
-		if ( ! $message instanceof EE_Message && is_object( $message ) && isset( $message->messenger ) ) {
+		if ( ! $message instanceof EE_Message && is_object( $message ) && isset( $message->content ) ) {
 			$msg = EE_Message::new_instance(
 				array(
-					'MSG_messenger' => $message->messenger,
-					'MSG_message_type' => $message->message_type,
+					'MSG_messenger' => $messenger,
+					'MSG_message_type' => $message_type,
 					'MSG_content' => $message->content,
 					'MSG_subject' => $message->subject
 				)
 			);
 		} else {
+			$msg = $message;
+		}
+
+		if ( ! $msg instanceof EE_Message ) {
 			return false;
+		}
+		//make sure any content in a content property (if not empty) is set on the MSG_content.
+		if ( ! empty( $msg->content ) ) {
+			$msg->set( 'MSG_content', $msg->content );
 		}
 		$queue->add( $msg );
 		return EED_Messages::send_message_with_messenger_only( $messenger, $message_type, $queue );
