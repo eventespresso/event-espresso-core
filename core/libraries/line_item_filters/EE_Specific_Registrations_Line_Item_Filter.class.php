@@ -97,7 +97,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				} else {
 					$percent_of_running_total = 0;
 				}
-				
+
 				$child_line_item->set_total( $runnign_total_of_children_under_consideration * $percent_of_running_total );
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
@@ -107,7 +107,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				//make sure this item's quantity matches its parent
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_quantity( $line_item->quantity() );
-					$child_line_item->set_total( $line_item->unit_price() * $line_item->quantity() );
+					$child_line_item->set_total( $child_line_item->unit_price() * $child_line_item->quantity() );
 				}
 			}
 			$running_total_of_children += $original_li_total;
