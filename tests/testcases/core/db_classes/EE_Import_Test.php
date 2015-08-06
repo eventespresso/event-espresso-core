@@ -277,7 +277,10 @@ class EE_Import_Test extends EE_UnitTestCase {
 	 * test that term relationships are migrated ok if they would conflict with something already in the db
 	 */
 	function test_save_data_array_to_db__from_other_site__no_duplicate_term_relationships() {
-		$this->markTestSkipped('addressed on ticket 7537.');
+		/**
+		 * @todo: unskip this once its working again
+		 */
+		$this->markTestSkipped('fixed on ticket 7537, https://events.codebasehq.com/projects/event-espresso/tickets/7537');
 		$event_id_from_other_db = 122;
 		$term_tax_from_other_db = 32;
 		$old_term_r_order = 3;
