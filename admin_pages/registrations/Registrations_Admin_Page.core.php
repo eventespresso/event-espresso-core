@@ -1404,7 +1404,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
 		$line_item_display = new EE_Line_Item_Display( 'reg_admin_table', 'EE_Admin_Table_Registration_Line_Item_Display_Strategy' );
-		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $filtered_line_item_tree );
+		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $filtered_line_item_tree, array( 'EE_Registration' => $this->_registration ) );
 
 
 		$attendee = $this->_registration->attendee();
