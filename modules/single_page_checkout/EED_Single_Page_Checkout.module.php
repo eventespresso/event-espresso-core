@@ -869,6 +869,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return false;
 			}
 		}
+		// now that things have been kinda sufficiently verified,
+		// let's add the checkout to the session so that's available other systems
+		EE_Registry::instance()->SSN->set_checkout( $this->checkout );
 		return true;
 	}
 
