@@ -76,6 +76,19 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
 	}
 
+	/**
+	 * @group 8622
+	 */
+	function test_save__allow_persist_changed() {
+		$t = EE_Transaction::new_instance();
+		$t->set_allow_persist( false );
+		$result = $t->save();
+		$this->assertEquals( 0, $result );
+		$t->set_allow_persist( true );
+		$result2 = $t->save();
+		$this->assertNotEquals( 0, $result2 );
+	}
+
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
