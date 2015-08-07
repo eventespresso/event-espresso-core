@@ -570,7 +570,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
 			$this->_set_shortcode_helper();
-			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			return '';
 		}
