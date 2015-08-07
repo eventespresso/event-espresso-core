@@ -94,6 +94,15 @@ abstract class EE_Base_Class{
 	 */
 	protected $_fields = array();
 
+	/**
+	 *
+	 * @var boolean indicating whether or not this model object is intended to ever be saved
+	 * For example, we might create model objects intended to only be used for the duration
+	 * of this request and to be thrown away, and if they were accidentally saved
+	 * it would be a bug.
+	 */
+	protected $_allow_persist = true;
+
 
 
 	/**
@@ -172,9 +181,30 @@ abstract class EE_Base_Class{
 		do_action( 'AHEE__EE_Base_Class__construct__finished', $this );
 	}
 
+	/**
+	 * Gets whether or not thsi model object is allowed to persist/be saved to the database.
+	 * @return boolean
+	 */
+	function allow_persist() {
+		return $this->_allow_persist;
+	}
+
 
 
 	/**
+	 * Sets whether or not this model object should be allowed to be saved to the DB.
+	 * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
+	 * you got new information that somehow made you change your mind.
+	 * @param boolean $allow_persist
+	 * @return boolean
+	 */
+	function set_allow_persist( $allow_persist ) {
+		return $this->_allow_persist = $allow_persist;
+	}
+
+
+
+		/**
 	 * Gets the field's original value when this object was constructed during this request.
 	 * This can be helpful when determining if a model object has changed or not
 	 *
@@ -1278,7 +1308,8 @@ abstract class EE_Base_Class{
 	 * @param array $set_cols_n_values 	keys are field names, values are their new values,
 	 * 		if provided during the save() method (often client code will change the fields' values before calling save)
 	 * @throws \EE_Error
-	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure
+	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure or if the model object
+	 * isn't allowed to persist (as determined by EE_Base_Class::allow_persist())
 	 */
 	public function save($set_cols_n_values=array()) {
 		/**
@@ -1299,6 +1330,9 @@ abstract class EE_Base_Class{
 		 * @param EE_Base_Class $model_object the model object about to be saved.
 		 */
 		do_action( 'AHEE__EE_Base_Class__save__begin', $this );
+		if( ! $this->allow_persist() ) {
+			return 0;
+		}
 		//now get current attribute values
 		$save_cols_n_values = $this->_fields;
 		//if the object already has an ID, update it. Otherwise, insert it

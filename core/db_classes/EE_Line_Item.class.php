@@ -783,7 +783,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * Gets the final total on this item, taking taxes into account.
 	 * Has the side-effect of setting the sub-total as it was just calculated.
 	 * If this is used on a grand-total line item, also updates the transaction's
-	 * TXN_total
+	 * TXN_total (provided this line item is allowed to persist, otherwise we don't
+	 * want to change a persistable transaction with info from a non-persisten line item)
 	 * @return float
 	 */
 	function recalculate_total_including_taxes() {
@@ -794,7 +795,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		// no negative totals plz
 		$total = max( $total, 0 );
 		$this->set_total( $total );
-		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
+		//only update the related transaction's total
+		//if we intend to save this line item and its a grand total
+		if( $this->allow_persist() &&
+				$this->type() == EEM_Line_Item::type_total &&
+				$this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
 			if ( $this->transaction()->ID() ) {
 				$this->transaction()->save();
