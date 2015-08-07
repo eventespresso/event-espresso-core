@@ -217,6 +217,29 @@ interface EEI_Line_Item {
 	 */
 	function delete_child_line_item( $code, $stop_search_once_found = true );
 
+	/**
+	 * Forgets the cached model of the given relation Name. So the next time we request it,
+	 * we will fetch it again from the database. (Handy if you know it's changed somehow).
+	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
+	 * then only remove that one object from our cached array. Otherwise, clear the entire list
+	 * @param string $relationName                         one of the keys in the _model_relations array on the model. Eg 'Registration'
+	 * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things, or NULL
+	 * if you intend to use $clear_all = TRUE, or the relation only has 1 object anyways (ie, it's a BelongsToRelation)
+	 * @param bool   $clear_all                            This flags clearing the entire cache relation property if this is HasMany or HABTM.
+	 * @throws EE_Error
+	 * @return EE_Base_Class | boolean from which was cleared from the cache, or true if we requested to remove a relation from all
+	 */
+	public function clear_cache($relationName, $object_to_remove_or_index_into_array = NULL, $clear_all = FALSE);
+
+	/**
+	 * Sets whether or not this model object should be allowed to be saved to the DB.
+	 * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
+	 * you got new information that somehow made you change your mind.
+	 * @param boolean $allow_persist
+	 * @return boolean
+	 */
+	function set_allow_persist( $allow_persist );
+
 
 }
 // End of file EEI_Line_Item.interface.php

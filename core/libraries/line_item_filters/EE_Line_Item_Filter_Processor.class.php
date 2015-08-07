@@ -78,6 +78,10 @@ class EE_Line_Item_Filter_Processor {
 		$cloned_line_item->set( 'LIN_ID', null );
 		$cloned_line_item->set( 'LIN_parent', null );
 		$cloned_line_item->clear_related_line_item_cache();
+		foreach( array_keys( EEM_Line_Item::instance()->relation_settings() ) as $relation_name) {
+			$cloned_line_item->clear_cache( $relation_name, null, true );
+		}
+		$cloned_line_item->set_allow_persist( false );
 		return $cloned_line_item;
 	}
 
