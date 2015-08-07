@@ -1664,7 +1664,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//enqueue thickbox for ee help popups.  default is to enqueue unless its explicitly set to false since we're assuming all EE pages will have popups
-		if ( !isset( $this->_route_config['has_help_popups']) || ( isset( $this->_route_config['has_help_popups']) && $this->_route_config['has_help_popups'] ) ) {
+		if ( ! isset( $this->_route_config['has_help_popups']) || ( isset( $this->_route_config['has_help_popups']) && $this->_route_config['has_help_popups'] ) ) {
 			wp_enqueue_script('ee_admin_js');
 			wp_enqueue_style('ee-admin-css');
 		}
@@ -1709,7 +1709,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function admin_footer_scripts_eei18n_js_strings() {
 
 		EE_Registry::$i18n_js_strings['ajax_url'] = WP_AJAX_URL;
-		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA associated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 
 		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['February'] = __( 'February', 'event_espresso' );
@@ -1751,8 +1751,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		EE_Registry::$i18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
 
+		//setting on espresso_core instead of ee_admin_js because expresso_core is enqueued by the maintenance
+		//admin page when in maintenance mode and ee_admin_js is not loaded then.  This works everywhere else because
+		//espresso_core is listed as a dependency of ee_admin_js.
 		wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );
-		wp_localize_script( 'jquery-validate', 'eei18n', EE_Registry::$i18n_js_strings );
 
 	}
 

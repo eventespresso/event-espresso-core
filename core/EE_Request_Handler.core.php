@@ -47,14 +47,14 @@ final class EE_Request_Handler {
 	 *	@var 	boolean
 	 * 	@access public
 	 */
-	public $ajax = FALSE;
+	public $ajax = false;
 
 	/**
 	 * 	whether current request is via AJAX from the frontend of the site
 	 *	@var 	boolean
 	 * 	@access public
 	 */
-	public $front_ajax = FALSE;
+	public $front_ajax = false;
 
 
 
@@ -80,10 +80,10 @@ final class EE_Request_Handler {
 	 *    set_request_vars
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param WP_Query $wp
 	 * @return void
 	 */
-	public function set_request_vars( $wp = NULL ) {
+	public function set_request_vars( $wp = null ) {
 		if ( ! is_admin() ) {
 			// set request post_id
 			$this->set( 'post_id', $this->get_post_id_from_request( $wp ));
@@ -91,7 +91,7 @@ final class EE_Request_Handler {
 			$this->set( 'post_name', $this->get_post_name_from_request( $wp ));
 			// set request post_type
 			$this->set( 'post_type', $this->get_post_type_from_request( $wp ));
-			// TRUE or FALSE ? is this page being used by EE ?
+			// true or false ? is this page being used by EE ?
 			$this->set_espresso_page();
 		}
 	}
@@ -102,14 +102,14 @@ final class EE_Request_Handler {
 	 *    get_post_id_from_request
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param WP_Query $wp
 	 * @return int
 	 */
-	public function get_post_id_from_request( $wp = NULL ) {
+	public function get_post_id_from_request( $wp = null ) {
 		if( ! $wp){
 			global $wp;
 		}
-		$post_id = NULL;
+		$post_id = null;
 		if ( isset( $wp->query_vars['p'] )) {
 			$post_id = $wp->query_vars['p'];
 		}
@@ -133,11 +133,11 @@ final class EE_Request_Handler {
 	 * @param WP_Query $wp
 	 * @return string
 	 */
-	public function get_post_name_from_request( $wp = NULL ) {
+	public function get_post_name_from_request( $wp = null ) {
 		if( ! $wp){
 			global $wp;
 		}
-		$post_name = NULL;
+		$post_name = null;
 		if ( isset( $wp->query_vars['name'] ) && ! empty( $wp->query_vars['name'] )) {
 			$post_name = $wp->query_vars['name'];
 		}
@@ -177,11 +177,11 @@ final class EE_Request_Handler {
 	 * @param WP_Query $wp
 	 * @return mixed
 	 */
-	public function get_post_type_from_request( $wp = NULL ) {
+	public function get_post_type_from_request( $wp = null ) {
 		if( ! $wp){
 			global $wp;
 		}
-		return isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : NULL;
+		return isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : null;
 	}
 
 
@@ -192,8 +192,19 @@ final class EE_Request_Handler {
 	 * 		@return bool
 	 */
 	public function test_for_espresso_page() {
+		global $wp;
+		/** @type EE_CPT_Strategy $EE_CPT_Strategy */
+		$EE_CPT_Strategy = EE_Registry::instance()->load_core( 'CPT_Strategy' );
+		$espresso_CPT_taxonomies = $EE_CPT_Strategy->get_CPT_taxonomies();
+		if ( is_array( $espresso_CPT_taxonomies ) ) {
+			foreach ( $espresso_CPT_taxonomies as $espresso_CPT_taxonomy =>$details ) {
+				if ( isset( $wp->query_vars, $wp->query_vars[ $espresso_CPT_taxonomy ] ) ) {
+					return true;
+				}
+			}
+		}
 		// load espresso CPT endpoints
-		$espresso_CPT_endpoints = EE_Registry::instance()->load_core('CPT_Strategy')->get_CPT_endpoints();
+		$espresso_CPT_endpoints = $EE_CPT_Strategy->get_CPT_endpoints();
 		$post_type_CPT_endpoints = array_flip( $espresso_CPT_endpoints );
 		$post_types = (array)$this->get( 'post_type' );
 		foreach ( $post_types as $post_type ) {
@@ -202,13 +213,13 @@ final class EE_Request_Handler {
 				// kk we know this is an espresso page, but is it a specific post ?
 				if ( ! $this->get( 'post_name' ) ) {
 					// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
-					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
+					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : null;
 					// if the post type matches on of our then set the endpoint
 					if ( $post_name ) {
 						$this->set( 'post_name', $post_name );
 					}
 				}
-				return TRUE;
+				return true;
 			}
 		}
 		if ( $this->get( 'post_name' )) {
@@ -218,10 +229,10 @@ final class EE_Request_Handler {
 			$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
 			// was a post name passed ?
 			if (  isset( $espresso_pages[ $this->get( 'post_name' ) ] )) {
-				 return TRUE;
+				 return true;
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 
@@ -233,7 +244,7 @@ final class EE_Request_Handler {
 	 * @param null $value
 	 * @return    mixed
 	 */
-	public function set_espresso_page( $value = NULL ) {
+	public function set_espresso_page( $value = null ) {
 		$value = $value ? $value : $this->test_for_espresso_page();
 		$this->_params['is_espresso_page'] = $value;
 	}
@@ -247,7 +258,7 @@ final class EE_Request_Handler {
 	 *  @return 	mixed
 	 */
 	public function is_espresso_page() {
-		return isset( $this->_params['is_espresso_page'] ) ? $this->_params['is_espresso_page'] : FALSE;
+		return isset( $this->_params['is_espresso_page'] ) ? $this->_params['is_espresso_page'] : false;
 	}
 
 
@@ -271,7 +282,7 @@ final class EE_Request_Handler {
 	 * @param bool $override_ee
 	 * @return    void
 	 */
-	public function set( $key, $value, $override_ee = FALSE ) {
+	public function set( $key, $value, $override_ee = false ) {
 		// don't allow "ee" to be overwritten unless explicitly instructed to do so
 		if ( $key != 'ee' || ( $key == 'ee' && empty( $this->_params['ee'] )) || ( $key == 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )) {
 			$this->_params[ $key ] = $value;
@@ -288,7 +299,7 @@ final class EE_Request_Handler {
 	 * @param null $default
 	 * @return    mixed
 	 */
-	public function get( $key, $default = NULL ) {
+	public function get( $key, $default = null ) {
 		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : $default;
 	}
 
@@ -302,7 +313,7 @@ final class EE_Request_Handler {
 	 * @return    boolean
 	 */
 	public function is_set( $key ) {
-		return isset( $this->_params[ $key ] ) ? TRUE : FALSE;
+		return isset( $this->_params[ $key ] ) ? true : false;
 	}
 
 
@@ -342,7 +353,7 @@ final class EE_Request_Handler {
 	 * @return    mixed
 	 */
 	public function get_notice( $key ) {
-		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : NULL;
+		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : null;
 	}
 
 
@@ -377,7 +388,7 @@ final class EE_Request_Handler {
 	 * @param $key
 	 */
 	function sanitize_text_field_for_array_walk( &$item, &$key ) {
-		$item = strpos( $item, 'email' ) !== FALSE ? sanitize_email( $item ) : sanitize_text_field( $item );
+		$item = strpos( $item, 'email' ) !== false ? sanitize_email( $item ) : sanitize_text_field( $item );
 	}
 
 
@@ -387,7 +398,7 @@ final class EE_Request_Handler {
 	 * @param $b
 	 * @return bool
 	 */
-	public function __set($a,$b) { return FALSE; }
+	public function __set($a,$b) { return false; }
 
 
 
@@ -395,7 +406,7 @@ final class EE_Request_Handler {
 	 * @param $a
 	 * @return bool
 	 */
-	public function __get($a) { return FALSE; }
+	public function __get($a) { return false; }
 
 
 
@@ -403,7 +414,7 @@ final class EE_Request_Handler {
 	 * @param $a
 	 * @return bool
 	 */
-	public function __isset($a) { return FALSE; }
+	public function __isset($a) { return false; }
 
 
 
@@ -411,28 +422,28 @@ final class EE_Request_Handler {
 	 * @param $a
 	 * @return bool
 	 */
-	public function __unset($a) { return FALSE; }
+	public function __unset($a) { return false; }
 
 
 
 	/**
 	 * @return bool
 	 */
-	public function __clone() { return FALSE; }
+	public function __clone() { return false; }
 
 
 
 	/**
 	 * @return bool
 	 */
-	public function __wakeup() { return FALSE; }
+	public function __wakeup() { return false; }
 
 
 
 	/**
 	 *
 	 */
-	public function __destruct() { return FALSE; }
+	public function __destruct() { return false; }
 
 
 }

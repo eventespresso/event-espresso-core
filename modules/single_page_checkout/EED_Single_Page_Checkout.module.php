@@ -309,7 +309,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP_Query ) {
-		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() ) {
+		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() && apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )) {
 			$this->_initialize();
 		}
 	}
@@ -325,9 +325,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	public static function init( $WP_Query ) {
-		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() ) {
-			EED_Single_Page_Checkout::instance()->_initialize();
-		}
+		EED_Single_Page_Checkout::instance()->run( $WP_Query );
 	}
 
 
@@ -346,6 +344,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// setup the EE_Checkout object
 		$this->checkout = $this->_initialize_checkout();
+		// filter checkout
+		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
 		// get the $_GET
 		$this->_get_request_vars();
 		// filter continue_reg
@@ -430,6 +430,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				exit();
 			}
 		}
+		$checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize_checkout__checkout', $checkout );
 		// reset anything that needs a clean slate for each request
 		$checkout->reset_for_current_request();
 		return $checkout;
@@ -514,7 +515,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _load_and_instantiate_reg_steps() {
 		// have reg_steps already been instantiated ?
-		if ( empty( $this->checkout->reg_steps )) {
+		if (
+			empty( $this->checkout->reg_steps ) ||
+			apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reload_reg_steps', false, $this->checkout )
+		) {
 			// if not, then loop through raw reg steps array
 			foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
 				if ( ! $this->_load_and_instantiate_reg_step( $reg_step, $order )) {
@@ -706,11 +710,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _get_registrations( EE_Transaction $transaction ) {
 		// first step: grab the registrants  { : o
-		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params );
+		$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, true );
 		// verify registrations have been set
 		if ( empty( $registrations )) {
 			// if no cached registrations, then check the db
-			$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params );
+			$registrations = $transaction->registrations( $this->checkout->reg_cache_where_params, false );
 			// still nothing ? well as long as this isn't a revisit
 			if ( empty( $registrations ) && ! $this->checkout->revisit ) {
 				// generate new registrations from scratch
@@ -746,53 +750,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    array
 	 */
 	private function _initialize_registrations( EE_Transaction $transaction ) {
+		$att_nmbr = 0;
 		$registrations = array();
 		if ( $transaction instanceof EE_Transaction ) {
 			/** @type EE_Registration_Processor $registration_processor */
 			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
-			$att_nmbr = 0;
 			$this->checkout->total_ticket_count = $this->checkout->cart->all_ticket_quantity_count();
 			// now let's add the cart items to the $transaction
-			foreach ( $this->checkout->cart->get_tickets() as $item ) {
-				// grab the related ticket object for this line_item
-				$ticket = $item->ticket();
-				if ( ! $ticket instanceof EE_Ticket ){
-					EE_Error::add_error(sprintf(__("Line item %s did not contain a valid ticket", "event_espresso"),$item->ID()), __FILE__, __FUNCTION__, __LINE__);
-					break;
-				}
-				$first_datetime = $ticket->get_first_related( 'Datetime' );
-				if ( ! $first_datetime instanceof EE_Datetime ){
-					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with any valid datetimes.", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE__ );
-					continue;
-				}
-				$event = $first_datetime->get_first_related( 'Event' );
-				if ( ! $event instanceof EE_Event ){
-					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with a valid event.", "event_espresso"),$ticket->name()),__FILE__,__FUNCTION__,__LINE__);
-					continue;
-				}
+			foreach ( $this->checkout->cart->get_tickets() as $line_item ) {
 				//do the following for each ticket of this type they selected
-				for ( $x = 1; $x <= $item->quantity(); $x++ ) {
+				for ( $x = 1; $x <= $line_item->quantity(); $x++ ) {
 					$att_nmbr++;
-					$reg_url_link = $registration_processor->generate_reg_url_link( $att_nmbr, $item );
-					// now create a new registration for the ticket
-					$registration = EE_Registration::new_instance( array(
-						'EVT_ID' 					=> $event->ID(),
-						'TXN_ID' 					=> $transaction->ID(),
-						'TKT_ID' 					=> $ticket->ID(),
-						'STS_ID' 					=> EEM_Registration::status_id_incomplete,
-						'REG_date' 				=> $transaction->datetime(),
-						'REG_final_price' 	=> $ticket->price(),
-						'REG_session' 			=> EE_Registry::instance()->SSN->id(),
-						'REG_count' 			=> $att_nmbr,
-						'REG_group_size' 	=> $this->checkout->total_ticket_count,
-						'REG_url_link'			=> $reg_url_link
-					));
-					$registration->set_reg_code( $registration_processor->generate_reg_code( $registration ));
-					$registration->save();
-					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
-					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
-					$transaction->_add_relation_to( $registration, 'Registration' );
-					$registrations[ $registration->ID() ] = $registration;
+					$registration = $registration_processor->generate_ONE_registration_from_line_item(
+						$line_item,
+						$transaction,
+						$att_nmbr,
+						$this->checkout->total_ticket_count
+					);
+					if ( $registration instanceof EE_Registration ) {
+						$registrations[ $registration->ID() ] = $registration;
+					}
 				}
 			}
 		}
@@ -828,10 +805,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	bool
 	 */
 	private function _final_verifications() {
+		// filter checkout
+		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
+		//verify that current step is still set correctly
 		if ( ! $this->checkout->current_step instanceof EE_SPCO_Reg_Step ) {
 			EE_Error::add_error( __( 'We\'re sorry but the registration process can not proceed because one or more registration steps were not setup correctly. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
+		// if returning to SPCO, then verify that primary registrant is set
 		if ( ! empty( $this->checkout->reg_url_link )) {
 			$valid_registrant = $this->checkout->transaction->primary_registration();
 			if ( ! $valid_registrant instanceof EE_Registration ) {
@@ -851,7 +832,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				return false;
 			}
 		}
-		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
 		return true;
 	}
 
@@ -1121,6 +1101,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			// add powered by EE msg
 			add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
+
+			$empty_cart = count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params ) ) < 1 ? true : false;
+			$cookies_not_set_msg = '';
+			if ( $empty_cart ) {
+				if ( ! isset( $_COOKIE[ 'ee_cookie_test' ] ) ) {
+					$cookies_not_set_msg = apply_filters(
+						'FHEE__Single_Page_Checkout__display_spco_reg_form__cookies_not_set_msg',
+						sprintf(
+							__( '%1$s%3$sIt appears your browser is not currently set to accept Cookies%4$s%5$sIn order to register for events, you need to enable cookies.%7$sIf you require assistance, then click the following link to learn how to %8$senable cookies%9$s%6$s%2$s', 'event_espresso' ),
+							'<div class="ee-attention">',
+							'</div>',
+							'<h6 class="important-notice">',
+							'</h6>',
+							'<p>',
+							'</p>',
+							'<br />',
+							'<a href="http://www.whatarecookies.com/enable.asp" target="_blank">',
+							'</a>'
+						)
+					);
+				}
+			}
 			$this->checkout->registration_form = new EE_Form_Section_Proper(
 				array(
 					'name' 	=> 'single-page-checkout',
@@ -1130,7 +1132,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							array(
 								'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
 								'template_args' => array(
-									'empty_cart' 		=> count( $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params )) < 1 ? TRUE : FALSE,
+									'empty_cart' 		=> $empty_cart,
 									'revisit' 				=> $this->checkout->revisit,
 									'reg_steps' 			=> $this->checkout->reg_steps,
 									'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
@@ -1138,17 +1140,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
 										sprintf(
 											__( 'You need to %1$sReturn to Events list%2$sselect at least one event%3$s before you can proceed with the registration process.', 'event_espresso' ),
-											'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
+											'<a href="' . get_post_type_archive_link( 'espresso_events' ) . '" title="',
 											'">',
 											'</a>'
 										)
 									),
-									'registration_time_limit' =>
-										$this->checkout->get_registration_time_limit(),
-									'session_expiration' =>
-										gmdate( 'M d, Y H:i:s',
-											EE_Registry::instance()
-											->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+									'cookies_not_set_msg' 		=> $cookies_not_set_msg,
+									'registration_time_limit' 	=> $this->checkout->get_registration_time_limit(),
+									'session_expiration' 			=>
+										gmdate( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
 								)
 							)
 						)

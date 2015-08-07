@@ -551,9 +551,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			case EEM_Question::QST_type_date :
 				return new EE_Datepicker_Input( $input_constructor_args );
 				break;
+			case EEM_Question::QST_type_html_textarea :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
+				$input =  new EE_Text_Area_Input( $input_constructor_args );
+				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
+				return $input;
 			// fallback
 			default :
-				return new EE_Text_Input( $input_constructor_args );
+				$default_input = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default', null, $question->type(), $question, $input_constructor_args );
+				if( ! $default_input ){
+					$default_input = new EE_Text_Input( $input_constructor_args );
+				}
+				return $default_input;
 		}
 	}
 
@@ -845,12 +854,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		} elseif ( $answer_is_obj ) {
 			// save this data to the answer object
 			$answers[ $answer_cache_id ]->set_value( $input_value );
-			return $answers[ $answer_cache_id ]->save();
+			$result = $answers[ $answer_cache_id ]->save();
+			return $result !== false ? true : false;
 		} else {
 			foreach ( $answers as $answer ) {
 				if ( $answer instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 					$answer->set_value( $input_value );
-					return $answer->save() !== FALSE ? TRUE : FALSE;
+					$result = $answer->save();
+					return $result !== false ? true : false;
 				}
 			}
 		}
