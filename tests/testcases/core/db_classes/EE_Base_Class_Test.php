@@ -585,6 +585,35 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals( $event->ID()-1, $previous_event['EVT_ID'] );
 	}
 
+	/**
+	 * @group github-102
+	 */
+	public function test_get__serialized_data() {
+		$log_message = array(
+						'key1' => 'value1',
+						'key2' => 'value2'
+					);
+		$log = EE_Change_Log::new_instance();
+		$log->set( 'LOG_message', $log_message );
+		$log->save();
+
+		//verify that when we get its LOG_message its still serialized
+		$this->assertTrue( is_array( $log->get( 'LOG_message' ) ) );
+		$this->assertEquals( $log_message, $log->get( 'LOG_message' ) );
+
+		//now when we get it from the DB, and get its LOG_message, its still serialized
+		$log_id = $log->ID();
+		EEM_Change_Log::reset();
+		unset( $log );
+		$log_from_db = EEM_Change_Log::instance()->get_one_by_ID( $log_id );
+		$this->assertTrue( is_array( $log_from_db->get( 'LOG_message' ) ) );
+		$this->assertEquals( $log_message, $log_from_db->get( 'LOG_message' ) );
+
+		//but if you set it to be a string, you'll get a string back
+		$log_from_db->set( 'LOG_message', serialize( $log_message ) );
+		$this->assertTrue( is_string( $log_from_db->get( 'LOG_message' ) ) );
+	}
+
 }
 
 // End of file EE_Base_Class_Test.php
