@@ -12,7 +12,6 @@
 
 class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Table_Line_Item_Display_Strategy  {
 
-
 	/**
 	 * Table header for display.
 	 * @since   4.8
@@ -138,10 +137,31 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
 	 * @return mixed
 	 */
 	protected function _total_row( EE_Line_Item $line_item, $options = array() ) {
+
+		$registration = isset( $options['EE_Registration'] ) ? $options['EE_Registration'] : null;
+		$registration_total = $registration instanceof EE_Registration ? $registration->pretty_final_price() : 0;
+		//if no valid registration object then we're not going to show the approximate text.
+		$total_match = $registration instanceof EE_Registration ? $registration->final_price() == $line_item->total() : true;
+
+
+
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
 		// Total th label
-		$total_label = sprintf( __( 'Transaction Total %s', 'event_espresso' ),  '(' . EE_Registry::instance()->CFG->currency->code . ')' );
+		if ( $total_match ) {
+			$total_label = sprintf( __( 'This registration\'s total %s:', 'event_espresso' ), '(' . EE_Registry::instance()->CFG->currency->code . ')' );
+		} else {
+			$total_label = sprintf( __( 'This registration\'s approximate total %s', 'event_espresso' ), '(' . EE_Registry::instance()->CFG->currency->code . ')' );
+			$total_label .= '<br>';
+			$total_label .= '<p class="ee-footnote-text">'
+			                . sprintf(
+				                __( 'The registrations\' share of the transaction total is approximate because it might not be possible to evenly divide the transaction total among each registration, and so some registrations may need to pay a penny more than others.  This registration\'s final share is actually %1$s%2$s%3$s.', 'event_espresso' ),
+				                '<strong>',
+				                $registration_total,
+				                '</strong>'
+			                )
+			                . '</p>';
+		}
 		$html .= EEH_HTML::th( $total_label, '',  'jst-rght',  '',  ' colspan="3"' );
 		// total th
 
