@@ -33,6 +33,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 */
 	protected $_children;
 
+	/**
+	 * for the parent line item
+	 * @var EE_Line_Item
+	 */
+	protected $_parent;
+
 
 
 	/**
@@ -372,10 +378,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 	/**
 	 * Gets the line item of which this item is a composite. Eg, if this is a subtotal, the parent might be a total\
+	 * If this line item is saved to the DB, fetches the parent from the DB. However, if this line item isn't in the DB
+	 * it uses its cached reference to its parent line item (which would have been set by `EE_Line_Item::set_parent()` or
+	 * indirectly by `EE_Line_item::add_child_line_item()`)
 	 * @return EE_Line_Item
 	 */
 	public function parent() {
-		return $this->get_model()->get_one_by_ID( $this->parent_ID() );
+		if( $this->ID() ) {
+			return $this->get_model()->get_one_by_ID( $this->parent_ID() );
+		} else {
+			return $this->_parent;
+		}
 	}
 
 
@@ -567,7 +580,31 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			return $line_item->save();
 		} else {
 			$this->_children[ $line_item->code() ] = $line_item;
+			if( $line_item->parent() != $this ) {
+				$line_item->set_parent( $this );
+			}
 			return TRUE;
+		}
+	}
+
+	/**
+	 * Similar to EE_Base_Class::_add_relation_to, except this isn't a normal relation.
+	 * If this line item is saved to the DB, this is just a wrapper for set_parent_ID() and save()
+	 * However, if this line item is NOT saved to the DB, this just caches the parent on
+	 * the EE_Line_Item::_parent property.
+	 * @param EE_Line_Item $line_item
+	 *
+	 */
+	public function set_parent( $line_item ) {
+		if ( $this->ID() ) {
+			if( ! $line_item->ID() ) {
+				$line_item->save();
+			}
+			$this->set_parent_ID( $line_item->ID() );
+			$this->save();
+		} else {
+			$this->_parent = $line_item;
+			$this->set_parent_ID( $line_item->ID() );
 		}
 	}
 
@@ -816,6 +853,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		//ensure all non-line items and non-sub-line-items have a quantity of 1
 		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
 			$this->set_quantity( 1 );
+			if( ! $this->is_percent() ) {
+				$this->set_unit_price( $this->total() );
+			}
 		}
 
 		//we don't want to bother saving grand totals, because that needs to factor in taxes anyways
@@ -823,8 +863,15 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		if( ! $this->is_total() ) {
 			$this->set_total( $total );
 			//if not a percent line item, make sure we keep the unit price in sync
-			if( $this->is_line_item() && ! empty( $my_children ) && ! $this->is_percent() ) {
-				$this->set_unit_price( $this->total() / $this->quantity() );
+			if( $this->is_line_item() &&
+					! empty( $my_children ) &&
+					! $this->is_percent() ) {
+				if( $this->quantity() === 0 ){
+					$new_unit_price = 0;
+				} else {
+					$new_unit_price = $this->total() / $this->quantity();
+				}
+				$this->set_unit_price( $new_unit_price );
 			}
 			$this->maybe_save();
 		}
@@ -1039,6 +1086,15 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			return $this->save();
 		}
 		return false;
+	}
+
+	/**
+	 * clears the cached children and parent from the line item
+	 * @return void
+	 */
+	public function clear_related_line_item_cache() {
+		$this->_children = array();
+		$this->_parent = null;
 	}
 
 

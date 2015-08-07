@@ -122,6 +122,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
 			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
 		}
+		EE_Registry::$i18n_js_strings[ 'ts_embed_iframe_title' ] = __( 'Copy and Paste the following:', 'event_espresso' );
 	}
 
 
@@ -878,7 +879,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		//iframe button js on admin event editor page
 		if ( EE_Registry::instance()->REQ->get('page') == 'espresso_events' && EE_Registry::instance()->REQ->get('action') == 'edit' ) {
 			wp_register_script( 'ticket_selector_embed', TICKET_SELECTOR_ASSETS_URL . 'ticket-selector-embed.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, true );
-			EE_Registry::$i18n_js_strings['ts_embed_iframe_title'] = __('Copy and Paste the following:', 'event_espresso' );
 			wp_enqueue_script( 'ticket_selector_embed' );
 		}
 	}
