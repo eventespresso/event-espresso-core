@@ -1367,7 +1367,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return string
 	 */
 	public function set_checkout_anchor() {
-		echo '<a id="checkout"/>';
+		echo '<a id="checkout" style="float: left; margin-left: -999em;"></a>';
 	}
 
 
