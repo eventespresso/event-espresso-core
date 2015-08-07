@@ -286,6 +286,13 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * add line item filters required for this reg step
 	 *
+	 * these filters are applied via this line in EE_SPCO_Reg_Step_Payment_Options::set_hooks():
+	 * 		add_filter( 'FHEE__SPCO__EE_Line_Item_Filter_Collection', array( 'EE_SPCO_Reg_Step_Payment_Options', 'add_spco_line_item_filters' ) );
+	 * so any code that wants to use the same set of filters during the payment options reg step,
+	 * can apply these filters via the following:
+	 * 		apply_filters( 'FHEE__SPCO__EE_Line_Item_Filter_Collection', new EE_Line_Item_Filter_Collection() )
+	 * or to an existing filter collection by passing that instead of instantiating a new collection
+	 *
 	 * @param \EE_Line_Item_Filter_Collection $line_item_filter_collection
 	 * @return \EE_Line_Item_Filter_Collection
 	 */
