@@ -136,7 +136,7 @@ abstract class EE_Shortcodes extends EE_Base {
 
 	/**
 	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
-	 * @var object
+	 * @var EEH_Parse_Shortcodes
 	 */
 	protected $_shortcode_helper;
 
