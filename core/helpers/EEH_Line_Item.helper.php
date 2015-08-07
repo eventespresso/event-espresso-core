@@ -231,6 +231,7 @@ class EEH_Line_Item {
 			'FHEE__EEH_Line_Item__create_ticket_line_item__line_item',
 			$line_item
 		);
+		$events_sub_total->add_child_line_item( $line_item );
 		//now add the sub-line items
 		$running_total_for_ticket = 0;
 		foreach ( $ticket->prices( array( 'order_by' => array( 'PRC_order' => 'ASC' ) ) ) as $price ) {
@@ -259,7 +260,6 @@ class EEH_Line_Item {
 			$running_total_for_ticket += $price_total;
 			$line_item->add_child_line_item( $sub_line_item );
 		}
-		$events_sub_total->add_child_line_item( $line_item );
 		return $line_item;
 	}
 
@@ -391,7 +391,8 @@ class EEH_Line_Item {
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'	=> 'taxes',
 			'LIN_name' 	=> __('Taxes', 'event_espresso'),
-			'LIN_type'	=> EEM_Line_Item::type_tax_sub_total
+			'LIN_type'	=> EEM_Line_Item::type_tax_sub_total,
+			'LIN_order' => 1000,//this should always come last
 		));
 		$tax_line_item = apply_filters(
 			'FHEE__EEH_Line_Item__create_taxes_subtotal__tax_line_item',
