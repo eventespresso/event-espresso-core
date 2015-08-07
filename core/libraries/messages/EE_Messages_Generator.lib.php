@@ -426,9 +426,11 @@ class EE_Messages_Generator {
 	 */
 	protected function _setup_message_object( $context, EE_Messages_Addressee $recipient, $templates, EE_Message_Template_Group $mtpg ) {
 		//stuff we already know
+		$transaction_id = $recipient->txn instanceof EE_Transaction ? $recipient->txn->ID() : 0;
+		$transaction_id = empty( $transaction_id ) && $this->_current_data_handler->txn instanceof EE_Transaction ? $this->_current_data_handler->txn->ID() : $transaction_id;
 		$message_fields = array(
 			'GRP_ID' => $mtpg->ID(),
-			'TXN_ID' => $recipient->txn instanceof EE_Transaction ? $recipient->txn->ID() : $this->_current_data_handler->txn->ID(),
+			'TXN_ID' => $transaction_id,
 			'MSG_messenger' => $this->_current_messenger->name,
 			'MSG_message_type' => $this->_current_message_type->name,
 			'MSG_context' => $context,
