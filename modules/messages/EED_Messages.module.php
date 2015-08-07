@@ -215,27 +215,15 @@ class EED_Messages  extends EED_Module {
 	 * This is used to retrieve the template pack for the given name.
 	 * Retrieved packs are cached on the static $_TMP_PACKS array.  If there is no class matching the given name then the default template pack is returned.
 	 *
+	 * @deprecated 4.9.0  @see EEH_MSG_Template::get_template_pack()
+	 *
 	 * @param string $template_pack_name This should correspond to the dbref of the template pack (which is also used in generating the Pack class name).
 	 *
 	 * @return EE_Messages_Template_Pack
 	 */
 	public static function get_template_pack( $template_pack_name ) {
-		if ( isset( self::$_TMP_PACKS[$template_pack_name] ) ) {
-			return self::$_TMP_PACKS[$template_pack_name];
-		}
-
-		//not set yet so let's attempt to get it.
-		$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template_pack_name ) ) );
-
-		if ( ! class_exists( $pack_class ) ) {
-			$pack_class = 'EE_Messages_Template_Pack_Default';
-			self::$_TMP_PACKS['default'] = empty( self::$_TMP_PACKS['default'] ) ? new $pack_class : self::$_TMP_PACKS['default'];
-			return self::$_TMP_PACKS['default'];
-		} else {
-			$pack = new $pack_class;
-			self::$_TMP_PACKS[$template_pack_name] = $pack;
-			return self::$_TMP_PACKS[$template_pack_name];
-		}
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::get_template_pack( $template_pack_name );
 	}
 
 
@@ -244,33 +232,22 @@ class EED_Messages  extends EED_Module {
 	/**
 	 * Retrieves an array of all template packs.
 	 * Array is in the format array( 'dbref' => EE_Messages_Template_Pack )
+	 * @deprecated 4.9.0  @see EEH_MSG_Template_Pack::get_template_pack_collection
 	 *
 	 * @return EE_Messages_Template_Pack[]
 	 */
 	public static function get_template_packs() {
-		//glob the defaults directory for messages
-		$templates = glob( EE_LIBRARIES . 'messages/defaults/*', GLOB_ONLYDIR );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
+		//for backward compat, let's make sure this returns in the same format as originally.
+		$template_pack_collection = EEH_MSG_Template::get_template_pack_collection();
+		$template_pack_collection->rewind();
 		$template_packs = array();
-		foreach( $templates as $template_path ) {
-			//grab folder name
-			$template = basename( $template_path );
-
-			//is this already set?
-			if ( isset( self::$_TMP_PACKS[$template] ) )
-				continue;
-
-			//setup classname.
-			$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template ) ) );
-
-			if ( ! class_exists( $pack_class ) )
-				continue;
-
-			$template_packs[$template] = new $pack_class;
+		while ( $template_pack_collection->valid() ) {
+			$template_packs[ $template_pack_collection->current()->dbref ] = $template_pack_collection->current();
+			$template_pack_collection->next();
 		}
-
-		$template_packs = apply_filters( 'FHEE__EED_Messages__get_template_packs__template_packs', $template_packs );
-		self::$_TMP_PACKS = array_merge( self::$_TMP_PACKS, $template_packs );
-		return self::$_TMP_PACKS;
+		return $template_packs;
 	}
 
 
@@ -285,7 +262,7 @@ class EED_Messages  extends EED_Module {
 	public static function set_autoloaders() {
 		if ( empty( self::$_MSG_PATHS ) ) {
 			self::_set_messages_paths();
-			EE_Registry::instance()->load_helper('Autoloader');
+			EE_Registry::instance()->load_helper( 'Autoloader' );
 			foreach ( self::$_MSG_PATHS as $path ) {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $path );
 			}

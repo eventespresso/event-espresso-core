@@ -72,10 +72,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function __construct( $routing = true ) {
 		//make sure MSG Template helper is loaded.
-		EE_Registry::instance()->load_helper('MSG_Template');
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		//make sure messages autoloader is running
 		EED_Messages::set_autoloaders();
-		parent::__construct($routing);
+		parent::__construct( $routing );
 	}
 
 
@@ -1482,13 +1482,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function template_pack_meta_box() {
 		$this->_set_message_template_group();
 
-
-		//setup template pack select values.
-		$template_packs = EED_Messages::get_template_packs();
+		$tp_collection = EEH_MSG_Template::get_template_pack_collection();
 
 		$tp_select_values = array();
 
-		foreach ( $template_packs as $tp ) {
+		foreach ( $tp_collection as $tp ) {
 			//only include template packs that support this messenger and message type!
 			$supports = $tp->get_supports();
 			if ( ! isset( $supports[$this->_message_template_group->messenger()] ) || ! in_array( $this->_message_template_group->message_type(), $supports[$this->_message_template_group->messenger()] ) ) {

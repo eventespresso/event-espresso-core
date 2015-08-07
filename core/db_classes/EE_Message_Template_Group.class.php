@@ -374,8 +374,8 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 */
 	public function get_template_pack() {
 		$pack_name = $this->get_template_pack_name();
-
-		return EED_Messages::get_template_pack( $pack_name );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::get_template_pack( $pack_name );
 	}
 
 

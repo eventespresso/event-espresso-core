@@ -29,6 +29,15 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EEH_MSG_Template {
 
 
+	/**
+	 * Holds a collection of EE_Message_Template_Pack objects.
+	 * @type EE_Messages_Template_Pack_Collection
+	 */
+	protected static $_template_pack_collection;
+
+
+
+
 	private static function _set_autoloader() {
 		EED_Messages::set_autoloaders();
 	}
@@ -572,5 +581,93 @@ class EEH_MSG_Template {
 		$payment_status_array = self::payment_status_to_message_type_array();
 		return isset( $payment_status_array[$payment_status] ) ? $payment_status_array[$payment_status] : '';
 	}
+
+
+	/**
+	 * This is used to retrieve the template pack for the given name.
+	 *
+	 * @param string $template_pack_name  should match the set `dbref` property value on the EE_Messages_Template_Pack.
+	 *
+	 * @return EE_Messages_Template_Pack
+	 */
+	public static function get_template_pack( $template_pack_name ) {
+		if ( ! self::$_template_pack_collection instanceof EE_Object_Collection ) {
+			self::$_template_pack_collection = new EE_Messages_Template_Pack_Collection();
+		}
+
+		//first see if in collection already
+		$template_pack = self::$_template_pack_collection->get_by_name( $template_pack_name );
+
+		if ( $template_pack instanceof EE_Messages_Template_Pack ) {
+			return $template_pack;
+		}
+
+		//nope...let's get it.
+		//not set yet so let's attempt to get it.
+		$pack_class_name = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template_pack_name ) ) );
+
+		if ( ! class_exists( $pack_class_name ) && $template_pack_name !== 'default' ) {
+			return self::get_template_pack( 'default' );
+		} else {
+			$template_pack = new $pack_class_name;
+			self::$_template_pack_collection->add( $template_pack );
+			return $template_pack;
+		}
+	}
+
+
+
+
+	/**
+	 * Globs template packs installed in core and returns the template pack collection with all installed template packs
+	 * in it.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return EE_Messages_Template_Pack_Collection
+	 */
+	public static function get_template_pack_collection() {
+		$new_collection = false;
+		if ( ! self::$_template_pack_collection instanceof EE_Messages_Template_Pack_Collection ) {
+			self::$_template_pack_collection = new EE_Messages_Template_Pack_Collection();
+			$new_collection = true;
+		}
+
+		//glob the defaults directory for messages
+		$templates = glob( EE_LIBRARIES . 'messages/defaults/*', GLOB_ONLYDIR );
+		foreach( $templates as $template_path ) {
+			//grab folder name
+			$template = basename( $template_path );
+
+			if ( ! $new_collection ) {
+				//already have it?
+				if ( self::$_template_pack_collection->get_by_name( $template ) instanceof EE_Messages_Template_Pack ) {
+					continue;
+				}
+			}
+
+			//setup classname.
+			$template_pack_class_name = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template ) ) );
+
+			if ( ! class_exists( $template_pack_class_name ) )
+				continue;
+
+			self::$_template_pack_collection->add( new $template_pack_class_name );
+		}
+
+		/**
+		 * Filter for plugins to add in any additional template packs
+		 * Note the filter name here is for backward compat, this used to be found in EED_Messages.
+		 */
+		$additional_template_packs = apply_filters( 'FHEE__EED_Messages__get_template_packs__template_packs', array() );
+		foreach ( (array) $additional_template_packs as $template_pack ) {
+			if ( ! self::$_template_pack_collection->contains($template_pack ) ) {
+				self::$_template_pack_collection->add( $template_pack );
+			}
+		}
+		return self::$_template_pack_collection;
+	}
+
+
 
 }
