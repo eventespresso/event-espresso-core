@@ -641,11 +641,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-
 	/**
 	 * simply validates the incoming message object and then sets up the properties for the messenger
 	 * @param  object $message message object
-	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _validate_and_setup( $message ) {
 		if ( !is_object( $message ) )
@@ -670,14 +669,13 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-
 	/**
 	 * Utility method for child classes to get the contents of a template file and return
 	 *
 	 * We're assuming the child messenger class has already setup template args!
-	 * @param  string  	$template url for template
-	 * @param  bool 	$preview if true we use the preview wrapper otherwise we use main wrapper.
+	 * @param  bool $preview if true we use the preview wrapper otherwise we use main wrapper.
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
 		$type = $preview ? 'preview' : 'main';
