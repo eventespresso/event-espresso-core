@@ -107,6 +107,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'contact_list_export'=>  __("Export Data", "event_espresso"),
 				),
 			'publishbox' => array(
+				'add_new_attendee' => __("Add Contact Record", 'event_espresso'),
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
 				),
 			'hide_add_button_on_cpt_route' => array(
@@ -454,7 +455,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box', 'attendee_editor_metaboxes' ) ),
 				'require_nonce' => FALSE
 				),
 
@@ -576,7 +577,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
 		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
-		wp_localize_script( 'espresso_reg', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
 
