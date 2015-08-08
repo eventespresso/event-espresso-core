@@ -17,6 +17,7 @@ class EE_Object_Repository_Mock extends EE_Object_Repository {
 	 */
 	public function __construct() {
 		$this->interface = 'EE_Ticket';
+		$this->persist_method = 'save';
 	}
 
 
