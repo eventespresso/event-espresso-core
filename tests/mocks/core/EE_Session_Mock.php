@@ -46,6 +46,11 @@ class EE_Session_Mock extends EE_Session {
 	protected function __construct( EE_Encryption $encryption = null ) {
 	}
 
+
+	public function lifespan() {
+		return  60 * MINUTE_IN_SECONDS;
+	}
+
 }
 // End of file EE_Session_Mock.php
 // Location: /tests/mocks/core/EE_Session_Mock.php
