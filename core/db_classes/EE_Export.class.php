@@ -452,7 +452,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				if( $reg_row[ 'Ticket.TKT_ID'] ) {
 					$ticket_name = $this->_prepare_value_from_db_for_display( $ticket_model, 'TKT_name', $reg_row[ 'Ticket.TKT_name' ] );
 					$datetimes_strings = array();
-					foreach( EEM_Datetime::instance()->get_all( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) ) as $datetime){
+					foreach( EEM_Datetime::instance()->get_all( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ), 'default_where_conditions' => 'none' ) ) as $datetime){
 						$datetimes_strings[] = $datetime->start_date_and_time();
 					}
 

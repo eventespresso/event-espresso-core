@@ -546,6 +546,7 @@ class EE_Error extends Exception {
 	*/
 	public static function add_error( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
 		self::_add_notice ( 'errors', $msg, $file, $func, $line );
+		self::$_error_count++;
 	}
 
 
@@ -626,11 +627,12 @@ class EE_Error extends Exception {
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
-			// get error code only on error
-			$error_code = $type == 'errors' ? EE_Error::generate_error_code ( $file, $func, $line ) : '';
-			$error_code =  ! empty( $error_code ) ? '<br/><span class="tiny-text">' . $error_code . '</span>' : '';
+			// get error code, but only on error
+			if ( WP_DEBUG && $type == 'errors' ) {
+				$msg .= '<br/><span class="tiny-text">' . EE_Error::generate_error_code( $file, $func, $line ) . '</span>';
+			}
 			// add notice
-			self::$_espresso_notices[ $type ][] = $msg . $error_code;
+			self::$_espresso_notices[ $type ][] = $msg;
 			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 

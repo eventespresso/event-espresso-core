@@ -71,6 +71,7 @@ if ( ! $empty_cart ) {
 ?>
 	<h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('Nothing in your Event Queue', 'event_espresso'); ?></h3>
 	<p><?php echo $empty_msg; ?></p>
+	<?php echo $cookies_not_set_msg; ?>
 <?php
 }
 do_action( 'AHEE__SPCO__reg_form_footer' );
