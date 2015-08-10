@@ -210,24 +210,24 @@ class EEM_Status extends EEM_Base {
 				__('sent', 'event_espresso')
 			),
 			EEM_Message::status_idle => array(
-				__('idle', 'event_espresso'),
-				__('idle', 'event_espresso'),
+				__('queued for sending', 'event_espresso'),
+				__('queued for sending', 'event_espresso'),
 			),
 	        EEM_Message::status_failed => array(
 		        __('failed', 'event_espresso'),
 		        __('failed', 'event_espresso'),
 	        ),
 	        EEM_Message::status_resend => array(
-		        __('retried', 'event_espresso'),
-		        __('retried', 'event_espresso'),
+		        __('queued for resending', 'event_espresso'),
+		        __('queued for resending', 'event_espresso'),
 	        ),
 	        EEM_Message::status_incomplete => array(
-		        __('incomplete', 'event_espresso'),
-		        __('incomplete', 'event_espresso'),
+		        __('queued for generating', 'event_espresso'),
+		        __('queued for generating', 'event_espresso'),
 	        ),
 			EEM_Message::status_retry => array(
-				__('retry', 'event_espresso'),
-				__('retry', 'event_espresso')
+				__('failed sending, can be retried', 'event_espresso'),
+				__('failed sending, can be retried', 'event_espresso')
 			)
 	    );
 
