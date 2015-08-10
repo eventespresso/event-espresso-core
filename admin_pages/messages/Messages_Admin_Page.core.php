@@ -192,7 +192,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$grp_id = empty( $grp_id ) && !empty( $this->_req_data['id'] ) ? $this->_req_data['id'] : $grp_id;
 
 		$this->_page_routes = array(
-				'default'=> array(
+				'default' => array(
+					'func' => '_message_queue_list_table',
+					'capability' => 'ee_read_messages'
+				),
+				'global_mtps'=> array(
 					'func' => '_ee_default_messages_overview_list_table',
 					'capability' => 'ee_read_global_messages'
 					),
@@ -282,11 +286,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'reports' => array(
 					'func' => '_messages_reports',
 					'capability' => 'ee_read_messages'
-					),
-				'message_queue' => array(
-					'func' => '_message_queue_list_table',
-					'capability' => 'ee_read_messages'
-				)
+					)
 		);
 	}
 
@@ -302,8 +302,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Default Message Templates', 'event_espresso'),
+					'label' => __('Message Activity', 'event_espresso'),
 					'order' => 10
+					),
+				'list_table' => 'EE_Message_List_Table',
+				'require_nonce' => false
+				),
+			'global_mtps' => array(
+				'nav' => array(
+					'label' => __('Default Message Templates', 'event_espresso'),
+					'order' => 20
 					),
 				'list_table' => 'Messages_Template_List_Table',
 				'help_tabs' => array(
@@ -342,7 +350,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'custom_mtps' => array(
 				'nav' => array(
 					'label' => __('Custom Message Templates', 'event_espresso'),
-					'order' => 15
+					'order' => 30
 					),
 				'help_tabs' => array(),
 				'help_tour' => array(),
@@ -410,7 +418,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
-					'order' => 30
+					'order' => 40
 					),
 				'metaboxes' => array('_messages_settings_metaboxes'),
 				'help_tabs' => array(
@@ -428,14 +436,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							),
 					),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
-				'require_nonce' => false
-				),
-			'message_queue' => array(
-				'nav' => array(
-					'label' => __('Message Queue', 'event_espresso'),
-					'order' => 20
-					),
-				'list_table' => 'EE_Message_List_Table',
 				'require_nonce' => false
 				),
 			/*'reports' => array(
@@ -460,7 +460,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _add_screen_options_default() {
+	protected function _add_screen_options_global_mtps() {
 		/**
 		 * Note: the reason for the value swap here on $this->_admin_page_title is because $this->_per_page_screen_options
          * uses the $_admin_page_title property and we want different outputs in the different spots.
@@ -474,7 +474,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _add_screen_options_message_queue() {
+	protected function _add_screen_options_default() {
 		$this->_admin_page_title = __( 'Message Queue', 'event_espresso' );
 		$this->_per_page_screen_option();
 	}
@@ -642,7 +642,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * set views array for List Table
 	 */
-	public function _set_list_table_views_default() {
+	public function _set_list_table_views_global_mtps() {
 		$this->_views = array(
 			'in_use' => array(
 				'slug' => 'in_use',
@@ -661,7 +661,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * set views array for message queue list table
 	 */
-	public function _set_list_table_views_message_queue() {
+	public function _set_list_table_views_default() {
 		$this->_views = array(
 			 'all' => array(
 			    'slug' => 'all',
@@ -1215,7 +1215,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//set extra content for publish box
 		$this->_template_args['publish_box_extra_content'] = $sidebar_fields;
-		$this->_set_publish_post_box_vars( 'id', $GRP_ID );
+		$this->_set_publish_post_box_vars(
+			'id',
+			 $GRP_ID,
+			 false,
+			 add_query_arg(
+			    array( 'action' => 'global_mtps' ),
+			    $this->_admin_base_url
+			 )
+		);
 
 		//add preview button
 		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'GRP_ID' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
@@ -1385,7 +1393,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$query_args = array(
 			'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : null,
 			'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : null,
-			'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
+			'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'global_mtps'
 			);
 
 		//if called via ajax then we return query args otherwise redirect
