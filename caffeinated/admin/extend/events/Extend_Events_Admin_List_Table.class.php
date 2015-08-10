@@ -25,7 +25,7 @@ class Extend_Events_Admin_List_Table extends Events_Admin_List_Table {
 		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
 
 		$actions = parent::_column_name_action_setup( $item );
-		$actions['export'] = '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>';
+//		$actions['export'] = '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>';
 		return $actions;
 	}
 

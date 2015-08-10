@@ -138,7 +138,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
                 'help_tabs' => array(
 					'registration_form_questions_overview_help_tab' => array(
 						'title' => __('Questions Overview', 'event_espresso'),
@@ -165,7 +165,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'label' => __('Question Groups'),
 					'order' => 20
 					),
-				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'metaboxes' => $this->_default_espresso_metaboxes,
 				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
 						'title' => __('Question Groups', 'event_espresso'),
@@ -183,7 +183,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_id']) ? add_query_arg(array('question_id' => $this->_req_data['question_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
-				'metaboxes' => array('_publish_post_box','_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_edit_question_group_help_tab' => array(
 						'title' => __('Edit Question', 'event_espresso'),
@@ -297,7 +297,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _questions_groups_preview() {
 		$this->_admin_page_title = __('Question Groups (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="Preview Question Groups Overview List Table screenshot" />';
+		$this->_template_args['preview_img'] = '<img src="' . REGISTRATION_FORM_ASSETS_URL . 'caf_reg_form_preview.jpg" alt="' . esc_attr__( 'Preview Question Groups Overview List Table screenshot', 'event_espresso' ) . '" />';
 		$this->_template_args['preview_text'] = '<strong>'.__( 'Question Groups is a feature that is only available in the Caffeinated version of Event Espresso.  With the Question Groups feature you are able to: create new question groups, edit existing question groups, and also create and edit new questions and add them to question groups.', 'event_espresso' ).'</strong>';
 		$this->display_admin_caf_preview_page( 'question_groups_tab' );
 	}
@@ -371,15 +371,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$question->set_order_to_latest();
 			$this->_set_add_edit_form_tags('insert_question');
 		}
-		$questionTypes=array();
-		$count=0;
-		foreach($this->_question_model->allowed_question_types() as $db_name => $nice_text){
-			$questionTypes[$count]=array('id'=>$db_name,'text'=>$nice_text);
-			$count++;
-		}
+		$question_types = $question->has_answers() ?  $this->_question_model->question_types_in_same_category( $question->type() ) : $this->_question_model->allowed_question_types();
 		$this->_template_args['QST_ID']=$ID;
 		$this->_template_args['question']=$question;
-		$this->_template_args['question_types']=$questionTypes;
+		$this->_template_args['question_types']= $question_types;;
 
 		$this->_set_publish_post_box_vars( 'id', $ID );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );

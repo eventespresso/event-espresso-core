@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * This is a helper class for displaying tabbed content
  *
  * requires that the ee-admin-page.js and jquery-ui-tabs be loaded.
- * 
+ *
  * @package		EEH_Tabbed_Content
  * @subpackage	helpers/
  * @author		Darren Ethier
@@ -49,7 +49,7 @@ class EEH_Tabbed_Content {
 		if ( !empty( $tabs_names) && ( count( (array) $tabs_names) != count( (array) $tabs_content) ) ) {
 			throw new EE_Error( __('The count for $tabs_names and $tabs_content does not match.', 'event_espresso') );
 		}
-		
+
 		//make sure we've got incoming data setup properly
 		$tabs = !empty( $tabs_names ) ? (array) $tabs_names : array_keys( (array) $tabs_contents );
 		$tabs_content = !empty( $tabs_names ) ? array_combine( (array) $tabs_names, (array) $tabs_content ) : $tabs_contents;
@@ -66,7 +66,7 @@ class EEH_Tabbed_Content {
 		}
 		/*
 		sample content for testing
-		 
+
 		$all_tabs .= '<a class="nav-tab" rel="ee-tab-anothertab" href="#anothertab">Another Tab</a>';
 		$all_tabs_content .= '<div class="nav-tab-content hidden" id="ee-tab-anothertab">This is just some sample content to show another tab<div style="clear:both"></div></div>';
 		//end sample content /**/
@@ -91,7 +91,7 @@ class EEH_Tabbed_Content {
 	 * 		'link_text' => 'tab text',
 	 * 		'css_class' => 'tab class' //including the nav-tab-active class if its active
 	 * 	)
-	 * ) 
+	 * )
 	 *
 	 * @access public
 	 * @static
@@ -150,7 +150,7 @@ class EEH_Tabbed_Content {
 	/**
 	 * This will take in an array of link items and spit out a formatted list of links that can be used to navigate to items.
 	 * There is a corresponding js file that can be loaded to dynamically display containers with the same id as the href -ref.
-	 * 
+	 *
 	 * @param  array $item_array      formatted array of items.  Format:
 	 * array(
 	 * 		'label' => __('localized label displayed'),
@@ -165,7 +165,7 @@ class EEH_Tabbed_Content {
 	 * @return string                  a html snippet of of all the formatted link elements.
 	 */
 	public static function tab_text_links( $item_array, $container_class = '', $sep = '|', $default = '' ) {
-		if ( !is_array($item_array) || empty( $item_array ) ) 
+		if ( !is_array($item_array) || empty( $item_array ) )
 			return false; //get out we don't have even the basic thing we need!
 
 
@@ -173,12 +173,12 @@ class EEH_Tabbed_Content {
 			'label' => __('Item', 'event_espresso'),
 			'class' => '',
 			'href' => '',
-			'title' => __('Link for Item', 'event_espresso'),
+			'title' => esc_attr__('Link for Item', 'event_espresso'),
 			'slug' => 'item_slug'
 		);
 		$container_class = !empty($container_class) ? 'ee-text-links ' . $container_class : 'ee-text-links';
 		$list = '<ul class="' . $container_class . '">';
-		
+
 		$ci = 1;
 		foreach ( $item_array as $item ) {
 			$item = wp_parse_args( $item, $defaults );
@@ -205,9 +205,9 @@ class EEH_Tabbed_Content {
 		} else {
 			extract($item);
 		}
-		
+
 		$class = $class != 'ee-text-link-sep'  ? 'class="ee-text-link-li ' . $class . '"' : 'class="ee-text-link-sep"';
-		
+
 		$content = '<li ' . $class . '>';
 		$content .= !empty($href) ? '<a class="ee-text-link" href="#' . $href . '" title="' . $title . '">' : '';
 		$content .= $label;

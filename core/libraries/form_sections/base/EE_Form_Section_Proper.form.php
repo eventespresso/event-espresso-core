@@ -45,6 +45,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	static protected $_js_localization = array();
 
+	/**
+	 * whether or not the form's localized validation JS vars have been set
+	 * @type boolean
+	 */
+	static protected $_scripts_localized = false;
+
 
 
 	/**
@@ -92,6 +98,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
 
 
 	}
@@ -398,8 +405,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
 		$this->localize_validation_rules();
-		add_action( 'wp_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ), -999 );
-		add_action( 'admin_footer', array( 'EE_Form_Section_Proper','localize_script_for_all_forms' ) );
+		add_action( 'wp_footer', array( 'EE_Form_Section_Proper', 'localize_script_for_all_forms' ), 2 );
+		add_action( 'admin_footer', array( 'EE_Form_Section_Proper', 'localize_script_for_all_forms' ) );
 	}
 
 
@@ -416,6 +423,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				'validation_rules'=> $this->get_jquery_validation_rules(),
 				'errors'=> $this->subsection_validation_errors_by_html_name()
 			);
+			EE_Form_Section_Proper::$_scripts_localized = true;
 		}
 	}
 
@@ -472,13 +480,25 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * ensure_scripts_localized
+	 */
+	public function ensure_scripts_localized(){
+		if ( ! EE_Form_Section_Proper::$_scripts_localized ) {
+			$this->_enqueue_and_localize_form_js();
+		}
+	}
+
+
+
+	/**
 	 * Gets the hard-coded validation error messages to be used in the JS. The convention
 	 * is that the key here should be the same as the custom validation rule put in the JS file
 	 * @return array keys are custom validation rules, and values are internationalized strings
 	 */
 	private static function _get_localized_error_messages(){
 		return array(
-			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg", "event_espresso")
+			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg", "event_espresso"),
+			'regex' => __( 'Please check your input', 'event_espresso' ),
 		);
 	}
 
@@ -618,14 +638,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * Returns a simple array where keys are input names, and values are their normalized
 	 * values. (Similar to calling get_input_value on inputs)
-	 * @return array
+	 * *
+	 * @param boolean $include_subform_inputs Whether to include inputs from subforms, or just this forms' direct children inputs
+	 * @param boolean $flatten Whether to force the results into 1-dimensional array, or allow multidimensional array
+	 * @return array if $flatten is TRUE it will always be a 1-dimensional array with array keys being
+	 * input names (regardless of whether they are from a subsection or not), and if $flatten is FALSE
+	 * it can be a multidimensional array where keys are always subsection names and values are either the
+	 * input's normalized value, or an array like the top-level array
 	 */
-	public function input_values(){
-		$input_values = array();
-		foreach($this->inputs() as $name => $input_obj){
-			$input_values[$name] = $input_obj->normalized_value();
-		}
-		return $input_values;
+	public function input_values( $include_subform_inputs = false, $flatten = false ){
+		return $this->_input_values( false, $include_subform_inputs, $flatten );
 	}
 
 	/**
@@ -633,12 +655,41 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * of each input. On some inputs (especially radio boxes or checkboxes), the value stored
 	 * is not necessarily the value we want to display to users. This creates an array
 	 * where keys are the input names, and values are their display values
-	 * @return array
+	 *
+	 * @param boolean $include_subform_inputs Whether to include inputs from subforms, or just this forms' direct children inputs
+	 * @param boolean $flatten Whether to force the results into 1-dimensional array, or allow multidimensional array
+	 * @return array if $flatten is TRUE it will always be a 1-dimensional array with array keys being
+	 * input names (regardless of whether they are from a subsection or not), and if $flatten is FALSE
+	 * it can be a multidimensional array where keys are always subsection names and values are either the
+	 * input's normalized value, or an array like the top-level array
 	 */
-	public function input_pretty_values(){
+	public function input_pretty_values(  $include_subform_inputs = false, $flatten = false ){
+		return $this->_input_values( true, $include_subform_inputs, $flatten );
+	}
+
+	/**
+	 * Gets the input values from the form
+	 * @param boolean $pretty Whether to retrieve the pretty value, or just the normalized value
+	 * @param boolean $include_subform_inputs Whether to include inputs from subforms, or just this forms' direct children inputs
+	 * @param boolean $flatten Whether to force the results into 1-dimensional array, or allow multidimensional array
+	 * @return array if $flatten is TRUE it will always be a 1-dimensional array with array keys being
+	 * input names (regardless of whether they are from a subsection or not), and if $flatten is FALSE
+	 * it can be a multidimensional array where keys are always subsection names and values are either the
+	 * input's normalized value, or an array like the top-level array
+	 */
+	public function _input_values( $pretty = false, $include_subform_inputs = false, $flatten = false ) {
 		$input_values = array();
-		foreach($this->inputs() as $name => $input_obj){
-			$input_values[$name] = $input_obj->pretty_value();
+		foreach( $this->subsections() as $subsection_name => $subsection ) {
+			if( $subsection instanceof EE_Form_Input_Base ) {
+				$input_values[ $subsection_name ] = $pretty ? $subsection->pretty_value() : $subsection->normalized_value();
+			} else if( $subsection instanceof EE_Form_Section_Proper && $include_subform_inputs ) {
+				$subform_input_values = $subsection->_input_values( $pretty, $include_subform_inputs, $flatten );
+				if( $flatten ) {
+					$input_values = array_merge( $input_values, $subform_input_values );
+				} else {
+					$input_values[ $subsection_name ] = $subform_input_values;
+				}
+			}
 		}
 		return $input_values;
 	}

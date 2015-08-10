@@ -29,7 +29,10 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 
-
+	/**
+	 *__construct
+	 * @return Payments_Admin_Page_Init
+	 */
 	public function __construct() {
 		//define some page related constants
 		define( 'EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings' );
@@ -39,6 +42,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/' );
 
 		//check that there are active gateways on all admin page loads. but dont do it just yet
+//		echo "constructing payments admin page";die;
 		add_action('admin_notices',array($this,'check_payment_gateway_setup'));
 		parent::__construct();
 	}
@@ -66,15 +70,18 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	 */
 	public function check_payment_gateway_setup(){
 		//ONLY do this check if models can query
-		if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
+		//and avoid a bug where when we nuke EE4's data that this causes a fatal error
+		//because the tables are deleted just before this request runs. see https://events.codebasehq.com/projects/event-espresso/tickets/7539
+		EE_Registry::instance()->load_helper('Activation');
+		if ( ! EE_Maintenance_Mode::instance()->models_can_query() || ! EEH_Activation::table_exists( EEM_Payment_Method::instance()->table() ) ) {
 			return;
 		}
 
 
 		// ensure Payment_Method model is loaded
 		EE_Registry::instance()->load_model( 'Payment_Method' );
-		$actives = EEM_Payment_Method::instance()->get_all_active();
-		if( ! $actives || count( $actives ) < 1 ){
+		$actives = EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart );
+		if( $actives  < 1 ){
 			$url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_PAYMENTS_ADMIN_URL);
 			echo '<div class="error">
 				 <p>'.  sprintf(__("There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s", "event_espresso"),"<a href='$url'>","</a>").'</p>

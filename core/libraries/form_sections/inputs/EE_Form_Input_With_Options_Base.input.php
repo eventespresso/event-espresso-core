@@ -85,24 +85,31 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		}
 		//d( $this->_options );
 		$select_option_keys = array_keys( $this->_options );
-		// grab key from first element of values
-		$first_key = reset( $select_option_keys );
 		// attempt to determine data type for values in order to set normalization type
 		if (
 			count( $this->_options ) == 2
 			&&
 			(
-				( in_array( TRUE, $select_option_keys ) && in_array( FALSE, $select_option_keys ))
-				|| ( in_array( 1, $select_option_keys ) && in_array( 0, $select_option_keys ))
+				( in_array( TRUE, $select_option_keys, true ) && in_array( FALSE, $select_option_keys, true ))
+				|| ( in_array( 1, $select_option_keys, true ) && in_array( 0, $select_option_keys, true ))
 			)
 		){
 			// values appear to be boolean, like TRUE, FALSE, 1, 0
 			$normalization = new EE_Boolean_Normalization();
-//			$normalization = new EE_Int_Normalization();
-		} elseif ( is_int( $first_key )){
-			$normalization = new EE_Int_Normalization();
-		} else {
-			$normalization = new EE_Text_Normalization();
+		} else{
+			//are ALL the options ints? If so use int validation
+			$all_ints = true;
+			foreach($select_option_keys as $value ){
+				if( ! is_int( $value ) ){
+					$all_ints = false;
+					break;
+				}
+			}
+			if( $all_ints ){
+				$normalization = new EE_Int_Normalization();
+			}else{
+				$normalization = new EE_Text_Normalization();
+			}
 		}
 		// does input type have multiple options ?
 		if ( $this->_multiple_selections ) {

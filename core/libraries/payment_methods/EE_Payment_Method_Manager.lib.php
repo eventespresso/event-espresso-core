@@ -102,7 +102,7 @@ class EE_Payment_Method_Manager {
 		// grab and sanitize module name
 		$module_dir = basename( $payment_method_path );
 		// create classname from module directory name
-		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
+		$module = str_replace( ' ', '_', str_replace( '_', ' ', $module_dir ));
 		// add class prefix
 		$module_class = 'EE_PMT_' . $module;
 		// does the module exist ?
@@ -221,6 +221,7 @@ class EE_Payment_Method_Manager {
 						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
 						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
 						'PMD_wp_user'=>$current_user->ID,
+						'PMD_order' => EEM_Payment_Method::instance()->count( array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))) * 10,
 					));
 				}
 				$payment_method->set_active();
@@ -249,7 +250,7 @@ class EE_Payment_Method_Manager {
 			$messages = EE_Registry::instance()->load_lib( 'messages' );
 			$messages->ensure_message_type_is_active( 'invoice', 'html' );
 			$messages->ensure_messenger_is_active( 'pdf' );
-			EE_Error::add_attention( sprintf( __( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'ee-saas-solution' ), '<a href="' . admin_url( 'admin.php?page=espresso_messages') . '">', '</a>' ) );
+			EE_Error::add_attention( sprintf( __( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso' ), '<a href="' . admin_url( 'admin.php?page=espresso_messages') . '">', '</a>' ) );
 		}
 		return $payment_method;
 	}

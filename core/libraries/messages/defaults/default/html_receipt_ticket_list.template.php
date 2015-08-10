@@ -28,7 +28,7 @@
 			</div>
 			<div class="ticket-place-details">
 				<h4 class="sub-section-title no-bottom-margin">
-					<img class="icon" src="<?php echo EE_IMAGES_URL . 'location-pin-16x16.png'; ?>"><?php _e( 'Venue', 'event-espresso' ); ?>
+					<img class="icon" src="<?php echo EE_IMAGES_URL . 'location-pin-16x16.png'; ?>"><?php _e( 'Venue', 'event_espresso' ); ?>
 				</h4>
 				<ul class="event-venues">
 					<li>[VENUE_TITLE]

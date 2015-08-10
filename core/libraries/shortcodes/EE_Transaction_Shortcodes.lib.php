@@ -42,6 +42,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[TXN_ID]' => __('The transaction id for the purchase.', 'event_espresso'),
 			'[PAYMENT_URL]' => __('This is a link to make a payment for the event', 'event_espresso'),
+			'[PAYMENT_LINK_IF_NEEDED_*]' => __('This is a special dynamic shortcode that allows one to insert a payment link conditional on there being amount owing on the transaction. Three params are available on this shortcode:') . '<ul>'
+				. '<li>' . sprintf( __('%class:%s Thisis can be used to indicate css class is given to the containing css element (default is "callout").', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '<li>' . sprintf( __('%scustom_text:%s This should be a sprintf format text string (with %%s for where the hyperlink tags go) that is used for the generated link text (The default is "You can %%smake a payment here »%%s.)', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '<li>' . sprintf( __('%scontainer_tag:%s Use this to indicate what container tag you want surrounding the payment link (default is "p").', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '</ul>',
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[INVOICE_LOGO_URL]' => __('This returns the url for the logo uploaded via the invoice settings page.', 'event_espresso'),
@@ -53,7 +58,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_PAYEE_TAX_NUMBER_*]' => __('This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: <code>[INVOICE_PAYEE_TAX_NUMBER_* prefix="GST:"]</code> and that will ouptut: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
-			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
+			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The transaction status for the transaction. This parses to the same value as the [TXN_STATUS] shortcode and still remains here for legacy support.', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
@@ -170,7 +175,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[TOTAL_OWING]" :
-				$total_owing = isset( $transaction ) && is_object($transaction) ? $transaction->remaining() : $transaction->total();
+				$total_owing = $transaction->remaining();
 				return EEH_Template::format_currency( $total_owing );
 				break;
 
@@ -221,6 +226,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( strpos( $shortcode, '[INVOICE_PAYEE_TAX_NUMBER_*' ) !== FALSE ) {
 			return $this->_get_invoice_payee_tax_number( $shortcode );
+		}
+
+		if ( strpos( $shortcode, '[PAYMENT_LINK_IF_NEEDED_*' ) !== FALSE ) {
+			return $this->_get_payment_link_if_needed( $shortcode );
 		}
 
 		return '';
@@ -298,7 +307,15 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		//image tags have been requested.
 		$image_size = getimagesize( $invoice_logo_url );
-		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
+		
+		//if image is wider than 200px, set the wideth to 200
+		if ( $image_size[0] > 300 ) {
+			$image_width = 300;
+		}else{
+			$image_width = $image_size[0];
+		}
+
+		return '<img class="logo screen" src="' . $invoice_logo_url . '" width="' . $image_width . '" alt="logo" />';
 	}
 
 
@@ -331,6 +348,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			if ( empty( $payment_method ) ) {
 				return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
 			}
+			return $payment_method;
 		}else{
 			//get the first payment method we can find
 			return apply_filters( 'FHEE__EE_Transaction_Shortcodes__get_payment_method__default', EEM_Payment_Method::instance()->get_one_of_type('Invoice'));
@@ -518,6 +536,46 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		return $tax ? $grand_total->get_total_tax() : $grand_total->get_items_total();
+	}
+
+
+
+
+	/**
+	 * parser for the [PAYMENT_LINK_IF_NEEDED_*] attribute type shortcode
+	 *
+	 * @since 4.7.0
+	 *
+	 * @param string $shortcode the incoming shortcode
+	 *
+	 * @return string parsed.
+	 */
+	private function _get_payment_link_if_needed( $shortcode ) {
+		$valid_shortcodes = array( 'transaction' );
+		$attrs = $this->_get_shortcode_attrs( $shortcode );
+
+		//ensure default is set.
+		$addressee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
+		$total_owing = $addressee instanceof EE_Messages_Addressee && $addressee->txn instanceof EE_Transaction ? $addressee->txn->remaining() : 0;
+
+		if ( $total_owing > 0 ) {
+			$class = isset( $attrs['class'] ) ? $attrs['class'] : 'callout';
+			$custom_text = isset( $attrs['custom_text'] ) ? $attrs['custom_text'] : 'You can %smake a payment here »%s.';
+			$container_tag = isset( $attrs['container_tag'] ) ? $attrs['container_tag'] : 'p';
+			$opening_tag = ! empty( $container_tag ) ? '<' . $container_tag : '';
+			$opening_tag .= ! empty( $opening_tag ) && !empty( $class ) ? ' class="' . $class . '"' : $opening_tag;
+			$opening_tag .= !empty( $opening_tag ) ? '>' : $opening_tag;
+			$closing_tag = ! empty( $container_tag ) ? '</' . $container_tag .'>' : '';
+			$content = $opening_tag . sprintf( $custom_text, '<a href="[PAYMENT_URL]">', '</a>' ) . $closing_tag;
+
+			//we need to re run this string through the parser to catch any shortcodes that are in it.
+			$this->_set_shortcode_helper();
+			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+		} else {
+			return '';
+		}
+
+		return $owing_content;
 	}
 
 } //end EE_Transaction Shortcodes library

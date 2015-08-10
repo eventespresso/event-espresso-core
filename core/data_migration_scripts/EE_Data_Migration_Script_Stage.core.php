@@ -22,8 +22,19 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @since                4.0
  *
  */
-abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base {
 
+/**
+ * Each migration script is meant to be composed of different stages. Often, each stage corresponds
+ * to a table that needs to be migrated: eg migrating 3.1 events to 4.1 event CPTs. However, each migration stage does
+ * NOT NEED to correspond to migrating a single table: it could also correspond to a group of wp options, files, etc.
+ * Only 3 functions need to be implemented for each migration stage: the constructor (it needs to set the _pretty_name property),
+ *  _count_records_to_migrate() (which, when migrating a database table, would usually just return the count of records in the table, but
+ * doesn't need to return the exactly correct number, as its mostly only used in the UI), and _migration_step() (which converts X records from their
+ * old format to the new format. Whatever definition your migration stage uses for "record" in _count_records_to_migrate() should be the same definition in
+ * _migration_step() (ie, it its a count of rows in the old attendees table in _count_records_to_migrate(), it should also be OLD attendee rows migrated
+ * on each call to _migration_step().
+ */
+abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base{
 	/**
 	 * The migration script this is a stage of
 	 * @var EE_Data_Migration_Script_Base
@@ -36,7 +47,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * called by EE_Data_Migration_Script_Base's __construct() method so children don't have to
 	 * @param EE_Data_Migration_Script_Base $migration_script
 	 */
-	public function _construct_finalize($migration_script) {
+	public function _construct_finalize($migration_script){
 		$this->_migration_script = $migration_script;
 	}
 
@@ -47,18 +58,19 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * @param int $num_items_to_migrate
 	 * @return int
 	 */
-	public function migration_step($num_items_to_migrate = 50) {
+	public function migration_step($num_items_to_migrate=50){
 		//before we run the migration step, we want ot take note of warnings that get outputted
 		ob_start();
 		$items_migrated = $this->_migration_step($num_items_to_migrate);
 		$output = ob_get_contents();
 		ob_end_clean();
-		if ($output) {
+		if( $output ){
 			$this->add_error($output);
 		}
 		$this->_records_migrated += $items_migrated;
 		return $items_migrated;
 	}
+
 
 
 	/**
@@ -70,7 +82,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * @param int $num_items_to_migrate
 	 * @return int number of items ACTUALLY migrated
 	 */
-	abstract protected function _migration_step($num_items_to_migrate = 50);
+	abstract protected function _migration_step($num_items_to_migrate=50);
 
 	/**
 	 * Counts the records that have been migrated so far
@@ -84,7 +96,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * returns an array of strings describing errors
 	 * @return array
 	 */
-	public function get_errors() 	{
+	public function get_errors(){
 		return $this->_errors;
 	}
 
@@ -94,9 +106,9 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * to have been made from the properties_as_array() function.
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 */
-	public function instantiate_from_array_of_properties($array_of_properties) {
+	public function instantiate_from_array_of_properties($array_of_properties){
 		unset($array_of_properties['class']);
-		foreach ($array_of_properties as $property_name => $property_value) {
+		foreach($array_of_properties as $property_name => $property_value){
 			$this->$property_name = $property_value;
 		}
 	}
@@ -105,10 +117,8 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * Gets the script this is a stage of
 	 * @return EE_Data_Migration_Script_Base
 	 */
-	protected function get_migration_script() {
+	protected function get_migration_script(){
 		return $this->_migration_script;
 	}
-
-
 }
 // end of file: /core/EE_Data_Migration_Script_Stage.core.php

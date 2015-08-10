@@ -26,6 +26,12 @@ class EEH_Debug_Tools{
 	 */
 	private $_times = array();
 
+	/**
+	 *
+	 * @var array
+	 */
+	protected $_memory_usage_points = array();
+
 
 
 	/**
@@ -137,6 +143,29 @@ class EEH_Debug_Tools{
 
 
 	/**
+	 *    registered_filter_callbacks
+	 *
+	 * @param string $hook_name
+	 * @return array
+	 */
+	public static function registered_filter_callbacks( $hook_name = '' ) {
+		$filters = array();
+		global $wp_filter;
+		if ( isset( $wp_filter[ $hook_name ] ) ) {
+			$filters[ $hook_name ] = array();
+			foreach ( $wp_filter[ $hook_name ] as $priority => $callbacks ) {
+				$filters[ $hook_name ][ $priority ] = array();
+				foreach ( $callbacks as $callback ) {
+					$filters[ $hook_name ][ $priority ][] = $callback['function'];
+				}
+			}
+		}
+		return $filters;
+	}
+
+
+
+	/**
 	 * 	start_timer
 	 * @param null $timer_name
 	 */
@@ -186,6 +215,29 @@ class EEH_Debug_Tools{
 		}
 		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0em 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
 	 }
+	 /**
+	  * Measure the memory usage by PHP so far.
+	  * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
+	  * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+	  * @return void
+	  */
+	 public function measure_memory( $label, $output_now = false ) {
+		 $memory_used = $this->convert( memory_get_peak_usage( true ) );
+		 $this->_memory_usage_points[ $label ] = $memory_used;
+		 if( $output_now ) {
+			 echo "\r\n<br>$label : $memory_used";
+		 }
+	 }
+
+	 /**
+	  * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
+	  * @param int $size
+	  * @return string
+	  */
+	 public function convert( $size ) {
+		$unit=array('b','kb','mb','gb','tb','pb');
+		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
+	 }
 
 
 
@@ -195,11 +247,12 @@ class EEH_Debug_Tools{
 	 * @return string
 	 */
 	public function show_times($output_now=true){
+		$output = '<h2>Times:</h2>' . implode("<br>",$this->_times) . '<h2>Memory</h2>' . implode('<br>', $this->_memory_usage_points );
 		 if($output_now){
-			 echo implode("<br>",$this->_times);
+			 echo $output;
 			 return '';
 		 }
-		return implode("<br>",$this->_times);
+		return $output;
 	 }
 
 
@@ -254,6 +307,118 @@ class EEH_Debug_Tools{
 
 
 
+
+	/**
+	 * Logger helpers
+	 */
+
+	/**
+	 * debug
+	 *
+	 * @param string $class
+	 * @param string $func
+	 * @param string $line
+	 * @param array $info
+	 * @param bool $display_request
+	 * @param string $debug_index
+	 * @param string $debug_key
+	 */
+	public static function log( $class='', $func = '', $line = '', $info = array(), $display_request = false,  $debug_index = '', $debug_key = 'EE_DEBUG_SPCO' ) {
+		if ( WP_DEBUG && false ) {
+			$debug_key = $debug_key . '_' . EE_Session::instance()->id();
+			$debug_data = get_option( $debug_key, array() );
+			$default_data = array(
+				$class => $func . '() : ' . $line,
+				'REQ'  => $display_request ? $_REQUEST : '',
+			);
+			// don't serialize objects
+			$info = self::strip_objects( $info );
+			$index = ! empty( $debug_index ) ? $debug_index : 0;
+			if ( ! isset( $debug_data[$index] ) ) {
+				$debug_data[$index] = array();
+			}
+			$debug_data[$index][microtime()] = array_merge( $default_data, $info );
+			update_option( $debug_key, $debug_data );
+		}
+	}
+
+
+
+	/**
+	 * strip_objects
+	 *
+	 * @param array $info
+	 * @return array
+	 */
+	public static function strip_objects( $info = array() ) {
+		foreach ( $info as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$info[ $key ] = self::strip_objects( $value );
+			} else if ( is_object( $value ) ) {
+				$object_class = get_class( $value );
+				$info[ $object_class ] = array();
+				$info[ $object_class ][ 'ID' ] = method_exists( $value, 'ID' ) ? $value->ID() : spl_object_hash( $value );
+				if ( method_exists( $value, 'ID' ) ) {
+					$info[ $object_class ][ 'ID' ] = $value->ID();
+				}
+				if ( method_exists( $value, 'status' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status();
+				} else if ( method_exists( $value, 'status_ID' ) ) {
+					$info[ $object_class ][ 'status' ] = $value->status_ID();
+				}
+				unset( $info[ $key ] );
+			}
+		}
+		return (array)$info;
+	}
+
+
+
+	/**
+	 *    @ print_r an array
+	 *    @ access public
+	 *    @ return void
+	 *
+	 * @param mixed $var
+	 * @param bool $var_name
+	 * @param string $file
+	 * @param int $line
+	 * @param string $height
+	 * @param bool $die
+	 */
+	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = false ) {
+		//$print_r = false;
+		if ( is_object( $var ) ) {
+			$var_name = ! $var_name ? 'object' : $var_name;
+			//$print_r = true;
+		} else if ( is_array( $var ) ) {
+			$var_name = ! $var_name ? 'array' : $var_name;
+			//$print_r = true;
+		} else if ( is_numeric( $var ) ) {
+			$var_name = ! $var_name ? 'numeric' : $var_name;
+		} else if ( is_string( $var ) ) {
+			$var_name = ! $var_name ? 'string' : $var_name;
+		} else if ( is_null( $var ) ) {
+			$var_name = ! $var_name ? 'null' : $var_name;
+		}
+		$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
+		ob_start();
+		echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
+		echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
+		//$print_r ? print_r( $var ) : var_dump( $var );
+		var_dump( $var );
+		echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
+		$result = ob_get_clean();
+		if ( $die ) {
+			die( $result );
+		} else {
+			echo $result;
+		}
+	}
+
+
+
+
 }
 
 
@@ -290,44 +455,4 @@ if ( class_exists('Kint') && ! function_exists( 'dump_post' ) ) {
 		d($post);
 	}
 }
-/**
- *    @ print_r an array
- *    @ access public
- *    @ return void
- *
- * @param mixed  $var
- * @param bool   $var_name
- * @param string $file
- * @param int    $line
- * @param string $height
- * @param bool   $die
- */
-function printr( $var, $var_name = FALSE, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = FALSE ) {
-	$print_r = FALSE;
-	if ( is_object( $var )) {
-		$var_name = ! $var_name ? 'object' : $var_name;
-		$print_r = TRUE;
-	} else if ( is_array( $var )) {
-		$var_name = ! $var_name ? 'array' : $var_name;
-		$print_r = TRUE;
-	} else if ( is_numeric( $var )) {
-		$var_name = ! $var_name ? 'numeric' : $var_name;
-	} else if ( is_string( $var )) {
-		$var_name = ! $var_name ? 'string' : $var_name;
-	} else if ( is_null( $var )) {
-		$var_name = ! $var_name ? 'null' : $var_name;
-	}
-	$var_name = ucwords(  str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ));
-	ob_start();
-	echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
-	echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
-	$print_r ? print_r($var) : var_dump($var);
-	echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
-	$result = ob_get_clean();
 
-	if ( $die ) {
-		die( $result );
-	} else {
-		echo $result;
-	}
-}

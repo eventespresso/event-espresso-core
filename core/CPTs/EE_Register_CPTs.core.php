@@ -49,6 +49,10 @@ class EE_Register_CPTs {
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
+
+		//remove no html restrictions from core wp saving of term descriptions.  Note. this will affect only registered EE taxonomies.
+		$this->_allow_html_descriptions_for_ee_taxonomies();
+
 		do_action( 'AHEE__EE_Register_CPTs__construct_end', $this );
 	}
 
@@ -68,6 +72,40 @@ class EE_Register_CPTs {
 		}
 	}
 
+
+	/**
+	 * By default, WordPress strips all html from term taxonomy description content.  The purpose of this method is to
+	 * remove that restriction and ensure that we still run ee term taxonomy descriptions through some full html sanitization
+	 * equivalent to the post content field.
+	 *
+	 * @since 4.7.8
+	 */
+	protected function _allow_html_descriptions_for_ee_taxonomies() {
+		//first remove default filter for term description but we have to do this earlier before wp sets their own filter
+		//because they just set a global filter on all term descriptions before the custom term description filter. Really sux.
+		add_filter( 'pre_term_description', array( $this, 'ee_filter_ee_term_description_not_wp' ), 1, 2 );
+	}
+
+
+	/**
+	 * Callback for pre_term_description hook.
+	 * @param string $description   The description content.
+	 * @param string $taxonomy      The taxonomy name for the taxonomy being filtered.
+	 * @return string
+	 */
+	public function ee_filter_ee_term_description_not_wp( $description, $taxonomy ) {
+		//get a list of EE taxonomies
+		$ee_taxonomies = array_keys( self::get_taxonomies() );
+
+		//only do our own thing if the taxonomy listed is an ee taxonomy.
+		if ( in_array( $taxonomy, $ee_taxonomies ) ) {
+			//remove default wp filter
+			remove_filter( 'pre_term_description', 'wp_filter_kses' );
+			//sanitize THIS content.
+			$description = wp_kses( $description, wp_kses_allowed_html( 'post' ) );
+		}
+		return $description;
+	}
 
 
 
@@ -132,6 +170,73 @@ class EE_Register_CPTs {
 
 
 	/**
+	 * This returns the corresponding model name for cpts registered by EE.
+	 *
+	 * @since 4.6.16.rc.000
+	 * @param string $post_type_slug If a slug is included, then attempt to retreive the model name for the given cpt
+	 *                               		        slug.  Otherwise if empty, then we'll return all cpt model names for cpts
+	 *                               		        registered in EE.
+	 *
+	 * @return array 	       Empty array if no matching model names for the given slug or an array of model
+	 *                                         names indexed by post type slug.
+	 */
+	public static function get_cpt_model_names( $post_type_slug = '' ) {
+		$cpts = self::get_CPTs();
+
+		//first if slug passed in...
+		if ( ! empty( $post_type_slug )  ) {
+			//match?
+			if ( ! isset( $cpts[$post_type_slug] ) || ( isset( $cpts[$post_type_slug] ) && empty( $cpts[$post_type_slug]['class_name'] ) ) ) {
+				return array();
+			}
+
+			//k let's get the model name for this cpt.
+			return array( $post_type_slug => str_replace( 'EE', 'EEM', $cpts[$post_type_slug]['class_name'] ) );
+		}
+
+
+		//if we made it here then we're returning an array of cpt model names indexed by post_type_slug.
+		$cpt_models = array();
+		foreach ( $cpts as $slug => $args ) {
+			if ( ! empty( $args['class_name'] ) ) {
+				$cpt_models[$slug] = str_replace( 'EE', 'EEM', $args['class_name'] );
+			}
+		}
+		return $cpt_models;
+	}
+
+
+
+
+
+	/**
+	 * This instantiates cpt models related to the cpts registered via EE.
+	 *
+	 * @since 4.6.16.rc.000
+	 *
+	 * @param string $post_type_slug If valid slug is provided, then will instantiate the model only for the cpt matching
+	 *                               		        the given slug.  Otherwise all cpt models will be instantiated (if possible).
+	 *
+	 * @return EEM_CPT_Base[]   successful instantiation will return an array of successfully instantiated EEM
+	 *                                     	  models  indexed by post slug.
+	 */
+	public static function instantiate_cpt_models( $post_type_slug = '' ) {
+		$cpt_model_names = self::get_cpt_model_names( $post_type_slug );
+		$instantiated = array();
+		foreach ( $cpt_model_names as $slug => $model_name ) {
+			$instance = EE_Registry::instance()->load_model( str_replace( 'EEM_', '', $model_name ) );
+			if ( $instance instanceof EEM_CPT_Base ) {
+				$instantiated[$slug] = $instance;
+			}
+		}
+		return $instantiated;
+	}
+
+
+
+
+
+	/**
 	 * 	get_CPTs
 	 *
 	 *  @access 	public
@@ -145,7 +250,7 @@ class EE_Register_CPTs {
 				'singular_name' => __("Event", "event_espresso"),
 				'plural_name' => __("Events", "event_espresso"),
 				'singular_slug' => __("event", "event_espresso"),
-				'plural_slug' => __("events", "event_espresso"),
+				'plural_slug' => EE_Registry::instance()->CFG->core->event_cpt_slug,
 				'class_name' => 'EE_Event',
 				'args' => array(
 					'public'=> TRUE,

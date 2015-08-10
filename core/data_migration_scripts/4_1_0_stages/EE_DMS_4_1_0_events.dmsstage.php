@@ -232,7 +232,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	 */
 	private function _add_post_metas($old_event,$post_id){
 		$event_meta = maybe_unserialize($old_event['event_meta']);
-		if( ! $event_meta){
+		if( ! $event_meta || ! is_array( $event_meta ) ){
 			return;
 		}
 		unset($event_meta['date_submitted']);//factored into CPT
@@ -412,7 +412,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$cols_n_values,
 				$datatypes);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_table, $cols_n_values, $datatypes));
+			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_meta_table, $cols_n_values, $datatypes));
 			return 0;
 		}
 		return $wpdb->insert_id;

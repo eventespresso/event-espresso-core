@@ -43,6 +43,34 @@ class EE_Payment_Test extends EE_UnitTestCase{
 		$p3->set_status( EEM_Payment::status_id_approved );
 		$this->assertTrue( $p3->just_approved() );
 	}
+
+	/**
+	 * @group 7653
+	 */
+	function test_set_details(){
+		$p = $this->new_model_obj_with_dependencies( 'Payment' );
+		$cookie = new WP_HTTP_Cookie( array(
+					'name' => 'something',
+					'value' => 'somethingelse'
+				));
+		$details_to_set = array(
+			'headers' => array(
+				'header1' => 'headervalue1',
+				'header2' => 'headervalue2',
+			),
+			'body' => '<html>hello</html>',
+			'cookies' => array(
+				$cookie
+			)
+		);
+		//set the details with that object in there
+		$p->set_details( $details_to_set );
+		//ok now verify that it's been converted into an array a-ok
+		$details_to_set['cookies'][0] = (array)$cookie;
+		//and we should have actually removed tags like we set out to do in that method
+		$details_to_set['body'] = 'hello';
+		$this->assertEquals( $details_to_set, $p->details() );
+	}
 }
 
 // End of file EE_Payment_Test.php

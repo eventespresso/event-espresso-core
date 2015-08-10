@@ -47,16 +47,16 @@ class EEH_URL{
 
 	/**
 	 * Returns whether not the remote file exists.
-	 * (Sends a HEAD curl request. It would probably be better to use wp_remote_get,
-	 * but its nice
+	 * Checking via GET because HEAD requests are blocked on some server configurations.
 	 * @param string $url
+	 * @param boolean $sslverify whether we care if the SSL certificate for the requested site is setup properly
 	 * @return boolean
 	 */
-	public static function remote_file_exists($url){
-		$results = wp_remote_request($url,array(
-			'method'=>'HEAD',
-			'redirection'=>1,
-		));
+	public static function remote_file_exists( $url, $args = array() ){
+		$results = wp_remote_request($url,array_merge( array(
+			'method'=>'GET',
+			'redirection'=>1
+		), $args ) );
 		if( ! $results instanceof WP_Error &&
 				isset($results['response']) &&
 				isset($results['response']['code']) &&
@@ -149,6 +149,21 @@ class EEH_URL{
 	public static function prevent_prefetching(){
 		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
 		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
+	}
+
+
+
+
+	/**
+	 * This generates a unique site-specific string.
+	 * An example usage for this string would be to save as a unique identifier for a record in the db for usage in urls.
+	 *
+	 * @param   string $prefix Use this to prefix the string with something.
+	 * @return string
+	 */
+	public static function generate_unique_token( $prefix = '' ) {
+		$token =  md5( uniqid() . mt_rand() );
+		return $prefix ? $prefix . '_' . $token : $token;
 	}
 
 

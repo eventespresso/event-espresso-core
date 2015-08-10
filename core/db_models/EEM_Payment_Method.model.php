@@ -46,13 +46,13 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_ID' => new EE_Primary_Key_Int_Field( 'PMD_ID', __( "ID", 'event_espresso' ) ),
 				'PMD_type' => new EE_Plain_Text_Field( 'PMD_type', __( "Payment Method Type", 'event_espresso' ), FALSE, 'Admin_Only' ),
 				'PMD_name' => new EE_Plain_Text_Field( 'PMD_name', __( "Name", 'event_espresso' ), FALSE ),
-				'PMD_desc' => new EE_Simple_HTML_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
+				'PMD_desc' => new EE_Post_Content_Field( 'PMD_desc', __( "Description", 'event_espresso' ), FALSE, '' ),
 				'PMD_admin_name' => new EE_Plain_Text_Field( 'PMD_admin_name', __( "Admin-Only Name", 'event_espresso' ), TRUE ),
-				'PMD_admin_desc' => new EE_Simple_HTML_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
+				'PMD_admin_desc' => new EE_Post_Content_Field( 'PMD_admin_desc', __( "Admin-Only Description", 'event_espresso' ), TRUE ),
 				'PMD_slug' => new EE_Slug_Field( 'PMD_slug', __( "Slug", 'event_espresso' ), FALSE ),
 				'PMD_order' => new EE_Integer_Field( 'PMD_order', __( "Order", 'event_espresso' ), FALSE, 0 ),
 				'PMD_debug_mode' => new EE_Boolean_Field( 'PMD_debug_mode', __( "Debug Mode On?", 'event_espresso' ), FALSE, FALSE ),
-				'PMD_wp_user' => new EE_Integer_Field( 'PMD_wp_user', __( "User ID", 'event_espresso' ), FALSE, 1 ),
+				'PMD_wp_user' => new EE_WP_User_Field( 'PMD_wp_user', __( "Payment Method Creator ID", 'event_espresso' ), FALSE ),
 				'PMD_open_by_default' => new EE_Boolean_Field( 'PMD_open_by_default', __( "Open by Default?", 'event_espresso' ), FALSE, FALSE ), 'PMD_button_url' => new EE_Plain_Text_Field( 'PMD_button_url', __( "Button URL", 'event_espresso' ), TRUE, '' ),
 				'PMD_scope' => new EE_Serialized_Text_Field( 'PMD_scope', __( "Usable From?", 'event_espresso' ), FALSE, array() ), //possible values currently are 'CART','ADMIN','API'
 		) );
@@ -60,7 +60,9 @@ class EEM_Payment_Method extends EEM_Base {
  //			'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
 			'Payment' => new EE_Has_Many_Relation(),
 			'Currency' => new EE_HABTM_Relation( 'Currency_Payment_Method' ),
-			'Transaction' => new EE_Has_Many_Relation(),);
+			'Transaction' => new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
+		);
 		parent::__construct( $timezone );
 	}
 
@@ -118,6 +120,9 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method[]
 	 */
 	public function get_all_active( $scope = NULL, $query_params = array() ) {
+		if( ! isset( $query_params[ 'order_by' ] ) && ! isset( $query_params[ 'order' ] ) ) {
+			$query_params = array( 'order_by' => array( 'PMD_order' => 'ASC', 'PMD_ID' => 'ASC' ) );
+		}
 		return $this->get_all( $this->_get_query_params_for_all_active( $scope, $query_params ) );
 	}
 
@@ -157,6 +162,17 @@ class EEM_Payment_Method extends EEM_Base {
 		}
 	}
 
+	/**
+	 * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
+	 * argument to get all active for a given scope
+	 * @param string $scope one of the constants EEM_Payment_Method::scope_*
+	 * @param array $query_params like EEM_Base::get_all.
+	 * @return array like param of EEM_Base::get_all()
+	 * @throws EE_Error
+	 */
+	public function get_query_params_for_all_active( $scope = NULL, $query_params = array() ) {
+		return $this->_get_query_params_for_all_active( $scope, $query_params );
+	}
 
 
 	/**
@@ -228,19 +244,44 @@ class EEM_Payment_Method extends EEM_Base {
 
 	/**
 	 * Verifies the button urls on all the passed payment methods have a valid button url. If not, resets them to their default.
-	 * @param EE_Payment_Method[] $payment_methods
+	 * @param EE_Payment_Method[] $payment_methods. If NULL is provided defaults to all payment methods active in the cart
 	 */
-	function verify_button_urls( $payment_methods ) {
+	function verify_button_urls( $payment_methods = NULL ) {
 		EE_Registry::instance()->load_helper( 'URL' );
-		$payment_methods = is_array( $payment_methods ) && ! empty( $payment_methods ) ? $payment_methods : $this->get_all_active();
+		$payment_methods = is_array( $payment_methods ) ? $payment_methods : $this->get_all_active(EEM_Payment_Method::scope_cart);
 		foreach ( $payment_methods as $payment_method ) {
 			try {
-				//send an HTTP HEAD request to quickly verify the file exists
-				if ( $payment_method->type_obj() instanceof EE_PMT_Base &&
-						$payment_method->type_obj()->default_button_url() &&
-						! EEH_URL::remote_file_exists( $payment_method->button_url() ) ) {
-					EE_Error::add_attention( sprintf( __( "Payment Method '%s' had a broken button url, so it was reset", "event_espresso" ), $payment_method->name() ) );
-					$payment_method->save( array( 'PMD_button_url' => $payment_method->type_obj()->default_button_url() ) );
+				$current_button_url = $payment_method->button_url();
+				$buttons_urls_to_try = apply_filters( 'FHEE__EEM_Payment_Method__verify_button_urls__button_urls_to_try', array(
+					'current_ssl' => str_replace( "http://", "https://", $current_button_url ),
+					'current' => str_replace( "https://", "http://", $current_button_url ),
+					'default_ssl' => str_replace( "http://", "https://", $payment_method->type_obj()->default_button_url() ),
+					'default' => str_replace( "https://", "http://", $payment_method->type_obj()->default_button_url() ),
+				) );
+				foreach( $buttons_urls_to_try as $button_url_to_try ) {
+					if(
+							(//this is the current url and it exists, regardless of SSL issues
+								$button_url_to_try == $current_button_url &&
+								EEH_URL::remote_file_exists(
+										$button_url_to_try,
+										array(
+											'sslverify' => false,
+											'limit_response_size' => 4095,//we don't really care for a full response, but we do want headers at least. Lets just ask for a one block
+											) )
+							)
+							||
+							(//this is NOT the current url and it exists with a working SSL cert
+								$button_url_to_try != $current_button_url &&
+								EEH_URL::remote_file_exists( $button_url_to_try )
+							) ) {
+						if( $current_button_url != $button_url_to_try ){
+							$payment_method->save( array( 'PMD_button_url' => $button_url_to_try ) );
+							EE_Error::add_attention( sprintf( __( "Payment Method %s's button url was set to %s, because the old image either didnt exist or SSL was recently enabled.", "event_espresso" ), $payment_method->name(), $button_url_to_try ) );
+						}
+						//this image exists. So if wasn't set before, now it is;
+						//or if it was already set, we have nothing to do
+						break;
+					}
 				}
 			}
 			catch ( EE_Error $e ) {
@@ -296,7 +337,13 @@ class EEM_Payment_Method extends EEM_Base {
 			//@todo take the relation between transaction and currencies into account
 		}
 		$currencies_for_events = array( EE_Config::instance()->currency->code );
-		return $this->get_all_active( $scope, array( array( 'Currency.CUR_code' => array( 'IN', $currencies_for_events ) ) ) );
+		//give addons a chance to override what payment methods are chosen based on the transaction
+		return apply_filters(
+			'FHEE__EEM_Payment_Method__get_all_for_transaction__payment_methods',
+			$this->get_all_active( $scope, array( array( 'Currency.CUR_code' => array( 'IN', $currencies_for_events ) ) ) ),
+			$transaction,
+			$scope
+		);
 	}
 
 

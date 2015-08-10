@@ -270,7 +270,7 @@ class EEH_Event_Query {
 					break;
 
 				case 'venue_title' :
-					$SQL .= ', EE_Venue_TBL.post_title AS venue_title' ;
+					$SQL .= ', Venue.post_title AS venue_title' ;
 					break;
 
 				case 'city' :
