@@ -475,7 +475,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _add_screen_options_default() {
-		$this->_admin_page_title = __( 'Message Queue', 'event_espresso' );
+		$this->_admin_page_title = __( 'Message Activity', 'event_espresso' );
 		$this->_per_page_screen_option();
 	}
 
@@ -684,6 +684,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _message_queue_list_table() {
+		$this->_search_btn_label = __('Message Activity', 'event_espresso');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
 
