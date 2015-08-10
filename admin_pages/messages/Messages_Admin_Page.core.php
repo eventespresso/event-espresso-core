@@ -306,6 +306,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'list_table' => 'EE_Message_List_Table',
+				'qtips' => array( 'EE_Message_List_Table_Tips' ),
 				'require_nonce' => false
 				),
 			'global_mtps' => array(
@@ -685,8 +686,49 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _message_queue_list_table() {
 		$this->_search_btn_label = __('Message Activity', 'event_espresso');
+		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_message_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
+
+
+
+
+	protected function _message_legend_items() {
+		/** @todo add action reference legend items here when they are ready */
+		$action_items = array();
+
+		/** @type array $status_items status legend setup*/
+		$status_items = array(
+			'sent_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_sent,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_sent, FALSE, 'sentence' )
+				),
+			'idle_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_idle,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_idle, FALSE, 'sentence' )
+				),
+			'failed_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_failed,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_failed, FALSE, 'sentence' )
+			),
+			'resend_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_resend,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_resend, FALSE, 'sentence' )
+				),
+			'incomplete_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_incomplete,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_incomplete, FALSE, 'sentence' )
+				),
+			'retry_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_retry,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_retry, FALSE, 'sentence' )
+				)
+		);
+		return array_merge( $action_items, $status_items );
+	}
+
+
+
 
 
 

@@ -394,7 +394,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Registration Views', 'event_espresso'),
 						'filename' => 'registrations_overview_views'
 					),
-					'registrations_overview_other_help_tab' => array(
+					'registrations_regoverview_other_help_tab' => array(
 						'title' => __('Registrations Other', 'event_espresso'),
 						'filename' => 'registrations_overview_other'
 					)

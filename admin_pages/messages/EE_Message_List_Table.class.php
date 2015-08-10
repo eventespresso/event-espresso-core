@@ -31,7 +31,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		);
 
 		$this->_columns = array(
-			'status' => '',
+			'msg_status' => '',
 			'cb' => '<input type="checkbox" />',
 			'to' => __( 'Recipient', 'event_espresso' ),
 			'from' => __( 'From', 'event_espresso' ),
@@ -74,8 +74,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 *
 	 * @return string    EE_Message status.
 	 */
-	public function column_status( $message ) {
-		return $message->STS_ID();
+	public function column_msg_status( $message ) {
+		return '<span class="ee-status-strip ee-status-strip-td msg-status-' . $message->STS_ID() . '"></span>';
 	}
 
 

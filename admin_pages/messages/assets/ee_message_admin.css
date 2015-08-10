@@ -36,7 +36,7 @@
 
 /** editor styles **/
 #ee-msg-non-global-fields-MTP_description {
-	height: 150px;px;
+	height: 150px;
 }
 
 .non-global-mtp-fields {
@@ -49,41 +49,6 @@
 
 .ee-msg-switcher-container {
 	margin-top: 8px;
-}
-
-/** overview table styles **/
-
-#Custom_Messages_Template_List_Table-table-frm .column-name {
-	width: 14%;
-}
-
-#Messages_Template_List_Table-table-frm .column-messenger, #Custom_Messages_Template_List_Table-table-frm .column-messenger {
-	width: 14%;
-}
-
-#Messages_Template_List_Table-table-frm .column-message_type, #Custom_Messages_Template_List_Table-table-frm .column-message_type {
-	width: 12%;
-}
-
-#Messages_Template_List_Table-table-frm .column-description {
-	width: 60%;
-}
-
-#Custom_Messages_Template_List_Table-table-frm .column-description {
-	width: 35%;
-}
-
-#Custom_Messages_Template_List_Table-table-frm .column-actions {
-	width: 15%;
-}
-
-#Messages_Template_List_Table-table-frm .column-actions {
-	width: 15%;
-}
-
-#Custom_Messages_Template_List_Table-table-frm .column-events {
-	width: 10%;
-	text-align: center;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
@@ -118,9 +83,9 @@
 	color: #AC9D93;
 }
 
-/** editor styles **/
+
 #ee-msg-non-global-fields-MTP_description {
-	height: 150px;px;
+	height: 150px;
 }
 
 .non-global-mtp-fields {
@@ -136,4 +101,103 @@
 	margin-top: 40px;
 	margin-bottom: 10px;
 
+}
+
+
+
+/** overview table styles **/
+
+#Custom_Messages_Template_List_Table-table-frm .column-name {
+    width: 14%;
+}
+
+#Messages_Template_List_Table-table-frm .column-messenger, #Custom_Messages_Template_List_Table-table-frm .column-messenger {
+    width: 14%;
+}
+
+#Messages_Template_List_Table-table-frm .column-message_type, #Custom_Messages_Template_List_Table-table-frm .column-message_type {
+    width: 12%;
+}
+
+#Messages_Template_List_Table-table-frm .column-description {
+    width: 60%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-description {
+    width: 35%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-actions {
+    width: 15%;
+}
+
+#Messages_Template_List_Table-table-frm .column-actions {
+    width: 15%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-events {
+    width: 10%;
+    text-align: center;
+}
+
+
+.widefat td.column-msg_status,
+.widefat th.column-msg_status {
+    width: 10px;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+
+/** status sent **/
+.msg-status-MSN {
+    border-left-color: #70CC50;
+}
+.ee-status-legend-MSN {
+    background-color: #70CC50;
+}
+
+/** status idle (queued for sending) **/
+.msg-status-MID {
+    border-left-color: #00B1CA;
+}
+.ee-status-legend-MID {
+    background-color: #00B1CA;
+}
+
+
+/** status failed **/
+.msg-status-MFL {
+    border-left-color: #E44064;
+}
+.ee-status-legend-MFL {
+    background-color: #E44064;
+}
+
+
+/** status resend (queued for resending) **/
+.msg-status-MRS {
+    border-left-color: #FCB93C;
+}
+.ee-status-legend-MRS {
+    background-color: #FCB93C;
+}
+
+
+/** status incomplete (queued for generation) **/
+.msg-status-MIC {
+    border-left-color: #A39D9C;
+}
+.ee-status-legend-MIC {
+    background-color: #A39D9C;
+}
+
+
+/** status retry (failed sending but can be retried) **/
+.msg-status-MRT {
+    border-left-color: #E76700;
+}
+.ee-status-legend-MRT {
+    background-color: #E76700;
 }
