@@ -41,7 +41,6 @@ abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init {
 			//added for 4.1 to completely disable autosave for our pages. This can be removed once we fully enable autosave functionality
 			remove_filter('wp_print_scripts', 'wp_just_in_time_script_localization');
 			add_filter('wp_print_scripts', array($this, 'wp_just_in_time_script_localization'), 100 );
-			add_filter('wp_check_post_lock_window', array($this, 'adjust_post_lock_window'), 100 );
 			//end removal of autosave functionality.
 		}
 	}

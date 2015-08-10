@@ -99,13 +99,17 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 				'PRT_is_percent'=>new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage','event_espresso'), false, false),
 				'PRT_order'=>new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ','event_espresso'), false, 0),
 				'PRT_deleted'=>new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trashed','event_espresso'), false, false),
-				'PRT_wp_user' => new EE_Integer_Field('PRT_wp_user', __('User who created this price type.', 'event_espresso'), FALSE, get_current_user_id() ),
+				'PRT_wp_user' => new EE_WP_User_Field('PRT_wp_user', __('Price Type Creator ID', 'event_espresso'), FALSE ),
 			)
 		);
 		$this->_model_relations = array(
 			'Price'=>new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
-
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		//all price types are "default" in terms of capability names
+		$this->_caps_slug = 'default_price_types';
 		parent::__construct( $timezone );
 
 	}

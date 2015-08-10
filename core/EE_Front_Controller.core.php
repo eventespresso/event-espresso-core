@@ -101,13 +101,16 @@ final class EE_Front_Controller {
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-
 		//exclude our private cpt comments
 		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
 		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 1 );
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
+		// for checking that browser cookies are enabled
+		if ( apply_filters( 'FHEE__EE_Front_Controller____construct__set_test_cookie', true )) {
+			setcookie( 'ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/' );
+		}
 	}
 
 
@@ -276,7 +279,7 @@ final class EE_Front_Controller {
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 							}
 							add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ));
-							break;
+							continue;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
@@ -287,7 +290,7 @@ final class EE_Front_Controller {
 								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								break;
+								continue;
 							}
 							// and pass the request object to the run method
 							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
@@ -532,7 +535,14 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && is_main_query() && ! is_feed() && in_the_loop() ) {
+		if (
+			apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE )
+			&& ! $shown_already
+			&& is_main_query()
+			&& ! is_feed()
+			&& in_the_loop()
+			&& EE_Registry::instance()->REQ->is_espresso_page()
+		) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
@@ -554,12 +564,14 @@ final class EE_Front_Controller {
 	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
-		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
-		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
-		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
-		$this->_template = basename( $this->_template_path );
-		//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		return $this->_template_path;
+		if ( EE_Registry::instance()->REQ->is_espresso_page() ) {
+			$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
+			$template_path = EEH_Template::locate_template( $this->_template_path, array(), false );
+			$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
+			$this->_template = basename( $this->_template_path );
+			return $this->_template_path;
+		}
+		return $template_include_path;
 	}
 
 

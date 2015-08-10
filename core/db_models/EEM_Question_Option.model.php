@@ -35,7 +35,7 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Question Options','event_espresso');
 
 		$this->_tables = array(
-			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSG_ID')
+			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSO_ID')
 		);
 		$this->_fields = array(
 			'Question_Option'=>array(
@@ -51,6 +51,13 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 			'Question'=>new EE_Belongs_To_Relation()
 		);
 
+		$this->_model_chain_to_wp_user = 'Question';
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('Question_Option');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form('Question_Option');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('Question_Option');
+		$this->_caps_slug = 'questions';
 		parent::__construct( $timezone );
 	}
 
