@@ -889,7 +889,7 @@ class PluginUpdateEngineChecker {
 			ob_start();
 			?>
 			<div class="error" id="pue_error_notices">
-				<?php echo $errors; ?>
+				<?php echo $this->_sanitize_notices( $errors ); ?>
 				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );" style="float:right; margin-bottom: 10px;">
 					<?php _e("Dismiss"); ?>
 				</a>
@@ -904,7 +904,7 @@ class PluginUpdateEngineChecker {
 			ob_start();
 			?>
 			<div class="notice notice-info" id="pue_attention_notices">
-				<?php echo $attentions; ?>
+				<?php echo $this->_sanitize_notices( $attentions ); ?>
 				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );" style="float:right; margin-bottom: 10px;">
 					<?php _e("Dismiss"); ?>
 				</a>
@@ -919,7 +919,7 @@ class PluginUpdateEngineChecker {
 			ob_start();
 			?>
 			<div class="success" id="pue_success_notices">
-				<?php echo $successes; ?>
+				<?php echo $this->_sanitize_notices( $successes ); ?>
 				<a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );" style="float:right; margin-bottom: 10px;">
 					<?php _e("Dismiss"); ?>
 				</a>
@@ -1032,7 +1032,7 @@ class PluginUpdateEngineChecker {
 					$msg = str_replace('%plugin_name%', $this->pluginName, $plugininfo->api_inline_invalid_message);
 					$msg = str_replace('%version%', $plugininfo->version, $msg);
 					$msg = str_replace('%changelog%', '<a class="thickbox" title="'.$this->pluginName.'" href="plugin-install.php?tab=plugin-information&plugin='.$this->slug.'&TB_iframe=true&width=640&height=808">What\'s New</a>', $msg);
-					echo '</tr><tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">' . $msg . '</div></td>';
+					echo '</tr><tr class="plugin-update-tr"><td colspan="3" class="plugin-update"><div class="update-message">' . $this->_sanitize_notices( $msg ) . '</div></td>';
 				}
 			}
 		}
@@ -1073,7 +1073,7 @@ class PluginUpdateEngineChecker {
 			//Dismiss code idea below is obtained from the Gravity Forms Plugin by rocketgenius.com
 			ob_start();
 			?>
-				<div class="updated" style="padding:15px; position:relative;" id="pu_dashboard_message"><?php echo $msg ?>
+				<div class="updated" style="padding:15px; position:relative;" id="pu_dashboard_message"><?php echo $this->_sanitize_notices( $msg ); ?>
 				<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" style='float:right;'><?php _e("Dismiss") ?></a>
 				<div style="clear:both;"></div>
             </div>
@@ -1091,6 +1091,39 @@ class PluginUpdateEngineChecker {
 			else
 				return $content;
 		}
+	}
+
+
+	/**
+	 * This just receives a content string and uses wp_kses to sanitize the incoming string so it only allows a small
+	 * subset of tags.
+	 *
+	 * @param string $content Content to sanitize
+	 * @return string
+	 */
+	protected function _sanitize_notices( $content ) {
+		$allowed_tags = array(
+			'a' => array(
+				'href' => array(),
+				'title' => array()
+			),
+			'br' => array(),
+			'em' => array(),
+			'strong' => array(),
+			'abbr' => array(),
+			'acronym' => array(),
+			'b' => array(),
+			'blockquote' => array(),
+			'cite' => array(),
+			'code' => array(),
+			'strike' => array(),
+			'ol' => array(),
+			'ul' => array(),
+			'li' => array(),
+			'p' => array()
+		);
+
+		return wp_kses( $content, $allowed_tags );
 	}
 
 
