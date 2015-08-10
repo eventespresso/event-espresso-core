@@ -239,7 +239,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 	 * @return array
 	 */
 	public function date_range( $dt_frmt = '', $conjunction = ' - ' ) {
-		return $this->first_datetime()->start_date( $dt_frmt ) . $conjunction . $this->last_datetime()->end_date( $dt_frmt );
+		$first_date = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()->start_date( $dt_frmt ) : '';
+		$last_date = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->end_date( $dt_frmt ) : '';
+
+		return $first_date && $last_date ? $first_date . $conjunction  . $last_date : '';
 	}
 
 
@@ -475,6 +478,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 			$this->_ticket_total_with_taxes = $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
 		}
 		return (float)$this->_ticket_total_with_taxes;
+	}
+
+
+
+	public function ensure_TKT_Price_correct() {
+		$this->set( 'TKT_price', EE_Taxes::get_subtotal_for_admin( $this ) );
+		$this->save();
 	}
 
 

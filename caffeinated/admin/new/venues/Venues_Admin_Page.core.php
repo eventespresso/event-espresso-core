@@ -107,7 +107,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'create_new' => __('Save New Venue', 'event_espresso'),
 				'edit' => __('Update Venue', 'event_espresso'),
 				'add_category' => __('Save New Category', 'event_espresso'),
-				'edit_category' => __('Update Category', 'event_espresso')
+				'edit_category' => __('Update Category', 'event_espresso'),
+				'google_map_settings' => __( 'Update Settings', 'event_espresso' )
 				)
 		);
 	}
@@ -178,6 +179,16 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
+			//settings related
+			'google_map_settings' => array(
+				'func' => '_google_map_settings',
+				'capability' => 'manage_options'
+			),
+			'update_google_map_settings' => array(
+				'func' => '_update_google_map_settings',
+				'capability' => 'manage_options',
+				'noheader' => TRUE
+			),
 			//venue category tab related
 			'add_category' => array(
 				'func' => '_category_details',
@@ -332,7 +343,22 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
-			//event category stuff
+			'google_map_settings' => array(
+				'nav' => array(
+					'label' => __('Google Maps'),
+					'order' => 40
+				),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
+				'help_tabs' => array(
+					'general_settings_google_maps_help_tab' => array(
+						'title' => __('Google Maps', 'event_espresso'),
+						'filename' => 'general_settings_google_maps'
+					)
+				),
+				'help_tour' => array( 'Google_Maps_Help_Tour' ),
+				'require_nonce' => FALSE
+			),
+			//venue category stuff
 			'add_category' => array(
 				'nav' => array(
 					'label' => __('Add Category', 'event_espresso'),
@@ -484,13 +510,24 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'slug' => 'all',
 				'label' => __('View All Venues', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array(
-					//'restore_venues' => __('Restore_from Trash', 'event_espresso'),
-					//'trash_venues' => __('Move to Trash', 'event_espresso'),
-					'delete_venues' => __('Delete', 'event_espresso')
-					)
+				'bulk_action' => array()
 				)
 		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_venues', 'espresso_venues_trash_venues' ) ) {
+			$this->_views['all']['bulk_action'] = array(
+				'trash_venues' => __('Move to Trash', 'event_espresso')
+			);
+			$this->_views['trash'] = array(
+				'slug' => 'trash',
+				'label' => __( 'Trash', 'event_espresso' ),
+				'count' => 0,
+				'bulk_action' => array(
+					'restore_venues' => __('Restore from Trash', 'event_espresso'),
+					'delete_venues' => __('Delete', 'event_espresso')
+				)
+			);
+		}
 	}
 
 
@@ -532,6 +569,130 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_publish_box_extras.template.php';
 		EEH_Template::display_template( $template, $extra_rows );
+	}
+
+
+
+	/*************		Google Maps 		*************/
+
+
+	protected function _google_map_settings() {
+
+
+		$this->_template_args['values'] = $this->_yes_no_values;
+		$default_map_settings = new stdClass();
+		$default_map_settings->use_google_maps = TRUE;
+		// for event details pages (reg page)
+		$default_map_settings->event_details_map_width = 585; 			// ee_map_width_single
+		$default_map_settings->event_details_map_height = 362; 			// ee_map_height_single
+		$default_map_settings->event_details_map_zoom = 14; 			// ee_map_zoom_single
+		$default_map_settings->event_details_display_nav = TRUE; 			// ee_map_nav_display_single
+		$default_map_settings->event_details_nav_size = FALSE; 			// ee_map_nav_size_single
+		$default_map_settings->event_details_control_type = 'default'; 		// ee_map_type_control_single
+		$default_map_settings->event_details_map_align = 'center'; 			// ee_map_align_single
+		// for event list pages
+		$default_map_settings->event_list_map_width = 300; 			// ee_map_width
+		$default_map_settings->event_list_map_height = 185; 		// ee_map_height
+		$default_map_settings->event_list_map_zoom = 12; 			// ee_map_zoom
+		$default_map_settings->event_list_display_nav = FALSE; 		// ee_map_nav_display
+		$default_map_settings->event_list_nav_size = TRUE; 			// ee_map_nav_size
+		$default_map_settings->event_list_control_type = 'dropdown'; 		// ee_map_type_control
+		$default_map_settings->event_list_map_align = 'center'; 			// ee_map_align
+
+		$this->_template_args['map_settings'] =
+			isset( EE_Registry::instance()->CFG->map_settings ) && ! empty( EE_Registry::instance()->CFG->map_settings )
+				? (object)array_merge( (array)$default_map_settings, (array)EE_Registry::instance()->CFG->map_settings )
+				: $default_map_settings;
+
+		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_VENUES_TEMPLATE_PATH . 'google_map.template.php', $this->_template_args, TRUE );
+		$this->display_admin_page_with_sidebar();
+	}
+
+	protected function _update_google_map_settings() {
+
+		EE_Registry::instance()->CFG->map_settings->use_google_maps =
+			isset( $this->_req_data['use_google_maps'] )
+				? absint( $this->_req_data['use_google_maps'] )
+				: EE_Registry::instance()->CFG->map_settings->use_google_maps;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_map_width =
+			isset( $this->_req_data['event_details_map_width'] )
+				? absint( $this->_req_data['event_details_map_width'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_width;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_map_height =
+			isset( $this->_req_data['event_details_map_height'] )
+				? absint( $this->_req_data['event_details_map_height'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_height;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_map_zoom =
+			isset( $this->_req_data['event_details_map_zoom'] )
+				? absint( $this->_req_data['event_details_map_zoom'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_zoom;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_display_nav =
+			isset( $this->_req_data['event_details_display_nav'] )
+				? absint( $this->_req_data['event_details_display_nav'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_display_nav;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_nav_size =
+			isset( $this->_req_data['event_details_nav_size'] )
+				? absint( $this->_req_data['event_details_nav_size'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_nav_size;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_control_type =
+			isset( $this->_req_data['event_details_control_type'] )
+				? sanitize_text_field( $this->_req_data['event_details_control_type'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_control_type;
+
+		EE_Registry::instance()->CFG->map_settings->event_details_map_align =
+			isset( $this->_req_data['event_details_map_align'] )
+				? sanitize_text_field( $this->_req_data['event_details_map_align'] )
+				: EE_Registry::instance()->CFG->map_settings->event_details_map_align;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_map_width =
+			isset( $this->_req_data['event_list_map_width'] )
+				? absint( $this->_req_data['event_list_map_width'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_width;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_map_height =
+			isset( $this->_req_data['event_list_map_height'] )
+				? absint( $this->_req_data['event_list_map_height'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_height;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_map_zoom =
+			isset( $this->_req_data['event_list_map_zoom'] )
+				? absint( $this->_req_data['event_list_map_zoom'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_zoom;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_display_nav =
+			isset( $this->_req_data['event_list_display_nav'] )
+				? absint( $this->_req_data['event_list_display_nav'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_display_nav;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_nav_size =
+			isset( $this->_req_data['event_list_nav_size'] )
+				? absint( $this->_req_data['event_list_nav_size'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_nav_size;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_control_type =
+			isset( $this->_req_data['event_list_control_type'] )
+				? sanitize_text_field( $this->_req_data['event_list_control_type'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_control_type;
+
+		EE_Registry::instance()->CFG->map_settings->event_list_map_align =
+			isset( $this->_req_data['event_list_map_align'] )
+				? sanitize_text_field( $this->_req_data['event_list_map_align'] )
+				: EE_Registry::instance()->CFG->map_settings->event_list_map_align;
+
+		EE_Registry::instance()->CFG->map_settings = apply_filters( 'FHEE__Extend_General_Settings_Admin_Page___update_google_map_settings__CFG_map_settings', EE_Registry::instance()->CFG->map_settings );
+
+		$what = 'Google Map Settings';
+		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
+
 	}
 
 
@@ -710,13 +871,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	protected function _trash_or_restore_venue( $venue_stats = 'trash', $redirect_after = TRUE ) {
+	protected function _trash_or_restore_venue( $venue_status = 'trash', $redirect_after = TRUE ) {
 		$VNU_ID = isset( $this->_req_data['VNU_ID'] ) ? absint( $this->_req_data['VNU_ID'] ) : FALSE;
 
 		//loop thru venues
 		if ( $VNU_ID ) {
 			//clean status
-			$venue_status = strtoupper( sanitize_key( $venue_status ) );
+			$venue_status = sanitize_key( $venue_status );
 			// grab status
 			if (!empty($venue_status)) {
 				$success = $this->_change_venue_status($VNU_ID, $venue_status);
@@ -743,12 +904,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _trash_or_restore_venues( $venue_status = 'trash' ) {
 		// clean status
-		$venue_status = strtoupper(sanitize_key($venue_status));
+		$venue_status = sanitize_key($venue_status);
 		// grab status
 		if (!empty($venue_status)) {
 			$success = TRUE;
 			//determine the event id and set to array.
-			$VNU_IDs = isset($this->_req_data['VNU_IDs']) ? (array) $this->_req_data['VNU_IDs'] : array();
+			$VNU_IDs = isset($this->_req_data['venue_id']) ? (array) $this->_req_data['venue_id'] : array();
 			// loop thru events
 			foreach ($VNU_IDs as $VNU_ID) {
 				if ($VNU_ID = absint($VNU_ID)) {
@@ -781,24 +942,24 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	 * //todo this is pretty much the same as the corresponding change_event_status method in Events_Admin_Page.  We should probably abstract this up to the EE_Admin_Page_CPT (or even EE_Admin_Page) and make this a common method accepting a certain number of params.
 	 *
 	 * @access  private
-	 * @param  int $event_id
-	 * @param  string $event_status
+	 * @param  int $VNU_ID
+	 * @param  string $venue_status
 	 * @return void
 	 */
-	private function _change_venue_status( $VNU_ID = FALSE, $venue_status = FALSE ) {
+	private function _change_venue_status( $VNU_ID = 0, $venue_status = '' ) {
 		// grab venue id
-		if (!$VNU_ID) {
+		if (! $VNU_ID) {
 			$msg = __('An error occurred. No Venue ID or an invalid Venue ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
 
-		$this->_set_model_object( $VNU_ID );
+		$this->_cpt_model_obj = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
 
 		// clean status
-		$venue_status = strtoupper(sanitize_key($venue_status));
+		$venue_status = sanitize_key($venue_status);
 		// grab status
-		if (empty($venue_status)) {
+		if ( ! $venue_status ) {
 			$msg = __('An error occurred. No Venue Status or an invalid Venue Status was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
@@ -835,13 +996,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * @param  boolean $redirect_after [description]
-	 * @return [type]                  [description]
+	 * @param  bool $redirect_after
+	 * @return void
 	 */
-	protected function _delete_venue( $redirect_after = TRUE ) {
+	protected function _delete_venue( $redirect_after = true ) {
 		//determine the venue id and set to array.
 		$VNU_ID = isset($this->_req_data['VNU_ID']) ? absint($this->_req_data['VNU_ID']) : NULL;
-		$VNU_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : NULL;
+		$VNU_ID = isset( $this->_req_data['post'] ) ? absint( $this->_req_data['post'] ) : $VNU_ID;
 
 
 		// loop thru venues
@@ -948,27 +1109,39 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$limit = array($offset, $per_page);
 
 		$category = isset( $this->_req_data['category'] ) && $this->_req_data['category'] > 0 ? $this->_req_data['category'] : NULL;
+		$where = array();
 
-		$where = array(
-			'status' => isset( $this->_req_data['venue_status'] ) && $this->_req_data['venue_status'] != '' ? $this->_req_data['venue_status'] : array('IN', array('publish', 'draft') )
-			//todo add filter by category
-			);
+		//only set initial status if it is in the incoming request.  Otherwise the "all" view display's all statuses.
+		if ( isset( $this->_req_data['status'] ) && $this->_req_data['status'] != 'all' ) {
+			$where['status'] = $this->_req_data['status'];
+		}
+
+		if ( isset( $this->_req_data['venue_status'] ) ) {
+			$where['status'] = $this->_req_data['venue_status'];
+		}
+
 
 		if ( $category ) {
 			$where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
 			$where['Term_Taxonomy.term_id'] = $category;
 		}
-
-		//cap checks
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_private_venues', 'get_venue' ) ) {
-			if ( ! empty( $where['status'][0] ) && $where['status'][0] == 'IN' ) {
-				$where['status'][1][] = 'private';
-			}
-		}
+		
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();
+		} else {
+				if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+					$where['OR'] = array(
+						'status*restrict_private' => array( '!=', 'private' ),
+						'AND'                     => array(
+							'status*inclusive' => array( '=', 'private' ),
+							'VNU_wp_user'      => get_current_user_id()
+						)
+					);
+				}
 		}
+
+
 
 
 		if ( isset( $this->_req_data['s'] ) ) {
@@ -1148,10 +1321,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
 		$success = 0; //we already have a success message so lets not send another.
-		$query_args = array(
-			'action' => 'edit_category',
-			'VEN_CAT_ID' => $cat_id
-		);
+		if ( $cat_id ) {
+			$query_args = array(
+				'action'     => 'edit_category',
+				'EVT_CAT_ID' => $cat_id
+			);
+		} else {
+			$query_args = array( 'action' => 'add_category' );
+		}
 		$this->_redirect_after_action( $success, '','', $query_args, TRUE );
 
 	}
@@ -1164,6 +1341,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$category_desc= isset( $this->_req_data['category_desc'] ) ? $this->_req_data['category_desc'] : '';
 		$category_parent = isset( $this->_req_data['category_parent'] ) ? $this->_req_data['category_parent'] : 0;
 
+		if ( empty( $category_name ) ) {
+			$msg = __( 'You must add a name for the category.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+
+
 		$term_args=array(
 			'name'=>$category_name,
 			'description'=>$category_desc,
@@ -1173,7 +1357,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_venue_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_venue_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
-			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso', 'event_espresso' );
+			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];

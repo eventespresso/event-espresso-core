@@ -40,7 +40,7 @@
 					?>
 					</td>
 					<td class="jst-left"><?php echo $registration->reg_code();?></td>
-					<td class="jst-rght"><?php echo EEH_Template::format_currency( $registration->price_paid() );?></td>
+					<td class="jst-rght"><?php echo EEH_Template::format_currency( $registration->final_price() );?></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
