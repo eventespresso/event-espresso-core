@@ -33,12 +33,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	protected static $_core_version = '';
 
-
 	/**
 	 * Holds values for registered addons
 	 * @var array
 	 */
 	protected static $_settings = array();
+
+	/**
+	 * @var  array $_incompatible_addons
+	 * @access    protected
+	 */
+	protected static $_incompatible_addons = array( 'EE_Promotions' );
 
 
 
@@ -206,13 +211,31 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// if not empty, inserts a new table row after this plugin's row on the WP Plugins page that can be used for adding upgrading/marketing info
 			'plugins_page_row' 			=> isset( $setup_args['plugins_page_row'] ) ? $setup_args['plugins_page_row'] : '',
 		);
+
 		// if plugin_action_slug is NOT set, but an admin page path IS set, then let's just use the plugin_slug since that will be used for linking to the admin page
 		$addon_settings[ 'plugin_action_slug' ] = empty( $addon_settings[ 'plugin_action_slug' ] ) && ! empty( $addon_settings[ 'admin_path' ] ) ? $addon_settings[ 'plugin_slug' ] : $addon_settings[ 'plugin_action_slug' ];
 		// full server path to main file (file loaded directly by WP)
 		$addon_settings['plugin_basename'] = plugin_basename( $addon_settings[ 'main_file_path' ] );
 
 		//check whether this addon version is compatible with EE core
-		if ( ! self::_meets_min_core_version_requirement( $setup_args['min_core_version'], EVENT_ESPRESSO_VERSION ) ){
+		if ( in_array( $class_name, EE_Register_Addon::$_incompatible_addons ) ) {
+			$incompatibility_message = sprintf(
+				__( 'The Event Espresso "%1$s" addon could not be activated because it is incompatible with your version of Event Espresso Core.%2$sThis can happen when attempting to run beta versions or release candidates with older versions of core.%2$sPlease upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
+				$addon_name,
+				'<br />'
+			);
+		} else if ( ! self::_meets_min_core_version_requirement( $setup_args[ 'min_core_version' ], espresso_version() ) ) {
+			$incompatibility_message = sprintf(
+				__( 'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
+				$addon_name,
+				self::_effective_version( $setup_args[ 'min_core_version' ] ),
+				self::_effective_version( espresso_version() ),
+				'<br />'
+			);
+		} else {
+			$incompatibility_message = '';
+		}
+		if ( ! empty( $incompatibility_message ) ) {
 			//remove 'activate' from the REQUEST so WP doesn't erroneously tell the user the
 			//plugin activated fine when it didn't
 			if( isset( $_GET[ 'activate' ]) ) {
@@ -222,16 +245,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				unset( $_REQUEST[ 'activate' ] );
 			}
 			//and show an error message indicating the plugin didn't activate properly
-			EE_Error::add_error(
-				sprintf(
-					__( 'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
-					$addon_name,
-					self::_effective_version( $setup_args[ 'min_core_version' ] ),
-					self::_effective_version( EVENT_ESPRESSO_VERSION ),
-					'<br />'
-				),
-				__FILE__, __FUNCTION__, __LINE__
-			);
+			EE_Error::add_error( $incompatibility_message, __FILE__, __FUNCTION__, __LINE__ );
 			if ( current_user_can( 'activate_plugins' )) {
 				require_once( ABSPATH.'wp-admin/includes/plugin.php' );
 				deactivate_plugins( plugin_basename( $addon_settings[ 'main_file_path' ] ), TRUE );
@@ -311,7 +325,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 		//register capability related stuff.
 		if ( ! empty( self::$_settings[ $addon_name ]['capabilities'] ) ) {
-			EE_Register_Capabilities::register( $addon_name . '_caps', array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
+			EE_Register_Capabilities::register( $addon_name , array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
 		}
 		//any message type to register?
 		if (  !empty( self::$_settings[$addon_name]['message_types'] ) ) {
@@ -477,6 +491,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				foreach( self::$_settings[$addon_name]['message_types'] as $message_type => $message_type_settings ) {
 					EE_Register_Message_Type::deregister( $message_type );
 				}
+			}
+			//deregister capabilities for addon
+			if ( ! empty( self::$_settings[$addon_name]['capabilities'] ) || ! empty( self::$_settings[$addon_name]['capability_maps']) ) {
+				EE_Register_Capabilities::deregister( $addon_name );
+			}
+			//deregister custom_post_types for addon
+			if ( ! empty( self::$_settings[$addon_name]['custom_post_types'] ) ) {
+				EE_Register_CPT::deregister( $addon_name );
 			}
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			remove_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( EE_Registry::instance()->addons->$class_name, 'initialize_db_if_no_migrations_required' ) );

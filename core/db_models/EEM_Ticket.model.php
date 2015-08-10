@@ -63,7 +63,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
 				'TKT_row' => new EE_Integer_Field('TKT_row', __('How tickets are displayed in the ui', 'event_espresso'), false, 0 ),
 				'TKT_deleted' => new EE_Trashed_Flag_Field('TKT_deleted', __('Flag indicating if this has been archived or not', 'event_espresso'), false, false),
-				'TKT_wp_user' => new EE_Integer_Field('TKT_wp_user', __('User who created this ticket.', 'event_espresso'), FALSE, get_current_user_id() ),
+				'TKT_wp_user' => new EE_WP_User_Field('TKT_wp_user', __('Ticket Creator ID', 'event_espresso'), FALSE ),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
 			));
 		$this->_model_relations = array(
@@ -72,8 +72,15 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),
 			'Ticket_Template'=>new EE_Belongs_To_Relation(),
 			'Registration' => new EE_Has_Many_Relation(),
+			'WP_User' => new EE_Belongs_To_Relation(),
 		);
 
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('TKT_is_default', 'Datetime.Event');
+		//account for default tickets in the caps
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Default_Protected( 'TKT_is_default', 'Datetime.Event' );
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Default_Protected( 'TKT_is_default', 'Datetime.Event' );
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Default_Protected( 'TKT_is_default', 'Datetime.Event' );
 		parent::__construct( $timezone );
 	}
 

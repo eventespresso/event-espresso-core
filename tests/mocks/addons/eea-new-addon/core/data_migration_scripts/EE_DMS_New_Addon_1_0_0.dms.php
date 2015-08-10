@@ -73,6 +73,7 @@ class EE_DMS_New_Addon_1_0_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version('esp_new_addon_thing', '
 			NEW_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			NEW_name VARCHAR(10) NOT NULL,
+			NEW_wp_user bigint unsigned NOT NULL,
 			PRIMARY KEY  (NEW_ID)'
 				);
 		$this->_table_is_new_in_this_version('esp_new_addon_attendee_meta', '

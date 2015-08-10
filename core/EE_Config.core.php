@@ -258,6 +258,10 @@ final class EE_Config {
 			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
 			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
+				//call configs populate method to ensure any defaults are set for empty values.
+				if ( method_exists( $settings, 'populate' ) ) {
+					$this->$config->populate();
+				}
 			}
 		}
 		if ( $update ) {
@@ -1013,26 +1017,28 @@ final class EE_Config {
 		if ( strpos( $module_path, $module_ext ) !== FALSE ) {
 			// grab and shortcode file name from directory name and break apart at dots
 			$module_file = explode( '.', basename( $module_path ));
-			// take first segment from file name pieces and remove class prefix if it exists
-			$module = strpos( $module_file[0], 'EED_' ) === 0 ? substr( $module_file[0], 4 ) : $module_file[0];
-			// sanitize shortcode directory name
-			$module = sanitize_key( $module );
 			// now we need to rebuild the shortcode path
 			$module_path = explode( DS, $module_path );
 			// remove last segment
 			array_pop( $module_path );
 			// glue it back together
 			$module_path = implode( DS, $module_path ) . DS;
+			// take first segment from file name pieces and sanitize it
+			$module = preg_replace( '/[^a-zA-Z0-9_\-]/', '', $module_file[0] );
+			// ensure class prefix is added
+			$module_class = strpos( $module, 'EED_' ) !== 0 ? 'EED_' . $module : $module;
 		} else {
 			// we need to generate the filename based off of the folder name
 			// grab and sanitize module name
-			$module = basename( $module_path );
+			$module = strtolower( basename( $module_path ));
+			$module = preg_replace( '/[^a-z0-9_\-]/', '', $module);
+			// like trailingslashit()
 			$module_path = rtrim( $module_path, DS ) . DS;
+			// create classname from module directory name
+			$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
+			// add class prefix
+			$module_class = 'EED_' . $module;
 		}
-		// create classname from module directory name
-		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
-		// add class prefix
-		$module_class = 'EED_' . $module;
 		// does the module exist ?
 		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
 			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
@@ -1331,6 +1337,25 @@ class EE_Config_Base{
 	}
 
 
+
+	public function populate() {
+		//grab defaults via a new instance of this class.
+		$class_name = get_class( $this );
+		$defaults = new $class_name;
+
+		//loop through the properties for this class and see if they are set.  If they are NOT, then grab the
+		//default from our $defaults object.
+		foreach ( get_object_vars( $defaults ) as $property => $value ) {
+			if ( is_null( $this->$property ) ) {
+				$this->$property = $value;
+			}
+		}
+
+		//cleanup
+		unset( $defaults );
+	}
+
+
 	/**
 	 *		@ override magic methods
 	 *		@ return void
@@ -1405,6 +1430,10 @@ class EE_Core_Config extends EE_Config_Base {
 	public $thank_you_page_url;
 	public $cancel_page_url;
 
+	/**
+	 * The next vars relate to the custom slugs for EE CPT routes
+	 */
+	public $event_cpt_slug;
 
 
 	/**
@@ -1426,15 +1455,17 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->module_forward_map = array();
 		$this->module_view_map = array();
 		// critical EE page IDs
-		$this->reg_page_id = FALSE;
-		$this->txn_page_id = FALSE;
-		$this->thank_you_page_id = FALSE;
-		$this->cancel_page_id = FALSE;
+		$this->reg_page_id = 0;
+		$this->txn_page_id = 0;
+		$this->thank_you_page_id = 0;
+		$this->cancel_page_id = 0;
 		// critical EE page URLs
-		$this->reg_page_url = FALSE;
-		$this->txn_page_url = FALSE;
-		$this->thank_you_page_url = FALSE;
-		$this->cancel_page_url = FALSE;
+		$this->reg_page_url = '';
+		$this->txn_page_url = '';
+		$this->thank_you_page_url = '';
+		$this->cancel_page_url = '';
+		//cpt slugs
+		$this->event_cpt_slug = __('events', 'event_espresso');
 
 		//ueip constant check
 		if ( defined( 'EE_DISABLE_UXIP' ) && EE_DISABLE_UXIP ) {
@@ -1531,7 +1562,30 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 
 
+	/**
+	 * Resets all critical page urls to their original state.  Used primarily by the __sleep() magic method currently.
+	 * @since 4.7.5
+	 */
+	protected function _reset_urls() {
+		$this->reg_page_url = '';
+		$this->txn_page_url = '';
+		$this->cancel_page_url = '';
+		$this->thank_you_page_url = '';
 
+	}
+
+
+	/**
+	 * Currently used to ensure critical page urls have initial values saved to the db instead of any current set values
+	 * on the object.
+	 * @return array
+	 */
+	public function __sleep() {
+		//reset all url properties
+		$this->_reset_urls();
+		//return what to save to db
+		return array_keys( get_object_vars( $this ) );
+	}
 
 }
 
@@ -2261,6 +2315,28 @@ class EE_Event_Single_Config extends EE_Config_Base{
 		$this->display_venue = 1;
 	}
 }
+
+
+
+/**
+ * Stores Ticket_Selector_Config settings
+ */
+class EE_Ticket_Selector_Config extends EE_Config_Base{
+	public $show_ticket_sale_columns;
+	public $show_ticket_details;
+	public $show_expired_tickets;
+
+	/**
+	 *	class constructor
+	 */
+	public function __construct() {
+		$this->show_ticket_sale_columns = 1;
+		$this->show_ticket_details = 1;
+		$this->show_expired_tickets = 1;
+	}
+}
+
+
 
 
 

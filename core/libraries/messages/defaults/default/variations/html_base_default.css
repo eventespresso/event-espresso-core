@@ -24,7 +24,7 @@ input.print_button {
 #invoice { width:740px; height:auto; padding:1cm; margin:0 auto; overflow:hidden; background-color:#fff; }
 #invoice-header tr { background-color: #ffffff !important; }
 
-#logo-dv img { max-width:200px!important; border: none; }
+#logo-dv img { max-width:300px!important; border: none; }
 
 table { border-collapse:collapse!important; width:100%; }
 td { vertical-align:top!important; }

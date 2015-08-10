@@ -118,14 +118,14 @@ abstract class EE_Base_Class{
 		$model_fields = $model->field_settings( FALSE );
 		// ensure $fieldValues is an array
 		$fieldValues = is_array( $fieldValues ) ? $fieldValues : array( $fieldValues );
-		// printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $fieldValues, '$fieldValues  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify client code has not passed any invalid field names
 		foreach($fieldValues as $field_name=> $field_value){
 			if( ! isset( $model_fields[ $field_name] ) ){
 				throw new EE_Error(sprintf(__("Invalid field (%s) passed to constructor of %s. Allowed fields are :%s", "event_espresso"),$field_name,get_class($this),implode(", ",array_keys($model_fields))));
 			}
 		}
-		// printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// EEH_Debug_Tools::printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		//if db model is instantiating
 		if( $bydb ){
@@ -242,6 +242,65 @@ abstract class EE_Base_Class{
 		}
 
 	}
+
+
+
+
+
+	/**
+	 * This sets the field value on the db column if it exists for the given $column_name or
+	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
+	 *
+	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
+	 *
+	 * @param string $field_name Must be the exact column name.
+	 * @param mixed  $field_value  The value to set.
+	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
+	 */
+	public function set_field_or_extra_meta( $field_name, $field_value ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
+			$this->set( $field_name, $field_value );
+			return true;
+		} else {
+			//ensure this object is saved first so that extra meta can be properly related.
+			$this->save();
+			return $this->update_extra_meta( $field_name, $field_value );
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * This retrieves the value of the db column set on this class or if that's not present
+	 * it will attempt to retrieve from extra_meta if found.
+	 *
+	 * Example Usage:
+	 * Via EE_Message child class:
+	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
+	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
+	 * also have additional main fields specific to the messenger.  The system accommodates those extra
+	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
+	 * value for those extra fields dynamically via the EE_message object.
+	 *
+	 * @param  string $field_name  expecting the fully qualified field name.
+	 * @return mixed|null  value for the field if found.  null if not found.
+	 */
+	public function get_field_or_extra_meta( $field_name ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
+			$column_value = $this->get( $field_name );
+		} else {
+			//This isn't a column in the main table, let's see if it is in the extra meta.
+			$column_value = $this->get_extra_meta( $field_name, true, null );
+		}
+		return $column_value;
+	}
+
+
+
+
 
 
 
@@ -615,6 +674,105 @@ abstract class EE_Base_Class{
 	}
 
 
+	/**
+	 * Returns the next x number of EE_Base_Class objects in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param int $limit                How many objects to return.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class[]
+	 */
+	public function next_x( $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->next_x( $current_value, $field, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the previous x number of EE_Base_Class objects in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param int $limit                How many objects to return.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class[]
+	 */
+	public function previous_x( $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->previous_x( $current_value, $field, $limit, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+	/**
+	 * Returns the next EE_Base_Class object in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an array of EE_Base_Class objects is returned, otherwise
+	 *                                  you can indicate just the columns you want returned
+	 *
+	 * @return array|EE_Base_Class
+	 */
+	public function next( $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->next( $current_value, $field, $query_params, $columns_to_select );
+	}
+
+
+
+
+
+
+	/**
+	 * Returns the previous EE_Base_Class object in sequence from this object as found in the database
+	 * matching the given query conditions.
+	 *
+	 * @param null $field_to_order_by   What field is being used as the reference point.
+	 * @param array $query_params       Any additional conditions on the query.
+	 * @param null $columns_to_select   If left null, then an EE_Base_Class object is returned, otherwise
+	 *                                  you can indicate just the column you want returned
+	 *
+	 * @return array|EE_Base_Class
+	 */
+	public function previous( $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
+		$field = empty( $field_to_order_by ) && $this->get_model()->has_primary_key_field() ? $this->get_model()->get_primary_key_field()->get_name() : $field_to_order_by;
+		$current_value = ! empty( $field ) ? $this->get( $field ) : null;
+		if ( empty( $field ) || empty( $current_value ) ) {
+			return array();
+		}
+		return $this->get_model()->previous( $current_value, $field, $query_params, $columns_to_select );
+	}
+
+
+
+
+
 
 	/**
 	 * Overrides parent because parent expects old models.
@@ -635,6 +793,7 @@ abstract class EE_Base_Class{
 				$field_value = $field_value_from_db;
 			}
 			$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
+			$this->_clear_cached_property( $field_name );
 		}
 	}
 
@@ -1224,20 +1383,28 @@ abstract class EE_Base_Class{
 	 * @return mixed (EE_Base_Class|bool)
 	 */
 	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
-		$primary_id_ref = self::_get_primary_key_name( $classname );
+		if( self::_get_model( $classname )->has_primary_key_field()){
+			$primary_id_ref = self::_get_primary_key_name( $classname );
 
-		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
-			$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
-			if ( $existing ) {
-				foreach ( $props_n_values as $property => $field_value ) {
-					$existing->set( $property, $field_value );
-				}
-				return $existing;
-			} else {
-				return FALSE;
+			if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
+				$existing = self::_get_model( $classname, $timezone )->get_one_by_ID( $props_n_values[$primary_id_ref] );
+			}else{
+				$existing = null;
 			}
+		}elseif( self::_get_model( $classname, $timezone )->has_all_combined_primary_key_fields(  $props_n_values ) ){
+			//no primary key on this model, but there's still a matching item in the DB
+				$existing = self::_get_model($classname, $timezone)->get_one_by_ID( self::_get_model($classname, $timezone)->get_index_primary_key_string( $props_n_values ) );
+		}else{
+			$existing = null;
 		}
-		return FALSE;
+		if ( $existing ) {
+			foreach ( $props_n_values as $property => $field_value ) {
+				$existing->set( $property, $field_value );
+			}
+			return $existing;
+		} else {
+			return FALSE;
+		}
 	}
 
 
@@ -1317,7 +1484,11 @@ abstract class EE_Base_Class{
 	 */
 	public function ID(){
 		//now that we know the name of the variable, use a variable variable to get its value and return its
-		return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		if( $this->get_model()->has_primary_key_field() ) {
+			return $this->_fields[self::_get_primary_key_name( get_class($this) )];
+		}else{
+			return $this->get_model()->get_index_primary_key_string( $this->_fields );
+		}
 	}
 
 
@@ -1436,7 +1607,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params   like EEM_Base::get_all's
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
 	 * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
@@ -1451,7 +1622,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by.
 	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)
@@ -1827,6 +1998,15 @@ abstract class EE_Base_Class{
 				);
 			}
 		}
+	}
+
+	/**
+	 * Because some other plugins, like Advanced Cron Manager, expect all objects to have this method
+	 * (probably a bad assumption they have made, oh well)
+	 * @return string
+	 */
+	public function __toString(){
+		return sprintf( '%s (%s)', $this->name(), $this->ID() );
 	}
 
 

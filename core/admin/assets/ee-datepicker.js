@@ -116,7 +116,7 @@ var dttPickerHelper = {
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
 
-		this.endDate = this.endDate === '' ? this.startDate.clone().add(this.defaultRange.type, this.defaultRange.duration) : moment(this.endDate, 'YYYY-MM-DD h:mm a');
+		this.endDate = this.endDate === '' ? this.startDate.clone().add( this.defaultRange.duration, this.defaultRange.type ) : moment(this.endDate, 'YYYY-MM-DD h:mm a');
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();
@@ -126,7 +126,7 @@ var dttPickerHelper = {
 		if ( !doingstart ) {
 			var minDateTime = this.startDate;
 			this.dttOptions.minDateTime = this.dttOptions.minDateTime === null ? minDateTime.toDate() : this.dttOptions.minDateTime;
-			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add('years', 100).toDate() : this.dttOptions.maxDateTime;
+			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add(100, 'years').toDate() : this.dttOptions.maxDateTime;
 		}
 
 
@@ -154,17 +154,14 @@ var dttPickerHelper = {
 					if ( doingstart )
 						//use the already calculated diff to set the new endDate or startDate.
 						if ( dttPickerHelper.endobj instanceof jQuery )
-							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a'));
-					else
-						dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract('minutes', diff).format('YYYY-MM-DD h:mm a') );
+							dttPickerHelper.endobj.val(dttPickerHelper.endDate.clone().subtract(diff,'minutes').format('YYYY-MM-DD h:mm a'));
+					    else
+						    dttPickerHelper.startobj.val(dttPickerHelper.startDate.clone().subtract(diff,'minutes').format('YYYY-MM-DD h:mm a') );
 				}
+                //trigger the dttPicker close event
+                dttPickerHelper.pickerobj.trigger({ type:'datepickerclose',dateText:dateText, dttinst:dpinst } );
 				dttPickerHelper.resetpicker();
 				dttPickerHelper.pickerobj.datetimepicker('destroy');
-				jQuery.event.trigger({
-					type: "datepickerclose",
-					dateText: dateText,
-					dttinst: dpinst
-				});
 				return false;
 			};
 

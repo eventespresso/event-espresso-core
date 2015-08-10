@@ -243,7 +243,7 @@ final class EE_Admin {
 		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
 			return;
 
-		$initial_meta_boxes = array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' );
+		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' ) );
 		$hidden_meta_boxes = array();
 
 		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
@@ -469,7 +469,63 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function admin_init() {
+
+		/**
+		 * our cpt models must be instantiated on WordPress post processing routes (wp-admin/post.php),
+		 * so any hooking into core WP routes is taken care of.  So in this next few lines of code:
+		 * - check if doing post processing.
+		 * - check if doing post processing of one of EE CPTs
+		 * - instantiate the corresponding EE CPT model for the post_type being processed.
+		 */
+		if ( isset( $_POST['action'] ) && $_POST['action'] == 'editpost' ) {
+			if ( isset( $_POST['post_type'] ) ) {
+				EE_Registry::instance()->load_core( 'Register_CPTs' );
+				EE_Register_CPTs::instantiate_cpt_models( $_POST['post_type'] );
+			}
+		}
+
+
+		/**
+		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
+		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+		 */
+		global $pagenow;
+		if ( $pagenow == 'options-reading.php' ) {
+			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
+		}
+
 	}
+
+
+	/**
+	 * Callback for wp_dropdown_pages hook to remove ee critical pages from the dropdown selection.
+	 *
+	 * @param string $output  Current output.
+	 * @return string
+	 */
+	public function modify_dropdown_pages( $output ) {
+		//get critical pages
+		$critical_pages = EE_Registry::instance()->CFG->core->get_critical_pages_array();
+
+		//split current output by line break for easier parsing.
+		$split_output = explode( "\n", $output );
+
+		//loop through to remove any critical pages from the array.
+		foreach ( $critical_pages as $page_id ) {
+			$needle = 'value="' . $page_id . '"';
+			foreach( $split_output as $key => $haystack ) {
+				if( strpos( $haystack, $needle ) !== false ) {
+					unset( $split_output[$key] );
+				}
+			}
+		}
+
+		//replace output with the new contents
+		$output = implode( "\n", $split_output );
+
+		return $output;
+	}
+
 
 
 	/**
@@ -623,16 +679,22 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-			// whether to proceed with update
-			$update_post_shortcodes = FALSE;
 			// post on frontpage ?
 			$page_for_posts = EE_Config::get_page_for_posts();
+			$maybe_remove_from_posts = array();
 			// critical page shortcodes that we do NOT want added to the Posts page (blog)
 			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
+			// whether to proceed with update, if an entry already exists for this post, then we want to update
+			$update_post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] ) ? true : false;
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
+			// check that posts page is already being tracked
+			if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] ) ) {
+				// if not, then ensure that it is properly added
+				EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+			}
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// convert to UPPERCASE to get actual shortcode
@@ -643,18 +705,28 @@ final class EE_Admin {
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
 					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
-						// check that posts page is already being tracked
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-							// if not, then ensure that it is properly added
-							EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
-						}
 						// add shortcode to "Posts page" tracking
 						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
 					}
 					$update_post_shortcodes = TRUE;
+					unset( $maybe_remove_from_posts[ $EES_Shortcode ] );
+				} else {
+					$maybe_remove_from_posts[ $EES_Shortcode ] = $post_ID;
 				}
 			}
 			if ( $update_post_shortcodes ) {
+				// remove shortcodes from $maybe_remove_from_posts that are still being used
+				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $shortcodes ) {
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
+					// compute difference between active post_shortcodes array and $maybe_remove_from_posts array
+					$maybe_remove_from_posts = array_diff_key( $maybe_remove_from_posts, $shortcodes );
+				}
+				// now unset unused shortcodes from the $page_for_posts post_shortcodes
+				foreach ( $maybe_remove_from_posts as $shortcode => $post_ID ) {
+					unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode ] );
+				}
 				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
 			}
 		}

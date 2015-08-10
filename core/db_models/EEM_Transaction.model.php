@@ -95,6 +95,7 @@ class EEM_Transaction extends EEM_Base {
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
 			'Payment_Method'=>new EE_Belongs_To_Relation(),
 		);
+		$this->_model_chain_to_wp_user = 'Registration.Event';
 		parent::__construct( $timezone );
 
 	}
@@ -135,10 +136,11 @@ class EEM_Transaction extends EEM_Base {
 	 * @return mixed
 	 */
 	public function get_revenue_per_event_report( $period = 'month' ) {
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		$date_mod = strtotime( '-1 ' . $period );
 
-		$SQL = 'SELECT post_name as event_name, SUM(TXN_paid) AS revenue';
+		$SQL = 'SELECT post_title as event_name, SUM(TXN_paid) AS revenue';
 		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
 		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
 		$SQL .= ' LEFT JOIN ' . $wpdb->posts . ' evt ON evt.ID = reg.EVT_ID';
@@ -198,6 +200,33 @@ class EEM_Transaction extends EEM_Base {
 		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this->ensure_is_obj( $transaction_obj_or_id ));
 	}
 
+	/**
+	 * Deletes "junk" transactions that were probably added by bots. There might be TONS
+	 * of these, so we are very careful to NOT select (which the models do even when deleting),
+	 * and so we only use wpdb directly and NOT do any joins.
+	 * The downside to this approach is that is addons are listening for object deletions
+	 * on EEM_Base::delete() they won't be notified of this.
+	 * @global WPDB $wpdb
+	 * @return mixed
+	 */
+	public function delete_junk_transactions() {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		$time_to_leave_alone = apply_filters(
+			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', WEEK_IN_SECONDS
+		);
+		$query = $wpdb->prepare( '
+			DELETE
+			FROM '. $this->table() . '
+			WHERE
+				STS_ID = %s AND
+				TXN_timestamp < %s',
+			EEM_Transaction::failed_status_code,
+			// use GMT time because that's what TXN_timestamps are in
+			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+		);
+		return $wpdb->query( $query );
+	}
 
 
 

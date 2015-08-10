@@ -282,11 +282,22 @@ abstract class EE_Addon extends EE_Configurable {
 	 * Takes care of double-checking that we're not in maintenance mode, and then
 	 * initializing this addon's necessary initial data. This is called by default on new activations
 	 * and reactivations
+	 * @param boolean $verify_schema whether to verify the database's schema for this addon, or just its data.
+	 * This is a resource-intensive job so we prefer to only do it when necessary
 	 * @return void
 	 */
-	public function initialize_db_if_no_migrations_required() {
+	public function initialize_db_if_no_migrations_required( $verify_schema = true ) {
+		if( $verify_schema === '' ) {
+			//wp core bug imo: if no args are passed to `do_action('some_hook_name')` besides the hook's name
+			//(ie, no 2nd or 3rd arguments), instead of calling the registered callbacks with no arguments, it
+			//calls them with an argument of an empty string (ie ""), which evaluates to false
+			//so we need to treat the empty string as if nothing had been passed, and should instead use the default
+			$verify_schema = true;
+		}
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			$this->initialize_db();
+			if( $verify_schema ) {
+				$this->initialize_db();
+			}
 			$this->initialize_default_data();
 			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array('slug' => $this->name(), 'version' => $this->version()));
@@ -298,6 +309,11 @@ abstract class EE_Addon extends EE_Configurable {
 			 */
 			EE_Registry::instance()->load_helper('Activation');
 			EEH_Activation::initialize_db_content();
+			update_option( 'ee_flush_rewrite_rules', TRUE );
+			//in case there are lots of addons being activated at once, let's force garbage collection
+			//to help avoid memory limit errors
+			//EEH_Debug_Tools::instance()->measure_memory( 'db content initialized for ' . get_class( $this), true );
+			gc_collect_cycles();
 		}else{
 			//ask the data migration manager to init this addon's data
 			//when migrations are finished because we can't do it now

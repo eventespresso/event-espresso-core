@@ -41,6 +41,7 @@ class EE_Country_Select_Input extends EE_Select_Input{
 			// get possibly cached list of countries
 			$countries = EEM_Country::instance()->get_all_active_countries();
 			if ( ! empty( $countries )) {
+				$country_options[ '' ] = '';
 				foreach( $countries as $country ){
 					if ( $country instanceof EE_Country ) {
 						$country_options[ $country->ID() ] = $country->name();

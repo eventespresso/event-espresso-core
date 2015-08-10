@@ -24,7 +24,7 @@
 ?>
 			<tr>
 				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
-				<td class="jst-left"><?php echo $item->ticket_event_name();?></td>
+				<td class="jst-left"><a href="<?php echo $event_link; ?>"><?php echo $item->ticket_event_name();?></a></td>
 				<td class="jst-left"><?php echo $item->ticket_datetime_start('Y-m-d','h:i a'); ?></td>
 				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
 				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item->get('LIN_unit_price') );?></td>
@@ -47,6 +47,39 @@
 			</tbody>
 		</table>
 	</div>
+
+	<?php
+	if ( WP_DEBUG ) {
+		$delivered_messages = get_option( 'EED_Messages__maybe_registration', array() );
+		if ( isset( $delivered_messages[ $REG_ID ] )) {
+	?>
+	<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-email-alt"></span><?php _e( 'Messages Sent to Registrant', 'event_espresso' );?></h4>
+
+	<div class="admin-primary-mbox-tbl-wrap">
+		<table class="admin-primary-mbox-tbl">
+			<thead>
+				<tr>
+					<th class="jst-left"><?php _e( 'Date & Time', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'Message Type', 'event_espresso' );?></th>
+					<th class="jst-left"><?php _e( 'REG Status Upon Sending', 'event_espresso' );?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $delivered_messages[ $REG_ID ] as $timestamp => $delivered_message ) :
+					?>
+					<tr>
+						<td class="jst-left"><?php echo gmdate( get_option('date_format') . ' ' . get_option('time_format'), ( $timestamp + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) );?></td>
+						<td class="jst-left"><?php echo isset( $delivered_message['message_type'] ) ? $delivered_message['message_type'] : '';?></td>
+						<td class="jst-left"><?php echo isset( $delivered_message['reg_status'] ) ? $delivered_message['reg_status'] : '';?></td>
+					</tr>
+				<?php endforeach; // $delivered_messages?>
+			</tbody>
+		</table>
+	</div>
+	<?php
+		}
+	}
+	?>
 
 	<a id="display-additional-registration-session-info" class="display-the-hidden smaller-text" rel="additional-registration-session-info">
 		<span class="dashicons dashicons-plus-alt"></span><?php _e( 'view additional registration session details', 'event_espresso' );?>

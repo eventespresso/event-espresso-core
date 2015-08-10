@@ -84,8 +84,8 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		//setup address?
 		if(		$primary_attendee->address()  &&
 				$primary_attendee->city()  &&
-				$primary_attendee->state_name()  &&
-				$primary_attendee->country_name()  &&
+				$primary_attendee->state_ID()  &&
+				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
 			$shipping_address = array(
 				'first_name'=>$primary_attendee->fname(),
@@ -94,7 +94,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 				'city' => $primary_attendee->city(),
 				'state_province' => $primary_attendee->state_name(),
 				'zip_code' => $primary_attendee->zip(),
-				'country' => $primary_attendee->country_name()
+				'country' => $primary_attendee->country_ID()
 			);
 			if( $primary_attendee->address2() ){
 				$shipping_address[ 'apt_suite' ] = $primary_attendee->address2();
@@ -102,7 +102,6 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			if( $primary_attendee->phone() ){
 				$shipping_address[ 'phone' ] = $primary_attendee->phone();
 			}
-			$order[ 'billing_address' ] = $shipping_address;
 			$order[ 'shipping_address' ] = $shipping_address;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
@@ -182,12 +181,17 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		$payment = $transaction instanceof EEI_Transaction ? $transaction->last_payment() : NULL;
 		if($payment && $payment instanceof EEI_Payment){
 			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
-			$request_args = array('headers' => array(
-			'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
-			'Accept'=>'application/json'
-			));
+			$request_args = array(
+				'headers' => array(
+					'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
+					'Accept'=>'application/json'
+				)
+			);
 			$response = wp_remote_get($url, $request_args );
-			$this->log( array( ' get paymetn status request_args' => $request_args, 'response' => $response ), $payment );
+			$this->log(
+				array( 'get payment status request_args' => $request_args, 'response' => $response ),
+				$payment
+			);
 			if($response && isset($response['body']) && $response_body = json_decode($response['body'])){
 				switch($response_body->status){
 					case 'paid':
