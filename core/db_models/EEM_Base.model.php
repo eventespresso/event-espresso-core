@@ -3843,7 +3843,7 @@ abstract class EEM_Base extends EE_Base{
 					continue;
 				}
 				if( WP_DEBUG ) {
-					EE_Error::add_error(__( 'Called %1$s on a model object that has no ID and so probably hasnt been saved to the database', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					EE_Error::add_error(__( 'Called %1$s on a model object that has no ID and so probably hasn\'t been saved to the database', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 			$IDs[] = $id;
