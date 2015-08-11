@@ -48,7 +48,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 			'[TICKET_NAME]' => __('The name of the ticket', 'event_espresso'),
 			'[TICKET_DESCRIPTION]' => __('The description of the ticket', 'event_espresso'),
 			'[TICKET_PRICE]' => __('The price of the ticket', 'event_espresso'),
-			'[TICKET_PRICE_WITH_TAXES]' => __('The price of the ticket including any taxes that might be on the ticket', 'event-espresso'),
+			'[TICKET_PRICE_WITH_TAXES]' => __('The price of the ticket including any taxes that might be on the ticket', 'event_espresso'),
 			'[TKT_QTY_PURCHASED]' => __('The total quantity of the current ticket in the list that has been purchased in this transaction', 'event_espresso'),
 			'[TKT_USES_*]' => __( 'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:', 'event_espresso' ) .
 				'<p><ul>' .
