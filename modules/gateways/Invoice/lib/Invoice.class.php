@@ -275,7 +275,7 @@ class Invoice {
 				$EE->CFG->organization->get_pretty( 'zip' ),
 				$EE->CFG->organization->get_pretty( 'email' ),
 				$EE->CFG->organization->vat,
-				date_i18n( get_option( 'date_format' ), strtotime( $this->registration->date() )),
+				$this->registration->get_i18n_datetime( 'REG_date', get_option( 'date_format' ) ),
 				$this->invoice_payment_method->get_extra_meta( 'pdf_instructions', TRUE ),
 		);
 

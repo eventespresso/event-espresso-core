@@ -413,11 +413,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * add our form section data to a static variable accessible by all form sections
+	 * @param bool $return_for_subsection
 	 * @return void
 	 */
-	public function localize_validation_rules(){
+	public function localize_validation_rules( $return_for_subsection = FALSE ){
 		// we only want to localize vars ONCE for the entire form, so if the form section doesn't have a parent, then it must be the top dog
-		if ( ! $this->parent_section() ) {
+		if ( ! $this->parent_section() || $return_for_subsection ) {
 			EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
 				'form_section_id'=> $this->html_id( TRUE ),
 				'validation_rules'=> $this->get_jquery_validation_rules(),

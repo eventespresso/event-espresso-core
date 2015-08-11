@@ -241,8 +241,37 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// load assets
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		$this->_translate_strings();
+	}
+
+
+
+	/**
+	 * 	load_js
+	 *
+	 * 	@access 		public
+	 * 	@return 		void
+	 */
+	protected function _translate_strings() {
+		EE_Registry::$i18n_js_strings[ 'e_reg_url_link' ] = $this->_reg_url_link;
+		EE_Registry::$i18n_js_strings[ 'initial_access' ] = time();
+		EE_Registry::$i18n_js_strings[ 'IPN_wait_time' ] = EES_Espresso_Thank_You::IPN_wait_time;
+		EE_Registry::$i18n_js_strings[ 'TXN_complete' ] = EEM_Transaction::complete_status_code;
+		EE_Registry::$i18n_js_strings[ 'TXN_incomplete' ] = EEM_Transaction::incomplete_status_code;
+		EE_Registry::$i18n_js_strings[ 'checking_for_new_payments' ] = __( 'checking for new payments...', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'loading_payment_info' ] = __( 'loading payment information...', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'server_error' ] = __( 'An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'slow_IPN' ] = apply_filters(
+			'EES_Espresso_Thank_You__load_js__slow_IPN',
+			sprintf(
+				__( '%sThe Payment Notification appears to be taking longer than usual to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
+				'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
+				'</div>'
+			)
+		);
 
 	}
+
 
 
 	/**
@@ -254,25 +283,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function load_js() {
 		wp_register_script( 'thank_you_page', THANK_YOU_ASSETS_URL . 'thank_you_page.js', array( 'espresso_core', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'thank_you_page' );
-		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->_reg_url_link;
-		EE_Registry::$i18n_js_strings['initial_access'] = current_time('timestamp');
-		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
-		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
-		EE_Registry::$i18n_js_strings['TXN_incomplete'] = EEM_Transaction::incomplete_status_code;
-		EE_Registry::$i18n_js_strings['checking_for_new_payments'] = __( 'checking for new payments...', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['loading_payment_info'] = __( 'loading payment information...', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso');
-		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters(
-			'EES_Espresso_Thank_You__load_js__slow_IPN',
-			sprintf(
-				__( '%sThe Payment Notification appears to be taking longer than usual to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
-				'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
-				'</div>'
-			)
-		);
-		wp_localize_script( 'thank_you_page', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
-
 
 
 
@@ -468,7 +479,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
 			}
 			// reset time to check for payments
-			$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
+			$response['espresso_thank_you_page']['get_payments_since'] = time();
 		} else {
 			$response['espresso_thank_you_page']['get_payments_since'] = $since;
 		}
@@ -487,7 +498,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	private function _update_server_wait_time( $thank_you_page_data = array() ) {
 		$response['espresso_thank_you_page'] = array (
-			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? current_time('timestamp') - $thank_you_page_data['initial_access'] : 0,
+			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? time() - $thank_you_page_data['initial_access'] : 0,
 			'txn_status' => $this->_current_txn->status_ID()
 		);
 		return $response;
@@ -750,7 +761,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
 			'STS_ID'=>EEM_Payment::status_id_pending,
-			'PAY_timestamp'=>current_time('timestamp'),
+			'PAY_timestamp'=>time(),
 			'PAY_amount'=>$this->_current_txn->total(),
 			'PMD_ID'=>$this->_current_txn->payment_method_ID()
 		));
