@@ -90,8 +90,8 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			count( $this->_options ) == 2
 			&&
 			(
-				( in_array( TRUE, $select_option_keys ) && in_array( FALSE, $select_option_keys ))
-				|| ( in_array( 1, $select_option_keys ) && in_array( 0, $select_option_keys ))
+				( in_array( TRUE, $select_option_keys, true ) && in_array( FALSE, $select_option_keys, true ))
+				|| ( in_array( 1, $select_option_keys, true ) && in_array( 0, $select_option_keys, true ))
 			)
 		){
 			// values appear to be boolean, like TRUE, FALSE, 1, 0

@@ -89,23 +89,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
-
-			'template_settings' => array(
-				'func' => '_template_settings',
-				'capability' => 'manage_options'
-				),
-
-			'update_template_settings' => array(
-				'func' => '_update_template_settings',
-				'capability' => 'manage_options',
-				'noheader' => TRUE,
-				),
-
-			'copy_templates' => array(
-				'func' => '_copy_templates',
-				'capability' => 'manage_options',
-				'noheader' => TRUE,
-				),
 			'default' => array(
 				'func' => '_your_organization_settings',
 				'capability' => 'manage_options',
@@ -170,7 +153,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Critical Pages', 'event_espresso'),
 					'order' => 50
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
                			'help_tabs' => array(
 					'general_settings_critical_pages_help_tab' => array(
 						'title' => __('Critical Pages', 'event_espresso'),
@@ -180,23 +163,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Critical_Pages_Help_Tour' ),
 				'require_nonce' => FALSE
 				),
-
-			//template settings
-			'template_settings' => array(
-				'nav' => array(
-					'label' => __('Templates', 'event_espresso'),
-					'order' => 30
-				),
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-				'help_tabs' => array(
-					'general_settings_templates_help_tab' => array(
-						'title' => __('Templates', 'event_espresso'),
-						'filename' => 'general_settings_templates'
-					)
-				),
-				'help_tour' => array( 'Templates_Help_Tour' ),
-				'require_nonce' => FALSE
-			),
 			'default' => array(
 				'nav' => array(
 					'label' => __('Your Organization', 'event_espresso'),
@@ -209,7 +175,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						)
 					),
 				'help_tour' => array( 'Your_Organization_Help_Tour' ),
-				'metaboxes' => array('_publish_post_box',  '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
 				),
 			'admin_option_settings' => array(
@@ -217,7 +183,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'label' => __('Admin Options', 'event_espresso'),
 					'order' => 60
 					),
-				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
                 			'help_tabs' => array(
 					'general_settings_admin_options_help_tab' => array(
 						'title' => __('Admin Options', 'event_espresso'),
@@ -239,7 +205,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 						)
 					),
 				'help_tour' => array( 'Countries_Help_Tour' ),
-				//'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
 				'require_nonce' => FALSE
 				)
 			);
@@ -282,13 +247,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script( 'gen_settings_countries' );
 		wp_enqueue_style( 'organization-css' );
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
 		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
-		$eei18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
-		wp_localize_script( 'gen_settings_countries', 'eei18n', $eei18n_js_strings );
+		EE_Registry::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
 	}
 
 
@@ -369,21 +332,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-
-
-
-	/*************		Templates 		*************/
-
-
-	protected function _template_settings() {
-		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
-		$this->_template_args['preview_img'] = '<img src="' . GEN_SET_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="' . esc_attr__( 'Template Settings Preview screenshot', 'event_espresso' ) . '" />';
-		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
-		$this->display_admin_caf_preview_page( 'template_settings_tab' );
-	}
 
 
 

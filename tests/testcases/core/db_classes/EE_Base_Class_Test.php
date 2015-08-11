@@ -440,6 +440,180 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//if that didn't throw an error, we're good
 	}
 
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_next_x() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the first event in the list as the reference
+		$event = reset( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$next_events = $event->next_x( 'EVT_ID', 2 );
+
+		//verify we have two returned.
+		$this->assertEquals( 2, count( $next_events ) );
+
+		//loop through and verify the events returned are correct.
+		$pointer = 1;
+		foreach( $next_events as $next_event ) {
+			$this->assertInstanceOf( 'EE_Event', $next_event );
+			$this->assertEquals( $event->ID()+$pointer, $next_event->ID() );
+			$pointer++;
+		}
+
+		//test retrieving just ids
+		$next_events = $event->next_x( 'EVT_ID', 2, array(), 'EVT_ID' );
+
+		//verify we have two returned
+		$this->assertEquals( 2, count( $next_events ) );
+
+		//loop through and verify the IDS returned are correct.
+		$pointer = 1;
+		foreach( $next_events as $next_event ) {
+			$this->assertTrue( array_key_exists( 'EVT_ID', $next_event ) );
+			$this->assertEquals( $event->ID()+$pointer, $next_event['EVT_ID'] );
+			$pointer++;
+		}
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_previous_x() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the last event in the list as the reference
+		$event = end( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$previous_events = $event->previous_x( 'EVT_ID', 2 );
+
+		//verify we have two returned.
+		$this->assertEquals( 2, count( $previous_events ) );
+
+		//loop through and verify the events returned are correct.
+		$pointer = 1;
+		foreach( $previous_events as $next_event ) {
+			$this->assertInstanceOf( 'EE_Event', $next_event );
+			$this->assertEquals( $event->ID()-$pointer, $next_event->ID() );
+			$pointer++;
+		}
+
+		//test retrieving just ids
+		$previous_events = $event->previous_x( 'EVT_ID', 2, array(), 'EVT_ID' );
+
+		//verify we have two returned
+		$this->assertEquals( 2, count( $previous_events ) );
+
+		//loop through and verify the IDS returned are correct.
+		$pointer = 1;
+		foreach( $previous_events as $next_event ) {
+			$this->assertTrue( array_key_exists( 'EVT_ID', $next_event ) );
+			$this->assertEquals( $event->ID()-$pointer, $next_event['EVT_ID'] );
+			$pointer++;
+		}
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_next() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the first event in the list as the reference
+		$event = reset( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$next_event = $event->next( 'EVT_ID' );
+
+		//verify we have an event returned and that its the right one in sequence.
+		$this->assertInstanceOf( 'EE_Event', $next_event );
+		$this->assertEquals( $event->ID()+1, $next_event->ID() );
+
+		//test retrieving just id
+		$next_event = $event->next( 'EVT_ID', array(), 'EVT_ID' );
+
+		//verify the returned array has the right key and value.
+		$this->assertTrue( is_array( $next_event ) );
+		$this->assertTrue( array_key_exists( 'EVT_ID', $next_event ) );
+		$this->assertEquals( $event->ID()+1, $next_event['EVT_ID'] );
+	}
+
+
+
+	/**
+	 * @since 4.6.x
+	 */
+	public function test_previous() {
+		//create 5 events for testing with.
+		$events = $this->factory->event->create_many( 5 );
+
+		//grab the last event in the list as the reference
+		$event = end( $events );
+
+		$this->assertInstanceOf( 'EE_Event', $event );
+
+		//test method retrieving object
+		$previous_event = $event->previous( 'EVT_ID' );
+
+		//verify we have an event returned and that its the right one in sequence.
+		$this->assertInstanceOf( 'EE_Event', $previous_event );
+		$this->assertEquals( $event->ID()-1, $previous_event->ID() );
+
+		//test retrieving just id
+		$previous_event = $event->previous( 'EVT_ID', array(), 'EVT_ID' );
+
+		//verify the returned array has the right key and value.
+		$this->assertTrue( is_array( $previous_event ) );
+		$this->assertTrue( array_key_exists( 'EVT_ID', $previous_event ) );
+		$this->assertEquals( $event->ID()-1, $previous_event['EVT_ID'] );
+	}
+
+	/**
+	 * @group github-102
+	 */
+	public function test_get__serialized_data() {
+		$log_message = array(
+						'key1' => 'value1',
+						'key2' => 'value2'
+					);
+		$log = EE_Change_Log::new_instance();
+		$log->set( 'LOG_message', $log_message );
+		$log->save();
+
+		//verify that when we get its LOG_message its still serialized
+		$this->assertTrue( is_array( $log->get( 'LOG_message' ) ) );
+		$this->assertEquals( $log_message, $log->get( 'LOG_message' ) );
+
+		//now when we get it from the DB, and get its LOG_message, its still serialized
+		$log_id = $log->ID();
+		EEM_Change_Log::reset();
+		unset( $log );
+		$log_from_db = EEM_Change_Log::instance()->get_one_by_ID( $log_id );
+		$this->assertTrue( is_array( $log_from_db->get( 'LOG_message' ) ) );
+		$this->assertEquals( $log_message, $log_from_db->get( 'LOG_message' ) );
+
+		//but if you set it to be a string, you'll get a string back
+		$log_from_db->set( 'LOG_message', serialize( $log_message ) );
+		$this->assertTrue( is_string( $log_from_db->get( 'LOG_message' ) ) );
+	}
+
 }
 
 // End of file EE_Base_Class_Test.php

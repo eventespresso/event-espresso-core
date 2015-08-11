@@ -499,7 +499,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 	 * @return EE_Registration
 	 */
 	public function get_most_recent_registration_for_event( $event_id ) {
-		return $this->get_first_related( 'Registrations', array( 'EVT_ID' => $event_id ), 'REG_date', 'DESC', '=', 'OBJECT_K' );
+		return $this->get_first_related( 'Registration', array(array( 'EVT_ID' => $event_id ), 'order_by' => array('REG_date' => 'DESC')));//, '=', 'OBJECT_K' );
 	}
 
 
@@ -528,7 +528,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 			return NULL;
 		}
 		$billing_form = $pm_type->billing_form();
-		$billing_form->receive_form_submission( $billing_info, FALSE );
+		$billing_form->receive_form_submission( array( $billing_form->name() => $billing_info ), FALSE );
 		return $billing_form;
 	}
 
@@ -558,7 +558,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address {
 			return false;
 		}
 		$billing_form->clean_sensitive_data();
-		return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name( $payment_method ), $billing_form->input_values() );
+		return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name( $payment_method ), $billing_form->input_values( true ) );
 	}
 
 }

@@ -474,7 +474,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$input_constructor_args = array(
 			'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-			'html_class' 			=> 'ee-reg-qstn',
+			'html_class' 			=> 'ee-reg-qstn ee-reg-qstn-' . $identifier,
 			'required' 				=> $question->required() ? TRUE : FALSE,
 			'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_label_class'	=> 'ee-reg-qstn',
@@ -516,7 +516,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				$state_options = array();
+				$state_options = array( '' => array( '' => ''));
 				$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
 				if ( ! empty( $states )) {
 					foreach( $states as $state ){
@@ -525,12 +525,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						}
 					}
 				}
-				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this );
+				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this, $registration, $question, $answer );
 				return new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				$country_options = array();
+				$country_options = array( '' => '' );
 				// get possibly cached list of countries
 				$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
 				if ( ! empty( $countries )) {
@@ -540,7 +540,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						}
 					}
 				}
-				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this );
+				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this, $registration, $question, $answer );
 				return new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
@@ -551,9 +551,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			case EEM_Question::QST_type_date :
 				return new EE_Datepicker_Input( $input_constructor_args );
 				break;
+			case EEM_Question::QST_type_html_textarea :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
+				$input =  new EE_Text_Area_Input( $input_constructor_args );
+				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
+				return $input;
 			// fallback
 			default :
-				return new EE_Text_Input( $input_constructor_args );
+				$default_input = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default', null, $question->type(), $question, $input_constructor_args );
+				if( ! $default_input ){
+					$default_input = new EE_Text_Input( $input_constructor_args );
+				}
+				return $default_input;
 		}
 	}
 
@@ -845,12 +854,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		} elseif ( $answer_is_obj ) {
 			// save this data to the answer object
 			$answers[ $answer_cache_id ]->set_value( $input_value );
-			return $answers[ $answer_cache_id ]->save();
+			$result = $answers[ $answer_cache_id ]->save();
+			return $result !== false ? true : false;
 		} else {
 			foreach ( $answers as $answer ) {
 				if ( $answer instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 					$answer->set_value( $input_value );
-					return $answer->save() !== FALSE ? TRUE : FALSE;
+					$result = $answer->save();
+					return $result !== false ? true : false;
 				}
 			}
 		}

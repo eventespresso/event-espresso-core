@@ -133,8 +133,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'require_nonce' => FALSE,
-				//'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'data_reset' => array(
 				'nav' => array(
@@ -142,8 +140,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'order' => 20
 					),
 				'require_nonce' => FALSE,
-				//'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'system_status'=>array(
 				'nav'=>array(
@@ -151,7 +147,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'order'=>30
 				),
 				'require_nonce' => FALSE,
-				//'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 			)
 		);
 	}
@@ -428,6 +423,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		if( $nuke_old_ee4_data ){
 			EEH_Activation::delete_all_espresso_cpt_data();
 			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
+			EEH_Activation::remove_cron_tasks();
 		}
 		//make sure when we reset the registry's config that it
 		//switches to using the new singleton
@@ -446,6 +442,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 		EEH_Activation::delete_all_espresso_cpt_data();
 		EEH_Activation::delete_all_espresso_tables_and_data();
+		EEH_Activation::remove_cron_tasks();
 		EEH_Activation::deactivate_event_espresso();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
 		exit;

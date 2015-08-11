@@ -250,6 +250,20 @@ class EE_Checkout {
 
 
 	/**
+	 * returns true if ANY reg status was updated during checkout
+	 * @return array
+	 */
+	public function any_reg_status_updated() {
+		foreach ( $this->reg_status_updated as $reg_status ) {
+			if ( $reg_status ) {
+				return true;
+			}
+		}
+	}
+
+
+
+	/**
 	 * @param $REG_ID
 	 * @return array
 	 */
@@ -264,7 +278,7 @@ class EE_Checkout {
 	 * @param $reg_status
 	 */
 	public function set_reg_status_updated( $REG_ID, $reg_status ) {
-		$this->reg_status_updated[ $REG_ID ] = $reg_status;
+		$this->reg_status_updated[ $REG_ID ] = filter_var( $reg_status, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -862,14 +876,16 @@ class EE_Checkout {
 			$this->primary_attendee_obj = $this->_refresh_primary_attendee_obj_from_db( $this->transaction );
 			// update EE_Checkout's cached payment object
 			$payment = $this->transaction->last_payment();
-			$this->payment = $payment instanceof EE_Payment ? $payment : null;
+			$this->payment = $payment instanceof EE_Payment ? $payment : $this->payment;
 			// update EE_Checkout's cached payment_method object
 			$payment_method = $this->payment instanceof EE_Payment ? $this->payment->payment_method() : null;
-			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : null;
+			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : $this->payment_method;
 			//now refresh the cart, based on the TXN
 			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction );
-			// verify cart
-			if ( ! $this->cart instanceof EE_Cart ) {
+			// verify and update the cart because inaccurate totals are not so much fun
+			if ( $this->cart instanceof EE_Cart ) {
+				$this->cart->get_grand_total()->recalculate_total_including_taxes();
+			} else {
 				$this->cart = EE_Registry::instance()->load_core( 'Cart' );
 			}
 		} else {
@@ -947,11 +963,16 @@ class EE_Checkout {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
+		// verify and update the cart because inaccurate totals are not so much fun
 		if ( $this->cart instanceof EE_Cart ) {
-			$grand_total = $this->cart->get_grand_total()->get_model()->refresh_entity_map_with(
-				$this->cart->get_grand_total()->ID(),
-				$this->cart->get_grand_total()
-			);
+			$grand_total = $this->cart->get_grand_total();
+			if ( $grand_total instanceof EE_Line_Item && $grand_total->ID() ) {
+				$grand_total->recalculate_total_including_taxes();
+				$grand_total = $grand_total->get_model()->refresh_entity_map_with(
+					$this->cart->get_grand_total()->ID(),
+					$this->cart->get_grand_total()
+				);
+			}
 			if ( $grand_total instanceof EE_Line_Item ) {
 				$this->cart = EE_Cart::instance( $grand_total );
 			} else {

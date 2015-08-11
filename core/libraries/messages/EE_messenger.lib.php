@@ -519,7 +519,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$default_value = empty( $default_value ) ? $mtpgID : $default_value;
 
 			$edit_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value), admin_url('admin.php') );
-			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ) );
+			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ), admin_url( 'admin.php' ) );
 
 			$st_args['mt_name'] = ucwords( $mtp_obj->label['singular'] );
 			$st_args['mt_slug'] = $mtpg->message_type();
@@ -681,9 +681,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
 		$type = $preview ? 'preview' : 'main';
-
-		//first get inline css (will be empty if the messenger doesn't use it)
-		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, $type, $this->_variation ), TRUE );
 
 		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, $type );
 
