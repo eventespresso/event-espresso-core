@@ -321,7 +321,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$req .= "&$key=$value";
 		}
 		// HTTP POST the complete, unaltered IPN back to PayPal
-		$response = wp_remote_post( $this->_gateway_url, array( 'body' => $req, 'sslverify' => false, 'timeout' => 60 ) );
+		$response = wp_remote_post(
+			$this->_gateway_url,
+			array(
+				'body' 				=> $req,
+				'sslverify' 		=> false,
+				'timeout' 		=> 60 ,
+				// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
+				// plz see: https://github.com/websharks/s2member/issues/610
+				'user-agent' 	=> 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url(),
+			)
+		);
 		// then check the response
 		if ( ! is_wp_error( $response ) && array_key_exists( 'body', $response ) && strcmp( $response[ 'body' ], "VERIFIED" ) == 0 ) {
 			return true;

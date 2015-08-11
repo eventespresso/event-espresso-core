@@ -91,10 +91,14 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 		$addressee_obj = $this->_extra_data['data'];
 
 		//made it here so we have an EE_Ticket, so we should have what we need.
-		$ticket_line_item = $addressee_obj->tickets[$ticket->ID()]['line_item'];
-		$sub_line_items = $addressee_obj->tickets[$ticket->ID()]['sub_line_items'];
+		$ticket_line_item = isset( $addressee_obj->tickets[$ticket->ID()]['line_item'] ) ? $addressee_obj->tickets[$ticket->ID()]['line_item'] : null;
+		$sub_line_items = isset( $addressee_obj->tickets[$ticket->ID()]['sub_line_items'] ) ? $addressee_obj->tickets[$ticket->ID()]['sub_line_items'] : array();
 
 		$template = count( $sub_line_items ) < 2 ? $templates['ticket_line_item_no_pms'] : $templates['ticket_line_item_pms'];
+
+		if ( empty( $ticket_line_item ) || empty( $sub_line_items ) ) {
+			return '';
+		}
 
 		//now we just return the appropriate template parsed for each ticket.
 		return $this->_shortcode_helper->parse_line_item_list_template( $template, $ticket_line_item, $valid_shortcodes, $this->_extra_data );

@@ -72,7 +72,7 @@ class EE_PMT_Bank extends EE_PMT_Base{
 						__('Please initiate an electronic payment using the following bank information: %1$sAccount Owner: Luke Skywalker%1$sBank Account # 1234567890%1$sBank Name: Rebellion Bank%1$sRouting Number: 12345%1$sBank Address: 12345 Wookie Rd., Planet Corellian.%1$sPayment must be received within 48 hours of event date.', 'event_espresso'),
 						"\n"
 					),
-					'validation_strategies' => array( new EE_Simple_HTML_Validation_Strategy() ),
+					'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
 				)),
 			),
 			'exclude'=>array('PMD_debug_mode')
