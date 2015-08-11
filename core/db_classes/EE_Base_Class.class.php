@@ -2173,13 +2173,14 @@ abstract class EE_Base_Class{
 	 * //START NEXT REQUEST
 	 * $att = get_option( 'my_option' );
 	 * $att->save();
-	 * 
+	 *
 	 * @return array
 	 */
 	public function __sleep() {
 		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
 			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
-				if( is_a( $this->get_one_from_cache( $relation_name ), 'EE_' . $this->get_model()->get_this_model_name() ) &&
+				$classname = 'EE_' . $this->get_model()->get_this_model_name();
+				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
 						$this->get_one_from_cache( $relation_name )->ID() ) {
 					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
 				}
