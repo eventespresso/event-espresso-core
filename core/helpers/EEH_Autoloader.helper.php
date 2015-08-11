@@ -82,11 +82,12 @@ class EEH_Autoloader {
 	 *
 	 * @access    public
 	 * @param array | string $class_paths - array of key => value pairings between class names and paths
-	 * @param bool $read_check true if we need to check whether the file is readable or not.
+	 * @param bool           $read_check true if we need to check whether the file is readable or not.
+	 * @param bool           $debug - set to true to display autoloader class => path mappings
+	 * @return void
 	 * @throws \EE_Error
-	 * @return        void
 	 */
-	public static function register_autoloader( $class_paths, $read_check = true ) {
+	public static function register_autoloader( $class_paths, $read_check = true, $debug = false ) {
 		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
 		foreach ( $class_paths as $class => $path ) {
 			// don't give up! you gotta...
@@ -103,7 +104,10 @@ class EEH_Autoloader {
 				throw new EE_Error ( sprintf( __( 'The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));
 			}
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
-				self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );
+				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
+				if ( WP_DEBUG && $debug ) {
+					printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
+				}
 			}
 		}
 	}
@@ -133,7 +137,8 @@ class EEH_Autoloader {
 	private function _register_custom_autoloaders() {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'interfaces' );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE );
-		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, TRUE );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_INTERFACES, true );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, true );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, true );
 	}
@@ -161,7 +166,7 @@ class EEH_Autoloader {
 	 * 	@return void
 	 */
 	public static function register_line_item_display_autoloaders() {
-		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(  EE_LIBRARIES . 'line_item_display' , TRUE );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(  EE_LIBRARIES . 'line_item_display' , true );
 	}
 
 
@@ -185,11 +190,14 @@ class EEH_Autoloader {
 	 * If that's not the case, you'll need to improve this function or just use EEH_File::get_classname_from_filepath_with_standard_filename() directly.
 	 * Yes this has to scan the directory for files, but it only does it once -- not on EACH
 	 * time the autoloader is used
+	 *
 	 * @param string $folder name, with or without trailing /, doesn't matter
 	 * @param bool   $recursive
-	 * @return array
+	 * @param bool   $debug - set to true to display autoloader class => path mappings
+	 * @return void
+	 * @throws \EE_Error
 	 */
-	public static function register_autoloaders_for_each_file_in_folder( $folder, $recursive = FALSE ){
+	public static function register_autoloaders_for_each_file_in_folder( $folder, $recursive = false, $debug = false ){
 		// make sure last char is a /
 		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
 		$class_to_filepath_map = array();
@@ -211,9 +219,8 @@ class EEH_Autoloader {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive );
 			}
 		}
-
-		//we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
-		self::register_autoloader($class_to_filepath_map, FALSE );
+		// we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
+		self::register_autoloader( $class_to_filepath_map, false, $debug );
 	}
 
 
