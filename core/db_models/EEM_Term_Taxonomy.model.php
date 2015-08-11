@@ -40,7 +40,7 @@ class EEM_Term_Taxonomy extends EEM_Base {
 				'term_taxonomy_id'=> new EE_Primary_Key_Int_Field('term_taxonomy_id', __('Term-Taxonomy ID','event_espresso')),
 				'term_id'=>new EE_Foreign_Key_Int_Field('term_id',  __("Term Id", "event_espresso"), false, 0, 'Term'), //EE_Foreign_Key_Int_Field('term_taxonomy_id', __('Term (in context of a taxonomy) ID','event_espresso'), false, 0, 'Term_Taxonomy'),
 				'taxonomy'=>new EE_Plain_Text_Field('taxonomy', __('Taxonomy Name','event_espresso'), false, 'category'),
-				'description'=>new EE_Simple_HTML_Field('description', __("Description of Term", "event_espresso"), false,''),
+				'description'=>new EE_Post_Content_Field('description', __("Description of Term", "event_espresso"), false,''),
 				'parent'=>new EE_Integer_Field('parent', __("Parent Term ID", "event_espresso"), false,0),
 				'term_count'=> new EE_Integer_Field('count', __("Count of Objects attached", 'event_espresso'), false, 0)
 			));
@@ -54,12 +54,42 @@ class EEM_Term_Taxonomy extends EEM_Base {
 		$this->_indexes = array(
 			'term_id_taxonomy'=>new EE_Unique_Index(array('term_id','taxonomy'))
 		);
+		$path_to_tax_model = '';
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Taxonomy_Protected( $path_to_tax_model );
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = false;
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = false;
+
+		//add cap restrictions for editing relating to the "ee_edit_*"
+		$this->_cap_restrictions[ EEM_Base::caps_edit ]['ee_edit_event_category'] = new EE_Default_Where_Conditions(
+				array(
+					$path_to_tax_model . 'taxonomy*ee_edit_event_category' => array( '!=', 'espresso_event_categories' )
+				));
+		$this->_cap_restrictions[ EEM_Base::caps_edit ]['ee_edit_venue_category'] = new EE_Default_Where_Conditions(
+				array(
+					$path_to_tax_model . 'taxonomy*ee_edit_venue_category' => array( '!=', 'espresso_venue_categories' )
+				));
+		$this->_cap_restrictions[ EEM_Base::caps_edit ]['ee_edit_event_type'] = new EE_Default_Where_Conditions(
+				array(
+					$path_to_tax_model . 'taxonomy*ee_edit_event_type' => array( '!=', 'espresso_event_type' )
+				));
+
+		//add cap restrictions for deleting relating to the "ee_deleting_*"
+		$this->_cap_restrictions[ EEM_Base::caps_delete ]['ee_delete_event_category'] = new EE_Default_Where_Conditions(
+				array(
+					$path_to_tax_model . 'taxonomy*ee_delete_event_category' => array( '!=', 'espresso_event_categories' )
+				));
+		$this->_cap_restrictions[ EEM_Base::caps_delete ]['ee_delete_venue_category'] = new EE_Default_Where_Conditions(
+				array(
+					$path_to_tax_model . 'taxonomy*ee_delete_venue_category' => array( '!=', 'espresso_venue_categories' )
+				));
+		$this->_cap_restrictions[ EEM_Base::caps_delete ]['ee_delete_event_type'] = new EE_Default_Where_Conditions(
+				array(
+					$path_to_tax_model . 'taxonomy*ee_delete_event_type' => array( '!=', 'espresso_event_type' )
+				));
 
 		parent::__construct( $timezone );
 	}
-
-
-
 
 }
 // End of file EEM_Term_Taxonomy.model.php

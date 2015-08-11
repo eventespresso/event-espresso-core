@@ -11,11 +11,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group models
+ * @group core/db_models
+ * @group capabilities
+ * @group EEM_Base_Test
  *
  * ------------------------------------------------------------------------
- */
-/**
- * @group core/db_models
  */
 class EEM_Base_Test extends EE_UnitTestCase{
 	public function test_models_defined_ok(){
@@ -211,6 +212,37 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	}
 
 	/**
+	 *
+	 * @group 7151
+	 */
+	function test_refresh_entity_map_from_db__serialized_object() {
+		//get an object purposefully out-of-sync with the DB
+		//call this and make sure it's wiped clean and
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array( 'PAY_amount' => 25 ) );
+		$p->save();
+		$this->assertEquals( $p, EEM_Payment::instance()->get_from_entity_map( $p->ID() ) );
+		//ok now remember that ID, serialize the payment, and otherwise remove the object
+		$p_id = $p->ID();
+		$p_serialized = serialize( $p );
+		unset( $p );
+		EEM_Payment::reset();
+		//now manually update it in teh DB, but not the model object
+		global $wpdb;
+		$affected = $wpdb->query( $wpdb->prepare( "update {$wpdb->prefix}esp_payment SET PAY_amount = 100, TXN_ID = 0 WHERE PAY_ID = %d", $p_id ) );
+		$this->assertEquals( 1, $affected );
+		//now unserialize it and verify it's what we thought it was
+		$p_unserialized = unserialize( $p_serialized );
+		$this->assertEquals( $p_id, $p_unserialized->ID() );
+		$this->assertEquals( 25, $p_unserialized->get( 'PAY_amount' ) );
+		//and when it's refreshed, its PAY_amount should be updated too and it should no longer have any transaction cached or even findable
+		$p_unserialized = EEM_Payment::instance()->refresh_entity_map_from_db( $p_unserialized->ID() );
+		$this->assertEquals( 100, $p_unserialized->get( 'PAY_amount' ) );
+		$this->assertEquals( 0, $p_unserialized->get( 'TXN_ID' ) );
+		$this->assertEquals( array(), $p_unserialized->get_all_from_cache( 'Transaction' ) );
+		$this->assertEquals( null, $p_unserialized->transaction() );
+	}
+
+	/**
 	 * @group 7151
 	 */
 	function test_fresh_entity_map_with(){
@@ -280,6 +312,191 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	}
 
 	/**
+	 * Checks that we can correctly apply backend read caps where there is only
+	 * one cap controlling access to the model
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_admin_read__basic(){
+		$this->assertEquals( 0, EEM_Transaction::instance()->count() );
+		$this->new_typical_transaction();
+		$current_user = $this->_ensure_current_user_set();
+		//let's test first on transactions, which just have a single cap controlling access
+		//which the current user doesn't have so nothing should be found
+		$this->assertEquals( 0, EEM_Transaction::instance()->count( array( 'caps' => EEM_Base::caps_read_admin ) ) );
+		//now give the user permission to access transactions and make sure he can
+		$current_user->add_cap( 'ee_read_transactions' );
+		$this->assertEquals( EEM_Transaction::instance()->count(), EEM_Transaction::instance()->count( array( 'caps' => EEM_Base::caps_read_admin ) ) );
+	}
+
+	/**
+	 * Checks that we can correctly apply backend read caps where there are two
+	 * caps controlling access to the model: the basic cap (eg 'ee_read_registrations')
+	 * and the 'others' cap (eg 'ee_read_others_registrations' )
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_admin_read__basic_and_others(){
+		$current_user = $this->_ensure_current_user_set();
+		$mtg_mine = $this->new_model_obj_with_dependencies( 'Message_Template_Group', array( 'MTP_user_id' => $current_user->ID, 'MTP_is_global' => false ) );
+		$mtg_others = $this->new_model_obj_with_dependencies( 'Message_Template_Group', array( 'MTP_user_id' => $current_user->ID + 1,  'MTP_is_global' => false ) );
+		//current user can't access messages
+		$this->assertEquals( 0, EEM_Message_Template_Group::instance()->count( array( 'caps' => EEM_Base::caps_read_admin ) ) );
+		//ok now allow them to see their own messages
+		$current_user->add_cap( 'ee_read_messages' );
+		$mtgs_i_can_see_now = EEM_Message_Template_Group::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin ) );
+		$this->assertEquals( 1, count( $mtgs_i_can_see_now ) );
+		$first_mtg_i_can_see_now = reset( $mtgs_i_can_see_now );
+		$this->assertEquals( $mtg_mine, $first_mtg_i_can_see_now );
+
+		//ok now allowthem to see others non-global messages (tesing global-related-caps should happen on EEM_Message_template_Group_Test)
+		$current_user->add_cap( 'ee_read_others_messages' );
+		$mtgs_i_can_see_now = EEM_Message_Template_Group::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin, array( 'MTP_is_global' => false ) ) );
+		$this->assertEquals( 2, count( $mtgs_i_can_see_now ) );
+		$first_mtg_i_can_see_now = reset( $mtgs_i_can_see_now );
+		$this->assertEquals( $mtg_mine, $first_mtg_i_can_see_now );
+		$last_mtg_i_can_see_now = end( $mtgs_i_can_see_now );
+		$this->assertEquals( $mtg_others, $last_mtg_i_can_see_now );
+	}
+
+	/**
+	 * Checks that we can correctly apply backend read caps where there are three
+	 * caps controlling access to the model: the basic cap (eg 'ee_read_events')
+	 * and the 'others' cap (eg 'ee_read_others_events' ) and the
+	 * 'private' cap (eg 'ee_read_private_events')
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_admin_read__basic_others_and_private(){
+		$current_user = $this->_ensure_current_user_set();
+		$my_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID, 'status' => 'publish' ) );
+		$others_public_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID + 1, 'status' => 'publish' ) );
+		$others_private_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID + 1, 'status' => 'private' ) );
+		//although there are 3 events, the current user shouldn't have permission to see any in the admin
+		$this->assertEquals( 3, EEM_Event::instance()->count() );
+		$this->assertEquals( 0, EEM_Event::instance()->count( array( 'caps' => EEM_Base::caps_read_admin ) ) );
+
+		//ok give them the cap to view their own
+		$current_user->add_cap( 'ee_read_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin ) );
+		$this->assertEquals( 1, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $my_e, $first_event_i_can_see );
+
+		//ok now allowthem to see others, but not others private events
+		$current_user->add_cap( 'ee_read_others_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin ) );
+		$this->assertEquals( 2, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $my_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $second_event_i_can_see );
+
+		//ok now allowthem to see others private events
+		$current_user->add_cap( 'ee_read_private_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read_admin, 'order_by' => array( 'EVT_ID' => 'ASC' ) ) );
+		$this->assertEquals( 3, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $my_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $second_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_private_e, $second_event_i_can_see );
+	}
+
+	/**
+	 * Checks that we can correctly apply FRONTEND  read caps where there are three
+	 * caps controlling access to the model: the basic cap (eg 'ee_read_events')
+	 * and the 'others' cap (eg 'ee_read_others_events' ) and the
+	 * 'private' cap (eg 'ee_read_private_events')
+	 * @group model_caps
+	 */
+	public function test_get_all__caps_read_read__basic_others_and_private(){
+		$others_public_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => 45678, 'status' => 'publish' ) );
+		$others_private_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => 3456, 'status' => 'private' ) );
+		$others_draft_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => 1234, 'status' => 'draft' ) );
+		//although there are 3 events, the current user shouldn't have permission to see any in the admin
+		$this->assertEquals( 3, EEM_Event::instance()->count() );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read ) );
+		$this->assertEquals( 1, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+
+		//ok great. now let's authenticate and create some events for the authenticated user
+		$current_user = $this->_ensure_current_user_set();
+		//ok give them the cap to view their own
+		$current_user->add_cap( 'ee_read_events' );
+		$my_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID, 'status' => 'publish' ) );
+		$my_private_e = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $current_user->ID, 'status' => 'private' ) );
+		$this->assertEquals( 5, EEM_Event::instance()->count() );
+
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read, 'order_by' => array( 'EVT_ID' => 'ASC' ) ) );
+		$this->assertEquals( 3, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $third_event_i_can_see );
+
+
+		//ok great. give them the cap to view others
+		$current_user->add_cap( 'ee_read_others_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read, 'order_by' => array( 'EVT_ID' => 'ASC' ) ) );
+		$this->assertEquals( 4, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_draft_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $third_event_i_can_see );
+		$fourth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $fourth_event_i_can_see );
+
+
+		//ok now allowthem to see others, but not others private events
+		$current_user->add_cap( 'ee_read_others_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read, 'order_by' => array( 'EVT_ID' => 'ASC'  ) ) );
+		$this->assertEquals( 4, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_draft_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $third_event_i_can_see );
+		$fourth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $fourth_event_i_can_see );
+
+
+		//ok now allowthem to see others private events
+		$current_user->add_cap( 'ee_read_private_events' );
+		$events_i_can_see = EEM_Event::instance()->get_all( array( 'caps' => EEM_Base::caps_read, 'order_by' => array( 'EVT_ID' => 'ASC'  ) ) );
+		$this->assertEquals( 5, count( $events_i_can_see ) );
+		$first_event_i_can_see = reset( $events_i_can_see );
+		$this->assertEquals( $others_public_e, $first_event_i_can_see );
+		$second_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_private_e, $second_event_i_can_see );
+		$third_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $others_draft_e, $third_event_i_can_see );
+		$fourth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_e, $fourth_event_i_can_see );
+		$fifth_event_i_can_see = next( $events_i_can_see );
+		$this->assertEquals( $my_private_e, $fifth_event_i_can_see );
+
+	}
+
+
+	/**
+	 * Makes sure the current user global is set and returns whoever that is
+	 * @global WP_User $current_user
+	 * @return WP_User
+	 */
+	protected function _ensure_current_user_set() {
+		global $current_user;
+		if( ! $current_user instanceof WP_User || ( $current_user instanceof WP_User && $current_user->ID == 0 ) ) {
+			$current_user = $this->factory->user->create_and_get();
+		}
+		return $current_user;
+	}
+
+	/**
 	 * Tests that when we get rows from the database and a secondary table has no row,
 	 * but the primary one does, that the fields for the secondary table are given
 	 * DEFAULT values instead of NULLs
@@ -328,7 +545,6 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			//make sure this model is queryable and when we fetch its items that there's no errors
 			$model->get_all();
 		}
-
 	}
 
 

@@ -35,7 +35,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_question_table;
 	function __construct() {
 		global $wpdb;
-		$this->_pretty_name = __("Prices", "event_espresso");
+		$this->_pretty_name = __("Answers", "event_espresso");
 		$this->_old_table = $wpdb->prefix."events_answer";
 		$this->_new_answer_table = $wpdb->prefix."esp_answer";
 		$this->_new_question_table = $wpdb->prefix."esp_question";
@@ -54,9 +54,6 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		//as inefficient as this sounds, we create an answer per REGISTRATION, (even if the registrations use the same attendee)
 		foreach($regs as $new_reg_id){
 			$new_answer_id = $this->_insert_new_answer($old_row,$new_reg_id);
-			if($new_answer_id){
-				$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_answer_table, $new_answer_id);
-			}	
 		}
 	}
 	/**
@@ -66,11 +63,11 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 	 * @param int $new_reg_id
 	 * @return int
 	 */
-	private function _insert_new_answer($old_answer,$new_reg_id){		
+	private function _insert_new_answer($old_answer,$new_reg_id){
 		global $wpdb;
 		$old_question_table = $wpdb->prefix."events_question";
 		$new_question_id = $this->get_migration_script()->get_mapping_new_pk($old_question_table, $old_answer['question_id'], $this->_new_question_table);
-		
+
 		$question_type = $this->_get_question_type($new_question_id);
 		if(in_array($question_type,array('MULTIPLE'))){
 			$ans_value = serialize(explode(",",stripslashes($old_answer['answer'])));
@@ -95,7 +92,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	/**
 	 * Gets the question's type
 	 * @global type $wpdb
@@ -107,5 +104,5 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		$type = $wpdb->get_var($wpdb->prepare("SELECT QST_type FROM ".$this->_new_question_table." WHERE QST_ID=%d LIMIT 1",$question_id));
 		return $type;
 	}
-	
+
 }

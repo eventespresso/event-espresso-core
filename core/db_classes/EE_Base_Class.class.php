@@ -245,6 +245,65 @@ abstract class EE_Base_Class{
 
 
 
+
+
+	/**
+	 * This sets the field value on the db column if it exists for the given $column_name or
+	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
+	 *
+	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
+	 *
+	 * @param string $field_name Must be the exact column name.
+	 * @param mixed  $field_value  The value to set.
+	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
+	 */
+	public function set_field_or_extra_meta( $field_name, $field_value ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
+			$this->set( $field_name, $field_value );
+			return true;
+		} else {
+			//ensure this object is saved first so that extra meta can be properly related.
+			$this->save();
+			return $this->update_extra_meta( $field_name, $field_value );
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * This retrieves the value of the db column set on this class or if that's not present
+	 * it will attempt to retrieve from extra_meta if found.
+	 *
+	 * Example Usage:
+	 * Via EE_Message child class:
+	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
+	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
+	 * also have additional main fields specific to the messenger.  The system accommodates those extra
+	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
+	 * value for those extra fields dynamically via the EE_message object.
+	 *
+	 * @param  string $field_name  expecting the fully qualified field name.
+	 * @return mixed|null  value for the field if found.  null if not found.
+	 */
+	public function get_field_or_extra_meta( $field_name ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
+			$column_value = $this->get( $field_name );
+		} else {
+			//This isn't a column in the main table, let's see if it is in the extra meta.
+			$column_value = $this->get_extra_meta( $field_name, true, null );
+		}
+		return $column_value;
+	}
+
+
+
+
+
+
+
 	/**
 	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally for being able to reference what timezone we are running conversions on when converting TO the internal timezone (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
 	 *  This is available to all child classes that may be using the EE_Datetime_Field for a field data type.
@@ -1441,15 +1500,15 @@ abstract class EE_Base_Class{
 	 * @param mixed  $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName               eg 'Events','Question',etc.
 	 *                                           an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specify array('role-column-name'=>'role-id')
-	 * @param array  $where_query                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $extra_join_model_fields_n_values                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @param null   $cache_id
 	 * @throws EE_Error
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
+	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $extra_join_model_fields_n_values = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
 		if( $this->ID() ){
-			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
 		} else {
@@ -1549,7 +1608,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params   like EEM_Base::get_all's
 	 * @param string $field_to_count name of field to count by. By default, uses primary key
 	 * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
@@ -1564,7 +1623,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
-	 * @param        $relation_name model_name like 'Event', or 'Registration'
+	 * @param string $relation_name model_name like 'Event', or 'Registration'
 	 * @param array  $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by.
 	 * 						By default, uses primary key (which doesn't make much sense, so you should probably change it)
@@ -1940,6 +1999,15 @@ abstract class EE_Base_Class{
 				);
 			}
 		}
+	}
+
+	/**
+	 * Because some other plugins, like Advanced Cron Manager, expect all objects to have this method
+	 * (probably a bad assumption they have made, oh well)
+	 * @return string
+	 */
+	public function __toString(){
+		return sprintf( '%s (%s)', $this->name(), $this->ID() );
 	}
 
 
