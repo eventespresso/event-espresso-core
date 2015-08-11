@@ -5,8 +5,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Line_Item_Filter_Base
  *
- * Description
+ * Abstract parent class for EE_Line_Item_Filters
  *
+ * @see \EEI_Line_Item_Filter
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen

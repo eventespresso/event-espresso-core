@@ -679,7 +679,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * final_price
-	 * total owing for this registration after all ticket/price modifications
+	 * the registration's share of the transaction total, so that the
+	 * sum of all the transaction's REG_final_prices equal the transaction's total
 	 * @access        public
 	 * @return    float
 	 */

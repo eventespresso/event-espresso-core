@@ -5,7 +5,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Line_Item_Filter_Collection
  *
- * Description
+ * An EE_Object_Collection object that type checks
+ * for EEI_Line_Item_Filter objects when adding to the collection
  *
  * @package               Event Espresso
  * @subpackage            core

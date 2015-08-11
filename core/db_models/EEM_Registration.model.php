@@ -108,7 +108,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
 				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, time(), $timezone ),
-				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration after all ticket/price modifications','event_espresso'), false, 0),
+				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Registration\'s share of the transaction total','event_espresso'), false, 0),
 				'REG_paid'=>new EE_Money_Field('REG_paid', __('Amount paid to date towards registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
@@ -278,7 +278,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
-	
+
 		$sql_date = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
 		$where = array( 'REG_date' => array( '>=', $sql_date ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 

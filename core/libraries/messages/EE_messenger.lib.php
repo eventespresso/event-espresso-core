@@ -649,8 +649,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( ! $send ) {
 			// the below may seem like duplication.  However, typically if a messenger enqueues scripts/styles,
 			// it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
-			//error message
-			EE_Registry::$i18n_js_strings[ 'links_disabled' ] = __( 'All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso' );
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
 			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
 		}
@@ -669,7 +667,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return void
 	 */
 	public function add_preview_script() {
-		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'espresso_core' ), EVENT_ESPRESSO_VERSION, true );
+		//error message
+		EE_Registry::$i18n_js_strings[ 'links_disabled' ] = __( 'All the links on this page have been disabled because this is a generated preview message for the purpose of ensuring layout, style, and content setup.  To test generated links, you must trigger an actual message notification.', 'event_espresso' );
+		wp_register_script( 'ee-messages-preview-js', EE_LIBRARIES_URL . 'messages/messenger/assets/js/ee-messages-preview.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, true );
+		wp_localize_script( 'ee-messages-preview-js', 'eei18n', EE_Registry::$i18n_js_strings );
 		wp_enqueue_script( 'ee-messages-preview-js' );
 	}
 
@@ -680,7 +681,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * simply validates the incoming message object and then sets up the properties for the messenger
 	 * @param  EE_Message $message
 	 * @throws EE_Error
-	 * @return void
 	 */
 	protected function _validate_and_setup( EE_Message $message ) {
 		$template_pack = $message->get_template_pack();
@@ -708,14 +708,13 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-
 	/**
 	 * Utility method for child classes to get the contents of a template file and return
 	 *
 	 * We're assuming the child messenger class has already setup template args!
-	 * @param  string  	$template url for template
-	 * @param  bool 	$preview if true we use the preview wrapper otherwise we use main wrapper.
+	 * @param  bool $preview if true we use the preview wrapper otherwise we use main wrapper.
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
 		$type = $preview ? 'preview' : 'main';

@@ -6,6 +6,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Line Item Filter Interface
  *
+ * Defines the contract required by classes that employ EE_Line_Item_Filters
+ * the process() method accepts an EEI_Line_Item object
+ * and returns an EEI_Line_Item object that may or may not have been modified
+ * OR can even return null if the line item should be removed entirely
+ *
  * @package    Event Espresso
  * @subpackage interfaces
  * @since      4.8.0

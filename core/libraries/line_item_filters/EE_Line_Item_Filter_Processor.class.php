@@ -10,6 +10,25 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * clones the entire grand total line item tree so that the original will not be affected
  * then process() applies each filter to the cloned grand total line item tree
  *
+ * example:
+ *
+ * 		// make sure to setup autoloaders
+ * 		EEH_Autoloader::register_line_item_filter_autoloaders();
+ * 		// create a collection to hold our filters
+ * 		$line_item_filter_collection = new EE_Line_Item_Filter_Collection();
+ * 		$line_item_filter_collection->add( new EE_Billable_Line_Item_Filter( $array_of_EE_Registrations() ) );
+ * 		$line_item_filter_collection->add( new EE_Non_Zero_Line_Item_Filter() );
+ * 		// create the main processor, and pass it our filter collection, and a grand total line item
+ * 		// which will be used to construct a clone of the entire line item tree
+ * 		$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
+ * 			$line_item_filter_collection,
+ * 			$EE_Cart->get_grand_total()
+ * 		);
+ * 		// then apply filters to the line item tree by calling process()
+ * 		$filtered_line_item_tree = $line_item_filter_processor->process();
+ * 		// the resultant filtered line item tree can then be passed along
+ * 		// to other classes to do what they need to do, such as display
+ *
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen

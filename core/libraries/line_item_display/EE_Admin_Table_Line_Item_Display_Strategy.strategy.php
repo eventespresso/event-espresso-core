@@ -189,7 +189,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_html = $line_item_related_object instanceof EEI_Has_Icon ? $line_item_related_object->get_icon() . $name_html : $name_html;
 		$name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
 		$name_html .=  sprintf(
-			_x( '%1$sfor the %2$s, %3$s%4$s', 'eg. "for the Event, My Cool Event"', 'event_espresso'),
+			_x( '%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
 			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type() : __( 'Item:', 'event_espresso' ),
 			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
