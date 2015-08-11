@@ -660,7 +660,9 @@ class EE_Line_Item extends EE_Base_Class {
 		$this->set_total( $total );
 		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
+			$this->transaction()->save();
 		}
+		$this->maybe_save();
 		return $total;
 	}
 
@@ -684,6 +686,7 @@ class EE_Line_Item extends EE_Base_Class {
 			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
 			$total = $this->unit_price() * $this->quantity();
 			$this->set_total( $total );
+			$this->maybe_save();
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
 			foreach ( $this->children() as $child_line_item ) {
@@ -700,6 +703,7 @@ class EE_Line_Item extends EE_Base_Class {
 			//and grand totals shouldn't be updated when calculating pre-tax totals
 			if( $this->is_sub_total() ){
 				$this->set_total( $total );
+				$this->maybe_save();
 			}
 		}
 		return $total;
@@ -903,6 +907,21 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 		}
 	}
+
+
+
+	/**
+	 * If this item has an ID, then this saves it again to update the db
+	 *
+	 * @return int count of items saved
+	 */
+	public function maybe_save() {
+		if ( $this->ID() ) {
+			return $this->save();
+		}
+		return false;
+	}
+
 
 
 }

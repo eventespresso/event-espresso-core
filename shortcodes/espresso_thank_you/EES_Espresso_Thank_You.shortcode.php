@@ -79,7 +79,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * whether the selected payment method is Bank, Check , Invoice, etc
 	 * @var boolean $_is_offline_payment_method
 	 */
-	private $_is_offline_payment_method = FALSE;
+	private $_is_offline_payment_method = true;
 
 
 
@@ -310,7 +310,19 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 		$this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method ? TRUE : FALSE;
 
-		$this->_is_offline_payment_method = $this->_current_txn->payment_method() instanceof EE_Payment_Method && $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
+		if (
+			// if payment method is unknown
+			! $this->_current_txn->payment_method() instanceof EE_Payment_Method ||
+			(
+				// or is an offline payment method
+				$this->_current_txn->payment_method() instanceof EE_Payment_Method &&
+				$this->_current_txn->payment_method()->is_off_line()
+			)
+		) {
+			$this->_is_offline_payment_method = true;
+		} else {
+			$this->_is_offline_payment_method = false;
+		}
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
 			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>$this->_reg_url_link ),
@@ -742,7 +754,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			'PAY_amount'=>$this->_current_txn->total(),
 			'PMD_ID'=>$this->_current_txn->payment_method_ID()
 		));
-		$template_args['gateway_content'] = $this->_current_txn->payment_method()->type_obj()->payment_overview_content($payment);//EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
+		$payment_method = $this->_current_txn->payment_method();
+		if ( $payment_method instanceof EE_Payment_Method && $payment_method->type_obj() instanceof EE_PMT_Base ) {
+			$template_args[ 'gateway_content' ] = $payment_method->type_obj()->payment_overview_content( $payment );
+		} else {
+			$template_args[ 'gateway_content' ] = '';
+		}
 		// link to SPCO payment_options
 		$template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
 		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;
