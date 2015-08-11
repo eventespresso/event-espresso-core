@@ -1,7 +1,7 @@
 #Event Espresso 4 Core
 
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.7.6.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
+[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.7.10.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.2.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
@@ -14,12 +14,12 @@
 Purchase a [Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=premium+support+license) to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=one+click+upgrades), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=growing+list+of+addons)).
 
 ## Installing Event Espresso
-Event Espresso can be installed via the WordPress Dashboard or through FTP or SFTP. 
+Event Espresso can be installed via the WordPress Dashboard or through FTP or SFTP.
 
 [View Event Espresso 4 Install Documentation →](http://eventespresso.com/wiki/installing-event-espresso/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+install+documentation)
 
 ## Documentation
-Resources on Event Espresso 4 for a beginner to advanced users. 
+Resources on Event Espresso 4 for a beginner to advanced users.
 
 [View Event Espresso 4 Documentation →](http://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
