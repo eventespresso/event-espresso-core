@@ -112,6 +112,8 @@
 		<li><a href="https://github.com/Veraxus">Matt Van Andel</a></li>
 		<li><a href="https://github.com/jonathan-dejong">Jonathan de Jong</a></li>
 		<li><a href="https://github.com/richardtape">Richard Tape</a></li>
+		<li><a href="https://github.com/robert-osborne">Robert Osborne</a></li>
+		<li><a href="https://github.com/rgunawans">Robby Gunawan Sutanto</a></li>
 	</ul>
 
 </p>
