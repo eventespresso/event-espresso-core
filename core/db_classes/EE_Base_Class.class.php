@@ -2148,6 +2148,47 @@ abstract class EE_Base_Class{
 		return sprintf( '%s (%s)', $this->name(), $this->ID() );
 	}
 
+	/**
+	 * Clear related model objects if they're already in the DB, because otherwise when we
+	 * UNserialize this model object we'll need to be careful to add them to the entity map.
+	 * This means if we have made changes to those related model obejcts, and want to unserialize
+	 * the this model object on a subsequent request, changes to those related model objects will be lost.
+	 * Instead, those related model objects should be directly serialized and stored.
+	 * Eg, the following won't work:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $reg = get_option( 'my_option' );
+	 * $reg->attendee()->save();
+	 *
+	 * And would need to be replace with:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $att = get_option( 'my_option' );
+	 * $att->save();
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+				$classname = 'EE_' . $this->get_model()->get_this_model_name();
+				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
+						$this->get_one_from_cache( $relation_name )->ID() ) {
+					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
+				}
+			}
+		}
+		return array_keys( get_object_vars( $this ) );
+	}
+
 
 
 }
