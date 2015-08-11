@@ -61,13 +61,13 @@ final class EE_Request_Handler {
 	/**
 	 *    class constructor
 	 *
-	 * @access    public
-	 * @param WP_Query $wp
+	 * @access public
+	 * @param WP $wp
 	 * @return \EE_Request_Handler
 	 */
 	public function __construct( $wp = null ) {
 		//if somebody forgot to provide us with WP, that's ok because its global
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		// grab request vars
@@ -85,7 +85,7 @@ final class EE_Request_Handler {
 	 *    set_request_vars
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return void
 	 */
 	public function set_request_vars( $wp = null ) {
@@ -107,11 +107,11 @@ final class EE_Request_Handler {
 	 *    get_post_id_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return int
 	 */
 	public function get_post_id_from_request( $wp = null ) {
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		$post_id = null;
@@ -135,11 +135,11 @@ final class EE_Request_Handler {
 	 *    get_post_name_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return string
 	 */
 	public function get_post_name_from_request( $wp = null ) {
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		$post_name = null;
@@ -154,7 +154,7 @@ final class EE_Request_Handler {
 			if ( ! is_numeric( $possible_post_name )) {
 				/** @type WPDB $wpdb */
 				global $wpdb;
-				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_status="publish" AND post_name=%d';
+				$SQL = "SELECT ID from $wpdb->posts WHERE post_status='publish' AND post_name=%s";
 				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
 				if ( $possible_post_name ) {
 					$post_name = $possible_post_name;
@@ -164,7 +164,7 @@ final class EE_Request_Handler {
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			/** @type WPDB $wpdb */
 			global $wpdb;
-			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_status="publish" AND ID=%d';
+			$SQL = "SELECT post_name from $wpdb->posts WHERE post_status='publish' AND ID=%d";
 			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
 			if( $possible_post_name ) {
 				$post_name = $possible_post_name;
@@ -179,15 +179,40 @@ final class EE_Request_Handler {
 	 *    get_post_type_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return mixed
 	 */
 	public function get_post_type_from_request( $wp = null ) {
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		return isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : null;
 	}
+
+
+
+	/**
+	 * Just a helper method for getting the url for the displayed page.
+	 * @param  WP $wp
+	 * @return bool|string|void
+	 */
+	public function get_current_page_permalink( $wp = null ) {
+		$post_id = $this->get_post_id_from_request( $wp );
+		if ( $post_id ) {
+			$current_page_permalink = get_permalink( $post_id );
+		} else {
+			if ( ! $wp instanceof WP ) {
+				global $wp;
+			}
+			if ( $wp->request ) {
+				$current_page_permalink = site_url( $wp->request );
+			} else {
+				$current_page_permalink = esc_url( site_url( $_SERVER[ 'REQUEST_URI' ] ) );
+			}
+		}
+		return $current_page_permalink;
+	}
+
 
 
 	/**

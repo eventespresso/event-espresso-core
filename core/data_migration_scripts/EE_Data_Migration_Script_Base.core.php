@@ -440,6 +440,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
 	/**
+	 * _old_table_exists
+	 * returns TRUE if the requested table exists in the current database
+	 * @param string $table_name
+	 * @return boolean
+	 */
+	protected function _old_table_exists( $table_name ) {
+		EE_Registry::instance()->load_helper( 'Activation' );
+		return EEH_Activation::table_exists( $table_name );
+	}
+
+
+
+	/**
 	 * It is preferred to use _table_has_not_changed_since_previous or _table_is_changed_in_this_version
 	 * as these are significantly more efficient.
 	 * Please see description of _table_is_new_in_this_version. This function will only set

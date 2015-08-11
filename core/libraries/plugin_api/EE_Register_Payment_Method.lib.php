@@ -45,7 +45,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API {
 	 *		EE_PMT_Payomatic.pm.php)
 	 * }
 	 * @throws EE_Error
-	 * @internal param string payment_method_paths 	an array of full server paths to folders containing any EE_PMT_Base children, or to the EED_Module files themselves
+	 * @type array payment_method_paths 	an array of full server paths to folders containing any EE_PMT_Base children, or to the EED_Module files themselves
 	 * @return void
 	 */
 	public static function register( $payment_method_id = NULL, $setup_args = array()  ) {

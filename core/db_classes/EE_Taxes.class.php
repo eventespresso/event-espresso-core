@@ -50,6 +50,19 @@ class EE_Taxes extends EE_BASE {
 		return $total_tax;
 	}
 
+	/**
+	 * Gets the total percentage of tax that should be applied to taxable line items
+	 * @return float the percentage of tax that should be added to taxable items
+	 * eg 20 for %20 tax (NOT 0.20, which
+	 */
+	public static function get_total_taxes_percentage() {
+		$total_tax_percent = 0;
+		foreach( self::get_taxes_for_admin() as $tax_price ) {
+			$total_tax_percent += $tax_price->get( 'PRC_amount' );
+		}
+		return $total_tax_percent;
+	}
+
 
 
 	/**
