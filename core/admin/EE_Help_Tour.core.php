@@ -239,7 +239,7 @@ abstract class EE_Help_Tour extends EE_Base {
 
 	/**
 	 * get options
-	 * @return void
+	 * @return array
 	 */
 	public function get_options() {
 		//let's make sure there are not pauses set

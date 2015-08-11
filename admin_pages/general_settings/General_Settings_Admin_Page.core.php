@@ -220,7 +220,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//scripts
 		wp_enqueue_script('ee_admin_js');
 	}
-	public function admin_init() {}
+
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'invalid_server_response' ] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'error_occurred' ] = __( 'An error occurred! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'confirm_delete_state' ] = __( 'Are you sure you want to delete this State / Province?', 'event_espresso' );
+		$protocol = isset( $_SERVER[ 'HTTPS' ] ) ? 'https://' : 'http://';
+		EE_Registry::$i18n_js_strings[ 'ajax_url' ] = admin_url( 'admin-ajax.php?page=espresso_general_settings', $protocol );
+	}
+
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -247,11 +255,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script( 'gen_settings_countries' );
 		wp_enqueue_style( 'organization-css' );
 
-		EE_Registry::$i18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
-		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
-		EE_Registry::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
 	}
 
 
