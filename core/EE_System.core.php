@@ -613,15 +613,19 @@ final class EE_System {
 	 * so that it will be done when migrations are finished
 	 * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
 	 *		however,
+	 * @param boolean $verify_db_schema if true will re-check the database tables have the correct schema. This is a resource-intensive job
+	 * so we prefer to only do it when necessary
 	 * @return void
 	 */
-	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE ){
+	public function initialize_db_if_no_migrations_required( $initialize_addons_too = FALSE, $verify_schema = true ){
 		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			update_option( 'ee_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
-			EEH_Activation::initialize_db_and_folders();
+			if( $verify_schema ) {
+				EEH_Activation::initialize_db_and_folders();
+			}
 			EEH_Activation::initialize_db_content();
 			if( $initialize_addons_too ) {
 				//foreach registered addon, make sure its db is up-to-date too
@@ -664,7 +668,7 @@ final class EE_System {
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *
-	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
+	 * @param array $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
 	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,

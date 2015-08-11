@@ -107,8 +107,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration after all ticket/price modifications','event_espresso'), false, 0),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, time(), $timezone ),
+				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Registration\'s share of the transaction total','event_espresso'), false, 0),
 				'REG_paid'=>new EE_Money_Field('REG_paid', __('Amount paid to date towards registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
@@ -180,6 +180,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	private function _get_registration_status_array( $exclude = array() ) {
 		//in the very rare circumstance that we are deleting a model's table's data
 		//and the table hasn't actually been created, this could have an error
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
@@ -252,17 +253,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*		retrieve registration for a specific transaction attendee from db
 	*
 	* 		@access		public
-	* 		@param		$TXN_ID
-	* 		@param		$ATT_ID
-	* 		@param		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
+	* 		@param	int	$TXN_ID
+	* 		@param    int		$ATT_ID
+	* 		@param    int		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_registration_for_transaction_attendee( $TXN_ID = FALSE, $ATT_ID = FALSE, $att_nmbr = FALSE ) {
+	public function get_registration_for_transaction_attendee( $TXN_ID = 0, $ATT_ID = 0, $att_nmbr = 0 ) {
 		return $this->get_one(array(
 			array(
 				'TXN_ID'=>$TXN_ID,
-				'ATT_ID'=>$ATT_ID),
-			'limit'=>array($att_nmbr-1,1)
+				'ATT_ID'=>$ATT_ID
+			),
+			'limit'=>array( min( ( $att_nmbr-1 ), 0 ), 1 )
 		));
 	}
 
@@ -275,12 +277,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
-		$sql_date = date("Y-m-d H:i:s", strtotime($period));
 
-		//don't include incomplete regs by default
-		$where = array('REG_date'=>array('>=',$sql_date), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
+		$sql_date = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
+		$where = array( 'REG_date' => array( '>=', $sql_date ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
-		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
@@ -305,14 +306,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	*		get the number of registrations per event  for the Registration Admin page Reports Tab
 	* 		@access		public
+	 * @param $period string which can be passed to php's strtotime function (eg "-1 month")
 	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
-		$date_sql = date("Y-m-d H:i:s", strtotime($period));
 
-		//do not include incomplete registrations by default
+		$date_sql = $this->convert_datetime_for_query( 'REG_date', date( "Y-m-d H:i:s", strtotime( $period )), 'Y-m-d H:i:s', 'UTC' );
+		$where = array( 'REG_date' => array( '>=', $date_sql ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
-		$where = array( 'REG_date'=>array('>=',$date_sql ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
@@ -338,7 +339,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @param int $TXN_ID
 	 * @return EE_Registration
 	 */
-	public function get_primary_registration_for_transaction_ID( $TXN_ID = FALSE){
+	public function get_primary_registration_for_transaction_ID( $TXN_ID = 0){
 		if( ! $TXN_ID ){
 			return false;
 		}
@@ -364,6 +365,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		return $this->count($query_params);
 	}
 
+	/**
+	 * Deletes all registrations with no transactions. Note that this needs to be very efficient
+	 * and so it uses wpdb directly
+	 * @global WPDB $wpdb
+	 * @return int number deleted
+	 */
+	public function delete_registrations_with_no_transaction() {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		return $wpdb->query(
+				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' . EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL' );
+	}
 
 
 

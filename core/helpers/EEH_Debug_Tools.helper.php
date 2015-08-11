@@ -26,6 +26,12 @@ class EEH_Debug_Tools{
 	 */
 	private $_times = array();
 
+	/**
+	 *
+	 * @var array
+	 */
+	protected $_memory_usage_points = array();
+
 
 
 	/**
@@ -209,6 +215,29 @@ class EEH_Debug_Tools{
 		}
 		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0em 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
 	 }
+	 /**
+	  * Measure the memory usage by PHP so far.
+	  * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
+	  * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+	  * @return void
+	  */
+	 public function measure_memory( $label, $output_now = false ) {
+		 $memory_used = $this->convert( memory_get_peak_usage( true ) );
+		 $this->_memory_usage_points[ $label ] = $memory_used;
+		 if( $output_now ) {
+			 echo "\r\n<br>$label : $memory_used";
+		 }
+	 }
+
+	 /**
+	  * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
+	  * @param int $size
+	  * @return string
+	  */
+	 public function convert( $size ) {
+		$unit=array('b','kb','mb','gb','tb','pb');
+		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
+	 }
 
 
 
@@ -218,11 +247,12 @@ class EEH_Debug_Tools{
 	 * @return string
 	 */
 	public function show_times($output_now=true){
+		$output = '<h2>Times:</h2>' . implode("<br>",$this->_times) . '<h2>Memory</h2>' . implode('<br>', $this->_memory_usage_points );
 		 if($output_now){
-			 echo implode("<br>",$this->_times);
+			 echo $output;
 			 return '';
 		 }
-		return implode("<br>",$this->_times);
+		return $output;
 	 }
 
 
@@ -264,14 +294,15 @@ class EEH_Debug_Tools{
 	 *
 	 * @access public
 	 * @param  string $function The function that was called
-	 * @param  string $message  A message explaining what has been done incorrectly
-	 * @param  string $version  The version of Event Espresso where the error was added
+	 * @param  string $message A message explaining what has been done incorrectly
+	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param int     $error_type
 	 * @uses trigger_error()
 	 */
-	public function doing_it_wrong( $function, $message, $version ) {
+	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
 		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
-		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), E_USER_DEPRECATED );
+		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), $error_type );
 	}
 
 

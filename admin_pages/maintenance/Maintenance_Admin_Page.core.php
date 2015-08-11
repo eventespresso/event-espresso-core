@@ -250,17 +250,20 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			}
 
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
-			$this->_template_args = array_merge($this->_template_args,array(
-			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
-			'show_migration_progress' => $show_migration_progress,//flag for showing the option to run migrations and see their progress
-			'show_backup_db_text' => $show_backup_db_text,//flag for showing text telling the user to backup their DB
-			'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
-			'script_names'=>$script_names,//array of names of scripts that have run
-			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
-			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL),
-			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
-			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
-		));
+			$this->_template_args = array_merge(
+				$this->_template_args,
+				array(
+					'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
+					'show_migration_progress' => $show_migration_progress,//flag for showing the option to run migrations and see their progress
+					'show_backup_db_text' => $show_backup_db_text,//flag for showing text telling the user to backup their DB
+					'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
+					'script_names'=>$script_names,//array of names of scripts that have run
+					'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
+					'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL),
+					'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
+					'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
+				)
+			);
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		//localize script stuff
@@ -423,6 +426,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		if( $nuke_old_ee4_data ){
 			EEH_Activation::delete_all_espresso_cpt_data();
 			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
+			EEH_Activation::remove_cron_tasks();
 		}
 		//make sure when we reset the registry's config that it
 		//switches to using the new singleton
@@ -441,6 +445,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 		EEH_Activation::delete_all_espresso_cpt_data();
 		EEH_Activation::delete_all_espresso_tables_and_data();
+		EEH_Activation::remove_cron_tasks();
 		EEH_Activation::deactivate_event_espresso();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
 		exit;

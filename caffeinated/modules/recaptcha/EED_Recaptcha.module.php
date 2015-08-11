@@ -64,6 +64,7 @@ class EED_Recaptcha  extends EED_Module {
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
+			add_filter( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array( 'EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method' ), 10, 1 );
 		}
 	}
 
@@ -194,6 +195,19 @@ class EED_Recaptcha  extends EED_Module {
 
 
 
+	/**
+	 * bypass_recaptcha_for_spco_load_payment_method
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public static function bypass_recaptcha_for_spco_load_payment_method() {
+		return array(
+			'EESID' 		=> EE_Registry::instance()->SSN->id(),
+			'step' 		=> 'payment_options',
+			'action' 	=> 'switch_spco_billing_form'
+		);
+	}
 
 
 
@@ -290,24 +304,29 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	private static function _process_recaptcha_response() {
 		// verify library is loaded
-		if ( ! class_exists( 'ReCaptcha' )) {
-			require_once( RECAPTCHA_BASE_PATH . 'recaptchalib.php' );
+		if ( ! class_exists( '\\ReCaptcha\\ReCaptcha' )) {
+			require_once( RECAPTCHA_BASE_PATH . DS . 'autoload.php' );
 		}
 		// The response from reCAPTCHA
 		EED_Recaptcha::_get_recaptcha_response();
 		$recaptcha_response = EED_Recaptcha::$_recaptcha_response;
 		// Was there a reCAPTCHA response?
 		if ( $recaptcha_response ) {
-			$reCaptcha = new ReCaptcha( EE_Registry::instance()->CFG->registration->recaptcha_privatekey );
-			$recaptcha_response = $reCaptcha->verifyResponse(
-				$_SERVER['REMOTE_ADDR'],
-				EED_Recaptcha::$_recaptcha_response
+			// if allow_url_fopen is Off, then set a different request method
+			$request_method = ! ini_get( 'allow_url_fopen' ) ? new \ReCaptcha\RequestMethod\SocketPost() : null;
+			$recaptcha = new \ReCaptcha\ReCaptcha(
+				EE_Registry::instance()->CFG->registration->recaptcha_privatekey,
+				$request_method
+			);
+			$recaptcha_response = $recaptcha->verify(
+				EED_Recaptcha::$_recaptcha_response,
+				$_SERVER[ 'REMOTE_ADDR' ]
 			);
 		}
-		// sorry... it appears you can't read gibberish chicken scratches !!!
-		if ( $recaptcha_response instanceof ReCaptchaResponse && $recaptcha_response->success ) {
+		if ( $recaptcha_response instanceof \ReCaptcha\Response && $recaptcha_response->isSuccess() ) {
 			return TRUE;
 		}
+		// sorry... it appears you can't don't know what soup or hamburgers are !!!
 		return FALSE;
 	}
 

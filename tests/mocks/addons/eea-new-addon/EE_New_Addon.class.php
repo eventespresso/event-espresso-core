@@ -30,8 +30,8 @@ Class  EE_New_Addon extends EE_Addon {
 			'New_Addon',
 			array(
 				'version' 					=> EE_NEW_ADDON_VERSION,
-				'min_core_version' => '4.3.0.dev.000',
-				'main_file_path' 				=> EE_NEW_ADDON_PLUGIN_FILE,
+				'min_core_version' => EE_NEW_ADDON_CORE_VERSION_REQUIRED,
+				'main_file_path' 		=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_New_Addon_Config',
@@ -55,11 +55,11 @@ Class  EE_New_Addon extends EE_Addon {
 					),
 				'capabilities' => array(
 					'administrator' => array(
-						'read_addon', 'edit_addon', 'edit_others_addon', 'edit_private_addon'
+						'edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'
 						),
 					),
 				'capability_maps' => array(
-					new EE_Meta_Capability_Map_Edit( 'edit_addon', array( 'Event', '', 'edit_others_addon', 'edit_private_addon' ) )
+					'EE_Meta_Capability_Map_Edit' => array( 'edit_thing', array( 'New_Addon_Thing', 'edit_things', 'edit_others_things', 'edit_private_things' ) )
 					),
 				'class_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_classes',
 				'model_paths' => EE_NEW_ADDON_PATH . 'core' . DS . 'db_models',
