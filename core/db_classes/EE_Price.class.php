@@ -28,23 +28,27 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 *
-	 * @param array $props_n_values
-	 * @param string $timezone
-	 * @return EE_Price
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array  $props_n_values
-	 * @param string $timezone
-	 * @return EE_Price
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -94,6 +98,18 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	 */
 	public function set_description( $PRC_desc = '' ) {
 		$this->Set( 'PRC_desc', $PRC_desc );
+	}
+
+
+
+	/**
+	*		set is_default
+	*
+	* 		@access		public
+	*		@param		bool		$PRC_is_default
+	*/
+	public function set_is_default( $PRC_is_default = FALSE ) {
+		$this->set( 'PRC_is_default', $PRC_is_default );
 	}
 
 
@@ -185,6 +201,17 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	 */
 	public function wp_user() {
 		return $this->get('PRC_wp_user');
+	}
+
+
+
+	/**
+	 *    get is_default
+	 * @access        public
+	 * @return        bool
+	 */
+	public function is_default() {
+		return $this->get( 'PRC_is_default' );
 	}
 
 
