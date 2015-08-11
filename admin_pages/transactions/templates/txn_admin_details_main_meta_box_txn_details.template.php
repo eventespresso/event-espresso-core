@@ -161,12 +161,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" data-payment-id="PAY_ID">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" data-payment-id="PAY_ID">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -236,6 +236,17 @@
 			<?php
 			echo sprintf(
 				__( 'Edit Payment #%s for Transaction #%s', 'event_espresso' ),
+				'<span></span>',
+				$txn_nmbr['value']
+			);
+			?>
+		</h2>
+
+		<h2 id="admin-modal-dialog-edit-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
+			<div class="ee-icon ee-icon-cash-edit float-left"></div>
+			<?php
+			echo sprintf(
+				__( 'Edit Refund #%s for Transaction #%s', 'event_espresso' ),
 				'<span></span>',
 				$txn_nmbr['value']
 			);
@@ -368,6 +379,11 @@
 				<li>
 					<a id="txn-admin-modal-dialog-edit-payment-lnk" class="button-primary no-icon" style="display:none;" >
 						<?php _e( 'Save Payment Details', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<a id="txn-admin-modal-dialog-edit-refund-lnk" class="button-primary no-icon" style="display:none;" >
+						<?php _e( 'Save Refund Details', 'event_espresso' );?>
 					</a>
 				</li>
 				<li>
