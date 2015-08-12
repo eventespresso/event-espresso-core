@@ -377,7 +377,7 @@ abstract class EE_Base_Class{
 			if ( $field_obj instanceof EE_Datetime_Field ) {
 				$field_obj->set_timezone( $this->_timezone );
 				if ( isset( $this->_fields[$field_name] ) && $this->_fields[$field_name] instanceof DateTime ) {
-					$this->_fields[$field_name]->setTimeZone( new DateTimeZone( $this->_timezone ) );
+					$this->_fields[$field_name]->setTimezone( new DateTimeZone( $this->_timezone ) );
 				}
 			}
 		}
@@ -1001,7 +1001,7 @@ abstract class EE_Base_Class{
 
 		//clear cached property if either formats are not null.
 		if( $dt_frmt !== null || $tm_frmt !== null ) {
-			$this->_clear_cached_property( $field_name, $date_or_time );
+			$this->_clear_cached_property( $field_name );
 			//reset format properties because they are used in get()
 			$this->_dt_frmt = $in_dt_frmt;
 			$this->_tm_frmt = $in_tm_frmt;

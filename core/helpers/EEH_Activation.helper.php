@@ -197,7 +197,7 @@ class EEH_Activation {
 	public static function reset_and_update_config() {
 		do_action( 'AHEE__EE_Config___load_core_config__start', array( 'EEH_Activation', 'load_calendar_config' ) );
 		add_filter( 'FHEE__EE_Config___load_core_config__config_settings', array( 'EEH_Activation', 'migrate_old_config_data' ), 10, 3 );
-		EE_Config::reset();
+		//EE_Config::reset();
 	}
 
 

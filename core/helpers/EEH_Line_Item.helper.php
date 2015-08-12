@@ -1115,7 +1115,7 @@ class EEH_Line_Item {
 	 * @return \EE_Line_Item|null
 	 */
 	public static function non_empty_line_items( EE_Line_Item $line_item ) {
-		$copied_li = EEH_Line_Item::non_emtpy_line_item( $line_item );
+		$copied_li = EEH_Line_Item::non_empty_line_item( $line_item );
 		if ( $copied_li === null ) {
 			return null;
 		}
@@ -1153,7 +1153,7 @@ class EEH_Line_Item {
 	 * @param EE_Line_Item      $line_item
 	 * @return EE_Line_Item
 	 */
-	public static function non_emtpy_line_item( EE_Line_Item $line_item ) {
+	public static function non_empty_line_item( EE_Line_Item $line_item ) {
 		if ( $line_item->type() === EEM_Line_Item::type_line_item &&
 			$line_item->OBJ_type() === 'Ticket' &&
 			$line_item->quantity() == 0
