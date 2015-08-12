@@ -1003,7 +1003,7 @@ abstract class EE_Base_Class{
 
 		//clear cached property if either formats are not null.
 		if( $dt_frmt !== null || $tm_frmt !== null ) {
-			$this->_clear_cached_property( $field_name, $date_or_time );
+			$this->_clear_cached_property( $field_name );
 			//reset format properties because they are used in get()
 			$this->_dt_frmt = $in_dt_frmt;
 			$this->_tm_frmt = $in_tm_frmt;
