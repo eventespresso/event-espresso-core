@@ -51,7 +51,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-//		EEH_Activation::CPT_initialization();//dont register taxonomies on activation because they need to happen on INIT hook anyways
+		EEH_Activation::reset_and_update_config();
 		//which is fired BEFORE activation of plugin anyways
 		EEH_Activation::verify_default_pages_exist();
 	}
@@ -101,6 +101,7 @@ class EEH_Activation {
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
 	}
+
 
 
 
@@ -180,6 +181,85 @@ class EEH_Activation {
 		flush_rewrite_rules();
 	}
 
+
+
+	/**
+	 * 	reset_and_update_config
+	 *
+	 * The following code was moved over from EE_Config so that it will no longer run on every request.
+	 * If there is old calendar config data saved, then it will get converted on activation.
+	 * This was basically a DMS before we had DMS's, and will get removed after a few more versions.
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function reset_and_update_config() {
+		do_action( 'AHEE__EE_Config___load_core_config__start', array( 'EEH_Activation', 'load_calendar_config' ) );
+		add_filter( 'FHEE__EE_Config___load_core_config__config_settings', array( 'EEH_Activation', 'migrate_old_config_data' ), 10, 3 );
+		EE_Config::reset();
+	}
+
+
+	/**
+	 *    load_calendar_config
+	 *
+	 * @access    public
+	 * @return    stdClass
+	 */
+	public static function load_calendar_config() {
+		// grab array of all plugin folders and loop thru it
+		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		if ( empty( $plugins ) ) {
+			return;
+		}
+		foreach ( $plugins as $plugin_path ) {
+			// grab plugin folder name from path
+			$plugin = basename( $plugin_path );
+			// drill down to Espresso plugins
+			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
+				// then to calendar related plugins
+				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
+					// this is what we are looking for
+					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+					// does it exist in this folder ?
+					if ( is_readable( $calendar_config )) {
+						// YEAH! let's load it
+						require_once( $calendar_config );
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 *    _migrate_old_config_data
+	 *
+	 * @access    public
+	 * @param array      $settings
+	 * @param string     $config
+	 * @param \EE_Config $EE_Config
+	 * @return \stdClass
+	 */
+	public static function migrate_old_config_data( $settings = array(), $config = '', EE_Config $EE_Config ) {
+		$convert_from_array = array( 'addons' );
+		// in case old settings were saved as an array
+		if ( is_array( $settings ) && in_array( $config, $convert_from_array )) {
+			// convert existing settings to an object
+			$config_array = $settings;
+			$settings = new stdClass();
+			foreach ( $config_array as $key => $value ){
+				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
+				} else {
+					$settings->$key = $value;
+				}
+			}
+			add_filter( 'FHEE__EE_Config___load_core_config__update_espresso_config', '__return_true' );
+		}
+		return $settings;
+	}
 
 
 
@@ -465,6 +545,7 @@ class EEH_Activation {
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		}
+		/** @var WPDB $wpdb */
 		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
 		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
@@ -483,20 +564,32 @@ class EEH_Activation {
 								TRUE );
 			}
 		}
-		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
-		//get $wpdb to echo errors, but buffer them. This way at least WE know an error
-		//happened. And then we can choose to tell the end user
-		$old_show_errors_policy = $wpdb->show_errors( TRUE );
-		$old_error_supression_policy = $wpdb->suppress_errors( FALSE );
-		ob_start();
-		dbDelta( $SQL );
-		$output = ob_get_contents();
-		ob_end_clean();
-		$wpdb->show_errors( $old_show_errors_policy );
-		$wpdb->suppress_errors( $old_error_supression_policy );
-		if( ! empty( $output ) ){
-			throw new EE_Error( $output	);
-		}
+// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
+if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
+	$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+	//get $wpdb to echo errors, but buffer them. This way at least WE know an error
+	//happened. And then we can choose to tell the end user
+	$old_show_errors_policy = $wpdb->show_errors( TRUE );
+	$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
+	ob_start();
+	dbDelta( $SQL );
+	$output = ob_get_contents();
+	ob_end_clean();
+	$wpdb->show_errors( $old_show_errors_policy );
+	$wpdb->suppress_errors( $old_error_suppression_policy );
+	if( ! empty( $output ) ){
+		throw new EE_Error( $output	);
+	}
+} else {
+	throw new EE_Error(
+		sprintf(
+			__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
+			'<br />',
+			$sql
+		)
+	);
+}
+
 	}
 
 

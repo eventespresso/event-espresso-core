@@ -161,7 +161,6 @@ jQuery(document).ready(function($) {
 
 
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-		console.log( response );
 		$('#espresso-ajax-loading').fadeOut('fast');
 		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
 //			if ( closeModal === undefined ) {

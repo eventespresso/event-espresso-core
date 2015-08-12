@@ -82,10 +82,13 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 	 * Overrides parent so that we don't NEED to save the $model_object before getting the related objects.
 	 * @param EE_Base_Class $model_obj_or_id
 	 * @param array $query_params like EEM_Base::get_all's $query_params
-	 * @param boolean $values_already_prepared_by_model_object
+	 * @param boolean $values_already_prepared_by_model_object @deprecated since 4.6.30
 	 * @return EE_Base_Class[]
 	 */
 	public function get_all_related($model_obj_or_id, $query_params = array(), $values_already_prepared_by_model_object = false) {
+		if( $values_already_prepared_by_model_object !== false ) {
+			EE_Error::doing_it_wrong( 'EE_Model_Relation_Base::get_all_related', __( 'The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso' ), '4.6.30' );
+		}
 		//get column on this model object which is a foreign key to the other model
 		$fk_field_obj = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		//get its value
@@ -100,7 +103,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 		$query_params = $this->_disable_default_where_conditions_on_query_param($query_params);
 //		echo '$query_params';
 //		var_dump($query_params);
-		return $this->get_other_model()->get_all($query_params, $values_already_prepared_by_model_object);
+		return $this->get_other_model()->get_all($query_params);
 	}
 
 }

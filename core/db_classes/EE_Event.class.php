@@ -24,7 +24,7 @@
  * @subpackage 	includes/models/
  * @author 				Mike Nelson
  */
-class EE_Event extends EE_CPT_Base {
+class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Has_Icon {
 
 	/**
 	 * cached value for the the logical active status for the event
@@ -43,29 +43,28 @@ class EE_Event extends EE_CPT_Base {
 
 	/**
 	 *
-	 * @param array $props_n_values
-	 * @return EE_Event
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array() ) {
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		$obj = $has_object ? $has_object : new self( $props_n_values );
-		//we need to set the _timezone property to whatever is set in the db for the event initially.
-		$obj->set_timezone( $obj->timezone_string() );
-		return $obj;
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 *
-	 * @param array $props_n_values
-	 * @return EE_Event
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array() ) {
-		$obj = new self( $props_n_values, TRUE );
-		//we need to set the _timezone property to whatever is set in the db for the event initially.
-		$obj->set_timezone( $obj->timezone_string() );
-		return $obj;
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
@@ -1110,5 +1109,86 @@ class EE_Event extends EE_CPT_Base {
 		return $this->get_many_related('Question_Group', $query_params);
 	}
 
+
+
+
+	/**
+	 * Implementation for EEI_Has_Icon interface method.
+	 * @see EEI_Visual_Representation for comments
+	 * @return string
+	 */
+	public function get_icon() {
+		return '<span class="dashicons dashicons-flag"></span>';
+	}
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_details_link() {
+		return $this->get_admin_edit_link();
+	}
+
+
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return return string
+	 */
+	public function get_admin_edit_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'edit',
+			'post' => $this->ID()
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_settings_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'default_event_settings'
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_overview_link() {
+
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'default'
+		),
+			admin_url( 'admin.php' )
+		);
+	}
 
 }

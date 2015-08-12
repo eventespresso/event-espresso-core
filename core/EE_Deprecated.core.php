@@ -37,7 +37,8 @@ function ee_deprecated__registration_checkout__button_text( $submit_button_text,
 						'FHEE__EE_SPCO_Reg_Step__set_submit_button_text___submit_button_text',
 						'/modules/single_page_checkout/inc/EE_SPCO_Reg_Step.class.php'
 					),
-					'4.6.10'
+					'4.6.10',
+					E_USER_DEPRECATED
 				);
 			}
 		} else {
@@ -94,7 +95,8 @@ function ee_deprecated_finalize_transaction( EE_Checkout $checkout, $status_upda
 				'AHEE__EE_Transaction_Processor__toggle_registration_statuses_for_default_approved_events',
 				'AHEE__EE_Transaction_Processor__toggle_registration_statuses_if_no_monies_owing'
 			),
-			'4.6.0'
+			'4.6.0',
+			E_USER_DEPRECATED
 		);
 		switch ( $action_ref ) {
 			case 'AHEE__EE_Transaction__finalize__new_transaction' :
@@ -123,7 +125,8 @@ function ee_deprecated_finalize_registration( EE_Registration $registration ) {
 				'/core/business/EE_Registration_Processor.class.php',
 				'AHEE__EE_Registration_Processor__trigger_registration_status_changed_hook'
 			),
-			'4.6.0'
+			'4.6.0',
+			E_USER_DEPRECATED
 		);
 		do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $registration, ( is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )));
 	}
@@ -168,7 +171,7 @@ function ee_deprecated_get_templates( $templates, EE_messenger $messenger, EE_me
 	foreach ( $old_default_classnames as $classname ) {
 		$filter_ref = 'FHEE__' . $classname . '___create_new_templates___templates';
 		if ( has_filter( $filter_ref ) ) {
-			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
+			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0', E_USER_DEPRECATED );
 		}
 		$templates = apply_filters( $filter_ref, $templates, $old_class_instance );
 	}
@@ -205,7 +208,8 @@ function ee_deprecated_hooks(){
 					$deprecation_info[ 'still_works' ] ?  __('It *may* work as an attempt to build in backwards compatibility.', 'event_espresso') : __( 'It has been completely removed.', 'event_espresso' ),
 					isset( $deprecation_info[ 'alternative' ] ) ? $deprecation_info[ 'alternative' ] : __( 'Please read the current EE4 documentation further or contact Support.', 'event_espresso' )
 				),
-				isset( $deprecation_info[ 'version' ] ) ? $deprecation_info[ 'version' ] : __( 'recently', 'event_espresso' )
+				isset( $deprecation_info[ 'version' ] ) ? $deprecation_info[ 'version' ] : __( 'recently', 'event_espresso' ),
+				E_USER_DEPRECATED
 			);
 		}
 	}
@@ -244,7 +248,7 @@ function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_me
 	foreach ( $classnames_to_try as $classname => $obj ) {
 		$filter_ref = 'FHEE__' . $classname . '__get_default_field_content';
 		if ( has_filter( $filter_ref ) ) {
-			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_specific_template__contents" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
+			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_specific_template__contents" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0', E_USER_DEPRECATED );
 		}
 		$contents = apply_filters( $filter_ref, $contents, $obj );
 	}
@@ -290,7 +294,7 @@ function ee_deprecated_get_inline_css_template_filters( $variation_path, $messen
 	}
 
 	if ( has_filter( $filter_ref ) ) {
-		EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_variation" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
+		EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_variation" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0', E_USER_DEPRECATED );
 	}
 
 	return apply_filters( $filter_ref, $variation_path, $url, $type );
@@ -318,7 +322,7 @@ class EE_Messages_Init extends EE_Base {
 	 * @param $method_name
 	 */
 	public static function doing_it_wrong_call( $method_name ) {
-		EE_Error::doing_it_wrong( __CLASS__, sprintf( __('The %s in this class is deprecated as of EE4.5.0.  All functionality formerly in this class is now in the EED_Messages module.', 'event_espresso'), $method_name ), '4.5.0' );
+		EE_Error::doing_it_wrong( __CLASS__, sprintf( __('The %s in this class is deprecated as of EE4.5.0.  All functionality formerly in this class is now in the EED_Messages module.', 'event_espresso'), $method_name ), '4.5.0', E_USER_DEPRECATED );
 	}
 
 	/**
@@ -405,7 +409,7 @@ class EE_Messages_Init extends EE_Base {
  */
 function ee_deprecated_get_cpts( $cpts ) {
 	if ( has_filter( 'FHEE__EE_Register_CPTs__construct__CPTs' ) ) {
-		EE_Error::doing_it_wrong( 'FHEE__EE_Register_CPTs__construct__CPTs', __('This filter is deprecated. It will still work for the time being.  However, it is recommended to use the new filter provided which is "FHEE__EE_Register_CPTs__get_CPTs__cpts" found in EE_Register_CPTs::get_CPTs()', 'event_espresso'), '4.5.0' );
+		EE_Error::doing_it_wrong( 'FHEE__EE_Register_CPTs__construct__CPTs', __('This filter is deprecated. It will still work for the time being.  However, it is recommended to use the new filter provided which is "FHEE__EE_Register_CPTs__get_CPTs__cpts" found in EE_Register_CPTs::get_CPTs()', 'event_espresso'), '4.5.0', E_USER_DEPRECATED );
 	}
 	return apply_filters( 'FHEE__EE_Register_CPTs__construct__CPTs', $cpts );
 }
@@ -425,7 +429,7 @@ add_filter( 'FHEE__EE_Register_CPTs__get_CPTs__cpts', 'ee_deprecated_get_cpts', 
  */
 function ee_deprecated_get_taxonomies( $cts ) {
 	if ( has_filter( 'FHEE__EE_Register_CPTs__construct__taxonomies' ) ) {
-		EE_Error::doing_it_wrong( 'FHEE__EE_Register_CPTs__construct__taxonomies', __('This filter is deprecated. It will still work for the time being.  However, it is recommended to use the new filter provided which is "FHEE__EE_Register_CPTs__get_taxonomies__taxonomies" found in EE_Register_CPTs::get_taxonomies()', 'event_espresso'), '4.5.0' );
+		EE_Error::doing_it_wrong( 'FHEE__EE_Register_CPTs__construct__taxonomies', __('This filter is deprecated. It will still work for the time being.  However, it is recommended to use the new filter provided which is "FHEE__EE_Register_CPTs__get_taxonomies__taxonomies" found in EE_Register_CPTs::get_taxonomies()', 'event_espresso'), '4.5.0', E_USER_DEPRECATED );
 	}
 	return apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', $cts );
 }

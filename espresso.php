@@ -3,8 +3,8 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 		    4.7.10.rc.027
-  Author: 		    Event Espresso
+  Version: 		4.8.1.rc.010
+  Author: 		Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		    GPLv2
   TextDomain: 		event_espresso
@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.7.10.rc.027';
+		return '4.8.1.rc.010';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -94,6 +94,7 @@ define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
 define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
+define( 'EE_INTERFACES', EE_CORE . 'interfaces' . DS );
 define( 'EE_BUSINESS', EE_CORE . 'business' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
