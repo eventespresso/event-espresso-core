@@ -5,47 +5,7 @@
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
-		<table class="admin-primary-mbox-tbl">
-			<thead>
-				<tr>
-					<th class="jst-left"><?php _e( 'Line Item ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Ticket Option', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Qty', 'event_espresso' );?></th>
-					<th class="jst-cntr"><?php _e( 'Line Total', 'event_espresso' );?></th>
-				</tr>
-			</thead>
-			<tbody>
-		<?php foreach ( $line_items as $item ) : ?>
-			<?php
-				$event = $item->ticket_event();
-				$event_name = $item->ticket_event_name();
-				$event_link = $event instanceof EE_Event ? '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event->ID() ), TXN_ADMIN_URL ) . '">' . $event_name . '</a>' : $event_name;
-			?>
-			<tr>
-				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
-				<td class="jst-left"><?php echo $event_link;?></td>
-				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_unit_price'), FALSE, FALSE ); ?></td>
-				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total'), FALSE, FALSE ); ?></td>
-			</tr>
-		<?php endforeach; // $items?>
-		<?php if ( is_array($taxes) ) : ?>
-			<?php foreach ( $taxes as $tax ) : ?>
-				<tr class="admin-primary-mbox-taxes-tr">
-					<th class=" jst-rght" colspan="5"><?php echo $tax->get('LIN_name');?> (<?php echo $tax->get_pretty('LIN_percent'); ?>%)</th>
-					<th class=" jst-rght"><?php echo EEH_Template::format_currency($tax->get('LIN_total'), FALSE, FALSE );?></th>
-				</tr>
-			<?php endforeach; // $taxes?>
-		<?php endif; // $taxes?>
-				<tr class="admin-primary-mbox-total-tr">
-					<th class=" jst-rght" colspan="5"><?php printf( __( 'Transaction Total %s', 'event_espresso' ), '(' . EE_Registry::instance()->CFG->currency->code . ')');?></th>
-					<th class=" jst-rght"><?php echo $grand_total;?></th>
-				</tr>
-			</tbody>
-		</table>
+		<?php echo $line_item_table; ?>
 		<span id="txn-admin-grand-total" class="hidden"><?php echo $grand_raw_total; ?></span>
 	</div>
 
@@ -201,12 +161,12 @@
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
-								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-edit-lnk" title="<?php esc_attr_e( 'Edit Payment', 'event_espresso' );?>" data-payment-id="PAY_ID">
 									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
-								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
+								<a class="txn-admin-payment-action-delete-lnk" title="<?php esc_attr_e( 'Delete Payment', 'event_espresso' );?>" data-payment-id="PAY_ID">
 									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
@@ -276,6 +236,17 @@
 			<?php
 			echo sprintf(
 				__( 'Edit Payment #%s for Transaction #%s', 'event_espresso' ),
+				'<span></span>',
+				$txn_nmbr['value']
+			);
+			?>
+		</h2>
+
+		<h2 id="admin-modal-dialog-edit-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
+			<div class="ee-icon ee-icon-cash-edit float-left"></div>
+			<?php
+			echo sprintf(
+				__( 'Edit Refund #%s for Transaction #%s', 'event_espresso' ),
 				'<span></span>',
 				$txn_nmbr['value']
 			);
@@ -408,6 +379,11 @@
 				<li>
 					<a id="txn-admin-modal-dialog-edit-payment-lnk" class="button-primary no-icon" style="display:none;" >
 						<?php _e( 'Save Payment Details', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<a id="txn-admin-modal-dialog-edit-refund-lnk" class="button-primary no-icon" style="display:none;" >
+						<?php _e( 'Save Refund Details', 'event_espresso' );?>
 					</a>
 				</li>
 				<li>

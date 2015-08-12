@@ -35,49 +35,38 @@
 	?>
 	
 	<h2 class="about-headline-callout">New Add-ons Available!</h2>
-	<h3><a href="http://eventespresso.com/product/eea-multi-event-registration/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Multiple Event Registration Add-on Released for Event Espresso 4.7</a></h3>
-	<a href="http://eventespresso.com/product/eea-multi-event-registration/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="Multi Event Registration" src="http://ee-screenshots.s3.amazonaws.com/ee4/mutliple_380_250_addon-380x250.jpg" width="260" height="202" /></a>
-	<p>Announcing the ability to allow attendees to register for multiple events during a single checkout! <strong><a href="http://eventespresso.com/2015/06/multiple-event-registration-now-available-for-event-espresso-4/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Read the announcement.</a></strong></p>
-	<p>With the <a href="http://eventespresso.com/product/eea-multi-event-registration/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Multiple Event Registration add-on</a>, attendees can <strong>register for several events at once</strong> and even add additional attendees to any of the same events–in the same checkout process. Additional attendees also get the customized registration form as the first/primary attendee.</p>
+	<h3><a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Promotions & Discounts Add-on Released for Event Espresso 4.8</a></h3>
+	<a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="Promotions Add-on" src="http://ee-screenshots.s3.amazonaws.com/ee4/promotions-discounts-addon.jpg" width="260" height="202" /></a>
+	<p>Announcing the ability to allow discounts and promotion codes for your events! <strong><a href="http://eventespresso.com/2015/08/promotions-discounts-now-available-for-event-espresso-4/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Read the announcement.</a></strong></p>
+	<p>With the <a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Promotions & Discounts add-on</a>, attendees can <strong>apply coupon codes</strong> and receive automatic and/or date based discounts when registering for events.</p>
 	<h4>How does it work?</h4>
-	<p>The Event Registration Cart gives the person registering the ability to select the type and quantity of tickets and update the cart total. Proceeding to the Checkout allows the person to then complete the registration form for each of the tickets and events (all on the same page). The Checkout also allows the person registering to reuse the personal information input into prior registration forms into subsequent event forms.</p>
+	<p>Event administrators can create discount codes and promotions, from within Event Espresso, that can be applied when registering for an event. This gives the person registering the ability to apply a discount code, or receive an automated discount that reduces the cost of an event.</p>
 	<p><strong>Get Started!</strong><br>
-	Purchase the <a href="http://eventespresso.com/product/eea-people-addon/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Multiple Event Registration add-on</a> add-on for Event Espresso 4.</p>
+	Purchase the <a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Promotions & Discounts add-on</a> for Event Espresso 4.</p>
 
 
-	<h3><a href="http://eventespresso.com/product/eea-people-addon/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">EE4 People Add-on</a></h3>
-	<a href="http://eventespresso.com/product/eea-people-addon/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="People Add-on" src="http://ee-screenshots.s3.amazonaws.com/ee4/people-addon1-380x250.jpg" width="260" height="202" /></a>
-	<p>The <a href="http://eventespresso.com/product/eea-people-addon/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Event Espresso People add-on</a> creates an interface for managing staff, instructors, speakers, volunteers, sponsors, or just about any type of role someone might fill within an event and/or organization.</p>	
+	<h3><a href="http://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">EE4 REST API Add-on</a></h3>
+	<a href="http://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="REST API Add-on" src="http://ee-screenshots.s3.amazonaws.com/ee4/rest-api.jpg" width="260" height="202" /></a>
+	<p>WordPress and Event Espresso Developers will be most interested in the <a href="http://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">REST API add-on</a>, because it will allow for faster development of a wide array of features, including custom reporting tools, mobile application development, and theme development.</p>
 	<h4>How does it work?</h4>
-	<p>The People add-on creates a new interface within the Event Espresso 4 admin for managing people associated with an organization and/or event. People can be organized by type (eg. as staff (default), volunteer, speaker, sponsor, etc.) and categories.</p>
+	<p>The EE4 REST API will provide an easy to use API, available via HTTP, to grab your site's event and registration data in simple JSON format. Retrieving or updating data is as simple as sending a HTTP request.</p>
 	<p><strong>Get Started!</strong><br>
-	Purchase the <a href="http://eventespresso.com/product/ee4-multiple-event-registration-add-on/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">People add-on</a> add-on for Event Espresso 4.</p>
-	
-
-	<h3><a href="http://eventespresso.com/product/eea-wp-user-integration/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">EE4 WP User Integration</a></h3>
-	<a href="http://eventespresso.com/product/eea-people-addon/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="People Add-on" src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-wp-user-integration-300x197.jpg" width="260" height="202" /></a>
-	<p>The <a href="http://eventespresso.com/product/eea-wp-user-integration/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">EE4 WP User Integration add-on</a> allows you to take full advantage of the WordPress user system. Create member only events and tickets, set the minimum WP User Capability for ticket purchase, create new users on registration, and more!</p>
-	<h4>How does it work?</h4>
-	<p>You’ll be able to display member only tickets to your logged-in members; members can store personal information into the WordPress database allowing your members to quickly register for events by auto-filling in the personal information on the event registration form.</p>
-	<p><strong>Get Started!</strong><br>
-	Purchase the <a href="http://eventespresso.com/product/eea-wp-user-integration/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">WP User Integration</a> add-on for Event Espresso 4.</p>
+	Download the REST API from <a href="http://eventespresso.com/rest-api/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Github.com</a>.</p>
 
 
 		<hr>
 	
-	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.7</h2>
-	<p>This release brought a few improvements to existing core features and support for a new add-on.</p>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.8</h2>
+	<p>This release brought many background updates/improvements to existing core features, and support for a new add-on. Here are the most interesting updates:</p>
 	<p><strong>New Features</strong></p>
 		<ul>
-			<li>Added support for the Multi Event Registration add-on</li>
+			<li>Added support for the Promotions & Discounts add-on</li>
 		</ul>
 	<p><strong>Enhancements/Fixes</strong></p>
 		<ul>
-			<li>Less memory intensive data migrations between versions</li>
-			<li>Fixed the Payment/Refund Modal (in the admin) not refreshing on save</li>
-			<li>Venues can now be trashed and restored like other EE objects</li>
-			<li>Restored the dropdown question type description field</li>
-			<li>Only allow question type changes to a question type of the same category</li>
+			<li>Localized the Date Picker in the Ticket Editor</li>
+			<li>Datetime Refactor (<a href="http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/">read more</a>)</li>
+			<li>Added an anchor to the registration form. This takes the registrant right to the registration form, rather than the top of the page, after selecting tickets.</li>
 		</ul>
 
 
