@@ -133,10 +133,13 @@ abstract class EE_Model_Relation_Base{
 	 * EE_Belongs_To_Relation doesn't need to be saved before querying.
 	 * @param EE_Base_Class|int $model_object_or_id or the primary key of this model
 	 * @param array $query_params like EEM_Base::get_all's $query_params
-	 * @param boolean $values_already_prepared_by_model_object
+	 * @param boolean $values_already_prepared_by_model_object @deprecated since 4.6.30
 	 * @return EE_Base_Class[]
 	 */
 	public function get_all_related($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false){
+		if( $values_already_prepared_by_model_object !== false ) {
+			EE_Error::doing_it_wrong( 'EE_Model_Relation_Base::get_all_related', __( 'The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso' ), '4.6.30' );
+		}
 		$query_params = $this->_disable_default_where_conditions_on_query_param($query_params);
 		$query_param_where_this_model_pk = $this->get_this_model()->get_this_model_name().".".$this->get_this_model()->get_primary_key_field()->get_name();
 		$model_object_id = $this->_get_model_object_id( $model_object_or_id );
