@@ -115,12 +115,12 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 	  * This is identical to EE_Model_Relation->get_all_related() except we're going handle special autosave conditions in here.
 	  * @param  EE_Base_Class|int  $model_object_or_id
 	  * @param  array   $query_params                            like EEM_Base::get_all's $query_params
-	  * @param  boolean $values_already_prepared_by_model_object @deprecated since 4.6.30
+	  * @param  boolean $values_already_prepared_by_model_object @deprecated since 4.8.1
 	  * @return EE_Base_Class[]
 	  */
 	 public function get_all_related( $model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false ) {
 		if( $values_already_prepared_by_model_object !== false ) {
-			EE_Error::doing_it_wrong( 'EE_Model_Relation_Base::get_all_related', __( 'The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso' ), '4.6.30' );
+			EE_Error::doing_it_wrong( 'EE_Model_Relation_Base::get_all_related', __( 'The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso' ), '4.8.1' );
 		}
 
 	 	//if this is an autosave then we're going to get things differently
