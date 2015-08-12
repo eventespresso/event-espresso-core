@@ -379,7 +379,7 @@ abstract class EE_Base_Class{
 			if ( $field_obj instanceof EE_Datetime_Field ) {
 				$field_obj->set_timezone( $this->_timezone );
 				if ( isset( $this->_fields[$field_name] ) && $this->_fields[$field_name] instanceof DateTime ) {
-					$this->_fields[$field_name]->setTimeZone( new DateTimeZone( $this->_timezone ) );
+					$this->_fields[$field_name]->setTimezone( new DateTimeZone( $this->_timezone ) );
 				}
 			}
 		}
