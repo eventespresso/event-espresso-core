@@ -318,6 +318,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	public function save_cart( $apply_taxes = TRUE ) {
 		if ( $apply_taxes && $this->_grand_total instanceof EE_Line_Item ) {
 			EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+			//make sure we don't cache the transaction because it can get stale
+			if( $this->_grand_total->get_one_from_cache( 'Transaction' ) instanceof EE_Transaction &&
+				$this->_grand_total->get_one_from_cache( 'Transaction' )->ID()) {
+				$this->_grand_total->clear_cache( 'Transaction', null, true );
+			}
 		}
 		return EE_Registry::instance()->SSN->set_cart( $this );
 	}

@@ -1633,15 +1633,15 @@ abstract class EE_Base_Class{
 	 * @param mixed  $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName               eg 'Events','Question',etc.
 	 *                                           an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specify array('role-column-name'=>'role-id')
-	 * @param array  $where_query                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $extra_join_model_fields_n_values                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @param null   $cache_id
 	 * @throws EE_Error
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
+	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $extra_join_model_fields_n_values = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
 		if( $this->ID() ){
-			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
 		} else {
@@ -2144,6 +2144,47 @@ abstract class EE_Base_Class{
 	 */
 	public function __toString(){
 		return sprintf( '%s (%s)', $this->name(), $this->ID() );
+	}
+
+	/**
+	 * Clear related model objects if they're already in the DB, because otherwise when we
+	 * UNserialize this model object we'll need to be careful to add them to the entity map.
+	 * This means if we have made changes to those related model obejcts, and want to unserialize
+	 * the this model object on a subsequent request, changes to those related model objects will be lost.
+	 * Instead, those related model objects should be directly serialized and stored.
+	 * Eg, the following won't work:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $reg = get_option( 'my_option' );
+	 * $reg->attendee()->save();
+	 *
+	 * And would need to be replace with:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $att = get_option( 'my_option' );
+	 * $att->save();
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+				$classname = 'EE_' . $this->get_model()->get_this_model_name();
+				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
+						$this->get_one_from_cache( $relation_name )->ID() ) {
+					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
+				}
+			}
+		}
+		return array_keys( get_object_vars( $this ) );
 	}
 
 

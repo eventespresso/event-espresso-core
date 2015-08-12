@@ -87,7 +87,7 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		//if we're coming in from the main content then $this->_data['data'] is instanceof EE_Messages_Addressee.
 		//which means we want to get tickets for all events this addressee is a part of.
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee ) {
-			$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'registration_details', 'attendee');
+			$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'registration_details', 'attendee', 'recipient_details');
 			$template = $this->_data['template'];
 
 			//tickets will be tickets for all registrations on this attendee.
@@ -104,7 +104,7 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		//if coming from the context of the event list parser, then let's return just the tickets for that event.
 		$event = $this->_data['data'];
 		if ( $event instanceof EE_Event ) {
-			$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee');
+			$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee', 'recipient_details');
 			$template = is_array($this->_data['template'] ) && isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 			//let's remove any existing [EVENT_LIST] shortcode from the ticket list template so that we don't get recursion.
 			$template = str_replace('[EVENT_LIST]', '', $template);
@@ -154,7 +154,7 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		$att = $data->att_obj;
 		$registrations_on_attendee = $att instanceof EE_Attendee ? $data->attendees[$att->ID()]['reg_objs'] : null;
 		$registrations_on_attendee = empty( $registrations_on_attendee ) && $data->reg_obj instanceof EE_Registration ? array( $data->reg_obj ) : array();
-		$valid_shortcodes = array( 'datetime', 'attendee' );
+		$valid_shortcodes = array( 'datetime', 'attendee', 'recipient_details' );
 		$template = '';
 		$dtts = array();
 
