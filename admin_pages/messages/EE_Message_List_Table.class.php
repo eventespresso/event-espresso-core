@@ -33,7 +33,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array(
 			'msg_status' => '',
 			'cb' => '<input type="checkbox" />',
-			'to' => __( 'Recipient', 'event_espresso' ),
+			'msg_id' => __( 'ID', 'event_espresso' ),
+			'to' => __( 'To', 'event_espresso' ),
 			'from' => __( 'From', 'event_espresso' ),
 			'messenger' => __( 'Messenger', 'event_espresso' ),
 			'message_type' => __( 'Message Type', 'event_espresso' ),
@@ -44,6 +45,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 		$this->_sortable_columns = array(
 			'modified' => array( 'MSG_modified' => true ),
+			'msg_id' => array( 'MSG_ID', false ),
 			'message_type' => array( 'MSG_message_type' => false ),
 			'messenger' => array( 'MSG_messenger' => false ),
 			'to' => array( 'MSG_to' => false ),
@@ -51,7 +53,9 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'context' => array( 'MSG_context' => false )
 		);
 
-		$this->_hidden_columns = array();
+		$this->_hidden_columns = array(
+			'msg_id'
+		);
 	}
 
 
@@ -87,6 +91,14 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	public function column_cb( $message ) {
 		return sprintf( '<input type="checkbox" name="checkbox[%s] value="1" />', $message->GRP_ID() );
 	}
+
+
+
+
+	public function column_msg_id( $message ) {
+		return $message->ID();
+	}
+
 
 
 	/**
