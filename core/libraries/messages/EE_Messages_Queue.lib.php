@@ -236,6 +236,7 @@ class EE_Messages_Queue {
 
 		//any to send?
 		if ( ! $messages_to_send ) {
+			$this->unlock_queue( EE_Messages_Queue::action_sending );
 			return false;
 		}
 

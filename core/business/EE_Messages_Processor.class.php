@@ -96,26 +96,25 @@ class EE_Messages_Processor {
 	 */
 	protected function _build_queue_for_generation( $messages = array(), $clear_queue = false ) {
 
-		//if generation is locked then get out now because that means processing is already happening.
-		if ( $this->_queue->is_locked() ) {
-			return false;
-		}
-
-		$this->_queue->lock_queue();
-
 		if ( $clear_queue ) {
 			$this->_queue = new EE_Messages_Queue( $this->_EEMSG );
 		}
 
 		if ( $messages ) {
+			//if generation is locked then get out now because that means processing is already happening.
+			if ( $this->_queue->is_locked() ) {
+				return false;
+			}
+
+			$this->_queue->lock_queue();
 			$messages = is_array( $messages ) ? $messages : array( $messages );
 			foreach ( $messages as $message ) {
 				$this->_queue->add( $message );
 			}
+			return true;
 		} else {
-			$this->_queue->get_batch_to_generate();
+			return $this->_queue->get_batch_to_generate();
 		}
-		return true;
 	}
 
 
