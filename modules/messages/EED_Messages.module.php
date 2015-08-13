@@ -763,6 +763,137 @@ class EED_Messages  extends EED_Module {
 
 
 
+
+	/**
+	 * Generates Messages immediately for EE_Message IDs (but only for the correct status for generation)
+	 *
+	 * @since 4.9.0
+	 * @param array     $message_ids An array of message ids
+	 * @return bool | EE_Messages_Queue     false if nothing was generated, EE_Messages_Queue containing generated messages.
+	 */
+	public static function generate_now( $message_ids ) {
+		self::_load_controller();
+		$messages = EEM_Message::instance()->get_all(
+			array(
+				0 => array(
+					'MSG_ID' => array( 'IN', $message_ids ),
+					'STS_ID' => EEM_Message::status_incomplete,
+				)
+			)
+		);
+
+		$generated_queue = self::$_MSG_PROCESSOR->batch_generate_from_queue( $messages );
+
+		if ( ! $generated_queue instanceof EE_Messages_Queue ) {
+			EE_Error::add_error(
+				__( 'The messages were not generated.  This is usually because there is already a batch being generated on a separate request.  You can wait a minute or two and try again.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
+		return $generated_queue;
+	}
+
+
+
+
+	/**
+	 * Sends messages immediately for the incoming message_ids that have the status of EEM_Message::status_resend or,
+	 * EEM_Message::status_idle
+	 *
+	 * @since 4.9.0
+	 * @param $message_ids
+	 *
+	 * @return bool | EE_Messages_Queue  false if no messages sent.
+	 */
+	public static function send_now( $message_ids ) {
+		self::_load_controller();
+		$messages = EEM_Message::instance()->get_all(
+			array(
+				0 => array(
+					'MSG_ID' => array( 'IN', $message_ids ),
+					'STS_ID' => array( 'IN', array( EEM_Message::status_idle, EEM_Message::status_resend ) )
+				)
+			)
+		);
+
+		$sent_queue = self::$_MSGPROCESSOR->batch_send_from_queue( $messages );
+
+		if ( ! $sent_queue instanceof EE_Messages_Queue ) {
+			EE_Error::add_error(
+				__( 'The messages were not sent.  This is usually because there is already a batch being sent on a separate request.  You can wait a minute or two and try again.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		} else {
+			//can count how many sent by using the messages in the queue
+			$sent_count = $sent_queue->count_STS_in_queue( array( EEM_Message::instance()->stati_indicating_sent() ) );
+			if ( $sent_count > 0 ) {
+				EE_Error::add_success(
+					sprintf(
+						_n(
+							'There was %d message successfully sent.',
+							'There were %d messages successfully sent.',
+							$sent_count,
+							'event_espresso'
+						),
+						$sent_count
+					)
+				);
+			} else {
+				EE_Error::add_error(
+					__( 'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, or there was an error.
+					If there was an error, you can look at the messages in the message activity list table for any error messages.', 'event_espresso' ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
+		}
+		return $sent_queue;
+	}
+
+
+
+
+
+	/**
+	 * This will queue the incoming message ids for resending.
+	 * Note, only message_ids corresponding to messages with the status of EEM_Message::sent will be queued.
+	 *
+	 * @since 4.9.0
+	 * @param array $message_ids  An array of EE_Message IDs
+	 *
+	 * @return bool  true means messages were successfully queued for resending, false means none were queued for resending.
+	 */
+	public static function queue_for_resending( $message_ids ) {
+		self::_load_controller();
+		self::$_MSGPROCESSOR->setup_messages_from_ids_and_send( $message_ids );
+
+		//get queue and count
+		$queue_count = self::$_MSGPROCESSOR->get_queue()->get_queue()->count();
+		if ( $queue_count > 0 ) {
+			EE_Error::add_success(
+				sprintf(
+					_n(
+						'%d message successfully queued for resending.',
+				        '%d messages successfully queued for resending.',
+				        $queue_count,
+				        'event_espresso'
+				    ),
+				    $queue_count
+				)
+			);
+		} else {
+			EE_Error::add_error(
+				__( 'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
+		return (bool) $queue_count;
+	}
+
+
+
+
+
+
 	/**
 	 * debug
 	 *
@@ -774,13 +905,13 @@ class EED_Messages  extends EED_Module {
 	 * @param bool $display_request
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
-		EE_Registry::instance()->load_helper('Debug_Tools');
+		EE_Registry::instance()->load_helper( 'Debug_Tools' );
 		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects
 				$info = EEH_Debug_Tools::strip_objects( $info );
-				$info[ 'TXN_status' ] = $transaction->status_ID();
-				$info[ 'TXN_reg_steps' ] = $transaction->reg_steps();
+				$info['TXN_status'] = $transaction->status_ID();
+				$info['TXN_reg_steps'] = $transaction->reg_steps();
 				if ( $transaction->ID() ) {
 					$index = 'EE_Transaction: ' . $transaction->ID();
 					EEH_Debug_Tools::log( $class, $func, $line, $info, $display_request, $index );
