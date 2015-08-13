@@ -547,12 +547,15 @@ class EEH_Activation {
 		/** @var WPDB $wpdb */
 		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
+		// do we need to first delete an existing version of this table ?
 		if ( $drop_pre_existing_table && EEH_Activation::table_exists( $wp_table_name ) ){
+			// ok, delete the table... but ONLY if it's empty
 			$deleted_safely = EEH_Activation::delete_db_table_if_empty( $wp_table_name );
+			// table is NOT empty, are you SURE you want to delete this table ???
 			if ( ! $deleted_safely && defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
 				EEH_Activation::delete_unused_db_table( $wp_table_name );
 			} else if ( ! $deleted_safely ) {
-				//so we should be more cautious rather than just dropping tables so easily
+				// so we should be more cautious rather than just dropping tables so easily
 				EE_Error::add_persistent_admin_notice(
 						'bad_table_' . $wp_table_name . '_detected',
 						sprintf( __( 'Database table %1$s exists when it shouldn\'t, and may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
@@ -740,7 +743,7 @@ class EEH_Activation {
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
 			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
-			$current_data_migration_script->set_migrating( FALSE );
+			$current_data_migration_script->set_migrating( false );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			if( $current_data_migration_script->get_errors() ){
@@ -751,13 +754,14 @@ class EEH_Activation {
 				}else{
 					EE_Error::add_error( __( 'There were errors creating the Event Espresso database tables and Event Espresso has been deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.', 'event_espresso' ) );
 				}
-				return FALSE;
+				return false;
 			}
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 		}else{
 			EE_Error::add_error( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-			return FALSE;
+			return false;
 		}
+		return true;
 	}
 
 
@@ -1061,10 +1065,12 @@ class EEH_Activation {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
+			$table_name = EEM_Status::instance()->table();
+
+			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
 			$wpdb->query($SQL);
 
-			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
+			$SQL = "INSERT INTO $table_name
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
 					('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),
@@ -1165,7 +1171,7 @@ class EEH_Activation {
 	public static function generate_default_message_templates() {
 
 		$success = FALSE;
-		$settings = $installed_messengers = $default_messengers = array();
+		$installed_messengers = $default_messengers = array();
 
 		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
