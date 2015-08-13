@@ -190,6 +190,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$grp_id = ! empty( $this->_req_data['GRP_ID'] ) && ! is_array( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
 		$grp_id = empty( $grp_id ) && !empty( $this->_req_data['id'] ) ? $this->_req_data['id'] : $grp_id;
+		$msg_id = ! empty( $this->_req_data['MSG_ID'] ) && ! is_array( $this->_req_data['MSG_ID'] ) ? $this->_req_data['MSG_ID'] : 0;
 
 		$this->_page_routes = array(
 				'default' => array(
@@ -283,10 +284,37 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'func' => '_settings',
 					'capability' => 'manage_options'
 					),
-				'reports' => array(
-					'func' => '_messages_reports',
-					'capability' => 'ee_read_messages'
-					)
+				'generate_now' => array(
+					'func' => '_generate_now',
+					'capability' => 'ee_send_message',
+					'noheader' => true
+				),
+				'generate_and_send_now' => array(
+					'func' => '_generate_and_send_now',
+					'capability' => 'ee_send_message',
+					'noheader' => true
+				),
+				'queue_for_resending' => array(
+					'func' => '_queue_for_resending',
+					'capability' => 'ee_send_message',
+					'noheader' => true
+				),
+				'send_now' => array(
+					'func' => '_send_now',
+					'capability' => 'ee_send_message',
+					'noheader' => true
+				),
+				'delete_ee_message' => array(
+					'func' => '_delete_ee_messages',
+					'capability' => 'ee_delete_message',
+					'noheader' => true
+				),
+				'delete_ee_messages' => array(
+					'func' => '_delete_ee_messages',
+					'capability' => 'ee_delete_messages',
+					'noheader' => true,
+					'obj_id' => $msg_id
+				)
 		);
 	}
 
@@ -438,13 +466,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
 				'require_nonce' => false
-				),
-			/*'reports' => array(
-				'nav' => array(at
-					'label' => __('Reports', 'event_espresso'),
-					'order' => 30
-					)
-				)*/
+				)
 		);
 
 	}
@@ -671,6 +693,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			    'bulk_action' => array()
 			 )
 		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'message_list_table_bulk_actions' ) ) {
+			$this->_views['all']['bulk_action'] = array(
+			        'generate_now' => __( 'Generate Now', 'event_espresso' ),
+			        'generate_and_send_now' => __( 'Generate and Send Now', 'event_espresso' ),
+			        'queue_for_resending' => __( 'Queue for Resending', 'event_espresso' ),
+			        'send_now' => __( 'Send Now', 'event_espresso' )
+			    );
+		}
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_messages', 'message_list_table_bulk_actions' ) ) {
+			$this->_views['all']['bulk_action']['delete_ee_messages'] = __( 'Delete Messages', 'event_espresso' );
+		}
 	}
 
 
@@ -2928,11 +2963,111 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**  EE MESSAGE PROCESSING ACTIONS **/
 
 
-	protected function _messages_reports() {
-		$this->_template_args['admin_page_content'] = "Feature coming soon man,  sit back, relax, and enjoy the fireworks.";
-		$this->display_admin_page_with_no_sidebar();
+
+	/**
+	 * This immediately generates any EE_Message ID's that are selected that are EEM_Message::status_incomplete
+     * However, this does not send immediately, it just queues for sending.
+     *
+     * @since 4.9.0
+     */
+	protected function _generate_now() {
+		$msg_ids = $this->_get_msg_ids_from_request();
+		EED_Messages::generate_now( $msg_ids );
+		$this->_redirect_after_action( false, '', '', array(), true );
 	}
+
+
+
+	/**
+	 * This immediately generates AND sends any EE_Message's selected that are EEM_Message::status_incomplete or that are
+     * EEM_Message::status_resend or EEM_Message::status_idle
+     *
+     * @since 4.9.0
+     *
+     */
+	protected function _generate_and_send_now() {
+		$this->_generate_now();
+		$this->_send_now();
+		$this->_redirect_after_action( false, '', '', array(), true );
+	}
+
+
+
+
+
+	/**
+	 * This queues any EEM_Message::status_sent EE_Message ids in the request for resending.
+     *
+     * @since 4.9.0
+     */
+	protected function _queue_for_resending() {
+		$msg_ids = $this->_get_msg_ids_from_request();
+		EED_Messages::queue_for_resending( $msg_ids );
+		$this->_redirect_after_action( false, '', '', array(), true );
+	}
+
+
+
+
+	/**
+	 *  This sends immediately any EEM_Message::status_idle or EEM_Message::status_resend messages in the queue
+     *
+     *  @since 4.9.0
+     */
+	protected function _send_now() {
+		$msg_ids = $this->_get_msg_ids_from_request();
+		EED_Messages::send_now( $msg_ids );
+		$this->_redirect_after_action( false, '', '', array(), true );
+	}
+
+
+
+
+	/**
+	 * Deletes EE_Messages for IDs in the request.
+     *
+     * @since 4.9.0
+     */
+	protected function _delete_ee_messages() {
+		$msg_ids = $this->_get_msg_ids_from_request();
+		$deleted_count = 0;
+		foreach ( $msg_ids as $msg_id ) {
+			if ( EEM_Message::instance()->delete_by_ID( $msg_id ) ) {
+				$deleted_count++;
+			}
+		}
+		if ( $deleted_count ) {
+			$this->_redirect_after_action(
+				true,
+				_n( 'message', 'messages', $deleted_count, 'event_espresso' ),
+				__('deleted', 'event_espresso')
+			);
+		} else {
+			EE_Error::add_error(
+				_n( 'The message was not deleted.', 'The messages were not deleted', count( $msg_ids ), 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			$this->_redirect_after_action( false, '', '', array(), true );
+		}
+	}
+
+
+
+
+	/**
+	 *  This looks for 'MSG_ID' key in the request and returns an array of MSG_ID's if present.
+     *  @since 4.9.0
+     *  @return array
+     */
+	protected function _get_msg_ids_from_request() {
+		if ( ! isset( $this->_req_data['MSG_ID'] ) ) {
+			return array();
+		}
+		return is_array( $this->_req_data['MSG_ID'] ) ? array_keys( $this->_req_data['MSG_ID'] ) : array( $this->_req_data['MSG_ID'] );
+	}
+
 
 }
