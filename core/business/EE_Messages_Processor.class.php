@@ -58,20 +58,22 @@ class EE_Messages_Processor {
 	}
 
 
-
-
 	/**
-	 *  Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
-	 * @return EE_Messages_Queue | bool  return false if nothing generated.  This returns a new EE_Message_Queue with
+	 * Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
+	 *
+	 * @param  EE_Message[] $messages    Array of EE_Message objects (optional) to build the queue with.
+	 * @param  bool         $clear_queue Whether to ensure a fresh queue or not.
+	 *
+	 * @return bool|EE_Messages_Queue return false if nothing generated.  This returns a new EE_Message_Queue with
 	 *                                   generated messages.
 	 */
-	public function batch_generate_from_queue() {
-		if ( $this->_queue->get_batch_to_generate() ) {
+	public function batch_generate_from_queue( $messages = array(), $clear_queue = false ) {
+		if ( $this->_build_queue_for_generation( $messages, $clear_queue ) ) {
 			$new_queue = $this->_generator->generate();
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
 				$this->_queue->unlock_queue();
-				$this->_queue->initiate_request_by_priority('send');
+				$this->_queue->initiate_request_by_priority( 'send' );
 				return $new_queue;
 			}
 		} else {
@@ -81,16 +83,90 @@ class EE_Messages_Processor {
 	}
 
 
+	/**
+	 * This method preps a queue for generation.
+	 *
+	 * @since    4.9.0
+	 *
+	 * @param EE_Message[] $messages    Array of EE_Message objects to build the queue with
+	 *
+	 * @param   bool       $clear_queue This indicates whether the existing queue should be dumped or not.
+	 *
+	 * @return bool true means queue prepped, false means there was a lock so no generation please.
+	 */
+	protected function _build_queue_for_generation( $messages = array(), $clear_queue = false ) {
+
+		//if generation is locked then get out now because that means processing is already happening.
+		if ( $this->_queue->is_locked() ) {
+			return false;
+		}
+
+		$this->_queue->lock_queue();
+
+		if ( $clear_queue ) {
+			$this->_queue = new EE_Messages_Queue( $this->_EEMSG );
+		}
+
+		if ( $messages ) {
+			$messages = is_array( $messages ) ? $messages : array( $messages );
+			foreach ( $messages as $message ) {
+				$this->_queue->add( $message );
+			}
+		} else {
+			$this->_queue->get_batch_to_generate();
+		}
+		return true;
+	}
+
+
+	/**
+	 * This method preps a queue for sending.
+	 *
+	 * @param EE_Message[] $messages
+	 * @param bool  $clear_queue Used to indicate whether to start with a fresh queue or not.
+	 *
+	 * @return bool true means queue prepped, false means there was a lock so no queue prepped.
+	 */
+	protected function _build_queue_for_sending( $messages, $clear_queue = false ) {
+		//if sending is locked then get out now because that means processing is already happening.
+		if ( $this->_queue->is_locked( EE_Messages_Queue::action_sending ) ) {
+			return false;
+		}
+
+		$this->_queue->lock_queue( EE_Messages_Queue::action_sending );
+
+		if ( $clear_queue ) {
+			$this->_queue = new EE_Messages_Queue( $this->_EEMSG );
+		}
+
+		$messages = is_array( $messages ) ? $messages : array( $messages );
+
+		foreach ( $messages as $message ) {
+			$this->_queue->add( $message );
+		}
+		return true;
+	}
 
 
 	/**
 	 * Calls the EE_Message_Queue::get_to_send_batch_and_send() method and then immediately just calls EE_Message_Queue::execute()
 	 * to iterate and send unsent messages.
+	 *
+	 * @param EE_Message[] $messages    If an array of messages is sent in then use it.
+	 *
+	 * @param bool         $clear_queue Whether to initialize a new queue or keep the existing one.
+	 *
 	 * @return EE_Messages_Queue
 	 */
-	public function batch_send_from_queue() {
-		//get messages to send and execute.
-		$this->_queue->get_to_send_batch_and_send();
+	public function batch_send_from_queue( $messages = array(), $clear_queue = false ) {
+
+		if ( $messages && $this->_build_queue_for_sending( $messages, $clear_queue ) ) {
+			$this->_queue->execute();
+			$this->_queue->unlock_queue( EE_Messages_Queue::action_sending );
+		} else {
+			//get messages to send and execute.
+			$this->_queue->get_to_send_batch_and_send();
+		}
 		//note: callers can use the EE_Messages_Queue::count_STS_in_queue() method to find out if there were any failed
 		//messages in the queue and decide how to handle at that point.
 		return $this->_queue;
@@ -325,7 +401,7 @@ class EE_Messages_Processor {
 	 */
 	public function setup_mtgs_for_all_active_messengers( $message_type, $data ) {
 		$messages_to_generate = array();
-		foreach( $this->_EEMSG->get_active_messengers() as $messenger_slug => $messenger_object  ) {
+		foreach ( $this->_EEMSG->get_active_messengers() as $messenger_slug => $messenger_object  ) {
 			$mtg = new EE_Message_To_Generate(
 				$messenger_slug,
 				$message_type,
@@ -350,16 +426,15 @@ class EE_Messages_Processor {
 	public function setup_messages_from_ids_and_send( $message_ids ) {
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
-				'MSG_ID' => aray( 'IN', $message_ids )
+				'MSG_ID' => array( 'IN', $message_ids ),
+				'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
 			)
 		));
 
 		//set the Messages to resend (only if their status is sent).
 		foreach ( $messages as $message ) {
-			if ( $message instanceof EE_Message && in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
-				$message->set_STS_ID( EEM_Message::status_resend );
-				$this->_queue->add( $message );
-			}
+			$message->set_STS_ID( EEM_Message::status_resend );
+			$this->_queue->add( $message );
 		}
 
 		$this->_queue->initiate_request_by_priority( 'send' );
@@ -399,8 +474,8 @@ class EE_Messages_Processor {
 
 		$messages_to_generate = array();
 
-		foreach( $regs_to_send as $status_group ) {
-			foreach( $status_group as $status_id => $registrations ) {
+		foreach ( $regs_to_send as $status_group ) {
+			foreach ( $status_group as $status_id => $registrations ) {
 				$messages_to_generate = $messages_to_generate + $this->setup_mtgs_for_all_active_messengers(
 						EEH_MSG_Template::convert_reg_status_to_message_type( $status_id ),
 						array( $registrations, $status_id )
