@@ -89,7 +89,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return string   checkbox
 	 */
 	public function column_cb( $message ) {
-		return sprintf( '<input type="checkbox" name="checkbox[%s] value="1" />', $message->GRP_ID() );
+		return sprintf( '<input type="checkbox" name="MSG_ID[%s] value="1" />', $message->GRP_ID() );
 	}
 
 
