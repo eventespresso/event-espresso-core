@@ -1,6 +1,7 @@
 <?php
 /** @type int $EVT_ID */
 /** @type int $max_atndz */
+/** @type string $event_status */
 /** @type boolean $event_is_expired */
 
 $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
@@ -83,6 +84,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		// if a previous required ticket with the same sale start date is sold out, then mark this ticket as sold out as well.
 		// tickets that go on sale at a later date than the required ticket  will NOT be affected
 		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status();
+		$tkt_status = $event_status === EE_Datetime::sold_out ? EE_Ticket::sold_out : $tkt_status;
 		// check ticket status
 		switch ( $tkt_status ) {
 			// sold_out
