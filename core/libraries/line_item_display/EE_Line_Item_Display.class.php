@@ -40,7 +40,7 @@ class EE_Line_Item_Display {
 				) {
 					$this->strategy = new  $other_line_item_display_strategy();
 				} else {
-					$this->strategy = new EE_SPCO_Line_Item_Display_Strategy();
+					$this->strategy = new EE_Default_Line_Item_Display_Strategy();
 				}
 		}
 	}

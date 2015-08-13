@@ -180,22 +180,31 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		//k more than one registration so let's see if we can get specific to context
 		//are we parsing event_list?
 		if ( $this->_data instanceof EE_Event ) {
+			$reg_code = array();
 			//loop through registrations for recipient and see if there is a match for this event
 			foreach ( $this->_registrations_for_recipient as $reg ) {
 				if ( $reg instanceof EE_Registration && $reg->event_ID() == $this->_data->ID() ) {
-					return $reg->reg_code();
+					$reg_code[] = $reg->reg_code();
 				}
 			}
+			return implode( ', ', $reg_code );
 		}
 
 		//are we parsing ticket list?
 		if ( $this->_data instanceof EE_Ticket ) {
+			$reg_code = array();
 			//loop through each registration for recipient and see if there is a match for this ticket
 			foreach ( $this->_registrations_for_recipient as $reg ) {
 				if ( $reg instanceof EE_Registration && $reg->ticket_ID() == $this->_data->ID() ) {
-					return $reg->reg_code();
+					$reg_code = $reg->reg_code();
 				}
 			}
+			return implode( ', ', $reg_code );
+		}
+
+		//do we have a specific reg_obj?  Let's use it
+		if ( $this->_data instanceof EE_Messages_Addressee && $this->_data->reg_obj instanceof EE_Registration ) {
+			return $this->_data->reg_obj->reg_code();
 		}
 
 		//not able to determine the single reg code so let's return a comma delimited list of reg codes.
