@@ -528,7 +528,7 @@ class EEH_Activation {
 	 * @param string $table_name without the $wpdb->prefix
 	 * @param string $sql SQL for creating the table (contents between brackets in an SQL create table query)
 	 * @param string $engine like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
-	 * @param boolean $drop_table_if_pre_existed set to TRUE when you want to make SURE the table is completely empty
+	 * @param boolean $drop_pre_existing_table set to TRUE when you want to make SURE the table is completely empty
 	 * and new once this function is done (ie, you really do want to CREATE a table, and
 	 * expect it to be empty once you're done)
 	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it
@@ -536,8 +536,7 @@ class EEH_Activation {
 	 * 	@return void
 	 * @throws EE_Error if there are database errors
 	 */
-	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
-//		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exists') . "<br>";//die;
+	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ', $drop_pre_existing_table = false ) {
 		if( apply_filters( 'FHEE__EEH_Activation__create_table__short_circuit', FALSE, $table_name, $sql ) ){
 			return;
 		}
@@ -548,15 +547,15 @@ class EEH_Activation {
 		/** @var WPDB $wpdb */
 		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
-		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
-		if($drop_table_if_pre_existed && EEH_Activation::table_exists( $wp_table_name ) ){
-			if( defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
-				$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
-			}else{
+		if ( $drop_pre_existing_table && EEH_Activation::table_exists( $wp_table_name ) ){
+			$deleted_safely = EEH_Activation::delete_db_table_if_empty( $wp_table_name );
+			if ( ! $deleted_safely && defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
+				EEH_Activation::delete_unused_db_table( $wp_table_name );
+			} else if ( ! $deleted_safely ) {
 				//so we should be more cautious rather than just dropping tables so easily
 				EE_Error::add_persistent_admin_notice(
 						'bad_table_' . $wp_table_name . '_detected',
-						sprintf( __( 'Database table %1$s existed when it shouldn\'t, and probably contained erroneous data. You probably restored to a backup that didn\'t remove old tables didn\'t you? We recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
+						sprintf( __( 'Database table %1$s exists when it shouldn\'t, and may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
 								$wp_table_name,
 								"<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
 								'<b>wp-config.php</b>',
@@ -564,31 +563,31 @@ class EEH_Activation {
 								TRUE );
 			}
 		}
-// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
-if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
-	$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
-	//get $wpdb to echo errors, but buffer them. This way at least WE know an error
-	//happened. And then we can choose to tell the end user
-	$old_show_errors_policy = $wpdb->show_errors( TRUE );
-	$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
-	ob_start();
-	dbDelta( $SQL );
-	$output = ob_get_contents();
-	ob_end_clean();
-	$wpdb->show_errors( $old_show_errors_policy );
-	$wpdb->suppress_errors( $old_error_suppression_policy );
-	if( ! empty( $output ) ){
-		throw new EE_Error( $output	);
-	}
-} else {
-	throw new EE_Error(
-		sprintf(
-			__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
-			'<br />',
-			$sql
-		)
-	);
-}
+		// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
+		if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
+			$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+			//get $wpdb to echo errors, but buffer them. This way at least WE know an error
+			//happened. And then we can choose to tell the end user
+			$old_show_errors_policy = $wpdb->show_errors( TRUE );
+			$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
+			ob_start();
+			dbDelta( $SQL );
+			$output = ob_get_contents();
+			ob_end_clean();
+			$wpdb->show_errors( $old_show_errors_policy );
+			$wpdb->suppress_errors( $old_error_suppression_policy );
+			if( ! empty( $output ) ){
+				throw new EE_Error( $output	);
+			}
+		} else {
+			throw new EE_Error(
+				sprintf(
+					__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
+					'<br />',
+					$sql
+				)
+			);
+		}
 
 	}
 
@@ -651,6 +650,40 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 
 
 	/**
+	 * db_table_is_empty
+	 *
+	 * @access public
+	 * @static
+	 * @param string $table_name
+	 * @return bool
+	 */
+	public static function db_table_is_empty( $table_name ) {
+		global $wpdb;
+		$table_name = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		$count = $wpdb->query( "SELECT COUNT(*) FROM $table_name" );
+		return absint( $count );
+	}
+
+
+
+	/**
+	 * delete_db_table_if_empty
+	 *
+	 * @access public
+	 * @static
+	 * @param string $table_name
+	 * @return bool | int
+	 */
+	public static function delete_db_table_if_empty( $table_name ) {
+		if ( EEH_Activation::db_table_is_empty( $table_name ) ) {
+			return EEH_Activation::delete_unused_db_table( $table_name );
+		}
+		return false;
+	}
+
+
+
+	/**
 	 * delete_unused_db_table
 	 *
 	 * @access public
@@ -660,7 +693,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
+		$table_name = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 	}
 
@@ -1441,7 +1474,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			'wp_esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
-			EEH_Activation::delete_unused_db_table( $table );
+			EEH_Activation::delete_db_table_if_empty( $table );
 		}
 
 
