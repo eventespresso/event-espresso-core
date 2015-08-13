@@ -99,13 +99,13 @@ class EED_Messages  extends EED_Module {
 	public static function set_hooks_admin() {
 		//actions
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( 'EED_Messages', 'payment' ), 10, 2 );
-		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder'), 10 );
+		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder' ), 10 );
 		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
-		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
+		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message' ), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 		//filters
 		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( 'EED_Messages', 'process_resend' ), 10, 2 );
-		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( 'EED_Messages', 'process_admin_payment'), 10, 2 );
+		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( 'EED_Messages', 'process_admin_payment' ), 10, 2 );
 		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 	}
@@ -185,14 +185,14 @@ class EED_Messages  extends EED_Module {
 		//get required vars
 		$cron_type = EE_Registry::instance()->REQ->get( 'type' );
 		$nonce = EE_Registry::instance()->REQ->get( '_nonce' );
-		header("HTTP/1.1 200 OK");
+		header( 'HTTP/1.1 200 OK' );
 
 		//now let's verify nonce, if not valid exit immediately
 		if ( ! wp_verify_nonce( $nonce, 'EE_Messages_Scheduler_' . $cron_type ) ) {
 			/**
 			 * trigger error so this gets in the error logs.  This is important because it happens on a non-user request.
 			 */
-			trigger_error( __( 'Invalid Nonce', 'event_espresso' ) );
+			trigger_error( esc_attr__( 'Invalid Nonce', 'event_espresso' ) );
 		}
 
 		$method = 'batch_' . $cron_type . '_from_queue';
@@ -203,7 +203,7 @@ class EED_Messages  extends EED_Module {
 			/**
 			 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
 			 */
-			trigger_error( sprintf( __('There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) );
+			trigger_error( esc_attr( sprintf( __( 'There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) ) );
 		}
 		exit();
 	}
@@ -291,11 +291,11 @@ class EED_Messages  extends EED_Module {
 			'messages/validators',
 			'messages/validators/email',
 			'messages/validators/html',
-			'shortcodes'
+			'shortcodes',
 			);
 		$paths = array();
 		foreach ( $dir_ref as $index => $dir ) {
-			$paths[$index] = EE_LIBRARIES . $dir;
+			$paths[ $index ] = EE_LIBRARIES . $dir;
 		}
 		self::$_MSG_PATHS = apply_filters( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', $paths );
 	}
@@ -352,7 +352,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function cancelled_registration( EE_Transaction $transaction ) {
 		self::_load_controller();
-		$data = array( $transaction, NULL );
+		$data = array( $transaction, null );
 		self::$_MSGPROCESSOR->generate_for_all_active_messengers( 'cancelled_registration', $data );
 	}
 
@@ -372,7 +372,6 @@ class EED_Messages  extends EED_Module {
 			//no messages please
 			return;
 		}
-
 
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
@@ -428,20 +427,20 @@ class EED_Messages  extends EED_Module {
 		// first we check if we're in admin and not doing front ajax
 		if ( is_admin() && ! EE_FRONT_AJAX ) {
 			//make sure appropriate admin params are set for sending messages
-			if ( empty( $_REQUEST[ 'txn_reg_status_change' ][ 'send_notifications' ] ) || ! absint( $_REQUEST[ 'txn_reg_status_change' ][ 'send_notifications' ] ) ) {
+			if ( empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) || ! absint( $_REQUEST['txn_reg_status_change']['send_notifications'] ) ) {
 				//no messages sent please.
 				return false;
 			}
 		} else {
 			// frontend request (either regular or via AJAX)
 			// TXN is NOT finalized ?
-			if ( ! isset( $extra_details[ 'finalized' ] ) || $extra_details[ 'finalized' ] === false ) {
+			if ( ! isset( $extra_details['finalized'] ) || $extra_details['finalized'] === false ) {
 				return false;
 			}
 			// return visit but nothing changed ???
 			if (
-				isset( $extra_details[ 'revisit' ], $extra_details[ 'status_updates' ] ) &&
-				$extra_details[ 'revisit' ] && ! $extra_details[ 'status_updates' ]
+				isset( $extra_details['revisit'], $extra_details['status_updates'] ) &&
+				$extra_details['revisit'] && ! $extra_details['status_updates']
 			) {
 				return false;
 			}
@@ -509,7 +508,7 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 
 		//if $msgID in this request then skip to the new resend_message
-		if( EE_Registry::instance()->REQ->get( 'MSG_ID' ) ) {
+		if ( EE_Registry::instance()->REQ->get( 'MSG_ID' ) ) {
 			return self::resend_message();
 		}
 
@@ -535,10 +534,9 @@ class EED_Messages  extends EED_Module {
 	public static function resend_message() {
 		self::_load_controller();
 
-
 		$msgID = EE_Registry::instance()->REQ->get( 'MSG_ID' );
 		if ( ! $msgID ) {
-			EE_Error::add_error( __('Something went wrong because there is no "MSG_ID" value in the request', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'Something went wrong because there is no "MSG_ID" value in the request', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
 
@@ -568,7 +566,7 @@ class EED_Messages  extends EED_Module {
 	 * @param  EE_Payment $payment EE_payment object
 	 * @return bool              success/fail
 	 */
-	public static function process_admin_payment( $success = TRUE, EE_Payment $payment ) {
+	public static function process_admin_payment( $success = true, EE_Payment $payment ) {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
@@ -644,7 +642,7 @@ class EED_Messages  extends EED_Module {
 	 * @return 	string
 	 */
 	public static function registration_message_trigger_url( $registration_message_trigger_url, EE_Registration $registration, $messenger = 'html', $message_type = 'invoice' ) {
-		EE_Registry::instance()->load_helper('MSG_Template');
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		// whitelist $messenger
 		switch ( $messenger ) {
 			case 'pdf' :
@@ -668,22 +666,22 @@ class EED_Messages  extends EED_Module {
 				break;
 		}
 		// verify that both the messenger AND the message type are active
-		if ( EEH_MSG_Template::is_messenger_active( $sending_messenger ) && EEH_MSG_Template::is_mt_active( $message_type )) {
+		if ( EEH_MSG_Template::is_messenger_active( $sending_messenger ) && EEH_MSG_Template::is_mt_active( $message_type ) ) {
 			//need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
 			$template_query_params = array(
-				'MTP_is_active' => TRUE,
+				'MTP_is_active' => true,
 				'MTP_messenger' => $generating_messenger,
 				'MTP_message_type' => $message_type,
 				'Event.EVT_ID' => $registration->event_ID()
 			);
 			//get the message template group.
-			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_query_params ));
+			$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_query_params ) );
 			//if we don't have an EE_Message_Template_Group then return
 			if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
 				// remove EVT_ID from query params so that global templates get picked up
-				unset( $template_query_params[ 'Event.EVT_ID' ] );
+				unset( $template_query_params['Event.EVT_ID'] );
 				//get global template as the fallback
-				$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_query_params ));
+				$msg_template_group = EEM_Message_Template_Group::instance()->get_one( array( $template_query_params ) );
 			}
 			//if we don't have an EE_Message_Template_Group then return
 			if ( ! $msg_template_group instanceof EE_Message_Template_Group ) {
@@ -715,7 +713,7 @@ class EED_Messages  extends EED_Module {
 	 * @param bool 	  $send true we will do a test send using the messenger delivery, false we just do a regular preview
 	 * @return string          The body of the message.
 	 */
-	public static function preview_message( $type, $context, $messenger, $send = FALSE ) {
+	public static function preview_message( $type, $context, $messenger, $send = false ) {
 		self::_load_controller();
 		$mtg = new EE_Message_To_Generate(
 			$messenger,
