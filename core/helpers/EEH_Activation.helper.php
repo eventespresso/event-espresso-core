@@ -678,8 +678,11 @@ class EEH_Activation {
 	public static function db_table_is_empty( $table_name ) {
 		global $wpdb;
 		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		$count = $wpdb->query( "SELECT COUNT(*) FROM $table_name" );
-		return absint( $count );
+		if ( EEH_Activation::table_exists( $table_name ) ) {
+			$count = $wpdb->query( "SELECT COUNT(*) FROM $table_name" );
+			return absint( $count );
+		}
+		return false;
 	}
 
 
@@ -711,8 +714,11 @@ class EEH_Activation {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		if ( EEH_Activation::table_exists( $table_name ) ) {
+			$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+			return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		}
+		return false;
 	}
 
 
