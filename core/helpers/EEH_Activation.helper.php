@@ -567,7 +567,8 @@ class EEH_Activation {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
+		// add WP table prefix if it is NOT already the first thing in the table name
+		$table_name = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 	}
 
