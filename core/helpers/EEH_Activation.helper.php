@@ -41,6 +41,21 @@ class EEH_Activation {
 	protected static $_initialized_db_content_already_in_this_request = false;
 
 
+
+	/**
+	 *    _ensure_table_name_has_prefix
+	 *
+	 * @access public
+	 * @static
+	 * @param $table_name
+	 * @return string
+	 */
+	public static function ensure_table_name_has_prefix( $table_name ) {
+		global $wpdb;
+		return strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+	}
+
+
 	/**
 	 * 	system_initialization
 	 * 	ensures the EE configuration settings are loaded with at least default options set
@@ -498,13 +513,13 @@ class EEH_Activation {
 
 		$role_to_check = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator' );
 
-		//let's allow pre_filtering for early exits by altenative methods for getting id.  We check for truthy result and if so then exit early.
+		//let's allow pre_filtering for early exits by alternative methods for getting id.  We check for truthy result and if so then exit early.
 		$pre_filtered_id = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id', false, $role_to_check );
 		if ( $pre_filtered_id !== false ) {
 			return (int) $pre_filtered_id;
 		}
 
-		$capabilities_key = $wpdb->prefix . 'capabilities';
+		$capabilities_key = EEH_Activation::ensure_table_name_has_prefix( 'capabilities' );
 		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1", '%' . $role_to_check . '%' );
 		$user_id = $wpdb->get_var( $query );
 		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
@@ -546,7 +561,7 @@ class EEH_Activation {
 		}
 		/** @var WPDB $wpdb */
 		global $wpdb;
-		$wp_table_name = $wpdb->prefix . $table_name;
+		$wp_table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		// do we need to first delete an existing version of this table ?
 		if ( $drop_pre_existing_table && EEH_Activation::table_exists( $wp_table_name ) ){
 			// ok, delete the table... but ONLY if it's empty
@@ -612,7 +627,7 @@ class EEH_Activation {
 			return FALSE;
 		}
 		global $wpdb;
-		$full_table_name=$wpdb->prefix.$table_name;
+		$full_table_name= EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		$fields = self::get_fields_on_table($table_name);
 		if (!in_array($column_name, $fields)){
 			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
@@ -636,7 +651,7 @@ class EEH_Activation {
 	 */
 	public static function get_fields_on_table( $table_name = NULL ) {
 		global $wpdb;
-		$table_name=$wpdb->prefix.$table_name;
+		$table_name= EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		if ( ! empty( $table_name )) {
 			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
 			if ($columns !== FALSE) {
@@ -662,7 +677,7 @@ class EEH_Activation {
 	 */
 	public static function db_table_is_empty( $table_name ) {
 		global $wpdb;
-		$table_name = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		$count = $wpdb->query( "SELECT COUNT(*) FROM $table_name" );
 		return absint( $count );
 	}
@@ -696,7 +711,7 @@ class EEH_Activation {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$table_name = strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 	}
 
@@ -716,13 +731,13 @@ class EEH_Activation {
 			return FALSE;
 		}
 		global $wpdb;
-		$table_name_with_prefix = $wpdb->prefix . $table_name ;
-		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
 		if (
-			$wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name
-			&& $wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
+			$wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name
+			&& $wpdb->get_var( $index_exists_query ) == $table_name //using get_var with the $index_exists_query returns the table's name
 		) {
-			return $wpdb->query( "ALTER TABLE $table_name_with_prefix DROP INDEX $index_name" );
+			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $index_name" );
 		}
 		return TRUE;
 	}
@@ -778,7 +793,8 @@ class EEH_Activation {
 	public static function initialize_system_questions() {
 		// QUESTION GROUPS
 		global $wpdb;
-		$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group' );
+		$SQL = "SELECT QSG_system FROM $table_name WHERE QSG_system != 0";
 		// what we have
 		$question_groups = $wpdb->get_col( $SQL );
 		// check the response
@@ -825,7 +841,7 @@ class EEH_Activation {
 				if ( ! empty( $QSG_values )) {
 					// insert system question
 					$wpdb->insert(
-						$wpdb->prefix . 'esp_question_group',
+						$table_name,
 						$QSG_values,
 						array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
 					);
@@ -838,7 +854,8 @@ class EEH_Activation {
 
 		// QUESTIONS
 		global $wpdb;
-		$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( 'esp_question' );
+		$SQL = "SELECT QST_system FROM $table_name WHERE QST_system != ''";
 		// what we have
 		$questions = $wpdb->get_col( $SQL );
 		// what we should have
@@ -1019,7 +1036,7 @@ class EEH_Activation {
 				if ( ! empty( $QST_values )) {
 					// insert system question
 					$wpdb->insert(
-						$wpdb->prefix . 'esp_question',
+						$table_name,
 						$QST_values,
 						array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
 					);
@@ -1029,7 +1046,7 @@ class EEH_Activation {
 					$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;
 					// add system questions to groups
 					$wpdb->insert(
-						$wpdb->prefix . 'esp_question_group_question',
+						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
 						array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ),
 						array( '%d', '%d','%d' )
 					);
@@ -1574,9 +1591,7 @@ class EEH_Activation {
 	 */
 	public static function table_exists( $table_name ){
 		global $wpdb, $EZSQL_ERROR;
-		if(strpos($table_name, $wpdb->prefix) !== 0){
-			$table_name = $wpdb->prefix.$table_name;
-		}
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		//ignore if this causes an sql error
 		$old_error = $wpdb->last_error;
 		$old_suppress_errors = $wpdb->suppress_errors();
