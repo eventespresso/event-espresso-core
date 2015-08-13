@@ -13,6 +13,18 @@ class EE_Messages_Queue {
 
 
 	/**
+	 * @type    string  reference for sending action
+	 */
+	const action_sending = 'sending';
+
+
+	/**
+	 * @type    string  reference for generation action
+	 */
+	const action_generating = 'generation';
+
+
+	/**
 	 * Sets the limit of how many messages are generated per process.
 	 * @type int
 	 */
@@ -155,12 +167,12 @@ class EE_Messages_Queue {
 	 * @return bool  true if successfully retrieved batch, false no batch ready.
 	 */
 	public function get_batch_to_generate() {
-		if ( $this->is_locked( 'generation' ) ) {
+		if ( $this->is_locked( EE_Messages_Queue::action_generating ) ) {
 			return false;
 		}
 
 		//lock batch generation to prevent race conditions.
-		$this->_lock_queue( 'generation' );
+		$this->lock_queue( EE_Messages_Queue::action_generating );
 
 		$where_conditions = array(
 			'STS_ID' => EEM_Message::status_incomplete
@@ -201,9 +213,11 @@ class EE_Messages_Queue {
 	 *               to assist with notifying user.
 	 */
 	public function get_to_send_batch_and_send() {
-		if ( $this->is_locked( 'sending' ) || $this->_rate_limit < 1 ) {
+		if ( $this->is_locked( EE_Messages_Queue::action_sending ) || $this->_rate_limit < 1 ) {
 			return false;
 		}
+
+		$this->lock_queue( EE_Messages_Queue::action_sending );
 
 		$batch = $this->_batch_count < $this->_rate_limit ? $this->_batch_count : $this->_rate_limit;
 
@@ -234,7 +248,7 @@ class EE_Messages_Queue {
 		$this->execute();
 
 		//release lock
-		$this->unlock_queue( 'sending' );
+		$this->unlock_queue( EE_Messages_Queue::action_sending );
 		return true;
 	}
 
@@ -246,7 +260,7 @@ class EE_Messages_Queue {
 	 *
 	 * @param   string  $type   The type of queue being locked.
 	 */
-	protected function _lock_queue( $type = 'generation' ) {
+	public function lock_queue( $type = EE_Messages_Queue::action_generating ) {
 		set_transient( $this->_get_lock_key( $type ), 1, $this->_get_lock_expiry( $type ) );
 	}
 
@@ -258,7 +272,7 @@ class EE_Messages_Queue {
 	 *
 	 * @param   string  $type   The type of queue being unlocked.
 	 */
-	public function unlock_queue( $type = 'generation' ) {
+	public function unlock_queue( $type = EE_Messages_Queue::action_generating ) {
 		delete_transient( $this->_get_lock_key( $type ) );
 	}
 
@@ -270,7 +284,7 @@ class EE_Messages_Queue {
 	 * @param string $type  The type of lock.
 	 * @return string
 	 */
-	protected function _get_lock_key( $type = 'generation' ) {
+	protected function _get_lock_key( $type = EE_Messages_Queue::action_generating ) {
 		return '_ee_lock_' . $type;
 	}
 
@@ -282,7 +296,7 @@ class EE_Messages_Queue {
 	 * @param string $type  The type of lock
 	 * @return int   time to expiry in seconds.
 	 */
-	protected function _get_lock_expiry( $type = 'generation' ) {
+	protected function _get_lock_expiry( $type = EE_Messages_Queue::action_generating ) {
 		return (int) apply_filters( 'FHEE__EE_Messages_Queue__lock_expiry', HOUR_IN_SECONDS, $type );
 	}
 
@@ -338,7 +352,7 @@ class EE_Messages_Queue {
 	 * @param  string $type The type of lock being checked for.
 	 * @return bool
 	 */
-	public function is_locked( $type = 'generation' ) {
+	public function is_locked( $type = EE_Messages_Queue::action_generating ) {
 		return (bool) get_transient( $this->_get_lock_key( $type ) );
 	}
 
