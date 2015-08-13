@@ -68,7 +68,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		foreach( $this->_views as $view => $args ) {
-			$this->_views[$view]['count'] = $this->_messages( $this->_per_page, $view );
+			$this->_views[$view]['count'] = $this->_get_messages( $this->_per_page, $view, true );
 		}
 	}
 
@@ -189,7 +189,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $perpage;
 		$offset = ($current_page-1)*$per_page;
-		$limit = $all ? null : array( $offset, $per_page );
+		$limit = $all || $count ? null : array( $offset, $per_page );
 
 		$query_params = array(
 			'order_by' => empty( $this->_req_data['orderby'] ) ? 'MSG_modified' : $this->_req_data['orderby'],
