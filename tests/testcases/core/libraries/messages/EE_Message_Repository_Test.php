@@ -147,4 +147,41 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 	}
 
 
+
+
+
+	function test_count_by_priority_and_status() {
+		$test_repo = new EE_Message_Repository();
+		//let's setup some message objects with a variety of priorities and statuses.
+		//high priority, idle
+		$messages_a = $this->factory->message->create_many( 3, array( 'MSG_priority' => EEM_Message::priority_high, 'STS_ID' => EEM_Message::status_idle ) );
+		//medium priority, sent
+		$messages_b = $this->factory->message->create_many( 2, array( 'MSG_priority' => EEM_Message::priority_medium, 'STS_ID' => EEM_Message::status_sent ) );
+		//medium priority, resend
+		$messages_c = $this->factory->message->create_many( 2, array( 'MSG_priority' => EEM_Message::priority_medium, 'STS_ID' => EEM_Message::status_resend ) );
+		//low priority, resend
+		$messages_d = $this->factory->message->create_many( 4, array( 'MSG_priority' => EEM_Message::priority_low, 'STS_ID' => EEM_Message::status_resend ) );
+
+		$all_messages = array_merge( $messages_a, $messages_b, $messages_c, $messages_d );
+
+		//add to queue
+		foreach( $all_messages as $message ) {
+			$test_repo->add( $message );
+		}
+
+		//test high priority results
+		$this->assertEquals( 3, $test_repo->count_by_priority_and_status( EEM_Message::priority_high ) );
+		$this->assertEquals( 0, $test_repo->count_by_priority_and_status( EEM_Message::priority_high, EEM_Message::status_incomplete ) );
+		$this->assertEquals( 3, $test_repo->count_by_priority_and_status( EEM_Message::priority_high, array( EEM_Message::status_incomplete, EEM_Message::status_idle ) ) );
+
+		//test medium priority results
+		$this->assertEquals( 4, $test_repo->count_by_priority_and_status( EEM_Message::priority_medium ) );
+		$this->assertEquals( 2, $test_repo->count_by_priority_and_status( EEM_Message::priority_medium, EEM_Message::status_resend ) );
+		$this->assertEquals( 4, $test_repo->count_by_priority_and_status( EEM_Message::priority_medium, array( EEM_Message::status_incomplete, EEM_Message::status_resend, EEM_Message::status_sent ) ) );
+
+		//test low priority results
+		$this->assertEquals( 4, $test_repo->count_by_priority_and_status( EEM_Message::priority_low, EEM_Message::status_resend ) );
+	}
+
+
 } //end EE_Message_Repository_Test
