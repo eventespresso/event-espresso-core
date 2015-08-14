@@ -83,8 +83,8 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	 * @param EE_Messages_Processor $message_proc
 	 */
 	function test_batch_generate_from_queue( EE_Messages_Processor $message_proc ) {
-		//first we know there is nothing in the db, so let's verify that returns false.
-		$this->assertFalse( $message_proc->batch_generate_from_queue() );
+		//first we know there is nothing in the db, so let's verify that returns false. (this also verifies the clear param)
+		$this->assertFalse( $message_proc->batch_generate_from_queue( array(), true ) );
 
 		//now let's test getting some batch ready to generate.
 		$this->factory->message->create_many( 5 );
@@ -92,11 +92,42 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$new_queue = $message_proc->batch_generate_from_queue();
 
 		$this->assertInstanceOf( 'EE_Messages_Queue', $new_queue );
-		//this will be 0 because there was no data with our dummy messages so no messages got generated.
-		//other tests in this class handle testing generation with data (using the preview data handler)
-		$this->assertEquals( 0, $new_queue->get_queue()->count() );
+		//this will be 5 because there the messages the factory create set the preview data handler for the data used.
+		$this->assertEquals( 5, $new_queue->get_queue()->count() );
 	}
 
+
+
+
+	/**
+	 * Same as above test except only doing batch generation on specific messages
+	 * @depends test_construct_and_get_queue
+	 * @param   EE_Messages_Processor $message_proc
+	 */
+	function test_batch_generate_from_queue_with_messages( EE_Messages_Processor $message_proc ) {
+		//make sure clear works
+		$this->assertFalse( $message_proc->batch_generate_from_queue( array(), true ) );
+
+		//setup some messages for generation.
+		$messages_to_test = $this->factory->message->create_many( 5 );
+
+		//now let's create 3 more that will NOT be used.
+		$this->factory->message->create_many( 3 );
+
+		$new_queue = $message_proc->batch_generate_from_queue( $messages_to_test );
+
+		$this->assertInstanceOf( 'EE_Messages_Queue', $new_queue );
+
+		//verify 5 got generated
+		$this->assertEquals( 5, $new_queue->get_queue()->count() );
+
+		//verify the original MIC Messages do not exist in the db anymore.
+		$messages_no_exist = EEM_Message::instance()->count( array( array(
+			'MSG_ID' => array( 'IN', array_keys( $messages_to_test ) )
+		) ) );
+
+		$this->assertEquals( 0, $messages_no_exist );
+	}
 
 
 
@@ -104,6 +135,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	function test_batch_send_from_queue() {
 		//setup up new processor
 		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		/** @type EE_Messages_Processor $proc */
 		$proc = EE_Registry::instance()->load_class( 'Messages_Processor', $ee_msg );
 
 		//create messages ready to send.
@@ -129,6 +161,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	 */
 	function test_generate_and_return() {
 		$test_components = $this->_test_components();
+		/** @type EE_Messages_Processor $proc */
 		$proc = $test_components['proc'];
 		$mtg = $test_components['mtg'];
 
@@ -167,7 +200,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->_common_test_with_specific_expected_status( 'generate_and_queue_for_sending', EEM_Message::status_idle, false, 0 );
 		//now there should be Messages in the database all queued up for sending.  Let's check
 		$messages = EEM_Message::instance()->get_all( array( array(
-			'STS_ID' => EEM_Message::status_idle
+			'STS_ID' => EEM_Message::status_idle,
 		)));
 
 		//expecting only one message because the specific context was provided.
@@ -187,6 +220,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->assertTrue( $mtg->preview );
 
 		try {
+			/** @type EE_Messages_Queue $generated_queue */
 			$generated_queue = $proc->generate_for_preview( $mtg );
 		} catch( Exception $e ) {
 			$this->fail( sprintf( 'Something went wrong with the test: %s', $e->getMessage() ) );
