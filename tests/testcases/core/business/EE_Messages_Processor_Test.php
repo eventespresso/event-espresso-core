@@ -268,6 +268,38 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 
+
+	function test_setup_messages_from_ids_and_send() {
+		//setup processor to work with
+		/** @type EE_messages $ee_msg */
+		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		/** @type EE_Messages_Processor $proc */
+		$proc = EE_Registry::instance()->load_class( 'Messages_Processor', $ee_msg );
+
+		//setup up messages we'll use for sending that have the right status
+		$messages_with_right_status = $this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_sent ) );
+		$messages_with_wrong_status = $this->factory->message->create_many( 5 );
+
+		$messages_with_right_status = array_map( function( $message ) {
+			return $message->ID();
+		}, $messages_with_right_status );
+		$messages_with_wrong_status = array_map( function( $message ) {
+			return $message->ID();
+		}, $messages_with_wrong_status );
+
+		//first test correct messages
+		$proc->setup_messages_from_ids_and_send( $messages_with_right_status );
+		$this->assertEquals( 5, $proc->get_queue()->count_STS_in_queue( EEM_Message::status_resend ) );
+
+		//next test incorrect messages
+		$proc = new EE_Messages_Processor( $ee_msg ); //fresh processor and queue.
+		$proc->setup_messages_from_ids_and_send( $messages_with_wrong_status );
+		$this->assertEquals( 0, $proc->get_queue()->count_STS_in_queue( EEM_Message::status_resend ) );
+	}
+
+
+
+
 	/**
 	 * Has common assertions for multiple EE_Messages_Processor method tests.
 	 * @param string $method_to_test  EE_Messages_Processor method being tested
