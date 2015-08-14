@@ -280,12 +280,18 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$messages_with_right_status = $this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_sent ) );
 		$messages_with_wrong_status = $this->factory->message->create_many( 5 );
 
-		$messages_with_right_status = array_map( function( $message ) {
-			return $message->ID();
-		}, $messages_with_right_status );
-		$messages_with_wrong_status = array_map( function( $message ) {
-			return $message->ID();
-		}, $messages_with_wrong_status );
+		$messages_with_right_status = array_map(
+			function( $message ) {
+				return $message->ID();
+			},
+			$messages_with_right_status
+		);
+		$messages_with_wrong_status = array_map(
+			function( $message ) {
+				return $message->ID();
+			},
+			$messages_with_wrong_status
+		);
 
 		//first test correct messages
 		$proc->setup_messages_from_ids_and_send( $messages_with_right_status );
