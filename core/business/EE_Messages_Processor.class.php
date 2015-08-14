@@ -41,6 +41,23 @@ class EE_Messages_Processor {
 	 * @param EE_messages $ee_messages
 	 */
 	public function __construct( EE_messages $ee_messages ) {
+		$this->_init_queue_and_generator( $ee_messages );
+
+	}
+
+
+
+
+	/**
+	 * This method sets (or resets) the various properties for use.
+	 *
+	 * - $_EEMSG = holds the EE_messages object
+	 * - $_queue = holds the messages queue
+	 * - $_generator = holds the messages generator
+	 *
+	 * @param EE_messages $ee_messages
+	 */
+	protected function _init_queue_and_generator( EE_messages $ee_messages ) {
 		$this->_EEMSG = $ee_messages;
 		$this->_queue = new EE_Messages_Queue( $ee_messages );
 		$this->_generator = new EE_Messages_Generator( $this->_queue, $ee_messages );
@@ -97,7 +114,7 @@ class EE_Messages_Processor {
 	protected function _build_queue_for_generation( $messages = array(), $clear_queue = false ) {
 
 		if ( $clear_queue ) {
-			$this->_queue = new EE_Messages_Queue( $this->_EEMSG );
+			$this->_init_queue_and_generator( $this->_EEMSG );
 		}
 
 		if ( $messages ) {
@@ -109,7 +126,8 @@ class EE_Messages_Processor {
 			$this->_queue->lock_queue();
 			$messages = is_array( $messages ) ? $messages : array( $messages );
 			foreach ( $messages as $message ) {
-				$this->_queue->add( $message );
+				$data = $message->all_extra_meta_array();
+				$this->_queue->add( $message, $data );
 			}
 			return true;
 		} else {
@@ -135,7 +153,7 @@ class EE_Messages_Processor {
 		$this->_queue->lock_queue( EE_Messages_Queue::action_sending );
 
 		if ( $clear_queue ) {
-			$this->_queue = new EE_Messages_Queue( $this->_EEMSG );
+			$this->_init_queue_and_generator( $this->_EEMSG );
 		}
 
 		$messages = is_array( $messages ) ? $messages : array( $messages );

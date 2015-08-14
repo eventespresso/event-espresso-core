@@ -161,6 +161,15 @@ class EE_Messages_Generator {
 				$this->_generate();
 			}
 
+			/**
+			 * need to get the next object and capture it for setting manually after deletes.  The reason is that when
+			 * an object is removed from the repo then valid for the next object will fail.
+			 */
+			$this->_generation_queue->get_queue()->next();
+			$next_msg = $this->_generation_queue->get_queue()->current();
+			//restore pointer to current item
+			$this->_generation_queue->get_queue()->set_current( $msg );
+
 			//if there are error messages then let's set the status and the error message.
 			if ( $this->_error_msg ) {
 				$msg->set_STS_ID( EEM_Message::status_failed );
@@ -175,7 +184,7 @@ class EE_Messages_Generator {
 				$this->_generation_queue->get_queue()->delete();
 			}
 			//next item
-			$this->_generation_queue->get_queue()->next();
+			$this->_generation_queue->get_queue()->set_current( $next_msg );
 		}
 
 		//generation queue is ALWAYS saved to record any errors in the generation process.
@@ -573,7 +582,11 @@ class EE_Messages_Generator {
 		/**
 		 * Check if there is any generation data, but only if this is not for a preview.
 		 */
-		if ( ! $this->_generation_queue->get_queue()->get_generation_data() && ! $this->_generation_queue->get_queue()->is_preview() ) {
+		if ( ! $this->_generation_queue->get_queue()->get_generation_data()
+		     && (
+			     ! $this->_generation_queue->get_queue()->is_preview()
+			     && $this->_generation_queue->get_queue()->get_data_handler() !== 'EE_Messages_Preview_incoming_data' )
+		) {
 			$this->_error_msg[] = __( 'There is no generation data for this message. Unable to generate.' );
 		}
 
@@ -643,11 +656,10 @@ class EE_Messages_Generator {
 	 * @return void.
 	 */
 	protected function _set_data_handler( $generating_data, $data_handler_class_name ) {
-
 		//valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
 		//is already a ready datahandler in the repository.
-		$data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $data_handler_class_name, $generating_data ) );
-		if ( ! $data_handler instanceof EE_messages_incoming_data ) {
+		$this->_current_data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $data_handler_class_name, $generating_data ) );
+		if ( ! $this->_current_data_handler instanceof EE_messages_incoming_data ) {
 			//no saved data_handler in the repo so let's set one up and add it to the repo.
 			try {
 				$this->_current_data_handler = new $data_handler_class_name( $generating_data );
