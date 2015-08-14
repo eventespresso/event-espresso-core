@@ -130,18 +130,16 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	}
 
 
-
-
-	function test_batch_send_from_queue() {
-		//setup up new processor
-		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
-		/** @type EE_Messages_Processor $proc */
-		$proc = EE_Registry::instance()->load_class( 'Messages_Processor', $ee_msg );
+	/**
+	 * @depends test_construct_and_get_queue
+	 * @param EE_Messages_Processor $message_proc
+	 */
+	function test_batch_send_from_queue( EE_Messages_Processor $message_proc ) {
 
 		//create messages ready to send.
 		$this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_idle ) );
 
-		$sent_queue = $proc->batch_send_from_queue();
+		$sent_queue = $message_proc->batch_send_from_queue(array(),true);
 
 		$this->assertInstanceOf( 'EE_Messages_Queue', $sent_queue );
 		$this->assertEquals( 5, $sent_queue->get_queue()->count() );
@@ -152,6 +150,28 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->assertEquals( 5, $sent_queue->count_STS_in_queue( EEM_Message::status_sent ) );
 	}
 
+
+	/**
+	 * Same as previous test except tests with sending in messages.
+	 * @depends test_construct_and_get_queue
+	 * @param EE_Messages_Processor $messages_proc
+	 */
+	function test_batch_send_from_queue_with_messages( EE_Messages_Processor $messages_proc ) {
+		//create messages we're going to use for sending
+		$messages_to_send = $this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_idle ) );
+
+		//create messages that are not ready for sending as a foil.
+		$this->factory->message->create_many( 3 );
+
+		$sent_queue = $messages_proc->batch_send_from_queue( $messages_to_send, true );
+
+		$this->assertInstanceOf( 'EE_Messages_Queue', $sent_queue );
+		$this->assertEquals( 5, $sent_queue->get_queue()->count() );
+
+		//verify no errors
+		$this->assertEquals( 0, $sent_queue->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() ) );
+		$this->assertEquals( 5, $sent_queue->count_STS_in_queue( EEM_Message::status_sent ) );
+	}
 
 
 	/**
