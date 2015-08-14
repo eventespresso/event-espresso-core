@@ -867,7 +867,7 @@ class EED_Messages  extends EED_Module {
 		self::$_MSGPROCESSOR->setup_messages_from_ids_and_send( $message_ids );
 
 		//get queue and count
-		$queue_count = self::$_MSGPROCESSOR->get_queue()->get_queue()->count();
+		$queue_count = self::$_MSGPROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_resend );
 		if ( $queue_count > 0 ) {
 			EE_Error::add_success(
 				sprintf(
