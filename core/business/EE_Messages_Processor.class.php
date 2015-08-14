@@ -448,7 +448,7 @@ class EE_Messages_Processor {
 			)
 		));
 
-		//set the Messages to resend (only if their status is sent).
+		//set the Messages to resend.
 		foreach ( $messages as $message ) {
 			$message->set_STS_ID( EEM_Message::status_resend );
 			$this->_queue->add( $message );
