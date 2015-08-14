@@ -51,6 +51,11 @@ class EE_UnitTest_Factory_For_Message extends WP_UnitTest_Factory_For_Thing {
 
 		$msgID = $save ? $message->save() : 1;
 
+		//if $save then let's attach the preview message handler so it can actually be generated
+		if ( $save && $msgID ) {
+			$message->set_field_or_extra_meta( 'data_handler_class_name', 'EE_Messages_Preview_incoming_data' );
+		}
+
 		return $msgID ? $message : false;
 	}
 
