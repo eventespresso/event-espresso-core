@@ -823,8 +823,7 @@ class EE_messages {
 	/**
 	 * This does NOT return the _active_message_types property but simply returns an array of active message types from that property.  (The _active_message_types property is indexed by messenger and active message_types per messenger).
 	 *
-	 * @access public
-	 * @return array array of message_type references
+	 * @return array array of message_type references (string)
 	 */
 	public function get_active_message_types() {
 		$message_types = array();
