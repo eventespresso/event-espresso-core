@@ -574,17 +574,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 *
 	 * @param object $item The current item
 	 */
-	protected function single_row_columns( $item ) {
+	public function single_row_columns( $item ) {
 		list( $columns, $hidden ) = $this->get_column_info();
 
 		foreach ( $columns as $column_name => $column_display_name ) {
-			$class = "class='$column_name column-$column_name'";
+			$hidden_class = in_array( $column_name, $hidden ) ? ' hidden' : '';
 
-			$style = '';
-			if ( in_array( $column_name, $hidden ) )
-				$style = ' style="display:none;"';
+			$class = "class='$column_name column-$column_name$hidden_class'";
 
-			$attributes = "$class$style";
+			$attributes = "$class";
 
 			if ( 'cb' == $column_name ) {
 				echo '<th scope="row" class="check-column">';
