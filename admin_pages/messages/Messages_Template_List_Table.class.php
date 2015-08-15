@@ -96,57 +96,56 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$messengers = $this->_admin_page->get_active_messengers();
 		$message_types = $this->_admin_page->get_installed_message_types();
 
-
 		//setup messengers for selects
-		$i=1;
-		$m_values[0]['id'] = 'all';
-		$m_values[0]['text'] = __('All Messengers', 'event_espresso' );
+		$i = 1;
 		foreach ( $messengers as $messenger => $args ) {
-			$m_values[$i]['id'] = $messenger;
-			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
+			$m_values[ $i ]['id'] = $messenger;
+			$m_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
 			$i++;
 		}
 
 		//lets do the same for message types
-		$i=1;
+		$i = 1;
 		foreach ( $message_types as $message_type => $args ) {
-			$mt_values[$i]['id'] = $message_type;
-			$mt_values[$i]['text'] = ucwords($args['obj']->label['singular']);
+			$mt_values[ $i ]['id'] = $message_type;
+			$mt_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
 			$i++;
 		}
 
 		$msgr_default[0] = array(
 			'id' => 'none_selected',
-			'text' => __('Show All', 'event_espresso')
+			'text' => __( 'Show All', 'event_espresso' )
 			);
 
 		$mt_default[0] = array(
 			'id' => 'none_selected',
-			'text' => __('Show All', 'event_espresso')
+			'text' => __( 'Show All', 'event_espresso' )
 			);
 
-		$msgr_filters = !empty($m_values) ? array_merge( $msgr_default, $m_values ) : array();
-		$mt_filters = !empty($mt_values) ? array_merge( $mt_default, $mt_values ) : array();
+		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
+		$mt_filters = ! empty( $mt_values ) ? array_merge( $mt_default, $mt_values ) : array();
 
-		if ( empty( $m_values ) )
+		if ( empty( $m_values ) ) {
 			$msgr_filters[0] = array(
-				'id' => 'no_messenger_options',
-				'text' => __('No Messengers active', 'event_espresso')
-				);
+				'id'   => 'no_messenger_options',
+				'text' => __( 'No Messengers active', 'event_espresso' )
+			);
+		}
 
-		if ( empty($mt_values) )
+		if ( empty( $mt_values ) ) {
 			$mt_filters[0] = array(
-				'id' => 'no_message_type_options',
-				'text' => __('No Message Types active', 'event_espresso')
-				);
+				'id'   => 'no_message_type_options',
+				'text' => __( 'No Message Types active', 'event_espresso' )
+			);
+		}
 
-		if ( count( $messengers ) >= 1  && !empty( $m_values ) ) {
+		if ( count( $messengers ) >= 1  && ! empty( $m_values ) ) {
 			unset( $msgr_filters[0] );
 			$msgr_filters = array_values( $msgr_filters ); //reindex keys
 		}
 
-		$filters[] = EEH_Form_Fields::select_input('ee_messenger_filter_by', $msgr_filters, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
-		$filters[] = EEH_Form_Fields::select_input('ee_message_type_filter_by', $mt_filters, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
+		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_key( $this->_req_data['ee_messenger_filter_by'] ) : '' );
+		$filters[] = EEH_Form_Fields::select_input( 'ee_message_type_filter_by', $mt_filters, isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_key( $this->_req_data['ee_message_type_filter_by'] ) : '' );
 		return $filters;
 	}
 
