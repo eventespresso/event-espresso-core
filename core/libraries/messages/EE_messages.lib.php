@@ -838,6 +838,25 @@ class EE_messages {
 	}
 
 
+	/**
+	 * Same as get_active_message_types() except this returns actual EE_message_type objects
+	 *
+	 * @since 4.9.0
+	 * @return EE_message_type[]
+	 */
+	public function get_active_message_type_objects() {
+		$message_types = array();
+		$message_type_refs = $this->get_active_message_types();
+		$installed_message_types = $this->get_installed_message_types();
+		foreach ( $message_type_refs as $ref ) {
+			if ( isset( $installed_message_types[$ref] ) ) {
+				$message_types[] = $installed_message_types[$ref];
+			}
+		}
+		return $message_types;
+	}
+
+
 
 
 	/**
