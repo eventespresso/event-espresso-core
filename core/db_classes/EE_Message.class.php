@@ -233,6 +233,22 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 
+
+	/**
+	 * Return the related object matching the recipient type and ID.
+	 *
+	 * @return EE_Base_Class | null
+	 */
+	public function recipient_object() {
+		if ( ! $this->recipient_type() || ! $this->recipient_ID() ) {
+			return null;
+		}
+
+		return $this->get_first_related( $this->recipient_type() );
+	}
+
+
+
 	/**
 	 * Sets recipient_type
 	 *
