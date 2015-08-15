@@ -61,14 +61,97 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		return array();
+		$filters = array();
+		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		/** @type EE_messages $eemsg */
+		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		$messengers = $this->_admin_page->get_active_messengers();
+		$message_types = $this->_admin_page->get_installed_message_types();
+		$contexts = $eemsg->get_all_contexts();
+
+		//setup messengers for selects
+		$i = 1;
+		foreach ( $messengers as $messenger => $args ) {
+			$m_values[ $i ]['id'] = $messenger;
+			$m_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
+			$i++;
+		}
+
+		//lets do the same for message types
+		$i = 1;
+		foreach ( $message_types as $message_type => $args ) {
+			$mt_values[ $i ]['id'] = $message_type;
+			$mt_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
+			$i++;
+		}
+
+		//and the same for contexts
+		$i = 1;
+		$labels = $c_values = array();
+		foreach ( $contexts as $context => $label ) {
+			//some message types may have the same label for a different context, so we're grouping these together so the end user
+			//doesn't get confused.
+			if ( isset( $labels[ $label ] ) ) {
+				$c_values[ $labels[ $label ] ]['id'] .= ',' . $context;
+				continue;
+			}
+			$c_values[ $i ]['id'] = $context;
+			$c_values[ $i ]['text'] = $label;
+			$labels[ $label ] = $i;
+			$i++;
+		}
+
+		$msgr_default[0] = array(
+			'id' => 'none_selected',
+			'text' => __( 'All Messengers', 'event_espresso' )
+		);
+
+		$mt_default[0] = array(
+			'id' => 'none_selected',
+			'text' => __( 'All Message Types', 'event_espresso' )
+		);
+
+		$c_default[0] = array(
+			'id' => 'none_selected',
+			'text' => __( 'All Contexts', 'event_espresso ' )
+		);
+
+		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
+		$mt_filters = ! empty( $mt_values ) ? array_merge( $mt_default, $mt_values ) : array();
+		$c_filters = ! empty( $c_values ) ? array_merge( $c_default, $c_values ): array();
+
+		if ( empty( $m_values ) ) {
+			$msgr_filters[0] = array(
+				'id'   => 'none_selected',
+				'text' => __( 'No Messengers active', 'event_espresso' )
+			);
+		}
+
+		if ( empty( $mt_values ) ) {
+			$mt_filters[0] = array(
+				'id'   => 'none_selected',
+				'text' => __( 'No Message Types active', 'event_espresso' )
+			);
+		}
+
+		if ( empty( $c_values ) ) {
+			$c_filters[0] = array(
+				'id'   => 'none_selected',
+				'text' => __( 'No Contexts (because no message types active)', 'event_espresso' )
+			);
+		}
+
+		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_title( $this->_req_data['ee_messenger_filter_by'] ) : '' );
+		$filters[] = EEH_Form_Fields::select_input( 'ee_message_type_filter_by', $mt_filters, isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title( $this->_req_data['ee_message_type_filter_by'] ) : '' );
+		$filters[] = EEH_Form_Fields::select_input( 'ee_context_filter_by', $c_filters, isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field( $this->_req_data['ee_context_filter_by'] ) : '' );
+		return $filters;
 	}
 
 
 
 	protected function _add_view_counts() {
-		foreach( $this->_views as $view => $args ) {
-			$this->_views[$view]['count'] = $this->_get_messages( $this->_per_page, $view, true, true );
+		foreach ( $this->_views as $view => $args ) {
+			$this->_views[ $view ]['count'] = $this->_get_messages( $this->_per_page, $view, true, true );
 		}
 	}
 
@@ -186,24 +269,51 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return int | EE_Message[]
 	 */
 	protected function _get_messages( $perpage = 10, $view = 'all', $count = false, $all = false ) {
-		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $perpage;
-		$offset = ($current_page-1)*$per_page;
+		$current_page = isset( $this->_req_data['paged'] ) && ! empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
+		$per_page = isset( $this->_req_data['perpage'] ) && ! empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $perpage;
+		$offset = ( $current_page - 1 ) * $per_page;
 		$limit = $all || $count ? null : array( $offset, $per_page );
 
 		$query_params = array(
 			'order_by' => empty( $this->_req_data['orderby'] ) ? 'MSG_modified' : $this->_req_data['orderby'],
 			'order' => empty( $this->_req_data['order'] ) ? 'DESC' : $this->_req_data['order'],
-			'limit' => $limit
+			'limit' => $limit,
 		);
 
-		if ( ! $all && isset( $this->_req_data['s'] ) ) {
+		if ( ! $all && ! empty( $this->_req_data['s'] ) ) {
 			$search_string = '%' . $this->_req_data['s'] . '%';
 			$query_params[0]['OR'] = array(
 				'MSG_to' => array( 'LIKE', $search_string ),
 				'MSG_from' => array( 'LIKE', $search_string ),
 				'MSG_subject' => array( 'LIKE', $search_string ),
 				'MSG_content' => array( 'LIKE', $search_string ),
+			);
+		}
+
+		//account for filters
+		if ( ! $all
+		     && isset( $this->_req_data['ee_messenger_filter_by'] )
+		     && $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
+		) {
+			$query_params[0]['AND*messenger_filter'] = array(
+				'MSG_messenger' => $this->_req_data['ee_messenger_filter_by'],
+			);
+		}
+		if ( ! $all
+		     && ! empty( $this->_req_data['ee_message_type_filter_by'] )
+			 && $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
+		) {
+			$query_params[0]['AND*message_type_filter'] = array(
+				'MSG_message_type' => $this->_req_data['ee_message_type_filter_by'],
+			);
+		}
+
+		if ( ! $all
+		     && ! empty( $this->_req_data['ee_context_filter_by'] )
+		     && $this->_req_data['ee_context_filter_by'] !== 'none_selected'
+		) {
+			$query_params[0]['AND*context_filter'] = array(
+				'MSG_context' => array( 'IN', explode( ',', $this->_req_data['ee_context_filter_by'] ) )
 			);
 		}
 
