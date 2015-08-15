@@ -212,6 +212,27 @@ class EEM_Message extends EEM_Base {
 		return apply_filters( 'FHEE__EEM_Message__stati_indicating_failed_sending', array( self::status_failed, self::status_retry ) );
 	}
 
+
+
+
+	/**
+	 * Returns filterable array of all EEM_Message statuses.
+	 * @return array
+	 */
+	public function all_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Message__all_statuses',
+			array(
+				EEM_Message::status_incomplete,
+				EEM_Message::status_idle,
+				EEM_Message::status_resend,
+				EEM_Message::status_failed,
+				EEM_Message::status_sent,
+				EEM_Message::status_retry,
+			)
+		);
+	}
+
 }
 // End of file EEM_Message.model.php
 // Location: /includes/models/EEM_Message.model.php
