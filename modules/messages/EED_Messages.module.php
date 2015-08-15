@@ -124,6 +124,7 @@ class EED_Messages  extends EED_Module {
 		EE_Config::register_route( 'msg_url_trigger', 'Messages', 'run' );
 		EE_Config::register_route( 'msg_cron_trigger', 'Messages', 'run_cron' );
 		EE_Config::register_route( 'msg_browser_trigger', 'Messages', 'browser_trigger' );
+		EE_Config::register_route( 'msg_browser_error_trigger', 'Messages', 'browser_error_trigger' );
 		do_action( 'AHEE__EED_Messages___register_routes' );
 	}
 
@@ -148,6 +149,39 @@ class EED_Messages  extends EED_Module {
 			$error_msg .= '||' . $e->getMessage();
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
+	}
+
+
+
+
+
+	/**
+	 * This is called when a browser error trigger is executed.
+	 * When triggered this will grab the EE_Message matching the token in the request and use that to get the error message
+	 * and display it.
+	 *
+	 * @since 4.9.0
+	 * @param $WP
+	 */
+	public function browser_error_trigger( $WP ) {
+		$token = EE_Registry::instance()->REQ->get( 'token' );
+		if ( $token ) {
+			$message = EEM_Message::instance()->get_one_by_token( $token );
+			if ( $message instanceof EE_Message ) {
+				header( 'HTTP/1.1 200 OK' );
+				?>
+				<!DOCTYPE html>
+				<html>
+					<head></head>
+					<body>
+						<?php echo esc_html( $message->error_message() ); ?>
+					</body>
+				</html>
+				<?php
+				exit;
+			}
+		}
+		return;
 	}
 
 

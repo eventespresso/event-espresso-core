@@ -465,7 +465,31 @@ class EEH_MSG_Template {
 		);
 		return apply_filters(
 			'FHEE__EEH_MSG_Template__generate_browser_trigger',
-			add_query_arg( $query_args, get_site_url() ),
+			add_query_arg( $query_args, site_url() ),
+			$message
+		);
+	}
+
+
+
+
+
+
+	/**
+	 * This returns the url for triggering an in browser view of the error saved on the incoming message object.
+	 * @param EE_Message $message
+	 * @return string
+	 */
+	public static function generate_error_display_trigger( EE_Message $message ) {
+		return apply_filters(
+			'FHEE__EEH_MSG_Template__generate_error_display_trigger',
+			add_query_arg(
+				array(
+					'ee' => 'msg_browser_error_trigger',
+					'token' => $message->MSG_token()
+				),
+				site_url()
+			),
 			$message
 		);
 	}
