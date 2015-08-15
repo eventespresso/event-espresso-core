@@ -8,7 +8,7 @@
  * @subpackage 	db classes
  * @author 		Darren Ethier
  */
-class EE_Message extends EE_Base_Class {
+class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 	/**
 	 * @deprecated 4.9.0  Added for backward compat with add-on's
@@ -521,6 +521,66 @@ class EE_Message extends EE_Base_Class {
 
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack_variation() : '';
 	}
+
+	/**
+	 * Return the link to the admin details for the object.
+	 * @return string
+	 */
+	public function get_admin_details_link() {
+		EE_Registry::instance()->load_helper( 'URL' );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		switch ( $this->STS_ID() ) {
+			case EEM_Message::status_failed :
+				return EEH_MSG_Template::generate_error_display_trigger( $this );
+				break;
+
+			case EEM_Message::status_sent :
+				return EEH_MSG_Template::generate_browser_trigger( $this );
+				break;
+
+			default :
+				return '';
+		}
+	}
+
+	/**
+	 * Returns the link to the editor for the object.  Sometimes this is the same as the details.
+	 * @return string
+	 */
+	public function get_admin_edit_link() {
+		return '';
+	}
+
+	/**
+	 * Returns the link to a settings page for the object.
+	 * @return string
+	 */
+	public function get_admin_settings_link() {
+		EE_Registry::instance()->load_helper( 'URL' );
+		return EEH_URL::add_query_args_and_nonce(
+			array(
+				'page' => 'espresso_messages',
+				'action' => 'settings',
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
+	 * Returns the link to the "overview" for the object (typically the "list table" view).
+	 * @return string
+	 */
+	public function get_admin_overview_link() {
+		EE_Registry::instance()->load_helper( 'URL' );
+		return EEH_URL::add_query_args_and_nonce(
+			array(
+				'page' => 'espresso_messages',
+				'action' => 'default',
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
 
 }
 /* End of file EE_Message.class.php */
