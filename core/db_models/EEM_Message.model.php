@@ -67,7 +67,7 @@ class EEM_Message extends EEM_Base {
 	 * indicates the message has been flagged for generation but has not been generated yet.  Messages always start as this
 	 * status when added to the queue.
 	 */
-	const status_incomplete = "MIC";
+	const status_incomplete = 'MIC';
 
 
 
@@ -76,7 +76,7 @@ class EEM_Message extends EEM_Base {
 	 * Indicates everything was generated fine for the message, however, the messenger was unable to send.
 	 * This status means that its possible to retry sending the message.
 	 */
-	const status_retry = "MRT";
+	const status_retry = 'MRT';
 
 
 
