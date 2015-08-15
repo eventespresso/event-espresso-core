@@ -29,17 +29,69 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_messages {
 
-	private $_active_messengers = array();
-	private $_active_message_types = array();
-	private $_installed_message_types = array();
-	private $_messenger;
-	private $_message_type;
-	private $_installed_messengers = array();
+
+	/**
+	 * Array of active messengers.
+	 * Format is this:
+	 * array(
+	 *      'messenger_name' => EE_messenger
+	 * )
+	 * @type EE_messenger[]
+	 */
 	protected $_active_messengers = array();
+
+
+
+
+	/**
+	 * Formatted array of active message types grouped per messenger.
+	 * Format is this:
+	 * array(
+	 *      'messenger_name' => array(
+	 *          'settings' => array(
+	 *              '{messenger_name}-message_types' => array(
+	 *                  'message_type_name' => array() //variable array of settings corresponding to message type.
+	 *              )
+	 *          )
+	 *      )
+	 * )
+	 * @type array
+	 */
 	protected $_active_message_types = array();
+
+
+
+
+
+	/**
+	 * @type EE_message_type[]
+	 */
 	protected $_installed_message_types = array();
+
+
+
+
+
+	/**
+	 * When setting up values this is a temporary holder of the current EE_messenger object.
+	 * @type EE_messenger
+	 */
 	protected $_messenger;
+
+
+
+
+
+	/**
+	 * When setting up values this is a temporary holder of the current EE_message_type object.
+	 * @type EE_message_type
+	 */
 	protected $_message_type;
+
+
+	/**
+	 * @type EE_messenger[]
+	 */
 	protected $_installed_messengers = array();
 
 	/**
