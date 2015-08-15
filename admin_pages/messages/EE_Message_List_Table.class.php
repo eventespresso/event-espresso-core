@@ -299,6 +299,19 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'limit' => $limit,
 		);
 
+		//view conditionals
+		if ( $view !== 'all' && $count && $all ) {
+			$query_params[0]['AND*view_conditional'] = array(
+				'STS_ID' => strtoupper( $view ),
+			);
+		}
+
+		if ( ! empty( $this->_req_data['status'] )  && ! $all && $this->_req_data['status'] !== 'all' ) {
+			$query_params[0]['AND*view_conditional'] = array(
+				'STS_ID' => strtoupper( $this->_req_data['status'] ),
+			);
+		}
+
 		if ( ! $all && ! empty( $this->_req_data['s'] ) ) {
 			$search_string = '%' . $this->_req_data['s'] . '%';
 			$query_params[0]['OR'] = array(

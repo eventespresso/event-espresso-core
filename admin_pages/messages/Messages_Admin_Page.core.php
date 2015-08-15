@@ -685,26 +685,62 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * set views array for message queue list table
 	 */
 	public function _set_list_table_views_default() {
+		EE_Registry::instance()->load_helper( 'Template' );
+
+		$common_bulk_actions = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'message_list_table_bulk_actions' )
+			? array(
+				'generate_now' => __( 'Generate Now', 'event_espresso' ),
+		        'generate_and_send_now' => __( 'Generate and Send Now', 'event_espresso' ),
+		        'queue_for_resending' => __( 'Queue for Resending', 'event_espresso' ),
+		        'send_now' => __( 'Send Now', 'event_espresso' )
+				)
+			: array();
+
+		$delete_bulk_action = EE_Registry::instance()->CAP->current_user_can( 'ee_delete_messages', 'message_list_table_bulk_actions' )
+			? array( 'delete_ee_messages' => __( 'Delete Messages', 'event_espresso' ) )
+			: array();
+
+
 		$this->_views = array(
 			 'all' => array(
 			    'slug' => 'all',
 			    'label' => __( 'All', 'event_espresso' ),
 			    'count' => 0,
-			    'bulk_action' => array()
+			    'bulk_action' => array_merge( $common_bulk_actions, $delete_bulk_action )
 			 )
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'message_list_table_bulk_actions' ) ) {
-			$this->_views['all']['bulk_action'] = array(
-			        'generate_now' => __( 'Generate Now', 'event_espresso' ),
-			        'generate_and_send_now' => __( 'Generate and Send Now', 'event_espresso' ),
-			        'queue_for_resending' => __( 'Queue for Resending', 'event_espresso' ),
-			        'send_now' => __( 'Send Now', 'event_espresso' )
-			    );
-		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_messages', 'message_list_table_bulk_actions' ) ) {
-			$this->_views['all']['bulk_action']['delete_ee_messages'] = __( 'Delete Messages', 'event_espresso' );
+		foreach ( EEM_Message::instance()->all_statuses() as $status ) {
+			$status_bulk_actions = $common_bulk_actions;
+			//unset bulk actions not applying to status
+			if ( ! empty( $status_bulk_actions ) ) {
+				switch ( $status ) {
+					case EEM_Message::status_idle :
+					case EEM_Message::status_resend :
+						$status_bulk_actions['send_now'] = $common_bulk_actions['send_now'];
+						break;
+
+					case EEM_Message::status_failed :
+						$status_bulk_actions = array();
+						break;
+
+					case EEM_Message::status_incomplete :
+						unset( $status_bulk_actions['queue_for_resending'], $status_bulk_actions['send_now'] );
+						break;
+
+					case EEM_Message::status_retry :
+					case EEM_Message::status_sent :
+						unset( $status_bulk_actions['generate_now'], $status_bulk_actions['generate_and_send_now'] );
+						break;
+				}
+			}
+			$this->_views[ strtolower( $status ) ] = array(
+				'slug' => strtolower( $status ),
+				'label' => EEH_Template::pretty_status( $status, false, 'sentence' ),
+				'count' => 0,
+				'bulk_action' => array_merge( $status_bulk_actions, $delete_bulk_action )
+			);
 		}
 	}
 
