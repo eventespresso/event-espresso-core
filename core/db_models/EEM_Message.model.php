@@ -223,12 +223,12 @@ class EEM_Message extends EEM_Base {
 		return apply_filters(
 			'FHEE__EEM_Message__all_statuses',
 			array(
+				EEM_Message::status_sent,
 				EEM_Message::status_incomplete,
 				EEM_Message::status_idle,
 				EEM_Message::status_resend,
-				EEM_Message::status_failed,
-				EEM_Message::status_sent,
 				EEM_Message::status_retry,
+				EEM_Message::status_failed,
 			)
 		);
 	}
