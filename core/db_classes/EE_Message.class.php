@@ -310,7 +310,8 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return string
 	 */
 	public function to() {
-		return $this->get( 'MSG_to' );
+		$to = $this->get( 'MSG_to' );
+		return empty( $to ) ? __( 'No recipient', 'event_espresso' ) : $to;
 	}
 
 
