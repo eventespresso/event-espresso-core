@@ -16,7 +16,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 	protected function _setup_data() {
 		$this->_data = $this->_get_messages( $this->_per_page, $this->_view );
-		$this->_all_data_count = $this->_get_messages( $this->_per_page, $this->_view, true, true );
+		$this->_all_data_count = $this->_get_messages( $this->_per_page, $this->_view, true );
 	}
 
 
@@ -68,7 +68,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		foreach( $this->_views as $view => $args ) {
-			$this->_views[$view]['count'] = $this->_get_messages( $this->_per_page, $view, true );
+			$this->_views[$view]['count'] = $this->_get_messages( $this->_per_page, $view, true, true );
 		}
 	}
 
@@ -196,6 +196,16 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'order' => empty( $this->_req_data['order'] ) ? 'DESC' : $this->_req_data['order'],
 			'limit' => $limit
 		);
+
+		if ( ! $all && isset( $this->_req_data['s'] ) ) {
+			$search_string = '%' . $this->_req_data['s'] . '%';
+			$query_params[0]['OR'] = array(
+				'MSG_to' => array( 'LIKE', $search_string ),
+				'MSG_from' => array( 'LIKE', $search_string ),
+				'MSG_subject' => array( 'LIKE', $search_string ),
+				'MSG_content' => array( 'LIKE', $search_string ),
+			);
+		}
 
 		return $count ? EEM_Message::instance()->count( $query_params ) : EEM_Message::instance()->get_all( $query_params );
 
