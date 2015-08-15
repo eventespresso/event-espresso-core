@@ -35,6 +35,12 @@ class EE_messages {
 	private $_messenger;
 	private $_message_type;
 	private $_installed_messengers = array();
+	protected $_active_messengers = array();
+	protected $_active_message_types = array();
+	protected $_installed_message_types = array();
+	protected $_messenger;
+	protected $_message_type;
+	protected $_installed_messengers = array();
 
 	/**
 	 * holds the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
