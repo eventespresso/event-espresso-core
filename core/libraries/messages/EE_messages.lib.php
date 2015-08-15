@@ -94,6 +94,20 @@ class EE_messages {
 	 */
 	protected $_installed_messengers = array();
 
+
+
+
+
+	/**
+	 * An array of unique message type contexts across all active message types.
+	 * @type array
+	 */
+	protected $_contexts = array();
+
+
+
+
+
 	/**
 	 * holds the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
 	 * @var object
@@ -914,6 +928,36 @@ class EE_messages {
 	public function get_installed_messengers() {
 		$this->_installed_messengers = empty( $this->_installed_messengers ) ? $this->get_installed( 'messengers', true ) : $this->_installed_messengers;
 		return $this->_installed_messengers;
+	}
+
+
+
+
+	/**
+	 * This returns all the contexts that are registered by all message types.
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	public function get_all_contexts() {
+		if ( ! empty( $this->_contexts ) ) {
+			return $this->_contexts;
+		}
+
+		//contexts has not been setup yet.  So let's get all active message type objects and loop through to get all
+		//unique contexts
+		$contexts = array();
+		foreach ( $this->get_active_message_type_objects() as $mt ) {
+			if ( $mt instanceof EE_message_type ) {
+				$mt_contexts = array_keys( $mt->get_contexts() );
+				foreach( $mt_contexts as $context ) {
+					$contexts[$context] = 1;
+				}
+			}
+		}
+
+		$this->_contexts = array_keys( $contexts );
+		return $this->_contexts;
 	}
 
 
