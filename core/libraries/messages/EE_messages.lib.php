@@ -936,10 +936,29 @@ class EE_messages {
 	/**
 	 * This returns all the contexts that are registered by all message types.
 	 *
+	 * If $slugs_only is true, then just an array indexed by unique context slugs with the latest label representation for that slug.
+	 * array(
+	 *      'context_slug' => 'localized label for context obtained from latest message type in the loop'.
+	 * );
+	 *
+	 * If $slugs_only is false, then the format is:
+	 * array(
+	 *      'message_type_name' => array(
+	 *          'context_slug' => array(
+	 *              'label' => 'localized lable for context',
+	 *              'description' => 'localized description for context'
+	 *          )
+	 *      )
+	 * );
+	 *
+	 * Keep in mind that although different message types may share the same context slugs, it is possible that the context
+	 * is described differently by the message type.
+	 *
 	 * @since 4.9.0
+	 * @param   bool    $slugs_only     Whether to return an array of just slugs and labels (true) or all contexts indexed by message type.
 	 * @return array
 	 */
-	public function get_all_contexts() {
+	public function get_all_contexts( $slugs_only = true ) {
 		if ( ! empty( $this->_contexts ) ) {
 			return $this->_contexts;
 		}
@@ -949,14 +968,18 @@ class EE_messages {
 		$contexts = array();
 		foreach ( $this->get_active_message_type_objects() as $mt ) {
 			if ( $mt instanceof EE_message_type ) {
-				$mt_contexts = array_keys( $mt->get_contexts() );
-				foreach( $mt_contexts as $context ) {
-					$contexts[$context] = 1;
+				$mt_contexts = $mt->get_contexts();
+				if ( $slugs_only ) {
+					foreach ( $mt_contexts as $context => $context_details ) {
+						$contexts[ $context ] = $context_details['label'];
+					}
+				} else {
+					$contexts[$mt->name] = $mt_contexts;
 				}
 			}
 		}
 
-		$this->_contexts = array_keys( $contexts );
+		$this->_contexts = $contexts;
 		return $this->_contexts;
 	}
 

@@ -58,14 +58,14 @@ class EE_messages_Test extends EE_UnitTestCase {
 		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
 		$contexts = $eemsg->get_all_contexts();
 
-		//expected three contexts.
+		//expected four contexts.
 		$this->assertEquals( 4, count( $contexts ) );
 
-		//expecting an array with 'admin', 'attendee', and 'primary_attendee' in it.
-		$this->assertContains( 'admin', $contexts );
-		$this->assertContains( 'attendee', $contexts );
-		$this->assertContains( 'primary_attendee', $contexts );
-		$this->assertContains( 'purchaser', $contexts );
+		//expecting an array with 'admin', 'attendee', and 'primary_attendee', and 'purchaser' in it.
+		$this->arrayHasKey( 'admin', $contexts );
+		$this->arrayHasKey( 'attendee', $contexts );
+		$this->arrayHasKey( 'primary_attendee', $contexts );
+		$this->arrayHasKey( 'purchaser', $contexts );
 	}
 
 
