@@ -246,6 +246,24 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 
+
+	/**
+	 * This returns the corresponding localized label for the given context slug, if possible from installed message types.
+	 * Otherwise, this will just return the set context slug on this object.
+	 *
+	 * @param bool  $plural Whether to return the plural localized string (true) or singular (false).
+	 *
+	 * @return string
+	 */
+	public function context_label( $plural = false ) {
+		/** @type EE_messages $eemsg */
+		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		$contexts = $eemsg->get_all_contexts();
+		return isset( $contexts[ $this->context() ] ) ? $contexts[ $this->context() ] : $this->context();
+	}
+
+
+
 	/**
 	 * Sets context
 	 *
