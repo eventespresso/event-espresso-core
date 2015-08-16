@@ -514,6 +514,153 @@ class EEH_MSG_Template {
 
 
 
+	/**
+	 * Return the specific css for the action icon given.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $type  What action to return.
+	 * @return string
+	 */
+	public static function get_message_action_icon( $type ) {
+		$action_icons = self::get_message_action_icons();
+		return isset( $action_icons[ $type ] ) ? esc_attr( $action_icons[ $type ] ) : '';
+	}
+
+
+	/**
+	 * This is used for retrieving the css classes used for the icons representing message actions.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @return array
+	 */
+	public static function get_message_action_icons() {
+		return apply_filters( 'FHEE__EEH_MSG_Template__message_action_icons',
+			array(
+				'view' => 'dashicons dashicons-welcome-view-site',
+				'error' => 'dashicons dashicons-info',
+				'see_notifications_for' => 'dashicons dashicons-images-alt',
+				'generate_now' => 'dashicons dashicons-admin-tools',
+				'send_now' => 'dashicons dashicons-controls-forward',
+				'queue_for_resending' => 'dashicons dashicons-controls-repeat',
+			)
+		);
+	}
+
+
+	/**
+	 * This returns the url for a given action related to EE_Message.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $type  What type of action to return the url for.
+	 * @param EE_Message $message   Required for generating the correct url for some types.
+	 * @param array  $query_params   Any additional query params to be included with the generated url.
+	 *
+	 * @return string
+	 */
+	public static function get_message_action_url( $type, EE_Message $message = null, $query_params = array() ) {
+		$action_urls = self::get_message_action_urls( $message, $query_params );
+		return isset( $action_urls[ $type ] )  ? $action_urls[ $type ] : '';
+	}
+
+
+	/**
+	 * This returns all the current urls for EE_Message actions.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param  EE_Message   $message    The EE_Message object required to generate correct urls for some types.
+	 * @param  array    $query_params   Any additional query_params to be included with the generated url.
+	 *
+	 * @return array
+	 */
+	public static function get_message_action_urls( EE_Message $message = null, $query_params = array() ) {
+		EE_Registry::instance()->load_helper( 'URL' );
+		//if $message is not an instance of EE_Message then let's just do a dummy.
+		$message = empty( $message ) ? EE_Message::new_instance() : $message;
+		return apply_filters(
+			'FHEE__EEH_MSG_Template__get_message_action_url',
+			array(
+				'view' => EEH_MSG_Template::generate_browser_trigger( $message ),
+				'error' => EEH_MSG_Template::generate_error_display_trigger( $message ),
+				'see_notifications_for' => EEH_URL::add_query_args_and_nonce(
+					array_merge(
+						array(
+							'page' => 'espresso_messages',
+							'action' => 'default',
+							'filterby' => 1,
+						),
+						$query_params
+					),
+					admin_url( 'admin.php' )
+				),
+				'generate_now' => EEH_URL::add_query_args_and_nonce(
+					array(
+						'page' => 'espresso_messages',
+						'action' => 'generate_now',
+						'MSG_ID' => $message->ID()
+					),
+					admin_url( 'admin.php' )
+				),
+				'send_now' => EEH_URL::add_query_args_and_nonce(
+					array(
+						'page' => 'espresso_messages',
+						'action' => 'send_now',
+						'MSG_ID' => $message->ID()
+					),
+					admin_url( 'admin.php' )
+				),
+				'queue_for_resending' => EEH_URL::add_query_args_and_nonce(
+					array(
+						'page' => 'espresso_messages',
+						'action' => 'queue_for_resending',
+						'MSG_ID' => $message->ID()
+					),
+					admin_url( 'admin.php' )
+				),
+			)
+		);
+	}
+
+
+	/**
+	 * This returns a generated link html including the icon used for the action link for EE_Message actions.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @param string $type What type of action the link is for (if invalid type is passed in then an
+	 *                     empty string is returned)
+	 * @param EE_Message|null $message  The EE_Message object (required for some actions to generate correctly)
+	 * @param array           $query_params Any extra query params to include in the generated link.
+	 *
+	 * @return string
+	 */
+	public static function get_message_action_link( $type, EE_Message $message = null, $query_params = array() ) {
+		$url = EEH_MSG_Template::get_message_action_url( $type, $message, $query_params );
+		$icon_css = EEH_MSG_Template::get_message_action_icon( $type );
+		if ( empty( $url ) || empty( $icon_css ) ) {
+			return '';
+		}
+
+		$icon_css .= esc_attr(
+			apply_filters(
+				'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
+				' js-ee-message-action-link js-action-link-' . $type,
+				$type,
+				$message,
+				$query_params
+			)
+		);
+
+		return '<a href="' . $url . '"><span class="' . $icon_css . '"></span></a>';
+
+	}
+
+
+
+
 
 	/**
 	 * This returns an array with keys as reg statuses and values as the corresponding message type slug (filtered).
