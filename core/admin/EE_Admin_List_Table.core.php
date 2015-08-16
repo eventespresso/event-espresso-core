@@ -570,11 +570,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * column.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param object $item The current item
 	 */
-	protected function single_row_columns( $item ) {
+	public function single_row_columns( $item ) {
 		list( $columns, $hidden ) = $this->get_column_info();
 
 		foreach ( $columns as $column_name => $column_display_name ) {
