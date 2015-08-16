@@ -713,6 +713,23 @@ class EE_Error extends Exception {
 
 
 
+
+	/**
+	 * This simply returns non formatted error notices as they were sent into the EE_Error object.
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	public static function get_vanilla_notices() {
+		return array(
+			'success' => isset( self::$_espresso_notices['success'] ) ? self::$_espresso_notices['success'] : array(),
+			'attention' => isset( self::$_espresso_notices['attention'] )  ? self::$_espresso_notices['attention'] : array(),
+			'errors' => isset( self::$_espresso_notices['errors'] ) ? self::$_espresso_notices['errors'] : array(),
+		);
+	}
+
+
+
 	/**
 	* 	compile all error or success messages into one string
 	*
