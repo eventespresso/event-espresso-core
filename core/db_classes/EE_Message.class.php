@@ -145,6 +145,35 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 
+
+	/**
+	 * Returns corresponding messenger object for the set messenger on this message
+	 *
+	 * @return EE_messenger | null
+	 */
+	public function messenger_object() {
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::messenger_obj( $this->messenger() );
+	}
+
+
+
+	/**
+	 * This returns the set localized label for the messenger on this message.
+	 * Note, if unable to retrieve the EE_messenger object then will just return the messenger slug saved
+	 * with this message.
+	 *
+	 * @param   bool    $plural whether to return the plural label or not.
+	 * @return string
+	 */
+	public function messenger_label( $plural = false ) {
+		$label_type = $plural ? 'plural' : 'singular';
+		$messenger = $this->messenger_object();
+		return $messenger instanceof EE_messenger ? $messenger->label[ $label_type ] : $this->messenger();
+	}
+
+
+
 	/**
 	 * Sets messenger
 	 *
@@ -166,6 +195,17 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	}
 
 
+	/**
+	 * Returns the message type object for the set message type on this message
+	 *
+	 * @return EE_message_type | null
+	 */
+	public function message_type_object() {
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::message_type_obj( $this->message_type() );
+	}
+
+
 
 	/**
 	 * Sets message_type
@@ -174,6 +214,23 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public function set_message_type( $message_type ) {
 		$this->set( 'MSG_message_type', $message_type );
+	}
+
+
+
+
+	/**
+	 * This returns the set localized label for the message type on this message.
+	 * Note, if unable to retrieve the EE_message_type object then will just return the message type slug saved
+	 * with this message.
+	 *
+	 * @param   bool    $plural whether to return the plural label or not.
+	 * @return string
+	 */
+	public function message_type_label( $plural = false ) {
+		$label_type = $plural ? 'plural' : 'singular';
+		$message_type = $this->message_type_object();
+		return $message_type instanceof EE_message_type ? $message_type->label[ $label_type ] : $this->message_type();
 	}
 
 
