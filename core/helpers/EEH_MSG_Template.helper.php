@@ -302,19 +302,9 @@ class EEH_MSG_Template {
 	 * @return EE_messenger
 	 */
 	public static function messenger_obj( $messenger ) {
-		$ref = ucwords( str_replace( '_', ' ', $messenger ) );
-		$ref = str_replace( ' ', '_', $ref );
-		$classname = 'EE_' . $ref . '_messenger';
-
-		if ( !class_exists($classname) ) {
-			$msg[] = __('Messenger class loading fail.', 'event_espresso');
-			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate messenger file name (minus the extension) in the "/core/messages/messenger/" directory', 'event_espresso'), $classname );
-			throw new EE_Error( implode( '||', $msg ) );
-		}
-
-		//made it here so let's instantiate the object and return it.
-		$a = new ReflectionClass($classname);
-		return $a->newInstance();
+		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		$installed_messengers = $ee_msg->get_installed_messengers();
+		return isset( $installed_messengers[ $messenger ] ) ? $installed_messengers[ $messenger ] : null;
 	}
 
 
@@ -328,19 +318,9 @@ class EEH_MSG_Template {
 	 * @return EE_message_type
 	 */
 	public static function message_type_obj( $message_type ) {
-		$ref = ucwords( str_replace( '_', ' ', $message_type ) );
-		$ref = str_replace( ' ', '_', $ref );
-		$classname = 'EE_' . $ref . '_message_type';
-
-		if ( !class_exists($classname) ) {
-			$msg[] = __('Message Type class loading fail.', 'event_espresso');
-			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate message type file name (minus the extension) in the "/core/messages/message_type/" directory', 'event_espresso'), $classname );
-			throw new EE_Error( implode( '||', $msg ) );
-		}
-
-		//made it here so let's instantiate the object and return it.
-		$a = new ReflectionClass($classname);
-		return $a->newInstance();
+		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		$installed_message_types = $ee_msg->get_installed_message_types();
+		return isset( $installed_message_types[ $message_type ] ) ? $installed_message_types[ $message_type ] : null;
 	}
 
 
