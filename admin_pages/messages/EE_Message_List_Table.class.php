@@ -227,7 +227,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return string  The messenger used to send the message.
 	 */
 	public function column_messenger( $message ) {
-		return $message->messenger();
+		return ucwords( $message->messenger_label() );
 	}
 
 
@@ -236,7 +236,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return string  The message type used to generate the message.
 	 */
 	public function column_message_type( $message ) {
-		return $message->message_type();
+		return ucwords( $message->message_type_label() );
 	}
 
 
