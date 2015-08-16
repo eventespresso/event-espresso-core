@@ -245,7 +245,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return string  The context the message was generated for.
 	 */
 	public function column_context( $message ) {
-		return $message->context();
+		return $message->context_label();
 	}
 
 
