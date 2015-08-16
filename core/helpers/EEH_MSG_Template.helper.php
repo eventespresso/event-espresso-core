@@ -647,7 +647,7 @@ class EEH_MSG_Template {
 		$icon_css .= esc_attr(
 			apply_filters(
 				'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
-				' js-ee-message-action-link js-action-link-' . $type,
+				' js-ee-message-action-link ee-message-action-link-' . $type,
 				$type,
 				$message,
 				$query_params
