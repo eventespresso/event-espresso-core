@@ -264,18 +264,35 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 */
 	public function column_action( $message ) {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		$browser_trigger_link = '<a href="' . EEH_MSG_Template::generate_browser_trigger( $message ) . '">' . __( 'View', 'event_espresso' ) . '</a>';
+		$action_links = array(
+			'view' => EEH_MSG_Template::get_message_action_link( 'view', $message ),
+			'error' => EEH_MSG_Template::get_message_action_link( 'error', $message ),
+			'generate_now' => EEH_MSG_Template::get_message_action_link( 'generate_now', $message ),
+			'send_now' => EEH_MSG_Template::get_message_action_link( 'send_now', $message ),
+			'queue_for_resending' => EEH_MSG_Template::get_message_action_link( 'queue_for_resending', $message )
+		);
+		$content = '';
 		switch ( $message->STS_ID() ) {
 			case EEM_Message::status_sent :
+				$content = $action_links['view'] . $action_links['queue_for_resending'];
+				break;
 			case EEM_Message::status_resend :
-				return $browser_trigger_link;
+				$content = $action_links['view'] . $action_links['send_now'];
+				break;
 			case EEM_Message::status_retry :
-				return $message->error_message()
-					. $browser_trigger_link;
+				$content = $action_links['view'] . $action_links['send_now'] . $action_links['error'];
+				break;
 			case EEM_Message::status_failed :
-				return $message->error_message();
+				$content = $action_links['error'];
+				break;
+			case EEM_Message::status_idle :
+				$content = $action_links['view'] . $action_links['send_now'];
+				break;
+			case EEM_Message::status_incomplete;
+				$content = $action_links['generate_now'];
+				break;
 		}
-		return '';
+		return $content;
 	}
 
 
@@ -298,6 +315,17 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'order' => empty( $this->_req_data['order'] ) ? 'DESC' : $this->_req_data['order'],
 			'limit' => $limit,
 		);
+
+
+		/**
+		 * @todo @see EEH_MSG_Template::get_message_action_urls(), I need to provide for an incoming 'filterby' argument
+		 *       in the request that indicates there will be additional key value pairs indicating what objects to filter by
+		 *       for the messages.  For example if filterby is true, then I will call a method on EE_Message that gets the query_params
+		 *       for the filter.  I might define a interface called `EEI_Filter_Query_Params` that can be implemented and it
+		 *       has the signature for the method `get_filter_by_query_params`.
+		 *       Then in EE_Message's implementation, we simply look through the request for any expected ID's
+		 *       that will use to indicate what we filter by (i.e. '_REG_ID', 'ATT_ID', 'TXN_ID', 'user_id' etc.)
+		 */
 
 		//view conditionals
 		if ( $view !== 'all' && $count && $all ) {
