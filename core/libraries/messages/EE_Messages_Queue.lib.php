@@ -404,9 +404,10 @@ class EE_Messages_Queue {
 	public function initiate_request_by_priority( $task = 'generate', $priority = EEM_Message::priority_high ) {
 		//determine what status is matched with the priority as part of the trigger conditions.
 		$status = $task == 'generate' ? EEM_Message::status_incomplete : EEM_Message::instance()->stati_indicating_to_send();
+		//always make sure we save because either this will get executed immediately on a separate request or remains in the
+		//queue for the regularly scheduled queue batch.
+		$this->save();
 		if ( $this->_queue->count_by_priority_and_status( $priority, $status ) ) {
-			//make sure to save the queue
-			$this->save();
 			EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( $task );
 		}
 	}
