@@ -594,6 +594,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_style('espresso_ee_msg');
 
 		wp_register_script('ee-messages-settings', EE_MSG_ASSETS_URL . 'ee-messages-settings.js', array('jquery-ui-droppable', 'ee-serialize-full-array'), EVENT_ESPRESSO_VERSION, true );
+		wp_register_script( 'ee-msg-list-table-js', EE_MSG_ASSETS_URL. 'ee_message_admin_list_table.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION );
+	}
+
+
+
+	public function load_scripts_styles_default() {
+		wp_enqueue_script( 'ee-msg-list-table-js' );
 	}
 
 
