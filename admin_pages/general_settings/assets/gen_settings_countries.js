@@ -170,14 +170,14 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					//console.log(response);
-					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+					if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
+						show_admin_page_ajax_msg( response );
+					} else if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 						if ( EE_CNT_STA.ajax_loading === false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
 						}
 						$('#country-states-dv').html( response.return_data );
 						EE_CNT_STA.ajax_loading = false;
-					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response );
 					} else {
 						response.errors = eei18n.invalid_server_response + ' <span class="smaller-text">get_country_states</span>';
 						show_admin_page_ajax_msg( response );
@@ -222,9 +222,10 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					//console.log(response);
-					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+					if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
+						show_admin_page_ajax_msg( response );
+					} else if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 						EE_CNT_STA.get_country_states( response.return_data );
-					} else if ( response.errors ) {
 						show_admin_page_ajax_msg( response );
 					} else {
 						response.errors = eei18n.invalid_server_response + ' <span class="smaller-text">add_new_state</span>';
@@ -279,12 +280,13 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					console.log(response);
-					if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
+					if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
+						show_admin_page_ajax_msg( response, '' );
+					} else if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
 						var row_to_delete = '#state-' + STA_ID + '-tr';
 						$( row_to_delete ).fadeOut().delay(500).remove();
 						$('#espresso-ajax-loading').fadeOut('fast');
-					} else if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
-						show_admin_page_ajax_msg( response, '' );
+						show_admin_page_ajax_msg( response );
 					} else {
 						response.errors = eei18n.invalid_server_response + ' <span class="smaller-text">delete_state</span>';
 						show_admin_page_ajax_msg( response );
