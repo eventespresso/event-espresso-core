@@ -764,6 +764,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _message_queue_list_table() {
 		$this->_search_btn_label = __('Message Activity', 'event_espresso');
+		$this->_template_args['per_column'] = 6;
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_message_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -772,8 +773,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _message_legend_items() {
-		/** @todo add action reference legend items here when they are ready */
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$action_css_classes = EEH_MSG_Template::get_message_action_icons();
 		$action_items = array();
+
+		foreach( $action_css_classes as $action_item => $action_details ) {
+			if ( $action_item === 'see_notifications_for' ) {
+				continue;
+			}
+			$action_items[$action_item] = array(
+				'class' => $action_details['css_class'],
+				'desc' => $action_details['label']
+			);
+		}
 
 		/** @type array $status_items status legend setup*/
 		$status_items = array(
