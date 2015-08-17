@@ -368,7 +368,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		//make sure $current is in the correct timezone.
-		$current->setTimeZone( $this->_DateTimeZone );
+		$current->setTimezone( $this->_DateTimeZone );
 		return $current->setTime( $parsed['hour'], $parsed['minute'], $parsed['second'] );
 	}
 
@@ -394,7 +394,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		//make sure $current is in the correct timezone
-		$current->setTimeZone( $this->_DateTimeZone );
+		$current->setTimezone( $this->_DateTimeZone );
 		return $current->setDate( $parsed['year'], $parsed['month'], $parsed['day'] );
 	}
 
@@ -453,7 +453,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 		$format_string = $this->_get_date_time_output( $schema );
 		//make sure datetime_value is in the correct timezone (in case that's been updated).
-		$DateTime->setTimeZone( $this->_DateTimeZone );
+		$DateTime->setTimezone( $this->_DateTimeZone );
 		if ( $schema ) {
 			if( $this->_display_timezone() ) {
 				//must be explicit because schema could equal true.
@@ -488,7 +488,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		if ( $datetime_value instanceof DateTime ) {
-			return $datetime_value->setTimeZone( $this->get_UTC_DateTimeZone() )->format( EE_Datetime_Field::mysql_timestamp_format );
+			return $datetime_value->setTimezone( $this->get_UTC_DateTimeZone() )->format( EE_Datetime_Field::mysql_timestamp_format );
 		}
 
 		// if $datetime_value is empty, and ! $this->_nullable, use current_time() but set the GMT flag to true
@@ -569,7 +569,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 		// if incoming date
 		if ( $date_string instanceof DateTime ) {
-			$date_string->setTimeZone( $this->_DateTimeZone );
+			$date_string->setTimezone( $this->_DateTimeZone );
 			return $date_string;
 		}
 

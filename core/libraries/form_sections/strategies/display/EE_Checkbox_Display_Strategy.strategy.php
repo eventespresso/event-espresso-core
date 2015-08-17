@@ -8,7 +8,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * @since 				4.6
  *
  */
 class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
@@ -36,7 +36,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 					var_export( $this->_input->raw_value(), true),
 					$this->_input->html_name() . '[]'
 				),
-				'4.6.21'
+				'4.8.1'
 			);
 		}
 		$input_raw_value = (array)$this->_input->raw_value();

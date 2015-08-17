@@ -451,6 +451,18 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 
 
+	/**
+	 * _delete_table_if_empty
+	 * returns TRUE if the requested table was empty and successfully empty
+	 * @param string $table_name
+	 * @return boolean
+	 */
+	protected function _delete_table_if_empty( $table_name ) {
+		EE_Registry::instance()->load_helper( 'Activation' );
+		return EEH_Activation::delete_db_table_if_empty( $table_name );
+	}
+
+
 
 	/**
 	 * It is preferred to use _table_has_not_changed_since_previous or _table_is_changed_in_this_version
