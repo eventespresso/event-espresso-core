@@ -44,7 +44,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 
 	/**
 	 * Sets the defaults for the billing form according to the attendee's details
-	 * @param int | \EE_Attendee $attendee
+	 * @param EE_Attendee $attendee
 	 */
 	public function populate_from_attendee( $attendee ){
 		$attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);

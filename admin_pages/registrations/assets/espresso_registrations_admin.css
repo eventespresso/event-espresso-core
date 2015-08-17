@@ -449,3 +449,15 @@
 #send-related-messages-dv input[type=checkbox] {
 	margin: 0 1em;
 }
+
+/** line item table styles **/
+.ee-line-item-id {
+    font-size: .9em;
+    color: #bbb;
+    font-style: italic;
+}
+
+.ee-line-item-name {
+    font-size: 1.1em;
+    font-weight: 600;
+}
