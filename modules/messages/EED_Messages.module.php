@@ -174,7 +174,7 @@ class EED_Messages  extends EED_Module {
 				<html>
 					<head></head>
 					<body>
-						<?php echo esc_html( $message->error_message() ); ?>
+						<?php echo $message->error_message(); ?>
 					</body>
 				</html>
 				<?php
