@@ -524,7 +524,7 @@ class EEH_MSG_Template {
 	 */
 	public static function get_message_action_icon( $type ) {
 		$action_icons = self::get_message_action_icons();
-		return isset( $action_icons[ $type ] ) ? esc_attr( $action_icons[ $type ] ) : '';
+		return isset( $action_icons[ $type ] ) ? $action_icons[ $type ] : '';
 	}
 
 
@@ -538,12 +538,34 @@ class EEH_MSG_Template {
 	public static function get_message_action_icons() {
 		return apply_filters( 'FHEE__EEH_MSG_Template__message_action_icons',
 			array(
-				'view' => 'dashicons dashicons-welcome-view-site',
-				'error' => 'dashicons dashicons-info',
-				'see_notifications_for' => 'dashicons dashicons-images-alt',
-				'generate_now' => 'dashicons dashicons-admin-tools',
-				'send_now' => 'dashicons dashicons-controls-forward',
-				'queue_for_resending' => 'dashicons dashicons-controls-repeat',
+				'view' => array(
+					'label' => __( 'View Message', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-welcome-view-site',
+				),
+				'error' => array(
+					'label' => __( 'View Error Message', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-info',
+				),
+				'see_notifications_for' => array(
+					'label' => __( 'View Related Messages', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-images-alt',
+				),
+				'generate_now' => array(
+					'label' => __( 'Generate the message now.', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-admin-tools',
+				),
+				'send_now' => array(
+					'label' => __( 'Send Immediately', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-controls-forward',
+				),
+				'queue_for_resending' => array(
+					'label' => __( 'Queue for Resending', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-controls-repeat',
+				),
+				'view_transaction' => array(
+					'label' => __( 'View related Transaction', 'event_espresso' ),
+					'css_class' => 'dashicons dashicons-cart',
+				)
 			)
 		);
 	}
@@ -580,7 +602,7 @@ class EEH_MSG_Template {
 		EE_Registry::instance()->load_helper( 'URL' );
 		//if $message is not an instance of EE_Message then let's just do a dummy.
 		$message = empty( $message ) ? EE_Message::new_instance() : $message;
-		return apply_filters(
+		$action_urls =  apply_filters(
 			'FHEE__EEH_MSG_Template__get_message_action_url',
 			array(
 				'view' => EEH_MSG_Template::generate_browser_trigger( $message ),
@@ -622,6 +644,20 @@ class EEH_MSG_Template {
 				),
 			)
 		);
+
+		if ( $message->TXN_ID() > 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_default', $message->TXN_ID() ) ) {
+			$action_urls['view_transaction'] = EEH_URL::add_query_args_and_nonce(
+				array(
+					'page' => 'espresso_transactions',
+					'action' => 'view_transaction',
+					'TXN_ID' => $message->TXN_ID()
+				),
+				admin_url( 'admin.php' )
+			);
+		} else {
+			$action_urls['view_transaction'] = '';
+		}
+		return $action_urls;
 	}
 
 
@@ -640,11 +676,11 @@ class EEH_MSG_Template {
 	public static function get_message_action_link( $type, EE_Message $message = null, $query_params = array() ) {
 		$url = EEH_MSG_Template::get_message_action_url( $type, $message, $query_params );
 		$icon_css = EEH_MSG_Template::get_message_action_icon( $type );
-		if ( empty( $url ) || empty( $icon_css ) ) {
+		if ( empty( $url ) || empty( $icon_css ) || ! isset( $icon_css['css_class'] ) ) {
 			return '';
 		}
 
-		$icon_css .= esc_attr(
+		$icon_css['css_class'] .= esc_attr(
 			apply_filters(
 				'FHEE__EEH_MSG_Template__get_message_action_link__icon_css_class',
 				' js-ee-message-action-link ee-message-action-link-' . $type,
@@ -654,7 +690,7 @@ class EEH_MSG_Template {
 			)
 		);
 
-		return '<a href="' . $url . '"><span class="' . $icon_css . '"></span></a>';
+		return '<a href="' . $url . '"><span class="' . esc_attr( $icon_css['css_class'] ) . '"></span></a>';
 
 	}
 
