@@ -269,27 +269,28 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'error' => EEH_MSG_Template::get_message_action_link( 'error', $message ),
 			'generate_now' => EEH_MSG_Template::get_message_action_link( 'generate_now', $message ),
 			'send_now' => EEH_MSG_Template::get_message_action_link( 'send_now', $message ),
-			'queue_for_resending' => EEH_MSG_Template::get_message_action_link( 'queue_for_resending', $message )
+			'queue_for_resending' => EEH_MSG_Template::get_message_action_link( 'queue_for_resending', $message ),
+			'view_transaction' => EEH_MSG_Template::get_message_action_link( 'view_transaction', $message ),
 		);
 		$content = '';
 		switch ( $message->STS_ID() ) {
 			case EEM_Message::status_sent :
-				$content = $action_links['view'] . $action_links['queue_for_resending'];
+				$content = $action_links['view'] . $action_links['queue_for_resending'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_resend :
-				$content = $action_links['view'] . $action_links['send_now'];
+				$content = $action_links['view'] . $action_links['send_now'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_retry :
-				$content = $action_links['view'] . $action_links['send_now'] . $action_links['error'];
+				$content = $action_links['view'] . $action_links['send_now'] . $action_links['error'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_failed :
-				$content = $action_links['error'];
+				$content = $action_links['error'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_idle :
-				$content = $action_links['view'] . $action_links['send_now'];
+				$content = $action_links['view'] . $action_links['send_now'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_incomplete;
-				$content = $action_links['generate_now'];
+				$content = $action_links['generate_now'] . $action_links['view_transaction'];
 				break;
 		}
 		return $content;
@@ -316,16 +317,12 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'limit' => $limit,
 		);
 
-
 		/**
-		 * @todo @see EEH_MSG_Template::get_message_action_urls(), I need to provide for an incoming 'filterby' argument
-		 *       in the request that indicates there will be additional key value pairs indicating what objects to filter by
-		 *       for the messages.  For example if filterby is true, then I will call a method on EE_Message that gets the query_params
-		 *       for the filter.  I might define a interface called `EEI_Filter_Query_Params` that can be implemented and it
-		 *       has the signature for the method `get_filter_by_query_params`.
-		 *       Then in EE_Message's implementation, we simply look through the request for any expected ID's
-		 *       that will use to indicate what we filter by (i.e. '_REG_ID', 'ATT_ID', 'TXN_ID', 'user_id' etc.)
+		 * Any filters coming in from other routes?
 		 */
+		if ( ! $all && isset( $this->_req_data['filterby'] ) ) {
+			$query_params = array_merge( $query_params, EEM_Message::instance()->filter_by_query_params() );
+		}
 
 		//view conditionals
 		if ( $view !== 'all' && $count && $all ) {
