@@ -845,7 +845,7 @@ class EED_Messages  extends EED_Module {
 			array(
 				0 => array(
 					'MSG_ID' => array( 'IN', $message_ids ),
-					'STS_ID' => array( 'IN', array( EEM_Message::status_idle, EEM_Message::status_resend ) )
+					'STS_ID' => array( 'IN', array( EEM_Message::status_idle, EEM_Message::status_resend, EEM_Message::status_retry ) )
 				)
 			)
 		);
@@ -873,6 +873,7 @@ class EED_Messages  extends EED_Module {
 					)
 				);
 			} else {
+				EE_Error::overwrite_errors();
 				EE_Error::add_error(
 					__( 'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, or there was an error.
 					If there was an error, you can look at the messages in the message activity list table for any error messages.', 'event_espresso' ),
