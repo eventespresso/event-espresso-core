@@ -2,7 +2,7 @@
 //this displays any legends with an array of $items that are indexed by id for each item and each item itself is an array of 'icon' and 'desc'.
 
 //figure out the columns based on the count of items (we want a max of 6 items per column).
-$per_col = 5;
+$per_col = isset( $per_column ) ? $per_column : 5;
 $count = 1;
 ?>
 <div class="ee-list-table-legend-container">

@@ -2542,9 +2542,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string        html string of legend
 	 */
 	protected function _display_legend( $items ) {
-		$template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
+		$this->_template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
 		$legend_template = EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
-		return EEH_Template::display_template($legend_template, $template_args, TRUE);
+		return EEH_Template::display_template($legend_template, $this->_template_args, TRUE);
 	}
 
 
