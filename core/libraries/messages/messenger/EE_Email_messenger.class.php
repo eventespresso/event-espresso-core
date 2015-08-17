@@ -347,12 +347,24 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return bool | WP_Error  true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */
 	protected function _send_message() {
-		return wp_mail(
+		$success =  wp_mail(
 			html_entity_decode( $this->_to, ENT_QUOTES, "UTF-8" ),
 			stripslashes( html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8" )),
 			$this->_body(),
 			$this->_headers()
 		);
+		if ( ! $success ) {
+			EE_Error::add_error(
+				sprintf(
+					__( 'The email did not send successfully. The WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.
+				It\'s possible the "to" address (%s) or "from" address (%s) is invalid.', 'event_espresso'),
+					$this->_to,
+					$this->_from
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
+		return $success;
 	}
 
 
