@@ -169,12 +169,15 @@ class EED_Messages  extends EED_Module {
 			$message = EEM_Message::instance()->get_one_by_token( $token );
 			if ( $message instanceof EE_Message ) {
 				header( 'HTTP/1.1 200 OK' );
+				$error_msg = $message->error_message();
 				?>
 				<!DOCTYPE html>
 				<html>
 					<head></head>
 					<body>
-						<?php echo $message->error_message(); ?>
+						<?php echo empty( $error_msg )
+						? esc_html__( 'Unfortunately, we were unable to capture the error message for this message.', 'event_espresso' )
+						: wp_kses( $error_msg, array( 'a', 'span', 'div', 'p', 'strong', 'em', 'br' ) ); ?>
 					</body>
 				</html>
 				<?php
