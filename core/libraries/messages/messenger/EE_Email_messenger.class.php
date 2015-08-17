@@ -357,7 +357,7 @@ class EE_Email_messenger extends EE_messenger  {
 			EE_Error::add_error(
 				sprintf(
 					__( 'The email did not send successfully. The WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.
-				It\'s possible the "to" address (%s) or "from" address (%s) is invalid.', 'event_espresso'),
+				It is possible the "to" address (%s) or "from" address (%s) is invalid.', 'event_espresso'),
 					$this->_to,
 					$this->_from
 				),
