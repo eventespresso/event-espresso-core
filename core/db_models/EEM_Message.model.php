@@ -6,7 +6,7 @@
  * @subpackage		models
  * @author			Mike Nelson
  */
-class EEM_Message extends EEM_Base {
+class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 	// private instance of the Message object
 	protected static $_instance = null;
@@ -232,6 +232,47 @@ class EEM_Message extends EEM_Base {
 			)
 		);
 	}
+
+	/**
+	 * Detects any specific query variables in the request and uses those to setup appropriate
+	 * filter for any queries.
+	 * @return array
+	 */
+	public function filter_by_query_params() {
+		//expected possible query_vars, the key in this array matches an expected key in the request, the value, matches
+		//the corresponding EEM_Base child reference.
+		$expected_vars = array(
+			'_REG_ID' => 'Registration',
+			'ATT_ID' => 'Attendee',
+			'ID' => 'WP_User',
+			'TXN_ID' => 'Transaction',
+			'EVT_ID' => 'Event',
+		);
+		$query_params[0] = array();
+		EE_Registry::instance()->load_class( 'Request_Handler' );
+		foreach ( $expected_vars as $request_key => $model_name ) {
+			if ( $request_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
+				//special case
+				if ( $request_key === '_REG_ID' ) {
+					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
+						'Registration.REG_ID' => $request_value,
+						'Attendee.Registration.REG_ID' => $request_value,
+					);
+					continue;
+				}
+				if ( $request_key === 'EVT_ID' ) {
+					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
+						'Registration.EVT_ID' => $request_value,
+						'Attendee.Registration.EVT_ID' => $request_value,
+					);
+					continue;
+				}
+				$query_params[0][ $model_name . '.' . $request_key ] = EE_Registry::instance()->REQ->get( $request_key );
+			}
+		}
+		return $query_params;
+	}
+
 
 }
 // End of file EEM_Message.model.php
