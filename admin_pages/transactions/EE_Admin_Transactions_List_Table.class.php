@@ -294,6 +294,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$dl_receipt_lnk_url = $registration->receipt_url();
 		$view_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
 		$send_pay_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
+	    $related_messages_link = EEH_MSG_Template::get_message_action_link( 'see_notifications_for', null, array(
+		    'TXN_ID' => $item->ID()
+	    ));
 
 		//Build row actions
 		$view_lnk = '
@@ -348,7 +351,13 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 				</a>
 			</li>' : '';
 
-	return $this->_action_string( $view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $view_reg_lnk . $send_pay_lnk, $item, 'ul', 'txn-overview-actions-ul' );
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+			$view_related_messages_lnk = '<li>' . $related_messages_link . '</li>';
+		} else {
+			$view_related_messages_lnk = '';
+		}
+
+		return $this->_action_string( $view_lnk . $dl_invoice_lnk . $dl_receipt_lnk . $view_reg_lnk . $send_pay_lnk . $view_related_messages_lnk, $item, 'ul', 'txn-overview-actions-ul' );
     }
 
 

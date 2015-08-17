@@ -385,31 +385,43 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 *	@return array
 	 */
 	protected function _transaction_legend_items() {
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
+			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
+				$items['view_related_messages'] = array(
+					'class' => $related_for_icon['css_class'],
+					'desc' => $related_for_icon['label'],
+				);
+			}
+		}
+
 		$items = apply_filters(
 			'FHEE__Transactions_Admin_Page___transaction_legend_items__items',
-			array(
-				'view_details' => array(
-					'class' => 'dashicons dashicons-cart',
-					'desc' => __('View Transaction Details', 'event_espresso')
-				),
-				'view_invoice' => array(
-					'class' => 'dashicons dashicons-media-spreadsheet',
-					'desc' => __('View Transaction Invoice', 'event_espresso')
-				),
-				'view_receipt' => array(
-					'class' => 'dashicons dashicons-media-default',
-					'desc' => __('View Transaction Receipt', 'event_espresso' )
-				),
-				'view_registration' => array(
-					'class' => 'dashicons dashicons-clipboard',
-					'desc' => __('View Registration Details', 'event_espresso')
+			array_merge( $items,
+				array(
+					'view_details' => array(
+						'class' => 'dashicons dashicons-cart',
+						'desc' => __('View Transaction Details', 'event_espresso')
+					),
+					'view_invoice' => array(
+						'class' => 'dashicons dashicons-media-spreadsheet',
+						'desc' => __('View Transaction Invoice', 'event_espresso')
+					),
+					'view_receipt' => array(
+						'class' => 'dashicons dashicons-media-default',
+						'desc' => __('View Transaction Receipt', 'event_espresso' )
+					),
+					'view_registration' => array(
+						'class' => 'dashicons dashicons-clipboard',
+						'desc' => __('View Registration Details', 'event_espresso')
+					)
 				)
 			)
 		);
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
-
-			EE_Registry::instance()->load_helper( 'MSG_Template' );
 			if ( EEH_MSG_Template::is_mt_active( 'payment_reminder' ) ) {
 				$items['send_payment_reminder'] = array(
 					'class' => 'dashicons dashicons-email-alt',
