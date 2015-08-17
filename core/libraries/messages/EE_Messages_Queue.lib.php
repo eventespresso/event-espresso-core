@@ -434,7 +434,7 @@ class EE_Messages_Queue {
 		while ( $this->_queue->valid() ) {
 			/** @type EE_Message $message */
 			$message = $this->_queue->current();
-			//if the message in the queue does not have a send status then skip
+			//if the message in the queue has a sent status, then skip
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
 			}
@@ -488,7 +488,6 @@ class EE_Messages_Queue {
 					$messages_sent++;
 				}
 			}
-
 			$this->_set_error_message( $message, $error_messages );
 			//add modified time
 			$message->set_modified( time() );
@@ -578,12 +577,13 @@ class EE_Messages_Queue {
 	 */
 	protected function _set_error_message( EE_Message $message, $error_messages ) {
 		$error_messages = (array) $error_messages;
-		if ( $message->STS_ID() === EEM_Message::status_failed ) {
+		if ( $message->STS_ID() === EEM_Message::status_failed || $message->STS_ID() === EEM_Message::status_retry ) {
 			$notices = EE_Error::has_notices();
-			if ( $notices && $notices['errors'] ) {
+			$error_messages[] = __( 'Messenger and Message Type were valid and active, but the messenger send method failed.', 'event_espresso' );
+			if ( $notices === 1 ) {
+				$notices = EE_Error::get_vanilla_notices();
+				$notices['errors'] = isset( $notices['errors'] ) ? $notices['errors'] : array();
 				$error_messages[] = implode( "\n", $notices['errors'] );
-			} else {
-				$error_messages[] = __( 'Messenger and Message Type were valid and active, but the messenger send method failed.', 'event_espresso' );
 			}
 		}
 		if ( count( $error_messages ) > 0 ) {
