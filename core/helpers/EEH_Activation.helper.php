@@ -679,8 +679,8 @@ class EEH_Activation {
 		global $wpdb;
 		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		if ( EEH_Activation::table_exists( $table_name ) ) {
-			$count = $wpdb->query( "SELECT COUNT(*) FROM $table_name" );
-			return absint( $count );
+			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
+			return absint( $count ) === 0 ? true : false;
 		}
 		return false;
 	}
