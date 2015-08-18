@@ -100,7 +100,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10 ) );
 		/** @type EE_Payment $payment */
 		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_pending, 'PAY_amount' => 0,  ), FALSE );
-		//because this is from an OFFLINE gateway, the paymetn shouldn't be saved
+		//because this is from an OFFLINE gateway, the payment shouldn't be saved
 		$this->assertEquals( EEM_Payment::status_id_pending, $payment->status() );
 
 		/** @type EE_Payment_Processor $payment_processor */
@@ -196,13 +196,14 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
 	/**
 	 * Gets the actual payment status in the database (useful for verifying a payment has actually been updated)
-	 * @global type $wpdb
+	 * @global WPDB $wpdb
 	 * @param EE_Payment $payment
 	 * @return string
 	 */
 	protected function _get_payment_status_in_db( EE_Payment $payment ) {
 		global $wpdb;
-		return $wpdb->get_var( $wpdb->prepare( "SELECT STS_ID FROM " . $payment->get_model()->table() . " WHERE PAY_ID = %d ", $payment->ID() ) );
+		$esp_payment = $payment->get_model()->table();
+		return $wpdb->get_var( $wpdb->prepare( "SELECT STS_ID FROM $esp_payment WHERE PAY_ID = %d", $payment->ID() ) );
 	}
 
 	public function test_process_payment__offline(){
@@ -340,6 +341,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	 * @group 7201
 	 */
 	public function test_process_ipn() {
+		/** @type EE_Payment_Method $pm */
 		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Offsite' ) );
 		$this->assertTrue( $pm->type_obj() instanceof EE_PMT_Mock_Offsite );
 		$this->assertTrue( $pm->type_obj()->get_gateway() instanceof EEG_Mock_Offsite );
