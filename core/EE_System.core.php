@@ -132,7 +132,7 @@ final class EE_System {
 			return;
 		}
 		// check required PHP version
-		if ( ! $this->_minimum_php_version_required() ) {
+		if ( ! $this->minimum_php_version_required() ) {
 			unset( $_GET['activate'] );
 			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
 			return;
@@ -147,7 +147,7 @@ final class EE_System {
 		}
 
 		//all the below should ONLY run if minimum php version requirement is met
-		if ( $this->_minimum_php_version_required() ) {
+		if ( $this->minimum_php_version_required() ) {
 			$this->display_alpha_banner_warning();
 			// central repository for classes
 			$this->_load_registry();
@@ -308,12 +308,11 @@ final class EE_System {
 	}
 
 	/**
-	 * 	_minimum_php_version_required
+	 * 	minimum_php_version_required
 	 *
-	 * 	@access private
 	 * 	@return boolean
 	 */
-	private function _minimum_php_version_required() {
+	public function minimum_php_version_required() {
 		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
 	}
 
