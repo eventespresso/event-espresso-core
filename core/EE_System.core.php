@@ -145,41 +145,45 @@ final class EE_System {
 		if ( ! $this->_minimum_php_version_recommended() ) {
 			$this->_display_minimum_recommended_php_version_notice();
 		}
-		$this->display_alpha_banner_warning();
-		// central repository for classes
-		$this->_load_registry();
-		// workarounds for PHP < 5.3
-		$this->_load_class_tools();
-		// load a few helper files
-		EE_Registry::instance()->load_helper( 'File' );
-		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		require_once EE_CORE . 'EE_Deprecated.core.php';
-		// load interfaces
-		require_once EE_CORE . 'EEI_Interfaces.php';
-		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
-		// WP cron jobs
-		EE_Registry::instance()->load_core( 'Cron_Tasks' );
 
-		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
-		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
-		// when an ee addon is activated, we want to call the core hook(s) again
-		// because the newly-activated addon didn't get a chance to run at all
-		add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
-		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
-		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
-		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
-		// you wanna get going? I wanna get going... let's get going!
-		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+		//all the below should ONLY run if minimum php version requirement is met
+		if ( $this->_minimum_php_version_required() ) {
+			$this->display_alpha_banner_warning();
+			// central repository for classes
+			$this->_load_registry();
+			// workarounds for PHP < 5.3
+			$this->_load_class_tools();
+			// load a few helper files
+			EE_Registry::instance()->load_helper( 'File' );
+			EE_Registry::instance()->load_helper( 'Autoloader', array(), false );
+			require_once EE_CORE . 'EE_Deprecated.core.php';
+			// load interfaces
+			require_once EE_CORE . 'EEI_Interfaces.php';
+			require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
+			// WP cron jobs
+			EE_Registry::instance()->load_core( 'Cron_Tasks' );
+			
+			// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
+			add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
+			// when an ee addon is activated, we want to call the core hook(s) again
+			// because the newly-activated addon didn't get a chance to run at all
+			add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
+			// detect whether install or upgrade
+			add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
+			// load EE_Config, EE_Textdomain, etc
+			add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
+			// load EE_Config, EE_Textdomain, etc
+			add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
+			// you wanna get going? I wanna get going... let's get going!
+			add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 
-		//other housekeeping
-		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-		// ALL EE Addons should use the following hook point to attach their initial setup too
-		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
-		do_action( 'AHEE__EE_System__construct__complete', $this );
+			//other housekeeping
+			//exclude EE critical pages from wp_list_pages
+			add_filter( 'wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages' ), 10 );
+			// ALL EE Addons should use the following hook point to attach their initial setup too
+			// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
+			do_action( 'AHEE__EE_System__construct__complete', $this );
+		}
 	}
 
 
