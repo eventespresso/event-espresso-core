@@ -173,8 +173,11 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
  * 	espresso_plugin_deactivation
  */
 function espresso_plugin_deactivation() {
-	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
-	EEH_Activation::plugin_deactivation();
+	if ( EE_System::instance()->minimum_php_version_required() ) {
+		espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
+		EEH_Activation::plugin_deactivation();
+	}
+
 }
 register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
 
