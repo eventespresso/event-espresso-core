@@ -316,15 +316,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $page
 	 */
 	public function delayedAdminPageMocks( $page = '' ) {
-		switch ( $page ) {
 
+		switch ( $page ) {
+			case 'decaf_events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+				break;
+			case 'registrations' :
+				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+				break;
 			case 'transactions' :
 				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
-				break;
-
-			case 'registrations' :
-				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
-				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
 				break;
 
 		}
