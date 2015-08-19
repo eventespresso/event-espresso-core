@@ -263,9 +263,10 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		// set incoming REG_Status
 		$this->set_new_reg_status( $registration->ID(), $new_reg_status );
 		// toggle reg status but only if it has changed and the user can do so
-		if ( $this->reg_status_updated( $registration->ID() ) && EE_Registry::instance()->CAP->current_user_can(
-				'ee_edit_registration',
-				'toggle_registration_status', $registration->ID() )) {
+		if (
+			$this->reg_status_updated( $registration->ID() ) &&
+			EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )
+		) {
 			// change status to new value
 			if ( $registration->set_status( $this->new_reg_status( $registration->ID() ) )) {
 				if ( $save ) {
