@@ -16,7 +16,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 	function __construct(){
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix . 'esp_line_item';
-		$this->_extra_where_sql = ' WHERE LIN_type="sub-total" AND LIN_code="pre-tax-total"';
+		$this->_extra_where_sql = ' WHERE LIN_type="sub-total" AND LIN_code="pre-tax-subtotal"';
 		$this->_pretty_name = __('Event Sub-total line items', 'event_espresso');
 		parent::__construct();
 	}
@@ -35,7 +35,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 					'LIN_order' => $line_item_row[ 'LIN_order' ],
 					'LIN_total' => $line_item_row[ 'LIN_total' ],
 					'LIN_quantity' => $line_item_row[ 'LIN_quantity' ],
-					'LIN_parent' => $line_item_row[ 'LIN_parent'],
+					'LIN_parent' => $line_item_row[ 'LIN_ID'],
 					'LIN_type' => 'sub-total',
 					'OBJ_type' => 'Event',
 					'OBJ_ID' => $event_id,
@@ -66,7 +66,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 		$wpdb->update(
 				$this->_old_table,
 				array( 'LIN_parent' => $new_line_item_id ),
-				array( 'LIN_parent' => $line_item_row[ 'LIN_ID' ] ),
+				array( 'LIN_parent' => $new_line_item_data[ 'LIN_ID' ] ),
 				array( '%d' ),
 				array( '%d' )
 			);
