@@ -42,7 +42,6 @@
 	<li><strong><?php _e('Transaction ID:', 'ee-new-messages-template-pack-test'); ?></strong> [TXN_ID]</li>
 	<li><strong><?php _e('Total Cost:', 'ee-new-messages-template-pack-test'); ?></strong> [TOTAL_COST]</li>
 	<li><strong><?php _e('Refund Amount:', 'ee-new-messages-template-pack-test'); ?></strong> [AMOUNT_PAID]</li>
-	<li><strong><?php _e('Amount Due:', 'ee-new-messages-template-pack-test'); ?></strong> [TOTAL_OWING]</li>
 </ul>
 [EVENT_LIST]
 </td>

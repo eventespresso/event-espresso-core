@@ -93,7 +93,7 @@ final class EE_Front_Controller {
 		// before headers sent
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		// load css and js
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 1 );
 		// header
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
@@ -101,13 +101,16 @@ final class EE_Front_Controller {
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-
 		//exclude our private cpt comments
 		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
 		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 1 );
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
+		// for checking that browser cookies are enabled
+		if ( apply_filters( 'FHEE__EE_Front_Controller____construct__set_test_cookie', true )) {
+			setcookie( 'ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/' );
+		}
 	}
 
 
@@ -276,7 +279,7 @@ final class EE_Front_Controller {
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 							}
 							add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ));
-							break;
+							continue;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
@@ -287,7 +290,7 @@ final class EE_Front_Controller {
 								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								break;
+								continue;
 							}
 							// and pass the request object to the run method
 							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
@@ -423,6 +426,7 @@ final class EE_Front_Controller {
 			// load core js
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
+			wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );
 
 		}
 

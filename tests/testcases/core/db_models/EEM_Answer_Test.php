@@ -36,6 +36,50 @@ class EEM_Answer_Test extends EE_UnitTestCase{
 		$this->assertEquals($a->value(),EEM_Answer::instance()->get_answer_value_to_question($r,$a->question_ID(),false));
 		$this->assertEquals($r->attendee()->fname(),EEM_Answer::instance()->get_answer_value_to_question($r,  EEM_Attendee::fname_question_id));
 	}
+	/**
+	 * @group 8237
+	 */
+	public function test_set_ANS_value__with_unsafe_html(){
+		$a = $this->new_model_obj_with_dependencies( 'Answer', array( 'ANS_value' => '<img src=x onerror=prompt(document.cookie)><img src=x onerror=prompt(/XSS/)><img src=x onerror=prompt(1)>') );
+		$this->assertEquals( '', $a->get_raw( 'ANS_value' ) );
+	}
+
+	/**
+	 * @group 8237
+	 */
+	public function test_get_ANS_value__with_unsafe_html_in_db() {
+		$a = $this->new_model_obj_with_dependencies( 'Answer' );
+		global $wpdb;
+		//manually insert bad stuff into the answer
+		$success = $wpdb->update(
+				EEM_Answer::instance()->table(),
+				array(
+					'ANS_value' => '<img src=x onerror=prompt(document.cookie)><img src=x onerror=prompt(/XSS/)><img src=x onerror=prompt(1)>'
+				),
+				array(
+					'ANS_ID' => $a->ID()
+				),
+				array(
+					'%s',//ANS_value
+				),
+				array(
+					'%s',//ANS_ID
+				)
+				);
+		$this->assertEquals( 1, $success );
+		$this->assertEquals(
+				'<img src=x onerror=prompt(document.cookie)><img src=x onerror=prompt(/XSS/)><img src=x onerror=prompt(1)>',
+				EEM_Answer::instance()->get_var(
+					array(
+						array(
+							'ANS_ID' => $a->ID()
+						)
+					),
+					'ANS_value' ));
+		//ok so it's definetely got dangerous stuff in the db, but when we fetch it using the models it should be safe again
+		$a->refresh_from_db();
+		$this->assertEquals( '', $a->get_raw( 'ANS_value' ) );
+	}
 }
 
 // End of file EEM_Answer_Test.php
