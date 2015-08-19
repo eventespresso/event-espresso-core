@@ -41,7 +41,6 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->delayedAdminPageMocks( 'transactions' );
-		$this->_admin_page = new Transactions_Admin_Page_Mock();
 	}
 
 
@@ -270,6 +269,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group 	8620
 	 */
 	public function test_create_new_payment_or_refund_from_request_data() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		//echo "\n\n " . __METHOD__ . "() \n";
 		$transaction = $this->_generate_transaction_and_registrations();
 		$request_data = $this->_generate_request_data_for_new_payment_or_refund( $transaction );
@@ -285,6 +285,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_get_REG_IDs_to_apply_payment_to_for_specific_registrations_and_new_payment() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		//echo "\n\n " . __METHOD__ . "() \n";
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		// get 2 out of the four registrations
@@ -313,6 +314,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_get_REG_IDs_to_apply_payment_to_for_all_registrations_and_new_payment() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		//echo "\n\n " . __METHOD__ . "() \n";
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		$REG_IDs = $this->_admin_page->get_REG_IDs_to_apply_payment_to( $this->_payment );
@@ -331,6 +333,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_get_existing_reg_payment_REG_IDs() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		//echo "\n\n " . __METHOD__ . "() \n";
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 15.00 );
 		// get 2 out of the four registrations
@@ -354,6 +357,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_remove_existing_registration_payments() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		//echo "\n\n " . __METHOD__ . "() \n";
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		$registrations = $this->_get_x_number_of_registrations_from_transaction( $this->_transaction, 2 );
@@ -376,6 +380,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_update_registration_payments_one_reg_paid_in_full() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		$this->_admin_page->set_existing_reg_payment_REG_IDs();
 		$registrations = $this->_get_x_number_of_registrations_from_transaction( $this->_transaction, 2 );
@@ -394,6 +399,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_update_registration_payments_one_reg_paid_in_full_one_partial() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 15.00 );
 		$this->_admin_page->set_existing_reg_payment_REG_IDs();
 		$registrations = $this->_get_x_number_of_registrations_from_transaction( $this->_transaction, 2 );
@@ -413,6 +419,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_update_registration_payments_last_reg_paid_in_full() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		$this->_admin_page->set_existing_reg_payment_REG_IDs();
 		$registrations = $this->_transaction->registrations();
@@ -432,6 +439,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_update_registration_payments_all_paid_in_full() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 40.00 );
 		$this->_admin_page->set_existing_reg_payment_REG_IDs();
 		$registrations = $this->_transaction->registrations();
@@ -449,6 +457,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_update_registration_payments_two_payments() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		$this->_admin_page->set_existing_reg_payment_REG_IDs();
 		$registrations = $this->_transaction->registrations();
@@ -478,6 +487,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_update_registration_payments_three_payments_all_paid() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 10.00 );
 		$this->_admin_page->set_existing_reg_payment_REG_IDs();
 		$registrations = $this->_transaction->registrations();
@@ -519,6 +529,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_process_registration_status_change_set_all_registrations_approved() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		// first we need to setup an admin with EE caps
 		global $current_user;
 		$current_user = $this->wp_admin_with_ee_caps( array( 'ee_edit_registration' ) );
@@ -565,6 +576,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_process_registration_status_change_set_two_registrations_approved() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		// first we need to setup an admin with EE caps
 		global $current_user;
 		$current_user = $this->wp_admin_with_ee_caps( array( 'ee_edit_registration' ) );
@@ -615,6 +627,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_build_payment_json_response_for_payment() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 15.00 );
 		// need to make sure relation is set between payment and payment method
 		$this->_payment->_add_relation_to( $this->_payment_method(), 'Payment_Method' );
@@ -650,6 +663,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_build_payment_json_response_for_deleted_payment() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 15.00 );
 		// need to make sure relation is set between payment and payment method
 		$this->_payment->_add_relation_to( $this->_payment_method(), 'Payment_Method' );
@@ -674,6 +688,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 	 * @group    8620
 	 */
 	public function test_registration_payment_data_array() {
+		$this->_admin_page = new Transactions_Admin_Page_Mock();
 		$this->_setup_standard_transaction_and_payment( 40.00, 4, 25.00 );
 		$registrations = $this->_transaction->registrations();
 		$this->_apply_payment_to_registrations( $registrations );
