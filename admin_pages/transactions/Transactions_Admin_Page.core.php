@@ -22,14 +22,31 @@
  * ------------------------------------------------------------------------
  */
 class Transactions_Admin_Page extends EE_Admin_Page {
+
 	/**
-	 *
 	 * @var EE_Transaction
 	 */
 	private $_transaction;
+
+	/**
+	 * @var EE_Session
+	 */
 	private $_session;
+
+	/**
+	 * @var array $_txn_status
+	 */
 	private static $_txn_status;
+
+	/**
+	 * @var array $_pay_status
+	 */
 	private static $_pay_status;
+
+	/**
+	 * @var array $_existing_reg_payment_REG_IDs
+	 */
+	protected $_existing_reg_payment_REG_IDs = null;
 
 
 
@@ -1033,7 +1050,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'PAY_source'           			=> EEM_Payment_Method::scope_admin,
 				'PMD_ID'               				=> $this->_req_data[ 'txn_admin_payment' ][ 'PMD_ID' ],
 				'PAY_amount'           			=> $amount,
-				'PAY_gateway_response' 	=> '',
+				//'PAY_gateway_response' 	=> '',
 				'PAY_txn_id_chq_nmbr'  	=> $this->_req_data[ 'txn_admin_payment' ][ 'txn_id_chq_nmbr' ],
 				'PAY_po_number'        		=> $this->_req_data[ 'txn_admin_payment' ][ 'po_number' ],
 				'PAY_extra_accntng'    		=> $this->_req_data[ 'txn_admin_payment' ][ 'accounting' ],
@@ -1045,7 +1062,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		);
 		if ( ! $payment->save() ) {
 			EE_Error::add_error(
-				__( 'The payment has not been successfully saved to the database.', 'event_espresso' ),
+				sprintf(
+					__( 'Payment %1$d has not been successfully saved to the database.', 'event_espresso' ),
+					$payment->ID()
+				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
@@ -1102,6 +1122,24 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
+	 * @return array
+	 */
+	public function existing_reg_payment_REG_IDs() {
+		return $this->_existing_reg_payment_REG_IDs;
+	}
+
+
+
+	/**
+	 * @param array $existing_reg_payment_REG_IDs
+	 */
+	public function set_existing_reg_payment_REG_IDs( $existing_reg_payment_REG_IDs = null ) {
+		$this->_existing_reg_payment_REG_IDs = $existing_reg_payment_REG_IDs;
+	}
+
+
+
+	/**
 	 * _get_existing_reg_payment_REG_IDs
 	 *
 	 * returns a list of registration IDs that the payment is currently related to
@@ -1111,14 +1149,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @return array
 	 */
 	protected function _get_existing_reg_payment_REG_IDs( EE_Payment $payment ) {
-		static $existing_reg_payment_REG_IDs = null;
-		if ( $existing_reg_payment_REG_IDs === null ) {
+		if ( $this->existing_reg_payment_REG_IDs() === null ) {
 			// let's get any existing reg payment records for this payment
 			$existing_reg_payment_REG_IDs = $payment->get_many_related( 'Registration' );
 			// but we only want the REG IDs, so grab the array keys
 			$existing_reg_payment_REG_IDs = ! empty( $existing_reg_payment_REG_IDs ) ? array_keys( $existing_reg_payment_REG_IDs ) : array();
+			$this->set_existing_reg_payment_REG_IDs( $existing_reg_payment_REG_IDs );
 		}
-		return $existing_reg_payment_REG_IDs;
+		return $this->existing_reg_payment_REG_IDs();
 	}
 
 
@@ -1133,19 +1171,20 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 *
 	 * @param \EE_Payment $payment
 	 * @param int         $PAY_ID
+	 * @return bool;
 	 */
 	protected function _remove_existing_registration_payments( EE_Payment $payment, $PAY_ID = 0 ) {
 		// newly created payments will have nothing recorded for $PAY_ID
 		if ( $PAY_ID == 0 ) {
-			return;
+			return false;
 		}
 		$existing_reg_payment_REG_IDs = $this->_get_existing_reg_payment_REG_IDs( $payment );
 		if ( empty( $existing_reg_payment_REG_IDs )) {
-			return;
+			return false;
 		}
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		$transaction_payments->delete_registration_payments_and_update_registrations(
+		return $transaction_payments->delete_registration_payments_and_update_registrations(
 			$payment,
 			array(
 				array(
