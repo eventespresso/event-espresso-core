@@ -129,10 +129,10 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 	 * @param  EE_Transaction $transaction
 	 * @param \EE_Payment     $payment
 	 * @param array           $REG_IDs
-	 * @return bool
+	 * @return void
 	 */
 	public function update_registration_payments( EE_Transaction $transaction, EE_Payment $payment, $REG_IDs = array() ) {
-		return $this->_update_registration_payments( $transaction, $payment, $REG_IDs );
+		$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
 	}
 
 
