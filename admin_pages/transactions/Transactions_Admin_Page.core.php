@@ -1257,7 +1257,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		return $transaction_processor->manually_update_registration_statuses(
 			$transaction,
 			sanitize_text_field( $this->_req_data[ 'txn_reg_status_change' ][ 'reg_status' ] ),
-			array( 'REG_ID' => array( 'IN', $REG_IDs ) )
+			array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) )
 		);
 //		$transaction_processor->finalize( $transaction, TRUE, FALSE);
 	}
@@ -1374,8 +1374,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
 					$registration_payment_data[ $registration->ID() ] = array(
+						'paid' => $registration->pretty_paid(),
 						'owing' => EEH_Template::format_currency( $registration->final_price() - $registration->paid() ),
-						'paid'  => $registration->pretty_paid()
 					);
 				}
 			}
