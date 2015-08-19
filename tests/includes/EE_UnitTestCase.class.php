@@ -308,14 +308,26 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+
 	/**
 	 * This loads the various admin page mock files required for tests.
 	 * Note these pages should be loaded on demand, because constants will be defined that will interfere with other Admin Page loading tests.
 	 * @since 4.6.0
+	 * @param string $page
 	 */
-	public function delayedAdminPageMocks() {
-		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
-		require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+	public function delayedAdminPageMocks( $page = '' ) {
+		switch ( $page ) {
+
+			case 'transactions' :
+				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
+				break;
+
+			case 'registrations' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+				break;
+
+		}
 	}
 
 
@@ -864,7 +876,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
 	 *
 	 * @param array $options {
-	 *	@type int $ticket_types the number of different ticket types in this transaction. Deafult 1
+	 *	@type int $ticket_types the number of different ticket types in this transaction. Default 1
 	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default INF
 	 * @return EE_Transaction
 	 */
