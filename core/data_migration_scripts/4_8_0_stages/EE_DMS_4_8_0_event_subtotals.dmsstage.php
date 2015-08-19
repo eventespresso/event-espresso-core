@@ -63,13 +63,10 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 		}
 		$new_line_item_id = $wpdb->insert_id;
 		$this->get_migration_script()->set_mapping($this->_old_table, $line_item_row[ 'LIN_ID' ], $this->_old_table, $new_line_item_id );
-		$wpdb->update(
-				$this->_old_table,
-				array( 'LIN_parent' => $new_line_item_id ),
-				array( 'LIN_parent' => $new_line_item_data[ 'LIN_ID' ] ),
-				array( '%d' ),
-				array( '%d' )
-			);
+		$success = $wpdb->query( $wpdb->prepare( "UPDATE {$this->_old_table} SET LIN_parent=%d WHERE LIN_parent = %d AND LIN_ID != %d ", $new_line_item_id, $line_item_row[ 'LIN_ID' ], $new_line_item_id ) );
+		if( ! $success ) {
+			$this->add_error( __( 'Error updating rows to new event subtotal %1$s from %2$s. Error was: %3%=$s', 'event_espresso' ), $new_line_item_id, $line_item_row[ 'LIN_ID' ], $wpdb->last_error );
+		}
 		return 1;
 	}
 }
