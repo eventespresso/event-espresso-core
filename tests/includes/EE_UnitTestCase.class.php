@@ -1011,4 +1011,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		return $ticket;
 	}
+
+
+
+	/**
+	 * Creates a WP user with standard admin caps PLUS all EE CAPS (default)
+	 * @param array $ee_capabilities array of EE CAPS if you don't want the user to have ALL EE CAPS
+	 * @return WP_User
+	 */
+	public function wp_admin_with_ee_caps( $ee_capabilities = array() ) {
+		/** @type WP_User $user */
+		$user = $this->factory->user->create_and_get( array( 'role' => 'administrator' ));
+		$ee_capabilities = (array)$ee_capabilities;
+		if ( empty( $ee_capabilities )) {
+			EE_Registry::instance()->load_core( 'Capabilities' );
+			$ee_capabilities = EE_Capabilities::instance()->get_ee_capabilities();
+		}
+		foreach( $ee_capabilities as $ee_capability ) {
+			$user->add_cap( $ee_capability );
+		}
+		return $user;
+	}
+
+
 }
