@@ -69,22 +69,14 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table{
 					$line_item_row[ 'LIN_ID' ],
 					$new_line_item_id );
 		$success = $wpdb->query( $query );
-		if( ! $success ) {
-			$count = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$this->_old_table}  WHERE LIN_parent = %d AND LIN_ID != %d ",
+		if( $success === false ) {
+			$this->add_error(
+					sprintf( __( 'Error updating rows to new event subtotal %1$s from %2$s. Error was: %3$s, while using query %4$s which had a result of %5$s', 'event_espresso' ),
+					$new_line_item_id,
 					$line_item_row[ 'LIN_ID' ],
-					$new_line_item_id ) );
-			if( intval( $count ) > 0 ) {
-				$this->add_error(
-						sprintf( __( 'Error updating rows to new event subtotal %1$s from %2$s. %3$s should have been updated. Error was: %4$s, while using query %5$s which had a result of %6$s', 'event_espresso' ),
-						$new_line_item_id,
-						$line_item_row[ 'LIN_ID' ],
-						$count,
-						$wpdb->last_error,
-						$query,
-						$success) );
-			}
+					$wpdb->last_error,
+					$query,
+					$success) );
 		}
 		return 1;
 	}
