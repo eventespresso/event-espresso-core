@@ -991,8 +991,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	public function apply_payments_or_refunds() {
 		$json_response_data = array( 'return_data' => FALSE );
-		if ( isset( $this->_req_data['txn_admin_payment'] ) && isset( $this->_req_data['txn_admin_payment']['TXN_ID'] )) {
-			$PAY_ID = isset( $this->_req_data[ 'txn_admin_payment' ][ 'PAY_ID' ] ) ? $this->_req_data[ 'txn_admin_payment' ][ 'PAY_ID' ] : 0;
+		if ( $this->_validate_payment_request_data() ) {
+			$PAY_ID =$this->_req_data[ 'txn_admin_payment' ][ 'PAY_ID' ];
 			//save  the new payment
 			$payment = $this->_create_payment_from_request_data( $PAY_ID );
 			// get the TXN for this payment
@@ -1031,6 +1031,49 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
+	 * _validate_payment_request_data
+	 *
+	 * @return bool
+	 */
+	protected function _validate_payment_request_data() {
+		if ( ! isset( $this->_req_data[ 'txn_admin_payment' ] ) ) {
+			return false;
+		}
+		$default_values = array(
+			'type' => array( 'value' => 1, 'required' => false, 'name' =>'Payment or Refund' ),
+			'TXN_ID' => array( 'value' => 0, 'required' => true, 'name' => 'Transaction ID' ),
+			'amount' => array( 'value' => 0, 'required' => true, 'name' => 'Payment amount' ),
+			'status' => array( 'value' => 0, 'required' => true, 'name' => 'Payment status' ),
+			'PMD_ID' => array( 'value' => 0, 'required' => true, 'name' => 'Payment Method' ),
+			'PAY_ID' => array( 'value' => 0, 'required' => false, 'name' => 'Payment ID' ),
+			'date' => array( 'value' => array( 'Y-m-d', 'H:i a' ), 'required' => false, 'name' => 'Payment date' ),
+			'txn_id_chq_nmbr' => array( 'value' => '', 'required' => false, 'name' => 'Transaction ID or Cheque Number' ),
+			'po_number' => array( 'value' => '', 'required' => false, 'name' => 'Purchase Order Number' ),
+			'accounting' => array( 'value' => '', 'required' => false, 'name' => 'Extra Field for Accounting' ),
+		);
+		foreach ( $default_values as $key => $default ) {
+			if ( ! isset( $this->_req_data[ 'txn_admin_payment' ][ $key ] )) {
+				if ( $default['required'] ) {
+					EE_Error::add_error(
+						sprintf(
+							__( 'A payment could not be generated because the "%1$s" field was invalid or missing payment data. Please ensure that all required fields are filled out and resubmit the form..', 'event_espresso' ),
+							$default[ 'name' ]
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					return false;
+				} else {
+					// set default value instead
+					$this->_req_data[ 'txn_admin_payment' ][ $key ] = $default[ 'value' ];
+				}
+			}
+		}
+		return true;
+	}
+
+
+
+	/**
 	 * _create_payment_from_request_data
 	 *
 	 * @param int $PAY_ID
@@ -1038,19 +1081,18 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _create_payment_from_request_data( $PAY_ID = 0 ) {
 		// get payment amount
-		$amount = abs( $this->_req_data[ 'txn_admin_payment' ][ 'amount' ] );
+		$amount = isset( $this->_req_data[ 'txn_admin_payment' ][ 'amount' ] ) ? abs( $this->_req_data[ 'txn_admin_payment' ][ 'amount' ] ) : 0;
 		// payments have a type value of 1 and refunds have a type value of -1
 		// so multiplying amount by type will give a positive value for payments, and negative values for refunds
 		$amount = $this->_req_data[ 'txn_admin_payment' ][ 'type' ] < 0 ? $amount * -1 : $amount;
 		$payment = EE_Payment::new_instance(
 			array(
-				'TXN_ID'               				=> $this->_req_data[ 'txn_admin_payment' ][ 'TXN_ID' ],
-				'STS_ID'               				=> $this->_req_data[ 'txn_admin_payment' ][ 'status' ],
-				'PAY_timestamp'        		=> $this->_req_data[ 'txn_admin_payment' ][ 'date' ],
+				'TXN_ID' 								=> $this->_req_data[ 'txn_admin_payment' ][ 'TXN_ID' ],
+				'STS_ID' 								=> $this->_req_data[ 'txn_admin_payment' ][ 'status' ],
+				'PAY_timestamp' 				=> $this->_req_data[ 'txn_admin_payment' ][ 'date' ],
 				'PAY_source'           			=> EEM_Payment_Method::scope_admin,
 				'PMD_ID'               				=> $this->_req_data[ 'txn_admin_payment' ][ 'PMD_ID' ],
 				'PAY_amount'           			=> $amount,
-				//'PAY_gateway_response' 	=> '',
 				'PAY_txn_id_chq_nmbr'  	=> $this->_req_data[ 'txn_admin_payment' ][ 'txn_id_chq_nmbr' ],
 				'PAY_po_number'        		=> $this->_req_data[ 'txn_admin_payment' ][ 'po_number' ],
 				'PAY_extra_accntng'    		=> $this->_req_data[ 'txn_admin_payment' ][ 'accounting' ],
