@@ -656,24 +656,28 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
 	/**
+	 * Sets sold
+	 * @param int $sold
+	 * @return boolean
+	 */
+	function set_sold( $sold ) {
+		// sold can not go below zero
+		$sold = max( 0, $sold );
+		$this->set( 'TKT_sold', $sold );
+	}
+
+
+
+	/**
 	 * increments sold by amount passed by $qty
 	 * @param int $qty
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
 		$sold = $this->get_raw( 'TKT_sold' ) + $qty;
+		// remove ticket reservation
+		$this->decrease_reserved( $qty );
 		return $this->set_sold( $sold );
-	}
-
-
-
-	/**
-	 * Sets sold
-	 * @param int $sold
-	 * @return boolean
-	 */
-	function set_sold( $sold ) {
-		$this->set( 'TKT_sold', $sold );
 	}
 
 
@@ -685,9 +689,54 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function decrease_sold( $qty = 1 ) {
 		$sold = $this->get_raw( 'TKT_sold' ) - $qty;
-		// sold can not go below zero
-		$sold = max( 0, $sold );
 		return $this->set_sold( $sold );
+	}
+
+
+
+	/**
+	 * Gets qty of reserved tickets
+	 * @return int
+	 */
+	function reserved() {
+		return $this->get( 'TKT_reserved' );
+	}
+
+
+
+	/**
+	 * Sets reserved
+	 * @param int $reserved
+	 * @return boolean
+	 */
+	function set_reserved( $reserved ) {
+		// reserved can not go below zero
+		$reserved = max( 0, $reserved );
+		$this->set( 'TKT_reserved', $reserved );
+	}
+
+
+
+	/**
+	 * increments reserved by amount passed by $qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function increase_reserved( $qty = 1 ) {
+		$reserved = $this->get_raw( 'TKT_reserved' ) + $qty;
+		return $this->set_reserved( $reserved );
+	}
+
+
+
+	/**
+	 * decrements (subtracts) reserved by amount passed by $qty
+	 * @param int $qty
+	 * @return boolean
+	 */
+	function decrease_reserved( $qty = 1 ) {
+		$reserved = $this->get_raw( 'TKT_reserved' ) - $qty;
+		return $this->set_reserved( $reserved );
 	}
 
 
