@@ -50,6 +50,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is TEXTAREA
 	const QST_type_textarea = 'TEXTAREA';
 
+	// constant used to indicate that the question type is a TEXTAREA that allows simple html
+	const QST_type_html_textarea = 'HTML_TEXTAREA';
 	/**
 	 * Question types that are interchangeable, even after answers have been provided for them.
 	 * Top-level keys are category slugs, next level is an array of question types. If question types
@@ -57,7 +59,6 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 * @var array
 	 */
 	protected $_question_type_categories = null;
-
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
 	 * @access private
@@ -81,7 +82,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
 				EEM_Question::QST_type_state =>__('State/Province Dropdown','event_espresso'),
 				EEM_Question::QST_type_country =>__('Country Dropdown','event_espresso'),
-				EEM_Question::QST_type_date =>__('Date Picker','event_espresso')
+				EEM_Question::QST_type_date =>__('Date Picker','event_espresso'),
+				EEM_Question::QST_type_html_textarea => __( 'HTML Textarea', 'event_espresso' ),
 			)
 		);
 		$this->_question_type_categories = apply_filters(
@@ -89,7 +91,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				array(
 				'text' => array(
 						self::QST_type_text,
-						self::QST_type_textarea
+						self::QST_type_textarea,
+						self::QST_type_html_textarea,
 					),
 				'single-answer-enum' => array(
 					self::QST_type_radio,

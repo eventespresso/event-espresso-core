@@ -1,21 +1,49 @@
 <?php
 /** @type int $EVT_ID */
 /** @type int $max_atndz */
+/** @type string $event_status */
 /** @type boolean $event_is_expired */
 
 $template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv" >
+
+	<?php do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event ); ?>
+
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
 		<thead>
 			<tr>
 				<th scope="col" class="ee-ticket-selector-ticket-details-th">
-					<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' )); ?> <span class="ee-icon ee-icon-tickets"></span>
+					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', __( 'Available Tickets', 'event_espresso' ), $EVT_ID ) ); ?> <span class="ee-icon ee-icon-tickets"></span>
 				</th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-				<th scope="col" class="ee-ticket-selector-ticket-price-th"><?php _e( 'Price', 'event_espresso' ); ?> </th>
+				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
+					<?php
+						/**
+						 * Filters the text printed for the header of the price column in the ticket selector table
+						 *
+						 * @since 4.7.2
+						 *
+						 * @param string 'Price' The translatable text to display in the table header for price
+						 * @param int $EVT_ID The Event ID
+						 */
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID ) );
+					?>
+				</th>
 				<?php } ?>
-				<th scope="col" class="ee-ticket-selector-ticket-qty-th"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
+				<th scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
+					<?php
+						/**
+						* Filters the text printed for the header of the quantity column in the ticket selector table
+						*
+						* @since 4.7.2
+						*
+						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
+						* @param int $EVT_ID The Event ID
+						*/
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
+					?>
+				</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -56,6 +84,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		// if a previous required ticket with the same sale start date is sold out, then mark this ticket as sold out as well.
 		// tickets that go on sale at a later date than the required ticket  will NOT be affected
 		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status();
+		$tkt_status = $event_status === EE_Datetime::sold_out ? EE_Ticket::sold_out : $tkt_status;
 		// check ticket status
 		switch ( $tkt_status ) {
 			// sold_out
@@ -166,7 +195,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>
 					<div class="ticket-pending-pg">
 						<span class="ticket-pending"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg', __( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' )); ?></span><br/>
-						<span class="small-text"><?php echo date_i18n( 'M d, Y', strtotime( $ticket->start_date() )); ?></span>
+						<span class="small-text"><?php echo $ticket->get_i18n_datetime( 'TKT_start_date', 'M d, Y' ); ?></span>
 					</div>
 					<?php
 					// min qty purchasable is less than tickets available
@@ -303,8 +332,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<section class="tckt-slctr-tkt-sale-dates-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_sales_date_heading', __( 'Ticket Sale Dates', 'event_espresso' )); ?></h5>
 										<span class="drk-grey-text small-text no-bold"> - <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_dates_available_message', __( 'The dates when this ticket is available for purchase.', 'event_espresso' )); ?></span><br/>
-										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_goes_on_sale', __( 'Goes On Sale:', 'event_espresso' )); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( $date_format, strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( $time_format, strtotime( $ticket->start_date() )) ; ?><br/>
-										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_sales_end', __( 'Sales End:', 'event_espresso' )); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( $date_format, strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( $time_format, strtotime( $ticket->end_date() )) ; ?><br/>
+										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_goes_on_sale', __( 'Goes On Sale:', 'event_espresso' )); ?></span><span class="dashicons dashicons-calendar"></span><?php echo $ticket->get_i18n_datetime( 'TKT_start_date', $date_format) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo $ticket->get_i18n_datetime( 'TKT_start_date',  $time_format ) ; ?><br/>
+										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_sales_end', __( 'Sales End:', 'event_espresso' )); ?></span><span class="dashicons dashicons-calendar"></span><?php echo $ticket->get_i18n_datetime( 'TKT_end_date', $date_format ) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo $ticket->get_i18n_datetime( 'TKT_end_date', $time_format ) ; ?><br/>
 									</section>
 									<br/>
 
@@ -435,9 +464,20 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 
 <?php if ( $max_atndz > 0 ) { ?>
-	<p class="smaller-text lt-grey-text">* <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote', sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz ));?></p>
+	<?php
+	echo apply_filters(
+		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
+		'<p class="smaller-text lt-grey-text" >*' .
+		sprintf(
+			__( 'Please note that a maximum number of %1$d tickets can be purchased for this event per order.', 'event_espresso' ),
+			$max_atndz
+		)
+		. '</p>'
+	);
+
+	?>
 <?php } ?>
 
-	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID ); ?>
+	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event ); ?>
 
 </div>

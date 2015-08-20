@@ -49,6 +49,15 @@
 		</a>
 		<span class="title"><?php _e('Core Developer', 'event_espresso'); ?></span>
 	</li>
+	<li class="wp-person" id="ee-person-nkolivoshka">
+		<a href="<?php esp_gravatar_profile('nazar@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'nazar@eventespresso.com', 'Nazar Kolivoshka' ); ?>
+		</a>
+		<a class="web" href="<?php esp_gravatar_profile('nazar@eventespresso.com'); ?>">
+			Nazar Kolivoshka
+		</a>
+		<span class="title"><?php _e('Core Developer', 'event_espresso'); ?></span>
+	</li>
 </ul>
 <h4 class="wp-people-group"><?php _e('Support Staff', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-support-staff">
@@ -76,14 +85,6 @@
 			Jonathan Wilson
 		</a>
 	</li>
-	<li class="wp-person" id="ee-person-sharrel">
-		<a href="<?php esp_gravatar_profile('sidney@eventespresso.com'); ?>">
-			<?php echo esp_gravatar_image( 'sidney@eventespresso.com', 'Sidney Harrell' ); ?>
-		</a>
-		<a class="web" href="<?php esp_gravatar_profile('sidney@eventespresso.com'); ?>">
-			Sidney Harrel
-		</a>
-	</li>
 	<li class="wp-person" id="ee-person-twarwick">
 		<a href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
 			<?php echo esp_gravatar_image( 'tony@eventespresso.com', 'Tony Warwick' ); ?>
@@ -104,12 +105,15 @@
 </ul>
 <h4 class="wp-people-group"><?php _e('Contributor Recognition', 'event_espresso'); ?></h4>
 <p class="description">
-	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a Github pull request. Want to see your name listed here? %sApply for access to our github repo.%s When you submit a pull request that gets included in a major release, we\'ll add your name here linked to your Github profile.', 'event_espresso'), '<a href="http://eventespresso.com/developers/request-repo-access/">', '</a>' ); ?>
+	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a GitHub pull request. Want to see your name listed here? %sWhen you submit a pull request that gets included in a major release%s, we\'ll add your name here linked to your GitHub profile.', 'event_espresso'), '<a href="https://github.com/eventespresso/event-espresso-core" title="Contribute to Event Espresso by making a pull request via GitHub">', '</a>' ); ?>
 </p>
 <p class="wp-credits-list">
 	<ul>
 		<li><a href="https://github.com/Veraxus">Matt Van Andel</a></li>
 		<li><a href="https://github.com/jonathan-dejong">Jonathan de Jong</a></li>
+		<li><a href="https://github.com/richardtape">Richard Tape</a></li>
+		<li><a href="https://github.com/robert-osborne">Robert Osborne</a></li>
+		<li><a href="https://github.com/rgunawans">Robby Gunawan Sutanto</a></li>
 	</ul>
 
 </p>

@@ -48,8 +48,10 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * Using the selected gateway, processes the payment for that transaction, and updates
-	 * the transaction appropriately. Saves the payment that is generated
+
+	 * Using the selected gateway, processes the payment for that transaction, and updates the transaction appropriately.
+ 	 * Saves the payment that is generated
+	 *
 	 * @param EE_Payment_Method 	$payment_method
 	 * @param EE_Transaction 				$transaction
 	 * @param float                					$amount 		if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
@@ -57,11 +59,12 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 *                                             										have already been called on the billing form (ie, its inputs should have their normalized values set).
 	 * @param string               				$return_url 	string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string               				$method 		like 'CART', indicates who the client who called this was
-	 * @param bool                 				$by_admin
+	 * @param bool                 				$by_admin 		TRUE if payment is being attempted from the admin
 	 * @param boolean              				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
+	 * @param string 	       						$cancel_url 	URL to return to if off-site payments are cancelled
 	 * @return EE_Payment
 	 */
-	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE ) {
+	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE, $cancel_url = '' ) {
 		// verify payment method
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		// verify transaction
