@@ -495,9 +495,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// do we have an event id?
 		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' ) ) {
 			// validate/sanitize data
-			$valid = self::_validate_post_data('add_event_to_cart');
-			// d( $valid );
-
+			$valid = self::_validate_post_data();
 			//check total tickets ordered vs max number of attendees that can register
 			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
 
@@ -515,37 +513,41 @@ class EED_Ticket_Selector extends  EED_Module {
 				// all data appears to be valid
 				$tckts_slctd = FALSE;
 				$success = TRUE;
-				// load cart
-				EE_Registry::instance()->load_core( 'Cart' );
+				// validate/sanitize data
+				$valid = apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', $valid );
+				if ( $valid[ 'total_tickets' ] >0 ) {
+					// load cart
+					EE_Registry::instance()->load_core( 'Cart' );
 
-				// cycle thru the number of data rows sent from the event listing
-				for ( $x = 0; $x < $valid['rows']; $x++ ) {
-					// does this row actually contain a ticket quantity?
-					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
-						// YES we have a ticket quantity
-						$tckts_slctd = TRUE;
-						//						d( $valid['ticket_obj'][$x] );
-						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
-							// then add ticket to cart
-							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
-							$success = ! $ticket_added ? FALSE : $success;
-							if ( EE_Error::has_error() ) {
-								break;
+					// cycle thru the number of data rows sent from the event listing
+					for ( $x = 0; $x < $valid['rows']; $x++ ) {
+						// does this row actually contain a ticket quantity?
+						if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
+							// YES we have a ticket quantity
+							$tckts_slctd = TRUE;
+							//						d( $valid['ticket_obj'][$x] );
+							if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
+								// then add ticket to cart
+								$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
+								$success = ! $ticket_added ? FALSE : $success;
+								if ( EE_Error::has_error() ) {
+									break;
+								}
+							} else {
+								// nothing added to cart retrieved
+								EE_Error::add_error(
+									sprintf( __( 'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+									__FILE__, __FUNCTION__, __LINE__
+								);
 							}
-						} else {
-							// nothing added to cart retrieved
-							EE_Error::add_error(
-								sprintf( __( 'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
-								__FILE__, __FUNCTION__, __LINE__
-							);
 						}
 					}
 				}
 //				d( EE_Registry::instance()->CART );
 //				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
-				if ( $tckts_slctd ) {
-					if ( $success ) {
+				if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__tckts_slctd', $tckts_slctd ) ) {
+					if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__success', $success ) ) {
 						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
 						EE_Registry::instance()->CART->recalculate_all_cart_totals();
 						EE_Registry::instance()->CART->save_cart( FALSE );
