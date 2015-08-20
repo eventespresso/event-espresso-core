@@ -548,6 +548,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					  TKT_description TEXT NOT NULL,
 					  TKT_qty MEDIUMINT(8) DEFAULT NULL,
 					  TKT_sold MEDIUMINT(8) NOT NULL DEFAULT 0,
+					  TKT_reserved SMALLINT(6) NOT NULL DEFAULT 0,
 					  TKT_uses TINYINT NOT NULL DEFAULT '-1',
 					  TKT_required TINYINT UNSIGNED NOT NULL DEFAULT '0',
 					  TKT_min TINYINT UNSIGNED NOT NULL DEFAULT '0',
