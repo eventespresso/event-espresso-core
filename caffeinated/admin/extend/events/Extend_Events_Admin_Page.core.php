@@ -206,9 +206,30 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
 
+		add_action('admin_init', array( $this, 'admin_init') );
+
 		//heartbeat stuff
 		add_filter( 'heartbeat_received', array( $this, 'heartbeat_response' ), 10, 2 );
 
+	}
+
+
+
+	/**
+	 * admin_init
+	 */
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings = array_merge(
+			EE_Registry::$i18n_js_strings,
+			array(
+				'image_confirm'          => __( 'Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso' ),
+				'event_starts_on'        => __( 'Event Starts on', 'event_espresso' ),
+				'event_ends_on'          => __( 'Event Ends on', 'event_espresso' ),
+				'event_datetime_actions' => __( 'Actions', 'event_espresso' ),
+				'event_clone_dt_msg'     => __( 'Clone this Event Date and Time', 'event_espresso' ),
+				'remove_event_dt_msg'    => __( 'Remove this Event Time', 'event_espresso' )
+			)
+		);
 	}
 
 
@@ -292,15 +313,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		wp_enqueue_script('event_editor_js');
 		wp_enqueue_script('ee-event-editor-heartbeat');
 
-		$new_strings = array(
-			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
-			'event_starts_on' => __('Event Starts on', 'event_espresso'),
-			'event_ends_on' => __('Event Ends on', 'event_espresso'),
-			'event_datetime_actions' => __('Actions', 'event_espresso'),
-			'event_clone_dt_msg' => __('Clone this Event Date and Time', 'event_espresso'),
-			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
-		);
-		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 	}
 
 
@@ -440,7 +452,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_event->set( 'EVT_ID', 0 );
 		$new_name = $new_event->name() . ' ' . __('**DUPLICATE**', 'event_espresso');
 		$new_event->set( 'EVT_name',  $new_name );
-		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
+		$new_event->set( 'EVT_slug',  wp_unique_post_slug( sanitize_title( $orig_event->name() ), 0, 'publish', 'espresso_events', 0 ) );
 		$new_event->set( 'status', 'draft' );
 
 		//duplicate discussion settings

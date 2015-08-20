@@ -24,62 +24,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 * whether to display the taxes row or not
 	 * @type bool $_show_taxes
 	 */
-	private $_show_taxes = FALSE;
+	private $_show_taxes = false;
 
 	/**
 	 * html for any tax rows
 	 * @type string $_show_taxes
 	 */
 	private $_taxes_html = '';
-
-	/**
-	 * array of registration and ticket IDs with monies owing
-	 * @type array $_billable
-	 */
-	private $_billable = array();
-
-	/**
-	 * array of registration and ticket IDs for events with Not Approved Reg Status
-	 * @type array $_do_not_bill
-	 */
-	private $_do_not_bill = array();
-
-	/**
-	 * whether or not registrations have been separated into billable and non-billable items
-	 * @type bool $_process_registrations
-	 */
-	private static $_process_registrations = true;
-
-	/**
-	 * total amount we can bill for at this time (pre-tax)
-	 * @type float $_billable_total
-	 */
-	private $_billable_total = 0.00;
-
-	/**
-	 * total amount we can NOT bill for at this time (pre-tax)
-	 * @type float $_non_billable_total
-	 */
-	private $_non_billable_total = 0.00;
-
-	/**
-	 * total billable amount for taxable items (pre-tax)
-	 *
-*@type float $_billable_tax_total
-	 */
-	private $_billable_tax_total = 0.00;
-
-	/**
-	 * total NON billable amount for taxable items (pre-tax)
-	 * @type float $_non_billable_tax_total
-	 */
-	private $_non_billable_tax_total = 0.00;
-
-	/**
-	 * total tax amount we can bill for at this time
-	 * @type float $_total_tax
-	 */
-	private $_total_tax = 0.00;
 
 	/**
 	 * total amount including tax we can bill for at this time
@@ -126,27 +77,23 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html = '';
 		// set some default options and merge with incoming
 		$default_options = array(
-			'show_desc' => TRUE,  // 	TRUE 		FALSE
-			'odd' => FALSE
+			'show_desc' => true,  // 	true 		false
+			'odd' => false
 		);
 		$options = array_merge( $default_options, (array)$options );
-
-		if ( isset( $options['registrations'] )) {
-			$this->_process_billable_registrations( $options[ 'registrations' ] );
-		}
 
 		switch( $line_item->type() ) {
 
 			case EEM_Line_Item::type_line_item:
-				$options[ 'billable_qty' ] = $this->_is_billable( $line_item );
-				if ( $options[ 'billable_qty' ] ) {
+				$this->_show_taxes = $line_item->is_taxable() ? true : $this->_show_taxes;
+				if ( $line_item->OBJ_type() == 'Ticket' ) {
 					// item row
 					$html .= $this->_ticket_row( $line_item, $options );
 					// got any kids?
 					foreach ( $line_item->children() as $child_line_item ) {
 						$this->display_line_item( $child_line_item, $options );
 					}
-				} else if ( $line_item->OBJ_type() !== 'Ticket' ) {
+				} else {
 					// item row
 					$html .= $this->_item_row( $line_item, $options );
 					// got any kids?
@@ -161,28 +108,45 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				break;
 
 			case EEM_Line_Item::type_sub_total:
+				static $sub_total = 0;
+				$event_sub_total = 0;
 				$text = __( 'Sub-Total', 'event_espresso' );
 				if ( $line_item->OBJ_type() == 'Event' ) {
-					if ( ! isset( $this->_events[ $line_item->OBJ_ID() ] ) ) {
-						$event = EEM_Event::instance()->get_one_by_ID( $line_item->OBJ_ID() );
+					$options[ 'event_id' ] = $event_id = $line_item->OBJ_ID();
+					if ( ! isset( $this->_events[ $options[ 'event_id' ] ] ) ) {
+						$event = EEM_Event::instance()->get_one_by_ID( $options[ 'event_id' ] );
 						if ( $event instanceof EE_Event ) {
 							if ( $event->default_registration_status() == EEM_Registration::status_id_not_approved ) {
 								return '';
 							}
 						}
+						$this->_events[ $options[ 'event_id' ] ] = 0;
 						$html .= $this->_event_row( $line_item );
 						$text = __( 'Event Sub-Total', 'event_espresso' );
 					}
 				}
-				static $sub_total = 0;
-				$sub_total += $line_item->total();
 				$child_line_items = $line_item->children();
 				// loop thru children
 				foreach( $child_line_items as $child_line_item ) {
 					// recursively feed children back into this method
 					$html .= $this->display_line_item( $child_line_item, $options );
 				}
-				if ( $line_item->total() != $sub_total && count( $child_line_items ) > 1 ) {
+				$event_sub_total += isset( $options[ 'event_id' ] ) ? $this->_events[ $options[ 'event_id' ] ] : 0;
+				$sub_total += $event_sub_total;
+				if (
+					(
+						// event subtotals
+						$line_item->code() != 'pre-tax-subtotal' &&
+						count( $child_line_items ) > 1
+					)
+					||
+					(
+						// pre-tax subtotals
+						$line_item->code() == 'pre-tax-subtotal' &&
+						count( $this->_events ) > 1
+					)
+				) {
+					$options['sub_total'] = $line_item->OBJ_type() == 'Event' ? $event_sub_total : $sub_total;
 					$html .= $this->_sub_total_row( $line_item, $text, $options );
 				}
 				break;
@@ -201,7 +165,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 						// recursively feed children back into this method
 						$html .= $this->display_line_item( $child_line_item, $options );
 					}
-					$this->_total_tax = $line_item->total() * $this->_tax_rate();
 					if ( count( $child_line_items ) > 1 ) {
 						$this->_taxes_html .= $this->_total_tax_row( $line_item, __( 'Tax Total', 'event_espresso' ), $options );
 					}
@@ -209,8 +172,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				break;
 
 			case EEM_Line_Item::type_total:
-				// determine whether to display taxes or not
-				$this->_show_taxes = $line_item->get_total_tax() > 0 ? true : false;
 				// get all child line items
 				$children = $line_item->children();
 				// loop thru all non-tax child line items
@@ -220,6 +181,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 						$html .= $this->display_line_item( $child_line_item, $options );
 					}
 				}
+
 				// now loop thru  tax child line items
 				foreach( $children as $child_line_item ) {
 					if ( $child_line_item->type() == EEM_Line_Item::type_tax_sub_total ) {
@@ -228,12 +190,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 					}
 				}
 				$html .= $this->_taxes_html;
-				$html .= $this->_total_row( $line_item, __('Total', 'event_espresso'), $options );
+				$html .= $this->_total_row( $line_item, __('Total', 'event_espresso') );
+
+
 				//$html .= $this->_payments_and_amount_owing_rows( $line_item );
 				break;
 
 		}
-
 		return $html;
 	}
 
@@ -246,11 +209,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 * @return mixed
 	 */
 	private function _event_row( EE_Line_Item $line_item ) {
-		$this->_events[ $line_item->OBJ_ID() ] = $line_item;
 		// start of row
 		$html = EEH_HTML::tr( '', 'event-cart-total-row', 'total_tr odd' );
 		// event name td
-		$html .= EEH_HTML::td( EEH_HTML::strong( $line_item->desc() ), '', 'event-header', '', ' colspan="4"' );
+		$html .= EEH_HTML::td( EEH_HTML::strong( $line_item->name() ), '', 'event-header', '', ' colspan="4"' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
@@ -287,10 +249,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// price td
 		$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		// quantity td
-		$html .= EEH_HTML::td( $options[ 'billable_qty' ], '', 'item_l jst-rght' );
+		$html .= EEH_HTML::td( $line_item->quantity(), '', 'item_l jst-rght' );
+		$this->_total_items += $line_item->quantity();
+		// determine total for line item
+		$total = $line_item->total();
+		$this->_events[ $options[ 'event_id' ] ] += $total;
 		// total td
-		$total = EEH_Template::format_currency( $line_item->unit_price() * $options[ 'billable_qty' ], false, false );
-		$html .= EEH_HTML::td( $total, '',  'item_r jst-rght' );
+		$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
@@ -312,7 +277,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// name && desc
 		$name_and_desc = apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
-			$line_item->name(),
+			$line_item->OBJ_type() . ': ' . $line_item->name(),
 			$line_item
 		);
 		$name_and_desc .= apply_filters(
@@ -332,10 +297,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		}
 		// quantity td
 		$html .= EEH_HTML::td( $line_item->quantity(), '', 'item_l jst-rght' );
-		$this->_billable_total += $line_item->total();
+		//$total = $line_item->total() * $line_item->quantity();
+		$total = $line_item->total();
+		$this->_events[ $options[ 'event_id' ] ] += $total;
 		// total td
-		$total = EEH_Template::format_currency( $line_item->total(), false, false );
-		$html .= EEH_HTML::td( $total, '',  'item_r jst-rght' );
+		$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
@@ -394,22 +360,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// empty td (price)
 		$html .= EEH_HTML::td( EEH_HTML::nbsp() );
 		// total td
-		$total = $line_item->total() * $this->_tax_rate();
-		$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '',  'item_r jst-rght' );
+		$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'item_r jst-rght' );
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
-	}
-
-
-
-	/**
-	 *    _tax_rate
-	 *
-	 * @return float
-	 */
-	private function _tax_rate() {
-		return $this->_billable_tax_total + $this->_non_billable_tax_total > 0 ? ( $this->_billable_tax_total / ( $this->_billable_tax_total + $this->_non_billable_tax_total ) ) : 1;
 	}
 
 
@@ -432,7 +386,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// empty td (price)
 			$html .= EEH_HTML::td( EEH_HTML::nbsp() );
 			// total td
-			$html .= EEH_HTML::td( EEH_Template::format_currency( $this->_total_tax, false, false ), '', 'total jst-rght' );
+			$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '', 'total jst-rght' );
 			// end of row
 			$html .= EEH_HTML::trx();
 		}
@@ -457,8 +411,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 			// total td
 			$html .= EEH_HTML::td( $text, '', 'total_currency total jst-rght', '', ' colspan="3"' );
 			// total td
-			$total = $line_item->total() * ( $this->_billable_total / ( $this->_billable_total + $this->_non_billable_total ) );
-			$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '', 'total jst-rght' );
+			$html .= EEH_HTML::td( EEH_Template::format_currency( $options[ 'sub_total' ], false, false ), '', 'total jst-rght' );
 			// end of row
 			$html .= EEH_HTML::trx();
 		}
@@ -473,22 +426,17 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 *
 	 * @param EE_Line_Item $line_item
 	 * @param string       $text
-	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
-		$html = '';
-		//if ( $line_item->total() ) {
-			// start of row
-			$html = EEH_HTML::tr( '', '', 'spco-grand-total total_tr odd' );
-			// total td
-			$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
-			// total td
-			$this->_grand_total = $this->_billable_total + $this->_total_tax;
-			$html .= EEH_HTML::td( EEH_Template::format_currency( $this->_grand_total, false, false ), '',  'total jst-rght' );
-			// end of row
-			$html .= EEH_HTML::trx();
-		//}
+	private function _total_row( EE_Line_Item $line_item, $text = '' ) {
+		// start of row
+		$html = EEH_HTML::tr( '', '', 'spco-grand-total total_tr odd' );
+		// total td
+		$html .= EEH_HTML::td( $text, '',  'total_currency total jst-rght',  '',  ' colspan="3"' );
+		// total td
+		$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'total jst-rght' );
+		// end of row
+		$html .= EEH_HTML::trx();
 		return $html;
 	}
 
@@ -536,84 +484,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				//}
 			}
 		}
-		return $html;
-	}
-
-
-
-	/**
-	 *    _process_registrations_requiring_payment
-	 * compiles a list of EE_Tickets for each event in the passed array
-	 *
-	 * @param EE_Registration[] $registrations_requiring_payment
-	 * @return mixed
-	 */
-	private function _process_billable_registrations( $registrations_requiring_payment = array() ) {
-		if ( is_array( $registrations_requiring_payment ) && self::$_process_registrations ) {
-			foreach ( $registrations_requiring_payment as $registration ) {
-				if ( ! $registration instanceof EE_Registration ) {
-					break;
-				}
-				if ( $registration->owes_monies_and_can_pay() ) {
-					$this->_billable[ $registration->ID() ] = $registration->ticket_ID();
-				} else {
-					$this->_do_not_bill[ $registration->ID() ] = $registration->ticket_ID();
-				}
-			}
-		}
-		self::$_process_registrations = false;
-	}
-
-
-
-
-	/**
-	 *    _process_billable_total
-	 *
-	 * @param EE_Line_Item $line_item
-	 * @return mixed
-	 */
-	private function _is_billable( EE_Line_Item $line_item ) {
-		$billable = 0;
-		// is this a ticket ?
-		if ( $line_item->OBJ_type() == 'Ticket' ) {
-			// is it in the "do not bill" list?
-			foreach ( $this->_billable as $REG_ID => $TKT_ID ) {
-				if ( $line_item->OBJ_ID() === $TKT_ID ) {
-					$this->_billable_total += $line_item->unit_price();
-					$this->_total_items++;
-					if ( $line_item->is_taxable() ) {
-						$this->_billable_tax_total += $line_item->unit_price();
-					}
-					$billable++;
-					unset( $this->_do_not_bill[ $REG_ID ] );
-				}
-			}
-
-			foreach ( $this->_do_not_bill as $REG_ID => $TKT_ID ) {
-				if ( $line_item->OBJ_ID() === $TKT_ID ) {
-					$this->_non_billable_total += $line_item->unit_price();
-					if ( $line_item->is_taxable() ) {
-						$this->_non_billable_tax_total += $line_item->unit_price();
-					}
-					unset( $this->_do_not_bill[ $REG_ID ] );
-				}
-			}
-		}
-		return $billable;
-	}
-
-
-
-	/**
-	 * 	_separator_row
-	 *
-	 * @param array        $options
-	 * @return mixed
-	 */
-	private function _separator_row( $options = array() ) {
-		// start of row
-		$html = EEH_HTML::tr( EEH_HTML::td( '<hr>', '',  '',  '',  ' colspan="4"' ));
 		return $html;
 	}
 

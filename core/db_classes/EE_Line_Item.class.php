@@ -25,13 +25,19 @@
  * @subpackage         includes/classes/EE_Checkin.class.php
  * @author             Michael Nelson
  */
-class EE_Line_Item extends EE_Base_Class {
+class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 	/**
 	 * for children line items (currently not a normal relation)
 	 * @type EE_Line_Item[]
 	 */
 	protected $_children;
+
+	/**
+	 * for the parent line item
+	 * @var EE_Line_Item
+	 */
+	protected $_parent;
 
 
 
@@ -74,6 +80,16 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( ! $this->get( 'LIN_code' ) ) {
 			$this->set_code( $this->generate_code() );
 		}
+	}
+
+
+
+	/**
+	 * Gets ID
+	 * @return int
+	 */
+	function ID() {
+		return $this->get( 'LIN_ID' );
 	}
 
 
@@ -240,8 +256,8 @@ class EE_Line_Item extends EE_Base_Class {
 			//to taxable items, so its' an exception. Treat it like a flat line item
 			return false;
 		}
-		$unit_price = $this->get( 'LIN_unit_price' );
-		$percent = $this->get( 'LIN_percent' );
+		$unit_price = abs( $this->get( 'LIN_unit_price' ) );
+		$percent = abs( $this->get( 'LIN_percent' ) );
 		if ( $unit_price < .001 && $percent ) {
 			return TRUE;
 		} elseif ( $unit_price >= .001 && !$percent ) {
@@ -294,6 +310,16 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function set_total( $total ) {
 		$this->set( 'LIN_total', $total );
+	}
+
+
+
+	/**
+	 * Gets order
+	 * @return int
+	 */
+	function order() {
+		return $this->get( 'LIN_order' );
 	}
 
 
@@ -352,10 +378,17 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Gets the line item of which this item is a composite. Eg, if this is a subtotal, the parent might be a total\
+	 * If this line item is saved to the DB, fetches the parent from the DB. However, if this line item isn't in the DB
+	 * it uses its cached reference to its parent line item (which would have been set by `EE_Line_Item::set_parent()` or
+	 * indirectly by `EE_Line_item::add_child_line_item()`)
 	 * @return EE_Line_Item
 	 */
 	public function parent() {
-		return $this->get_model()->get_one_by_ID( $this->parent_ID() );
+		if( $this->ID() ) {
+			return $this->get_model()->get_one_by_ID( $this->parent_ID() );
+		} else {
+			return $this->_parent;
+		}
 	}
 
 
@@ -524,11 +557,16 @@ class EE_Line_Item extends EE_Base_Class {
 	/**
 	 * Adds the line item as a child to this line item. If there is another child line
 	 * item with the same LIN_code, it is overwritten by this new one
-	 * @param EE_Line_Item $line_item
-	 * @return boolean success
+	 * @param EEI_Line_Item $line_item
+	 * @param bool         $set_order
+	 * @return bool success
+	 * @throws \EE_Error
 	 */
-	function add_child_line_item( EE_Line_Item $line_item ) {
-		$line_item->set_order( count( $this->children() ) );
+	function add_child_line_item( EEI_Line_Item $line_item, $set_order = true ) {
+		// should we calculate the LIN_order for this line item ?
+		if ( $set_order || $line_item->order() === null ) {
+			$line_item->set_order( count( $this->children() ) );
+		}
 		if ( $this->ID() ) {
 			//check for any duplicate line items (with the same code), if so, this replaces it
 			$line_item_with_same_code = $this->get_child_line_item(  $line_item->code() );
@@ -542,7 +580,31 @@ class EE_Line_Item extends EE_Base_Class {
 			return $line_item->save();
 		} else {
 			$this->_children[ $line_item->code() ] = $line_item;
+			if( $line_item->parent() != $this ) {
+				$line_item->set_parent( $this );
+			}
 			return TRUE;
+		}
+	}
+
+	/**
+	 * Similar to EE_Base_Class::_add_relation_to, except this isn't a normal relation.
+	 * If this line item is saved to the DB, this is just a wrapper for set_parent_ID() and save()
+	 * However, if this line item is NOT saved to the DB, this just caches the parent on
+	 * the EE_Line_Item::_parent property.
+	 * @param EE_Line_Item $line_item
+	 *
+	 */
+	public function set_parent( $line_item ) {
+		if ( $this->ID() ) {
+			if( ! $line_item->ID() ) {
+				$line_item->save();
+			}
+			$this->set_parent_ID( $line_item->ID() );
+			$this->save();
+		} else {
+			$this->_parent = $line_item;
+			$this->set_parent_ID( $line_item->ID() );
 		}
 	}
 
@@ -721,7 +783,8 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Gets the final total on this item, taking taxes into account.
 	 * Has the side-effect of setting the sub-total as it was just calculated.
 	 * If this is used on a grand-total line item, also updates the transaction's
-	 * TXN_total, and the registrations' REG_final_prices
+	 * TXN_total (provided this line item is allowed to persist, otherwise we don't
+	 * want to change a persistable transaction with info from a non-persisten line item)
 	 * @return float
 	 */
 	function recalculate_total_including_taxes() {
@@ -732,12 +795,14 @@ class EE_Line_Item extends EE_Base_Class {
 		// no negative totals plz
 		$total = max( $total, 0 );
 		$this->set_total( $total );
-		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
+		//only update the related transaction's total
+		//if we intend to save this line item and its a grand total
+		if( $this->allow_persist() &&
+				$this->type() == EEM_Line_Item::type_total &&
+				$this->transaction() instanceof EE_Transaction ){
 			$this->transaction()->set_total( $total );
 			if ( $this->transaction()->ID() ) {
 				$this->transaction()->save();
-				$reg_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
-				$reg_processor->update_registration_final_prices( $this->transaction() );
 			}
 		}
 		$this->maybe_save();
@@ -750,45 +815,70 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children EXCEPT when we're only calculating the taxable total and when this is called on the grand total
-	 * @param \EE_Line_Item $parent_line_item
 	 * @return float
 	 * @throws \EE_Error
 	 */
-	function recalculate_pre_tax_total( EE_Line_Item $parent_line_item = null ) {
+	function recalculate_pre_tax_total() {
 		$total = 0;
-		//completely ignore tax sub-totals when calculating the pre-tax-total
-		if ( $this->is_tax_sub_total() ) {
+		$my_children = $this->children();
+		//completely ignore tax and tax sub-totals when calculating the pre-tax-total
+		if ( $this->is_tax_sub_total() || $this->is_tax() ) {
 			return 0;
-		} elseif ( $this->is_sub_line_item() ) {
-			throw new EE_Error( sprintf( __( 'Calculating the pretax-total on sub-line items doesn\'t make sense right now. You were trying to calculate it on %s', "event_espresso" ), print_r( $this, TRUE ) ) );
-		} elseif ( $this->is_line_item() ) {
-			if ( $this->is_percent() && $parent_line_item instanceof EE_Line_Item ) {
-				$total += $parent_line_item->total() * $this->percent() / 100;
-			} else {
-				$total = $this->unit_price() * $this->quantity();
-			}
-			$this->set_total( $total );
-			$this->maybe_save();
-		} elseif ( $this->is_sub_total() || $this->is_total() ) {
+		} elseif (
+				( $this->is_sub_line_item() || $this->is_line_item() ) &&
+				empty( $my_children ) ) {
+			$total = $this->unit_price() * $this->quantity();
+		} elseif ( $this->is_sub_total() || $this->is_total() || ($this->is_line_item() && ! empty( $my_children ) ) ) {
 			//get the total of all its children
-			foreach ( $this->children() as $child_line_item ) {
+			foreach ( $my_children as $child_line_item ) {
 				if ( $child_line_item instanceof EE_Line_Item ) {
-					//only recalculate sub-totals for NON-taxes
 					if ( $child_line_item->is_percent() ) {
-						$total += $total * $child_line_item->percent() / 100;
+						$percent_total = $total * $child_line_item->percent() / 100;
+						$child_line_item->set_total( $percent_total );
+						//so far all percent line items should have a quantity of 1
+						//(ie, no double percent discounts. Although that might be requested someday)
+						$child_line_item->set_quantity( 1 );
+						$child_line_item->maybe_save();
+						$total += $percent_total;
 					} else {
-						$total += $child_line_item->recalculate_pre_tax_total( $this );
+						//verify flat sub-line-item quantities match their parent
+						if( $child_line_item->is_sub_line_item() ) {
+							$child_line_item->set_quantity( $this->quantity() );
+						}
+						$total += $child_line_item->recalculate_pre_tax_total();
 					}
 				}
 			}
-			//we only want to update sub-totals if we're including non-taxable items
-			//and grand totals shouldn't be updated when calculating pre-tax totals
+
 			if( $this->is_sub_total() ){
 				// no negative totals plz
 				$total = max( $total, 0 );
-				$this->set_total( $total );
-				$this->maybe_save();
 			}
+		}
+		//ensure all non-line items and non-sub-line-items have a quantity of 1
+		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
+			$this->set_quantity( 1 );
+			if( ! $this->is_percent() ) {
+				$this->set_unit_price( $this->total() );
+			}
+		}
+
+		//we don't want to bother saving grand totals, because that needs to factor in taxes anyways
+		//so it ought to be
+		if( ! $this->is_total() ) {
+			$this->set_total( $total );
+			//if not a percent line item, make sure we keep the unit price in sync
+			if( $this->is_line_item() &&
+					! empty( $my_children ) &&
+					! $this->is_percent() ) {
+				if( $this->quantity() === 0 ){
+					$new_unit_price = 0;
+				} else {
+					$new_unit_price = $this->total() / $this->quantity();
+				}
+				$this->set_unit_price( $new_unit_price );
+			}
+			$this->maybe_save();
 		}
 		return $total;
 	}
@@ -903,7 +993,9 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Returns the amount taxable among this line item's children (or if it has no children,
-	 * how much of it is taxable). Does not recalculate totals or subtotals
+	 * how much of it is taxable). Does not recalculate totals or subtotals.
+	 * If the taxable total is negative, (eg, if none of the tickets were taxable,
+	 * but there is a "Taxable" discount), returns 0.
 	 * @return float
 	 */
 	function taxable_total() {
@@ -923,7 +1015,7 @@ class EE_Line_Item extends EE_Base_Class {
 				}
 			}
 		}
-		return $total;
+		return max( $total, 0 );
 	}
 
 
@@ -999,6 +1091,15 @@ class EE_Line_Item extends EE_Base_Class {
 			return $this->save();
 		}
 		return false;
+	}
+
+	/**
+	 * clears the cached children and parent from the line item
+	 * @return void
+	 */
+	public function clear_related_line_item_cache() {
+		$this->_children = array();
+		$this->_parent = null;
 	}
 
 

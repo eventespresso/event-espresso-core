@@ -899,3 +899,11 @@ input.ee-register-button {
 	color: #8A549A;
 }
 
+
+/** other styling - footnotes etc **/
+.ee-footnote-text {
+    font-style: italic;
+    font-size: .8em;
+    font-color: #dcc;
+    font-weight: normal;
+}

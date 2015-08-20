@@ -515,6 +515,20 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+	/**
+	 * @param string $expected_date  The expected date string in the given full_format date string format.
+	 * @param string $actual_date    The actual date string in the given full_format date string format.
+	 * @param $full_format
+	 */
+	public function assertDateWithinOneMinute( $expected_date, $actual_date, $full_format, $custom_error_message = '' ) {
+		//take the incoming date strings convert to datetime objects and verify they are within one minute of each other
+		$expected_date = date_create_from_format( $full_format, $expected_date );
+		$actual_date = date_create_from_format( $full_format, $actual_date );
+		$difference = $actual_date->format('U') - $expected_date->format('U');
+		$this->assertTrue( $difference < 60, $custom_error_message );
+	}
+
+
 
 	/**
 	 * This sets up some save data for use in testing updates and saves via the event editor.
@@ -755,7 +769,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}
-			if( ! isset( $args[ $field_name ] ) && $value !== NULL){
+			if( ! array_key_exists( $field_name, $args ) && $value !== NULL){
 				$args[$field->get_name()] = $value;
 			}
 		}
@@ -869,11 +883,25 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}else{
 			$taxable_tickets = INF;
 		}
+		if( isset( $options[ 'fixed_ticket_price_modifiers' ] ) ) {
+			$fixed_ticket_price_modifiers = $options[ 'fixed_ticket_price_modifiers' ];
+		} else {
+			$fixed_ticket_price_modifiers = 1;
+		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
 			$ticket = $this->new_model_obj_with_dependencies( 'Ticket',  array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false ) );
-			$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $i * 10 ) );
-			$ticket->_add_relation_to( $price, 'Price' );
+			$sum_of_sub_prices = 0;
+			for( $j=1; $j<= $fixed_ticket_price_modifiers; $j++ ) {
+				if( $j == $fixed_ticket_price_modifiers ) {
+					$price_amount = $ticket->price() - $sum_of_sub_prices;
+				} else {
+					$price_amount = $i * 10 / $fixed_ticket_price_modifiers;
+				}
+				$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $price_amount, 'PRC_order' => $j ) );
+				$sum_of_sub_prices += $price->amount();
+				$ticket->_add_relation_to( $price, 'Price' );
+			}
 			$a_datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
 			$ticket->_add_relation_to( $a_datetime, 'Datetime');
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );

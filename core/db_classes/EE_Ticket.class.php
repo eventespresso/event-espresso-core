@@ -242,7 +242,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return array
 	 */
 	public function date_range( $dt_frmt = '', $conjunction = ' - ' ) {
-		return $this->first_datetime()->start_date( $dt_frmt ) . $conjunction . $this->last_datetime()->end_date( $dt_frmt );
+		$first_date = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()->start_date( $dt_frmt ) : '';
+		$last_date = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()->end_date( $dt_frmt ) : '';
+
+		return $first_date && $last_date ? $first_date . $conjunction  . $last_date : '';
 	}
 
 
@@ -994,5 +997,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		$event = $this->get_related_event();
 		return $event instanceof EE_Event ? $event->ID() : 0;
 	}
+
 
 } //end EE_Ticket class

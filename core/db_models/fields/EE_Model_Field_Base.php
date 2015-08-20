@@ -102,6 +102,10 @@ abstract class EE_Model_Field_Base{
 	}
 
 	/**
+	 * Returns the table alias joined to the table column, however this isn't the right
+	 * table alias if the aliased table is being joined to. In that case, you can use
+	 * EE_Model_Parser::extract_table_alias_model_relation_chain_prefix() to find the table's current alias
+	 * in the current query
 	 * @return string
 	 */
 	function get_qualified_column(){

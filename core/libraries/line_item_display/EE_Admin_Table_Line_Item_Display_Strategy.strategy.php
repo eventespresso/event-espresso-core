@@ -17,20 +17,20 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * whether to display the taxes row or not
 	 * @type bool $_show_taxes
 	 */
-	private $_show_taxes = FALSE;
+	protected $_show_taxes = false;
 
 	/**
 	 * html for any tax rows
 	 * @type string $_show_taxes
 	 */
-	private $_taxes_html = '';
+	protected $_taxes_html = '';
 
 
 	/**
 	 * total amount including tax we can bill for at this time
 	 * @type float $_grand_total
 	 */
-	private $_grand_total = 0.00;
+	protected $_grand_total = 0.00;
 
 
 
@@ -94,7 +94,11 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 				break;
 
 			case EEM_Line_Item::type_tax_sub_total:
-				//no tax subtotal for admin table.
+				foreach( $line_item->children() as $child_line_item ) {
+					if ( $child_line_item->type() == EEM_Line_Item::type_tax ) {
+						$this->display_line_item( $child_line_item, $options );
+					}
+				}
 				break;
 
 			case EEM_Line_Item::type_total:
@@ -102,12 +106,10 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 				$this->_show_taxes = $line_item->get_total_tax() > 0 ? true : false;
 				// get all child line items
 				$children = $line_item->children();
+
 				// loop thru all non-tax child line items
 				foreach( $children as $child_line_item ) {
-					if ( $child_line_item->type() != EEM_Line_Item::type_tax_sub_total ) {
-						// recursively feed children back into this method
 						$html .= $this->display_line_item( $child_line_item, $options );
-					}
 				}
 
 				$html .= $this->_taxes_html;
@@ -163,7 +165,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _item_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _item_row( EE_Line_Item $line_item, $options = array() ) {
 		$line_item_related_object = $line_item->get_object();
 		$parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->get_object() : null;
 		// start of row
@@ -175,8 +177,10 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_link = $line_item_related_object instanceof EEI_Admin_Links ? $line_item_related_object->get_admin_details_link() : '';
 
 		//related object scope.
-		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->name() : $line_item->parent()->name();
+		$parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object ? $parent_line_item_related_object->name() : '';
+		$parent_related_object_name = empty( $parent_related_object_name ) && $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : $parent_related_object_name;
 		$parent_related_object_link = $parent_line_item_related_object instanceof EEI_Admin_Links ? $parent_line_item_related_object->get_admin_details_link() : '';
+
 
 		$name_html = $line_item_related_object instanceof EEI_Line_Item_Object ? $line_item_related_object->name() : $line_item->name();
 		$name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>' : $name_html;
@@ -185,9 +189,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 		$name_html = $line_item_related_object instanceof EEI_Has_Icon ? $line_item_related_object->get_icon() . $name_html : $name_html;
 		$name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
 		$name_html .=  sprintf(
-			_x( '%1$sfor the %2$s, %3$s%4$s', 'eg. "for the Event, My Cool Event"', 'event_espresso'),
+			_x( '%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
-			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->name() : __( 'Item', 'event_espresso' ),
+			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type() : __( 'Item:', 'event_espresso' ),
 			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
 			'</span>'
 		);
@@ -195,7 +199,8 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 
 		//Type Column
 		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type() . '<br />' : '';
-		$type_html .= '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $line_item->code() ) . '</span>';
+		$code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
+		$type_html .= ! empty( $code ) ? '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $code ) . '</span>' : '';
 		$html .= EEH_HTML::td( $type_html, '', 'jst-left' );
 
 
@@ -226,7 +231,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
 		//for now we're not showing sub-items
 		return '';
 	}
@@ -240,7 +245,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _tax_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _tax_row( EE_Line_Item $line_item, $options = array() ) {
 		// start of row
 		$html = EEH_HTML::tr( '', 'admin-primary-mbox-taxes-tr' );
 		// name th
@@ -263,7 +268,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _sub_total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
+	protected function _sub_total_row( EE_Line_Item $line_item, $text = '', $options = array() ) {
 		//currently not showing subtotal row
 		return '';
 	}
@@ -277,7 +282,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 	 * @param array        $options
 	 * @return mixed
 	 */
-	private function _total_row( EE_Line_Item $line_item, $options = array() ) {
+	protected function _total_row( EE_Line_Item $line_item, $options = array() ) {
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
 		// Total th label

@@ -43,11 +43,15 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 		// setup DateTimeZone
 		$timezone = $timezone instanceof DateTimeZone ? $timezone : new DateTimeZone( 'America/Toronto' );
 		// and base DateTime for now
-		$now = $now instanceof DateTime ? $now : date_create_from_format( 'Y-m-d H:i:s', Date( 'Y-m-d' ) . '13:00:00', $timezone );
+		$now = $now instanceof DateTime ? $now : new DateTime( 'now', $timezone );
 		//setup some dates we'll use for testing with.
-		$two_days_ago = new DateTime( "now -2days", $timezone );
-		$one_hour_from_now = new DateTime( "now +1hour", $timezone );
-		$two_days_from_now = new DateTime( "now +2days", $timezone );
+		$two_days_ago = clone $now;
+		$one_hour_from_now = clone $now;
+		$two_days_from_now = clone $now;
+		$now_clone_for_other = clone $now;
+		$two_days_ago = $two_days_ago->sub( new DateInterval('P2D') );
+		$one_hour_from_now = $one_hour_from_now->add( new DateInterval('PT1H') );
+		$two_days_from_now = $two_days_from_now->add( new DateInterval('P2D') );
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
 
@@ -55,7 +59,7 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 		$payment_args = array(
 			array( 'PAY_timestamp' => $two_days_ago->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $one_hour_from_now->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
-			array( 'PAY_timestamp' => $now->sub( new DateInterval( "PT2H" ) )->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
+			array( 'PAY_timestamp' => $now_clone_for_other->sub( new DateInterval( 'PT2H' ) )->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $two_days_from_now->format( $full_format) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 			array( 'PAY_timestamp' => $two_days_ago->format( $full_format ) , 'timezone' => 'America/Toronto', 'formats' => $formats ),
 		);
@@ -74,9 +78,9 @@ class EEM_Payment_Test extends EE_UnitTestCase {
 	 */
 	public function test_get_payments_between_dates() {
 		$timezone = new DateTimeZone( 'America/Toronto' );
-		// let's create a DateTime object with a set time so that our tests don't fail when run and different times
-		// we'll use the year, month, and day from "now" but set the time to 1pm
-		$now = date_create_from_format( 'Y-m-d H:i:s', Date( 'Y-m-d' ) . '13:00:00', $timezone );
+
+		//set $now in the timezone being tested.
+		$now = new DateTime( 'now', $timezone );
 		$this->_setup_payments( $now, $timezone );
 
 		//test defaults

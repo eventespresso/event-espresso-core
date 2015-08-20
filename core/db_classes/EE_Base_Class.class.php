@@ -94,6 +94,15 @@ abstract class EE_Base_Class{
 	 */
 	protected $_fields = array();
 
+	/**
+	 *
+	 * @var boolean indicating whether or not this model object is intended to ever be saved
+	 * For example, we might create model objects intended to only be used for the duration
+	 * of this request and to be thrown away, and if they were accidentally saved
+	 * it would be a bug.
+	 */
+	protected $_allow_persist = true;
+
 
 
 	/**
@@ -172,9 +181,30 @@ abstract class EE_Base_Class{
 		do_action( 'AHEE__EE_Base_Class__construct__finished', $this );
 	}
 
+	/**
+	 * Gets whether or not thsi model object is allowed to persist/be saved to the database.
+	 * @return boolean
+	 */
+	function allow_persist() {
+		return $this->_allow_persist;
+	}
+
 
 
 	/**
+	 * Sets whether or not this model object should be allowed to be saved to the DB.
+	 * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
+	 * you got new information that somehow made you change your mind.
+	 * @param boolean $allow_persist
+	 * @return boolean
+	 */
+	function set_allow_persist( $allow_persist ) {
+		return $this->_allow_persist = $allow_persist;
+	}
+
+
+
+		/**
 	 * Gets the field's original value when this object was constructed during this request.
 	 * This can be helpful when determining if a model object has changed or not
 	 *
@@ -270,6 +300,65 @@ abstract class EE_Base_Class{
 
 
 
+
+
+	/**
+	 * This sets the field value on the db column if it exists for the given $column_name or
+	 * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
+	 *
+	 * @see EE_message::get_column_value for related documentation on the necessity of this method.
+	 *
+	 * @param string $field_name Must be the exact column name.
+	 * @param mixed  $field_value  The value to set.
+	 * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
+	 */
+	public function set_field_or_extra_meta( $field_name, $field_value ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
+			$this->set( $field_name, $field_value );
+			return true;
+		} else {
+			//ensure this object is saved first so that extra meta can be properly related.
+			$this->save();
+			return $this->update_extra_meta( $field_name, $field_value );
+		}
+	}
+
+
+
+
+
+
+	/**
+	 * This retrieves the value of the db column set on this class or if that's not present
+	 * it will attempt to retrieve from extra_meta if found.
+	 *
+	 * Example Usage:
+	 * Via EE_Message child class:
+	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
+	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
+	 * also have additional main fields specific to the messenger.  The system accommodates those extra
+	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
+	 * value for those extra fields dynamically via the EE_message object.
+	 *
+	 * @param  string $field_name  expecting the fully qualified field name.
+	 * @return mixed|null  value for the field if found.  null if not found.
+	 */
+	public function get_field_or_extra_meta( $field_name ) {
+		if ( $this->get_model()->has_field( $field_name ) ) {
+			$column_value = $this->get( $field_name );
+		} else {
+			//This isn't a column in the main table, let's see if it is in the extra meta.
+			$column_value = $this->get_extra_meta( $field_name, true, null );
+		}
+		return $column_value;
+	}
+
+
+
+
+
+
+
 	/**
 	 * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally for being able to reference what timezone we are running conversions on when converting TO the internal timezone (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp).
 	 *  This is available to all child classes that may be using the EE_Datetime_Field for a field data type.
@@ -290,7 +379,7 @@ abstract class EE_Base_Class{
 			if ( $field_obj instanceof EE_Datetime_Field ) {
 				$field_obj->set_timezone( $this->_timezone );
 				if ( isset( $this->_fields[$field_name] ) && $this->_fields[$field_name] instanceof DateTime ) {
-					$this->_fields[$field_name]->setTimeZone( new DateTimeZone( $this->_timezone ) );
+					$this->_fields[$field_name]->setTimezone( new DateTimeZone( $this->_timezone ) );
 				}
 			}
 		}
@@ -648,7 +737,7 @@ abstract class EE_Base_Class{
 	 *
 	 * @param string $relationName
 	 * @throws \EE_Error
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class[] NOT necessarily indexed by primary keys
 	 */
 	public function get_all_from_cache($relationName){
 		$cached_array_or_object =  $this->_model_relations[$relationName];
@@ -914,7 +1003,7 @@ abstract class EE_Base_Class{
 
 		//clear cached property if either formats are not null.
 		if( $dt_frmt !== null || $tm_frmt !== null ) {
-			$this->_clear_cached_property( $field_name, $date_or_time );
+			$this->_clear_cached_property( $field_name );
 			//reset format properties because they are used in get()
 			$this->_dt_frmt = $in_dt_frmt;
 			$this->_tm_frmt = $in_tm_frmt;
@@ -1219,7 +1308,8 @@ abstract class EE_Base_Class{
 	 * @param array $set_cols_n_values 	keys are field names, values are their new values,
 	 * 		if provided during the save() method (often client code will change the fields' values before calling save)
 	 * @throws \EE_Error
-	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure
+	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure or if the model object
+	 * isn't allowed to persist (as determined by EE_Base_Class::allow_persist())
 	 */
 	public function save($set_cols_n_values=array()) {
 		/**
@@ -1240,6 +1330,9 @@ abstract class EE_Base_Class{
 		 * @param EE_Base_Class $model_object the model object about to be saved.
 		 */
 		do_action( 'AHEE__EE_Base_Class__save__begin', $this );
+		if( ! $this->allow_persist() ) {
+			return 0;
+		}
 		//now get current attribute values
 		$save_cols_n_values = $this->_fields;
 		//if the object already has an ID, update it. Otherwise, insert it
@@ -1542,15 +1635,15 @@ abstract class EE_Base_Class{
 	 * @param mixed  $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName               eg 'Events','Question',etc.
 	 *                                           an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specify array('role-column-name'=>'role-id')
-	 * @param array  $where_query                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $extra_join_model_fields_n_values                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @param null   $cache_id
 	 * @throws EE_Error
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
+	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $extra_join_model_fields_n_values = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
 		if( $this->ID() ){
-			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
 		} else {
@@ -1617,7 +1710,8 @@ abstract class EE_Base_Class{
 	 * because we want to get even deleted items etc.
 	 * @param string $relationName key in the model's _model_relations array
 	 * @param array  $query_params  like EEM_Base::get_all
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class[] Results not necessarily indexed by IDs, because some results might not have primary keys
+	 * or might not be saved yet. Consider using EEM_Base::get_IDs() on these results if you want IDs
 	 */
 	public function get_many_related($relationName,$query_params = array()){
 		if($this->ID()){//this exists in the DB, so get the related things from either the cache or the DB
@@ -2053,6 +2147,47 @@ abstract class EE_Base_Class{
 	 */
 	public function __toString(){
 		return sprintf( '%s (%s)', $this->name(), $this->ID() );
+	}
+
+	/**
+	 * Clear related model objects if they're already in the DB, because otherwise when we
+	 * UNserialize this model object we'll need to be careful to add them to the entity map.
+	 * This means if we have made changes to those related model obejcts, and want to unserialize
+	 * the this model object on a subsequent request, changes to those related model objects will be lost.
+	 * Instead, those related model objects should be directly serialized and stored.
+	 * Eg, the following won't work:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $reg = get_option( 'my_option' );
+	 * $reg->attendee()->save();
+	 *
+	 * And would need to be replace with:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $att = get_option( 'my_option' );
+	 * $att->save();
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+				$classname = 'EE_' . $this->get_model()->get_this_model_name();
+				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
+						$this->get_one_from_cache( $relation_name )->ID() ) {
+					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
+				}
+			}
+		}
+		return array_keys( get_object_vars( $this ) );
 	}
 
 

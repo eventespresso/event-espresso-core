@@ -24,4 +24,5 @@ interface EEI_Line_Item_Object {
 	 */
 	public function ID();
 
+
 } //end EEI_Line_Item_Object interface

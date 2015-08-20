@@ -122,6 +122,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
 			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
 		}
+		EE_Registry::$i18n_js_strings[ 'ts_embed_iframe_title' ] = __( 'Copy and Paste the following:', 'event_espresso' );
 	}
 
 
@@ -280,6 +281,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 
 		$template_args = array();
+		$template_args['event_status'] = $_event_active_status;
+
 		$template_args['date_format'] = apply_filters( 'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format', 'l F jS, Y' );
 		$template_args['time_format'] = apply_filters( 'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format', 'g:i a' );
 
@@ -523,8 +526,8 @@ class EED_Ticket_Selector extends  EED_Module {
 						$tckts_slctd = TRUE;
 						//						d( $valid['ticket_obj'][$x] );
 						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
-							// then add ticket to cart; but don't bother updating the totals until we've added them all
-							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x], false );
+							// then add ticket to cart
+							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
 							$success = ! $ticket_added ? FALSE : $success;
 							if ( EE_Error::has_error() ) {
 								break;
@@ -719,10 +722,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @access   private
 	 * @param EE_Ticket $ticket
 	 * @param int       $qty
-	 * @param boolean $update_totals
 	 * @return TRUE on success, FALSE on fail
 	 */
-	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1, $update_totals = true ) {
+	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// get the number of spaces left for this datetime ticket
 		$available_spaces = self::_ticket_datetime_availability( $ticket );
@@ -733,7 +735,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				return false;
 			}
 			// add event to cart
-			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty, $update_totals )) {
+			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
 				self::_recalculate_ticket_datetime_availability( $ticket, $qty );
 				return true;
 			} else {
@@ -866,9 +868,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 			wp_enqueue_style('ticket_selector');
 			// make it dance
-			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
+			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('espresso_core'), '', TRUE);
 			//			wp_enqueue_script('ticket_selector');
-			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}
 
@@ -880,9 +881,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		//iframe button js on admin event editor page
 		if ( EE_Registry::instance()->REQ->get('page') == 'espresso_events' && EE_Registry::instance()->REQ->get('action') == 'edit' ) {
 			wp_register_script( 'ticket_selector_embed', TICKET_SELECTOR_ASSETS_URL . 'ticket-selector-embed.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, true );
-			EE_Registry::$i18n_js_strings['ts_embed_iframe_title'] = __('Copy and Paste the following:', 'event_espresso' );
 			wp_enqueue_script( 'ticket_selector_embed' );
-			wp_localize_script( 'ticket_selector_embed', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}
 

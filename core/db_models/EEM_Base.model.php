@@ -670,7 +670,7 @@ abstract class EEM_Base extends EE_Base{
 	 *		current user items they should be able to view on the frontend, backend, edit, or delete?
 	 *		can be set to 'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
 	 * }
-	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
+	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 * Some full examples:
 	 *
 	 * 		get 10 transactions which have Scottish attendees:
@@ -1789,12 +1789,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
 	 * @param string $relationName, key in EEM_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specify array('role-column-name'=>'role-id')
-	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
+	 * @param array   $extra_join_model_fields_n_values This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $extra_join_model_fields_n_values = array()){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $where_query);
+		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $extra_join_model_fields_n_values);
 	}
 
 	/**
@@ -4018,7 +4018,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array|EE_Base_Class $model_object_or_attributes_array 	If its an array, it's field-value pairs
 	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
-	 * @return \EE_Base_Class[]
+	 * @return \EE_Base_Class[] Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 */
 	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
 
@@ -4109,6 +4109,38 @@ abstract class EEM_Base extends EE_Base{
 			$names[$obj->ID()] = $obj->name();
 		}
 		return $names;
+	}
+
+	/**
+	 * Gets an array of primary keys from the model objects. If you acquired the model objects
+	 * using EEM_Base::get_all() you don't need to call this (and probably shouldn't because
+	 * this is duplicated effort and reduces efficiency) you would be better to use
+	 * array_keys() on $model_objects.
+	 * @param /EE_Base_Class[] $model_objects
+	 * @param boolean $filter_out_empty_ids if a model object has an ID of '' or 0, don't bother including it in the returned array
+	 * @return array
+	 */
+	public function get_IDs( $model_objects, $filter_out_empty_ids = false) {
+		if( ! $this->has_primary_key_field() ) {
+			if( WP_DEBUG ) {
+				EE_Error::add_error( __( 'Trying to get IDs from a model than has no primary key', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return array();
+			}
+		}
+		$IDs = array();
+		foreach( $model_objects as $model_object ) {
+			$id = $model_object->ID();
+			if( ! $id ) {
+				if( $filter_out_empty_ids ) {
+					continue;
+				}
+				if( WP_DEBUG ) {
+					EE_Error::add_error(__( 'Called %1$s on a model object that has no ID and so probably hasn\'t been saved to the database', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
+			$IDs[] = $id;
+		}
+		return $IDs;
 	}
 
 	/**
