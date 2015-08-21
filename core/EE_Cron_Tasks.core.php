@@ -380,8 +380,6 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
 			foreach ( self::$_expired_transactions as $TXN_ID ) {
@@ -396,21 +394,26 @@ class EE_Cron_Tasks extends EE_BASE {
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction and whether it is failed or not
-				if ( ! $transaction instanceof EE_Transaction|| $transaction->status_ID() !== EEM_Transaction::failed_status_code ) {
+				if ( ! $transaction instanceof EE_Transaction || $transaction->status_ID() !== EEM_Transaction::failed_status_code ) {
 					continue;
 				}
 				apply_filters( 'FHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', $transaction );
-				$registrations = $transaction->registrations();
-				if ( ! empty( $registrations ) ) {
-					foreach ( $registrations as $registration ) {
-						if ( $registration instanceof EE_Registration ) {
-							$ticket = $registration->ticket();
-							if ( $ticket instanceof EE_Ticket ) {
-								$ticket->decrease_reserved();
-							}
-						}
-					}
-				}
+				// todo : perform garbage collection here
+				//$registrations = $transaction->registrations();
+				//if ( ! empty( $registrations ) ) {
+				//	foreach ( $registrations as $registration ) {
+				//		if ( $registration instanceof EE_Registration ) {
+							//$delete_registration = true;
+							//if ( $registration->attendee() instanceof EE_Attendee ) {
+							//	$delete_registration = false;
+							//}
+							//if ( $delete_registration ) {
+							//	$registration->delete_permanently();
+							//	$registration->delete_related_permanently();
+							//}
+				//		}
+				//	}
+				//}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
 			}
 		}
