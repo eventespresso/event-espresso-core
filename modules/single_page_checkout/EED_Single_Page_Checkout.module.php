@@ -697,8 +697,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$transaction = $this->_initialize_transaction();
 		// verify transaction
 		if ( $transaction instanceof EE_Transaction ) {
-			// save it so that we have an ID for other objects to use
-			$transaction->save();
 			// and save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $transaction->ID() );
 		} else {
@@ -722,13 +720,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// grab the cart grand total
 			$cart_total = $this->checkout->cart->get_cart_grand_total();
 			// create new TXN
-			return EE_Transaction::new_instance( array(
+			$transaction = EE_Transaction::new_instance( array(
 				'TXN_timestamp' 	=> time(),
 				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
 				'TXN_total' 				=> $cart_total > 0 ? $cart_total : 0,
 				'TXN_paid' 				=> 0,
 				'STS_ID' 					=> EEM_Transaction::failed_status_code,
 			));
+			// save it so that we have an ID for other objects to use
+			$transaction->save();
+			// set cron job for following up on TXNs after their session has expired
+			EE_Cron_Tasks::schedule_expired_transaction_check(
+				EE_Registry::instance()->SSN->expiration() + 1,
+				$transaction->ID()
+			);
+			return $transaction;
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
 		}
