@@ -62,7 +62,8 @@ jQuery(document).ready( function($) {
 	*     timer_minute: string,
 	*     timer_second: string,
 	*     registration_expiration_notice: string,
-	*     ajax_submit: bool
+	*     ajax_submit: bool,
+	*     empty_cart: boolean
 	*  }}
 	* @namespace response
 	* @type {{
@@ -134,10 +135,12 @@ jQuery(document).ready( function($) {
 		form_is_valid : false,
 		// amount to be paid during this TXN
 		payment_amount : 0,
+		// container for displaying how much time is left to complete registration
+		registration_time_limit : $( '#spco-registration-time-limit-spn' ),
 
 
 
-		/********** INITIAL SETUP **********/
+	/********** INITIAL SETUP **********/
 
 
 
@@ -456,32 +459,26 @@ jQuery(document).ready( function($) {
 
 
 		/**
-		 * @function display_registration_expiration_notice
-		 */
-		display_registration_expiration_notice : function() {
-			SPCO.main_container.slideUp().html( eei18n.registration_expiration_notice ).slideDown();
-		},
-
-
-
-		/**
 		 * @function start_registration_time_limit_countdown
 		 */
 		start_registration_time_limit_countdown : function() {
-			var $registration_time_limit = $('#spco-registration-time-limit-spn');
-			if ( $registration_time_limit.length > 0 ) {
+			if ( SPCO.registration_time_limit.length > 0 && eei18n.empty_cart !== 1 ) {
 				var expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
 				var layout = (( new Date() ) - expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
-				//alert( '$registration_time_limit = ' + $registration_time_limit.html() + '\n' + 'expiration = ' + expiration );
-				$registration_time_limit.countdown({
+				SPCO.registration_time_limit.countdown({
 					labels: [ eei18n.timer_years, eei18n.timer_months, eei18n.timer_weeks, eei18n.timer_days, eei18n.timer_hours, eei18n.timer_minutes, eei18n.timer_seconds ],
 					labels1: [ eei18n.timer_year, eei18n.timer_month, eei18n.timer_week, eei18n.timer_day, eei18n.timer_hour, eei18n.timer_minute, eei18n.timer_second ],
 					until: expiration,
-					layout: layout
-					//onExpiry: SPCO.display_registration_expiration_notice()
+					layout: layout,
+					onExpiry: function() {
+						SPCO.main_container.slideUp( function() {
+							SPCO.main_container.html( eei18n.registration_expiration_notice ).slideDown();
+						});
+					}
 				});
 			}
 		},
+
 
 
 
