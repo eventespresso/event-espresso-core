@@ -443,15 +443,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 //		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
 
 		$grand_total_needs_resaving = FALSE;
-		$itemized_payment = $payment->get_extra_meta( 'itemized_payment', TRUE, FALSE );
+		$shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
-		if( $this->_paypal_shipping && $itemized_payment ){
-			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
+		if( $this->_paypal_shipping && $shipping_amount ){
+			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), $shipping_amount, __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
 			$grand_total_needs_resaving = TRUE;
 
 		}
 		//might paypal have changed the taxes?
-		if( $this->_paypal_taxes && $itemized_payment ){
+		if( $this->_paypal_taxes ){
 			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			$grand_total_needs_resaving = TRUE;
 		}
