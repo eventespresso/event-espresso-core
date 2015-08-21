@@ -1324,7 +1324,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $cat_id ) {
 			$query_args = array(
 				'action'     => 'edit_category',
-				'EVT_CAT_ID' => $cat_id
+				'VEN_CAT_ID' => $cat_id
 			);
 		} else {
 			$query_args = array( 'action' => 'add_category' );
