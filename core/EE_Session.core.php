@@ -269,7 +269,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return \EE_Cart
 	  */
 	 public function cart() {
-		 return isset( $this->_session_data['cart'] ) ? $this->_session_data['cart'] : NULL;
+		 return isset( $this->_session_data['cart'] ) && $this->_session_data[ 'cart' ] instanceof EE_Cart ? $this->_session_data['cart'] : NULL;
 	 }
 
 
@@ -299,7 +299,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return \EE_Checkout
 	  */
 	 public function checkout() {
-		 return isset( $this->_session_data['checkout'] ) ? $this->_session_data['checkout'] : NULL;
+		 return isset( $this->_session_data['checkout'] ) && $this->_session_data[ 'checkout' ] instanceof EE_Checkout ? $this->_session_data['checkout'] : NULL;
 	 }
 
 
@@ -331,7 +331,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return \EE_Transaction
 	  */
 	 public function transaction() {
-		 return isset( $this->_session_data['transaction'] ) ? $this->_session_data['transaction'] : NULL;
+		 return isset( $this->_session_data['transaction'] ) && $this->_session_data[ 'transaction' ] instanceof EE_Transaction ? $this->_session_data['transaction'] : NULL;
 	 }
 
 
