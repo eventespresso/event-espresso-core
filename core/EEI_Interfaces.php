@@ -102,6 +102,13 @@ interface EEI_Transaction extends EEI_Base {
 	 * @return float
 	 */
 	function remaining();
+
+	/**
+	 *        get Total Amount Paid to Date
+	 * @access        public
+	 * @return float
+	 */
+	public function paid();
 }
 
 
@@ -263,6 +270,13 @@ interface EEHI_Line_Item{
 	 * @return boolean success
 	 */
 	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE );
+
+	/**
+	 * Gets the line item for the taxes subtotal
+	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+	 * @return \EE_Line_Item
+	 */
+	public static function get_taxes_subtotal( EE_Line_Item $total_line_item );
 }
 
 

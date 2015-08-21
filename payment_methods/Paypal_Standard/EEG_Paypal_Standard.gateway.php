@@ -98,13 +98,25 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
 		$total_line_item = $transaction->total_line_item();
-		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
-			//this payment is for the entire transaction,
+
+		$total_discounts_to_cart_total = $transaction->paid();
+		//only itemize the order if we're paying for the rest of the order's amount
+		if( $payment->amount() == $transaction->remaining() ) {
+			//this payment is for the remaining transaction amount,
+			//keep track of exactly how much the itemized order amount equals
+			$itemized_sum = 0;
+
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
 					//if this is a re-attempt at paying, don't re-add PayPal's shipping
 					if ( $line_item->code() == 'paypal_shipping' ) {
+						continue;
+					}
+					//it's some kind of discount
+					if( $line_item->total() < 0 ) {
+						$total_discounts_to_cart_total += abs( $line_item->total() );
+						$itemized_sum += $line_item->total();
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
@@ -120,16 +132,32 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						$redirect_args[ 'shipping2_' . $item_num ] = '0';
 					}
 					$item_num++;
+					$itemized_sum += $line_item->total();
 				}
 			}
-			//add our taxes to the order if we're NOT using PayPal's
-			if( ! $this->_paypal_taxes ){
-				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
+			$taxes_li = $this->_line_item->get_taxes_subtotal( $total_line_item );
+			$itemized_sum += $taxes_li->total();
+			//ideally itemized sum equals the transaction total. but if not (which is weird)
+			//and the itemized sum is LESS than the transaction total
+			//add another line item
+			//if the itemized sum is MORE than the transaction total,
+			//add the difference it to the discounts
+			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum;
+			if( $transaction->total() < $itemized_sum ) {
+				//itemized sum is too big
+				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
+			} elseif( $transaction->total() > $itemized_sum ) {
+				$redirect_args[ 'item_name_' . $item_num ] = substr(
+						__( 'Other charges', 'event_espresso' ), 0, 127 );
+				$redirect_args[ 'amount_' . $item_num ] = $itemized_sum_diff_from_txn_total;
+				$redirect_args[ 'quantity_' . $item_num ] = 1;
+				$redirect_args[ 'tax_' . $item_num ] = 0;
+				$item_num++;
 			}
-			//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
-			$payment->update_extra_meta( 'itemized_payment', TRUE );
-		}else{
-			//this is a partial payment, so we can't really show all the line items
+			$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
+		} else {
+			//partial payment that's not for the remaining amount, so we can't send an itemized list
+			//and we don't want to let paypal add taxes or other stuff
 			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			//if we aren't allowing PayPal to calculate shipping, set it to 0
@@ -142,6 +170,13 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
 			$payment->update_extra_meta( 'itemized_payment', FALSE );
 		}
+		//add our taxes to the order if we're NOT using PayPal's
+		if( ! $this->_paypal_taxes ){
+			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
+		}
+		//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
+		$payment->update_extra_meta( 'itemized_payment', TRUE );
+
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
 			$redirect_args['amount_' . $item_num] = 0;
