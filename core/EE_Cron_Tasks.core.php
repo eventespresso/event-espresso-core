@@ -47,6 +47,12 @@ class EE_Cron_Tasks extends EE_BASE {
 			array( 'EE_Cron_Tasks', 'check_for_abandoned_transactions' ),
 			10, 1
 		);
+		// EXPIRED TRANSACTION CHECK
+		add_action(
+			'AHEE__EE_Cron_Tasks__expired_transaction_check',
+			array( 'EE_Cron_Tasks', 'expired_transaction_check' ),
+			10, 1
+		);
 		// CLEAN OUT JUNK TRANSACTIONS AND RELATED DATA
 		add_action(
 				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
@@ -275,6 +281,7 @@ class EE_Cron_Tasks extends EE_BASE {
 					}
 					// maybe update status, but don't save transaction just yet
 					$transaction_payments	->update_transaction_status_based_on_total_paid( $transaction, false );
+					do_action( 'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__after_status_update_based_on_total_paid', $transaction );
 					// check if enough Reg Steps have been completed to warrant finalizing the TXN
 					if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
 						// and if it hasn't already been set as being started...
@@ -285,6 +292,124 @@ class EE_Cron_Tasks extends EE_BASE {
 						$transaction,
 						$transaction->last_payment()
 					);
+				}
+				unset( self::$_abandoned_transactions[ $TXN_ID ] );
+			}
+		}
+	}
+
+
+
+	/*************  END OF FINALIZE ABANDONED TRANSACTIONS  *************/
+
+	/*****************  EXPIRED TRANSACTION CHECK *****************/
+
+
+
+	/**
+	 * array of TXN IDs
+	 * @var array
+	 */
+	protected static $_expired_transactions = array();
+
+
+
+	/**
+	 * schedule_expired_transaction_check
+	 *
+	 * sets a wp_schedule_single_event() for following up on TXNs after their session has expired
+	 *
+	 * @param int $timestamp
+	 * @param int $TXN_ID
+	 */
+	public static function schedule_expired_transaction_check(
+		$timestamp,
+		$TXN_ID
+	) {
+		// validate $TXN_ID and $timestamp
+		$TXN_ID = absint( $TXN_ID );
+		$timestamp = absint( $timestamp );
+		if ( $TXN_ID && $timestamp ) {
+			wp_schedule_single_event(
+				$timestamp,
+				'AHEE__EE_Cron_Tasks__expired_transaction_check',
+				array( $TXN_ID )
+			);
+		}
+	}
+
+
+
+	/**
+	 * expired_transaction_check
+	 *
+	 * this is the callback for the action hook:
+	 * 'AHEE__EE_Cron_Tasks__transaction_session_expiration_check'
+	 * which is utilized by wp_schedule_single_event()
+	 * in \EED_Single_Page_Checkout::_initialize_transaction().
+	 * The passed TXN_ID gets added to an array, and then the
+	 * process_expired_transactions() function is hooked into
+	 * 'AHEE__EE_System__core_loaded_and_ready' which will actually handle the
+	 * processing of any failed transactions, because doing so now would be
+	 * too early and the required resources may not be available
+	 *
+	 * @param int $TXN_ID
+	 */
+	public static function expired_transaction_check(	$TXN_ID = 0 ) {
+		if ( absint( $TXN_ID )) {
+			self::$_expired_transactions[]  = $TXN_ID;
+			add_action(
+				'shutdown',
+				array( 'EE_Cron_Tasks', 'process_expired_transactions' ),
+				5
+			);
+		}
+	}
+
+
+
+	/**
+	 * process_expired_transactions
+	 *
+	 * loops through the self::$_expired_transactions array and processes any failed TXNs
+	 */
+	public static function process_expired_transactions() {
+		// are there any TXNs that need cleaning up ?
+		if ( ! empty( self::$_expired_transactions ) ) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// set revisit flag for txn processor
+			$transaction_processor->set_revisit( false );
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+			// load EEM_Transaction
+			EE_Registry::instance()->load_model( 'Transaction' );
+			foreach ( self::$_expired_transactions as $TXN_ID ) {
+				// reschedule the cron if we can't hit the db right now
+				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
+					// reset cron job for finalizing the TXN
+					EE_Cron_Tasks::schedule_expired_transaction_check(
+						time() + MINUTE_IN_SECONDS,
+						$TXN_ID
+					);
+					continue;
+				}
+				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+				// verify transaction and whether it is failed or not
+				if ( ! $transaction instanceof EE_Transaction|| $transaction->status_ID() !== EEM_Transaction::failed_status_code ) {
+					continue;
+				}
+				apply_filters( 'FHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', $transaction );
+				$registrations = $transaction->registrations();
+				if ( ! empty( $registrations ) ) {
+					foreach ( $registrations as $registration ) {
+						if ( $registration instanceof EE_Registration ) {
+							$ticket = $registration->ticket();
+							if ( $ticket instanceof EE_Ticket ) {
+								$ticket->decrease_reserved();
+							}
+						}
+					}
 				}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
 			}
