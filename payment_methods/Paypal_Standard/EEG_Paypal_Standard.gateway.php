@@ -156,7 +156,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args[ 'tax_' . $item_num ] = 0;
 				$item_num++;
 			}
-			$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
+			if( $total_discounts_to_cart_total > 0 ) {
+				$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
+			}
+
 		} else {
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			//and we don't want to let paypal add taxes or other stuff
@@ -169,15 +172,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['tax_cart'] = '0';
 
 			$item_num++;
-			//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
-			$payment->update_extra_meta( 'itemized_payment', FALSE );
 		}
 		//add our taxes to the order if we're NOT using PayPal's
 		if( ! $this->_paypal_taxes ){
 			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 		}
-		//remember that we sent an itemized payment, so paypal can be allowed to add taxes and shipping
-		$payment->update_extra_meta( 'itemized_payment', TRUE );
 
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
@@ -458,6 +457,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		if( $grand_total_needs_resaving ){
 			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
+			EE_Registration_Processor::instance()->update_registration_final_prices( $transaction );
 		}
 		$this->log(
 			array(
