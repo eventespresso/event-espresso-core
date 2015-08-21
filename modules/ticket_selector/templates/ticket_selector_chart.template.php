@@ -57,7 +57,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		//	d( $ticket );
 		$max =$ticket->max();
 		$min = 0;
-		$remaining = $ticket->remaining() - $ticket->reserved();
+		$remaining = max( $ticket->remaining() - $ticket->reserved(), 0 );
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
 			$max = min( $remaining, $max_atndz );
