@@ -118,7 +118,7 @@ jQuery(document).ready(function($) {
 			$('input', messages_content).each(function(index, el) {
 				$(this).val('');
 			});
-			var dialog = dialogHelper.displayModal(true).addContent(messages_content);
+			var dialog = dialogHelper.displayModal(true,null,false).addContent(messages_content);
 			//replace the content so that
 			$('.ee-admin-dialog-container').eeScrollTo(400);
 		},
