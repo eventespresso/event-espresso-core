@@ -394,27 +394,29 @@ class EE_Cron_Tasks extends EE_BASE {
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction and whether it is failed or not
-				if ( ! $transaction instanceof EE_Transaction || $transaction->status_ID() !== EEM_Transaction::failed_status_code ) {
-					continue;
+				if ( $transaction instanceof EE_Transaction && $transaction->status_ID() === EEM_Transaction::failed_status_code ) {
+					apply_filters( 'FHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', $transaction );
+					// todo : perform garbage collection here and remove clean_out_junk_transactions()
+					// todo : could also merge the finalize_abandoned_transactions cron into this one...
+					// todo : and use a switch with multiple actions so that business logic can be moved elsewhere
+					// todo : such as into EE_Transaction_Processor for finalizing abandoned transactions
+					//$registrations = $transaction->registrations();
+					//if ( ! empty( $registrations ) ) {
+					//	foreach ( $registrations as $registration ) {
+					//		if ( $registration instanceof EE_Registration ) {
+					//$delete_registration = true;
+					//if ( $registration->attendee() instanceof EE_Attendee ) {
+					//	$delete_registration = false;
+					//}
+					//if ( $delete_registration ) {
+					//	$registration->delete_permanently();
+					//	$registration->delete_related_permanently();
+					//}
+					//		}
+					//	}
+					//}
 				}
-				apply_filters( 'FHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', $transaction );
-				// todo : perform garbage collection here
-				//$registrations = $transaction->registrations();
-				//if ( ! empty( $registrations ) ) {
-				//	foreach ( $registrations as $registration ) {
-				//		if ( $registration instanceof EE_Registration ) {
-							//$delete_registration = true;
-							//if ( $registration->attendee() instanceof EE_Attendee ) {
-							//	$delete_registration = false;
-							//}
-							//if ( $delete_registration ) {
-							//	$registration->delete_permanently();
-							//	$registration->delete_related_permanently();
-							//}
-				//		}
-				//	}
-				//}
-				unset( self::$_abandoned_transactions[ $TXN_ID ] );
+				unset( self::$_expired_transactions[ $TXN_ID ] );
 			}
 		}
 	}
