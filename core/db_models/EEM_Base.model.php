@@ -3728,6 +3728,7 @@ abstract class EEM_Base extends EE_Base{
 					$obj_in_map->clear_cache($relation_name, NULL, TRUE );
 				}
 			}
+			$this->_entity_map[ $id ] = $obj_in_map;
 			return $obj_in_map;
 		}else{
 			return $this->get_one_by_ID( $id );
