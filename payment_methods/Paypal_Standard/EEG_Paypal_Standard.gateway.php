@@ -450,14 +450,21 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		}
 		//might paypal have changed the taxes?
-		if( $this->_paypal_taxes ){
+		$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
+		if( $taxes_li instanceof EE_Line_Item ) {
+			$current_tax_amount = $taxes_li->total();
+		} else {
+			$current_tax_amount = 0;
+		}
+		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $current_tax_amount ){
 			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			$grand_total_needs_resaving = TRUE;
 		}
 
 		if( $grand_total_needs_resaving ){
 			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
-			EE_Registration_Processor::instance()->update_registration_final_prices( $transaction );
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+			$registration_processor->update_registration_final_prices( $transaction );
 		}
 		$this->log(
 			array(
