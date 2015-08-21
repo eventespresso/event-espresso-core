@@ -570,23 +570,29 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * column.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param object $item The current item
 	 */
-	protected function single_row_columns( $item ) {
+	public function single_row_columns( $item ) {
 		list( $columns, $hidden ) = $this->get_column_info();
 
-		foreach ( $columns as $column_name => $column_display_name ) {
-			$class = "class='$column_name column-$column_name'";
+		global $wp_version;
+		$use_hidden_class = version_compare( $wp_version, '4.3-RC', '>=' );
 
-			$style = '';
-			if ( in_array( $column_name, $hidden ) )
-				$style = ' style="display:none;"';
+		foreach ( $columns as $column_name => $column_display_name ) {
+
+			/**
+			 * With WordPress version 4.3.RC+ WordPress started using the hidden css class to control whether columns are
+			 * hidden or not instead of using "display:none;".  This bit of code provides backward compat.
+			 */
+			$hidden_class = $use_hidden_class && in_array( $column_name, $hidden ) ? ' hidden' : '';
+			$style = ! $use_hidden_class && in_array( $column_name, $hidden ) ? ' style="display:none;"' : '';
+
+			$class = "class='$column_name column-$column_name$hidden_class'";
 
 			$attributes = "$class$style";
 
-			if ( 'cb' == $column_name ) {
+			if ( 'cb' === $column_name ) {
 				echo '<th scope="row" class="check-column">';
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content', $this->column_cb( $item ), $item, $this );
 				echo '</th>';

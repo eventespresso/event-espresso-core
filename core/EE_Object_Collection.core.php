@@ -14,64 +14,79 @@
  * @since                4.6.31
  *
  */
-abstract class EE_Object_Collection extends SplObjectStorage {
+abstract class EE_Object_Collection extends SplObjectStorage implements EEI_Collection {
 
 	/**
-	 * addObject
+	 * an interface (or class) name to be used for restricting the type of objects added to the storage
+	 * this should be set from within the child class constructor
+	 * @type string $interface
+	 */
+	protected $interface;
+
+
+
+	/**
+	 * add
 	 *
-	 * attaches an object to the SplObjectStorage
+	 * attaches an object to the Collection
 	 * and sets any supplied data associated with the current iterator entry
-	 * by calling EE_Object_Collection::setObjectInfo()
+	 * by calling EE_Object_Collection::set_info()
 	 *
-	 * @access protected
+	 * @access public
 	 * @param object $object
 	 * @param mixed $info
 	 * @return bool
 	 */
-	protected function addObject( $object, $info = null ) {
+	public function add( $object, $info = null ) {
+		$class = $this->interface;
+		if ( ! $object instanceof $class ) {
+			return false;
+		}
 		$this->attach( $object );
-		$this->setObjectInfo( $object, $info );
+		$this->set_info( $object, $info );
 		return $this->contains( $object );
 	}
 
 
 
 	/**
-	 * setObjectInfo
+	 * set_info
 	 *
-	 * Sets the data associated with an object in the SplObjectStorage
+	 * Sets the data associated with an object in the Collection
 	 * if no $info is supplied, then the spl_object_hash() is used
 	 *
-	 * @access protected
+	 * @access public
 	 * @param object $object
 	 * @param mixed $info
 	 * @return bool
 	 */
-	protected function setObjectInfo( $object, $info = null ) {
+	public function set_info( $object, $info = null ) {
 		$info = ! empty( $info ) ? $info : spl_object_hash( $object );
 		$this->rewind();
 		while ( $this->valid() ) {
 			if ( $object == $this->current() ) {
 				$this->setInfo( $info );
 				$this->rewind();
-				return;
+				return true;
 			}
 			$this->next();
 		}
+		return false;
 	}
 
 
 
 	/**
-	 * getObjectByInfo
+	 * get_by_info
 	 *
-	 * finds and returns an object in the repository based on the info that was set using addObject()
+	 * finds and returns an object in the Collection based on the info that was set using addObject()
+	 * PLZ NOTE: the pointer is reset to the beginning of the collection before returning
 	 *
-	 * @access protected
+	 * @access public
 	 * @param mixed
 	 * @return null | object
 	 */
-	protected function getObjectByInfo( $info ) {
+	public function get_by_info( $info ) {
 		$this->rewind();
 		while ( $this->valid() ) {
 			if ( $info === $this->getInfo() ) {
@@ -87,31 +102,73 @@ abstract class EE_Object_Collection extends SplObjectStorage {
 
 
 	/**
-	 * hasObject
+	 * has
 	 *
-	 * returns TRUE or FALSE depending on whether the supplied object is within the repository
+	 * returns TRUE or FALSE depending on whether the supplied object is within the Collection
 	 *
-	 * @access protected
+	 * @access public
 	 * @param object $object
 	 * @return bool
 	 */
-	protected function hasObject( $object ) {
+	public function has( $object ) {
 		return $this->contains( $object );
 	}
 
 
 
 	/**
-	 * removeObject
+	 * remove
 	 *
-	 * detaches an object from the SplObjectStorage
+	 * detaches an object from the Collection
 	 *
-	 * @access protected
+	 * @access public
 	 * @param $object
 	 * @return void
 	 */
-	protected function removeObject( $object ) {
+	public function remove( $object ) {
 		$this->detach( $object );
+	}
+
+
+
+	/**
+	 * set_current
+	 *
+	 * advances pointer to the provided object
+	 *
+	 * @access public
+	 * @param $object
+	 * @return void
+	 */
+	public function set_current( $object ) {
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $this->current() === $object ) {
+				break;
+			}
+			$this->next();
+		}
+	}
+
+
+
+	/**
+	 * set_current_by_info
+	 *
+	 * advances pointer to the object whose info matches that which was provided
+	 *
+	 * @access public
+	 * @param $info
+	 * @return void
+	 */
+	public function set_current_by_info( $info ) {
+		$this->rewind();
+		while ( $this->valid() ) {
+			if ( $info === $this->getInfo() ) {
+				break;
+			}
+			$this->next();
+		}
 	}
 
 
