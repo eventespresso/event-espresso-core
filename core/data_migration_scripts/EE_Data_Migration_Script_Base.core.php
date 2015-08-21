@@ -427,7 +427,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Like _table_is_new_in_this_version and _table_should_exist_previously, this function verifies the given table exists.
 	 * But we understand that this table has CHANGED in this version since the previous version. So it's not completely new,
 	 * but it's different. So we need to treat it like a new table in terms of verifying it's schema is correct on
-	 * activations, migrations, upgrades; but if it exists when it shouldn't, we need to be as lenient as _table_should_exist_previously
+	 * activations, migrations, upgrades; but if it exists when it shouldn't, we need to be as lenient as _table_should_exist_previously.
+	 * 8656]{Assumes only this plugin could have added this table (ie, if its a new activation of this plugin, the table shouldn't exist).
 	 * @param string $table_name
 	 * @param string $table_definition_sql
 	 * @param string $engine_string
@@ -451,13 +452,26 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 
 
+	/**
+	 * _delete_table_if_empty
+	 * returns TRUE if the requested table was empty and successfully empty
+	 * @param string $table_name
+	 * @return boolean
+	 */
+	protected function _delete_table_if_empty( $table_name ) {
+		EE_Registry::instance()->load_helper( 'Activation' );
+		return EEH_Activation::delete_db_table_if_empty( $table_name );
+	}
+
+
 
 	/**
 	 * It is preferred to use _table_has_not_changed_since_previous or _table_is_changed_in_this_version
 	 * as these are significantly more efficient.
 	 * Please see description of _table_is_new_in_this_version. This function will only set
 	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
-	 * new activation. Otherwise, we'll always set $drop_pre_existing_tables to FALSE
+	 * new activation. ie, a more accurate name for this method would be "_table_added_previously_by_this_plugin" because the table will be cleared out if this is a new activation (ie, if its a new activation, it actually should exisy previously).
+	 * Otherwise, we'll always set $drop_pre_existing_tables to FALSE
 	 * because the table should have existed. Note, if the table is being MODIFIED in this
 	 * version being activated or migrated to, then you want _table_is_changed_in_this_version NOT this one.
 	 * We don't check this table's structure during migrations because apparently it hasn't changed since the previous one, right?
@@ -477,6 +491,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * So this is useful only to improve efficiency when doing migrations (not a big deal for single site installs,
 	 * but important for multisite where migrations can take a very long time otherwise).
 	 * If the table is known to have changed since previous version, use _table_is_changed_in_this_version().
+	 * Assumes only this plugin could have added this table (ie, if its a new activation of this plugin, the table shouldn't exist).
 	 * @param string $table_name
 	 * @param string $table_definition_sql
 	 * @param string $engine_string
@@ -503,7 +518,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 	/**
 	 * Determines if a table should be dropped, based on whether it's reported to be new in $table_is_new,
-	 * and the plugin's request type
+	 * and the plugin's request type.
+	 * Assumes only this plugin could have added the table (ie, if its a new activation of this plugin, the table shouldn't exist no matter what).
 	 * @param boolean $table_is_new
 	 * @return boolean
 	 */
