@@ -259,6 +259,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * reset_cart
 	  */
 	 public function reset_cart() {
+		 do_action( 'AHEE__EE_Session__reset_cart__before_reset', $this );
 		 $this->_session_data['cart'] = NULL;
 	 }
 
@@ -288,6 +289,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * reset_checkout
 	  */
 	 public function reset_checkout() {
+		 do_action( 'AHEE__EE_Session__reset_checkout__before_reset', $this );
 		 $this->_session_data['checkout'] = NULL;
 	 }
 
@@ -319,6 +321,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * reset_transaction
 	  */
 	 public function reset_transaction() {
+		 do_action( 'AHEE__EE_Session__reset_transaction__before_reset', $this );
 		 $this->_session_data['transaction'] = NULL;
 	 }
 
