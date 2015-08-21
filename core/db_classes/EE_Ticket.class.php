@@ -711,7 +711,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function set_reserved( $reserved ) {
 		// reserved can not go below zero
-		$reserved = max( 0, $reserved );
+		$reserved = max( 0, intval( $reserved ) );
 		$this->set( 'TKT_reserved', $reserved );
 	}
 
@@ -723,7 +723,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return boolean
 	 */
 	function increase_reserved( $qty = 1 ) {
-		$reserved = $this->get_raw( 'TKT_reserved' ) + $qty;
+		$reserved = $this->get_raw( 'TKT_reserved' ) + absint( $qty );
 		return $this->set_reserved( $reserved );
 	}
 
@@ -735,7 +735,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return boolean
 	 */
 	function decrease_reserved( $qty = 1 ) {
-		$reserved = $this->get_raw( 'TKT_reserved' ) - $qty;
+		$reserved = $this->get_raw( 'TKT_reserved' ) - absint( $qty );
 		return $this->set_reserved( $reserved );
 	}
 
