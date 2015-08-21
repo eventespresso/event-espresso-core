@@ -525,7 +525,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
 							// YES we have a ticket quantity
 							$tckts_slctd = TRUE;
-							//						d( $valid['ticket_obj'][$x] );
+							// d( $valid['ticket_obj'][$x] );
 							if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
 								// then add ticket to cart
 								$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
@@ -558,6 +558,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						if ( is_admin() ) {
 							return TRUE;
 						}
+						EE_Error::get_notices( false, true );
 						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
 
