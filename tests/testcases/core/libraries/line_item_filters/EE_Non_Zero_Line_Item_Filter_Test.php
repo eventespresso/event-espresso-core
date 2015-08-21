@@ -10,7 +10,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
+ * @group                Line_Item_Filter
  */
 class EE_Non_Zero_Line_Item_Filter_Test extends EE_UnitTestCase{
 	function setUp(){
