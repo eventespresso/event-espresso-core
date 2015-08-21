@@ -57,6 +57,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	public static function set_hooks() {
 		add_filter( 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', array( 'EED_Ticket_Sales_Monitor', 'validate_ticket_sales' ), 10, 1 );
+		add_action( 'FHEE__EE_Session__construct__reset_checkout__before_reset', array( 'EED_Ticket_Sales_Monitor', 'session_checkout_reset' ), 10, 1 );
+		add_action( 'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__after_status_update_based_on_total_paid', array( 'EED_Ticket_Sales_Monitor', 'process_abandoned_transactions' ), 10, 1 );
+		add_filter( 'FHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction', array( 'EED_Ticket_Sales_Monitor', 'process_failed_transactions' ), 10, 1 );
 	}
 
 
@@ -93,6 +96,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 
 
+	/********************************** VALIDATE_TICKET_SALES  **********************************/
+
+
+
 	/**
 	 *    validate_ticket_sales
 	 *
@@ -109,12 +116,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	/**
 	 *    _validate_ticket_sales
 	 *
-	 * @access 	public
+	 * @access    protected
 	 * @param 	array $valid
 	 * @return 	array
 	 * @throws \EE_Error
 	 */
-	public function _validate_ticket_sales( $valid ) {
+	protected function _validate_ticket_sales( $valid ) {
 		if ( ! isset( $valid[ 'id' ], $valid[ 'total_tickets' ], $valid[ 'rows' ], $valid[ 'qty' ], $valid[ 'ticket_obj' ] )) {
 			EE_Error::add_error(
 				__( 'Ticket selections could not be processed because the ticket information was missing or invalid.', 'event_espresso' ),
@@ -224,6 +231,112 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		unset( $this->ticket_selections[ 'qty' ][ $this->current_row ] );
 		$this->sold_out_tickets[] = $ticket->name();
 	}
+
+
+
+	/********************************** SESSION_CHECKOUT_RESET  **********************************/
+
+
+
+	/**
+	 *    session_checkout_reset
+	 *
+	 * @access    public
+	 * @param    EE_Checkout $checkout
+	 * @return    void
+	 */
+	public static function session_checkout_reset( EE_Checkout $checkout ) {
+		EED_Ticket_Sales_Monitor::instance()->_session_checkout_reset( $checkout );
+	}
+
+
+
+	/**
+	 *    session_checkout_reset
+	 *
+	 * @access    protected
+	 * @param    EE_Checkout $checkout
+	 * @return    void
+	 */
+	protected function _session_checkout_reset( EE_Checkout $checkout ) {
+		if ( ! $checkout->transaction instanceof EE_Transaction ) {
+			return;
+		}
+		$this->_unreserve_all_tickets_for_transaction( $checkout->transaction );
+	}
+
+
+
+	/**
+	 *    session_checkout_reset
+	 *
+	 * @access    protected
+	 * @param    EE_Transaction $transaction
+	 * @return    void
+	 */
+	protected function _unreserve_all_tickets_for_transaction( EE_Transaction $transaction ) {
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+		// check if 'finalize_registration' step has been completed...
+		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
+		// if the session is getting cleared BEFORE the TXN has been finalized
+		if ( ! $finalized ) {
+			// let's cancel any reserved tickets
+			$registrations = $transaction->registrations();
+			if ( ! empty( $registrations ) ) {
+				foreach ( $registrations as $registration ) {
+					if ( $registration instanceof EE_Registration ) {
+						$ticket = $registration->ticket();
+						if ( $ticket instanceof EE_Ticket ) {
+							$ticket->decrease_reserved();
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	/********************************** PROCESS_ABANDONED_TRANSACTIONS  **********************************/
+
+
+
+	/**
+	 *    process_abandoned_transactions
+	 *
+	 * @access    public
+	 * @param    EE_Transaction $transaction
+	 * @return    void
+	 */
+	public static function process_abandoned_transactions( EE_Transaction $transaction ) {
+		// has any money been paid towards this TXN? If so, then leave it alone
+		$payments = $transaction->payments();
+		if ( $transaction->is_free() || $transaction->paid() > 0 || ! empty( $payments ) ) {
+			return;
+		}
+		// since you haven't even attempted to pay for your ticket...
+		EED_Ticket_Sales_Monitor::instance()->_unreserve_all_tickets_for_transaction( $transaction );
+	}
+
+
+
+	/********************************** PROCESS_FAILED_TRANSACTIONS  **********************************/
+
+
+
+	/**
+	 *    process_failed_transactions
+	 *
+	 * @access    public
+	 * @param    EE_Transaction $transaction
+	 * @return    void
+	 */
+	public static function process_failed_transactions( EE_Transaction $transaction ) {
+		// since you haven't even attempted to pay for your ticket...
+		EED_Ticket_Sales_Monitor::instance()->_unreserve_all_tickets_for_transaction( $transaction );
+	}
+
+
 
 
 
