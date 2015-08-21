@@ -105,12 +105,14 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this payment is for the remaining transaction amount,
 			//keep track of exactly how much the itemized order amount equals
 			$itemized_sum = 0;
+			$shipping = 0;
 
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
 					//if this is a re-attempt at paying, don't re-add PayPal's shipping
 					if ( $line_item->code() == 'paypal_shipping' ) {
+						$shipping = $line_item->total();
 						continue;
 					}
 					//it's some kind of discount
@@ -142,11 +144,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//add another line item
 			//if the itemized sum is MORE than the transaction total,
 			//add the difference it to the discounts
-			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum;
-			if( $transaction->total() < $itemized_sum ) {
+			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum - $shipping;
+			if( $transaction->total() < $itemized_sum + $shipping ) {
 				//itemized sum is too big
 				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
-			} elseif( $transaction->total() > $itemized_sum ) {
+			} elseif( $transaction->total() > $itemized_sum + $shipping ) {
 				$redirect_args[ 'item_name_' . $item_num ] = substr(
 						__( 'Other charges', 'event_espresso' ), 0, 127 );
 				$redirect_args[ 'amount_' . $item_num ] = $itemized_sum_diff_from_txn_total;
