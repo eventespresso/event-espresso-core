@@ -357,7 +357,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 
 
 
-	public function test_set_redirect_info__partial_payment(){
+	public function test_set_redirect_info__partial_payment_for_remainder(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
 		$ppg->set_settings( $this->_test_settings );
@@ -372,7 +372,27 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 
 		$this->assertNotEmpty( $p->redirect_url() );
 		$rargs = $p->redirect_args();
-		//also check we didn't try to enumerat ethe line items
+		//also check we DID try to enumerat ethe line items
+		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+	}
+
+	public function test_set_redirect_info__partial_payment_initial(){
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings( $this->_test_settings );
+		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => 10 ) );
+		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+
+		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+
+		$this->assertNotEmpty( $p->redirect_url() );
+		$rargs = $p->redirect_args();
+		//also check we DID NOT try to enumerat ethe line items
 		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
 		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
 		$this->assertFalse( isset( $rargs[ 'item_name_2' ] ) );
@@ -380,15 +400,134 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertFalse( isset( $rargs[ 'quantity_2' ] ) );
 	}
 	/**
+	 * Verifies that we don't re-add shipping if it's already been added
+	 */
+	public function test_set_redirect_info__with_promotion() {
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings( $this->_test_settings );
+		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
+		$event = EEM_Event::instance()->get_one( array( array( 'Registration.TXN_ID' => $t->ID() ) ) );
+		$event_li = EEH_Line_Item::get_event_line_item( $t->total_line_item(), $event );
+		$discount_li = $this->new_model_obj_with_dependencies(
+				'Line_Item',
+				array(
+					'LIN_parent' => $event_li->ID(),
+					'LIN_name' => 'discount',
+					'LIN_code' => 'discount',
+					'LIN_unit_price' => -10,
+					'LIN_quantity' => 1,
+					'LIN_percent' => 0,
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'TXN_ID' => $t->ID()
+				));
+		$t->total_line_item()->recalculate_total_including_taxes();
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
+		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+
+		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+
+		$rargs = $p->redirect_args();
+		//also check we DID enumerat ethe line items
+		$this->assertEquals( '10', $rargs[ 'discount_amount_cart' ] );
+		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+	}
+
+	/**
+	 * if taxes should factor in the discount, then paypal shouldn't be allowed to calculate taxes
+	 */
+	public function test_set_redirect_info__with_promotion__but_applies_to_taxes() {
+		$this->fail( 'test not implemented. need to verify taxes are specified on each line item');
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings( $this->_test_settings );
+		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
+		$event = EEM_Event::instance()->get_one( array( array( 'Registration.TXN_ID' => $t->ID() ) ) );
+		$event_li = EEH_Line_Item::get_event_line_item( $t->total_line_item(), $event );
+		$discount_li = $this->new_model_obj_with_dependencies(
+				'Line_Item',
+				array(
+					'LIN_parent' => $event_li->ID(),
+					'LIN_name' => 'discount',
+					'LIN_code' => 'discount',
+					'LIN_unit_price' => -10,
+					'LIN_quantity' => 1,
+					'LIN_percent' => 0,
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'TXN_ID' => $t->ID()
+				));
+		$t->total_line_item()->recalculate_total_including_taxes();
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
+		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+
+		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+
+		$rargs = $p->redirect_args();
+		//also check we DID enumerat ethe line items
+		$this->assertEquals( '10', $rargs[ 'discount_amount_cart' ] );
+		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+	}
+
+	/**
+	 * Verifies that we don't re-add shipping if it's already been added
+	 */
+	public function test_set_redirect_info__with_shipping_already() {
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings( $this->_test_settings );
+		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
+		$pretax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
+		$shipping_li = $this->new_model_obj_with_dependencies(
+				'Line_Item',
+				array(
+					'LIN_parent' => $pretax_subtotal->ID(),
+					'LIN_name' => __('Shipping charges calculated by Paypal', 'event_espresso'),
+					'LIN_code' => 'paypal_shipping',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,
+					'LIN_percent' => 0,
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_is_taxable' => false,
+					'TXN_ID' => $t->ID()
+				));
+		$t->total_line_item()->recalculate_total_including_taxes();
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
+		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+
+		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+
+		$rargs = $p->redirect_args();
+		//check that we didn't add a line item for shipping
+		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+		$this->assertFalse( isset( $rargs[ 'item_name_3' ] ) );
+		$this->assertFalse( isset( $rargs[ 'amount_3' ] ) );
+		$this->assertFalse( isset( $rargs[ 'quantity_3' ] ) );
+	}
+
+	/**
 	 * tests that even if the line items are too complicated for the gateway to handle,
 	 * it can at least send the total payable
 	 */
-	public function test_do_direct_payment__total_mismatch(){
+	public function test_set_redirect_info__total_mismatch__itemized_higher(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
 		$ppg->set_settings( $this->_test_settings );
 		$t = $this->new_typical_transaction();
-		$t->set_total( $t->total() / 2 );
+		$t->set_total( $t->total() - 10 );
 		$t->total_line_item()->set_total ( $t->total() );
 		$t->save();
 		$t->total_line_item()->save();
@@ -399,12 +538,47 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 
 		$this->assertNotEmpty( $p->redirect_url() );
 		$rargs = $p->redirect_args();
-		//also check we didn't try to enumerat ethe line items
+		//also check we DID manage to enumerat ethe line items, just with a discount
+		//the amount missing is equal to
+		$this->assertEquals( 10, intval( $rargs[ 'discount_amount_cart' ] ) );
 		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
 		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
-		$this->assertFalse( isset( $rargs[ 'item_name_2' ] ) );
-		$this->assertFalse( isset( $rargs[ 'amount_2' ] ) );
-		$this->assertFalse( isset( $rargs[ 'quantity_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+	}
+
+	/**
+	 * tests that even if the line items are too complicated for the gateway to handle,
+	 * it can at least send the total payable
+	 */
+	public function test_set_redirect_info__total_mismatch__itemized_lower(){
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings( $this->_test_settings );
+		$t = $this->new_typical_transaction();
+		$t->set_total( $t->total() + 5 );
+		$t->total_line_item()->set_total ( $t->total() );
+		$t->save();
+		$t->total_line_item()->save();
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total()  ) );
+		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
+
+		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+
+		$this->assertNotEmpty( $p->redirect_url() );
+		$rargs = $p->redirect_args();
+		//also check we DID manage to enumerat ethe line items, just with an extra item for the surplus
+		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
+		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+		//check that we've also added another item to make up for the difference
+		$this->assertTrue( isset( $rargs[ 'item_name_3' ] ) );
+		$this->assertTrue( isset( $rargs[ 'amount_3' ] ) );
+		$this->assertTrue( isset( $rargs[ 'quantity_3' ] ) );
+		$this->assertEquals( 5, $rargs[ 'amount_3' ] );
 	}
 }
 

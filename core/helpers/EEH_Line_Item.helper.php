@@ -478,6 +478,17 @@ class EEH_Line_Item {
 		if ( ! $event instanceof EE_Event ) {
 			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no event data associated with it.','event_espresso' ), $ticket->ID() ) );
 		}
+		return EEH_Line_Item::get_event_line_item( $grand_total, $event );
+	}
+
+	/**
+	 * Gets the event line item
+	 * @param EE_Line_Item $grand_total
+	 * @param EE_Event $event
+	 * @return EE_Line_Item for the event subtotal which is a child of $grand_total
+	 */
+	public static function get_event_line_item( EE_Line_Item $grand_total, $event ) {
+		$event = EEM_Event::instance()->ensure_is_obj( $event, true );
 		$event_line_item = NULL;
 		$found = false;
 		foreach ( EEH_Line_Item::get_event_subtotals( $grand_total ) as $event_line_item ) {
