@@ -183,7 +183,7 @@ class EEH_HTML {
 		return EEH_HTML::_open_tag( 'h2', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h3( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes, TRUE );
+		return EEH_HTML::_open_tag( 'h3', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
 	public static function h4( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes, TRUE );

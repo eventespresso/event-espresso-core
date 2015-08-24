@@ -1751,7 +1751,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		EE_Registry::$i18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
 
-		//setting on espresso_core instead of ee_admin_js because expresso_core is enqueued by the maintenance
+		//setting on espresso_core instead of ee_admin_js because espresso_core is enqueued by the maintenance
 		//admin page when in maintenance mode and ee_admin_js is not loaded then.  This works everywhere else because
 		//espresso_core is listed as a dependency of ee_admin_js.
 		wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );

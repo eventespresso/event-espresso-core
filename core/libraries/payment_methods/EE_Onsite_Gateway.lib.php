@@ -30,7 +30,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway{
 	 * @return EE_Onsite_Gateway
 	 */
 	public function __construct() {
-		$this->_supports_sending_refunds = true;
+		$this->_supports_sending_refunds = TRUE;
 		parent::__construct();
 	}
 	/**
