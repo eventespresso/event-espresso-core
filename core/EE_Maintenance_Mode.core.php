@@ -269,10 +269,9 @@ class EE_Maintenance_Mode {
 			! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 			&& EE_Registry::instance()->REQ->is_espresso_page()
 		) {
-			$admin_bar_adjustment = is_admin_bar_showing() ? ' style="top:32px;"' : '';
 			printf(
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
-				'<div id="ee-m-mode-admin-notice-dv" class="ee-really-important-notice-dv"' . $admin_bar_adjustment . '><a class="close-espresso-notice" title="',
+				'<div id="ee-m-mode-admin-notice-dv" class="ee-really-important-notice-dv"><a class="close-espresso-notice" title="',
 				'">&times;</a><p>',
 				' &raquo; <a href="' . add_query_arg( array( 'page' => 'espresso_maintenance_settings' ), admin_url( 'admin.php' )) . '">',
 				'</a></p></div>'
