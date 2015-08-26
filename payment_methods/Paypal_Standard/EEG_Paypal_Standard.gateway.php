@@ -125,7 +125,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
-						sprintf( _x( '%1$s for %2$s', 'Shipping Charges for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
+						sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
 						0, 127
 					);
 					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
