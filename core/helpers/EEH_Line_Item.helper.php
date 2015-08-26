@@ -56,7 +56,8 @@ class EEH_Line_Item {
 		));
 		$line_item = apply_filters(
 			'FHEE__EEH_Line_Item__add_unrelated_item__line_item',
-			$line_item
+			$line_item,
+			$parent_line_item
 		);
 		return self::add_item( $parent_line_item, $line_item );
 	}
@@ -488,6 +489,7 @@ class EEH_Line_Item {
 	 * @return EE_Line_Item for the event subtotal which is a child of $grand_total
 	 */
 	public static function get_event_line_item( EE_Line_Item $grand_total, $event ) {
+		/** @type EE_Event $event */
 		$event = EEM_Event::instance()->ensure_is_obj( $event, true );
 		$event_line_item = NULL;
 		$found = false;
@@ -686,7 +688,8 @@ class EEH_Line_Item {
 		));
 		$new_tax_subtotal = apply_filters(
 			'FHEE__EEH_Line_Item__set_total_tax_to__new_tax_subtotal',
-			$new_tax_subtotal
+			$new_tax_subtotal,
+			$total_line_item
 		);
 		$new_tax_subtotal->save();
 		$tax_subtotal->set_total( $amount );
