@@ -31,19 +31,19 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * instance of the EE_Session object
 	  * @var EE_Session
 	  */
-	 private static $_instance = NULL;
+	 private static $_instance = null;
 
 	 /**
 	  * the session id
 	  * @var string
 	  */
-	 private $_sid = NULL;
+	 private $_sid = null;
 
 	 /**
 	  * session id salt
 	  * @var string
 	  */
-	 private $_sid_salt = NULL;
+	 private $_sid_salt = null;
 
 	 /**
 	  * session data
@@ -65,6 +65,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 private $_expiration;
 
 	 /**
+	  * whether or not session has expired at some point
+	  * @var boolean
+	  */
+	 private $_expired = false;
+
+	 /**
 	  * current time as Unix timestamp in GMT
 	  * @var int
 	  */
@@ -74,45 +80,45 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * whether to encrypt session data
 	  * @var bool
 	  */
-	 private $_use_encryption = FALSE;
+	 private $_use_encryption = false;
 
 	 /**
 	  * EE_Encryption object
 	  * @var EE_Encryption
 	  */
-	 private $encryption = NULL;
+	 private $encryption = null;
 
 	 /**
 	  * well... according to the server...
 	  * @var null
 	  */
-	 private $_user_agent = NULL;
+	 private $_user_agent = null;
 
 	 /**
 	  * do you really trust the server ?
 	  * @var null
 	  */
-	 private $_ip_address = NULL;
+	 private $_ip_address = null;
 
 	 /**
 	  * current WP user_id
 	  * @var null
 	  */
-	 private $_wp_user_id = NULL;
+	 private $_wp_user_id = null;
 
 	 /**
 	  * array for defining default session vars
 	  * @var array
 	  */
 	 private $_default_session_vars = array (
-		'id' => NULL,
-		'user_id' => NULL,
-		'ip_address' => NULL,
-		'user_agent' => NULL,
-		'init_access' => NULL,
-		'last_access' => NULL,
-		'expiration' => NULL,
-		'pages_visited' => array()
+		'id' 							=> null,
+		'user_id' 					=> null,
+		'ip_address' 			=> null,
+		'user_agent' 			=> null,
+		'init_access' 			=> null,
+		'last_access' 			=> null,
+		'expiration' 				=> null,
+		'pages_visited' 		=> array()
 	);
 
 
@@ -146,7 +152,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
-			return NULL;
+			return null;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		define( 'ESPRESSO_SESSION', TRUE );
@@ -197,6 +203,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	 /**
+	  * @return bool
+	  */
+	 public function expired() {
+		 return $this->_expired;
+	 }
+
+
+
+	 /**
 	  * @return int
 	  */
 	 public function expiration() {
@@ -223,11 +238,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	private function _set_defaults() {
 		// set some defaults
 		foreach ( $this->_default_session_vars as $key => $default_var ) {
-			if ( is_array( $default_var )) {
-				$this->_session_data[ $key ] = array();
-			} else {
-				$this->_session_data[ $key ] = '';
-			}
+			$this->_session_data[ $key ] = $default_var;
 		}
 	}
 
@@ -366,7 +377,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return 	TRUE on success, FALSE on fail
 	  */
 	public function set_session_data( $data ) {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// nothing ??? bad data ??? go home!
@@ -377,7 +387,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		foreach ( $data as $key =>$value ) {
 			if ( isset( $this->_default_session_vars[ $key ] )) {
-				EE_Error::add_error( sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $key ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					sprintf( __( 'Sorry! %s is a default session datum and can not be reset.', 'event_espresso' ), $key ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				return FALSE;
 			} else {
 				$this->_session_data[ $key ] = $value;
@@ -461,7 +474,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
-			// wipe out everything that isn't a default session datum
+			$this->_expired = true;
+			// wipe out everything that isn't a default session datum, and set expired flag to true
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		// make event espresso session data available to plugin
@@ -528,53 +542,51 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  */
 	public function update( $new_session = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_session_data = isset( $this->_session_data )
-			&& is_array( $this->_session_data )
-			&& isset( $this->_session_data['id'])
-			? $this->_session_data
-			: NULL;
+
+		if ( ! isset( $this->_session_data ) || ! is_array( $this->_session_data ) || ! isset( $this->_session_data[ 'id' ] ) ) {
+			$this->_session_data = array();
+		}
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
 		}
-		$session_data = array();
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
 
 				case 'id' :
 					// session ID
-					$session_data['id'] = $this->_sid;
+					$this->_session_data['id'] = $this->_sid;
 				break;
 
 				case 'ip_address' :
 					// visitor ip address
-					$session_data['ip_address'] = $this->_visitor_ip();
+					$this->_session_data['ip_address'] = $this->_visitor_ip();
 				break;
 
 				case 'user_agent' :
 					// visitor user_agent
-					$session_data['user_agent'] = $this->_user_agent;
+					$this->_session_data['user_agent'] = $this->_user_agent;
 				break;
 
 				case 'init_access' :
-					$session_data['init_access'] = absint( $value );
+					$this->_session_data['init_access'] = absint( $value );
 				break;
 
 				case 'last_access' :
 					// current access time
-					$session_data['last_access'] = $this->_time;
+					$this->_session_data['last_access'] = $this->_time;
 				break;
 
 				case 'expiration' :
 					// when the session expires
-					$session_data['expiration'] = ! empty( $this->_expiration )
+					$this->_session_data['expiration'] = ! empty( $this->_expiration )
 						? $this->_expiration
-						: $session_data['init_access'] + $this->_lifespan;
+						: $this->_session_data['init_access'] + $this->_lifespan;
 				break;
 
 				case 'user_id' :
 					// current user if logged in
-					$session_data['user_id'] = $this->_wp_user_id();
+					$this->_session_data['user_id'] = $this->_wp_user_id();
 				break;
 
 				case 'pages_visited' :
@@ -583,19 +595,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 						// set pages visited where the first will be the http referrer
 						$this->_session_data[ 'pages_visited' ][ $this->_time ] = $page_visit;
 						// we'll only save the last 10 page visits.
-						$session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );
+						$this->_session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );
 					}
 				break;
-
-				default :
-					// carry any other data over
-					$session_data[$key] = $this->_session_data[$key];
 
 			}
 
 		}
-
-		$this->_session_data = $session_data;
 		// creating a new session does not require saving to the db just yet
 		if ( ! $new_session ) {
 			// ready? let's save
@@ -644,18 +650,23 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				|| EE_Registry::instance()->REQ->front_ajax
 			)
 		) {
-			return FALSE;
+			return false;
 		}
+		EE_Registry::instance()->SSN = $this;
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
+		// add an hour to the session transient expiration (NOT the session expiration itself),
+		// which allows us to still retrieve expired sessions instead of having the transients deleted on us immediately,
+		// which looks no different than the session having never existed at all
+		$expiry = $this->_lifespan + HOUR_IN_SECONDS;
 		// maybe save hash check
 		if ( apply_filters( 'FHEE__EE_Session___perform_session_id_hash_check', WP_DEBUG ) ) {
-			set_transient( EE_Session::hash_check_prefix . $this->_sid, md5( $session_data ), $this->_lifespan );
+			set_transient( EE_Session::hash_check_prefix . $this->_sid, md5( $session_data ), $expiry );
 		}
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		return set_transient( EE_Session::session_id_prefix . $this->_sid, $session_data, $this->_lifespan );
+		return set_transient( EE_Session::session_id_prefix . $this->_sid, $session_data, $expiry );
 	}
 
 
@@ -704,9 +715,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *			@return string
 	 */
 	public function _get_page_visit() {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
 
 		// check for request url
@@ -716,16 +725,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 			$ru_bits = explode( '?', $request_uri );
 			$request_uri = $ru_bits[0];
-			//echo '<h1>$request_uri   ' . $request_uri . '</h1>';
-
 			// check for and grab host as well
 			if ( isset( $_SERVER['HTTP_HOST'] )) {
 				$http_host = esc_url( $_SERVER['HTTP_HOST'] );
 			} else {
 				$http_host = '';
 			}
-			//echo '<h1>$http_host   ' . $http_host . '</h1>';
-
 			// check for page_id in SERVER REQUEST
 			if ( isset( $_REQUEST['page_id'] )) {
 				// rebuild $e_reg without any of the extra parameters
@@ -772,10 +777,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @access public
 	  * @param string $class
 	  * @param string $function
-	  * @return void
 	  */
 	public function clear_session( $class = '', $function = '' ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '( ' . $class . '::' . $function . '() )</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
 		$this->reset_cart();
 		$this->reset_checkout();
@@ -819,7 +822,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					if ( $show_all_notices ) {
 						EE_Error::add_success( sprintf( __( 'The session variable %s was removed.', 'event_espresso' ), $reset ), __FILE__, __FUNCTION__, __LINE__ );
 					}
-					$return_value = !isset($return_value) ? TRUE : $return_value;
 
 				} else {
 					// yeeeeeeeeerrrrrrrrrrr OUT !!!!
@@ -883,7 +885,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			 global $wpdb;
 			 // since transient expiration timestamps are set in the future, we can compare against NOW
 			 $expiration = time();
-			 $too_far_in_the_the_future = $expiration + ( $this->_lifespan * 2 );
+			 $too_far_in_the_the_future = $expiration + ( $this->_lifespan * 2 ) + HOUR_IN_SECONDS;
 			 // filter the query limit. Set to 0 to turn off garbage collection
 			 $expired_session_transient_delete_query_limit = absint( apply_filters( 'FHEE__EE_Session__garbage_collection___expired_session_transient_delete_query_limit', 50 ));
 			 // non-zero LIMIT means take out the trash
