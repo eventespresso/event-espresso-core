@@ -6,7 +6,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Class EED_Ticket_Sales_Monitor
  *
  * ensures that tickets can not be added to the cart if they have sold out
- * in the time since the page with the ticket selector was first viewed
+ * in the time since the page with the ticket selector was first viewed.
+ * also considers tickets in the cart that are in the process of being registered for
  *
  * @package               Event Espresso
  * @subpackage 		modules
@@ -67,12 +68,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			10, 1
 		);
 		add_action(
-			'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__after_status_update_based_on_total_paid',
+			'AHEE__EE_Cron_Tasks__process_expired_transactions__incomplete_transaction',
 			array( 'EED_Ticket_Sales_Monitor', 'process_abandoned_transactions' ),
 			10, 1
 		);
-		add_filter(
-			'FHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction',
+		add_action(
+			'AHEE__EE_Cron_Tasks__process_expired_transactions__failed_transaction',
 			array( 'EED_Ticket_Sales_Monitor', 'process_failed_transactions' ),
 			10, 1
 		);
@@ -118,6 +119,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    validate_ticket_sales
+	 *    callback for 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data'
 	 *
 	 * @access 	public
 	 * @param 	array $valid
@@ -131,6 +133,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    _validate_ticket_sales
+	 * 		determines whether or not tickets can still be purchased based on ticket sales
+	 * 		as well as the number of tickets that have been reserved because their registration is in progress
 	 *
 	 * @access    protected
 	 * @param 	array $valid
@@ -177,6 +181,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    _validate_ticket_sale
+	 * checks whether an individual ticket is available for purchase based on datetime, and ticket details
 	 *
 	 * @access    protected
 	 * @param   \EE_Registration $ticket
@@ -205,7 +210,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
 					$datetime->refresh_from_db();
-					$available = $this->_get_datetime_availability( $datetime, $ticket );
+					$available = $this->_get_datetime_availability( $datetime );
 					//echo "\n . . . FINAL AVAILABLE: " . $available . '<br />';
 					if ( $available < 1 ) {
 						$this->_ticket_sold_out( $ticket );
@@ -230,14 +235,14 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 
 	/**
-	 *    _process_event_data
+	 *    _get_datetime_availability
+	 * determines the number of available tickets for a particular datetime
 	 *
 	 * @access 	protected
 	 * @param 	\EE_Datetime $datetime
-	 * @param 	\EE_Ticket    $ticket
 	 * @return 	int
 	 */
-	protected function _get_datetime_availability( EE_Datetime $datetime, EE_Ticket $ticket ) {
+	protected function _get_datetime_availability( EE_Datetime $datetime ) {
 		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		//echo "\n . . datetime->ID: " . $datetime->ID() . '<br />';
 		// don't track datetimes with unlimited reg limits
@@ -268,6 +273,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    _ticket_sold_out
+	 * 	removes quantities within the ticket selector based on zero ticket availability
 	 *
 	 * @access 	protected
 	 * @param 	\EE_Ticket   $ticket
@@ -289,11 +295,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    _ticket_quantity_decremented
+	 *    adjusts quantities within the ticket selector based on decreased ticket availability
 	 *
-	 * @access 	protected
-	 * @param 	\EE_Ticket   $ticket
-	 * @return 	bool
-	 * @throws \EE_Error
+	 * @access    protected
+	 * @param    \EE_Ticket $ticket
+	 * @param int           $qty
+	 * @return bool
 	 */
 	protected function _ticket_quantity_decremented( EE_Ticket $ticket, $qty = 1 ) {
 		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
@@ -321,6 +328,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    session_checkout_reset
+	 * callback hooked into 'AHEE__EE_Session__reset_checkout__before_reset'
 	 *
 	 * @access    public
 	 * @param    EE_Session $session
@@ -336,7 +344,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 
 	/**
-	 *    session_checkout_reset
+	 *    _session_checkout_reset
+	 * releases reserved tickets for the EE_Checkout->transaction
 	 *
 	 * @access    protected
 	 * @param    EE_Checkout $checkout
@@ -353,40 +362,86 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 
 	/**
-	 *    session_checkout_reset
+	 *    _release_all_reserved_tickets_for_transaction
+	 *    releases reserved tickets for all registrations of an EE_Transaction
+	 *    by default, will NOT release tickets for finalized transactions
 	 *
 	 * @access    protected
 	 * @param    EE_Transaction $transaction
-	 * @return    void
+	 * @param bool 					$force_release 	allows reserved tickets for default approved registrations for failed TXNs to still be released
+	 * @return int
 	 */
-	protected function _release_all_reserved_tickets_for_transaction( EE_Transaction $transaction ) {
+	protected function _release_all_reserved_tickets_for_transaction( EE_Transaction $transaction, $force_release = false ) {
 		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
 		//echo "\n . transaction->ID: " . $transaction->ID() . '<br />';
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// check if 'finalize_registration' step has been completed...
 		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
+		// how many tickets were released
+		$count = 0;
 		// if the session is getting cleared BEFORE the TXN has been finalized
-		if ( ! $finalized ) {
+		if ( ! $finalized || $force_release ) {
 			// let's cancel any reserved tickets
 			$registrations = $transaction->registrations();
 			if ( ! empty( $registrations ) ) {
 				foreach ( $registrations as $registration ) {
 					if ( $registration instanceof EE_Registration ) {
-						//echo "\n . . registration->ID: " . $registration->ID() . '<br />';
-						$ticket = $registration->ticket();
-						if ( $ticket instanceof EE_Ticket ) {
-							//echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
-							//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
-							$ticket->decrease_reserved();
-							$ticket->save();
-							//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
-						}
+						$count += $this->_release_reserved_ticket_for_registration( $registration, $force_release );
 					}
 				}
 			}
 		}
+		return $count;
 	}
+
+
+
+	/**
+	 *    _release_reserved_ticket_for_registration
+	 *    releases reserved tickets for an EE_Registration
+	 *    by default, will NOT release tickets for APPROVED registrations
+	 *
+	 * @access    protected
+	 * @param    EE_Registration 	$registration
+	 * @param bool               			$force_release 	allows reserved tickets for default approved registrations for failed TXNs to still be released
+	 * @return int
+	 * @throws \EE_Error
+	 */
+	protected function _release_reserved_ticket_for_registration( EE_Registration $registration, $force_release = false ) {
+		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		//echo "\n . . registration->ID: " . $registration->ID() . '<br />';
+		// don't release tickets for Approved registrations... err... unless you really want me to
+		if ( $registration->status_ID() !== EEM_Registration::status_id_approved || $force_release ) {
+			$ticket = $registration->ticket();
+			if ( $ticket instanceof EE_Ticket ) {
+				//echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
+				//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+				$ticket->decrease_reserved();
+				return $ticket->save() ? 1 : 0;
+				//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+			}
+		}
+		return 0;
+	}
+
+
+
+	/********************************** SESSION_EXPIRED_RESET  **********************************/
+
+
+
+	/**
+	 *    session_expired_reset
+	 *
+	 * @access    public
+	 * @param    EE_Session $session
+	 * @return    void
+	 */
+	public static function session_expired_reset( EE_Session $session ) {
+
+	}
+
 
 
 	/********************************** PROCESS_ABANDONED_TRANSACTIONS  **********************************/
@@ -395,13 +450,15 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 	/**
 	 *    process_abandoned_transactions
+	 *    releases reserved tickets for all registrations of an ABANDONED EE_Transaction
+	 *    by default, will NOT release tickets for free transactions, or any that have received a payment
 	 *
 	 * @access    public
 	 * @param    EE_Transaction $transaction
 	 * @return    void
 	 */
 	public static function process_abandoned_transactions( EE_Transaction $transaction ) {
-		// has any money been paid towards this TXN? If so, then leave it alone
+		// is this TXN free or has any money been paid towards this TXN? If so, then leave it alone
 		$payments = $transaction->payments();
 		if ( $transaction->is_free() || $transaction->paid() > 0 || ! empty( $payments ) ) {
 			return;
@@ -417,7 +474,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 
 	/**
-	 *    process_failed_transactions
+	 *    process_abandoned_transactions
+	 *    releases reserved tickets for absolutely ALL registrations of a FAILED EE_Transaction
 	 *
 	 * @access    public
 	 * @param    EE_Transaction $transaction
@@ -425,7 +483,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	public static function process_failed_transactions( EE_Transaction $transaction ) {
 		// since you haven't even attempted to pay for your ticket...
-		EED_Ticket_Sales_Monitor::instance()->_release_all_reserved_tickets_for_transaction( $transaction );
+		EED_Ticket_Sales_Monitor::instance()->_release_all_reserved_tickets_for_transaction( $transaction, true );
 	}
 
 
