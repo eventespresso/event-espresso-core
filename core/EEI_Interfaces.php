@@ -267,9 +267,10 @@ interface EEHI_Line_Item{
 	 * @param string $description
 	 * @param int $quantity
 	 * @param boolean $taxable
+	 * @param boolean $code if set to a value, ensures there is only one line item with that code
 	 * @return boolean success
 	 */
-	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE );
+	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = null );
 
 	/**
 	 * Gets the line item for the taxes subtotal
@@ -287,11 +288,11 @@ interface EEHI_Money{
 		/**
 	 * For comparing floats. Default operator is '=', but see the $operator below for all options.
 	 * This should be used to compare floats instead of normal '==' because floats
-	 * are inherently inprecise, and so you can sometimes have two floats that appear to be identical
+	 * are inherently imprecise, and so you can sometimes have two floats that appear to be identical
 	 * but actually differ by 0.00000001.
 	 * @param float $float1
 	 * @param float $float2
-	 * $param string $operator  The operator. Valid options are =, <=, <, >=, >, <>, eq, lt, lte, gt, gte, ne
+	 * @param string $operator  The operator. Valid options are =, <=, <, >=, >, <>, eq, lt, lte, gt, gte, ne
 	 * @return boolean whether the equation is true or false
 	 */
 	function compare_floats( $float1, $float2, $operator='=' );
