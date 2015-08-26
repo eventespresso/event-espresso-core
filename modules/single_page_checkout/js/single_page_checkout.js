@@ -63,7 +63,7 @@ jQuery(document).ready( function($) {
 	*     timer_second: string,
 	*     registration_expiration_notice: string,
 	*     ajax_submit: bool,
-	*     empty_cart: boolean
+	*     empty_cart: bool,
 	*  }}
 	* @namespace response
 	* @type {{
