@@ -527,6 +527,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					$orig_prices = $orig_tkt->prices();
 					$new_tkt->set('TKT_ID', 0);
 					$new_tkt->set('TKT_sold', 0);
+					$new_tkt->set('TKT_reserved', 0);
 
 					$new_tkt->save(); //make sure new ticket has ID.
 
