@@ -17,7 +17,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
-	const itemized_transaction = 'itemized_transaction';
+	const itemized_transaction = 'itemized_payment';
 
 	protected $_paypal_id = NULL;
 
