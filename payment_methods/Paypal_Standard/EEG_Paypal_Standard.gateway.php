@@ -97,6 +97,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
+		/** @type EE_Line_Item $total_line_item */
 		$total_line_item = $transaction->total_line_item();
 
 		$total_discounts_to_cart_total = $transaction->paid();
@@ -122,7 +123,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
-						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ), 0, 127 );
+						sprintf( _x( '%1$s for %2$s', 'Shipping Charges for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
+						0, 127
+					);
 					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
 					$redirect_args[ 'quantity_' . $item_num ] = $line_item->quantity();
 					if ( ! $line_item->is_taxable() ) {
@@ -163,7 +166,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		} else {
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			//and we don't want to let paypal add taxes or other stuff
-			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
+			$redirect_args['item_name_' . $item_num] = substr(
+				sprintf( __('Payment of %1$s for %2$s', "event_espresso"), $payment->amount(), $primary_registrant->reg_code() ),
+				0, 127
+			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			//if we aren't allowing PayPal to calculate shipping, set it to 0
 			$redirect_args['shipping_' . $item_num ] = '0';
@@ -204,7 +210,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$redirect_args['no_shipping'] = $this->_shipping_details;
 		$redirect_args['bn'] = 'EventEspresso_SP';//EE will blow up if you change this
 
-		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args );
+		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args, $this );
 
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
@@ -445,7 +451,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
 		if( $this->_paypal_shipping && $shipping_amount ){
-			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), $shipping_amount, __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
+			$this->_line_item->add_unrelated_item(
+				$transaction->total_line_item(),
+				__('Shipping', 'event_espresso'),
+				$shipping_amount,
+				__('Shipping charges calculated by Paypal', 'event_espresso'),
+				1,
+				FALSE,
+				'paypal_shipping'
+			);
 			$grand_total_needs_resaving = TRUE;
 
 		}
@@ -457,7 +471,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$current_tax_amount = 0;
 		}
 		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $current_tax_amount ){
-			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
+			$this->_line_item->set_total_tax_to(
+				$transaction->total_line_item(),
+				floatval( $update_info['tax'] ),
+				__( 'Taxes', 'event_espresso' ),
+				__( 'Calculated by Paypal', 'event_espresso' )
+			);
 			$grand_total_needs_resaving = TRUE;
 		}
 
