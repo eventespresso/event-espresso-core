@@ -184,6 +184,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		define( 'SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS );
 		define( 'SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( SPCO_BASE_PATH, TRUE );
+		EE_Registry::$i18n_js_strings[ 'registration_expiration_notice' ] = sprintf(
+			__( '%1$sWe\'re sorry, but you\'re registration time has expired.%2$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s', 'event_espresso' ),
+			'<h4 class="important-notice">',
+			'</h4>',
+			'<br />',
+			'<p>',
+			'<a href="' . get_post_type_archive_link( 'espresso_events' ) . '" title="',
+			'">',
+			'</a>',
+			'</p>'
+		);
 	}
 
 
@@ -358,6 +369,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EED_Single_Page_Checkout::$_initialized ) {
 			return;
 		}
+		$this->_verify_session();
 		// setup the EE_Checkout object
 		$this->checkout = $this->_initialize_checkout();
 		// filter checkout
@@ -375,23 +387,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->set_current_step( $this->checkout->step );
 		// and the next step
 		$this->checkout->set_next_step();
-		// was there already a valid transaction in the checkout from the session ?
-		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-			// get transaction from db or session
-			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_cart_for_current_session_and_setup_new_transaction();
-			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-				// add some style and make it dance
-				$this->checkout->transaction = EE_Transaction::new_instance();
-				$this->add_styles_and_scripts();
-				EED_Single_Page_Checkout::$_initialized = true;
-				return;
-			}
-			// and the registrations for the transaction
-			$this->_get_registrations( $this->checkout->transaction );
-		}
 		// verify that everything has been setup correctly
-		if ( ! $this->_final_verifications() ) {
+		if ( ! $this->_verify_transaction_and_get_registrations() && ! $this->_final_verifications() ) {
 			EED_Single_Page_Checkout::$_initialized = true;
 			return;
 		}
@@ -424,6 +421,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 *    _verify_session
+	 * checks that the session is valid and not expired
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 */
+	private function _verify_session() {
+		if ( ! EE_Registry::instance()->SSN instanceof EE_Session ) {
+			throw new EE_Error( __( 'The EE_Session class could not be loaded.', 'event_espresso' ) );
+		}
+		// is session still valid ?
+		if ( EE_Registry::instance()->SSN->expired() ) {
+			$this->checkout->transaction = null;
+			EE_Registry::instance()->SSN->reset_cart();
+			EE_Registry::instance()->SSN->reset_checkout();
+			EE_Registry::instance()->SSN->reset_transaction();
+			EE_Error::add_attention( EE_Registry::$i18n_js_strings[ 'registration_expiration_notice' ], __FILE__, __FUNCTION__, __LINE__ );
+		}
+	}
+
+
+
+	/**
 	 *    _initialize_checkout
 	 * loads and instantiates EE_Checkout
 	 *
@@ -433,6 +453,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _initialize_checkout() {
 		// look in session for existing checkout
+		/** @type EE_Checkout $checkout */
 		$checkout = EE_Registry::instance()->SSN->checkout();
 		// verify
 		if ( ! $checkout instanceof EE_Checkout ) {
@@ -620,6 +641,32 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				);
 			}
 			return false;
+		}
+		return true;
+	}
+
+
+
+	/**
+	 * _verify_transaction_and_get_registrations
+	 *
+	 * @access private
+	 * 	@return bool
+	 */
+	private function _verify_transaction_and_get_registrations() {
+		// was there already a valid transaction in the checkout from the session ?
+		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+			// get transaction from db or session
+			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_cart_for_current_session_and_setup_new_transaction();
+			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				// add some style and make it dance
+				$this->checkout->transaction = EE_Transaction::new_instance();
+				$this->add_styles_and_scripts();
+				return false;
+			}
+			// and the registrations for the transaction
+			$this->_get_registrations( $this->checkout->transaction );
 		}
 		return true;
 	}
@@ -1080,21 +1127,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['timer_hour'] = __( 'hour', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_minute'] = __( 'minute', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_second'] = __( 'second', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
-			__( '%1$sWe\'re sorry, but you\'re registration time has expired
-			.%2$s%3$s%4$sIf you still wish to complete your registration, please
-			return to the %5$sEvent List%6$sEvent List%7$s and reselect your
-			tickets if available. Please except our apologies for any inconvenience this
-			may have caused.%8$s', 'event_espresso' ),
-			'<h4 class="important-notice">',
-			'</h4>',
-			'<br />',
-			'<p>',
-			'<a href="'. get_post_type_archive_link( 'espresso_events' ) . '" title="',
-			'">',
-			'</a>',
-			'</p>'
-		);
 		EE_Registry::$i18n_js_strings[ 'ajax_submit' ] = apply_filters( 'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit', true );
 	}
 
