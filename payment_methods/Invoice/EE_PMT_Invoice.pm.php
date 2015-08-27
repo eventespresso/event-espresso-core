@@ -36,7 +36,12 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	 */
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Invoice", 'event_espresso');
-		$this->_default_description = __( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment.', 'event_espresso' );
+		$this->_default_description = sprintf(
+			__( 'After clicking "Finalize Registration", you will be given instructions on how to access your invoice and complete your payment.%1$sPlease note that event spaces will not be reserved until payment is received in full, and any remaining tickets could be sold to others in the meantime.%2$s%3$s', 'event_espresso' ),
+			'<br />',
+			'<span class="important-notice">',
+			'</span>'
+		);
 		parent::__construct($pm_instance);
 		$this->_default_button_url = $this->file_url().'lib'.DS.'invoice-logo.png';
 	}
