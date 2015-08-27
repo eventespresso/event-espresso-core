@@ -388,7 +388,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and the next step
 		$this->checkout->set_next_step();
 		// verify that everything has been setup correctly
-		if ( ! $this->_verify_transaction_and_get_registrations() && ! $this->_final_verifications() ) {
+		if ( ! ( $this->_verify_transaction_and_get_registrations() && $this->_final_verifications() ) ) {
 			EED_Single_Page_Checkout::$_initialized = true;
 			return;
 		}
@@ -438,6 +438,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			EE_Registry::instance()->SSN->reset_checkout();
 			EE_Registry::instance()->SSN->reset_transaction();
 			EE_Error::add_attention( EE_Registry::$i18n_js_strings[ 'registration_expiration_notice' ], __FILE__, __FUNCTION__, __LINE__ );
+			EE_Registry::instance()->SSN->reset_expired();
 		}
 	}
 
