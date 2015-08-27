@@ -13,6 +13,8 @@
 class EED_Bot_Trap  extends EED_Module {
 
 
+	const PLACEHOLDER_EMAIL_ADDY = 'a@b.com';
+
 
 	/**
 	 * @return EED_Bot_Trap
@@ -74,7 +76,7 @@ class EED_Bot_Trap  extends EED_Module {
 		$do_not_enter = __( 'please do not enter anything in this input', 'event_espresso' );
 		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin-left:-999em;">';
 		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
-		$html .= '<input type="email" name="tkt-slctr-request-processor-email" placeholder="' . $do_not_enter . '" value=""/>';
+		$html .= '<input type="email" name="tkt-slctr-request-processor-email" placeholder="' . $do_not_enter . '" value="' . EED_Bot_Trap::PLACEHOLDER_EMAIL_ADDY . '"/>';
 		$html .= '<input type="hidden" name="tkt-slctr-request-processor-token" value="';
 		$html .= EE_Encryption::instance()->encrypt( time() );
 		$html .= '"/>';
@@ -93,7 +95,7 @@ class EED_Bot_Trap  extends EED_Module {
 	public static function process_bot_trap() {
 		EE_Registry::instance()->load_core( 'EE_Encryption' );
 		// what's your email address Mr. Bot ?
-		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == '' ? true : false;
+		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == EED_Bot_Trap::PLACEHOLDER_EMAIL_ADDY ? true : false;
 		// get encrypted timestamp for when the form was originally displayed
 		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) : '';
 		// decrypt and convert to absolute  integer
