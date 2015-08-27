@@ -37,7 +37,7 @@ class EE_Cron_Tasks extends EE_BASE {
 	private function __construct() {
 		// UPDATE TRANSACTION WITH PAYMENT
 		add_action(
-			'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
+			'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
 			array( 'EE_Cron_Tasks', 'setup_update_for_transaction_with_payment' ),
 			10, 2
 		);
@@ -89,7 +89,7 @@ class EE_Cron_Tasks extends EE_BASE {
 		if ( $TXN_ID && $timestamp ) {
 			wp_schedule_single_event(
 				$timestamp,
-				'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
+				'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
 				array( $TXN_ID, $payment )
 			);
 		}
