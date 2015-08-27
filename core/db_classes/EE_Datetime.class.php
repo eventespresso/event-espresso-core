@@ -605,10 +605,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * Counts the total tickets available (from all the different types of tickets which are available for
 	 * this datetime).
 	 * @param array $query_params like EEM_Base::get_all's
+	 * @param bool $subtract_reserved whether or not reserved tickets should be factored into the calculations
 	 * @return int
 	 */
-	public function tickets_remaining( $query_params = array() ) {
-		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime( $this->ID(), $query_params );
+	public function tickets_remaining( $query_params = array(), $subtract_reserved = false ) {
+		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime( $this->ID(), $query_params, $subtract_reserved );
 	}
 
 
