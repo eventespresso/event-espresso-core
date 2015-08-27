@@ -212,6 +212,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	 /**
+	  * @return void
+	  */
+	 public function reset_expired() {
+		 $this->_expired = false;
+	 }
+
+
+
+	 /**
 	  * @return int
 	  */
 	 public function expiration() {
