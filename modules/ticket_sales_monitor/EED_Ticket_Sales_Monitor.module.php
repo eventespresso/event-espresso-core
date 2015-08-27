@@ -17,6 +17,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EED_Ticket_Sales_Monitor extends EED_Module {
 
+	const debug = false;
+
 	/**
 	 * an array of raw ticket data from EED_Ticket_Selector
 	 *
@@ -32,14 +34,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @var int $current_row
 	 */
 	protected $current_row = 0;
-
-	/**
-	 * an array for monitoring "in progress" ticket sales
-	 * where the key is the ticket ID and the value is the number of reserved tickets
-	 *
-	 * @var array $ticket_reserves
-	 */
-	protected $ticket_reserves = array();
 
 	/**
 	 * an array for tracking names of tickets that have sold out
@@ -142,7 +136,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	protected function _validate_ticket_sales( $valid ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		}
 		if ( ! isset( $valid[ 'id' ], $valid[ 'total_tickets' ], $valid[ 'rows' ], $valid[ 'qty' ], $valid[ 'ticket_obj' ] )) {
 			EE_Error::add_error(
 				__( 'Ticket selections could not be processed because the ticket information was missing or invalid.', 'event_espresso' ),
@@ -155,8 +151,13 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		}
 		$this->ticket_selections = $valid;
 		for ( $this->current_row = 0; $this->current_row < $this->ticket_selections[ 'rows' ]; $this->current_row++ ) {
-			//echo "<br/><br/> this->current_row: " . $this->current_row;
-			$this->_validate_ticket_sale( $this->ticket_selections[ 'ticket_obj' ][ $this->current_row ] );
+			if ( self::debug ) {
+				echo " this->current_row: " . $this->current_row . '<br />';
+			}
+			// don't bother processing if the selected ticket quantity is zero
+			if ( $this->ticket_selections[ 'qty' ][ $this->current_row ] > 0 ) {
+				$this->_validate_ticket_sale( $this->ticket_selections[ 'ticket_obj' ][ $this->current_row ] );
+			}
 		}
 		if ( ! empty( $this->sold_out_tickets )) {
 			EE_Error::add_attention(
@@ -188,19 +189,25 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @return    void
 	 */
 	protected function _validate_ticket_sale( $ticket ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		}
 		if ( ! $ticket instanceof EE_Ticket ) {
 			return;
 		}
-		//echo "\n . . . original ticket->reserved: " . $ticket->reserved() . '<br />';
+		if ( self::debug ) {
+			echo "\n . ticket->ID: " . $ticket->ID() . '<br />';
+			echo "\n . original ticket->reserved: " . $ticket->reserved() . '<br />';
+		}
 		$ticket->refresh_from_db();
 		// first let's determine the ticket availability based on sales
-		//echo "\n . ticket->ID: " . $ticket->ID() . '<br />';
 		$available = $ticket->qty() - $ticket->sold() - $ticket->reserved();
-		//echo "\n . . . ticket->qty: " . $ticket->qty() . '<br />';
-		//echo "\n . . . ticket->sold: " . $ticket->sold() . '<br />';
-		//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
-		//echo "\n . . . available: " . $available . '<br />';
+		if ( self::debug ) {
+			echo "\n . . . ticket->qty: " . $ticket->qty() . '<br />';
+			echo "\n . . . ticket->sold: " . $ticket->sold() . '<br />';
+			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+			echo "\n . . . available: " . $available . '<br />';
+		}
 		if ( $available < 1 ) {
 			$this->_ticket_sold_out( $ticket );
 			return;
@@ -209,21 +216,29 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		if ( ! empty( $datetimes ) ) {
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->refresh_from_db();
-					$available = $this->_get_datetime_availability( $datetime );
-					//echo "\n . . . FINAL AVAILABLE: " . $available . '<br />';
+					$datetime_availability = $this->_get_datetime_availability( $datetime );
+					if ( self::debug ) {
+						echo "\n . . . FINAL AVAILABLE: " . $datetime_availability . '<br />';
+					}
+					$available = min( $available, $datetime_availability );
 					if ( $available < 1 ) {
 						$this->_ticket_sold_out( $ticket );
 						continue;
 					}
 					$qty = $this->ticket_selections[ 'qty' ][ $this->current_row ];
-					//echo "\n . . . qty: " . $qty . '<br />';
+					if ( self::debug ) {
+						echo "\n . . . qty: " . $qty . '<br />';
+					}
 					if ( $available < $qty ) {
 						$qty = $available;
-						//echo "\n . . . QTY ADJUSTED: " . $qty . '<br />';
+						if ( self::debug ) {
+							echo "\n . . . QTY ADJUSTED: " . $qty . '<br />';
+						}
 						$this->_ticket_quantity_decremented( $ticket, $qty );
 					}
-					//echo "\n\n . . . INCREASE RESERVED: " . $qty;
+					if ( self::debug ) {
+						echo "\n\n . . . INCREASE RESERVED: " . $qty . '<br/><br/>';
+					}
 					$ticket->increase_reserved( $qty );
 					$ticket->save();
 				}
@@ -243,8 +258,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @return 	int
 	 */
 	protected function _get_datetime_availability( EE_Datetime $datetime ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
-		//echo "\n . . datetime->ID: " . $datetime->ID() . '<br />';
+		if ( self::debug )
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		if ( self::debug )
+			echo "\n . . datetime->ID: " . $datetime->ID() . '<br />';
 		// don't track datetimes with unlimited reg limits
 		if ( $datetime->reg_limit() < 0 ) {
 			return false;
@@ -257,13 +274,17 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		// so you have to set each ticket quantity to the maximum number of seats, which is 20,
 		// but we don't want 40 people showing up, only 20, so we can't go by ticket quantity alone
 		$available = $datetime->reg_limit() - $datetime->sold();
-		//echo "\n . . . available: " . $available . '<br />';
-		//echo "\n . . . datetime->reg_limit: " . $datetime->reg_limit() . '<br />';
-		//echo "\n . . . datetime->sold: " . $datetime->sold() . '<br />';
+		if ( self::debug ) {
+			echo "\n . . . available: " . $available . '<br />';
+			echo "\n . . . datetime->reg_limit: " . $datetime->reg_limit() . '<br />';
+			echo "\n . . . datetime->reg_limit: " . $datetime->reg_limit() . '<br />';
+		}
 		// we also need to factor reserved quantities for ALL tickets into this equation
 		$all_tickets = $datetime->tickets();
 		foreach ( $all_tickets as $one_of_many_tickets ) {
-			//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+			if ( self::debug ) {
+				echo "\n . . . ticket->reserved: " . $one_of_many_tickets->reserved() . '<br />';
+			}
 			$available = $available - $one_of_many_tickets->reserved();
 		}
 		return $available;
@@ -281,7 +302,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	protected function _ticket_sold_out( EE_Ticket $ticket ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		}
 		// make sure ticket quantity wasn't already zero before doing anything
 		if ( $this->ticket_selections[ 'qty' ][ $this->current_row ] > 0 ) {
 			unset( $this->ticket_selections[ 'ticket_obj' ][ $this->current_row ] );
@@ -303,7 +326,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @return bool
 	 */
 	protected function _ticket_quantity_decremented( EE_Ticket $ticket, $qty = 1 ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		}
 		// subtract the difference between what they requested and what they are actually getting
 		$this->ticket_selections[ 'total_tickets' ] = $this->ticket_selections[ 'total_tickets' ] - ( $this->ticket_selections[ 'qty' ][ $this->current_row ] - $qty );
 		$this->ticket_selections[ 'qty' ][ $this->current_row ] = $qty;
@@ -312,7 +337,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			sprintf(
 				apply_filters(
 					'FHEE__EED_Ticket_Sales_Monitor___ticket_quantity_decremented__notice',
-					__( 'We\'re sorry...%1$sThe ticket quantity for %2$s has been adjusted to match the current available amount due to sales that have occurred since you first viewed this page:', 'event_espresso' )
+					__( 'We\'re sorry...%1$sThe ticket quantity for %2$s has been adjusted to match the current available amount due to sales that have occurred since you first viewed the last page:', 'event_espresso' )
 				),
 				'<br />',
 				$ticket->name()
@@ -352,8 +377,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 * @return    void
 	 */
 	protected function _session_checkout_reset( EE_Checkout $checkout ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
-		if ( ! $checkout->transaction instanceof EE_Transaction ) {
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+		}
+		// we want to release the each registration's reserved tickets if the session was cleared, but not if this is a revisit
+		if ( $checkout->revisit || ! $checkout->transaction instanceof EE_Transaction ) {
 			return;
 		}
 		$this->_release_all_reserved_tickets_for_transaction( $checkout->transaction );
@@ -366,28 +394,37 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 *    releases reserved tickets for all registrations of an EE_Transaction
 	 *    by default, will NOT release tickets for finalized transactions
 	 *
-	 * @access    protected
-	 * @param    EE_Transaction $transaction
-	 * @param bool 					$force_release 	allows reserved tickets for default approved registrations for failed TXNs to still be released
+	 * @access 	protected
+	 * @param 	EE_Transaction 	$transaction
 	 * @return int
 	 */
-	protected function _release_all_reserved_tickets_for_transaction( EE_Transaction $transaction, $force_release = false ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
-		//echo "\n . transaction->ID: " . $transaction->ID() . '<br />';
+	protected function _release_all_reserved_tickets_for_transaction( EE_Transaction $transaction ) {
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+			echo "\n . transaction->ID: " . $transaction->ID() . '<br />';
+		}
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// check if 'finalize_registration' step has been completed...
 		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
 		// how many tickets were released
 		$count = 0;
+		if ( self::debug ) {
+			echo "\n . . . finalized: " . $finalized . '<br />';
+		}
+		$release_tickets_with_TXN_status = array(
+			EEM_Transaction::failed_status_code,
+			EEM_Transaction::abandoned_status_code,
+			EEM_Transaction::incomplete_status_code,
+		);
 		// if the session is getting cleared BEFORE the TXN has been finalized
-		if ( ! $finalized || $force_release ) {
+		if ( ! $finalized || in_array( $transaction->status_ID(), $release_tickets_with_TXN_status ) ) {
 			// let's cancel any reserved tickets
 			$registrations = $transaction->registrations();
 			if ( ! empty( $registrations ) ) {
 				foreach ( $registrations as $registration ) {
 					if ( $registration instanceof EE_Registration ) {
-						$count += $this->_release_reserved_ticket_for_registration( $registration, $force_release );
+						$count += $this->_release_reserved_ticket_for_registration( $registration, $transaction );
 					}
 				}
 			}
@@ -402,24 +439,40 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 *    releases reserved tickets for an EE_Registration
 	 *    by default, will NOT release tickets for APPROVED registrations
 	 *
-	 * @access    protected
-	 * @param    EE_Registration 	$registration
-	 * @param bool               			$force_release 	allows reserved tickets for default approved registrations for failed TXNs to still be released
-	 * @return int
-	 * @throws \EE_Error
+	 * @access 	protected
+	 * @param 	EE_Registration $registration
+	 * @param 	EE_Transaction $transaction
+	 * @return 	int
+	 * @throws 	\EE_Error
 	 */
-	protected function _release_reserved_ticket_for_registration( EE_Registration $registration, $force_release = false ) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
-		//echo "\n . . registration->ID: " . $registration->ID() . '<br />';
-		// don't release tickets for Approved registrations... err... unless you really want me to
-		if ( $registration->status_ID() !== EEM_Registration::status_id_approved || $force_release ) {
+	protected function _release_reserved_ticket_for_registration( EE_Registration $registration, EE_Transaction $transaction ) {
+		if ( self::debug ) {
+			echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
+			echo "\n . . registration->ID: " . $registration->ID() . '<br />';
+			echo "\n . . registration->status_ID: " . $registration->status_ID() . '<br />';
+			echo "\n . . transaction->status_ID(): " . $transaction->status_ID() . '<br />';
+		}
+		if (
+			// release Tickets for Failed Transactions and Abandoned Transactions
+			$transaction->status_ID() === EEM_Transaction::failed_status_code ||
+			$transaction->status_ID() === EEM_Transaction::abandoned_status_code ||
+			(
+				// also release Tickets for Incomplete Transactions, but ONLY if the Registrations are NOT Approved
+				$transaction->status_ID() === EEM_Transaction::incomplete_status_code &&
+				$registration->status_ID() !== EEM_Registration::status_id_approved
+			)
+		) {
 			$ticket = $registration->ticket();
 			if ( $ticket instanceof EE_Ticket ) {
-				//echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
-				//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+				if ( self::debug ) {
+					echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
+					echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+				}
 				$ticket->decrease_reserved();
+				if ( self::debug ) {
+					echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+				}
 				return $ticket->save() ? 1 : 0;
-				//echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
 			}
 		}
 		return 0;
@@ -483,7 +536,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	public static function process_failed_transactions( EE_Transaction $transaction ) {
 		// since you haven't even attempted to pay for your ticket...
-		EED_Ticket_Sales_Monitor::instance()->_release_all_reserved_tickets_for_transaction( $transaction, true );
+		EED_Ticket_Sales_Monitor::instance()->_release_all_reserved_tickets_for_transaction( $transaction );
 	}
 
 
