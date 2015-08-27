@@ -34,7 +34,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 *		@Constructor
 	 *		@access private
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket','event_espresso');
@@ -92,8 +91,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * @return EE_Ticket[]
 	 */
 	public function get_all_default_tickets() {
+		/** @type EE_Ticket[] $tickets */
 		$tickets = $this->get_all( array( array('TKT_is_default' => 1), 'order_by' => array('TKT_order' => 'ASC')) );
-
 		//we need to set the start date and end date to today's date and the start of the default dtt
 		return $this->_set_default_dates( $tickets );
 	}
@@ -107,44 +106,59 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	private function _set_default_dates( $tickets ) {
 		foreach ( $tickets as $ticket ) {
-			$ticket->set('TKT_start_date', $this->current_time_for_query('TKT_start_date', true) );
-			$ticket->set('TKT_end_date', $this->current_time_for_query( 'TKT_end_date', true ) + (60 * 60 * 24 * 30 ) );
+			$ticket->set('TKT_start_date', (int)$this->current_time_for_query('TKT_start_date', true) );
+			$ticket->set('TKT_end_date', (int)$this->current_time_for_query( 'TKT_end_date', true ) + (60 * 60 * 24 * 30 ) );
 			$ticket->set_end_time( $this->convert_datetime_for_query( 'TKT_end_date', '11:59 pm', 'g:i a', $this->_timezone ) );
 		}
 
 		return $tickets;
 	}
 
+
+
 	/**
 	 * Gets the total number of tickets available at a particular datetime (does
 	 * NOT take int account the datetime's spaces available)
-	 * @param int $DTT_ID
+	 * @param int   $DTT_ID
 	 * @param array $query_params
-	 * @return int|boolean of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 * @param bool  $subtract_reserved whether or not reserved tickets should be factored into the calculations
+	 * @return int of tickets available. If infinite, returns INF. If sold out or NO tickets attached to datetime then 0 is returned.
 	 */
-	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
-		$sum = 0;
-		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
-		$remaining_per_ticket = $this->_get_all_wpdb_results(
+	public function sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params = array(), $subtract_reserved = false ){
+		// let's do one query to get all the info we need
+		$tickets = $this->_get_all_wpdb_results(
+			// make sure we implement the DTT_ID, but still allow other incoming query params to be used
+			array_merge(
 				$query_params,
-				ARRAY_A,
-				array(
-					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold','%d'),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
-					'initially_available'=>array('Ticket.TKT_qty','%d')));
-
-		if ( empty( $remaining_per_ticket ) )
-			return FALSE;
-
-
-		foreach($remaining_per_ticket as $remaining){
-			if(intval($remaining['initially_available'])==EE_INF_IN_DB){//infinite in DB
-				return INF;
+				array( array( 'Datetime.DTT_ID' => $DTT_ID ) )
+			),
+			ARRAY_A,
+			array(
+				//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
+				'remaining' => array( 'Ticket.TKT_qty-Ticket.TKT_sold','%d' ),
+				'initial_qty' 	=> array( 'Ticket.TKT_qty','%d' ),
+				'reserved' 	=> array( 'Ticket.TKT_reserved','%d' ),
+			)
+		);
+		$sum = 0;
+		if ( ! empty( $tickets ) ) {
+			foreach ( $tickets as $ticket ) {
+				// are there unlimited tickets available ?
+				if ( intval( $ticket[ 'initial_qty' ] ) == EE_INF_IN_DB ) {
+					return INF;
+				}
+				// if not, ya gotta ADD IT UP... ADD IT UP...
+				$sum += intval( $ticket[ 'remaining' ] );
+				// but subtract reserved tickets if taking that into consideration
+				if ( $subtract_reserved ) {
+					$sum -= intval( $ticket[ 'reserved' ] );
+				}
 			}
-			$sum+=intval($remaining['tickets_remaining']);
 		}
-
-		return $sum;
+		return max( $sum, 0 );
 	}
+
+
 
 	/**
 	 * Updates the TKT_sold quantity on all the tickets matching $query_params
