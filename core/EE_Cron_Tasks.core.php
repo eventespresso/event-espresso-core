@@ -76,12 +76,12 @@ class EE_Cron_Tasks extends EE_BASE {
 	 *
 	 * @param int $timestamp
 	 * @param int $TXN_ID
-	 * @param EE_Payment | null $payment
+	 * @param int $PAY_ID
 	 */
 	public static function schedule_update_transaction_with_payment(
 		$timestamp,
 		$TXN_ID,
-		$payment
+		$PAY_ID
 	) {
 		// validate $TXN_ID and $timestamp
 		$TXN_ID = absint( $TXN_ID );
@@ -90,7 +90,7 @@ class EE_Cron_Tasks extends EE_BASE {
 			wp_schedule_single_event(
 				$timestamp,
 				'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
-				array( $TXN_ID, $payment )
+				array( $TXN_ID, $PAY_ID )
 			);
 		}
 	}
@@ -110,11 +110,11 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * and the required resources may not be available
 	 *
 	 * @param int  $TXN_ID
-	 * @param null $payment
+	 * @param null $PAY_ID
 	 */
-	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $payment = null ) {
+	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $PAY_ID = 0 ) {
 		if ( absint( $TXN_ID )) {
-			self::$_update_transactions_with_payment[ $TXN_ID ] = $payment;
+			self::$_update_transactions_with_payment[ $TXN_ID ] = $PAY_ID;
 			add_action(
 				'shutdown',
 				array( 'EE_Cron_Tasks', 'update_transaction_with_payment' ),
@@ -142,20 +142,22 @@ class EE_Cron_Tasks extends EE_BASE {
 			$payment_processor->set_revisit( false );
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
-			foreach ( self::$_update_transactions_with_payment as $TXN_ID => $payment ) {
+			foreach ( self::$_update_transactions_with_payment as $TXN_ID => $PAY_ID ) {
 				// reschedule the cron if we can't hit the db right now
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for updating the TXN
 					EE_Cron_Tasks::schedule_update_transaction_with_payment(
 						time() + ( 10 * MINUTE_IN_SECONDS ) + 1,
 						$TXN_ID,
-						$payment
+						$PAY_ID
 					);
 					continue;
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+				$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
 				// verify transaction
-				if ( $transaction instanceof EE_Transaction ) {
+				if ( $transaction instanceof EE_Transaction &&
+						$payment instanceof EE_Payment ) {
 					// now try to update the TXN with any payments
 					$payment_processor->update_txn_based_on_payment( $transaction, $payment, true, true );
 				}
