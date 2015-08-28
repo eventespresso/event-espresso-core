@@ -38,7 +38,6 @@
  */
 define( 'EE_NEW_ADDON_CORE_VERSION_REQUIRED', '4.8.0.rc.0000' );
 define( 'EE_NEW_ADDON_VERSION', '1.0.0.dev.000' );
-define( 'EE_NEW_ADDON_CORE_VERSION_REQUIRED', '4.6.0.alpha' );
 define( 'EE_NEW_ADDON_PLUGIN_FILE',  __FILE__ );
 function load_espresso_new_addon() {
   if ( class_exists( 'EE_Addon' )) {

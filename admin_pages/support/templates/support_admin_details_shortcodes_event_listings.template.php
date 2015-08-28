@@ -7,7 +7,7 @@
 			<li><strong><?php _e('Set a custom title for the event list', 'event_espresso'); ?></strong><br /> [ESPRESSO_EVENTS title="My Super Event List"]</li>
 			<li><strong><?php _e('Limit (paginate) the number of events that are shown in the event list on a page or post', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS limit="5"]</li>
 			<li><strong><?php _e('Add a custom CSS class to each event post/article', 'event_espresso'); ?></strong><br /> [ESPRESSO_EVENTS css_class="my-custom-class"]</li>
-			<li><strong><?php _e('Filter the event list by month and year', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS month="October 2104"]</li>
+			<li><strong><?php _e('Filter the event list by month and year', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS month="<?php echo date( 'F Y' ); ?>"]</li>
 			<li><strong><?php _e('Show expired events in the event list', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS show_expired="true"]</li>
 			<li><strong><?php _e('Sorts the event list in ascending order', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS sort="ASC"]</li>
 			<li><strong><?php _e('Sorts the event list in descending order', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS sort="DESC"]</li>
