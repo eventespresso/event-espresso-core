@@ -147,7 +147,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return \EE_Line_Item[]
 	 */
 	public function get_tickets() {
-		return EEH_Line_Item::get_ticket_line_items( $this->_grand_total );
+		return EEH_Line_Item::get_ticket_line_items( $this->get_grand_total() );
 	}
 
 
