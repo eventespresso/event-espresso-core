@@ -64,7 +64,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'capability' => 'ee_edit_questions',
 				'noheader' => TRUE
 				),
-
+			'duplicate_question' => array(
+				'func' => '_duplicate_question',
+				'capability' => 'ee_edit_questions',
+				'noheader' => TRUE
+				),
 			'trash_question' => array(
 				'func' => '_trash_question',
 				'capability' => 'ee_delete_question',
@@ -584,6 +588,35 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
 
+	}
+
+	/**
+	 * duplicates a question and all its question options and redirects to the new question.
+	 */
+	public function _duplicate_question() {
+		$question_ID = intval( $this->_req_data[ 'QST_ID' ] );
+		$question = EEM_Question::instance()->get_one_by_ID( $question_ID );
+		if( $question instanceof EE_Question ) {
+			$fields_n_vals = $question->model_field_array();
+			unset( $fields_n_vals[ 'QST_ID' ] );
+			$fields_n_vals[ 'QST_display_text' ] .=  __( '**Duplicate**', 'event_espresso' );
+			$fields_n_vals[ 'QST_admin_label' ] .= __( '**Duplicate**', 'event_espresso' );
+			$fields_n_vals[ 'QST_system' ] = null;
+			$fields_n_vals[ 'QST_wp_user' ] = get_current_user_id();
+			$new_question = EE_Question::new_instance( $fields_n_vals );
+			$success = $new_question->save();
+			foreach( $question->options() as $question_option ) {
+				$question_option_fields_n_vals = $question_option->model_field_array();
+				unset( $question_option_fields_n_vals[ 'QSO_ID' ] );
+				$question_option_fields_n_vals[ 'QST_ID' ] = $new_question->ID();
+				$new_question_option = EE_Question_Option::new_instance( $question_option_fields_n_vals );
+				$new_question_option->save();
+			}
+			$this->_redirect_after_action( $success, __( 'Question', 'event_espresso' ), __( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+		} else {
+			EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action(FALSE, '', '', array('action'=>'default'), TRUE);
+		}
 	}
 
 
