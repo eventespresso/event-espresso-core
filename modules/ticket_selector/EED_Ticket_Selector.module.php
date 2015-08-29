@@ -277,7 +277,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				)
 			)
 		) {
-			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
+			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn() : '';
 		}
 
 		$template_args = array();
@@ -348,7 +348,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$ticket_selector .= ! is_admin() ? '' : __( 'Registration is at an external URL for this event.', 'event_espresso' );
 		}
 		// submit button and form close tag
-		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() ) : '';
+		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit() : '';
 		// set no cache headers and constants
 		EE_System::do_not_cache();
 
@@ -463,25 +463,30 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *
 	 *	@access public
 	 * 	@access 		public
-	 * 	@return		array  or FALSE
+	 * 	@return		bool
 	 */
 	public function process_ticket_selections() {
 		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
+		//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		// check nonce
-		if ( ! is_admin() && ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' ))) {
+		if (
+			! is_admin() &&
+			(
+				! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) ||
+				! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )
+			)
+		) {
 			EE_Error::add_error(
 				sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 			return FALSE;
 		}
-//		d( EE_Registry::instance()->REQ );
+
 		self::$_available_spaces = array(
 			'tickets' => array(),
 			'datetimes' => array()
 		);
-
-
 		//we should really only have 1 registration in the works now (ie, no MER) so clear any previous items in the cart.
 		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
@@ -511,8 +516,9 @@ class EED_Ticket_Selector extends  EED_Module {
 			} else {
 
 				// all data appears to be valid
-				$tckts_slctd = FALSE;
-				$success = TRUE;
+				$tckts_slctd = false;
+				$success = true;
+				$total_tickets = 0;
 				// validate/sanitize data
 				$valid = apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', $valid );
 				if ( $valid[ 'total_tickets' ] >0 ) {
@@ -528,8 +534,14 @@ class EED_Ticket_Selector extends  EED_Module {
 							// d( $valid['ticket_obj'][$x] );
 							if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
 								// then add ticket to cart
-								$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
-								$success = ! $ticket_added ? FALSE : $success;
+								$tickets_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
+								if ( $tickets_added > 0 ) {
+									$total_tickets += $tickets_added;
+								} else {
+									$success = false;
+								}
+								//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+								//echo "\n . ticket_added: " . $ticket_added . '<br />';
 								if ( EE_Error::has_error() ) {
 									break;
 								}
@@ -543,8 +555,10 @@ class EED_Ticket_Selector extends  EED_Module {
 						}
 					}
 				}
-//				d( EE_Registry::instance()->CART );
-//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
+				//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+				//echo "\n . total_tickets: " . $total_tickets . '<br />';
+				do_action( 'AHEE__EE_Ticket_Selector__process_ticket_selections__after_tickets_added_to_cart', EE_Registry::instance()->CART, $this );
+				//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__tckts_slctd', $tckts_slctd ) ) {
 					if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__success', $success ) ) {
@@ -552,12 +566,12 @@ class EED_Ticket_Selector extends  EED_Module {
 						EE_Registry::instance()->CART->recalculate_all_cart_totals();
 						EE_Registry::instance()->CART->save_cart( FALSE );
 						EE_Registry::instance()->SSN->update();
-//						d( EE_Registry::instance()->CART );
 //						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 						// just return TRUE for registrations being made from admin
 						if ( is_admin() ) {
 							return TRUE;
 						}
+
 						EE_Error::get_notices( false, true );
 						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
@@ -725,7 +739,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @access   private
 	 * @param EE_Ticket $ticket
 	 * @param int       $qty
-	 * @return TRUE on success, FALSE on fail
+	 * @return int quantity of tickets added
 	 */
 	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -735,14 +749,15 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( $available_spaces >= $qty ) {
 			// allow addons to prevent a ticket from being added to cart
 			if ( ! apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart', true, $ticket, $qty, $available_spaces ) ) {
-				return false;
+				return 0;
 			}
+			$qty = apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty', $qty, $ticket );
 			// add event to cart
 			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
 				self::_recalculate_ticket_datetime_availability( $ticket, $qty );
-				return true;
+				return $qty;
 			} else {
-				return false;
+				return 0;
 			}
 		} else {
 			// tickets can not be purchased but let's find the exact number left for the last ticket selected PRIOR to subtracting tickets
@@ -766,7 +781,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			} else {
 				EE_Error::add_error( __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
-			return false;
+			return 0;
 		}
 	}
 
