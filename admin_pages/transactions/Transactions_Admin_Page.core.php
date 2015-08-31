@@ -1076,9 +1076,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _generate_payment_form_section() {
 		return new EE_Form_Section_Proper(
 			array(
-				'name'            => 'txn_admin_payment',
-				'html_id'         => 'txn_admin_payment',
-				'action'          => '#',
+				'name' => 'txn_admin_payment',
 				'subsections'     => array(
 					'PAY_ID' => new EE_Text_Input(
 						array(
