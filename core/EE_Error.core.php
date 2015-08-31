@@ -546,6 +546,7 @@ class EE_Error extends Exception {
 	*/
 	public static function add_error( $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
 		self::_add_notice ( 'errors', $msg, $file, $func, $line );
+		self::$_error_count++;
 	}
 
 
@@ -626,11 +627,12 @@ class EE_Error extends Exception {
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
-			// get error code only on error
-			$error_code = $type == 'errors' ? EE_Error::generate_error_code ( $file, $func, $line ) : '';
-			$error_code =  ! empty( $error_code ) ? '<br/><span class="tiny-text">' . $error_code . '</span>' : '';
+			// get error code, but only on error
+			if ( WP_DEBUG && $type == 'errors' ) {
+				$msg .= '<br/><span class="tiny-text">' . EE_Error::generate_error_code( $file, $func, $line ) . '</span>';
+			}
 			// add notice
-			self::$_espresso_notices[ $type ][] = $msg . $error_code;
+			self::$_espresso_notices[ $type ][] = $msg;
 			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 
@@ -1084,14 +1086,15 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	 *
 	 * @uses   constant WP_DEBUG test if wp_debug is on or not
 	 * @param  string $function The function that was called
-	 * @param  string $message  A message explaining what has been done incorrectly
-	 * @param  string $version  The version of Event Espresso where the error was added
-	 * @return trigger_error()
+	 * @param  string $message A message explaining what has been done incorrectly
+	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param int     $error_type
+	 * @return void
 	 */
-	public static function doing_it_wrong( $function, $message, $version ) {
+	public static function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			EE_Registry::instance()->load_helper('Debug_Tools');
-			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version );
+			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
 		}
 	}
 

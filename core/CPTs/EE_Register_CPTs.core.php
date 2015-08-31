@@ -49,6 +49,10 @@ class EE_Register_CPTs {
 
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
+
+		//remove no html restrictions from core wp saving of term descriptions.  Note. this will affect only registered EE taxonomies.
+		$this->_allow_html_descriptions_for_ee_taxonomies();
+
 		do_action( 'AHEE__EE_Register_CPTs__construct_end', $this );
 	}
 
@@ -68,6 +72,40 @@ class EE_Register_CPTs {
 		}
 	}
 
+
+	/**
+	 * By default, WordPress strips all html from term taxonomy description content.  The purpose of this method is to
+	 * remove that restriction and ensure that we still run ee term taxonomy descriptions through some full html sanitization
+	 * equivalent to the post content field.
+	 *
+	 * @since 4.7.8
+	 */
+	protected function _allow_html_descriptions_for_ee_taxonomies() {
+		//first remove default filter for term description but we have to do this earlier before wp sets their own filter
+		//because they just set a global filter on all term descriptions before the custom term description filter. Really sux.
+		add_filter( 'pre_term_description', array( $this, 'ee_filter_ee_term_description_not_wp' ), 1, 2 );
+	}
+
+
+	/**
+	 * Callback for pre_term_description hook.
+	 * @param string $description   The description content.
+	 * @param string $taxonomy      The taxonomy name for the taxonomy being filtered.
+	 * @return string
+	 */
+	public function ee_filter_ee_term_description_not_wp( $description, $taxonomy ) {
+		//get a list of EE taxonomies
+		$ee_taxonomies = array_keys( self::get_taxonomies() );
+
+		//only do our own thing if the taxonomy listed is an ee taxonomy.
+		if ( in_array( $taxonomy, $ee_taxonomies ) ) {
+			//remove default wp filter
+			remove_filter( 'pre_term_description', 'wp_filter_kses' );
+			//sanitize THIS content.
+			$description = wp_kses( $description, wp_kses_allowed_html( 'post' ) );
+		}
+		return $description;
+	}
 
 
 
