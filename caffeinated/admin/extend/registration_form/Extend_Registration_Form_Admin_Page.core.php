@@ -598,10 +598,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$question = EEM_Question::instance()->get_one_by_ID( $question_ID );
 		if( $question instanceof EE_Question ) {
 			$new_question = $question->duplicate();
-			$this->_redirect_after_action( $new_question instanceof EE_Question ? true  : false, __( 'Question', 'event_espresso' ), __( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+			if( $new_question instanceof EE_Question ) {
+				$this->_redirect_after_action( true, __( 'Question', 'event_espresso' ), __( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+			} else {
+				global $wpdb;
+				EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %1$d because: %2$s', 'event_espresso' ), $question_ID, $wpdb->last_error ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action(false, '', '', array('action'=>'default'), false );
+			}
 		} else {
 			EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
-			$this->_redirect_after_action(FALSE, '', '', array('action'=>'default'), TRUE);
+			$this->_redirect_after_action( false, '', '', array( 'action' => 'default' ), false );
 		}
 	}
 
