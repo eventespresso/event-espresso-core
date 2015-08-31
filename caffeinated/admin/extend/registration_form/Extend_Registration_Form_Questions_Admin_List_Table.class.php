@@ -91,7 +91,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 			}
 		}
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_questions', 'espresso_registration_form_edit_question' ) && $this->_view != 'trash' ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_questions', 'espresso_registration_form_edit_question' ) ) {
 			$actions[ 'duplicate' ] = '<a href="' . $duplicate_link . '" title="' . __('Duplicate Question', 'event_espresso') . '">' . __('Duplicate', 'event_espresso') . '</a>';
 		}
 
