@@ -26,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Question extends EE_Soft_Delete_Base_Class {
+class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable {
 
 	/**
 	 *
@@ -432,6 +432,29 @@ class EE_Question extends EE_Soft_Delete_Base_Class {
 		$questionModel = $this->get_model();
 		/* @var $questionModel EEM_Question */
 		return $questionModel->allowed_question_types();
+	}
+
+	/**
+	 * Duplicates this question and its question options
+	 * @return \EE_Question
+	 */
+	public function duplicate( $options = array() ) {
+		$new_question = clone $this;
+		$new_question->set( 'QST_ID', null );
+		$new_question->set_display_text( sprintf( __( '%s **Duplicate**', 'event_espresso' ), $this->display_text() ) );
+		$new_question->set_admin_label( sprintf( __( '%s **Duplicate**', 'event_espresso' ), $this->admin_label() ) );
+		$new_question->set_system_ID( null );
+		$new_question->set_wp_user( get_current_user_id() );
+		$success = $new_question->save();
+		if( $success ) {
+			//we don't totally want to duplicate the question options, because we want them to be for the NEW question
+			foreach( $this->options() as $question_option ) {
+				$question_option->duplicate( array( 'QST_ID' => $new_question->ID() ) );
+			}
+			return $new_question;
+		} else {
+			return null;
+		}
 	}
 
 
