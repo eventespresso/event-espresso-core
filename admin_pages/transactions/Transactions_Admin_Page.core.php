@@ -991,10 +991,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	public function apply_payments_or_refunds() {
 		$json_response_data = array( 'return_data' => FALSE );
-		if ( $this->_validate_payment_request_data() ) {
-			$PAY_ID =$this->_req_data[ 'txn_admin_payment' ][ 'PAY_ID' ];
+		$valid_data = $this->_validate_payment_request_data();
+		if ( ! empty( $valid_data ) ) {
+			$PAY_ID = $valid_data[ 'PAY_ID' ];
 			//save  the new payment
-			$payment = $this->_create_payment_from_request_data( $PAY_ID );
+			$payment = $this->_create_payment_from_request_data( $valid_data );
 			// get the TXN for this payment
 			$transaction = $payment->transaction();
 			// verify transaction
@@ -1033,42 +1034,130 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _validate_payment_request_data
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	protected function _validate_payment_request_data() {
 		if ( ! isset( $this->_req_data[ 'txn_admin_payment' ] ) ) {
 			return false;
 		}
-		$default_values = array(
-			'type' => array( 'value' => 1, 'required' => false, 'name' =>'Payment or Refund' ),
-			'TXN_ID' => array( 'value' => 0, 'required' => true, 'name' => 'Transaction ID' ),
-			'amount' => array( 'value' => 0, 'required' => true, 'name' => 'Payment amount' ),
-			'status' => array( 'value' => 0, 'required' => true, 'name' => 'Payment status' ),
-			'PMD_ID' => array( 'value' => 0, 'required' => true, 'name' => 'Payment Method' ),
-			'PAY_ID' => array( 'value' => 0, 'required' => false, 'name' => 'Payment ID' ),
-			'date' => array( 'value' => array( 'Y-m-d', 'H:i a' ), 'required' => false, 'name' => 'Payment date' ),
-			'txn_id_chq_nmbr' => array( 'value' => '', 'required' => false, 'name' => 'Transaction ID or Cheque Number' ),
-			'po_number' => array( 'value' => '', 'required' => false, 'name' => 'Purchase Order Number' ),
-			'accounting' => array( 'value' => '', 'required' => false, 'name' => 'Extra Field for Accounting' ),
-		);
-		foreach ( $default_values as $key => $default ) {
-			if ( ! isset( $this->_req_data[ 'txn_admin_payment' ][ $key ] )) {
-				if ( $default['required'] ) {
-					EE_Error::add_error(
-						sprintf(
-							__( 'A payment could not be generated because the "%1$s" field was invalid or missing payment data. Please ensure that all required fields are filled out and resubmit the form..', 'event_espresso' ),
-							$default[ 'name' ]
-						),
-						__FILE__, __FUNCTION__, __LINE__
-					);
-					return false;
-				} else {
-					// set default value instead
-					$this->_req_data[ 'txn_admin_payment' ][ $key ] = $default[ 'value' ];
+		$payment_form = $this->_generate_payment_form_section();
+		try {
+			if ( $payment_form->was_submitted() ) {
+				$payment_form->receive_form_submission();
+				if ( ! $payment_form->is_valid() ) {
+					$submission_error_messages = array();
+					foreach ( $payment_form->get_validation_errors_accumulated() as $validation_error ) {
+						if ( $validation_error instanceof EE_Validation_Error ) {
+							$submission_error_messages[] = sprintf(
+								_x( '%s : %s', 'Form Section Name : Form Validation Error', 'event_espresso' ),
+								$validation_error->get_form_section()->html_label_text(),
+								$validation_error->getMessage()
+							);
+						}
+					}
+					EE_Error::add_error( join( '<br />', $submission_error_messages ), __FILE__, __FUNCTION__, __LINE__ );
+					return array();
 				}
 			}
+		} catch ( EE_Error $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+			return array();
 		}
-		return true;
+		return $payment_form->valid_data();
+	}
+
+
+
+	/**
+	 * _generate_payment_form_section
+	 *
+	 * @return EE_Form_Section_Proper
+	 */
+	protected function _generate_payment_form_section() {
+		return new EE_Form_Section_Proper(
+			array(
+				'name'            => 'txn_admin_payment',
+				'html_id'         => 'txn_admin_payment',
+				'action'          => '#',
+				'subsections'     => array(
+					'PAY_ID' => new EE_Text_Input(
+						array(
+							'default' => 0,
+							'required' => false,
+							'html_label_text' => __( 'Payment ID', 'event_espresso' ),
+							'validation_strategies' => array( new EE_Int_Normalization() )
+						)
+					),
+					'TXN_ID' => new EE_Text_Input(
+						array(
+							'default' => 0,
+							'required' => true,
+							'html_label_text' => __( 'Transaction ID', 'event_espresso' ),
+							'validation_strategies' => array( new EE_Int_Normalization() )
+						)
+					),
+					'type' => new EE_Text_Input(
+						array(
+							'default' => 1,
+							'required' => true,
+							'html_label_text' => __( 'Payment or Refund', 'event_espresso' ),
+							'validation_strategies' => array( new EE_Int_Normalization() )
+						)
+					),
+					'amount' => new EE_Text_Input(
+						array(
+							'default' => 0,
+							'required' => true,
+							'html_label_text' => __( 'Payment amount', 'event_espresso' ),
+							'validation_strategies' => array( new EE_Float_Normalization() )
+						)
+					),
+					'status' => new EE_Text_Input(
+						array(
+							'default' => EEM_Payment::status_id_approved,
+							'required' => true,
+							'html_label_text' => __( 'Payment status', 'event_espresso' ),
+						)
+					),
+					'PMD_ID' => new EE_Text_Input(
+						array(
+							'default' => 2,
+							'required' => true,
+							'html_label_text' => __( 'Payment Method', 'event_espresso' ),
+							'validation_strategies' => array( new EE_Int_Normalization() )
+						)
+					),
+					'date' => new EE_Text_Input(
+						array(
+							'default' => time(),
+							'required' => true,
+							'html_label_text' => __( 'Payment date', 'event_espresso' ),
+						)
+					),
+					'txn_id_chq_nmbr' => new EE_Text_Input(
+						array(
+							'default' => '',
+							'required' => false,
+							'html_label_text' => __( 'Transaction or Cheque Number', 'event_espresso' ),
+						)
+					),
+					'po_number' => new EE_Text_Input(
+						array(
+							'default' => '',
+							'required' => false,
+							'html_label_text' => __( 'Purchase Order Number', 'event_espresso' ),
+						)
+					),
+					'accounting' => new EE_Text_Input(
+						array(
+							'default' => '',
+							'required' => false,
+							'html_label_text' => __( 'Extra Field for Accounting', 'event_espresso' ),
+						)
+					),
+				)
+			)
+		);
 	}
 
 
@@ -1076,27 +1165,28 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _create_payment_from_request_data
 	 *
-	 * @param int $PAY_ID
+	 * @param array $valid_data
 	 * @return EE_Payment
 	 */
-	protected function _create_payment_from_request_data( $PAY_ID = 0 ) {
+	protected function _create_payment_from_request_data( $valid_data ) {
+		$PAY_ID = $valid_data[ 'PAY_ID' ];
 		// get payment amount
-		$amount = isset( $this->_req_data[ 'txn_admin_payment' ][ 'amount' ] ) ? abs( $this->_req_data[ 'txn_admin_payment' ][ 'amount' ] ) : 0;
+		$amount = $valid_data[ 'amount' ] ? abs( $valid_data[ 'amount' ] ) : 0;
 		// payments have a type value of 1 and refunds have a type value of -1
 		// so multiplying amount by type will give a positive value for payments, and negative values for refunds
-		$amount = $this->_req_data[ 'txn_admin_payment' ][ 'type' ] < 0 ? $amount * -1 : $amount;
+		$amount = $valid_data[ 'type' ] < 0 ? $amount * -1 : $amount;
 		$payment = EE_Payment::new_instance(
 			array(
-				'TXN_ID' 								=> $this->_req_data[ 'txn_admin_payment' ][ 'TXN_ID' ],
-				'STS_ID' 								=> $this->_req_data[ 'txn_admin_payment' ][ 'status' ],
-				'PAY_timestamp' 				=> $this->_req_data[ 'txn_admin_payment' ][ 'date' ],
+				'TXN_ID' 								=> $valid_data[ 'TXN_ID' ],
+				'STS_ID' 								=> $valid_data[ 'status' ],
+				'PAY_timestamp' 				=> $valid_data[ 'date' ],
 				'PAY_source'           			=> EEM_Payment_Method::scope_admin,
-				'PMD_ID'               				=> $this->_req_data[ 'txn_admin_payment' ][ 'PMD_ID' ],
+				'PMD_ID'               				=> $valid_data[ 'PMD_ID' ],
 				'PAY_amount'           			=> $amount,
-				'PAY_txn_id_chq_nmbr'  	=> $this->_req_data[ 'txn_admin_payment' ][ 'txn_id_chq_nmbr' ],
-				'PAY_po_number'        		=> $this->_req_data[ 'txn_admin_payment' ][ 'po_number' ],
-				'PAY_extra_accntng'    		=> $this->_req_data[ 'txn_admin_payment' ][ 'accounting' ],
-				'PAY_details'          				=> $this->_req_data[ 'txn_admin_payment' ],
+				'PAY_txn_id_chq_nmbr'  	=> $valid_data[ 'txn_id_chq_nmbr' ],
+				'PAY_po_number'        		=> $valid_data[ 'po_number' ],
+				'PAY_extra_accntng'    		=> $valid_data[ 'accounting' ],
+				'PAY_details'          				=> $valid_data,
 				'PAY_ID'               				=> $PAY_ID
 			),
 			'',
