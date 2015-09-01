@@ -1129,6 +1129,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['timer_minute'] = __( 'minute', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_second'] = __( 'second', 'event_espresso' );
 		EE_Registry::$i18n_js_strings[ 'ajax_submit' ] = apply_filters( 'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit', true );
+		EE_Registry::$i18n_js_strings[ 'session_extension' ] = absint( apply_filters( 'FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS ) );
 	}
 
 
