@@ -230,6 +230,17 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	 /**
+	  * @param int $time number of seconds to add to session expiration
+	  * @return int
+	  */
+	 public function extend_expiration( $time = 0 ) {
+		 $time = $time ? $time :  10 * MINUTE_IN_SECONDS;
+		 $this->_expiration += absint( apply_filters( 'FHEE__EE_Session__extend_expiration__seconds_added', $time ) );
+	 }
+
+
+
+	 /**
 	  * @return int
 	  */
 	 public function lifespan() {
