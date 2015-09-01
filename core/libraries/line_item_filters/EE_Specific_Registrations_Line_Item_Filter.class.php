@@ -75,7 +75,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 		//the original running total (taking ALL tickets into account)
 		$running_total_of_children = 0;
 		//the new running total (only taking the specified ticket quantities into account)
-		$runnign_total_of_children_under_consideration = 0;
+		$running_total_of_children_under_consideration = 0;
 		foreach ( $line_item->children() as $child_line_item ) {
 			if( $child_line_item->is_percent() ) {
 				$original_li_total = $running_total_of_children * $child_line_item->percent() / 100;
@@ -98,7 +98,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 					$percent_of_running_total = 0;
 				}
 
-				$child_line_item->set_total( $runnign_total_of_children_under_consideration * $percent_of_running_total );
+				$child_line_item->set_total( $running_total_of_children_under_consideration * $percent_of_running_total );
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
 				}
@@ -111,11 +111,11 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				}
 			}
 			$running_total_of_children += $original_li_total;
-			$runnign_total_of_children_under_consideration += $child_line_item->total();
+			$running_total_of_children_under_consideration += $child_line_item->total();
 		}
-		$line_item->set_total( $runnign_total_of_children_under_consideration );
+		$line_item->set_total( $running_total_of_children_under_consideration );
 		if( $line_item->quantity() ) {
-			$line_item->set_unit_price( $runnign_total_of_children_under_consideration / $line_item->quantity() );
+			$line_item->set_unit_price( $running_total_of_children_under_consideration / $line_item->quantity() );
 		} else {
 			$line_item->set_unit_price( 0 );
 		}
