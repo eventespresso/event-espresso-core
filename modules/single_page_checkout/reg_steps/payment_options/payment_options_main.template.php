@@ -40,6 +40,3 @@
 
 	<?php  echo $after_payment_options;  ?>
 
-	<?php  echo $default_hidden_inputs;  ?>
-	<?php  echo $extra_hidden_inputs;  ?>
-
