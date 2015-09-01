@@ -107,6 +107,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'contact_list_export'=>  __("Export Data", "event_espresso"),
 				),
 			'publishbox' => array(
+				'add_new_attendee' => __("Add Contact Record", 'event_espresso'),
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
 				),
 			'hide_add_button_on_cpt_route' => array(
@@ -454,7 +455,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE
 					),
-				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box', 'attendee_editor_metaboxes' ) ),
 				'require_nonce' => FALSE
 				),
 
@@ -511,7 +512,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _add_screen_options() {}
 	protected function _add_feature_pointers() {}
-	public function admin_init() {}
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'update_att_qstns' ] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
+	}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -575,7 +578,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
-		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
 	}
 
 
@@ -674,7 +676,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'today' => array(
 				'slug' => 'today',
-				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp', 0) ) ),
+				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp' ) ) ),
 				'count' => 0,
 				'bulk_action' => array_merge( $def_reg_status_actions,  array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
@@ -872,6 +874,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
 
+
 		switch ( $this->_req_data['orderby'] ) {
 			case '_REG_ID':
 				$orderby = 'REG_ID';
@@ -927,23 +930,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$curdate = date('Y-m-d', current_time('timestamp'));
 			$_where['REG_date']= array('BETWEEN',
 				array(
-					strtotime($curdate . $time_start),
-					strtotime($curdate . $time_end)
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $curdate . $time_start, 'Y-m-d H:i:s' ),
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $curdate . $time_end, 'Y-m-d H:i:s' ),
 			));
 		}elseif($this_month_a || $this_month){
 			$this_month_r = date('m', current_time('timestamp'));
 			$days_this_month = date( 't', current_time('timestamp') );
 			$_where['REG_date']= array('BETWEEN',
 				array(
-					strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
-					strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end )
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start, 'Y-m-d H:i:s' ),
+					EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' ' . $time_end, 'Y-m-d H:i:s' )
 			));
 		}elseif($month_range){
 			$pieces = explode(' ', $this->_req_data['month_range'], 3);
 			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
+			$days_in_month = date('t', strtotime($year_r .  '-' . $month_r . '-' . '01') );
 			$_where['REG_date']= array('BETWEEN',
-				array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+				array(  EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-01 00:00:00', 'Y-m-d H:i:s'), EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', $year_r . '-' . $month_r . '-' . $days_in_month .  ' 23:59:59', 'Y-m-d H:i:s' ) ) );
 		}elseif($start_date && $end_date){
 			throw new EE_Error("not yet supported");
 		}elseif($start_date){
@@ -1386,28 +1390,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	public function _reg_details_meta_box() {
+		EEH_Autoloader::register_line_item_display_autoloaders();
+		EEH_Autoloader::register_line_item_filter_autoloaders();
+		EE_Registry::instance()->load_Helper( 'Line_Item' );
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
+		$filters = new EE_Line_Item_Filter_Collection();
+		$filters->add( new EE_Single_Registration_Line_Item_Filter( $this->_registration ) );
+		$filters->add( new EE_Non_Zero_Line_Item_Filter() );
+		$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item() );
+		$filtered_line_item_tree = $line_item_filter_processor->process();
+
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
-		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
+		$line_item_display = new EE_Line_Item_Display( 'reg_admin_table', 'EE_Admin_Table_Registration_Line_Item_Display_Strategy' );
+		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $filtered_line_item_tree, array( 'EE_Registration' => $this->_registration ) );
 
 
 		$attendee = $this->_registration->attendee();
 
-		// process taxes
-		if ( $transaction ) {
-			//get all "tax" line items for this transaction and we'll use them for the tax display.
-			$taxes = $transaction->get_many_related('Line_Item', array(array('LIN_type' => EEM_Line_Item::type_tax ) ) );
-			$this->_template_args['taxes'] = !empty($taxes) ? $taxes : array();
-		} else {
-			$this->_template_args['taxes'] = array();
-		}
 
 		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
 		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
-		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
