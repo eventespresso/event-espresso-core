@@ -192,6 +192,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$sold_out_events = array();
 		$sold_out_tickets = array();
 		$reg_count = 0;
+		$no_payment_required = true;
 		// loop thru registrations to gather info
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		foreach ( $registrations as $registration ) {
@@ -282,14 +283,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					$this->line_item_display->display_line_item( $filtered_line_item_tree )
 				);
 			}
+			$no_payment_required = false;
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
-
 		}
 		$this->_save_selected_method_of_payment();
 
 		$subsections['default_hidden_inputs'] = $this->reg_step_hidden_inputs();
-		$subsections['extra_hidden_inputs' ] = $this->_extra_hidden_inputs( false );
+		$subsections['extra_hidden_inputs' ] = $this->_extra_hidden_inputs( $no_payment_required );
 
 		return new EE_Form_Section_Proper(
 			array(
@@ -1197,6 +1198,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->_setup_primary_registrant_prior_to_payment() ) {
 			return FALSE;
 		}
+		// if session is close to expiring
+		if ( ( time() - EE_Registry::instance()->SSN->expiration() ) < ( 10 * MINUTE_IN_SECONDS ) ) {
+			// add some time to session expiration so that payment can be completed
+			EE_Registry::instance()->SSN->extend_expiration();
+		}
+
 		/** @type EE_Transaction_Processor $transaction_processor */
 		//$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations for events with a default reg status of Approved
