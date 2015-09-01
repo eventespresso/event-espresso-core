@@ -2,7 +2,7 @@
 <?php
 if ( ! $empty_cart ) {
 	if ( apply_filters( 'FHEE__registration_page_wrapper_template__display_time_limit', false ) ) { ?>
-	<p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice">
+	<p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice" style="display: none;">
 		<?php echo sprintf(
 			apply_filters(
 				'FHEE__registration_page_wrapper_template___time_limit',

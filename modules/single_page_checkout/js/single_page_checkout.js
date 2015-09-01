@@ -62,8 +62,8 @@ jQuery(document).ready( function($) {
 	*     timer_minute: string,
 	*     timer_second: string,
 	*     registration_expiration_notice: string,
-	*     ajax_submit: bool,
-	*     empty_cart: bool,
+	*     ajax_submit: boolean,
+	*     empty_cart: boolean,
 	*  }}
 	* @namespace response
 	* @type {{
@@ -462,7 +462,8 @@ jQuery(document).ready( function($) {
 		 * @function start_registration_time_limit_countdown
 		 */
 		start_registration_time_limit_countdown : function() {
-			if ( SPCO.registration_time_limit.length > 0 && eei18n.empty_cart !== 1 ) {
+			if ( SPCO.registration_time_limit.length > 0 && parseInt( eei18n.empty_cart ) !== 1 && parseInt( eei18n.revisit ) !== 1 ) {
+				$( '#spco-registration-time-limit-pg' ).show();
 				var expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
 				var layout = (( new Date() ) - expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
 				SPCO.registration_time_limit.countdown({
