@@ -81,6 +81,28 @@ class EE_Registration_Payment extends EE_Base_Class {
 
 
 
+	/**
+	 * registration
+	 * @access    public
+	 * @return \EE_Registration
+	 */
+	public function registration() {
+		return $this->get_first_related( 'Registration' );
+	}
+
+
+
+	/**
+	 * payment
+	 * @access    public
+	 * @return \EE_Payment
+	 */
+	public function payment() {
+		return $this->get_first_related( 'Payment' );
+	}
+
+
+
 }
 // End of file EE_Registration_Payment.class.php
 // Location: /EE_Registration_Payment.class.php
