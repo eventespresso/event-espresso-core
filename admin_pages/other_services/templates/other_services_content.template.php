@@ -77,7 +77,7 @@
 															<ul class="plugin-action-buttons-custom">
 																<li>
 																	<a class="plugin-div-button button button-primary" href="http://eventespresso.com/product/eea-ticketing/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_printable_tickets&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/ee4-printable-tickets/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_printable_tickets&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/ee4-printable-tickets-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_printable_tickets&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
@@ -225,7 +225,7 @@
 															<ul class="plugin-action-buttons-custom">
 																<li>
 																	<a class="plugin-div-button button button-primary" href="http://eventespresso.com/product/eea-events-table-view-template/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_table_view_template&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/ee4-events-table-view-template/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_table_view_template&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/events-table-view-template-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_table_view_template&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
@@ -246,7 +246,7 @@
 															<ul class="plugin-action-buttons-custom">
 																<li>
 																	<a class="plugin-div-button button button-primary" href="http://eventespresso.com/product/eea-events-grid-view-template/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_grid_view_template&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/ee4-events-grid-view-template/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_grid_view_template&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/events-grid-view-template-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_grid_view_template&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
