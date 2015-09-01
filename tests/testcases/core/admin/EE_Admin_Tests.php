@@ -33,7 +33,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ), 10 );
 		$this->assertEquals( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ), 10 );
 		$this->assertEquals( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ), 100 );
-		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded'), 100 ), 100 );
+		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded') ), 100 );
 		$this->assertEquals( has_action('admin_init', array($admin_instance, 'admin_init') ), 100 );
 		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
@@ -126,7 +126,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	function test_init() {
 		$admin = EE_Admin::instance();
 
-		//test when maintainence mode is set at level 2
+		//test when maintenance mode is set at level 2
 		$this->setMaintenanceMode(2);
 		$admin->init();
 		$this->assertFalse( has_action('wp_ajax_dismiss_ee_nag_notice', array( $admin, 'dismiss_ee_nag_notice_callback' ) ) );
@@ -202,7 +202,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		add_meta_box( 'add-espresso_events', __('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
 
 		//need to set the current user
-		$current_user = get_current_user_id();
+		//$current_user = get_current_user_id();
 		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
 
 		//set the current page to the be the nav-menus.php page

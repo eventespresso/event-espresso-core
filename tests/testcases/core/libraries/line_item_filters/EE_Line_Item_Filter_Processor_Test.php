@@ -10,7 +10,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
+ * @group                Line_Item_Filter
  */
 class EE_Line_Item_Filter_Processor_Test extends EE_UnitTestCase{
 	function setUp(){
@@ -41,3 +41,4 @@ class EE_Line_Item_Filter_Processor_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Line_Item_Filter_Processor_Test.php
+// Location: /tests/testcases/core/libraries/line_item_filters/EE_Line_Item_Filter_Processor_Test.php
