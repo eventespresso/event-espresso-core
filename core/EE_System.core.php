@@ -162,7 +162,7 @@ final class EE_System {
 			require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
 			// WP cron jobs
 			EE_Registry::instance()->load_core( 'Cron_Tasks' );
-			
+
 			// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 			add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 			// when an ee addon is activated, we want to call the core hook(s) again
@@ -814,13 +814,13 @@ final class EE_System {
 	 */
 	public function load_core_configuration(){
 		do_action( 'AHEE__EE_System__load_core_configuration__begin', $this );
+		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
+		//load textdomain
+		EE_Load_Textdomain::load_textdomain();
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		EE_Registry::instance()->load_core( 'Network_Config' );
 		// setup autoloaders
-		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
-		//load textdomain
-		EE_Load_Textdomain::load_textdomain();
 		// enable logging?
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			EE_Registry::instance()->load_core( 'Log' );
