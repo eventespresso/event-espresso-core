@@ -452,7 +452,6 @@
 
 					// adjust the grid and add click event
 					if (show && o[litem + 'Grid'] > 0) {
-						console.log( o[litem + 'Min']);
 						size = 100 * gridSize[litem] * o[litem + 'Grid'] / (max[litem] - o[litem + 'Min']);
 						$tp.find('.ui_tpicker_' + litem + ' table').css({
 							width: size + "%",
@@ -734,7 +733,7 @@
 					secMax = parseInt((this._defaults.secondMax - ((this._defaults.secondMax - this._defaults.secondMin) % this._defaults.stepSecond)), 10),
 					millisecMax = parseInt((this._defaults.millisecMax - ((this._defaults.millisecMax - this._defaults.millisecMin) % this._defaults.stepMillisec)), 10),
 					microsecMax = parseInt((this._defaults.microsecMax - ((this._defaults.microsecMax - this._defaults.microsecMin) % this._defaults.stepMicrosec)), 10);
-				console.log( this._defaults.hourMin );
+
 				if (this.hour_slider) {
 					this.control.options(this, this.hour_slider, 'hour', { min: this._defaults.hourMin, max: hourMax, step: this._defaults.stepHour });
 					this.control.value(this, this.hour_slider, 'hour', this.hour - (this.hour % this._defaults.stepHour));
