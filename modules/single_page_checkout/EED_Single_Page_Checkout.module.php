@@ -432,8 +432,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			throw new EE_Error( __( 'The EE_Session class could not be loaded.', 'event_espresso' ) );
 		}
 		// is session still valid ?
-		if ( EE_Registry::instance()->SSN->expired() ) {
-			$this->checkout->transaction = null;
+		if ( EE_Registry::instance()->SSN->expired() && EE_Registry::instance()->REQ->get( 'e_reg_url_link', '' ) === '' ) {
+			$this->checkout = new EE_Checkout();
 			EE_Registry::instance()->SSN->reset_cart();
 			EE_Registry::instance()->SSN->reset_checkout();
 			EE_Registry::instance()->SSN->reset_transaction();
