@@ -126,8 +126,10 @@ class EE_Messages_Processor {
 			$this->_queue->lock_queue();
 			$messages = is_array( $messages ) ? $messages : array( $messages );
 			foreach ( $messages as $message ) {
-				$data = $message->all_extra_meta_array();
-				$this->_queue->add( $message, $data );
+				if ( $message instanceof EE_Message ) {
+					$data = $message->all_extra_meta_array();
+					$this->_queue->add( $message, $data );
+				}
 			}
 			return true;
 		} else {
