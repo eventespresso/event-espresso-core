@@ -47,22 +47,25 @@ $display_order_values = array(
 				</th>
 				<td>
 					<p>
+						<?php echo EEH_Form_Fields::select_input( 'display_order_tickets', $display_order_values, $display_order_tickets, 'id="display_order_tickets"' ); ?>
 						<label for="display_order_tickets">
 						<?php _e('Tickets Display Order', 'event_espresso'); ?>
 						</label>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_tickets', $display_order_values, $display_order_tickets, 'id="display_order_tickets"' ); ?>
+						
 					</p>
 					<p>
+						<?php echo EEH_Form_Fields::select_input( 'display_order_datetimes', $display_order_values, $display_order_datetimes, 'id="display_order_datetimes"' ); ?>
 						<label for="display_order_datetimes">
 						<?php _e('Datetime Display Order', 'event_espresso'); ?>
 						</label>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_datetimes', $display_order_values, $display_order_datetimes, 'id="display_order_datetimes"' ); ?>
+						
 					</p>
 					<p>
+						<?php echo EEH_Form_Fields::select_input( 'display_order_venue', $display_order_values, $display_order_venue, 'id="display_order_venue"' ); ?>
 						<label for="display_order_venue">
 						<?php _e('Venue Display Order', 'event_espresso'); ?>
 						</label>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_venue', $display_order_values, $display_order_venue, 'id="display_order_venue"' ); ?>
+						
 					</p>
 					<p class="description"><?php _e('Use these settings to determine the display order of the ticket selector, datetime(s), and venue on the single event page.', 'event_espresso'); ?></p>
 
