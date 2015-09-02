@@ -16,7 +16,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	 * This priority indicates a message should be generated and sent ASAP
 	 * @type int
 	 */
-	const priority_high = 1;
+	const priority_high = 10;
 
 
 
@@ -25,7 +25,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	 * This priority indicates a message should be generated ASAP and queued for sending.
 	 * @type
 	 */
-	const priority_medium = 2;
+	const priority_medium = 20;
 
 
 
@@ -34,7 +34,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	 * This priority indicates a message should be queued for generating.
 	 * @type int
 	 */
-	const priority_low = 3;
+	const priority_low = 30;
 
 
 
