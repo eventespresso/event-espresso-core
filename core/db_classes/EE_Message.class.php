@@ -638,7 +638,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return string
 	 */
 	public function get_admin_edit_link() {
-		return '';
+		return $this->get_admin_details_link();
 	}
 
 	/**
