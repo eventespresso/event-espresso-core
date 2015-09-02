@@ -100,6 +100,22 @@ class EE_messages {
 
 	/**
 	 * An array of unique message type contexts across all active message types.
+	 *
+	 * The array will be indexed by either 'slugs' or 'all'.
+	 * The slugs index contains an array indexed by unique context slugs with the latest label representation for that slug.
+	 * array(
+	 *      'context_slug' => 'localized label for context obtained from latest message type in the loop'.
+	 * );
+	 *
+	 * The all index returns an array in this format:
+	 * array(
+	 *      'message_type_name' => array(
+	 *          'context_slug' => array(
+	 *              'label' => 'localized lable for context',
+	 *              'description' => 'localized description for context'
+	 *          )
+	 *      )
+	 * );
 	 * @type array
 	 */
 	protected $_contexts = array();
@@ -959,8 +975,9 @@ class EE_messages {
 	 * @return array
 	 */
 	public function get_all_contexts( $slugs_only = true ) {
-		if ( ! empty( $this->_contexts ) ) {
-			return $this->_contexts;
+		$key = $slugs_only ? 'slugs' : 'all';
+		if ( ! empty( $this->_contexts[$key] ) ) {
+			return $this->_contexts[$key];
 		}
 
 		//contexts has not been setup yet.  So let's get all active message type objects and loop through to get all
@@ -979,8 +996,8 @@ class EE_messages {
 			}
 		}
 
-		$this->_contexts = $contexts;
-		return $this->_contexts;
+		$this->_contexts[$key] = $contexts;
+		return $this->_contexts[$key];
 	}
 
 
