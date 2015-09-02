@@ -376,7 +376,8 @@ class EED_Messages  extends EED_Module {
 	public static function payment( EE_Transaction $transaction, EE_Payment $payment ) {
 		self::_load_controller();
 		$data = array( $transaction, $payment );
-		$message_type = self::_get_payment_message_type( $payment->STS_ID() );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$message_type = EEH_MSG_Template::convert_payment_status_to_message_type( $payment->STS_ID() );
 		//if payment amount is less than 0 then switch to payment_refund message type.
 		$message_type = $payment->amount() < 0 ? 'payment_refund' : $message_type;
 		self::$_MSGPROCESSOR->generate_for_all_active_messengers( $message_type, $data );
