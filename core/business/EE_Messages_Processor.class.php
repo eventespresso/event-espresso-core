@@ -93,10 +93,9 @@ class EE_Messages_Processor {
 				$this->_queue->initiate_request_by_priority( 'send' );
 				return $new_queue;
 			}
-		} else {
-			$this->_queue->unlock_queue();
-			return false;
 		}
+		$this->_queue->unlock_queue();
+		return false;
 	}
 
 
@@ -313,7 +312,7 @@ class EE_Messages_Processor {
 	/**
 	 * Generate for preview and execute right away.
 	 * @param   EE_Message_To_Generate $mtg
-	 * @return  EE_Messages_Qeueue | bool   false if unable to generate otherwise the generated queue.
+	 * @return  EE_Messages_Queue | bool   false if unable to generate otherwise the generated queue.
 	 */
 	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
 		if ( ! $mtg->valid() ) {
