@@ -95,7 +95,7 @@ class EE_Message_To_Generate {
 
 
 	/**
-	 * Holds the classname for the datahandler used by the current message type.
+	 * Holds the classname for the data handler used by the current message type.
 	 * This is set on the first call to the public `get_data_handler_class_name()` method.
 	 * @type string
 	 */
@@ -115,13 +115,10 @@ class EE_Message_To_Generate {
 	 * @param bool|false $preview       Whether this is being used to generate a preview or not.
 	 */
 	public function __construct( $messenger, $message_type, $data,  EE_messages $ee_msg, $context = '', $preview = false ) {
-		$messenger;
-		$message_type;
 		$this->data = is_array( $data ) ? $data : array( $data );
 		$this->context = $context;
 		$this->preview = $preview;
 		$this->_EEMSG = $ee_msg;
-
 		//this immediately validates whether the given messenger/messagetype are active or not
 		//and sets the valid flag.
 		$this->_set_valid( $messenger, $message_type );
@@ -145,7 +142,7 @@ class EE_Message_To_Generate {
 			$this->_valid = false;
 		} else {
 			$this->messenger = $validated_for_use['messenger'];
-			$this->_send_now = $validated_for_use['messenger']->send_now();
+			$this->_send_now = $this->messenger->send_now();
 		}
 
 		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
@@ -183,7 +180,7 @@ class EE_Message_To_Generate {
 		if ( $this->_EE_Message instanceof EE_Message ) {
 			return $this->_EE_Message;
 		}
-		$this->_EE_Message = $this->_EE_Message instanceof EE_Message ? $this->_EE_Message : EE_Message::new_instance( array(
+		$this->_EE_Message = EE_Message::new_instance( array(
 			'MSG_messenger' => $this->messenger->name,
 			'MSG_message_type' => $this->message_type->name,
 			'MSG_context' => $this->context,
@@ -200,7 +197,7 @@ class EE_Message_To_Generate {
 	 * Note: this also verifies that the data handler class exists.  If it doesn't then $_valid is set to false
 	 * and the data_handler_class name is set to an empty string.
 	 *
-	 * @param   bool    $preview    Used to indicate that the preview datahandler is to be returned.
+	 * @param   bool    $preview    Used to indicate that the preview data handler is to be returned.
 	 * @return  string
 	 */
 	public function get_data_handler_class_name( $preview = false ) {
