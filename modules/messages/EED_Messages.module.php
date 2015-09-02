@@ -103,9 +103,9 @@ class EED_Messages  extends EED_Module {
 		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message' ), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
+		add_action( 'AHEE__EE_Admin_Page___process_admin_payment_notification', array( 'EED_Messages', 'process_admin_payment' ), 10, 1 );
 		//filters
 		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( 'EED_Messages', 'process_resend' ), 10, 2 );
-		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( 'EED_Messages', 'process_admin_payment' ), 10, 2 );
 		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 	}
@@ -600,11 +600,10 @@ class EED_Messages  extends EED_Module {
 
 	/**
 	 * Message triggers for manual payment applied by admin
-	 * @param  bool     $success incoming success value
 	 * @param  EE_Payment $payment EE_payment object
 	 * @return bool              success/fail
 	 */
-	public static function process_admin_payment( $success = true, EE_Payment $payment ) {
+	public static function process_admin_payment( EE_Payment $payment ) {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
@@ -626,6 +625,7 @@ class EED_Messages  extends EED_Module {
 			$count_to_generate = self::$_MSGPROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
 
 			if ( $count_to_generate > 0 ) {
+				add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true' );
 				return true;
 			} else {
 				$count_failed = self::$_MSGPROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() );
