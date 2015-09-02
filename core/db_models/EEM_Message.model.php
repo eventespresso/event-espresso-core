@@ -115,7 +115,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 				'MSG_token' => new EE_Plain_Text_Field( 'MSG_token', __('Unique Token used to represent this row in publicly viewable contexts (eg. a url).', 'event_espresso' ), false, EEH_URL::generate_unique_token() ),
 				'GRP_ID'=>new EE_Foreign_Key_Int_Field( 'GRP_ID', __('Foreign key to the EEM_Message_Template_Group table.', 'event_espresso' ), true, 0, 'Message_Template_Group' ),
 				'TXN_ID' => new EE_Foreign_Key_Int_Field( 'TXN_ID', __( 'Foreign key to the related EE_Transaction.  This is required to give context for regenerating the specific message', 'event_espresso' ), true, 0, 'Transaction' ),
-				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resends of the message.', 'event_espresso' ), false ),
+				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resending of the message.', 'event_espresso' ), false ),
 				'MSG_message_type' => new EE_Plain_Text_Field( 'MSG_message_type', __( 'Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso' ), false ),
 				'MSG_context' => new EE_Plain_Text_Field( 'MSG_context', __( 'Context', 'event_espresso' ), false ),
 				'MSG_recipient_ID' => new EE_Foreign_Key_Int_Field( 'MSG_recipient_ID', __( 'Recipient ID', 'event_espresso' ), true, null, array( 'Registration', 'Attendee', 'WP_User' ) ),
@@ -152,7 +152,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 		return $this->exists( array( array(
 			'Attendee.ATT_ID' => $attendee_ID,
 			'MSG_message_type' => $message_type,
-			'STS_ID' => array( 'IN', $this->stati_indicating_sent() ) ) ) );
+			'STS_ID' => array( 'IN', $this->stati_indicating_sent() )
+		) ) );
 	}
 
 
@@ -169,7 +170,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 		return $this->exists( array( array(
 			'Registration.REG_ID' => $registrationID,
 			'MSG_message_type' => $message_type,
-			'STS_ID' => array( 'IN', $this->stati_indicating_sent() ) ) ) );
+			'STS_ID' => array( 'IN', $this->stati_indicating_sent() )
+		) ) );
 	}
 
 
