@@ -330,13 +330,10 @@ class EE_Messages_Processor {
 		if ( $generated_queue->execute( false ) ) {
 			//the first queue item should be the preview
 			$generated_queue->get_queue()->rewind();
-			if ( $generated_queue->get_queue()->valid() ) {
-				if ( $generated_queue->get_queue()->is_test_send() ) {
-					return true;
-				} else {
-					return $generated_queue;
-				}
+			if ( ! $generated_queue->get_queue()->valid() ) {
+				return $generated_queue;
 			}
+			return $generated_queue->get_queue()->is_test_send() ? true : $generated_queue;
 		} else {
 			return false;
 		}
