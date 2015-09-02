@@ -37,12 +37,11 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 *
 	 * @param array  $props_n_values
 	 * @param string $timezone
-	 * @param array  incoming date formats in an array.  First value is the date_format, second is time format.
+	 * @param array $date_formats incoming date formats in an array.  First value is the date_format, second is time format.
 	 * @return EE_Message
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-
 		//if object doesn't exist, let's generate a unique token on instantiation so that its available even before saving to db.
 		if ( ! $has_object ) {
 			EE_Registry::instance()->load_helper( 'URL' );
