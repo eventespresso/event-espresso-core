@@ -4,7 +4,7 @@
  *
  * @package			Event Espresso
  * @subpackage		models
- * @author			Mike Nelson
+ * @author			Darren Ethier
  */
 class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
