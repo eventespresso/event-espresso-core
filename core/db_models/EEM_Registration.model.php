@@ -127,6 +127,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation(),
+			'Registration_Payment' => new EE_Has_Many_Relation(),
 			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
 			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletes even if there are messages in the queue related
 		);

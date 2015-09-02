@@ -608,6 +608,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 * @return boolean
 	 */
 	public function schema_changes_after_migration() {
+		$this->fix_non_default_taxes();
 		//this is actually the same as the last DMS
 		/** @var EE_DMS_Core_4_7_0 $script_4_7_defaults */
 		$script_4_7_defaults = EE_Registry::instance()->load_dms('Core_4_7_0');
@@ -616,5 +617,24 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 	public function migration_page_hooks(){
 
+	}
+
+	/**
+	 * addresses https://events.codebasehq.com/projects/event-espresso/tickets/8731
+	 * which should just be a temporary issue for folks who isntalled 4.8.0-4.8.5;
+	 * we should be able to stop doing this in 4.9
+	 */
+	public function fix_non_default_taxes(){
+		global $wpdb;
+		$query = $wpdb->prepare( "UPDATE
+				{$wpdb->prefix}esp_price p INNER JOIN
+				{$wpdb->prefix}esp_price_type pt ON p.PRT_ID = pt.PRT_ID
+			SET
+				p.PRC_is_default = 1
+			WHERE
+				p.PRC_is_default = 0 AND
+				pt.PBT_ID = %d
+					", EEM_Price_Type::base_type_tax );
+		$wpdb->query( $query );
 	}
 }

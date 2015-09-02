@@ -3402,6 +3402,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
+		add_filter( 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', '__return_true' );
 		$success = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;
