@@ -378,7 +378,7 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	public function process_admin_payment( $success, $payment ) {
 		self::doing_it_wrong_call( __METHOD__ );
-		EED_Messages::process_admin_payment( $success, $payment );
+		EED_Messages::process_admin_payment( $payment );
 	}
 
 	/**
