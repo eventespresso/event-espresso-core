@@ -225,7 +225,7 @@ class EE_Messages_Generator {
 	 * @return bool Whether the message was successfully generated or not.
 	 */
 	protected function _generate() {
-		//doublecheck verification has run and that everything is ready to work with (saves us having to validate everything again).
+		//double check verification has run and that everything is ready to work with (saves us having to validate everything again).
 		if ( ! $this->_verified ) {
 			return false; //get out because we don't have a valid setup to work with.
 		}
@@ -237,7 +237,7 @@ class EE_Messages_Generator {
 				$this->_generation_queue->get_queue()->current()->context()
 			);
 		} catch ( EE_Error $e ) {
-			$this->_error_msg[] = $e->get_error();
+			$this->_error_msg[] = $e->getMessage();
 			return false;
 		}
 
@@ -393,7 +393,7 @@ class EE_Messages_Generator {
 	 * @param array $addressees  Array of EE_Messages_Addressee objects indexed by message type context.
 	 * @param array $templates   formatted array of templates used for parsing data.
 	 * @param EE_Message_Template_Group $mtpg
-	 * @return bool   true if message generation went a-ok.  false if some sort of exception occured.  Note: The method will
+	 * @return bool   true if message generation went a-ok.  false if some sort of exception occurred.  Note: The method will
 	 *                attempt to generate ALL EE_Message objects and add to the _ready_queue.  Successfully generated messages
 	 *                get added to the queue with EEM_Message::status_idle, unsuccessfully generated messages will get added
 	 *                to the queue as EEM_Message::status_failed.  Very rarely should "false" be returned from this method.
@@ -469,7 +469,7 @@ class EE_Messages_Generator {
 			//we silently exit here and do NOT record a fail because the message is "turned off" by having no "to" field.
 			return false;
 		}
-
+		$error_msg = array();
 		foreach ( $templates as $field => $ctxt ) {
 			$error_msg = array();
 			//let's setup the valid shortcodes for the incoming context.
@@ -489,7 +489,7 @@ class EE_Messages_Generator {
 						$message );
 					$message->set_field_or_extra_meta( $column_name, $content );
 				} catch ( EE_Error $e ) {
-					$error_msg[] = sprintf( __( 'There was a problem generating the content for the field %s: %s', 'event_espresso' ), $field, $e->get_error() );
+					$error_msg[] = sprintf( __( 'There was a problem generating the content for the field %s: %s', 'event_espresso' ), $field, $e->getMessage() );
 					$message->set_STS_ID( EEM_Message::status_failed );
 				}
 			}
@@ -657,7 +657,7 @@ class EE_Messages_Generator {
 	 */
 	protected function _set_data_handler( $generating_data, $data_handler_class_name ) {
 		//valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
-		//is already a ready datahandler in the repository.
+		//is already a ready data handler in the repository.
 		$this->_current_data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $data_handler_class_name, $generating_data ) );
 		if ( ! $this->_current_data_handler instanceof EE_messages_incoming_data ) {
 			//no saved data_handler in the repo so let's set one up and add it to the repo.
