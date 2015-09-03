@@ -195,7 +195,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>
 					<div class="ticket-pending-pg">
 						<span class="ticket-pending"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg', __( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' )); ?></span><br/>
-						<span class="small-text"><?php echo $ticket->get_i18n_datetime( 'TKT_start_date', 'M d, Y' ); ?></span>
+						<span class="small-text"><?php echo $ticket->get_i18n_datetime( 'TKT_start_date', $date_format ); ?></span>
 					</div>
 					<?php
 					// min qty purchasable is less than tickets available
