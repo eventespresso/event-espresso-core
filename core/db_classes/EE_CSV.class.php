@@ -315,7 +315,7 @@
 //		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
 		header("Content-Type: text/csv; charset=utf-8");
-		echo "\xEF\xBB\xBF"; // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
+		echo "\xEF\xBB\xBFsep=,\n"; // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
 		$fh = fopen('php://output', 'w');
 		return $fh;
 	}
