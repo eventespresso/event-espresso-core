@@ -275,7 +275,7 @@ class EE_Messages_Processor {
 	 * Simply loops through the given array of EE_Message_To_Generate objects and adds them to the _queue as EE_Message
 	 * objects.
 	 *
-	 * @param $messages_to_generate
+	 * @param EE_Message_To_Generate[] $messages_to_generate
 	 */
 	protected function _queue_for_generation_loop( $messages_to_generate ) {
 		//make sure is in an array.
@@ -364,22 +364,23 @@ class EE_Messages_Processor {
 	/**
 	 * This generates and sends from the given EE_Message_To_Generate class immediately.
 	 * @param EE_Message_To_Generate $mtg
-	 * @return bool
+	 * @return EE_Messages_Queue | null
 	 */
 	public function generate_and_send_now( EE_Message_To_Generate $mtg ) {
 		if ( ! $mtg->valid() ) {
-			return false;
+			return null;
 		}
 		$sending_messenger = $mtg instanceof EEI_Has_Sending_Messenger ? $mtg->sending_messenger()->name : '';
 		if ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
 			$this->_queue->add( $mtg->get_EE_Message() );
 			$this->_queue->execute( false, $sending_messenger );
+			return $this->_queue;
 		} elseif ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_incomplete ) {
-			$generated_queue = $this->generate_and_return( $mtg );
+			$generated_queue = $this->generate_and_return( array( $mtg ) );
 			$generated_queue->execute( false, $sending_messenger );
-		} else {
-			return false;
+			return $generated_queue;
 		}
+		return null;
 	}
 
 
