@@ -195,7 +195,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>
 					<div class="ticket-pending-pg">
 						<span class="ticket-pending"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg', __( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' )); ?></span><br/>
-						<span class="small-text"><?php echo $ticket->get_i18n_datetime( 'TKT_start_date', $date_format ); ?></span>
+						<span class="small-text"><?php echo $ticket->get_i18n_datetime( 'TKT_start_date', apply_filters( 'FHEE__EED_Ticket_Selector__display_goes_on_sale__date_format', $date_format ) ); ?></span>
 					</div>
 					<?php
 					// min qty purchasable is less than tickets available
@@ -260,7 +260,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 									<?php if ( $ticket_price != 0 && apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
 									<section class="tckt-slctr-tkt-price-sctn">
-										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading', __( 'Ticket Price Breakdown', 'event_espresso' )); ?></h5>
+										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading', __( 'Price', 'event_espresso' )); ?></h5>
 										<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 											<table class="tckt-slctr-tkt-details-tbl">
 												<thead>
@@ -319,8 +319,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<?php } ?>
 												<?php } ?>
 													<tr>
-														<td colspan="2" class="jst-rght small-text ttl-lbl-td"><b><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?></b></td>
-														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total Ticket Price', 'event_espresso' )); ?>" class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
+														<td colspan="2" class="jst-rght small-text ttl-lbl-td"><b><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total', 'event_espresso' )); ?></b></td>
+														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_total_price', __( 'Total', 'event_espresso' )); ?>" class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
 													</tr>
 												</tbody>
 											</table>
