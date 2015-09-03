@@ -23,6 +23,18 @@
  */
 class EED_Event_Single  extends EED_Module {
 
+	protected static $filter_order_array = array();
+
+	protected static $event_position;
+
+	protected static $display_order_tickets;
+
+	protected static $display_order_datetimes;
+
+	protected static $display_order_event;
+
+	protected static $display_order_venue;
+
 
 
 	/**
@@ -82,6 +94,84 @@ class EED_Event_Single  extends EED_Module {
 		$this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Event_Single_Config' );
 		$this->set_config_name( 'EED_Event_Single' );
+		EED_Event_Single::$display_order_tickets = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_tickets;
+		EED_Event_Single::$display_order_datetimes = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_datetimes;
+		EED_Event_Single::$display_order_event = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_event;
+		EED_Event_Single::$display_order_venue = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_venue;
+		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_tickets ] = 'tickets';
+		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_datetimes ] = 'datetimes';
+		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_event ] = 'event';
+		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_venue ] = 'venue';
+		EED_Event_Single::_process_filter_order_array();
+	}
+
+
+
+	/**
+	 *   _process_filter_order_array
+	 *
+	 * reorganizes the order of the template parts as set in the admin, in order for the filters to work correctly
+	 * 	because we are adding content via filters that always attach before or after the event description (the content)
+	 * 	we actually need to process the middle items first, then work our way outwards to the first and last items
+	 * 	so we process the second item in our list first, then the third, then first, then last
+	 *
+	 * @access    protected
+	 * @return    void
+	 */
+	protected static function _process_filter_order_array() {
+		ksort( EED_Event_Single::$filter_order_array );
+		$corrected_keys = array(
+			100 => 102,
+			101 => 100,
+			102 => 101,
+			103 => 103,
+			array( 'id' => 2, 'text' => 1 ),
+			array( 'id' => 0, 'text' => 2 ),
+			array( 'id' => 1, 'text' => 3 ),
+			array( 'id' => 3, 'text' => 4 ),
+		);
+		$corrected_key_array = array();
+		foreach ( EED_Event_Single::$filter_order_array as $key => $template ) {
+			$corrected_key_array[ $corrected_keys[ $key ] ] = $template;
+			if ( $template == 'event' ) {
+				EED_Event_Single::$event_position = $corrected_keys[ $key ];
+			}
+			$filter = 'display_order_' . $template;
+			EED_Event_Single::${$filter} = $corrected_keys[ $key ];
+		}
+		EED_Event_Single::$filter_order_array = $corrected_key_array;
+		ksort( EED_Event_Single::$filter_order_array );
+		// DEFAULT
+		// want:  	tickets - dates - EVENT - venue
+		// order:  dates - EVENT - tickets - venue
+		// REVERSE
+		// want:  venue - EVENT - dates - tickets
+		// order: EVENT - dates - venue - tickets
+		// 2 or 3, 2 or 3, FIRST, LAST
+		// RANDOM EVENT LAST
+		// want:  dates - tickets - venue - EVENT
+		// order: tickets - venue - dates - EVENT
+		// 0 to 1 : venue - tickets - dates - EVENT
+		// RANDOM EVENT FIRST
+		// want:  EVENT - tickets - venue - dates
+		// order: tickets - venue - EVENT - dates
+		// RANDOM EVENT LAST
+		// want:  dates - tickets - venue - EVENT
+		// order: tickets - venue - dates - EVENT
+		// 0 to 1 : venue - tickets - dates - EVENT
+		if ( EED_Event_Single::$event_position == 103 ) {
+			// EVENT LAST
+			// swap positions for elements 0 & 1
+			$temp = EED_Event_Single::$filter_order_array[ 100 ];
+			EED_Event_Single::$filter_order_array[ 100 ] = EED_Event_Single::$filter_order_array[ 101 ];
+			EED_Event_Single::$filter_order_array[ 101 ] = $temp;
+			ksort( EED_Event_Single::$filter_order_array );
+			// don't forget to update the actual config properties
+			foreach ( EED_Event_Single::$filter_order_array as $filter_order => $filter ) {
+				$filter = 'display_order_' . $filter;
+				EED_Event_Single::${$filter} = $filter_order;
+			}
+		}
 	}
 
 
@@ -102,6 +192,10 @@ class EED_Event_Single  extends EED_Module {
 		// load css
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		EE_Registry::instance()->load_helper( 'Venue_View' );
+
+
+
+
 	}
 
 
@@ -123,7 +217,7 @@ class EED_Event_Single  extends EED_Module {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), EED_Event_Single::$display_order_event );
 			add_action( 'loop_end', array( 'EED_Event_Single', 'loop_end' ));
 			// don't display entry meta because the existing theme will take car of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
@@ -175,21 +269,59 @@ class EED_Event_Single  extends EED_Module {
 			// it uses the_content() for displaying the $post->post_content
 			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), EED_Event_Single::$display_order_event  );
 			//now add additional content
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110, 1 );
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120, 1 );
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130, 1 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), EED_Event_Single::$display_order_datetimes, 1 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), EED_Event_Single::$display_order_tickets, 1 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), EED_Event_Single::$display_order_venue, 1 );
 			// now load our template
 			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 			//now add our filter back in, plus some others
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110 );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120 );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), EED_Event_Single::$display_order_event  );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), EED_Event_Single::$display_order_datetimes );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), EED_Event_Single::$display_order_tickets );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), EED_Event_Single::$display_order_venue );
 		}
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
+	}
+
+
+
+	/**
+	 *    _position_filtered_element
+	 *
+	 * @param        string $content
+	 * @param               $element
+	 * @param               $template
+	 * @return string
+	 * @access    protected
+	 */
+	protected static function _position_filtered_element( $content, $element, $template ) {
+		if ( EED_Event_Single::$event_position == 102 ) {
+			// EVENT is FIRST so all elements go AFTER the content
+			$before = false;
+		} else if ( EED_Event_Single::$event_position == 103 ) {
+			// EVENT is LAST so all elements go BEFORE the content
+			$before = true;
+		} else if ( $element == 103 ) {
+			// this element is LAST - add AFTER existing content
+			$before = false;
+		} else if ( $element == 102 ) {
+			// this element is FIRST - add BEFORE existing content
+			$before = true;
+		} else if ( $element < EED_Event_Single::$display_order_event ) {
+			// this element is BEFORE the content
+			$before = true;
+		} else {
+			// this element is AFTER the content
+			$before = false;
+		}
+		if ( $before ) {
+			return EEH_Template::locate_template( "content-espresso_events-$template.php" ) . $content;
+		} else {
+			return $content . EEH_Template::locate_template( "content-espresso_events-$template.php" );
+		}
 	}
 
 
@@ -202,7 +334,7 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_datetimes( $content ) {
-		return EEH_Template::locate_template( 'content-espresso_events-datetimes.php' ) . $content;
+		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_datetimes, 'datetimes' );
 	}
 
 	/**
@@ -213,7 +345,7 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_tickets( $content ) {
-		return EEH_Template::locate_template( 'content-espresso_events-tickets.php' ) . $content;
+		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_tickets, 'tickets' );
 	}
 
 	/**
@@ -224,7 +356,7 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_venues( $content ) {
-		return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
+		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_venue, 'venues' );
 	}
 
 
