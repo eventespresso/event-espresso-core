@@ -61,6 +61,8 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 			'CHK_timestamp' => array( 'CHK_timestamp' => TRUE )
 			);
 
+		$this->_primary_column = 'CHK_in';
+
 		$this->_hidden_columns = array();
 	}
 

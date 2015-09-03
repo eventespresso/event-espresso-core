@@ -103,7 +103,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		if ( isset( $_GET['event_id'] )) {
 			$this->_columns = array(
-				'_Reg_Status' => '',
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'_REG_ID' => __( 'ID', 'event_espresso' ),
 				'_REG_count' => '#',
@@ -126,7 +125,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 		} else {
 			$this->_columns = array(
-				'_Reg_Status' => '',
 				'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
 				'_REG_ID' => __( 'ID', 'event_espresso' ),
 				'_REG_count' => '#',
@@ -143,10 +141,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$this->_bottom_buttons = array(
 				'report_all'=> array(
 				'route' => 'registrations_report'
-			),
+				),
 			);
 		}
 
+		$this->_primary_column = '_REG_ID';
 
 		$this->_sortable_columns = array(
 			'_REG_date' => array( '_REG_date' => TRUE ),   //true means its already sorted

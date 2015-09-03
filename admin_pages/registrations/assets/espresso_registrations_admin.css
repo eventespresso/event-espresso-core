@@ -280,45 +280,80 @@
 /**
  * status strips
  */
+
+.wp-list-table .ee-status-strip ._REG_att_checked_in {
+	border-left-style: solid;
+	border-left-width: 4px;
+}
+
+.wp-list-table .ee-status-strip.has-checkbox-column ._REG_att_checked_in {
+	border-left: none;
+}
+
+/** fix for mobile view in new WP > 4.3 list tables **/
+@media screen and ( max-width: 782px ) {
+	.wp-list-table tr:not(.inline-edit-row):not(.no-items) td:not(.check-column)._REG_att_checked_in {
+		text-align: left;
+	}
+
+	.wp-list-table tr.has-checkbox-column ._REG_att_checked_in {
+		margin-left: 20px;
+		margin-top: 5px;
+	}
+}
+
 /*pending payment*/
 .reg-status-RPP,
 .button-secondary.reg-status-RPP,
-.button-primary.reg-status-RPP {
+.button-primary.reg-status-RPP,
+.reg-status-RPP ._REG_att_checked_in,
+.reg-status-RPP .check-column{
 	border-left-color : #00B1CA;
 }
 
 /*cancelled*/
 .reg-status-RCN,
+.tr-ee-reg-status-RCN,
 .button-secondary.reg-status-RCN,
-.button-primary.reg-status-RCN {
+.button-primary.reg-status-RCN,
+.reg-status-RCN ._REG_att_checked_in,
+.reg-status-RCN .check-column{
 	border-left-color : #AC9D9C;
 }
 
 /*declined*/
 .reg-status-RDC,
 .button-secondary.reg-status-RDC,
-.button-primary.reg-status-RDC {
+.button-primary.reg-status-RDC,
+.reg-status-RDC ._REG_att_checked_in,
+.reg-status-RDC .check-column{
 	border-left-color : #E44064;
 }
 
 /*approved*/
 .reg-status-RAP,
 .button-secondary.reg-status-RAP,
-.button-primary.reg-status-RAP {
+.button-primary.reg-status-RAP,
+.reg-status-RAP ._REG_att_checked_in,
+.reg-status-RAP .check-column{
 	border-left-color : #70CC50;
 }
 
 /*not-approved*/
 .reg-status-RNA,
 .button-secondary.reg-status-RNA,
-.button-primary.reg-status-RNA {
+.button-primary.reg-status-RNA,
+.reg-status-RNA ._REG_att_checked_in,
+.reg-status-RNA .check-column{
 	border-left-color : #E76700;
 }
 
 /*not-approved*/
 .reg-status-RIC,
 .button-secondary.reg-status-RIC,
-.button-primary.reg-status-RIC {
+.button-primary.reg-status-RIC,
+.reg-status-RIC ._REG_att_checked_in,
+.reg-status-RIC .check-column{
 	border-left-color : #FCB93C;
 }
 
