@@ -7,7 +7,7 @@ $display_order_values = array(
 	array('id' => 0, 'text' => 1),
 	array('id' => 1, 'text' => 2),
 	array('id' => 2, 'text' => 3),
-
+	array('id' => 3, 'text' => 4),
 );
 ?>
 
@@ -46,6 +46,13 @@ $display_order_values = array(
 					<?php _e('Display Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link('display_addresses_in_reg_form_info');?>
 				</th>
 				<td>
+					<p>
+						<?php echo EEH_Form_Fields::select_input( 'display_order_description', $display_order_values, $display_order_description, 'id="display_order_description"' ); ?>
+						<label for="display_order_description">
+						<?php _e('Description Display Order', 'event_espresso'); ?>
+						</label>
+						
+					</p>
 					<p>
 						<?php echo EEH_Form_Fields::select_input( 'display_order_tickets', $display_order_values, $display_order_tickets, 'id="display_order_tickets"' ); ?>
 						<label for="display_order_tickets">
