@@ -27,6 +27,18 @@ class EED_Events_Archive  extends EED_Module {
 	public static $espresso_event_list_ID = 0;
 	public static $espresso_grid_event_lists = array();
 
+	protected static $filter_order_array = array();
+
+	protected static $event_position;
+
+	protected static $display_order_tickets;
+
+	protected static $display_order_datetimes;
+
+	protected static $display_order_event;
+
+	protected static $display_order_venue;
+
 
 
 	/**
@@ -85,6 +97,84 @@ class EED_Events_Archive  extends EED_Module {
 		$this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Events_Archive_Config' );
 		$this->set_config_name( 'EED_Events_Archive' );
+		EED_Events_Archive::$display_order_tickets = 100 + EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_order_tickets;
+		EED_Events_Archive::$display_order_datetimes = 100 + EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_order_datetimes;
+		EED_Events_Archive::$display_order_event = 100 + EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_order_event;
+		EED_Events_Archive::$display_order_venue = 100 + EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_order_venue;
+		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_tickets ] = 'tickets';
+		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_datetimes ] = 'datetimes';
+		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_event ] = 'event';
+		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_venue ] = 'venue';
+		EED_Events_Archive::_process_filter_order_array();
+	}
+
+
+
+	/**
+	 *   _process_filter_order_array
+	 *
+	 * reorganizes the order of the template parts as set in the admin, in order for the filters to work correctly
+	 *    because we are adding content via filters that always attach before or after the event description (the content)
+	 *    we actually need to process the middle items first, then work our way outwards to the first and last items
+	 *    so we process the second item in our list first, then the third, then first, then last
+	 *
+	 * @access    protected
+	 * @return    void
+	 */
+	protected static function _process_filter_order_array() {
+		ksort( EED_Events_Archive::$filter_order_array );
+		$corrected_keys = array(
+			100 => 102,
+			101 => 100,
+			102 => 101,
+			103 => 103,
+			array( 'id' => 2, 'text' => 1 ),
+			array( 'id' => 0, 'text' => 2 ),
+			array( 'id' => 1, 'text' => 3 ),
+			array( 'id' => 3, 'text' => 4 ),
+		);
+		$corrected_key_array = array();
+		foreach ( EED_Events_Archive::$filter_order_array as $key => $template ) {
+			$corrected_key_array[ $corrected_keys[ $key ] ] = $template;
+			if ( $template == 'event' ) {
+				EED_Events_Archive::$event_position = $corrected_keys[ $key ];
+			}
+			$filter = 'display_order_' . $template;
+			EED_Events_Archive::${$filter} = $corrected_keys[ $key ];
+		}
+		EED_Events_Archive::$filter_order_array = $corrected_key_array;
+		ksort( EED_Events_Archive::$filter_order_array );
+		// DEFAULT
+		// want:  	tickets - dates - EVENT - venue
+		// order:  dates - EVENT - tickets - venue
+		// REVERSE
+		// want:  venue - EVENT - dates - tickets
+		// order: EVENT - dates - venue - tickets
+		// 2 or 3, 2 or 3, FIRST, LAST
+		// RANDOM EVENT LAST
+		// want:  dates - tickets - venue - EVENT
+		// order: tickets - venue - dates - EVENT
+		// 0 to 1 : venue - tickets - dates - EVENT
+		// RANDOM EVENT FIRST
+		// want:  EVENT - tickets - venue - dates
+		// order: tickets - venue - EVENT - dates
+		// RANDOM EVENT LAST
+		// want:  dates - tickets - venue - EVENT
+		// order: tickets - venue - dates - EVENT
+		// 0 to 1 : venue - tickets - dates - EVENT
+		if ( EED_Events_Archive::$event_position == 103 ) {
+			// EVENT LAST
+			// swap positions for elements 0 & 1
+			$temp = EED_Events_Archive::$filter_order_array[ 100 ];
+			EED_Events_Archive::$filter_order_array[ 100 ] = EED_Events_Archive::$filter_order_array[ 101 ];
+			EED_Events_Archive::$filter_order_array[ 101 ] = $temp;
+			ksort( EED_Events_Archive::$filter_order_array );
+			// don't forget to update the actual config properties
+			foreach ( EED_Events_Archive::$filter_order_array as $filter_order => $filter ) {
+				$filter = 'display_order_' . $filter;
+				EED_Events_Archive::${$filter} = $filter_order;
+			}
+		}
 	}
 
 
@@ -164,9 +254,9 @@ class EED_Events_Archive  extends EED_Module {
 				// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
-				add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+				add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 				// or the_content
-				add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+				add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 				// and just in case they are running get_the_excerpt() which DESTROYS things
 				add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 				// don't display entry meta because the existing theme will take care of that
@@ -190,8 +280,8 @@ class EED_Events_Archive  extends EED_Module {
 		if ( post_password_required() ) {
 			return $excerpt;
 		}
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 		return EED_Events_Archive::event_details( $excerpt );
 	}
 
@@ -232,8 +322,8 @@ class EED_Events_Archive  extends EED_Module {
 			&& ! post_password_required()
 		) {
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
+			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 			remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 			//now add additional content depending on whether event is using the_excerpt() or the_content()
 			EED_Events_Archive::_add_additional_excerpt_filters();
@@ -241,8 +331,8 @@ class EED_Events_Archive  extends EED_Module {
 			// now load our template
 			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 			// re-add our main filters (or else the next event won't have them)
-			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
+			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 			add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 			// but remove the other filters so that they don't get applied to the next post
 			EED_Events_Archive::_remove_additional_events_archive_filters();
@@ -260,9 +350,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	private static function _add_additional_excerpt_filters() {
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
 	}
 
 
@@ -274,11 +364,48 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	private static function _add_additional_content_filters() {
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
 	}
 
+
+
+	/**
+	 *    _position_filtered_element
+	 *
+	 * @param        string $content
+	 * @param               $element
+	 * @param               $template
+	 * @return string
+	 * @access    protected
+	 */
+	protected static function _position_filtered_element( $content, $element, $template ) {
+		if ( EED_Events_Archive::$event_position == 102 ) {
+			// EVENT is FIRST so all elements go AFTER the content
+			$before = false;
+		} else if ( EED_Events_Archive::$event_position == 103 ) {
+			// EVENT is LAST so all elements go BEFORE the content
+			$before = true;
+		} else if ( $element == 103 ) {
+			// this element is LAST - add AFTER existing content
+			$before = false;
+		} else if ( $element == 102 ) {
+			// this element is FIRST - add BEFORE existing content
+			$before = true;
+		} else if ( $element < EED_Events_Archive::$display_order_event ) {
+			// this element is BEFORE the content
+			$before = true;
+		} else {
+			// this element is AFTER the content
+			$before = false;
+		}
+		if ( $before ) {
+			return EEH_Template::locate_template( "content-espresso_events-$template.php" ) . $content;
+		} else {
+			return $content . EEH_Template::locate_template( "content-espresso_events-$template.php" );
+		}
+	}
 
 
 	/**
@@ -292,7 +419,7 @@ class EED_Events_Archive  extends EED_Module {
 		if ( post_password_required() ) {
 			return $content;
 		}
-		return EEH_Template::locate_template( 'content-espresso_events-datetimes.php' ) . $content;
+		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_datetimes, 'datetimes' );
 	}
 
 	/**
@@ -306,7 +433,7 @@ class EED_Events_Archive  extends EED_Module {
 		if ( post_password_required() ) {
 			return $content;
 		}
-		return EEH_Template::locate_template( 'content-espresso_events-tickets.php' ) . $content;
+		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_datetimes, 'tickets' );
 	}
 
 	/**
@@ -320,7 +447,7 @@ class EED_Events_Archive  extends EED_Module {
 		if ( post_password_required() ) {
 			return $content;
 		}
-	return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
+		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_datetimes, 'venues' );
 }
 
 	/**
@@ -330,12 +457,12 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	private static function _remove_additional_events_archive_filters() {
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
 	}
 	/**
 	 * 	remove_all_events_archive_filters
@@ -346,14 +473,14 @@ class EED_Events_Archive  extends EED_Module {
 	public static function remove_all_events_archive_filters() {
 		remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 		remove_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
 		// don't display entry meta because the existing theme will take care of that
 		remove_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 	}
