@@ -1,8 +1,8 @@
 <div class="padding">
 
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Critical Pages & Shortcodes', 'event_espresso'); ?>
-	</h4>
+	</h2>
 	<p class="ee-attention">
 		<?php
 		echo sprintf(
