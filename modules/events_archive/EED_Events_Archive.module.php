@@ -31,13 +31,13 @@ class EED_Events_Archive  extends EED_Module {
 
 	protected static $event_position;
 
-	protected static $display_order_tickets;
+	protected static $display_order_tickets = 100;
 
-	protected static $display_order_datetimes;
+	protected static $display_order_datetimes = 101;
 
-	protected static $display_order_event;
+	protected static $display_order_event = 102;
 
-	protected static $display_order_venue;
+	protected static $display_order_venue = 103;
 
 
 
@@ -128,10 +128,6 @@ class EED_Events_Archive  extends EED_Module {
 			101 => 100,
 			102 => 101,
 			103 => 103,
-			array( 'id' => 2, 'text' => 1 ),
-			array( 'id' => 0, 'text' => 2 ),
-			array( 'id' => 1, 'text' => 3 ),
-			array( 'id' => 3, 'text' => 4 ),
 		);
 		$corrected_key_array = array();
 		foreach ( EED_Events_Archive::$filter_order_array as $key => $template ) {
