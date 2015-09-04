@@ -369,9 +369,9 @@ class EED_Recaptcha  extends EED_Module {
 				'subsections' 			=> apply_filters(
 					'FHEE__EED_Recaptcha___recaptcha_settings_form__form_subsections',
 					array(
-						'main_settings_hdr' 				=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Anti-spam Settings', 'event_espresso' ) . EEH_Template::get_help_tab_link( 'recaptcha_info' ))),
+						'main_settings_hdr' 				=> new EE_Form_Section_HTML( EEH_HTML::h2( __( 'reCAPTCHA Anti-spam Settings', 'event_espresso' ) . EEH_Template::get_help_tab_link( 'recaptcha_info' ))),
 						'main_settings' 						=> EED_Recaptcha::_recaptcha_main_settings(),
-						'appearance_settings_hdr' 	=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'reCAPTCHA Appearance', 'event_espresso' ) )),
+						'appearance_settings_hdr' 	=> new EE_Form_Section_HTML( EEH_HTML::h2( __( 'reCAPTCHA Appearance', 'event_espresso' ) )),
 						'appearance_settings' 			=> EED_Recaptcha::_recaptcha_appearance_settings(),
 						// 'recaptcha_example' 				=> new EE_Form_Section_HTML( EED_Recaptcha::display_recaptcha() ),
 						'required_fields_note' 			=> new EE_Form_Section_HTML( EEH_HTML::p( __( 'All fields marked with a * are required fields', 'event_espresso' ), '', 'grey-text' ))
