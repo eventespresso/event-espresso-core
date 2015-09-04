@@ -261,25 +261,28 @@ class EED_Event_Single  extends EED_Module {
 	public static function event_details( $content ) {
 		global $post;
 		if ( $post->post_type == 'espresso_events' && ! post_password_required() ) {
-			// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
-			// it uses the_content() for displaying the $post->post_content
-			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
-			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), EED_Event_Single::$display_order_event  );
-			//now add additional content
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), EED_Event_Single::$display_order_datetimes, 1 );
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), EED_Event_Single::$display_order_tickets, 1 );
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), EED_Event_Single::$display_order_venue, 1 );
-			// now load our template
-			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
-			//now add our filter back in, plus some others
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), EED_Event_Single::$display_order_event  );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), EED_Event_Single::$display_order_datetimes );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), EED_Event_Single::$display_order_tickets );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), EED_Event_Single::$display_order_venue );
+			$content = EED_Event_Single::_apply_event_content_filters( $content );
 		}
-		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
-		return ! empty( $template ) ? $template : $content;
+ 		return $content;
+	}
+
+
+
+	/**
+	 *    _apply_event_content_filters
+	 *
+	 * @access    private
+	 * @param string $content
+	 * @return string
+	 */
+	private static function _apply_event_content_filters( $content = '' ) {
+		foreach ( EED_Event_Single::$filter_order_array as $order => $filter ) {
+			$filter = "event_$filter";
+			if ( method_exists( 'EED_Event_Single', $filter ) ) {
+				$content = EED_Event_Single::$filter( $content );
+			}
+		}
+		return $content;
 	}
 
 
@@ -333,23 +336,40 @@ class EED_Event_Single  extends EED_Module {
 		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_datetimes, 'datetimes' );
 	}
 
+
+
 	/**
-	 * 	event_tickets
+	 *    event_tickets
 	 *
-	 *  	@access 	public
-	 * 	@param		string 	$content
-	 *  	@return 		string
+	 * @access 	public
+	 * @param 	string $content
+	 * @return 	string
 	 */
 	public static function event_tickets( $content ) {
 		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_tickets, 'tickets' );
 	}
 
+
+
 	/**
-	 * 	event_venues
+	 *    event_venues
 	 *
-	 *  	@access 	public
-	 * 	@param		string 	$content
-	 *  	@return 		string
+	 * @access 	public
+	 * @param 	string $content
+	 * @return 	string
+	 */
+	public static function event_venue( $content ) {
+		return EED_Event_Single::event_venues( $content );
+	}
+
+
+
+	/**
+	 *    event_venues
+	 *
+	 * @access 	public
+	 * @param 	string $content
+	 * @return 	string
 	 */
 	public static function event_venues( $content ) {
 		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_venue, 'venues' );
