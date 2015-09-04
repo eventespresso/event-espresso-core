@@ -910,12 +910,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->_verify_payment_method_is_set() ) {
 			return FALSE;
 		}
-		EE_Error::add_success(
-			apply_filters(
-				'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-				sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
-			)
-		);
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false ) ) {
+			EE_Error::add_success(
+				apply_filters(
+					'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+					sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
+				)
+			);
+		}
 		// generate billing form for selected method of payment if it hasn't been done already
 		if ( $this->checkout->payment_method->type_obj()->has_billing_form() ) {
 			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
