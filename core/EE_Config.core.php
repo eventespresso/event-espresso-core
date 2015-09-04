@@ -2112,12 +2112,12 @@ class EE_Template_Config extends EE_Config_Base {
 	public $current_espresso_theme;
 
 	/**
-	* @var EED_Event_Single $EED_Event_Single
+	* @var EE_Events_Archive_Config $EED_Event_Single
 	*/
 	public $EED_Event_Single;
 
 	/**
-	* @var EED_Events_Archive $EED_Events_Archive
+	* @var EE_Events_Archive_Config $EED_Events_Archive
 	*/
 	public $EED_Events_Archive;
 
