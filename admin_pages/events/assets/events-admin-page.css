@@ -1,7 +1,5 @@
-#Events_Admin_List_Table-table-frm .check-column,
-#Extend_Events_Admin_List_Table-table-frm .check-column { width: 4%; max-width: 30px; }
 #Events_Admin_List_Table-table-frm .column-id,
-#Extend_Events_Admin_List_Table-table-frm .column-id { width:5%; max-width: 40px; }
+#Extend_Events_Admin_List_Table-table-frm .column-id { width:5%; }
 #Events_Admin_List_Table-table-frm .column-name,
 #Extend_Events_Admin_List_Table-table-frm .column-name { width: 20%;  }
 #Events_Admin_List_Table-table-frm .column-venue,
@@ -11,7 +9,7 @@
 #Events_Admin_List_Table-table-frm .column-reg_begins,
 #Extend_Events_Admin_List_Table-table-frm .column-reg_begins { width:15%; }
 #Events_Admin_List_Table-table-frm .column-attendees,
-#Extend_Events_Admin_List_Table-table-frm .column-attendees { width: 5%; max-width: 40px;}
+#Extend_Events_Admin_List_Table-table-frm .column-attendees { width: 5%;}
 #Events_Admin_List_Table-table-frm .column-actions,
 #Extend_Events_Admin_List_Table-table-frm .column-actions { width: 15%; }
 
