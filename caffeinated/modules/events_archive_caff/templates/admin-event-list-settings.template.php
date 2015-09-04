@@ -17,9 +17,9 @@ EE_Registry::instance()->load_helper('Form_Fields');
 
 
 	<!--*************************   Event Listings  ****************************-->
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Event List Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_list_settings_info');?>
-	</h4>
+	</h2>
 	<table class="form-table">
 		<tbody>
 

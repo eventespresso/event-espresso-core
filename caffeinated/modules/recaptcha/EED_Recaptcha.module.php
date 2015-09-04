@@ -550,9 +550,9 @@ class EED_Recaptcha  extends EED_Module {
 	protected static function _recaptcha_example() {
 		//		 if ( !empty( $recaptcha_example ) ) { ?>
 		<!--		-->
-		<!--			<h4 class="ee-admin-settings-hdr admin-recaptcha-settings-hdr">-->
+		<!--			<h2 class="ee-admin-settings-hdr admin-recaptcha-settings-hdr">-->
 		<!--				--><?php //_e('reCAPTCHA Example', 'event_espresso'); ?>
-		<!--			</h4>-->
+		<!--			</h2>-->
 		<!--			<p class="description">--><?php //_e('A reCAPTCHA displaying here means that you have a valid public key entered for the reCAPTCHA settings and this is how the reCAPTCHA will look with the currently set appearance settings.  If you do not see a reCAPTCHA then please doublecheck the key you entered for a public key.', 'event_espresso'); ?><!--</p>-->
 		<!--			<table class="form-table">-->
 		<!--				<tbody>-->
