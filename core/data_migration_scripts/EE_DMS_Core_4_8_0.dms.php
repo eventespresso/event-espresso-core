@@ -90,6 +90,8 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 * @return bool
 	 */
 	public function schema_changes_before_migration() {
+		$now_in_mysql = current_time( 'mysql', true );
+
 		$table_name='esp_answer';
 		$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 					REG_ID INT UNSIGNED NOT NULL,
@@ -241,6 +243,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				LIN_quantity INT(10) DEFAULT NULL,
 				OBJ_ID INT(11) DEFAULT NULL,
 				OBJ_type VARCHAR(45)DEFAULT NULL,
+				LIN_modified DATETIME NOT NULL DEFAULT '$now_in_mysql',
 				PRIMARY KEY  (LIN_ID)";
 		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB' );
 
