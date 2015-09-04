@@ -17,7 +17,8 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 	/**
 	 * QST_system for questions are strings not ints now,
-	 * so these constants are deprecated
+	 * so these constants are deprecated.
+	 * Please instead use the EEM_Attnedee::system_question_* constants
 	 * @deprecated
 	 */
 	const fname_question_id=1;
@@ -33,7 +34,8 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 	/**
 	 * When looking for questions that correspond to attendee fields,
-	 * look for the question with this QST_system value:
+	 * look for the question with this QST_system value.
+	 * These replace the old constants like EEM_Attendee::*_qusetion_id
 	 */
 	const system_question_fname = 'fname';
 	const system_question_lname = 'lname';
@@ -45,6 +47,25 @@ class EEM_Attendee extends EEM_CPT_Base {
 	const system_question_country = 'country';
 	const system_question_zip = 'zip';
 	const system_question_phone = 'phone';
+
+	/**
+	 * Keys are all the EEM_Attendee::system_question_* constants, which are
+	 * also all the values of QST_system in the questions table, and values
+	 * are their corresponding Attendee field names
+	 * @var array
+	 */
+	protected $_system_question_to_attendee_field_name = array(
+		EEM_Attendee::system_question_fname => 'ATT_fname',
+		EEM_Attendee::system_question_lname => 'ATT_lname',
+		EEM_Attendee::system_question_email => 'ATT_email',
+		EEM_Attendee::system_question_address => 'ATT_address',
+		EEM_Attendee::system_question_address2 => 'ATT_address2',
+		EEM_Attendee::system_question_city => 'ATT_city',
+		EEM_Attendee::system_question_state => 'STA_ID',
+		EEM_Attendee::system_question_country => 'CNT_ISO',
+		EEM_Attendee::system_question_zip => 'ATT_zip',
+		EEM_Attendee::system_question_phone => 'ATT_phone',
+	);
 
 
 	/**
@@ -101,6 +122,16 @@ class EEM_Attendee extends EEM_CPT_Base {
 		$this->_caps_slug = 'contacts';
 		parent::__construct( $timezone );
 
+	}
+
+	/**
+	 * Gets the name of the field on the attendee model corresponding to the system question string
+	 * which should be one of the keys from EEM_Attendee::_system_question_to_attendee_field_name
+	 * @param type $system_question_string
+	 * @return string|null if not found
+	 */
+	public function get_attendee_field_for_system_question( $system_question_string ) {
+		return isset( $this->_system_question_to_attendee_field_name[ $system_question_string ] ) ? $this->_system_question_to_attendee_field_name[ $system_question_string ] : null;
 	}
 
 
