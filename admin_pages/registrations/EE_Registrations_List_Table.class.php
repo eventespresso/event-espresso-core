@@ -108,7 +108,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'ATT_fname' => __( 'Name', 'event_espresso' ),
 				'ATT_email' =>  __('Email', 'event_espresso'),
 				'_REG_date' => __( 'Reg Date', 'event_espresso' ),
-				//'Reg_status' => __( 'Status', 'event_espresso' ),
 				'PRC_amount' => __( 'TKT Price', 'event_espresso' ),
 				'_REG_final_price' => __( 'Final Price', 'event_espresso' ),
 				'TXN_total' => __( 'Total Txn', 'event_espresso' ),
@@ -129,7 +128,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				'_REG_date' => __( 'TXN Date', 'event_espresso' ),
 				'event_name' => __( 'Event', 'event_espresso' ),
 					'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
-				//'Reg_status' => __( 'Status', 'event_espresso' ),
 				'_REG_final_price' => __( 'Price', 'event_espresso' ),
 				'_REG_paid' => __( 'Paid', 'event_espresso' ),
 				'actions' => __( 'Actions', 'event_espresso' )
@@ -148,13 +146,24 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			'ATT_fname' => array( 'ATT_fname' => FALSE ),
 			'event_name' => array( 'event_name' => FALSE ),
 			'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
-			//'Reg_status' => array( 'Reg_status' => FALSE ),
 			'_REG_ID' => array( '_REG_ID' => FALSE ),
 		);
 
 		$this->_hidden_columns = array();
 	}
 
+
+
+
+	protected function _get_row_class( $item ) {
+		$class = parent::_get_row_class( $item );
+		//add status class
+		$class .= ' ee-status-strip reg-status-' . $item->status_ID();
+		if ( $this->_has_checkbox_column ) {
+			$class .= ' has-checkbox-column';
+		}
+		return $class;
+	}
 
 
 
