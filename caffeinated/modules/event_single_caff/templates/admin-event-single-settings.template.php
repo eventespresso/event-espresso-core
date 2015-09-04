@@ -3,19 +3,12 @@ $values = array(
 	array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
 	array('id' => FALSE, 'text' => __('No', 'event_espresso'))
 );
-$display_order_values = array(
-	array('id' => 0, 'text' => 1),
-	array('id' => 1, 'text' => 2),
-	array('id' => 2, 'text' => 3),
-	array('id' => 3, 'text' => 4),
-);
 ?>
 
 	<!--*************************   Event Single  ****************************-->
-	
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Single Event Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_single_settings_info');?>
-	</h4>
+	</h2>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -42,42 +35,21 @@ $display_order_values = array(
 				</td>
 			</tr>
 			<tr>
-				<th>		
+				<th>
 					<?php _e('Display Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link('display_addresses_in_reg_form_info');?>
 				</th>
 				<td>
-					<p>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_description', $display_order_values, $display_order_description, 'id="display_order_description"' ); ?>
-						<label for="display_order_description">
-						<?php _e('Description Display Order', 'event_espresso'); ?>
-						</label>
-						
-					</p>
-					<p>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_tickets', $display_order_values, $display_order_tickets, 'id="display_order_tickets"' ); ?>
-						<label for="display_order_tickets">
-						<?php _e('Tickets Display Order', 'event_espresso'); ?>
-						</label>
-						
-					</p>
-					<p>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_datetimes', $display_order_values, $display_order_datetimes, 'id="display_order_datetimes"' ); ?>
-						<label for="display_order_datetimes">
-						<?php _e('Datetime Display Order', 'event_espresso'); ?>
-						</label>
-						
-					</p>
-					<p>
-						<?php echo EEH_Form_Fields::select_input( 'display_order_venue', $display_order_values, $display_order_venue, 'id="display_order_venue"' ); ?>
-						<label for="display_order_venue">
-						<?php _e('Venue Display Order', 'event_espresso'); ?>
-						</label>
-						
-					</p>
-					<p class="description"><?php _e('Use these settings to determine the display order of the ticket selector, datetime(s), and venue on the single event page.', 'event_espresso'); ?></p>
+
+					<?php wp_nonce_field( 'espresso_update_event_single_order', 'espresso_update_event_single_order_nonce', false ); ?>
+					<ul id="event-single-sortable-js">
+						<?php echo $event_single_display_order; ?>
+					</ul>
+
+					<p class="description"><?php _e('Drag and Drop the above to determine the display order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the single event page.', 'event_espresso'); ?></p>
 
 				</td>
 			</tr>
 
 		</tbody>
 	</table>
+
