@@ -16,8 +16,9 @@ class EEM_Attendee extends EEM_CPT_Base {
 	protected static $_instance = NULL;
 
 	/**
-	 * QST_ID and QST_systems that relate to attendee attributes.
-	 * NOTE: this will be deprecated if we remove system questions
+	 * QST_system for questions are strings not ints now,
+	 * so these constants are deprecated
+	 * @deprecated
 	 */
 	const fname_question_id=1;
 	const lname_question_id=2;
@@ -30,6 +31,20 @@ class EEM_Attendee extends EEM_CPT_Base {
 	const zip_question_id=9;
 	const phone_question_id=10;
 
+	/**
+	 * When looking for questions that correspond to attendee fields,
+	 * look for the question with this QST_system value:
+	 */
+	const system_question_fname = 'fname';
+	const system_question_lname = 'lname';
+	const system_question_email = 'email';
+	const system_question_address = 'address';
+	const system_question_address2 = 'address2';
+	const system_question_city = 'city';
+	const system_question_state = 'state';
+	const system_question_country = 'country';
+	const system_question_zip = 'zip';
+	const system_question_phone = 'phone';
 
 
 	/**
