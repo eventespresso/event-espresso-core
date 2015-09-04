@@ -143,25 +143,32 @@
 
 
 /**status strips**/
-.event-status-DTS {
+.event-status-DTS
+.event-status-DTS .check-column {
 	border-left-color: #FCB93C;
 }
-.event-status-DTA {
+.event-status-DTA
+.event-status-DTA .check-column {
 	border-left-color: #70CC50;
 }
-.event-status-DTU {
+.event-status-DTU,
+.event-status-DTU .check-column {
 	border-left-color: #00B1CA;
 }
-.event-status-DTP {
+.event-status-DTP,
+.event-status-DTP .check-column {
 	border-left-color: #8A549A;
 }
-.event-status-DTC {
+.event-status-DTC,
+.event-status-DTC .check-column {
 	border-left-color: #E44064;
 }
-.event-status-DTE {
+.event-status-DTE,
+.event-status-DTE .check-column {
 	border-left-color: #AC9D9C;
 }
-.event-status-DTI {
+.event-status-DTI,
+.event-status-DTI .check-column {
 	border-left-color: #403A3A;
 }
 
