@@ -137,7 +137,7 @@ class EEM_Line_Item extends EEM_Base {
 				),
 				'OBJ_ID' 					=> new EE_Foreign_Key_Int_Field( 'OBJ_ID', __( 'ID of Item purchased.', 'event_espresso' ), TRUE, NULL, $line_items_can_be_for ),
 				'OBJ_type'				=>new EE_Any_Foreign_Model_Name_Field( 'OBJ_type', __( "Model Name this Line Item is for", "event_espresso" ), TRUE, NULL, $line_items_can_be_for ),
-				'LIN_modified' => new EE_Datetime_Field('LIN_modified', __('When the line item was last modified','event_espresso'), false, time(), $timezone ),
+				'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created','event_espresso'), false, time(), $timezone ),
 			)
 		);
 		$this->_model_relations = array(
@@ -202,7 +202,7 @@ class EEM_Line_Item extends EEM_Base {
 				'DELETE li
 				FROM ' . $this->table() . ' li
 				LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
-				WHERE t.TXN_ID IS NULL AND li.LIN_modified < %s',
+				WHERE t.TXN_ID IS NULL AND li.LIN_timestamp < %s',
 				// use GMT time because that's what TXN_timestamps are in
 				gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
 				);
