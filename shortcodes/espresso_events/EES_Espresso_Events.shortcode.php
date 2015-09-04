@@ -103,7 +103,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		// grab attributes and merge with defaults, then extract
 		$attributes = array_merge( $default_espresso_events_shortcode_atts, $attributes );
 		// make sure we use the_excerpt()
-		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
+		//add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
 		// apply query filters
 		add_filter( 'FHEE__EEH_Event_Query__apply_query_filters', '__return_true' );
 		// run the query
