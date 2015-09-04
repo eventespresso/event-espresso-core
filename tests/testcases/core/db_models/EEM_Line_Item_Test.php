@@ -63,7 +63,7 @@ class EEM_Line_Item_Test extends EE_UnitTestCase {
 		$deletable_count = 5;
 		$safe_count = 8;
 		for( $i = 0; $i < $deletable_count; $i++ ) {
-			$this->new_model_obj_with_dependencies( 'Line_Item', array( 'TXN_ID' => 0, 'LIN_timestamp' => current_time( 'timestamp' ) - WEEK_IN_SECONDS * 2 ) );
+			$this->new_model_obj_with_dependencies( 'Line_Item', array( 'TXN_ID' => 0, 'LIN_timestamp' => time() - WEEK_IN_SECONDS * 2 ) );
 		}
 		for( $i=0;$i< $safe_count; $i++ ){
 			$this->new_model_obj_with_dependencies( 'Line_Item' );
