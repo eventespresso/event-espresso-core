@@ -17,9 +17,11 @@ EE_Registry::instance()->load_helper('Form_Fields');
 
 
 	<!--*************************   Event Listings  ****************************-->
-	<h4 class="ee-admin-settings-hdr">
+<br/>
+<br/>
+<h2 class="ee-admin-settings-hdr">
 		<?php _e('Event List Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_list_settings_info');?>
-	</h4>
+	</h2>
 	<table class="form-table">
 		<tbody>
 
@@ -116,16 +118,32 @@ EE_Registry::instance()->load_helper('Form_Fields');
 				</td>
 			</tr>
 
-		<tr>
-			<th>
-				<label for="EED_Events_Archive_reset_event_list_settings">
-					<?php _e('Reset Event List Settings', 'event_espresso'); ?>
-				</label>
-			</th>
-			<td>
-				<?php echo EEH_Form_Fields::select( 'reset_event_list_settings', 0, $values, 'EED_Events_Archive_reset_event_list_settings', 'EED_Events_Archive_reset_event_list_settings' );?>
-			</td>
-		</tr>
+			<tr>
+				<th>
+					<?php _e( 'Display Order', 'event_espresso' ); ?><?php echo EEH_Template::get_help_tab_link( 'display_addresses_in_reg_form_info' ); ?>
+				</th>
+				<td>
 
-	</tbody>
+					<?php wp_nonce_field( 'espresso_update_event_archive_order', 'espresso_update_event_archive_order_nonce', false ); ?>
+					<ul id="event-archive-sortable-js">
+						<?php echo $event_archive_display_order; ?>
+					</ul>
+
+					<p class="description"><?php _e( 'Drag and Drop the above to determine the display order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the event archive page.', 'event_espresso' ); ?></p>
+
+				</td>
+			</tr>
+
+			<tr>
+				<th>
+					<label for="EED_Events_Archive_reset_event_list_settings">
+						<?php _e( 'Reset Event List Settings', 'event_espresso' ); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select( 'reset_event_list_settings', 0, $values, 'EED_Events_Archive_reset_event_list_settings', 'EED_Events_Archive_reset_event_list_settings' ); ?>
+				</td>
+			</tr>
+
+		</tbody>
 </table>
