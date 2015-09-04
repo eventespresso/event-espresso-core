@@ -276,9 +276,12 @@ class EED_Events_Archive  extends EED_Module {
 		if ( post_password_required() ) {
 			return $excerpt;
 		}
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
-		return EED_Events_Archive::event_details( $excerpt );
+		if ( apply_filters( 'FHEE__EED_Events_Archive__get_the_excerpt__theme_uses_get_the_excerpt', false ) ) {
+			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
+			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
+			$excerpt = EED_Events_Archive::event_details( $excerpt );
+		}
+		return $excerpt;
 	}
 
 
@@ -310,7 +313,6 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function event_details( $content ) {
 		global $post;
-		$template = '';
 		if (
 			$post->post_type == 'espresso_events' &&
 			! post_password_required() &&
@@ -319,52 +321,44 @@ class EED_Events_Archive  extends EED_Module {
 				apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
 			)
 		) {
-			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+			// no further password checks required atm
+			add_filter( 'FHEE__EED_Events_Archive__event_details__no_post_password_required', '__return_true' );
+			// we need to first remove this callback from being applied to the_content() or the_excerpt() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
 			remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
-			//now add additional content depending on whether event is using the_excerpt() or the_content()
-			EED_Events_Archive::_add_additional_excerpt_filters();
-			EED_Events_Archive::_add_additional_content_filters();
-			// now load our template
-			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+			// now add additional content depending on whether event is using the_excerpt() or the_content()
+			$content = EEH_Event_View::event_content_or_excerpt( 50 );
+			$content = EED_Events_Archive::apply_event_content_filters( $content );
+			add_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
+			$content = EEH_Template::locate_template( 'content-espresso_events-details.php' ) . $content;
+			remove_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
 			// re-add our main filters (or else the next event won't have them)
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 			add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
-			// but remove the other filters so that they don't get applied to the next post
-			EED_Events_Archive::_remove_additional_events_archive_filters();
+			remove_filter( 'FHEE__EED_Events_Archive__event_details__no_post_password_required', '__return_true' );
 		}
-		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
-		return ! empty( $template ) ? $template : $content;
+		return $content;
 	}
 
 
 
 	/**
-	 * 	_add_additional_content_filters
+	 *    apply_event_content_filters
 	 *
-	 *  	@access 	private
-	 *  	@return 		void
+	 * @access    public
+	 * @param string $content
+	 * @return string
 	 */
-	private static function _add_additional_excerpt_filters() {
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
-	}
-
-
-
-	/**
-	 * 	_add_additional_content_filters
-	 *
-	 *  	@access 	private
-	 *  	@return 		void
-	 */
-	private static function _add_additional_content_filters() {
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes, 1 );
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets, 1 );
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue, 1 );
+	public static function apply_event_content_filters( $content = '' ) {
+		foreach ( EED_Events_Archive::$filter_order_array as $order => $filter ) {
+			$filter = "event_$filter";
+			if ( method_exists( 'EED_Events_Archive', $filter ) ) {
+				$content = EED_Events_Archive::$filter( $content );
+			}
+		}
+		return $content;
 	}
 
 
@@ -379,6 +373,9 @@ class EED_Events_Archive  extends EED_Module {
 	 * @access    protected
 	 */
 	protected static function _position_filtered_element( $content, $element, $template ) {
+		if ( ! apply_filters( 'FHEE__EED_Events_Archive__event_details__no_post_password_required', false ) && post_password_required() ) {
+			return $content;
+		}
 		if ( EED_Events_Archive::$event_position == 102 ) {
 			// EVENT is FIRST so all elements go AFTER the content
 			$before = false;
@@ -414,9 +411,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_datetimes( $content ) {
-		if ( post_password_required() ) {
-			return $content;
-		}
 		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_datetimes, 'datetimes' );
 	}
 
@@ -428,10 +422,20 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_tickets( $content ) {
-		if ( post_password_required() ) {
-			return $content;
-		}
-		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_datetimes, 'tickets' );
+		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_tickets, 'tickets' );
+	}
+
+
+
+	/**
+	 *    event_venues - adds venues BELOW content
+	 *
+	 * @access    public
+	 * @param    string $content
+	 * @return    string
+	 */
+	public static function event_venue( $content ) {
+		return EED_Events_Archive::event_venues( $content );
 	}
 
 	/**
@@ -442,26 +446,11 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		string
 	 */
 	public static function event_venues( $content ) {
-		if ( post_password_required() ) {
-			return $content;
-		}
-		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_datetimes, 'venues' );
-}
-
-	/**
-	 * 	remove_all_events_archive_filters
-	 *
-	 *  	@access 	private
-	 *  	@return 		void
-	 */
-	private static function _remove_additional_events_archive_filters() {
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue );
+		return EED_Events_Archive::_position_filtered_element( $content, EED_Events_Archive::$display_order_venue, 'venues' );
 	}
+
+
+
 	/**
 	 * 	remove_all_events_archive_filters
 	 *
@@ -469,7 +458,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public static function remove_all_events_archive_filters() {
-		remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
+		//remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
 		remove_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100 );
 		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
 		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes );
