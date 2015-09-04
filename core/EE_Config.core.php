@@ -2111,6 +2111,16 @@ class EE_Template_Config extends EE_Config_Base {
 	*/
 	public $current_espresso_theme;
 
+	/**
+	* @var EED_Event_Single $EED_Event_Single
+	*/
+	public $EED_Event_Single;
+
+	/**
+	* @var EED_Events_Archive $EED_Events_Archive
+	*/
+	public $EED_Events_Archive;
+
 
 
 	/**
@@ -2127,6 +2137,8 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
 		$this->current_espresso_theme = 'Espresso_Arabica_2014';
+		$this->EED_Event_Single = null;
+		$this->EED_Events_Archive = null;
 	}
 
 }
