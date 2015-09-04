@@ -330,9 +330,11 @@ class EED_Events_Archive  extends EED_Module {
 			// now add additional content depending on whether event is using the_excerpt() or the_content()
 			$content = EEH_Event_View::event_content_or_excerpt( 50 );
 			$content = EED_Events_Archive::apply_event_content_filters( $content );
-			add_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
-			$content = EEH_Template::locate_template( 'content-espresso_events-details.php' ) . $content;
-			remove_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
+			if ( ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false ) ) {
+				add_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
+				$content = EEH_Template::locate_template( 'content-espresso_events-details.php' ) . $content;
+				remove_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
+			}
 			// re-add our main filters (or else the next event won't have them)
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
 			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event, 1 );
