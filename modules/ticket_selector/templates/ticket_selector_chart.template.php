@@ -178,8 +178,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							echo apply_filters( 'FHEE__ticket_selector_chart_template__per_ticket_bundle_text', __( ' / bundle', 'event_espresso' ));
 						} else {
 							echo apply_filters( 'FHEE__ticket_selector_chart_template__per_ticket_text', __( '', 'event_espresso' ));
-						}?></span> &nbsp;
-					</td>
+						}?></span>&nbsp;</td>
 					<?php } ?>
 					<td class="tckt-slctr-tbl-td-qty cntr">
 					<?php
