@@ -1,11 +1,17 @@
-#Events_Admin_List_Table-table-frm .check-column { width: 4%; max-width: 30px; }
-#Events_Admin_List_Table-table-frm .column-id { width:5%; max-width: 40px; }
-#Events_Admin_List_Table-table-frm .column-name { width: 20%;  }
-#Events_Admin_List_Table-table-frm .column-venue  { width:15%; }
-#Events_Admin_List_Table-table-frm .column-start_date_time { width:15%; }
-#Events_Admin_List_Table-table-frm .column-reg_begins { width:15%; }
-#Events_Admin_List_Table-table-frm .column-attendees { width: 5%; max-width: 40px;}
-#Events_Admin_List_Table-table-frm .column-actions { width: 15%; }
+#Events_Admin_List_Table-table-frm .column-id,
+#Extend_Events_Admin_List_Table-table-frm .column-id { width:5%; }
+#Events_Admin_List_Table-table-frm .column-name,
+#Extend_Events_Admin_List_Table-table-frm .column-name { width: 20%;  }
+#Events_Admin_List_Table-table-frm .column-venue,
+#Extend_Events_Admin_List_Table-table-frm .column-venue  { width:15%; }
+#Events_Admin_List_Table-table-frm .column-start_date_time,
+#Extend_Events_Admin_List_Table-table-frm .column-start_date_time { width:15%; }
+#Events_Admin_List_Table-table-frm .column-reg_begins,
+#Extend_Events_Admin_List_Table-table-frm .column-reg_begins { width:15%; }
+#Events_Admin_List_Table-table-frm .column-attendees,
+#Extend_Events_Admin_List_Table-table-frm .column-attendees { width: 5%;}
+#Events_Admin_List_Table-table-frm .column-actions,
+#Extend_Events_Admin_List_Table-table-frm .column-actions { width: 15%; }
 
 
 .remove-item { cursor: pointer; vertical-align: middle; }
@@ -96,13 +102,13 @@
 .inactice-price { margin-right:1em; color:#CE9B8B; }
 
 .price-date-status-img {
-	 position:relative; top:5px; left:4px;
+	position:relative; top:5px; left:4px;
 }
 .input-disabled { color:#999 !important; }
 
 
 #espresso_event_editor_event_options .inside {
-    text-align: left;
+	text-align: left;
 }
 
 /** sold out **/
@@ -143,25 +149,32 @@
 
 
 /**status strips**/
-.event-status-DTS {
+.event-status-DTS
+.event-status-DTS .check-column {
 	border-left-color: #FCB93C;
 }
-.event-status-DTA {
+.event-status-DTA
+.event-status-DTA .check-column {
 	border-left-color: #70CC50;
 }
-.event-status-DTU {
+.event-status-DTU,
+.event-status-DTU .check-column {
 	border-left-color: #00B1CA;
 }
-.event-status-DTP {
+.event-status-DTP,
+.event-status-DTP .check-column {
 	border-left-color: #8A549A;
 }
-.event-status-DTC {
+.event-status-DTC,
+.event-status-DTC .check-column {
 	border-left-color: #E44064;
 }
-.event-status-DTE {
+.event-status-DTE,
+.event-status-DTE .check-column {
 	border-left-color: #AC9D9C;
 }
-.event-status-DTI {
+.event-status-DTI,
+.event-status-DTI .check-column {
 	border-left-color: #403A3A;
 }
 
