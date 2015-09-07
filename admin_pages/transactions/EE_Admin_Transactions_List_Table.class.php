@@ -65,13 +65,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_columns = array(
-			'STS_ID' => '',
 			'TXN_ID' => __( 'ID', 'event_espresso' ),
 			'TXN_timestamp'	=> __( 'Transaction Date', 'event_espresso' ),
 			'TXN_total' => __( 'Total', 'event_espresso' ),
 			'TXN_paid' => __( 'Paid', 'event_espresso' ),
 			'ATT_fname' => __( 'Primary Registrant', 'event_espresso' ),
-			'ATT_email' => __( 'Email Address', 'event_espresso' ),
 			'event_name' => __( 'Event', 'event_espresso' ),
 			'actions' => __( 'Actions', 'event_espresso' )
 		);
@@ -83,7 +81,21 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			'TXN_timestamp'	=> array( 'TXN_timestamp'=> TRUE ) //true means its already sorted
 		);
 
+		$this->_primary_column = 'TXN_ID';
+
 		$this->_hidden_columns = array();
+	}
+
+
+
+	protected function _get_row_class( $item ) {
+		$class = parent::_get_row_class( $item );
+		//add status class
+		$class .= ' ee-status-strip txn-status-' . $item->status_ID();
+		if ( $this->_has_checkbox_column ) {
+			$class .= ' has-checkbox-column';
+		}
+		return $class;
 	}
 
 
@@ -129,18 +141,31 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 */
    function column_TXN_ID( EE_Transaction $item ){
     	$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
-				return '<a href="' . $view_lnk_url . '" title="' . esc_attr__( 'Go to Transaction Details', 'event_espresso' ) . '">' . $item->ID() . '</a>';
+	   $content = '<a href="' . $view_lnk_url . '" title="' . esc_attr__( 'Go to Transaction Details', 'event_espresso' ) . '">' . $item->ID() . '</a>';
+
+	   //txn timestamp
+	   $content .= '  <span class="show-on-mobile-view-only">' . $this->_get_txn_timestamp( $item ) . '</span>';
+	   return $content;
 	}
 
 
-	/**
-	 * 	column_STS_ID
-	 * @param \EE_Transaction $item
-	 * @return string
-	 */
-	function column_STS_ID( EE_Transaction $item ){
-		return '<span class="ee-status-strip ee-status-strip-td txn-status-' . $item->status_ID() . '"></span>';
+
+	protected function _get_txn_timestamp( EE_Transaction $item ) {
+		//txn timestamp
+		// is TXN less than 2 hours old ?
+		if (
+			( ( time() - EE_Registry::instance()->SSN->lifespan() )
+			< $item->datetime( false, true )
+			)
+		&& ( $item->failed() || $item->is_abandoned() )
+		) {
+			$timestamp = __( 'TXN in progress...', 'event_espresso' );
+	   } else {
+			$timestamp = $item->get_i18n_datetime( 'TXN_timestamp' );
+		}
+		return $timestamp;
 	}
+
 
 
 	/**
@@ -153,6 +178,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	}
 
 
+
+
 	/**
 	 * 	column_TXN_timestamp
 	 * @param \EE_Transaction $item
@@ -160,18 +187,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	 */
 	function column_TXN_timestamp( EE_Transaction $item ){
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
-		// is TXN less than 2 hours old ?
-		if (
-			(
-				( time() - EE_Registry::instance()->SSN->lifespan() )
-				< $item->datetime( false, true )
-			) &&
-			( $item->failed() || $item->is_abandoned() )
-		) {
-			$txn_date = '<a href="'.$view_lnk_url.'" title="' . esc_attr__( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . __( 'TXN in progress...', 'event_espresso' ) . '</a>';
-		} else {
-			$txn_date = '<a href="'.$view_lnk_url.'" title="' . esc_attr__( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->get_i18n_datetime( 'TXN_timestamp' ) .  '</a>';
-		}
+		$txn_date = '<a href="'.$view_lnk_url.'" title="' . esc_attr__( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $this->_get_txn_timestamp( $item ) . '</a>';
 		return $txn_date;
 	}
 
@@ -231,7 +247,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$attendee = $primary_reg->get_first_related('Attendee');
 		if ( $attendee instanceof EE_Attendee ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
-			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
+			$content = EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
+			$content .= '<br>' . $attendee->email();
+			return $content;
 		}
 		return $item->failed() || $item->is_abandoned() ? __('no contact record.', 'event_espresso') : __('No contact record, because the transaction was abandoned or the registration process failed.', 'event_espresso');
 	}
