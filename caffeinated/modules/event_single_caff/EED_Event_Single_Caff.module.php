@@ -90,16 +90,15 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 	 *  @return 	void
 	 */
 	public static function template_settings_form() {
-		$EE = EE_Registry::instance();
-		$EE->CFG->template_settings->EED_Event_Single = isset( $EE->CFG->template_settings->EED_Event_Single ) ? $EE->CFG->template_settings->EED_Event_Single : new EE_Event_Single_Config();
-		$EE->CFG->template_settings->EED_Event_Single = apply_filters( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Event_Single );
-		$template_settings = (array)$EE->CFG->template_settings->EED_Event_Single;
+		$config = EE_Registry::instance()->CFG->template_settings;
+		$config = isset( $config->EED_Event_Single ) && $config->EED_Event_Single instanceof EE_Event_Single_Config ? $config->EED_Event_Single : new EE_Event_Single_Config();
+		$config = apply_filters( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', $config );
 
 		$event_single_order_array = array();
-		$event_single_order_array[ EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_tickets ] = 'tickets';
-		$event_single_order_array[ EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_datetimes ] = 'datetimes';
-		$event_single_order_array[ EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_event ] = 'event';
-		$event_single_order_array[ EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_venue ] = 'venue';
+		$event_single_order_array[ $config->display_order_tickets ] = 'tickets';
+		$event_single_order_array[ $config->display_order_datetimes ] = 'datetimes';
+		$event_single_order_array[ $config->display_order_event ] = 'event';
+		$event_single_order_array[ $config->display_order_venue ] = 'venue';
 		ksort( $event_single_order_array );
 
 		$templates = array(
@@ -118,8 +117,9 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 			$event_single_display_order .= '
 <li id="' . $template . '" class="single-sortable-li single-sortable-js" ><span class="dashicons dashicons-arrow-up-alt2" ></span ><span class="dashicons dashicons-arrow-down-alt2" ></span >' . $templates[ $template ] . '</li>';
 		}
-		$template_settings['event_single_display_order'] = $event_single_display_order;
-		EEH_Template::display_template( EVENT_SINGLE_CAFF_TEMPLATES_PATH . 'admin-event-single-settings.template.php', $template_settings );
+		$config = (array)$config;
+		$config['event_single_display_order'] = $event_single_display_order;
+		EEH_Template::display_template( EVENT_SINGLE_CAFF_TEMPLATES_PATH . 'admin-event-single-settings.template.php', $config );
 	}
 
 
@@ -127,10 +127,10 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 	/**
 	 *    update_template_settings
 	 *
-	 * @access    public
-	 * @param $CFG
-	 * @param $REQ
-	 * @return    EE_Event_Single_Config
+	 * @access    	public
+	 * @param 		EE_Template_Config $CFG
+	 * @param 		array $REQ
+	 * @return    	EE_Event_Single_Config
 	 */
 	public static function update_template_settings( $CFG, $REQ ) {
 		$display_order_tickets = $CFG->EED_Event_Single->display_order_tickets;
@@ -160,7 +160,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$elements = explode( ',', trim( $elements, ',' ) );
 		foreach ( $elements as $key => $element ) {
 			$element = "display_order_$element";
-			EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$element = $key;
+			EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$element = $key + 100;
 		}
 		$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
 		if ( $config_saved ) {
@@ -168,8 +168,6 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		} else {
 			EE_Error::add_success( __( 'Display Order was not updated.', 'event_espresso' ) );
 		}
-		//echo "\n EE_Registry::instance()->CFG->template_settings->EED_Event_Single: ";
-		//var_dump( EE_Registry::instance()->CFG->template_settings->EED_Event_Single );
 		echo wp_json_encode( EE_Error::get_notices( false ));
 		exit();
 	}
