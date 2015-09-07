@@ -287,8 +287,9 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 		EE_Registry::instance()->load_helper('DTT_Helper');
 		//make sure now is in the timezone we want to test with.
-		$now =  new Datetime( "now +30 days", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+		$now =  new Datetime( "now", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 		$now->setTime( '8', '0', '0' );
+		$now->add( new DateInterval( 'P30D' ) );
 		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
 
 		//get the default datetime
@@ -303,6 +304,9 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$actual = $default_date->get_DateTime_object( 'DTT_EVT_start');
 
 		$this->assertInstanceOf( 'DateTime', $actual );
+
+		//assert timezones are the same
+		$this->assertEquals( $now->getTimezone(), $actual->getTimeZone() );
 
 		//assert that we have the correct values on the date... we'll do each part separately to verify.
 		$this->assertEquals( $now->format('Y'), $actual->format('Y' ) );
