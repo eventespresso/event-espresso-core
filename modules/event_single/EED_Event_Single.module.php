@@ -94,10 +94,12 @@ class EED_Event_Single  extends EED_Module {
 		$this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Event_Single_Config' );
 		$this->set_config_name( 'EED_Event_Single' );
-		EED_Event_Single::$display_order_tickets = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_tickets;
-		EED_Event_Single::$display_order_datetimes = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_datetimes;
-		EED_Event_Single::$display_order_event = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_event;
-		EED_Event_Single::$display_order_venue = 100 + EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_order_venue;
+		/** @type EE_Event_Single_Config $config */
+		$config = $this->config();
+		EED_Event_Single::$display_order_tickets = isset( $config->display_order_tickets ) ? $config->display_order_tickets : 100;
+		EED_Event_Single::$display_order_datetimes = isset( $config->display_order_datetimes ) ? $config->display_order_datetimes : 101;
+		EED_Event_Single::$display_order_event = isset( $config->display_order_event ) ? $config->display_order_event : 102;
+		EED_Event_Single::$display_order_venue = isset( $config->display_order_venue ) ? $config->display_order_venue : 103;
 		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_tickets ] = 'tickets';
 		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_datetimes ] = 'datetimes';
 		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_event ] = 'event';
