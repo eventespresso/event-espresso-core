@@ -99,10 +99,10 @@ class EED_Events_Archive  extends EED_Module {
 		$this->set_config_name( 'EED_Events_Archive' );
 		/** @type EE_Events_Archive_Config $config */
 		$config = $this->config();
-		EED_Events_Archive::$display_order_tickets = 100 + $config->display_order_tickets;
-		EED_Events_Archive::$display_order_datetimes = 100 + $config->display_order_datetimes;
-		EED_Events_Archive::$display_order_event = 100 + $config->display_order_event;
-		EED_Events_Archive::$display_order_venue = 100 + $config->display_order_venue;
+		EED_Events_Archive::$display_order_tickets = isset( $config->display_order_tickets ) ? $config->display_order_tickets : 100;
+		EED_Events_Archive::$display_order_datetimes = isset( $config->display_order_datetimes ) ? $config->display_order_datetimes : 101;
+		EED_Events_Archive::$display_order_event = isset( $config->display_order_event ) ? $config->display_order_event : 102;
+		EED_Events_Archive::$display_order_venue = isset( $config->display_order_venue ) ? $config->display_order_venue : 103;
 		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_tickets ] = 'tickets';
 		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_datetimes ] = 'datetimes';
 		EED_Events_Archive::$filter_order_array[ EED_Events_Archive::$display_order_event ] = 'event';
