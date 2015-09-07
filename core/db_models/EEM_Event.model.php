@@ -102,7 +102,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			)
 		);
 
-		EEM_Event::$_default_reg_status = EEM_Registration::status_id_pending_payment;
+		self::$_default_reg_status = empty( self::$_default_reg_status ) ? EEM_Registration::status_id_pending_payment : self::$_default_reg_status;
 
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table( 'posts','ID' ),
