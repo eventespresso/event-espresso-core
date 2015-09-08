@@ -816,13 +816,13 @@ final class EE_System {
 	 */
 	public function load_core_configuration(){
 		do_action( 'AHEE__EE_System__load_core_configuration__begin', $this );
+		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
+		//load textdomain
+		EE_Load_Textdomain::load_textdomain();
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		EE_Registry::instance()->load_core( 'Network_Config' );
 		// setup autoloaders
-		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
-		//load textdomain
-		EE_Load_Textdomain::load_textdomain();
 		// enable logging?
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			EE_Registry::instance()->load_core( 'Log' );
