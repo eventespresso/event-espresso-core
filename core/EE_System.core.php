@@ -366,10 +366,11 @@ final class EE_System {
 		<p>
 		<?php
 		printf(
-			__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
+			__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on supported versions of PHP, please go to %4$s, or %5$s to download the latest stable versions.', 'event_espresso' ),
 			EE_MIN_PHP_VER_REQUIRED,
 			PHP_VERSION,
 			'<br/>',
+			'<a href="http://php.net/supported-versions.php">http://php.net/supported-versions.php</a>',
 			'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 		);
 		?>
@@ -413,7 +414,7 @@ final class EE_System {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
-				__( 'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on supported PHP versions, please go to %4$s, or %5$s to download the latest stable versions.', 'event_espresso' ),
+				__( 'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on supported versions of PHP, please go to %4$s, or %5$s to download the latest stable versions.', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
 				PHP_VERSION,
 				'<br/>',
