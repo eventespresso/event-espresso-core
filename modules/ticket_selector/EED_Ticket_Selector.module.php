@@ -277,7 +277,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				)
 			)
 		) {
-			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
+			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn() : '';
 		}
 
 		$template_args = array();
@@ -348,7 +348,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$ticket_selector .= ! is_admin() ? '' : __( 'Registration is at an external URL for this event.', 'event_espresso' );
 		}
 		// submit button and form close tag
-		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() ) : '';
+		$ticket_selector .= ! is_admin() ? EED_Ticket_Selector::display_ticket_selector_submit() : '';
 		// set no cache headers and constants
 		EE_System::do_not_cache();
 
@@ -408,7 +408,11 @@ class EED_Ticket_Selector extends  EED_Module {
 					__('Register Now', 'event_espresso' ),
 					self::$_event
 				);
-				return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn ticket-selector-submit-ajax" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div></form>';
+				$html = '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"';
+				$html .= ' class="ticket-selector-submit-btn ticket-selector-submit-ajax"';
+				$html .= ' type="submit" value="' . $btn_text . '" />';
+				$html .= '<div class="clear"><br/></div></form>';
+				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
 			}
@@ -495,8 +499,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		// do we have an event id?
 		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' ) ) {
 			// validate/sanitize data
-			$valid = self::_validate_post_data('add_event_to_cart');
-			// d( $valid );
+			$valid = self::_validate_post_data();
+
+			//EEH_Debug_Tools::printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
+			//EEH_Debug_Tools::printr( $valid, '$valid', __FILE__, __LINE__ );
+			//EEH_Debug_Tools::printr( $valid[ 'total_tickets' ], 'total_tickets', __FILE__, __LINE__ );
+			//EEH_Debug_Tools::printr( $valid[ 'max_atndz' ], 'max_atndz', __FILE__, __LINE__ );
 
 			//check total tickets ordered vs max number of attendees that can register
 			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
