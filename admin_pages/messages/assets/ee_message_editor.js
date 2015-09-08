@@ -71,28 +71,8 @@ jQuery(document).ready(function($) {
 	 */
 	$('#ee-msg-edit-frm').on( 'click', '.js-open-list-trigger', function(e) {
 		e.stopPropagation();
-		var itemClicked = $(this);
-		var shortcodeContainer = $( '.ee_shortcode_chooser_container', itemClicked );
-		shortcodeContainer.removeClass('hidden');
-		shortcodeContainer.addClass('ee-shortcode-chooser-open');
-
-		//set click event but unbind any existing first. Also namespace.
-		$( '.js-shortcode-selection', shortcodeContainer ).unbind('click.shortcodeClick').bind( 'click.shortcodeClick', function(e) {
-			e.stopPropagation();
-			var shortcodeRequested = $(this).data('value');
-			var input = $(this).data('linkedInputId');
-
-			//if linked input has `wp-editor-area` class then use WP Editor insert function
-			if ( $('#' + input ).hasClass('wp-editor-area' ) ) {
-				AddVariableToWPEditor( input, shortcodeRequested );
-			} else {
-				AddVariableToInput( input, shortcodeRequested );
-			}
-			shortcodeContainer.addClass('hidden');
-			shortcodeContainer.removeClass('ee-shortcode-chooser-open');
-		});
+		shortCodePicker(this);
 	});
-
 
 	/**
 	 * Hide shortcode picker on leaving the window.
@@ -113,6 +93,39 @@ jQuery(document).ready(function($) {
 		}
 	});
 });
+
+
+
+function shortCodePicker( el ) {
+	var itemClicked = jQuery(el);
+	var shortcodeContainer = jQuery( '.ee_shortcode_chooser_container', itemClicked );
+	shortcodeContainer.removeClass('hidden');
+	shortcodeContainer.addClass('ee-shortcode-chooser-open');
+
+	//set click event but unbind any existing first. Also namespace.
+	jQuery( '.js-shortcode-selection', shortcodeContainer ).unbind('click.shortcodeClick').bind( 'click.shortcodeClick', function(e) {
+		e.stopPropagation();
+		shortCodePickerClickEvent( this, shortcodeContainer );
+	});
+
+	//capture any ctrl-s keypress for shortcode picker
+}
+
+
+
+function shortCodePickerClickEvent( el, shortcodeContainer ) {
+	var shortcodeRequested = jQuery(el).data('value');
+	var input = jQuery(el).data('linkedInputId');
+
+	//if linked input has `wp-editor-area` class then use WP Editor insert function
+	if ( jQuery('#' + input ).hasClass('wp-editor-area' ) ) {
+		AddVariableToWPEditor( input, shortcodeRequested );
+	} else {
+		AddVariableToInput( input, shortcodeRequested );
+	}
+	shortcodeContainer.addClass('hidden');
+	shortcodeContainer.removeClass('ee-shortcode-chooser-open');
+}
 
 
 function AddVariableToInput(element_id, value) {
