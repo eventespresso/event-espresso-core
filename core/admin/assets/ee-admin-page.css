@@ -172,6 +172,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .big-text { font-size : 1.2em; line-height : 1.6em; letter-spacing : -.5px; }
 .bigger-text { font-size : 1.5em; line-height : 2em; letter-spacing : -.75px; }
 .huge-text { font-size : 2em; line-height : 2.4em; letter-spacing : -1px; }
+.ee-infinity-sign { font-size: 1.5em; line-height: 1em; letter-spacing: -.25px; vertical-align: bottom; }
 
 .float-right { float : right; }
 .left { float : left; }
@@ -356,6 +357,10 @@ label.error { display : block; color : #FE2A00 !important; }
 .ui-timepicker-div td { font-size : 90%; }
 .ui-tpicker-grid-label { background : none; border : none; margin : 0; padding : 0; }
 
+.ui-timepicker-div .ui_tpicker_unit_hide {
+	display:none;
+}
+
 .ee-upload-form-dv {
 	margin : 2em 0;
 }
@@ -472,6 +477,32 @@ label.error { display : block; color : #FE2A00 !important; }
 
 .espresso-admin .form-table th {
 	width : 230px;
+}
+
+.espresso-admin .wp-list-table .show-on-mobile-view-only {
+	display: none;
+}
+
+
+/*wp-list-table media query*/
+@media screen and ( max-width: 782px ) {
+	.espresso-admin .wp-list-table .column-primary {
+		width: 100% !important;
+	}
+
+	.espresso-admin .wp-list-table .is-ee-status-column, .espresso-admin .wp-list-table .is-ee-status-column {
+		display: table-cell !important;
+		vertical-align: top;
+	}
+
+	.espresso-admin .wp-list-table .show-on-mobile-view-only {
+		display: inline;
+	}
+
+	/** hide qtips when in mobile view **/
+	.qtip {
+		display: none !important;
+	}
 }
 
 /** CAFFEINATED PREVIEW CSS **/
@@ -640,6 +671,16 @@ label.error { display : block; color : #FE2A00 !important; }
 .ee-status-strip-td {
 	height: 100%;
 	min-height: 20px;
+}
+
+.wp-list-table .ee-status-strip .check-column {
+	border-left-style: solid;
+	border-left-width: 4px;
+}
+
+.wp-list-table tr.ee-status-strip {
+	display: table-row;
+	border: none;
 }
 
 .wp-list-table .ee-status-strip-td {
@@ -898,3 +939,11 @@ input.ee-register-button {
 	color: #8A549A;
 }
 
+
+/** other styling - footnotes etc **/
+.ee-footnote-text {
+    font-style: italic;
+    font-size: .8em;
+    font-color: #dcc;
+    font-weight: normal;
+}

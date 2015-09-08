@@ -413,11 +413,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * add our form section data to a static variable accessible by all form sections
+	 * @param bool $return_for_subsection
 	 * @return void
 	 */
-	public function localize_validation_rules(){
+	public function localize_validation_rules( $return_for_subsection = FALSE ){
 		// we only want to localize vars ONCE for the entire form, so if the form section doesn't have a parent, then it must be the top dog
-		if ( ! $this->parent_section() ) {
+		if ( ! $this->parent_section() || $return_for_subsection ) {
 			EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
 				'form_section_id'=> $this->html_id( TRUE ),
 				'validation_rules'=> $this->get_jquery_validation_rules(),
@@ -736,14 +737,23 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Adds the listed subsections to the form section. If $subsection_name_to_add_before is provided,
-	 * adds them all directly before that subsection, otherwise onto the end.
-	 * @param EE_Form_Section_Base[] $subsections where keys are their names
-	 * @param string $subsection_name_to_add_before name of the section to add these subsections in front of, or null to add at the very end
+	 * add_subsections
+	 *
+	 * Adds the listed subsections to the form section.
+	 * If $subsection_name_to_target is provided,
+	 * then new subsections are added before or after that subsection,
+	 * otherwise to the start or end of the entire subsections array.
+	 *
+	 * @param EE_Form_Section_Base[] $new_subsections 	array of new form subsections where keys are their names
+	 * @param string $subsection_name_to_target 					an existing for section that $new_subsections should be added before or after
+	 * 																								IF $subsection_name_to_target is null, then $new_subsections will be added to
+	 * 																								the beginning or end of the entire subsections array
+	 * @param boolean $add_before 										whether to add $new_subsections, before or after $subsection_name_to_target,
+	 * 																								or if $subsection_name_to_target is null, before or after entire subsections array
 	 * @return void
 	 */
-	public function add_subsections($subsections,$subsection_name_to_add_before = NULL){
-		foreach($subsections as $subsection_name => $subsection){
+	public function add_subsections( $new_subsections, $subsection_name_to_target = NULL, $add_before = true ){
+		foreach($new_subsections as $subsection_name => $subsection){
 			if( ! $subsection instanceof EE_Form_Section_Base){
 				EE_Error::add_error(
 					sprintf(
@@ -753,25 +763,42 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 						$this->name()
 					)
 				);
-				unset($subsections[$subsection_name]);
+				unset($new_subsections[$subsection_name]);
 			}
 		}
-		$subsections_before = array();
-		if( $subsection_name_to_add_before ){
+
+		EE_Registry::instance()->load_helper( 'Array' );
+		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_target, $add_before );
+
+		/*$subsections_before = array();
+		if( $subsection_name_to_target ){
 			foreach( $this->_subsections as $subsection_name => $subsection ) {
-				if ( $subsection_name == $subsection_name_to_add_before ) {
+				if ( $add_before && $subsection_name == $subsection_name_to_target ) {
 					break;
 				}
 				$subsections_before[$subsection_name] = $subsection;
+				if ( ! $add_before && $subsection_name == $subsection_name_to_target ) {
+					break;
+				}
 			}
 			$subsections_after = array_diff_key($this->_subsections, $subsections_before);
-			$this->_subsections = array_merge($subsections_before,$subsections,$subsections_after);
+			$this->_subsections = array_merge($subsections_before,$new_subsections,$subsections_after);
 		}else{
-			//don't use array_merge because keys might be numeric and we want to preserve their keys
-			foreach( $subsections as $key => $subsection ){
-				$this->_subsections[ $key ] = $subsection;
+			if( $add_before ) {
+				//add before nothing, meaning nothing should be after it
+				//don't use array_merge because keys might be numeric and we want to preserve their keys
+				foreach( $new_subsections as $key => $subsection ){
+					$this->_subsections[ $key ] = $subsection;
+				}
+			}else{
+				//add after nothing, meaning nothing should be before it
+				//again don't use array_merge because we want
+				foreach( $this->_subsections as $key => $subsection ) {
+					$new_subsections[ $key ] = $subsection;
+				}
+				$this->_subsections = $new_subsections;
 			}
-		}
+		}*/
 		if( $this->_construction_finalized ){
 			foreach($this->_subsections as $name => $subsection){
 				$subsection->_construct_finalize($this, $name);

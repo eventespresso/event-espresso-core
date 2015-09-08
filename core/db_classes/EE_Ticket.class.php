@@ -24,7 +24,7 @@
  * @subpackage 	includes/classes/EE_Ticket.class.php
  * @author             Darren Ethier
  */
-class EE_Ticket extends EE_Soft_Delete_Base_Class {
+class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Object, EEI_Event_Relation, EEI_Has_Icon {
 
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
@@ -59,24 +59,27 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 *
-	 * @param array $props_n_values
-	 * @param string $timezone
-	 * @return EE_Ticket
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 *
-	 * @param array $props_n_values
-	 * @param string $timezone
-	 * @return EE_Ticket
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array(), $timezone = '' ) {
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
@@ -945,4 +948,55 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 	public function count_registrations( $query_params = array() ) {
 		return $this->count_related('Registration', $query_params);
 	}
+
+
+
+	/**
+	 * Implementation for EEI_Has_Icon interface method.
+	 * @see EEI_Visual_Representation for comments
+	 * @return string
+	 */
+	public function get_icon() {
+		return '<span class="dashicons dashicons-tickets-alt"></span>';
+	}
+
+
+
+	/**
+	 * Implementation of the EEI_Event_Relation interface method
+	 * @see EEI_Event_Relation for comments
+	 * @return EE_Event|null
+	 */
+	public function get_related_event() {
+		//get one datetime to use for getting the event
+		$datetime = $this->first_datetime();
+		if ( $datetime instanceof EE_Datetime ) {
+			return $datetime->event();
+		}
+		return null;
+	}
+
+
+	/**
+	 * Implementation of the EEI_Event_Relation interface method
+	 * @see EEI_Event_Relation for comments
+	 * @return string
+	 */
+	public function get_event_name() {
+		$event = $this->get_related_event();
+		return $event instanceof EE_Event ? $event->name() : '';
+	}
+
+
+	/**
+	 * Implementation of the EEI_Event_Relation interface method
+	 * @see EEI_Event_Relation for comments
+	 * @return int
+	 */
+	public function get_event_ID() {
+		$event = $this->get_related_event();
+		return $event instanceof EE_Event ? $event->ID() : 0;
+	}
+
+
 } //end EE_Ticket class
