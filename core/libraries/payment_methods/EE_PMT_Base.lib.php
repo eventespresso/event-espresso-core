@@ -31,6 +31,11 @@ abstract class EE_PMT_Base{
 	protected $_requires_https = FALSE;
 
 	/**
+	 * @var boolean
+	 */
+	protected $_has_billing_form;
+
+	/**
 	 * @var EE_Gateway
 	 */
 	protected $_gateway = NULL;
@@ -105,6 +110,15 @@ abstract class EE_PMT_Base{
 			EE_Registry::instance()->load_helper( 'Money' );
 			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
+		if ( ! isset( $this->_has_billing_form ) ) {
+			// by default, On Site gateways have a billing form
+			if ( $this->payment_occurs() == EE_PMT_Base::onsite ) {
+				$this->set_has_billing_form( true );
+			} else {
+				$this->set_has_billing_form( false );
+			}
+		}
+
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
 		}
@@ -112,6 +126,15 @@ abstract class EE_PMT_Base{
 		if( $this->_default_button_url === NULL){
 			$this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
 		}
+	}
+
+
+
+	/**
+	 * @param boolean $has_billing_form
+	 */
+	public function set_has_billing_form( $has_billing_form ) {
+		$this->_has_billing_form = filter_var( $has_billing_form, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -229,24 +252,35 @@ abstract class EE_PMT_Base{
 
 
 	/**
+	 * @return boolean
+	 */
+	public function has_billing_form() {
+		return $this->_has_billing_form;
+	}
+
+
+
+	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
 	 *
 	 * @param \EE_Transaction $transaction
 	 * @param array $extra_args
-	 * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form
+	 * @return \EE_Billing_Attendee_Info_Form|\EE_Billing_Info_Form|null
 	 */
 	public function billing_form( EE_Transaction $transaction = NULL, $extra_args = array() ){
 		// has billing form already been regenerated ? or overwrite cache?
-		if( ! $this->_billing_form || ! $this->_cache_billing_form ){
+		if ( ! $this->_billing_form instanceof EE_Billing_Info_Form || ! $this->_cache_billing_form ){
 			$this->_billing_form = $this->generate_new_billing_form( $transaction, $extra_args );
 		}
 		//if we know who the attendee is, and this is a billing form
 		//that uses attendee info, populate it
-		if( $this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
-				$transaction instanceof EE_Transaction &&
-				$transaction->primary_registration() instanceof EE_Registration &&
-				$transaction->primary_registration()->attendee() instanceof EE_Attendee ){
+		if (
+			$this->_billing_form instanceof EE_Billing_Attendee_Info_Form &&
+			$transaction instanceof EE_Transaction &&
+			$transaction->primary_registration() instanceof EE_Registration &&
+			$transaction->primary_registration()->attendee() instanceof EE_Attendee
+		){
 			$this->_billing_form->populate_from_attendee( $transaction->primary_registration()->attendee() );
 		}
 		return $this->_billing_form;
@@ -302,13 +336,13 @@ abstract class EE_PMT_Base{
 	 * @param float                $amount
 	 * @param EE_Billing_Info_Form $billing_info
 	 * @param string               $return_url
-	 * @param null                 $fail_url
+	 * @param string                 $fail_url
 	 * @param string               $method
 	 * @param bool           $by_admin
 	 * @return EE_Payment
 	 * @throws EE_Error
 	 */
-	function process_payment( EE_Transaction $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
+	function process_payment( EE_Transaction $transaction, $amount = null, $billing_info = null, $return_url = null,$fail_url = '', $method = 'CART', $by_admin = false ){
 		// @todo: add surcharge for the payment method, if any
 		if ( $this->_gateway ) {
 			//there is a gateway, so we're going to make a payment object
@@ -318,8 +352,8 @@ abstract class EE_PMT_Base{
 				'TXN_ID' 								=> $transaction->ID(),
 				'PMD_ID' 							=> $this->_pm_instance->ID(),
 				'PAY_source' 						=> $method,
-				'PAY_amount' 					=> $amount !== NULL ? $amount : $transaction->remaining(),
-				'PAY_gateway_response' 	=> NULL,
+				'PAY_amount' 					=> $amount !== null ? $amount : $transaction->remaining(),
+				'PAY_gateway_response' 	=> null,
 			);
 			$payment = EEM_Payment::instance()->get_one( array( $duplicate_properties ));
 			//if we didn't already have a payment in progress for the same thing,
@@ -329,11 +363,11 @@ abstract class EE_PMT_Base{
 					array_merge(
 						$duplicate_properties,
 						array(
-							'PAY_timestamp' 			=> current_time( 'mysql' ),
-							'PAY_txn_id_chq_nmbr' 	=> NULL,
-							'PAY_po_number' 			=> NULL,
-							'PAY_extra_accntng' 		=> NULL,
-							'PAY_details' 					=> NULL
+							'PAY_timestamp' 			=> time(),
+							'PAY_txn_id_chq_nmbr' 	=> null,
+							'PAY_po_number' 			=> null,
+							'PAY_extra_accntng' 		=> null,
+							'PAY_details' 					=> null,
 						)
 					)
 				);
@@ -367,7 +401,7 @@ abstract class EE_PMT_Base{
 			} else {
 				throw new EE_Error(
 					sprintf(
-						__('Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or NULL (to indicate NO gateway)', 'event_espresso' ),
+						__('Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or null (to indicate NO gateway)', 'event_espresso' ),
 						get_class($this),
 						gettype( $this->_gateway )
 					)
@@ -384,7 +418,7 @@ abstract class EE_PMT_Base{
 					'TXN_ID'        			=> $transaction->ID(),
 					'PMD_ID' 				=> $transaction->payment_method_ID(),
 					'PAY_amount'    		=> 0.00,
-					'PAY_timestamp' 	=> current_time( 'timestamp' ),
+					'PAY_timestamp' 	=> time(),
 				)
 			);
 

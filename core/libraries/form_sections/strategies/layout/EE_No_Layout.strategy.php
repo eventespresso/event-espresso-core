@@ -17,7 +17,7 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout {
 	 * @return string
 	 */
 	public function layout_form_begin() {
-		return '';
+		return EEH_HTML::nl(1);
 	}
 
 
@@ -52,13 +52,28 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout {
 			$html .= EEH_HTML::nl() . $input->get_html_for_input();
 			$html .= EEH_HTML::nl() . $input->get_html_for_help();
 		}
+		$html .= EEH_HTML::nl(-1);
 		return $html;
 	}
+
+
+
+	/**
+	 * Lays out a row for the subsection
+	 * @param EE_Form_Section_Proper $form_section
+	 * @return string
+	 */
+	public function layout_subsection( $form_section ){
+//		d( $form_section );
+		return EEH_HTML::nl(1) . $form_section->get_html_and_js() . EEH_HTML::nl(-1);
+	}
+
+
 	/**
 	 * closing div tag for a form
 	 * @return string
 	 */
 	public function layout_form_end(){
-		return '';
+		return EEH_HTML::nl(-1);
 	}
 }

@@ -8,7 +8,7 @@
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Mike Nelson
- * @since 				$VID:$
+ * @since 				4.6
  *
  */
 class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
@@ -27,6 +27,19 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 		$this->_input->set_label_sizes();
 		$label_size_class = $this->_input->get_label_size_class();
 		$html = '';
+		if ( ! is_array( $this->_input->raw_value() ) && $this->_input->raw_value() !== NULL ) {
+			EE_Error::doing_it_wrong(
+				'EE_Checkbox_Display_Strategy::display()',
+				sprintf(
+					__( 'Input values for checkboxes should be an array of values, but the value for input "%1$s" is "%2$s". Please verify that the input name is exactly "%3$s"', 'event_espresso'),
+					$this->_input->html_id(),
+					var_export( $this->_input->raw_value(), true),
+					$this->_input->html_name() . '[]'
+				),
+				'4.8.1'
+			);
+		}
+		$input_raw_value = (array)$this->_input->raw_value();
 		foreach( $this->_input->options() as $value => $display_text ){
 			$option_value_as_string = $this->_input->get_normalization_strategy()->unnormalize_one( $value );
 			$html_id = $multi ? $this->_input->html_id() . '-' . sanitize_key( $option_value_as_string ) : $this->_input->html_id();
@@ -39,7 +52,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= ' class="' . $this->_input->html_class() . '"';
 			$html .= ' style="' . $this->_input->html_style() . '"';
 			$html .= ' value="' . esc_attr( $value ) . '"';
-			$html .= $this->_input->raw_value() && in_array( $value, $this->_input->raw_value() ) ? ' checked="checked"' : '';
+			$html .= ! empty( $input_raw_value ) && in_array( $value, $input_raw_value ) ? ' checked="checked"' : '';
 			$html .= '>&nbsp;';
 			$html .= $display_text;
 			$html .= EEH_HTML::nl( -1, 'checkbox' ) . '</label>';
