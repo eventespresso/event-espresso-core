@@ -1061,7 +1061,7 @@ class EEH_Activation {
 						if( is_array( $id_col ) ) {
 							$QSG_ID = reset( $id_col );
 						} else {
-							//ok so we didn't find it in the db either?? thats weird because we should have inserted it at the start of this method
+							//ok so we didn't find it in the db either?? that's weird because we should have inserted it at the start of this method
 							$QSG_ID = null;
 						}
 					}
