@@ -93,6 +93,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	protected $_autosave_containers = array();
 	protected $_autosave_fields = array();
 
+	/**
+	 * Array mapping from admin actions to their equivalent wp core pages for custom post types. So when a user visits a page for an action, it will appear as if they were visiting the wp core page for that custom post type
+	 * @var array
+	 */
+	protected $_pagenow_map = null;
 
 
 
@@ -164,6 +169,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_cpt_object = isset($this->_req_data['action']) && isset( $this->_cpt_routes[$this->_req_data['action']] ) ? get_post_type_object($this->_cpt_routes[$this->_req_data['action']]) : get_post_type_object( $page );
 
 		//tweak pagenow for page loading.
+		if( ! $this->_pagenow_map ) {
+			$this->_pagenow_map = array(
+				'create_new' => 'post-new.php',
+				'edit' => 'post.php',
+				'trash' => 'post.php'
+				);
+		}
 		add_action( 'current_screen', array( $this, 'modify_pagenow') );
 
 
@@ -192,16 +204,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function modify_pagenow( $current_screen ) {
 		global $pagenow;
-		//corresponding pagenow maps for our custom routes.
-		$pagenow_map = array(
-			'create_new' => 'post-new.php',
-			'edit' => 'post.php',
-			'trash' => 'post.php'
-			);
-
 		//possibly reset pagenow.
-		if ( ! empty( $this->_req_data['page'] ) && $this->_req_data['page'] == $this->page_slug && !empty( $this->_req_data['action'] ) && isset( $pagenow_map[$this->_req_data['action'] ] ) ) {
-			$pagenow = $pagenow_map[$this->_req_data['action']];
+		if ( ! empty( $this->_req_data['page'] ) && $this->_req_data['page'] == $this->page_slug && !empty( $this->_req_data['action'] ) && isset( $this->_pagenow_map[$this->_req_data['action'] ] ) ) {
+			$pagenow = $this->_pagenow_map[$this->_req_data['action']];
 		}
 	}
 

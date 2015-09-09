@@ -53,7 +53,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$this->_columns = array(
-			'status' => __(''),
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
@@ -76,6 +75,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
 			);
 
+		$this->_primary_column = 'id';
+
 		$this->_hidden_columns = array( 'author' );
 	}
 
@@ -94,6 +95,18 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
 			$this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
 		}
+	}
+
+
+
+	protected function _get_row_class( $item ) {
+		$class = parent::_get_row_class( $item );
+		//add status class
+		$class .= ' ee-status-strip event-status-' . $item->get_active_status();
+		if ( $this->_has_checkbox_column ) {
+			$class .= ' has-checkbox-column';
+		}
+		return $class;
 	}
 
 
@@ -118,7 +131,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id($item) {
-		return $item->ID();
+		$content = $item->ID();
+		$content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
+		return $content;
 	}
 
 

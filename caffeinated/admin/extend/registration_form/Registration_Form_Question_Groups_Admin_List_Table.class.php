@@ -116,7 +116,9 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 	public function column_id(EE_Question_Group $item) {
-		return $item->ID();
+		$content = $item->ID();
+		$content .= '  <span class="show-on-mobile-view-only">' .$item->name() . '</span>';
+		return $content;
 	}
 
 

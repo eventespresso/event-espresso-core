@@ -109,7 +109,9 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id(EE_Question $item) {
-		return $item->ID();
+		$content = $item->ID();
+		$content .= '  <span class="show-on-mobile-view-only">' . $item->display_text() . '</span>';
+		return $content;
 	}
 
 
