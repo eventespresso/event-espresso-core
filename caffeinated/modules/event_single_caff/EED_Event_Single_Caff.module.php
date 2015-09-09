@@ -133,10 +133,10 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 	 * @return    	EE_Event_Single_Config
 	 */
 	public static function update_template_settings( $CFG, $REQ ) {
-		$display_order_tickets = $CFG->EED_Event_Single->display_order_tickets;
-		$display_order_datetimes = $CFG->EED_Event_Single->display_order_datetimes;
-		$display_order_event = $CFG->EED_Event_Single->display_order_event;
-		$display_order_venue = $CFG->EED_Event_Single->display_order_venue;
+		$display_order_tickets = isset( $CFG->EED_Event_Single->display_order_tickets ) ? $CFG->EED_Event_Single->display_order_tickets : 100;
+		$display_order_datetimes = isset( $CFG->EED_Event_Single->display_order_datetimes ) ? $CFG->EED_Event_Single->display_order_datetimes : 110;
+		$display_order_event = isset( $CFG->EED_Event_Single->display_order_event ) ? $CFG->EED_Event_Single->display_order_event : 120;
+		$display_order_venue = isset( $CFG->EED_Event_Single->display_order_venue ) ? $CFG->EED_Event_Single->display_order_venue : 130;
 		$CFG->EED_Event_Single = new EE_Event_Single_Config();
 		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
 		$CFG->EED_Event_Single->display_venue = ! empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
@@ -160,7 +160,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$elements = explode( ',', trim( $elements, ',' ) );
 		foreach ( $elements as $key => $element ) {
 			$element = "display_order_$element";
-			EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$element = $key + 100;
+			EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$element = ( $key * 10 ) + 100;
 		}
 		$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
 		if ( $config_saved ) {
