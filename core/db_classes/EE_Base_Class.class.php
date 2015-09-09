@@ -1273,6 +1273,7 @@ abstract class EE_Base_Class{
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
 		$result = $this->get_model()->delete_by_ID( $this->ID() );
+                $this->refresh_cache_of_related_objects();
 		/**
 		 * Called just after deleting a model object
 		 * @param EE_Base_Class $model_object that was just 'deleted'
@@ -1292,11 +1293,35 @@ abstract class EE_Base_Class{
 		$model=$this->get_model();
 		if($model instanceof EEM_Soft_Delete_Base){
 			$result=$model->delete_permanently_by_ID($this->ID());
+                        $this->refresh_cache_of_related_objects();
 		}else{
 			$result = $this->delete();
 		}
 		return $result ? true : false;
 	}
+        
+        /**
+         * When this model object is deleted, it may still be cached on related model objects. This clears the cache of
+         * related model obejcts
+         */
+        public function refresh_cache_of_related_objects() {
+            foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+                if( ! empty( $this->_model_relations[ $relation_name ] ) ) {
+                    $related_objects = $this->_model_relations[ $relation_name ];
+                    if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+                        //this relation only stores a single model object, not an array
+                        //but let's make it consistent
+                        $related_objects = array( $related_objects );
+                    }
+                    foreach( $related_objects as $relation_obj ) {
+                        //only refresh their cache if they're in memory
+                        if( $relation_obj instanceof EE_Base_Class ) {
+                            $relation_obj->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                        }
+                    }
+                }
+            }
+        }
 
 
 
