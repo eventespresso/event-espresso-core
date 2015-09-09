@@ -565,9 +565,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			} else {
 				// not found, remove it (but only if not a system question for the personal group)
 				if ( $question instanceof EE_Question &&
-						! (
-							$question->is_system_question() &&
-							$question_group->system_group() === EEM_Question_Group::system_personal )) {
+					! (
+						$question->is_system_question() &&
+						$question_group->system_group() === EEM_Question_Group::system_personal
+					)
+				) {
 					$question_group->remove_question( $question_ID );
 				}
 			}
