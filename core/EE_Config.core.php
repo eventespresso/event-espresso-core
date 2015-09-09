@@ -2288,9 +2288,9 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->display_venue = 0;
 		$this->display_expired_events = 0;
 		$this->display_order_tickets = 100;
-		$this->display_order_datetimes = 101;
-		$this->display_order_event = 102;
-		$this->display_order_venue = 103;
+		$this->display_order_datetimes = 110;
+		$this->display_order_event = 120;
+		$this->display_order_venue = 130;
 	}
 }
 
@@ -2314,9 +2314,9 @@ class EE_Event_Single_Config extends EE_Config_Base{
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
 		$this->display_order_tickets = 100;
-		$this->display_order_datetimes = 101;
-		$this->display_order_event = 102;
-		$this->display_order_venue = 103;
+		$this->display_order_datetimes = 110;
+		$this->display_order_event = 120;
+		$this->display_order_venue = 130;
 	}
 }
 
