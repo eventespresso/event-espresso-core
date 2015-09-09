@@ -380,6 +380,11 @@ class EED_Events_Archive  extends EED_Module {
 		if ( ! apply_filters( 'FHEE__EED_Events_Archive__event_details__no_post_password_required', false ) && post_password_required() ) {
 			return $content;
 		}
+		static $applied_filters = array();
+		if ( has_filter( 'the_content', array( 'EED_Events_Archive', "event_$template" ) ) && isset( $applied_filters[ $template ] ) ) {
+			return $content;
+		}
+		$applied_filters[ $template ] = true;
 		if ( EED_Events_Archive::$event_position == 120 ) {
 			// EVENT is FIRST so all elements go AFTER the content
 			$before = false;
