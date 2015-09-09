@@ -88,8 +88,7 @@ jQuery(document).ready(function($) {
 
 	jQuery('body').mouseup( function() {
 		if ( ! eeShortcodeHover ) {
-			$('.ee_shortcode_chooser_container').addClass('hidden');
-			$('.ee_shortcode_chooser_container').removeClass('ee-shortcode-chooser-open');
+			$('.ee_shortcode_chooser_container').addClass('hidden').removeClass('ee-shortcode-chooser-open');
 		}
 	});
 });
@@ -99,8 +98,7 @@ jQuery(document).ready(function($) {
 function shortCodePicker( el ) {
 	var itemClicked = jQuery(el);
 	var shortcodeContainer = jQuery( '.ee_shortcode_chooser_container', itemClicked );
-	shortcodeContainer.removeClass('hidden');
-	shortcodeContainer.addClass('ee-shortcode-chooser-open');
+	shortcodeContainer.removeClass('hidden' ).addClass('ee-shortcode-chooser-open');
 
 	//set click event but unbind any existing first. Also namespace.
 	jQuery( '.js-shortcode-selection', shortcodeContainer ).unbind('click.shortcodeClick').bind( 'click.shortcodeClick', function(e) {
@@ -123,8 +121,7 @@ function shortCodePickerClickEvent( el, shortcodeContainer ) {
 	} else {
 		AddVariableToInput( input, shortcodeRequested );
 	}
-	shortcodeContainer.addClass('hidden');
-	shortcodeContainer.removeClass('ee-shortcode-chooser-open');
+	shortcodeContainer.addClass('hidden').removeClass('ee-shortcode-chooser-open');
 }
 
 
