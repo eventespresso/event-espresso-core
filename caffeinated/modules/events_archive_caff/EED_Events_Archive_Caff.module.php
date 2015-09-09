@@ -100,9 +100,9 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 		$config->display_expired_events = isset( $config->display_expired_events ) ? $config->display_expired_events : 0;
 		// display order options
 		$config->display_order_tickets = isset( $config->display_order_tickets  )? $config->display_order_tickets : 100;
-		$config->display_order_datetimes = isset( $config->display_order_datetimes  )? $config->display_order_datetimes : 101;
-		$config->display_order_event = isset( $config->display_order_event  )? $config->display_order_event : 102;
-		$config->display_order_venue = isset( $config->display_order_venue  )? $config->display_order_venue : 103;
+		$config->display_order_datetimes = isset( $config->display_order_datetimes  )? $config->display_order_datetimes : 110;
+		$config->display_order_event = isset( $config->display_order_event  )? $config->display_order_event : 120;
+		$config->display_order_venue = isset( $config->display_order_venue  )? $config->display_order_venue : 130;
 		$event_archive_order_array = array();
 		$event_archive_order_array[ $config->display_order_tickets ] = 'tickets';
 		$event_archive_order_array[ $config->display_order_datetimes ] = 'datetimes';
@@ -155,9 +155,9 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 			$config->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : 0;
 			$config->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : 0;
 			$config->display_order_tickets = isset( $CFG->EED_Events_Archive->display_order_tickets ) ? $CFG->EED_Events_Archive->display_order_tickets : 100;
-			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) ? $CFG->EED_Events_Archive->display_order_datetimes : 101;
-			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) ? $CFG->EED_Events_Archive->display_order_event : 102;
-			$config->display_order_venue = isset( $CFG->EED_Events_Archive->display_order_venue ) ? $CFG->EED_Events_Archive->display_order_venue : 103;
+			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) ? $CFG->EED_Events_Archive->display_order_datetimes : 110;
+			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) ? $CFG->EED_Events_Archive->display_order_event : 120;
+			$config->display_order_venue = isset( $CFG->EED_Events_Archive->display_order_venue ) ? $CFG->EED_Events_Archive->display_order_venue : 130;
 		}
 		$CFG->EED_Events_Archive = $config;
 		return $CFG;
@@ -176,7 +176,7 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 		$elements = explode( ',', trim( $elements, ',' ) );
 		foreach ( $elements as $key => $element ) {
 			$element = "display_order_$element";
-			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->$element = $key + 100;
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->$element = ( $key * 10 ) + 100;
 		}
 		$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
 		if ( $config_saved ) {
