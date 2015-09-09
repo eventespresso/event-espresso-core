@@ -753,6 +753,28 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$log_from_db->set( 'LOG_message', serialize( $log_message ) );
 		$this->assertTrue( is_string( $log_from_db->get( 'LOG_message' ) ) );
 	}
+        
+        /**
+         * @group 8686
+         */
+        public function test_delete__remove_from_related_items_in_entity_mapper() {
+            $p = $this->new_model_obj_with_dependencies( 'Payment' );
+            $r = $this->new_model_obj_with_dependencies( 'Registration' );
+            $p->_add_relation_to( $r, 'Registration' );
+            $this->assertFalse( empty( $p->registration_payments() ) );
+            //now delete the relation entry
+            foreach ( $p->registration_payments() as $registration_payment ) {
+                if ( $registration_payment instanceof EE_Registration_Payment ) {       
+                    $this->assertEquals( 1, $registration_payment->delete() );
+                }
+            }
+//            echo "all registraiton payments";
+//            var_dump( EEM_Registration_Payment::instance()->get_all() );
+//            echo "registration payments related to payment";
+//            var_dump($p->registration_payments() );
+            //now there shoudl eb no more registraiton payments on that payment right?
+            $this->assertTrue( empty( $p->registration_payments() ) );
+        }
 
 }
 
