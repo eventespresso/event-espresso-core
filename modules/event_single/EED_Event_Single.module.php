@@ -299,6 +299,11 @@ class EED_Event_Single  extends EED_Module {
 	 * @access    protected
 	 */
 	protected static function _position_filtered_element( $content, $element, $template ) {
+		static $applied_filters = array();
+		if ( has_filter( 'the_content', array( 'EED_Event_Single', "event_$template" ) ) && isset( $applied_filters[ $template ] ) ) {
+			return $content;
+		}
+		$applied_filters[ $template ] = true;
 		if ( EED_Event_Single::$event_position == 120 ) {
 			// EVENT is FIRST so all elements go AFTER the content
 			$before = false;
