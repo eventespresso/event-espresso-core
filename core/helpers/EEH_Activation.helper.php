@@ -1062,10 +1062,17 @@ class EEH_Activation {
 							$QSG_ID = reset( $id_col );
 						} else {
 							//ok so we didn't find it in the db either?? that's weird because we should have inserted it at the start of this method
-							$QSG_ID = null;
+                                                        EE_Log::instance()->log( 
+                                                                __FILE__, 
+                                                                __FUNCTION__, 
+                                                                sprintf( 
+                                                                        __( 'Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'), 
+                                                                        $QST_ID ), 
+                                                                'error' );
+                                                        continue;
 						}
 					}
-
+                                        
 					// add system questions to groups
 					$wpdb->insert(
 						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
