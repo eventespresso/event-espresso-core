@@ -29,11 +29,11 @@ class EED_Event_Single  extends EED_Module {
 
 	protected static $display_order_tickets = 100;
 
-	protected static $display_order_datetimes = 101;
+	protected static $display_order_datetimes = 110;
 
-	protected static $display_order_event = 102;
+	protected static $display_order_event = 120;
 
-	protected static $display_order_venue = 103;
+	protected static $display_order_venue = 130;
 
 
 
@@ -97,9 +97,9 @@ class EED_Event_Single  extends EED_Module {
 		/** @type EE_Event_Single_Config $config */
 		$config = $this->config();
 		EED_Event_Single::$display_order_tickets = isset( $config->display_order_tickets ) ? $config->display_order_tickets : 100;
-		EED_Event_Single::$display_order_datetimes = isset( $config->display_order_datetimes ) ? $config->display_order_datetimes : 101;
-		EED_Event_Single::$display_order_event = isset( $config->display_order_event ) ? $config->display_order_event : 102;
-		EED_Event_Single::$display_order_venue = isset( $config->display_order_venue ) ? $config->display_order_venue : 103;
+		EED_Event_Single::$display_order_datetimes = isset( $config->display_order_datetimes ) ? $config->display_order_datetimes : 110;
+		EED_Event_Single::$display_order_event = isset( $config->display_order_event ) ? $config->display_order_event : 120;
+		EED_Event_Single::$display_order_venue = isset( $config->display_order_venue ) ? $config->display_order_venue : 130;
 		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_tickets ] = 'tickets';
 		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_datetimes ] = 'datetimes';
 		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_event ] = 'event';
@@ -123,10 +123,10 @@ class EED_Event_Single  extends EED_Module {
 	protected static function _process_filter_order_array() {
 		ksort( EED_Event_Single::$filter_order_array );
 		$corrected_keys = array(
-			100 => 102,
-			101 => 100,
-			102 => 101,
-			103 => 103,
+			100 => 120,
+			110 => 100,
+			120 => 110,
+			130 => 130,
 		);
 		$corrected_key_array = array();
 		foreach ( EED_Event_Single::$filter_order_array as $key => $template ) {
@@ -157,12 +157,12 @@ class EED_Event_Single  extends EED_Module {
 		// want:  dates - tickets - venue - EVENT
 		// order: tickets - venue - dates - EVENT
 		// 0 to 1 : venue - tickets - dates - EVENT
-		if ( EED_Event_Single::$event_position == 103 ) {
+		if ( EED_Event_Single::$event_position == 130 ) {
 			// EVENT LAST
 			// swap positions for elements 0 & 1
 			$temp = EED_Event_Single::$filter_order_array[ 100 ];
-			EED_Event_Single::$filter_order_array[ 100 ] = EED_Event_Single::$filter_order_array[ 101 ];
-			EED_Event_Single::$filter_order_array[ 101 ] = $temp;
+			EED_Event_Single::$filter_order_array[ 100 ] = EED_Event_Single::$filter_order_array[ 110 ];
+			EED_Event_Single::$filter_order_array[ 110 ] = $temp;
 			ksort( EED_Event_Single::$filter_order_array );
 			// don't forget to update the actual config properties
 			foreach ( EED_Event_Single::$filter_order_array as $filter_order => $filter ) {
@@ -299,16 +299,16 @@ class EED_Event_Single  extends EED_Module {
 	 * @access    protected
 	 */
 	protected static function _position_filtered_element( $content, $element, $template ) {
-		if ( EED_Event_Single::$event_position == 102 ) {
+		if ( EED_Event_Single::$event_position == 120 ) {
 			// EVENT is FIRST so all elements go AFTER the content
 			$before = false;
-		} else if ( EED_Event_Single::$event_position == 103 ) {
+		} else if ( EED_Event_Single::$event_position == 130 ) {
 			// EVENT is LAST so all elements go BEFORE the content
 			$before = true;
-		} else if ( $element == 103 ) {
+		} else if ( $element == 130 ) {
 			// this element is LAST - add AFTER existing content
 			$before = false;
-		} else if ( $element == 102 ) {
+		} else if ( $element == 120 ) {
 			// this element is FIRST - add BEFORE existing content
 			$before = true;
 		} else if ( $element < EED_Event_Single::$display_order_event ) {
