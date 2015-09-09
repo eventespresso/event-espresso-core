@@ -18,7 +18,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 	/**
 	 * QST_system for questions are strings not ints now,
 	 * so these constants are deprecated.
-	 * Please instead use the EEM_Attnedee::system_question_* constants
+	 * Please instead use the EEM_Attendee::system_question_* constants
 	 * @deprecated
 	 */
 	const fname_question_id=1;
@@ -35,7 +35,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 	/**
 	 * When looking for questions that correspond to attendee fields,
 	 * look for the question with this QST_system value.
-	 * These replace the old constants like EEM_Attendee::*_qusetion_id
+	 * These replace the old constants like EEM_Attendee::*_question_id
 	 */
 	const system_question_fname = 'fname';
 	const system_question_lname = 'lname';
@@ -127,7 +127,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 	/**
 	 * Gets the name of the field on the attendee model corresponding to the system question string
 	 * which should be one of the keys from EEM_Attendee::_system_question_to_attendee_field_name
-	 * @param type $system_question_string
+	 * @param string $system_question_string
 	 * @return string|null if not found
 	 */
 	public function get_attendee_field_for_system_question( $system_question_string ) {
