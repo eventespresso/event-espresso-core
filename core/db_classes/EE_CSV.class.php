@@ -75,7 +75,7 @@
 	/**
 	 *		@ singleton method used to instantiate class object
 	 *		@ access public
-	 *		@ return class instance
+	 *		@return EE_CSV
 	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
@@ -597,6 +597,23 @@
 //		}
 //	}
 
+	/**
+	 * Gets the date format to use in teh csv. filterable
+	 * @param string $current_format
+	 * @return string
+	 */
+	public function get_date_format_for_csv( $current_format = null ) {
+		return apply_filters( 'FHEE__EE_CSV__get_date_format_for_csv__format', 'Y-m-d', $current_format );
+	}
+
+	/**
+	 * Gets the time format we want to use in CSV reports. Filterable
+	 * @param string $current_format
+	 * @return string
+	 */
+	public function get_time_format_for_csv( $current_format = null ) {
+		return apply_filters( 'FHEE__EE_CSV__get_time_format_for_csv__format', 'H:i:s', $current_format );
+	}
 
 
 }
