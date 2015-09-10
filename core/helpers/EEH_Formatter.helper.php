@@ -157,11 +157,11 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
+	 * @param string $country
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip ) {
+	public function format( $address, $address2, $city, $state, $zip, $country ) {
 		$formatted_address = $address;
 		$formatted_address .= ! empty( $address2 ) ? '<br/>' . $address2 : '';
 		$formatted_address .= ! empty( $city ) ? '<br/>' . $city : '';
@@ -196,11 +196,11 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
+	 * @param string $country
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip ) {
+	public function format( $address, $address2, $city, $state, $zip, $country ) {
 		$formatted_address = $address;
 		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
 		$formatted_address .= ! empty( $address2 ) ? $address2 : '';
@@ -209,9 +209,9 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
 		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
 		$formatted_address .= ! empty( $state ) ? $state : '';
 		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $country ) ? $country : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
 		$formatted_address .= ! empty( $zip ) ? $zip : '';
+		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
+		$formatted_address .= ! empty( $country ) ? $country : '';
 		return $formatted_address;
 	}
 }
@@ -240,11 +240,11 @@ class EE_Null_Address_Formatter implements EEI_Address_Formatter {
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
+	 * @param string $country
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip ) {
+	public function format( $address, $address2, $city, $state, $zip, $country ) {
 		return NULL;
 	}
 }
@@ -341,8 +341,8 @@ class EEH_Address {
 			$obj_with_address->address2(),
 			$obj_with_address->city(),
 			$obj_with_address->state(),
-			$obj_with_address->country(),
-			$obj_with_address->zip()
+			$obj_with_address->zip(),
+			$obj_with_address->country()
 		);
 		$formatted_address .= $add_wrapper ? '</div>' : '';
 		// return the formatted address
@@ -367,8 +367,8 @@ class EEH_Address {
 			EEH_Schema::postOfficeBoxNumber( $obj_with_address ),
 			EEH_Schema::addressLocality( $obj_with_address ),
 			EEH_Schema::addressRegion( $obj_with_address ),
-			EEH_Schema::addressCountry( $obj_with_address ),
-			EEH_Schema::postalCode( $obj_with_address )
+			EEH_Schema::postalCode( $obj_with_address ),
+			EEH_Schema::addressCountry( $obj_with_address )
 		);
 		$formatted_address .= '</div>';
 		// return the formatted address
@@ -566,20 +566,20 @@ class EE_Generic_Address implements EEI_Address {
 	private $_city = '';
 	private $_state_ID = '';
 	private $_state_obj = '';
+	private $_zip = '';
 	private $_country_ID = '';
 	private $_country_obj = '';
-	private $_zip = '';
 
 	/**
 	 * @param string $address
 	 * @param string $address2
 	 * @param string $city
 	 * @param EE_State | string $state
-	 * @param EE_Country | string $country
 	 * @param string $zip
+	 * @param EE_Country | string $country
 	 * @return EE_Generic_Address
 	 */
-	public function __construct( $address, $address2, $city, $state, $country, $zip ) {
+	public function __construct( $address, $address2, $city, $state, $zip, $country ) {
 		$this->_address = $address;
 		$this->_address2 = $address2;
 		$this->_city = $city;
@@ -589,13 +589,13 @@ class EE_Generic_Address implements EEI_Address {
 			$this->_state_ID = $state;
 			$this->_state_obj = $this->_get_state_obj();
 		}
+		$this->_zip = $zip;
 		if ( $country instanceof EE_Country ) {
 			$this->_country_obj = $country;
 		} else {
 			$this->_country_ID = $country;
 			$this->_country_obj = $this->_get_country_obj();
 		}
-		$this->_zip = $zip;
 	}
 
 
