@@ -155,7 +155,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r_from_t = $t->get_first_related('Registration');
 		$this->assertEquals($r,$r_from_t);
 	}
-
+        /**
+         * @group 8686
+         */
 	function test_remove_relation_to(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -163,12 +165,20 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r->save();
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertEquals($t,$t_from_r);
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertFalse( empty( $rs_from_t ) );
 		//remove the relation
 		$t_removed = $r->_remove_relation_to($t, 'Transaction');
 		$this->assertEquals($t,$t_removed);
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertNull($t_from_r);
+                //and verify the cached reciprocal relation is updated too
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertTrue( empty( $rs_from_t ) );
 	}
+        /**
+         * @group 8686
+         */
 	function test_remove_relations(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -176,9 +186,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r->save();
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertEquals($t,$t_from_r);
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertFalse( empty( $rs_from_t ) );
+                //ok now remove the relation between them
 		$r->_remove_relations('Transaction');
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertNull($t_from_r);
+                //and verify the cached reciprocal relation is updated too
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertTrue( empty( $rs_from_t ) );
 	}
 	function test_count_related(){
 		$e1 = EE_Event::new_instance(array('EVT_name'=>'1'));
