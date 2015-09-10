@@ -388,6 +388,18 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	protected function get_primary_column_name() {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'get_primary_column_name' ) && $parent == 'WP_List_Table' ) {
+				return parent::get_primary_column_name();
+			}
+		}
+		return $this->_primary_column;
+	}
+
+
+
+
 	/**
 	 * _get_bulk_actions
 	 * This is a wrapper called by WP_List_Table::get_bulk_actions()
