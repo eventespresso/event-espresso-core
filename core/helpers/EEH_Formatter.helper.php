@@ -159,17 +159,24 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 	 * @param string $state
 	 * @param string $zip
 	 * @param string $country
+	 * @param string $CNT_ISO
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $zip, $country ) {
-		$formatted_address = $address;
-		$formatted_address .= ! empty( $address2 ) ? '<br/>' . $address2 : '';
-		$formatted_address .= ! empty( $city ) ? '<br/>' . $city : '';
-		$formatted_address .=  ! empty( $city ) && ! empty( $state ) ? ', ' : '';
-		$formatted_address .= ! empty( $state ) ? $state : '';
-		$formatted_address .= ! empty( $zip ) ? '<br/>' . $zip : '';
-		$formatted_address .= ! empty( $country ) ? '<br/>' . $country : '';
-		return $formatted_address;
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
+
+		$address_formats = apply_filters(
+			'FHEE__EE_MultiLine_Address_Formatter__address_formats',
+			array(
+				'CA'  	=> "$address%$address2%$city%$state%$country%$zip",
+				'UK'  	=> "$address%$address2%$city%$state%$zip%$country",
+				'USA' 	=> "$address%$address2%$city%$state%$zip%$country",
+				'ZZZ' 	=> "$address%$address2%$city%$state%$zip%$country",
+			)
+		);
+		// if the incoming country has a set format, use that, else use the default
+		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZZ' ];
+		// remove placeholder from start and end, reduce repeating placeholders to singles, then replace with HTML line breaks
+		return preg_replace( '/%+/', '<br />', trim( $formatted_address, '%' ) );
 	}
 }
 
@@ -191,6 +198,7 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
  * ------------------------------------------------------------------------
  */
 class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
+
 	/**
 	 * @param string $address
 	 * @param string $address2
@@ -198,21 +206,23 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
 	 * @param string $state
 	 * @param string $zip
 	 * @param string $country
+	 * @param string $CNT_ISO
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $zip, $country ) {
-		$formatted_address = $address;
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $address2 ) ? $address2 : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $city ) ? $city : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $state ) ? $state : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $zip ) ? $zip : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $country ) ? $country : '';
-		return $formatted_address;
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
+		$address_formats = apply_filters(
+			'FHEE__EE_Inline_Address_Formatter__address_formats',
+			array(
+				'CA'  	=> "$address%$address2%$city%$state%$country%$zip",
+				'UK'  	=> "$address%$address2%$city%$state%$zip%$country",
+				'USA' 	=> "$address%$address2%$city%$state%$zip%$country",
+				'ZZZ' 	=> "$address%$address2%$city%$state%$zip%$country",
+			)
+		);
+		// if the incoming country has a set format, use that, else use the default
+		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZZ' ];
+		// remove placeholder from start and end, reduce repeating placeholders to singles, then replace with HTML line breaks
+		return preg_replace( '/%+/', ', ', trim( $formatted_address, '%' ) );
 	}
 }
 
@@ -235,6 +245,7 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
  * ------------------------------------------------------------------------
  */
 class EE_Null_Address_Formatter implements EEI_Address_Formatter {
+
 	/**
 	 * @param string $address
 	 * @param string $address2
@@ -242,9 +253,10 @@ class EE_Null_Address_Formatter implements EEI_Address_Formatter {
 	 * @param string $state
 	 * @param string $zip
 	 * @param string $country
+	 * @param string $CNT_ISO
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $zip, $country ) {
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
 		return NULL;
 	}
 }
@@ -340,9 +352,10 @@ class EEH_Address {
 			$obj_with_address->address(),
 			$obj_with_address->address2(),
 			$obj_with_address->city(),
-			$obj_with_address->state(),
+			$obj_with_address->state_name(),
 			$obj_with_address->zip(),
-			$obj_with_address->country()
+			$obj_with_address->country_name(),
+			$obj_with_address->country_ID()
 		);
 		$formatted_address .= $add_wrapper ? '</div>' : '';
 		// return the formatted address
@@ -368,7 +381,8 @@ class EEH_Address {
 			EEH_Schema::addressLocality( $obj_with_address ),
 			EEH_Schema::addressRegion( $obj_with_address ),
 			EEH_Schema::postalCode( $obj_with_address ),
-			EEH_Schema::addressCountry( $obj_with_address )
+			EEH_Schema::addressCountry( $obj_with_address ),
+			$obj_with_address->country_ID()
 		);
 		$formatted_address .= '</div>';
 		// return the formatted address
@@ -474,7 +488,7 @@ class EEH_Schema {
 	* 	@return string
 	*/
 	public static function addressRegion ( EEI_Address $obj_with_address = NULL ) {
-		$state = $obj_with_address->state();
+		$state = $obj_with_address->state_name();
 		if ( ! empty( $state ) ) {
 			return '<span itemprop="addressRegion">' . $state . '</span>';
 		} else {
@@ -491,7 +505,7 @@ class EEH_Schema {
 	* 	@return string
 	*/
 	public static function addressCountry ( EEI_Address $obj_with_address = NULL ) {
-		$country = $obj_with_address->country();
+		$country = $obj_with_address->country_name();
 		if ( ! empty( $country ) ) {
 			return '<span itemprop="addressCountry">' . $country . '</span>';
 		} else {
