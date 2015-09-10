@@ -665,8 +665,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, 'load_scripts_styles_' . $this->_current_view ) )
 			add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles_' . $this->_current_view ), 15 );
 
-		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these.
-		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 1 );
+		add_action('admin_enqueue_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 100 );
+
+		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_global' ), 99 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts' ), 100 );
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
