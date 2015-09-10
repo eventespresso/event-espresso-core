@@ -263,7 +263,11 @@ class EED_Event_Single  extends EED_Module {
 	public static function event_details( $content ) {
 		global $post;
 		if ( $post->post_type == 'espresso_events' && ! post_password_required() ) {
-			$content = EED_Event_Single::_apply_event_content_filters( $content );
+			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order ) {
+				$content = EED_Event_Single::_apply_event_content_filters( $content );
+			} else {
+				$content = \EED_Event_Single::use_filterable_display_order( $content );
+			}
 		}
  		return $content;
 	}
@@ -290,13 +294,43 @@ class EED_Event_Single  extends EED_Module {
 
 
 	/**
+	 *    use_filterable_display_order
+	 *
+	 * @access    protected
+	 * @param        string $content
+	 * @return string
+	 */
+	protected static function use_filterable_display_order( $content ) {
+		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
+		// it uses the_content() for displaying the $post->post_content
+		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
+		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+		//now add additional content
+		add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110, 1 );
+		add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120, 1 );
+		add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130, 1 );
+		// now load our template
+		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+		//now add our filter back in, plus some others
+		add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110 );
+		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120 );
+		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130 );
+		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+		return ! empty( $template ) ? $template : $content;
+	}
+
+
+
+	/**
 	 *    _position_filtered_element
 	 *
+	 * @access    protected
 	 * @param        string $content
 	 * @param               $element
 	 * @param               $template
 	 * @return string
-	 * @access    protected
 	 */
 	protected static function _position_filtered_element( $content, $element, $template ) {
 		static $applied_filters = array();
