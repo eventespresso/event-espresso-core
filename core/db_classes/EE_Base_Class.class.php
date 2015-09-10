@@ -1685,6 +1685,16 @@ abstract class EE_Base_Class{
 			}
 			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
+                //fix the reciprocal relation too
+                if( $otherObject->ID() ) {
+                    //its saved so assumed relations exist in the DB, so we can just
+                    //clear the cache so future queries use the updated info in the DB
+                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
+                } else {
+                    
+                    //it's not saved, so it caches relations like this
+                    $otherObject->cache( $this->get_model()->get_this_model_name(), $this );
+                }
 
 
 		return $otherObject;
