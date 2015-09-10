@@ -1697,18 +1697,22 @@ abstract class EE_Base_Class{
 	 * If this model object doesn't exist in the DB, just removes the related thing from the cache
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
 	 * @param string $relationName
-	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $where_query You can optionally include an array of key=
+         * >value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+         * @param boolean $remove_reciprocal_relation whether to remove the reciprocal relation or not
 	 * @return EE_Base_Class the relation was removed from
 	 */
-	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
-		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-			$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-			$this->clear_cache($relationName, $otherObject);
-		}else{//this doesn't exist in the DB, just remove it from the cache
-			$otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
-		}
-                $otherObject->_remove_relation_to( $this, $this->get_model()->get_this_model_name() );
-		return $otherObject;
+	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array(), $remove_reciprocal_relation = true ){
+            if($this->ID()){//if this exists in the DB, save the relation change to the DB too
+                    $otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
+                    $this->clear_cache($relationName, $otherObject);
+            }else{//this doesn't exist in the DB, just remove it from the cache
+                    $otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
+            }
+            if( $remove_reciprocal_relation ) {
+                $otherObject->_remove_relation_to( $this, $this->get_model()->get_this_model_name(), array(), false );
+            }
+            return $otherObject;
 	}
 
 	/**

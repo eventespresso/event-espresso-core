@@ -761,7 +761,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
             $p = $this->new_model_obj_with_dependencies( 'Payment' );
             $r = $this->new_model_obj_with_dependencies( 'Registration' );
             $p->_add_relation_to( $r, 'Registration' );
-            $this->assertFalse( empty( $p->registration_payments() ) );
+            $reg_payments = $p->registration_payments();
+            $this->assertFalse( empty( $reg_payments ) );
             //now delete the relation entry
             foreach ( $p->registration_payments() as $registration_payment ) {
                 if ( $registration_payment instanceof EE_Registration_Payment ) {       
@@ -769,7 +770,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
                 }
             }
             //now there shoudl eb no more registraiton payments on that payment right?
-            $this->assertTrue( empty( $p->registration_payments() ) );
+            $reg_payments = $p->registration_payments();
+            $this->assertTrue( empty( $reg_payments ) );
         }
         
         /**
@@ -779,8 +781,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
             $p = $this->new_model_obj_with_dependencies( 'Payment' );
             $r = $this->new_model_obj_with_dependencies( 'Registration' );
             $p->_add_relation_to( $r, 'Registration' );
-            $this->assertFalse( empty( $p->get_many_related( 'Registration' ) ) );
-            $this->assertFalse( empty( $r->get_many_related( 'Payment' ) ) );
+            $regs_on_p = $p->get_many_related( 'Registration' );
+            $pays_on_r = $r->get_many_related( 'Payment' );
+            $this->assertFalse( empty( $regs_on_p ) );
+            $this->assertFalse( empty( $pays_on_r ) );
             //now remove the relations
             foreach ( $p->get_many_related( 'Registration' ) as $registration ) {
                 if ( $registration instanceof EE_Registration ) {       
@@ -788,8 +792,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
                 }
             }
             //now there shoudl eb no more relations between those two right?
-            $this->assertTrue( empty( $p->get_many_related( 'Registration' ) ) );
-            $this->assertTrue( empty( $registration->get_many_related( 'Payment' ) ) );
+            $regs_on_p = $p->get_many_related( 'Registration' );
+            $pays_on_r = $r->get_many_related( 'Payment' );
+            $this->assertTrue( empty( $regs_on_p ) );
+            $this->assertTrue( empty( $pays_on_r ) );
         }
 
 }
