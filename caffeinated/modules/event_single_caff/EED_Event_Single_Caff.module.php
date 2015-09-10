@@ -92,6 +92,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 	public static function template_settings_form() {
 		$config = EE_Registry::instance()->CFG->template_settings;
 		$config = isset( $config->EED_Event_Single ) && $config->EED_Event_Single instanceof EE_Event_Single_Config ? $config->EED_Event_Single : new EE_Event_Single_Config();
+		$config->use_sortable_display_order = isset( $config->use_sortable_display_order ) ? $config->use_sortable_display_order : false;
 		$config = apply_filters( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', $config );
 
 		$event_single_order_array = array();
@@ -140,6 +141,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$CFG->EED_Event_Single = new EE_Event_Single_Config();
 		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
 		$CFG->EED_Event_Single->display_venue = ! empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
+		$CFG->EED_Event_Single->use_sortable_display_order = ! empty( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] ) ? absint( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] ) : 0;
 		$CFG->EED_Event_Single->display_order_tickets = $display_order_tickets;
 		$CFG->EED_Event_Single->display_order_datetimes = $display_order_datetimes;
 		$CFG->EED_Event_Single->display_order_event = $display_order_event;
