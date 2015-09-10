@@ -614,6 +614,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( ! $send ) {
 			// the below may seem like duplication.  However, typically if a messenger enqueues scripts/styles,
 			// it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			add_action( 'admin_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
 			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
 		}
