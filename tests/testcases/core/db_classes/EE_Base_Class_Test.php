@@ -99,14 +99,41 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 //		$results = $tr->save();
 //		$this->assertNotNull($results);
 //	}
+        /**
+         * @group 8686
+         */
 	function test_add_relation_to(){
-		$t = EE_Transaction::new_instance();
-		$t->save();
-		$r = EE_Registration::new_instance();
-		$r->save();
-		$t->_add_relation_to($r, 'Registration');
-		$this->assertEquals($r->get('TXN_ID'),$t->ID());
+            $t = EE_Transaction::new_instance();
+            $t->save();
+            $r = EE_Registration::new_instance();
+            $r->save();
+            //verify the relations
+            $t_from_r = $r->transaction();
+            $this->assertNull( $t_from_r );
+            $rs_from_t = $t->registrations();
+            $this->assertTrue( empty( $rs_from_t ) );
+            
+            //add a relation and verify it changes the model object with the PK
+            $r->_add_relation_to($t, 'Transaction');
+            $this->assertEquals( $t->ID(), $r->get('TXN_ID'));
+            //and we get expected results when fetching using it
+            $t_from_r = $r->transaction();
+            $this->assertEquals( $t, $t_from_r );
+            $rs_from_t = $t->registrations();
+            $this->assertFalse( empty( $rs_from_t ) ); 
 	}
+        /**
+         * @group 8686
+         */
+        function test_add_relation_to__unsaved() {
+            $t = EE_Transaction::new_instance();
+            $r = EE_Registration::new_instance();
+            $t->_add_relation_to($r, 'Registration');
+            $t_from_r = $r->transaction();
+            $this->assertEquals( $t, $t_from_r );
+            $rs_from_t = $t->registrations();
+            $this->assertFalse( empty( $rs_from_t ) );
+        }
 	/**
 	 * @group 7084
 	 */
