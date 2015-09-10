@@ -20,8 +20,8 @@ $description = EEH_Form_Fields::prep_answer_options( array(
 	<!--*************************   Event Listings  ****************************-->
 <br/>
 <br/>
-<h2 class="ee-admin-settings-hdr">
-		<?php _e('Event List Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_list_settings_info');?>
+	<h2 class="ee-admin-settings-hdr">
+		<?php _e('Event List Pages', 'event_espresso'); ?>
 	</h2>
 	<table class="form-table">
 		<tbody>

@@ -11,6 +11,7 @@ $values = EEH_Form_Fields::prep_answer_options(
 ?>
 
 	<!--*************************   Event Single  ****************************-->
+
 	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Single Event Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_single_settings_info');?>
 	</h2>
