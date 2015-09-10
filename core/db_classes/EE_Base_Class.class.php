@@ -1671,6 +1671,7 @@ abstract class EE_Base_Class{
 			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
+                        $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
 		} else {
 			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
@@ -1699,19 +1700,16 @@ abstract class EE_Base_Class{
 	 * @param string $relationName
 	 * @param array  $where_query You can optionally include an array of key=
          * >value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
-         * @param boolean $remove_reciprocal_relation whether to remove the reciprocal relation or not
 	 * @return EE_Base_Class the relation was removed from
 	 */
-	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array(), $remove_reciprocal_relation = true ){
+	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
             if($this->ID()){//if this exists in the DB, save the relation change to the DB too
                     $otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
                     $this->clear_cache($relationName, $otherObject);
             }else{//this doesn't exist in the DB, just remove it from the cache
                     $otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
             }
-            if( $remove_reciprocal_relation ) {
-                $otherObject->_remove_relation_to( $this, $this->get_model()->get_this_model_name(), array(), false );
-            }
+            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
             return $otherObject;
 	}
 
@@ -1728,6 +1726,9 @@ abstract class EE_Base_Class{
 		}else{//this doesn't exist in the DB, just remove it from the cache
 			$otherObjects = $this->clear_cache($relationName,null,true);
 		}
+                foreach( $otherObjects as $otherObject ) {
+                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                }
 		return $otherObjects;
 	}
 
