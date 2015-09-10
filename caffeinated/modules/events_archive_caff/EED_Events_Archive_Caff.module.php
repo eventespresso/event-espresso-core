@@ -99,6 +99,7 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 		$config->display_venue = isset( $config->display_venue ) ? $config->display_venue : 0;
 		$config->display_expired_events = isset( $config->display_expired_events ) ? $config->display_expired_events : 0;
 		// display order options
+		$config->use_sortable_display_order = isset( $config->use_sortable_display_order  )? $config->use_sortable_display_order : false;
 		$config->display_order_tickets = isset( $config->display_order_tickets  )? $config->display_order_tickets : 100;
 		$config->display_order_datetimes = isset( $config->display_order_datetimes  )? $config->display_order_datetimes : 110;
 		$config->display_order_event = isset( $config->display_order_event  )? $config->display_order_event : 120;
@@ -123,7 +124,7 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 		$event_archive_display_order = '';
 		foreach ( $event_archive_order_array as $template ) {
 			$event_archive_display_order .= '
-<li id="' . $template . '" class="archive-sortable-li archive-sortable-js" ><span class="dashicons dashicons-arrow-up-alt2" ></span ><span class="dashicons dashicons-arrow-down-alt2" ></span >' . $templates[ $template ] . '</li>';
+<li id="' . $template . '" class="archive-sortable-li" ><span class="dashicons dashicons-arrow-up-alt2" ></span ><span class="dashicons dashicons-arrow-down-alt2" ></span >' . $templates[ $template ] . '</li>';
 		}
 		// convert to array so that we can add more properties
 		$config = (array)$config;
@@ -154,6 +155,7 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 			$config->display_datetimes = isset( $REQ['EED_Events_Archive_display_datetimes'] ) ? absint( $REQ['EED_Events_Archive_display_datetimes'] ) : 1;
 			$config->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : 0;
 			$config->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : 0;
+			$config->use_sortable_display_order = isset( $REQ['EED_Events_Archive_use_sortable_display_order'] ) ? absint( $REQ['EED_Events_Archive_use_sortable_display_order'] ) : 0;
 			$config->display_order_tickets = isset( $CFG->EED_Events_Archive->display_order_tickets ) ? $CFG->EED_Events_Archive->display_order_tickets : 100;
 			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) ? $CFG->EED_Events_Archive->display_order_datetimes : 110;
 			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) ? $CFG->EED_Events_Archive->display_order_event : 120;
