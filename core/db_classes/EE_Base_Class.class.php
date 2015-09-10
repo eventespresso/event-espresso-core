@@ -1299,10 +1299,10 @@ abstract class EE_Base_Class{
 		}
 		return $result ? true : false;
 	}
-        
+
         /**
          * When this model object is deleted, it may still be cached on related model objects. This clears the cache of
-         * related model obejcts
+         * related model objects
          */
         public function refresh_cache_of_related_objects() {
             foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
@@ -1313,10 +1313,10 @@ abstract class EE_Base_Class{
                         //but let's make it consistent
                         $related_objects = array( $related_objects );
                     }
-                    foreach( $related_objects as $relation_obj ) {
+                    foreach( $related_objects as $related_object ) {
                         //only refresh their cache if they're in memory
-                        if( $relation_obj instanceof EE_Base_Class ) {
-                            $relation_obj->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                        if( $related_object instanceof EE_Base_Class ) {
+							$related_object->clear_cache( $this->get_model()->get_this_model_name(), $this );
                         }
                     }
                 }
@@ -1685,17 +1685,16 @@ abstract class EE_Base_Class{
 			}
 			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
-                //fix the reciprocal relation too
-                if( $otherObject->ID() ) {
-                    //its saved so assumed relations exist in the DB, so we can just
-                    //clear the cache so future queries use the updated info in the DB
-                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
-                } else {
-                    
-                    //it's not saved, so it caches relations like this
-                    $otherObject->cache( $this->get_model()->get_this_model_name(), $this );
-                }
+			//fix the reciprocal relation too
+			if( $otherObject->ID() ) {
+				//its saved so assumed relations exist in the DB, so we can just
+				//clear the cache so future queries use the updated info in the DB
+				$otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
+			} else {
 
+				//it's not saved, so it caches relations like this
+				$otherObject->cache( $this->get_model()->get_this_model_name(), $this );
+			}
 
 		return $otherObject;
 	}
@@ -1706,21 +1705,28 @@ abstract class EE_Base_Class{
 	 * Removes a relationship to the specified EE_Base_Class object, given the relationships' name. Eg, if the current model is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
 	 * If this model object doesn't exist in the DB, just removes the related thing from the cache
-	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
+	 *
+	 * @param mixed $otherObjectModelObjectOrID
+	 * 				EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
 	 * @param string $relationName
-	 * @param array  $where_query You can optionally include an array of key=
-         * >value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $where_query
+	 * 				You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.
+	 * 				However, keep in mind that the columns (keys) given must match a column on the JOIN table
+	 * 				and currently only the HABTM models accept these additional conditions.
+	 * 				Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
-            if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-                    $otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-                    $this->clear_cache($relationName, $otherObject);
-            }else{//this doesn't exist in the DB, just remove it from the cache
-                    $otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
-            }
-            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
-            return $otherObject;
+		if ( $this->ID() ) {
+			//if this exists in the DB, save the relation change to the DB too
+			$otherObject = $this->get_model()->remove_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$this->clear_cache( $relationName, $otherObject );
+		} else {
+			//this doesn't exist in the DB, just remove it from the cache
+			$otherObject = $this->clear_cache( $relationName, $otherObjectModelObjectOrID );
+		}
+		$otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+		return $otherObject;
 	}
 
 	/**
@@ -1730,15 +1736,17 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function _remove_relations($relationName,$where_query_params = array()){
-		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-			$otherObjects = $this->get_model()->remove_relations($this, $relationName, $where_query_params );
-			$this->clear_cache($relationName,null,true);
-		}else{//this doesn't exist in the DB, just remove it from the cache
-			$otherObjects = $this->clear_cache($relationName,null,true);
+		if ( $this->ID() ) {
+			//if this exists in the DB, save the relation change to the DB too
+			$otherObjects = $this->get_model()->remove_relations( $this, $relationName, $where_query_params );
+			$this->clear_cache( $relationName, null, true );
+		} else {
+			//this doesn't exist in the DB, just remove it from the cache
+			$otherObjects = $this->clear_cache( $relationName, null, true );
 		}
-                foreach( $otherObjects as $otherObject ) {
-                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
-                }
+		foreach ( $otherObjects as $otherObject ) {
+			$otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+		}
 		return $otherObjects;
 	}
 
