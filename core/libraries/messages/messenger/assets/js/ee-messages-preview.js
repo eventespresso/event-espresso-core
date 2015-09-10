@@ -8,7 +8,8 @@ jQuery(document).ready(function($) {
 	 */
 
 	//if the eeLazyLoadingContainers object is loaded then we're in wp-admin so dont' disable links globally. Otherwise disable globally.
-	var containerToDisable = typeof eeLazyLoadingContainers === undefined ? document : '#ee-message-preview-container';
+	var containerToDisable = typeof eeLazyLoadingContainers === 'undefined' ? document : '#ee-message-preview-container';
+
 	$(containerToDisable).on('click', 'a', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
