@@ -140,6 +140,43 @@ class EEH_Formatter {
 /**
  * ------------------------------------------------------------------------
  *
+ * EE_Address_Formatter
+ *
+ * Base class for address formatters
+ *
+ * @package		Event Espresso
+ * @subpackage	/helper/EEH_Formatter.helper.php
+ * @author		Brent Christensen
+ *
+ * ------------------------------------------------------------------------
+ */
+class EE_Address_Formatter {
+
+	protected function parse_formatted_address( $address, $address2, $city, $state, $zip, $country, $formatted_address, $sub ) {
+		// swap address part placeholders for the real text
+		$formatted_address = str_replace(
+			// find
+			array( '{address}', '{address2}', '{city}', '{state}', '{zip}', '{country}' ),
+			// replace
+			array( $address, $address2, $city, $state, $zip, $country ),
+			// string
+			$formatted_address
+		);
+		// remove placeholder from start and end, reduce repeating placeholders to singles, then replace with HTML line breaks
+		return preg_replace( '/%+/', $sub, trim( $formatted_address, '%' ) );
+	}
+
+
+}
+//end class EEH_Formatter
+
+
+
+
+
+/**
+ * ------------------------------------------------------------------------
+ *
  * EE_MultiLine_Address_Formatter
  *
  * This class will format an address and add line breaks in appropriate places
@@ -150,7 +187,7 @@ class EEH_Formatter {
  *
  * ------------------------------------------------------------------------
  */
-class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
+class EE_MultiLine_Address_Formatter extends EE_Address_Formatter implements EEI_Address_Formatter {
 
 	/**
 	 * @param string $address
@@ -167,16 +204,15 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 		$address_formats = apply_filters(
 			'FHEE__EE_MultiLine_Address_Formatter__address_formats',
 			array(
-				'CA'  	=> "$address%$address2%$city%$state%$country%$zip",
-				'UK'  	=> "$address%$address2%$city%$state%$zip%$country",
-				'USA' 	=> "$address%$address2%$city%$state%$zip%$country",
-				'ZZZ' 	=> "$address%$address2%$city%$state%$zip%$country",
+				'CA'  => "{address}%{address2}%{city}%{state}%{country}%{zip}",
+				'GB'  => "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'US' => "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'ZZ' => "{address}%{address2}%{city}%{state}%{zip}%{country}",
 			)
 		);
 		// if the incoming country has a set format, use that, else use the default
-		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZZ' ];
-		// remove placeholder from start and end, reduce repeating placeholders to singles, then replace with HTML line breaks
-		return preg_replace( '/%+/', '<br />', trim( $formatted_address, '%' ) );
+		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZ' ];
+		return $this->parse_formatted_address( $address, $address2, $city, $state, $zip, $country, $formatted_address, '<br />' );
 	}
 }
 
@@ -197,7 +233,7 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
  *
  * ------------------------------------------------------------------------
  */
-class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
+class EE_Inline_Address_Formatter extends EE_Address_Formatter implements EEI_Address_Formatter {
 
 	/**
 	 * @param string $address
@@ -213,16 +249,16 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
 		$address_formats = apply_filters(
 			'FHEE__EE_Inline_Address_Formatter__address_formats',
 			array(
-				'CA'  	=> "$address%$address2%$city%$state%$country%$zip",
-				'UK'  	=> "$address%$address2%$city%$state%$zip%$country",
-				'USA' 	=> "$address%$address2%$city%$state%$zip%$country",
-				'ZZZ' 	=> "$address%$address2%$city%$state%$zip%$country",
+				'CA'  	=> "{address}%{address2}%{city}%{state}%{country}%{zip}",
+				'GB'  	=> "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'US' 	=> "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'ZZZ' 	=> "{address}%{address2}%{city}%{state}%{zip}%{country}",
 			)
 		);
 		// if the incoming country has a set format, use that, else use the default
 		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZZ' ];
-		// remove placeholder from start and end, reduce repeating placeholders to singles, then replace with HTML line breaks
-		return preg_replace( '/%+/', ', ', trim( $formatted_address, '%' ) );
+		return $this->parse_formatted_address( $address, $address2, $city, $state, $zip, $country, $formatted_address, ', ' );
+
 	}
 }
 
@@ -388,6 +424,8 @@ class EEH_Address {
 		// return the formatted address
 		return $formatted_address;
 	}
+
+
 
 }
 
