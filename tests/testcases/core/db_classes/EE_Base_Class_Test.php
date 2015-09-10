@@ -768,12 +768,28 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
                     $this->assertEquals( 1, $registration_payment->delete() );
                 }
             }
-//            echo "all registraiton payments";
-//            var_dump( EEM_Registration_Payment::instance()->get_all() );
-//            echo "registration payments related to payment";
-//            var_dump($p->registration_payments() );
             //now there shoudl eb no more registraiton payments on that payment right?
             $this->assertTrue( empty( $p->registration_payments() ) );
+        }
+        
+        /**
+         * @group 8686
+         */
+        public function test_remove_relation_to__reciprocal() {
+            $p = $this->new_model_obj_with_dependencies( 'Payment' );
+            $r = $this->new_model_obj_with_dependencies( 'Registration' );
+            $p->_add_relation_to( $r, 'Registration' );
+            $this->assertFalse( empty( $p->get_many_related( 'Registration' ) ) );
+            $this->assertFalse( empty( $r->get_many_related( 'Payment' ) ) );
+            //now remove the relations
+            foreach ( $p->get_many_related( 'Registration' ) as $registration ) {
+                if ( $registration instanceof EE_Registration ) {       
+                    $this->assertEquals( $registration, $p->_remove_relation_to( $registration, 'Registration' ) );
+                }
+            }
+            //now there shoudl eb no more relations between those two right?
+            $this->assertTrue( empty( $p->get_many_related( 'Registration' ) ) );
+            $this->assertTrue( empty( $registration->get_many_related( 'Payment' ) ) );
         }
 
 }
