@@ -422,12 +422,12 @@ class EED_Events_Archive  extends EED_Module {
 	 *    _position_filtered_element
 	 *
 	 * @param        string $content
-	 * @param               $element
+	 * @param               $priority
 	 * @param               $template
 	 * @return string
 	 * @access    protected
 	 */
-	protected static function _position_filtered_element( $content, $element, $template ) {
+	protected static function _position_filtered_element( $content, $priority, $template ) {
 		if ( ! apply_filters( 'FHEE__EED_Events_Archive__event_details__no_post_password_required', false ) && post_password_required() ) {
 			return $content;
 		}
@@ -442,13 +442,13 @@ class EED_Events_Archive  extends EED_Module {
 		} else if ( EED_Events_Archive::$event_position == 130 ) {
 			// EVENT is LAST so all elements go BEFORE the content
 			$before = true;
-		} else if ( $element == 130 ) {
+		} else if ( $priority == 130 ) {
 			// this element is LAST - add AFTER existing content
 			$before = false;
-		} else if ( $element == 120 ) {
+		} else if ( $priority == 120 ) {
 			// this element is FIRST - add BEFORE existing content
 			$before = true;
-		} else if ( $element < EED_Events_Archive::$display_order_event ) {
+		} else if ( $priority < EED_Events_Archive::$display_order_event ) {
 			// this element is BEFORE the content
 			$before = true;
 		} else {
