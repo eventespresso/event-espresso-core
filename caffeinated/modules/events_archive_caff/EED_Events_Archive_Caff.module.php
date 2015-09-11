@@ -156,10 +156,10 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 			$config->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : 0;
 			$config->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : 0;
 			$config->use_sortable_display_order = isset( $REQ['EED_Events_Archive_use_sortable_display_order'] ) ? absint( $REQ['EED_Events_Archive_use_sortable_display_order'] ) : 0;
-			$config->display_order_tickets = isset( $CFG->EED_Events_Archive->display_order_tickets ) ? $CFG->EED_Events_Archive->display_order_tickets : 100;
-			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) ? $CFG->EED_Events_Archive->display_order_datetimes : 110;
-			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) ? $CFG->EED_Events_Archive->display_order_event : 120;
-			$config->display_order_venue = isset( $CFG->EED_Events_Archive->display_order_venue ) ? $CFG->EED_Events_Archive->display_order_venue : 130;
+			$config->display_order_tickets = isset( $CFG->EED_Events_Archive->display_order_tickets ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_tickets : 100;
+			$config->display_order_datetimes = isset( $CFG->EED_Events_Archive->display_order_datetimes ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_datetimes : 110;
+			$config->display_order_event = isset( $CFG->EED_Events_Archive->display_order_event ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_event : 120;
+			$config->display_order_venue = isset( $CFG->EED_Events_Archive->display_order_venue ) && $config->use_sortable_display_order ? $CFG->EED_Events_Archive->display_order_venue : 130;
 		}
 		$CFG->EED_Events_Archive = $config;
 		return $CFG;
