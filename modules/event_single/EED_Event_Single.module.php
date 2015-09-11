@@ -301,6 +301,11 @@ class EED_Event_Single  extends EED_Module {
 	 * @return string
 	 */
 	protected static function use_filterable_display_order( $content ) {
+		static $applied = false;
+		if ( $applied ) {
+			return $content;
+		}
+		$applied = true;
 		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 		// it uses the_content() for displaying the $post->post_content
 		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
@@ -328,11 +333,11 @@ class EED_Event_Single  extends EED_Module {
 	 *
 	 * @access    protected
 	 * @param        string $content
-	 * @param               $element
+	 * @param               $priority
 	 * @param               $template
 	 * @return string
 	 */
-	protected static function _position_filtered_element( $content, $element, $template ) {
+	protected static function _position_filtered_element( $content, $priority, $template ) {
 		static $applied_filters = array();
 		if ( has_filter( 'the_content', array( 'EED_Event_Single', "event_$template" ) ) && isset( $applied_filters[ $template ] ) ) {
 			return $content;
@@ -344,13 +349,13 @@ class EED_Event_Single  extends EED_Module {
 		} else if ( EED_Event_Single::$event_position == 130 ) {
 			// EVENT is LAST so all elements go BEFORE the content
 			$before = true;
-		} else if ( $element == 130 ) {
+		} else if ( $priority == 130 ) {
 			// this element is LAST - add AFTER existing content
 			$before = false;
-		} else if ( $element == 120 ) {
+		} else if ( $priority == 120 ) {
 			// this element is FIRST - add BEFORE existing content
 			$before = true;
-		} else if ( $element < EED_Event_Single::$display_order_event ) {
+		} else if ( $priority < EED_Event_Single::$display_order_event ) {
 			// this element is BEFORE the content
 			$before = true;
 		} else {
