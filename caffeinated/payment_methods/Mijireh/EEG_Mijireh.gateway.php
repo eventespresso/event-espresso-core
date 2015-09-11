@@ -189,14 +189,17 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$this->_mijireh_api_orders_url . '/' . $payment->txn_id_chq_nmbr(),
 			$request_args
 		);
+		if ( $response instanceof WP_Error ) {
+			throw new EE_Error( $response->get_error_message(), (int)$response->get_error_code() );
+		}
 
 		$this->log(
 			array( 'get payment status request_args' => $request_args, 'response' => $response ),
 			$payment
 		);
-
-		if( $response && isset( $response['body'] ) && $response_body = json_decode( $response['body'] )){
-
+		// validate response
+		$response_body = isset( $response[ 'body' ] ) ? json_decode( $response[ 'body' ] ) : '';
+		if( $response && $response_body ){
 			switch( $response_body->status ){
 				case 'paid':
 					$payment->set_status($this->_pay_model->approved_status());
@@ -213,7 +216,8 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$payment->set_details( $response );
 			$payment->set_status( $this->_pay_model->failed_status() );
 		}
-
+		// the following is ONLY for testing the Mijireh IPN and should NEVER be uncommented for real usage
+		//$payment->set_status( $this->_pay_model->pending_status() );
 		return $payment;
 
 	}
