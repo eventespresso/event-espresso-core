@@ -15,11 +15,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected $_evt = NULL;
 
 
-	/**
-	 * Used to indicate whether the table has a checkbox column or not.
-	 * @type bool
-	 */
-	protected $_has_checkbox_column = false;
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
