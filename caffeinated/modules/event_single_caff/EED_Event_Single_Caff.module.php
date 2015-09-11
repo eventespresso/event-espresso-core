@@ -142,10 +142,10 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
 		$CFG->EED_Event_Single->display_venue = ! empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
 		$CFG->EED_Event_Single->use_sortable_display_order = ! empty( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] ) ? absint( $REQ[ 'EED_Events_Single_use_sortable_display_order' ] ) : 0;
-		$CFG->EED_Event_Single->display_order_tickets = $display_order_tickets;
-		$CFG->EED_Event_Single->display_order_datetimes = $display_order_datetimes;
-		$CFG->EED_Event_Single->display_order_event = $display_order_event;
-		$CFG->EED_Event_Single->display_order_venue = $display_order_venue;
+		$CFG->EED_Event_Single->display_order_tickets = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_tickets : 100;
+		$CFG->EED_Event_Single->display_order_datetimes = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_datetimes : 110;
+		$CFG->EED_Event_Single->display_order_event = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_event : 120;
+		$CFG->EED_Event_Single->display_order_venue = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_venue : 130;
 		return $CFG;
 	}
 
