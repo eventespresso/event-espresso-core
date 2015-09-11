@@ -40,13 +40,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'venues';
-		$this->_remove_metaboxes = array(
-			0 => array(
-				'page_route' => array( 'create_new', 'edit' ),
-				'id' => 'espresso_event_editor_venue',
-				'context' => 'normal'
-				)
-			);/**/
+
 		$this->_metaboxes = array(
 			0 => array(
 				'page_route' => array('edit', 'create_new'),

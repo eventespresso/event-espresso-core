@@ -186,7 +186,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					),
 				),
 				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
-				'qtips' => array( 'Transactions_List_Table_Tips' ),
+				/**
+				 * commented out because currently we are not displaying tips for transaction list table status but this
+				 * may change in a later iteration so want to keep the code for then.
+				 */
+				//'qtips' => array( 'Transactions_List_Table_Tips' ),
 				'require_nonce' => FALSE
 				),
 			'view_transaction' => array(

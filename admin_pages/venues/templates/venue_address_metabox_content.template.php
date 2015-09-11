@@ -18,11 +18,11 @@
 					<?php echo $states_dropdown; ?>
 				</p>
 				<p>
-					<?php echo $countries_dropdown; ?>
-				</p>
-				<p>
 					<label for="zip-postal"><?php _e('Zip/Postal Code:', 'event_espresso'); ?></label><br/>
 					<input class="all-options" id="zip-postal" type="text"  value="<?php echo $_venue->zip(); ?>" name="vnu_zip" />
+				</p>
+				<p>
+					<?php echo $countries_dropdown; ?>
 				</p>
 			</fieldset>
 		</td>
