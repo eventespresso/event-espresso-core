@@ -193,7 +193,6 @@
 					<p class='description'>
 						<?php printf(__("If you would still like your venues on a page like in Event Espresso 3.1 or earlier, simply create a page and place a shortcode to display them on the page, as described %s here %s", "event_espresso"),'<a href="admin.php?page=espresso_support">','</a>') ?>
 					</p>
-					<br/><br/>
 				</td>
 			</tr>
 
