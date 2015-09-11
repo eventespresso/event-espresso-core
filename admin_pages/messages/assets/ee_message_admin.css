@@ -137,7 +137,7 @@
 	margin-bottom: 10px;
 }
 
-#ee-msg-edit-frm .admin-primary-mbox-dv input, #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
+#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"], #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
 	width: 94%;
 }
 
