@@ -139,7 +139,7 @@ function AddVariableToInput(element_id, value) {
 		var startPos = input.selectionStart;
 		input.value = input.value.substr(0, startPos) + value + input.value.substr(input.selectionEnd, input.value.length);
 		input.selectionStart = startPos + input.value.length;
-		input.selectionEnd = startPos + input.value.length;
+		input.selectionEnd = startPos + value.length;
 	} else {
 		//do nothing for now.
 	}
