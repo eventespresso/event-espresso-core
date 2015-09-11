@@ -53,8 +53,31 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 				$last_payment->payment_method()->type_obj() instanceof EE_PMT_Mijireh &&
 				$last_payment->status() != EEM_Payment::status_id_approved
 			) {
-				EE_Payment_Processor::instance()->process_ipn( NULL, $transaction, $last_payment->payment_method() );
+				add_action(
+					'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
+					array( 'EED_Mijireh_Payment_Checker', 'send_notifications_after_mijireh_ipn' ),
+					5, 2
+				);
+				EE_Payment_Processor::instance()->process_ipn( null, $transaction, $last_payment->payment_method() );
 			}
+		}
+	}
+
+
+
+	/**
+	 *    send_notifications_after_mijireh_ipn
+	 *
+	 * checks if the payment processed in the IPN was approved and if not, blocks messages from being sent.
+	 *
+	 * @access    public
+	 * @param EE_Registration $registration
+	 * @param array $additional_details
+	 */
+	public static function send_notifications_after_mijireh_ipn( $registration, $additional_details ) {
+		$last_payment = isset( $additional_details[ 'last_payment' ] ) ? $additional_details[ 'last_payment' ] : null;
+		if ( ! $last_payment instanceof EE_Payment || $last_payment != EEM_Payment::status_id_approved ) {
+			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
 		}
 	}
 
