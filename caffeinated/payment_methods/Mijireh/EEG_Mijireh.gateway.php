@@ -174,7 +174,6 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 	 * @param array $update_info unused. We just use the $transaction
 	 * @param EEI_Transaction $transaction
 	 * @return \EEI_Payment|null
-	 * @throws EE_Error
 	 */
 	public function handle_payment_update($update_info, $transaction) {
 
@@ -195,9 +194,6 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$this->_mijireh_api_orders_url . '/' . $payment->txn_id_chq_nmbr(),
 			$request_args
 		);
-		if ( $response instanceof WP_Error ) {
-			throw new EE_Error( $response->get_error_message(), (int)$response->get_error_code() );
-		}
 
 		$this->log(
 			array( 'get payment status request_args' => $request_args, 'response' => $response ),
