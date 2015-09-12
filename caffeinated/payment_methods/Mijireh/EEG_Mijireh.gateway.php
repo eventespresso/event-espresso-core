@@ -99,39 +99,45 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( $this->_mijireh_api_orders_url, $args );
+                $problems_string = false;
 		$this->log(array('get checkout url request_args' => $args, 'response' => $response ), $payment);
 		if( ! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
-			if($response_body == NULL || ! isset($response_body->checkout_url)){
-				if( is_array( $response_body ) || is_object( $response_body)){
-					$response_body_as_array = (array)$response_body;
-					$problems_string = '';
-					foreach($response_body_as_array as $problem_parameter => $problems){
-						$problems_string.= sprintf(__('\nProblems with %s: %s','event_espresso'),$problem_parameter,implode(", ",$problems));
-					}
-				}else{
-					$problems_string = $response['body'];
-				}
-				if( $problems_string == ''){
-					//no message to show? wack
-					if( isset( $response[ 'headers' ][ 'status' ] ) ){
-						$problems_string = $response[ 'headers' ][ 'status' ];
-					}else{
-						$problems_string = __( 'No response from Mijireh', 'event_espresso' );
-					}
-				}
-
-				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
-			}
-			$payment->set_redirect_url($response_body->checkout_url);
-			$payment->set_txn_id_chq_nmbr($response_body->order_number);
-			$payment->set_details($response['body']);
+			if($response_body && isset($response_body->checkout_url)){
+                            $payment->set_redirect_url($response_body->checkout_url);
+                            $payment->set_txn_id_chq_nmbr($response_body->order_number);
+                            $payment->set_details($response['body']);
+			} else {
+                           if( is_array( $response_body ) || is_object( $response_body)){
+                                    $response_body_as_array = (array)$response_body;
+                                    foreach($response_body_as_array as $problem_parameter => $problems){
+                                            $problems_string.= sprintf(__('\nProblems with %s: %s','event_espresso'),$problem_parameter,implode(", ",$problems));
+                                    }
+                            }else{
+                                    $problems_string = $response['body'];
+                            }
+                            if( ! $problems_string ) {
+                                //no message to show? wack
+                                if( isset( $response[ 'headers' ][ 'status' ] ) ){
+                                        $problems_string = $response[ 'headers' ][ 'status' ];
+                                }else{
+                                        $problems_string = __( 'No response from Mijireh', 'event_espresso' );
+                                }
+                            }
+                        }
 		}else{
-			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
-			EE_Error::add_error($error_message, __FILE__, __FUNCTION__, __LINE__ );
-			throw new EE_Error($error_message);
-
+                    $problems_string = implode( ",", $response->get_error_messages() );
 		}
+                
+                if( $problems_string ) {
+                    $payment->set_gateway_response( sprintf( __( 'Errors occurred communicating with Mijireh: %1$s', 'event_espresso'), $problems_string ) );
+                    $payment->set_details( $response );
+                    $payment->set_redirect_url( null );
+                    //even though the payment's status is failed at this point anyways,
+                    //let's be explicit about it. The fact that the redirect url is null
+                    //should be enough to client code that they can't redirect the user
+                    $payment->set_status( $this->_pay_model->failed_status() );
+                }
 		return $payment;
 	}
 
