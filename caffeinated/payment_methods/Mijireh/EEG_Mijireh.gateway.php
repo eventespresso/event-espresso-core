@@ -219,7 +219,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$payment->set_status( $this->_pay_model->failed_status() );
 		}
 		// the following is ONLY for testing the Mijireh IPN and should NEVER be uncommented for real usage
-		//$payment->set_status( $this->_pay_model->pending_status() );
+//		$payment->set_status( $this->_pay_model->pending_status() );
 		return $payment;
 
 	}

@@ -76,7 +76,7 @@ class EED_Mijireh_Payment_Checker extends EED_Module{
 	 */
 	public static function send_notifications_after_mijireh_ipn( $registration, $additional_details ) {
 		$last_payment = isset( $additional_details[ 'last_payment' ] ) ? $additional_details[ 'last_payment' ] : null;
-		if ( ! $last_payment instanceof EE_Payment || $last_payment != EEM_Payment::status_id_approved ) {
+		if ( ! $last_payment instanceof EE_Payment || $last_payment->status() != EEM_Payment::status_id_approved ) {
 			add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
 		}
 	}
