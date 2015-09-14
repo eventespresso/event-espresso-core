@@ -11,6 +11,7 @@
 				</th>
 				<td>
 					<?php echo EEH_Form_Fields::select_input('use_google_maps', $values, $map_settings->use_google_maps, 'id="ee-display-map-no-shortcodes"'); ?>
+					<p class="description"><?php _e('Turn Google maps on or off site wide for Event Espresso.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
@@ -18,10 +19,10 @@
 	</table>
 
 
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Reg Page Map Settings', 'event_espresso'); ?>
 		<?php echo EEH_Template::get_help_tab_link('gmaps_info'); ?>
-	</h4>
+	</h2>
 
 	<table class="form-table">
 		<tbody>
@@ -140,9 +141,9 @@
 	</table>
 
 
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Events List Options', 'event_espresso'); ?>
-	</h4>
+	</h2>
 
 	<table class="form-table">
 		<tbody>
