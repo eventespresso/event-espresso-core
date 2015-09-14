@@ -23,17 +23,11 @@
  */
 class EED_Event_Single  extends EED_Module {
 
-	protected static $filter_order_array = array();
 
-	protected static $event_position;
-
-	protected static $display_order_tickets = 100;
-
-	protected static $display_order_datetimes = 110;
-
-	protected static $display_order_event = 120;
-
-	protected static $display_order_venue = 130;
+	/**
+	 * @type EE_Template_Part_Manager $template_parts
+	 */
+	protected $template_parts;
 
 
 
@@ -88,89 +82,38 @@ class EED_Event_Single  extends EED_Module {
 	/**
 	 *    set_config
 	 *
-	 * @return \EE_Events_Archive_Config
+	 * @void
 	 */
 	protected function set_config(){
 		$this->set_config_section( 'template_settings' );
 		$this->set_config_class( 'EE_Event_Single_Config' );
 		$this->set_config_name( 'EED_Event_Single' );
-		/** @type EE_Event_Single_Config $config */
-		$config = $this->config();
-		EED_Event_Single::$display_order_tickets = isset( $config->display_order_tickets ) ? $config->display_order_tickets : 100;
-		EED_Event_Single::$display_order_datetimes = isset( $config->display_order_datetimes ) ? $config->display_order_datetimes : 110;
-		EED_Event_Single::$display_order_event = isset( $config->display_order_event ) ? $config->display_order_event : 120;
-		EED_Event_Single::$display_order_venue = isset( $config->display_order_venue ) ? $config->display_order_venue : 130;
-		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_tickets ] = 'tickets';
-		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_datetimes ] = 'datetimes';
-		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_event ] = 'event';
-		EED_Event_Single::$filter_order_array[ EED_Event_Single::$display_order_venue ] = 'venue';
-		EED_Event_Single::_process_filter_order_array();
 	}
+
 
 
 
 	/**
-	 *   _process_filter_order_array
+	 *    initialize_template_parts
 	 *
-	 * reorganizes the order of the template parts as set in the admin, in order for the filters to work correctly
-	 * 	because we are adding content via filters that always attach before or after the event description (the content)
-	 * 	we actually need to process the middle items first, then work our way outwards to the first and last items
-	 * 	so we process the second item in our list first, then the third, then first, then last
-	 *
-	 * @access    protected
+	 * @access    public
 	 * @return    void
 	 */
-	protected static function _process_filter_order_array() {
-		ksort( EED_Event_Single::$filter_order_array );
-		$corrected_keys = array(
-			100 => 120,
-			110 => 100,
-			120 => 110,
-			130 => 130,
+	public function initialize_template_parts() {
+		/** @type EE_Event_Single_Config $config */
+		$config = $this->config();
+		EEH_Autoloader::instance()->register_template_part_autoloaders();
+		$this->template_parts = new EE_Template_Part_Manager();
+		$this->template_parts->add_template_part( 'tickets', 'content-espresso_events-tickets.php', $config->display_order_tickets );
+		$this->template_parts->add_template_part( 'datetimes', 'content-espresso_events-datetimes.php', $config->display_order_datetimes );
+		$this->template_parts->add_template_part( 'event', 'content-espresso_events-event.php', $config->display_order_event );
+		$this->template_parts->add_template_part( 'venue', 'content-espresso_events-venues.php', $config->display_order_venue );
+		$this->template_parts = apply_filters(
+			'FHEE__EED_Event_Single__set_config__template_parts',
+			$this->template_parts
 		);
-		$corrected_key_array = array();
-		foreach ( EED_Event_Single::$filter_order_array as $key => $template ) {
-			$corrected_key_array[ $corrected_keys[ $key ] ] = $template;
-			if ( $template == 'event' ) {
-				EED_Event_Single::$event_position = $corrected_keys[ $key ];
-			}
-			$filter = 'display_order_' . $template;
-			EED_Event_Single::${$filter} = $corrected_keys[ $key ];
-		}
-		EED_Event_Single::$filter_order_array = $corrected_key_array;
-		ksort( EED_Event_Single::$filter_order_array );
-		// DEFAULT
-		// want:  	tickets - dates - EVENT - venue
-		// order:  dates - EVENT - tickets - venue
-		// REVERSE
-		// want:  venue - EVENT - dates - tickets
-		// order: EVENT - dates - venue - tickets
-		// 2 or 3, 2 or 3, FIRST, LAST
-		// RANDOM EVENT LAST
-		// want:  dates - tickets - venue - EVENT
-		// order: tickets - venue - dates - EVENT
-		// 0 to 1 : venue - tickets - dates - EVENT
-		// RANDOM EVENT FIRST
-		// want:  EVENT - tickets - venue - dates
-		// order: tickets - venue - EVENT - dates
-		// RANDOM EVENT LAST
-		// want:  dates - tickets - venue - EVENT
-		// order: tickets - venue - dates - EVENT
-		// 0 to 1 : venue - tickets - dates - EVENT
-		if ( EED_Event_Single::$event_position == 130 ) {
-			// EVENT LAST
-			// swap positions for elements 0 & 1
-			$temp = EED_Event_Single::$filter_order_array[ 100 ];
-			EED_Event_Single::$filter_order_array[ 100 ] = EED_Event_Single::$filter_order_array[ 110 ];
-			EED_Event_Single::$filter_order_array[ 110 ] = $temp;
-			ksort( EED_Event_Single::$filter_order_array );
-			// don't forget to update the actual config properties
-			foreach ( EED_Event_Single::$filter_order_array as $filter_order => $filter ) {
-				$filter = 'display_order_' . $filter;
-				EED_Event_Single::${$filter} = $filter_order;
-			}
-		}
 	}
+
 
 
 
@@ -182,7 +125,7 @@ class EED_Event_Single  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP ) {
-		// ensure valid EE_Events_Archive_Config() object exists
+		// ensure valid EE_Events_Single_Config() object exists
 		$this->set_config();
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
@@ -207,7 +150,9 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public function template_include( $template ) {
 		global $post;
-		if ( $this->config()->display_status_banner_single ) {
+		/** @type EE_Event_Single_Config $config */
+		$config = $this->config();
+		if ( $config->display_status_banner_single ) {
 			add_filter( 'the_title', array( 'EED_Event_Single', 'the_title' ), 100, 2 );
 		}
 		// not a custom template?
@@ -215,7 +160,7 @@ class EED_Event_Single  extends EED_Module {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), EED_Event_Single::$display_order_event );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 			add_action( 'loop_end', array( 'EED_Event_Single', 'loop_end' ));
 			// don't display entry meta because the existing theme will take car of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
@@ -263,32 +208,14 @@ class EED_Event_Single  extends EED_Module {
 	public static function event_details( $content ) {
 		global $post;
 		if ( $post->post_type == 'espresso_events' && ! post_password_required() ) {
-			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order ) {
-				$content = EED_Event_Single::_apply_event_content_filters( $content );
+			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order /*&& false*/ ) {
+				EED_Event_Single::instance()->initialize_template_parts();
+				$content = EED_Event_Single::instance()->template_parts->apply_template_part_filters( $content );
 			} else {
 				$content = \EED_Event_Single::use_filterable_display_order( $content );
 			}
 		}
  		return $content;
-	}
-
-
-
-	/**
-	 *    _apply_event_content_filters
-	 *
-	 * @access    private
-	 * @param string $content
-	 * @return string
-	 */
-	private static function _apply_event_content_filters( $content = '' ) {
-		foreach ( EED_Event_Single::$filter_order_array as $order => $filter ) {
-			$filter = "event_$filter";
-			if ( method_exists( 'EED_Event_Single', $filter ) ) {
-				$content = EED_Event_Single::$filter( $content );
-			}
-		}
-		return $content;
 	}
 
 
@@ -315,6 +242,7 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110, 1 );
 		add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120, 1 );
 		add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130, 1 );
+		do_action( 'AHEE__EED_Event_Single__use_filterable_display_order__after_add_filters' );
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
@@ -329,70 +257,27 @@ class EED_Event_Single  extends EED_Module {
 
 
 	/**
-	 *    _position_filtered_element
+	 *    event_datetimes - adds datetimes ABOVE content
 	 *
-	 * @access    protected
+	 * @access    public
 	 * @param        string $content
-	 * @param               $priority
-	 * @param               $template
-	 * @return string
-	 */
-	protected static function _position_filtered_element( $content, $priority, $template ) {
-		static $applied_filters = array();
-		if ( has_filter( 'the_content', array( 'EED_Event_Single', "event_$template" ) ) && isset( $applied_filters[ $template ] ) ) {
-			return $content;
-		}
-		$applied_filters[ $template ] = true;
-		if ( EED_Event_Single::$event_position == 120 ) {
-			// EVENT is FIRST so all elements go AFTER the content
-			$before = false;
-		} else if ( EED_Event_Single::$event_position == 130 ) {
-			// EVENT is LAST so all elements go BEFORE the content
-			$before = true;
-		} else if ( $priority == 130 ) {
-			// this element is LAST - add AFTER existing content
-			$before = false;
-		} else if ( $priority == 120 ) {
-			// this element is FIRST - add BEFORE existing content
-			$before = true;
-		} else if ( $priority < EED_Event_Single::$display_order_event ) {
-			// this element is BEFORE the content
-			$before = true;
-		} else {
-			// this element is AFTER the content
-			$before = false;
-		}
-		if ( $before ) {
-			return EEH_Template::locate_template( "content-espresso_events-$template.php" ) . $content;
-		} else {
-			return $content . EEH_Template::locate_template( "content-espresso_events-$template.php" );
-		}
-	}
-
-
-
-	/**
-	 * 	event_datetimes
-	 *
-	 *  	@access 	public
-	 * 	@param		string 	$content
-	 *  	@return 		string
+	 * @return        string
 	 */
 	public static function event_datetimes( $content ) {
-		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_datetimes, 'datetimes' );
+		return EEH_Template::locate_template( 'content-espresso_events-datetimes.php' ) . $content;
 	}
 
 
 
 	/**
-	 *    event_tickets
+	 *    event_tickets - adds tickets ABOVE content (which includes datetimes)
 	 *
-	 * @access 	public
-	 * @param 	string $content
-	 * @return 	string
+	 * @access    public
+	 * @param        string $content
+	 * @return        string
 	 */
 	public static function event_tickets( $content ) {
-		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_tickets, 'tickets' );
+		return EEH_Template::locate_template( 'content-espresso_events-tickets.php' ) . $content;
 	}
 
 
@@ -411,14 +296,14 @@ class EED_Event_Single  extends EED_Module {
 
 
 	/**
-	 *    event_venues
+	 *    event_venues - adds venues BELOW content
 	 *
-	 * @access 	public
-	 * @param 	string $content
-	 * @return 	string
+	 * @access    public
+	 * @param        string $content
+	 * @return        string
 	 */
 	public static function event_venues( $content ) {
-		return EED_Event_Single::_position_filtered_element( $content, EED_Event_Single::$display_order_venue, 'venues' );
+		return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
 	}
 
 
@@ -476,8 +361,9 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function display_venue() {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
-		/** @type EE_Event_Single_Config EED_Event_Single::instance()->config() */
-		$display_venue= isset( EED_Event_Single::instance()->config()->display_venue ) ? EED_Event_Single::instance()->config()->display_venue : TRUE;
+		/** @type EE_Event_Single_Config $config */
+		$config = EED_Event_Single::instance()->config();
+		$display_venue= isset( $config->display_venue ) ? $config->display_venue : TRUE;
 		$venue_name = EEH_Venue_View::venue_name();
 		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
 	}
