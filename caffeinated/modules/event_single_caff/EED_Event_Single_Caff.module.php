@@ -100,13 +100,21 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$event_single_order_array[ $config->display_order_datetimes ] = 'datetimes';
 		$event_single_order_array[ $config->display_order_event ] = 'event';
 		$event_single_order_array[ $config->display_order_venue ] = 'venue';
+		$event_single_order_array = apply_filters(
+			'FHEE__EED_Event_Single__template_settings_form__event_single_order_array',
+			$event_single_order_array
+		);
+
 		ksort( $event_single_order_array );
 
-		$templates = array(
-			'tickets' => __( "Ticket Selector", "event_espresso" ),
-			'datetimes' => __( "Dates and Times", "event_espresso" ),
-			'event' => __( "Event Description", "event_espresso" ),
-			'venue' => __( "Venue Information", "event_espresso" ),
+		$templates = apply_filters(
+			'FHEE__EED_Event_Single__template_settings_form__templates',
+			array(
+				'tickets' => __( "Ticket Selector", "event_espresso" ),
+				'datetimes' => __( "Dates and Times", "event_espresso" ),
+				'event' => __( "Event Description", "event_espresso" ),
+				'venue' => __( "Venue Information", "event_espresso" ),
+			)
 		);
 		foreach ( $templates as $template => $text ) {
 			if ( ! in_array( $template, $event_single_order_array ) ) {
@@ -146,6 +154,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$CFG->EED_Event_Single->display_order_datetimes = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_datetimes : 110;
 		$CFG->EED_Event_Single->display_order_event = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_event : 120;
 		$CFG->EED_Event_Single->display_order_venue = $CFG->EED_Event_Single->use_sortable_display_order ? $display_order_venue : 130;
+		do_action( 'AHEE__EED_Event_Single__update_template_settings__after_update', $CFG, $REQ );
 		return $CFG;
 	}
 
@@ -158,17 +167,22 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 	 * @return    void
 	 */
 	public static function update_event_single_order() {
-		$elements = sanitize_text_field( $_POST['elements'] );
-		$elements = explode( ',', trim( $elements, ',' ) );
-		foreach ( $elements as $key => $element ) {
-			$element = "display_order_$element";
-			EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$element = ( $key * 10 ) + 100;
+		$config_saved = false;
+		$template_parts = sanitize_text_field( $_POST[ 'elements' ] );
+		if ( ! empty( $template_parts ) ) {
+			$template_parts = explode( ',', trim( $template_parts, ',' ) );
+			foreach ( $template_parts as $key => $template_part ) {
+				$template_part = "display_order_$template_part";
+				$priority = ( $key * 10 ) + 100;
+				EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$template_part = $priority;
+				do_action( "AHEE__EED_Event_Single__update_event_single_order__$template_part", $priority );
+			}
+			$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
 		}
-		$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
 		if ( $config_saved ) {
 			EE_Error::add_success( __( 'Display Order has been successfully updated.', 'event_espresso' ) );
 		} else {
-			EE_Error::add_success( __( 'Display Order was not updated.', 'event_espresso' ) );
+			EE_Error::add_error( __( 'Display Order was not updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		echo wp_json_encode( EE_Error::get_notices( false ));
 		exit();
