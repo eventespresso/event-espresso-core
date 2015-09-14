@@ -106,7 +106,7 @@ class EEH_Autoloader {
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
 				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
 				if ( WP_DEBUG && $debug ) {
-					printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
+					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
 				}
 			}
 		}
@@ -180,6 +180,19 @@ class EEH_Autoloader {
 	 */
 	public static function register_line_item_filter_autoloaders() {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder(  EE_LIBRARIES . 'line_item_filters' , true );
+	}
+
+
+
+
+	/**
+	 * 	register template part 'autoloaders'
+	 *
+	 * 	@access public
+	 * 	@return void
+	 */
+	public static function register_template_part_autoloaders() {
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'template_parts', true );
 	}
 
 
