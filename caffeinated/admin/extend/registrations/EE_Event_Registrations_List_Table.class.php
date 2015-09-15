@@ -15,11 +15,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected $_evt = NULL;
 
 
-	/**
-	 * Used to indicate whether the table has a checkbox column or not.
-	 * @type bool
-	 */
-	protected $_has_checkbox_column = false;
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
@@ -242,6 +237,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$name_link .= EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() )
 			? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') .'">' . $item->reg_code() . '</a>'
 			: $item->reg_code();
+
+		//status
+		$name_link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
