@@ -967,6 +967,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_full_name' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
