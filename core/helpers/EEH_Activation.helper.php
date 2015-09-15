@@ -41,6 +41,21 @@ class EEH_Activation {
 	protected static $_initialized_db_content_already_in_this_request = false;
 
 
+
+	/**
+	 *    _ensure_table_name_has_prefix
+	 *
+	 * @access public
+	 * @static
+	 * @param $table_name
+	 * @return string
+	 */
+	public static function ensure_table_name_has_prefix( $table_name ) {
+		global $wpdb;
+		return strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+	}
+
+
 	/**
 	 * 	system_initialization
 	 * 	ensures the EE configuration settings are loaded with at least default options set
@@ -51,7 +66,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-//		EEH_Activation::CPT_initialization();//dont register taxonomies on activation because they need to happen on INIT hook anyways
+		EEH_Activation::reset_and_update_config();
 		//which is fired BEFORE activation of plugin anyways
 		EEH_Activation::verify_default_pages_exist();
 	}
@@ -101,6 +116,7 @@ class EEH_Activation {
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
 	}
+
 
 
 
@@ -180,6 +196,85 @@ class EEH_Activation {
 		flush_rewrite_rules();
 	}
 
+
+
+	/**
+	 * 	reset_and_update_config
+	 *
+	 * The following code was moved over from EE_Config so that it will no longer run on every request.
+	 * If there is old calendar config data saved, then it will get converted on activation.
+	 * This was basically a DMS before we had DMS's, and will get removed after a few more versions.
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function reset_and_update_config() {
+		do_action( 'AHEE__EE_Config___load_core_config__start', array( 'EEH_Activation', 'load_calendar_config' ) );
+		add_filter( 'FHEE__EE_Config___load_core_config__config_settings', array( 'EEH_Activation', 'migrate_old_config_data' ), 10, 3 );
+		//EE_Config::reset();
+	}
+
+
+	/**
+	 *    load_calendar_config
+	 *
+	 * @access    public
+	 * @return    stdClass
+	 */
+	public static function load_calendar_config() {
+		// grab array of all plugin folders and loop thru it
+		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		if ( empty( $plugins ) ) {
+			return;
+		}
+		foreach ( $plugins as $plugin_path ) {
+			// grab plugin folder name from path
+			$plugin = basename( $plugin_path );
+			// drill down to Espresso plugins
+			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
+				// then to calendar related plugins
+				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
+					// this is what we are looking for
+					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+					// does it exist in this folder ?
+					if ( is_readable( $calendar_config )) {
+						// YEAH! let's load it
+						require_once( $calendar_config );
+					}
+				}
+			}
+		}
+	}
+
+
+	/**
+	 *    _migrate_old_config_data
+	 *
+	 * @access    public
+	 * @param array      $settings
+	 * @param string     $config
+	 * @param \EE_Config $EE_Config
+	 * @return \stdClass
+	 */
+	public static function migrate_old_config_data( $settings = array(), $config = '', EE_Config $EE_Config ) {
+		$convert_from_array = array( 'addons' );
+		// in case old settings were saved as an array
+		if ( is_array( $settings ) && in_array( $config, $convert_from_array )) {
+			// convert existing settings to an object
+			$config_array = $settings;
+			$settings = new stdClass();
+			foreach ( $config_array as $key => $value ){
+				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
+				} else {
+					$settings->$key = $value;
+				}
+			}
+			add_filter( 'FHEE__EE_Config___load_core_config__update_espresso_config', '__return_true' );
+		}
+		return $settings;
+	}
 
 
 
@@ -418,13 +513,13 @@ class EEH_Activation {
 
 		$role_to_check = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator' );
 
-		//let's allow pre_filtering for early exits by altenative methods for getting id.  We check for truthy result and if so then exit early.
+		//let's allow pre_filtering for early exits by alternative methods for getting id.  We check for truthy result and if so then exit early.
 		$pre_filtered_id = apply_filters( 'FHEE__EEH_Activation__get_default_creator_id__pre_filtered_id', false, $role_to_check );
 		if ( $pre_filtered_id !== false ) {
 			return (int) $pre_filtered_id;
 		}
 
-		$capabilities_key = $wpdb->prefix . 'capabilities';
+		$capabilities_key = EEH_Activation::ensure_table_name_has_prefix( 'capabilities' );
 		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1", '%' . $role_to_check . '%' );
 		$user_id = $wpdb->get_var( $query );
 		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
@@ -448,7 +543,7 @@ class EEH_Activation {
 	 * @param string $table_name without the $wpdb->prefix
 	 * @param string $sql SQL for creating the table (contents between brackets in an SQL create table query)
 	 * @param string $engine like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
-	 * @param boolean $drop_table_if_pre_existed set to TRUE when you want to make SURE the table is completely empty
+	 * @param boolean $drop_pre_existing_table set to TRUE when you want to make SURE the table is completely empty
 	 * and new once this function is done (ie, you really do want to CREATE a table, and
 	 * expect it to be empty once you're done)
 	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it
@@ -456,8 +551,7 @@ class EEH_Activation {
 	 * 	@return void
 	 * @throws EE_Error if there are database errors
 	 */
-	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
-//		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exists') . "<br>";//die;
+	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ', $drop_pre_existing_table = false ) {
 		if( apply_filters( 'FHEE__EEH_Activation__create_table__short_circuit', FALSE, $table_name, $sql ) ){
 			return;
 		}
@@ -467,16 +561,19 @@ class EEH_Activation {
 		}
 		/** @var WPDB $wpdb */
 		global $wpdb;
-		$wp_table_name = $wpdb->prefix . $table_name;
-		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
-		if($drop_table_if_pre_existed && EEH_Activation::table_exists( $wp_table_name ) ){
-			if( defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
-				$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
-			}else{
-				//so we should be more cautious rather than just dropping tables so easily
+		$wp_table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+		// do we need to first delete an existing version of this table ?
+		if ( $drop_pre_existing_table && EEH_Activation::table_exists( $wp_table_name ) ){
+			// ok, delete the table... but ONLY if it's empty
+			$deleted_safely = EEH_Activation::delete_db_table_if_empty( $wp_table_name );
+			// table is NOT empty, are you SURE you want to delete this table ???
+			if ( ! $deleted_safely && defined( 'EE_DROP_BAD_TABLES' ) && EE_DROP_BAD_TABLES ){
+				EEH_Activation::delete_unused_db_table( $wp_table_name );
+			} else if ( ! $deleted_safely ) {
+				// so we should be more cautious rather than just dropping tables so easily
 				EE_Error::add_persistent_admin_notice(
 						'bad_table_' . $wp_table_name . '_detected',
-						sprintf( __( 'Database table %1$s existed when it shouldn\'t, and probably contained erroneous data. You probably restored to a backup that didn\'t remove old tables didn\'t you? We recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
+						sprintf( __( 'Database table %1$s exists when it shouldn\'t, and may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend adding %2$s to your %3$s file then restore to that backup again. This will clear out the invalid data from %1$s. Afterwards you should undo that change from your %3$s file. %4$sIf you cannot edit %3$s, you should remove the data from %1$s manually then restore to the backup again.', 'event_espresso' ),
 								$wp_table_name,
 								"<pre>define( 'EE_DROP_BAD_TABLES', TRUE );</pre>",
 								'<b>wp-config.php</b>',
@@ -484,31 +581,31 @@ class EEH_Activation {
 								TRUE );
 			}
 		}
-// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
-if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
-	$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
-	//get $wpdb to echo errors, but buffer them. This way at least WE know an error
-	//happened. And then we can choose to tell the end user
-	$old_show_errors_policy = $wpdb->show_errors( TRUE );
-	$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
-	ob_start();
-	dbDelta( $SQL );
-	$output = ob_get_contents();
-	ob_end_clean();
-	$wpdb->show_errors( $old_show_errors_policy );
-	$wpdb->suppress_errors( $old_error_suppression_policy );
-	if( ! empty( $output ) ){
-		throw new EE_Error( $output	);
-	}
-} else {
-	throw new EE_Error(
-		sprintf(
-			__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
-			'<br />',
-			$sql
-		)
-	);
-}
+		// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
+		if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
+			$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+			//get $wpdb to echo errors, but buffer them. This way at least WE know an error
+			//happened. And then we can choose to tell the end user
+			$old_show_errors_policy = $wpdb->show_errors( TRUE );
+			$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
+			ob_start();
+			dbDelta( $SQL );
+			$output = ob_get_contents();
+			ob_end_clean();
+			$wpdb->show_errors( $old_show_errors_policy );
+			$wpdb->suppress_errors( $old_error_suppression_policy );
+			if( ! empty( $output ) ){
+				throw new EE_Error( $output	);
+			}
+		} else {
+			throw new EE_Error(
+				sprintf(
+					__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
+					'<br />',
+					$sql
+				)
+			);
+		}
 
 	}
 
@@ -530,7 +627,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			return FALSE;
 		}
 		global $wpdb;
-		$full_table_name=$wpdb->prefix.$table_name;
+		$full_table_name= EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		$fields = self::get_fields_on_table($table_name);
 		if (!in_array($column_name, $fields)){
 			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
@@ -554,7 +651,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	 */
 	public static function get_fields_on_table( $table_name = NULL ) {
 		global $wpdb;
-		$table_name=$wpdb->prefix.$table_name;
+		$table_name= EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		if ( ! empty( $table_name )) {
 			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
 			if ($columns !== FALSE) {
@@ -571,6 +668,43 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 
 
 	/**
+	 * db_table_is_empty
+	 *
+	 * @access public
+	 * @static
+	 * @param string $table_name
+	 * @return bool
+	 */
+	public static function db_table_is_empty( $table_name ) {
+		global $wpdb;
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+		if ( EEH_Activation::table_exists( $table_name ) ) {
+			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
+			return absint( $count ) === 0 ? true : false;
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * delete_db_table_if_empty
+	 *
+	 * @access public
+	 * @static
+	 * @param string $table_name
+	 * @return bool | int
+	 */
+	public static function delete_db_table_if_empty( $table_name ) {
+		if ( EEH_Activation::db_table_is_empty( $table_name ) ) {
+			return EEH_Activation::delete_unused_db_table( $table_name );
+		}
+		return false;
+	}
+
+
+
+	/**
 	 * delete_unused_db_table
 	 *
 	 * @access public
@@ -580,8 +714,11 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
-		return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		if ( EEH_Activation::table_exists( $table_name ) ) {
+			$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+			return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
+		}
+		return false;
 	}
 
 
@@ -600,13 +737,13 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			return FALSE;
 		}
 		global $wpdb;
-		$table_name_with_prefix = $wpdb->prefix . $table_name ;
-		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
 		if (
-			$wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name
-			&& $wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
+			$wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name
+			&& $wpdb->get_var( $index_exists_query ) == $table_name //using get_var with the $index_exists_query returns the table's name
 		) {
-			return $wpdb->query( "ALTER TABLE $table_name_with_prefix DROP INDEX $index_name" );
+			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $index_name" );
 		}
 		return TRUE;
 	}
@@ -627,7 +764,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
 			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
-			$current_data_migration_script->set_migrating( FALSE );
+			$current_data_migration_script->set_migrating( false );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			if( $current_data_migration_script->get_errors() ){
@@ -638,13 +775,14 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 				}else{
 					EE_Error::add_error( __( 'There were errors creating the Event Espresso database tables and Event Espresso has been deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.', 'event_espresso' ) );
 				}
-				return FALSE;
+				return false;
 			}
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 		}else{
 			EE_Error::add_error( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-			return FALSE;
+			return false;
 		}
+		return true;
 	}
 
 
@@ -661,7 +799,8 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	public static function initialize_system_questions() {
 		// QUESTION GROUPS
 		global $wpdb;
-		$SQL = 'SELECT QSG_system FROM ' . $wpdb->prefix . 'esp_question_group WHERE QSG_system != 0';
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group' );
+		$SQL = "SELECT QSG_system FROM $table_name WHERE QSG_system != 0";
 		// what we have
 		$question_groups = $wpdb->get_col( $SQL );
 		// check the response
@@ -708,7 +847,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 				if ( ! empty( $QSG_values )) {
 					// insert system question
 					$wpdb->insert(
-						$wpdb->prefix . 'esp_question_group',
+						$table_name,
 						$QSG_values,
 						array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
 					);
@@ -721,7 +860,8 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 
 		// QUESTIONS
 		global $wpdb;
-		$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( 'esp_question' );
+		$SQL = "SELECT QST_system FROM $table_name WHERE QST_system != ''";
 		// what we have
 		$questions = $wpdb->get_col( $SQL );
 		// what we should have
@@ -902,7 +1042,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 				if ( ! empty( $QST_values )) {
 					// insert system question
 					$wpdb->insert(
-						$wpdb->prefix . 'esp_question',
+						$table_name,
 						$QST_values,
 						array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
 					);
@@ -912,7 +1052,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 					$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;
 					// add system questions to groups
 					$wpdb->insert(
-						$wpdb->prefix . 'esp_question_group_question',
+						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
 						array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ),
 						array( '%d', '%d','%d' )
 					);
@@ -948,10 +1088,12 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 
 		if ( EEH_Activation::table_exists( EEM_Status::instance()->table() ) ) {
 
-			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
+			$table_name = EEM_Status::instance()->table();
+
+			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC' );";
 			$wpdb->query($SQL);
 
-			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
+			$SQL = "INSERT INTO $table_name
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
 					('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),
@@ -1052,7 +1194,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	public static function generate_default_message_templates() {
 
 		$success = FALSE;
-		$settings = $installed_messengers = $default_messengers = array();
+		$installed_messengers = $default_messengers = array();
 
 		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
@@ -1361,7 +1503,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			'wp_esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
-			EEH_Activation::delete_unused_db_table( $table );
+			EEH_Activation::delete_db_table_if_empty( $table );
 		}
 
 
@@ -1397,6 +1539,9 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
 		);
+		if( is_main_site() ) {
+			$wp_options_to_delete[ 'ee_network_config' ] = true;
+		}
 
 		$undeleted_options = array();
 		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
@@ -1455,9 +1600,7 @@ if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
 	 */
 	public static function table_exists( $table_name ){
 		global $wpdb, $EZSQL_ERROR;
-		if(strpos($table_name, $wpdb->prefix) !== 0){
-			$table_name = $wpdb->prefix.$table_name;
-		}
+		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		//ignore if this causes an sql error
 		$old_error = $wpdb->last_error;
 		$old_suppress_errors = $wpdb->suppress_errors();

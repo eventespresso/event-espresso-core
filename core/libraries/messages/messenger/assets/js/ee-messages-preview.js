@@ -6,19 +6,23 @@ jQuery(document).ready(function($) {
 	/**
 	 * Capture all link and button clicks and show a popup about being disabled.
 	 */
-	$(document).on('click', 'a', function(e) {
+
+	//if the eeLazyLoadingContainers object is loaded then we're in wp-admin so dont' disable links globally. Otherwise disable globally.
+	var containerToDisable = typeof eeLazyLoadingContainers === 'undefined' ? document : '#ee-message-preview-container';
+
+	$(containerToDisable).on('click', 'a', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		alert( eei18n.links_disabled );
 	});
 
-	$(document).on('click', 'button', function(e) {
+	$(containerToDisable).on('click', 'button', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		alert( eei18n.links_disabled );
 	});/**/
 
-	$(document).on('submit', 'form', function(e) {
+	$(containerToDisable).on('submit', 'form', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		alert( eei18n.links_disabled );

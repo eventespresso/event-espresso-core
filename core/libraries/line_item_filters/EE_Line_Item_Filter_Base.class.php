@@ -24,7 +24,9 @@ abstract class EE_Line_Item_Filter_Base implements EEI_Line_Item_Filter {
 	 * @param \EEI_Line_Item $line_item
 	 * @return \EEI_Line_Item
 	 */
-	abstract public function process( EEI_Line_Item $line_item );
+	public function process( EEI_Line_Item $line_item ) {
+		return $line_item;
+	}
 
 
 }

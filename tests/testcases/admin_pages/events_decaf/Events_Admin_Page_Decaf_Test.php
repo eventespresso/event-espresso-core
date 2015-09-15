@@ -19,9 +19,9 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 
 
 	/**
-	 * This holds the Events_Admin_Page_Mock class
+	 * This holds the Events_Admin_Page_Decaf_Mock class
 	 *
-	 * @var Events_Admin_Page_Mock
+	 * @var Events_Admin_Page_Decaf_Mock
 	 */
 	protected $_admin_page;
 
@@ -38,7 +38,7 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->delayedAdminPageMocks();
+		$this->delayedAdminPageMocks( 'decaf_events' );
 	}
 
 
