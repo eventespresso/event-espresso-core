@@ -97,21 +97,39 @@ class EED_Event_Single  extends EED_Module {
 	 *    initialize_template_parts
 	 *
 	 * @access    public
-	 * @return    void
+	 * @param \EE_Event_Single_Config $config
+	 * @return \EE_Template_Part_Manager
 	 */
-	public function initialize_template_parts() {
-		/** @type EE_Event_Single_Config $config */
-		$config = $this->config();
+	public function initialize_template_parts( EE_Event_Single_Config $config = null ) {
+		$config = $config instanceof EE_Event_Single_Config ? $config : $this->config();
 		EEH_Autoloader::instance()->register_template_part_autoloaders();
-		$this->template_parts = new EE_Template_Part_Manager();
-		$this->template_parts->add_template_part( 'tickets', 'content-espresso_events-tickets.php', $config->display_order_tickets );
-		$this->template_parts->add_template_part( 'datetimes', 'content-espresso_events-datetimes.php', $config->display_order_datetimes );
-		$this->template_parts->add_template_part( 'event', 'content-espresso_events-event.php', $config->display_order_event );
-		$this->template_parts->add_template_part( 'venue', 'content-espresso_events-venues.php', $config->display_order_venue );
-		$this->template_parts = apply_filters(
-			'FHEE__EED_Event_Single__set_config__template_parts',
-			$this->template_parts
+		$template_parts = new EE_Template_Part_Manager();
+		$template_parts->add_template_part(
+			'tickets',
+			__( 'Ticket Selector', 'event_espresso' ),
+			'content-espresso_events-tickets.php',
+			$config->display_order_tickets
 		);
+		$template_parts->add_template_part(
+			'datetimes',
+			__( 'Dates and Times', 'event_espresso' ),
+			'content-espresso_events-datetimes.php',
+			$config->display_order_datetimes
+		);
+		$template_parts->add_template_part(
+			'event',
+			__( 'Event Description', 'event_espresso' ),
+			'content-espresso_events-event.php',
+			$config->display_order_event
+		);
+		$template_parts->add_template_part(
+			'venue',
+			__( 'Venue Information', 'event_espresso' ),
+			'content-espresso_events-venues.php',
+			$config->display_order_venue
+		);
+		do_action( 'AHEE__EED_Event_Single__initialize_template_parts', $template_parts );
+		return $template_parts;
 	}
 
 
@@ -209,7 +227,7 @@ class EED_Event_Single  extends EED_Module {
 		global $post;
 		if ( $post->post_type == 'espresso_events' && ! post_password_required() ) {
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order /*&& false*/ ) {
-				EED_Event_Single::instance()->initialize_template_parts();
+				EED_Event_Single::instance()->template_parts = EED_Event_Single::instance()->initialize_template_parts();
 				$content = EED_Event_Single::instance()->template_parts->apply_template_part_filters( $content );
 			} else {
 				$content = \EED_Event_Single::use_filterable_display_order( $content );
