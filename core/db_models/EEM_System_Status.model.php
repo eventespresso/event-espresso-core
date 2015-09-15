@@ -42,6 +42,7 @@ class EEM_System_Status{
 			'ee_migration_history'=>$this->get_ee_migration_history(),
 			'active_plugins'=>$this->get_active_plugins(),
 			'wp_settings'=>$this->get_wp_settings(),
+                        'wp_maintenance_mode' => $this->get_wp_maintenance_mode(),
 			'https_enabled'=>$this->get_https_enabled(),
 			'logging_enabled' => $this->get_logging_enabled(),
 			'remote_posting' => $this->get_remote_posting(),
@@ -211,13 +212,17 @@ class EEM_System_Status{
 		}
 		return "ok!";
 	}
+        function get_wp_maintenance_mode() {
+            $opened = file_exists( ABSPATH . '.maintenance' );
+            return $opened ? __('.maintenance file detected. Wordpress may have a failed update.', 'event_espresso') : __( 'Wordpress A-OK, the .maintenance file not detected.', 'event_espresso' ) ;
+        }
 	/**
 	 * Whether or not logging is enabled
 	 * @return string descripting logging's status
 	 */
 	function get_logging_enabled(){
-		$opened = @fopen( EVENT_ESPRESSO_UPLOAD_DIR . '/logs/espresso_log.txt', 'a' );
-		return $opened ? __('Log Directory is writable', 'event_espresso') : sprintf( __('%sLog directory is NOT writable%s', 'event_espresso'), '<mark class="error"','</mark>' ) ;
+            $opened = @fopen( EVENT_ESPRESSO_UPLOAD_DIR . '/logs/espresso_log.txt', 'a' );
+            return $opened ? __('Log Directory is writable', 'event_espresso') : sprintf( __('%sLog directory is NOT writable%s', 'event_espresso'), '<mark class="error"','</mark>' ) ;
 	}
 	/**
 	 *  Whether curl ro fsock works
