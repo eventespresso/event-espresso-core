@@ -77,9 +77,7 @@ $values = EEH_Form_Fields::prep_answer_options(
 				<td>
 
 					<?php wp_nonce_field( 'espresso_update_event_single_order', 'espresso_update_event_single_order_nonce', false ); ?>
-					<ul id="event-single-sortable-js">
-						<?php echo $event_single_display_order; ?>
-					</ul>
+					<?php echo $event_single_display_order; ?>
 
 					<p class="description"><?php _e('Drag and Drop the above to determine the display order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the single event page.', 'event_espresso'); ?></p>
 
