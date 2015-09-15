@@ -24,6 +24,11 @@ class EE_Template_Part {
 	protected $name;
 
 	/**
+	 * @type string $label
+	 */
+	protected $label;
+
+	/**
 	 * @type string $template
 	 */
 	protected $template;
@@ -38,11 +43,13 @@ class EE_Template_Part {
 	/**
 	 *    class constructor
 	 * @param string $name
+	 * @param string $label
 	 * @param string $template
-	 * @param int   $priority
+	 * @param int    $priority
 	 */
-	public function __construct( $name, $template, $priority = 100 ) {
+	public function __construct( $name, $label, $template, $priority = 100 ) {
 		$this->set_name( $name );
+		$this->set_label( $label );
 		$this->set_template( $template );
 		$this->set_priority( $priority );
 	}
@@ -63,6 +70,24 @@ class EE_Template_Part {
 	 */
 	public function set_name( $name ) {
 		$this->name = $name;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function label() {
+		return $this->label;
+	}
+
+
+
+	/**
+	 * @param string $label
+	 */
+	public function set_label( $label ) {
+		$this->label = $label;
 	}
 
 
