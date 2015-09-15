@@ -155,9 +155,7 @@ $description = EEH_Form_Fields::prep_answer_options( array(
 				<td>
 
 					<?php wp_nonce_field( 'espresso_update_event_archive_order', 'espresso_update_event_archive_order_nonce', false ); ?>
-					<ul id="event-archive-sortable-js">
-						<?php echo $event_archive_display_order; ?>
-					</ul>
+					<?php echo $event_archive_display_order; ?>
 
 					<p class="description"><?php _e( 'Drag and Drop the above to determine the display order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the event archive page.', 'event_espresso' ); ?></p>
 
