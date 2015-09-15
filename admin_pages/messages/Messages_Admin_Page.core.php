@@ -922,6 +922,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';
 
+							//shortcode selector
+							$field_name_to_use = $extra_field == 'main' ? 'content' : $extra_field;
+							$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector( $field_name_to_use, $field_id );
+
 							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' ) {
 								//we want to decode the entities
 								$template_form_fields[$field_id]['value'] = stripslashes( html_entity_decode( $template_form_fields[$field_id]['value'], ENT_QUOTES, "UTF-8") );
@@ -971,6 +975,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
 					$css_class = isset($field_setup_array['css_class']) ? $field_setup_array['css_class'] : '';
 					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
+
+					//shortcode selector
+					$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector( $template_field, $field_id );
 
 					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' ) {
 						//we want to decode the entities
@@ -1159,7 +1166,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					);
 			}
 
-			//send to field generator
 
 			$template_fields = $this->_generate_admin_form_fields( $template_form_fields );
 			$sidebar_fields = $this->_generate_admin_form_fields( $sidebar_form_fields );
@@ -1185,6 +1191,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'extra' => $preview_button
 		);
 		$this->_set_context_switcher($message_template_group, $context_switcher_args);
+
 
 		//main box
 		$this->_template_args['template_fields'] = $template_fields;
@@ -1554,6 +1561,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
+
+
+	/**
+     * This returns the shortcode selector skeleton for a given context and field.
+     *
+     * @since 4.9.rc.000
+     *
+	 * @param string $field  The name of the field retrieving shortcodes for.
+     * @param string $linked_input_id The css id of the input that the shortcodes get added to.
+     * @return string
+    */
+	protected function _get_shortcode_selector( $field, $linked_input_id ) {
+		$template_args = array(
+			'shortcodes' => $this->_get_shortcodes( array( $field ), true ),
+			'fieldname' => $field,
+			'linked_input_id' => $linked_input_id
+		);
+		return EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'shortcode_selector_skeleton.template.php', $template_args, true );
+	}
+
+
 	/**
 	 * This just takes care of returning the meta box content for shortcodes (only used on the edit message template page)
 	 *
@@ -1570,30 +1598,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$alt = 0;
 			?>
-			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('This is a list of shortcodes that have been organized by content areas where they can be used: ', 'event_espresso' ); ?></p>
-
-			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
-				<?php
-				//get the field label
-				$field_label = $messenger->get_field_label($field);
-				?>
-				<div class="shortcode-field-table">
-					<h3 class="shortcode-field-title"><?php echo $field_label; ?>:</h3>
-					<div class="ee-shortcode-table-scroll">
-						<table class="widefat ee-shortcode-table">
-							<tbody>
-					<?php foreach ( $allshortcodes as $code => $label ) : ?>
-						<?php $alt_class = !($alt%2) ? 'class="alternate"' : ''; ?>
-						<tr <?php echo $alt_class; ?>>
-							<td><?php echo $code; ?></td>
-						</tr>
-					<?php $alt++; endforeach; ?>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			<?php endforeach; ?>
-			</table> <!-- end .ee-shortcode-table -->
+			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php printf( __('You can view the shortcodes usable in your template by clicking the %s icon next to each field.', 'event_espresso' ), '<span class="dashicons dashicons-menu"></span>' ); ?></p>
 			<?php
 		}
 

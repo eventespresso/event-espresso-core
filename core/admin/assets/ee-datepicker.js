@@ -24,7 +24,11 @@ var dttPickerHelper = {
 		hour: null,
 		minute: null,
 		defaultDate: null,
-		showOn:'focus'
+		showOn:'focus',
+		showSecond : false,
+		showMillisec : false,
+		showMicrosec : false,
+		showTimezone: false
 	},
 
 	momentFormat : 'YYYY-MM-DD h:mm a',
@@ -229,7 +233,11 @@ var dttPickerHelper = {
 			hour: null,
 			minute: null,
 			defaultDate: null,
-			showOn:'focus'
+			showOn:'focus',
+			showSecond : false,
+			showMillisec : false,
+			showMicrosec : false,
+			showTimezone: false
 		};
 		this.dttOptions.minDate = null;
 		this.dttOptions.maxDate = null;

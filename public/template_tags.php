@@ -736,8 +736,8 @@ if ( ! function_exists( 'espresso_organization_address' )) {
 				EE_Registry::instance()->CFG->organization->address_2,
 				EE_Registry::instance()->CFG->organization->city,
 				EE_Registry::instance()->CFG->organization->STA_ID,
-				EE_Registry::instance()->CFG->organization->CNT_ISO,
-				EE_Registry::instance()->CFG->organization->zip
+				EE_Registry::instance()->CFG->organization->zip,
+				EE_Registry::instance()->CFG->organization->CNT_ISO
 			);
 			return EEH_Address::format( $address, $type );
 		}

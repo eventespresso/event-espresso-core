@@ -14,6 +14,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
 	protected $_evt = NULL;
 
+
+
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
 		$this->_status = $this->_admin_page->get_registration_status_array();
@@ -40,17 +42,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
-		$columns['_Reg_Status'] = '';
-		if ( !empty( $evt_id ) )
-			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
+		$columns = array();
+		//$columns['_Reg_Status'] = '';
+		if ( !empty( $evt_id ) ) {
+			$columns['cb'] = '<input type="checkbox" />'; //Render a checkbox instead of text
+			$this->_has_checkbox_column = true;
+		}
 
 		$this->_columns = array(
 				'_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
-				'_REG_count' => '#',
 				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
 				'Event' => __('Event', 'event_espresso'),
-				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
 				'PRC_name' => __('TKT Option', 'event_espresso'),
 				'_REG_final_price' => __('Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
@@ -58,6 +61,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_columns = array_merge( $columns, $this->_columns);
+
+		$this->_primary_column = '_REG_att_checked_in';
 
 		if ( !empty( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_registrations_reports', $evt_id )  ) {
 			$this->_bottom_buttons = array(
@@ -71,20 +76,28 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_sortable_columns = array(
 			 //true means its already sorted
 			'ATT_name' => array( 'ATT_name' => TRUE ),
-			'_REG_code' => array( '_REG_code' => TRUE ),
 			'Event' => array( 'Event.EVT.Name' => FALSE )
 		);
 
 		$this->_hidden_columns = array();
 
-
 		$this->_evt = EEM_Event::instance()->get_one_by_ID($evt_id);
 		$this->_dtts_for_event = !empty($evt_id) ? $this->_evt->datetimes_ordered() : array();
-
 
 	}
 
 
+
+
+	protected function _get_row_class( $item ) {
+		$class = parent::_get_row_class( $item );
+		//add status class
+		$class .= ' ee-status-strip reg-status-' . $item->status_ID();
+		if ( $this->_has_checkbox_column ) {
+			$class .= ' has-checkbox-column';
+		}
+		return $class;
+	}
 
 
 
@@ -186,13 +199,17 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_REG_att_checked_in
 	*/
 	function column__REG_att_checked_in(EE_Registration $item){
+		$attendee = $item->attendee();
+		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0;
 		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
 		$nonce = wp_create_nonce('checkin_nonce');
 		$evt_id = isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : NULL;
 		$toggle_active = !empty ( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_edit_checkin', 'espresso_registrations_toggle_checkin_status', $item->ID() ) ? ' clickable trigger-checkin' : '';
 
-		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-_regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
+		$mobile_view_content = ' <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
+
+		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-_regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>' . $mobile_view_content;
 	}
 
 
@@ -209,6 +226,19 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_contacts', 'espresso_registrations_edit_attendee' ) ?  '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
 		$name_link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	' : '';
+
+		//add group details
+		$name_link .= '&nbsp;' . sprintf(__( '(%s of %s)', 'event_espresso' ),$item->count(), $item->group_size());
+
+		//add regcode
+		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
+		$name_link .= '<br>';
+		$name_link .= EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() )
+			? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') .'">' . $item->reg_code() . '</a>'
+			: $item->reg_code();
+
+		//status
+		$name_link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
@@ -228,25 +258,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$attendee = $item->attendee();
 		return $attendee instanceof EE_Attendee ? $attendee->email() : '';
 		return $item->get_first_related('Attendee')->email();
-	}
-
-
-	/**
-	 * 		column_REG_count
-	*/
-	function column__REG_count(EE_Registration $item){
-		return sprintf(__( '%s of %s', 'event_espresso' ),$item->count(), $item->group_size());
-	}
-
-
-	/**
-	 * REG_code
-	 * @param  EE_Registration $item EE_Registration object
-	 * @return string                Registration code
-	 */
-	function column__REG_code(EE_Registration $item){
-		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
-		return EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() ) ? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>' : $item->get('REG_code');
 	}
 
 
