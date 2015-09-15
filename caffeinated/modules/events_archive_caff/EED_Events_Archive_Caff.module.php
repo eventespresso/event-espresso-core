@@ -104,38 +104,11 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 		$config->display_order_datetimes = isset( $config->display_order_datetimes  )? $config->display_order_datetimes : 110;
 		$config->display_order_event = isset( $config->display_order_event  )? $config->display_order_event : 120;
 		$config->display_order_venue = isset( $config->display_order_venue  )? $config->display_order_venue : 130;
-		$event_archive_order_array = array();
-		$event_archive_order_array[ $config->display_order_tickets ] = 'tickets';
-		$event_archive_order_array[ $config->display_order_datetimes ] = 'datetimes';
-		$event_archive_order_array[ $config->display_order_event ] = 'event';
-		$event_archive_order_array[ $config->display_order_venue ] = 'venue';
-		$event_archive_order_array = apply_filters(
-			'FHEE__EED_Events_Archive__template_settings_form__event_archive_order_array',
-			$event_archive_order_array
-		);
-		ksort( $event_archive_order_array );
-		$templates = apply_filters(
-			'FHEE__EED_Event_Archive__template_settings_form__templates',
-			array(
-				'tickets'   => __( "Ticket Selector", "event_espresso" ),
-				'datetimes' => __( "Dates and Times", "event_espresso" ),
-				'event'     => __( "Event Description", "event_espresso" ),
-				'venue'     => __( "Venue Information", "event_espresso" ),
-			)
-		);
-		foreach ( $templates as $template => $text ) {
-			if ( ! in_array( $template, $event_archive_order_array ) ) {
-				array_push( $event_archive_order_array, $template );
-			}
-		}
-		$event_archive_display_order = '';
-		foreach ( $event_archive_order_array as $template ) {
-			$event_archive_display_order .= '
-<li id="' . $template . '" class="archive-sortable-li archive-sortable-js" ><span class="dashicons dashicons-arrow-up-alt2" ></span ><span class="dashicons dashicons-arrow-down-alt2" ></span >' . $templates[ $template ] . '</li>';
-		}
+		// get template parts
+		$template_parts = EED_Events_Archive::instance()->initialize_template_parts( $config );
 		// convert to array so that we can add more properties
-		$config = (array)$config;
-		$config[ 'event_archive_display_order' ] = $event_archive_display_order;
+		$config = get_object_vars( $config );
+		$config[ 'event_archive_display_order' ] = $template_parts->generate_sortable_list_of_template_parts( 'event-archive-sortable-js', '', 'archive-sortable-li archive-sortable-js' );
 		EEH_Template::display_template( EVENTS_ARCHIVE_CAFF_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $config );
 	}
 
