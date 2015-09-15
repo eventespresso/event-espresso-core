@@ -44,7 +44,7 @@ class EE_Register_Model_Test extends EE_UnitTestCase{
 		try{
 			EE_Register_Model::register($this->_model_group, $this->_reg_args);
 			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch(PHPUnit_Framework_Error_Deprecated $e){
+		}catch(PHPUnit_Framework_Error_Notice $e){
 			$this->assertTrue(True);
 		}
 		EE_System::instance()->load_core_configuration();

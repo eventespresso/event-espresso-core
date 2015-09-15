@@ -40,6 +40,7 @@ class EE_Register_Module implements EEI_Plugin_API {
 	 * @since    4.3.0
 	 * @param string $module_id		a unique identifier for this set of modules Required.
 	 * @param  array $setup_args 		an array of full server paths to folders containing any EED_Modules, or to the EED_Module files themselves Required.
+	 * @type 	array module_paths 	an array of full server paths to folders containing any EED_Modules, or to the EED_Module files themselves
 	 * @throws EE_Error
 	 * @return void
 	 */

@@ -113,23 +113,58 @@ class EEH_Formatter {
 	 * Formats a date
 	 * @param string $date
 	 * @param string $format - format for the date
+	 * @deprecated 4.6.12  Note, a search revealed this was not used anywhere in core or in our
+	 *             		  addons at time of writing this.  So just deprecated in case of third party use.
 	 * @return string
 	 * @deprecated v4.6.21
 	 */
 	static public function event_date_display( $date, $format = '' ) {
 		EE_Error::doing_it_wrong(
-			'EEH_Formatter::event_date_display()',
-			__( 'This method is deprecated. If you wish to display an Event date in a theme template, then there are better alternatives such as EEH_Event_View::the_event_date() which can be found in \core\helpers\EEH_Event_View.helper.php', 'event_espresso' ),
+			__METHOD__,
+			__( 'This method is deprecated as of EE 4.6.12.  Currently it does not reformat as with prior behaviour but just returns the incoming string.  Please use the EE_Datetime helpers for Datetime on the event to display as desired.', 'event_espresso' ),
 			'4.6.21'
 		);
-		if ( empty( $date )) {
-			return '';
-		} else {
-			$format = $format == '' ? get_option('date_format') : $format;
-			return date_i18n( $format, strtotime( $date ));
-		}
+
+		return $date;
 	}
 
+
+
+}
+//end class EEH_Formatter
+
+
+
+
+
+/**
+ * ------------------------------------------------------------------------
+ *
+ * EE_Address_Formatter
+ *
+ * Base class for address formatters
+ *
+ * @package		Event Espresso
+ * @subpackage	/helper/EEH_Formatter.helper.php
+ * @author		Brent Christensen
+ *
+ * ------------------------------------------------------------------------
+ */
+class EE_Address_Formatter {
+
+	protected function parse_formatted_address( $address, $address2, $city, $state, $zip, $country, $formatted_address, $sub ) {
+		// swap address part placeholders for the real text
+		$formatted_address = str_replace(
+			// find
+			array( '{address}', '{address2}', '{city}', '{state}', '{zip}', '{country}' ),
+			// replace
+			array( $address, $address2, $city, $state, $zip, $country ),
+			// string
+			$formatted_address
+		);
+		// remove placeholder from start and end, reduce repeating placeholders to singles, then replace with HTML line breaks
+		return preg_replace( '/%+/', $sub, trim( $formatted_address, '%' ) );
+	}
 
 
 }
@@ -152,26 +187,32 @@ class EEH_Formatter {
  *
  * ------------------------------------------------------------------------
  */
-class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
+class EE_MultiLine_Address_Formatter extends EE_Address_Formatter implements EEI_Address_Formatter {
 
 	/**
 	 * @param string $address
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
+	 * @param string $country
+	 * @param string $CNT_ISO
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip ) {
-		$formatted_address = $address;
-		$formatted_address .= ! empty( $address2 ) ? '<br/>' . $address2 : '';
-		$formatted_address .= ! empty( $city ) ? '<br/>' . $city : '';
-		$formatted_address .=  ! empty( $city ) && ! empty( $state ) ? ', ' : '';
-		$formatted_address .= ! empty( $state ) ? $state : '';
-		$formatted_address .= ! empty( $zip ) ? '<br/>' . $zip : '';
-		$formatted_address .= ! empty( $country ) ? '<br/>' . $country : '';
-		return $formatted_address;
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
+
+		$address_formats = apply_filters(
+			'FHEE__EE_MultiLine_Address_Formatter__address_formats',
+			array(
+				'CA'  => "{address}%{address2}%{city}%{state}%{country}%{zip}",
+				'GB'  => "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'US' => "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'ZZ' => "{address}%{address2}%{city}%{state}%{zip}%{country}",
+			)
+		);
+		// if the incoming country has a set format, use that, else use the default
+		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZ' ];
+		return $this->parse_formatted_address( $address, $address2, $city, $state, $zip, $country, $formatted_address, '<br />' );
 	}
 }
 
@@ -192,29 +233,32 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
  *
  * ------------------------------------------------------------------------
  */
-class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
+class EE_Inline_Address_Formatter extends EE_Address_Formatter implements EEI_Address_Formatter {
+
 	/**
 	 * @param string $address
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
+	 * @param string $country
+	 * @param string $CNT_ISO
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip ) {
-		$formatted_address = $address;
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $address2 ) ? $address2 : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $city ) ? $city : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $state ) ? $state : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $country ) ? $country : '';
-		$formatted_address .= substr( $formatted_address, -2 ) != ', ' ? ', ' : '';
-		$formatted_address .= ! empty( $zip ) ? $zip : '';
-		return $formatted_address;
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
+		$address_formats = apply_filters(
+			'FHEE__EE_Inline_Address_Formatter__address_formats',
+			array(
+				'CA'  	=> "{address}%{address2}%{city}%{state}%{country}%{zip}",
+				'GB'  	=> "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'US' 	=> "{address}%{address2}%{city}%{state}%{zip}%{country}",
+				'ZZZ' 	=> "{address}%{address2}%{city}%{state}%{zip}%{country}",
+			)
+		);
+		// if the incoming country has a set format, use that, else use the default
+		$formatted_address = isset( $address_formats[ $CNT_ISO ] ) ? $address_formats[ $CNT_ISO ] : $address_formats[ 'ZZZ' ];
+		return $this->parse_formatted_address( $address, $address2, $city, $state, $zip, $country, $formatted_address, ', ' );
+
 	}
 }
 
@@ -237,16 +281,18 @@ class EE_Inline_Address_Formatter implements EEI_Address_Formatter {
  * ------------------------------------------------------------------------
  */
 class EE_Null_Address_Formatter implements EEI_Address_Formatter {
+
 	/**
 	 * @param string $address
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
+	 * @param string $country
+	 * @param string $CNT_ISO
 	 * @return string
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip ) {
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
 		return NULL;
 	}
 }
@@ -342,9 +388,10 @@ class EEH_Address {
 			$obj_with_address->address(),
 			$obj_with_address->address2(),
 			$obj_with_address->city(),
-			$obj_with_address->state(),
-			$obj_with_address->country(),
-			$obj_with_address->zip()
+			$obj_with_address->state_name(),
+			$obj_with_address->zip(),
+			$obj_with_address->country_name(),
+			$obj_with_address->country_ID()
 		);
 		$formatted_address .= $add_wrapper ? '</div>' : '';
 		// return the formatted address
@@ -369,13 +416,16 @@ class EEH_Address {
 			EEH_Schema::postOfficeBoxNumber( $obj_with_address ),
 			EEH_Schema::addressLocality( $obj_with_address ),
 			EEH_Schema::addressRegion( $obj_with_address ),
+			EEH_Schema::postalCode( $obj_with_address ),
 			EEH_Schema::addressCountry( $obj_with_address ),
-			EEH_Schema::postalCode( $obj_with_address )
+			$obj_with_address->country_ID()
 		);
 		$formatted_address .= '</div>';
 		// return the formatted address
 		return $formatted_address;
 	}
+
+
 
 }
 
@@ -476,7 +526,7 @@ class EEH_Schema {
 	* 	@return string
 	*/
 	public static function addressRegion ( EEI_Address $obj_with_address = NULL ) {
-		$state = $obj_with_address->state();
+		$state = $obj_with_address->state_name();
 		if ( ! empty( $state ) ) {
 			return '<span itemprop="addressRegion">' . $state . '</span>';
 		} else {
@@ -493,7 +543,7 @@ class EEH_Schema {
 	* 	@return string
 	*/
 	public static function addressCountry ( EEI_Address $obj_with_address = NULL ) {
-		$country = $obj_with_address->country();
+		$country = $obj_with_address->country_name();
 		if ( ! empty( $country ) ) {
 			return '<span itemprop="addressCountry">' . $country . '</span>';
 		} else {
@@ -568,20 +618,20 @@ class EE_Generic_Address implements EEI_Address {
 	private $_city = '';
 	private $_state_ID = '';
 	private $_state_obj = '';
+	private $_zip = '';
 	private $_country_ID = '';
 	private $_country_obj = '';
-	private $_zip = '';
 
 	/**
 	 * @param string $address
 	 * @param string $address2
 	 * @param string $city
 	 * @param EE_State | string $state
-	 * @param EE_Country | string $country
 	 * @param string $zip
+	 * @param EE_Country | string $country
 	 * @return EE_Generic_Address
 	 */
-	public function __construct( $address, $address2, $city, $state, $country, $zip ) {
+	public function __construct( $address, $address2, $city, $state, $zip, $country ) {
 		$this->_address = $address;
 		$this->_address2 = $address2;
 		$this->_city = $city;
@@ -591,13 +641,13 @@ class EE_Generic_Address implements EEI_Address {
 			$this->_state_ID = $state;
 			$this->_state_obj = $this->_get_state_obj();
 		}
+		$this->_zip = $zip;
 		if ( $country instanceof EE_Country ) {
 			$this->_country_obj = $country;
 		} else {
 			$this->_country_ID = $country;
 			$this->_country_obj = $this->_get_country_obj();
 		}
-		$this->_zip = $zip;
 	}
 
 

@@ -1,7 +1,7 @@
 #Event Espresso 4 Core
 
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.7.10.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
+[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.8.1.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
 [![WordPress](https://img.shields.io/badge/WordPress-v4.2.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
@@ -35,7 +35,7 @@ Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&u
 
 ***
 
-**Current Stable Version:** 4.6.x.p
+**Current Stable Version:** 4.7.x.p
 
 ***
 

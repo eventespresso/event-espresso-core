@@ -29,19 +29,19 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$e->save();
 		$d_exp = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')-10,
-			'DTT_EVT_end'=>current_time('timestamp') - 5));
+			'DTT_EVT_start'=>time()-10,
+			'DTT_EVT_end'=>time() - 5));
 		$d_exp->save();
 		$d_del = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')-5,
-			'DTT_EVT_end'=>current_time('timestamp')+5,
+			'DTT_EVT_start'=>time()-5,
+			'DTT_EVT_end'=>time()+5,
 			'DTT_deleted'=>true));
 		$d_del->save();
 		$d_ok= EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp') - 1,
-			'DTT_EVT_end'=>current_time('timestamp') + 5));
+			'DTT_EVT_start'=>time() - 1,
+			'DTT_EVT_end'=>time() + 5));
 		$d_ok->save();
 		$ds = $e->datetimes_ordered();
 		$this->assertArrayContains($d_exp,$ds);
@@ -76,18 +76,18 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$e->save();
 		$d_now = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')-100,
-			'DTT_EVT_end'=>current_time('timestamp') + 50));
+			'DTT_EVT_start'=>time()-100,
+			'DTT_EVT_end'=>time() + 50));
 		$d_now->save();
 		$d_exp = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')-10,
-			'DTT_EVT_end'=>current_time('timestamp') - 5));
+			'DTT_EVT_start'=>time()-10,
+			'DTT_EVT_end'=>time() - 5));
 		$d_exp->save();
 		$d_upcoming = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')+10,
-			'DTT_EVT_end'=>current_time('timestamp') + 15));
+			'DTT_EVT_start'=>time()+10,
+			'DTT_EVT_end'=>time() + 15));
 		$d_upcoming->save();
 
 		$this->assertEquals(EE_Datetime::active,$e->get_active_status( TRUE ));
@@ -101,20 +101,49 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$e->save();
 		$d_now = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')-100,
-			'DTT_EVT_end'=>current_time('timestamp') - 50,
+			'DTT_EVT_start'=>time()-100,
+			'DTT_EVT_end'=>time() - 50,
 			'DTT_sold'=>5));
 		$d_now->save();
 		$d_exp = EE_Datetime::new_instance(array(
 			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>current_time('timestamp')-10,
-			'DTT_EVT_end'=>current_time('timestamp') - 5,
+			'DTT_EVT_start'=>time()-10,
+			'DTT_EVT_end'=>time() - 5,
 			'DTT_sold'=>15));
 		$d_exp->save();
 		$this->assertEquals(20,$e->get_number_of_tickets_sold());
 		$e->_remove_relation_to($d_now, 'Datetime');
 		$this->assertEquals(15,$e->get_number_of_tickets_sold());
 	}
+
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_total_available_spaces() {
+		//grab test scenarios.
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
+		foreach ( $scenarios as $scenario ) {
+			if ( $scenario->get_expected( 'total_available_spaces') ) {
+				$this->assertEquals( $scenario->get_expected( 'total_available_spaces' ), $scenario->get_scenario_object()->total_available_spaces(), 'Testing ' . $scenario->name );
+			}
+		}
+	}
+
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_spaces_remaining_for_sale() {
+		//grab test scenarios
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
+		foreach ( $scenarios as $scenario ) {
+			if ( $scenario->get_expected( 'total_remaining_spaces' ) ) {
+				$this->assertEquals( $scenario->get_expected( 'total_remaining_spaces'), $scenario->get_scenario_object()->spaces_remaining_for_sale(), 'Testing ' . $scenario->name );
+			}
+		}
+	}
+
 }
 
 // End of file EE_Event_Test.php

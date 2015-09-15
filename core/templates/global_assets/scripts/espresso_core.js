@@ -160,44 +160,61 @@ jQuery(document).ready(function($) {
 
 
 
-	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-		$('#espresso-ajax-loading').fadeOut('fast');
-		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
-//			if ( closeModal === undefined ) {
-//				closeModal = false;
-//			}
-			var fadeaway = true;
-			var msg = '';
-			// if there is no existing message...
-			if ( $(existing_message).length === 0 ) {
-				//create one and add it to the DOM
-				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
-			}
-			// success ?
-			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
-				msg = '<p>' + response.success + '</p>';
-			}
-			// no existing errors?
-			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
-				msg = '<p>' + response.errors + '</p>';
-				$(existing_message).removeClass('updated').addClass('error');
-				fadeaway = false;
-			}
-			// set message content
-			$(existing_message).html(msg);
-			//  change location in the DOM if so desired
-			if ( typeof(beforeWhat) !== 'undefined' && beforeWhat !== '' ) {
-				var moved_message = $(existing_message);
-				$(existing_message).remove();
-				$( beforeWhat ).before( moved_message );
-			}
-			// and display it
-			if ( fadeaway === true ) {
-				$(existing_message).removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
-			} else {
-				$(existing_message).removeAttr('style').removeClass('hidden').show();
-			}
+	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, removeExisting ) {
+		removeExisting = typeof removeExisting !== false;
+		var messages = $( '#ajax-notices-container' );
+		// if there is no existing message...
+		if ( removeExisting === true ) {
+			messages.html('');
 		}
+		// make sure there is at least ONE notification to display
+		if (
+			( typeof response !== 'object' ) ||
+			! ( // or NOT the following
+				( typeof response.success !== 'undefined' && response.success !== '' && response.success !== false ) ||
+				( typeof response.attention !== 'undefined' && response.attention !== '' && response.attention !== false ) ||
+				( typeof response.errors !== 'undefined' && response.errors !== '' && response.errors !== false )
+			)
+		) {
+			console.log( JSON.stringify( 'show_admin_page_ajax_msg response: ', null, 4 ) );
+			console.log( response );
+			return;
+		}
+
+		$( '#espresso-ajax-loading' ).fadeOut( 'fast' );
+		var msg = '';
+		// no existing errors?
+		if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
+			msg = msg + '<div class="ee-admin-notification error hidden"><p>' + response.errors + '</p></div>';
+		}
+		// attention notice?
+		if ( typeof(response.attention) !== 'undefined' && response.attention !== '' && response.attention !== false ) {
+			msg = msg + '<div class="ee-admin-notification ee-attention hidden"><p>' + response.attention + '</p></div>';
+		}
+		// success ?
+		if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
+			msg = msg + '<div class="ee-admin-notification updated hidden ee-fade-away"><p>' + response.success + '</p></div>';
+		}
+		messages.html( msg );
+		var new_messages = messages;
+		messages.remove();
+		beforeWhat = typeof beforeWhat !== 'undefined' && beforeWhat !== '' ? beforeWhat : '.nav-tab-wrapper';
+		// set message content
+		var messages_displayed = false;
+		$( 'body, html' ).animate( { scrollTop : 0 }, 'normal', function() {
+			if ( ! messages_displayed ) {
+				$( beforeWhat ).before( new_messages );
+			}
+		} );
+		// and display it
+		new_messages.find('.ee-admin-notification').each( function() {
+			$( this ).removeAttr( 'style' ).removeClass( 'hidden' ).show();
+			//  but sometimes not too long
+			if ( $( this ).hasClass( 'ee-fade-away' ) ) {
+				$( this ).delay( 8000 ).fadeOut();
+			}
+		} );
+
 	};
 
 

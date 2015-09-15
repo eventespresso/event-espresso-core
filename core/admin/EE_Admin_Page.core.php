@@ -665,8 +665,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( method_exists( $this, 'load_scripts_styles_' . $this->_current_view ) )
 			add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles_' . $this->_current_view ), 15 );
 
-		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these.
-		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 1 );
+		add_action('admin_enqueue_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 100 );
+
+		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_global' ), 99 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts' ), 100 );
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
@@ -974,9 +975,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *	                      		http://{$some_url}/?page=espresso_registrations&action=resend_something
 	 *	                        	&wp_referer[action]=default&wp_referer[event_id]=20&wpreferer[
 	 *	                        	month_range]=March%202015
+	 * @param   bool    $exclude_nonce  If true, the the nonce will be excluded from the generated nonce.
 	 * 	@return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false ) {
+	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false, $exclude_nonce = false ) {
 		EE_Registry::instance()->load_helper('URL');
 
 		//if there is a _wp_http_referer include the values from the request but only if sticky = true
@@ -993,7 +995,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			}
 		}
 
-		return EEH_URL::add_query_args_and_nonce($args, $url);
+		return EEH_URL::add_query_args_and_nonce( $args, $url, $exclude_nonce );
 	}
 
 
@@ -1751,7 +1753,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		EE_Registry::$i18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
 
-		//setting on espresso_core instead of ee_admin_js because expresso_core is enqueued by the maintenance
+		//setting on espresso_core instead of ee_admin_js because espresso_core is enqueued by the maintenance
 		//admin page when in maintenance mode and ee_admin_js is not loaded then.  This works everywhere else because
 		//espresso_core is listed as a dependency of ee_admin_js.
 		wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );
@@ -2447,7 +2449,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			),
 		'http://eventespresso.com/pricing/'
 		);
-		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', $buy_now_url ) : $this->_template_args['preview_action_button'];
+		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', $buy_now_url, true ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		$this->_display_admin_page( $display_sidebar );
@@ -2982,16 +2984,18 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * get_action_link_or_button
 	 * returns the button html for adding, editing, or deleting an item (depending on given type)
 	 *
-	 * @access  public
-	 *
 	 * @param string $action use this to indicate which action the url is generated with.
 	 * @param string $type accepted strings must be defined in the $_labels['button'] array(as the key) property.
 	 * @param array $extra_request if the button requires extra params you can include them in $key=>$value pairs.
 	 * @param string $class Use this to give the class for the button. Defaults to 'button-primary'
 	 * @param string $base_url If this is not provided the _admin_base_url will be used as the default for the button base_url.  Otherwise this value will be used.
+	 * @param bool   $exclude_nonce If true then no nonce will be in the generated button link.
+	 *
+	 * @throws EE_Error
+	 *
 	 * @return string html for button
 	 */
-	public function get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE) {
+	public function get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE, $exclude_nonce = false ) {
 		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
 		if ( !isset($this->_page_routes[$action]) && !$base_url )
 			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
@@ -3014,7 +3018,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( !empty($extra_request) )
 			$query_args = array_merge( $extra_request, $query_args );
 
-		$url = self::add_query_args_and_nonce( $query_args, $_base_url );
+		$url = self::add_query_args_and_nonce( $query_args, $_base_url, false, $exclude_nonce );
 
 		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
 
@@ -3402,6 +3406,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
+		add_filter( 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', '__return_true' );
 		$success = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;

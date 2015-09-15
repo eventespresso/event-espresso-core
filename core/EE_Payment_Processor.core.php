@@ -48,8 +48,10 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * Using the selected gateway, processes the payment for that transaction, and updates
-	 * the transaction appropriately. Saves the payment that is generated
+
+	 * Using the selected gateway, processes the payment for that transaction, and updates the transaction appropriately.
+ 	 * Saves the payment that is generated
+	 *
 	 * @param EE_Payment_Method 	$payment_method
 	 * @param EE_Transaction 				$transaction
 	 * @param float                					$amount 		if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
@@ -57,11 +59,12 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 *                                             										have already been called on the billing form (ie, its inputs should have their normalized values set).
 	 * @param string               				$return_url 	string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string               				$method 		like 'CART', indicates who the client who called this was
-	 * @param bool                 				$by_admin
+	 * @param bool                 				$by_admin 		TRUE if payment is being attempted from the admin
 	 * @param boolean              				$update_txn  	whether or not to call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
+	 * @param string 	       						$cancel_url 	URL to return to if off-site payments are cancelled
 	 * @return EE_Payment
 	 */
-	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE ) {
+	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE, $cancel_url = '' ) {
 		// verify payment method
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		// verify transaction
@@ -211,7 +214,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		} catch( EE_Error $e ) {
 			do_action(
 				'AHEE__log', __FILE__, __FUNCTION__, sprintf(
-					"Error occurred while receiving IPN. Transaction: %s, req data: %s. The error was '%s'",
+					__( 'Error occurred while receiving IPN. Transaction: %1$s, req data: %2$s. The error was "%3$s"', 'event_espresso' ),
 					print_r( $transaction, TRUE ),
 					print_r( $_req_data, TRUE ),
 					$e->getMessage()
@@ -222,9 +225,9 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	}
 
 	/**
-	 * Removes any non-printable illegal characters from the input, which might cause a raucus
+	 * Removes any non-printable illegal characters from the input, which might cause a raucous
 	 * when trying to insert into the database
-	 * @param type $request_data
+	 * @param array $request_data
 	 * @return array|string
 	 */
 	protected function _remove_unusable_characters( $request_data ) {
@@ -372,6 +375,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $do_action, '$do_action' );
 			//global hook for others to use.
 			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
 		}
@@ -408,7 +412,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		if ( empty( $registrations )) {
 			return;
 		}
-
 		// todo: break out the following logic into a separate strategy class
 		// todo: named something like "Sequential_Reg_Payment_Strategy"
 		// todo: which would apply payments using the capitalist "first come first paid" approach
@@ -419,7 +422,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		$refund = $payment->is_a_refund();
 		// how much is available to apply to registrations?
 		$available_payment_amount = abs( $payment->amount() );
-		//EEH_Debug_Tools::printr( $available_payment_amount, '$available_payment_amount', __FILE__, __LINE__ );
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				// nothing left?
@@ -432,6 +434,18 @@ class EE_Payment_Processor extends EE_Processor_Base {
 					$available_payment_amount = $this->process_registration_payment( $registration, $payment, $available_payment_amount );
 				}
 			}
+		}
+		if ( $available_payment_amount > 0 && apply_filters( 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', false ) ) {
+			EE_Error::add_attention(
+				sprintf(
+					__( 'A remainder of %1$s exists after applying this payment to Registration(s) %2$s.%3$sPlease verify that the original payment amount of %4$s is correct. If so, you should edit this payment and select at least one additional registration in the "Registrations to Apply Payment to" section, so that the remainder of this payment can be applied to the additional registration(s).', 'event_espresso' ),
+					EEH_Template::format_currency( $available_payment_amount ),
+					implode( ', ',  array_keys( $registrations ) ),
+					'<br/>',
+					EEH_Template::format_currency( $payment->amount() )
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 	}
 
@@ -447,8 +461,6 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 */
 	public function process_registration_payment( EE_Registration $registration, EE_Payment $payment, $available_payment_amount = 0.00 ) {
 		$owing = $registration->final_price() - $registration->paid();
-		//EEH_Debug_Tools::printr( $owing, '$owing', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $payment->amount(), '$payment->amount()', __FILE__, __LINE__ );
 		if ( $owing > 0 ) {
 			// don't allow payment amount to exceed the available payment amount, OR the amount owing
 			$payment_amount = min( $available_payment_amount, $owing );

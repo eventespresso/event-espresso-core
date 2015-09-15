@@ -63,7 +63,8 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
 			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
 			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event if you have it set via custom field in your event, otherwise it will use the Facebook URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_facebook</code> and the value as your facebook url.', 'event_espresso'),
-			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url', 'event_espresso')
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url', 'event_espresso'),
+			'[EVENT_META_*]' => __('This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode.', 'event_espresso')
 			);
 	}
 
@@ -158,6 +159,18 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 		}
+
+		if ( strpos( $shortcode, '[EVENT_META_*' ) !== false ) {
+			$shortcode = str_replace( '[EVENT_META_*', '', $shortcode );
+			$shortcode = trim( str_replace( ']', '', $shortcode ) );
+
+			//pull the meta value from the event post
+			$event_meta = $this->_event->get_post_meta( $shortcode, true );
+
+			return !empty( $event_meta ) ? $this->_event->get_post_meta( $shortcode, true ) : '';
+
+		}
+
 		return '';
 	}
 
