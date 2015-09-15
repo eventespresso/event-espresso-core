@@ -237,6 +237,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') .'">' . $item->reg_code() . '</a>'
 			: $item->reg_code();
 
+		//status
+		$name_link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
+
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$DTT_ID = empty( $DTT_ID ) && !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : $DTT_ID;

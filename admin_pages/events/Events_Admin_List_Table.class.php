@@ -147,6 +147,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actions = $this->_column_name_action_setup( $item );
 		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
+		$content .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->get_active_status(), false, 'sentence' ) . '</span>';
 		$content .= $this->row_actions($actions);
 		return $content;
 
