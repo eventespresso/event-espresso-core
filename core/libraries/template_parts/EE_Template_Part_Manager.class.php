@@ -62,15 +62,20 @@ class EE_Template_Part_Manager {
 	 * @param string $template - name or path of template to be used by EEH_Template::locate_template()
 	 * @param int    $priority - order in which template parts should be applied
 	 */
-	public function add_template_part( $name, $template, $priority ) {
+	public function add_template_part( $name, $label, $template, $priority ) {
+		// SplPriorityQueue doesn't play nice with multiple items having the same priority
+		// so if the incoming priority is already occupied, then let's increment it by one,
+		// and then pass everything back into this method and try again with the new priority
 		if ( isset( $priorities[  $priority ] ) ) {
 			$priority++;
-			$this->add_template_part( $name, $template, $priority );
+			$this->add_template_part( $name, $label, $template, $priority );
 			return;
 		}
+		// kk now we can mark this priority as being occupied
 		$priorities[ $priority ] = true;
+		// create the template part and add to the queue
 		$this->template_parts->insert(
-			new EE_Template_Part( $name, $template, $priority ),
+			new EE_Template_Part( $name, $label, $template, $priority ),
 			$priority
 		);
 		if ( $name == 'event' ) {
@@ -110,9 +115,17 @@ class EE_Template_Part_Manager {
 			}
 			if  ( $counter === $total_count ) {
 				// process the first template part before the last, now that all of the inner parts are done
-				$content = $this->position_template_part( $content, $first_template_part->template(), $first_template_part->priority() );
+				$content = $this->position_template_part(
+					$content,
+					$first_template_part->template(),
+					$first_template_part->priority()
+				);
 			}
-			$content = $this->position_template_part( $content, $this->template_parts->current()->template(), $this->template_parts->current()->priority() );
+			$content = $this->position_template_part(
+				$content,
+				$this->template_parts->current()->template(),
+				$this->template_parts->current()->priority()
+			);
 			$this->template_parts->next();
 		}
 		return $content;
@@ -171,6 +184,44 @@ class EE_Template_Part_Manager {
 		return $before ? $template_part . $content : $content . $template_part;
 	}
 
+
+
+	/**
+	 *    generate_sortable_list_of_template_parts
+	 *
+	 *    creates an HTML list (<ul>) with list items (<li>) for each template part,
+	 *    in a format that can be used as a sortable list in the admin
+	 *
+	 * @access public
+	 * @param string $list_css_id
+	 * @param string $list_css_class
+	 * @param string $list_item_css_class
+	 * @param string $list_item_css_id_prefix
+	 * @return string
+	 */
+	public function generate_sortable_list_of_template_parts(
+		$list_css_id = '',
+		$list_css_class = '',
+		$list_item_css_class = '',
+		$list_item_css_id_prefix = ''
+	) {
+		EE_Registry::instance()->load_helper( 'HTML' );
+		$event_archive_display_order = EEH_HTML::ul( $list_css_id, $list_css_class );
+		$this->template_parts->rewind();
+		// loop through template parts and add template content
+		while ( $this->template_parts->valid() ) {
+			$event_archive_display_order .= EEH_HTML::li(
+				EEH_HTML::span( '', '', 'dashicons dashicons-arrow-up-alt2' ) .
+				EEH_HTML::span( '', '', 'dashicons dashicons-arrow-down-alt2' ) .
+				$this->template_parts->current()->label(),
+				$list_item_css_id_prefix . $this->template_parts->current()->name(),
+				$list_item_css_class
+			);
+			$this->template_parts->next();
+		}
+		$event_archive_display_order .= EEH_HTML::ulx();
+		return $event_archive_display_order;
+	}
 
 
 }
