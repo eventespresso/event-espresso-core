@@ -339,24 +339,8 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
-					// or have had all of their reg steps completed
-					if ( $transaction_processor->all_reg_steps_completed(	$transaction ) === true ) {
-						continue;
-					}
-					// maybe update status, but don't save transaction just yet
-					$transaction_payments	->update_transaction_status_based_on_total_paid( $transaction, false );
-					do_action( 'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__after_status_update_based_on_total_paid', $transaction );
-					// check if enough Reg Steps have been completed to warrant finalizing the TXN
-					if ( $transaction_processor->all_reg_steps_completed_except_final_step( $transaction ) ) {
-						// and if it hasn't already been set as being started...
-						$transaction_processor->set_reg_step_initiated( $transaction, 'finalize_registration' );
-					}
-					// now update the TXN and trigger notifications
-					$transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
-						$transaction,
-						$transaction->last_payment()
-					);
-// 
+					// let's simulate an IPN here which will trigger any notifications that need to go out
+					$payment_processor->update_txn_based_on_payment( $transaction, $transaction->last_payment(), true, true );
 				}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
 			}
