@@ -112,4 +112,35 @@ class EEM_Event_Test extends EE_UnitTestCase {
 		//now do our tests
 		$this->assertEquals( 1, EEM_Event::instance()->get_inactive_events( array(), true ) );
 	}
+
+
+	/**
+	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/8799
+	 * @group 8799
+	 * @since 4.8.8.rc.019
+	 */
+	public function test_default_reg_status() {
+		//first verify the default reg status on config is pending payment
+		$this->assertEquals( EEM_Registration::status_id_pending_payment, EE_Registry::instance()->CFG->registration->default_STS_ID );
+
+		//verify creating default event from the model has that default reg status
+		/** @type EE_Event $event */
+		$event = EEM_Event::instance()->create_default_object();
+		$this->assertEquals( EEM_Registration::status_id_pending_payment, $event->default_registration_status() );
+
+		//let's update config in the db to have default reg status of approved
+		EE_Registry::instance()->CFG->registration->default_STS_ID = EEM_Registration::status_id_approved;
+		EE_Registry::instance()->CFG->update_espresso_config();
+
+		//let's reset for new test
+		EEM_Event::reset();
+		EE_Registry::reset();
+
+		//k NOW the default reg status in config should be approved
+		$this->assertEquals( EEM_Registration::status_id_approved, EE_Registry::instance()->CFG->registration->default_STS_ID );
+
+		//new default event should have approved as the default reg status
+		$event = EEM_Event::instance()->create_default_object();
+		$this->assertEquals( EEM_Registration::status_id_approved, $event->default_registration_status() );
+	}
 }
