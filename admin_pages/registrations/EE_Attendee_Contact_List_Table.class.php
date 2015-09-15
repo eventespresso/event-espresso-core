@@ -97,7 +97,10 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_ATT_ID($item) {
-		return '<div>' . $item->ID() . '</div>';
+		$content =  $item->ID();
+		$attendee_name = $item instanceof EE_Attendee ? $item->full_name() : '';
+		$content .= '  <span class="show-on-mobile-view-only">' . $attendee_name . '</span>';
+		return $content;
 	}
 
 

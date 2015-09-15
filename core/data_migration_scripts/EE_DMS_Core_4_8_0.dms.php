@@ -1,9 +1,9 @@
 <?php
 /**
  * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
- * going to be released before this version) to 4.8 (which basiclaly supports promotions)
+ * going to be released before this version) to 4.8 (which basically supports promotions)
  * mostly just
- * -refacotrs line item trees, so that there are subtotals for EACH event purchased,
+ * -refactors line item trees, so that there are subtotals for EACH event purchased,
  * which is especially convenient for applying event-wide promotions
  * -does NOT actually make any database schema changes
  */
@@ -619,7 +619,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * addresses https://events.codebasehq.com/projects/event-espresso/tickets/8731
-	 * which should just be a temporary issue for folks who isntalled 4.8.0-4.8.5;
+	 * which should just be a temporary issue for folks who installed 4.8.0-4.8.5;
 	 * we should be able to stop doing this in 4.9
 	 */
 	public function fix_non_default_taxes(){

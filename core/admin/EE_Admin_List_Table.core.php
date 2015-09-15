@@ -212,6 +212,25 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 	/**
+	 * Used to indicate what should be the primary column for the list table. If not present then fallsback to what WP calculates
+	 * as the primary column.
+	 * @type string
+	 */
+	protected $_primary_column = '';
+
+
+
+
+	/**
+	 * Used to indicate whether the table has a checkbox column or not.
+	 * @type bool
+	 */
+	protected $_has_checkbox_column = false;
+
+
+
+
+	/**
 	 * constructor
 	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
 	 */
@@ -232,6 +251,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_nonce_action_ref = $this->_view;
 
 		$this->_set_properties();
+
+		//set primary column
+		add_filter( 'list_table_primary_column', array( $this, 'set_primary_column' ) );
 
 		//set parent defaults
 		parent::__construct($this->_wp_list_args);
@@ -370,9 +392,37 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 			$sortable[$id] = $_data;
 		}
-		$this->_column_headers = array( $columns, $hidden, $sortable );
+		$primary = $this->get_primary_column_name();
+		$this->_column_headers = array( $columns, $hidden, $sortable, $primary );
 	}
 
+
+	/**
+	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 * @return string
+	 */
+	protected function get_primary_column_name() {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'get_primary_column_name' ) && $parent == 'WP_List_Table' ) {
+				return parent::get_primary_column_name();
+			}
+		}
+		return $this->_primary_column;
+	}
+
+
+	/**
+	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 * @return string
+	 */
+	protected function handle_row_actions( $item, $column_name, $primary ) {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'handle_row_actions' ) && $parent == 'WP_List_Table' ) {
+				return parent::handle_row_actions( $item, $column_name, $primary );
+			}
+		}
+		'';
+	}
 
 
 
@@ -421,6 +471,23 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		//add reset filters button at end
 		echo '<a class="button button-secondary"  href="' . $this->_admin_page->get_current_page_view_url() . '" style="display:inline-block">' . __('Reset Filters', 'event_espresso') . '</a>';
 	}
+
+
+	/**
+	 * Callback for 'list_table_primary_column' WordPress filter
+	 *
+	 * If child EE_Admin_List_Table classes set the _primary_column property then that will be set as the primary column when class
+	 * is instantiated.
+	 *
+	 * @see WP_List_Table::get_primary_column_name
+	 * @param string $column_name
+	 * @return string
+	 */
+	public function set_primary_column( $column_name ) {
+		return ! empty( $this->_primary_column ) ? $this->_primary_column : $column_name;
+	}
+
+
 
 
 
@@ -516,7 +583,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 */
 	public function single_row( $item ) {
 		$row_class = $this->_get_row_class( $item );
-		echo '<tr' . $row_class . '>';
+		echo '<tr class="' . esc_attr( $row_class ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
@@ -532,12 +599,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		static $row_class = '';
 		$row_class = ( $row_class == '' ? 'alternate' : '' );
 
-		$new_row = $row_class;
+		$new_row_class = $row_class;
 
-		if ( !empty($this->_ajax_sorting_callback) )
-			$new_row .= ' rowsortable';
+		if ( !empty($this->_ajax_sorting_callback) ) {
+			$new_row_class .= ' rowsortable';
+		}
 
-		return ' class="' . $new_row . '"';
+		return $new_row_class;
 	}
 
 
@@ -574,7 +642,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @param object $item The current item
 	 */
 	public function single_row_columns( $item ) {
-		list( $columns, $hidden ) = $this->get_column_info();
+		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
 
 		global $wp_version;
 		$use_hidden_class = version_compare( $wp_version, '4.3-RC', '>=' );
@@ -588,9 +656,16 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			$hidden_class = $use_hidden_class && in_array( $column_name, $hidden ) ? ' hidden' : '';
 			$style = ! $use_hidden_class && in_array( $column_name, $hidden ) ? ' style="display:none;"' : '';
 
-			$class = "class='$column_name column-$column_name$hidden_class'";
+			$classes = $column_name . ' column-' . $column_name.$hidden_class;
+			if ( $primary == $column_name ) {
+				$classes .= ' has-row-actions column-primary';
+			}
 
-			$attributes = "$class$style";
+			$data = ' data-colname="' . wp_strip_all_tags( $column_display_name ) . '"';
+
+			$class = "class='$classes'";
+
+			$attributes = "$class$style$data";
 
 			if ( 'cb' === $column_name ) {
 				echo '<th scope="row" class="check-column">';
@@ -600,11 +675,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			elseif ( method_exists( $this, 'column_' . $column_name ) ) {
 				echo "<td $attributes>";
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content', call_user_func( array( $this, 'column_' . $column_name ), $item ), $item, $this );
+				echo $this->handle_row_actions( $item, $column_name, $primary );
 				echo "</td>";
 			}
 			else {
 				echo "<td $attributes>";
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_default__column_content', $this->column_default( $item, $column_name ), $item, $column_name, $this );
+				echo $this->handle_row_actions( $item, $column_name, $primary );
 				echo "</td>";
 			}
 		}
