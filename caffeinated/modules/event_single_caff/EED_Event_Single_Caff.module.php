@@ -100,34 +100,11 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 		$event_single_order_array[ $config->display_order_datetimes ] = 'datetimes';
 		$event_single_order_array[ $config->display_order_event ] = 'event';
 		$event_single_order_array[ $config->display_order_venue ] = 'venue';
-		$event_single_order_array = apply_filters(
-			'FHEE__EED_Event_Single__template_settings_form__event_single_order_array',
-			$event_single_order_array
-		);
-
-		ksort( $event_single_order_array );
-
-		$templates = apply_filters(
-			'FHEE__EED_Event_Single__template_settings_form__templates',
-			array(
-				'tickets' => __( "Ticket Selector", "event_espresso" ),
-				'datetimes' => __( "Dates and Times", "event_espresso" ),
-				'event' => __( "Event Description", "event_espresso" ),
-				'venue' => __( "Venue Information", "event_espresso" ),
-			)
-		);
-		foreach ( $templates as $template => $text ) {
-			if ( ! in_array( $template, $event_single_order_array ) ) {
-				array_push( $event_single_order_array, $template );
-			}
-		}
-		$event_single_display_order = '';
-		foreach ( $event_single_order_array as $template ) {
-			$event_single_display_order .= '
-<li id="' . $template . '" class="single-sortable-li single-sortable-js" ><span class="dashicons dashicons-arrow-up-alt2" ></span ><span class="dashicons dashicons-arrow-down-alt2" ></span >' . $templates[ $template ] . '</li>';
-		}
-		$config = (array)$config;
-		$config['event_single_display_order'] = $event_single_display_order;
+		// get template parts
+		$template_parts = EED_Event_Single::instance()->initialize_template_parts( $config );
+		// convert to array so that we can add more properties
+		$config = get_object_vars( $config );
+		$config[ 'event_single_display_order' ] = $template_parts->generate_sortable_list_of_template_parts( 'event-single-sortable-js', '', 'single-sortable-li single-sortable-js' );
 		EEH_Template::display_template( EVENT_SINGLE_CAFF_TEMPLATES_PATH . 'admin-event-single-settings.template.php', $config );
 	}
 
