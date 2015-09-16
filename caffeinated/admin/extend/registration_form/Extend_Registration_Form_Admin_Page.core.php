@@ -64,7 +64,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'capability' => 'ee_edit_questions',
 				'noheader' => TRUE
 				),
-
+			'duplicate_question' => array(
+				'func' => '_duplicate_question',
+				'capability' => 'ee_edit_questions',
+				'noheader' => TRUE
+				),
 			'trash_question' => array(
 				'func' => '_trash_question',
 				'capability' => 'ee_delete_question',
@@ -584,6 +588,27 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
 
+	}
+
+	/**
+	 * duplicates a question and all its question options and redirects to the new question.
+	 */
+	public function _duplicate_question() {
+		$question_ID = intval( $this->_req_data[ 'QST_ID' ] );
+		$question = EEM_Question::instance()->get_one_by_ID( $question_ID );
+		if( $question instanceof EE_Question ) {
+			$new_question = $question->duplicate();
+			if( $new_question instanceof EE_Question ) {
+				$this->_redirect_after_action( true, __( 'Question', 'event_espresso' ), __( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+			} else {
+				global $wpdb;
+				EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %1$d because: %2$s', 'event_espresso' ), $question_ID, $wpdb->last_error ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action(false, '', '', array('action'=>'default'), false );
+			}
+		} else {
+			EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( false, '', '', array( 'action' => 'default' ), false );
+		}
 	}
 
 

@@ -97,6 +97,7 @@ jQuery(document).ready(function($) {
 			// find all input's and add css classes: required and needs-value
 			$( add_new_state_dv ).find(':input').each( function() {
 				$(this).addClass('required needs-value').trigger('change');
+				$( add_new_state_dv ).slideDown();
 			});
 		},
 
@@ -351,6 +352,10 @@ jQuery(document).ready(function($) {
 	};
 
 	SPCO.main_container.on( 'spco_display_step', function() {
+		EE_ANS.initialize();
+	});
+
+	SPCO.main_container.on( 'spco_switch_payment_methods', function() {
 		EE_ANS.initialize();
 	});
 

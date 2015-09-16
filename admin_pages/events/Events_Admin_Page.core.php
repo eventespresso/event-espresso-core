@@ -1312,7 +1312,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->verify_cpt_object();
 		add_meta_box('espresso_event_editor_tickets', __('Event Datetime & Ticket', 'event_espresso'), array($this, 'ticket_metabox'), $this->page_slug, 'normal', 'high');
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
-		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->page_slug, 'normal', 'core');
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
 
@@ -1468,51 +1467,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['additional_registration_options'] = apply_filters( 'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
-	}
-
-
-
-	/**
-	 * decaf venue metabox
-	 * @return string form for Event Venue
-	 */
-	public function venue_metabox() {
-
-		//first let's see if we have a venue already
-		$event_id = $this->_cpt_model_obj->ID();
-		$venue = !empty( $event_id ) ? $this->_cpt_model_obj->venues() : NULL;
-		$venue = empty( $venue ) ? EE_Registry::instance()->load_model('Venue')->create_default_object() : array_shift( $venue );
-		$template_args['_venue'] = $venue;
-
-		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input(
-			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
-				EE_Answer::new_instance( array(  'ANS_value'=> $venue->state_ID() )),
-				array(
-					'input_name' =>  'state',
-					'input_id' => 'phys-state',
-					'input_class' => '',
-					'input_prefix' => '',
-					'append_qstn_id' => FALSE
-				)
-			)
-		);
-		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input(
-			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
-				EE_Answer::new_instance( array(  'ANS_value'=> $venue->country_ID() )),
-				array(
-					'input_name' =>  'countries',
-					'input_id' => 'phys-country',
-					'input_class' => '',
-					'input_prefix' => '',
-					'append_qstn_id' => FALSE
-				)
-			)
-		);
-
-		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
-		EEH_Template::display_template( $template_path, $template_args );
 	}
 
 
@@ -1964,7 +1918,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function total_events() {
 
-		$count = EEM_Event::instance()->count( array(), 'EVT_ID', true );
+		$count = EEM_Event::instance()->count( array( 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -1982,7 +1936,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => array( 'IN', array('draft', 'auto-draft' ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
+		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -2001,7 +1955,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => 'trash'
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', true );
+		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 

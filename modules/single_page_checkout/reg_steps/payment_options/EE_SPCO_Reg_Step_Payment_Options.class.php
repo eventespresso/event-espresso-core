@@ -1398,6 +1398,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				TRUE,
 				$this->reg_step_url()
 			);
+
 		} catch( Exception $e ) {
 			$this->_handle_payment_processor_exception( $e );
 		}
@@ -1516,6 +1517,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		} else if ( $this->checkout->payment_method->is_off_site() ) {
 			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
 			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
+				do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $payment->redirect_url(), '$payment->redirect_url()' );
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
@@ -1527,6 +1529,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					EE_Registry::instance()->SSN->expiration() + 1,
 					$this->checkout->transaction->ID()
 				);
+				// and lastly, let's bump the payment status to pending
+				$payment->set_status( EEM_Payment::status_id_pending );
+				$payment->save();
 			} else {
 				// not a payment
 				$this->checkout->continue_reg = false;
@@ -1582,6 +1587,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// verify payment validity
 		if ( $payment instanceof EE_Payment ) {
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $payment->status(), '$payment->status()' );
 			$msg = $payment->gateway_response();
 			// check results
 			switch ( $payment->status() ) {
