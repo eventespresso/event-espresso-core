@@ -97,7 +97,7 @@ class EED_Bot_Trap  extends EED_Module {
 		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
 		$html .= '<input type="email" name="tkt-slctr-request-processor-email" value=""/>';
 		$html .= '<input type="hidden" name="tkt-slctr-request-processor-token" value="';
-		$html .= EE_Encryption::instance()->encrypt( time() );
+		$html .= EE_Registry::instance()->CFG->registration->use_encryption ? EE_Encryption::instance()->encrypt( time() ) : time();
 		$html .= '"/>';
 		$html .= '</div>';
 		echo $html;
@@ -118,7 +118,11 @@ class EED_Bot_Trap  extends EED_Module {
 		// get encrypted timestamp for when the form was originally displayed
 		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) : '';
 		// decrypt and convert to absolute  integer
-		$bot_trap_timestamp = absint( EE_Encryption::instance()->decrypt( $bot_trap_timestamp ) );
+		if ( EE_Registry::instance()->CFG->registration->use_encryption ) {
+			$bot_trap_timestamp = absint( EE_Encryption::instance()->decrypt( $bot_trap_timestamp ) );
+		} else {
+			$bot_trap_timestamp = absint( $bot_trap_timestamp );
+		}
 		// ticket form submitted too impossibly fast ( after now ) or more than an hour later ???
 		$suspicious_timing = $bot_trap_timestamp > time() || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS ) ? true : false;
 		// are we human ?
@@ -199,6 +203,14 @@ class EED_Bot_Trap  extends EED_Module {
 							'required'        		=> false
 						)
 					),
+					'use_encryption' 		=> new EE_Yes_No_Input(
+						array(
+							'html_label_text' 	=> __( 'Encrypt Bot Trap Data', 'event_espresso' ),
+							'html_help_text' 		=>  __( 'One way to detect spam bots is by looking at how long it takes them to submit a form. They are often inhumanly fast, or will submit forms hours, days, or even weeks after the form was first scraped off the web. The Event Espresso Bot Trap will send a timestamp with the Ticket Selector form when it is submitted. By default, this timestamp is encrypted so that the spam bots can not change it, but encryption may cause issues on some servers due to configuration "conflicts". If you continuously get caught in the bot trap, then try setting this option to "No". This may increase the number of spam submissions you receive, but increases server compatibility.', 'event_espresso' ),
+							'default'        			=> isset( EE_Registry::instance()->CFG->registration->use_encryption ) ? EE_Registry::instance()->CFG->registration->use_encryption : true,
+							'required'        		=> false
+						)
+					),
 				)
 			)
 		);
@@ -224,8 +236,9 @@ class EED_Bot_Trap  extends EED_Module {
 				if ( $bot_trap_settings_form->is_valid() ) {
 					// grab validated data from form
 					$valid_data = $bot_trap_settings_form->valid_data();
-					if ( isset( $valid_data[ 'use_bot_trap' ] ) ) {
+					if ( isset( $valid_data[ 'use_bot_trap' ], $valid_data[ 'use_encryption' ] ) ) {
 						$EE_Registration_Config->use_bot_trap = $valid_data[ 'use_bot_trap' ];
+						$EE_Registration_Config->use_encryption = $valid_data[ 'use_encryption' ];
 					} else {
 						EE_Error::add_error( __( 'Invalid or missing Bot Trap settings. Please refresh the form and try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					}
