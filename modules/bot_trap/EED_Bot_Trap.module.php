@@ -91,13 +91,17 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function generate_bot_trap() {
-		EE_Registry::instance()->load_core( 'EE_Encryption' );
 		$do_not_enter = __( 'please do not enter anything in this input', 'event_espresso' );
 		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin-left:-999em;">';
 		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
 		$html .= '<input type="email" name="tkt-slctr-request-processor-email" value=""/>';
 		$html .= '<input type="hidden" name="tkt-slctr-request-processor-token" value="';
-		$html .= EE_Registry::instance()->CFG->registration->use_encryption ? EE_Encryption::instance()->encrypt( time() ) : time();
+		if ( EE_Registry::instance()->CFG->registration->use_encryption ) {
+			EE_Registry::instance()->load_core( 'EE_Encryption' );
+			$html .= EE_Encryption::instance()->encrypt( time() );
+		} else {
+			$html .= time();
+		}
 		$html .= '"/>';
 		$html .= '</div>';
 		echo $html;
@@ -112,13 +116,13 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function process_bot_trap() {
-		EE_Registry::instance()->load_core( 'EE_Encryption' );
 		// what's your email address Mr. Bot ?
 		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == '' ? true : false;
 		// get encrypted timestamp for when the form was originally displayed
 		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) : '';
 		// decrypt and convert to absolute  integer
 		if ( EE_Registry::instance()->CFG->registration->use_encryption ) {
+			EE_Registry::instance()->load_core( 'EE_Encryption' );
 			$bot_trap_timestamp = absint( EE_Encryption::instance()->decrypt( $bot_trap_timestamp ) );
 		} else {
 			$bot_trap_timestamp = absint( $bot_trap_timestamp );
