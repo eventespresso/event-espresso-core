@@ -300,6 +300,11 @@
 		margin-left: 20px;
 		margin-top: 5px;
 	}
+
+	p.search-box {
+		position: relative;
+		top: 0;
+	}
 }
 
 /*pending payment*/
