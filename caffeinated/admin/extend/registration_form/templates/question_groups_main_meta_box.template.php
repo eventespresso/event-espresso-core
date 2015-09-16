@@ -126,7 +126,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 							/*@var $question EE_Question*/
 							$checked = isset( $question_group_questions[ $question_ID ] ) ? ' checked="checked"' : '';
 							// disable questions from the personal information question group
-							$disabled = $question->is_system_question() && $QSG_system == EEM_Question_Group::system_personal ? ' disabled="disabled"' : '';
+							$disabled = $question->is_system_question() && $QSG_system === EEM_Question_Group::system_personal && $question_ID !== EEM_Attendee::lname_question_id ? ' disabled="disabled"' : '';
 							// make sure phone checkbox is enabled
 							$disabled = $question->ID() == EEM_Attendee::phone_question_id ? '' : $disabled;
 							if (
@@ -136,6 +136,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 									&& (
 										empty( $checked )
 										&& $question->ID() != EEM_Attendee::phone_question_id
+										&& $question->ID() != EEM_Attendee::lname_question_id
 									)
 								)
 								||

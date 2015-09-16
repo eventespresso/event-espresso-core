@@ -566,8 +566,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ] )) {
 				$question_group->add_question( $question_ID );
 			} else {
-				// not found, remove it (but only if not a system question for the personal group)
-				if ( ! ( $question->is_system_question() && $question_group->system_group() === EEM_Question_Group::system_personal )) {
+				// not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
+				if ( $question->is_system_question() && $question_group->system_group() === EEM_Question_Group::system_personal && $question_ID !== EEM_Attendee::lname_question_id ) {
+					continue;
+				} else {
 					$question_group->remove_question( $question_ID );
 				}
 			}
