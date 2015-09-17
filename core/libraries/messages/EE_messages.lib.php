@@ -186,12 +186,13 @@ class EE_messages {
 
 
 	/**
-	 * Ensures that tthe specified message type for the given messenger is currently active, if not activates it.
+	 * Ensures that the specified message type for the given messenger is currently active, if not activates it.
 	 * This ALSO ensures that the given messenger is active as well!.
 	 *
 	 * @param string $message_type message type name
-	 *
-	 * @return boolean true if it got activated (or was active) and false if not.
+	 * @param        $messenger
+	 * @return bool true if it got activated (or was active) and false if not.
+	 * @throws \EE_Error
 	 */
 	public function ensure_message_type_is_active( $message_type, $messenger ) {
 		//first validate that the incoming messenger allows this message type to be activated.
@@ -203,7 +204,14 @@ class EE_messages {
 		$msgr = $messengers[$messenger];
 		$valid_message_types = $msgr->get_valid_message_types();
 		if ( ! in_array( $message_type, $valid_message_types ) ) {
-			throw new EE_Error( sprint_f( __('The message type ($1%s) sent to $2%s is not valid for the $3%s messenger.  Doublecheck the spelling and verify that message type has been registered as a valid type with the messenger.', 'event_espresso' ), $message_type, __METHOD__, $messenger ) );
+			throw new EE_Error(
+				sprintf(
+					__('The message type (%1$s) sent to %2$s is not valid for the %3$s messenger.  Double-check the spelling and verify that message type has been registered as a valid type with the messenger.', 'event_espresso' ),
+					$message_type,
+					__METHOD__,
+					$messenger
+				)
+			);
 		}
 
 		//all is good so let's just get it active
@@ -213,18 +221,17 @@ class EE_messages {
 	/**
 	 * Activates the specified messenger
 	 * @param string $messenger_name
-	 * @param array $message_types (optional) An array of message types to activate with this messenger.  If
+	 * @param array $mts_to_activate (optional) An array of message types to activate with this messenger.  If
 	 *                             				included we do NOT setup the default message types (assuming
 	 *                             				they are already setup.)
 	 * @return boolean an array of generated templates or false if nothing generated/activated.
 	 */
-	public function activate_messenger( $messenger_name, $mts = array() ){
+	public function activate_messenger( $messenger_name, $mts_to_activate = array() ){
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$message_types = $this->get_installed_message_types();
 		$installed_messengers = $this->get_installed_messengers();
-		$mts_to_activate = array();
 		$templates = false;
-
+		$settings = array();
 		//get has_active so we can be sure its kept up to date.
 		$has_activated = get_option( 'ee_has_activated_messenger' );
 
@@ -237,7 +244,7 @@ class EE_messages {
 			$active_messengers[ $messenger->name ][ 'obj' ] = $messenger;
 
 			/** @var EE_messenger[] $installed_messengers  */
-			$mts_to_activate = ! empty( $mts ) ? $mts :  $messenger->get_default_message_types();
+			$mts_to_activate = ! empty( $mts_to_activate ) ? $mts_to_activate :  $messenger->get_default_message_types();
 			foreach ( $mts_to_activate as $message_type ) {
 				//we need to setup any initial settings for message types
 				/** @var EE_message_type[] $installed_mts */
@@ -284,20 +291,18 @@ class EE_messages {
 
 
 
-
-
-
 	/**
 	 * load the active files needed (key word... NEEDED)
-	 * @param string $kind indicates what kind of files we are loading.
-	 * @param array $actives indicates what active types of the $kind are actually to be loaded.
+	 * @param string $kind    indicates what kind of files we are loading.
+	 * @param array  $actives indicates what active types of the $kind are actually to be loaded.
+	 * @return array|void
 	 */
 	private function _load_files($kind, $actives) {
 		$active_names = array();
 		$base_path = EE_LIBRARIES . 'messages' . DS . $kind . DS;
 		if ( empty($actives) ) return false;
 
-		//make sure autoloaders are set (failsafe)
+		//make sure autoloaders are set (fail-safe)
 		EED_Messages::set_autoloaders();
 
 		//make sure $actives is an array
@@ -314,7 +319,15 @@ class EE_messages {
 			} else {
 				$this->_unset_active($active, $kind);
 				//set WP_Error
-				return EE_Error::add_error( sprintf( __("Missing messages system file set as inactive: (%s) %s has been made inactive.", 'event_espresso'), $load_file, $msg_name), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					sprintf(
+						__('Missing messages system file set as inactive: (%1$s) %2$s has been made inactive.', 'event_espresso'),
+						$load_file,
+						$msg_name
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+				return false;
 			}
 		}
 		return $active_names;
@@ -324,7 +337,7 @@ class EE_messages {
 
 
 	/**
-	 * unsets the active if we can't find the file (failsafe)
+	 * unsets the active if we can't find the file (fail-safe)
 	 *
 	 * @access private
 	 * @param  string $active_name name of messenger or message type
@@ -363,12 +376,11 @@ class EE_messages {
 	 * Used to verify if a message can be sent for the given messenger and message type and that it is a generating messenger (used for generating message templates).
 	 *
 	 * @param EE_messenger $messenger    messenger used in trigger
-	 * @param EE_messagetype $message_type message type used in trigger
+	 * @param EE_message_type $message_type message type used in trigger
 	 *
 	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
 	 */
 	public function is_generating_messenger_and_active( EE_messenger $messenger, EE_message_type $message_type ) {
-		$generating_msgrs = array();
 		//get the $messengers the message type says it can be used with.
 		$used_with = $message_type->with_messengers();
 
@@ -607,7 +619,7 @@ class EE_messages {
 	 * @param  string $message_type EE_message_type
 	 * @param bool $is_global whether this is a global template or not.
 	 * @throws EE_Error
-	 * @return bool(true)|wp_error_object
+	 * @return bool(true)|WP_Error
 	 */
 	private function _validate_setup($messenger, $message_type, $is_global = FALSE) {
 
@@ -631,12 +643,18 @@ class EE_messages {
 			throw new EE_Error( sprintf( __(' The %s messenger or the %s message_type are not active. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
 
 		//is given message_type valid for given messenger (if this is not a global save)
-		$types_to_check = array();
 		if ( !$is_global ) {
 			$has_active = EEM_Message_Template_Group::instance()->count( array( array( 'MTP_is_active' => TRUE, 'MTP_messenger' => $this->_messenger->name, 'MTP_message_type' => $message_type ) ) );
 
 			if ( $has_active == 0 ) {
-				EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $message_type, $messenger), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					sprintf(
+						__(' The %1$s message type is not registered with the %2$s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'),
+						$message_type,
+						$messenger
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				return false;
 			}
 
@@ -644,13 +662,18 @@ class EE_messages {
 		return true;
 	}
 
+
+
 	/**
 	 * This is a wrapper for the protected _create_new_templates function
+	 * @param         $messenger
 	 * @param  string $message_type message type that the templates are being created for
-	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned.
+	 * @param int     $GRP_ID
+	 * @param bool    $is_global
+	 * @return array|object if creation is successful then we return an array of info, otherwise an error_object is returned.
+	 * @throws \EE_Error
 	 */
 	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
-		$valid_mt = false;
 
 		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
 
@@ -759,12 +782,12 @@ class EE_messages {
 	 * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
 	 * @param  string $messenger    EE_messenger
 	 * @param  string $message_type EE_message_type
-	 * @return array|wp_error_object  template fields indexed by context.
+	 * @return array|WP_Error  template fields indexed by context.
 	 */
 	public function get_fields($messenger, $message_type) {
 		$template_fields = array();
 
-		$valid_msg = $this->_validate_setup($messenger, $message_type);
+		$this->_validate_setup($messenger, $message_type);
 
 
 		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
