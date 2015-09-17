@@ -159,7 +159,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'filename' => 'payment_methods_settings'
 					)
 				),
-				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
+				//'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
 			),

@@ -69,6 +69,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_cpt_edit_routes = array(
 			'espresso_attendees' => 'edit_attendee'
 			);
+		$this->_pagenow_map = array(
+				'add_new_attendee' => 'post-new.php',
+				'edit_attendee' => 'post.php',
+				'trash' => 'post.php'
+			);
 
 		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
 		//add filters so that the comment urls don't take users to a confusing 404 page
@@ -962,6 +967,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_full_name' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -974,7 +980,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_count' => array( 'LIKE' , $sstr ),
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Ticket.TKT_description' => array( 'LIKE', $sstr )
+				'Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Transaction.Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $sstr )
 				);
 		}
 

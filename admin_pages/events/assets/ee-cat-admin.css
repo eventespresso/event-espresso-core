@@ -1,4 +1,6 @@
 .form-table .postbox { border: none; }
 table.eventcategories th.column-id { width:7.5%; }
 table.eventcategories th.column-name { width:25%; }
+table.eventcategories .column-shortcode { width: 50%;}
+table.eventcategories .column-count { width: 9%; text-align: center;}
 h4.category_description_label { margin-left: -10px; margin-bottom: 0 }

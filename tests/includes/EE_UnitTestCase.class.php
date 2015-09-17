@@ -308,14 +308,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+
 	/**
 	 * This loads the various admin page mock files required for tests.
 	 * Note these pages should be loaded on demand, because constants will be defined that will interfere with other Admin Page loading tests.
 	 * @since 4.6.0
+	 * @param string $page
 	 */
-	public function delayedAdminPageMocks() {
-		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
-		require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+	public function delayedAdminPageMocks( $page = '' ) {
+
+		switch ( $page ) {
+			case 'decaf_events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+				break;
+			case 'registrations' :
+				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+				break;
+			case 'transactions' :
+				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
+				break;
+
+		}
 	}
 
 
@@ -864,7 +877,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
 	 *
 	 * @param array $options {
-	 *	@type int $ticket_types the number of different ticket types in this transaction. Deafult 1
+	 *	@type int $ticket_types the number of different ticket types in this transaction. Default 1
 	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default INF
 	 * @return EE_Transaction
 	 */
@@ -998,4 +1011,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		return $ticket;
 	}
+
+
+
+	/**
+	 * Creates a WP user with standard admin caps PLUS all EE CAPS (default)
+	 * @param array $ee_capabilities array of EE CAPS if you don't want the user to have ALL EE CAPS
+	 * @return WP_User
+	 */
+	public function wp_admin_with_ee_caps( $ee_capabilities = array() ) {
+		/** @type WP_User $user */
+		$user = $this->factory->user->create_and_get( array( 'role' => 'administrator' ));
+		$ee_capabilities = (array)$ee_capabilities;
+		if ( empty( $ee_capabilities )) {
+			EE_Registry::instance()->load_core( 'Capabilities' );
+			$ee_capabilities = EE_Capabilities::instance()->get_ee_capabilities();
+		}
+		foreach( $ee_capabilities as $ee_capability ) {
+			$user->add_cap( $ee_capability );
+		}
+		return $user;
+	}
+
+
 }
