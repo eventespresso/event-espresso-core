@@ -1867,6 +1867,18 @@ class EE_Registration_Config extends EE_Config_Base {
       public $reg_confirmation_last;
 
 	  /**
+	   * Whether or not to enable the EE Bot Trap
+	   * @var boolean $use_bot_trap
+	   */
+      public $use_bot_trap;
+
+	  /**
+	   * Whether or not to encrypt some data sent by the EE Bot Trap
+	   * @var boolean $use_encryption
+	   */
+      public $use_encryption;
+
+	  /**
 	   * Whether or not to use ReCaptcha
 	   * @var boolean $use_captcha
 	   */
@@ -1928,6 +1940,8 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
+		$this->use_bot_trap = true;
+		$this->use_encryption = true;
 		$this->use_captcha = FALSE;
 		$this->recaptcha_theme = 'light';
 		$this->recaptcha_type = 'image';
