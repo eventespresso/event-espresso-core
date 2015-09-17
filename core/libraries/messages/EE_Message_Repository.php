@@ -14,8 +14,12 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 
 
 
+	/**
+	 *    EE_Message_Repository constructor
+	 */
 	public function __construct() {
 		$this->interface = 'EE_Message';
+		parent::__construct();
 	}
 
 
@@ -131,7 +135,6 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 	public function getMessageByToken( $token ) {
 		$this->rewind();
 		while( $this->valid() ) {
-			$data = $this->getInfo();
 			if ( $this->current()->MSG_token() === $token ) {
 				$message = $this->current();
 				$this->rewind();
