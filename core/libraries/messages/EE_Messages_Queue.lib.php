@@ -75,7 +75,7 @@ class EE_Messages_Queue {
 	 * Constructor.
 	 * Setup all the initial properties and load a EE_Message_Repository.
 	 *
-	 * @param  EE_messages  $msg  dependency on EE_messsages.
+	 * @param  EE_messages  $msg  dependency on EE_messages.
 	 */
 	public function __construct( EE_messages $msg ) {
 		$this->_batch_count = apply_filters( 'FHEE__EE_Messages_Queue___batch_count', 50 );
@@ -190,8 +190,10 @@ class EE_Messages_Queue {
 		}
 
 		foreach ( $messages as $message ) {
-			$data = $message->all_extra_meta_array();
-			$this->add( $message, $data );
+			if ( $message instanceof EE_Message ) {
+				$data = $message->all_extra_meta_array();
+				$this->add( $message, $data );
+			}
 		}
 		return true;
 	}
@@ -399,7 +401,7 @@ class EE_Messages_Queue {
 	 * Note: Keep in mind that there is the possibility that the request will not execute if there is already another request
 	 * running on a queue for the given task.
 	 * @param string $task This indicates what type of request is going to be initiated.
-	 * @param int    $priority  This indicates the priority that triggers initating the request.
+	 * @param int    $priority  This indicates the priority that triggers initiating the request.
 	 */
 	public function initiate_request_by_priority( $task = 'generate', $priority = EEM_Message::priority_high ) {
 		//determine what status is matched with the priority as part of the trigger conditions.
