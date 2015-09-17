@@ -32,12 +32,19 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
 	/**
 	 * Constructor
-	 * This doesn't receive any params because they are derived from the request object.
+	 * This instantiates the object using arguments from the given request and calling the parent constructor.
 	 * @param   EE_messages $ee_msg
 	 * @param   EE_Request_Handler $request
 	 */
 	public function __construct( EE_messages $ee_msg, EE_Request_Handler $request ) {
-		$this->_instantiate_from_request( $ee_msg, $request );
+		parent::__construct( $request->get( 'gen_msgr' ), $request->get( 'message_type' ), array(), $ee_msg, $request->get( 'context' ) );
+		if ( ! $this->valid() ) {
+			return;
+		}
+		$this->_sending_messenger = $this->_EEMSG->get_messenger_if_active( $request->get( 'snd_msgr' ) );
+		$this->token = $request->get( 'token' );
+		$this->_validate_request();
+		$this->data = $this->_get_data_from_request( $request->get( 'id' ) );
 	}
 
 
@@ -53,29 +60,6 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
 
 	/**
-	 * This instantiates the object from the given request by grabbing required arguments from the request and calling the
-	 * parent constructor.
-	 * @param EE_messages $ee_msg
-	 * @param EE_Request_Handler $request
-	 * @return bool
-	 */
-	protected function _instantiate_from_request( EE_messages $ee_msg, EE_Request_Handler $request ) {
-		parent::__construct( $request->get('gen_msgr'), $request->get('message_type'), array(), $ee_msg, $request->get('context') );
-		if ( ! $this->valid() ) {
-			return false;
-		}
-		$this->_sending_messenger = $this->_EEMSG->get_messenger_if_active( $request->get('snd_msgr') );
-		$this->token = $request->get('token');
-		$this->_validate_request();
-		$this->data = $this->_get_data_from_request( $request->get('id') );
-		return true;
-	}
-
-
-
-
-
-	/**
 	 * This validates set properties from the incoming request.
 	 * @throws EE_Error
 	 */
@@ -86,10 +70,8 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 		     || empty( $this->context )
 			 || empty( $this->token ) ) {
 			throw new EE_Error( __( 'The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso' ) );
-			return;
 		}
 	}
-
 
 
 
@@ -106,7 +88,6 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 		//if no registration then bail early.
 		if ( ! $registration instanceof EE_Registration ) {
 			throw new EE_Error( __( 'Unable to complete the request because the token is invalid.', 'event_espresso' ) );
-			return;
 		}
 
 		return $this->_get_data_to_use( $registration, $id );
