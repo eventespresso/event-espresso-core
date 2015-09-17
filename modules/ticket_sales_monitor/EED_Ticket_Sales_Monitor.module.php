@@ -195,6 +195,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			return 0;
 		}
 		$available = $this->_get_all_datetimes_availability( $ticket, $available );
+		if ( $available < 1 ) {
+			$this->_ticket_sold_out( $ticket );
+			return 0;
+		}
 		if ( self::debug ) {
 			echo "\n . . . qty: " . $qty . '<br />';
 		}
@@ -234,8 +238,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 					}
 					$available = min( $available, $datetime_availability );
 					if ( $available < 1 ) {
-						$this->_ticket_sold_out( $ticket );
-						break;
+						return $available;
 					}
 				}
 			}
@@ -356,7 +359,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 				sprintf(
 					apply_filters(
 						'FHEE__EED_Ticket_Sales_Monitor___post_notices__sold_out_tickets_notice',
-						__( 'We\'re sorry...%1$sThe following tickets have sold out since you first viewed this page, and can no longer be registered for:%1$s%1$s%2$s%1$s%1$sPlease note that ticket availability can change at any time due to cancellations, so please check back again later if registration for these events is important to you.', 'event_espresso' )
+						__( 'We\'re sorry...%1$sThe following items have sold out since you first viewed this page, and can no longer be registered for:%1$s%1$s%2$s%1$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.', 'event_espresso' )
 					),
 					'<br />',
 					implode( '<br />', $this->sold_out_tickets )
@@ -372,7 +375,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 				sprintf(
 					apply_filters(
 						'FHEE__EED_Ticket_Sales_Monitor___ticket_quantity_decremented__notice',
-						__( 'We\'re sorry...%1$sDue to sales that have occurred since you first viewed the last page, the following tickets have had their quantities adjusted to match the current available amount:%1$s%1$s%2$s%1$s%1$sPlease note that ticket availability can change at any time due to cancellations, so please check back again later if registration for these events is important to you.', 'event_espresso' )
+						__( 'We\'re sorry...%1$sDue to sales that have occurred since you first viewed the last page, the following items have had their quantities adjusted to match the current available amount:%1$s%1$s%2$s%1$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.', 'event_espresso' )
 					),
 					'<br />',
 					implode( '<br />', $this->decremented_tickets )
