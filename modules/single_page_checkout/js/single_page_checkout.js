@@ -65,6 +65,7 @@ jQuery(document).ready( function($) {
 	*     ajax_submit: boolean,
 	*     empty_cart: boolean,
 	*     session_extension: number,
+	*     session_expiration: number,
 	*  }}
 	* @namespace response
 	* @type {{
@@ -139,7 +140,8 @@ jQuery(document).ready( function($) {
 		// container for displaying how much time is left to complete registration
 		registration_time_limit : $( '#spco-registration-time-limit-spn' ),
 		// timestamp for when the session expires
-		registration_session_expiration : null,
+		//registration_session_expiration : new Date( Date.parse( $( '#spco-registration-expiration-spn' ).html() ) ),
+		registration_session_expiration : new Date( Date.parse( eei18n.session_expiration ) ),
 
 
 
@@ -467,7 +469,7 @@ jQuery(document).ready( function($) {
 		start_registration_time_limit_countdown : function() {
 			if ( SPCO.registration_time_limit.length > 0 && parseInt( eei18n.empty_cart ) !== 1 && parseInt( eei18n.revisit ) !== 1 ) {
 				$( '#spco-registration-time-limit-pg' ).show();
-				SPCO.registration_session_expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
+				//SPCO.registration_session_expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
 				var layout = (( new Date() ) - SPCO.registration_session_expiration ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
 				SPCO.registration_time_limit.countdown({
 					labels: [ eei18n.timer_years, eei18n.timer_months, eei18n.timer_weeks, eei18n.timer_days, eei18n.timer_hours, eei18n.timer_minutes, eei18n.timer_seconds ],
