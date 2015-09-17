@@ -110,7 +110,9 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id($item) {
-		return $item->ID();
+		$content = $item->ID();
+		$content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
+		return $content;
 	}
 
 

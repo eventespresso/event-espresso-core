@@ -858,6 +858,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			if (  $answer_is_obj ) {
 				// and delete the corresponding answer since we won't be storing this data in that object
 				$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
+				$answers[ $answer_cache_id ]->delete_permanently();
 			}
 			return TRUE;
 		} elseif ( $answer_is_obj ) {

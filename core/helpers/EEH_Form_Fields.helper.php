@@ -52,6 +52,7 @@ class EEH_Form_Fields {
 	 * 		'db-col' => 'column_in_db' //used to indicate which column the field corresponds with in the db
 	 * 		'options' => optiona, optionb || array('value' => 'label', '') //if the input type is "select", this allows you to set the args for the different <option> tags.
 	 * 		'tabindex' => 1 //this allows you to set the tabindex for the field.
+	 *      'append_content' => '' //this allows you to send in html content to append to the field.
 	 * 	)
 	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@return string
@@ -82,7 +83,8 @@ class EEH_Form_Fields {
 				'format' => '%d',
 				'db-col' => 'column_in_db',
 				'options' => array(),
-				'tabindex' => ''
+				'tabindex' => '',
+				'append_content' => ''
 				);
 
 			$input_value = wp_parse_args( $input_value, $defaults );
@@ -99,6 +101,9 @@ class EEH_Form_Fields {
 			//rows or cols?
 			$rows = isset($input_value['rows'] ) ? $input_value['rows'] : '10';
 			$cols = isset($input_value['cols'] ) ? $input_value['cols'] : '80';
+
+			//any content?
+			$append_content = $input_value['append_content'];
 
 			$output .= (!$close) ? '<ul>' : '';
 			$output .= '<li>';
@@ -162,6 +167,9 @@ class EEH_Form_Fields {
 					$output .= '</li>';
 					$output .= '</ul>';
 					$output .= '<h4>' . $input_value['label'] . '</h4>';
+					if ( $append_content ) {
+						$output .= $append_content;
+					}
 					ob_start();
 					wp_editor( $input_value['value'], $field_id, $editor_settings);
 					$editor = ob_get_contents();
@@ -169,6 +177,9 @@ class EEH_Form_Fields {
 					$output .= $editor;
 					break;
 
+				}
+				if ( $append_content && $input_value['input'] !== 'wp_editor' ) {
+					$output .= $append_content;
 				}
 				$output .= ($close) ? '</li>' : '';
 
