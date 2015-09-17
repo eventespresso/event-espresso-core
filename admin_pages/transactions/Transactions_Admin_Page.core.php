@@ -1611,6 +1611,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Event.EVT_name' => array( 'LIKE', $search_string ),
 				'Registration.Event.EVT_desc' => array( 'LIKE', $search_string ),
 				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $search_string ),
+				'Registration.Attendee.ATT_full_name' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_fname' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_lname' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $search_string ),
@@ -1626,7 +1627,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $search_string ),
 				'Payment.PAY_source' => array('LIKE', $search_string ),
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $search_string ),
-				'TXN_session_data' => array( 'LIKE', $search_string )
+				'TXN_session_data' => array( 'LIKE', $search_string ),
+				'Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $search_string )
 				);
 		}
 

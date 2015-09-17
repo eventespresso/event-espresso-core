@@ -62,11 +62,16 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 			'QST_ID' => $item->ID()
 			);
 
+		$duplicate_query_args = array(
+				'action' => 'duplicate_question',
+				'QST_ID' => $item->ID()
+			);
 
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_FORMS_ADMIN_URL );
 		$trash_link = EE_Admin_Page::add_query_args_and_nonce( $trash_query_args, EE_FORMS_ADMIN_URL );
 		$restore_link = EE_Admin_Page::add_query_args_and_nonce( $restore_query_args, EE_FORMS_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_FORMS_ADMIN_URL );
+		$duplicate_link = EE_Admin_Page::add_query_args_and_nonce( $duplicate_query_args, EE_FORMS_ADMIN_URL );
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ) {
 			$actions = array(
@@ -85,6 +90,9 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 			if ( $item->count_related('Answer') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question', 'espresso_registration_form_delete_questions', $item->ID() ) ) {
 				$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 			}
+		}
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_questions', 'espresso_registration_form_edit_question' ) ) {
+			$actions[ 'duplicate' ] = '<a href="' . $duplicate_link . '" title="' . __('Duplicate Question', 'event_espresso') . '">' . __('Duplicate', 'event_espresso') . '</a>';
 		}
 
 		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>' : $item->display_text();

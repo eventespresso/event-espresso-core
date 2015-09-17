@@ -373,7 +373,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_set_related_details($item);
        		 //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=> $this->_transaction_details['id'] ), TXN_ADMIN_URL );
-		return EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a class="ee-status-color-' . $this->_transaction_details['status'] . '" href="'.$view_lnk_url.'" title="' . esc_attr( $this->_transaction_details['title_attr'] ) . '">' . $item->get_i18n_datetime( 'REG_date' ) . '</a>' : $item->get_i18n_datetime( 'REG_date' );
+		$view_link = EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a class="ee-status-color-' . $this->_transaction_details['status'] . '" href="'.$view_lnk_url.'" title="' . esc_attr( $this->_transaction_details['title_attr'] ) . '">' . $item->get_i18n_datetime( 'REG_date' ) . '</a>' : $item->get_i18n_datetime( 'REG_date' );
+		$view_link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $this->_transaction_details['status'], false, 'sentence' ) . '</span>';
+		return $view_link;
 	}
 
 
@@ -448,6 +450,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 	    //append reg_code
 	    $link .= '<br>' . sprintf( __( 'Reg Code: %s', 'event_espresso' ), $item->get('REG_code') );
+
+	    //reg status text for accessibility
+	    $link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
 
 		//trash/restore/delete actions
 		$actions = array();
