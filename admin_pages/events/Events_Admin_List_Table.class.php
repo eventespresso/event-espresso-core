@@ -224,7 +224,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 						$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . esc_attr__('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
 					}
 					if ( $item->count_related('Registration') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_delete_event', $item->ID() ) ) {
-						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+						$actions['delete'] = '<a href="' . $delete_event_link . '" title="' . esc_attr__('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 					}
 				break;
 			default :
