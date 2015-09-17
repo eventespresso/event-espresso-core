@@ -350,7 +350,7 @@ class EED_Messages  extends EED_Module {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
 			self::$_EEMSG = EE_Registry::instance()->load_lib( 'messages' );
-			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_class( 'Messages_Processor', self::$_EEMSG );
+			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor', self::$_EEMSG );
 		}
 	}
 
