@@ -446,11 +446,12 @@ class EE_Messages_Processor {
 				'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
 			)
 		));
-
 		//set the Messages to resend.
 		foreach ( $messages as $message ) {
-			$message->set_STS_ID( EEM_Message::status_resend );
-			$this->_queue->add( $message );
+			if ( $message instanceof EE_Message ) {
+				$message->set_STS_ID( EEM_Message::status_resend );
+				$this->_queue->add( $message );
+			}
 		}
 
 		$this->_queue->initiate_request_by_priority( 'send' );

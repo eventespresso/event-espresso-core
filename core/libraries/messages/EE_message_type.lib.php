@@ -342,7 +342,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * This is a public wrapper for the protected _do_messenger_hooks() method.
 	 * For backward compat reasons, this was done rather than making the protected method public.
-	 * @param   EE_messenger    This is used to set the $_active_messenger property, so message types are able to know
+	 * @param   EE_messenger $messenger  This is used to set the $_active_messenger property, so message types are able to know
 	 *                          what messenger is being used to send the message at the time of sending.
 	 * @since 4.9.0
 	 */
@@ -402,7 +402,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 	/**
 	 * This runs the _set_data_handler() method for message types and then returns what got set.
-	 * @param  This sets the data property for the message type with the incoming data used for generating.
+	 * @param mixed $data This sets the data property for the message type with the incoming data used for generating.
 	 * @return string (the reference for the data handler) (will be an empty string if could not be determined).
 	 */
 	public function get_data_handler( $data ) {
@@ -545,7 +545,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
 	 * @param array $extra  This is just an extra argument that can be used to pass additional data for setting up page content.
 	 * @access public
-	 * @return void
+	 * @return string
 	 */
 	public function get_message_type_admin_page_content($page, $action = NULL, $extra = array(), $messengers = array() ) {
 		//we can also further refine the context by action (if present).
@@ -735,35 +735,26 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
-		$admin_ids = array();
+
 		$admin_events = array();
-		$admin_attendees = array();
 		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
-			$admin_id = $this->_get_event_admin_id($event['ID']);
-			//get the user_id for the event
-			$admin_ids[] = $admin_id;
+			$admin_id = $this->_get_event_admin_id( $event['ID'] );
 			//make sure we are just including the events that belong to this admin!
-			$admin_events[$admin_id][$line_ref] = $event;
+			$admin_events[ $admin_id ][$line_ref] = $event;
 		}
-
-		//make sure we've got unique event_admins!
-		$admin_ids = array_unique($admin_ids);
-
 		//k now we can loop through the event_admins and setup the addressee data.
-		foreach ( $admin_ids as $event_admin ) {
+		foreach ( $admin_events as $admin_id => $event_details ) {
 			$aee = array(
-				'user_id' => $event_admin,
-				'events' => $admin_events[$event_admin],
+				'user_id' => $admin_id,
+				'events' => $event_details,
 				'attendees' => $this->_data->attendees,
-				'recipient_id' => $event_admin,
+				'recipient_id' => $admin_id,
 				'recipient_type' => 'WP_User'
-				);
+			);
 			$aee = array_merge( $this->_default_addressee_data, $aee );
-
-
 			$addressees[] = new EE_Messages_Addressee( $aee );
 		}
 
@@ -856,12 +847,16 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		return $add;
 	}
-	
 
 
-	protected function _get_event_admin_id($event_id) {
-		$event = EEM_Event::instance()->get_one_by_ID($event_id);
-		return $event->wp_user();
+
+	/**
+	 * @param $event_id
+	 * @return int
+	 */
+	protected function _get_event_admin_id( $event_id ) {
+		$event = EEM_Event::instance()->get_one_by_ID( $event_id );
+		return $event instanceof EE_Event ? $event->wp_user() : 0;
 	}
 
 
