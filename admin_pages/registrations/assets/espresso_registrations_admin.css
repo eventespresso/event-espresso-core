@@ -304,6 +304,7 @@
 	p.search-box {
 		position: relative;
 		top: 0;
+		display: inline-block;
 	}
 }
 
