@@ -96,7 +96,6 @@ class EED_Messages  extends EED_Module {
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 		//filters
-		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( 'EED_Messages', 'process_resend' ), 10, 2 );
 		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( 'EED_Messages', 'process_admin_payment'), 10, 2 );
 		add_filter( 'FHEE__EE_Registration__receipt_url__receipt_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
 		add_filter( 'FHEE__EE_Registration__invoice_url__invoice_url', array( 'EED_Messages', 'registration_message_trigger_url' ), 10, 4 );
@@ -369,6 +368,11 @@ class EED_Messages  extends EED_Module {
 		$active_mts = self::$_EEMSG->get_active_message_types();
 
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, current_time( 'mysql' ), 'delivered' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $message_type, '$message_type' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $transaction->status_ID(), '$transaction->status_ID()' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $payment->status(), '$payment->status()' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, print_r( $active_mts, true ), '$active_mts' );
 
 		if ( $message_type ) {
 			if ( self::$_EEMSG->send_message( $message_type, $data ) ) {

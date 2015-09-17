@@ -226,11 +226,11 @@ interface EEI_Address_Formatter {
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
-	 * @param string mixed
+	 * @param string $country
+	 * @param string $CNT_ISO
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip );
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO );
 }
 
 

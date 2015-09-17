@@ -43,4 +43,15 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page {
 			return parent::get_registrations( $per_page, $count, $this_month, $today );
 	}
 
+
+	/**
+	 * Mock for _set_registration_status_from_request
+	 * @param bool|false $status
+	 * @param bool|false $notify
+	 */
+	public function set_registration_status_from_request( $status = false, $notify = false ) {
+		$this->_req_data = array_merge( $_POST, $_REQUEST );
+		return parent::_set_registration_status_from_request( $status, $notify );
+	}
+
 } //end class Registrations_Admin_Page_Mock

@@ -36,7 +36,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 *                          		used.)
 	 * @param array $date_formats  incoming date_formats in an array where the first value is the
 	 *                             		    date_format and the second value is the time format
-	 * @return EE_Attendee
+	 * @return EE_Transaction
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
