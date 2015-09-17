@@ -190,13 +190,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$registrations_for_free_events = array();
 		$registrations_requiring_pre_approval = array();
 		$sold_out_events = array();
-		$sold_out_tickets = array();
 		$reg_count = 0;
 		$no_payment_required = true;
 		// loop thru registrations to gather info
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		foreach ( $registrations as $registration ) {
-			//echo '<h3 style="color:#E76700;line-height:1em;">' . $registration->ID() . '<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h3>';
 			/** @var $registration EE_Registration */
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
@@ -225,14 +223,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						continue;
 					}
 				}
-				// check for sold out tickets
-				$ticket = $registration->ticket();
-				if ( $ticket instanceof EE_Ticket ) {
-					if ( $ticket->remaining() - $ticket->reserved() < 1 ) {
-						$sold_out_tickets[ $ticket->ID() ] = $ticket;
-						continue;
-					}
-				}
 			}
 			// are they allowed to pay now and is there monies owing?
 			if ( $registration->owes_monies_and_can_pay() ) {
@@ -250,9 +240,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// now decide which template to load
 		if ( ! empty( $sold_out_events )) {
 			$subsections['sold_out_events'] = $this->_sold_out_events( $sold_out_events );
-		}
-		if ( ! empty( $sold_out_tickets )) {
-			$subsections['sold_out_tickets'] = $this->_sold_out_tickets( $sold_out_tickets );
 		}
 		if ( ! empty( $registrations_requiring_pre_approval )) {
 			$subsections['registrations_requiring_pre_approval'] = $this->_registrations_requiring_pre_approval( $registrations_requiring_pre_approval );
@@ -272,9 +259,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->cart->get_grand_total()
 			);
 			$filtered_line_item_tree = $line_item_filter_processor->process();
-			//echo "\n<br />";
-			//EEH_Line_Item::visualize( $filtered_line_item_tree );
-			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
 			$this->checkout->amount_owing = $filtered_line_item_tree->total();
 			if ( $this->checkout->amount_owing > 0 ) {
 				EEH_Autoloader::register_line_item_display_autoloaders();
@@ -377,48 +361,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 								'sold_out_events_msg' 	=> apply_filters(
 									'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
 									__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso' )
-								)
-							)
-						)
-					)
-				)
-			)
-		);
-	}
-
-
-
-	/**
-	 * _sold_out_tickets
-	 * @param \EE_Ticket[] $sold_out_tickets_array
-	 * @return \EE_Form_Section_Proper
-	 */
-	private function _sold_out_tickets( $sold_out_tickets_array = array() ) {
-		// set some defaults
-		$sold_out_tickets = '';
-		foreach ( $sold_out_tickets_array as $sold_out_ticket ) {
-			$sold_out_tickets .= EEH_HTML::li(
-				EEH_HTML::span(
-					EEH_HTML::nbsp(2) .
-					apply_filters(
-						'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_tickets__sold_out_ticket_info',
-						sprintf( _x( '%1$s ticket for %2$s event', 'Ticket Name for Event Name', 'event_espresso' ), $sold_out_ticket->name(), $sold_out_ticket->get_event_name() )
-					), '', 'dashicons dashicons-marker ee-icon-size-16 pink-text'
-				)
-			);
-		}
-		return new EE_Form_Section_Proper(
-			array(
-				'layout_strategy'		=> new EE_Template_Layout(
-					array(
-						'layout_template_file' 	=> SPCO_REG_STEPS_PATH . $this->_slug . DS . 'sold_out_tickets.template.php', // layout_template
-						'template_args'  				=> apply_filters(
-							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_tickets__template_args',
-							array(
-								'sold_out_tickets' 			=> $sold_out_tickets,
-								'sold_out_tickets_msg' 	=> apply_filters(
-									'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_tickets__sold_out_tickets_msg',
-									__( 'The following ticket(s) have sold out since you first registered. If you have already made a payment, please contact the event administrator for a refund.', 'event_espresso' )
 								)
 							)
 						)
