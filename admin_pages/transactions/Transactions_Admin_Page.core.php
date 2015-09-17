@@ -1627,7 +1627,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $search_string ),
 				'Payment.PAY_source' => array('LIKE', $search_string ),
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $search_string ),
-				'TXN_session_data' => array( 'LIKE', $search_string )
+				'TXN_session_data' => array( 'LIKE', $search_string ),
+				'Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $search_string )
 				);
 		}
 
