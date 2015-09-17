@@ -1110,7 +1110,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['invalid_payment_method'] = __( 'There appears to be a problem with the payment method configuration! Please refresh the page and try again or contact support.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['reg_step_error'] = __('This registration step could not be completed. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
-		EE_Registry::$i18n_js_strings['process_registration'] = sprintf( __( 'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso' ), '<br/>', '<br/>' );
+		EE_Registry::$i18n_js_strings['process_registration'] = sprintf(
+			__( 'Please wait while we process your registration.%1$sDo not refresh the page or navigate away while this is happening.%1$sThank you for your patience.', 'event_espresso' ),
+			'<br/>'
+		);
 		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 		EE_Registry::$i18n_js_strings['EESID'] = EE_Registry::instance()->SSN->id();
 		EE_Registry::$i18n_js_strings['datepicker_yearRange'] = '-150:+20';
@@ -1129,7 +1132,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['timer_minute'] = __( 'minute', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_second'] = __( 'second', 'event_espresso' );
 		EE_Registry::$i18n_js_strings[ 'ajax_submit' ] = apply_filters( 'FHEE__Single_Page_Checkout__translate_js_strings__ajax_submit', true );
-		EE_Registry::$i18n_js_strings[ 'session_extension' ] = absint( apply_filters( 'FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS ) );
+		EE_Registry::$i18n_js_strings[ 'session_extension' ] = absint(
+			apply_filters( 'FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS )
+		);
+		EE_Registry::$i18n_js_strings[ 'session_expiration' ] = gmdate(
+			'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
+		);
+
+
 	}
 
 
@@ -1147,7 +1157,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// load JS
 		wp_register_script( 'jquery_plugin', EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js', array( 'jquery' ), '1.0.1', TRUE );
 		wp_register_script( 'jquery_countdown', EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js', array( 'jquery_plugin' ), '2.0.2', TRUE );
-		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script(
+			'single_page_checkout',
+			SPCO_JS_URL . 'single_page_checkout.js',
+			array( 'espresso_core', 'underscore', 'ee_form_section_validation', 'jquery_countdown' ),
+			EVENT_ESPRESSO_VERSION,
+			TRUE
+		);
 		wp_enqueue_script( 'single_page_checkout' );
 
 		/**
@@ -1228,8 +1244,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 									),
 									'cookies_not_set_msg' 		=> $cookies_not_set_msg,
 									'registration_time_limit' 	=> $this->checkout->get_registration_time_limit(),
-									'session_expiration' 			=>
-										gmdate( 'M d, Y H:i:s', EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+									//'session_expiration' 			=>
+									//	gmdate(
+									//		'M d, Y H:i:s',
+									//		EE_Registry::instance()->SSN->expiration() + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
+									//	)
 							)
 						)
 					)
