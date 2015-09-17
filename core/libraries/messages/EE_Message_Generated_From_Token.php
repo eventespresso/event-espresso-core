@@ -78,7 +78,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 		$this->_sending_messenger = $this->_EEMSG->get_messenger_if_active( $sending_messenger_slug );
 
 		if ( ! $this->_sending_messenger instanceof EE_messenger ) {
-			$this->_EE_Message->set_STS_ID( EEM_Message::status_fail );
+			$this->_EE_Message->set_STS_ID( EEM_Message::status_failed );
 			$this->_EE_Message->set_error_message( sprintf(
 				__( 'Unable to send message because the %s messenger is not active or not installed', 'event_espresso' ),
 				$sending_messenger_slug )
