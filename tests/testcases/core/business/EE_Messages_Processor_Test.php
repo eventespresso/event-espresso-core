@@ -38,7 +38,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	protected function _test_components() {
 		//setup up new processor
 		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
-		$proc = EE_Registry::instance()->load_class( 'Messages_Processor', $ee_msg );
+		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $ee_msg );
 
 		//set up a EE_Message_To_Generate object
 		$mtg = new EE_Message_To_Generate(
@@ -67,7 +67,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	function test_construct_and_get_queue() {
 		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
 		try {
-			$message_proc = EE_Registry::instance()->load_class( 'Messages_Processor', $eemsg );
+			$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $eemsg );
 		} catch( Exception $e ) {
 			$this->fail( sprintf( 'Loading EE_Messages_Processor failed: %s', $e->getMessage() ) );
 		}
@@ -274,7 +274,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		/** @type EE_messages $ee_msg */
 		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
 		/** @type EE_Messages_Processor $proc */
-		$proc = EE_Registry::instance()->load_class( 'Messages_Processor', $ee_msg );
+		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $ee_msg );
 
 		//setup up messages we'll use for sending that have the right status
 		$messages_with_right_status = $this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_sent ) );
