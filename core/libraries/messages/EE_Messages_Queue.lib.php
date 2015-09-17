@@ -64,7 +64,7 @@ class EE_Messages_Queue {
 
 
 	/**
-	 * @type  EE_messages
+	 * @type  EE_messages $_EEMSG
 	 */
 	protected $_EEMSG;
 
@@ -244,7 +244,9 @@ class EE_Messages_Queue {
 
 		//add to queue.
 		foreach ( $messages_to_send as $message ) {
-			$this->add( $message );
+			if ( $message instanceof EE_Message ) {
+				$this->add( $message );
+			}
 		}
 
 		//send messages  (this also updates the rate limit)
