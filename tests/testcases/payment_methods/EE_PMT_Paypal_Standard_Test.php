@@ -444,9 +444,12 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertEquals( '10', $rargs[ 'discount_amount_cart' ] );
 		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
 		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
+                //although we shouldn't be mentioning how much taxes are per item. leave that to paypal
+                $this->assertFalse( isset( $rargs[ 'tax_1' ] ) );
 		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
 		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
 		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+                $this->assertFalse( isset( $rargs[ 'tax_2' ] ) );
 	}
 
 	/**
