@@ -175,19 +175,15 @@ abstract class EE_Messages_Base extends EE_Base {
 
 
 
-
-
-
-
 	/**
 	 * sets the _existing_admin_settings property can be overridden by child classes.  We do this so we only do database calls if needed.
 	 *
 	 * @access protected
-	 * @return void
+	 * @param string $messenger
 	 */
-	protected function _set_existing_admin_settings( $messenger = NULL ) {
+	protected function _set_existing_admin_settings( $messenger = '' ) {
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-		$active_message_types = !empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : array();
+		$active_message_types = ! empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : array();
 
 
 		$actives = $this->_messages_item_type == 'messenger' ? $active_messengers : $active_message_types;
@@ -205,9 +201,10 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * (if needed) sets and returns the _existing_admin_settings property.
 	 *
 	 * @access public
+	 * @param string $messenger
 	 * @return array          settings
 	 */
-	public function get_existing_admin_settings( $messenger = NULL ) {
+	public function get_existing_admin_settings( $messenger = '' ) {
 		// if admin_settings property empty lets try setting it.
 		if ( method_exists($this, '_set_existing_admin_settings') && empty( $this->_existing_admin_settings ) )
 			$this->_set_existing_admin_settings( $messenger );
