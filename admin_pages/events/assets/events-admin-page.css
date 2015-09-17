@@ -149,11 +149,11 @@
 
 
 /**status strips**/
-.event-status-DTS
+.event-status-DTS,
 .event-status-DTS .check-column {
 	border-left-color: #FCB93C;
 }
-.event-status-DTA
+.event-status-DTA,
 .event-status-DTA .check-column {
 	border-left-color: #70CC50;
 }
