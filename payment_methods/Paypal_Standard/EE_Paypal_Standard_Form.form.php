@@ -37,7 +37,7 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 					) ),
 					'paypal_taxes'     => new EE_Yes_No_Input( array(
 						'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), $payment_method_type->get_help_tab_link() ),
-						'html_help_text'  => __( 'Whether Paypal should calculate order taxes on taxable tickets', 'event_espresso' ),
+						'html_help_text'  => __( 'Whether Paypal should add taxes to the order', 'event_espresso' ),
 						'default'         => false
 					) ),
 					'paypal_shipping'  => new EE_Yes_No_Input( array(

@@ -109,6 +109,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//keep track of exactly how much the itemized order amount equals
 			$itemized_sum = 0;
 			$shipping = 0;
+                        $total_taxes_added = 0;
 
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
@@ -130,9 +131,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 					);
 					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
 					$redirect_args[ 'quantity_' . $item_num ] = $line_item->quantity();
-					if ( ! $line_item->is_taxable() ) {
-						$redirect_args[ 'tax_' . $item_num ] = 0;
-					}
 					//if we're not letting PayPal calculate shipping, tell them its 0
 					if ( ! $this->_paypal_shipping ) {
 						$redirect_args[ 'shipping_' . $item_num ] = '0';
@@ -158,7 +156,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						__( 'Other charges', 'event_espresso' ), 0, 127 );
 				$redirect_args[ 'amount_' . $item_num ] = $itemized_sum_diff_from_txn_total;
 				$redirect_args[ 'quantity_' . $item_num ] = 1;
-				$redirect_args[ 'tax_' . $item_num ] = 0;
 				$item_num++;
 			}
 			if( $total_discounts_to_cart_total > 0 ) {
@@ -179,13 +176,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['shipping2_' . $item_num ] = '0';
 			//PayPal can't calculate taxes because we don't know what parts of it are taxable
 			$redirect_args['tax_cart'] = '0';
-
 			$item_num++;
 		}
 		//add our taxes to the order if we're NOT using PayPal's
 		if( ! $this->_paypal_taxes ){
 			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
-		}
+                }
 
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
@@ -217,6 +213,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
+//                echo "redirect info";
+//                var_dump( $redirect_args );
+//                die;
 		return $payment;
 	}
 
