@@ -62,7 +62,9 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 					}
 
 					foreach ( $regs as $reg ) {
-						$this->_regs_for_sending[] = $reg->ID();
+						if ( $reg instanceof EE_Registration ) {
+							$this->_regs_for_sending[] = $reg->ID();
+						}
 					}
 					$this->_data = isset( $this->_data[1] ) ? array( $maybe_reg->transaction(), null, $this->_data[1] ) : array( $maybe_reg->transaction() );
 					$this->_data_handler = 'Gateways';
