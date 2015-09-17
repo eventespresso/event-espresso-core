@@ -101,7 +101,9 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id($item) {
-		return $item->get('term_id');
+		$content = $item->get('term_id');
+		$content .= '  <span class="show-on-mobile-view-only">' . $item->get_first_related('Term')->get('name') . '</span>';
+		return $content;
 	}
 
 

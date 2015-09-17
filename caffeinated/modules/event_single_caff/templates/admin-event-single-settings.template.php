@@ -7,9 +7,9 @@ $values = array(
 
 	<!--*************************   Event Single  ****************************-->
 	
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Single Event Pages', 'event_espresso'); ?>  <?php //echo EEH_Template::get_help_tab_link('event_single_settings_info');?>
-	</h4>
+	</h2>
 	<table class="form-table">
 		<tbody>
 			<tr>
