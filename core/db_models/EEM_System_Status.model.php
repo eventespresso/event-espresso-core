@@ -35,21 +35,23 @@ class EEM_System_Status{
 	 * it might be a value, an array, or an object
 	 */
 	function get_system_stati(){
-		return array(
-			'ee_version'=>$this->get_ee_version(),
-			'ee_activation_history'=>$this->get_ee_activation_history(),
-			'ee_config'=>$this->get_ee_config(),
-			'ee_migration_history'=>$this->get_ee_migration_history(),
-			'active_plugins'=>$this->get_active_plugins(),
-			'wp_settings'=>$this->get_wp_settings(),
-                        'wp_maintenance_mode' => $this->get_wp_maintenance_mode(),
-			'https_enabled'=>$this->get_https_enabled(),
-			'logging_enabled' => $this->get_logging_enabled(),
-			'remote_posting' => $this->get_remote_posting(),
-			'php_version'=>$this->php_version(),
-			'php.ini_settings'=>$this->get_php_ini_all(),
-			'php_info'=>$this->get_php_info(),
+		return array_filter(
+			array(
+				'ee_version'=>$this->get_ee_version(),
+				'ee_activation_history'=>$this->get_ee_activation_history(),
+				'ee_config'=>$this->get_ee_config(),
+				'ee_migration_history'=>$this->get_ee_migration_history(),
+				'active_plugins'=>$this->get_active_plugins(),
+				'wp_settings'=>$this->get_wp_settings(),
+				'wp_maintenance_mode' => $this->get_wp_maintenance_mode(),
+				'https_enabled'=>$this->get_https_enabled(),
+				'logging_enabled' => $this->get_logging_enabled(),
+				'remote_posting' => $this->get_remote_posting(),
+				'php_version'=>$this->php_version(),
+				'php.ini_settings'=>$this->get_php_ini_all(),
+				'php_info'=>$this->get_php_info(),
 
+			)
 		);
 	}
 	/**
@@ -214,7 +216,7 @@ class EEM_System_Status{
 	}
         function get_wp_maintenance_mode() {
             $opened = file_exists( ABSPATH . '.maintenance' );
-            return $opened ? __('.maintenance file detected. Wordpress may have a failed auto-update which could prevent Event Espresso from updating the database correctly.', 'event_espresso') : __( 'Wordpress A-OK, .maintenance file not detected.', 'event_espresso' ) ;
+            return $opened ? __('.maintenance file detected. Wordpress may have a failed auto-update which could prevent Event Espresso from updating the database correctly.', 'event_espresso') : NULL ;
         }
 	/**
 	 * Whether or not logging is enabled
