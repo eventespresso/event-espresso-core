@@ -214,7 +214,7 @@ class EEM_System_Status{
 	}
         function get_wp_maintenance_mode() {
             $opened = file_exists( ABSPATH . '.maintenance' );
-            return $opened ? __('.maintenance file detected. Wordpress may have a failed update.', 'event_espresso') : __( 'Wordpress A-OK, the .maintenance file not detected.', 'event_espresso' ) ;
+            return $opened ? __('.maintenance file detected. Wordpress may have a failed auto-update which could prevent Event Espresso from updating the database correctly.', 'event_espresso') : __( 'Wordpress A-OK, .maintenance file not detected.', 'event_espresso' ) ;
         }
 	/**
 	 * Whether or not logging is enabled
