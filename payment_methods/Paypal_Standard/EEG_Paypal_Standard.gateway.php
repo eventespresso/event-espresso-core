@@ -449,7 +449,27 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
 		$itemized_transaction = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_transaction, true, false );
 		$grand_total_needs_resaving = false;
-		$shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
+		
+		//might paypal have changed the taxes?
+		$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
+		if( $taxes_li instanceof EE_Line_Item ) {
+			$current_tax_amount = $taxes_li->total();
+		} else {
+			$current_tax_amount = 0;
+		}
+		if( $itemized_transaction && $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $current_tax_amount ){
+                    //note that we're doing this BEFORE adding shipping; we actually want Paypals shipping to remain non-taxable
+                    $this->_line_item->set_line_items_taxable( $transaction->total_line_item() );
+                    $this->_line_item->set_total_tax_to(
+                            $transaction->total_line_item(),
+                            floatval( $update_info['tax'] ),
+                            __( 'Taxes', 'event_espresso' ),
+                            __( 'Calculated by Paypal', 'event_espresso' )
+                    );
+                    $grand_total_needs_resaving = TRUE;
+		}
+                
+                $shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
 		if( $itemized_transaction && $this->_paypal_shipping && $shipping_amount ){
 			$this->_line_item->add_unrelated_item(
@@ -463,23 +483,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			);
 			$grand_total_needs_resaving = true;
 
-		}
-		//might paypal have changed the taxes?
-		$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
-		if( $taxes_li instanceof EE_Line_Item ) {
-			$current_tax_amount = $taxes_li->total();
-		} else {
-			$current_tax_amount = 0;
-		}
-		if( $itemized_transaction && $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $current_tax_amount ){
-                    $this->_line_item->set_line_items_taxable( $transaction->total_line_item() );
-                    $this->_line_item->set_total_tax_to(
-                            $transaction->total_line_item(),
-                            floatval( $update_info['tax'] ),
-                            __( 'Taxes', 'event_espresso' ),
-                            __( 'Calculated by Paypal', 'event_espresso' )
-                    );
-                    $grand_total_needs_resaving = TRUE;
 		}
 
 		if( $grand_total_needs_resaving ){
