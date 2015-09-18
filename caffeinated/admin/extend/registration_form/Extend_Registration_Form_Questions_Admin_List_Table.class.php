@@ -88,7 +88,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 				$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
 			}
 			if ( $item->count_related('Answer') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question', 'espresso_registration_form_delete_questions', $item->ID() ) ) {
-				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+				$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 			}
 		}
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_questions', 'espresso_registration_form_edit_question' ) ) {
