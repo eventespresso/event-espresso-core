@@ -472,13 +472,14 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$current_tax_amount = 0;
 		}
 		if( $itemized_transaction && $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $current_tax_amount ){
-			$this->_line_item->set_total_tax_to(
-				$transaction->total_line_item(),
-				floatval( $update_info['tax'] ),
-				__( 'Taxes', 'event_espresso' ),
-				__( 'Calculated by Paypal', 'event_espresso' )
-			);
-			$grand_total_needs_resaving = TRUE;
+                    $this->_line_item->set_line_items_taxable( $transaction->total_line_item() );
+                    $this->_line_item->set_total_tax_to(
+                            $transaction->total_line_item(),
+                            floatval( $update_info['tax'] ),
+                            __( 'Taxes', 'event_espresso' ),
+                            __( 'Calculated by Paypal', 'event_espresso' )
+                    );
+                    $grand_total_needs_resaving = TRUE;
 		}
 
 		if( $grand_total_needs_resaving ){

@@ -697,6 +697,21 @@ class EEH_Line_Item {
 		$total_line_item->recalculate_total_including_taxes();
 		return $new_tax_subtotal;
 	}
+        
+        /**
+         * Makes all the line items which are children of $line_item taxable (or not).
+         * Does NOT save the line items
+         * @param EE_Line_Item $line_item
+         * @param boolean $taxable
+         */
+        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true ) {
+            if( $line_item->is_line_item() ) {
+                $line_item->set_is_taxable( $taxable );
+            }
+            foreach( $line_item->children() as $child_line_item ) {
+                EEH_Line_Item::set_line_items_taxable( $child_line_item, $taxable );
+            }
+        }
 
 
 

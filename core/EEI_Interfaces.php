@@ -257,6 +257,14 @@ interface EEHI_Line_Item{
 	 * @return EE_Line_Item the new tax created
 	 */
 	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL );
+        
+         /**
+         * Makes all the line items which are children of $line_item taxable (or not).
+         * Does NOT save the line items
+         * @param EE_Line_Item $line_item
+         * @param boolean $taxable
+         */
+        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true );
 
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
