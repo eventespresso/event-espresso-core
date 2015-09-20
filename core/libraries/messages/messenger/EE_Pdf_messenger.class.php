@@ -297,6 +297,9 @@ class EE_Pdf_messenger extends EE_messenger  {
 	protected function _get_main_template( $preview = FALSE ) {
 		$wrapper_template = $this->_tmp_pack->get_wrapper( 'html', 'main' );
 
+		//add message type to template_args
+		$this->_template_args['message_type'] = $this->_incoming_message_type;
+
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
