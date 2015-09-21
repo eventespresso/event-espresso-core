@@ -29,7 +29,7 @@ class EE_Event_Scenario_A extends EE_Test_Scenario {
 	protected function _set_up_expected(){
 		$this->_expected_values = array(
 			'total_available_spaces' => 15,
-			'total_remaining_spaces' => 15
+			'total_remaining_spaces' => 15,
 		);
 	}
 
