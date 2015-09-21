@@ -230,12 +230,21 @@
 
 
 	 /**
+	  * @return int
+	  */
+	 public function extension() {
+		 return apply_filters( 'FHEE__EE_Session__extend_expiration__seconds_added', ( 10 * MINUTE_IN_SECONDS ) );
+	 }
+
+
+
+	 /**
 	  * @param int $time number of seconds to add to session expiration
 	  * @return int
 	  */
 	 public function extend_expiration( $time = 0 ) {
-		 $time = $time ? $time :  10 * MINUTE_IN_SECONDS;
-		 $this->_expiration += absint( apply_filters( 'FHEE__EE_Session__extend_expiration__seconds_added', $time ) );
+		 $time = $time ? $time : $this->extension();
+		 $this->_expiration += absint( $time );
 	 }
 
 
