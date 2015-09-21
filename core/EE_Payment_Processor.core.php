@@ -375,6 +375,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $do_action, '$do_action' );
 			//global hook for others to use.
 			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
 		}

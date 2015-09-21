@@ -368,6 +368,11 @@ class EED_Messages  extends EED_Module {
 		$active_mts = self::$_EEMSG->get_active_message_types();
 
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : false;
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, current_time( 'mysql' ), 'delivered' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $message_type, '$message_type' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $transaction->status_ID(), '$transaction->status_ID()' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $payment->status(), '$payment->status()' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, print_r( $active_mts, true ), '$active_mts' );
 
 		if ( $message_type ) {
 			if ( self::$_EEMSG->send_message( $message_type, $data ) ) {

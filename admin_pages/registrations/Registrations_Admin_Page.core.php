@@ -967,6 +967,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_full_name' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -979,7 +980,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_count' => array( 'LIKE' , $sstr ),
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Ticket.TKT_description' => array( 'LIKE', $sstr )
+				'Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Transaction.Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $sstr )
 				);
 		}
 
