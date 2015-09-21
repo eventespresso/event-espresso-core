@@ -1142,8 +1142,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->_setup_primary_registrant_prior_to_payment() ) {
 			return FALSE;
 		}
-		// if session is close to expiring
-		if ( ( time() - EE_Registry::instance()->SSN->expiration() ) < ( 10 * MINUTE_IN_SECONDS ) ) {
+		// if session is close to expiring (under 10 minutes by default)
+		if ( ( time() - EE_Registry::instance()->SSN->expiration() ) < EE_Registry::instance()->SSN->extension() ) {
 			// add some time to session expiration so that payment can be completed
 			EE_Registry::instance()->SSN->extend_expiration();
 		}
