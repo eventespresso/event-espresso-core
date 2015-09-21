@@ -119,30 +119,52 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * NOT take int account the datetime's spaces available)
 	 * @param int $DTT_ID
 	 * @param array $query_params
-	 * @return int|boolean of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
 	 */
 	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
 		$sum = 0;
-		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
+		$query_params[ 0 ][ 'Datetime.DTT_ID' ] = $DTT_ID;
 		$remaining_per_ticket = $this->_get_all_wpdb_results(
-				$query_params,
-				ARRAY_A,
-				array(
-					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold','%d'),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
-					'initially_available'=>array('Ticket.TKT_qty','%d')));
-
-		if ( empty( $remaining_per_ticket ) )
-			return FALSE;
-
-
-		foreach($remaining_per_ticket as $remaining){
-			if(intval($remaining['initially_available'])==EE_INF_IN_DB){//infinite in DB
+			$query_params,
+			ARRAY_A,
+			array(
+				'tickets_remaining'   => array( 'Ticket.TKT_qty-Ticket.TKT_sold', '%d' ),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
+				'initially_available' => array( 'Ticket.TKT_qty', '%d' )
+			) );
+		if ( empty( $remaining_per_ticket ) ) {
+			return false;
+		}
+		foreach ( $remaining_per_ticket as $remaining ) {
+			if ( intval( $remaining[ 'initially_available' ] ) == EE_INF_IN_DB ) {//infinite in DB
 				return INF;
 			}
-			$sum+=intval($remaining['tickets_remaining']);
+			$sum += intval( $remaining[ 'tickets_remaining' ] );
 		}
-
 		return $sum;
+/*		$sum = 0;
+		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
+		$tickets = $this->_get_all_wpdb_results(
+			$query_params,
+			ARRAY_A,
+			array(
+				'qty'       		=> array( 'Ticket.TKT_qty', '%d' ),
+				'sold'      		=> array( 'Ticket.TKT_sold', '%d' ),
+				'reg_limit' 	=> array( 'Datetime.DTT_reg_limit', '%d' )
+			)
+		);
+		if ( ! empty( $tickets ) ) {
+			foreach ( $tickets as $ticket ) {
+				// is there an unlimited amount of tickets available ?
+				$ticket[ 'qty' ] = intval( $ticket[ 'qty' ] ) === EE_INF_IN_DB ? INF : intval( $ticket[ 'qty' ] );
+				// cap ticket quantity at reg limit for datetime
+				$ticket[ 'qty' ] = min ( $ticket[ 'qty' ], $ticket[ 'reg_limit' ] );
+				if ( $ticket[ 'qty' ] === INF ) {
+					return INF;
+				}
+				$sum += intval( $ticket[ 'qty' ] - $ticket[ 'sold' ] );
+			}
+		}
+		return $sum;*/
 	}
 
 	/**
