@@ -95,7 +95,7 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * Used to initialize the scenario (does nothing if its beein initialized.
+	 * Used to initialize the scenario (does nothing if its been initialized.
 	 */
 	public function initialize() {
 		if ( $this->is_initialized() ) {
@@ -108,7 +108,7 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * Reset the scenario to non-initalized state.  Note this does not do any cleanup
+	 * Reset the scenario to non-initialized state.  Note this does not do any cleanup
 	 */
 	public function reset() {
 		$this->_initialized = false;
