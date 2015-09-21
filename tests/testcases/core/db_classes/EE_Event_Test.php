@@ -147,3 +147,4 @@ class EE_Event_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Event_Test.php
+// Location: tests/testcases/core/db_classes/EE_Event_Test.php
