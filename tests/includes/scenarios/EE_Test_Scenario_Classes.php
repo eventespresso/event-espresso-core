@@ -217,7 +217,9 @@ class EE_Test_Scenario_Collection extends EE_Object_Collection {
 			if ( isset( $currentInfo[$key] ) && $currentInfo[$key] === $info ) {
 				$objects[] = $this->current();
 				$this->next();
+				continue;
 			}
+			$this->next();
 		}
 		$this->rewind();
 		return $objects;
