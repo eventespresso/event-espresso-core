@@ -186,13 +186,46 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		//setup a datetime for testing
 		$start_date = new DateTime( 'now' );
 		$end_date = new DateTime( 'now + 3 hours' );
-		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ), 'timezone' => 'UTC', 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
+		$datetime = $this->factory->datetime->create(
+			array(
+				'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ),
+				'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ),
+				'timezone' => 'UTC', 'formats' => array( 'Y-m-d', 'H:i:s' )
+			)
+		);
 
 		//assert we have a datetime
 		$this->assertInstanceOf( 'EE_Datetime', $datetime );
 
 		//verify that the expected time format is generated.
 		$this->assertEquals( $start_date->format( 'H:i:s' ) . ' - ' . $end_date->format( 'H:i:s' ), $datetime->time_range() );
+	}
+
+
+
+	/**
+	 * @group 8861
+	 */
+	public function test_tickets_remaining() {
+		//echo "\n\n test_tickets_remaining: ";
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'datetime' );
+		//echo "\n scenarios: ";
+		//var_dump( $scenarios );
+		foreach ( $scenarios as $scenario ) {
+			/* @type EE_Datetime $datetime */
+			$datetime = $scenario->get_scenario_object();
+			if ( $scenario->get_expected( $datetime->ID() ) !== false ) {
+				//echo "\n datetime->ID(): " . $datetime->ID();
+				//echo "\n datetime->name(): " . $datetime->name();
+				//echo "\n datetime->reg_limit(): " . $datetime->reg_limit();
+				//echo "\n datetime->sold(): " . $datetime->sold();
+				$tickets_remaining = $datetime->tickets_remaining();
+				//echo "\n tickets_remaining: " . $tickets_remaining;
+				$tickets_expected = $scenario->get_expected( $datetime->ID() );
+				//echo "\n tickets_expected: " . $tickets_expected;
+				$this->assertEquals( $tickets_expected, $tickets_remaining );
+			}
+		}
 	}
 
 
