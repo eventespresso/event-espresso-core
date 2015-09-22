@@ -331,17 +331,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	/**
-	 * Sets the cart to match the line item. Especially handy for loading an old cart where you
-	 *  know the grand total line item on it
-	 * @param EE_Line_Item $line_item
-	 */
-	public function set_grand_total_line_item( EE_Line_Item $line_item ) {
-		$this->_grand_total = $line_item;
-	}
-
-
-
 	 /**
 	  * @save cart to session
 	  * @access public
