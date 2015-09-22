@@ -22,14 +22,58 @@ class EEM_Attendee extends EEM_CPT_Base {
 	 * @deprecated
 	 */
 	const fname_question_id=1;
+
+	/**
+	 * @deprecated
+	 */
 	const lname_question_id=2;
+
+
+	/**
+	 * @deprecated
+	 */
 	const email_question_id=3;
+
+
+	/**
+	 * @deprecated
+	 */
 	const address_question_id=4;
+
+
+	/**
+	 * @deprecated
+	 */
 	const address2_question_id=5;
+
+
+	/**
+	 * @deprecated
+	 */
 	const city_question_id=6;
+
+
+	/**
+	 * @deprecated
+	 */
 	const state_question_id=7;
+
+
+	/**
+	 * @deprecated
+	 */
 	const country_question_id=8;
+
+
+	/**
+	 * @deprecated
+	 */
 	const zip_question_id=9;
+
+
+	/**
+	 * @deprecated
+	 */
 	const phone_question_id=10;
 
 	/**

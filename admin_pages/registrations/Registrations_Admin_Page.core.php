@@ -1285,8 +1285,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//merge request vars so that the reloaded list table contains any existing filter query params
 		$route = array_merge( $this->_req_data, $route );
 
-		$this->_redirect_after_action( false, '', '', $route, true );
-	}
+		$this->_redirect_after_action( $success, '', '', $route, true );
+
+		}
 
 
 
@@ -1296,9 +1297,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _change_reg_status() {
 		$this->_req_data['return'] = 'view_registration';
-
 		//set notify based on whether the send notifications toggle is set or not
 		$notify = ! empty( $this->_req_data['txn_reg_status_change']['send_notifications'] );
+		$this->_req_data[ '_reg_status_id' ] = isset( $this->_req_data[ '_reg_status_id' ] ) ? $this->_req_data[ '_reg_status_id' ] : '';
 
 		switch ( $this->_req_data['_reg_status_id'] ) {
 			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, false, 'sentence' ) :

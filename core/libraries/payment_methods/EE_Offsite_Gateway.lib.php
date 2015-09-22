@@ -49,6 +49,11 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 
 
 	/**
+	 * Adds information into the payment object's redirect_url and redirect_args so
+	 * client code can use that payment to know where (and with what information)
+	 * to redirect the user to in order to make the payment on the offsite gateway's website.
+	 * Saving the payment from within this method is unnecessary,
+	 * as it is the responsibility of client code to save it.
 	 * @param EE_Payment $payment    to process
 	 * @param array      $billing_info
 	 * @param string     $return_url URL to send the user to after a successful payment on the payment provider's website
@@ -63,7 +68,8 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	/**
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
 	 * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever
-	 * the payment method passes in.
+	 * the payment method passes in. Saving the payment from within this method is unnecessary,
+	 * as it is the responsibility of client code to save it.
 	 * @param array $update_info of whatever
 	 * @param EEI_Transaction $transaction
 	 * @return EEI_Payment updated
