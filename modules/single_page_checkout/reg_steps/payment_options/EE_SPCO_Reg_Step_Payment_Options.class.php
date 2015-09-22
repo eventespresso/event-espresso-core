@@ -1947,6 +1947,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'TXN_reg_steps' 		=> $this->checkout->transaction->reg_steps(),
 				'STS_ID'        			=> $this->checkout->transaction->status_ID(),
 				'PMD_ID'        			=> $this->checkout->transaction->payment_method_ID(),
+				'payment_amount' => $this->checkout->amount_owing,
 				'return_url' 				=> $return_url,
 				'cancel_url' 				=> add_query_arg( array( 'ee_cancel_payment' => true ), $return_url ),
 				'notify_url' 				=> EE_Config::instance()->core->txn_page_url(
