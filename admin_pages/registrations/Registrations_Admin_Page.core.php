@@ -1814,7 +1814,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$REG = $REGM->get_one_by_ID($REG_ID);
 				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
 				if ( $payment_count > 0 ) {
-					$name = $REG->attendee()->full_name();
+					$name = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' );
 					$error = 1;
 					$success = 0;
 					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );

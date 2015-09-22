@@ -798,7 +798,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
 				// add html for checkbox input and label
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee()->full_name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' ) . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
 				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-rght">' . $registration->pretty_paid() . '</td>';
