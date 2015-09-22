@@ -286,7 +286,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		/** @type EE_Payment_Method $payment_method */
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
 		if ( $payment_method->type_obj()->supports_sending_refunds() ) {
-			$payment_method->do_direct_refund( $payment_to_refund,$refund_info );
+			$payment_method->type_obj()->process_refund( $payment_to_refund, $refund_info );
 			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
 		}
 		return $payment_to_refund;
