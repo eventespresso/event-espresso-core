@@ -62,6 +62,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	protected function set_config(){
+		$this->set_config_section( 'template_settings' );
+		$this->set_config_class( 'EE_Ticket_Selector_Config' );
+		$this->set_config_name( 'EED_Ticket_Selector' );
+	}
+
+
+
 
 
 	/**
@@ -92,10 +100,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
-
 		//add button for iframe code to event editor.
 		add_filter( 'get_sample_permalink_html', array( 'EED_Ticket_Selector', 'iframe_code_button' ), 10, 4 );
-
 		add_action( 'admin_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets_admin' ), 10 );
 	}
 
@@ -110,6 +116,13 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function set_definitions() {
 		define( 'TICKET_SELECTOR_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'TICKET_SELECTOR_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
+
+		//if config is not set, initialize
+		//If config is not set, set it.
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = new EE_Ticket_Selector_Config();
+		}
+		EE_Registry::$i18n_js_strings[ 'ts_embed_iframe_title' ] = __( 'Copy and Paste the following:', 'event_espresso' );
 	}
 
 
@@ -196,6 +209,40 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
+	 *    finds and sets the EE_Event object for use throughout class
+	 *
+	 * @access 	public
+	 * @param 	mixed $event
+	 * @return 	bool
+	 */
+	protected static function set_event( $event = null ) {
+		if( $event === null ) {
+			global $post;
+			$event = $post;
+		}
+		//		d( $event );
+		if ( $event instanceof EE_Event ) {
+			self::$_event = $event;
+		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
+			self::$_event = $event->EE_Event;
+		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event ) ) {
+			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
+			self::$_event = $event->EE_Event;
+		} else {
+			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
+			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
+			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
+			return false;
+		}
+		return true;
+	}
+
+
+
+
+
+
+	/**
 	 *    creates buttons for selecting number of attendees for an event
 	 *
 	 * @access 	public
@@ -204,26 +251,13 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @return 	string
 	 */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// reset filter for displaying submit button
 		remove_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 		// poke and prod incoming event till it tells us what it is
-		if ( $event instanceof EE_Event ) {
-			self::$_event = $event;
-			$event_post = $event->ID();
-		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
-			self::$_event = $event->EE_Event;
-			$event_post = $event;
-		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event )) {
-			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
-			self::$_event = $event->EE_Event;
-			$event_post = $event;
-		} else {
-			$user_msg = __( 'No Event object or an invalid Event object was supplied.', 'event_espresso' );
-			$dev_msg = $user_msg . __( 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.', 'event_espresso' );
-			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+		if ( ! EED_Ticket_Selector::set_event( $event )) {
+			return false;
 		}
+		$event_post = self::$_event instanceof EE_Event ? self::$_event->ID() : $event;
 		// grab event status
 		$_event_active_status = self::$_event->get_active_status();
 		if (
@@ -247,8 +281,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 
 		$template_args = array();
-		$template_args['date_format'] = apply_filters( 'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format', 'l F jS, Y' );
-		$template_args['time_format'] = apply_filters( 'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format', 'g:i a' );
+		$template_args['event_status'] = $_event_active_status;
+
+		$template_args['date_format'] = apply_filters( 'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format', get_option( 'date_format' ) );
+		$template_args['time_format'] = apply_filters( 'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format', get_option( 'time_format' ) );
 
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
@@ -257,6 +293,24 @@ class EED_Ticket_Selector extends  EED_Module {
 		$template_args['event_is_expired'] = self::$_event->is_expired();
 		if ( $template_args['event_is_expired'] ) {
 			return '<div class="ee-event-expired-notice"><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></div>';
+		}
+
+		$ticket_query_args = array(
+			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
+			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_required' => 'DESC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+		);
+
+		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets ) {
+			//use the correct applicable time query depending on what version of core is being run.
+			$current_time = method_exists( 'EEM_Datetime', 'current_time_for_query' ) ? time() : current_time('timestamp');
+			$ticket_query_args[0]['TKT_end_date'] = array( '>', $current_time );
+		}
+
+		// get all tickets for this event ordered by the datetime
+		$template_args['tickets'] = EEM_Ticket::instance()->get_all( $ticket_query_args );
+
+		if ( count( $template_args['tickets'] ) < 1 ) {
+			return '<div class="ee-event-expired-notice"><span class="important-notice">' . __( 'We\'re sorry, but all ticket sales have ended.', 'event_espresso' ) . '</span></div>';
 		}
 
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
@@ -274,18 +328,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 			return '<p><span class="important-notice">' . $sales_closed_msg . '</span></p>';
 		}
-
-		$ticket_query_args = array(
-			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_required' => 'DESC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
-		);
-
-		if ( ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets ) {
-			$ticket_query_args[0]['TKT_end_date'] = array( '>', time() );
-		}
-
-		// get all tickets for this event ordered by the datetime
-		$template_args['tickets'] = EEM_Ticket::instance()->get_all( $ticket_query_args );
 
 		$templates['ticket_selector'] = TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
@@ -337,12 +379,15 @@ class EED_Ticket_Selector extends  EED_Module {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = EEH_Event_View::event_link_url( $ID );
 		if ( ! $checkout_url ) {
-			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
+		EED_Ticket_Selector::set_event();
 		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
-		return '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$html = '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
+		$html .= wp_nonce_field( 	'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
+		$html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
+		$html = apply_filters( 'FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, self::$_event );
+		return $html;
 	}
 
 
@@ -358,8 +403,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function display_ticket_selector_submit() {
 		if ( ! is_admin() ) {
 			if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) ) {
-				$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text', __('Register Now', 'event_espresso' ));
-				return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div></form>';
+				$btn_text = apply_filters(
+					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
+					__('Register Now', 'event_espresso' ),
+					self::$_event
+				);
+				return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn ticket-selector-submit-ajax" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div></form>';
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
 			}
@@ -394,12 +443,12 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function display_view_details_btn() {
 		if ( ! self::$_event->get_permalink() ) {
-			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$view_details_btn = '<form method="POST" action="' . self::$_event->get_permalink() . '">';
-		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __( 'View Details', 'event_espresso' ) );
-		$view_details_btn .= '<input id="ticket-selector-submit-' . self::$_event->ID() . '-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
+		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __( 'View Details', 'event_espresso' ), self::$_event );
+		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn view-details-btn" type="submit" value="' . $btn_text . '" />';
+		$view_details_btn .= '<div class="clear"><br/></div>';
 		$view_details_btn .= '</form>';
 		return $view_details_btn;
 	}
@@ -420,8 +469,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! is_admin() && ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' ))) {
-			$error_msg = sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			return FALSE;
 		}
 //		d( EE_Registry::instance()->REQ );
@@ -442,8 +493,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// do we have an event id?
-		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
-
+		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' ) ) {
 			// validate/sanitize data
 			$valid = self::_validate_post_data('add_event_to_cart');
 			// d( $valid );
@@ -455,12 +505,11 @@ class EED_Ticket_Selector extends  EED_Module {
 				$singular = 'You have attempted to purchase %s ticket.';
 				$plural = 'You have attempted to purchase %s tickets.';
 				$limit_error_1 = sprintf( _n( $singular, $plural, $valid['total_tickets'], 'event_espresso' ), $valid['total_tickets'], $valid['total_tickets'] );
-
+				// dev only message
 				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
 				$limit_error_2 = sprintf( _n( $singular, $plural, $valid['max_atndz'], 'event_espresso' ), $valid['max_atndz'], $valid['max_atndz'] );
-				$error_msg = $limit_error_1 . '<br/>' . $limit_error_2;
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( $limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 
 				// all data appears to be valid
@@ -480,37 +529,46 @@ class EED_Ticket_Selector extends  EED_Module {
 							// then add ticket to cart
 							$ticket_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
 							$success = ! $ticket_added ? FALSE : $success;
+							if ( EE_Error::has_error() ) {
+								break;
+							}
 						} else {
 							// nothing added to cart retrieved
-							$error_msg = sprintf( __( 'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
-							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+							EE_Error::add_error(
+								sprintf( __( 'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+								__FILE__, __FUNCTION__, __LINE__
+							);
 						}
 					}
 				}
 //				d( EE_Registry::instance()->CART );
-//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE
+//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
-						EE_Registry::instance()->CART->save_cart();
+						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
+						EE_Registry::instance()->CART->recalculate_all_cart_totals();
+						EE_Registry::instance()->CART->save_cart( FALSE );
 						EE_Registry::instance()->SSN->update();
+//						d( EE_Registry::instance()->CART );
+//						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 						// just return TRUE for registrations being made from admin
 						if ( is_admin() ) {
 							return TRUE;
 						}
-						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__$success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
+						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
 						exit();
 
 					} else {
-						// nothing added to cart
-						$error_msg = __( 'No tickets were added for the event.', 'event_espresso' );
-						EE_Error::add_attention( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+						if ( ! EE_Error::has_error() ) {
+							// nothing added to cart
+							EE_Error::add_attention( __( 'No tickets were added for the event', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						}
 					}
 
 				} else {
 					// no ticket quantities were selected
-					$error_msg = __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' );
-					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+					EE_Error::add_error( __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 			// at this point, just return if registration is being made from admin
@@ -531,8 +589,10 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		} else {
 			// $_POST['tkt-slctr-event-id'] was not set ?!?!?!?
-			$error_msg = sprintf( __( 'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' );
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf( __( 'An event id was not provided or was not received.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 
 		return FALSE;
@@ -646,8 +706,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			} 	// end foreach $inputs_to_clean
 
 		} else {
-			$error_msg = 'The event id provided was not valid';
-			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('The event id provided was not valid.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 
@@ -671,35 +730,40 @@ class EED_Ticket_Selector extends  EED_Module {
 		$available_spaces = self::_ticket_datetime_availability( $ticket );
 		// compare available spaces against the number of tickets being purchased
 		if ( $available_spaces >= $qty ) {
+			// allow addons to prevent a ticket from being added to cart
+			if ( ! apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart', true, $ticket, $qty, $available_spaces ) ) {
+				return false;
+			}
 			// add event to cart
 			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
 				self::_recalculate_ticket_datetime_availability( $ticket, $qty );
-				return TRUE;
+				return true;
 			} else {
-				return FALSE;
+				return false;
 			}
 		} else {
 			// tickets can not be purchased but let's find the exact number left for the last ticket selected PRIOR to subtracting tickets
-			$available_spaces = self::_ticket_datetime_availability( $ticket, TRUE );
+			$available_spaces = self::_ticket_datetime_availability( $ticket, true );
 			// greedy greedy greedy eh?
 			if ( $available_spaces > 0 ) {
 				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
-				$error_msg = sprintf(
-					_n(
-						'We\'re sorry, but there is only %s available space left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
-						 'We\'re sorry, but there are only %s available spaces left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
+				EE_Error::add_error(
+					sprintf(
+						_n(
+							'We\'re sorry, but there is only %s available space left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
+							'We\'re sorry, but there are only %s available spaces left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
+							$available_spaces,
+							'event_espresso'
+						),
 						$available_spaces,
-						'event_espresso'
+						'<br />'
 					),
-					$available_spaces,
-					'<br />'
+					__FILE__, __FUNCTION__, __LINE__
 				);
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
-				$error_msg = __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso');
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -750,7 +814,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// first, get all of the datetimes that are available to this ticket
 		$datetimes = $ticket->get_many_related(
 			'Datetime',
-			array( array( 'DTT_EVT_end' => array( '>=', current_time( 'mysql' ))), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
+			array( array( 'DTT_EVT_end' => array( '>=', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) ) ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
 		);
 		if ( ! empty( $datetimes )) {
 			// now loop thru all of the datetimes
@@ -804,9 +868,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 			wp_enqueue_style('ticket_selector');
 			// make it dance
-			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
+			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('espresso_core'), '', TRUE);
 			//			wp_enqueue_script('ticket_selector');
-			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}
 
@@ -818,9 +881,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		//iframe button js on admin event editor page
 		if ( EE_Registry::instance()->REQ->get('page') == 'espresso_events' && EE_Registry::instance()->REQ->get('action') == 'edit' ) {
 			wp_register_script( 'ticket_selector_embed', TICKET_SELECTOR_ASSETS_URL . 'ticket-selector-embed.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, true );
-			EE_Registry::$i18n_js_strings['ts_embed_iframe_title'] = __('Copy and Paste the following:', 'event_espresso' );
 			wp_enqueue_script( 'ticket_selector_embed' );
-			wp_localize_script( 'ticket_selector_embed', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
 	}
 

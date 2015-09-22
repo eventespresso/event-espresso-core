@@ -25,6 +25,32 @@
  */
 abstract class EEM_Base extends EE_Base{
 
+	//admin posty
+	//basic -> grants access to mine -> if they don't have it, select none
+	//*_others -> grants access to others that arent private, and all mine -> if they don't have it, select mine
+	//*_private -> grants full access -> if dont have it, select all mine and others' non-private
+	//*_published -> grants access to published -> if they dont have it, select non-published
+	//*_global/default/system -> grants access to global items -> if they don't have it, select non-global
+	//publish_{thing} -> can change status TO publish; SPECIAL CASE
+
+
+	//frontend posty
+	//by default has access to published
+	//basic -> grants access to mine that arent published, and all published
+	//*_others ->grants access to others that arent private, all mine
+	//*_private -> grants full access
+
+	//frontend non-posty
+	//like admin posty
+
+	//category-y
+	//assign -> grants access to join-table
+	//(delete, edit)
+
+	//payment-method-y
+	//for each registered payment method,
+	//ee_payment_method_{pmttype} -> if they don't have it, select all where they aren't of that type
+
 	/**
 	 * Flag to indicate whether the values provided to EEM_Base have already been prepared
 	 * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).
@@ -111,6 +137,61 @@ abstract class EEM_Base extends EE_Base{
 	protected $_ignore_where_strategy = FALSE;
 
 	/**
+	 * String used in caps relating to this model. Eg, if the caps relating to this
+	 * model are 'ee_edit_events', 'ee_read_events', etc, it would be 'events'.
+	 * @var string. If null it hasn't been initialized yet. If false then we
+	 * have indicated capabilities don't apply to this
+	 */
+	protected $_caps_slug = null;
+
+	/**
+	 * 2d array where top-level keys are one of EEM_Base::valid_cap_contexts(),
+	 * and next-level keys are capability names, and each's value is a
+	 * EE_Default_Where_Condition. If the requestor requests to apply caps to the query,
+	 * they specify which context to use (ie, frontend, backend, edit or delete)
+	 * and then each capability in the corresponding sub-array that they're missing
+	 * adds the where conditions onto the query.
+	 * @var array
+	 */
+	protected $_cap_restrictions = array(
+		self::caps_read => array(),
+		self::caps_read_admin => array(),
+		self::caps_edit => array(),
+		self::caps_delete => array() );
+
+	/**
+	 * Array defining which cap restriction generators to use to create default
+	 * cap restrictions to put in EEM_Base::_cap_restrictions.
+	 *
+	 * Array-keys are one of EEM_Base::valid_cap_contexts(), and values are a child of
+	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
+	 * automatically set this to false (not just null).
+	 * @var EE_Restriction_Generator_Base
+	 */
+	protected $_cap_restriction_generators = array();
+
+	/**
+	 * constants used to categorize capability restrictions on EEM_Base::_caps_restrictions
+	 */
+	const caps_read = 'read';
+	const caps_read_admin = 'read_admin';
+	const caps_edit = 'edit';
+	const caps_delete = 'delete';
+
+	/**
+	 * Keys are all the cap contexts (ie constants EEM_Base::_caps_*) and values are their 'action'
+	 * as how they'd be used in capability names. Eg EEM_Base::caps_read ('read_frontend')
+	 * maps to 'read' because when looking for relevant permissions we're going to use
+	 * 'read' in teh capabilities names like 'ee_read_events' etc.
+	 * @var array
+	 */
+	protected $_cap_contexts_to_cap_action_map = array(
+		self::caps_read => 'read',
+		self::caps_read_admin => 'read',
+		self::caps_edit => 'edit',
+		self::caps_delete => 'delete' );
+
+	/**
 	 * Timezone
 	 * This gets set via the constructor so that we know what timezone incoming strings|timestamps are in when there are EE_Datetime_Fields in use.  This can also be used before a get to set what timezone you want strings coming out of the created objects.  NOT all EEM_Base child classes use this property but any that use a EE_Datetime_Field data type will have access to it.
 	 * @var string
@@ -148,6 +229,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @var boolean
 	 */
 	protected $_has_primary_key_field=null;
+
+	/**
+	 * Whether or not this model is based off a table in WP core only (CPTs should set
+	 * this to FALSE, but if we were to make an EE_WP_Post model, it should set this to true).
+	 * @var boolean
+	 */
+	protected $_wp_core_model = false;
 
 	/**
 	 *	List of valid operators that can be used for querying.
@@ -221,7 +309,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'where', but 'where' clauses are so common that we thought we'd omit it
 	 * @var array
 	 */
-	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions');
+	private $_allowed_query_params = array(0, 'limit','order_by','group_by','having','force_join','order','on_join_limit','default_where_conditions', 'caps');
 
 	/**
 	 * All the data types that can be used in $wpdb->prepare statements.
@@ -257,13 +345,6 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_entity_map;
 
-	/**
-	 * The non-db-only-fields of this model. Keys are the table columns (one entry for the fully-qualified
-	 * table column, and one for just the table column). This is primarily only used to speed up querying
-	 *
-	 * @var EE_Model_Field_Base[]
-	 */
-	private $_model_fields_sorted_by_db_col = NULL;
 
 
 
@@ -294,7 +375,9 @@ abstract class EEM_Base extends EE_Base{
 					get_class( $this )
 				)
 			);
-		}		/**
+		}
+
+		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
 		 * @var EE_Table_Base[] $_tables
@@ -359,34 +442,66 @@ abstract class EEM_Base extends EE_Base{
 			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
 		}
 		$this->_default_where_conditions_strategy->_finalize_construct($this);
+
+		//if the cap slug hasn't been set, and we haven't set it to false on purpose
+		//to indicate to NOT set it, set it to the logical default
+		if( $this->_caps_slug === null ) {
+			EE_Registry::instance()->load_helper( 'Inflector' );
+			$this->_caps_slug = EEH_Inflector::pluralize_and_lower( $this->get_this_model_name() );
+		}
+		//initialize the standard cap restriction generators if none were specified by the child constructor
+		if( $this->_cap_restriction_generators !== false ){
+			foreach( $this->cap_contexts_to_cap_action_map() as $cap_context => $action ){
+				if( ! isset( $this->_cap_restriction_generators[ $cap_context ] ) ) {
+					$this->_cap_restriction_generators[ $cap_context ] = apply_filters(
+						'FHEE__EEM_Base___construct__standard_cap_restriction_generator',
+						new EE_Restriction_Generator_Protected(),
+						$cap_context,
+						$this
+					);
+				}
+			}
+		}
+		//if there are cap restriction generators, use them to make the default cap restrictions
+		if( $this->_cap_restriction_generators !== false ){
+			foreach( $this->_cap_restriction_generators as $context => $generator_object ) {
+				if( ! $generator_object ){
+					continue;
+				}
+				if( ! $generator_object instanceof EE_Restriction_Generator_Base ){
+					throw new EE_Error(
+						sprintf(
+							__( 'Index "%1$s" in the model %2$s\'s _cap_restriction_generators is not a child of EE_Restriction_Generator_Base. It should be that or NULL.', 'event_espresso' ),
+							$context,
+							$this->get_this_model_name()
+						)
+					);
+				}
+				$action = $this->cap_action_for_context( $context );
+				if( ! $generator_object->construction_finalized() ){
+					$generator_object->_construct_finalize( $this, $action );
+				}
+
+			}
+		}
 		do_action('AHEE__'.get_class($this).'__construct__end');
 	}
 
-
-
-
-
 	/**
-	 * This sets the _timezone property after model object has been instantiated.
-	 * @param string $timezone valid PHP DateTimeZone timezone string
+	 * Generates the cap restrictions for the given context, or if they were
+	 * already generated just gets what's cached
+	 * @param string $context one of EEM_Base::valid_cap_contexts()
+	 * @return EE_Default_Where_Conditions[]
 	 */
-	public function set_timezone( $timezone ) {
-		if($timezone !== NULL){
-			$this->_timezone = $timezone;
+	protected function _generate_cap_restrictions( $context ){
+		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
+				$this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base ) {
+			return $this->_cap_restriction_generators[ $context ]->generate_restrictions();
+		}else{
+			return array();
 		}
+}
 
-		//note we need to loop through relations and set the timezone on those objects as well.
-		foreach ( $this->_model_relations as $relation ) {
-			$relation->set_timezone($timezone);
-		}
-
-		//and finally we do the same for any datetime fields
-		foreach ( $this->_fields as $field ) {
-			if ( $field instanceof EE_Datetime_Field ) {
-				$field->set_timezone( $timezone );
-			}
-		}
-	}
 
 	/**
 	 *		This function is a singleton method used to instantiate the Espresso_model object
@@ -414,14 +529,17 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * resets the model and returns it
+	 * @param null | string $timezone
 	 * @return static
 	 */
 	public static function reset(  $timezone = NULL ){
-		static::$_instance = NULL;
-		return self::instance( $timezone );
+		if ( ! is_null( static::$_instance ) ) {
+			static::$_instance = null;
+
+			return self::instance( $timezone );
+		}
+		return null;
 	}
-
-
 
 	/**
 	 * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
@@ -547,8 +665,12 @@ abstract class EEM_Base extends EE_Base{
 	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
 	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
+	 *	@var string $caps controls what capability requirements to apply to the query; ie, should we just NOT
+	 *		apply cany capabilities/permissions/restrictions and return everything? Or should we only show the
+	 *		current user items they should be able to view on the frontend, backend, edit, or delete?
+	 *		can be set to 'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
 	 * }
-	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
+	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 * Some full examples:
 	 *
 	 * 		get 10 transactions which have Scottish attendees:
@@ -581,11 +703,26 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Modifies the query parameters so we only get back model objects
 	 * that "belong" to the current user
-	 * @param array $query_parms @see EEM_Base::get_all()
+	 * @param array $query_params @see EEM_Base::get_all()
 	 * @return array like EEM_Base::get_all
 	 */
-	function alter_query_params_to_only_include_mine( $query_parms = array() ) {
-		try {
+	function alter_query_params_to_only_include_mine( $query_params = array() ) {
+		$wp_user_field_name = $this->wp_user_field_name();
+		if( $wp_user_field_name ){
+			$query_params[0][ $wp_user_field_name ] = get_current_user_id();
+		}
+		return $query_params;
+	}
+
+	/**
+	 * Returns the name of the field's name that points to the WP_User table
+	 *  on this model (or follows the _model_chain_to_wp_user and uses that model's
+	 * foreign key to the WP_User table)
+	 * @return string|boolean string on success, boolean false when there is no
+	 * foreign key to the WP_User table
+	 */
+	function wp_user_field_name() {
+		try{
 			if( ! empty( $this->_model_chain_to_wp_user ) ) {
 				$models_to_follow_to_wp_users = explode( '.', $this->_model_chain_to_wp_user );
 				$last_model_name = end( $models_to_follow_to_wp_users );
@@ -596,11 +733,9 @@ abstract class EEM_Base extends EE_Base{
 				$model_chain_to_wp_user = '';
 			}
 			$wp_user_field = $model_with_fk_to_wp_users->get_foreign_key_to( 'WP_User' );
-			$query_parms[0][ $model_chain_to_wp_user . $wp_user_field->get_name() ] = get_current_user_id();
-			return $query_parms;
-		} catch( EE_Error $e ) {
-			//if there's no foreign key to WP_User, then they own all of them?
-			return $query_parms;
+			return $model_chain_to_wp_user . $wp_user_field->get_name();
+		}catch( EE_Error $e ) {
+			return false;
 		}
 	}
 
@@ -648,7 +783,7 @@ abstract class EEM_Base extends EE_Base{
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
 	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
-	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		//remember the custom selections, if any
@@ -924,14 +1059,157 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * This sets the _timezone property after model object has been instantiated.
+	 * @param null | string $timezone valid PHP DateTimeZone timezone string
+	 */
+	public function set_timezone( $timezone ) {
+		if ( $timezone !== null ) {
+			$this->_timezone = $timezone;
+		}
+		//note we need to loop through relations and set the timezone on those objects as well.
+		foreach ( $this->_model_relations as $relation ) {
+			$relation->set_timezone( $timezone );
+		}
+		//and finally we do the same for any datetime fields
+		foreach ( $this->_fields as $field ) {
+			if ( $field instanceof EE_Datetime_Field ) {
+				$field->set_timezone( $timezone );
+			}
+		}
+	}
+
+
+
+	/**
 	 * This just returns whatever is set for the current timezone.
 	 *
 	 * @access public
 	 * @return string
 	 */
 	public function get_timezone() {
+		//first validate if timezone is set.  If not, then let's set it be whatever is set on the model fields.
+		if ( empty( $this->_timezone ) ) {
+			foreach( $this->_fields as $field ) {
+				if ( $field instanceof EE_Datetime_Field ) {
+					$this->set_timezone($field->get_timezone());
+					break;
+				}
+			}
+		}
+
+		//if timezone STILL empty then return the default timezone for the site.
+		if ( empty( $this->_timezone ) ) {
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$this->set_timezone( EEH_DTT_Helper::get_timezone() );
+		}
 		return $this->_timezone;
 	}
+
+
+
+	/**
+	 * This returns the date formats set for the given field name and also ensures that
+	 * $this->_timezone property is set correctly.
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The name of the field the formats are being retrieved for.
+	 * @param bool   $pretty          Whether to return the pretty formats (true) or not (false).
+	 * @throws EE_Error   If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return array formats in an array with the date format first, and the time format last.
+	 */
+	public function get_formats_for( $field_name, $pretty = false ) {
+		$field_settings = $this->field_settings_for( $field_name );
+
+		//if not a valid EE_Datetime_Field then throw error
+		if ( ! $field_settings instanceof EE_Datetime_Field ) {
+			throw new EE_Error( sprintf( __('The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.', 'event_espresso' ), $field_name ) );
+		}
+
+		//while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on
+		//the field.
+		$this->_timezone = $field_settings->get_timezone();
+
+		return array( $field_settings->get_date_format( $pretty ), $field_settings->get_time_format( $pretty ) );
+	}
+
+
+
+	/**
+	 * This returns the current time in a format setup for a query on this model.
+	 * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
+	 * it will return:
+	 *  - a formatted string in the timezone and format currently set on the EE_Datetime_Field for the given field for NOW
+	 *  - or a unixtimestamp (equivalent to time())
+	 *
+	 * @since 4.6.x
+	 * @param string $field_name The field the currrent time is needed for.
+	 * @param bool   $timestamp  True means to return a unix timestamp. Otherwise a
+	 *                           		 formatted string matching the set format for the field in the set timezone will
+	 *                           		 be returned.
+	 * @param string $what         Whether to return the string in just the time format, the date format, or both.
+	 *
+	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
+	 *
+	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+	 *                    	     exception is triggered.
+	 */
+	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {
+		$formats = $this->get_formats_for( $field_name );
+
+		$DateTime = new DateTime( "now", new DateTimeZone( $this->_timezone ) );
+
+		if ( $timestamp ) {
+			return $DateTime->format( 'U' );
+		}
+
+		//not returning timestamp, so return formatted string in timezone.
+		switch( $what ) {
+			case 'time' :
+				return $DateTime->format( $formats[1] );
+				break;
+			case 'date' :
+				return $DateTime->format( $formats[0] );
+				break;
+			default :
+				return $DateTime->format( implode( ' ', $formats ) );
+				break;
+		}
+	}
+
+
+
+
+
+	/**
+	 * This receives a timestring for a given field and ensures that it is setup to match what the internal settings
+	 * for the model are.  Returns a DateTime object.
+	 *
+	 * Note: a gotcha for when you send in unixtimestamp.  Remember a unixtimestamp is already timezone agnostic,
+	 * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is ignored.
+	 *
+	 * @param string $field_name The field being setup.
+	 * @param string $timestring   The date timestring being used.
+	 * @param string $incoming_format        The format for the time string.
+	 * @param string $timezone   By default, it is assumed the incoming timestring is in timezone for
+	 *                           		the blog.  If this is not the case, then it can be specified here.  If incoming format is
+	 *                           		'U', this is ignored.
+	 * @return DateTime
+	 */
+	public function convert_datetime_for_query( $field_name, $timestring, $incoming_format, $timezone = '' ) {
+
+		//just using this to ensure the timezone is set correctly internally
+		$this->get_formats_for( $field_name );
+
+		//load EEH_DTT_Helper
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
+
+		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
+
+		return $incomingDateTime->setTimeZone( new DateTimeZone( $this->_timezone ) );
+	}
+
 
 
 
@@ -1152,6 +1430,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string of SQL
 	 */
 	function _construct_update_sql($fields_n_values){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		$cols_n_values = array();
 		foreach($fields_n_values as $field_name => $value){
@@ -1393,7 +1672,7 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * @param array $query_params like EEM_Base::get_all
 	 * @param string $field_to_sum name of field (array key in $_fields array)
-	 * @return int
+	 * @return float
 	 */
 	function sum($query_params, $field_to_sum = NULL){
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -1409,7 +1688,7 @@ abstract class EEM_Base extends EE_Base{
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		$return_value = $this->_do_wpdb_query('get_var',array( $SQL ) );
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
-			return (int)$return_value;
+			return (float)$return_value;
 		}else{//must be %f
 			return (float)$return_value;
 		}
@@ -1433,6 +1712,7 @@ abstract class EEM_Base extends EE_Base{
 		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
 			throw new EE_Error(sprintf(__("Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.", "event_espresso")));
 		}
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		if( ! method_exists( $wpdb, $wpdb_method ) ){
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
@@ -1509,12 +1789,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
 	 * @param string $relationName, key in EEM_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specify array('role-column-name'=>'role-id')
-	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
+	 * @param array   $extra_join_model_fields_n_values This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
-	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
+	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $extra_join_model_fields_n_values = array()){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $where_query);
+		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $extra_join_model_fields_n_values);
 	}
 
 	/**
@@ -1633,7 +1913,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $model_name like 'Event', or 'Registration'
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @param string $field_to_sum name of field to count by. By default, uses primary key
-	 * @return int
+	 * @return float
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
@@ -1912,6 +2192,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _prepare_value_for_use_in_db($value, $field){
 		if($field && $field instanceof EE_Model_Field_Base){
 			switch( $this->_values_already_prepared_by_model_object ){
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case self::not_prepared_by_model_object:
 					$value = $field->prepare_for_set($value);
 					//purposefully left out "return"
@@ -2118,16 +2399,22 @@ abstract class EEM_Base extends EE_Base{
 			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
 		}
-		$query_object = $this->_extract_related_models_from_query($query_params);
-		if(array_key_exists(0,$query_params)){
+		if( isset( $query_params[0] ) ) {
 			$where_query_params = $query_params[0];
 		}else{
 			$where_query_params = array();
 		}
+		//first check if we should alter the query to account for caps or not
+		//because the caps might require us to do extra joins
+		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] != 'none' ) {
+			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->caps_where_conditions( $query_params[ 'caps' ] ) );
+		}
+		$query_object = $this->_extract_related_models_from_query($query_params);
+
 		//verify where_query_params has NO numeric indexes.... that's simply not how you use it!
 		foreach($where_query_params as $key => $value){
 			if(is_int($key)){
-				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, $value,get_class($this)));
+				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. All the query params provided were '%s' Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, var_export( $value, true ), var_export( $query_params, true ), get_class($this)));
 			}
 		}
 		if( array_key_exists( 'default_where_conditions',$query_params) && ! empty( $query_params['default_where_conditions'] )){
@@ -2233,7 +2520,24 @@ abstract class EEM_Base extends EE_Base{
 		return $query_object;
 	}
 
-
+	/**
+	 * Gets the where conditions that should be imposed on the query based on the
+	 * context (eg reading frontend, backend, edit or delete).
+	 * @param string $context one of EEM_Base::valid_cap_contexts()
+	 * @return array like EEM_Base::get_all() 's $query_params[0]
+	 */
+	public function caps_where_conditions( $context = self::caps_read ) {
+		EEM_Base::verify_is_valid_cap_context( $context );
+		$cap_where_conditions = array();
+		$cap_restrictions = $this->caps_missing( $context );
+		/**
+		 * @var $cap_restrictions EE_Default_Where_Conditions[]
+		 */
+		foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
+				$cap_where_conditions = array_replace_recursive( $cap_where_conditions, $restriction_if_no_cap->get_default_where_conditions() );
+		}
+		return apply_filters( 'FHEE__EEM_Base__caps_where_conditions__return', $cap_where_conditions, $this, $context, $cap_restrictions );
+	}
 
 	/**
 	 * Verifies that $should_be_order_string is in $this->_allowed_order_values,
@@ -2431,6 +2735,7 @@ abstract class EEM_Base extends EE_Base{
 				);
 			}
 		}
+
 		//check if it's a custom selection
 		elseif(array_key_exists($query_param,$this->_custom_selections)){
 			return;
@@ -2769,6 +3074,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return false|null|string
 	 */
 	private function _wpdb_prepare_using_field($value,$field_obj){
+		/** @type WPDB $wpdb */
 		global $wpdb;
 		if($field_obj instanceof EE_Model_Field_Base){
 			return $wpdb->prepare($field_obj->get_wpdb_data_type(),$this->_prepare_value_for_use_in_db($value, $field_obj));
@@ -3171,12 +3477,13 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	*		cycle though array of attendees and create objects out of each item
-	*
-	* 		@access		private
-	* 		@param		array		$rows of results of $wpdb->get_results($query,ARRAY_A)
-	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
-	*/
+	 *        cycle though array of attendees and create objects out of each item
+	 *
+	 * @access        private
+	 * @param        array $rows of results of $wpdb->get_results($query,ARRAY_A)
+	 * @return \EE_Base_Class[] array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
+	 * @throws \EE_Error
+	 */
 	protected function _create_objects( $rows = array() ) {
 		$array_of_objects=array();
 		if(empty($rows)){
@@ -3242,23 +3549,6 @@ abstract class EEM_Base extends EE_Base{
 	}
 
 
-
-	/**
-	 * _get_cached_acceptable_table_columns
-	 * @return EE_Model_Field_Base[]|null
-	 */
-	private function _get_cached_acceptable_table_columns(){
-		if( $this->_model_fields_sorted_by_db_col === NULL ){
-			foreach( $this->field_settings() as $field_obj ){
-				if( ! $field_obj->is_db_only_field() ){
-					$this->_model_fields_sorted_by_db_col[ $field_obj->get_qualified_column() ] = $field_obj;
-//					$this->_model_fields_sorted_by_db_col[ $field->get_table_column() ] = $field_obj;
-					$this->_model_fields_sorted_by_db_col[ $field_obj->get_table_column() ] = $field_obj;
-				}
-			}
-		}
-		return $this->_model_fields_sorted_by_db_col;
-	}
 
 	/**
 	 *
@@ -3381,7 +3671,9 @@ abstract class EEM_Base extends EE_Base{
 			if( $table_obj->get_pk_column() && $table_pk_value === NULL ){
 				foreach( $this->_get_fields_for_table( $table_alias ) as $field_name => $field_obj ) {
 					if( ! $field_obj->is_db_only_field() ){
-						$this_model_fields_n_values[$field_name] = $field_obj->get_default_value();
+						//prepare field as if its coming from db
+						$prepared_value = $field_obj->prepare_for_set( $field_obj->get_default_value() );
+						$this_model_fields_n_values[$field_name] = $field_obj->prepare_for_use_in_db( $prepared_value );
 					}
 				}
 			}else{
@@ -3726,7 +4018,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array|EE_Base_Class $model_object_or_attributes_array 	If its an array, it's field-value pairs
 	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
-	 * @return \EE_Base_Class[]
+	 * @return \EE_Base_Class[] Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 */
 	public function get_all_copies($model_object_or_attributes_array, $query_params = array()){
 
@@ -3817,5 +4109,168 @@ abstract class EEM_Base extends EE_Base{
 			$names[$obj->ID()] = $obj->name();
 		}
 		return $names;
+	}
+
+	/**
+	 * Gets an array of primary keys from the model objects. If you acquired the model objects
+	 * using EEM_Base::get_all() you don't need to call this (and probably shouldn't because
+	 * this is duplicated effort and reduces efficiency) you would be better to use
+	 * array_keys() on $model_objects.
+	 * @param /EE_Base_Class[] $model_objects
+	 * @param boolean $filter_out_empty_ids if a model object has an ID of '' or 0, don't bother including it in the returned array
+	 * @return array
+	 */
+	public function get_IDs( $model_objects, $filter_out_empty_ids = false) {
+		if( ! $this->has_primary_key_field() ) {
+			if( WP_DEBUG ) {
+				EE_Error::add_error( __( 'Trying to get IDs from a model than has no primary key', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return array();
+			}
+		}
+		$IDs = array();
+		foreach( $model_objects as $model_object ) {
+			$id = $model_object->ID();
+			if( ! $id ) {
+				if( $filter_out_empty_ids ) {
+					continue;
+				}
+				if( WP_DEBUG ) {
+					EE_Error::add_error(__( 'Called %1$s on a model object that has no ID and so probably hasn\'t been saved to the database', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
+			$IDs[] = $id;
+		}
+		return $IDs;
+	}
+
+	/**
+	 * Returns the string used in capabilities relating to this model. If there
+	 * are no capabilities that relate to this model returns false
+	 * @return string|false
+	 */
+	public function cap_slug(){
+		return apply_filters( 'FHEE__EEM_Base__cap_slug', $this->_caps_slug, $this);
+	}
+
+	/**
+	 * Returns the capability-restrictions array (@see EEM_Base::_cap_restrictions).
+	 *
+	 * If $context is provided (which should be set to one of EEM_Base::valid_cap_contexts())
+	 * only returns the cap restrictions array in that context (ie, the array
+	 * at that key)
+	 * @param string $context
+	 * @return EE_Default_Where_Conditions[] indexed by associated capability
+	 */
+	public function cap_restrictions( $context = EEM_Base::caps_read ) {
+		EEM_Base::verify_is_valid_cap_context( $context );
+		//check if we ought to run the restriction generator first
+		if( isset( $this->_cap_restriction_generators[ $context ] ) &&
+				$this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base &&
+				! $this->_cap_restriction_generators[ $context ]->has_generated_cap_restrictions() ) {
+			$this->_cap_restrictions[ $context ] = array_merge( $this->_cap_restrictions[ $context ],  $this->_cap_restriction_generators[ $context ]->generate_restrictions() );
+		}
+		//and make sure we've finalized the construction of each restriction
+		foreach( $this->_cap_restrictions[ $context ] as $where_conditions_obj ) {
+			$where_conditions_obj->_finalize_construct( $this );
+		}
+
+		return $this->_cap_restrictions[ $context ];
+	}
+
+	/**
+	 * Indicating whether or not this model thinks its a wp core model
+	 * @return boolean
+	 */
+	public function is_wp_core_model(){
+		return $this->_wp_core_model;
+	}
+
+	/**
+	 * Gets all the caps that are missing which impose a restriction on
+	 * queries made in this context
+	 * @param string $context one of EEM_Base::caps_ constants
+	 * @return EE_Default_Where_Conditions[] indexed by capability name
+	 */
+	public function caps_missing( $context = EEM_Base::caps_read ) {
+		$missing_caps = array();
+		$cap_restrictions = $this->cap_restrictions( $context );
+		foreach( $cap_restrictions as $cap => $restriction_if_no_cap ) {
+			if( ! EE_Capabilities::instance()->current_user_can( $cap, $this->get_this_model_name() . '_model_applying_caps') ) {
+				$missing_caps[ $cap ] = $restriction_if_no_cap;
+			}
+		}
+		return $missing_caps;
+	}
+
+	/**
+	 * Gets the mapping from capability contexts to action strings used in capability names
+	 * @return array keys are one of EEM_Base::valid_cap_contexts(), and values are usually
+	 * one of 'read', 'edit', or 'delete'
+	 */
+	public function cap_contexts_to_cap_action_map() {
+		return apply_filters( 'FHEE__EEM_Base__cap_contexts_to_cap_action_map', $this->_cap_contexts_to_cap_action_map, $this );
+	}
+
+
+
+	/**
+	 * Gets the action string for the specified capability context
+	 * @param string $context
+	 * @return string one of EEM_Base::cap_contexts_to_cap_action_map() values
+	 * @throws \EE_Error
+	 */
+	public function cap_action_for_context( $context ) {
+		$mapping = $this->cap_contexts_to_cap_action_map();
+		if( isset( $mapping[ $context ] ) ) {
+			return $mapping[ $context ];
+		}
+		if( $action = apply_filters( 'FHEE__EEM_Base__cap_action_for_context', null, $this, $mapping, $context ) ) {
+			return $action;
+		}
+		throw new EE_Error(
+			sprintf(
+				__( 'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso' ),
+				$context,
+				implode(',', array_keys( $this->cap_contexts_to_cap_action_map() ) )
+			)
+		);
+
+	}
+
+	/**
+	 * Returns all the capability contexts which are valid when querying models
+	 * @return array
+	 */
+	static public function valid_cap_contexts() {
+		return apply_filters( 'FHEE__EEM_Base__valid_cap_contexts', array(
+			self::caps_read,
+			self::caps_read_admin,
+			self::caps_edit,
+			self::caps_delete
+		));
+	}
+
+
+
+	/**
+	 * Verifies $context is one of EEM_Base::valid_cap_contexts(), if not it throws an exception
+	 * @param string $context
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	static public function verify_is_valid_cap_context( $context ) {
+		$valid_cap_contexts = EEM_Base::valid_cap_contexts();
+		if( in_array( $context, $valid_cap_contexts ) ) {
+			return true;
+		}else{
+			throw new EE_Error(
+				sprintf(
+					__( 'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s', 'event_espresso' ),
+					$context,
+					'EEM_Base' ,
+					implode(',', $valid_cap_contexts )
+				)
+			);
+		}
 	}
 }

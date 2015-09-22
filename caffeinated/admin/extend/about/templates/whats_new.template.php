@@ -33,129 +33,52 @@
 		<?php
 	}
 	?>
-	<?php 
-	/*
-	<h2 class="about-headline-callout">New Add-on Available</h2>
-	<h3>Mailchimp Add-on Released</h3>
-	<img class="alignright " alt="mijireh-checkout-large" src="http://ee-screenshots.s3.amazonaws.com/ee4/mijireh-checkout-large.png" width="131" height="147" /><p>Announcing the ability to integrate Event Espresso with <strong>over 90 different gateways and payment providers</strong>, using the Mijireh Checkout system! <a href="http://www.mijireh.com/" target="_blank">Mijireh Checkout</a> is a PCI compliant checkout page that looks exactly like your site, with support for over 90 gateways and payment providers to use on Mijireh's <a href="http://www.mijireh.com/docs/payment-gateways/" target="_blank">secure PCI compliant servers</a>.</p>
-	<p>Mijireh Checkout helps increase your conversion rates by using your existing website design. Your checkout process remains seamless to your customers while Mijireh Checkout securely handles collecting and transmitting of the credit card data for you.</p>
-	<h3>Support for the Calendar Add-on in EE 4.2+</h3>
-	<a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg"><img class="alignright size-medium wp-image-132" alt="ee4-calendar-3-0-01" src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg" width="265" height="300" /></a>
-	<p>The calendar add-on for EE 4.2 is now available for purchase on the <a target="_blank" href="http://eventespresso.com/product/ee4-events-calendar/">Event Espresso</a> website. The events calendar allows you to display your events in a way that your attendees/registrants are familiar with. It is another way for customers to find your events and even allows you to invite your attendees/registrants to add the events to their own calendars.</p>
-	<p>The EE4 Calendar add-on includes:</p>
+	
+	<h2 class="about-headline-callout">New Add-ons Available!</h2>
+	<h3><a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">Promotions & Discounts Add-on Released for Event Espresso 4.8</a></h3>
+	<a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=promtions_addon_link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="Promotions Add-on" src="http://ee-screenshots.s3.amazonaws.com/ee4/promotions-discounts-addon.jpg" width="260" height="202" /></a>
+	<p>Announcing the ability to allow discounts and promotion codes for your events! <strong><a href="http://eventespresso.com/2015/08/promotions-discounts-now-available-for-event-espresso-4/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">Read the announcement.</a></strong></p>
+	<p>With the <a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=promotions_addon_link&ap_id=EEspresso" target="_blank">Promotions & Discounts add-on</a>, attendees can <strong>apply coupon codes</strong> and receive automatic and/or date based discounts when registering for events.</p>
+	<h4>How does it work?</h4>
+	<p><strong>As an event organizer, promotions and and discount codes allow you to:</strong></p>
 	<ul>
-		<li>Inline calendar images</li>
-		<li>Category filtering</li>
-		<li>Venue filtering</li>
-		<li>Featured images</li>
-		<li>Datetime and format settings</li>
-		<li>Tooltips</li>
-		<li>Color coded categories</li>
-		<li>Better compatibility with themes</li>
-		<li>and much more</li>
+	<li> - Target and re-target attendees with banners or email campaigns offering <strong>automatic discounts</strong> or giving them <strong>special discounts</strong> with a code</li>
+	<li> - Distribute and promote your event through partners (speakers, sponsors, venues, affiliates, etc.) by offering them a <strong>special coupon code</strong> they can share with their audience</li>
+	<li> - Track and measure the performance of marketing campaigns and advertising</li>
+	<li> - Reward loyal customers by offering them a special discount and incentivize them to attend again</li>
+	<li> - Encourage customers to take action now by offering limited quantity or <strong>limited time discounts</strong></li>
+	<li> - Test and discover what pricing, distribution, marketing or advertising strategy works best for your audience(s)</li>
+	<li> - Offer discounts to different target audiences so that your event is priced perfectly</li>
 	</ul>
-	<hr>
-	*/
-	?>
-	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.6</h2>
-	<p>This release brought many improvements to existing core features and many new features, such as a new payments system, refactored Single Page Checkout, user capabilities system, and customizable invoices/receipts.</p>
+	....and much more!
+	<p><strong>Get Started!</strong><br>
+	Purchase the <a href="http://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">Promotions & Discounts add-on</a> for Event Espresso 4.</p>
+
+
+	<h3><a href="http://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_addon_link&ap_id=EEspresso" target="_blank">REST API Add-on</a></h3>
+	<a href="http://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_addon_link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="REST API Add-on" src="http://ee-screenshots.s3.amazonaws.com/ee4/rest-api.jpg" width="260" height="202" /></a>
+	<p>WordPress and Event Espresso Developers will be most interested in the <a href="http://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=rest_api_addon_link&utm_campaign=event_espresso_about_page&utm_content=link&ap_id=EEspresso" target="_blank">REST API add-on</a>, because it will allow for faster development of a wide array of features, including custom reporting tools, mobile application development, and theme development.</p>
+	<h4>How does it work?</h4>
+	<p>The Event Espresso 4 REST API will provide an easy to use API, available via HTTP, to grab your site's event and registration data in simple JSON format. Retrieving or updating data is as simple as sending a HTTP request.</p>
+	<p><strong>Get Started!</strong><br>
+	Download the REST API from <a href="http://eventespresso.com/rest-api/" target="_blank">Github.com</a>.</p>
+
+
+		<hr>
+	
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.8</h2>
+	<p>This release brought many background updates/improvements to existing core features, and support for a new add-on. Here are the most interesting updates:</p>
 	<p><strong>New Features</strong></p>
-	<p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2015/02/spco-recaptcha.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2015/02/spco-recaptcha.png" alt="reCAPTCHA" height="410" width="384"></a></p>
 		<ul>
-			<li>New payments system</li>
-				<ul>
-					<li>Open one payment method by default</li>
-					<li>Add compatiblity for gateway add-ons like Stripe</li>
-					<li>Developers: Mock payment method add-on</li>
-				</ul>
-			<li>Customizable receipt and invoice templates</li>
-			<li>More modular Single Page Checkout &rarr;</li>
-			<li>Free event registrations are now a one step checkout &rarr;</li>
-			<li>Switch to the new <a href="http://googleonlinesecurity.blogspot.com/2014/12/are-you-robot-introducing-no-captcha.html">NoCAPTCHA reCAPTCHA</a> &rarr;</li>
-			<li>User capabilities system</li>
-			<li>Compatibility with the new Ticketing and Barcode scanner add-ons</li>
-			<li>Event page template selector</li>
-			<li>Message pack template system</li>
-			<li>Support for UTF-8 invoices and receipts</li>
-			<li>Developers: New API for registering new Custom Post types and taxonomies with Event Espresso</li>
-			<li>Registrations CSV report for all events</li>
-			<li><strong>This is the first release of Event Espresso that also powers <a href="https://eventsmart.com/">Event Smart</a></strong></li>
+			<li> - Added support for the Promotions & Discounts add-on</li>
 		</ul>
 	<p><strong>Enhancements/Fixes</strong></p>
 		<ul>
-			<li>Tag archives</li>
-			<li>Upcoming events widget now uses WordPress defined date and time settings</li>
+			<li> - Localized the Date Picker in the Ticket Editor</li>
+			<li> - Datetime Refactor (<a href="http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/">read more</a>)</li>
+			<li> - Added an anchor to the registration form. This takes the registrant right to the registration form, rather than the top of the page, after selecting tickets.</li>
 		</ul>
 
-	<p><strong><a href="http://eventespresso.com/2015/02/major-release-update-4-6-now-available/">Please read the 4.6.0 announcement for more details</a></strong></p>
-
-	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.4</h2>
-	<p>This release brings a few improvements to existing core features.</p>
-	<p><strong>Enhancements/Fixes</strong></p>
-		<ul>
-			<li>Enhancement: Added a link/button for attendees to resend registration or payment email </li>
-			<li>Enhancement: PayPal Standard - Send Event Name with shopping cart data</li> 
-			<li>Enhancement: Remove image captions on 'Events' page excerpts</li>
-			<li>Enhancement: Added template tag: espresso_get_events</li>
-			<li>Fixed: ESPRESSO_EVENTS shortcodes params getting overwritten </li>
-			<li>Fixed: Front-end Messages when Maximum Per-transaction Limit is 0 </li>
-			
-		</ul>
-	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
-	<p>This release brought many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
-	<p><strong>New Features</strong></p>
-		<ul>
-			<li>Duplicate Event</li>
-			<li>Ticket Required Option</li>
-			<li>Added iCal Integration</li>
-			<li>Drag-n-drop Answer Values</li>
-			<li>Order Questions by Question Group</li>
-			<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
-			<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
-			<li>Moved the Ticket Selector Above the Event Dates and Description</li>
-			<li>New Hooks and Filters for Developers Added to the Registration Process</li>
-		</ul>
-	<p><strong>Fixes</strong></p>
-		<ul>
-			<li>Gateways</li>
-			<li>Messages System</li>
-			<li>Migration Issues</li>
-			<li>Miscellaneous Spelling Errors</li>
-		</ul>
-		
-
-<p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
-Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
-<ul>
-	<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">Ticket Bundles</a>
-Starting with Event Espresso 4.3 you can offer discount pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">This article</a> shows how to create a ticket bundle where you can set a lower price per ticket when purchased in a bundle.</li>
-	<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">Graduated Ticket Pricing</a>
-Starting with Event Espresso 4.3 you can offer graduated pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">This article</a> shows how to set graduated ticket pricing where you can set a lower price per ticket for larger quantity ticket purchases.</li>
-</ul>
-<p><strong>Messages System Changes/Fixes</strong><br />
-	We’ve improved the Custom Template System, added a “Newsletter” Message Type for sending batch emails, and made a couple of minor updates.</p>
-<ul>
-<li>Messages Admin – Updated to implement a new Custom Template creation/edit process</li>
-<li>Event Editor – Modify Messages metabox in event editor to use new custom template system</li>
-<li>Messages System – Default ‘From’ Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
-<li>Message Type – Newsletter message type</li>
-</ul>
-<p><a class="thickbox" href="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields.png"><img class="alignright wp-image-96900 " src="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields-300x261.png" alt="acf-home-panel-fields" height="149" width="171"></a><strong>Advanced Custom Fields Integration</strong><br>
-Fully customize WordPress edit screens with powerful custom fields.</p>
-<ul>
-<li><a href="http://eventespresso.com/2014/05/developers-corner-using-advanced-custom-fields-extend-ee4/" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
-<li><a href="http://eventespresso.com/wiki/add-course-curriculum-events-using-advanced-custom-fields/" target="_blank">Add a Course Curriculum Section to the “Thank You” Page Using Advanced Custom Fields</a></li>
-<li><a href="http://eventespresso.com/wiki/add-sponsors-section-events-using-advanced-custom-fields/" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a></li>
-<li><a href="http://eventespresso.com/wiki/ee4-thank-page-actions-filters-hooks/" target="_blank">EE4 “Thank You” Page Actions &amp; Filters</a></li>
-<li><a href="http://eventespresso.com/wiki/ee4-single-page-checkout-page-actions-filters/" target="_blank">EE4 “Single Page Checkout” Page Actions &amp; Filters</a></li>
-</ul>
-<p><strong>Payment Gateway Fixes</strong></p>
-<ul>
-<li>Thank You page now uses the WordPress Heartbeat API to automatically display payment status updates</li>
-<li>Show failed payments in payment response</li>
-<li>Fix for Single Page Checkout so it displays the correct amount owed based on when a payment has already been entered into the system</li>
-<li>Send address fields to Mijireh</li>
-</ul>
 
 	<hr>
 

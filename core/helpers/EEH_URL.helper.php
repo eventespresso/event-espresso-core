@@ -18,10 +18,11 @@ class EEH_URL{
 	 * @access public
 	 * @param array       $args
 	 * @param string $url
+	 * @param bool  $exclude_nonce  If true then the nonce will be excluded from the generated url.
 	 * @return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = '' ) {
-		if ( empty( $url )) {
+	public static function add_query_args_and_nonce( $args = array(), $url = '', $exclude_nonce = false ) {
+		if ( empty( $url ) ) {
 			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf(
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
@@ -29,15 +30,17 @@ class EEH_URL{
 				);
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		// check that an action exists
-		if ( isset( $args['action'] ) && ! empty( $args['action'] )) {
-			$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' )));
-		} else {
-			$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' )));
+		// check that an action exists and add nonce
+		if ( ! $exclude_nonce ) {
+			if ( isset( $args['action'] ) && ! empty( $args['action'] ) ) {
+				$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' ) ) );
+			} else {
+				$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' ) ) );
+			}
 		}
 
 		//finally, let's always add a return address (if present) :)
-		$args = !empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
+		$args = ! empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
 
 		return add_query_arg( $args, $url );
 
@@ -49,13 +52,14 @@ class EEH_URL{
 	 * Returns whether not the remote file exists.
 	 * Checking via GET because HEAD requests are blocked on some server configurations.
 	 * @param string $url
+	 * @param boolean $sslverify whether we care if the SSL certificate for the requested site is setup properly
 	 * @return boolean
 	 */
-	public static function remote_file_exists($url){
-		$results = wp_remote_request($url,array(
+	public static function remote_file_exists( $url, $args = array() ){
+		$results = wp_remote_request($url,array_merge( array(
 			'method'=>'GET',
-			'redirection'=>1,
-		));
+			'redirection'=>1
+		), $args ) );
 		if( ! $results instanceof WP_Error &&
 				isset($results['response']) &&
 				isset($results['response']['code']) &&
@@ -148,6 +152,21 @@ class EEH_URL{
 	public static function prevent_prefetching(){
 		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
 		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
+	}
+
+
+
+
+	/**
+	 * This generates a unique site-specific string.
+	 * An example usage for this string would be to save as a unique identifier for a record in the db for usage in urls.
+	 *
+	 * @param   string $prefix Use this to prefix the string with something.
+	 * @return string
+	 */
+	public static function generate_unique_token( $prefix = '' ) {
+		$token =  md5( uniqid() . mt_rand() );
+		return $prefix ? $prefix . '_' . $token : $token;
 	}
 
 

@@ -66,81 +66,6 @@ interface EEI_Transaction extends EEI_Base {
 
 
 
-/**
- * Interface EEI_Line_Item
- */
-interface EEI_Line_Item{
-	/**
-	 * @return string
-	 */
-	function name();
-	/**
-	 * @return string
-	 */
-	function desc();
-	/**
-	 * The unit price for the items of this line item
-	 * @return float
-	 */
-	function unit_price();
-
-	/**
-	 * Returns the number of items in this line item
-	 * @return int
-	 */
-	function quantity();
-	/**
-	 * Returns the total amount due for this line item
-	 * (usually quantity x unit_price)
-	 * @return float
-	 */
-	function total();
-	/**
-	 * Gets all teh children line items of type 'line-item'
-	 * @return EEI_Line_Item[]
-	 */
-	function get_items();
-	/**
-	 * Gets the total for all the items purchased only
-	 * @return float
-	 */
-	public function get_items_total();
-	/**
-	 * Gets all the children line items of type 'tax'
-	 * @return EEI_Line_Item[]
-	 */
-	function tax_descendants();
-
-	/**
-	 * Gets the total amount of the tax sub-line items
-	 * @return float
-	 */
-	function get_total_tax();
-
-	/**
-	 * Returns the name of the event the ticket is for
-	 * @return string
-	 */
-	function ticket_event_name();
-
-	/**
-	 * Saves this line item to the DB, and recursively saves its descendants.
-	 * Also sets the transaction on this line item and all its descendants before saving
-	 * @param int $txn_id if none is provided, assumes $this->TXN_ID()
-	 * @return int count of items saved
-	 */
-	public function save_this_and_descendants_to_txn( $txn_id = NULL );
-
-	/**
-	 * Indicates whether or not taxes should apply to this line item
-	 * @return boolean
-	 */
-	public function is_taxable();
-}
-
-
-
-
 
 /**
  * Interface EEI_Registration
@@ -252,11 +177,11 @@ interface EEI_Address_Formatter {
 	 * @param string $address2
 	 * @param string $city
 	 * @param string $state
-	 * @param string $country
 	 * @param string $zip
-	 * @param string mixed
+	 * @param string $country
+	 * @param string $CNT_ISO
 	 */
-	public function format( $address, $address2, $city, $state, $country, $zip );
+	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO );
 }
 
 
@@ -334,5 +259,22 @@ interface EEHI_Template{
 	 */
 	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = '', $cur_code_span_class = 'currency-code' );
 }
-// End of file EEI_Payment_Method_Interfaces.php
-// Location: /EEI_Payment_Method_Interfaces.php
+
+
+
+/**
+ * Interface EEI_Line_Item_Display
+ */
+interface EEI_Line_Item_Display {
+
+	/**
+	 * @param EE_Line_Item $line_item
+	 * @param array $options
+	 * @return mixed
+	 */
+	public function display_line_item( EE_Line_Item $line_item, $options = array() );
+
+}
+
+// End of file EEI_Interfaces.php
+// Location: /core/EEI_Interfaces.php

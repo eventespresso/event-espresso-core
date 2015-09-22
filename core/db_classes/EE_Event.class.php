@@ -24,7 +24,7 @@
  * @subpackage 	includes/models/
  * @author 				Mike Nelson
  */
-class EE_Event extends EE_CPT_Base {
+class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Has_Icon {
 
 	/**
 	 * cached value for the the logical active status for the event
@@ -43,29 +43,28 @@ class EE_Event extends EE_CPT_Base {
 
 	/**
 	 *
-	 * @param array $props_n_values
-	 * @return EE_Event
+	 * @param array $props_n_values  incoming values
+	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
+	 *                          		used.)
+	 * @param array $date_formats  incoming date_formats in an array where the first value is the
+	 *                             		    date_format and the second value is the time format
+	 * @return EE_Attendee
 	 */
-	public static function new_instance( $props_n_values = array() ) {
+	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
-		$obj = $has_object ? $has_object : new self( $props_n_values );
-		//we need to set the _timezone property to whatever is set in the db for the event initially.
-		$obj->set_timezone( $obj->timezone_string() );
-		return $obj;
+		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 *
-	 * @param array $props_n_values
-	 * @return EE_Event
+	 * @param array $props_n_values  incoming values from the database
+	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
+	 *                          		the website will be used.
+	 * @return EE_Attendee
 	 */
-	public static function new_instance_from_db( $props_n_values = array() ) {
-		$obj = new self( $props_n_values, TRUE );
-		//we need to set the _timezone property to whatever is set in the db for the event initially.
-		$obj->set_timezone( $obj->timezone_string() );
-		return $obj;
+	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
@@ -741,7 +740,7 @@ class EE_Event extends EE_CPT_Base {
 	 *                                              may appear to equal remaining tickets.  However, the more tickets are
 	 *                                              sold out, the more accurate the "live" total is.
 	 *
-	* @return  int|float  (Note: if INF is returned its considered a float by PHP)
+	 * @return  int|float  (Note: if INF is returned its considered a float by PHP)
 	 */
 	public function total_available_spaces( $current_total_available = false ) {
 		$spaces_available = 0;
@@ -781,21 +780,32 @@ class EE_Event extends EE_CPT_Base {
 				return INF;
 			}
 
-			//add the sum of ticket qty and all datetimes on the ticket. Note we're ordering sums by lowest to highest.
-			$ticket_sums[$ticket->ID()]['sum'] = $remaining;
+			//multiply normalized $tkt quantity by the number of datetimes on the ticket as the "sum"
+			//also include the sum of all the datetime reg limits on the ticket for breaking ties.
+			$ticket_sums[$ticket->ID()]['sum'] = $remaining * count( $datetimes );
+			$ticket_sums[$ticket->ID()]['datetime_sums'] = 0;
 			foreach ( $datetimes as $datetime ) {
-				if ( $datetime->spaces_remaining() !== INF ) {
-					$ticket_sums[ $ticket->ID() ]['sum'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
+				if ( $datetime->reg_limit() === INF ) {
+					$ticket_sums[$ticket->ID()]['datetime_sums'] = INF;
+				} else {
+					$ticket_sums[ $ticket->ID() ]['datetime_sums'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
 				}
 				$datetime_limits[$datetime->ID()] = $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
 			}
 			$ticket_sums[$ticket->ID()]['ticket'] = $ticket;
 		}
 
-		//reorder the tickets by lowest sum first.
+		//The order is sorted by lowest available first (which is calculated for each ticket by multiplying the normalized
+		//ticket quantity by the number of datetimes on the ticket).  For tie-breakers, then the next sort is based on the
+		//ticket with the greatest sum of all remaining datetime->spaces_remaining() ( or $datetime->reg_limit() if not
+		//$current_total_available ) for the datetimes on the ticket.
 		usort( $ticket_sums, function( $a, $b ) {
 			if ( $a['sum'] == $b['sum'] ) {
-				return 0;
+				if ( $a['datetime_sums'] == $b['datetime_sums'] ) {
+					return 0;
+				}
+
+				return $a['datetime_sums'] < $b['datetime_sums'] ? 1 : -1;
 			}
 			return ( $a['sum'] < $b['sum'] ) ? -1 : 1;
 		});
@@ -1099,5 +1109,86 @@ class EE_Event extends EE_CPT_Base {
 		return $this->get_many_related('Question_Group', $query_params);
 	}
 
+
+
+
+	/**
+	 * Implementation for EEI_Has_Icon interface method.
+	 * @see EEI_Visual_Representation for comments
+	 * @return string
+	 */
+	public function get_icon() {
+		return '<span class="dashicons dashicons-flag"></span>';
+	}
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_details_link() {
+		return $this->get_admin_edit_link();
+	}
+
+
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return return string
+	 */
+	public function get_admin_edit_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'edit',
+			'post' => $this->ID()
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_settings_link() {
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'default_event_settings'
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+
+
+	/**
+	 * Implementation for EEI_Admin_Links interface method.
+	 * @see EEI_Admin_Links for comments
+	 * @return string
+	 */
+	public function get_admin_overview_link() {
+
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce( array(
+			'page' => 'espresso_events',
+			'action' => 'default'
+		),
+			admin_url( 'admin.php' )
+		);
+	}
 
 }

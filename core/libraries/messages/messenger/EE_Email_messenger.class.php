@@ -327,6 +327,7 @@ class EE_Email_messenger extends EE_messenger  {
 			'declined_registration',
 			'cancelled_registration',
 			'pending_approval',
+			'registration_summary',
 			'payment_reminder',
 			'payment_declined',
 			'payment_refund'
@@ -387,7 +388,7 @@ class EE_Email_messenger extends EE_messenger  {
 		//but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the header.
 		add_filter( 'wp_mail_from',  array( $this, 'set_from_address' ), 100 );
 		add_filter( 'wp_mail_from_name', array( $this, 'set_from_name' ), 100 );
-		return $headers;
+		return apply_filters( 'FHEE__EE_Email_messenger___headers', $headers, $this->_incoming_message_type, $this );
 	}
 
 
@@ -485,6 +486,7 @@ class EE_Email_messenger extends EE_messenger  {
 				$style = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, 'main', $this->_variation ), TRUE );
 				$CSS = new TijsVerkoyen\CssToInlineStyles\CssToInlineStyles( $body, $style );
 				$body = ltrim( $CSS->convert( true ), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
+				$body = ltrim( $body, "<?" ); //see https://events.codebasehq.com/projects/event-espresso/tickets/8609
 			}
 
 		}

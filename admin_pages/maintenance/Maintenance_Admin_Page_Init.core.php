@@ -85,8 +85,8 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 			$maintenance_page_url = EE_Admin_Page::add_query_args_and_nonce(array(), EE_MAINTENANCE_ADMIN_URL);
 			switch(EE_Maintenance_Mode::instance()->level()){
 				case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
-					$notice = '<div class="updated">
-						<p>'. sprintf(__("Event Espresso is in Frontend-Only MAINTENANCE MODE. This means the front-end (ie, non-wp-admin pages) is disabled for ALL users except site admins. Visit the %s Maintenance Page %s to disable maintenance mode.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
+					$notice = '<div class="update-nag">
+						' . sprintf(__("Event Espresso is in Frontend-Only MAINTENANCE MODE. This means the front-end (ie, non-wp-admin pages) is disabled for ALL users except site admins. Visit the %s Maintenance Page %s to disable maintenance mode.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
 					'</div>';
 					break;
 				case EE_Maintenance_Mode::level_2_complete_maintenance:

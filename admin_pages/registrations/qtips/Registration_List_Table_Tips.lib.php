@@ -35,7 +35,8 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 				'target' => '.ee-lock-icon',
 				'content' => $this->_registration_trash_message(),
 				),
-			1 => array(
+			/** removing status strips for now because they are triggered anywhere on the row. */
+			/**1 => array(
 				'content_id' => 'registration-status-' . EEM_Registration::status_id_approved,
 				'target' => '.reg-status-' . EEM_Registration::status_id_approved,
 				'content' => $this->_registration_status_legend(EEM_Registration::status_id_approved),
@@ -84,7 +85,7 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 						'target' => 'mouse'
 						)
 					)
-				)
+				)/**/
 			);
 	}
 

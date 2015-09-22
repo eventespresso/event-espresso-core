@@ -5,10 +5,13 @@ jQuery(document).ready(function($) {
 	/*
 	generates background overlay for a lightbox affect
 	 */
-	window.position_overlay = function position_overlay() {
+	window.position_overlay = function position_overlay(scrollToTop) {
+		scrollToTop = typeof scrollToTop === undefined ? true : scrollToTop;
 		var dcmntWidth = parseInt($(document).width(), 10 );
 		var dcmntHeight = parseInt($(document).height(), 10 );
-		$(window).scrollTop(0);
+		if ( scrollToTop ) {
+			$(window).scrollTop(0);
+		}
 		var ovrParOff = overlay.parent().offset();
 		var ovrlyTop = ovrParOff.top * (-1);
 		var ovrlyLeft = ovrParOff.left * (-1);
@@ -16,11 +19,15 @@ jQuery(document).ready(function($) {
 	};
 
 
-	window.position_dialog = function position_dialog(dialogWidthFraction) {
-		dialogWidthFraction = typeof dialogWidthFraction === 'undefined' ? 2 : dialogWidthFraction;
+	window.position_dialog = function position_dialog(dialogWidthFraction, scrollToTop) {
+		console.log(scrollToTop);
+		dialogWidthFraction = typeof dialogWidthFraction === 'undefined' || typeof dialogWidthFraction === 'null' ? 1.5 : dialogWidthFraction;
+		scrollToTop = typeof scrollToTop === 'undefined' ? true : scrollToTop;
+		console.log(scrollToTop);
+
 		var wndwWidth = parseInt( $(window).width(), 10 );
 		var wndwHeight = parseInt( $(window).height(), 10 );
-		var scrllTp = $('html').scrollTop();
+		var scrllTp = scrollToTop ? $('html').scrollTop() : $(this).scrollTop();
 		var parOff = eedialog.parent().offset();
 		var dialogTop =  ( wndwHeight / 10 ) - parOff.top + scrllTp;
 		var dialogLeft =  ( (wndwWidth - ( wndwWidth/dialogWidthFraction ) ) /2 ) - parOff.left;
@@ -53,11 +60,12 @@ jQuery(document).ready(function($) {
 
 		dialogContentContainer : $('.ee-admin-dialog-container-inner-content'),
 
-		displayModal: function(overlaystick, draggable) {
-			overlaystick = typeof(overlaystick) === 'undefined' ? false : overlaystick;
-			draggable = typeof(draggable) === 'undefined' ? false : draggable
-			position_overlay();
-			position_dialog();
+		displayModal: function(overlaystick, draggable, scrollToTop) {
+			overlaystick = typeof(overlaystick) === 'undefined' || typeof overlaystick === 'null' ? false : overlaystick;
+			draggable = typeof(draggable) === 'undefined' || typeof draggable === 'null' ? false : draggable
+			scrollToTop = typeof scrollToTop === 'undefined' ? true : scrollToTop
+			position_overlay(scrollToTop);
+			position_dialog(1.5, scrollToTop);
 
 			//if draggable has been turned on
 			if ( draggable ) {

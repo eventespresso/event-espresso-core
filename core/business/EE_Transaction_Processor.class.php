@@ -126,7 +126,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return bool
 	 */
 	public function txn_status_updated() {
-		return $this->_new_txn_status !== $this->_old_txn_status ? true : false;
+		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
 	}
 
 
@@ -276,7 +276,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @return boolean
 	 */
 	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
-		$current_time = (int)current_time( 'timestamp' );
+		$current_time = time();
 		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, $current_time );
 	}
 
@@ -423,9 +423,16 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
 		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
-			// set incoming TXN_Status
 			$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
-			$transaction->set_status( EEM_Transaction::incomplete_status_code );
+			// if a contact record for the primary registrant has been created
+			if ( $transaction->primary_registration() instanceof EE_Registration && $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
+				$transaction->set_status( EEM_Transaction::incomplete_status_code );
+				$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
+			} else {
+				// no contact record? yer abandoned!
+				$transaction->set_status( EEM_Transaction::abandoned_status_code );
+				$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
+			}
 			return TRUE;
 		}
 		return FALSE;
@@ -444,6 +451,13 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 */
 	public function manually_update_registration_statuses( EE_Transaction $transaction, $new_reg_status = '', $registration_query_params = array() ) {
 		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'manually_update_registration_status', $transaction, $registration_query_params, $new_reg_status );
+		// send messages
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		$registration_processor->trigger_registration_update_notifications(
+			$transaction->primary_registration(),
+			array( 'manually_updated' 	=> true )
+		);
 		do_action( 'AHEE__EE_Transaction_Processor__manually_update_registration_statuses', $transaction, $status_updates );
 		return $status_updates;
 	}
@@ -495,6 +509,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
 		// set incoming TXN_Status, and consider it new since old status should have been set
 		$this->set_new_txn_status( $transaction->status_ID() );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $transaction->status_ID(), '$transaction->status_ID()' );
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
@@ -521,6 +536,15 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$this->_registration_query_params,
 			$update_params
 		);
+
+		// send messages
+		/** @type EE_Registration_Processor $registration_processor */
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		$registration_processor->trigger_registration_update_notifications(
+			$transaction->primary_registration(),
+			$update_params
+		);
+
 		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
 		return $update_params;
 	}
@@ -562,6 +586,73 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		return $response;
 	}
 
+
+
+	/**
+	 * set_transaction_payment_method_based_on_registration_statuses
+	 *
+	 * sets or unsets the PMD_ID field on the TXN based on the related REG statuses
+	 * basically if ALL Registrations are "Not Approved", then the EE_Transaction.PMD_ID is set to null,
+	 * but if any Registration has a different status, then EE_Transaction.PMD_ID is set to either:
+	 * 		the first "default" Payment Method
+	 * 		the first active Payment Method
+	 * 	whichever is found first.
+	 *
+	 * @param  EE_Registration $edited_registration
+	 * @return void
+	 */
+	public function set_transaction_payment_method_based_on_registration_statuses(
+		EE_Registration $edited_registration
+	) {
+		if ( $edited_registration instanceof EE_Registration ) {
+			$transaction = $edited_registration->transaction();
+			if ( $transaction instanceof EE_Transaction ) {
+				$all_not_approved = true;
+				foreach ( $transaction->registrations() as $registration ) {
+					if ( $registration instanceof EE_Registration ) {
+						// if any REG != "Not Approved" then toggle to false
+						$all_not_approved = $registration->is_not_approved() ? $all_not_approved : false;
+					}
+				}
+				// if ALL Registrations are "Not Approved"
+				if ( $all_not_approved ) {
+					$transaction->set_payment_method_ID( null );
+					$transaction->save();
+				} else {
+					$available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart );
+					if ( ! empty( $available_payment_methods ) ) {
+						$PMD_ID = 0;
+						foreach ( $available_payment_methods as $available_payment_method ) {
+							if ( $available_payment_method instanceof EE_Payment_Method && $available_payment_method->open_by_default() ) {
+								$PMD_ID = $available_payment_method->ID();
+								break;
+							}
+						}
+						if ( ! $PMD_ID ) {
+							$first_payment_method = reset( $available_payment_methods );
+							if ( $first_payment_method instanceof EE_Payment_Method ) {
+								$PMD_ID = $first_payment_method->ID();
+							} else {
+								EE_Error::add_error(
+									__( 'A valid Payment Method could not be determined. Please ensure that at least
+									one Payment Method is activated.',
+										'event_espresso' ),
+									__FILE__, __LINE__, __FUNCTION__
+								);
+							}
+						}
+						$transaction->set_payment_method_ID( $PMD_ID );
+						$transaction->save();
+					} else {
+						EE_Error::add_error(
+							__( 'Please activate at least one Payment Method in order for things to operate correctly.', 'event_espresso' ),
+							__FILE__, __LINE__, __FUNCTION__
+						);
+					}
+				}
+			}
+		}
+	}
 
 }
 

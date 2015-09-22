@@ -112,12 +112,8 @@ class EE_Html_messenger extends EE_messenger  {
 				'required' => array('[DATETIME_LIST]')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'question_list'),
+				'shortcodes' => array('attendee'),
 				'required' => array('[ATTENDEE_LIST]')
-				),
-			'question_list' => array(
-				'shortcodes' => array('question'),
-				'required' => array('[QUESTION_LIST]')
 				),
 			'tax_line_item_list' => array(
 				'shortcodes' => array('line_item'),
@@ -271,17 +267,6 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '5',
 						'shortcodes_required' => array('[ATTENDEE_LIST]')
 					),
-					'question_list' => array(
-						'input' => 'textarea',
-						'label' => '[QUESTION_LIST]',
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
-						'shortcodes_required' => array('[QUESTION_LIST]')
-					),
 					'tax_line_item_list' => array(
 						'input' => 'textarea',
 						'label' => '[TAX_LINE_ITEM_LIST]',
@@ -408,6 +393,9 @@ class EE_Html_messenger extends EE_messenger  {
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
 		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, 'main' );
+
+		//include message type as a template arg
+		$this->_template_args['message_type'] = $this->_incoming_message_type;
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
