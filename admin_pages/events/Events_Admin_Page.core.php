@@ -540,7 +540,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_register_script('event-datetime-metabox', EVENTS_ASSETS_URL . 'event-datetime-metabox.js', array('event_editor_js', 'ee-datepicker'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script('event-datetime-metabox');
 
-		EE_Registry::$i18n_js_strings['image_confirm'] = __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso');
 	}
 
 
@@ -572,8 +571,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'image_confirm' ] = __( 'Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso' );
+	}
+
+
+
 	//nothing needed for events with these methods.
-	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -919,6 +923,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _default_tickets_update( $evtobj, $data ) {
 		$success = TRUE;
+		$incoming_date_formats = array( 'Y-m-d', 'h:i a' );
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
@@ -932,17 +937,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 
 			if ( !empty( $dtt['DTT_ID'] ) ) {
-				$DTM = EE_Registry::instance()->load_model('Datetime')->get_one_by_ID($dtt['DTT_ID'] );
+				$DTM = EE_Registry::instance()->load_model('Datetime', array( $evtobj->get_timezone() ) )->get_one_by_ID($dtt['DTT_ID'] );
+				$DTM->set_date_format( $incoming_date_formats[0] );
+				$DTM->set_time_format( $incoming_date_formats[1] );
 				foreach ( $datetime_values as $field => $value ) {
 					$DTM->set( $field, $value );
 				}
 
-				$DTM->save();
 				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
 				$saved_dtts[$DTM->ID()] = $DTM;
 			} else {
 				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values ), FALSE, FALSE );
+				$DTM->set_date_format( $incoming_date_formats[0] );
+				$DTM->set_time_format( $incoming_date_formats[1] );
+				$DTM->set_timezone( $evtobj->get_timezone() );
+				foreach ( $datetime_values as $field => $value ) {
+					$DTM->set( $field, $value );
+				}
 			}
+			$DTM->save();
 
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
@@ -966,16 +979,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//update tickets next
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
+			$incoming_date_formats = array( 'Y-m-d', 'h:i a' );
 			$update_prices = false;
 			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
+
+			if ( empty( $tkt['TKT_start_date'] ) ) {
+				//let's use now in the set timezone.
+				$now = new DateTime( 'now', new DateTimeZone( $evtobj->get_timezone() ) );
+				$tkt['TKT_start_date'] = $now->format( $incoming_date_formats[0] . ' ' . $incoming_date_formats[1] );
+			}
+
+			if ( empty( $tkt['TKT_end_date'] ) ) {
+				//use the start date of the first datetime
+				$dtt = $evtobj->get_first_related( 'Datetime' );
+				$tkt['TKT_end_date'] = $dtt->start_date_and_time( $incoming_date_formats[0], $incoming_date_formats[1] );
+			}
 
 			$TKT_values = array(
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
 				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
 				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
 				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
-				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
-				'TKT_end_date' => isset( $tkt['TKT_end_date'] ) ? $tkt['TKT_end_date'] : current_time('mysql'),
+				'TKT_start_date' => $tkt['TKT_start_date'],
+				'TKT_end_date' => $tkt['TKT_end_date'],
 				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
 				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
@@ -1001,13 +1027,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
 
 			if ( !empty( $tkt['TKT_ID'] ) ) {
-				$TKT = EE_Registry::instance()->load_model( 'Ticket')->get_one_by_ID( $tkt['TKT_ID'] );
+				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $evtobj->get_timezone() ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
 
 				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 
 				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
 				$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
+
+				$TKT->set_date_format( $incoming_date_formats[0] );
+				$TKT->set_time_format( $incoming_date_formats[1] );
 
 				//set new values
 				foreach ( $TKT_values as $field => $value ) {
@@ -1042,6 +1071,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
 				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
+
+				//need to reset values to properly account for the date formats
+				$TKT->set_date_format( $incoming_date_formats[0] );
+				$TKT->set_time_format( $incoming_date_formats[1] );
+				$TKT->set_timezone( $evtobj->get_timezone() );
+
+				//set new values
+				foreach ( $TKT_values as $field => $value ) {
+					$TKT->set( $field, $value );
+				}
+
 				$update_prices = TRUE;
 			}
 
@@ -1088,6 +1128,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
 			$tkt_to_remove->delete_permanently();
 		}/**/
+		return array( $saved_dtt, $saved_tickets );
 	}
 
 
@@ -1271,7 +1312,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->verify_cpt_object();
 		add_meta_box('espresso_event_editor_tickets', __('Event Datetime & Ticket', 'event_espresso'), array($this, 'ticket_metabox'), $this->page_slug, 'normal', 'high');
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
-		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->page_slug, 'normal', 'core');
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
 
@@ -1431,51 +1471,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	/**
-	 * decaf venue metabox
-	 * @return string form for Event Venue
-	 */
-	public function venue_metabox() {
-
-		//first let's see if we have a venue already
-		$event_id = $this->_cpt_model_obj->ID();
-		$venue = !empty( $event_id ) ? $this->_cpt_model_obj->venues() : NULL;
-		$venue = empty( $venue ) ? EE_Registry::instance()->load_model('Venue')->create_default_object() : array_shift( $venue );
-		$template_args['_venue'] = $venue;
-
-		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input(
-			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
-				EE_Answer::new_instance( array(  'ANS_value'=> $venue->state_ID() )),
-				array(
-					'input_name' =>  'state',
-					'input_id' => 'phys-state',
-					'input_class' => '',
-					'input_prefix' => '',
-					'append_qstn_id' => FALSE
-				)
-			)
-		);
-		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input(
-			$QFI = new EE_Question_Form_Input(
-				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
-				EE_Answer::new_instance( array(  'ANS_value'=> $venue->country_ID() )),
-				array(
-					'input_name' =>  'countries',
-					'input_id' => 'phys-country',
-					'input_class' => '',
-					'input_prefix' => '',
-					'append_qstn_id' => FALSE
-				)
-			)
-		);
-
-		$template_path = EVENTS_TEMPLATE_PATH . 'event_venues_metabox_content.template.php';
-		EEH_Template::display_template( $template_path, $template_args );
-	}
-
-
-
 	/** end metaboxes * */
 	/*	 * **************** *
 
@@ -1536,19 +1531,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//date where conditions
+		$start_formats = EEM_Datetime::instance()->get_formats_for( 'DTT_EVT_start' );
 		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
+			$DateTime = new DateTime( $year_r . '-' . $month_r . '-01 00:00:00', new DateTimeZone( EEM_Datetime::instance()->get_timezone() ) );
+			$start = $DateTime->format( implode( ' ', $start_formats  ) );
+			$end = $DateTime->setDate( $year_r, $month_r, $DateTime->format('t') )->setTime(23,59,59)->format( implode( ' ', $start_formats ) );
+			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( $start, $end ) );
 		} else if (isset($this->_req_data['status']) && $this->_req_data['status'] == 'today') {
-			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime(date('Y-m-d') . ' 0:00:00'), strtotime(date('Y-m-d') . ' 23:59:59') ) );
+			$DateTime = new DateTime( 'now', new DateTimeZone( EEM_Event::instance()->get_timezone() ) );
+			$start = $DateTime->setTime( 0,0,0 )->format( implode( ' ', $start_formats ) );
+			$end = $DateTime->setTime( 23, 59, 59 )->format( implode( ' ', $start_formats ) );
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( $start, $end ) );
 		} else if ( isset($this->_req_data['status']) && $this->_req_data['status'] == 'month' ) {
-			$this_year_r = date('Y');
-			$this_month_r = date('m');
-			$days_this_month = date('t');
-			$start = ' 00:00:00';
-			$end = ' 23:59:59';
-			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) );
+			$now = date( 'Y-m-01' );
+			$DateTime = new DateTime( $now, new DateTimeZone( EEM_Event::instance()->get_timezone() ) );
+			$start = $DateTime->setTime( 0, 0, 0 )->format( implode( ' ', $start_formats ) );
+			$end = $DateTime->setDate( date('Y'), date('m'), $DateTime->format('t' ) )->setTime( 23, 59, 59 )->format( implode( ' ', $start_formats ) );
+			$where['Datetime.DTT_EVT_start'] = array( 'BETWEEN', array( $start, $end ) );
 		}
-		
+
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 			$where['EVT_wp_user'] =  get_current_user_id();
@@ -1609,7 +1610,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			}
 		}
 
-		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
+		$events = $count ? $EEME->count( array( $where ), 'EVT_ID', true ) : $EEME->get_all( $query_params );
 
 		return $events;
 	}
@@ -1917,7 +1918,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function total_events() {
 
-		$count = EEM_Event::instance()->count( array(), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -1935,7 +1936,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => array( 'IN', array('draft', 'auto-draft' ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -1954,7 +1955,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'status' => 'trash'
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 

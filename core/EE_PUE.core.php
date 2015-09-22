@@ -45,12 +45,11 @@ class EE_PUE {
 	 *	class constructor
 	 *
 	 *	@access public
-	 *	@return void
 	 */
 	public function __construct() {
 //		throw new EE_Error('error');
 
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 
 		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
 		if ( !defined('MONTH_IN_SECONDS' ) )
@@ -64,7 +63,7 @@ class EE_PUE {
 		$ueip_optin = EE_Registry::instance()->CFG->core->ee_ueip_optin;
 		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 
-		//has optin been selected for datacollection?
+		//has optin been selected for data collection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
 		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
@@ -195,7 +194,7 @@ class EE_PUE {
 	 */
 	 public static function espresso_data_collection_optin_text( $extra = TRUE ) {
 	 	if ( ! $extra ) {
-			 echo '<h4 '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
+			 echo '<h2 class="ee-admin-settings-hdr" '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').EEH_Template::get_help_tab_link('organization_logo_info').'</h2>';
 			 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<p><em>', '</em></p>','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
 		} else {
 			$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );

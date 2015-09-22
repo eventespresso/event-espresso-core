@@ -206,9 +206,30 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
 
+		add_action('admin_init', array( $this, 'admin_init') );
+
 		//heartbeat stuff
 		add_filter( 'heartbeat_received', array( $this, 'heartbeat_response' ), 10, 2 );
 
+	}
+
+
+
+	/**
+	 * admin_init
+	 */
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings = array_merge(
+			EE_Registry::$i18n_js_strings,
+			array(
+				'image_confirm'          => __( 'Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso' ),
+				'event_starts_on'        => __( 'Event Starts on', 'event_espresso' ),
+				'event_ends_on'          => __( 'Event Ends on', 'event_espresso' ),
+				'event_datetime_actions' => __( 'Actions', 'event_espresso' ),
+				'event_clone_dt_msg'     => __( 'Clone this Event Date and Time', 'event_espresso' ),
+				'remove_event_dt_msg'    => __( 'Remove this Event Time', 'event_espresso' )
+			)
+		);
 	}
 
 
@@ -292,15 +313,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		wp_enqueue_script('event_editor_js');
 		wp_enqueue_script('ee-event-editor-heartbeat');
 
-		$new_strings = array(
-			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
-			'event_starts_on' => __('Event Starts on', 'event_espresso'),
-			'event_ends_on' => __('Event Ends on', 'event_espresso'),
-			'event_datetime_actions' => __('Actions', 'event_espresso'),
-			'event_clone_dt_msg' => __('Clone this Event Date and Time', 'event_espresso'),
-			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso')
-		);
-		EE_Registry::$i18n_js_strings = array_merge( EE_Registry::$i18n_js_strings, $new_strings);
 	}
 
 
@@ -440,7 +452,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_event->set( 'EVT_ID', 0 );
 		$new_name = $new_event->name() . ' ' . __('**DUPLICATE**', 'event_espresso');
 		$new_event->set( 'EVT_name',  $new_name );
-		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
+		$new_event->set( 'EVT_slug',  wp_unique_post_slug( sanitize_title( $orig_event->name() ), 0, 'publish', 'espresso_events', 0 ) );
 		$new_event->set( 'status', 'draft' );
 
 		//duplicate discussion settings
@@ -947,14 +959,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return int
 	 */
 	public function total_events_today() {
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
+		$start = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', date('Y-m-d' ) . ' 00:00:00', 'Y-m-d H:i:s', 'UTC' );
+		$end = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', date('Y-m-d' ) . ' 23:59:59', 'Y-m-d H:i:s', 'UTC' );
 
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime(date('Y-m-d') . $start), strtotime(date('Y-m-d') . $end) ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID' );
+		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 
@@ -969,14 +981,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this_year_r = date('Y');
 		$this_month_r = date('m');
 		$days_this_month = date('t');
-		$start = ' 00:00:00';
-		$end = ' 23:59:59';
+		$start = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $this_year_r . '-' . $this_month_r . '-01 00:00:00', 'Y-m-d H:i:s', 'UTC' );
+		$end = EEM_Datetime::instance()->convert_datetime_for_query( 'DTT_EVT_start', $this_year_r . '-' . $this_month_r . '-' . $days_this_month . ' 23:59:59', 'Y-m-d H:i:s', 'UTC' );
 
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array(strtotime($this_year_r . '-' . $this_month_r . '-01' . $start), strtotime($this_year_r . '-' . $this_month_r . '-' . $days_this_month . $end) ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array($start, $end ) )
 			);
 
-		$count = EEM_Event::instance()->count( array( $where ), 'EVT_ID', TRUE );
+		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
 	}
 

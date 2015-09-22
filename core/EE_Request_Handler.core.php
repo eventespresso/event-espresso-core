@@ -61,16 +61,21 @@ final class EE_Request_Handler {
 	/**
 	 *    class constructor
 	 *
-	 * @access    public
+	 * @access public
+	 * @param WP $wp
 	 * @return \EE_Request_Handler
 	 */
-	public function __construct() {
+	public function __construct( $wp = null ) {
+		//if somebody forgot to provide us with WP, that's ok because its global
+		if ( ! $wp instanceof WP ){
+			global $wp;
+		}
 		// grab request vars
 		$this->_params = $_REQUEST;
 		// AJAX ???
-		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
-		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
-		//$this->set_request_vars( $wp );
+		$this->ajax = defined( 'DOING_AJAX' ) ? true : false;
+		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
+		$this->set_request_vars( $wp );
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
 	}
 
@@ -80,7 +85,7 @@ final class EE_Request_Handler {
 	 *    set_request_vars
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return void
 	 */
 	public function set_request_vars( $wp = null ) {
@@ -102,11 +107,11 @@ final class EE_Request_Handler {
 	 *    get_post_id_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return int
 	 */
 	public function get_post_id_from_request( $wp = null ) {
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		$post_id = null;
@@ -130,11 +135,11 @@ final class EE_Request_Handler {
 	 *    get_post_name_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return string
 	 */
 	public function get_post_name_from_request( $wp = null ) {
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		$post_name = null;
@@ -174,15 +179,40 @@ final class EE_Request_Handler {
 	 *    get_post_type_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return mixed
 	 */
 	public function get_post_type_from_request( $wp = null ) {
-		if( ! $wp){
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
 		return isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : null;
 	}
+
+
+
+	/**
+	 * Just a helper method for getting the url for the displayed page.
+	 * @param  WP $wp
+	 * @return bool|string|void
+	 */
+	public function get_current_page_permalink( $wp = null ) {
+		$post_id = $this->get_post_id_from_request( $wp );
+		if ( $post_id ) {
+			$current_page_permalink = get_permalink( $post_id );
+		} else {
+			if ( ! $wp instanceof WP ) {
+				global $wp;
+			}
+			if ( $wp->request ) {
+				$current_page_permalink = site_url( $wp->request );
+			} else {
+				$current_page_permalink = esc_url( site_url( $_SERVER[ 'REQUEST_URI' ] ) );
+			}
+		}
+		return $current_page_permalink;
+	}
+
 
 
 	/**

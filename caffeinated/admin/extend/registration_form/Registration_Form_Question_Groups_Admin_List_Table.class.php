@@ -116,7 +116,9 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 
 	public function column_id(EE_Question_Group $item) {
-		return $item->ID();
+		$content = $item->ID();
+		$content .= '  <span class="show-on-mobile-view-only">' .$item->name() . '</span>';
+		return $content;
 	}
 
 
@@ -171,7 +173,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 			}
 
 			if ( !$item->has_questions_with_answers() &&  EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_group', 'espresso_registration_form_delete_question_group', $item->ID() ) ) {
-				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . esc_attr__('Delete Question Group Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+				$actions['delete'] = '<a href="' . $delete_link . '" title="' . esc_attr__('Delete Question Group Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 			}
 		}
 

@@ -1,16 +1,13 @@
 <?php
-if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
-}
-
 /**
  *
- * EEM_Transaction_Test
+ * All tests for the EEM_Transaction class.
  *
- * @package			Event Espresso
- * @subpackage
- * @author				Mike Nelson
- *
+ * @author 	Mike Nelson
+ * @since 		4.6.x
+ * @package 	Event Espresso
+ * @subpackage 	tests
+ * @group 	core/db_models
  */
 class EEM_Transaction_Test extends EE_UnitTestCase{
 
@@ -29,9 +26,9 @@ class EEM_Transaction_Test extends EE_UnitTestCase{
 		$this->factory->transaction->create_many( $pretend_real_good_txns, array( 'STS_ID' => EEM_Transaction::abandoned_status_code ) );
 		$num_deleted = EEM_Transaction::instance()->delete_junk_transactions();
 		$this->assertEquals( $pretend_bot_creations, $num_deleted );
-
-
 	}
-}
 
+
+
+}
 // End of file EEM_Transaction_Test.php

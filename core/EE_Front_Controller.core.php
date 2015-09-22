@@ -70,7 +70,7 @@ final class EE_Front_Controller {
 		// before headers sent
 		add_action( 'wp', array( $this, 'wp' ), 5 );
 		// load css and js
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 1 );
 		// header
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
@@ -412,6 +412,7 @@ final class EE_Front_Controller {
 			// load core js
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
+			wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );
 
 		}
 

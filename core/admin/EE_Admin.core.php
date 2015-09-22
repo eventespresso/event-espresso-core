@@ -679,16 +679,22 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-			// whether to proceed with update
-			$update_post_shortcodes = FALSE;
 			// post on frontpage ?
 			$page_for_posts = EE_Config::get_page_for_posts();
+			$maybe_remove_from_posts = array();
 			// critical page shortcodes that we do NOT want added to the Posts page (blog)
 			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
+			// whether to proceed with update, if an entry already exists for this post, then we want to update
+			$update_post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] ) ? true : false;
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
+			// check that posts page is already being tracked
+			if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] ) ) {
+				// if not, then ensure that it is properly added
+				EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+			}
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// convert to UPPERCASE to get actual shortcode
@@ -699,18 +705,28 @@ final class EE_Admin {
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
 					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
-						// check that posts page is already being tracked
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-							// if not, then ensure that it is properly added
-							EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
-						}
 						// add shortcode to "Posts page" tracking
 						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
 					}
 					$update_post_shortcodes = TRUE;
+					unset( $maybe_remove_from_posts[ $EES_Shortcode ] );
+				} else {
+					$maybe_remove_from_posts[ $EES_Shortcode ] = $post_ID;
 				}
 			}
 			if ( $update_post_shortcodes ) {
+				// remove shortcodes from $maybe_remove_from_posts that are still being used
+				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $shortcodes ) {
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
+					// compute difference between active post_shortcodes array and $maybe_remove_from_posts array
+					$maybe_remove_from_posts = array_diff_key( $maybe_remove_from_posts, $shortcodes );
+				}
+				// now unset unused shortcodes from the $page_for_posts post_shortcodes
+				foreach ( $maybe_remove_from_posts as $shortcode => $post_ID ) {
+					unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode ] );
+				}
 				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
 			}
 		}
@@ -730,6 +746,7 @@ final class EE_Admin {
 	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		// check for date_format or time_format
 		switch ( $option ) {
 			case 'date_format' :
@@ -743,22 +760,25 @@ final class EE_Admin {
 		}
 		// do we have a date_time format to check ?
 		if ( $date_time_format ) {
-			// because DateTime chokes on some formats, check first that strtotime can parse it
-			$date_string = strtotime( date( $date_time_format ));
-			// invalid date time formats will evaluate to either "0" or ""
-			if ( empty( $date_string )) {
+			$error_msg = EEH_DTT_Helper::validate_format_string( $date_time_format );
+
+			if ( is_array( $error_msg ) ) {
+				$msg = '<p>' . sprintf( __( 'The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:', 'event_espresso' ), date( $date_time_format ) , $date_time_format  ) . '</p><p><ul>';
+
+
+				foreach ( $error_msg as $error ) {
+					$msg .= '<li>' . $error . '</li>';
+				}
+
+				$msg .= '</ul></p><p>' . sprintf( __( '%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ), '<span style="color:#D54E21;">', '</span>' ) . '</p>';
+
 				// trigger WP settings error
 				add_settings_error(
 					'date_format',
 					'date_format',
-					sprintf(
-						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to its format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
-						date( $date_time_format ),
-						$date_time_format,
-						'<br /><span style="color:#D54E21;">',
-						'</span>'
-					)
+					$msg
 				);
+
 				// set format to something valid
 				switch ( $option ) {
 					case 'date_format' :

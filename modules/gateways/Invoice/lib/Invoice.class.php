@@ -137,7 +137,7 @@ class Invoice {
 				$venues_for_events = array_merge($venues_for_events, $event->venues());
 			}
 			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
-			$questions_to_skip = array(EEM_Attendee::fname_question_id,EEM_Attendee::lname_question_id,  EEM_Attendee::email_question_id);
+			$questions_to_skip = array(EEM_Attendee::system_question_fname,EEM_Attendee::system_question_lname,  EEM_Attendee::system_question_email);
 
 
 			$template_args['events_for_txn'] = $events_for_txn;
@@ -275,7 +275,7 @@ class Invoice {
 				$EE->CFG->organization->get_pretty( 'zip' ),
 				$EE->CFG->organization->get_pretty( 'email' ),
 				$EE->CFG->organization->vat,
-				date_i18n( get_option( 'date_format' ), strtotime( $this->registration->date() )),
+				$this->registration->get_i18n_datetime( 'REG_date', get_option( 'date_format' ) ),
 				$this->invoice_payment_method->get_extra_meta( 'pdf_instructions', TRUE ),
 		);
 
