@@ -980,7 +980,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_count' => array( 'LIKE' , $sstr ),
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Ticket.TKT_description' => array( 'LIKE', $sstr )
+				'Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Transaction.Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $sstr )
 				);
 		}
 
@@ -1284,8 +1285,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//merge request vars so that the reloaded list table contains any existing filter query params
 		$route = array_merge( $this->_req_data, $route );
 
-		$this->_redirect_after_action( false, '', '', $route, true );
-	}
+		$this->_redirect_after_action( $success, '', '', $route, true );
+
+		}
 
 
 
@@ -1295,9 +1297,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _change_reg_status() {
 		$this->_req_data['return'] = 'view_registration';
-
 		//set notify based on whether the send notifications toggle is set or not
 		$notify = ! empty( $this->_req_data['txn_reg_status_change']['send_notifications'] );
+		$this->_req_data[ '_reg_status_id' ] = isset( $this->_req_data[ '_reg_status_id' ] ) ? $this->_req_data[ '_reg_status_id' ] : '';
 
 		switch ( $this->_req_data['_reg_status_id'] ) {
 			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, false, 'sentence' ) :
@@ -1812,7 +1814,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$REG = $REGM->get_one_by_ID($REG_ID);
 				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
 				if ( $payment_count > 0 ) {
-					$name = $REG->attendee()->full_name();
+					$name = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' );
 					$error = 1;
 					$success = 0;
 					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );

@@ -617,7 +617,5 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 	public function migration_page_hooks(){
 
 	}
-
-
 }
 // end of file: /core/data_migration_scripts/EE_DMS_Core_4_7_0.dms.php

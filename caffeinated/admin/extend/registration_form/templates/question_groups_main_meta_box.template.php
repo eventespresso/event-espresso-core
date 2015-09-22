@@ -128,21 +128,21 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 							// disable questions from the personal information question group
 							$disabled = $question->is_system_question() && $QSG_system === EEM_Question_Group::system_personal && $question_ID !== EEM_Attendee::lname_question_id ? ' disabled="disabled"' : '';
 							// make sure phone checkbox is enabled
-							$disabled = $question->ID() == EEM_Attendee::phone_question_id ? '' : $disabled;
+							$disabled = $question->system_ID() == EEM_Attendee::system_question_phone ? '' : $disabled;
 							if (
 								(
 									$QSG_system === EEM_Question_Group::system_personal
 									&& $question->is_system_question()
 									&& (
 										empty( $checked )
-										&& $question->ID() != EEM_Attendee::phone_question_id
-										&& $question->ID() != EEM_Attendee::lname_question_id
+										&& $question->system_ID() != EEM_Attendee::system_question_lname
+										&& $question->system_ID() != EEM_Attendee::system_question_phone
 									)
 								)
 								||
 								(
 									$QSG_system == EEM_Question_Group::system_address
-									&& in_array( $question_ID, array( EEM_Attendee::fname_question_id, EEM_Attendee::lname_question_id, EEM_Attendee::email_question_id ))
+									&& in_array( $question->system_ID(), array( EEM_Attendee::system_question_fname, EEM_Attendee::system_question_lname, EEM_Attendee::system_question_email ))
 								)
 								||
 								(
