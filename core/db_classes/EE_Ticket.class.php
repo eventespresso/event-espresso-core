@@ -64,7 +64,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 *                          		used.)
 	 * @param array $date_formats  incoming date_formats in an array where the first value is the
 	 *                             		    date_format and the second value is the time format
-	 * @return EE_Attendee
+	 * @return EE_Ticket
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -77,7 +77,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @param array $props_n_values  incoming values from the database
 	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
 	 *                          		the website will be used.
-	 * @return EE_Attendee
+	 * @return EE_Ticket
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
@@ -110,7 +110,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 			}
 		}
 		// datetime is still open for registration, but is this ticket sold out ?
-		return $this->get_raw( 'TKT_qty' ) < 1 || $this->get_raw( 'TKT_qty' ) > $this->get_raw( 'TKT_sold' ) ? TRUE : FALSE;
+		return $this->qty() < 1 || $this->qty() > $this->sold() ? TRUE : FALSE;
 	}
 
 
@@ -180,9 +180,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		// if datetime reg limit is not unlimited
 		if ( ! empty( $datetimes ) ) {
 			// although TKT_qty and $datetime->spaces_remaining() could both be INF
-			//we only need to check for INF explicitly if we want to optimize.
-			//because INF - x = INF; and min(x,INF) = x(
-			$tickets_remaining = $this->get( 'TKT_qty' ) - $this->get( 'TKT_sold' );
+			// we only need to check for INF explicitly if we want to optimize.
+			// because INF - x = INF; and min(x,INF) = x;
+			$tickets_remaining = $this->qty() - $this->sold();
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
 					$tickets_remaining = min( $tickets_remaining, $datetime->spaces_remaining() );
@@ -333,7 +333,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 			}
 		}
 		//Tickets sold
-		$tickets_sold[ 'ticket' ] = $this->get_raw( 'TKT_sold' );
+		$tickets_sold[ 'ticket' ] = $this->sold();
 		return $tickets_sold;
 	}
 
@@ -650,7 +650,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return int
 	 */
 	function sold() {
-		return $this->get( 'TKT_sold' );
+		return $this->get_raw( 'TKT_sold' );
 	}
 
 
@@ -661,7 +661,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->get_raw( 'TKT_sold' ) + $qty;
+		$sold = $this->sold() + $qty;
 		return $this->set_sold( $sold );
 	}
 
@@ -684,7 +684,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->get_raw( 'TKT_sold' ) - $qty;
+		$sold = $this->sold() - $qty;
 		// sold can not go below zero
 		$sold = max( 0, $sold );
 		return $this->set_sold( $sold );
@@ -697,7 +697,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return int
 	 */
 	function qty() {
-		return $this->get( 'TKT_qty' );
+		return $this->get_raw( 'TKT_qty' );
 	}
 
 
