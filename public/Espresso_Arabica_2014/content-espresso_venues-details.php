@@ -17,7 +17,7 @@
 <?php  endif; ?>
 	
 	<h3 class="event-venues-h3 ee-event-h3">
-		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Venue Details', 'event_espresso' ); ?>
+		<?php _e( 'Details', 'event_espresso' ); ?>
 	</h3>
 
 	<?php if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>

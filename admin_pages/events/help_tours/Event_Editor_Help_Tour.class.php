@@ -71,14 +71,6 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -30,
 					)
 				),
-			45 => array(
-				'id' => 'espresso_event_editor_venue',
-				'content' => $this->_event_venues_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -30,
-					)
-				),
 			50 => array(
 				'id' => 'espresso_events_Pricing_Hooks_pricing_metabox_metabox',
 				'content' => $this->_event_pricing_caf(),

@@ -331,14 +331,9 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
 		$this->assertEmpty( $p->redirect_url() );
 
-		try{
-			$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
-			//that should have thrown an error because the access key is bogus
-			$this->assertTrue( FALSE );
-		}catch( EE_Error $e ){
-			$this->assertTrue( TRUE );
-			$this->assertEmpty( $p->redirect_url() );
-		}
+                $p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+                $this->assertEmpty( $p->redirect_url() );
+                $this->assertEquals(EEM_Payment::status_id_failed, $p->get( 'STS_ID' ) );
 	}
 	public function test_set_redirect_info__partial_payment(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mijireh' ) );

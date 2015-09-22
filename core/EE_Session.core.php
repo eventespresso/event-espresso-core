@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
+/**
  *
  * Event Espresso
  *
@@ -148,7 +148,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
 			return NULL;
 		}
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '' );
 		define( 'ESPRESSO_SESSION', TRUE );
 		// default session lifespan in seconds
 		$this->_lifespan = apply_filters(
@@ -346,7 +346,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$this->reset_checkout();
 			$this->reset_transaction();
 		}
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
 			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;
 		}  else  {
@@ -363,8 +362,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return 	TRUE on success, FALSE on fail
 	  */
 	public function set_session_data( $data ) {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// nothing ??? bad data ??? go home!
 		if ( empty( $data ) || ! is_array( $data )) {
@@ -524,7 +521,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return TRUE on success, FALSE on fail
 	  */
 	public function update( $new_session = FALSE ) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_session_data = isset( $this->_session_data )
 			&& is_array( $this->_session_data )
 			&& isset( $this->_session_data['id'])
@@ -617,7 +613,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * 	@return bool
 	 */
 	private function _create_espresso_session( ) {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, '' );
 		// use the update function for now with $new_session arg set to TRUE
 		return  $this->update( TRUE ) ? TRUE : FALSE;
 	}
@@ -633,7 +629,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * 	@return string
 	 */
 	private function _save_session_to_db() {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (
 			! EE_Registry::instance()->REQ instanceof EE_Request_Handler
 			|| ! (
@@ -668,7 +663,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return string
 	 */
 	private function _visitor_ip() {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$visitor_ip = '0.0.0.0';
 		$server_keys = array(
 			'HTTP_CLIENT_IP',
@@ -702,7 +696,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	public function _get_page_visit() {
 
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
 

@@ -175,7 +175,7 @@ abstract class EE_Model_Relation_Base{
 	public function delete_all_related($model_object_or_id,$query_params = array()){
 		//for each thing we would delete,
 		$related_model_objects = $this->get_all_related($model_object_or_id,$query_params);
-		//determine if it's blocked by anything else before it can be deletedx
+		//determine if it's blocked by anything else before it can be deleted
 		$deleted_count = 0;
 		foreach($related_model_objects as $related_model_object){
 			$delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object, $model_object_or_id);
@@ -203,7 +203,7 @@ abstract class EE_Model_Relation_Base{
 	public function delete_related_permanently($model_object_or_id,$query_params = array()){
 		//for each thing we would delete,
 		$related_model_objects = $this->get_all_related($model_object_or_id,$query_params);
-		//determine if it's blocked by anything else before it can be deletedx
+		//determine if it's blocked by anything else before it can be deleted
 		$deleted_count = 0;
 		foreach($related_model_objects as $related_model_object){
 			$delete_is_blocked = $this->get_other_model()->delete_is_blocked_by_related_models($related_model_object, $model_object_or_id);
@@ -261,9 +261,9 @@ abstract class EE_Model_Relation_Base{
 
 
 	/**
-	 * Adds a reltionships between the two model objects provided. Each type of relationship handles this differently (EE_Belongs_To is a
+	 * Adds a relationships between the two model objects provided. Each type of relationship handles this differently (EE_Belongs_To is a
 	 * slight exception, it should more accurately be called set_relation_to(...), as this relationship only allows this model to be related
-	 * to a signel other model of this type)
+	 * to a single other model of this type)
 	 * @param $this_obj_or_id
 	 * @param $other_obj_or_id
 	 * @return EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for $other_obj_or_id)

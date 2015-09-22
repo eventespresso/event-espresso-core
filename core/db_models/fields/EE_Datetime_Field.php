@@ -572,13 +572,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			$date_string->setTimezone( $this->_DateTimeZone );
 			return $date_string;
 		}
-
 		// if empty date_string and made it here.
 		// Return a datetime object for now in the given timezone.
 		if ( empty( $date_string ) ) {
 			return new DateTime( "now", $this->_DateTimeZone );
 		}
-
 		// if $date_string is matches something that looks like a Unix timestamp let's just use it.
 		if ( preg_match( EE_Datetime_Field::unix_timestamp_regex, $date_string ) ) {
 			try {
@@ -588,7 +586,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				 * current_time('timestamp');
 				 *
 				 */
-				$DateTime =  new DateTime( "now", $this->_DateTimeZone );
+				$DateTime = new DateTime( "now", $this->_DateTimeZone );
 				return $DateTime->setTimestamp( $date_string );
 			 } catch ( Exception $e )  {
 			 	// should be rare, but if things got fooled then let's just continue
@@ -598,11 +596,21 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		//create the DateTime object.
 		$format = $this->_date_format . ' ' . $this->_time_format;
 		try {
-			return DateTime::createFromFormat( $format, $date_string, $this->_DateTimeZone );
+			$DateTime = DateTime::createFromFormat( $format, $date_string, $this->_DateTimeZone );
+			if ( ! $DateTime instanceof DateTime ) {
+				throw new EE_Error(
+					sprintf(
+						__( '"%1$s" does not represent a valid Date Time in the format "%2$s".', 'event_espresso' ),
+						$date_string,
+						$format
+					)
+				);
+			}
 		} catch ( Exception $e ) {
 			// if we made it here then likely then something went really wrong.  Instead of throwing an exception, let's just return a DateTime object for now, in the set timezone.
-			return new DateTime( "now", $this->_DateTimeZone );
+			$DateTime = new DateTime( "now", $this->_DateTimeZone );
 		}
+		return $DateTime;
 	}
 
 
