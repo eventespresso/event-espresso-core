@@ -425,7 +425,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
 
 		// if this question was for an attendee detail, then check for that answer
-		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
+		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->system_ID() );
 		$answer = $answer_value === null
 				? EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() )	) )
 				: null;
@@ -858,6 +858,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			if (  $answer_is_obj ) {
 				// and delete the corresponding answer since we won't be storing this data in that object
 				$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
+				$answers[ $answer_cache_id ]->delete_permanently();
 			}
 			return TRUE;
 		} elseif ( $answer_is_obj ) {

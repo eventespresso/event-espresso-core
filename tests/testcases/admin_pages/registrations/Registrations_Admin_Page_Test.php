@@ -143,6 +143,56 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 	}
 
 
+
+	/**
+	 * @since 4.8.10.rc.10
+	 * @group integration
+	 */
+	public function test__set_registration_status_from_request_for_single_registration() {
+		//first setup a registration
+		$testing_registration = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_pending_payment ) );
+		$_REQUEST['_REG_ID'] = $testing_registration->ID();
+		$this->_load_requirements();
+		$success = $this->_admin_page->set_registration_status_from_request( EEM_Registration::status_id_not_approved );
+		$this->assertArrayHasKey( 'success', $success );
+		$this->assertTrue( $success['success'] );
+		$this->assertArrayHasKey( 'REG_ID', $success );
+		$this->assertArrayContains( $testing_registration->ID(), $success['REG_ID'] );
+
+		//verify registration got changed to not approved.
+		$actual_registration = EEM_Registration::reset()->instance()->get_one_by_ID( $testing_registration->ID() );
+		$this->assertEquals( EEM_Registration::status_id_not_approved, $actual_registration->status_ID() );
+	}
+
+
+	/**
+	 * @since 4.8.10.rc.10
+	 * @group integration
+	 */
+	public function test__set_registration_status_from_request_for_multiple_registrations() {
+		//basically the same as the prior test except here we're testing multiple registrations.
+		$registration_a = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_cancelled ) );
+		$registration_b = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_pending_payment ) );
+		$registration_c = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
+
+		$expected_ids = array( $registration_a->ID(), $registration_b->ID(), $registration_c->ID() );
+		$_REQUEST['_REG_ID'] = $expected_ids;
+		$this->_load_requirements();
+		$success = $this->_admin_page->set_registration_status_from_request( EEM_Registration::status_id_not_approved );
+		$this->assertArrayHasKey( 'success', $success );
+		$this->assertTrue( $success['success'] );
+		$this->assertArrayHasKey( 'REG_ID', $success );
+		$this->assertCount( 3, $success['REG_ID'] );
+		$this->assertEquals( $expected_ids, $success['REG_ID'] );
+
+		//verify registrations got chagned to approved (or stayed there).
+		$registrations = EEM_Registration::reset()->instance()->get_all( array( array( 'STS_ID' => EEM_Registration::status_id_not_approved ) ) );
+		$this->assertEquals( 3, count( $registrations ) );
+		$this->assertEquals( $expected_ids, array_keys( $registrations ) );
+
+	}
+
+
 }
 //end Registrations_Admin_Page_Test
 // Location: /tests/testcases/admin_pages/registrations/Registrations_Admin_Page_Test.php

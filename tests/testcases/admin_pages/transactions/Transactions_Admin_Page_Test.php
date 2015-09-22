@@ -368,7 +368,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase {
 		/** @type EE_Payment $payment */
 		$payment = EEM_Payment::instance()->get_one_by_ID( $this->_payment->ID() );
 		$registration_payments = $payment->registration_payments();
-		$this->assertNotEmpty( $registration_payments );
+		$this->assertEmpty( $registration_payments );
 
 	}
 

@@ -509,6 +509,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
 		// set incoming TXN_Status, and consider it new since old status should have been set
 		$this->set_new_txn_status( $transaction->status_ID() );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $transaction->status_ID(), '$transaction->status_ID()' );
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
