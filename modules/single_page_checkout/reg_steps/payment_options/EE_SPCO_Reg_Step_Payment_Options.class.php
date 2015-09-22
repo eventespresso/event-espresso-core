@@ -258,12 +258,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			//EEH_Line_Item::visualize( $filtered_line_item_tree );
 			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
 			$this->checkout->amount_owing = $filtered_line_item_tree->total();
+
 			if ( $this->checkout->amount_owing > 0 ) {
 				EEH_Autoloader::register_line_item_display_autoloaders();
 				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
 				$subsections[ 'payment_options' ] = $this->_display_payment_options(
 					$this->line_item_display->display_line_item( $filtered_line_item_tree )
 				);
+				$this->_apply_transaction_payments_to_amount_owing();
 			}
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
@@ -528,6 +530,25 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 *    _apply_transaction_payments_to_amount_owing
+	 *
+	 * @access    protected
+	 * @return 	void
+	 */
+	protected function _apply_transaction_payments_to_amount_owing() {
+		$payments = $this->checkout->transaction->payments();
+		if ( ! empty( $payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( $payment instanceof EE_Payment && $payment->status() === EEM_Payment::status_id_approved ) {
+					$this->checkout->amount_owing -= $payment->amount();
+				}
+			}
+		}
 	}
 
 
