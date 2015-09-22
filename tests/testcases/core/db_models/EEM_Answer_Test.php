@@ -28,13 +28,13 @@ class EEM_Answer_Test extends EE_UnitTestCase{
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		global $wpdb;
 		$att = EEM_Attendee::reset()->get_one_by_ID( $r->attendee_ID() );
-		$this->assertEquals( $r->attendee()->fname(), EEM_Answer::instance()->get_attendee_property_answer_value( $r,  EEM_Attendee::fname_question_id ) );
+		$this->assertEquals( $r->attendee()->fname(), EEM_Answer::instance()->get_attendee_property_answer_value( $r,  EEM_Attendee::system_question_fname ) );
 	}
 	public function test_get_answer_value_to_question(){
 		$r = $this->new_model_obj_with_dependencies('Registration');
 		$a = $this->new_model_obj_with_dependencies('Answer',array('REG_ID'=>$r->ID()));
 		$this->assertEquals($a->value(),EEM_Answer::instance()->get_answer_value_to_question($r,$a->question_ID(),false));
-		$this->assertEquals($r->attendee()->fname(),EEM_Answer::instance()->get_answer_value_to_question($r,  EEM_Attendee::fname_question_id));
+		$this->assertEquals($r->attendee()->fname(),EEM_Answer::instance()->get_answer_value_to_question($r,  EEM_Question::instance()->get_Question_ID_from_system_string( EEM_Attendee::system_question_fname ) ) );
 	}
 	/**
 	 * @group 8237

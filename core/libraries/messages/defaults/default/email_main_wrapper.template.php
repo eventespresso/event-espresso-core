@@ -7,8 +7,13 @@
 	<!-- Facebook sharing information tags -->
 	<meta property="og:title" content="<?php echo $subject; ?>" />
 	<title><?php echo $subject; ?></title>
+	<?php do_action( 'AHEE__EE_Email_Messenger_main_wrapper_template_head', $message_type, $subject, $from, $main_body ); ?>
 </head>
+<?php do_action( 'AHEE__EE_Email_Messenger_main_wrapper_template_header', $message_type, $subject, $from, $main_body ); ?>
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" marginheight="0" marginwidth="0">
+<?php do_action( 'AHEE__EE_Email_Messenger_main_wrapper_template_before_main_body', $message_type, $subject, $from, $main_body ); ?>
 <?php echo $main_body; ?>
+<?php do_action( 'AHEE__EE_Email_Messenger_main_wrapper_template_after_main_body', $message_type, $subject, $from, $main_body ); ?>
 </body>
+<?php do_action( 'AHEE__EE_Email_Messenger_main_wrapper_template_footer', $message_type, $subject, $from, $main_body ); ?>
 </html>
