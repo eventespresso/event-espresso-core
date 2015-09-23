@@ -541,10 +541,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return 	void
 	 */
 	protected function _apply_transaction_payments_to_amount_owing() {
-		$payments = $this->checkout->transaction->payments();
+		$payments = $this->checkout->transaction->approved_payments();
 		if ( ! empty( $payments ) ) {
 			foreach ( $payments as $payment ) {
-				if ( $payment instanceof EE_Payment && $payment->status() === EEM_Payment::status_id_approved ) {
+				if ( $payment instanceof EE_Payment ) {
 					$this->checkout->amount_owing -= $payment->amount();
 				}
 			}
