@@ -27,8 +27,12 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 
 
 	protected function _set_up_expected() {
+		// array of Datetime IDs => available ticket quantities
 		$this->_expected_values = array(
 			'sum_tickets_currently_available_at_datetime' => 0,
+			1 => 0,
+			2 => 0,
+			3 => 0,
 		);
 	}
 
@@ -36,21 +40,21 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 	protected function _set_up_scenario() {
 		$build_artifact = array(
 			'Datetime' => array(
-				0 => array(
+				1 => array(
 					'fields' => array(
 						'DTT_name' => 'Datetime 1',
 						'DTT_reg_limit' => 5,
 						'DTT_sold' => 5,
 					)
 				),
-				1 => array(
+				2 => array(
 					'fields' => array(
 						'DTT_name' => 'Datetime 2',
 						'DTT_reg_limit' => 20,
 						'DTT_sold' => 3,
 					)
 				),
-				2 => array(
+				3 => array(
 					'fields' => array(
 						'DTT_name' => 'Datetime 3',
 						'DTT_reg_limit' => 3,
@@ -59,40 +63,39 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 				)
 			),
 			'Ticket' => array(
-				0 => array(
+				'A' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket A',
 						'TKT_qty' => INF,
 						'TKT_sold' => 3,
 					),
 					'relations' => array(
-						'Datetime' => array( 0, 1, 2 )
+						'Datetime' => array( 1, 2, 3 )
 					)
 				),
-				1 => array(
+				'B' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket B',
 						'TKT_qty' => 15,
 						'TKT_sold' => 0,
 					),
 					'relations' => array(
-						'Datetime' => array( 0, 1 )
+						'Datetime' => array( 1, 2 )
 					)
 				),
-				2 => array(
+				'C' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket C',
 						'TKT_qty' => 20,
 						'TKT_sold' => 2,
 					),
 					'relations' => array(
-						'Datetime' => array( 0 )
+						'Datetime' => array( 1 )
 					)
 				),
 			),
 		);
 		$build_objects = $this->_eeTest->factory->complex_factory->build( $build_artifact );
-
 		//assign the first datetime object as the scenario object (it's the one that will be used for tests.
 		$this->_scenario_object = reset( $build_objects['Datetime'] );
 	}
