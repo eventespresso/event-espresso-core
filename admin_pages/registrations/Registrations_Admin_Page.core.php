@@ -758,7 +758,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'view_transaction' => array(
 				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
-				)
+				),
+			'view_invoice' => array(
+				'class' => 'dashicons dashicons-media-spreadsheet',
+				'desc' => __('View Transaction Invoice', 'event_espresso')
+				),
  			);
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
 			$fc_items['resend_registration'] = array(
