@@ -126,7 +126,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$evts[] = array(
 					'id' => $evt->ID(),
 					'text' => $evt->get( 'EVT_name' ),
-					'class' => $evt->is_expired() ? 'ee-expired-event hidden' : ''
+					'class' => $evt->is_expired() ? 'ee-expired-event' : ''
 				);
 			}
 			$event_filter = '<div class="ee-event-filter">';
