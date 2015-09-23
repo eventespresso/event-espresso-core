@@ -1012,9 +1012,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				if ( ! empty( $REG_IDs ) ) {
 					$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
 					// now process status changes for the same registrations
-					if ( isset( $this->_req_data['txn_reg_status_change'] ) ) {
-						$this->_process_registration_status_change( $transaction, array( $REG_IDs ) );
-					}
+					$this->_process_registration_status_change( $transaction, $REG_IDs );
 				}
 				$this->_process_payment_notification( $payment );
 				//prepare to render page
@@ -1393,7 +1391,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			sanitize_text_field( $this->_req_data[ 'txn_reg_status_change' ][ 'reg_status' ] ),
 			array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) )
 		);
-//		$transaction_processor->finalize( $transaction, TRUE, FALSE);
 	}
 
 
