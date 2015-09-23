@@ -116,6 +116,18 @@ jQuery(document).ready(function($) {
 	} catch(err) {
 		//won't do anything just wanna make sure .validate only runs when the jQuery validate plugin is present
 	}
+
+
+	/** Hide/unhide expired events in event dropdown **/
+	$('#js-ee-hide-expired-events', '#post-body-content').click( function() {
+		$('#event_id', '#post-body-content').find('.ee-expired-event').each( function() {
+			if ( $(this).hasClass( 'hidden' ) ) {
+				$(this).removeClass('hidden');
+			} else {
+				$(this).addClass('hidden');
+			}
+		});
+	});
 });
 
 /**
