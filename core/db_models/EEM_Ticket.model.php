@@ -34,7 +34,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 *		@Constructor
 	 *		@access private
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket','event_espresso');
@@ -91,8 +90,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * @return EE_Ticket[]
 	 */
 	public function get_all_default_tickets() {
+		/** @type EE_Ticket[] $tickets */
 		$tickets = $this->get_all( array( array('TKT_is_default' => 1), 'order_by' => array('TKT_order' => 'ASC')) );
-
 		//we need to set the start date and end date to today's date and the start of the default dtt
 		return $this->_set_default_dates( $tickets );
 	}
