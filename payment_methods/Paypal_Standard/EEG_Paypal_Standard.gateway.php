@@ -165,7 +165,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		} else {
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
-			//and we don't want to let paypal add taxes or other stuff
 			$redirect_args['item_name_' . $item_num] = substr(
 				sprintf( __('Payment of %1$s for %2$s', "event_espresso"), $payment->amount(), $primary_registrant->reg_code() ),
 				0, 127
@@ -174,8 +173,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//if we aren't allowing PayPal to calculate shipping, set it to 0
 			$redirect_args['shipping_' . $item_num ] = '0';
 			$redirect_args['shipping2_' . $item_num ] = '0';
-			//PayPal can't calculate taxes because we don't know what parts of it are taxable
-			$redirect_args['tax_cart'] = '0';
+                        //but we'll let paypal calculate taxes
 			$item_num++;
 		}
 		//add our taxes to the order if we're NOT using PayPal's
@@ -426,7 +424,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 */
 	public function update_txn_based_on_payment( $payment ) {
 		$update_info = $payment->details();
-		$redirect_args = $payment->redirect_args();
 		$transaction = $payment->transaction();
 		if( ! $transaction ){
 			$this->log( __( 'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldn\'t be executed properly', 'event_espresso' ), $payment );
@@ -457,14 +454,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		} else {
 			$current_tax_amount = 0;
 		}
-		if( $itemized_transaction && $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $current_tax_amount ){
+                //always add paypal's taxes
+		if( $this->_paypal_taxes ){
                     //note that we're doing this BEFORE adding shipping; we actually want Paypals shipping to remain non-taxable
                     $this->_line_item->set_line_items_taxable( $transaction->total_line_item() );
                     $this->_line_item->set_total_tax_to(
                             $transaction->total_line_item(),
                             floatval( $update_info['tax'] ),
                             __( 'Taxes', 'event_espresso' ),
-                            __( 'Calculated by Paypal', 'event_espresso' )
+                            __( 'Calculated by Paypal', 'event_espresso' ),
+                            'paypal_tax',
+                            true
                     );
                     $grand_total_needs_resaving = TRUE;
 		}

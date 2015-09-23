@@ -669,33 +669,50 @@ class EEH_Line_Item {
 	 * @param float $amount
 	 * @param string $name
 	 * @param string $description
+         * @param string $code 
+         * @param boolean $add_to_existing_line_item if true and a duplicate line item with 
+         *  the same code is found, $amount will be added onto it; otherwise will simply
+         *  set the taxes to match $amount
 	 * @return EE_Line_Item the new tax line item created
 	 */
-	public static function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name = NULL, $description = NULL ){
-		//first: remove all tax descendants
-		//add this as a new tax descendant
-		$tax_subtotal = self::get_taxes_subtotal( $total_line_item );
-		$tax_subtotal->delete_children_line_items();
-		$taxable_total = $total_line_item->taxable_total();
-		$new_tax_subtotal = EE_Line_Item::new_instance(array(
+	public static function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false ){
+            $tax_subtotal = self::get_taxes_subtotal( $total_line_item );
+            $taxable_total = $total_line_item->taxable_total();
+            
+            if( $add_to_existing_line_item ) {
+                $new_tax = $tax_subtotal->get_child_line_item( $code );
+                EEM_Line_Item::instance()->delete( array( array( 'LIN_code' => array( '!=', $code ), 'LIN_parent' => $tax_subtotal->ID() ) ) );
+            } else {
+                $new_tax = null;
+                $tax_subtotal->delete_children_line_items();
+            }
+            if( $new_tax ) {
+                $new_tax->set_total( $new_tax->total() + $amount );
+                $new_tax->set_percent( $taxable_total ? ( $new_tax->total() ) / $taxable_total * 100 : 0 );
+            } else {
+                //no existing tax item. Create it               
+                $new_tax = EE_Line_Item::new_instance(array(
 			'TXN_ID' => $total_line_item->TXN_ID(),
 			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
 			'LIN_desc' => $description ? $description : '',
-			'LIN_percent' => $taxable_total ? ( $amount / $total_line_item->taxable_total()  * 100 ) : 0,
+			'LIN_percent' => $taxable_total ? ( $amount / $taxable_total  * 100 ) : 0,
 			'LIN_total' => $amount,
 			'LIN_parent' => $tax_subtotal->ID(),
-			'LIN_type' => EEM_Line_Item::type_tax
+			'LIN_type' => EEM_Line_Item::type_tax,
+                        'LIN_code' => $code
 		));
-		$new_tax_subtotal = apply_filters(
-			'FHEE__EEH_Line_Item__set_total_tax_to__new_tax_subtotal',
-			$new_tax_subtotal,
-			$total_line_item
-		);
-		$new_tax_subtotal->save();
-		$tax_subtotal->set_total( $amount );
-		$tax_subtotal->save();
-		$total_line_item->recalculate_total_including_taxes();
-		return $new_tax_subtotal;
+            }
+		
+            $new_tax = apply_filters(
+                    'FHEE__EEH_Line_Item__set_total_tax_to__new_tax_subtotal',
+                    $new_tax,
+                    $total_line_item
+            );
+            $new_tax->save();
+            $tax_subtotal->set_total( $new_tax->total() );
+            $tax_subtotal->save();
+            $total_line_item->recalculate_total_including_taxes();
+            return $new_tax;
 	}
         
         /**

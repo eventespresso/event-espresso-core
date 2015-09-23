@@ -254,9 +254,13 @@ interface EEHI_Line_Item{
 	 * @param float $amount
 	 * @param string $name
 	 * @param string $description
+         * @param string $code 
+         * @param boolean $add_to_existing_line_item if true and a duplicate line item with 
+         *  the same code is found, $amount will be added onto it; otherwise will simply
+         *  set the taxes to match $amount
 	 * @return EE_Line_Item the new tax created
 	 */
-	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL );
+	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false );
         
          /**
          * Makes all the line items which are children of $line_item taxable (or not).

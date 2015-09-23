@@ -354,6 +354,65 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$t->total_line_item()->recalculate_total_including_taxes();
 		$this->assertEquals( $updated_line_item_total, $t->total_line_item()->total() );
 	}
+        
+        /**
+	 * @group 4710
+	 */
+	public function test_handle_payment_update__paypal_adds_taxes_and_shipping__twice(){
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings(array(
+			'paypal_id' => $this->_paypal_id,
+			'paypal_taxes' => TRUE,
+			'paypal_shipping' => TRUE
+		));
+		$t = $this->new_typical_transaction();
+                $old_taxable_total = $t->total_line_item()->taxable_total();
+		$this->assertNotEmpty( $old_taxable_total );
+		$old_tax_total = $t->tax_total();
+		$this->assertNotEmpty( $old_tax_total );
+                
+                $tax_in_1st_ipn = 1.80;
+		$p = $this->new_model_obj_with_dependencies( 'Payment', 
+                        array(
+                            'TXN_ID'=>$t->ID(), 
+                            'STS_ID' => EEM_Payment::status_id_approved,
+                            'PMD_ID' => $ppm->ID(), 
+                            'PAY_amount' => $t->total() / 2,
+                            'PAY_details' => array (
+                                'tax' => "$tax_in_1st_ipn",//IMPORTANT
+                                'mc_shipping' => '0.00',//IMPORTANT
+                            ),
+                        ) );
+		//pretend we sent a NON itemized report to paypal
+		$p->update_extra_meta( 'itemized_payment', false );
+		
+		//if the old tax matches what's going to be in the IPN data, we can't verify the IPN data
+		//updated the tax can we?
+		$this->assertNotEquals( $tax_in_1st_ipn, $old_tax_total );
+		
+		$ppg->update_txn_based_on_payment( $p );
+		//check the new tax is correct
+		$this->assertNotEquals( $old_tax_total, $t->tax_total(), 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total was updated' );
+		$this->assertEquals( $tax_in_1st_ipn, $t->tax_total() );
+		
+                //ok now let's pretend they made another payment via paypal and added more onto the taxes. 
+                //they should be ADDED onto the existing paypal taxes
+                $tax_in_2nd_ipn = 1.5;
+                $p2 = $this->new_model_obj_with_dependencies( 'Payment', 
+                        array(
+                            'TXN_ID'=>$t->ID(), 
+                            'STS_ID' => EEM_Payment::status_id_approved,
+                            'PMD_ID' => $ppm->ID(), 
+                            'PAY_amount' => $t->remaining(),
+                            'PAY_details' => array( 
+                                'tax' => "$tax_in_2nd_ipn",
+                                'mc_shipping' => '8.00')) );
+                $p2->update_extra_meta( 'itemized_payment', true );
+                $ppg->update_txn_based_on_payment( $p2 );
+                //assert that the total tax is now the SUM of both IPN's tax amounts
+                $this->assertEquals( $tax_in_1st_ipn + $tax_in_2nd_ipn, $t->tax_total() );
+	}
 
 
 	/**
