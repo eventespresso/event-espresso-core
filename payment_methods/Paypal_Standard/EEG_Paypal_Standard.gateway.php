@@ -17,8 +17,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
-	const itemized_transaction = 'itemized_payment';
-
 	protected $_paypal_id = NULL;
 
 	protected $_image_url = NULL;
@@ -104,21 +102,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$total_discounts_to_cart_total = $transaction->paid();
 		//only itemize the order if we're paying for the rest of the order's amount
-		if( $payment->amount() == $transaction->remaining() ) {
+		if( $payment->amount() == $transaction->total() ) {
 			//this payment is for the remaining transaction amount,
 			//keep track of exactly how much the itemized order amount equals
 			$itemized_sum = 0;
-			$shipping = 0;
                         $total_taxes_added = 0;
 
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
-					//if this is a re-attempt at paying, don't re-add PayPal's shipping
-					if ( $line_item->code() == 'paypal_shipping' ) {
-						$shipping = $line_item->total();
-						continue;
-					}
 					//it's some kind of discount
 					if( $line_item->total() < 0 ) {
 						$total_discounts_to_cart_total += abs( $line_item->total() );
@@ -147,11 +139,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//add another line item
 			//if the itemized sum is MORE than the transaction total,
 			//add the difference it to the discounts
-			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum - $shipping;
-			if( $transaction->total() < $itemized_sum + $shipping ) {
+			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum;
+			if( $transaction->total() < $itemized_sum ) {
 				//itemized sum is too big
 				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
-			} elseif( $transaction->total() > $itemized_sum + $shipping ) {
+			} elseif( $transaction->total() > $itemized_sum ) {
 				$redirect_args[ 'item_name_' . $item_num ] = substr(
 						__( 'Other charges', 'event_espresso' ), 0, 127 );
 				$redirect_args[ 'amount_' . $item_num ] = $itemized_sum_diff_from_txn_total;
@@ -161,8 +153,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if( $total_discounts_to_cart_total > 0 ) {
 				$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
 			}
-			$payment->add_extra_meta( EEG_Paypal_Standard::itemized_transaction , true, true );
-
 		} else {
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			$redirect_args['item_name_' . $item_num] = substr(
@@ -170,10 +160,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				0, 127
 			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
-			//if we aren't allowing PayPal to calculate shipping, set it to 0
-			$redirect_args['shipping_' . $item_num ] = '0';
-			$redirect_args['shipping2_' . $item_num ] = '0';
-                        //but we'll let paypal calculate taxes
+
+                        //if we aren't allowing PayPal to calculate shipping, set it to 0
+                        if( ! $this->_paypal_shipping ) {
+                            $redirect_args['shipping_' . $item_num ] = '0';
+                            $redirect_args['shipping2_' . $item_num ] = '0';
+                        }
+                        //should we allow paypal to calculate taxes?
+                        if( ! $this->_paypal_taxes ) {
+                            $redirect_args['tax_cart'] = '0';
+                        }
 			$item_num++;
 		}
 		//add our taxes to the order if we're NOT using PayPal's
@@ -440,11 +436,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			);
 			return;
 		}
-		//take note of whether or not we COULD have allowed PayPal to add taxes and shipping
-		//when we sent the customer to PayPal (because if we couldn't itemize the transaction, we
-		//wouldn't have known what parts were taxable, meaning we would have had to tell PayPal
-		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
-		$itemized_transaction = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_transaction, true, false );
+                if( $payment->status() !== $this->_pay_model->approved_status() ) {
+			$this->log(
+				array(
+					'url' 				=> $this->_process_response_url(),
+					'message' 	=> __( 'We shouldn\'t update transactions taxes or shipping data from non-approved payments', 'event_espresso' ),
+					'payment' 	=> $payment->model_field_array()
+				),
+				$payment
+			);
+			return;
+		}
 		$grand_total_needs_resaving = false;
 		
 		//might paypal have changed the taxes?
@@ -471,18 +473,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
                 
                 $shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
-		if( $itemized_transaction && $this->_paypal_shipping && $shipping_amount ){
+		if( $this->_paypal_shipping && $shipping_amount ){
 			$this->_line_item->add_unrelated_item(
 				$transaction->total_line_item(),
-				__('Shipping', 'event_espresso'),
+				sprintf( __('Shipping for payment %1$s', 'event_espresso'), $payment->ID() ),
 				$shipping_amount,
 				__('Shipping charges calculated by Paypal', 'event_espresso'),
 				1,
 				false,
-				'paypal_shipping'
+				'paypal_shipping_' . $payment->ID()
 			);
 			$grand_total_needs_resaving = true;
-
 		}
 
 		if( $grand_total_needs_resaving ){
@@ -499,7 +500,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				'use_paypal_shipping' 					=> $this->_paypal_shipping,
 				'use_paypal_tax' 							=> $this->_paypal_taxes,
 				'grand_total_needed_resaving' 	=> $grand_total_needs_resaving,
-				'itemized_transaction' => $itemized_transaction,
 			),
 			$payment
 		);

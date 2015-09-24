@@ -357,8 +357,9 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
         
         /**
 	 * @group 4710
+         * @group current
 	 */
-	public function test_handle_payment_update__paypal_adds_taxes_and_shipping__twice(){
+	public function test_update_txn_based_on_payment__paypal_adds_taxes_and_shipping__twice(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
 		$ppg = $ppm->type_obj()->get_gateway();
 		$ppg->set_settings(array(
@@ -373,6 +374,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertNotEmpty( $old_tax_total );
                 
                 $tax_in_1st_ipn = 1.80;
+                $ship_in_1st_ipn = 3.00;
 		$p = $this->new_model_obj_with_dependencies( 'Payment', 
                         array(
                             'TXN_ID'=>$t->ID(), 
@@ -381,11 +383,9 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
                             'PAY_amount' => $t->total() / 2,
                             'PAY_details' => array (
                                 'tax' => "$tax_in_1st_ipn",//IMPORTANT
-                                'mc_shipping' => '0.00',//IMPORTANT
+                                'mc_shipping' => "$ship_in_1st_ipn",//IMPORTANT
                             ),
                         ) );
-		//pretend we sent a NON itemized report to paypal
-		$p->update_extra_meta( 'itemized_payment', false );
 		
 		//if the old tax matches what's going to be in the IPN data, we can't verify the IPN data
 		//updated the tax can we?
@@ -395,10 +395,14 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		//check the new tax is correct
 		$this->assertNotEquals( $old_tax_total, $t->tax_total(), 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total was updated' );
 		$this->assertEquals( $tax_in_1st_ipn, $t->tax_total() );
+                $pre_tax_total = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
+                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $p->ID() );
+                $this->assertEquals( $ship_in_1st_ipn, $shipping1_line_item->total() );
 		
                 //ok now let's pretend they made another payment via paypal and added more onto the taxes. 
                 //they should be ADDED onto the existing paypal taxes
                 $tax_in_2nd_ipn = 1.5;
+                $ship_in_2nd_ipn = 8.00;
                 $p2 = $this->new_model_obj_with_dependencies( 'Payment', 
                         array(
                             'TXN_ID'=>$t->ID(), 
@@ -407,11 +411,15 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
                             'PAY_amount' => $t->remaining(),
                             'PAY_details' => array( 
                                 'tax' => "$tax_in_2nd_ipn",
-                                'mc_shipping' => '8.00')) );
-                $p2->update_extra_meta( 'itemized_payment', true );
+                                'mc_shipping' => "$ship_in_2nd_ipn")) );
                 $ppg->update_txn_based_on_payment( $p2 );
                 //assert that the total tax is now the SUM of both IPN's tax amounts
                 $this->assertEquals( $tax_in_1st_ipn + $tax_in_2nd_ipn, $t->tax_total() );
+                //verify the old shipping is still there
+                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $p->ID() );
+                $this->assertEquals( $ship_in_1st_ipn, $shipping1_line_item->total() );
+                $shipping2_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $p2->ID() );
+                $this->assertEquals( $ship_in_2nd_ipn, $shipping2_line_item->total() );
 	}
 
 
@@ -435,12 +443,12 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertNotEmpty( $p->redirect_url() );
 		$rargs = $p->redirect_args();
 		//also check we DID try to enumerat ethe line items
-		$this->assertEquals( $previous_payment->amount(), $rargs[ 'discount_amount_cart' ] );
+		$this->assertFalse(  isset( $rargs[ 'discount_amount_cart' ] ) );
 		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
 		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
-		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
-		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
-		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
+		$this->assertFalse( isset( $rargs[ 'item_name_2' ] ) );
+		$this->assertFalse( isset( $rargs[ 'amount_2' ] ) );
+		$this->assertFalse( isset( $rargs[ 'quantity_2' ] ) );
 	}
 
 	/**
@@ -509,35 +517,6 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
 		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
                 $this->assertFalse( isset( $rargs[ 'tax_2' ] ) );
-	}
-
-	/**
-	 * Verifies that we don't re-add shipping if it's already been added
-	 * @group 4710
-	 */
-	public function test_set_redirect_info__with_shipping_already() {
-		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
-		$ppg = $ppm->type_obj()->get_gateway();
-		$ppg->set_settings( $this->_test_settings );
-		$t = $this->new_typical_transaction( array( 'ticket_types' => 2));
-		$pretax_subtotal = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
-		EEH_Line_Item::add_unrelated_item( $t->total_line_item(), __('Shipping', 'event_espresso'), 10, __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
-		$t->total_line_item()->recalculate_total_including_taxes();
-		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
-		$this->assertNotEquals( EEM_Payment::status_id_approved, $p->status() );
-
-		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
-
-		$rargs = $p->redirect_args();
-		//check that we didn't add a line item for shipping
-		$this->assertTrue( isset( $rargs[ 'item_name_1' ] ) );
-		$this->assertTrue( isset( $rargs[ 'amount_1' ] ) );
-		$this->assertTrue( isset( $rargs[ 'item_name_2' ] ) );
-		$this->assertTrue( isset( $rargs[ 'amount_2' ] ) );
-		$this->assertTrue( isset( $rargs[ 'quantity_2' ] ) );
-		$this->assertFalse( isset( $rargs[ 'item_name_3' ] ) );
-		$this->assertFalse( isset( $rargs[ 'amount_3' ] ) );
-		$this->assertFalse( isset( $rargs[ 'quantity_3' ] ) );
 	}
 
 	/**
