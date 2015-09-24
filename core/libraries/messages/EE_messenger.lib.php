@@ -687,6 +687,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( !is_readable( $wrapper_template ) )
 			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular']) , $wrapper_template ) );
 
+		//add message type to template args
+		$this->_template_args['message_type'] = $this->_incoming_message_type;
+
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
