@@ -343,7 +343,7 @@ class EEH_Form_Fields {
 	 * @param  string  $name       field name
 	 * @param  array  $values     option values, numbered array starting at 0, where each value is an array with a key 'text' (meaning text to display' and 'id' (meaning the internal value)
 	 * eg: array(1=>array('text'=>'Monday','id'=>1),2=>array('text'=>'Tuesday','id'=>2)...). or as an array of key-value pairs, where the key is to be used for the
-	 * select input's name, and the value will be the text shown to the user
+	 * select input's name, and the value will be the text shown to the user.  Optionally you can also include an additional key of "class" which will add a specific class to the option for that value.
 	 * @param  string  $default    default value
 	 * @param  string  $parameters extra paramaters
 	 * @param  string  $class      css class
@@ -376,8 +376,9 @@ class EEH_Form_Fields {
 						$size = 'wide';
 				}
 			}
-		} else
+		} else {
 			$size = '';
+		}
 
 		$field .= ' class="' . $class . ' ' . $size . '">';
 
@@ -389,6 +390,9 @@ class EEH_Form_Fields {
 			$field .= '<option value="' . $values[$i]['id'] . '"';
 			if ($default == $values[$i]['id']) {
 				$field .= ' selected = "selected"';
+			}
+			if ( isset( $values[$i]['class'] ) ) {
+				$field .= ' class="' . $values[$i]['class'] . '"';
 			}
 			$field .= '>' . $values[$i]['text'] . '</option>';
 		}
