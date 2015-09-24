@@ -214,10 +214,14 @@ class EEM_System_Status{
 		}
 		return "ok!";
 	}
-        function get_wp_maintenance_mode() {
-            $opened = file_exists( ABSPATH . '.maintenance' );
-            return $opened ? __('.maintenance file detected. Wordpress may have a failed auto-update which could prevent Event Espresso from updating the database correctly.', 'event_espresso') : NULL ;
-        }
+	/**
+	 * Whether or not a .maintenance file is detected
+	 * @return string descripting wp_maintenance_mode status
+	 */
+    function get_wp_maintenance_mode() {
+        $opened = file_exists( ABSPATH . '.maintenance' );
+        return $opened ? sprintf( __('%s.maintenance file detected.%s Wordpress may have a failed auto-update which could prevent Event Espresso from updating the database correctly.', 'event_espresso'), '<strong>','</strong>' ) : __('.maintenance file not detected. WordPress is not in maintenance mode.', 'event_espresso')  ;
+    }
 	/**
 	 * Whether or not logging is enabled
 	 * @return string descripting logging's status
