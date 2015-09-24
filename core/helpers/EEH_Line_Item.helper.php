@@ -719,14 +719,21 @@ class EEH_Line_Item {
          * Makes all the line items which are children of $line_item taxable (or not).
          * Does NOT save the line items
          * @param EE_Line_Item $line_item
+         * @param string $code_substring_for_whitelist if this string is part of the line item's code
+         *  it will be whitelisted (ie, except from becoming taxable)
          * @param boolean $taxable
          */
-        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true ) {
-            if( $line_item->is_line_item() ) {
+        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true, $code_substring_for_whitelist = null ) {
+            if( $code_substring_for_whitelist !== null ) {
+                $whitelisted = strpos( $line_item->code(), $code_substring_for_whitelist ) !== false ? true : false;
+            } else {
+                $whitelisted = false;
+            }
+            if( $line_item->is_line_item() && ! $whitelisted ) {
                 $line_item->set_is_taxable( $taxable );
             }
             foreach( $line_item->children() as $child_line_item ) {
-                EEH_Line_Item::set_line_items_taxable( $child_line_item, $taxable );
+                EEH_Line_Item::set_line_items_taxable( $child_line_item, $taxable, $code_substring_for_whitelist );
             }
         }
 

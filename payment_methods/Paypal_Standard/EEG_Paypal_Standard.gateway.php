@@ -458,8 +458,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
                 //always add paypal's taxes
 		if( $this->_paypal_taxes ){
+                    $li = $transaction->total_line_item();
                     //note that we're doing this BEFORE adding shipping; we actually want Paypals shipping to remain non-taxable
-                    $this->_line_item->set_line_items_taxable( $transaction->total_line_item() );
+                    $this->_line_item->set_line_items_taxable( $transaction->total_line_item(), true, 'paypal_shipping' );
                     $this->_line_item->set_total_tax_to(
                             $transaction->total_line_item(),
                             floatval( $update_info['tax'] ),

@@ -267,8 +267,10 @@ interface EEHI_Line_Item{
          * Does NOT save the line items
          * @param EE_Line_Item $line_item
          * @param boolean $taxable
+         * @param string $code_substring_for_whitelist if this string is part of the line item's code
+         *  it will be whitelisted (ie, except from becoming taxable)
          */
-        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true );
+        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true, $code_substring_for_whitelist = null );
 
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
