@@ -247,6 +247,7 @@ div.TB-ee-frame a {
 .grey-icon:before, .grey { color: #888; }
 .drk-grey-icon:before, .drk-grey { color: #59595B; }
 .black-icon:before, .black { color: #2F3334; }
+.white-icon:before, .white { color: #fff; }
 
 /** corresponding background colors **/
 .pink-bg, .reg-status-bg-RDC, .txn-status-bg-TFL, .pymt-status-bg-PDC { background-color: #E44064; }
