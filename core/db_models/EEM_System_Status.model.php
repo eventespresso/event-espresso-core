@@ -35,8 +35,7 @@ class EEM_System_Status{
 	 * it might be a value, an array, or an object
 	 */
 	function get_system_stati(){
-		return array_filter(
-			array(
+		return array(
 				'ee_version'=>$this->get_ee_version(),
 				'ee_activation_history'=>$this->get_ee_activation_history(),
 				'ee_config'=>$this->get_ee_config(),
@@ -50,8 +49,6 @@ class EEM_System_Status{
 				'php_version'=>$this->php_version(),
 				'php.ini_settings'=>$this->get_php_ini_all(),
 				'php_info'=>$this->get_php_info(),
-
-			)
 		);
 	}
 	/**
