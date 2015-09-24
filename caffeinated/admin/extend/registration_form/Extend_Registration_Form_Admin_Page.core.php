@@ -570,7 +570,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				// not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
 				if (
 					$question instanceof EE_Question
-					&& $question->is_system_question() 
+					&& $question->is_system_question()
 					&& $question_group->system_group() === EEM_Question_Group::system_personal
 					&& $question->system_ID() != EEM_Attendee::system_question_lname
 				) {
@@ -703,11 +703,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
 
 		if( $count ){
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$results=$this->_question_model->count_deleted($where);
 		}else{
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 			$results=$this->_question_model->get_all_deleted($query_params);
 		}
 		return $results;
@@ -715,7 +715,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
+	public function get_question_groups( $per_page, $current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if ($count){
