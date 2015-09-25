@@ -26,7 +26,7 @@
 </li>
 <li>
 <strong><?php _e('PayPal Calculates Shipping', 'event_espresso'); ?></strong><br />
-<?php _e('Similar to the "PayPal Calculates Taxes" setting, if this is set to "Yes", we will indicate to PayPal that it ought to calculate the shipping on the order and it. Also, if there are multiple payments for a single transaction, PayPal is permitted to add shipping charges to each payment.', 'event_espresso'); ?><br/>
+<?php _e('Similar to the "PayPal Calculates Taxes" setting, if this is set to "Yes", we will indicate to PayPal that it ought to calculate the shipping on each payment (if there are multiple payments for a single transaction, PayPal is permitted to add shipping charges to each payment.)', 'event_espresso'); ?><br/>
 <?php _e( 'Important Note: PayPal will ONLY calculate shipping on an order if "Shipping Address Options" is set to "Prompt for an Address" (otherwise how will PayPal know how much to charge for shipping if it doesn\'t know where it\'s shipping to?)', 'event_espresso' );?>
 <li>
 <strong><?php _e( 'Notes Regarding Paypal Taxes and Shipping', 'event_espresso' );?></strong><br/>
