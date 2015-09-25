@@ -106,8 +106,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this payment is for the remaining transaction amount,
 			//keep track of exactly how much the itemized order amount equals
 			$itemized_sum = 0;
-                        $total_taxes_added = 0;
-
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
@@ -161,21 +159,21 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 
-                        //if we aren't allowing PayPal to calculate shipping, set it to 0
-                        if( ! $this->_paypal_shipping ) {
-                            $redirect_args['shipping_' . $item_num ] = '0';
-                            $redirect_args['shipping2_' . $item_num ] = '0';
-                        }
-                        //should we allow paypal to calculate taxes?
-                        if( ! $this->_paypal_taxes ) {
-                            $redirect_args['tax_cart'] = '0';
-                        }
+			//if we aren't allowing PayPal to calculate shipping, set it to 0
+			if( ! $this->_paypal_shipping ) {
+				$redirect_args['shipping_' . $item_num ] = '0';
+				$redirect_args['shipping2_' . $item_num ] = '0';
+			}
+			//should we allow paypal to calculate taxes?
+			if( ! $this->_paypal_taxes ) {
+				$redirect_args['tax_cart'] = '0';
+			}
 			$item_num++;
 		}
 		//add our taxes to the order if we're NOT using PayPal's
 		if( ! $this->_paypal_taxes ){
 			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
-                }
+		}
 
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
@@ -436,7 +434,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			);
 			return;
 		}
-                if( $payment->status() !== $this->_pay_model->approved_status() ) {
+		if( $payment->status() !== $this->_pay_model->approved_status() ) {
 			$this->log(
 				array(
 					'url' 				=> $this->_process_response_url(),
@@ -448,7 +446,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			return;
 		}
 		$grand_total_needs_resaving = false;
-		
+
 		//might paypal have changed the taxes?
 		$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
 		if( $taxes_li instanceof EE_Line_Item ) {
@@ -458,8 +456,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
                 //always add paypal's taxes
 		if( $this->_paypal_taxes ){
-                    $li = $transaction->total_line_item();
-                    //note that we're doing this BEFORE adding shipping; we actually want Paypals shipping to remain non-taxable
+                    //note that we're doing this BEFORE adding shipping; we actually want PayPal's shipping to remain non-taxable
                     $this->_line_item->set_line_items_taxable( $transaction->total_line_item(), true, 'paypal_shipping' );
                     $this->_line_item->set_total_tax_to(
                             $transaction->total_line_item(),
@@ -471,7 +468,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
                     );
                     $grand_total_needs_resaving = TRUE;
 		}
-                
+
                 $shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
 		if( $this->_paypal_shipping && $shipping_amount ){
