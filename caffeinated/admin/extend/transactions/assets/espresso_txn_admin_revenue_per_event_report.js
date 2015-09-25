@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
 				yaxis: {
 					min: 0,
 					tickOptions: {
-						formatString:"$%'.2f"
+						formatString: eei18n.currency_format ? eei18n.currency_format : "$%'.2f"
 					}
 				}
 			},
