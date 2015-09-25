@@ -129,7 +129,9 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 							$disabled = $question->is_system_question() && $QSG_system === EEM_Question_Group::system_personal && $question_ID !== EEM_Attendee::lname_question_id ? ' disabled="disabled"' : '';
 							// make sure phone checkbox is enabled
 							$disabled = $question->system_ID() == EEM_Attendee::system_question_phone ? '' : $disabled;
+                                                        $disabled = apply_filters( 'FHEE__question_groups_main_meta_box__question_disabled', $disabled, $question_group, $question );
 							if (
+                                                                apply_filters( 'FHEE__question_groups_main_meta_box__skip_question' ,
 								(
 									$QSG_system === EEM_Question_Group::system_personal
 									&& $question->is_system_question()
@@ -148,8 +150,10 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 								(
 									! $QSG_system
 									&& $question->is_system_question()
-								)
-							) {
+								), 
+                                                                        $question_group, 
+                                                                        $question
+							) ) {
 								continue; //skip over system question not assigned to this group except for the address system group cause we want the address questions to display even if they aren't selected (but still not show the personal system questions).  The third condition checks if we're displaying a non system question group and the question is a system question, then we skip because for non-system question groups we only want to show non-system questions.
 							}
 						?>

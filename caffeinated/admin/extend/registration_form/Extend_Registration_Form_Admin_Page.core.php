@@ -569,10 +569,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			} else {
 				// not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
 				if (
+                                        apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___insert_or_update_question_group',
 					$question instanceof EE_Question
 					&& $question->is_system_question()
 					&& $question_group->system_group() === EEM_Question_Group::system_personal
-					&& $question->system_ID() != EEM_Attendee::system_question_lname
+					&& $question->system_ID() != EEM_Attendee::system_question_lname,
+                                                $question_group, $question )
 				) {
 					continue;
 				} else {
