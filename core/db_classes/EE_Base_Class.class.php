@@ -1725,7 +1725,9 @@ abstract class EE_Base_Class{
 			//this doesn't exist in the DB, just remove it from the cache
 			$otherObject = $this->clear_cache( $relationName, $otherObjectModelObjectOrID );
 		}
-		$otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                if( $otherObject instanceof EE_Base_Class ) {
+                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                }
 		return $otherObject;
 	}
 
