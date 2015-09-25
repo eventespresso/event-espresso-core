@@ -448,12 +448,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$grand_total_needs_resaving = false;
 
 		//might paypal have changed the taxes?
-		$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
-		if( $taxes_li instanceof EE_Line_Item ) {
-			$current_tax_amount = $taxes_li->total();
-		} else {
-			$current_tax_amount = 0;
-		}
+		//$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
+		//if( $taxes_li instanceof EE_Line_Item ) {
+		//	$current_tax_amount = $taxes_li->total();
+		//} else {
+		//	$current_tax_amount = 0;
+		//}
                 //always add paypal's taxes
 		if( $this->_paypal_taxes ){
                     //note that we're doing this BEFORE adding shipping; we actually want PayPal's shipping to remain non-taxable
