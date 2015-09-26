@@ -28,8 +28,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	const system_address = 2;
   	// private instance of the Attendee object
 	protected static $_instance = NULL;
-
-
+        
+        
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question Group','event_espresso');
 		$this->plural_item = __('Question Groups','event_espresso');
@@ -65,6 +65,57 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		parent::__construct( $timezone );
 
 	}
+        
+        /**
+         * Returns an array of all the QST_system values that can be allowed in the system question group
+         * identified by $system_question_group_id
+         * @param string $system_question_group_id QSG_system
+         * @return array of system question names (QST_system)
+         */
+        public function system_questions_allowed_in_system_question_group( $system_question_group_id ) {
+            $question_system_ids = null;
+            switch( $system_question_group_id ) {
+                case EEM_Question_Group::system_personal:
+                    $question_system_ids = array(
+                        EEM_Attendee::system_question_fname, 
+                        EEM_Attendee::system_question_lname,
+                        EEM_Attendee::system_question_email,
+                        EEM_Attendee::system_question_phone
+                    );
+                case EEM_Question_Group::system_address:
+                    $question_system_ids = array( EEM_Attendee::system_question_address,
+                        EEM_Attendee::system_question_address2,
+                        EEM_Attendee::system_question_city,
+                        EEM_Attendee::system_question_state,
+                        EEM_Attendee::system_question_country,
+                        EEM_Attendee::system_question_zip,
+                        EEM_Attendee::system_question_phone
+                    );
+                default:
+                    $question_system_ids = array();
+            }
+            return apply_filters( 'FHEE__EEM_Question_Group__system_questions_allowed_in_system_question_group__return', $question_system_ids, $system_question_group_id );
+        }
+        
+        /**
+         * Returns an array of all the QST_system values that are required in the system question group
+         * identified by $system_question_group_id
+         * @param string $system_question_group_id QSG_system
+         * @return array of system question names (QST_system)
+         */
+        public function system_questions_required_in_system_question_group( $system_question_group_id ) {
+            $question_system_ids = null;
+            switch( $system_question_group_id ) {
+                case EEM_Question_Group::system_personal:
+                    $question_system_ids =  array(
+                            EEM_Attendee::system_question_fname,
+                            EEM_Attendee::system_question_email,
+                        );
+                default:
+                    $question_system_ids = array();
+            }
+            return apply_filters( 'FHEE__EEM_Question_Group__system_questions_required_in_system_question_group', $question_system_ids, $system_question_group_id );
+        }
 
 
 
