@@ -142,7 +142,7 @@ class EEH_Money extends EEH_Base  {
 		}
 
 		//first get the decimal place and number of places
-		$format = "%'" . $currency_config->dec_mrk . $currency_config->dec_plc . $format;
+		$format = "%'." . $currency_config->dec_plc . $format;
 
 		//currency symbol on right side.
 		$format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
