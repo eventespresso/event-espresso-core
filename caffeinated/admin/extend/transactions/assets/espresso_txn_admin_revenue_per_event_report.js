@@ -4,7 +4,10 @@ jQuery(document).ready(function($) {
 	if ( revenuePerEvent.revenue.length <= 0 ) {
 		$('#'+revenuePerEvent.id).html(revenuePerEvent.noTxnMsg);
 	} else {
-
+		if ( EE_ACCOUNTING_CFG ) {
+			$.jqplot.sprintf.thousandsSeparator = EE_ACCOUNTING_CFG.currency.thousand;
+			$.jqplot.sprintf.decimalMark = EE_ACCOUNTING_CFG.currency.decimal;
+		}
 		$.jqplot( revenuePerEvent.id, [revenuePerEvent.revenue], {
 			title: revenuePerEvent.title,
 			animate: !$.jqplot.use_excanvas,
