@@ -420,6 +420,26 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		}
 	}
 
+
+
+	/**
+	 * 	Gets the total number of tickets available at a particular datetime
+	 * 	(does NOT take into account the datetime's spaces available)
+	 *
+	 * @param int   $DTT_ID
+	 * @param array $query_params
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 */
+	public function sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params = array() ) {
+		$datetime = $this->get_one_by_ID( $DTT_ID );
+		if ( $datetime instanceof EE_Datetime ) {
+			return $datetime->tickets_remaining( $query_params );
+		}
+		return 0;
+	}
+
+
+
 }
 // End of file EEM_Datetime.model.php
 // Location: /includes/models/EEM_Datetime.model.php
