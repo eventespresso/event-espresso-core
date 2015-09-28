@@ -268,6 +268,12 @@ class EE_Cron_Tasks extends EE_BASE {
 		$timestamp = absint( $timestamp );
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID' );
 		if ( $TXN_ID && $timestamp ) {
+			// DEBUG LOG
+			//EEH_Debug_Tools::log(
+			//	__CLASS__, __FUNCTION__, __LINE__,
+			//	array( '$TXN_ID' => $TXN_ID ),
+			//	false, 'EE_Transaction: ' . $TXN_ID
+			//);
 			wp_schedule_single_event(
 				$timestamp,
 				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions',
@@ -329,18 +335,23 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
 			foreach ( self::$_abandoned_transactions as $TXN_ID ) {
+				// DEBUG LOG
+				//EEH_Debug_Tools::log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	array( '$TXN_ID' => $TXN_ID ),
+				//	false, 'EE_Transaction: ' . $TXN_ID
+				//);
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
 					// let's simulate an IPN here which will trigger any notifications that need to go out
 					$payment_processor->update_txn_based_on_payment( $transaction, $transaction->last_payment(), true, true );
+					do_action( 'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions__abandoned_transaction', $transaction );
 				}
 				unset( self::$_abandoned_transactions[ $TXN_ID ] );
 			}
@@ -436,7 +447,7 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			// load EEM_Transaction
+			 // load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
 			foreach ( self::$_expired_transactions as $TXN_ID ) {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
