@@ -345,8 +345,23 @@ class EE_Payment_Processor extends EE_Processor_Base {
 		} else {
 			// verify payment and that it has been saved
 			if ( $payment instanceof EE_Payment && $payment->ID() ) {
+				//$this->log(
+				//	__CLASS__, __FUNCTION__, __LINE__,
+				//	$payment->transaction(),
+				//	array(
+				//		'IPN'             => $IPN,
+				//		'payment' => $payment,
+				//	)
+				//);
 				if( $payment->payment_method() instanceof EE_Payment_Method && $payment->payment_method()->type_obj() instanceof EE_PMT_Base ){
 					$payment->payment_method()->type_obj()->update_txn_based_on_payment( $payment );
+					//$this->log(
+					//	__CLASS__, __FUNCTION__, __LINE__,
+					//	$payment->transaction(),
+					//	array(
+					//		'payment_method' => $payment->payment_method(),
+					//	)
+					//);
 					// update TXN registrations with payment info
 					$this->process_registration_payments( $transaction, $payment );
 				}
