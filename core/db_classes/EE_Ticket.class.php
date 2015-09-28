@@ -439,7 +439,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return EE_Price[]
 	 */
 	public function get_ticket_taxes_for_admin() {
-		return EE_Taxes::get_taxes_for_admin( $this );
+		return EE_Taxes::get_taxes_for_admin();
 	}
 
 
@@ -673,6 +673,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return boolean
 	 */
 	function set_sold( $sold ) {
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		$this->set( 'TKT_sold', $sold );
 	}
 
@@ -685,29 +687,74 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
-		// sold can not go below zero
-		$sold = max( 0, $sold );
 		return $this->set_sold( $sold );
 	}
 
 
 
 	/**
-	 * Gets qty
+	 * Gets ticket quantity
+	 *
+	 * @param string $context
+	 *                         ticket quantity is somewhat subjective depending on the exact information sought
+	 *                         therefore $context can be one of three values: 'raw', 'reg_limit', or 'saleable'
+	 *                         RAW: quantity is the actual db value for TKT_qty, unaffected by other objects
+	 *                         REG LIMIT: caps qty based on DTT_reg_limit for ALL related datetimes
+	 *                         SALEABLE: also considers datetime sold and returns zero if ANY DTT is sold out, and
+	 *                         is therefore the truest measure of tickets that can be purchased at the moment
+	 *
 	 * @return int
 	 */
-	function qty() {
-		return $this->get_raw( 'TKT_qty' );
+	function qty( $context = 'raw' ) {
+		$qty = array(
+			// RAW quantity is the actual db value for TKT_qty, unaffected by other objects
+			'raw'   => null,
+			// REG LIMIT caps qty based on DTT_reg_limit for ALL related datetimes
+			'reg_limit' => null,
+			// SALEABLE also considers datetime sold and returns zero if ANY DTT is sold out
+			'saleable'  => null,
+		);
+		if ( $qty[ 'raw' ] === null ) {
+			$qty[ 'raw' ] = $this->get_raw( 'TKT_qty' );
+		}
+		if ( $context != 'raw' && $qty[ 'reg_limit' ] === null ) {
+			// initialize with no restrictions
+			$qty[ 'reg_limit' ] = INF;
+			$qty[ 'saleable' ] = INF;
+			$datetimes = $this->datetimes();
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					// adjust qty based on datetime reg limit
+					$qty[ 'reg_limit' ] = min( $qty[ 'reg_limit' ], $datetime->reg_limit() - $datetime->sold() );
+					$qty[ 'reg_limit' ] = min( $qty[ 'reg_limit' ], $qty[ 'raw' ] );
+					// if we want the actual saleable amount, then we need to consider datetime sales
+					if ( $context == 'saleable' ) {
+						// adjust qty based on tickets sold
+						$qty[ 'saleable' ] = max( $qty[ 'reg_limit' ] - $this->sold(), 0 );
+						$qty[ 'saleable' ] = ! $datetime->sold_out() ? $qty[ 'saleable' ] : 0;
+					}
+				}
+			}
+		}
+		return $qty[ $context ];
 	}
 
 
 
 	/**
-	 * Sets qty
-	 * @param int $qty
-	 * @return boolean
+	 * Sets qty - IMPORTANT!!! Does NOT allow QTY to be set higher than the lowest reg limit of any related datetimes
+	 *
+	 * @param int  $qty
+	 * @return bool
+	 * @throws \EE_Error
 	 */
 	function set_qty( $qty ) {
+		$datetimes = $this->datetimes();
+		foreach ( $datetimes as $datetime ) {
+			if ( $datetime instanceof EE_Datetime ) {
+				$qty = min( $qty, $datetime->reg_limit() );
+			}
+		}
 		$this->set( 'TKT_qty', $qty );
 	}
 
