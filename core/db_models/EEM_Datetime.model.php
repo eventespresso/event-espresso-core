@@ -330,16 +330,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * This returns a wpdb->results 				Array of all DTT month and years matching the incoming query params and grouped by month and year.
-	 * @param  array $where_params 			Array of query_params as described in the comments for EEM_Base::get_all()
+	 * This returns a wpdb->results 		Array of all DTT month and years matching the incoming query params and grouped by month and year.
+	 * @param  array $where_params 		Array of query_params as described in the comments for EEM_Base::get_all()
 	 * @param  string $evt_active_status 		A string representing the evt active status to filter the months by.
-	 * 								Can be:
-	 *                                     - '' = no filter
-	 *                                     - upcoming = Published events with at least one upcoming datetime.
-	 *                                     - expired = Events with all datetimes expired.
-	 *                                     - active = Events that are published and have at least one datetime that starts before now and ends after
-	 *                                     		now.
-	 *                                     - inactive = Events that are either not published.
+	 * 		Can be:
+	 * 			- '' = no filter
+	 * 			- upcoming = Published events with at least one upcoming datetime.
+	 * 			- expired = Events with all datetimes expired.
+	 * 			- active = Events that are published and have at least one datetime that starts before now and ends after now.
+	 * 			- inactive = Events that are either not published.
 	 * @return wpdb results array
 	 */
 	public function get_dtt_months_and_years( $where_params, $evt_active_status = '' ) {
