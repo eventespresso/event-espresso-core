@@ -207,21 +207,15 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	 * @group 8861
 	 */
 	public function test_tickets_remaining() {
-		//echo "\n\n test_tickets_remaining: ";
 		$scenarios = $this->scenarios->get_scenarios_by_type( 'datetime' );
-		//echo "\n scenarios: ";
-		//var_dump( $scenarios );
 		foreach ( $scenarios as $scenario ) {
 			/* @type EE_Datetime $datetime */
 			$datetime = $scenario->get_scenario_object();
-			if ( $scenario->get_expected( $datetime->ID() ) !== false ) {
-				//echo "\n datetime->ID(): " . $datetime->ID();
-				//echo "\n datetime->name(): " . $datetime->name();
-				//echo "\n datetime->reg_limit(): " . $datetime->reg_limit();
-				//echo "\n datetime->sold(): " . $datetime->sold();
+			$datetime_id_to_tickets_map = $scenario->get_expected( 'datetime_id_to_tickets_map' );
+			if ( isset( $datetime_id_to_tickets_map[ $datetime->ID() ] ) ) {
 				$tickets_remaining = $datetime->tickets_remaining();
 				//echo "\n tickets_remaining: " . $tickets_remaining;
-				$tickets_expected = $scenario->get_expected( $datetime->ID() );
+				$tickets_expected = $datetime_id_to_tickets_map[ $datetime->ID() ];
 				//echo "\n tickets_expected: " . $tickets_expected;
 				$this->assertEquals( $tickets_expected, $tickets_remaining );
 			}
@@ -232,3 +226,4 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Datetime_Test.php
+// Location: tests/testcases/core/db_classes/EE_Datetime_Test.php
