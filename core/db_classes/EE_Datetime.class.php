@@ -188,6 +188,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @param        int $sold
 	 */
 	public function set_sold( $sold ) {
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		$this->set( 'DTT_sold', $sold );
 	}
 
@@ -210,8 +212,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
-		// sold can not go below zero
-		$sold = max( 0, $sold );
 		$this->set_sold( $sold );
 	}
 
@@ -596,7 +596,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 		// tickets remaining available for purchase
 		//no need for special checks for infinite, because if DTT_reg_limit == INF, then INF - x = INF
 		$dtt_remaining = $this->reg_limit() - $this->sold();
-		if ( !$consider_tickets ) {
+		if ( ! $consider_tickets ) {
 			return $dtt_remaining;
 		}
 		$tickets_remaining = $this->tickets_remaining();
@@ -607,32 +607,30 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Counts the total tickets available (from all the different types of tickets which are available for this datetime).
+	 *
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @return int
 	 */
 	public function tickets_remaining( $query_params = array() ) {
-		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime( $this->ID(), $query_params );
-		//$sum = 0;
-		//$tickets = $this->tickets( $query_params );
-		//if ( ! empty( $tickets ) ) {
-		//	foreach ( $tickets as $ticket ) {
-		//		if ( $ticket instanceof EE_Ticket ) {
-		//			$qty = $ticket->qty( 'sold' );
-		//			//echo "\n TKT ID: " . $ticket->ID();
-		//			if ( $qty === INF ) {
-		//				//echo "\n  ticket->qty: " . $ticket->qty();
-		//				return INF;
-		//			}
-		//			//echo "\n  ticket->qty(): " . $ticket->qty();
-		//			//echo "\n  ticket->sold(): " . $ticket->sold();
-		//			if ( $qty > 0 ) {
-		//				$sum += absint( $qty - $ticket->sold() );
-		//			}
-		//			//echo "\n   DTT SUM: " . $sum;
-		//		}
-		//	}
-		//}
-		//return $sum;
+		$sum = 0;
+		$tickets = $this->tickets( $query_params );
+		if ( ! empty( $tickets ) ) {
+			foreach ( $tickets as $ticket ) {
+				if ( $ticket instanceof EE_Ticket ) {
+					// get the actual amount of tickets that can be sold
+					$qty = $ticket->qty( 'saleable' );
+					if ( $qty === INF ) {
+						return INF;
+					}
+					if ( $qty > 0 ) {
+						$sum += min( ( $qty - $ticket->sold() ), 0 );
+					}
+				}
+			}
+		} else {
+			// NO TICKETS!!! maybe do something else here?  like an action ?
+		}
+		return $sum;
 	}
 
 
@@ -656,7 +654,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return int
 	 */
 	public function total_tickets_available_at_this_datetime() {
-		return min( array( $this->tickets_remaining(), $this->spaces_remaining() ) );
+		return $this->spaces_remaining( true );
 	}
 
 
