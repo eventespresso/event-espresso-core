@@ -2135,6 +2135,11 @@ class EE_Template_Config extends EE_Config_Base {
 	*/
 	public $current_espresso_theme;
 
+	/**
+	* @var EE_Ticket_Selector_Config $EED_Ticket_Selector
+	*/
+	public $EED_Ticket_Selector;
+
 
 
 	/**
