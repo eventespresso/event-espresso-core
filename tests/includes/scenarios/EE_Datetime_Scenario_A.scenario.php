@@ -30,9 +30,11 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 		// array of Datetime IDs => available ticket quantities
 		$this->_expected_values = array(
 			'sum_tickets_currently_available_at_datetime' => 0,
-			1 => 0,
-			2 => 0,
-			3 => 0,
+			'datetime_id_to_tickets_map' => array(
+				1 => 0,
+				2 => 0,
+				3 => 0,
+			),
 		);
 	}
 
