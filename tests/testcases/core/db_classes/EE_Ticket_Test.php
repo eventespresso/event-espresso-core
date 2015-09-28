@@ -119,3 +119,4 @@ class EE_Ticket_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Ticket_Test.php
+// Location: tests/testcases/core/db_classes/EE_Ticket_Test.php
