@@ -585,11 +585,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	 *
 	 * @access 	public
-	 * @param    bool $consider_tickets
-	 *                                    Whether to consider tickets remaining when determining if there are any spaces left
-	 *                                    Because if all tickets attached to this datetime have no spaces left, then this datetime IS effectively sold out.
-	 *                                    However, there are cases where we just want to know the spaces remaining for this particular datetime,
-	 *                                    hence the flag.
+	 * @param    bool $consider_tickets 	Whether to consider tickets remaining when determining if there are any spaces left
+	 *                                                           		Because if all tickets attached to this datetime have no spaces left,
+	 * 																	then this datetime IS effectively sold out.
+	 *                                                          		However, there are cases where we just want to know
+	 * 																	the spaces remaining for this particular datetime, hence the flag.
 	 * @return 	int
 	 */
 	public function spaces_remaining( $consider_tickets = FALSE ) {
