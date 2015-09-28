@@ -49,7 +49,7 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * This contains the data returned by get_object().  Typically this is somethign that test cases need for
+	 * This contains the data returned by get_object().  Typically this is something that test cases need for
 	 * setting up a test.
 	 * @var mixed
 	 */
@@ -62,9 +62,10 @@ abstract class EE_Test_Scenario {
 	protected $_eeTest;
 
 
+
 	/**
 	 * Instantiates the scenario class and sets up basic properties.
-	 *
+	 * @param \EE_UnitTestCase $eeTest
 	 */
 	public function __construct( EE_UnitTestCase $eeTest ) {
 		//verify properties set
@@ -138,8 +139,8 @@ abstract class EE_Test_Scenario {
 		if ( ! empty( $this->_scenario_object) ) {
 			return $this->_scenario_object;
 		}
-
 		$this->_scenario_object = $this->_get_scenario_object();
+		return $this->_scenario_object;
 	}
 
 
