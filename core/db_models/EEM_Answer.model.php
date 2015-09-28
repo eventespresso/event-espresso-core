@@ -130,7 +130,7 @@ class EEM_Answer extends EEM_Base {
                     $question_id = $question_system_id;
                     $question_system_id = EEM_Question::instance()->get_var( array( array( 'QST_ID' => $question_system_id ) ), 'QST_system' );
                 } else {
-                    $question_id = EEM_Question::instance()->get_var( array( array( 'QST_system' => $question_system_id ) ), 'QST_ID' );
+                    $question_id = intval( EEM_Question::instance()->get_var( array( array( 'QST_system' => $question_system_id ) ), 'QST_ID' ) );
                 }
 		//only bother checking if the registration has an attendee
 		if( $registration->attendee() instanceof EE_Attendee ) {
