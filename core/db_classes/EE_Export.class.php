@@ -500,7 +500,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					}else{
 						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer_row[ 'Answer.QST_ID' ] );
 					}
-					$reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display( EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
+                                        if( isset( $answer_row[ 'Question.QST_type'] ) && $answer_row[ 'Question.QST_type' ] == EEM_Question::QST_type_state ) {
+                                            $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID( $answer_row[ 'Answer.ANS_value' ] );
+                                        } else {
+                                            $reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display( EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
+                                        }
 				}
 				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $reg_row );
 			}
