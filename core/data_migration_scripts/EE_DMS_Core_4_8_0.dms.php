@@ -90,6 +90,8 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 * @return bool
 	 */
 	public function schema_changes_before_migration() {
+		$now_in_mysql = current_time( 'mysql', true );
+
 		$table_name='esp_answer';
 		$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 					REG_ID INT UNSIGNED NOT NULL,
@@ -241,8 +243,9 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				LIN_quantity INT(10) DEFAULT NULL,
 				OBJ_ID INT(11) DEFAULT NULL,
 				OBJ_type VARCHAR(45)DEFAULT NULL,
+				LIN_timestamp DATETIME NOT NULL DEFAULT '$now_in_mysql',
 				PRIMARY KEY  (LIN_ID)";
-		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB' );
+		$this->_table_is_changed_in_this_version($table_name,$sql, 'ENGINE=InnoDB' );
 
 		$table_name = 'esp_log';
 		$sql = "LOG_ID INT(11) NOT NULL AUTO_INCREMENT,
@@ -601,6 +604,9 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		$script_4_6_defaults->add_default_admin_only_payments();
 		$script_4_6_defaults->insert_default_currencies();
 
+		$this->verify_new_countries();
+		$this->verify_new_currencies();
+
 		return true;
 	}
 	/**
@@ -617,7 +623,99 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	public function migration_page_hooks(){
 
 	}
+	
+	/**
+	 * verifies each of the new countries exists that somehow we missed in 4.1
+	 */
+	public function verify_new_countries() {
+		//a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
+		//how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
+		//currency symbols: http://www.xe.com/symbols.php
+		//CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active
+		//('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
+		$newer_countries = array(
+			array( 'AX', 'ALA', 0, 'Alan Islands', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+358', 1, 0 ),
+			array( 'BL', 'BLM', 0, 'Saint Barthelemy', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0 ),
+			array( 'CW', 'CUW', 0, 'Curacao', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+599', 1, 0 ),
+			array( 'GG', 'GGY', 0, 'Guernsey', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+44', 0, 0 ),
+			array( 'IM', 'IMN', 0, 'Isle of Man', 'GBP', 'Pound', 'Pounds', '£', 1, 2,  '+44', 0, 0  ),
+			array( 'JE', 'JEY', 0, 'Jersey', 'GBP', 'Pound', 'Pounds', '£', 1, 2, '+44', 0, 0 ),
+			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0 ),
+			array( 'MN', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 0 ),
+			array( 'RS', 'SRB', 0, 'Serbia', 'RSD', 'Dinar', 'Dinars', '', 0, 2, '+941', 1, 0 ),
+			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '£', 1, 2, '+211', 0, 0 ),
+			array( 'SX', 'SXM', 0, 'Sint Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 0 ),
+			array( 'XK', 'XKX', 0, 'Kosovo', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+381', 0, 0 ),
+			array( 'YT', 'MYT', 0, 'Mayotte', 'EUR', 'Euro', 'Euros', '€', 0, 2, '+262', 1, 0 ),
+		);
+		global $wpdb;
+		$country_table = $wpdb->prefix."esp_country";
+		$country_format = array(
+							"CNT_ISO" => '%s',
+							"CNT_ISO3" => '%s',
+							"RGN_ID" => '%d',
+							"CNT_name" => '%s',
+							"CNT_cur_code" => '%s',
+							"CNT_cur_single" => '%s',
+							"CNT_cur_plural" => '%s',
+							"CNT_cur_sign" => '%s',
+							"CNT_cur_sign_b4" => '%d',
+							"CNT_cur_dec_plc" => '%d',
+							"CNT_tel_code" => '%s',
+							"CNT_is_EU" => '%d',
+							"CNT_active" => '%d',
+						);
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
+			foreach( $newer_countries as $country ) {
+				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
+				$countries = $wpdb->get_var($SQL);
+				if ( ! $countries ) {
 
+					$wpdb->insert( $country_table,
+							array_combine( array_keys( $country_format), $country ),
+							$country_format
+							);
+				}
+			}
+		}
+	}
+
+	/**
+	 * verifies each of the new currencies exists that somehow we missed in 4.6
+	 */
+	public function verify_new_currencies() {
+		//a list of countries (and specifically some which were missed in another list):https://gist.github.com/adhipg/1600028
+		//how many decimal places? https://en.wikipedia.org/wiki/ISO_4217
+		//currency symbols: http://www.xe.com/symbols.php
+		// CUR_code, CUR_single, CUR_plural, CUR_sign, CUR_dec_plc, CUR_active
+		//( 'EUR',  'Euro',  'Euros',  '€',  2,1),
+		$newer_currencies = array(
+			array( 'RSD', 'Dinar', 'Dinars', '', 3, 1 ),
+		);
+		global $wpdb;
+		$currency_table = $wpdb->prefix."esp_currency";
+		$currency_format = array(
+							"CUR_code" => '%s',
+							"CUR_single" => '%s',
+							"CUR_plural" => '%s',
+							"CUR_sign" => '%s',
+							"CUR_dec_plc" => '%d',
+							"CUR_active" => '%d',
+						);
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
+			foreach( $newer_currencies as $currency ) {
+				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
+				$countries = $wpdb->get_var($SQL);
+				if ( ! $countries ) {
+
+					$wpdb->insert( $currency_table,
+							array_combine( array_keys( $currency_format), $currency ),
+							$currency_format
+							);
+				}
+			}
+		}
+        }
 	/**
 	 * addresses https://events.codebasehq.com/projects/event-espresso/tickets/8731
 	 * which should just be a temporary issue for folks who installed 4.8.0-4.8.5;

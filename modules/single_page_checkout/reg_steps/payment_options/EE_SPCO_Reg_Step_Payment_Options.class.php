@@ -260,12 +260,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			);
 			$filtered_line_item_tree = $line_item_filter_processor->process();
 			$this->checkout->amount_owing = $filtered_line_item_tree->total();
+
 			if ( $this->checkout->amount_owing > 0 ) {
 				EEH_Autoloader::register_line_item_display_autoloaders();
 				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
 				$subsections[ 'payment_options' ] = $this->_display_payment_options(
 					$this->line_item_display->display_line_item( $filtered_line_item_tree )
 				);
+				$this->_apply_transaction_payments_to_amount_owing();
 			}
 			$no_payment_required = false;
 		} else {
@@ -524,6 +526,25 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 *    _apply_transaction_payments_to_amount_owing
+	 *
+	 * @access    protected
+	 * @return 	void
+	 */
+	protected function _apply_transaction_payments_to_amount_owing() {
+		$payments = $this->checkout->transaction->approved_payments();
+		if ( ! empty( $payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( $payment instanceof EE_Payment ) {
+					$this->checkout->amount_owing -= $payment->amount();
+				}
+			}
+		}
 	}
 
 
@@ -1949,6 +1970,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'TXN_reg_steps' 		=> $this->checkout->transaction->reg_steps(),
 				'STS_ID'        			=> $this->checkout->transaction->status_ID(),
 				'PMD_ID'        			=> $this->checkout->transaction->payment_method_ID(),
+				'payment_amount' => $this->checkout->amount_owing,
 				'return_url' 				=> $return_url,
 				'cancel_url' 				=> add_query_arg( array( 'ee_cancel_payment' => true ), $return_url ),
 				'notify_url' 				=> EE_Config::instance()->core->txn_page_url(

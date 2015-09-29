@@ -798,7 +798,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
 				// add html for checkbox input and label
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee()->full_name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' ) . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
 				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-rght">' . $registration->pretty_paid() . '</td>';
@@ -1012,9 +1012,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				if ( ! empty( $REG_IDs ) ) {
 					$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
 					// now process status changes for the same registrations
-					if ( isset( $this->_req_data['txn_reg_status_change'] ) ) {
-						$this->_process_registration_status_change( $transaction, array( $REG_IDs ) );
-					}
+					$this->_process_registration_status_change( $transaction, $REG_IDs );
 				}
 				$this->_process_payment_notification( $payment );
 				//prepare to render page
@@ -1393,7 +1391,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			sanitize_text_field( $this->_req_data[ 'txn_reg_status_change' ][ 'reg_status' ] ),
 			array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) )
 		);
-//		$transaction_processor->finalize( $transaction, TRUE, FALSE);
 	}
 
 
