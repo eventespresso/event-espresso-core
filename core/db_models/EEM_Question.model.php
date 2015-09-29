@@ -159,6 +159,58 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 
 		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
 	}
+        
+        /**
+         * Returns an array of all the QST_system values that can be allowed in the system question group
+         * identified by $system_question_group_id
+         * @param string $system_question_group_id QSG_system
+         * @return array of system question names (QST_system)
+         */
+        public function system_questions_allowed_in_system_question_group( $system_question_group_id ) {
+            $question_system_ids = array();
+            switch( $system_question_group_id ) {
+                case EEM_Question_Group::system_personal:
+                    $question_system_ids = array(
+                        EEM_Attendee::system_question_fname, 
+                        EEM_Attendee::system_question_lname,
+                        EEM_Attendee::system_question_email,
+                        EEM_Attendee::system_question_phone
+                    );
+                    break;
+                case EEM_Question_Group::system_address:
+                    $question_system_ids = array( EEM_Attendee::system_question_address,
+                        EEM_Attendee::system_question_address2,
+                        EEM_Attendee::system_question_city,
+                        EEM_Attendee::system_question_state,
+                        EEM_Attendee::system_question_country,
+                        EEM_Attendee::system_question_zip,
+                        EEM_Attendee::system_question_phone
+                    );
+                    break;
+            }
+            return apply_filters( 'FHEE__EEM_Question__system_questions_allowed_in_system_question_group__return', $question_system_ids, $system_question_group_id );
+        }
+        
+        /**
+         * Returns an array of all the QST_system values that are required in the system question group
+         * identified by $system_question_group_id
+         * @param string $system_question_group_id QSG_system
+         * @return array of system question names (QST_system)
+         */
+        public function system_questions_required_in_system_question_group( $system_question_group_id ) {
+            $question_system_ids = null;
+            switch( $system_question_group_id ) {
+                case EEM_Question_Group::system_personal:
+                    $question_system_ids =  array(
+                            EEM_Attendee::system_question_fname,
+                            EEM_Attendee::system_question_email,
+                        );
+                    break;
+                default:
+                    $question_system_ids = array();
+            }
+            return apply_filters( 'FHEE__EEM_Question__system_questions_required_in_system_question_group', $question_system_ids, $system_question_group_id );
+        }
 
 
 

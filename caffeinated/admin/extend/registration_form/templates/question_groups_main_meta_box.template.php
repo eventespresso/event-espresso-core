@@ -127,31 +127,11 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 							$checked = isset( $question_group_questions[ $question_ID ] ) ? ' checked="checked"' : '';
 							// disable questions from the personal information question group
                                                         //is it required int he current question group? if so don't allow admins to remove it
-                                                        $disabled = in_array( $question->system_ID(), EEM_Question_Group::instance()->system_questions_required_in_system_question_group( $question_group->system_group() ) ) ? 'disabled="disabled"' : '';
-							if (
-                                                                    ! in _array( EEM_Question_Group::instance()->system_questions_allowed_in_system_question_group( $QSG_system ) )
-                                                                
-                                                                
-                                                                //////
-//								(
-//                                                                        $QSG_system === EEM_Question_Group::system_personal
-//									&& $question->is_system_question()
-//									&& (
-//										empty( $checked )
-//										&& $question->system_ID() != EEM_Attendee::system_question_lname
-//										&& $question->system_ID() != EEM_Attendee::system_question_phone
-//									)
-//								)
-//								||
-//								(
-//									$QSG_system == EEM_Question_Group::system_address
-//									&& in_array( $question->system_ID(), array( EEM_Attendee::system_question_fname, EEM_Attendee::system_question_lname, EEM_Attendee::system_question_email ))
-//								)
-//								||
-//								(
-//									! $QSG_system
-//									&& $question->is_system_question()
-//								) 
+                                                        $disabled = in_array( $question->system_ID(), EEM_Question::instance()->system_questions_required_in_system_question_group( $QSG_system ) ) ? 'disabled="disabled"' : '';
+							//limit where system questions can appear
+                                                        if (
+                                                                $question->system_ID() &&
+                                                                    ! in_array( $question->system_ID(), EEM_Question::instance()->system_questions_allowed_in_system_question_group( $QSG_system ) )
 								) {
 								continue; //skip over system question not assigned to this group except for the address system group cause we want the address questions to display even if they aren't selected (but still not show the personal system questions).  The third condition checks if we're displaying a non system question group and the question is a system question, then we skip because for non-system question groups we only want to show non-system questions.
 							}
