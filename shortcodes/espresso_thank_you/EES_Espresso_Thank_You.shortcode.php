@@ -227,8 +227,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
+		// remove site_url() from thank you page URL
+		$thank_you_page_URL = substr( EE_Registry::instance()->CFG->core->thank_you_page_url(), strlen( site_url() ) );
+		// remove other non-essential details from URL
+		$thank_you_page_URL = trim( parse_url( $thank_you_page_URL, PHP_URL_PATH ), '/' );
 		// ensure this shortcode doesn't trigger on anything BUT the thank you page
-		if ( isset( $WP->request ) &&  $WP->request != trim( parse_url( EE_Registry::instance()->CFG->core->thank_you_page_url(), PHP_URL_PATH ), '/' ) ) {
+		if ( isset( $WP->request ) && trim( $WP->request, '/' ) != $thank_you_page_URL ) {
 			return;
 		} else if ( isset( $WP->query_vars['page_id'] ) && $WP->query_vars['page_id'] != EE_Registry::instance()->CFG->core->thank_you_page_id ) {
 			return;
