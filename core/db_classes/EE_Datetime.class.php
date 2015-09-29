@@ -622,13 +622,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 					if ( $qty === INF ) {
 						return INF;
 					}
+					// no negative ticket quantities plz
 					if ( $qty > 0 ) {
-						$sum += min( ( $qty - $ticket->sold() ), 0 );
+						$sum += $qty;
 					}
 				}
 			}
-		} else {
-			// NO TICKETS!!! maybe do something else here?  like an action ?
 		}
 		return $sum;
 	}
