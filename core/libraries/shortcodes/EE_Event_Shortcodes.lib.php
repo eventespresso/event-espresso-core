@@ -70,7 +70,8 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_TOTAL_SPOTS_TAKEN]' => __( 'This shortcode will parse to the output the total approved registrations for this event', 'event_espresso' ),
 			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event if you have it set via custom field in your event, otherwise it will use the Facebook URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_facebook</code> and the value as your facebook url.', 'event_espresso'),
 			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url', 'event_espresso'),
-			'[EVENT_META_*]' => __('This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode.', 'event_espresso')
+			'[EVENT_META_*]' => __('This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode.', 'event_espresso'),
+			'[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' => __( 'This parses to the url for the registration list table filtered by registrations for this event.', 'event_espresso' ),
 			);
 	}
 
@@ -168,6 +169,18 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				return EEM_Registration::instance()->count( array( array( 'EVT_ID' => $this->_event->ID(), 'STS_ID' => EEM_Registration::status_id_approved ) ), 'REG_ID', true );
 				break;
 
+			case '[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' :
+				EE_Registry::instance()->load_helper( 'URL' );
+				return EEH_URL::add_query_args_and_nonce(
+					array(
+						'event_id' => $this->_event->ID(),
+						'page' => 'espresso_registrations',
+						'action' => 'default'
+					),
+					admin_url( 'admin.php' ),
+					true
+				);
+				break;
 		}
 
 		if ( strpos( $shortcode, '[EVENT_META_*' ) !== false ) {
