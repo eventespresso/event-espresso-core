@@ -355,7 +355,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => $tkt['TKT_start_date'],
 				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
+				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : $tkt['TKT_qty'],
 				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
 				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
@@ -364,7 +364,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
 				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0,
 				'TKT_price' => $ticket_price
-				);
+			);
 
 
 
@@ -381,74 +381,84 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			if ( !empty( $TKT_values['TKT_ID'] ) ) {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
+				if ( $TKT instanceof EE_Ticket ) {
+					//set ticket formats
+					$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
+					$TKT->set_date_format( $this->_date_format_strings['date'] );
+					$TKT->set_time_format( $this->_date_format_strings['time'] );
 
-				//set ticket formats
-				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
-				$TKT->set_date_format( $this->_date_format_strings['date'] );
-				$TKT->set_time_format( $this->_date_format_strings['time'] );
+					//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
+					$orig_price = $TKT->price();
+					$create_new_TKT = $ticket_sold && $ticket_price != $orig_price && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
 
-				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$orig_price = $TKT->price();
-				$create_new_TKT = $ticket_sold && $ticket_price != $orig_price && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
-
-				//set new values
-				foreach ( $TKT_values as $field => $value ) {
-					$TKT->set( $field, $value );
-				}
-
-				//make sure price is set if it hasn't been already
-				$TKT->set( 'TKT_price', $ticket_price );
-
-				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket.
-				if ( $create_new_TKT ) {
-					//@TODO need to move this logic into its own method that just receives the ticket object (and other necessary info)
-					$new_tkt = clone($TKT);
-
-					//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
-					$dtts_on_existing = $TKT->get_many_related('Datetime');
-
-					//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
-
-					//if existing $TKT has sold amount, then we need to adjust the qty for the new TKT to = the remaining available.
-					if ( $TKT->get('TKT_sold') > 0 ) {
-						$new_qty = $TKT->get('TKT_qty') - $TKT->get('TKT_sold');
-						$new_tkt->set_qty($new_qty);
+					//set new values
+					foreach ( $TKT_values as $field => $value ) {
+						if ( $field == 'TKT_qty' ) {
+							$TKT->set_qty( $value );
+						} else {
+							$TKT->set( $field, $value );
+						}
 					}
 
+					//make sure price is set if it hasn't been already
+					$TKT->set( 'TKT_price', $ticket_price );
 
-					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
-					$new_tkt->set( 'TKT_ID', 0 );
-					$new_tkt->set( 'TKT_deleted', 0 );
-					$new_tkt->set( 'TKT_price', $ticket_price );
-					$new_tkt->set( 'TKT_sold', 0 );
+					//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket.
+					if ( $create_new_TKT ) {
+						//@TODO need to move this logic into its own method that just receives the ticket object (and other necessary info)
+						$new_tkt = clone($TKT);
 
-					//now we update the prices just for this ticket
-					$new_tkt = $this->_add_prices_to_ticket( $price_rows, $new_tkt, TRUE );
+						//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
+						$dtts_on_existing = $TKT->get_many_related('Datetime');
 
-					//and we update the base price
-					$new_tkt =  $this->_add_prices_to_ticket( array(), $new_tkt, TRUE, $base_price, $base_price_id );
+						//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
 
-					foreach ( $dtts_on_existing as $adddtt ) {
-						$new_tkt->_add_relation_to( $adddtt, 'Datetime' );
+						//if existing $TKT has sold amount, then we need to adjust the qty for the new TKT to = the remaining available.
+						if ( $TKT->get('TKT_sold') > 0 ) {
+							$new_qty = $TKT->get('TKT_qty') - $TKT->get('TKT_sold');
+							$new_tkt->set_qty($new_qty);
+						}
+
+
+						//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
+						$new_tkt->set( 'TKT_ID', 0 );
+						$new_tkt->set( 'TKT_deleted', 0 );
+						$new_tkt->set( 'TKT_price', $ticket_price );
+						$new_tkt->set( 'TKT_sold', 0 );
+
+						//now we update the prices just for this ticket
+						$new_tkt = $this->_add_prices_to_ticket( $price_rows, $new_tkt, TRUE );
+
+						//and we update the base price
+						$new_tkt =  $this->_add_prices_to_ticket( array(), $new_tkt, TRUE, $base_price, $base_price_id );
+
+						foreach ( $dtts_on_existing as $adddtt ) {
+							$new_tkt->_add_relation_to( $adddtt, 'Datetime' );
+						}
+
 					}
-
 				}
 
 			} else {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
 				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values, $timezone ), FALSE, FALSE );
+				if ( $TKT instanceof EE_Ticket ) {
+					//reset values so that new formats are correctly considered when converting date and time strings
+					$TKT->set_date_format( $this->_date_format_strings['date'] );
+					$TKT->set_time_format( $this->_date_format_strings['time'] );
 
-				//reset values so that new formats are correctly considered when converting date and time strings
-				$TKT->set_date_format( $this->_date_format_strings['date'] );
-				$TKT->set_time_format( $this->_date_format_strings['time'] );
+					//reset values
+					foreach ( $TKT_values as $field => $value ) {
+						if ( $field == 'TKT_qty' ) {
+							$TKT->set_qty( $value );
+						} else {
+							$TKT->set( $field, $value );
+						}
+					}
 
-				//reset values
-				foreach ( $TKT_values as $field => $value ) {
-					$TKT->set( $field, $value );
+					$update_prices = TRUE;
 				}
-
-				$update_prices = TRUE;
 			}
 
 			$TKT->save(); //make sure any current values have been saved.

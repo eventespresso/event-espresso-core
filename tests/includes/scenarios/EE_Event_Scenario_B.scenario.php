@@ -5,12 +5,17 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 /**
  * This scenario creates an event that has:
  * - Two Datetimes
- *      - D1 - reg limit 15
- *      - D2 - reg limit 17
+ *      - D1 - reg limit 15		( TA, TB )		<< can only sell 15 max : Tickets A & B sold out after 15 sales
+ *      - D2 - reg limit 17 	( TA, TC ) 	<< can only sell 17 max : Tickets A & C sold out after 17 sales
  * - Three Tickets
- *      - TA - qty 23 (D1, D2)
- *      - TB - qty 5 (D1)
- *      - TC - qty 15 (D2)
+ *      - TA - qty 23 	( D1, D2 )    << can only sell 15 max due to D1 reg limit ( which sells out Tickets A & B )
+ *      - TB - qty 5 	( D1 )    		<< can only sell 5 max due to TB qty
+ *      - TC - qty 15 	( D2 )    		<< can only sell 15 max due to TC qty
+ *
+ *  MAX SELLOUT:
+ *  	- 5 TB tickets for D1 ( TB sold out )
+ * 		- 10 TA tickets for D1 ( D1 sold out = TA sold out )
+ * 		- 7 TC tickets for D2 ( since 10 TA tickets have already been sold )
  *
  * @package    Event Espresso
  * @subpackage tests/scenarios
@@ -34,11 +39,13 @@ class EE_Event_Scenario_B extends EE_Test_Scenario {
 
 	protected function _set_up_scenario(){
 		$build_artifact = array(
+
 			'Event' => array(
 				0 => array(
 					'fields' => array( 'EVT_name' => 'Test Scenario EVT B' )
 				)
 			),
+
 			'Datetime' => array(
 				0 => array(
 					'fields' => array(
@@ -59,6 +66,7 @@ class EE_Event_Scenario_B extends EE_Test_Scenario {
 					)
 				)
 			),
+
 			'Ticket' => array(
 				0 => array(
 					'fields' => array(

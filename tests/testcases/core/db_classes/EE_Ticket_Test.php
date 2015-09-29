@@ -52,6 +52,7 @@ class EE_Ticket_Test extends EE_UnitTestCase{
 		));
 		$this->assertTrue($t->available());
 		$t->set('TKT_sold', 10);
+		$t->save();
 		$this->assertFalse($t->available());
 	}
 
@@ -118,3 +119,4 @@ class EE_Ticket_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Ticket_Test.php
+// Location: tests/testcases/core/db_classes/EE_Ticket_Test.php

@@ -1151,7 +1151,7 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
 	 *
-	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+	 * @return int|string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
 	 *                    	     exception is triggered.
 	 */
 	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {

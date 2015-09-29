@@ -121,41 +121,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * NOT take int account the datetime's spaces available)
 	 * @param int   $DTT_ID
 	 * @param array $query_params
-	 * @param bool  $subtract_reserved whether or not reserved tickets should be factored into the calculations
-	 * @return int of tickets available. If infinite, returns INF. If sold out or NO tickets attached to datetime then 0 is returned.
+	 * @return int
 	 */
-	public function sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params = array(), $subtract_reserved = false ){
-		// let's do one query to get all the info we need
-		$tickets = $this->_get_all_wpdb_results(
-			// make sure we implement the DTT_ID, but still allow other incoming query params to be used
-			array_merge(
-				$query_params,
-				array( array( 'Datetime.DTT_ID' => $DTT_ID ) )
-			),
-			ARRAY_A,
-			array(
-				//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
-				'remaining' => array( 'Ticket.TKT_qty-Ticket.TKT_sold','%d' ),
-				'initial_qty' 	=> array( 'Ticket.TKT_qty','%d' ),
-				'reserved' 	=> array( 'Ticket.TKT_reserved','%d' ),
-			)
-		);
-		$sum = 0;
-		if ( ! empty( $tickets ) ) {
-			foreach ( $tickets as $ticket ) {
-				// are there unlimited tickets available ?
-				if ( intval( $ticket[ 'initial_qty' ] ) == EE_INF_IN_DB ) {
-					return INF;
-				}
-				// if not, ya gotta ADD IT UP... ADD IT UP...
-				$sum += intval( $ticket[ 'remaining' ] );
-				// but subtract reserved tickets if taking that into consideration
-				if ( $subtract_reserved ) {
-					$sum -= intval( $ticket[ 'reserved' ] );
-				}
-			}
-		}
-		return max( $sum, 0 );
+	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
+		return EEM_Datetime::instance()->sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params );
 	}
 
 
@@ -171,6 +140,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			$ticket->update_tickets_sold();
 		}
 	}
+
+
 
 }
 //end EEM_Ticket model

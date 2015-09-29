@@ -18,7 +18,7 @@
 
 
 /**
- * Event Question Group Model
+ * EE_Event
  *
  * @package 			Event Espresso
  * @subpackage 	includes/models/
@@ -70,6 +70,29 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 	/**
+	 * Gets all the datetimes for this event
+	 *
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes( $query_params = array() ) {
+		return $this->get_many_related( 'Datetime', $query_params );
+	}
+
+
+
+	/**
+	 * Gets all the datetimes for this event, ordered by DTT_EVT_start in ascending order
+	 *
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes_in_chronological_order() {
+		return $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+	}
+
+
+
+	/**
 	 * Gets all the datetimes for this event, ordered by the DTT_order on the datetime.
 	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
 	 * after running our query, so that this timezone isn't set for EVERY query
@@ -78,7 +101,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param boolean $show_deleted whether or not to include deleted events
 	 * @return EE_Datetime[]
 	 */
-	public function datetimes_ordered( $show_expired = TRUE, $show_deleted = FALSE, $limit = NULL ) {
+	public function datetimes_ordered( $show_expired = true, $show_deleted = false, $limit = null ) {
 		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted, $limit );
 	}
 
@@ -555,7 +578,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$upcoming = FALSE;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is expired then we continue cause one of the other datetimes might be upcoming.
@@ -586,7 +609,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$active = FALSE;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is expired then we continue cause one of the other datetimes might be active.
@@ -617,7 +640,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$expired = FALSE;
 		//first let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is upcoming or active then we return false.
@@ -658,7 +681,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$spaces_remaining = 0;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				$dtt_spaces_remaining = $datetime->spaces_remaining( TRUE );
@@ -767,7 +790,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				if ( $ticket->is_remaining() ) {
 					$remaining = $ticket->remaining();
 				} else {
-					$spaces_available += $ticket->get( 'TKT_sold' );
+					$spaces_available += $ticket->sold();
 					//and we don't cache this ticket to our list because its sold out.
 					continue;
 				}
@@ -922,7 +945,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			return FALSE;
 		}
 		//first get all datetimes ordered by date
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		//next loop through $datetimes and setup status array
 		$status_array = array();
 		foreach ( $datetimes as $datetime ) {
@@ -981,9 +1004,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		$status = '<span class="ee-status event-active-status-' . $active_status . '">' . EEH_Template::pretty_status( $active_status, FALSE, 'sentence' ) . '</span>';
 		if ( $echo ) {
 			echo $status;
-		} else {
-			return $status;
+			return '';
 		}
+		return $status;
 	}
 
 
@@ -996,9 +1019,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		if ( !$this->ID() ) {
 			return 0;
 		}
-		$datetimes = $this->get_many_related( 'Datetime' );
+		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
-			$tkt_sold += $datetime->get( 'DTT_sold' );
+			if ( $datetime instanceof EE_Datetime ) {
+				$tkt_sold += $datetime->sold();
+			}
 		}
 		return $tkt_sold;
 	}
@@ -1141,7 +1166,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * Implementation for EEI_Admin_Links interface method.
 	 * @see EEI_Admin_Links for comments
-	 * @return return string
+	 * @return string
 	 */
 	public function get_admin_edit_link() {
 		EE_Registry::instance()->load_helper('URL');
