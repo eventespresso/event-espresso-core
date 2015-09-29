@@ -355,7 +355,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => $tkt['TKT_start_date'],
 				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] == '' ? INF : $tkt['TKT_qty'],
+				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : $tkt['TKT_qty'],
 				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
 				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
