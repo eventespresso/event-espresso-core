@@ -730,18 +730,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function real_quantity_on_ticket( $context = 'reg_limit' ) {
 		$raw = $this->get_raw( 'TKT_qty' );
+		if ( $raw === 0 ) {
+			return $raw;
+		}
 		// initialize with no restrictions
 		$qty = INF;
 		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
-				// adjust qty based on reg limit and sales for ALL datetimes
-				$qty = min( $qty, $datetime->reg_limit() - $datetime->sold() );
+				// adjust qty based on reg limit for ALL datetimes
+				$qty = min( $qty, $datetime->reg_limit() );
 				$qty = min( $qty, $raw );
 				// if we want the actual saleable amount, then we need to consider ticket sales
 				if ( $context == 'saleable' ) {
-					// adjust qty based on tickets sold
-					$qty = max( $qty - $this->sold(), 0 );
+					$qty = max( $qty - $datetime->sold(), 0 );
 					$qty = ! $datetime->sold_out() ? $qty : 0;
 				}
 			}
