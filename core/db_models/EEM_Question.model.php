@@ -166,7 +166,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
          * @param string $system_question_group_id QSG_system
          * @return array of system question names (QST_system)
          */
-        public function system_questions_allowed_in_system_question_group( $system_question_group_id ) {
+        public function allowed_system_questions_in_system_question_group( $system_question_group_id ) {
             $question_system_ids = array();
             switch( $system_question_group_id ) {
                 case EEM_Question_Group::system_personal:
@@ -197,7 +197,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
          * @param string $system_question_group_id QSG_system
          * @return array of system question names (QST_system)
          */
-        public function system_questions_required_in_system_question_group( $system_question_group_id ) {
+        public function required_system_questions_in_system_question_group( $system_question_group_id ) {
             $question_system_ids = null;
             switch( $system_question_group_id ) {
                 case EEM_Question_Group::system_personal:
