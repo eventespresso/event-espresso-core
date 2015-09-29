@@ -610,7 +610,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) ) {
 			if ( $event->status() !== $orig_status && $orig_status !== EEM_Event::sold_out  ) {
 				EE_Error::add_attention( sprintf(
-					__( 'Please note that the Event Status has automaticallly been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You <em>can</em> change the status back to something else before updating if you wish.', 'event_espresso' ),
+					__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
 					EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' )
 				));
 			}
@@ -1002,14 +1002,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => $tkt['TKT_start_date'],
 				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => empty( $tkt['TKT_qty'] ) ? INF : $tkt['TKT_qty'],
+				'TKT_qty' => $tkt[ 'TKT_qty' ] == '' ? INF : $tkt['TKT_qty'],
 				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
 				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
 				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : $row,
 				'TKT_price' => $ticket_price
-				);
+			);
 
 
 
@@ -1028,61 +1028,61 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 			if ( !empty( $tkt['TKT_ID'] ) ) {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $evtobj->get_timezone() ) )->get_one_by_ID( $tkt['TKT_ID'] );
-
-
-				$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
-
-				//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
-				$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price') && !$TKT->get('TKT_deleted') ? TRUE : FALSE;
-
-				$TKT->set_date_format( $incoming_date_formats[0] );
-				$TKT->set_time_format( $incoming_date_formats[1] );
-
-				//set new values
-				foreach ( $TKT_values as $field => $value ) {
-					$TKT->set( $field, $value );
-				}
-
-				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket.
-				if ( $create_new_TKT ) {
-					//archive the old ticket first
-					$TKT->set('TKT_deleted', 1);
-					$TKT->save();
-
-					//make sure this ticket is still recorded in our saved_tkts so we don't run it through the regular trash routine.
-					$saved_tickets[$TKT->ID()] = $TKT;
-
-
-					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
-					$TKT = clone $TKT;
-					$TKT->set( 'TKT_ID', 0 );
-					$TKT->set( 'TKT_deleted', 0 );
+				if ( $TKT instanceof EE_Ticket ) {
+					$ticket_sold = $TKT->count_related( 'Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
+					//let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
+					$create_new_TKT = $ticket_sold && $ticket_price != $TKT->get( 'TKT_price' ) && ! $TKT->get( 'TKT_deleted' ) ? true : false;
+					$TKT->set_date_format( $incoming_date_formats[ 0 ] );
+					$TKT->set_time_format( $incoming_date_formats[ 1 ] );
+					//set new values
+					foreach ( $TKT_values as $field => $value ) {
+						if ( $field == 'TKT_qty' ) {
+							$TKT->set_qty( $value );
+						} else {
+							$TKT->set( $field, $value );
+						}
+					}
+					//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket.
+					if ( $create_new_TKT ) {
+						//archive the old ticket first
+						$TKT->set( 'TKT_deleted', 1 );
+						$TKT->save();
+						//make sure this ticket is still recorded in our saved_tkts so we don't run it through the regular trash routine.
+						$saved_tickets[ $TKT->ID() ] = $TKT;
+						//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
+						$TKT = clone $TKT;
+						$TKT->set( 'TKT_ID', 0 );
+						$TKT->set( 'TKT_deleted', 0 );
+						$TKT->set( 'TKT_price', $ticket_price );
+						$TKT->set( 'TKT_sold', 0 );
+						//now we need to make sure that $new prices are created as well and attached to new ticket.
+						$update_prices = true;
+					}
+					//make sure price is set if it hasn't been already
 					$TKT->set( 'TKT_price', $ticket_price );
-					$TKT->set( 'TKT_sold', 0 );
-
-					//now we need to make sure that $new prices are created as well and attached to new ticket.
-					$update_prices = TRUE;
 				}
-
-				//make sure price is set if it hasn't been already
-				$TKT->set( 'TKT_price', $ticket_price );
 
 			} else {
 				//no TKT_id so a new TKT
 				$TKT_values['TKT_price'] = $ticket_price;
 				$TKT = EE_Registry::instance()->load_class('Ticket', array( $TKT_values ), FALSE, FALSE );
+				if ( $TKT instanceof EE_Ticket ) {
+					//need to reset values to properly account for the date formats
+					$TKT->set_date_format( $incoming_date_formats[0] );
+					$TKT->set_time_format( $incoming_date_formats[1] );
+					$TKT->set_timezone( $evtobj->get_timezone() );
 
-				//need to reset values to properly account for the date formats
-				$TKT->set_date_format( $incoming_date_formats[0] );
-				$TKT->set_time_format( $incoming_date_formats[1] );
-				$TKT->set_timezone( $evtobj->get_timezone() );
+					//set new values
+					foreach ( $TKT_values as $field => $value ) {
+						if ( $field == 'TKT_qty' ) {
+							$TKT->set_qty( $value );
+						} else {
+							$TKT->set( $field, $value );
+						}
+					}
 
-				//set new values
-				foreach ( $TKT_values as $field => $value ) {
-					$TKT->set( $field, $value );
+					$update_prices = TRUE;
 				}
-
-				$update_prices = TRUE;
 			}
 
 			//update ticket.
