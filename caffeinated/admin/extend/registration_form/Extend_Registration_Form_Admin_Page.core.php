@@ -569,7 +569,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			} else {
 				// not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
 				if (
-                                        in_array( $question->system_ID(), EEM_Question::instance()->required_system_questions_in_system_question_group( $question_group->system_group() ) )
+					in_array(
+						$question->system_ID(),
+						EEM_Question::instance()->required_system_questions_in_system_question_group( $question_group->system_group() )
+					)
 				) {
 					continue;
 				} else {
