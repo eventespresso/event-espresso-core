@@ -1535,7 +1535,7 @@ class EEH_Activation {
 			'ee_active_messengers' => true,
 			'ee_has_activated_messenger' => true,
 			'ee_flush_rewrite_rules' => true,
-			'ee_config' => true,
+			'ee_config' => false,
 			'ee_data_migration_current_db_state' => true,
 			'ee_data_migration_mapping_' => false,
 			'ee_data_migration_script_' => false,
