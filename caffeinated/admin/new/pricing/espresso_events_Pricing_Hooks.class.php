@@ -187,7 +187,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//first we need to start with datetimes cause they are the "root" items attached to events.
 		$saved_dtts = $this->_update_dtts( $evtobj, $data );
 		//next tackle the tickets (and prices?)
-		$success = $this->_update_tkts( $evtobj, $saved_dtts, $data );
+		$this->_update_tkts( $evtobj, $saved_dtts, $data );
 	}
 
 
@@ -196,11 +196,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * update event_datetimes
 	 * @param  EE_Event 	$evt_obj Event being updated
 	 * @param  array    	$data    the request data from the form
-	 * @return EE_Datetime           array of EE_Datetime ids created/updated.
+	 * @return EE_Datetime[]
 	 */
 	protected function _update_dtts( $evt_obj, $data ) {
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
-		$success = TRUE;
+		$saved_dtt_ids = array();
+		$saved_dtt_objs = array();
 
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
@@ -227,8 +228,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$DTM->set( $field, $value );
 				}
 
-				//make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
-				$saved_dtts[$DTM->ID()] = $DTM;
+				// make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.
+				// We need to do this so we dont' TRASH the parent DTT.(save the ID for both key and value to avoid duplications)
+				$saved_dtt_ids[$DTM->ID()] = $DTM->ID();
 
 			} else {
 				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
@@ -243,21 +245,23 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 			$DTM->save();
-			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
+			$DTM = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
-				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
+			if( $DTM->get_raw('DTT_EVT_start') > $DTM->get_raw('DTT_EVT_end') ) {
+				$DTM->set('DTT_EVT_end', $DTM->get('DTT_EVT_start') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
-				$DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
-				$DTT->save();
+				$DTM = EEH_DTT_Helper::date_time_add($DTM, 'DTT_EVT_end', 'days');
+				$DTM->save();
 			}
 
-			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
-			$saved_dtts[$DTT->ID()] = $DTT;
-			$saved_dtt_objs[$row] = $DTT;
+			//	now we have to make sure we add the new DTT_ID to the $saved_dtt_ids array
+			// because it is possible there was a new one created for the autosave.
+			// (save the ID for both key and value to avoid duplications)
+			$saved_dtt_ids[$DTM->ID()] = $DTM->ID();
+			$saved_dtt_objs[$row] = $DTM;
 
-			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
+			//todo if ANY of these updates fail then we want the appropriate global error message.
 		}
 
 		//now we need to REMOVE any dtts that got deleted.  Keep in mind that this process will only kick in for DTT's that don't have any DTT_sold on them. So its safe to permanently delete at this point.
@@ -265,7 +269,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$old_datetimes = $old_datetimes[0] == '' ? array() : $old_datetimes;
 
 		if ( is_array( $old_datetimes ) ) {
-			$dtts_to_delete = array_diff( $old_datetimes, array_keys($saved_dtts) );
+			$dtts_to_delete = array_diff( $old_datetimes, $saved_dtt_ids );
 			foreach ( $dtts_to_delete as $id ) {
 				$id = absint( $id );
 				if ( empty( $id ) )
@@ -279,8 +283,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$dtt_to_remove->_remove_relation_to($tkt, 'Ticket');
 				}
 
-
 				$evt_obj->_remove_relation_to( $id, 'Datetime' );
+				$dtt_to_remove->refresh_cache_of_related_objects();
+
 			}
 		}
 
@@ -300,6 +305,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @return EE_Ticket[]
 	 */
 	protected function _update_tkts( $evtobj, $saved_dtts, $data ) {
+		$new_tkt = null;
+		$new_default = null;
 		//stripslashes because WP filtered the $_POST ($data) array to add slashes
 		$data = stripslashes_deep($data);
 		$timezone = isset( $data['timezone_string'] ) ? $data['timezone_string'] : NULL;
@@ -312,7 +319,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
 			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
-			$new_default = $new_tkt = NULL;
 
 			//figure out what dtts were added to the ticket and what dtts were removed from the ticket in the session.
 
@@ -320,7 +326,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$tkt_dtt_rows = explode(',', $data['ticket_datetime_rows'][$row] );
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
-
 			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
 			//note incoming ['TKT_price'] value is already in standard notation (via js).
 			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
@@ -367,7 +372,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 
 
-
 			//if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly, which means in turn that the prices will become new prices as well.
 			if ( isset( $tkt['TKT_is_default'] ) && $tkt['TKT_is_default'] ) {
 				$TKT_values['TKT_ID'] = 0;
@@ -393,7 +397,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 					//set new values
 					foreach ( $TKT_values as $field => $value ) {
-						if ( $field == 'TKT_qty' ) {
+						if ( $field === 'TKT_qty' ) {
 							$TKT->set_qty( $value );
 						} else {
 							$TKT->set( $field, $value );
@@ -410,16 +414,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 						//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
 						$dtts_on_existing = $TKT->get_many_related('Datetime');
-
+						foreach ( $dtts_on_existing as $adddtt ) {
+							$new_tkt->_add_relation_to( $adddtt, 'Datetime' );
+						}
 						//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
 
 						//if existing $TKT has sold amount, then we need to adjust the qty for the new TKT to = the remaining available.
 						if ( $TKT->get('TKT_sold') > 0 ) {
-							$new_qty = $TKT->get('TKT_qty') - $TKT->get('TKT_sold');
-							$new_tkt->set_qty($new_qty);
+							$new_qty = $TKT->qty() - $TKT->sold();
+							$new_tkt->set_qty( $new_qty );
 						}
-
-
 						//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
 						$new_tkt->set( 'TKT_ID', 0 );
 						$new_tkt->set( 'TKT_deleted', 0 );
@@ -431,10 +435,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 						//and we update the base price
 						$new_tkt =  $this->_add_prices_to_ticket( array(), $new_tkt, TRUE, $base_price, $base_price_id );
-
-						foreach ( $dtts_on_existing as $adddtt ) {
-							$new_tkt->_add_relation_to( $adddtt, 'Datetime' );
-						}
 
 					}
 				}
@@ -503,46 +503,48 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//now we just have to add the ticket to all the datetimes its supposed to be with and removing the ticket from datetimes it got removed from.
 
 
-			//first let's do the add_relation_to()
-			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
-
-			foreach ( $dtts_added as $dttrow ) {
-				$dttrow = (int) $dttrow;
-				$TKT->_add_relation_to($saved_dtts[$dttrow], 'Datetime');
-
-				//now wait a minute.  Does this tkt have any sold?  Cause if it does then we need to add that to the DTT sold because this DTT is getting added.
-				if ( $TKT->get('TKT_sold') > 0 ) {
-					$saved_dtts[$dttrow]->increase_sold($TKT->get('TKT_sold') );
-					$saved_dtts[$dttrow]->save();
+			//first let's add datetimes
+			if ( ! empty( $dtts_added ) && is_array( $dtts_added ) ) {
+				foreach ( $dtts_added as $dttrow ) {
+					$dttrow = (int)$dttrow;
+					if ( $saved_dtts[ $dttrow ] instanceof EE_Datetime ) {
+						$TKT->_add_relation_to( $saved_dtts[ $dttrow ], 'Datetime' );
+						// now wait a minute.  Does this tkt have any sold?
+						// Cause if it does then we need to add that to the DTT sold because this DTT is getting added.
+						if ( $TKT->get( 'TKT_sold' ) > 0 ) {
+							$saved_dtts[ $dttrow ]->increase_sold( $TKT->sold() );
+							$saved_dtts[ $dttrow ]->save();
+						}
+						//if we have a new_tkt... let's add to it as well
+						if ( $new_tkt instanceof EE_Ticket ) {
+							$new_tkt->_add_relation_to( $saved_dtts[ $dttrow ], 'Datetime' );
+						}
+					}
 				}
-
-				//if we have a new_tkt... let's add to it as well
-				if ( !empty( $new_tkt ) )
-					$new_tkt->_add_relation_to($saved_dtts[$dttrow], 'Datetime' );
 			}
 
 
-			$dtts_removed = empty( $dtts_removed ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
-
-			//now let's do the remove_relation_to()
-			foreach ( $dtts_removed as $dttrow ) {
-				$dttrow = (int) $dttrow;
-				//its entirely possible that a datetime got deleted (instead of just removed from relationship.  So make sure we skip over this if the dtt isn't in the saved_dtts array)
-				if ( empty($saved_dtts[$dttrow] ) || ! $saved_dtts[$dttrow] instanceof EE_Datetime )
-					continue;
-
-				$TKT->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
-
-				//now wait a minute.  Does this tkt have any sold? Cause if it does then we need to remove it's sold from the DTT_sold.
-				if ( $TKT->get('TKT_sold') > 0 ) {
-					$saved_dtts[$dttrow]->decrease_sold($TKT->get('TKT_sold') );
-					$saved_dtts[$dttrow]->save();
+			if ( ! empty( $dtts_removed ) && is_array( $dtts_removed ) ) {
+				//now let's do the remove_relation_to()
+				foreach ( $dtts_removed as $dttrow ) {
+					$dttrow = (int) $dttrow;
+					// its entirely possible that a datetime got deleted (instead of just removed from relationship.
+					// So make sure we skip over this if the dtt isn't in the saved_dtts array)
+					if ( $saved_dtts[ $dttrow ] instanceof EE_Datetime ) {
+						$TKT->_remove_relation_to( $saved_dtts[$dttrow], 'Datetime' );
+						//now wait a minute.  Does this tkt have any sold? Cause if it does then we need to remove it's sold from the DTT_sold.
+						if ( $TKT->get('TKT_sold') > 0 ) {
+							$saved_dtts[$dttrow]->decrease_sold( $TKT->sold() );
+							$saved_dtts[$dttrow]->save();
+						}
+						if ( $new_tkt instanceof EE_Ticket ) {
+							$new_tkt->_remove_relation_to( $saved_dtts[ $dttrow ], 'Datetime' );
+						}
+					}
 				}
-
-				if ( !empty( $new_tkt ) )
-					$new_tkt->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
 			}
-
+			// cap ticket qty by datetime reg limits
+			$TKT->set_qty( min( $TKT->qty(), $TKT->qty( 'reg_limit' ) ) );
 
 			//DO ALL dtt relationships for both current tickets and any archived tickets for the given dtt that are related to the current ticket. TODO... not sure exactly how we're going to do this considering we don't know what current ticket the archived tickets are related to (and TKT_parent is used for autosaves so that's not a field we can reliably use).
 
@@ -550,7 +552,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//let's assign any tickets that have been setup to the saved_tickets tracker
 			//save existing TKT
 			$TKT->save();
-			if ( $create_new_TKT ) {
+			if ( $create_new_TKT && $new_tkt instanceof EE_Ticket ) {
 				//save new TKT
 				$new_tkt->save();
 				//add new ticket to array
@@ -623,7 +625,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 * @param bool 		$new_prices Whether attach existing incoming prices or create new ones.
 	 * @param int|bool 		$base_price if FALSE then NOT doing a base price add.
 	 * @param int|bool 		$base_price_id  if present then this is the base_price_id being updated.
-	 * @return  void
+	 * @return EE_Ticket
 	 */
 	protected function  _add_prices_to_ticket( $prices = array(), EE_Ticket $ticket, $new_prices = FALSE, $base_price = FALSE, $base_price_id = FALSE ) {
 
