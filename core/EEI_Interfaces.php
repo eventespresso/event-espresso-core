@@ -243,14 +243,14 @@ interface EEI_Address_Formatter {
 interface EEHI_Line_Item{
 	/**
 	 * Adds an item to the purchase in the right spot
-	 * @param EEI_Line_Item $total_line_item
-	 * @param EEI_Line_Item $line_item
+	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Line_Item $line_item
 	 */
-	public function add_item( EEI_Line_Item $total_line_item, EEI_Line_Item $line_item );
+	public function add_item( EE_line_Item $total_line_item, EE_Line_Item $line_item );
 	/**
 	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
 	 * tax and updates the total line item accordingly
-	 * @param EEI_Line_Item $total_line_item
+	 * @param EE_Line_Item $total_line_item
 	 * @param float $amount
 	 * @param string $name
 	 * @param string $description
@@ -258,24 +258,24 @@ interface EEHI_Line_Item{
          * @param boolean $add_to_existing_line_item if true and a duplicate line item with 
          *  the same code is found, $amount will be added onto it; otherwise will simply
          *  set the taxes to match $amount
-	 * @return EEI_Line_Item the new tax created
+	 * @return EE_Line_Item the new tax created
 	 */
-	public function set_total_tax_to( EEI_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false );
+	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false );
         
          /**
          * Makes all the line items which are children of $line_item taxable (or not).
          * Does NOT save the line items
-         * @param EEI_Line_Item $line_item
+         * @param EE_Line_Item $line_item
          * @param boolean $taxable
          * @param string $code_substring_for_whitelist if this string is part of the line item's code
          *  it will be whitelisted (ie, except from becoming taxable)
          */
-        public static function set_line_items_taxable( EEI_Line_Item $line_item, $taxable = true, $code_substring_for_whitelist = null );
+        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true, $code_substring_for_whitelist = null );
 
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
 	 * in the correct spot in the line item tree.
-	 * @param EEI_Line_Item $total_line_item
+	 * @param EE_Line_Item $total_line_item
 	 * @param string $name
 	 * @param float $unit_price
 	 * @param string $description
@@ -284,14 +284,14 @@ interface EEHI_Line_Item{
 	 * @param boolean $code if set to a value, ensures there is only one line item with that code
 	 * @return boolean success
 	 */
-	public function add_unrelated_item( EEI_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = null );
+	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = null );
 
 	/**
 	 * Gets the line item for the taxes subtotal
-	 * @param EEI_Line_Item $total_line_item of type EEM_Line_Item::type_total
-	 * @return \EEI_Line_Item
+	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+	 * @return \EE_Line_Item
 	 */
-	public static function get_taxes_subtotal( EEI_Line_Item $total_line_item );
+	public static function get_taxes_subtotal( EE_Line_Item $total_line_item );
 }
 
 
@@ -339,11 +339,11 @@ interface EEHI_Template{
 interface EEI_Line_Item_Display {
 
 	/**
-	 * @param EEI_Line_Item $line_item
+	 * @param EE_Line_Item $line_item
 	 * @param array $options
 	 * @return mixed
 	 */
-	public function display_line_item( EEI_Line_Item $line_item, $options = array() );
+	public function display_line_item( EE_Line_Item $line_item, $options = array() );
 
 }
 
