@@ -126,28 +126,28 @@ final class EE_System {
 	private function __construct() {
 		do_action( 'AHEE__EE_System__construct__begin',$this );
 		// check required WP version
-		if ( ! $this->_minimum_wp_version_required() ) {
+		if ( ! EE_System::_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
-			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
+			add_action( 'admin_notices', array( 'EE_System', 'minimum_wp_version_error' ), 1 );
 			return;
 		}
 		// check required PHP version
-		if ( ! $this->minimum_php_version_required() ) {
+		if ( ! EE_System::minimum_php_version_required() ) {
 			unset( $_GET['activate'] );
-			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
+			add_action( 'admin_notices', array( 'EE_System', 'minimum_php_version_error' ), 1 );
 			return;
 		}
 		// check recommended WP version
-		if ( ! $this->_minimum_wp_version_recommended() ) {
-			$this->_display_minimum_recommended_wp_version_notice();
+		if ( ! EE_System::_minimum_wp_version_recommended() ) {
+			EE_System::_display_minimum_recommended_wp_version_notice();
 		}
 		// check recommended PHP version
-		if ( ! $this->_minimum_php_version_recommended() ) {
-			$this->_display_minimum_recommended_php_version_notice();
+		if ( ! EE_System::_minimum_php_version_recommended() ) {
+			EE_System::_display_minimum_recommended_php_version_notice();
 		}
 
 		//all the below should ONLY run if minimum php version requirement is met
-		if ( $this->minimum_php_version_required() ) {
+		if ( EE_System::minimum_php_version_required() ) {
 			$this->display_alpha_banner_warning();
 			// central repository for classes
 			$this->_load_registry();
@@ -276,7 +276,7 @@ final class EE_System {
 	 * @param string $min_version
 	 * @return boolean
 	 */
-	private function _check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
+	private static function _check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
 		global $wp_version;
 		return version_compare( $wp_version, $min_version, '>=' ) ? TRUE : FALSE;
 	}
@@ -287,8 +287,8 @@ final class EE_System {
 	 * 	@access private
 	 * 	@return boolean
 	 */
-	private function _minimum_wp_version_required() {
-		return $this->_check_wp_version( EE_MIN_WP_VER_REQUIRED );
+	private static function _minimum_wp_version_required() {
+		return EE_System::_check_wp_version( EE_MIN_WP_VER_REQUIRED );
 	}
 
 	/**
@@ -297,8 +297,8 @@ final class EE_System {
 	 * 	@access private
 	 * 	@return boolean
 	 */
-	private function _minimum_wp_version_recommended() {
-		return $this->_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
+	private static function _minimum_wp_version_recommended() {
+		return EE_System::_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
 	}
 
 
@@ -310,7 +310,7 @@ final class EE_System {
 	 * @param string $min_version
 	 * @return boolean
 	 */
-	private function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
+	private static function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
 		return version_compare( phpversion(), $min_version, '>=' ) ? TRUE : FALSE;
 	}
 
@@ -319,8 +319,8 @@ final class EE_System {
 	 *
 	 * 	@return boolean
 	 */
-	public function minimum_php_version_required() {
-		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
+	public static function minimum_php_version_required() {
+		return EE_System::_check_php_version( EE_MIN_PHP_VER_REQUIRED );
 	}
 
 	/**
@@ -329,8 +329,8 @@ final class EE_System {
 	 * 	@access private
 	 * 	@return boolean
 	 */
-	private function _minimum_php_version_recommended() {
-		return $this->_check_php_version( EE_MIN_PHP_VER_RECOMMENDED );
+	private static function _minimum_php_version_recommended() {
+		return EE_System::_check_php_version( EE_MIN_PHP_VER_RECOMMENDED );
 	}
 
 
@@ -340,7 +340,7 @@ final class EE_System {
 	 *
 	 * 	@return void
 	 */
-	public function minimum_wp_version_error() {
+	public static function minimum_wp_version_error() {
 		global $wp_version;
 		?>
 		<div class="error">
@@ -367,7 +367,7 @@ final class EE_System {
 	 *
 	 * 	@return void
 	 */
-	public function minimum_php_version_error() {
+	public static function minimum_php_version_error() {
 		?>
 		<div class="error">
 		<p>
@@ -395,7 +395,7 @@ final class EE_System {
 	 * 	@access private
 	 * 	@return void
 	 */
-	private function _display_minimum_recommended_wp_version_notice() {
+	private static function _display_minimum_recommended_wp_version_notice() {
 		global $wp_version;
 		EE_Error::add_persistent_admin_notice(
 			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended',
@@ -417,7 +417,7 @@ final class EE_System {
 	 * 	@access private
 	 * 	@return void
 	 */
-	private function _display_minimum_recommended_php_version_notice() {
+	private static function _display_minimum_recommended_php_version_notice() {
 		EE_Error::add_persistent_admin_notice(
 			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
