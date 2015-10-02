@@ -129,13 +129,13 @@ final class EE_System {
 		if ( ! EE_System::_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
 			add_action( 'admin_notices', array( 'EE_System', 'minimum_wp_version_error' ), 1 );
-			return;
+			exit();
 		}
 		// check required PHP version
 		if ( ! EE_System::minimum_php_version_required() ) {
 			unset( $_GET['activate'] );
 			add_action( 'admin_notices', array( 'EE_System', 'minimum_php_version_error' ), 1 );
-			return;
+			exit();
 		}
 		// check recommended WP version
 		if ( ! EE_System::_minimum_wp_version_recommended() ) {
