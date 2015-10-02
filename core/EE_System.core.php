@@ -158,7 +158,7 @@ final class EE_System {
 			EE_Registry::instance()->load_helper( 'Autoloader', array(), false );
 			// instantiate PSR4 autoloader
 			require_once( EE_CORE . 'Psr4Autoloader.php' );
-			$psr4_loader = new \EventEspresso\Core\Psr4Autoloader;
+			$psr4_loader = new \EventEspresso\Core\Psr4Autoloader();
 			// register the autoloader
 			$psr4_loader->register();
 			// register the base directories for the namespace prefix
