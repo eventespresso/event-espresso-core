@@ -145,126 +145,7 @@ final class EE_System {
 		if ( ! EE_System::_minimum_php_version_recommended() ) {
 			EE_System::_display_minimum_recommended_php_version_notice();
 		}
-
-		//all the below should ONLY run if minimum php version requirement is met
-		if ( EE_System::minimum_php_version_required() ) {
-			$this->display_alpha_banner_warning();
-			// central repository for classes
-			$this->_load_registry();
-			// workarounds for PHP < 5.3
-			$this->_load_class_tools();
-			// load a few helper files
-			EE_Registry::instance()->load_helper( 'File' );
-			EE_Registry::instance()->load_helper( 'Autoloader', array(), false );
-			// instantiate PSR4 autoloader
-			require_once( EE_CORE . 'Psr4Autoloader.php' );
-			$psr4_loader = new \EventEspresso\Core\Psr4Autoloader();
-			// register the autoloader
-			$psr4_loader->register();
-			// register the base directories for the namespace prefix
-			$psr4_loader->addNamespace( 'EventEspresso', EE_PLUGIN_DIR_PATH );
-			require_once EE_CORE . 'EE_Deprecated.core.php';
-			// load interfaces
-			require_once EE_CORE . 'EEI_Interfaces.php';
-			require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
-			// WP cron jobs
-			EE_Registry::instance()->load_core( 'Cron_Tasks' );
-
-			// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
-			add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
-			// when an ee addon is activated, we want to call the core hook(s) again
-			// because the newly-activated addon didn't get a chance to run at all
-			add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
-			// detect whether install or upgrade
-			add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
-			// load EE_Config, EE_Textdomain, etc
-			add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
-			// load EE_Config, EE_Textdomain, etc
-			add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
-			// you wanna get going? I wanna get going... let's get going!
-			add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
-
-			//other housekeeping
-			//exclude EE critical pages from wp_list_pages
-			add_filter( 'wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages' ), 10 );
-			// ALL EE Addons should use the following hook point to attach their initial setup too
-			// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
-			do_action( 'AHEE__EE_System__construct__complete', $this );
-		}
-	}
-
-
-
-	/**
-	 *    display_alpha_banner_warning
-	 *
-	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
-	 *
-	 * @access    public
-	 * @return    string
-	 */
-	public function display_alpha_banner_warning() {
-		// skip AJAX requests
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
-		// skip stable releases
-		if ( strpos( EVENT_ESPRESSO_VERSION, '.alpha' ) === false ) {
-			return;
-		}
-		// post release candidate warning
-		if ( is_admin() ) {
-			add_action( 'admin_notices', array( $this, 'alpha_banner_admin_notice' ), -999 );
-		} else {
-			// site admin has authorized use of non-stable release candidate for production
-			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
-				return;
-			}
-			add_action( 'shutdown', array( $this, 'alpha_banner_warning_notice' ), 10 );
-		}
-	}
-
-
-
-	/**
-	 *    alpha_banner_admin_notice
-	 *    displays admin notice that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function alpha_banner_admin_notice() {
-		EE_Error::add_attention(
-			sprintf(
-				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
-				'<strong>',
-				'</strong>'
-			),
-			__FILE__, __FUNCTION__, __LINE__
-		);
-	}
-
-
-
-	/**
-	 *    alpha_banner_warning_notice
-	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function alpha_banner_warning_notice() {
-		global $pagenow;
-		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
-			return;
-		}
-		printf(
-			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
-			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
-			'<strong>',
-			'</strong>',
-			'</p></div>'
-		);
+		$this->_initialize();
 	}
 
 
@@ -428,6 +309,136 @@ final class EE_System {
 				'<a href="http://php.net/supported-versions.php">http://php.net/supported-versions.php</a>',
 				'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 			)
+		);
+	}
+
+
+
+	/**
+	 *    _initialize
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _initialize() {
+		// check PHP version again just to be sure
+		if ( ! EE_System::minimum_php_version_required() ) {
+			return;
+		}
+		// the following should ONLY run if minimum php version requirement is met
+		$this->display_alpha_banner_warning();
+		// central repository for classes
+		$this->_load_registry();
+		// workarounds for PHP < 5.3
+		$this->_load_class_tools();
+		// load a few helper files
+		EE_Registry::instance()->load_helper( 'File' );
+		EE_Registry::instance()->load_helper( 'Autoloader', array(), false );
+		// instantiate PSR4 autoloader
+		require_once( EE_CORE . 'Psr4Autoloader.php' );
+		$psr4_loader = new \EventEspresso\Core\Psr4Autoloader();
+		// register the autoloader
+		$psr4_loader->register();
+		// register the base directories for the namespace prefix
+		$psr4_loader->addNamespace( 'EventEspresso', EE_PLUGIN_DIR_PATH );
+		require_once EE_CORE . 'EE_Deprecated.core.php';
+		// load interfaces
+		require_once EE_CORE . 'EEI_Interfaces.php';
+		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
+		// WP cron jobs
+		EE_Registry::instance()->load_core( 'Cron_Tasks' );
+		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
+		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
+		// when an ee addon is activated, we want to call the core hook(s) again
+		// because the newly-activated addon didn't get a chance to run at all
+		add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
+		// detect whether install or upgrade
+		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
+		// load EE_Config, EE_Textdomain, etc
+		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
+		// load EE_Config, EE_Textdomain, etc
+		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
+		// you wanna get going? I wanna get going... let's get going!
+		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+		//other housekeeping
+		//exclude EE critical pages from wp_list_pages
+		add_filter( 'wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages' ), 10 );
+		// ALL EE Addons should use the following hook point to attach their initial setup too
+		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
+		do_action( 'AHEE__EE_System__construct__complete', $this );
+	}
+
+
+
+	/**
+	 *    display_alpha_banner_warning
+	 *
+	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public function display_alpha_banner_warning() {
+		// skip AJAX requests
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
+		}
+		// skip stable releases
+		if ( strpos( EVENT_ESPRESSO_VERSION, '.alpha' ) === false ) {
+			return;
+		}
+		// post release candidate warning
+		if ( is_admin() ) {
+			add_action( 'admin_notices', array( $this, 'alpha_banner_admin_notice' ), -999 );
+		} else {
+			// site admin has authorized use of non-stable release candidate for production
+			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
+				return;
+			}
+			add_action( 'shutdown', array( $this, 'alpha_banner_warning_notice' ), 10 );
+		}
+	}
+
+
+
+	/**
+	 *    alpha_banner_admin_notice
+	 *    displays admin notice that current version of EE is not a stable release
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function alpha_banner_admin_notice() {
+		EE_Error::add_attention(
+			sprintf(
+				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
+				'<strong>',
+				'</strong>'
+			),
+			__FILE__, __FUNCTION__, __LINE__
+		);
+	}
+
+
+
+	/**
+	 *    alpha_banner_warning_notice
+	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function alpha_banner_warning_notice() {
+		global $pagenow;
+		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
+			return;
+		}
+		printf(
+			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
+			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
+			'<strong>',
+			'</strong>',
+			'</p></div>'
 		);
 	}
 
