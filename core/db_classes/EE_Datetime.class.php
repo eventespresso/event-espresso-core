@@ -581,6 +581,27 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * calculates total number of reserved tickets for this datetime
+	 *
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @return int
+	 */
+	function reserved( $query_params = array() ) {
+		$sum = 0;
+		$tickets = $this->tickets( $query_params );
+		if ( ! empty( $tickets ) ) {
+			foreach ( $tickets as $ticket ) {
+				if ( $ticket instanceof EE_Ticket ) {
+					$sum += $ticket->reserved();
+				}
+			}
+		}
+		return $sum;
+	}
+
+
+
+	/**
 	 *    return the total number of spaces remaining at this venue.
 	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	 *
@@ -609,10 +630,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * Counts the total tickets available (from all the different types of tickets which are available for this datetime).
 	 *
 	 * @param array $query_params like EEM_Base::get_all's
-	 * @param bool $subtract_reserved whether or not reserved tickets should be factored into the calculations
 	 * @return int
 	 */
-	public function tickets_remaining( $query_params = array(), $subtract_reserved = false ) {
+	public function tickets_remaining( $query_params = array() ) {
 		$sum = 0;
 		$tickets = $this->tickets( $query_params );
 		if ( ! empty( $tickets ) ) {
