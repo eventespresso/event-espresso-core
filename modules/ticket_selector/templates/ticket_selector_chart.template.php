@@ -54,21 +54,16 @@ $ticket_count = count( $tickets );
 $required_ticket_sold_out = FALSE;
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
-		//	d( $ticket );
-		$max =$ticket->max();
-		$min = 0;
 		$remaining = max( $ticket->remaining() - $ticket->reserved(), 0 );
-		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
-			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
-			$max = min( $remaining, $max_atndz );
-			// but... we also want to restrict the number of tickets by the ticket max setting,
-			// however, the max still can't be higher than what was just set above
-			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
-			// and we also want to restrict the minimum number of tickets by the ticket min setting
-			$min = $ticket->min() > 0 ? $ticket->min() : 0;
-			// and if the ticket is required, then make sure that min qty is at least 1
-			$min = $ticket->required() ? max( $min, 1 ) : $min;
-		} else {
+		// max tickets or $max_atndz, whichever is smaller
+		$max = min( $ticket->max(), $max_atndz );;
+		// offer the number of $tickets_remaining or $max, whichever is smaller
+		$max = min( $remaining, $max );
+		// and we also want to restrict the minimum number of tickets by the ticket min setting
+		$min = $ticket->min() > 0 ? $ticket->min() : 0;
+		// and if the ticket is required, then make sure that min qty is at least 1
+		$min = $ticket->required() ? max( $min, 1 ) : $min;
+		if ( ! $ticket->is_on_sale() || $remaining < $min ) {
 			// set flag if ticket is required (flag is set to start date so that future tickets are not blocked)
 			$required_ticket_sold_out = $ticket->required() && ! $remaining ? $ticket->start_date() : $required_ticket_sold_out;
 		}
@@ -81,35 +76,36 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$ticket_bundle = TRUE;
 		}
 		$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket_price, $ticket );
+		$is_remaining = $remaining > 0 ? true : false;
 		// if a previous required ticket with the same sale start date is sold out, then mark this ticket as sold out as well.
 		// tickets that go on sale at a later date than the required ticket  will NOT be affected
-		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status();
+		$tkt_status = $required_ticket_sold_out !== FALSE && $required_ticket_sold_out === $ticket->start_date() ? EE_Ticket::sold_out : $ticket->ticket_status( false, $is_remaining );
 		$tkt_status = $event_status === EE_Datetime::sold_out ? EE_Ticket::sold_out : $tkt_status;
 		// check ticket status
 		switch ( $tkt_status ) {
 			// sold_out
 			case EE_Ticket::sold_out :
-				$ticket_status = '<span class="ticket-sales-sold-out">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-sales-sold-out">' . $ticket->ticket_status( TRUE, $is_remaining ) . '</span>';
 				$status_class = 'ticket-sales-sold-out lt-grey-text';
 			break;
 			// expired
 			case EE_Ticket::expired :
-				$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-sales-expired">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'ticket-sales-expired lt-grey-text';
 			break;
 			// archived
 			case EE_Ticket::archived :
-				$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="archived-ticket">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'archived-ticket hidden';
 			break;
 			// pending
 			case EE_Ticket::pending :
-				$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-pending">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'ticket-pending';
 			break;
 			// onsale
 			case EE_Ticket::onsale :
-				$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
+				$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( true, $is_remaining ) . '</span>';
 				$status_class = 'ticket-on-sale';
 			break;
 		}
@@ -338,7 +334,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 									<?php do_action( 'AHEE__ticket_selector_chart_template__after_ticket_date', $ticket ); ?>
 
-									<?php if ( $ticket->min() &&$ticket->max() ) { ?>
+									<?php if ( $ticket->min() && $ticket->max() ) { ?>
 									<section class="tckt-slctr-tkt-quantities-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_heading', __( 'Purchasable Quantities', 'event_espresso' )); ?></h5>
 										<span class="drk-grey-text small-text no-bold"> - <?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_message', __( 'The number of tickets that can be purchased per transaction (if available).', 'event_espresso' )); ?></span><br/>
@@ -421,7 +417,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 															<?php echo $ticket->sold(); ?>
 														</td>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left', __( 'Remaining', 'event_espresso' )); ?>" class="cntr small-text">
-															<?php echo $ticket->qty() === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
+															<?php echo $remaining === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $remaining; ?>
 														</td>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold', __( 'Total Sold', 'event_espresso' )); ?>" class="cntr small-text">
 															<?php echo $datetime->sold(); ?>
