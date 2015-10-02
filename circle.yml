@@ -35,9 +35,6 @@ dependencies:
     # setup phpunit
     - wget --no-check-certificate https://phar.phpunit.de/phpunit-old.phar && chmod +x phpunit-old.phar && mv phpunit-old.phar /home/ubuntu/.phpenv/shims/phpunit
 
-  #override:
-    #- COMPOSER=tests/espresso-circleci-config.json install --no-interaction --no-dev
-
 ##tests override
 test:
   override:
