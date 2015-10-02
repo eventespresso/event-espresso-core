@@ -118,10 +118,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	/**
 	 * Using the start date and end date this method calculates whether the ticket is On Sale, Pending, or Expired
 	 * @param bool $display true = we'll return a localized string, otherwise we just return the value of the relevant status const
-	 * @return mixed(int|string) status int if the display string isn't requested
+	 * @param bool | null $remaining  if it is already known that tickets are available, then simply pass a bool to save further processing
+	 * @return mixed status int if the display string isn't requested
 	 */
-	public function ticket_status( $display = FALSE ) {
-		if ( ! $this->is_remaining() ) {
+	public function ticket_status( $display = FALSE, $remaining = null ) {
+		$remaining = is_bool( $remaining ) ? $remaining : $this->is_remaining();
+		if ( ! $remaining ) {
 			return $display ? EEH_Template::pretty_status( EE_Ticket::sold_out, FALSE, 'sentence' ) : EE_Ticket::sold_out;
 		}
 		if ( $this->get( 'TKT_deleted' ) ) {
@@ -163,34 +165,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 	/**
 	 * return the total number of tickets available for purchase
-	 * @param  int $DTT_ID the primary key for a particular datetime. set to null for
-	 *                     all related datetimes
+	 *
+	 * @param  int $DTT_ID the primary key for a particular datetime.
+	 *                     set to 0 for all related datetimes
 	 * @return int
 	 */
 	public function remaining( $DTT_ID = 0 ) {
-		// are we checking availability for a particular datetime ?
-		if ( $DTT_ID ) {
-			// get array with the one requested datetime
-			$datetimes = $this->get_many_related( 'Datetime', array( array( 'DTT_ID' => $DTT_ID ) ) );
-		} else {
-			// we need to check availability of ALL datetimes
-			$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
-		}
-		//		d( $datetimes );
-		// if datetime reg limit is not unlimited
-		if ( ! empty( $datetimes ) ) {
-			// although TKT_qty and $datetime->spaces_remaining() could both be INF
-			// we only need to check for INF explicitly if we want to optimize.
-			// because INF - x = INF; and min(x,INF) = x;
-			$tickets_remaining = $this->qty() - $this->sold();
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$tickets_remaining = min( $tickets_remaining, $datetime->spaces_remaining() );
-				}
-			}
-			return $tickets_remaining;
-		}
-		return 0;
+		return $this->real_quantity_on_ticket('saleable', $DTT_ID );
 	}
 
 
@@ -774,26 +755,40 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 *                            REG LIMIT: caps qty based on DTT_reg_limit for ALL related datetimes
 	 *                            SALEABLE: also considers datetime sold and returns zero if ANY DTT is sold out, and
 	 *                            is therefore the truest measure of tickets that can be purchased at the moment
+	 * @param  int $DTT_ID        the primary key for a particular datetime.
+	 *                            set to 0 for all related datetimes
 	 *
 	 * @return int
 	 */
-	function real_quantity_on_ticket( $context = 'reg_limit' ) {
+	function real_quantity_on_ticket( $context = 'reg_limit', $DTT_ID = 0 ) {
 		$raw = $this->get_raw( 'TKT_qty' );
 		if ( $raw === 0 ) {
 			return $raw;
 		}
 		// initialize with no restrictions
 		$qty = INF;
-		$datetimes = $this->datetimes();
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				// adjust qty based on reg limit for ALL datetimes
-				$qty = min( $qty, $datetime->reg_limit() );
-				$qty = min( $qty, $raw );
-				// if we want the actual saleable amount, then we need to consider ticket sales
-				if ( $context == 'saleable' ) {
-					$qty = max( $qty - $datetime->sold(), 0 );
-					$qty = ! $datetime->sold_out() ? $qty : 0;
+		// do we want data for one datetime or all of them ?
+		$query_params = $DTT_ID ? array( array( 'DTT_ID' => $DTT_ID ) ) : array( array() );
+		$datetimes = $this->datetimes( $query_params );
+		if ( is_array( $datetimes ) && ! empty( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					//echo "\n datetime->name: " . $datetime->name() . "<br />";
+					// adjust qty based on reg limit for ALL datetimes
+					$qty = min( $qty, $datetime->reg_limit() );
+					//echo "\n datetime->reg_limit(): " . $datetime->reg_limit() . "<br />";
+					//echo "\n qty: " . $qty . "<br />";
+					$qty = min( $qty, $raw );
+					//echo "\n raw: " . $raw . "<br />";
+					// if we want the actual saleable amount, then we need to consider ticket sales
+					if ( $context == 'saleable' ) {
+						$sold_or_reserved = $datetime->sold() + $datetime->reserved();
+						//echo "\n sold_or_reserved: " . $sold_or_reserved . "<br />";
+						$qty = max( $qty - $sold_or_reserved, 0 );
+						//echo "\n qty: " . $qty . "<br />";
+						$qty = ! $datetime->sold_out() ? $qty : 0;
+						//echo "\n qty: " . $qty . "<br />";
+					}
 				}
 			}
 		}
