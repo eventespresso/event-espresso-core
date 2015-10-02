@@ -311,7 +311,7 @@ final class EE_System {
 	 * @return boolean
 	 */
 	private function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
-		return version_compare( PHP_VERSION, $min_version, '>=' ) ? TRUE : FALSE;
+		return version_compare( phpversion(), $min_version, '>=' ) ? TRUE : FALSE;
 	}
 
 	/**
