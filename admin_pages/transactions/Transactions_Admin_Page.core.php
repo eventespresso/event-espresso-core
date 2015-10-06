@@ -1024,7 +1024,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				);
 			}
 		} else {
-			EE_Error::add_error( __( 'The payment form data could not be loaded.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'The payment form data could not be processed. Please try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 		echo json_encode( array_merge( $json_response_data, $notices ));
@@ -1140,7 +1140,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'required' => false,
 							'html_label_text' => __( 'Transaction or Cheque Number', 'event_espresso' ),
                                                         'validation_strategies' => array(
-                                                            new EE_Max_Length_Validation_Strategy( null, 100 ),
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 100 ),
                                                         )
 						)
 					),
@@ -1150,7 +1150,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'required' => false,
 							'html_label_text' => __( 'Purchase Order Number', 'event_espresso' ),
                                                         'validation_strategies' => array(
-                                                            new EE_Max_Length_Validation_Strategy( null, 100 ),
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 100 ),
                                                         )
 						)
 					),
@@ -1160,7 +1160,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'required' => false,
 							'html_label_text' => __( 'Extra Field for Accounting', 'event_espresso' ),
                                                         'validation_strategies' => array(
-                                                            new EE_Max_Length_Validation_Strategy( null, 100 ),
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 10 ),
                                                         )
 						)
 					),
