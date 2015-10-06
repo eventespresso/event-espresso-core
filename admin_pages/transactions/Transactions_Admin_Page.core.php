@@ -1139,6 +1139,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'default' => '',
 							'required' => false,
 							'html_label_text' => __( 'Transaction or Cheque Number', 'event_espresso' ),
+                                                        'validation_strategies' => array(
+                                                            new EE_Max_Length_Validation_Strategy( null, 100 ),
+                                                        )
 						)
 					),
 					'po_number' => new EE_Text_Input(
@@ -1146,6 +1149,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'default' => '',
 							'required' => false,
 							'html_label_text' => __( 'Purchase Order Number', 'event_espresso' ),
+                                                        'validation_strategies' => array(
+                                                            new EE_Max_Length_Validation_Strategy( null, 100 ),
+                                                        )
 						)
 					),
 					'accounting' => new EE_Text_Input(
@@ -1153,6 +1159,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'default' => '',
 							'required' => false,
 							'html_label_text' => __( 'Extra Field for Accounting', 'event_espresso' ),
+                                                        'validation_strategies' => array(
+                                                            new EE_Max_Length_Validation_Strategy( null, 100 ),
+                                                        )
 						)
 					),
 				)
