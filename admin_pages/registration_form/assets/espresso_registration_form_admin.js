@@ -83,15 +83,16 @@ function espresso_reg_forms_add_option(){
 	jQuery('#question_options tr:last').after(newRow);
 	//add new count to dom.
 	jQuery('#question_options_count').val(count);
-	newRow.find('input[type="text"]').focus();
+	newRowName.focus();
 }
 
 function espresso_reg_forms_show_option_desc(){
-		jQuery('.option-desc-cell').show();
-		jQuery('.option-desc-header').show();
-		jQuery('.option-value-header').css('width', '45%');
-		jQuery('.option-value-cell').css('width','45%');
-
+	jQuery('.option-desc-cell').show();
+	jQuery('.option-desc-header').show();
+	jQuery('.option-value-header').css('width', '45%');
+	jQuery('.option-value-cell').css('width','45%');
+	/** focus on value field **/
+	jQuery('.option-value').focus();
 }
 
 

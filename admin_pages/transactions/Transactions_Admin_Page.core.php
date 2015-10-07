@@ -186,7 +186,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					),
 				),
 				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
-				'qtips' => array( 'Transactions_List_Table_Tips' ),
+				/**
+				 * commented out because currently we are not displaying tips for transaction list table status but this
+				 * may change in a later iteration so want to keep the code for then.
+				 */
+				//'qtips' => array( 'Transactions_List_Table_Tips' ),
 				'require_nonce' => FALSE
 				),
 			'view_transaction' => array(
@@ -794,7 +798,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
 				// add html for checkbox input and label
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee()->full_name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' ) . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
 				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-rght">' . $registration->pretty_paid() . '</td>';
@@ -1008,9 +1012,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				if ( ! empty( $REG_IDs ) ) {
 					$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
 					// now process status changes for the same registrations
-					if ( isset( $this->_req_data['txn_reg_status_change'] ) ) {
-						$this->_process_registration_status_change( $transaction, array( $REG_IDs ) );
-					}
+					$this->_process_registration_status_change( $transaction, $REG_IDs );
 				}
 				$this->_process_payment_notification( $payment );
 				//prepare to render page
@@ -1389,7 +1391,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			sanitize_text_field( $this->_req_data[ 'txn_reg_status_change' ][ 'reg_status' ] ),
 			array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) )
 		);
-//		$transaction_processor->finalize( $transaction, TRUE, FALSE);
 	}
 
 
@@ -1607,6 +1608,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Event.EVT_name' => array( 'LIKE', $search_string ),
 				'Registration.Event.EVT_desc' => array( 'LIKE', $search_string ),
 				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $search_string ),
+				'Registration.Attendee.ATT_full_name' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_fname' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_lname' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $search_string ),
@@ -1622,7 +1624,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $search_string ),
 				'Payment.PAY_source' => array('LIKE', $search_string ),
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $search_string ),
-				'TXN_session_data' => array( 'LIKE', $search_string )
+				'TXN_session_data' => array( 'LIKE', $search_string ),
+				'Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $search_string )
 				);
 		}
 

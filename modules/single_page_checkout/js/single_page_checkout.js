@@ -984,6 +984,7 @@ jQuery(document).ready( function($) {
 				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'process_response', eei18n.invalid_json_response ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 			}
+			$( '.hide-if-no-js' ).removeClass( 'hide-if-no-js' );
 		},
 
 

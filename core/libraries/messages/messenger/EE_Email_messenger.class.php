@@ -388,7 +388,7 @@ class EE_Email_messenger extends EE_messenger  {
 		//but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the header.
 		add_filter( 'wp_mail_from',  array( $this, 'set_from_address' ), 100 );
 		add_filter( 'wp_mail_from_name', array( $this, 'set_from_name' ), 100 );
-		return $headers;
+		return apply_filters( 'FHEE__EE_Email_messenger___headers', $headers, $this->_incoming_message_type, $this );
 	}
 
 

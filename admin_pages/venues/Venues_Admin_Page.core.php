@@ -65,7 +65,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$this->page_slug = EE_VENUES_PG_SLUG;
 		$this->_admin_base_url = EE_VENUES_ADMIN_URL;
-		$this->_admin_base_path = EE_CORE_CAF_ADMIN . 'new/venues';
+		$this->_admin_base_path = EE_ADMIN_PAGES . 'venues';
 		$this->page_label = __('Event Venues', 'event_espresso');
 		$this->_cpt_model_names = array(
 			'create_new' => 'EEM_Venue',
@@ -554,6 +554,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_venues'), __("View Venue Archive Page", "event_espresso"), 'button' );
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->_search_btn_label = __('Venues', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
