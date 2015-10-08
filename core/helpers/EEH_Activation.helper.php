@@ -1535,7 +1535,7 @@ class EEH_Activation {
 			'ee_active_messengers' => true,
 			'ee_has_activated_messenger' => true,
 			'ee_flush_rewrite_rules' => true,
-			'ee_config' => true,
+			'ee_config' => false,
 			'ee_data_migration_current_db_state' => true,
 			'ee_data_migration_mapping_' => false,
 			'ee_data_migration_script_' => false,
@@ -1582,6 +1582,8 @@ class EEH_Activation {
 				}
 			}
 		}
+                //also, let's make sure the "ee_config_option_names" wp option stays out by removing the action that adds it
+                remove_action( 'shutdown', array( EE_Config::instance(), 'shutdown' ), 10 );
 
 		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
 			$db_update_sans_ee4 = array();
