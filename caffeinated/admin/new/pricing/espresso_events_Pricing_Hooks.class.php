@@ -431,8 +431,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					// make sure ticket has an ID of setting relations won't work
 					$TKT->save();
 					$TKT = $this->_update_ticket_datetimes( $TKT, $saved_dtts, $dtts_added, $dtts_removed );
-					// make sure ticket qty respects datetime limits by resetting it
-					$TKT->set_qty( $TKT_values[ 'TKT_qty' ] );
 					$update_prices = TRUE;
 				}
 			}
@@ -472,7 +470,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_default = $this->_add_prices_to_ticket( array(), $new_default, $update_prices, $base_price, $base_price_id );
 					$new_default->save();
 					do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_new_default_ticket', $new_default, $row, $TKT, $data );
-
 				}
 			}
 
