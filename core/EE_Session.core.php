@@ -441,13 +441,6 @@
 			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
-
-		// have we met before???
-		// let's compare our stored session details with the current visitor
-		// first the ip address
-		if ( $session_data['ip_address'] != $this->_ip_address ) {
-			return FALSE;
-		}
 		// now the user agent
 		if ( $session_data['user_agent'] != $this->_user_agent ) {
 			return FALSE;
