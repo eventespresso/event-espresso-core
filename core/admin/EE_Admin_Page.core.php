@@ -2591,8 +2591,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// make sure there are no php errors or headers_sent.  Then we can set correct json header.
 		if ( NULL === error_get_last() || ! headers_sent() )
 			header('Content-Type: application/json; charset=UTF-8');
-
-		echo json_encode( $json );
+                if( function_exists( 'wp_json_encode' ) ) {
+                    echo wp_json_encode( $json );
+                } else {
+                    echo json_encode( $json );
+                }
 		exit();
 	}
 
