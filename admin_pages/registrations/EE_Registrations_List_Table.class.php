@@ -611,7 +611,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column_actions(EE_Registration $item) {
-
+		EE_Registry::instance()->load_helper('MSG_Template');
 		$attendee = $item->attendee();
 		$ticket = $item->ticket();
 		$this->_set_related_details( $item );
@@ -656,7 +656,21 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 			</li>' : '';
 
-			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk, $item, 'ul', 'reg-overview-actions-ul' );
+		//invoice link
+		$dl_invoice_lnk_url = $item->invoice_url();
+		//only show invoice link if message type is active.
+		if ( $item->is_primary_registrant() && $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'invoice' ) ) {
+			$dl_invoice_lnk = '
+		<li>
+			<a title="' . esc_attr__( 'View Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
+				<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
+			</a>
+		</li>';
+		} else {
+			$dl_invoice_lnk = '';
+		}
+
+			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . $dl_invoice_lnk, $item, 'ul', 'reg-overview-actions-ul' );
 	}
 
 }

@@ -2591,8 +2591,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// make sure there are no php errors or headers_sent.  Then we can set correct json header.
 		if ( NULL === error_get_last() || ! headers_sent() )
 			header('Content-Type: application/json; charset=UTF-8');
-
-		echo json_encode( $json );
+                if( function_exists( 'wp_json_encode' ) ) {
+                    echo wp_json_encode( $json );
+                } else {
+                    echo json_encode( $json );
+                }
 		exit();
 	}
 
@@ -3391,6 +3394,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
+		add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
 		$this->_template_args['success'] = EED_Messages::process_resend( $this->_req_data );
 		do_action( 'AHEE__EE_Admin_Page___process_resend_registration', $this->_template_args['success'], $this->_req_data );
 		return $this->_template_args['success'];

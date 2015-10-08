@@ -120,6 +120,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 			} else {
 				echo __('There seems to be a problem with your questions. Please contact support@eventespresso.com', 'event_espresso');
 			}
+			do_action( 'AHEE__espresso_events_Registration_Form_Hooks__additional_questions__after_content' );
 			?>
 		</div>
 		<?php

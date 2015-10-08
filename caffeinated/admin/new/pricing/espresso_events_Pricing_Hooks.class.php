@@ -471,6 +471,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					//don't forget the base price!
 					$new_default = $this->_add_prices_to_ticket( array(), $new_default, $update_prices, $base_price, $base_price_id );
 					$new_default->save();
+					do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_new_default_ticket', $new_default, $row, $TKT, $data );
+
 				}
 			}
 
