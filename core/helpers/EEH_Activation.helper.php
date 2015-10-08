@@ -1519,11 +1519,11 @@ class EEH_Activation {
 		//there are some tables whose models were removed.
 		//they should be removed when removing all EE core's data
 		$tables_without_models = array(
-			'wp_esp_promotion',
-			'wp_esp_promotion_applied',
-			'wp_esp_promotion_object',
-			'wp_esp_promotion_rule',
-			'wp_esp_rule'
+			'esp_promotion',
+			'esp_promotion_applied',
+			'esp_promotion_object',
+			'esp_promotion_rule',
+			'esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
 			EEH_Activation::delete_db_table_if_empty( $table );
