@@ -11,7 +11,7 @@ if ( ! $empty_cart ) {
 			'<span id="spco-registration-time-limit-spn" class="spco-registration-time-limit-spn">' . $registration_time_limit . '</span>'
 		);
 		?>
-		<span id="spco-registration-expiration-spn" class="" style="display:none;"><?php echo $session_expiration; ?></span>
+		<span id="spco-registration-expiration-spn" class="" style="display:none;"></span>
 	</p>
 <?php }
 	if ( ! $revisit && apply_filters( 'FHEE__registration_page_wrapper_template__steps_display', TRUE )) {
