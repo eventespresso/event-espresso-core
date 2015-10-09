@@ -100,7 +100,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 						array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types )),
 						array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' => __( 'Card Type', 'event_espresso' ))
 					),
-					'exp_month'=>new EE_Month_Input(
+					'exp_month'=>new EE_Credit_Card_Month_Input(
 						TRUE, array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  __( 'Expiry Month', 'event_espresso' )  )
 					),
 					'exp_year'=>new EE_Credit_Card_Year_Input(
