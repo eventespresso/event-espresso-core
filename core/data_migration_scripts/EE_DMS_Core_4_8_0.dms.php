@@ -245,7 +245,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				OBJ_type VARCHAR(45)DEFAULT NULL,
 				LIN_timestamp DATETIME NOT NULL DEFAULT '$now_in_mysql',
 				PRIMARY KEY  (LIN_ID)";
-		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB' );
+		$this->_table_is_changed_in_this_version($table_name,$sql, 'ENGINE=InnoDB' );
 
 		$table_name = 'esp_log';
 		$sql = "LOG_ID INT(11) NOT NULL AUTO_INCREMENT,
