@@ -44,6 +44,7 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 					'QSO_value'=>new EE_Plain_Text_Field('QSO_value',  __("Question Option Value", "event_espresso"),false,''),
 					'QSO_desc'=>new EE_Full_HTML_Field('QSO_desc', __('Question Option Description','event_espresso'), false, ''),
 					'QSO_order' => new EE_Integer_Field('QSO_order', __('Question Option Order', 'event_espresso' ), false, 0 ),
+					'QSO_system'=>new EE_Plain_Text_Field('QSO_system', __('Internal string ID for question option','event_espresso'), TRUE, NULL ),
 					'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', __('Flag indicating Option was trashed','event_espresso'), false, false)
 				)
 		);

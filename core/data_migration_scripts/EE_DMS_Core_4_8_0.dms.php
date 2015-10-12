@@ -391,9 +391,10 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					QSO_desc TEXT NOT NULL,
 					QST_ID INT UNSIGNED NOT NULL,
 					QSO_order INT UNSIGNED NOT NULL DEFAULT 0,
+					QSO_system VARCHAR(25) DEFAULT NULL,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSO_ID)";
-		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_is_changed_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
