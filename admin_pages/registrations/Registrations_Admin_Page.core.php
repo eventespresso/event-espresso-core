@@ -965,7 +965,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error("not yet supported");
 		}
 
-		if ( isset( $this->_req_data['s'] ) ) {
+		if ( ! empty( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Event.EVT_name' => array( 'LIKE', $sstr),
