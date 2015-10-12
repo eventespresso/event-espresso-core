@@ -56,6 +56,17 @@
 	width: 10%;
 }
 
+.ee-event-filter {
+	display: inline-block;
+}
+
+.ee-event-filter .ee-event-filter-toggle {
+	display: block;
+	float: right;
+	margin-right: 20px;
+	margin-top: 5px;
+}
+
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {
 	width : 3%;
 }

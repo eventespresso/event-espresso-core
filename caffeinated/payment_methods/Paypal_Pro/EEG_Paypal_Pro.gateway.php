@@ -284,6 +284,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		$cleaned_request_data = $request;
 		unset($cleaned_request_data['CCDetails']['acct']);
 		unset($cleaned_request_data['CCDetails']['cvv2']);
+		unset($cleaned_request_data['CCDetails']['expdate']);
 		$this->log(array('Paypal Request'=>$cleaned_request_data), $payment);
 	}
 
