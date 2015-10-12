@@ -148,7 +148,7 @@ $has_answers = $question->has_answers();
 							$question_options = $question->options();
 							if ( ! empty( $question_options )) {
 								foreach( $question_options as $option_id => $option ) {
-									$disabled =  $has_answers ? ' disabled="disabled"' : '';
+									$disabled =  $has_answers || $option->get('QSO_system') ? ' disabled="disabled"'  : '';
 							?>
 								<tr class="question-option ee-options-sortable">
 									<td class="option-value-cell">
