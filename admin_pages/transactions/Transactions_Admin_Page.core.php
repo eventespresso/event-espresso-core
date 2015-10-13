@@ -1160,7 +1160,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'required' => false,
 							'html_label_text' => __( 'Extra Field for Accounting', 'event_espresso' ),
                                                         'validation_strategies' => array(
-                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 10 ),
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 100 ),
                                                         )
 						)
 					),
