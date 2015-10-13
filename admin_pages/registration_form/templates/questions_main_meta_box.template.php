@@ -162,7 +162,7 @@ $has_answers = $question->has_answers();
 										<input type="text" class="option-desc regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php $option->f('QSO_desc')?>">
 									</td>
 									<td>
-										<?php if ( ! $option->get( 'QSO_system' ) ) { ?>
+										<?php if ( ! $option->system() ) { ?>
 											<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
 										<?php } ?>
 										<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
