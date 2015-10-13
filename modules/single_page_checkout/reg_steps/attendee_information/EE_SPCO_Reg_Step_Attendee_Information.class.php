@@ -501,7 +501,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		//add "-lbl" to the end of the label id
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
-		$input_constructor_args = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input',
+		$input_constructor_args = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
 				$input_constructor_args,
 				$registration,
 				$question,
