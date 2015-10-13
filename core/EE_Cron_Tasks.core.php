@@ -300,8 +300,6 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 			// load EEM_Transaction
@@ -320,9 +318,10 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
-					//if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
-					//	continue;
-					//}
+					// don't finalize the TXN if it has already been completed
+					if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
+						continue;
+					}
 					// let's simulate an IPN here which will trigger any notifications that need to go out
 					$payment_processor->update_txn_based_on_payment( $transaction, $transaction->last_payment(), true, true );
 				}
