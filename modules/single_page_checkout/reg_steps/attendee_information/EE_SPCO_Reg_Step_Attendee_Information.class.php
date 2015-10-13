@@ -23,6 +23,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private $_attendee_data = array();
 
+	/**
+	 * @type array $_required_questions
+	 */
+	private $_required_questions = array();
+
 
 
 	/**
@@ -508,6 +513,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$answer
 				);
 
+		$this->_required_questions[ $identifier ] = $question->required() ? true : false;
+
 		switch ( $question->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
@@ -895,6 +902,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private function _verify_critical_attendee_details_are_set_and_validate_email( $form_input = '', $input_value = '' ) {
 		if ( empty( $input_value )) {
+			// if the form input isn't marked as being required, then just return
+			if ( ! isset( $this->_required_questions[ $form_input ]  ) || ! $this->_required_questions[ $form_input ] ) {
+				return true;
+			}
 			switch( $form_input ) {
 				case 'fname' :
 					EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
