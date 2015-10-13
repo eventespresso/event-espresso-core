@@ -85,9 +85,9 @@ abstract class EE_Addon extends EE_Configurable {
 	 * if not empty, inserts a new table row after this plugin's row on the WP Plugins page
 	 * that can be used for adding upgrading/marketing info
 	 *
-	 * @type string $_plugins_page_row
+	 * @type array $_plugins_page_row
 	 */
-	protected $_plugins_page_row = '';
+	protected $_plugins_page_row = array();
 
 
 
@@ -218,7 +218,7 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * @return string
+	 * @return array
 	 */
 	public function plugins_page_row() {
 
@@ -228,9 +228,9 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * @param string $plugins_page_row
+	 * @param array $plugins_page_row
 	 */
-	public function set_plugins_page_row( $plugins_page_row ) {
+	public function set_plugins_page_row( $plugins_page_row = array() ) {
 
 		$this->_plugins_page_row = $plugins_page_row;
 	}
@@ -649,12 +649,22 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @param $plugin_file
 	 * @param $plugin_data
 	 * @param $status
-	 * @return array
+	 * @return string
 	 */
 	public function after_plugin_row( $plugin_file, $plugin_data, $status ) {
+
+		$after_plugin_row = '';
 		if ( $plugin_file == $this->plugin_basename() && $this->plugins_page_row() != '' ) {
 			$class = $status ? 'active' : 'inactive';
-			echo '<style>
+			$plugins_page_row = $this->plugins_page_row();
+			$link_text = isset( $plugins_page_row[ 'link_text' ] ) ? $plugins_page_row[ 'link_text' ] : '';
+			$link_url = isset( $plugins_page_row[ 'link_url' ] ) ? $plugins_page_row[ 'link_url' ] : '';
+			$description = isset( $plugins_page_row[ 'description' ] ) ? $plugins_page_row[ 'description' ] : $plugins_page_row;
+			$after_plugin_row .= '<tr id="' . sanitize_title( $plugin_file ) . '-ee-addon" class="' . $class . '">';
+			$after_plugin_row .= '<th class="check-column" scope="row"></th>';
+			$after_plugin_row .= '<td class="ee-addon-upsell-info-title-td plugin-title column-primary">';
+			if ( ! empty( $link_text )) {
+				$after_plugin_row .= '<style>
 .ee-button,
 .ee-button:active,
 .ee-button:visited {
@@ -691,27 +701,19 @@ abstract class EE_Addon extends EE_Configurable {
 }
 .ee-button:active { top:0; }
 </style>';
-			$plugins_page_row = $this->plugins_page_row();
-			$link_text = isset( $plugins_page_row[ 'link_text' ] ) ? $plugins_page_row[ 'link_text' ] : '';
-			$link_url = isset( $plugins_page_row[ 'link_url' ] ) ? $plugins_page_row[ 'link_url' ] : '';
-			$description = isset( $plugins_page_row[ 'description' ] ) ? $plugins_page_row[ 'description' ] : $plugins_page_row;
-			echo '<tr id="' . sanitize_title( $plugin_file ) . '" class="' . $class . '">';
-			if ( ! empty( $link_text )) {
-				echo '<th class="check-column" scope="row"></th>';
-				echo '<td class="ee-addon-upsell-info-title-td plugin-title">';
-				echo '
-<div class="ee-addon-upsell-info-dv">
+				$after_plugin_row .= '
+<p class="ee-addon-upsell-info-dv">
 	<a class="ee-button" href="' . $link_url . '">' . $link_text . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span></a>
-</div>';
-				echo '</td>';
-				echo '<td class="ee-addon-upsell-info-desc-td column-description desc">';
-				echo $description;
-				echo '</td>';
-			} else {
-				echo $description;
+</p>';
 			}
-			echo '</tr>';
+			$after_plugin_row .= '</td>';
+			$after_plugin_row .= '<td class="ee-addon-upsell-info-desc-td column-description desc">';
+			$after_plugin_row .= $description;
+			$after_plugin_row .= '</td>';
+			$after_plugin_row .= '</tr>';
 		}
+
+		echo $after_plugin_row;
 	}
 
 
