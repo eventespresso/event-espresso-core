@@ -220,7 +220,7 @@ $has_answers = $question->has_answers();
 				</th>
 				<td>
 					<?php
-					$system_required = array( 'fname', 'lname', 'email' );
+					$system_required = array( 'fname', 'email' );
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : '';
 					$required_on = $question->get('QST_admin_only');
 					$show_required_msg = $required_on ? '' : ' display:none;';
