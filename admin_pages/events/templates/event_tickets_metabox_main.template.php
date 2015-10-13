@@ -1,3 +1,4 @@
+<?php do_action( 'AHEE__event_tickets_metabox_main__before_content' ); ?>
 <div id="event-and-ticket-form-content">
 	<h4 class="event-tickets-datetimes-title"><?php _e('Event Datetime', 'event_espresso'); ?></h4><?php echo $event_datetime_help_link; ?>
 	<div class="event-datetimes-container">
@@ -69,6 +70,9 @@
 	</div> <!-- end .event-tickets-container -->
 	<div style="clear:both"></div>
 </div> <!-- end #event-and-ticket-form-content -->
+
+<?php do_action( 'AHEE__event_tickets_metabox_main__after_content' ); ?>
+
 <table id="new-ticket-row-form" class="hidden">
 	<tbody><?php echo $ticket_js_structure; ?></tbody>
 </table>

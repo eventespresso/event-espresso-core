@@ -674,12 +674,16 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 					'TKT_name' => $old_att_price_option,
 					'TKT_qty' => -1,
 					'TKT_price' => $old_att_price,
+					'TKT_start_date' => $old_att_start_datetime,//we really have no clue what the time should be, but at least it was available when they attended
+					'TKT_end_date' => $old_att_end_datetime,
 
 				),
 				array(
 					'%s',//name
 					'%d',//qty
 					'%d',//price
+					'%s',//start_date
+					'%s',//end_date
 				));
 		$ticket_id = $wpdb->insert_id;
 		//associate the ticket with the datetime we found earlier
@@ -696,11 +700,13 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$wpdb->insert( $this->_new_price_table,
 				array(
 					'PRC_amount' => $old_att_price,
+					'PRT_ID' => EE_DMS_4_1_0_prices::price_type_base,
 					'PRC_name' => $old_att_price_option,
 					'PRC_deleted' => TRUE
 				),
 				array(
 					'%d',//PRC_amount
+					'%d',//PRT_ID
 					'%s',//PRC_name
 					'%d',//PRC_deleted
 				));
