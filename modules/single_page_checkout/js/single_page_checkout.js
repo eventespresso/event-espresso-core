@@ -706,7 +706,7 @@ jQuery(document).ready( function($) {
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
 			if ( typeof step !== 'undefined' && step !== '' && ! $(next_step_btn).hasClass('disabled') ) {
 				if ( step === 'payment_options' ) {
-					// add 15 minutes to session expiration
+					// add time to session expiration (defaults to +10 minutes)
 					SPCO.registration_session_expiration = SPCO.registration_session_expiration.setTime(
 						SPCO.registration_session_expiration.getTime() + ( parseInt( eei18n.session_extension ) * 1000 )
 					);
