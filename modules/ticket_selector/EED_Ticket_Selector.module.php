@@ -518,7 +518,6 @@ class EED_Ticket_Selector extends  EED_Module {
 				// all data appears to be valid
 				$tckts_slctd = false;
 				$success = true;
-				$total_tickets = 0;
 				// validate/sanitize data
 				$valid = apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', $valid );
 				if ( $valid[ 'total_tickets' ] >0 ) {
@@ -535,9 +534,7 @@ class EED_Ticket_Selector extends  EED_Module {
 							if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
 								// then add ticket to cart
 								$tickets_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
-								if ( $tickets_added > 0 ) {
-									$total_tickets += $tickets_added;
-								} else {
+								if ( $tickets_added < 1 ) {
 									$success = false;
 								}
 								//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
