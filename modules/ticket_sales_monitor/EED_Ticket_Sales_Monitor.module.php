@@ -308,9 +308,9 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	protected function _ticket_sold_out( EE_Ticket $ticket ) {
 		if ( self::debug ) {
 			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . . ticket->name: " . $ticket->name() . '<br />';
+			echo "\n . . ticket->name: " . $this->_get_ticket_and_event_name( $ticket ) . '<br />';
 		}
-		$this->sold_out_tickets[] = $ticket->name();
+		$this->sold_out_tickets[] = $this->_get_ticket_and_event_name( $ticket );
 	}
 
 
@@ -326,9 +326,33 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	protected function _ticket_quantity_decremented( EE_Ticket $ticket ) {
 		if ( self::debug ) {
 			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . . ticket->name: " . $ticket->name() . '<br />';
+			echo "\n . . ticket->name: " . $this->_get_ticket_and_event_name( $ticket ) . '<br />';
 		}
-		$this->decremented_tickets[] = $ticket->name();
+		$this->decremented_tickets[] = $this->_get_ticket_and_event_name( $ticket );
+	}
+
+
+
+	/**
+	 *    _get_ticket_and_event_name
+	 *    builds string out of ticket and event name
+	 *
+	 * @access    protected
+	 * @param    \EE_Ticket $ticket
+	 * @return string
+	 */
+	protected function _get_ticket_and_event_name( EE_Ticket $ticket ) {
+		$event = $ticket->get_related_event();
+		if ( $event instanceof EE_Event ) {
+			$ticket_name = sprintf(
+				_x( '%1$s for %2$s', 'ticket name for event name', 'event_espresso' ),
+				$ticket->name(),
+				$event->name()
+			);
+		} else {
+			$ticket_name = $ticket->name();
+		}
+		return $ticket_name;
 	}
 
 
