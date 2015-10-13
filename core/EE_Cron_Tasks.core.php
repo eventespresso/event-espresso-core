@@ -118,19 +118,22 @@ class EE_Cron_Tasks extends EE_BASE {
 	 *
 	 * @param int $timestamp
 	 * @param int $TXN_ID
-	 * @param int $PAY_ID
+	 * @param EE_Payment | null $payment
 	 */
-	public static function schedule_update_transaction_with_payment( $timestamp = 0, $TXN_ID = 0, $PAY_ID = 0 ) {
+	public static function schedule_update_transaction_with_payment(
+		$timestamp,
+		$TXN_ID,
+		$payment
+	) {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// validate $TXN_ID and $timestamp
-		$timestamp 	= absint( $timestamp );
-		$TXN_ID 	= absint( $TXN_ID );
-		$PAY_ID 	= absint( $PAY_ID );
-		if ( $timestamp && $TXN_ID && $PAY_ID ) {
+		$TXN_ID = absint( $TXN_ID );
+		$timestamp = absint( $timestamp );
+		if ( $TXN_ID && $timestamp ) {
 			wp_schedule_single_event(
 				$timestamp,
 				'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
-				array( $TXN_ID, $PAY_ID )
+				array( $TXN_ID, $payment )
 			);
 		}
 	}
@@ -149,13 +152,13 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * transactions requiring updating, because doing so now would be too early
 	 * and the required resources may not be available
 	 *
-	 * @param int 	$TXN_ID
-	 * @param int 	$PAY_ID
+	 * @param int  $TXN_ID
+	 * @param null $payment
 	 */
-	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $PAY_ID = 0 ) {
+	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $payment = null ) {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID' );
 		if ( absint( $TXN_ID )) {
-			self::$_update_transactions_with_payment[ $TXN_ID ] = $PAY_ID;
+			self::$_update_transactions_with_payment[ $TXN_ID ] = $payment;
 			add_action(
 				'shutdown',
 				array( 'EE_Cron_Tasks', 'update_transaction_with_payment' ),
@@ -184,25 +187,22 @@ class EE_Cron_Tasks extends EE_BASE {
 			$payment_processor->set_revisit( false );
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
-			foreach ( self::$_update_transactions_with_payment as $TXN_ID => $PAY_ID ) {
+			foreach ( self::$_update_transactions_with_payment as $TXN_ID => $payment ) {
 				// reschedule the cron if we can't hit the db right now
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for updating the TXN
 					EE_Cron_Tasks::schedule_update_transaction_with_payment(
 						time() + EE_Cron_Tasks::reschedule_timeout,
 						$TXN_ID,
-						$PAY_ID
+						$payment
 					);
 					continue;
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
-					$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
-					if ( $payment instanceof EE_Payment ) {
-						// now try to update the TXN with any payments
-						$payment_processor->update_txn_based_on_payment( $transaction, $payment, true, true );
-					}
+					// now try to update the TXN with any payments
+					$payment_processor->update_txn_based_on_payment( $transaction, $payment, true, true );
 				}
 				unset( self::$_update_transactions_with_payment[ $TXN_ID ] );
 			}
@@ -300,6 +300,8 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 			// load EEM_Transaction
@@ -318,10 +320,9 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
-					// don't finalize the TXN if it has already been completed
-					if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
-						continue;
-					}
+					//if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
+					//	continue;
+					//}
 					// let's simulate an IPN here which will trigger any notifications that need to go out
 					$payment_processor->update_txn_based_on_payment( $transaction, $transaction->last_payment(), true, true );
 				}
