@@ -768,7 +768,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		// initialize with no restrictions
 		$qty = INF;
 		// do we want data for one datetime or all of them ?
-		$query_params = $DTT_ID ? array( array( 'DTT_ID' => $DTT_ID ) ) : array( array() );
+		$query_params = $DTT_ID ? array( array( 'DTT_ID' => $DTT_ID ) ) : array();
 		$datetimes = $this->datetimes( $query_params );
 		if ( is_array( $datetimes ) && ! empty( $datetimes ) ) {
 			foreach ( $datetimes as $datetime ) {
