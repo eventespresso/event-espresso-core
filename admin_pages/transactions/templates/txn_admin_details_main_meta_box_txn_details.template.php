@@ -301,7 +301,7 @@
 					<div class="mop-PP mop-CC mop-CHQ mop">
 						<div class="txn-admin-apply-payment-gw-txn-id-dv admin-modal-dialog-row">
 							<label for="txn-admin-payment-txn-id-inp" class=""><?php _e( 'TXN ID / CHQ #', 'event_espresso' );?></label>
-							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
+							<input name="txn_admin_payment[txn_id_chq_nmbr]" id="txn-admin-payment-txn-id-chq-nmbr-inp" class="txn-admin-apply-payment-inp" type="text" maxlength="100"/>
 							<p class="description"><?php _e( 'The Transaction ID sent back from the payment gateway, or the Cheque #', 'event_espresso' );?></p>
 						</div>
 					</div>
@@ -329,13 +329,13 @@
 
 					<div class="txn-admin-apply-payment-po-nmbr-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-po-nmbr-inp" class=""><?php _e( 'P.O. / S.O. #', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[po_number]" id="txn-admin-payment-po-nmbr-inp" class="txn-admin-apply-payment-inp" type="text"/>
+						<input name="txn_admin_payment[po_number]" id="txn-admin-payment-po-nmbr-inp" class="txn-admin-apply-payment-inp" type="text" maxlength="100"/>
 						<p class="description"><?php _e( 'The Purchase or Sales Order Number if any (optional)', 'event_espresso' );?></p>
 					</div>
 
 					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
 						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
+						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>" maxlength="100"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
 						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p>
 					</div>
 

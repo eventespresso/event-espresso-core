@@ -304,16 +304,16 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					PAY_amount DECIMAL(10,3) DEFAULT NULL,
 					PMD_ID INT(11) DEFAULT NULL,
 					PAY_gateway_response TEXT COLLATE utf8_bin,
-					PAY_txn_id_chq_nmbr VARCHAR(32) COLLATE utf8_bin DEFAULT NULL,
-					PAY_po_number VARCHAR(32) COLLATE utf8_bin DEFAULT NULL,
-					PAY_extra_accntng VARCHAR(45) COLLATE utf8_bin DEFAULT NULL,
+					PAY_txn_id_chq_nmbr VARCHAR(100) COLLATE utf8_bin DEFAULT NULL,
+					PAY_po_number VARCHAR(100) COLLATE utf8_bin DEFAULT NULL,
+					PAY_extra_accntng VARCHAR(100) COLLATE utf8_bin DEFAULT NULL,
 					PAY_details TEXT COLLATE utf8_bin,
 					PAY_redirect_url VARCHAR(300),
 					PAY_redirect_args TEXT,
 					PRIMARY KEY  (PAY_ID),
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
-		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name = 'esp_payment_method';
 		$sql = "PMD_ID INT(11) NOT NULL AUTO_INCREMENT,
