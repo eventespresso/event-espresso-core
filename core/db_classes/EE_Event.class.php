@@ -863,7 +863,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
 				// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
 				// to the next ticket.
-				$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				if ( $current_total_available ) {
+					$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				} else {
+					$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->qty() );
+				}
 
 				//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
 				//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
