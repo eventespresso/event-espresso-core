@@ -220,7 +220,7 @@ abstract class EE_Addon extends EE_Configurable {
 	/**
 	 * @return array
 	 */
-	public function plugins_page_row() {
+	public function get_plugins_page_row() {
 
 		return $this->_plugins_page_row;
 	}
@@ -654,9 +654,9 @@ abstract class EE_Addon extends EE_Configurable {
 	public function after_plugin_row( $plugin_file, $plugin_data, $status ) {
 
 		$after_plugin_row = '';
-		if ( $plugin_file == $this->plugin_basename() && $this->plugins_page_row() != '' ) {
+		if ( $plugin_file == $this->plugin_basename() && $this->get_plugins_page_row() != '' ) {
 			$class = $status ? 'active' : 'inactive';
-			$plugins_page_row = $this->plugins_page_row();
+			$plugins_page_row = $this->get_plugins_page_row();
 			$link_text = isset( $plugins_page_row[ 'link_text' ] ) ? $plugins_page_row[ 'link_text' ] : '';
 			$link_url = isset( $plugins_page_row[ 'link_url' ] ) ? $plugins_page_row[ 'link_url' ] : '';
 			$description = isset( $plugins_page_row[ 'description' ] ) ? $plugins_page_row[ 'description' ] : $plugins_page_row;
