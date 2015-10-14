@@ -49,6 +49,9 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 	
 	/**
 	 * @group 8964
+	 * Uses a particular number and quantity that has been shown to cause rounding problems
+	 * prior to the work on 8964 (specifically, if you had 2 transactions for 1 ticket purchase each
+	 * the total for both transactions was NOT the same as 1 transaction for 2 ticket purchases)
 	 */
 	function test_recalculate_pre_tax_total__rounding_issues() {
 		EE_Registry::instance()->load_helper( 'Line_Item' );

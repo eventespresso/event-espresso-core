@@ -829,23 +829,31 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 				empty( $my_children ) ) {
 			$total = $this->unit_price() * $this->quantity();
 		} elseif ( $this->is_sub_total() || $this->is_total() || ($this->is_line_item() && ! empty( $my_children ) ) ) {
+			//we need to keep track of the running total for a single item, 
+			//because we need to round as we go
+			$unit_price_for_total = 0;
 			//get the total of all its children
 			foreach ( $my_children as $child_line_item ) {
 				if ( $child_line_item instanceof EE_Line_Item ) {
 					if ( $child_line_item->is_percent() ) {
-						$percent_total = $total * $child_line_item->percent() / 100;
+						//it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
+						//not total multiplied by percent, because that ignores rounding along-the-way
+						$percent_unit_price = round( $unit_price_for_total * $child_line_item->percent() / 100, EE_Registry::instance()->CFG->currency->dec_plc, PHP_ROUND_HALF_DOWN );
+						$percent_total = $percent_unit_price * $this->quantity();
 						$child_line_item->set_total( $percent_total );
 						//so far all percent line items should have a quantity of 1
 						//(ie, no double percent discounts. Although that might be requested someday)
 						$child_line_item->set_quantity( 1 );
 						$child_line_item->maybe_save();
 						$total += $percent_total;
+						$unit_price_for_total += $percent_unit_price;
 					} else {
 						//verify flat sub-line-item quantities match their parent
 						if( $child_line_item->is_sub_line_item() ) {
 							$child_line_item->set_quantity( $this->quantity() );
 						}
 						$total += $child_line_item->recalculate_pre_tax_total();
+						$unit_price_for_total += $child_line_item->unit_price();
 					}
 				}
 			}
