@@ -662,7 +662,27 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function increase_sold( $qty = 1 ) {
 		$sold = $this->sold() + $qty;
+		$this->_increase_sold_for_datetimes( $qty );
 		return $this->set_sold( $sold );
+	}
+
+
+
+	/**
+	 * Increases sold on related datetimes
+	 * @param int $qty
+	 * @return boolean
+	 */
+	protected function _increase_sold_for_datetimes( $qty = 1 ) {
+		$datetimes = $this->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->increase_sold( $qty );
+					$datetime->save();
+				}
+			}
+		}
 	}
 
 
@@ -687,7 +707,28 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function decrease_sold( $qty = 1 ) {
 		$sold = $this->sold() - $qty;
+		$this->_decrease_sold_for_datetimes( $qty );
 		return $this->set_sold( $sold );
+	}
+
+
+
+	/**
+	* Decreases sold on related datetimes
+	*
+	* @param int $qty
+	* @return boolean
+	*/
+	protected function _decrease_sold_for_datetimes( $qty = 1 ) {
+		$datetimes = $this->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->decrease_sold( $qty );
+					$datetime->save();
+				}
+			}
+		}
 	}
 
 
