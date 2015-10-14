@@ -37,7 +37,7 @@ class EE_Event_Scenario_G extends EE_Test_Scenario {
 	protected function _set_up_expected(){
 		$this->_expected_values = array(
 			'total_available_spaces' => 5,
-			'total_remaining_spaces' => 9
+			'total_remaining_spaces' => 3
 		);
 	}
 
@@ -119,8 +119,16 @@ class EE_Event_Scenario_G extends EE_Test_Scenario {
 		);
 
 		$build_objects = $this->_eeTest->factory->complex_factory->build( $build_artifact );
-		EEH_Debug_Tools::printr( $build_objects, '$build_objects', __FILE__, __LINE__ );
-
+		// simulate two sales for ticket 3, which will also increase sold qty for D1 & D2
+		if (
+			isset( $build_objects['Ticket'], $build_objects['Ticket'][3] )
+			&& $build_objects['Ticket'][3] instanceof EE_Ticket
+		) {
+			/** @type EE_Ticket $ticket */
+			$ticket = $build_objects['Ticket'][3];
+			$ticket->increase_sold( 2 );
+		}
+		//EEH_Debug_Tools::printr( $build_objects['Datetime'], 'Datetimes', __FILE__, __LINE__ );
 		//assign the event object as the scenario object
 		$this->_scenario_object = reset( $build_objects['Event'] );
 	}
