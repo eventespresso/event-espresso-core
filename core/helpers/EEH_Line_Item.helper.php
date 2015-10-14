@@ -208,7 +208,14 @@ class EEH_Line_Item {
 	 */
 	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$datetimes = $ticket->datetimes();
-		$event = sprintf( __( '(For %1$s)', 'event_espresso' ), reset( $datetimes )->event()->name() );
+		$first_datetime = reset( $datetimes );
+		if( $first_datetime instanceof EE_Datetime &&
+				$first_datetime->event() instanceof EE_Event ) {
+			$first_datetime_name = $first_datetime->event()->name();
+		} else {
+			$first_datetime_name = __( 'Event', 'event_espresso' );
+		}
+		$event = sprintf( __( '(For %1$s)', 'event_espresso' ), $first_datetime_name );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
 		if ( ! $events_sub_total instanceof EE_Line_Item ) {
