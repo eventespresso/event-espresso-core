@@ -660,10 +660,10 @@ abstract class EE_Addon extends EE_Configurable {
 			$link_text = isset( $plugins_page_row[ 'link_text' ] ) ? $plugins_page_row[ 'link_text' ] : '';
 			$link_url = isset( $plugins_page_row[ 'link_url' ] ) ? $plugins_page_row[ 'link_url' ] : '';
 			$description = isset( $plugins_page_row[ 'description' ] ) ? $plugins_page_row[ 'description' ] : $plugins_page_row;
-			$after_plugin_row .= '<tr id="' . sanitize_title( $plugin_file ) . '-ee-addon" class="' . $class . '">';
-			$after_plugin_row .= '<th class="check-column" scope="row"></th>';
-			$after_plugin_row .= '<td class="ee-addon-upsell-info-title-td plugin-title column-primary">';
-			if ( ! empty( $link_text )) {
+			if ( ! empty( $link_text ) && ! empty( $link_url ) && ! empty( $description )) {
+				$after_plugin_row .= '<tr id="' . sanitize_title( $plugin_file ) . '-ee-addon" class="' . $class . '">';
+				$after_plugin_row .= '<th class="check-column" scope="row"></th>';
+				$after_plugin_row .= '<td class="ee-addon-upsell-info-title-td plugin-title column-primary">';
 				$after_plugin_row .= '<style>
 .ee-button,
 .ee-button:active,
@@ -705,12 +705,14 @@ abstract class EE_Addon extends EE_Configurable {
 <p class="ee-addon-upsell-info-dv">
 	<a class="ee-button" href="' . $link_url . '">' . $link_text . ' &nbsp;<span class="dashicons dashicons-arrow-right-alt2" style="margin:0;"></span></a>
 </p>';
+				$after_plugin_row .= '</td>';
+				$after_plugin_row .= '<td class="ee-addon-upsell-info-desc-td column-description desc">';
+				$after_plugin_row .= $description;
+				$after_plugin_row .= '</td>';
+				$after_plugin_row .= '</tr>';
+			} else {
+				$after_plugin_row .= $description;
 			}
-			$after_plugin_row .= '</td>';
-			$after_plugin_row .= '<td class="ee-addon-upsell-info-desc-td column-description desc">';
-			$after_plugin_row .= $description;
-			$after_plugin_row .= '</td>';
-			$after_plugin_row .= '</tr>';
 		}
 
 		echo $after_plugin_row;
