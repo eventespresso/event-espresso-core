@@ -209,10 +209,10 @@ class EED_Ical  extends EED_Module {
 	}
 
 	/**
-	 * 	_escape_ICal_data
+	 * 	_escape_ICal_description
 	 *
 	 *	@access 	private
-	 *  	@param	string $string
+	 *  	@param	string $description
 	 *  	@return	string
 	 */
 	private static function _escape_ICal_description( $description = '' ) {
@@ -225,11 +225,7 @@ class EED_Ical  extends EED_Module {
 
 		return $description;
 	}
-
-
-	 		
-
-
+	
 }
 // End of file EED_Ical.module.php
 // Location: /modules/ical/EED_Ical.module.php
