@@ -10,7 +10,6 @@
 		<option value='PDC'>Declined</option>
 		<option value='PFL'>Failed</option>
 	</select><br>
-	<label for='gateway_txn_id'>Gateway Transaction ID</label>
-	<input id='gateway_txn_id' name='gateway_txn_id' value='<?php echo $_REQUEST['gateway_txn_id'];?>'><br>
+	<input id='gateway_txn_id' name='gateway_txn_id' type='hidden' value='<?php echo $_REQUEST['gateway_txn_id'];?>'><br>
 	<button>Return Event Espresso</button> (<?php echo $_REQUEST['return_url'];?>)
 </form>
