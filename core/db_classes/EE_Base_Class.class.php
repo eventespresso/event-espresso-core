@@ -721,7 +721,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function get_one_from_cache($relationName){
-		$cached_array_or_object =  $this->_model_relations[$relationName];
+		$cached_array_or_object = isset( $this->_model_relations[$relationName] ) ? $this->_model_relations[$relationName] : null;
 		if(is_array($cached_array_or_object)){
 			return array_shift($cached_array_or_object);
 		}else{
@@ -740,7 +740,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class[] NOT necessarily indexed by primary keys
 	 */
 	public function get_all_from_cache($relationName){
-		$cached_array_or_object =  $this->_model_relations[$relationName];
+		$cached_array_or_object =  isset( $this->_model_relations[$relationName] ) ? $this->_model_relations[$relationName] : array();
 		if(is_array($cached_array_or_object)){
 			$objects = $cached_array_or_object;
 		}elseif($cached_array_or_object){
