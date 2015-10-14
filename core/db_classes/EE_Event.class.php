@@ -680,20 +680,19 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return bool    return the ACTUAL sold out state.
 	 */
 	public function perform_sold_out_status_check() {
+		EE_Registry::instance()->load_helper('HTML');
+		// get all unexpired untrashed tickets
+		$tickets = $this->tickets( array(
+			array(
+				'TKT_end_date'   => array( '>=', EEM_Ticket::instance()->current_time_for_query( 'TKT_end_date' ) ),
+				'TKT_deleted'    => false
+			)
+		));
 		// set initial value
 		$spaces_remaining = 0;
-		//next let's get all datetimes and loop through them
-		$datetimes = $this->datetimes_in_chronological_order();
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				$dtt_spaces_remaining = $datetime->spaces_remaining( TRUE );
-				// if datetime has unlimited reg limit then the event can never be sold out
-				if ( $dtt_spaces_remaining === INF ) {
-					return FALSE;
-				}
-				else {
-					$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
-				}
+		foreach( $tickets as $ticket ) {
+			if ( $ticket instanceof EE_Ticket ) {
+				$spaces_remaining += $ticket->qty( 'saleable' );
 			}
 		}
 		if ( $spaces_remaining === 0 ) {
