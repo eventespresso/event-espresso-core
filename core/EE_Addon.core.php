@@ -231,7 +231,10 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @param array $plugins_page_row
 	 */
 	public function set_plugins_page_row( $plugins_page_row = array() ) {
-		$plugins_page_row = strpos( $plugins_page_row, '<h3>Promotions Addon Upsell Info</h3>' ) !== false ? $plugins_page_row : '';
+		// sigh.... check for example content that I stupidly merged to master and remove it if found
+		if ( ! is_array( $plugins_page_row ) && strpos( $plugins_page_row, '<h3>Promotions Addon Upsell Info</h3>' ) !== false ) {
+			$plugins_page_row = '';
+		}
 		$this->_plugins_page_row = $plugins_page_row;
 	}
 
