@@ -97,9 +97,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
 	 * after running our query, so that this timezone isn't set for EVERY query
 	 * on EEM_Datetime for the rest of the request, no?
+	 *
 	 * @param boolean $show_expired whether or not to include expired events
 	 * @param boolean $show_deleted whether or not to include deleted events
-	 * @return EE_Datetime[]
+	 * @param null $limit
+	 * @return \EE_Datetime[]
 	 */
 	public function datetimes_ordered( $show_expired = true, $show_deleted = false, $limit = null ) {
 		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted, $limit );
@@ -835,54 +837,59 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 		//now let's loop through the sorted tickets and simulate sellouts
 		foreach ( $ticket_sums as $ticket_info ) {
-			$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
-			//need to sort these $datetimes by remaining (only if $current_total_available)
-			//setup datetimes for simulation
-			$ticket_datetimes_remaining = array();
-			foreach( $datetimes as $datetime ) {
-				$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
-				$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
-			}
-			usort( $ticket_datetimes_remaining, function( $a, $b ) {
-				if ( $a['rem'] == $b['rem'] ) {
-					return 0;
+			if ( $ticket_info['ticket'] instanceof EE_Ticket ) {
+
+				$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
+				//need to sort these $datetimes by remaining (only if $current_total_available)
+				//setup datetimes for simulation
+				$ticket_datetimes_remaining = array();
+				foreach( $datetimes as $datetime ) {
+					$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
+					$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
 				}
-				return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
-			});
+				usort( $ticket_datetimes_remaining, function( $a, $b ) {
+					if ( $a['rem'] == $b['rem'] ) {
+						return 0;
+					}
+					return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
+				});
 
 
-			//get the remaining on the first datetime (which should be the one with the least remaining) and that is
-			//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
-			$lowest_datetime = reset( $ticket_datetimes_remaining );
+				//get the remaining on the first datetime (which should be the one with the least remaining) and that is
+				//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
+				$lowest_datetime = reset( $ticket_datetimes_remaining );
 
-			//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
-			// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
-			// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
-			// to the next ticket.
-			$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
+				// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
+				// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
+				// to the next ticket.
+				$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
 
-			//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
-			//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
-			//available.
-			if ( $remaining === INF ) {
-				$spaces_available += $ticket_info['ticket']->qty();
-				continue;
-			}
+				//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
+				//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
+				//available.
+				if ( $remaining === INF ) {
+					$spaces_available += $ticket_info['ticket']->qty();
+					continue;
+				}
 
-			//if ticket has sold amounts then we also need to add that (but only if doing live counts)
-			if ( $current_total_available ) {
-				$spaces_available += $ticket_info['ticket']->sold();
-			}
+				//if ticket has sold amounts then we also need to add that (but only if doing live counts)
+				if ( $current_total_available ) {
+					$spaces_available += $ticket_info['ticket']->sold();
+				}
 
-			if ( $remaining <= 0 ) {
-				continue;
-			} else {
-				$spaces_available += $remaining;
-			}
+				if ( $remaining <= 0 ) {
+					continue;
+				} else {
+					$spaces_available += $remaining;
+				}
 
-			//loop through the datetimes and sell them out!
-			foreach ( $ticket_datetimes_remaining as $datetime_info ) {
-				$datetime_limits[$datetime_info['datetime']->ID()] += - $remaining;
+				//loop through the datetimes and sell them out!
+				foreach ( $ticket_datetimes_remaining as $datetime_info ) {
+					if ( $datetime_info['datetime'] instanceof EE_Datetime ) {
+						$datetime_limits[ $datetime_info['datetime']->ID() ] += - $remaining;
+					}
+				}
 			}
 		}
 
