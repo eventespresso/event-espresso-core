@@ -63,6 +63,10 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"),  $this->get_help_tab_link() )
+				)),
+				'override_use_separate_IPN_request' => new EE_Yes_No_Input( array(
+					'html_label_text' => __('Use Separate IPN', 'event_espresso'),
+					'html_help_text' => __( 'Instruct the gateway to send a separate IPN request, or send payment data back with the user upon return.', 'event_espresso' ),
 				)))));
 		return $form;
 	}

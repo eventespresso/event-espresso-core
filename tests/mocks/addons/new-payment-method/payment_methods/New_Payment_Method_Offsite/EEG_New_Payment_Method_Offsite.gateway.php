@@ -27,6 +27,18 @@ class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
 	protected $_currencies_supported = EE_Gateway::all_currencies_supported;
 	
 	/**
+	 * Example of site's login ID
+	 * @var string
+	 */
+	protected $_login_id = null;
+	
+	/**
+	 * Whether we have configured the gateway integration object to use a separate IPN or not
+	 * @var boolean
+	 */
+	protected $_override_use_separate_IPN = null;
+	
+	/**
 	 * @return EEG_New_Payment_Method_Offsite
 	 */
 	public function __construct() {
@@ -35,6 +47,18 @@ class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
 		//set this to TRUE
 		$this->set_uses_separate_IPN_request( false ) ;
 		parent::__construct();
+	}
+	
+	/**
+	 * Override's parent so this gateway integration class can act like one that uses
+	 * a separate IPN or not, depending on what is set in the payment methods settings form
+	 * @return boolean
+	 */
+	public function uses_separate_IPN_request() {
+		if( $this->_override_use_separate_IPN_request !== null ) {
+			$this->set_uses_separate_IPN_request( $this->_override_use_separate_IPN_request );
+		} 
+		return parent::uses_separate_IPN_request();
 	}
 
 	/**
@@ -85,6 +109,8 @@ class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
 			'amount' => $payment->amount(),
 			'gateway_txn_id' => $payment->txn_id_chq_nmbr(),
 			'return_url' => $return_url,
+			'uses_separate_IPN_request' => $this->uses_separate_IPN_request(),
+			'ipn_url' => $notify_url,
 		));
 		return $payment;
 	}
