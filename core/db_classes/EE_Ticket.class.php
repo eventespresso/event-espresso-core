@@ -784,7 +784,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 				$qty = min( $qty, $raw );
 				// if we want the actual saleable amount, then we need to consider ticket sales
 				if ( $context == 'saleable' ) {
-					$qty = max( $qty - $datetime->sold(), 0 );
+					$qty = max( $qty - $this->sold(), 0 );
 					$qty = ! $datetime->sold_out() ? $qty : 0;
 				}
 			}
