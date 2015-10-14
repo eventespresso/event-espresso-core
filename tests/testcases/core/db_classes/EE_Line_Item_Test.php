@@ -46,6 +46,44 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertNotEquals( 0, $txn->tax_total() );
 		$this->assertEquals( $total_including_taxes, $total_line_item->total() );
 	}
+	
+	/**
+	 * @group 8964
+	 */
+	function test_recalculate_pre_tax_total__rounding_issues() {
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		$flat_base_price_type_id = EEM_Price_Type::instance()->get_var( array( array( 'PRT_name' => 'Base Price' ) ) );
+		$percent_surcharge_price_type_id = EEM_Price_Type::instance()->get_var( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
+		$base_price = $this->new_model_obj_with_dependencies( 
+				'Price', 
+				array(
+					'PRT_ID' => $flat_base_price_type_id,
+					'PRC_amount' => 21.67
+				));
+		$percent_surcharge = $this->new_model_obj_with_dependencies( 
+				'Price',
+				array(
+					'PRT_ID' => $percent_surcharge_price_type_id,
+					'PRC_amount' => 20
+				));
+		$ticket = $this->new_model_obj_with_dependencies(
+				'Ticket',
+				array(
+					'TKT_price' => $base_price->amount() + ( $base_price->amount() * $percent_surcharge->amount() / 100 ),
+					'TKT_taxable' => false
+				));
+		$ticket->_add_relation_to( $base_price, 'Price' );
+		$ticket->_add_relation_to( $percent_surcharge, 'Price' );
+		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		$datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
+		$ticket->_add_relation_to( $datetime, 'Datetime' );
+		
+		$quantity = 2;
+		$total_line_item = EEH_Line_Item::add_ticket_purchase( EEH_Line_Item::create_total_line_item(), $ticket, $quantity);
+		
+		$this->assertEquals( $ticket->price() * $quantity, $total_line_item->total() );
+		
+	}
 	/**
 	 * * also test that if you call this in order to get the taxable total, that it doesn't update
 	 * the totals to ONLY be taxable totals
