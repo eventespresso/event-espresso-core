@@ -680,7 +680,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return bool    return the ACTUAL sold out state.
 	 */
 	public function perform_sold_out_status_check() {
-		EE_Registry::instance()->load_helper('HTML');
 		// get all unexpired untrashed tickets
 		$tickets = $this->tickets( array(
 			array(
