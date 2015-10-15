@@ -839,7 +839,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 					if ( $child_line_item->is_percent() ) {
 						//it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
 						//not total multiplied by percent, because that ignores rounding along-the-way
-						$percent_unit_price = round( $unit_price_for_total * $child_line_item->percent() / 100, EE_Registry::instance()->CFG->currency->dec_plc, PHP_ROUND_HALF_DOWN );
+						$percent_unit_price = round( $unit_price_for_total * $child_line_item->percent() / 100, EE_Registry::instance()->CFG->currency->dec_plc );
 						$percent_total = $percent_unit_price * $quantity_for_total;
 						$child_line_item->set_total( $percent_total );
 						//so far all percent line items should have a quantity of 1
