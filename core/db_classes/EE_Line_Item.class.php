@@ -828,42 +828,10 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 				( $this->is_sub_line_item() || $this->is_line_item() ) &&
 				empty( $my_children ) ) {
 			$total = $this->unit_price() * $this->quantity();
-		} elseif ( $this->is_sub_total() || $this->is_total() || ($this->is_line_item() && ! empty( $my_children ) ) ) {
-			//we need to keep track of the running total for a single item, 
-			//because we need to round as we go
-			$unit_price_for_total = 0;
-			$quantity_for_total = 1;
-			//get the total of all its children
-			foreach ( $my_children as $child_line_item ) {
-				if ( $child_line_item instanceof EE_Line_Item ) {
-					if ( $child_line_item->is_percent() ) {
-						//it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
-						//not total multiplied by percent, because that ignores rounding along-the-way
-						$percent_unit_price = round( $unit_price_for_total * $child_line_item->percent() / 100, EE_Registry::instance()->CFG->currency->dec_plc );
-						$percent_total = $percent_unit_price * $quantity_for_total;
-						$child_line_item->set_total( $percent_total );
-						//so far all percent line items should have a quantity of 1
-						//(ie, no double percent discounts. Although that might be requested someday)
-						$child_line_item->set_quantity( 1 );
-						$child_line_item->maybe_save();
-						$total += $percent_total;
-						$unit_price_for_total += $percent_unit_price;
-					} else {
-						//verify flat sub-line-item quantities match their parent
-						if( $child_line_item->is_sub_line_item() ) {
-							$child_line_item->set_quantity( $this->quantity() );
-						}
-						$quantity_for_total = $child_line_item->quantity();
-						$total += $child_line_item->recalculate_pre_tax_total();
-						$unit_price_for_total += $child_line_item->unit_price();
-					}
-				}
-			}
-
-			if( $this->is_sub_total() ){
-				// no negative totals plz
-				$total = max( $total, 0 );
-			}
+		} elseif( $this->is_sub_total() || $this->is_total() ) {
+			$total = $this->_recalculate_pretax_total_for_subtotal( $total, $my_children );
+		} elseif (  $this->is_line_item() && ! empty( $my_children ) ) {
+			$total = $this->_recalcualte_pretax_total_for_line_item( $total, $my_children );
 		}
 		//ensure all non-line items and non-sub-line-items have a quantity of 1
 		if( ! $this->is_line_item() && ! $this->is_sub_line_item() ) {
@@ -891,6 +859,93 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			$this->maybe_save();
 		}
 		return $total;
+	}
+	
+	/**
+	 * Calculates the pretax total when this line item is a subtotal or total line item.
+	 * Basically does a sum-then-round approach (ie, any percent line item that are children
+	 * will calculate their total based on the un-rounded total we're working with so far, and 
+	 * THEN round the result; instead of rounding as we go like with sub-line-items)
+	 * @param float $calculated_total_so_far
+	 * @param EE_Line_Item[] $my_children
+	 * @return float 
+	 */
+	protected function _recalculate_pretax_total_for_subtotal( $calculated_total_so_far, $my_children = null ) {
+		if( $my_children === null ) {
+			$my_children = $this->children();
+		}
+		//get the total of all its children
+		foreach ( $my_children as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				if ( $child_line_item->is_percent() ) {
+					$percent_total = $calculated_total_so_far * $child_line_item->percent() / 100;
+					$child_line_item->set_total( $percent_total );
+					//so far all percent line items should have a quantity of 1
+					//(ie, no double percent discounts. Although that might be requested someday)
+					$child_line_item->set_quantity( 1 );
+					$child_line_item->maybe_save();
+					$calculated_total_so_far += $percent_total;
+				} else {
+					//verify flat sub-line-item quantities match their parent
+					if( $child_line_item->is_sub_line_item() ) {
+						$child_line_item->set_quantity( $this->quantity() );
+					}
+					$calculated_total_so_far += $child_line_item->recalculate_pre_tax_total();
+				}
+			}
+		}
+
+		if( $this->is_sub_total() ){
+			// no negative totals plz
+			$calculated_total_so_far = max( $calculated_total_so_far, 0 );
+		}	
+		return $calculated_total_so_far;
+	}
+	
+	/**
+	 * Calculates the pretax total for a normal line item, in a round-then-sum approach
+	 * (where each sub-line-item is applied to the base price for the line item 
+	 * and the result is immediately rounded, rather than summing all the sub-line-items
+	 * then rounding, like we do when recalculating pretax totals on totals and subtotas).
+	 * @param float $calculated_total_so_far
+	 * @param EE_Line_Item[] $my_children
+	 * @return float
+	 */
+	protected function _recalcualte_pretax_total_for_line_item( $calculated_total_so_far, $my_children = null ) {
+		if( $my_children === null ) {
+			$my_children = $this->children();
+		}
+		//we need to keep track of the running total for a single item, 
+		//because we need to round as we go
+		$unit_price_for_total = 0;
+		$quantity_for_total = 1;
+		//get the total of all its children
+		foreach ( $my_children as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				if ( $child_line_item->is_percent() ) {
+					//it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
+					//not total multiplied by percent, because that ignores rounding along-the-way
+					$percent_unit_price = round( $unit_price_for_total * $child_line_item->percent() / 100, EE_Registry::instance()->CFG->currency->dec_plc );
+					$percent_total = $percent_unit_price * $quantity_for_total;
+					$child_line_item->set_total( $percent_total );
+					//so far all percent line items should have a quantity of 1
+					//(ie, no double percent discounts. Although that might be requested someday)
+					$child_line_item->set_quantity( 1 );
+					$child_line_item->maybe_save();
+					$calculated_total_so_far += $percent_total;
+					$unit_price_for_total += $percent_unit_price;
+				} else {
+					//verify flat sub-line-item quantities match their parent
+					if( $child_line_item->is_sub_line_item() ) {
+						$child_line_item->set_quantity( $this->quantity() );
+					}
+					$quantity_for_total = $child_line_item->quantity();
+					$calculated_total_so_far += $child_line_item->recalculate_pre_tax_total();
+					$unit_price_for_total += $child_line_item->unit_price();
+				}
+			}
+		}
+		return $calculated_total_so_far;
 	}
 
 
