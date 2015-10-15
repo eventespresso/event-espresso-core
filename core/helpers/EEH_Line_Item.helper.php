@@ -215,7 +215,7 @@ class EEH_Line_Item {
 		} else {
 			$first_datetime_name = __( 'Event', 'event_espresso' );
 		}
-		$event = sprintf( __( '(For %1$s)', 'event_espresso' ), $first_datetime_name );
+		$event = sprintf( _x( '(For %1$s)', '(For Event Name)', 'event_espresso' ), $first_datetime_name );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
 		if ( ! $events_sub_total instanceof EE_Line_Item ) {
