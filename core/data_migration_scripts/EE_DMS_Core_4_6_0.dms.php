@@ -609,7 +609,9 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
-			$default_admin_only_payment_methods = array(
+			$default_admin_only_payment_methods = apply_filters( 
+					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods', 
+					array(
 					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
 					__("Cash", 'event_espresso')=>  __("Cash Delivered Physically", 'event_espresso'),
 					__("Check", 'event_espresso')=>  __("Paper Check", 'event_espresso'),
@@ -619,7 +621,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					__("Money Order", 'event_espresso')=>'',
 					__("Paypal", 'event_espresso')=>  __("Paypal eCheck, Invoice, etc", 'event_espresso'),
 					__('Other', 'event_espresso') => __('Other method of payment', 'event_espresso')
-				);
+				) );
 			//make sure we hae payment method records for the following
 			//so admins can record payments for them from the admin page
 
