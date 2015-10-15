@@ -87,12 +87,12 @@ class EE_CPT_Event_Strategy {
 	 * we don't want to join to the datetime table when querying for venues, do we!?)
 	 */
 	protected function _remove_filters(){
-		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 1, 2 );
-		remove_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
-		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
-		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
-		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
-		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
+		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 1 );
+		remove_filter( 'posts_join', array( $this, 'posts_join' ), 1 );
+		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10 );
+		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
+		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1 );
+		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1 );
 	}
 
 
@@ -117,6 +117,9 @@ class EE_CPT_Event_Strategy {
 		) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 			$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
+			// because we only want to retrieve the next upcoming datetime for each event:
+			// add something like ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date " to WP Query SELECT statement
+			$SQL .= ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ' ;
 		}
 		return $SQL;
 	}
@@ -194,7 +197,7 @@ class EE_CPT_Event_Strategy {
 				|| $wp_query->is_espresso_event_taxonomy
 			)
 		) {
-			$SQL = EEM_Datetime::instance()->table() . '.DTT_EVT_start ASC';
+			$SQL = ' event_start_date ASC ';
 		}
 		return $SQL;
 	}
@@ -222,7 +225,7 @@ class EE_CPT_Event_Strategy {
 			// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once
 			// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
 			global $wpdb;
-			$SQL = $wpdb->posts . '.ID';
+			$SQL = $wpdb->posts . '.ID ';
 		}
 		return $SQL;
 	}
