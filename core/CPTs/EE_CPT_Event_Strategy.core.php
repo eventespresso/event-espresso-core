@@ -117,9 +117,11 @@ class EE_CPT_Event_Strategy {
 		) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 			$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
-			// because we only want to retrieve the next upcoming datetime for each event:
-			// add something like ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date " to WP Query SELECT statement
-			$SQL .= ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ' ;
+			if ( $wp_query->is_espresso_event_archive ) {
+				// because we only want to retrieve the next upcoming datetime for each event:
+				// add something like ", MIN( wp_esp_datetime.DTT_EVT_start ) as event_start_date " to WP Query SELECT statement
+				$SQL .= ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ' ;
+			}
 		}
 		return $SQL;
 	}
