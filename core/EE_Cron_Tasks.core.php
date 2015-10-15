@@ -10,6 +10,12 @@
  */
 class EE_Cron_Tasks extends EE_BASE {
 
+	/**
+	 * WordPress doesn't allow duplicate crons within 10 minutes of the original,
+	 * so we'll set our retry time for just over 10 minutes to avoid that
+	 */
+	const reschedule_timeout = 605;
+
 
 	/**
 	 * @var EE_Cron_Tasks
@@ -186,7 +192,7 @@ class EE_Cron_Tasks extends EE_BASE {
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for updating the TXN
 					EE_Cron_Tasks::schedule_update_transaction_with_payment(
-						time() + ( 10 * MINUTE_IN_SECONDS ) + 1,
+						time() + EE_Cron_Tasks::reschedule_timeout,
 						$TXN_ID,
 						$PAY_ID
 					);
@@ -296,8 +302,6 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 			// load EEM_Transaction
@@ -308,7 +312,7 @@ class EE_Cron_Tasks extends EE_BASE {
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for finalizing the TXN
 					EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
-						time() + ( 10 * MINUTE_IN_SECONDS ) + 1,
+						time() + EE_Cron_Tasks::reschedule_timeout,
 						$TXN_ID
 					);
 					continue;
@@ -316,6 +320,10 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
+					// don't finalize the TXN if it has already been completed
+					if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
+						continue;
+					}
 					// let's simulate an IPN here which will trigger any notifications that need to go out
 					$payment_processor->update_txn_based_on_payment( $transaction, $transaction->last_payment(), true, true );
 				}
