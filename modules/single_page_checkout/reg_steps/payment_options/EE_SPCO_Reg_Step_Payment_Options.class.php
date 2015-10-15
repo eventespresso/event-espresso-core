@@ -1743,8 +1743,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				//$this->_setup_redirect_for_next_step();
 				// store that for later
 				$this->checkout->payment = $payment;
-				// mark this reg step as completed
-				//$this->checkout->current_step->set_completed();
+				// mark this reg step as completed, as long as gateway doesn't use a separate IPN request,
+				// because we will complete this step during the IPN processing then
+				if ( $gateway instanceof EE_Offsite_Gateway && ! $gateway->uses_separate_IPN_request() ) {
+					$this->checkout->current_step->set_completed();
+				}
 				return true;
 			}
 		}
