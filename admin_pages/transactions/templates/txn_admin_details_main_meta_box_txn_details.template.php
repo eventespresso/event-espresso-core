@@ -360,9 +360,18 @@
 					</div>
 
 					<div class="txn-admin-apply-payment-send-notifications-dv admin-modal-dialog-row">
+
 						<label for="txn-admin-payment-send-notifications-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
-						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
-						<p class="description"><?php printf( __('By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check this box, the system will also send any related messages matching the status of the registrations to %1$search registration for this transaction%2$s.', 'event_espresso'), '<strong>', '</strong>', '<br />' ); ?></p>
+						<label class="txn-admin-payment-send-notifications-lbl">
+							<input type="checkbox" value="1" name="txn_payments[send_notifications]" checked="checked" aria-checked="true" style="vertical-align: middle;">
+							<?php _e( 'Payment Messages?', 'event_espresso' ); ?>
+						</label>
+						<label class="txn-admin-payment-send-notifications-lbl">
+							<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]" style="vertical-align: middle;">
+							<?php _e( 'Registration Messages?', 'event_espresso' ); ?>
+						</label>
+						<br class="clear-float"/>
+						<p class="description"><?php printf( __('By default %1$sa payment message is sent to the primary registrant%2$s after submitting this form.%3$sHowever, if you check the "Registration Messages" box, the system will also send any related messages matching the status of the registrations to %1$seach registration for this transaction%2$s.', 'event_espresso'), '<strong>', '</strong>', '<br />' ); ?></p>
 						<label></label>
 					</div>
 					<div class="clear"></div>
@@ -432,7 +441,7 @@
 					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
 						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
 						<input type="checkbox" value="1" name="delete_txn_reg_status_change[send_notifications]">
-						<p class="description"><?php _e( 'If you check this box, the system will send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p>
+						<p class="description"><?php _e( 'If you check this box, the system will send any related registration messages matching the status of the registrations to each registration for this transaction. No Payment notifications are sent when deleting a payment.', 'event_espresso' );?></p>
 					</div>
 					<div class="clear"></div>
 
