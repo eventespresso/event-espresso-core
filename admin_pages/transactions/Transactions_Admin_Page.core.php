@@ -1539,23 +1539,31 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 * @param \EE_Payment | null $payment
 	 */
 	protected function _maybe_send_notifications( $payment = null ) {
-		if (
-			isset(
-				$this->_req_data['txn_reg_status_change'],
-				$this->_req_data['txn_reg_status_change']['send_notifications']
-			) &&
-			filter_var( $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ], FILTER_VALIDATE_BOOLEAN )
-		) {
-			switch ( $payment instanceof EE_Payment ) {
-				// payment notifications
-				case true :
+		switch ( $payment instanceof EE_Payment ) {
+			// payment notifications
+			case true :
+				if (
+					isset(
+						$this->_req_data[ 'txn_payments' ],
+						$this->_req_data[ 'txn_payments' ][ 'send_notifications' ]
+					) &&
+					filter_var( $this->_req_data[ 'txn_payments' ][ 'send_notifications' ], FILTER_VALIDATE_BOOLEAN )
+				) {
 					$this->_process_payment_notification( $payment );
-					break;
-				// registration notifications
-				case false :
+				}
+				break;
+			// registration notifications
+			case false :
+				if (
+					isset(
+						$this->_req_data[ 'txn_reg_status_change' ],
+						$this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ]
+					) &&
+					filter_var( $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ], FILTER_VALIDATE_BOOLEAN )
+				) {
 					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
-					break;
-			}
+				}
+				break;
 		}
 	}
 
