@@ -26,7 +26,7 @@ class EEH_Activation {
 	/**
 	 * constant used to indicate a cron task is no longer in use
 	 */
-	const cron_task_no_longer_in_use = null;
+	const cron_task_no_longer_in_use = 'no_longer_in_use';
 
 	private static $_default_creator_id = null;
 
@@ -136,6 +136,7 @@ class EEH_Activation {
 			array(
 				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
 //				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
+				'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use, //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
 			)
 		);
 		if( $which_to_include === 'all' ) {
@@ -173,11 +174,33 @@ class EEH_Activation {
 	 */
 	public static function remove_cron_tasks( $remove_all = true ) {
 		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
+		$crons = _get_cron_array();
+		$crons = is_array( $crons ) ? $crons : array();
+		/* reminder that $crons looks like: top-level keys are timestamps,
+		 * and their values are arrays.
+		 * The 2nd level arrays have keys with each of the cron task hooknames to run at that time
+		 * and their values are arrays.
+		 * The 3rd level level arrays are keys which are hashes of the cron task's arguments,
+		 *  and their values are the UN-hashed arguments
+		 * eg
+		 * array (size=13)
+		 *		1429903276 =>
+		 *		  array (size=1)
+		 *			'AHEE__EE_Cron_Tasks__update_transaction_with_payment' =>
+		 *			  array (size=1)
+		 *				'561299d6e42c8e079285870ade0e47e6' =>
+		 *				  array (size=2)
+		 *					...
+		 *      ...
+		 */
 		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
-			while( $scheduled_time = wp_next_scheduled( $hook_name ) ) {
-				wp_unschedule_event( $scheduled_time, $hook_name );
+			foreach( $crons as $timestamp => $hooks_to_fire_at_time ) {
+				if ( array_key_exists( $hook_name, $hooks_to_fire_at_time ) )  {
+					unset( $crons[ $timestamp ][ $hook_name ] );
+				}
 			}
 		}
+		_set_cron_array( $crons );
 	}
 
 

@@ -37,11 +37,23 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base {
 	 * @return string
 	 * @throws EE_Error
 	 */
-	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		if($value_inputted_for_field_on_model_object!==null && !array_key_exists($value_inputted_for_field_on_model_object,$this->_allowed_enum_values)){
+	function prepare_for_set( $value_inputted_for_field_on_model_object ) {
+		if(
+			$value_inputted_for_field_on_model_object !== null
+			&& ! array_key_exists( $value_inputted_for_field_on_model_object, $this->_allowed_enum_values )
+		){
 			if( defined( 'WP_DEBUG' ) &&  WP_DEBUG ){
-				$msg = sprintf(__("System is assigning incompatible value '%s' to field '%s'",'event_espresso'),$value_inputted_for_field_on_model_object,$this->_name);
-				$msg2 = sprintf(__("Allowed values for '%s' are %s. You provided %s",'event_espresso'),$this->_name,implode(", ",array_keys($this->_allowed_enum_values)),$value_inputted_for_field_on_model_object);
+				$msg = sprintf(
+					__('System is assigning incompatible value "%1$s" to field "%2$s"','event_espresso'),
+					$value_inputted_for_field_on_model_object,
+					$this->_name
+				);
+				$msg2 = sprintf(
+					__('Allowed values for "%1$s" are "%2$s". You provided: "%3$s"','event_espresso'),
+					$this->_name,
+					implode( ", ", array_keys( $this->_allowed_enum_values ) ),
+					$value_inputted_for_field_on_model_object
+				);
 				EE_Error::add_error( "$msg||$msg2", __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return $this->get_default_value();
