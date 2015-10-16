@@ -1011,10 +1011,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				// apply payment to registrations (if applicable)
 				if ( ! empty( $REG_IDs ) ) {
 					$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
+					$this->_maybe_send_notifications();
 					// now process status changes for the same registrations
 					$this->_process_registration_status_change( $transaction, $REG_IDs );
 				}
-				$this->_process_payment_notification( $payment );
+				$this->_maybe_send_notifications( $payment );
 				//prepare to render page
 				$json_response_data[ 'return_data' ] = $this->_build_payment_json_response( $payment, $REG_IDs );
 			} else {
@@ -1475,7 +1476,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						//MAKE sure we also add the delete_txn_req_status_change to the
 						//$_REQUEST global because that's how messages will be looking for it.
 						$_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
-						$this->_process_registration_status_change( $payment->transaction() );
+						$this->_maybe_send_notifications();
+						$this->_process_registration_status_change( $payment->transaction(), $REG_IDs );
+						//$this->_maybe_send_notifications( $payment );
 					}
 				}
 			} else {
@@ -1521,6 +1524,39 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		return $registration_payment_data;
+	}
+
+
+
+	/**
+	 * _maybe_send_notifications
+	 *
+	 * determines whether or not the admin has indicated that notifications should be sent.
+	 * If so, will toggle a filter switch for delivering registration notices.
+	 * If passed an EE_Payment object, then it will trigger payment notifications instead.
+	 *
+	 * @access protected
+	 * @param \EE_Payment | null $payment
+	 */
+	protected function _maybe_send_notifications( $payment = null ) {
+		if (
+			isset(
+				$this->_req_data['txn_reg_status_change'],
+				$this->_req_data['txn_reg_status_change']['send_notifications']
+			) &&
+			filter_var( $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ], FILTER_VALIDATE_BOOLEAN )
+		) {
+			switch ( $payment instanceof EE_Payment ) {
+				// payment notifications
+				case true :
+					$this->_process_payment_notification( $payment );
+					break;
+				// registration notifications
+				case false :
+					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+					break;
+			}
+		}
 	}
 
 
