@@ -49,7 +49,7 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * This contains the data returned by get_object().  Typically this is somethign that test cases need for
+	 * This contains the data returned by get_object().  Typically this is something that test cases need for
 	 * setting up a test.
 	 * @var mixed
 	 */
@@ -62,9 +62,10 @@ abstract class EE_Test_Scenario {
 	protected $_eeTest;
 
 
+
 	/**
 	 * Instantiates the scenario class and sets up basic properties.
-	 *
+	 * @param \EE_UnitTestCase $eeTest
 	 */
 	public function __construct( EE_UnitTestCase $eeTest ) {
 		//verify properties set
@@ -95,7 +96,7 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * Used to initialize the scenario (does nothing if its beein initialized.
+	 * Used to initialize the scenario (does nothing if its been initialized.
 	 */
 	public function initialize() {
 		if ( $this->is_initialized() ) {
@@ -108,7 +109,7 @@ abstract class EE_Test_Scenario {
 
 
 	/**
-	 * Reset the scenario to non-initalized state.  Note this does not do any cleanup
+	 * Reset the scenario to non-initialized state.  Note this does not do any cleanup
 	 */
 	public function reset() {
 		$this->_initialized = false;
@@ -138,8 +139,8 @@ abstract class EE_Test_Scenario {
 		if ( ! empty( $this->_scenario_object) ) {
 			return $this->_scenario_object;
 		}
-
 		$this->_scenario_object = $this->_get_scenario_object();
+		return $this->_scenario_object;
 	}
 
 
@@ -217,7 +218,9 @@ class EE_Test_Scenario_Collection extends EE_Object_Collection {
 			if ( isset( $currentInfo[$key] ) && $currentInfo[$key] === $info ) {
 				$objects[] = $this->current();
 				$this->next();
+				continue;
 			}
+			$this->next();
 		}
 		$this->rewind();
 		return $objects;
