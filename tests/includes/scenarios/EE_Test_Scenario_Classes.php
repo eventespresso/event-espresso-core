@@ -165,6 +165,17 @@ abstract class EE_Test_Scenario {
 	 */
 	abstract protected function _get_scenario_object();
 
+
+
+	/**
+	 * Can be overridden in child classes for doing additional "stuff" during tests.
+	 *
+	 * @param array $arguments
+	 */
+	public function run_additional_logic( $arguments = array() ) {
+	}
+
+
 }
 
 
