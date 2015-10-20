@@ -427,6 +427,7 @@ $table_style = $hide_ticket_selector ? ' style="display:none"' : '';
 //EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
+if ( ! $hide_ticket_selector ) {
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv"<?php echo $table_style; ?>>
 
@@ -491,25 +492,28 @@ if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event ); ?>
 
 </div>
-
-<?php if ( $hide_ticket_selector && isset( $TKT_ID ) ) { ?>
-	<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
-	<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
-	<?php if ( $ticket instanceof EE_Ticket ) {
+<?php } else if ( isset( $TKT_ID ) ) { ?>
+<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
+<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
+<?php
+	if ( $ticket instanceof EE_Ticket ) {
+		do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event );
 		$ticket_description = $ticket->description();
-		?>
-	<div id="no-tkt-slctr-ticket-dv-<?php echo $EVT_ID; ?>" class="no-tkt-slctr-ticket-dv">
-		<div class="no-tkt-slctr-ticket-content-dv">
-			<h5><?php echo $ticket->name(); ?></h5>
-			<?php if ( ! empty( $ticket_description ) ) { ?>
-			<p><?php echo $ticket_description; ?></p>
-			<?php } ?>
-		</div>
-			<?php
-			function espresso_no_tkt_slctr_end_dv() {
-				return '<div class="clear"></div></div>';
-			}
-			add_filter( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', 'espresso_no_tkt_slctr_end_dv' );
-			add_filter( 'FHEE__EE_Ticket_Selector__after_view_details_btn', 'espresso_no_tkt_slctr_end_dv' );
-		} ?>
-<?php } ?>
+?>
+<div id="no-tkt-slctr-ticket-dv-<?php echo $EVT_ID; ?>" class="no-tkt-slctr-ticket-dv">
+	<div class="no-tkt-slctr-ticket-content-dv">
+		<h5><?php echo $ticket->name(); ?></h5>
+		<?php if ( ! empty( $ticket_description ) ) { ?>
+		<p><?php echo $ticket_description; ?></p>
+		<?php } ?>
+	</div>
+<?php
+		do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event );
+		function espresso_no_tkt_slctr_end_dv() {
+			return '<div class="clear"></div></div>';
+		}
+		add_filter( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', 'espresso_no_tkt_slctr_end_dv' );
+		add_filter( 'FHEE__EE_Ticket_Selector__after_view_details_btn', 'espresso_no_tkt_slctr_end_dv' );
+	}
+}
+?>
