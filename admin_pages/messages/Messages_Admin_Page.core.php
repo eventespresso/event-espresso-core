@@ -1553,7 +1553,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//print out $test_settings_fields
 		if ( !empty( $test_settings_fields ) ) {
 			echo $test_settings_fields;
-			$test_settings_html = '<p class="description">' . __('Send a test email to the address above', 'event_espresso') . '</p>' . '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" /><div style="clear:both"></div>';
+			$test_settings_html = '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" /><div style="clear:both"></div>';
 		}
 
 		//and button
