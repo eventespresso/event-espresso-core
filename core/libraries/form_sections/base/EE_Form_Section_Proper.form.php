@@ -70,6 +70,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function __construct( $options_array = array() ){
 		EE_Registry::instance()->load_helper('Formatter');
+		$options_array = apply_filters( 'FHEE__EE_Form_Section_Proper___construct__options_array', $options_array, $this );
 		//call parent first, as it may be setting the name
 		parent::__construct($options_array);
 		//if they've included subsections in the constructor, add them now
@@ -99,8 +100,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
-
-
 	}
 
 
@@ -130,6 +129,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				);
 			}
 		}
+		do_action( 'AHEE__EE_Form_Section_Proper___construct_finalize__end', $this, $parent_form_section, $name );
 	}
 
 
