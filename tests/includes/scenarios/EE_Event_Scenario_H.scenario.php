@@ -35,14 +35,20 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 		$build_artifact = array(
 			'Event' => array(
 				1 => array(
-					'fields' => array( 'EVT_name' => 'Test Scenario EVT H - Two Classes' )
+					'fields' => array(
+						'EVT_name' 	=> 'Test Scenario EVT H - Two Classes',
+						'status' 	=> 'publish',
+					)
 				)
 			),
 			'Datetime' => array(
 				1 => array(
 					'fields' => array(
-						'DTT_name' => 'Class 1 of 2',
+						'DTT_name' 		=> 'Class 1 of 2',
+						'DTT_EVT_start' => time() + ( 7 * DAY_IN_SECONDS ),
+						'DTT_EVT_end' 	=> time() + ( 7.5 * DAY_IN_SECONDS ),
 						'DTT_reg_limit' => 12,
+						'DTT_sold' 		=> 0,
 					),
 					'relations' => array(
 						'Event' => array( 1 )
@@ -50,8 +56,11 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 				),
 				2 => array(
 					'fields' => array(
-						'DTT_name' => 'Class 2 of 2',
+						'DTT_name' 		=> 'Class 2 of 2',
+						'DTT_EVT_start' => time() + ( 14 * DAY_IN_SECONDS ),
+						'DTT_EVT_end'   => time() + ( 14.5 * DAY_IN_SECONDS ),
 						'DTT_reg_limit' => 12,
+						'DTT_sold' 		=> 0,
 					),
 					'relations' => array(
 						'Event' => array( 1 )
@@ -61,8 +70,9 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 			'Ticket' => array(
 				1 => array(
 					'fields' => array(
-						'TKT_name' => 'Ticket 1',
-						'TKT_qty' => 12,
+						'TKT_name' 	=> 'Ticket 1',
+						'TKT_qty' 	=> 12,
+						'TKT_sold' 	=> 0,
 					),
 					'relations' => array(
 						'Datetime' => array( 1, 2 )
@@ -132,7 +142,7 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 	 * @param array $arguments
 	 */
 	public function run_additional_logic( $arguments = array() ) {
-		$qty = isset( $arguments['qty'] ) ? $arguments[ 'qty' ] : 6;
+		$qty = isset( $arguments['qty'] ) ? $arguments[ 'qty' ] : 1;
 		$this->_sell_tickets( $qty );
 	}
 
