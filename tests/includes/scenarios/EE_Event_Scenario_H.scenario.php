@@ -26,7 +26,9 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 		$this->_expected_values = array(
 			'total_available_spaces' => 12,
 			'total_remaining_spaces' => 6,
-			'total_remaining_spaces_2' => 0,
+			'total_remaining_spaces_4' => 4,
+			'total_remaining_spaces_2' => 2,
+			'total_remaining_spaces_0' => 0,
 		);
 	}
 
