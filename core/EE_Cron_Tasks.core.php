@@ -10,6 +10,12 @@
  */
 class EE_Cron_Tasks extends EE_BASE {
 
+	/**
+	 * WordPress doesn't allow duplicate crons within 10 minutes of the original,
+	 * so we'll set our retry time for just over 10 minutes to avoid that
+	 */
+	const reschedule_timeout = 605;
+
 
 	/**
 	 * @var EE_Cron_Tasks
@@ -38,7 +44,7 @@ class EE_Cron_Tasks extends EE_BASE {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// UPDATE TRANSACTION WITH PAYMENT
 		add_action(
-			'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
+			'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
 			array( 'EE_Cron_Tasks', 'setup_update_for_transaction_with_payment' ),
 			10, 2
 		);
@@ -112,12 +118,12 @@ class EE_Cron_Tasks extends EE_BASE {
 	 *
 	 * @param int $timestamp
 	 * @param int $TXN_ID
-	 * @param EE_Payment | null $payment
+	 * @param int $PAY_ID
 	 */
 	public static function schedule_update_transaction_with_payment(
 		$timestamp,
 		$TXN_ID,
-		$payment
+		$PAY_ID
 	) {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 		// validate $TXN_ID and $timestamp
@@ -126,8 +132,8 @@ class EE_Cron_Tasks extends EE_BASE {
 		if ( $TXN_ID && $timestamp ) {
 			wp_schedule_single_event(
 				$timestamp,
-				'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
-				array( $TXN_ID, $payment )
+				'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
+				array( $TXN_ID, $PAY_ID )
 			);
 		}
 	}
@@ -147,12 +153,12 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * and the required resources may not be available
 	 *
 	 * @param int  $TXN_ID
-	 * @param null $payment
+	 * @param int $PAY_ID
 	 */
-	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $payment = null ) {
-		do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID' );
+	public static function setup_update_for_transaction_with_payment( $TXN_ID = 0, $PAY_ID = 0 ) {
+            do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $TXN_ID, '$TXN_ID' );
 		if ( absint( $TXN_ID )) {
-			self::$_update_transactions_with_payment[ $TXN_ID ] = $payment;
+			self::$_update_transactions_with_payment[ $TXN_ID ] = $PAY_ID;
 			add_action(
 				'shutdown',
 				array( 'EE_Cron_Tasks', 'update_transaction_with_payment' ),
@@ -181,20 +187,22 @@ class EE_Cron_Tasks extends EE_BASE {
 			$payment_processor->set_revisit( false );
 			// load EEM_Transaction
 			EE_Registry::instance()->load_model( 'Transaction' );
-			foreach ( self::$_update_transactions_with_payment as $TXN_ID => $payment ) {
+			foreach ( self::$_update_transactions_with_payment as $TXN_ID => $PAY_ID ) {
 				// reschedule the cron if we can't hit the db right now
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for updating the TXN
 					EE_Cron_Tasks::schedule_update_transaction_with_payment(
-						time() + ( 10 * MINUTE_IN_SECONDS ) + 1,
+						time() + EE_Cron_Tasks::reschedule_timeout,
 						$TXN_ID,
-						$payment
+						$PAY_ID
 					);
 					continue;
 				}
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+				$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
 				// verify transaction
-				if ( $transaction instanceof EE_Transaction ) {
+				if ( $transaction instanceof EE_Transaction &&
+						$payment instanceof EE_Payment ) {
 					// now try to update the TXN with any payments
 					$payment_processor->update_txn_based_on_payment( $transaction, $payment, true, true );
 				}
@@ -294,8 +302,6 @@ class EE_Cron_Tasks extends EE_BASE {
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// set revisit flag for txn processor
 			$transaction_processor->set_revisit( false );
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 			/** @type EE_Payment_Processor $payment_processor */
 			$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 			// load EEM_Transaction
@@ -306,7 +312,7 @@ class EE_Cron_Tasks extends EE_BASE {
 				if ( ! EE_Maintenance_Mode::instance()->models_can_query() ) {
 					// reset cron job for finalizing the TXN
 					EE_Cron_Tasks::schedule_finalize_abandoned_transactions_check(
-						time() + ( 10 * MINUTE_IN_SECONDS ) + 1,
+						time() + EE_Cron_Tasks::reschedule_timeout,
 						$TXN_ID
 					);
 					continue;
@@ -314,6 +320,10 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
+					// don't finalize the TXN if it has already been completed
+					if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
+						continue;
+					}
 					// let's simulate an IPN here which will trigger any notifications that need to go out
 					$payment_processor->update_txn_based_on_payment( $transaction, $transaction->last_payment(), true, true );
 				}
@@ -336,7 +346,7 @@ class EE_Cron_Tasks extends EE_BASE {
 		if( EE_Maintenance_Mode::instance()->models_can_query() ) {
 			EEM_Transaction::instance('')->delete_junk_transactions();
 			EEM_Registration::instance('')->delete_registrations_with_no_transaction();
-//			EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
+			EEM_Line_Item::instance('')->delete_line_items_with_no_transaction();
 		}
 	}
 

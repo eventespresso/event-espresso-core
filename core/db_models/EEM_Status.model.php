@@ -42,14 +42,19 @@ class EEM_Status extends EEM_Base {
 			'Status'=>array(
 				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso')),
 				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
-				'STS_type'=>new EE_Enum_Text_Field('STS_type', __("Type", "event_espresso"), false, 'event',
-						array(
-							'event'=> __("Event", "event_espresso"),//deprecated
-							'registration'=>  __("Registration", "event_espresso"),
-							'transaction'=>  __("Transaction", "event_espresso"),
-							'payment'=>  __("Payment", "event_espresso"),
-							'email'=>  __("Email", "event_espresso")
-						)),
+				'STS_type'=>new EE_Enum_Text_Field(
+					'STS_type',
+					__("Type", "event_espresso"),
+					false,
+					'event',
+					array(
+						'event'=> __("Event", "event_espresso"),//deprecated
+						'registration'=>  __("Registration", "event_espresso"),
+						'transaction'=>  __("Transaction", "event_espresso"),
+						'payment'=>  __("Payment", "event_espresso"),
+						'email'=>  __("Email", "event_espresso")
+					)
+				),
 				'STS_can_edit'=>new EE_Boolean_Field('STS_can_edit', __('Editable?','event_espresso'), false),
 				'STS_desc'=>new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
 				'STS_open'=>new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false,false)

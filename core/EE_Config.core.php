@@ -583,6 +583,7 @@ final class EE_Config {
 
 	/**
 	 *    update_config
+         * Important: the config object must ALREADY be set, otherwise this will produce an error.
 	 *
 	 * @access    public
 	 * @param    string                 $section
