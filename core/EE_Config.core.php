@@ -243,14 +243,12 @@ final class EE_Config {
 		foreach ( $espresso_config as $config => $settings ) {
 			// load_core_config__start hook
 			$settings = apply_filters( 'FHEE__EE_Config___load_core_config__config_settings', $settings, $config, $this );
-			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
-			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
+			if ( is_object( $settings ) && property_exists( $this, $config ) ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 				//call configs populate method to ensure any defaults are set for empty values.
 				if ( method_exists( $settings, 'populate' ) ) {
 					$this->$config->populate();
 				}
-
 				if ( method_exists( $settings, 'do_hooks' ) ) {
 					$this->$config->do_hooks();
 				}
@@ -273,41 +271,41 @@ final class EE_Config {
 	 */
 	protected function _verify_config() {
 
-		$this->core = $this->core instanceof EE_Core_Config ?
-			$this->core :
-			apply_filters( 'FHEE__EE_Config___initialize_config__core', new EE_Core_Config() );
+		$this->core = $this->core instanceof EE_Core_Config
+			? $this->core  : new EE_Core_Config();
+		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', $this->core );
 
-		$this->organization = $this->organization instanceof EE_Organization_Config ?
-			$this->organization :
-			apply_filters( 'FHEE__EE_Config___initialize_config__organization', new EE_Organization_Config() );
+		$this->organization = $this->organization instanceof EE_Organization_Config
+			? $this->organization  : new EE_Organization_Config();
+		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', $this->organization );
 
-		$this->currency = $this->currency instanceof EE_Currency_Config ?
-			$this->currency :
-			apply_filters( 'FHEE__EE_Config___initialize_config__currency', new EE_Currency_Config() );
+		$this->currency = $this->currency instanceof EE_Currency_Config
+			? $this->currency : new EE_Currency_Config();
+		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', $this->currency );
 
-		$this->registration = $this->registration instanceof EE_Registration_Config ?
-			$this->registration :
-			apply_filters( 'FHEE__EE_Config___initialize_config__registration', new EE_Registration_Config() );
+		$this->registration = $this->registration instanceof EE_Registration_Config
+			? $this->registration : new EE_Registration_Config();
+		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', $this->registration );
 
-		$this->admin = $this->admin instanceof EE_Admin_Config ?
-			$this->admin :
-			apply_filters( 'FHEE__EE_Config___initialize_config__admin', new EE_Admin_Config() );
+		$this->admin = $this->admin instanceof EE_Admin_Config
+			? $this->admin : new EE_Admin_Config();
+		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', $this->admin );
 
-		$this->template_settings = $this->template_settings instanceof EE_Template_Config ?
-			$this->template_settings :
-			apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', new EE_Template_Config() );
+		$this->template_settings = $this->template_settings instanceof EE_Template_Config
+			? $this->template_settings : new EE_Template_Config();
+		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', $this->template_settings );
 
-		$this->map_settings = $this->map_settings instanceof EE_Map_Config ?
-			$this->map_settings :
-			apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', new EE_Map_Config() );
+		$this->map_settings = $this->map_settings instanceof EE_Map_Config
+			? $this->map_settings : new EE_Map_Config();
+		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', $this->map_settings );
 
-		$this->environment = $this->environment instanceof EE_Environment_Config ?
-			$this->environment :
-			apply_filters( 'FHEE__EE_Config___initialize_config__environment', new EE_Environment_Config() );
+		$this->environment = $this->environment instanceof EE_Environment_Config
+			? $this->environment : new EE_Environment_Config();
+		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', $this->environment );
 
-		$this->gateway = $this->gateway instanceof EE_Gateway_Config ?
-			$this->gateway :
-			apply_filters( 'FHEE__EE_Config___initialize_config__gateway', new EE_Gateway_Config()  );
+		$this->gateway = $this->gateway instanceof EE_Gateway_Config
+			? $this->gateway : new EE_Gateway_Config();
+		$this->gateway = apply_filters( 'FHEE__EE_Config___initialize_config__gateway', $this->gateway );
 
 	}
 
