@@ -39,9 +39,15 @@ class EE_Registry {
 
 	/**
 	 * @var array $_class_abbreviations
-	 * @access    private
+	 * @access    protected
 	 */
 	protected $_class_abbreviations = array();
+
+	/**
+	 * @var array $_auto_resolve_dependencies
+	 * @access    protected
+	 */
+	protected $_auto_resolve_dependencies = array();
 
 	/**
 	 *    EE_Cart Object
@@ -179,12 +185,17 @@ class EE_Registry {
 	 */
 	protected function __construct() {
 		$this->_class_abbreviations = array(
-			'EE_Config'          => 'CFG',
-			'EE_Session'         => 'SSN',
-			'EE_Capabilities'    => 'CAP',
-			'EE_Cart' => 'CART',
-			'EE_Network_Config'  => 'NET_CFG',
-			'EE_Request_Handler' => 'REQ',
+			'EE_Config'          	=> 'CFG',
+			'EE_Session'         	=> 'SSN',
+			'EE_Capabilities'    	=> 'CAP',
+			'EE_Cart' 				=> 'CART',
+			'EE_Network_Config'  	=> 'NET_CFG',
+			'EE_Request_Handler' 	=> 'REQ',
+		);
+		$this->_auto_resolve_dependencies = array(
+			'EE_Session'         	=> array( 'EE_Encryption' ),
+			'EE_Cart' 				=> array( null, 'EE_Session' ),
+			'EE_Front_Controller' 	=> array( 'EE_Registry', 'EE_Request_Handler', 'EE_Module_Request_Router' ),
 		);
 		// class library
 		$this->LIB = new StdClass();
@@ -642,15 +653,16 @@ class EE_Registry {
 	 */
 	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = false ) {
 		$class_obj = null;
+		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) ? true : false;
 		// don't give up! you gotta...
 		try {
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
+			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
 			// attempt to inject dependencies ?
 			if ( $resolve_dependencies && ! $from_db && ! $load_only && ! $reflector->isSubclassOf( 'EE_Base_Class' ) ) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
-			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
 			// instantiate the class and add to the LIB array for tracking
 			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
 			if ( $reflector->getConstructor() === null || $reflector->isAbstract() || $load_only ) {
@@ -728,33 +740,38 @@ class EE_Registry {
 				$param_class === null ||
 				(
 					// something already exists in the incoming arguments for this param
-					isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] ) &&
+					isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
 					// AND it's the correct class
-					$arguments[ $argument_keys[ $index ] ] instanceof $param_class
+					&& $arguments[ $argument_keys[ $index ] ] instanceof $param_class
 				)
+
 			) {
 				// so let's skip this argument and move on to the next
 				continue;
-			}
-			// we might have a dependency... let's try and find it in our cache
-			$cached_class = $this->_get_cached_class( $param_class );
-			$dependency = null;
-			// and grab it if it exists
-			if ( $cached_class instanceof $param_class ) {
-				$dependency = $cached_class;
-			} else if ( $param_class != $class_name ) {
-				// or if not cached, then let's try and load it directly
-				$core_class = $this->load_core( $param_class );
-				// as long as we aren't creating some recursive loading loop
-				if ( $core_class instanceof $param_class ) {
-					$dependency = $core_class;
+			} else if ( in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] ) ) {
+				// we might have a dependency... let's try and find it in our cache
+				$cached_class = $this->_get_cached_class( $param_class );
+				$dependency = null;
+				// and grab it if it exists
+				if ( $cached_class instanceof $param_class ) {
+					$dependency = $cached_class;
+				} else if ( $param_class != $class_name ) {
+					// or if not cached, then let's try and load it directly
+					$core_class = $this->load_core( $param_class );
+					// as long as we aren't creating some recursive loading loop
+					if ( $core_class instanceof $param_class ) {
+						$dependency = $core_class;
+					}
 				}
+				// did we successfully find the correct dependency ?
+				if ( $dependency instanceof $param_class ) {
+					// then let's inject it into the incoming array of arguments at the correct location
+					array_splice( $arguments, $index, 1, array( $dependency ) );
+				}
+			} else {
+				$arguments[ $index ] = null;
 			}
-			// did we successfully find the correct dependency ?
-			if ( $dependency instanceof $param_class ) {
-				// then let's inject it into the incoming array of arguments at the correct location
-				array_splice( $arguments, $index, 1, array( $dependency ) );
-			}
+
 		}
 		return $arguments;
 	}
