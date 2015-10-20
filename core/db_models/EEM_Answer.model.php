@@ -119,7 +119,8 @@ class EEM_Answer extends EEM_Base {
 	 * @param int|string $question_system_id if an INT this is understood to be the question's ID; if a string then it should be its QST_system value.
 	 *	Passing in the QST_system value is more efficient
 	 * @param boolean $pretty_answer
-	 * @return string
+	 * @return string|null (if the registration has no attendee, or the question_system_id is not a QST_ID or QST_system for 
+	 * a question corresponding to an attendee field, returns null)
 	 */
 	public function get_attendee_property_answer_value( EE_Registration $registration, $question_system_id = NULL, $pretty_answer = FALSE ){
 		$field_name = NULL;
