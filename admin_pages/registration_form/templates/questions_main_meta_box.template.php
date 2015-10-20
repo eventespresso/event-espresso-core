@@ -148,7 +148,7 @@ $has_answers = $question->has_answers();
 							$question_options = $question->options();
 							if ( ! empty( $question_options )) {
 								foreach( $question_options as $option_id => $option ) {
-									$disabled =  $has_answers ? ' disabled="disabled"' : '';
+									$disabled =  $has_answers || $option->get('QSO_system') ? ' disabled="disabled"'  : '';
 							?>
 								<tr class="question-option ee-options-sortable">
 									<td class="option-value-cell">
@@ -162,7 +162,9 @@ $has_answers = $question->has_answers();
 										<input type="text" class="option-desc regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php $option->f('QSO_desc')?>">
 									</td>
 									<td>
-										<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
+										<?php if ( ! $option->system() ) { ?>
+											<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
+										<?php } ?>
 										<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
 									</td>
 									<?php
@@ -220,7 +222,7 @@ $has_answers = $question->has_answers();
 				</th>
 				<td>
 					<?php
-					$system_required = array( 'fname', 'lname', 'email' );
+					$system_required = array( 'fname', 'email' );
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : '';
 					$required_on = $question->get('QST_admin_only');
 					$show_required_msg = $required_on ? '' : ' display:none;';

@@ -136,7 +136,7 @@ function __construct() {
 					'post_modified'=>current_time('mysql'),//VNU_modified
 					'post_modified_gmt'=>current_time('mysql',true),
 					'post_author'=>$old_venue['wp_user'],//VNU_wp_user
-					'post_parent'=>null,//parent
+					'post_parent'=>0,//parent
 					'menu_order'=>0,//VNU_order
 					'post_type'=>'espresso_venues'//post_type
 				);
@@ -158,7 +158,7 @@ function __construct() {
 				$insertion_array,
 				$datatypes_array);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
 			return 0;
 		}
 		return $wpdb->insert_id;

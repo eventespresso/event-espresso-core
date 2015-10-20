@@ -170,10 +170,19 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * This is a method for restoring this_obj using details from the given $revision_id
-	 * @param  int         $revision_id ID of the revision we're getting data from
-	 * @param array|string $related_obj_names
-	 * @param array        $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
-	 * @internal param array|string $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
+	 *
+	 * @param int $revision_id 		ID of the revision we're getting data from
+	 * @param array $related_obj_names if included this will be used to restore for related obj
+	 *                                 if not included then we just do restore on the meta.
+	 *                                 We will accept an array of related_obj_names for restoration here.
+	 * @param array $where_query       You can optionally include an array of key=>value pairs
+	 *                                 that allow you to further constrict the relation to being added.
+	 *                                 However, keep in mind that the columns (keys) given
+	 *                                 must match a column on the JOIN table and currently
+	 *                                 only the HABTM models accept these additional conditions.
+	 *                                 Also remember that if an exact match isn't found for these extra cols/val pairs,
+	 *                                 then a NEW row is created in the join table.
+	 *                                 This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
 	 * @return void
 	 */
 	public function restore_revision( $revision_id, $related_obj_names = array(), $where_query = array() ) {
