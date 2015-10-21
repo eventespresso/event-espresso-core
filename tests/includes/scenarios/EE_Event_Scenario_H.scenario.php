@@ -19,6 +19,7 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 	public function __construct( EE_UnitTestCase $eetest ) {
 		$this->type = 'event';
 		$this->name = 'Event Scenario H - Two Classes';
+		$this->_skip = true;
 		parent::__construct( $eetest );
 	}
 
@@ -33,6 +34,10 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 	}
 
 
+
+	/**
+	 * @throws \Exception
+	 */
 	protected function _set_up_scenario(){
 		$build_artifact = array(
 			'Event' => array(
@@ -86,7 +91,7 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 		$build_objects = $this->_eeTest->factory->complex_factory->build( $build_artifact );
 		//assign the event object as the scenario object
 		$this->_scenario_object = reset( $build_objects['Event'] );
-		$this->_sell_tickets( 6 );
+		$this->_sell_tickets( $this->_get_event_ticket() , 6 );
 	}
 
 
@@ -98,42 +103,15 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 
 
 	/**
-	 * simulate six sales for the ticket, which will also increase sold qty for D1 & D2
-	 *
-	 * @param int $qty
+	 * @return EE_Ticket|null
 	 */
-	protected function _sell_tickets( $qty = 1 ) {
-
-		$event = $this->_scenario_object;
-		if ( $event instanceof EE_Event ) {
-			$transaction = EE_Transaction::new_instance(
-				array(
-					'STS_ID'        => EEM_Transaction::complete_status_code,
-					'TXN_timestamp' => time() - DAY_IN_SECONDS,
-					'TXN_total'     => 0,
-					'TXN_paid'      => 0,
-				)
-			);
-			$transaction->save();
-			$tickets = $event->tickets();
+	protected function _get_event_ticket() {
+		$ticket = null;
+		if ( $this->_scenario_object instanceof EE_Event ) {
+			$tickets = $this->_scenario_object->tickets();
 			$ticket = reset( $tickets );
-			if ( $ticket instanceof EE_Ticket ) {
-				for ( $x = 1; $x <= $qty; $x++ ) {
-					$registration = EE_Registration::new_instance(
-						array(
-							'STS_ID'   => EEM_Registration::status_id_approved,
-							'REG_date' => time() - DAY_IN_SECONDS,
-							'REG_code' => $x . '-2-1-eieio',
-							'TXN_ID'   => $transaction->ID(),
-							'EVT_ID'   => $event->ID(),
-							'TKT_ID'   => $ticket->ID(),
-						)
-					);
-					$registration->save();
-				}
-				$event->save();
-			}
 		}
+		return $ticket;
 	}
 
 
@@ -144,8 +122,10 @@ class EE_Event_Scenario_H extends EE_Test_Scenario {
 	 * @param array $arguments
 	 */
 	public function run_additional_logic( $arguments = array() ) {
-		$qty = isset( $arguments['qty'] ) ? $arguments[ 'qty' ] : 1;
-		$this->_sell_tickets( $qty );
+		$qty = isset( $arguments['qty'] ) ? $arguments[ 'qty' ] : 0;
+		if ( $qty ) {
+			$this->_sell_tickets( $this->_get_event_ticket(), $qty );
+		}
 	}
 
 
