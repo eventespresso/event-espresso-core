@@ -1718,12 +1718,27 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
 		}
 		if( WP_DEBUG ){
-			$wpdb->last_error = NULL;
 			$old_show_errors_value = $wpdb->show_errors;
 			$wpdb->show_errors( FALSE );
 		}
-
+		$wpdb->last_error = NULL;
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
+		//was there an error running the query? let's double-check the DB
+		if( $result === false || ! empty( $wpdb->last_error ) ) {
+			EE_System::instance()->initialize_db_if_no_migrations_required( false, true );
+			//ok let's try initializing the core DB again. Maybe a table or column didn't exist, or wasn't big enough etc.
+			$wpdb->last_error = NULL;
+			$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
+			//and try the query again
+			if( $result === false || ! empty( $wpdb->last_error ) ) {
+				//STILL NO LOVE?? verify all the addons too. Maybe they need to be fixed
+				EE_System::instance()->initialize_addons();
+				//and try one more time. If this doesn't work admit defeat
+				$wpdb->last_error = NULL;
+				$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
+			}
+		}
+		
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		if( WP_DEBUG ){
 			$wpdb->show_errors( $old_show_errors_value );
@@ -1737,7 +1752,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $result;
 	}
-
+	
 	/**
 	 * In order to avoid repeating this code for the get_all, sum, and count functions, put the code parts
 	 * that are identical in here. Returns a string of SQL of everything in a SELECT query except the beginning
