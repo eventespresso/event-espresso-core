@@ -62,6 +62,12 @@ abstract class EE_Test_Scenario {
 	protected $_eeTest;
 
 
+	/**
+	 * @var bool
+	 */
+	protected $_skip = false;
+
+
 
 	/**
 	 * Instantiates the scenario class and sets up basic properties.
@@ -131,6 +137,8 @@ abstract class EE_Test_Scenario {
 	}
 
 
+
+
 	/**
 	 * Return the test_scenario_object
 	 * @return mixed
@@ -142,6 +150,52 @@ abstract class EE_Test_Scenario {
 		$this->_scenario_object = $this->_get_scenario_object();
 		return $this->_scenario_object;
 	}
+
+
+
+	/**
+	 * simulate six sales for an event's ticket, which will also increase sold qty for D1 & D2
+	 *
+	 * @param \EE_Ticket $ticket
+	 * @param int $qty
+	 * @throws \EE_Error
+	 */
+	protected function _sell_tickets( EE_Ticket $ticket, $qty = 1 ) {
+		if ( $ticket instanceof EE_Ticket ) {
+			$transaction = EE_Transaction::new_instance(
+				array(
+					'STS_ID'        => EEM_Transaction::complete_status_code,
+					'TXN_timestamp' => time() - DAY_IN_SECONDS,
+					'TXN_total'     => 0,
+					'TXN_paid'      => 0,
+				)
+			);
+			$transaction->save();
+			for ( $x = 1; $x <= $qty; $x++ ) {
+				$registration = EE_Registration::new_instance(
+					array(
+						'STS_ID'   => EEM_Registration::status_id_approved,
+						'REG_date' => time() - DAY_IN_SECONDS,
+						'REG_code' => $transaction->ID() . "-" . $ticket->ID() . "-$x-test",
+						'TXN_ID'   => $transaction->ID(),
+						'EVT_ID'   => $ticket->get_event_ID(),
+						'TKT_ID'   => $ticket->ID(),
+					)
+				);
+				$registration->save();
+			}
+		}
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function skip() {
+		return $this->_skip;
+	}
+
 
 
 	/**
@@ -194,6 +248,11 @@ class EE_Test_Scenario_Collection extends EE_Object_Collection {
 	}
 
 
+
+	/**
+	 * @param \EE_Test_Scenario $test_scenario
+	 * @return bool
+	 */
 	public function add_test_scenario( EE_Test_Scenario $test_scenario ) {
 		return $this->add( $test_scenario, array(
 			'type' => $test_scenario->type,
@@ -201,13 +260,25 @@ class EE_Test_Scenario_Collection extends EE_Object_Collection {
 		) );
 	}
 
+
+
+	/**
+	 * @param string $type
+	 * @return array
+	 */
 	public function get_scenarios_by_type( $type ) {
 		return $this->getObjectByInfoArray( $type, 'type' );
 	}
 
 
+
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
 	public function get_scenario_by_name( $name ) {
-		return reset( $this->getObjectByInfoArray( $name, 'name' ) );
+		$objects = $this->getObjectByInfoArray( $name, 'name' );
+		return reset( $objects );
 	}
 
 
@@ -215,7 +286,7 @@ class EE_Test_Scenario_Collection extends EE_Object_Collection {
 	 * @param mixed $info  The value to check for.
 	 * @param $key
 	 *
-	 * @return array | object
+	 * @return array
 	 */
 	protected function getObjectByInfoArray( $info, $key ) {
 		$objects = array();
