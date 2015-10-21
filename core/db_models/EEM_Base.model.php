@@ -1732,6 +1732,13 @@ abstract class EEM_Base extends EE_Base{
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 		//was there an error running the query? let's double-check the DB
 		if( ( $result === false || ! empty( $wpdb->last_error ) ) && ! EEM_Base::$_already_verified_db_ok_this_request ) {
+			$error_message = sprintf( 
+					__( 'WPDB Error "%1$s" while running wpdb method "%2$s" with arguments %3$s. Automatically attempting to fix EE Core DB', 'event_espresso' ),
+					$wpdb->last_error,
+					$wpdb_method,
+					json_encode( $arguments_to_provide ) );
+			EE_Log::instance()->log( __FILE__, __FUNCTION__, $error_message, 'error' );
+			trigger_error( $error_message );
 			//ok remember that we've already attempted fixing the db, in case the problem persists
 			EEM_Base::$_already_verified_db_ok_this_request = true;
 			EE_System::instance()->initialize_db_if_no_migrations_required( false, true );
@@ -1740,6 +1747,13 @@ abstract class EEM_Base extends EE_Base{
 			$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 			//and try the query again
 			if( $result === false || ! empty( $wpdb->last_error ) ) {
+				$error_message = sprintf( 
+					__( 'WPDB AGAIN: Error "%1$s" while running the same method and arguments as before. Automatically attempting to fix EE Addons DB', 'event_espresso' ),
+					$wpdb->last_error,
+					$wpdb_method,
+					json_encode( $arguments_to_provide ) );
+				EE_Log::instance()->log( __FILE__, __FUNCTION__, $error_message, 'error' );
+				trigger_error( $error_message  );
 				//STILL NO LOVE?? verify all the addons too. Maybe they need to be fixed
 				EE_System::instance()->initialize_addons();
 				//and try one more time. If this doesn't work admit defeat
