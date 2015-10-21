@@ -344,6 +344,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Base_Class[]
 	 */
 	protected $_entity_map;
+	
+	/**
+	 * Boolean indicating whether an EEM_Base child has already re-verified the DB
+	 * is ok (we don't want to do it repetitively)
+	 * @var boolean
+	 */
+	protected static $_already_verified_db_ok_this_request = false;
 
 
 
@@ -1724,7 +1731,9 @@ abstract class EEM_Base extends EE_Base{
 		$wpdb->last_error = NULL;
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 		//was there an error running the query? let's double-check the DB
-		if( $result === false || ! empty( $wpdb->last_error ) ) {
+		if( ( $result === false || ! empty( $wpdb->last_error ) ) && ! EEM_Base::$_already_verified_db_ok_this_request ) {
+			//ok remember that we've already attempted fixing the db, in case the problem persists
+			EEM_Base::$_already_verified_db_ok_this_request = true;
 			EE_System::instance()->initialize_db_if_no_migrations_required( false, true );
 			//ok let's try initializing the core DB again. Maybe a table or column didn't exist, or wasn't big enough etc.
 			$wpdb->last_error = NULL;
