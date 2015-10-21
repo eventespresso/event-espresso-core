@@ -344,13 +344,20 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Base_Class[]
 	 */
 	protected $_entity_map;
-	
+
 	/**
-	 * Boolean indicating whether an EEM_Base child has already re-verified the DB
-	 * is ok (we don't want to do it repetitively)
-	 * @var boolean
+	 * constants used to determine the db verification level
 	 */
-	protected static $_already_verified_db_ok_this_request = false;
+	const db_verified_none 		= 0;
+	const db_verified_core 		= 1;
+	const db_verified_addons 	= 2;
+
+	/**
+	 * indicates whether an EEM_Base child has already re-verified the DB
+	 * is ok (we don't want to do it repetitively)
+	 * @var int - 0 = none, 1 = core, 2 = addons
+	 */
+	protected static $_db_verification_level = EEM_Base::db_verified_none;
 
 
 
@@ -1728,40 +1735,7 @@ abstract class EEM_Base extends EE_Base{
 			$old_show_errors_value = $wpdb->show_errors;
 			$wpdb->show_errors( FALSE );
 		}
-		$wpdb->last_error = NULL;
-		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
-		//was there an error running the query? let's double-check the DB
-		if( ( $result === false || ! empty( $wpdb->last_error ) ) && ! EEM_Base::$_already_verified_db_ok_this_request ) {
-			$error_message = sprintf( 
-					__( 'WPDB Error "%1$s" while running wpdb method "%2$s" with arguments %3$s. Automatically attempting to fix EE Core DB', 'event_espresso' ),
-					$wpdb->last_error,
-					$wpdb_method,
-					json_encode( $arguments_to_provide ) );
-			EE_Log::instance()->log( __FILE__, __FUNCTION__, $error_message, 'error' );
-			trigger_error( $error_message );
-			//ok remember that we've already attempted fixing the db, in case the problem persists
-			EEM_Base::$_already_verified_db_ok_this_request = true;
-			EE_System::instance()->initialize_db_if_no_migrations_required( false, true );
-			//ok let's try initializing the core DB again. Maybe a table or column didn't exist, or wasn't big enough etc.
-			$wpdb->last_error = NULL;
-			$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
-			//and try the query again
-			if( $result === false || ! empty( $wpdb->last_error ) ) {
-				$error_message = sprintf( 
-					__( 'WPDB AGAIN: Error "%1$s" while running the same method and arguments as before. Automatically attempting to fix EE Addons DB', 'event_espresso' ),
-					$wpdb->last_error,
-					$wpdb_method,
-					json_encode( $arguments_to_provide ) );
-				EE_Log::instance()->log( __FILE__, __FUNCTION__, $error_message, 'error' );
-				trigger_error( $error_message  );
-				//STILL NO LOVE?? verify all the addons too. Maybe they need to be fixed
-				EE_System::instance()->initialize_addons();
-				//and try one more time. If this doesn't work admit defeat
-				$wpdb->last_error = NULL;
-				$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
-			}
-		}
-		
+		$result = $this->_process_wpdb_query( $wpdb_method, $arguments_to_provide );
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		if( WP_DEBUG ){
 			$wpdb->show_errors( $old_show_errors_value );
@@ -1775,7 +1749,95 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $result;
 	}
-	
+
+
+
+	/**
+	 * @param $wpdb_method
+	 * @param $arguments_to_provide
+	 * @return mixed
+	 */
+	private function _process_wpdb_query( $wpdb_method, $arguments_to_provide ) {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		$wpdb->last_error = null;
+		$result = call_user_func_array( array( $wpdb, $wpdb_method ), $arguments_to_provide );
+		// was there an error running the query?
+		if ( ( $result === false || ! empty( $wpdb->last_error ) ) ) {
+			switch ( EEM_Base::$_db_verification_level ) {
+
+				case EEM_Base::db_verified_none :
+					// let's double-check core's DB
+					$error_message = $this->_verify_core_db( $wpdb_method, $arguments_to_provide );
+					break;
+
+				case EEM_Base::db_verified_core :
+					// STILL NO LOVE?? verify all the addons too. Maybe they need to be fixed
+					$error_message = $this->_verify_addons_db( $wpdb_method, $arguments_to_provide );
+					break;
+
+				case EEM_Base::db_verified_addons :
+					// ummmm... you in trouble
+					return $result;
+					break;
+			}
+			if ( ! empty( $error_message ) ) {
+				EE_Log::instance()->log( __FILE__, __FUNCTION__, $error_message, 'error' );
+				trigger_error( $error_message );
+			}
+			return $this->_process_wpdb_query( $wpdb_method, $arguments_to_provide );
+
+		}
+
+		return $result;
+	}
+
+
+
+	/**
+	 * @param $wpdb_method
+	 * @param $arguments_to_provide
+	 * @return string
+	 */
+	private function _verify_core_db( $wpdb_method, $arguments_to_provide ){
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		//ok remember that we've already attempted fixing the core db, in case the problem persists
+		EEM_Base::$_db_verification_level = EEM_Base::db_verified_core;
+		$error_message = sprintf(
+			__( 'WPDB Error "%1$s" while running wpdb method "%2$s" with arguments %3$s. Automatically attempting to fix EE Core DB', 'event_espresso' ),
+			$wpdb->last_error,
+			$wpdb_method,
+			json_encode( $arguments_to_provide )
+		);
+		EE_System::instance()->initialize_db_if_no_migrations_required( false, true );
+		return $error_message;
+	}
+
+
+
+	/**
+	 * @param $wpdb_method
+	 * @param $arguments_to_provide
+	 * @return string
+	 */
+	private function _verify_addons_db( $wpdb_method, $arguments_to_provide ) {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		//ok remember that we've already attempted fixing the addons dbs, in case the problem persists
+		EEM_Base::$_db_verification_level = EEM_Base::db_verified_addons;
+		$error_message = sprintf(
+			__( 'WPDB AGAIN: Error "%1$s" while running the same method and arguments as before. Automatically attempting to fix EE Addons DB', 'event_espresso' ),
+			$wpdb->last_error,
+			$wpdb_method,
+			json_encode( $arguments_to_provide )
+		);
+		EE_System::instance()->initialize_addons();
+		return $error_message;
+	}
+
+
+
 	/**
 	 * In order to avoid repeating this code for the get_all, sum, and count functions, put the code parts
 	 * that are identical in here. Returns a string of SQL of everything in a SELECT query except the beginning
@@ -4311,4 +4373,8 @@ abstract class EEM_Base extends EE_Base{
 			);
 		}
 	}
+
+
+
+
 }
