@@ -28,8 +28,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	const system_address = 2;
   	// private instance of the Attendee object
 	protected static $_instance = NULL;
-
-
+        
+        
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question Group','event_espresso');
 		$this->plural_item = __('Question Groups','event_espresso');
@@ -65,9 +65,6 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		parent::__construct( $timezone );
 
 	}
-
-
-
 	/**
 	 * searches the db for the question group with the latest question order and returns that value.
 	 * @access public

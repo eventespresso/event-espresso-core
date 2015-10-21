@@ -72,30 +72,47 @@ class EE_Event_Test extends EE_UnitTestCase{
 	}
 
 	function test_active_status(){
-		$e = EE_Event::new_instance(array('status'=>'publish'));
+		/** @type EE_Event $e */
+		$e = EE_Event::new_instance( array( 'status' => 'publish' ) );
 		$e->save();
-		$d_now = EE_Datetime::new_instance(array(
-			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>time()-100,
-			'DTT_EVT_end'=>time() + 50));
+		//echo "\n\n create Ticket";
+		$t = EE_Ticket::new_instance( array(
+			'TKT_start_date' => time() - 100,
+			'TKT_end_date'   => time() + 50,
+			'TKT_qty'        => 100,
+			'TKT_sold'       => 0,
+		) );
+		$t->save();
+		$d_now = EE_Datetime::new_instance( array(
+			'EVT_ID'        => $e->ID(),
+			'DTT_EVT_start' => time() - 100,
+			'DTT_EVT_end'   => time() + 50
+		) );
+		$d_now->_add_relation_to( $t, 'Ticket' );
 		$d_now->save();
-		$d_exp = EE_Datetime::new_instance(array(
-			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>time()-10,
-			'DTT_EVT_end'=>time() - 5));
+		$d_exp = EE_Datetime::new_instance( array(
+			'EVT_ID'        => $e->ID(),
+			'DTT_EVT_start' => time() - 10,
+			'DTT_EVT_end'   => time() - 5
+		) );
+		$d_exp->_add_relation_to( $t, 'Ticket' );
 		$d_exp->save();
-		$d_upcoming = EE_Datetime::new_instance(array(
-			'EVT_ID'=>$e->ID(),
-			'DTT_EVT_start'=>time()+10,
-			'DTT_EVT_end'=>time() + 15));
+		$d_upcoming = EE_Datetime::new_instance( array(
+			'EVT_ID'        => $e->ID(),
+			'DTT_EVT_start' => time() + 10,
+			'DTT_EVT_end'   => time() + 15
+		) );
+		$d_upcoming->_add_relation_to( $t, 'Ticket' );
 		$d_upcoming->save();
-
 		$this->assertEquals(EE_Datetime::active,$e->get_active_status( TRUE ));
 		$e->_remove_relation_to($d_now, 'Datetime');
 		$this->assertEquals(EE_Datetime::upcoming,$e->get_active_status( TRUE ));
 		$e->_remove_relation_to($d_upcoming, 'Datetime');
 		$this->assertEquals(EE_Datetime::expired,$e->get_active_status( TRUE ));
 	}
+
+
+
 	function test_get_number_of_tickets_sold(){
 		$e = EE_Event::new_instance();
 		$e->save();
@@ -125,7 +142,11 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
 		foreach ( $scenarios as $scenario ) {
 			if ( $scenario->get_expected( 'total_available_spaces') ) {
-				$this->assertEquals( $scenario->get_expected( 'total_available_spaces' ), $scenario->get_scenario_object()->total_available_spaces(), 'Testing ' . $scenario->name );
+				$this->assertEquals(
+					$scenario->get_expected( 'total_available_spaces' ),
+					$scenario->get_scenario_object()->total_available_spaces(),
+					'Testing ' . $scenario->name
+				);
 			}
 		}
 	}
@@ -138,8 +159,57 @@ class EE_Event_Test extends EE_UnitTestCase{
 		//grab test scenarios
 		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
 		foreach ( $scenarios as $scenario ) {
-			if ( $scenario->get_expected( 'total_remaining_spaces' ) ) {
-				$this->assertEquals( $scenario->get_expected( 'total_remaining_spaces'), $scenario->get_scenario_object()->spaces_remaining_for_sale(), 'Testing ' . $scenario->name );
+			/** @type EE_Event $event */
+			$event = $scenario->get_scenario_object();
+			if ( $scenario->get_expected( 'total_remaining_spaces' ) !== false ) {
+				$this->assertEquals(
+					$scenario->get_expected( 'total_remaining_spaces' ),
+					$event->spaces_remaining_for_sale(),
+					'Testing ' . $scenario->name
+				);
+			}
+			if ( $scenario->name == 'Event Scenario H - Two Classes' ) {
+				$this->assertEquals(
+					EE_Datetime::upcoming,
+					$event->get_active_status( true ),
+					$scenario->name . ' active_status after initial 6 ticket sales'
+				);
+				// now sell 2 more tickets
+				$scenario->run_additional_logic( array( 'qty' => 2 ) );
+				$this->assertEquals(
+					$scenario->get_expected( 'total_remaining_spaces_4' ),
+					$event->spaces_remaining_for_sale(),
+					'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+				);
+				$this->assertEquals(
+					EE_Datetime::upcoming,
+					$event->get_active_status( true ),
+					$scenario->name . ' active_status after an additional 2 ticket sales'
+				);
+				// now sell 2 more tickets
+				$scenario->run_additional_logic( array( 'qty' => 2 ) );
+				$this->assertEquals(
+					$scenario->get_expected( 'total_remaining_spaces_2' ),
+					$event->spaces_remaining_for_sale(),
+					'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+				);
+				$this->assertEquals(
+					EE_Datetime::upcoming,
+					$event->get_active_status( true ),
+					$scenario->name . ' active_status after an additional 2 ticket sales'
+				);
+				// now sell 2 more tickets
+				$scenario->run_additional_logic( array( 'qty' => 2 ) );
+				$this->assertEquals(
+					$scenario->get_expected( 'total_remaining_spaces_0' ),
+					$event->spaces_remaining_for_sale(),
+					'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+				);
+				$this->assertEquals(
+					EE_Datetime::sold_out,
+					$event->get_active_status( true ),
+					$scenario->name . ' active_status after additional 6 ticket sales'
+				);
 			}
 		}
 	}
@@ -147,3 +217,4 @@ class EE_Event_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Event_Test.php
+// Location: tests/testcases/core/db_classes/EE_Event_Test.php
