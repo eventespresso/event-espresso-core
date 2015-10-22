@@ -56,11 +56,12 @@ class EE_Template_Part_Manager {
 	/**
 	 *    add_template_part
 	 *
-	 * 	used for setting the details about a particular template part
+	 *    used for setting the details about a particular template part
 	 *
-	 * @param string $name - just a simple string identifier - do NOT use 'event'
+	 * @param string $name     - just a simple string identifier - do NOT use 'event'
+	 * @param string $label    - template part label displayed in admin
 	 * @param string $template - name or path of template to be used by EEH_Template::locate_template()
-	 * @param int    $priority - order in which template parts should be applied
+	 * @param int $priority    - order in which template parts should be applied
 	 */
 	public function add_template_part( $name, $label, $template, $priority ) {
 		// SplPriorityQueue doesn't play nice with multiple items having the same priority
