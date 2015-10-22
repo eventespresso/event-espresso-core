@@ -188,6 +188,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	function column_TXN_timestamp( EE_Transaction $item ){
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 		$txn_date = '<a href="'.$view_lnk_url.'" title="' . esc_attr__( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $this->_get_txn_timestamp( $item ) . '</a>';
+		//status
+		$txn_date .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
 		return $txn_date;
 	}
 
@@ -232,8 +234,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			$transaction_paid = 0;
 		}
 
-		return '<span class="' . $span_class . ' txn-pad-rght">' . $transaction_paid !== 0 ? $item->get_pretty('TXN_paid') : $transaction_paid . '</span>';
+		$payment_method = $item->payment_method();
+		$payment_method_name = $payment_method instanceof EE_Payment_Method ? $payment_method->admin_name() : __( 'Unknown', 'event_espresso' );
 
+		$content = '<span class="' . $span_class . ' txn-pad-rght">' . $transaction_paid !== 0 ? $item->get_pretty('TXN_paid') : $transaction_paid . '</span>';
+		if ( $transaction_paid > 0 ) {
+			$content .= '<br><span class="ee-status-text-small">' . sprintf( __( '...via %s', 'event_espresso' ), $payment_method_name ) . '</span>';
+		}
+		return $content;
 	}
 
 

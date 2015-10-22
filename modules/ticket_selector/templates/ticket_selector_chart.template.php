@@ -3,55 +3,21 @@
 /** @type int $max_atndz */
 /** @type string $event_status */
 /** @type boolean $event_is_expired */
+/** @type EE_Ticket[] $tickets */
 
-$template_settings =  isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
-?>
-<div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv" >
-
-	<?php do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event ); ?>
-
-	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
-		<thead>
-			<tr>
-				<th scope="col" class="ee-ticket-selector-ticket-details-th">
-					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', '', $EVT_ID ) ); ?>
-				</th>
-				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
-					<?php
-						/**
-						 * Filters the text printed for the header of the price column in the ticket selector table
-						 *
-						 * @since 4.7.2
-						 *
-						 * @param string 'Price' The translatable text to display in the table header for price
-						 * @param int $EVT_ID The Event ID
-						 */
-						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID ) );
-					?>
-				</th>
-				<?php } ?>
-				<th scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
-					<?php
-						/**
-						* Filters the text printed for the header of the quantity column in the ticket selector table
-						*
-						* @since 4.7.2
-						*
-						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
-						* @param int $EVT_ID The Event ID
-						*/
-						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
-					?>
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-<?php
 
 $row = 1;
+$max = 1;
 $ticket_count = count( $tickets );
+
+if ( ! $ticket_count ) {
+	return;
+}
+
 $required_ticket_sold_out = FALSE;
+$template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
+ob_start();
+
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
 		//	d( $ticket );
@@ -451,27 +417,107 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$row++;
 		}
 	}
-?>
 
+$ticket_row_html = ob_get_clean();
+// if there is only ONE ticket with a max qty of ONE, and it is free... then not much need for the ticket selector
+$hide_ticket_selector = $ticket_count == 1 && $max == 1 && $ticket->is_free() ? true : false;
+$hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_selector', $hide_ticket_selector, $EVT_ID );
+//EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
+//EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
+//EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
+//EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
+if ( ! $hide_ticket_selector ) {
+?>
+<div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
+
+	<?php do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event ); ?>
+
+	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
+		<thead>
+			<tr>
+				<th scope="col" class="ee-ticket-selector-ticket-details-th">
+					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', '', $EVT_ID ) ); ?>
+				</th>
+				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
+				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
+					<?php
+						/**
+						 * Filters the text printed for the header of the price column in the ticket selector table
+						 *
+						 * @since 4.7.2
+						 *
+						 * @param string 'Price' The translatable text to display in the table header for price
+						 * @param int $EVT_ID The Event ID
+						 */
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_price', __( 'Price', 'event_espresso' ), $EVT_ID ) );
+					?>
+				</th>
+				<?php } ?>
+				<th scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
+					<?php
+						/**
+						* Filters the text printed for the header of the quantity column in the ticket selector table
+						*
+						* @since 4.7.2
+						*
+						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
+						* @param int $EVT_ID The Event ID
+						*/
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
+					?>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php echo $ticket_row_html;?>
 		</tbody>
 	</table>
 
 	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo $_SERVER['REQUEST_URI']?>" />
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL );?>" />
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 
-<?php if ( $max_atndz > 0 ) { ?>
-	<?php
+<?php
+if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 	echo apply_filters(
 		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
 		''
 	);
-
-	?>
-<?php } ?>
+}
+?>
 
 	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event ); ?>
 
 </div>
+<?php } else if ( isset( $TKT_ID ) ) { ?>
+<input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
+<input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
+<input type="hidden" name="noheader" value="true"/>
+<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL ); ?>"/>
+<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>"/>
+<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>"/>
+<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>"/>
+<?php
+	if ( $ticket instanceof EE_Ticket ) {
+		do_action( 'AHEE__ticket_selector_chart__template__before_ticket_selector', $event );
+		$ticket_description = $ticket->description();
+?>
+<div id="no-tkt-slctr-ticket-dv-<?php echo $EVT_ID; ?>" class="no-tkt-slctr-ticket-dv">
+	<div class="no-tkt-slctr-ticket-content-dv">
+		<h5><?php echo $ticket->name(); ?></h5>
+		<?php if ( ! empty( $ticket_description ) ) { ?>
+		<p><?php echo $ticket_description; ?></p>
+		<?php } ?>
+	</div>
+<?php
+		do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event );
+		function espresso_no_tkt_slctr_end_dv() {
+			return '<div class="clear"></div></div>';
+		}
+		add_filter( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', 'espresso_no_tkt_slctr_end_dv' );
+		add_filter( 'FHEE__EE_Ticket_Selector__after_view_details_btn', 'espresso_no_tkt_slctr_end_dv' );
+	}
+}
+?>

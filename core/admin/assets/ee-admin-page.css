@@ -226,9 +226,9 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .ee-spinner {
 	font-family: 'dashicons';
 	display: inline-block;
-    	font-style: normal;
-    	font-weight: normal;
-    	line-height: 1;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
 	vertical-align: middle;
 }
 
@@ -512,19 +512,19 @@ label.error { display : block; color : #FE2A00 !important; }
 }
 
 .ee-caf-preview-text {
-   float: left;
+	float: left;
 	padding: 0 10px;
 }
 
 .ee-caf-preview-action-box {
-    float: right;
+	float: right;
 	padding : 10px;
 }
 
 #ee-admin-caf-preview-container .button-large {
-    height: 50px;
-    font-size: 1.5em;
-    padding: 10px 15px 0;
+	height: 50px;
+	font-size: 1.5em;
+	padding: 10px 15px 0;
 }
 
 .ee-admin-caf-preview-img, .ee-admin-caf-preview-img img {
@@ -691,6 +691,11 @@ label.error { display : block; color : #FE2A00 !important; }
 	width: 5px;
 }
 
+.ee-status-text-small {
+	font-size: .9em;
+	font-style: italic;
+}
+
 .ee-table-wrap {
 	background    : none repeat scroll 0 0 #FFFFFF;
 	border        : 1px solid #DFDFDF;
@@ -729,25 +734,25 @@ div.updated.ee-notices-attention {
 /** EE-INPUT-SELECTORS**/
 /**************************/
 .ee-text-inp, .ee-small-text-inp {
-    width: 100%;
+	width: 100%;
 }
 
 .ee-small-text-inp {
-    max-width: 100%;
-    min-width:  50px;
+	max-width: 100%;
+	min-width:  50px;
 }
 
 .ee-large-text-inp {
-    width: 100%;
+	width: 100%;
 }
 
 .ee-full-textarea-inp {
-    width: 100%;
-    height: 100px;
+	width: 100%;
+	height: 100px;
 }
 
 .ee-inp-right {
-    text-align: right;
+	text-align: right;
 }
 
 .ee-numeric {
@@ -777,7 +782,7 @@ input.mid-text  { width: 100px; }
 	text-decoration: none !important;
 	text-align: center;
 	line-height: 1em;
-/*	line-height: 1;*/
+	/*	line-height: 1;*/
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
 	border-radius: 0;
@@ -942,8 +947,8 @@ input.ee-register-button {
 
 /** other styling - footnotes etc **/
 .ee-footnote-text {
-    font-style: italic;
-    font-size: .8em;
-    font-color: #dcc;
-    font-weight: normal;
+	font-style: italic;
+	font-size: .8em;
+	font-color: #dcc;
+	font-weight: normal;
 }

@@ -798,7 +798,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
 				// add html for checkbox input and label
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee()->full_name() . '</td>';
+				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' ) . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable . '</td>';
 				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
 				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-rght">' . $registration->pretty_paid() . '</td>';
@@ -1011,12 +1011,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				// apply payment to registrations (if applicable)
 				if ( ! empty( $REG_IDs ) ) {
 					$this->_update_registration_payments( $transaction, $payment, $REG_IDs );
+					$this->_maybe_send_notifications();
 					// now process status changes for the same registrations
-					if ( isset( $this->_req_data['txn_reg_status_change'] ) ) {
-						$this->_process_registration_status_change( $transaction, array( $REG_IDs ) );
-					}
+					$this->_process_registration_status_change( $transaction, $REG_IDs );
 				}
-				$this->_process_payment_notification( $payment );
+				$this->_maybe_send_notifications( $payment );
 				//prepare to render page
 				$json_response_data[ 'return_data' ] = $this->_build_payment_json_response( $payment, $REG_IDs );
 			} else {
@@ -1026,7 +1025,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				);
 			}
 		} else {
-			EE_Error::add_error( __( 'The payment form data could not be loaded.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'The payment form data could not be processed. Please try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 		echo json_encode( array_merge( $json_response_data, $notices ));
@@ -1141,6 +1140,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'default' => '',
 							'required' => false,
 							'html_label_text' => __( 'Transaction or Cheque Number', 'event_espresso' ),
+                                                        'validation_strategies' => array(
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 100 ),
+                                                        )
 						)
 					),
 					'po_number' => new EE_Text_Input(
@@ -1148,6 +1150,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'default' => '',
 							'required' => false,
 							'html_label_text' => __( 'Purchase Order Number', 'event_espresso' ),
+                                                        'validation_strategies' => array(
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 100 ),
+                                                        )
 						)
 					),
 					'accounting' => new EE_Text_Input(
@@ -1155,6 +1160,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							'default' => '',
 							'required' => false,
 							'html_label_text' => __( 'Extra Field for Accounting', 'event_espresso' ),
+                                                        'validation_strategies' => array(
+                                                            new EE_Max_Length_Validation_Strategy( __('Input too long', 'event_espresso'), 100 ),
+                                                        )
 						)
 					),
 				)
@@ -1393,7 +1401,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			sanitize_text_field( $this->_req_data[ 'txn_reg_status_change' ][ 'reg_status' ] ),
 			array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) )
 		);
-//		$transaction_processor->finalize( $transaction, TRUE, FALSE);
 	}
 
 
@@ -1469,7 +1476,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						//MAKE sure we also add the delete_txn_req_status_change to the
 						//$_REQUEST global because that's how messages will be looking for it.
 						$_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
-						$this->_process_registration_status_change( $payment->transaction() );
+						$this->_maybe_send_notifications();
+						$this->_process_registration_status_change( $payment->transaction(), $REG_IDs );
+						//$this->_maybe_send_notifications( $payment );
 					}
 				}
 			} else {
@@ -1515,6 +1524,47 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		return $registration_payment_data;
+	}
+
+
+
+	/**
+	 * _maybe_send_notifications
+	 *
+	 * determines whether or not the admin has indicated that notifications should be sent.
+	 * If so, will toggle a filter switch for delivering registration notices.
+	 * If passed an EE_Payment object, then it will trigger payment notifications instead.
+	 *
+	 * @access protected
+	 * @param \EE_Payment | null $payment
+	 */
+	protected function _maybe_send_notifications( $payment = null ) {
+		switch ( $payment instanceof EE_Payment ) {
+			// payment notifications
+			case true :
+				if (
+					isset(
+						$this->_req_data[ 'txn_payments' ],
+						$this->_req_data[ 'txn_payments' ][ 'send_notifications' ]
+					) &&
+					filter_var( $this->_req_data[ 'txn_payments' ][ 'send_notifications' ], FILTER_VALIDATE_BOOLEAN )
+				) {
+					$this->_process_payment_notification( $payment );
+				}
+				break;
+			// registration notifications
+			case false :
+				if (
+					isset(
+						$this->_req_data[ 'txn_reg_status_change' ],
+						$this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ]
+					) &&
+					filter_var( $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ], FILTER_VALIDATE_BOOLEAN )
+				) {
+					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true' );
+				}
+				break;
+		}
 	}
 
 
@@ -1611,6 +1661,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Event.EVT_name' => array( 'LIKE', $search_string ),
 				'Registration.Event.EVT_desc' => array( 'LIKE', $search_string ),
 				'Registration.Event.EVT_short_desc' => array( 'LIKE' , $search_string ),
+				'Registration.Attendee.ATT_full_name' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_fname' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_lname' => array( 'LIKE', $search_string ),
 				'Registration.Attendee.ATT_short_bio' => array( 'LIKE', $search_string ),
@@ -1626,7 +1677,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $search_string ),
 				'Payment.PAY_source' => array('LIKE', $search_string ),
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $search_string ),
-				'TXN_session_data' => array( 'LIKE', $search_string )
+				'TXN_session_data' => array( 'LIKE', $search_string ),
+				'Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $search_string )
 				);
 		}
 

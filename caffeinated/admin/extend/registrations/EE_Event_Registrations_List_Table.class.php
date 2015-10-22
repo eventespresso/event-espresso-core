@@ -117,15 +117,23 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$where['EVT_wp_user'] =  get_current_user_id();
 			}
 
-			$events = EEM_Event::instance()->get_all(array( $where, 'order_by' => array( 'EVT_name' => 'asc' ) ) );
+			$events = EEM_Event::instance()->get_all(array( $where, 'order_by' => array( 'Datetime.DTT_EVT_start' => 'DESC' ) ) );
 			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status, select an event', 'event_espresso') );
 			foreach ( $events as $evt ) {
 				//any registrations for this event?
 				if ( ! $evt->get_count_of_all_registrations() )
 					continue;
-				$evts[] = array( 'id' => $evt->ID(), 'text' => $evt->get('EVT_name') );
+				$evts[] = array(
+					'id' => $evt->ID(),
+					'text' => $evt->get( 'EVT_name' ),
+					'class' => $evt->is_expired() ? 'ee-expired-event' : ''
+				);
 			}
-			$filters[] = EEH_Form_Fields::select_input( 'event_id', $evts );
+			$event_filter = '<div class="ee-event-filter">';
+			$event_filter .= EEH_Form_Fields::select_input( 'event_id', $evts );
+			$event_filter .= '<br><span class="ee-event-filter-toggle"><input type="checkbox" id="js-ee-hide-expired-events" checked>' . ' ' . __( 'Hide Expired Events', 'event_espresso' ) . '</span>';
+			$event_filter .= '</div>';
+			$filters[] = $event_filter;
 
 		} else {
 			//DTT datetimes filter
@@ -167,6 +175,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$status_ids_array = apply_filters( 'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
 
 		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
+
 		return EEM_Registration::instance()->count($query_params);
 	}
 
@@ -236,6 +245,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$name_link .= EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() )
 			? '<a href="' . $link . '" title="' . esc_attr__('View Registration Details', 'event_espresso') .'">' . $item->reg_code() . '</a>'
 			: $item->reg_code();
+
+		//status
+		$name_link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
