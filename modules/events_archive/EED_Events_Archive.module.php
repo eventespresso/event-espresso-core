@@ -26,8 +26,10 @@ class EED_Events_Archive  extends EED_Module {
 
 	public static $espresso_event_list_ID = 0;
 	public static $espresso_grid_event_lists = array();
-
-
+	protected static $display_order_tickets   = 100;
+	protected static $display_order_datetimes = 110;
+	protected static $display_order_event     = 120;
+	protected static $display_order_venue     = 130;
 
 	/**
 	 * @type EE_Template_Part_Manager $template_parts
@@ -138,6 +140,23 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
+	 * set_template_part_priorities
+	 *
+	 * @access    public
+	 * @param \EE_Events_Archive_Config $config
+	 * @return    void
+	 */
+	public function set_static_template_part_priorities( EE_Events_Archive_Config $config = null ) {
+		$config = $config instanceof EE_Events_Archive_Config ? $config : $this->config();
+		EED_Events_Archive::$display_order_tickets = $config->display_order_tickets;
+		EED_Events_Archive::$display_order_datetimes = $config->display_order_datetimes;
+		EED_Events_Archive::$display_order_event = $config->display_order_event;
+		EED_Events_Archive::$display_order_venue = $config->display_order_venue;
+	}
+
+
+
+	/**
 	 *    run - initial module setup - this gets called by the EE_Front_Controller if the module route is found in the incoming request
 	 *
 	 * @access    public
@@ -209,6 +228,7 @@ class EED_Events_Archive  extends EED_Module {
 			}
 			// if NOT a custom template
 			if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+				$this->set_static_template_part_priorities( $config );
 				// don't display entry meta because the existing theme will take care of that
 				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
 				// load functions.php file for the theme (loaded by WP if using child theme)
@@ -448,7 +468,7 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 *    remove_all_events_archive_filters
+	 *    _remove_additional_events_archive_filters
 	 *
 	 * @access    private
 	 * @return        void
