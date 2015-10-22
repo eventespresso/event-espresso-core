@@ -142,7 +142,11 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
 		foreach ( $scenarios as $scenario ) {
 			if ( $scenario->get_expected( 'total_available_spaces') ) {
-				$this->assertEquals( $scenario->get_expected( 'total_available_spaces' ), $scenario->get_scenario_object()->total_available_spaces(), 'Testing ' . $scenario->name );
+				$this->assertEquals(
+					$scenario->get_expected( 'total_available_spaces' ),
+					$scenario->get_scenario_object()->total_available_spaces(),
+					'Testing ' . $scenario->name
+				);
 			}
 		}
 	}
@@ -155,13 +159,209 @@ class EE_Event_Test extends EE_UnitTestCase{
 		//grab test scenarios
 		$scenarios = $this->scenarios->get_scenarios_by_type( 'event' );
 		foreach ( $scenarios as $scenario ) {
-			if ( $scenario->get_expected( 'total_remaining_spaces' ) ) {
-				$this->assertEquals( $scenario->get_expected( 'total_remaining_spaces' ), $scenario->get_scenario_object()->spaces_remaining_for_sale(), 'Testing ' . $scenario->name );
+			if ( $scenario->skip() ) {
+				continue;
+			}
+			/** @type EE_Event $event */
+			$event = $scenario->get_scenario_object();
+			if ( $scenario->get_expected( 'total_remaining_spaces' ) !== false ) {
+				$this->assertEquals(
+					$scenario->get_expected( 'total_remaining_spaces' ),
+					$event->spaces_remaining_for_sale(),
+					'Testing ' . $scenario->name
+				);
 			}
 		}
 	}
 
-}
 
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_spaces_remaining_for_sale_for_Event_Scenario_H() {
+		//grab test scenario
+		$scenario = $this->scenarios->get_scenario_by_name( 'Event Scenario H - Two Classes' );
+		// verify
+		if (
+			! $scenario instanceof EE_Test_Scenario ||
+			( $scenario instanceof EE_Test_Scenario && $scenario->name != 'Event Scenario H - Two Classes' )
+		) {
+				return;
+		}
+		/** @type EE_Event $event */
+		$event = $scenario->get_scenario_object();
+		if ( $scenario->get_expected( 'total_remaining_spaces' ) !== false ) {
+			$this->assertEquals(
+				$scenario->get_expected( 'total_remaining_spaces' ),
+				$event->spaces_remaining_for_sale(),
+				'Testing ' . $scenario->name
+			);
+		}
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after initial 6 ticket sales'
+		);
+		// now sell 2 more tickets
+		$scenario->run_additional_logic( array( 'qty' => 2 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_4' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after an additional 2 ticket sales'
+		);
+		// now sell 2 more tickets
+		$scenario->run_additional_logic( array( 'qty' => 2 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_2' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after an additional 2 ticket sales'
+		);
+		// now sell 2 more tickets
+		$scenario->run_additional_logic( array( 'qty' => 2 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_0' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::sold_out,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after additional 6 ticket sales'
+		);
+	}
+
+
+
+
+
+
+	/**
+	 * @since 4.8.0
+	 */
+	function test_spaces_remaining_for_sale_for_Event_Scenario_I() {
+
+		//grab test scenario
+		$scenario = $this->scenarios->get_scenario_by_name( 'Event Scenario I - Four Tickets One Date' );
+		// verify
+		if (
+			! $scenario instanceof EE_Test_Scenario ||
+			( $scenario instanceof EE_Test_Scenario && $scenario->name != 'Event Scenario I - Four Tickets One Date' )
+		) {
+			return;
+		}
+		/** @type EE_Event $event */
+		$event = $scenario->get_scenario_object();
+		if ( $scenario->get_expected( 'total_remaining_spaces' ) !== false ) {
+			$this->assertEquals(
+				$scenario->get_expected( 'total_remaining_spaces' ),
+				$event->spaces_remaining_for_sale(),
+				'Testing ' . $scenario->name
+			);
+		}
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after initial setup'
+		);
+		// now sell first batch of tickets
+		$scenario->run_additional_logic( array( 'tkt_id' => 1, 'qty' => 2 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 2, 'qty' => 2 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_20' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling first 4 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after selling first 4 tickets'
+		);
+		// now sell second batch of tickets - THIS IS WHEN IT USED TO SELL OUT
+		$scenario->run_additional_logic( array( 'tkt_id' => 1, 'qty' => 2 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 3, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 4, 'qty' => 1 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_16' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling 8 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after selling 8 tickets'
+		);
+		// now sell third batch of tickets
+		$scenario->run_additional_logic( array( 'tkt_id' => 1, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 2, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 3, 'qty' => 2 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_12' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling 12 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after selling 12 tickets'
+		);
+		// and a fourth batch of tickets
+		$scenario->run_additional_logic( array( 'tkt_id' => 1, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 2, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 3, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 4, 'qty' => 1 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_8' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling 16 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after selling 16 tickets'
+		);
+		// and a fifth
+		$scenario->run_additional_logic( array( 'tkt_id' => 2, 'qty' => 2 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 3, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 4, 'qty' => 1 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_4' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling 20 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::upcoming,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after selling 20 tickets'
+		);
+		// last batch
+		$scenario->run_additional_logic( array( 'tkt_id' => 3, 'qty' => 1 ) );
+		$scenario->run_additional_logic( array( 'tkt_id' => 4, 'qty' => 3 ) );
+		$this->assertEquals(
+			$scenario->get_expected( 'total_remaining_spaces_0' ),
+			$event->spaces_remaining_for_sale(),
+			'Testing ' . $scenario->name . ' after selling all 24 tickets'
+		);
+		$this->assertEquals(
+			EE_Datetime::sold_out,
+			$event->get_active_status( true ),
+			$scenario->name . ' active_status after selling all 24 tickets'
+		);
+	}
+
+
+
+
+}
 // End of file EE_Event_Test.php
 // Location: tests/testcases/core/db_classes/EE_Event_Test.php
