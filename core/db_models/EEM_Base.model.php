@@ -346,15 +346,24 @@ abstract class EEM_Base extends EE_Base{
 	protected $_entity_map;
 
 	/**
-	 * constants used to determine the db verification level
+	 * constant used to show EEM_Base has not yet verified the db on this http request
 	 */
 	const db_verified_none 		= 0;
+	/**
+	 * constant used to show EEM_Base has verified the EE core db on this http request,
+	 * but not the addons' dbs
+	 */
 	const db_verified_core 		= 1;
+	/**
+	 * constant used to show EEM_Base has verified the addons' dbs (and implicitly
+	 * the EE core db too)
+	 */
 	const db_verified_addons 	= 2;
 
 	/**
 	 * indicates whether an EEM_Base child has already re-verified the DB
-	 * is ok (we don't want to do it repetitively)
+	 * is ok (we don't want to do it repetitively). Should be set to one the constants
+	 * looking like EEM_Base::db_verified_*
 	 * @var int - 0 = none, 1 = core, 2 = addons
 	 */
 	protected static $_db_verification_level = EEM_Base::db_verified_none;
@@ -1753,8 +1762,12 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * @param $wpdb_method
-	 * @param $arguments_to_provide
+	 * Attempts to run the indicated WPDB method with the provided arguments,
+	 * and if there's an error tries to verify the DB is correct. Uses
+	 * the static property EEM_Base::$_db_verification_level to determine whether
+	 * we should try to fix the EE core db, the addons, or just give up
+	 * @param string $wpdb_method
+	 * @param array $arguments_to_provide
 	 * @return mixed
 	 */
 	private function _process_wpdb_query( $wpdb_method, $arguments_to_provide ) {
@@ -1795,8 +1808,10 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * @param $wpdb_method
-	 * @param $arguments_to_provide
+	 * Verifies the EE core database is up-to-date and records that we've done it on
+	 * EEM_Base::$_db_verification_level
+	 * @param string $wpdb_method
+	 * @param array $arguments_to_provide
 	 * @return string
 	 */
 	private function _verify_core_db( $wpdb_method, $arguments_to_provide ){
@@ -1817,6 +1832,8 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
+	 * Verifies the EE addons' database is up-to-date and records that we've done it on
+	 * EEM_Base::$_db_verification_level
 	 * @param $wpdb_method
 	 * @param $arguments_to_provide
 	 * @return string
