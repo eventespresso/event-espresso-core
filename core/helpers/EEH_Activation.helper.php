@@ -175,6 +175,7 @@ class EEH_Activation {
 	public static function remove_cron_tasks( $remove_all = true ) {
 		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
 		$crons = _get_cron_array();
+		$crons = is_array( $crons ) ? $crons : array();
 		/* reminder that $crons looks like: top-level keys are timestamps,
 		 * and their values are arrays.
 		 * The 2nd level arrays have keys with each of the cron task hooknames to run at that time

@@ -1143,7 +1143,7 @@ abstract class EEM_Base extends EE_Base{
 	 *  - or a unixtimestamp (equivalent to time())
 	 *
 	 * @since 4.6.x
-	 * @param string $field_name The field the currrent time is needed for.
+	 * @param string $field_name The field the current time is needed for.
 	 * @param bool   $timestamp  True means to return a unix timestamp. Otherwise a
 	 *                           		 formatted string matching the set format for the field in the set timezone will
 	 *                           		 be returned.
@@ -1151,7 +1151,7 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * @throws EE_Error   	If the given field_name is not of the EE_Datetime_Field type.
 	 *
-	 * @return string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+	 * @return int|string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
 	 *                    	     exception is triggered.
 	 */
 	public function current_time_for_query( $field_name, $timestamp = false, $what = 'both' ) {

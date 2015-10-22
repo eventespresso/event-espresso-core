@@ -150,4 +150,6 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase {
 	}
 
 
-} //end class espresso_events_Pricing_Hooks_Test
+}
+//end class espresso_events_Pricing_Hooks_Test
+// Location: tests/testcases/admin_pages/pricing/espresso_events_Pricing_Hooks_Test.php
