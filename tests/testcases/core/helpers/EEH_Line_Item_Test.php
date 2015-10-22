@@ -285,7 +285,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$ten_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
 				'TXN_ID' => $transaction->ID(),
-				'LIN_unit_price' => 10
+				'LIN_unit_price' => 10,
+				'LIN_type' => EEM_Line_Item::type_line_item,
 			)
 		));
 		$this->assertEquals( 10.31, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
@@ -293,7 +294,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$twenty_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
 				'TXN_ID' => $transaction->ID(),
-				'LIN_unit_price' => 20
+				'LIN_unit_price' => 20,
+				'LIN_type' => EEM_Line_Item::type_line_item,
 			)
 		));
 		$this->assertEquals( 20.62, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );
@@ -301,7 +303,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$six_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
 				'TXN_ID' => $transaction->ID(),
-				'LIN_unit_price' => 6
+				'LIN_unit_price' => 6,
+				'LIN_type' => EEM_Line_Item::type_line_item,
 			)
 		));
 		$this->assertEquals( 5.29, round( $totals[ $six_dollar_ticket->ID() ], 2 ) );
@@ -309,7 +312,6 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 
 	/**
 	 * @group 8193
-	 * @group current
 	 */
 	public function test_calculate_reg_final_prices_per_line_item__3_taxable_tickets_with_an_event_wide_discount() {
 		$transaction = $this->new_typical_transaction(
@@ -335,9 +337,13 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 					'LIN_name' => 'event discount',
 					'LIN_total' => -8,
 					'LIN_unit_price' => -8,
+					'LIN_percent' => 0,
 					'LIN_quantity' => 1,
-					'LIN_parent' => $event_line_item->ID()
+					'LIN_parent' => $event_line_item->ID(),
+					'LIN_percent' => null,
+					'LIN_order' => count( $event_line_item->children() )
 				));
+		$transaction->total_line_item()->recalculate_pre_tax_total();
 		//and add an unrelated purchase
 		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Transaction-Wide Discount', -5 );
 
@@ -369,7 +375,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$ten_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
 				'TXN_ID' => $transaction->ID(),
-				'LIN_unit_price' => 10
+				'LIN_unit_price' => 10,
+				'LIN_type' => EEM_Line_Item::type_line_item,
 			)
 		));
 		$this->assertEquals( 3.05, round( $totals[ $ten_dollar_ticket->ID() ], 2 ) );
@@ -377,7 +384,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$twenty_dollar_ticket = EEM_Line_Item::instance()->get_one( array(
 			array(
 				'TXN_ID' => $transaction->ID(),
-				'LIN_unit_price' => 20
+				'LIN_unit_price' => 20,
+				'LIN_type' => EEM_Line_Item::type_line_item,
 			)
 		));
 		$this->assertEquals( 18.45, round( $totals[ $twenty_dollar_ticket->ID() ], 2 ) );

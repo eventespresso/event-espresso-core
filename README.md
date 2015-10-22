@@ -1,8 +1,8 @@
 #Event Espresso 4 Core
 
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.8.0.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
-[![WordPress](https://img.shields.io/badge/WordPress-v4.2.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
+[![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=latest%20tag)](https://github.com/eventespresso/event-espresso-core/releases)
+[![WordPress](https://img.shields.io/badge/WordPress-v4.3.x+%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
 
@@ -33,11 +33,6 @@ Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&u
 
 **Note:** for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically only include bug fixes and minor features.  Releases including bigger features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-stable release candidate version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
 
-***
-
-**Current Stable Version:** 4.7.x.p
-
-***
 
 This is the Core for Event Espresso 4. This README.md file is targeted for display with our GitHub repo.  For detailed information via traditional readme, see the readme.txt file.
 

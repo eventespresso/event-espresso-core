@@ -5,8 +5,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Line_Item_Filter_Base
  *
- * Description
+ * Abstract parent class for EE_Line_Item_Filters
  *
+ * @see \EEI_Line_Item_Filter
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
@@ -20,9 +21,12 @@ abstract class EE_Line_Item_Filter_Base implements EEI_Line_Item_Filter {
 	/**
 	 * process
 	 *
-	 * @return EEI_Line_Item
+	 * @param \EEI_Line_Item $line_item
+	 * @return \EEI_Line_Item
 	 */
-	abstract public function process();
+	public function process( EEI_Line_Item $line_item ) {
+		return $line_item;
+	}
 
 
 }

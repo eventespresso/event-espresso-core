@@ -2,9 +2,9 @@
 	<?php
 		//we'll only show site-license keys if this is main_site() (which works for both multi-site and single-site wp installations)
 		if ( is_main_site() ) { ?>
-		<h4 class="ee-admin-settings-hdr" style="width:300px;">
+		<h2 class="ee-admin-settings-hdr" style="width:300px;">
 			<?php _e('Your Event Espresso License Key', 'event_espresso'); ?>
-		</h4>
+		</h2>
 
 		<table class="form-table">
 			<tbody>
@@ -29,9 +29,9 @@
 
 
 
-	<h4 id="contact_info_h4" class="ee-admin-settings-hdr">
+	<h2 id="contact_info_h4" class="ee-admin-settings-hdr">
 		<?php _e('Contact Information', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('contact_info_info');?>
-	</h4>
+	</h2>
 
 	<table class="form-table">
 		<tbody>
@@ -132,9 +132,9 @@
 		</tbody>
 	</table>
 
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Company Logo', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('organization_logo_info');?>
-	</h4>
+	</h2>
 
 	<table class="form-table">
 		<tbody>
@@ -178,9 +178,9 @@
 	</table>
 	<br/><br/>
 
-	<h4 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Social Links', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('social_links_info');?>
-	</h4>
+	</h2>
 	<p class="description"><?php _e('Enter any links to social accounts for your organization here', 'event_espresso'); ?></p>
 
 	<table class="form-table">

@@ -154,15 +154,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->increase_sold();
-					$datetime->save();
-				}
-			}
-		}
 		// possibly set event status to sold out
 		$this->event()->perform_sold_out_status_check();
 	}
@@ -220,15 +211,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->decrease_sold();
-					$datetime->save();
-				}
-			}
-		}
 	}
 
 
@@ -679,7 +661,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * final_price
-	 * total owing for this registration after all ticket/price modifications
+	 * the registration's share of the transaction total, so that the
+	 * sum of all the transaction's REG_final_prices equal the transaction's total
 	 * @access        public
 	 * @return    float
 	 */

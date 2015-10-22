@@ -123,7 +123,7 @@ class EEM_Line_Item extends EEM_Base {
 				'LIN_is_taxable' 	=> new EE_Boolean_Field( 'LIN_is_taxable', __( "Taxable", "event_espresso" ), FALSE, FALSE ),
 				'LIN_order' 			=> new EE_Integer_Field( 'LIN_order', __( "Order of Application towards total of parent", "event_espresso" ), FALSE, 1 ),
 				'LIN_total' 			=> new EE_Money_Field( 'LIN_total', __( "Total (unit price x quantity)", "event_espresso" ), FALSE, 0 ),
-				'LIN_quantity' 	=> new EE_Integer_Field( 'LIN_quantity', __( "Quantity", "event_espresso" ), TRUE, NULL ),
+				'LIN_quantity' 	=> new EE_Integer_Field( 'LIN_quantity', __( "Quantity", "event_espresso" ), TRUE, 1 ),
 				'LIN_parent' 		=> new EE_Integer_Field( 'LIN_parent', __( "Parent ID (this item goes towards that Line Item's total)", "event_espresso" ), TRUE, NULL ),
 				'LIN_type' 			=> new EE_Enum_Text_Field( 'LIN_type', __( "Type", "event_espresso" ), FALSE, 'line-item', array(
 						self::type_line_item		=>  __("Line Item", "event_espresso"),
@@ -137,6 +137,7 @@ class EEM_Line_Item extends EEM_Base {
 				),
 				'OBJ_ID' 					=> new EE_Foreign_Key_Int_Field( 'OBJ_ID', __( 'ID of Item purchased.', 'event_espresso' ), TRUE, NULL, $line_items_can_be_for ),
 				'OBJ_type'				=>new EE_Any_Foreign_Model_Name_Field( 'OBJ_type', __( "Model Name this Line Item is for", "event_espresso" ), TRUE, NULL, $line_items_can_be_for ),
+				'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created','event_espresso'), false, time(), $timezone ),
 			)
 		);
 		$this->_model_relations = array(
@@ -186,19 +187,26 @@ class EEM_Line_Item extends EEM_Base {
 	}
 
 	/**
-	 * Deletes line items with no transaction. This needs to be very efficient
+	 * Deletes line items with no transaction who have passed the transaction cutoff time.
+	 * This needs to be very efficient
 	 * because if there are spam bots afoot there will be LOTS of line items
 	 * @return int count of how many deleted
 	 */
 	public function delete_line_items_with_no_transaction(){
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		return $wpdb->query(
-			'DELETE li
-			FROM ' . $this->table() . ' li
-			LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
-			WHERE t.TXN_ID IS NULL'
+		$time_to_leave_alone = apply_filters(
+			'FHEE__EEM_Line_Item__delete_line_items_with_no_transaction__time_to_leave_alone', WEEK_IN_SECONDS
 		);
+		$query = $wpdb->prepare(
+				'DELETE li
+				FROM ' . $this->table() . ' li
+				LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
+				WHERE t.TXN_ID IS NULL AND li.LIN_timestamp < %s',
+				// use GMT time because that's what TXN_timestamps are in
+				gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+				);
+		return $wpdb->query( $query );
 	}
 
 
@@ -295,13 +303,23 @@ class EEM_Line_Item extends EEM_Base {
 	 * @return EEM_Line_ITem
 	 */
 	public function get_line_item_for_registration( EE_Registration $registration ) {
-		return $this->get_one( array(
+		return $this->get_one( $this->line_item_for_registration_query_params( $registration ));
+	}
+
+	/**
+	 * Gets the query params used to retrieve a specific line item for the given registration
+	 * @param EE_Registration $registration
+	 * @param array $original_query_params any extra query params you'd like to be merged with
+	 * @return array like EEM_Base::get_all()'s $query_params
+	 */
+	public function line_item_for_registration_query_params( EE_Registration $registration, $original_query_params = array() ) {
+		return array_replace_recursive( $original_query_params, array(
 			array(
 				'OBJ_ID' => $registration->ticket_ID(),
 				'OBJ_type' => 'Ticket',
 				'TXN_ID' => $registration->transaction_ID()
 			)
-		));
+		) );
 	}
 
 

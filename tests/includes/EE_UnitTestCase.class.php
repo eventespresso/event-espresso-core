@@ -308,14 +308,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+
 	/**
 	 * This loads the various admin page mock files required for tests.
 	 * Note these pages should be loaded on demand, because constants will be defined that will interfere with other Admin Page loading tests.
 	 * @since 4.6.0
+	 * @param string $page
 	 */
-	public function delayedAdminPageMocks() {
-		require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
-		require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+	public function delayedAdminPageMocks( $page = '' ) {
+
+		switch ( $page ) {
+			case 'decaf_events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+				break;
+			case 'registrations' :
+				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
+				break;
+			case 'transactions' :
+				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
+				break;
+
+		}
 	}
 
 
@@ -769,7 +782,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}
-			if( ! isset( $args[ $field_name ] ) && $value !== NULL){
+			if( ! array_key_exists( $field_name, $args ) && $value !== NULL){
 				$args[$field->get_name()] = $value;
 			}
 		}
@@ -864,7 +877,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
 	 *
 	 * @param array $options {
-	 *	@type int $ticket_types the number of different ticket types in this transaction. Deafult 1
+	 *	@type int $ticket_types the number of different ticket types in this transaction. Default 1
 	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default INF
 	 * @return EE_Transaction
 	 */
@@ -883,11 +896,25 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}else{
 			$taxable_tickets = INF;
 		}
+		if( isset( $options[ 'fixed_ticket_price_modifiers' ] ) ) {
+			$fixed_ticket_price_modifiers = $options[ 'fixed_ticket_price_modifiers' ];
+		} else {
+			$fixed_ticket_price_modifiers = 1;
+		}
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
 			$ticket = $this->new_model_obj_with_dependencies( 'Ticket',  array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => $taxable_tickets-- > 0 ? true : false ) );
-			$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $i * 10 ) );
-			$ticket->_add_relation_to( $price, 'Price' );
+			$sum_of_sub_prices = 0;
+			for( $j=1; $j<= $fixed_ticket_price_modifiers; $j++ ) {
+				if( $j == $fixed_ticket_price_modifiers ) {
+					$price_amount = $ticket->price() - $sum_of_sub_prices;
+				} else {
+					$price_amount = $i * 10 / $fixed_ticket_price_modifiers;
+				}
+				$price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $price_amount, 'PRC_order' => $j ) );
+				$sum_of_sub_prices += $price->amount();
+				$ticket->_add_relation_to( $price, 'Price' );
+			}
 			$a_datetime = $this->new_model_obj_with_dependencies( 'Datetime' );
 			$ticket->_add_relation_to( $a_datetime, 'Datetime');
 			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
@@ -984,4 +1011,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		return $ticket;
 	}
+
+
+
+	/**
+	 * Creates a WP user with standard admin caps PLUS all EE CAPS (default)
+	 * @param array $ee_capabilities array of EE CAPS if you don't want the user to have ALL EE CAPS
+	 * @return WP_User
+	 */
+	public function wp_admin_with_ee_caps( $ee_capabilities = array() ) {
+		/** @type WP_User $user */
+		$user = $this->factory->user->create_and_get( array( 'role' => 'administrator' ));
+		$ee_capabilities = (array)$ee_capabilities;
+		if ( empty( $ee_capabilities )) {
+			EE_Registry::instance()->load_core( 'Capabilities' );
+			$ee_capabilities = EE_Capabilities::instance()->get_ee_capabilities();
+		}
+		foreach( $ee_capabilities as $ee_capability ) {
+			$user->add_cap( $ee_capability );
+		}
+		return $user;
+	}
+
+
 }

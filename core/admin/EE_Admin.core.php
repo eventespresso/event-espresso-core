@@ -644,15 +644,21 @@ final class EE_Admin {
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
 		$items['events']['title'] = __('Click to view all Events', 'event_espresso');
-		$registrations = EEM_Registration::instance()->count();
+		$registrations = EEM_Registration::instance()->count(
+			array(
+				array(
+					'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete )
+				)
+			)
+		);
 		$items['registrations']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
 		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
-		foreach ( $items as $item ) {
-			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );
+		foreach ( $items as $type => $item_properties ) {
+			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
 		}
 		return $elements;
 	}
@@ -679,16 +685,22 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-			// whether to proceed with update
-			$update_post_shortcodes = FALSE;
 			// post on frontpage ?
 			$page_for_posts = EE_Config::get_page_for_posts();
+			$maybe_remove_from_posts = array();
 			// critical page shortcodes that we do NOT want added to the Posts page (blog)
 			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
+			// whether to proceed with update, if an entry already exists for this post, then we want to update
+			$update_post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] ) ? true : false;
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
+			// check that posts page is already being tracked
+			if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] ) ) {
+				// if not, then ensure that it is properly added
+				EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+			}
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// convert to UPPERCASE to get actual shortcode
@@ -699,18 +711,28 @@ final class EE_Admin {
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
 					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
-						// check that posts page is already being tracked
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-							// if not, then ensure that it is properly added
-							EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
-						}
 						// add shortcode to "Posts page" tracking
 						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
 					}
 					$update_post_shortcodes = TRUE;
+					unset( $maybe_remove_from_posts[ $EES_Shortcode ] );
+				} else {
+					$maybe_remove_from_posts[ $EES_Shortcode ] = $post_ID;
 				}
 			}
 			if ( $update_post_shortcodes ) {
+				// remove shortcodes from $maybe_remove_from_posts that are still being used
+				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $shortcodes ) {
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
+					// compute difference between active post_shortcodes array and $maybe_remove_from_posts array
+					$maybe_remove_from_posts = array_diff_key( $maybe_remove_from_posts, $shortcodes );
+				}
+				// now unset unused shortcodes from the $page_for_posts post_shortcodes
+				foreach ( $maybe_remove_from_posts as $shortcode => $post_ID ) {
+					unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode ] );
+				}
 				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
 			}
 		}

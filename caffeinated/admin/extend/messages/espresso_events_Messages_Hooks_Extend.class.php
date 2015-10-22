@@ -166,10 +166,13 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 				<span class="ee-spinner ee-spin"></span><span class="hidden">' . __('loading...', 'event_espresso') . '</span>
 			</div><div class="ee-notices"></div>';
 
-		if ( defined('DOING_AJAX' ) )
+		if ( defined('DOING_AJAX' ) ) {
 			return $tabbed_content;
+		}
 
+		do_action( 'AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__before_content' );
 		echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
+		do_action( 'AHEE__espresso_events_Messages_Hooks_Extend__messages_metabox__after_content' );
 
 	}
 

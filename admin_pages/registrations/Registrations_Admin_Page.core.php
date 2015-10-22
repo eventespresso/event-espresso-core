@@ -69,6 +69,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_cpt_edit_routes = array(
 			'espresso_attendees' => 'edit_attendee'
 			);
+		$this->_pagenow_map = array(
+				'add_new_attendee' => 'post-new.php',
+				'edit_attendee' => 'post.php',
+				'trash' => 'post.php'
+			);
 
 		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
 		//add filters so that the comment urls don't take users to a confusing 404 page
@@ -512,7 +517,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _add_screen_options() {}
 	protected function _add_feature_pointers() {}
-	public function admin_init() {}
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'update_att_qstns' ] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
+	}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -576,7 +583,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
-		EE_Registry::$i18n_js_strings['update_att_qstns'] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
 	}
 
 
@@ -752,7 +758,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'view_transaction' => array(
 				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
-				)
+				),
+			'view_invoice' => array(
+				'class' => 'dashicons dashicons-media-spreadsheet',
+				'desc' => __('View Transaction Invoice', 'event_espresso')
+				),
  			);
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
 			$fc_items['resend_registration'] = array(
@@ -955,12 +965,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error("not yet supported");
 		}
 
-		if ( isset( $this->_req_data['s'] ) ) {
+		if ( ! empty( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_full_name' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -973,7 +984,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_count' => array( 'LIKE' , $sstr ),
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Ticket.TKT_description' => array( 'LIKE', $sstr )
+				'Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Transaction.Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $sstr )
 				);
 		}
 
@@ -1277,8 +1289,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//merge request vars so that the reloaded list table contains any existing filter query params
 		$route = array_merge( $this->_req_data, $route );
 
-		$this->_redirect_after_action( false, '', '', $route, true );
-	}
+		$this->_redirect_after_action( $success, '', '', $route, true );
+
+		}
 
 
 
@@ -1288,9 +1301,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _change_reg_status() {
 		$this->_req_data['return'] = 'view_registration';
-
 		//set notify based on whether the send notifications toggle is set or not
 		$notify = ! empty( $this->_req_data['txn_reg_status_change']['send_notifications'] );
+		$this->_req_data[ '_reg_status_id' ] = isset( $this->_req_data[ '_reg_status_id' ] ) ? $this->_req_data[ '_reg_status_id' ] : '';
 
 		switch ( $this->_req_data['_reg_status_id'] ) {
 			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, false, 'sentence' ) :
@@ -1389,28 +1402,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	public function _reg_details_meta_box() {
+		EEH_Autoloader::register_line_item_display_autoloaders();
+		EEH_Autoloader::register_line_item_filter_autoloaders();
+		EE_Registry::instance()->load_Helper( 'Line_Item' );
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
+		$filters = new EE_Line_Item_Filter_Collection();
+		$filters->add( new EE_Single_Registration_Line_Item_Filter( $this->_registration ) );
+		$filters->add( new EE_Non_Zero_Line_Item_Filter() );
+		$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item() );
+		$filtered_line_item_tree = $line_item_filter_processor->process();
+
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
-		$this->_template_args['line_items'] = $transaction->get_many_related('Line_Item', array( array('LIN_type' => 'line-item' ) ) );
+		$line_item_display = new EE_Line_Item_Display( 'reg_admin_table', 'EE_Admin_Table_Registration_Line_Item_Display_Strategy' );
+		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $filtered_line_item_tree, array( 'EE_Registration' => $this->_registration ) );
 
 
 		$attendee = $this->_registration->attendee();
 
-		// process taxes
-		if ( $transaction ) {
-			//get all "tax" line items for this transaction and we'll use them for the tax display.
-			$taxes = $transaction->get_many_related('Line_Item', array(array('LIN_type' => EEM_Line_Item::type_tax ) ) );
-			$this->_template_args['taxes'] = !empty($taxes) ? $taxes : array();
-		} else {
-			$this->_template_args['taxes'] = array();
-		}
 
 		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
 		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
-		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
@@ -1804,7 +1818,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$REG = $REGM->get_one_by_ID($REG_ID);
 				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
 				if ( $payment_count > 0 ) {
-					$name = $REG->attendee()->full_name();
+					$name = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' );
 					$error = 1;
 					$success = 0;
 					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );

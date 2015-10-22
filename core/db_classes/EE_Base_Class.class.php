@@ -94,6 +94,15 @@ abstract class EE_Base_Class{
 	 */
 	protected $_fields = array();
 
+	/**
+	 *
+	 * @var boolean indicating whether or not this model object is intended to ever be saved
+	 * For example, we might create model objects intended to only be used for the duration
+	 * of this request and to be thrown away, and if they were accidentally saved
+	 * it would be a bug.
+	 */
+	protected $_allow_persist = true;
+
 
 
 	/**
@@ -172,9 +181,30 @@ abstract class EE_Base_Class{
 		do_action( 'AHEE__EE_Base_Class__construct__finished', $this );
 	}
 
+	/**
+	 * Gets whether or not thsi model object is allowed to persist/be saved to the database.
+	 * @return boolean
+	 */
+	function allow_persist() {
+		return $this->_allow_persist;
+	}
+
 
 
 	/**
+	 * Sets whether or not this model object should be allowed to be saved to the DB.
+	 * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
+	 * you got new information that somehow made you change your mind.
+	 * @param boolean $allow_persist
+	 * @return boolean
+	 */
+	function set_allow_persist( $allow_persist ) {
+		return $this->_allow_persist = $allow_persist;
+	}
+
+
+
+		/**
 	 * Gets the field's original value when this object was constructed during this request.
 	 * This can be helpful when determining if a model object has changed or not
 	 *
@@ -349,7 +379,7 @@ abstract class EE_Base_Class{
 			if ( $field_obj instanceof EE_Datetime_Field ) {
 				$field_obj->set_timezone( $this->_timezone );
 				if ( isset( $this->_fields[$field_name] ) && $this->_fields[$field_name] instanceof DateTime ) {
-					$this->_fields[$field_name]->setTimeZone( new DateTimeZone( $this->_timezone ) );
+					$this->_fields[$field_name]->setTimezone( new DateTimeZone( $this->_timezone ) );
 				}
 			}
 		}
@@ -691,7 +721,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function get_one_from_cache($relationName){
-		$cached_array_or_object =  $this->_model_relations[$relationName];
+		$cached_array_or_object = isset( $this->_model_relations[$relationName] ) ? $this->_model_relations[$relationName] : null;
 		if(is_array($cached_array_or_object)){
 			return array_shift($cached_array_or_object);
 		}else{
@@ -707,10 +737,10 @@ abstract class EE_Base_Class{
 	 *
 	 * @param string $relationName
 	 * @throws \EE_Error
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class[] NOT necessarily indexed by primary keys
 	 */
 	public function get_all_from_cache($relationName){
-		$cached_array_or_object =  $this->_model_relations[$relationName];
+		$cached_array_or_object =  isset( $this->_model_relations[$relationName] ) ? $this->_model_relations[$relationName] : array();
 		if(is_array($cached_array_or_object)){
 			$objects = $cached_array_or_object;
 		}elseif($cached_array_or_object){
@@ -973,7 +1003,7 @@ abstract class EE_Base_Class{
 
 		//clear cached property if either formats are not null.
 		if( $dt_frmt !== null || $tm_frmt !== null ) {
-			$this->_clear_cached_property( $field_name, $date_or_time );
+			$this->_clear_cached_property( $field_name );
 			//reset format properties because they are used in get()
 			$this->_dt_frmt = $in_dt_frmt;
 			$this->_tm_frmt = $in_tm_frmt;
@@ -1243,6 +1273,7 @@ abstract class EE_Base_Class{
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
 		$result = $this->get_model()->delete_by_ID( $this->ID() );
+                $this->refresh_cache_of_related_objects();
 		/**
 		 * Called just after deleting a model object
 		 * @param EE_Base_Class $model_object that was just 'deleted'
@@ -1262,11 +1293,35 @@ abstract class EE_Base_Class{
 		$model=$this->get_model();
 		if($model instanceof EEM_Soft_Delete_Base){
 			$result=$model->delete_permanently_by_ID($this->ID());
+                        $this->refresh_cache_of_related_objects();
 		}else{
 			$result = $this->delete();
 		}
 		return $result ? true : false;
 	}
+
+        /**
+         * When this model object is deleted, it may still be cached on related model objects. This clears the cache of
+         * related model objects
+         */
+        public function refresh_cache_of_related_objects() {
+            foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+                if( ! empty( $this->_model_relations[ $relation_name ] ) ) {
+                    $related_objects = $this->_model_relations[ $relation_name ];
+                    if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+                        //this relation only stores a single model object, not an array
+                        //but let's make it consistent
+                        $related_objects = array( $related_objects );
+                    }
+                    foreach( $related_objects as $related_object ) {
+                        //only refresh their cache if they're in memory
+                        if( $related_object instanceof EE_Base_Class ) {
+							$related_object->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                        }
+                    }
+                }
+            }
+        }
 
 
 
@@ -1278,7 +1333,8 @@ abstract class EE_Base_Class{
 	 * @param array $set_cols_n_values 	keys are field names, values are their new values,
 	 * 		if provided during the save() method (often client code will change the fields' values before calling save)
 	 * @throws \EE_Error
-	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure
+	 * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure or if the model object
+	 * isn't allowed to persist (as determined by EE_Base_Class::allow_persist())
 	 */
 	public function save($set_cols_n_values=array()) {
 		/**
@@ -1299,6 +1355,9 @@ abstract class EE_Base_Class{
 		 * @param EE_Base_Class $model_object the model object about to be saved.
 		 */
 		do_action( 'AHEE__EE_Base_Class__save__begin', $this );
+		if( ! $this->allow_persist() ) {
+			return 0;
+		}
 		//now get current attribute values
 		$save_cols_n_values = $this->_fields;
 		//if the object already has an ID, update it. Otherwise, insert it
@@ -1601,17 +1660,20 @@ abstract class EE_Base_Class{
 	 * @param mixed  $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName               eg 'Events','Question',etc.
 	 *                                           an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specify array('role-column-name'=>'role-id')
-	 * @param array  $where_query                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $extra_join_model_fields_n_values                You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @param null   $cache_id
 	 * @throws EE_Error
 	 * @return EE_Base_Class the object the relation was added to
 	 */
-	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $where_query = array(), $cache_id = NULL ){
+	public function _add_relation_to( $otherObjectModelObjectOrID,$relationName, $extra_join_model_fields_n_values = array(), $cache_id = NULL ){
 		//if this thing exists in the DB, save the relation to the DB
 		if( $this->ID() ){
-			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
+                        if( $otherObject instanceof EE_Base_Class ) {
+                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                        }
 		} else {
 			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
@@ -1625,8 +1687,18 @@ abstract class EE_Base_Class{
 			}
 			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
+                if( $otherObject instanceof EE_Base_Class ) {
+                    //fix the reciprocal relation too
+                    if( $otherObject->ID() ) {
+                            //its saved so assumed relations exist in the DB, so we can just
+                            //clear the cache so future queries use the updated info in the DB
+                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
+                    } else {
 
-
+                            //it's not saved, so it caches relations like this
+                            $otherObject->cache( $this->get_model()->get_this_model_name(), $this );
+                    }
+                }
 		return $otherObject;
 	}
 
@@ -1636,18 +1708,29 @@ abstract class EE_Base_Class{
 	 * Removes a relationship to the specified EE_Base_Class object, given the relationships' name. Eg, if the current model is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
 	 * If this model object doesn't exist in the DB, just removes the related thing from the cache
-	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
+	 *
+	 * @param mixed $otherObjectModelObjectOrID
+	 * 				EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
 	 * @param string $relationName
-	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $where_query
+	 * 				You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.
+	 * 				However, keep in mind that the columns (keys) given must match a column on the JOIN table
+	 * 				and currently only the HABTM models accept these additional conditions.
+	 * 				Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
-		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-			$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-			$this->clear_cache($relationName, $otherObject);
-		}else{//this doesn't exist in the DB, just remove it from the cache
-			$otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
+		if ( $this->ID() ) {
+			//if this exists in the DB, save the relation change to the DB too
+			$otherObject = $this->get_model()->remove_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$this->clear_cache( $relationName, $otherObject );
+		} else {
+			//this doesn't exist in the DB, just remove it from the cache
+			$otherObject = $this->clear_cache( $relationName, $otherObjectModelObjectOrID );
 		}
+                if( $otherObject instanceof EE_Base_Class ) {
+                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                }
 		return $otherObject;
 	}
 
@@ -1658,12 +1741,19 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function _remove_relations($relationName,$where_query_params = array()){
-		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-			$otherObjects = $this->get_model()->remove_relations($this, $relationName, $where_query_params );
-			$this->clear_cache($relationName,null,true);
-		}else{//this doesn't exist in the DB, just remove it from the cache
-			$otherObjects = $this->clear_cache($relationName,null,true);
+		if ( $this->ID() ) {
+			//if this exists in the DB, save the relation change to the DB too
+			$otherObjects = $this->get_model()->remove_relations( $this, $relationName, $where_query_params );
+			$this->clear_cache( $relationName, null, true );
+		} else {
+			//this doesn't exist in the DB, just remove it from the cache
+			$otherObjects = $this->clear_cache( $relationName, null, true );
 		}
+                if( is_array( $otherObjects ) ) {
+                    foreach ( $otherObjects as $otherObject ) {
+                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                    }
+                }
 		return $otherObjects;
 	}
 
@@ -1676,7 +1766,8 @@ abstract class EE_Base_Class{
 	 * because we want to get even deleted items etc.
 	 * @param string $relationName key in the model's _model_relations array
 	 * @param array  $query_params  like EEM_Base::get_all
-	 * @return EE_Base_Class[]
+	 * @return EE_Base_Class[] Results not necessarily indexed by IDs, because some results might not have primary keys
+	 * or might not be saved yet. Consider using EEM_Base::get_IDs() on these results if you want IDs
 	 */
 	public function get_many_related($relationName,$query_params = array()){
 		if($this->ID()){//this exists in the DB, so get the related things from either the cache or the DB
@@ -2112,6 +2203,47 @@ abstract class EE_Base_Class{
 	 */
 	public function __toString(){
 		return sprintf( '%s (%s)', $this->name(), $this->ID() );
+	}
+
+	/**
+	 * Clear related model objects if they're already in the DB, because otherwise when we
+	 * UNserialize this model object we'll need to be careful to add them to the entity map.
+	 * This means if we have made changes to those related model obejcts, and want to unserialize
+	 * the this model object on a subsequent request, changes to those related model objects will be lost.
+	 * Instead, those related model objects should be directly serialized and stored.
+	 * Eg, the following won't work:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $reg = get_option( 'my_option' );
+	 * $reg->attendee()->save();
+	 *
+	 * And would need to be replace with:
+	 * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
+	 * $att = $reg->attendee();
+	 * $att->set( 'ATT_fname', 'Dirk' );
+	 * update_option( 'my_option', serialize( $reg ) );
+	 * //END REQUEST
+	 * //START NEXT REQUEST
+	 * $att = get_option( 'my_option' );
+	 * $att->save();
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+			if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+				$classname = 'EE_' . $this->get_model()->get_this_model_name();
+				if( $this->get_one_from_cache( $relation_name ) instanceof $classname &&
+						$this->get_one_from_cache( $relation_name )->ID() ) {
+					$this->clear_cache( $relation_name, $this->get_one_from_cache( $relation_name )->ID() );
+				}
+			}
+		}
+		return array_keys( get_object_vars( $this ) );
 	}
 
 

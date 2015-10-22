@@ -76,6 +76,19 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Transaction', $existing_t_in_entity_map );
 	}
 
+	/**
+	 * @group 8622
+	 */
+	function test_save__allow_persist_changed() {
+		$t = EE_Transaction::new_instance();
+		$t->set_allow_persist( false );
+		$result = $t->save();
+		$this->assertEquals( 0, $result );
+		$t->set_allow_persist( true );
+		$result2 = $t->save();
+		$this->assertNotEquals( 0, $result2 );
+	}
+
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
@@ -86,14 +99,41 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 //		$results = $tr->save();
 //		$this->assertNotNull($results);
 //	}
+        /**
+         * @group 8686
+         */
 	function test_add_relation_to(){
-		$t = EE_Transaction::new_instance();
-		$t->save();
-		$r = EE_Registration::new_instance();
-		$r->save();
-		$t->_add_relation_to($r, 'Registration');
-		$this->assertEquals($r->get('TXN_ID'),$t->ID());
+            $t = EE_Transaction::new_instance();
+            $t->save();
+            $r = EE_Registration::new_instance();
+            $r->save();
+            //verify the relations
+            $t_from_r = $r->transaction();
+            $this->assertNull( $t_from_r );
+            $rs_from_t = $t->registrations();
+            $this->assertTrue( empty( $rs_from_t ) );
+            
+            //add a relation and verify it changes the model object with the PK
+            $r->_add_relation_to($t, 'Transaction');
+            $this->assertEquals( $t->ID(), $r->get('TXN_ID'));
+            //and we get expected results when fetching using it
+            $t_from_r = $r->transaction();
+            $this->assertEquals( $t, $t_from_r );
+            $rs_from_t = $t->registrations();
+            $this->assertFalse( empty( $rs_from_t ) ); 
 	}
+        /**
+         * @group 8686
+         */
+        function test_add_relation_to__unsaved() {
+            $t = EE_Transaction::new_instance();
+            $r = EE_Registration::new_instance();
+            $t->_add_relation_to($r, 'Registration');
+            $t_from_r = $r->transaction();
+            $this->assertEquals( $t, $t_from_r );
+            $rs_from_t = $t->registrations();
+            $this->assertFalse( empty( $rs_from_t ) );
+        }
 	/**
 	 * @group 7084
 	 */
@@ -142,7 +182,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r_from_t = $t->get_first_related('Registration');
 		$this->assertEquals($r,$r_from_t);
 	}
-
+        /**
+         * @group 8686
+         */
 	function test_remove_relation_to(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -150,12 +192,20 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r->save();
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertEquals($t,$t_from_r);
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertFalse( empty( $rs_from_t ) );
 		//remove the relation
 		$t_removed = $r->_remove_relation_to($t, 'Transaction');
 		$this->assertEquals($t,$t_removed);
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertNull($t_from_r);
+                //and verify the cached reciprocal relation is updated too
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertTrue( empty( $rs_from_t ) );
 	}
+        /**
+         * @group 8686
+         */
 	function test_remove_relations(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -163,9 +213,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r->save();
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertEquals($t,$t_from_r);
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertFalse( empty( $rs_from_t ) );
+                //ok now remove the relation between them
 		$r->_remove_relations('Transaction');
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertNull($t_from_r);
+                //and verify the cached reciprocal relation is updated too
+                $rs_from_t = $t->get_many_related( 'Registration' );
+                $this->assertTrue( empty( $rs_from_t ) );
 	}
 	function test_count_related(){
 		$e1 = EE_Event::new_instance(array('EVT_name'=>'1'));
@@ -453,15 +509,15 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 	 */
 	public function test_get_raw() {
 		$l2 = EE_Line_Item::new_instance( array( ) );
-		$this->assertTrue( null === $l2->get_raw( 'LIN_quantity' ) );
+		$this->assertTrue( 1 == $l2->get_raw( 'LIN_quantity' ) );
 		$l2->save();
 		$l2_from_db = EEM_Line_Item::reset()->get_one_by_ID( $l2->ID());
 		//double check its NULL in the DB
 		$qty_col_with_one_result = EEM_Line_Item::instance()->get_col( array( array( 'LIN_ID' => $l2->ID() ) ), 'LIN_quantity' );
 		$qty_col_in_db = reset( $qty_col_with_one_result );
-		$this->assertTrue( null === $qty_col_in_db );
+		$this->assertTrue( 1 == $qty_col_in_db );
 		//and now verify get_raw is returning that same value
-		$this->assertTrue( null === $l2_from_db->get_raw( 'LIN_quantity' ) );
+		$this->assertTrue( 1 == $l2_from_db->get_raw( 'LIN_quantity' ) );
 	}
 	/**
 	 * Tests when we set a field to INFINITY, it stays that way even after we re-fetch it from the db
@@ -711,6 +767,103 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals( $event->ID()-1, $previous_event['EVT_ID'] );
 
 	}
+
+	/**
+	 * @group github-102
+	 * @group 8589
+	 */
+	public function test_get__serialized_data__once() {
+		$log_message = array(
+						'key1' => 'value1',
+						'key2' => 'value2'
+					);
+		$log = EE_Change_Log::new_instance();
+		$log->set( 'LOG_message', $log_message );
+		$log->save();
+
+		//verify that when we get its LOG_message its still serialized
+		$this->assertTrue( is_array( $log->get( 'LOG_message' ) ) );
+		$this->assertEquals( $log_message, $log->get( 'LOG_message' ) );
+
+		//now when we get it from the DB, and get its LOG_message, its still serialized
+		$log_id = $log->ID();
+		EEM_Change_Log::reset();
+		unset( $log );
+		$log_from_db = EEM_Change_Log::instance()->get_one_by_ID( $log_id );
+		$this->assertTrue( is_array( $log_from_db->get( 'LOG_message' ) ) );
+		$this->assertEquals( $log_message, $log_from_db->get( 'LOG_message' ) );
+	}
+
+	/**
+	* @group github-102
+	* @group 8589
+	*/
+	public function test_get__serialized_data__twice() {
+		$log_message = serialize( array(
+						'key1' => 'value1',
+						'key2' => 'value2'
+					) );
+		$log = EE_Change_Log::new_instance();
+		$log->set( 'LOG_message', $log_message );
+		$log->save();
+
+		//verify that when we get its LOG_message its still serialized
+		$this->assertTrue( is_array( $log->get( 'LOG_message' ) ) );
+		$this->assertEquals( unserialize( $log_message ), $log->get( 'LOG_message' ) );
+
+		//now when we get it from the DB, and get its LOG_message, its still serialized
+		$log_id = $log->ID();
+		EEM_Change_Log::reset();
+		unset( $log );
+		$log_from_db = EEM_Change_Log::instance()->get_one_by_ID( $log_id );
+		$this->assertTrue( is_array( $log_from_db->get( 'LOG_message' ) ) );
+		$this->assertEquals( unserialize( $log_message ), $log_from_db->get( 'LOG_message' ) );
+	}
+        
+        /**
+         * @group 8686
+         */
+        public function test_delete__remove_from_related_items_in_entity_mapper() {
+            $p = $this->new_model_obj_with_dependencies( 'Payment' );
+            $r = $this->new_model_obj_with_dependencies( 'Registration' );
+            $p->_add_relation_to( $r, 'Registration' );
+            $reg_payments = $p->registration_payments();
+            $this->assertFalse( empty( $reg_payments ) );
+            //now delete the relation entry
+            foreach ( $p->registration_payments() as $registration_payment ) {
+                if ( $registration_payment instanceof EE_Registration_Payment ) {       
+                    $this->assertEquals( 1, $registration_payment->delete() );
+                }
+            }
+            //now there shoudl eb no more registraiton payments on that payment right?
+            $reg_payments = $p->registration_payments();
+            $this->assertTrue( empty( $reg_payments ) );
+        }
+        
+        /**
+         * @group 8686
+         */
+        public function test_remove_relation_to__reciprocal() {
+            $p = $this->new_model_obj_with_dependencies( 'Payment' );
+            $r = $this->new_model_obj_with_dependencies( 'Registration' );
+            $p->_add_relation_to( $r, 'Registration' );
+            $regs_on_p = $p->get_many_related( 'Registration' );
+            $pays_on_r = $r->get_many_related( 'Payment' );
+            $this->assertFalse( empty( $regs_on_p ) );
+            $this->assertFalse( empty( $pays_on_r ) );
+            //now remove the relations
+            foreach ( $p->get_many_related( 'Registration' ) as $registration ) {
+                if ( $registration instanceof EE_Registration ) {       
+                    $this->assertEquals( $registration, $p->_remove_relation_to( $registration, 'Registration' ) );
+                }
+            }
+            //now there shoudl eb no more relations between those two right?
+            $regs_on_p = $p->get_many_related( 'Registration' );
+            $pays_on_r = $r->get_many_related( 'Payment' );
+            $this->assertTrue( empty( $regs_on_p ) );
+            $this->assertTrue( empty( $pays_on_r ) );
+        }
+
 
 }
 

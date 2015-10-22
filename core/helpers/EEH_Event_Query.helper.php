@@ -223,7 +223,8 @@ class EEH_Event_Query {
 	 */
 	public static function posts_clauses( $clauses, WP_Query $wp_query ) {
 		if ( EEH_Event_Query::apply_query_filters( $wp_query ) ) {
-			$clauses['distinct'] = "DISTINCT";
+			global $wpdb;
+			$clauses['groupby'] = $wpdb->posts . '.ID ';
 		}
 		return $clauses;
 	}
@@ -257,7 +258,7 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_fields_sql_for_orderby( $orderby_params = array() ) {
-		$SQL= '';
+		$SQL = ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ' ;
 		foreach( (array)$orderby_params as $orderby ) {
 			switch ( $orderby ) {
 
@@ -631,7 +632,7 @@ class EEH_Event_Query {
 					break;
 				case 'start_date' :
 				default :
-					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_start ' . $sort;
+					$SQL .= $glue . ' event_start_date ' . $sort;
 					break;
 			}
 			// add to array of orderby params that have been added

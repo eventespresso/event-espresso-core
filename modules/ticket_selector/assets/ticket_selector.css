@@ -128,7 +128,7 @@
 }
 .ee-ticket-selector-ticket-qty-th {
 	text-align: center;
-	width: 17.5%;
+	width: 25%;
 }
 
 
@@ -306,6 +306,25 @@
 /*.tckt-slctr-tkt-details-tbl th:last-child, .tckt-slctr-tkt-details-tbl td:last-child {*/
 	/*padding-right: 0;*/
 /*}*/
+
+
+.no-tkt-slctr-ticket-dv {
+	border: 1px solid #EEEEEE;
+	box-sizing: border-box;
+	margin: 0 0 1em;
+	padding: 1em;
+	width: 100%;
+}
+
+.no-tkt-slctr-ticket-content-dv {
+	float: left;
+	margin: 0;
+}
+.no-tkt-slctr-ticket-dv p,
+.no-tkt-slctr-ticket-dv h5 {
+	margin: 0;
+}
+
 
 @media (max-width: 600px) {
 

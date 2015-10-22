@@ -116,6 +116,27 @@ jQuery(document).ready(function($) {
 	} catch(err) {
 		//won't do anything just wanna make sure .validate only runs when the jQuery validate plugin is present
 	}
+
+
+	/** Hide/unhide expired events in event dropdown **/
+	var non_expired_opts = '', full_opts = '';
+	if ( full_opts === '' ) {
+		full_opts = $( '#event_id', '#post-body-content').children();
+		non_expired_opts = $( '#event_id', '#post-body-content' ).children().not( '.ee-expired-event' );
+
+		//on load let's just show non_expired
+		$('#event_id', '#post-body-content').html( non_expired_opts );
+		$('#event_id', '#post-body-content').find( 'option[value=0]').prop('selected',true);
+	}
+	$('#js-ee-hide-expired-events', '#post-body-content').click( function() {
+		if ( $(this).prop('checked') ) {
+			$('#event_id', '#post-body-content').html( non_expired_opts );
+			$('#event_id', '#post-body-content').find( 'option[value=0]').prop('selected',true);
+		} else {
+			$('#event_id', '#post-body-content').html( full_opts );
+			$('#event_id', '#post-body-content').find( 'option[value=0]').prop('selected',true);
+		}
+	});
 });
 
 /**

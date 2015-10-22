@@ -23,11 +23,11 @@ if ( count( $registrations ) > 0 ) {
 			<?php if ( $registration->ticket()->ID() != $prev_ticket ) { ?>
 				<?php if ( ! $revisit ) { ?>
 			<div class="spco-ticket-info-dv small-text">
-				<h5><?php _e('Ticket Details', 'event_espresso');?></h5>
+				<h5><?php _e('Details', 'event_espresso');?></h5>
 				<table>
 					<thead>
 						<tr>
-							<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
+							<th scope="col" width=""><?php _e('Name and Description', 'event_espresso');?></th>
 							<th scope="col" width="7.5%" class="jst-rght"><?php _e('Qty', 'event_espresso');?></th>
 							<th scope="col" width="17.5%" class="jst-rght"><?php _e('Price', 'event_espresso');?></th>
 							<th scope="col" width="17.5%" class="jst-rght"><?php _e('Total', 'event_espresso');?></th>

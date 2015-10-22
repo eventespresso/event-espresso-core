@@ -80,4 +80,60 @@ class EEH_Array extends EEH_Base {
 		return isset( $arr[ $index ] ) ? $arr[ $index ] : $default;
 	}
 
+	/**
+	 * Exactly like `maybe_unserialize`, but also accounts for a WP bug: http://core.trac.wordpress.org/ticket/26118
+	 * @param mixed $value usually a string, but could be an array or object
+	 * @return mixed the UNserialized data
+	 */
+	public static function maybe_unserialize( $value ) {
+		$data = maybe_unserialize($value);
+		//it's possible that this still has serialized data if its the session.  WP has a bug, http://core.trac.wordpress.org/ticket/26118 that doesnt' unserialize this automatically.
+		$token = 'C';
+		$data = is_string($data) ? trim($data) : $data;
+		if ( is_string($data) && strlen($data) > 1 && $data[0] == $token  && preg_match( "/^{$token}:[0-9]+:/s", $data ) ) {
+			return unserialize($data);
+		} else {
+			return $data;
+		}
+	}
+
+
+
+	/**
+	 * insert_into_array
+	 *
+	 * @param array $target_array 		the array to insert new data into
+	 * @param array $array_to_insert 	the new data to be inserted
+	 * @param int | string $offset 			a known key within $target_array where new data will be inserted
+	 * @param bool $add_before			whether to add new data before or after the offset key
+	 * @param bool $preserve_keys 		whether or not to reset numerically indexed arrays
+	 * @return array
+	 */
+	public static function insert_into_array( $target_array = array(), $array_to_insert = array(), $offset = null, $add_before = true, $preserve_keys = true ) {
+		// ensure incoming arrays are actually arrays
+		$target_array 		= (array)$target_array;
+		$array_to_insert	= (array)$array_to_insert;
+		// if no offset key was supplied
+		if ( empty( $offset )) {
+			// use start or end of $target_array based on whether we are adding before or not
+			$offset = $add_before ? 0 : count( $target_array );
+		}
+		// if offset key is a string, then find the corresponding numeric location for that element
+		$offset = is_int( $offset ) ? $offset : array_search( $offset, array_keys( $target_array ) );
+		// add one to the offset if adding after
+		$offset = $add_before ? $offset : $offset + 1;
+		// but ensure offset does not exceed the length of the array
+		$offset = $offset > count( $target_array ) ? count( $target_array ) : $offset;
+		// reindex array ???
+		if ( $preserve_keys ) {
+			// take a slice of the target array from the beginning till the offset,
+			// then add the new data
+			// then add another slice that starts at the offset and goes till the end
+			return array_slice( $target_array, 0, $offset, true ) + $array_to_insert + array_slice( $target_array, $offset, null, true );
+		} else {
+			// since we don't want to preserve keys, we can use array_splice
+			array_splice( $target_array, $offset, 0, $array_to_insert );
+			return $target_array;
+		}
+	}
 } //end EEH_Template class

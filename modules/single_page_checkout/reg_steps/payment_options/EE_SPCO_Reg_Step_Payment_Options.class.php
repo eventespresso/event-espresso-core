@@ -15,9 +15,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * @access protected
-	 * @var EE_Line_Item_Display $Line_Item_Display
+	 * @var EE_Line_Item_Display $line_item_display
 	 */
-	protected $Line_Item_Display = null;
+	protected $line_item_display = null;
 
 
 
@@ -28,6 +28,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
+		add_filter( 'FHEE__SPCO__EE_Line_Item_Filter_Collection', array( 'EE_SPCO_Reg_Step_Payment_Options', 'add_spco_line_item_filters' ) );
 		add_action( 'wp_ajax_switch_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'switch_spco_billing_form' ));
 		add_action( 'wp_ajax_nopriv_switch_spco_billing_form', array( 'EE_SPCO_Reg_Step_Payment_Options', 'switch_spco_billing_form' ));
 		add_action( 'wp_ajax_save_payer_details', array( 'EE_SPCO_Reg_Step_Payment_Options', 'save_payer_details' ));
@@ -104,17 +105,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * @return null
 	 */
-	public function Line_Item_Display() {
-		return $this->Line_Item_Display;
+	public function line_item_display() {
+		return $this->line_item_display;
 	}
 
 
 
 	/**
-	 * @param null $Line_Item_Display
+	 * @param null $line_item_display
 	 */
-	public function set_Line_Item_Display( $Line_Item_Display ) {
-		$this->Line_Item_Display = $Line_Item_Display;
+	public function set_line_item_display( $line_item_display ) {
+		$this->line_item_display = $line_item_display;
 	}
 
 
@@ -244,15 +245,27 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $registrations_requiring_payment ) ) {
 			//EEH_Debug_Tools::printr( $registrations_requiring_payment, '$registrations_requiring_payment', __FILE__, __LINE__ );
 			// autoload Line_Item_Display classes
-			EEH_Autoloader::register_line_item_display_autoloaders();
-			$this->set_Line_Item_Display( new EE_Line_Item_Display( 'spco' ) );
-			$transaction_details = $this->Line_Item_Display->display_line_item(
-				$this->checkout->cart->get_grand_total(),
-				array( 'registrations' => $registrations )
+			EEH_Autoloader::register_line_item_filter_autoloaders();
+			$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
+				apply_filters(
+					'FHEE__SPCO__EE_Line_Item_Filter_Collection',
+					new EE_Line_Item_Filter_Collection()
+				),
+				$this->checkout->cart->get_grand_total()
 			);
-			$this->checkout->amount_owing = $this->Line_Item_Display->grand_total();
+			$filtered_line_item_tree = $line_item_filter_processor->process();
+			//echo "\n<br />";
+			//EEH_Line_Item::visualize( $filtered_line_item_tree );
+			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
+			$this->checkout->amount_owing = $filtered_line_item_tree->total();
+
 			if ( $this->checkout->amount_owing > 0 ) {
-				$subsections[ 'payment_options' ] = $this->_display_payment_options( $transaction_details );
+				EEH_Autoloader::register_line_item_display_autoloaders();
+				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
+				$subsections[ 'payment_options' ] = $this->_display_payment_options(
+					$this->line_item_display->display_line_item( $filtered_line_item_tree )
+				);
+				$this->_apply_transaction_payments_to_amount_owing();
 			}
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
@@ -268,6 +281,33 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 * add line item filters required for this reg step
+	 *
+	 * these filters are applied via this line in EE_SPCO_Reg_Step_Payment_Options::set_hooks():
+	 * 		add_filter( 'FHEE__SPCO__EE_Line_Item_Filter_Collection', array( 'EE_SPCO_Reg_Step_Payment_Options', 'add_spco_line_item_filters' ) );
+	 * so any code that wants to use the same set of filters during the payment options reg step,
+	 * can apply these filters via the following:
+	 * 		apply_filters( 'FHEE__SPCO__EE_Line_Item_Filter_Collection', new EE_Line_Item_Filter_Collection() )
+	 * or to an existing filter collection by passing that instead of instantiating a new collection
+	 *
+	 * @param \EE_Line_Item_Filter_Collection $line_item_filter_collection
+	 * @return \EE_Line_Item_Filter_Collection
+	 */
+	public static function add_spco_line_item_filters( EE_Line_Item_Filter_Collection $line_item_filter_collection ) {
+		$line_item_filter_collection->add(
+			new EE_Billable_Line_Item_Filter(
+				EE_Registry::instance()->SSN->checkout()->transaction->registrations(
+					EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
+				)
+			)
+		);
+		$line_item_filter_collection->add( new EE_Non_Zero_Line_Item_Filter() );
+		return $line_item_filter_collection;
 	}
 
 
@@ -444,7 +484,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 							'template_args'  				=> apply_filters(
 								'FHEE__EE_SPCO_Reg_Step_Payment_Options___display_payment_options__template_args',
 								array(
-									'reg_count' 					=> $this->Line_Item_Display->total_items(),
+									'reg_count' 					=> $this->line_item_display->total_items(),
 									'transaction_details' 	=> $transaction_details,
 									'available_payment_methods' => array()
 								)
@@ -490,6 +530,25 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
+	}
+
+
+
+	/**
+	 *    _apply_transaction_payments_to_amount_owing
+	 *
+	 * @access    protected
+	 * @return 	void
+	 */
+	protected function _apply_transaction_payments_to_amount_owing() {
+		$payments = $this->checkout->transaction->approved_payments();
+		if ( ! empty( $payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( $payment instanceof EE_Payment ) {
+					$this->checkout->amount_owing -= $payment->amount();
+				}
+			}
+		}
 	}
 
 
@@ -818,12 +877,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->_verify_payment_method_is_set() ) {
 			return FALSE;
 		}
-		EE_Error::add_success(
-			apply_filters(
-				'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-				sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
-			)
-		);
+		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false ) ) {
+			EE_Error::add_success(
+				apply_filters(
+					'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+					sprintf( __( 'You have selected "%s" as your method of payment. Please note the important payment information below.', 'event_espresso' ), $this->checkout->payment_method->name() )
+				)
+			);
+		}
 		// generate billing form for selected method of payment if it hasn't been done already
 		if ( $this->checkout->payment_method->type_obj()->has_billing_form() ) {
 			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
@@ -1358,6 +1419,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				TRUE,
 				$this->reg_step_url()
 			);
+
 		} catch( Exception $e ) {
 			$this->_handle_payment_processor_exception( $e );
 		}
@@ -1446,7 +1508,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// not a payment
 			EE_Error::add_error(
 				sprintf(
-					__( 'A valid payment was not generated due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+					__( 'A valid payment was not generated due to a technical issue.%1$sPlease try again or contact
+					%2$s for assistance.', 'event_espresso' ),
 					'<br/>',
 					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 				), __FILE__, __FUNCTION__, __LINE__
@@ -1476,6 +1539,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		} else if ( $this->checkout->payment_method->is_off_site() ) {
 			// if a payment object was made and it specifies a redirect url, then we'll setup that redirect info
 			if ( $payment instanceof EE_Payment && $payment->redirect_url() ){
+				do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $payment->redirect_url(), '$payment->redirect_url()' );
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
 				$this->checkout->redirect_url = $this->reg_step_url( 'redirect_form' );
@@ -1487,6 +1551,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					EE_Registry::instance()->SSN->expiration() + 1,
 					$this->checkout->transaction->ID()
 				);
+				// and lastly, let's bump the payment status to pending
+				$payment->set_status( EEM_Payment::status_id_pending );
+				$payment->save();
 			} else {
 				// not a payment
 				$this->checkout->continue_reg = false;
@@ -1542,6 +1609,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// verify payment validity
 		if ( $payment instanceof EE_Payment ) {
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $payment->status(), '$payment->status()' );
 			$msg = $payment->gateway_response();
 			// check results
 			switch ( $payment->status() ) {
@@ -1676,8 +1744,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				//$this->_setup_redirect_for_next_step();
 				// store that for later
 				$this->checkout->payment = $payment;
-				// mark this reg step as completed
-				//$this->checkout->current_step->set_completed();
+				// mark this reg step as completed, as long as gateway doesn't use a separate IPN request,
+				// because we will complete this step during the IPN processing then
+				if ( $gateway instanceof EE_Offsite_Gateway && ! $gateway->uses_separate_IPN_request() ) {
+					$this->checkout->current_step->set_completed();
+				}
 				return true;
 			}
 		}
@@ -1901,6 +1972,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				'TXN_reg_steps' 		=> $this->checkout->transaction->reg_steps(),
 				'STS_ID'        			=> $this->checkout->transaction->status_ID(),
 				'PMD_ID'        			=> $this->checkout->transaction->payment_method_ID(),
+				'payment_amount' => $this->checkout->amount_owing,
 				'return_url' 				=> $return_url,
 				'cancel_url' 				=> add_query_arg( array( 'ee_cancel_payment' => true ), $return_url ),
 				'notify_url' 				=> EE_Config::instance()->core->txn_page_url(

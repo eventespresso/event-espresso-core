@@ -102,7 +102,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			)
 		);
 
-		EEM_Event::$_default_reg_status = EEM_Registration::status_id_pending_payment;
+		self::$_default_reg_status = empty( self::$_default_reg_status ) ? EEM_Registration::status_id_pending_payment : self::$_default_reg_status;
 
 		$this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table( 'posts','ID' ),
@@ -167,6 +167,13 @@ class EEM_Event  extends EEM_CPT_Base{
 	 */
 	public static function set_default_reg_status( $default_reg_status ) {
 		self::$_default_reg_status = $default_reg_status;
+		//if EEM_Event has already been instantiated, then we need to reset the `EVT_default_reg_status` field to use the new default.
+		if ( self::$_instance instanceof EEM_Event ) {
+			self::$_instance->_fields['Event_Meta']['EVT_default_registration_status'] = new EE_Enum_Text_Field(
+				'EVT_default_registration_status', __( 'Default Registration Status on this Event', 'event_espresso' ), false, $default_reg_status, EEM_Registration::reg_status_array()
+			);
+			self::$_instance->_fields['Event_Meta']['EVT_default_registration_status']->_construct_finalize( 'Event_Meta', 'EVT_default_registration_status', 'EEM_Event' );
+		}
 	}
 
 

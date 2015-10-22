@@ -1,6 +1,6 @@
-<h4 class="ee-admin-settings-hdr">
+<h2 class="ee-admin-settings-hdr">
 	<?php _e('Debug/Logging Options', 'event_espresso'); ?>
-</h4>
+</h2>
 
 <table class="form-table">
 	<tbody>
