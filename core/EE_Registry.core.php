@@ -132,7 +132,9 @@ final class EE_Registry {
 	 * $non_abstract_db_models
 	 * @access public
 	 * @var array this is an array of all implemented model names (i.e. not the parent abstract models, or models
-	 * which don't actually fetch items from the DB in the normal way (ie, are not children of EEM_Base))
+	 * which don't actually fetch items from the DB in the normal way (ie, are not children of EEM_Base)).
+	 * Keys are model "shortnames" (eg "Event") as used in model relations, and values are
+	 * classnames (eg "EEM_Event")
 	 */
 	public $non_abstract_db_models = array();
 
@@ -726,6 +728,20 @@ final class EE_Registry {
 			$instance->reset_model( $model_name );
 		}
 		return $instance;
+	}
+
+	/**
+	 * Gets all the custom post type models defined
+	 * @return array keys are model "short names" (Eg "Event") and keys are classnames (eg "EEM_Event")
+	 */
+	public function cpt_models() {
+		$cpt_models = array();
+		foreach( $this->non_abstract_db_models as $shortname => $classname ) {
+			if( is_subclass_of(  $classname, 'EEM_CPT_Base' ) ) {
+				$cpt_models[ $shortname ] = $classname;
+			}
+		}
+		return $cpt_models;
 	}
 
 

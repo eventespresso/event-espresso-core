@@ -209,6 +209,12 @@
 	border-width: 1px;
 	line-height: .8em;
 }
+.tckt-slctr-tkt-datetimes-sctn .tckt-slctr-tkt-details-tbl {
+	table-layout: auto; /* twentyfifteen override */
+	display: block;
+	overflow-x: auto;
+	font-size: 0.85em;
+}
 .tckt-slctr-tkt-details-tbl th {
 	padding: 5px;
 	font-size: 1em;
@@ -365,5 +371,10 @@
 	.tckt-slctr-tkt-details-dv .smaller-text {
 		display: inline;
 		font-size: inherit;
+	}
+	.tckt-slctr-tkt-datetimes-sctn .tckt-slctr-tkt-details-tbl {
+		table-layout: fixed;
+		display: table;
+		font-size: 1em;
 	}
 }
