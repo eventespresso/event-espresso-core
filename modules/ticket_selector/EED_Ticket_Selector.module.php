@@ -408,7 +408,12 @@ class EED_Ticket_Selector extends  EED_Module {
 					__('Register Now', 'event_espresso' ),
 					self::$_event
 				);
-				return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn ticket-selector-submit-ajax" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div></form>';
+				$html = '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"';
+				$html .= ' class="ticket-selector-submit-btn ticket-selector-submit-ajax"';
+				$html .= ' type="submit" value="' . $btn_text . '" />';
+				$html .= apply_filters( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', self::$_event );
+				$html .= '<div class="clear"><br/></div></form>';
+				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
 			}
@@ -448,6 +453,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		$view_details_btn = '<form method="POST" action="' . self::$_event->get_permalink() . '">';
 		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __( 'View Details', 'event_espresso' ), self::$_event );
 		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn view-details-btn" type="submit" value="' . $btn_text . '" />';
+		$view_details_btn .= apply_filters( 'FHEE__EE_Ticket_Selector__after_view_details_btn', '', self::$_event );
 		$view_details_btn .= '<div class="clear"><br/></div>';
 		$view_details_btn .= '</form>';
 		return $view_details_btn;

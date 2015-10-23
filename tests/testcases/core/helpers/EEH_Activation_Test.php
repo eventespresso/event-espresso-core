@@ -15,7 +15,8 @@
  * @subpackage 	tests
  */
 class EEH_Activation_Test extends EE_UnitTestCase {
-
+	const current_cron_task_name = 'current_one';
+	const expired_cron_task_name = 'expired_one';
 
 
 	/**
@@ -165,5 +166,31 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$new_expected_id = reset( $users_created_after_reset );
 		$this->assertEquals( EEH_Activation::get_default_creator_id(), $new_expected_id );
 
+	}
+
+	function test_get_cron_tasks__old() {
+		add_filter( 'FHEE__EEH_Activation__get_cron_tasks', array( $this, 'change_cron_tasks' ) );
+		$old_cron_tasks = EEH_Activation::get_cron_tasks( 'old' );
+		$this->assertArrayHasKey( self::expired_cron_task_name, $old_cron_tasks );
+		$this->assertArrayNotHasKey( self::current_cron_task_name, $old_cron_tasks );
+	}
+	function test_get_cron_tasks__all() {
+		add_filter( 'FHEE__EEH_Activation__get_cron_tasks', array( $this, 'change_cron_tasks' ) );
+		$old_cron_tasks = EEH_Activation::get_cron_tasks( 'all' );
+		$this->assertArrayHasKey( self::expired_cron_task_name, $old_cron_tasks );
+		$this->assertArrayHasKey( self::current_cron_task_name, $old_cron_tasks );
+	}
+	/**
+	 * Makes it so this function can be independent on what the current cron tasks actually are
+	 * (because they'll likely change, whereas some of these functions just want to check that
+	 * we are retrieving cron tasks correctly)
+	 * @param type $old_cron_tasks
+	 * @return array
+	 */
+	function change_cron_tasks( $old_cron_tasks ) {
+		return array(
+			self::current_cron_task_name => 'hourly',
+			self::expired_cron_task_name => EEH_Activation::cron_task_no_longer_in_use
+		);
 	}
 } //end class EEH_Activation_Test

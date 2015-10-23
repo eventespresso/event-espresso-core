@@ -340,7 +340,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			EE_Cron_Tasks::schedule_update_transaction_with_payment(
 				time(),
 				$transaction->ID(),
-				$payment
+				$payment->ID()
 			);
 		} else {
 			// verify payment and that it has been saved

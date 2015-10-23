@@ -154,15 +154,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->increase_sold();
-					$datetime->save();
-				}
-			}
-		}
 		// possibly set event status to sold out
 		$this->event()->perform_sold_out_status_check();
 	}
@@ -220,15 +211,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->decrease_sold();
-					$datetime->save();
-				}
-			}
-		}
 	}
 
 
