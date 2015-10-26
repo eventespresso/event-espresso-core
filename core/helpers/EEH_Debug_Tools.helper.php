@@ -265,11 +265,7 @@ class EEH_Debug_Tools{
 	public static function ee_plugin_activation_errors() {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			$activation_errors = ob_get_contents();
-			if ( class_exists( 'EE_Registry' )) {
-				EE_Registry::instance()->load_helper( 'File' );
-			} else {
-				include_once( EE_HELPERS . 'EEH_File.helper.php' );
-			}
+			espresso_load_required( 'EEH_File', EE_HELPERS . 'EEH_File.helper.php' );
 			if ( class_exists( 'EEH_File' )) {
 				try {
 					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
