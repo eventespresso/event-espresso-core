@@ -25,11 +25,24 @@ final class EE_System {
 
 
 	/**
-	 * 	instance of the EE_System object
-	 *	@var 	$_instance
-	 * 	@access 	private
+	 *    instance of the EE_System object
+	 *
+	 * @var    $_instance
+	 * @access    private
 	 */
-	private static $_instance = NULL;
+	private static $_instance = null;
+
+	/**
+	 * @access    protected
+	 * @type    $config EE_Registry
+	 */
+	protected $registry;
+
+	/**
+	 * @access    protected
+	 * @type    $config EE_Config
+	 */
+	protected $config;
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
@@ -88,12 +101,10 @@ final class EE_System {
 	 *	@return EE_System
 	 */
 	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_System )) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
+		return EE_Registry::instance()->load_core( __CLASS__ );
 	}
+
+
 	/**
 	 * resets the instance and returns it
 	 * @return EE_System
@@ -112,241 +123,14 @@ final class EE_System {
 
 
 	/**
-	 *    class constructor
-	 *
-	 *    checks recommended versions for both WP and PHP
-	 *    loads minimum files for bootstrapping system
 	 *    sets hooks for running rest of system
 	 *    provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
 	 *    starting EE Addons from any other point may lead to problems
 	 *
-	 * @access    private
-	 * @return \EE_System
+	 * @access    public
 	 */
-	private function __construct() {
-		do_action( 'AHEE__EE_System__construct__begin',$this );
-		// check required WP version
-		if ( ! EE_System::_minimum_wp_version_required() ) {
-			unset( $_GET['activate'] );
-			add_action( 'admin_notices', array( 'EE_System', 'minimum_wp_version_error' ), 1 );
-			exit();
-		}
-		// check required PHP version
-		if ( ! EE_System::minimum_php_version_required() ) {
-			unset( $_GET['activate'] );
-			add_action( 'admin_notices', array( 'EE_System', 'minimum_php_version_error' ), 1 );
-			exit();
-		}
-		// check recommended WP version
-		if ( ! EE_System::_minimum_wp_version_recommended() ) {
-			EE_System::_display_minimum_recommended_wp_version_notice();
-		}
-		// check recommended PHP version
-		if ( ! EE_System::_minimum_php_version_recommended() ) {
-			EE_System::_display_minimum_recommended_php_version_notice();
-		}
-		$this->_initialize();
-	}
-
-
-
-	/**
-	 *    _check_wp_version
-	 *
-	 * @access private
-	 * @param string $min_version
-	 * @return boolean
-	 */
-	private static function _check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
-		global $wp_version;
-		return version_compare( $wp_version, $min_version, '>=' ) ? TRUE : FALSE;
-	}
-
-	/**
-	 * 	_minimum_wp_version_required
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private static function _minimum_wp_version_required() {
-		return EE_System::_check_wp_version( EE_MIN_WP_VER_REQUIRED );
-	}
-
-	/**
-	 * 	_minimum_wp_version_recommended
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private static function _minimum_wp_version_recommended() {
-		return EE_System::_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
-	}
-
-
-
-	/**
-	 *    _check_php_version
-	 *
-	 * @access private
-	 * @param string $min_version
-	 * @return boolean
-	 */
-	private static function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
-		return version_compare( phpversion(), $min_version, '>=' ) ? TRUE : FALSE;
-	}
-
-	/**
-	 * 	minimum_php_version_required
-	 *
-	 * 	@return boolean
-	 */
-	public static function minimum_php_version_required() {
-		return EE_System::_check_php_version( EE_MIN_PHP_VER_REQUIRED );
-	}
-
-	/**
-	 * 	_minimum_php_version_recommended
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private static function _minimum_php_version_recommended() {
-		return EE_System::_check_php_version( EE_MIN_PHP_VER_RECOMMENDED );
-	}
-
-
-
-	/**
-	 * 	minimum_wp_version_error
-	 *
-	 * 	@return void
-	 */
-	public static function minimum_wp_version_error() {
-		global $wp_version;
-		?>
-		<div class="error">
-		<p>
-		<?php
-		printf(
-			__( 'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
-			EE_MIN_WP_VER_REQUIRED,
-			$wp_version,
-			'<br/>',
-			'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
-		);
-		?>
-		</p>
-		</div>
-		<?php
-		EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
-	}
-
-
-
-	/**
-	 * 	minimum_php_version_error
-	 *
-	 * 	@return void
-	 */
-	public static function minimum_php_version_error() {
-		?>
-		<div class="error">
-		<p>
-		<?php
-		printf(
-			__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on supported versions of PHP, please go to %4$s, or %5$s to download the latest stable versions.', 'event_espresso' ),
-			EE_MIN_PHP_VER_REQUIRED,
-			PHP_VERSION,
-			'<br/>',
-			'<a href="http://php.net/supported-versions.php">http://php.net/supported-versions.php</a>',
-			'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
-		);
-		?>
-		</p>
-		</div>
-		<?php
-		deactivate_plugins( EE_PLUGIN_BASENAME );
-	}
-
-
-
-	/**
-	 * 	_display_minimum_recommended_wp_version_notice
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private static function _display_minimum_recommended_wp_version_notice() {
-		global $wp_version;
-		EE_Error::add_persistent_admin_notice(
-			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended',
-			sprintf(
-				__( 'Event Espresso recommends WordPress version %1$s or greater in order for everything to operate properly. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
-				EE_MIN_WP_VER_RECOMMENDED,
-				$wp_version,
-				'<br/>',
-				'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
-			)
-		);
-	}
-
-
-
-	/**
-	 * 	_display_minimum_recommended_php_version_notice
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private static function _display_minimum_recommended_php_version_notice() {
-		EE_Error::add_persistent_admin_notice(
-			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
-			sprintf(
-				__( 'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on supported versions of PHP, please go to %4$s, or %5$s to download the latest stable versions.', 'event_espresso' ),
-				EE_MIN_PHP_VER_RECOMMENDED,
-				PHP_VERSION,
-				'<br/>',
-				'<a href="http://php.net/supported-versions.php">http://php.net/supported-versions.php</a>',
-				'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
-			)
-		);
-	}
-
-
-
-	/**
-	 *    _initialize
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _initialize() {
-		// check PHP version again just to be sure
-		if ( ! EE_System::minimum_php_version_required() ) {
-			return;
-		}
-		// the following should ONLY run if minimum php version requirement is met
-		$this->display_alpha_banner_warning();
-		// central repository for classes
-		$this->_load_registry();
-		// workarounds for PHP < 5.3
-		$this->_load_class_tools();
-		// load a few helper files
-		EE_Registry::instance()->load_helper( 'File' );
-		EE_Registry::instance()->load_helper( 'Autoloader', array(), false );
-		// instantiate PSR4 autoloader
-		require_once( EE_CORE . 'Psr4Autoloader.php' );
-		$psr4_loader = new \EventEspresso\Core\Psr4Autoloader();
-		// register the autoloader
-		$psr4_loader->register();
-		// register the base directories for the namespace prefix
-		$psr4_loader->addNamespace( 'EventEspresso', EE_PLUGIN_DIR_PATH );
-		require_once EE_CORE . 'EE_Deprecated.core.php';
-		// load interfaces
-		require_once EE_CORE . 'EEI_Interfaces.php';
-		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
-		// WP cron jobs
-		EE_Registry::instance()->load_core( 'Cron_Tasks' );
+	public function __construct() {
+		do_action( 'AHEE__EE_System__construct__begin', $this );
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 		// when an ee addon is activated, we want to call the core hook(s) again
@@ -366,114 +150,6 @@ final class EE_System {
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
-	}
-
-
-
-	/**
-	 *    display_alpha_banner_warning
-	 *
-	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
-	 *
-	 * @access    public
-	 * @return    string
-	 */
-	public function display_alpha_banner_warning() {
-		// skip AJAX requests
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
-		// skip stable releases
-		if ( strpos( EVENT_ESPRESSO_VERSION, '.alpha' ) === false ) {
-			return;
-		}
-		// post release candidate warning
-		if ( is_admin() ) {
-			add_action( 'admin_notices', array( $this, 'alpha_banner_admin_notice' ), -999 );
-		} else {
-			// site admin has authorized use of non-stable release candidate for production
-			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
-				return;
-			}
-			add_action( 'shutdown', array( $this, 'alpha_banner_warning_notice' ), 10 );
-		}
-	}
-
-
-
-	/**
-	 *    alpha_banner_admin_notice
-	 *    displays admin notice that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function alpha_banner_admin_notice() {
-		EE_Error::add_attention(
-			sprintf(
-				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
-				'<strong>',
-				'</strong>'
-			),
-			__FILE__, __FUNCTION__, __LINE__
-		);
-	}
-
-
-
-	/**
-	 *    alpha_banner_warning_notice
-	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function alpha_banner_warning_notice() {
-		global $pagenow;
-		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
-			return;
-		}
-		printf(
-			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
-			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
-			'<strong>',
-			'</strong>',
-			'</p></div>'
-		);
-	}
-
-
-
-	/**
-	 * 	_load_registry
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _load_registry() {
-		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
-			require_once( EE_CORE . 'EE_Registry.core.php' );
-		} else {
-			$msg = __( 'The EE_Registry core class could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			wp_die( EE_Error::get_notices() );
-		}
-	}
-
-
-	/**
-	 * 	_load_registry
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _load_class_tools() {
-		if ( is_readable( EE_HELPERS . 'EEH_Class_Tools.helper.php' )) {
-			require_once( EE_HELPERS . 'EEH_Class_Tools.helper.php' );
-		} else {
-			$msg = __( 'The EEH_Class_Tools helper could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
 	}
 
 
@@ -508,6 +184,9 @@ final class EE_System {
 			$addon->detect_activation_or_upgrade();
 		}
 	}
+
+
+
 	/**
 	* detect_if_activation_or_upgrade
 	*
@@ -1000,28 +679,11 @@ final class EE_System {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
 						unset( $_GET['activate'] );
-						EE_System::deactivate_plugin( $active_plugin );
+						espresso_deactivate_plugin( $active_plugin );
 					}
 				}
 			}
 		}
-	}
-
-
-
-	/**
-	 *    deactivate_plugin
-	 * usage:  EE_System::deactivate_plugin( plugin_basename( __FILE__ ));
-	 *
-	 * @access public
-	 * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
-	 * @return    void
-	 */
-	public static function deactivate_plugin( $plugin_basename = '' ) {
-		if ( ! function_exists( 'deactivate_plugins' )) {
-			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-		}
-		deactivate_plugins( $plugin_basename );
 	}
 
 
@@ -1045,14 +707,9 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function load_CPTs_and_session() {
-//		$e = EEM_Event::instance()->get_one();
-//		EEM_Datetime::instance()->show_next_x_db_queries();
-//		$ds = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time($e->ID(),false);
-//
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-//		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -1538,7 +1195,5 @@ final class EE_System {
 
 
 }
-//EE_System::instance();
-
 // End of file EE_System.core.php
 // Location: /core/EE_System.core.php

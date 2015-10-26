@@ -1,20 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- *
- * Event Espresso
- *
- * Event Registration and Ticketing Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author 			Event Espresso
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	$VID:$
- *
- * ------------------------------------------------------------------------
- */
-/**
 * EE_Registry Class
  *
  * Centralized Application Data Storage and Management
@@ -181,7 +166,7 @@ final class EE_Registry {
 	 *private constructor to prevent direct creation
 	 * @Constructor
 	 * @access private
-	 * @return \EE_Registry
+	 * @return EE_Registry
 	 */
 	private function __construct() {
 		$this->load_core( 'Base' );
@@ -686,11 +671,15 @@ final class EE_Registry {
 		return $addons;
 	}
 
+
+
 	/**
-	 * Resets that specified model's instance AND makes sure EE_Registry doesn't keep
+	 * Resets the specified model's instance AND makes sure EE_Registry doesn't keep
 	 * a stale copy of it around
+	 *
 	 * @param string $model_name
 	 * @return EEM_Base
+	 * @throws EE_Error
 	 */
 	public function reset_model( $model_name ){
 		$model = $this->load_model( $model_name );
@@ -709,9 +698,9 @@ final class EE_Registry {
 	 * reset absolutely everything will probably be tricky. right now it just resets
 	 * the config, data migration manager, and the models)
 	 * @param boolean $hard whether to reset data in the database too, or just refresh
-	 * the Registry to its state at the bginning of the request
-	 * @param boolean $reinstantiate whether to create new instances of EE_REgistry's singletons too,
-	 * or just reset without reinstantiating (handy to set to FALSE if you're not sure if you CAN
+	 * the Registry to its state at the beginning of the request
+	 * @param boolean $reinstantiate whether to create new instances of EE_Registry's singletons too,
+	 * or just reset without re-instantiating (handy to set to FALSE if you're not sure if you CAN
 	 * currently reinstantiate the singletons at the moment)
 	 * @return EE_Registry
 	 */

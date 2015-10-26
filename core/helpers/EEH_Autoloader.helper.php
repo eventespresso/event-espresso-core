@@ -13,14 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EEH_Autoloader {
-
-	/**
-	 * 	instance of the EEH_Autoloader object
-	 *	@var 	$_instance
-	 * 	@access 	private
-	 */
-	private static $_instance = NULL;
+class EEH_Autoloader extends EEH_Base {
 
 	/**
 	* 	$_autoloaders
@@ -32,30 +25,27 @@ class EEH_Autoloader {
 
 
 	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 *	@return EEH_Autoloader
+	 *    class constructor
+	 *
+	 * @access    public
+	 * @return \EEH_Autoloader
 	 */
-	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( ! self::$_instance instanceof  EEH_Autoloader ) {
-			self::$_instance = new self();
+	public function __construct() {
+		if ( self::$_autoloaders === null ) {
+			self::$_autoloaders = array();
+			$this->_register_custom_autoloaders();
+			spl_autoload_register( array( $this, 'espresso_autoloader' ) );
 		}
-		return self::$_instance;
 	}
 
 
 
 	/**
-	 *    class constructor
-	 *
-	 * @access    private
-	 * @return \EEH_Autoloader
+	 * @access public
+	 * @return EEH_Autoloader
 	 */
-	private function __construct() {
-		self::$_autoloaders = array();
-		$this->_register_custom_autoloaders();
-		spl_autoload_register( array( $this, 'espresso_autoloader' ));
+	public static function instance() {
+		//return EE_Registry::instance()->load_helper( __CLASS__ );
 	}
 
 
@@ -106,7 +96,8 @@ class EEH_Autoloader {
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
 				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
 				if ( WP_DEBUG && $debug ) {
-					printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
+					EEH_Debug_Tools::printr( $class, '$class', __FILE__, __LINE__ );
+					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
 				}
 			}
 		}
@@ -213,7 +204,7 @@ class EEH_Autoloader {
 			if ( substr( $filepath, -4, 4 ) == '.php' ) {
 				$class_name = EEH_File::get_classname_from_filepath_with_standard_filename( $filepath );
 				if ( ! in_array( $class_name, $exclude )) {
-					$class_to_filepath_map [ $class_name ] = str_replace( array( '\/', '/' ), DS, $filepath );
+					$class_to_filepath_map [ $class_name ] = $filepath;
 				}
 			} else if ( $recursive ) {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive );

@@ -3,7 +3,7 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 		4.8.14.rc.003
+  Version: 		4.8.18.rc.005
   Author: 		Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		    GPLv2
@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.8.14.rc.003';
+		return '4.8.18.rc.005';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -153,7 +153,7 @@ function espresso_duplicate_plugin_error() {
 	<p><?php _e( 'Can not run multiple versions of Event Espresso! Please deactivate one of the versions.', 'event_espresso' ); ?></p>
 	</div>
 	<?php
-	EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
+	espresso_deactivate_plugin( EE_PLUGIN_BASENAME );
 }
 
 
@@ -172,14 +172,14 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
 /**
  * 	espresso_plugin_deactivation
  */
-function espresso_plugin_deactivation() {
-	if ( EE_System::instance()->minimum_php_version_required() ) {
-		espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
-		EEH_Activation::plugin_deactivation();
-	}
-
-}
-register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
+//function espresso_plugin_deactivation() {
+//	if ( EE_System::instance()->minimum_php_version_required() ) {
+//		espresso_load_required( EE_HELPERS . 'EEH_Activation.helper.php' );
+//		EEH_Activation::plugin_deactivation();
+//	}
+//
+//}
+//register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
 
 
 
@@ -189,7 +189,7 @@ register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivat
  */
 function espresso_load_error_handling() {
 	// load debugging tools
-	if ( WP_DEBUG === TRUE ) {
+	if ( WP_DEBUG === TRUE && is_readable( EE_HELPERS . 'EEH_Debug_Tools.helper.php' ) ) {
 		require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 		EEH_Debug_Tools::instance();
 	}
@@ -206,20 +206,41 @@ function espresso_load_error_handling() {
 /**
  * 	espresso_load_required
  * 	given a class name and path, this function will load that file or throw an exception
+ *
+ * @param $full_path_to_file
+ * @throws \Exception
  */
-function espresso_load_required( $classname, $full_path_to_file ) {
+function espresso_load_required( $full_path_to_file ) {
 	espresso_load_error_handling();
 	if ( is_readable( $full_path_to_file )) {
 		require_once( $full_path_to_file );
 	} else {
-		throw new EE_Error ( sprintf (
-			__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
-			$classname
-		));
+		$file = explode( '.', basename( $full_path_to_file ) );
+		throw new EE_Error (
+			sprintf (
+				__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
+				array_shift( $file )
+			)
+		);
 	}
+}
+
+/**
+ *    deactivate_plugin
+ * usage:  espresso_deactivate_plugin( plugin_basename( __FILE__ ));
+ *
+ * @access public
+ * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
+ * @return    void
+ */
+function espresso_deactivate_plugin( $plugin_basename = '' ) {
+	if ( ! function_exists( 'deactivate_plugins' ) ) {
+		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	}
+	deactivate_plugins( $plugin_basename );
 }
 
 
 
-espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-EE_System::instance();
+espresso_load_required( EE_CORE . 'EE_Bootstrap.core.php' );
+new EE_Bootstrap();
