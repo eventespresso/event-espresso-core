@@ -201,29 +201,27 @@ function espresso_load_error_handling() {
 	}
 }
 
-
-
 /**
- * 	espresso_load_required
- * 	given a class name and path, this function will load that file or throw an exception
+ *    espresso_load_required
+ *    given a class name and path, this function will load that file or throw an exception
  *
- * @param $full_path_to_file
- * @throws \Exception
+ * @param 	string $classname
+ * @param 	string $full_path_to_file
+ * @throws 	EE_Error
  */
-function espresso_load_required( $full_path_to_file ) {
+function espresso_load_required( $classname, $full_path_to_file ) {
 	espresso_load_error_handling();
-	if ( is_readable( $full_path_to_file )) {
+	if ( is_readable( $full_path_to_file ) ) {
 		require_once( $full_path_to_file );
 	} else {
-		$file = explode( '.', basename( $full_path_to_file ) );
-		throw new EE_Error (
-			sprintf (
-				__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
-				array_shift( $file )
-			)
-		);
+		throw new EE_Error ( sprintf(
+			__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
+			$classname
+		) );
 	}
 }
+
+
 
 /**
  *    deactivate_plugin
@@ -237,10 +235,12 @@ function espresso_deactivate_plugin( $plugin_basename = '' ) {
 	if ( ! function_exists( 'deactivate_plugins' ) ) {
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 	}
+	unset( $_GET[ 'activate' ] );
+	unset( $_REQUEST[ 'activate' ] );
 	deactivate_plugins( $plugin_basename );
 }
 
 
 
-espresso_load_required( EE_CORE . 'EE_Bootstrap.core.php' );
+espresso_load_required( 'EE_Bootstrap', EE_CORE . 'EE_Bootstrap.core.php' );
 new EE_Bootstrap();
