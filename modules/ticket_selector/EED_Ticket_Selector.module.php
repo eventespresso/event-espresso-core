@@ -516,7 +516,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				$tckts_slctd = FALSE;
 				$success = TRUE;
 				// load cart
-				EE_Registry::instance()->load_core( 'Cart', array( null, EE_Registry::instance()->load_core( 'Session' ) ) );
+				EE_Registry::instance()->load_core( 'Cart' );
 
 				// cycle thru the number of data rows sent from the event listing
 				for ( $x = 0; $x < $valid['rows']; $x++ ) {
