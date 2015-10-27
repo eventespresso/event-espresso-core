@@ -330,10 +330,7 @@ final class EE_System {
 			}
 			EEH_Activation::initialize_db_content();
 			if( $initialize_addons_too ) {
-				//foreach registered addon, make sure its db is up-to-date too
-				foreach(EE_Registry::instance()->addons as $addon){
-					$addon->initialize_db_if_no_migrations_required();
-				}
+				$this->initialize_addons();
 			}
 		}else{
 			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( 'Core' );
@@ -343,6 +340,15 @@ final class EE_System {
 		}
 	}
 
+	/**
+	 * Initializes the db for all registered addons
+	 */
+	public function initialize_addons(){
+		//foreach registered addon, make sure its db is up-to-date too
+		foreach(EE_Registry::instance()->addons as $addon){
+			$addon->initialize_db_if_no_migrations_required();
+		}
+	}
 
 
 	/**

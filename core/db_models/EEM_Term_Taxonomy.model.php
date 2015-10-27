@@ -47,10 +47,11 @@ class EEM_Term_Taxonomy extends EEM_Base {
 		$this->_model_relations = array(
 			'Term_Relationship'=>new EE_Has_Many_Relation(),
 			'Term'=>new EE_Belongs_To_Relation(),
-			'Event'=>new EE_HABTM_Relation('Term_Relationship'),
-			'Venue'=>new EE_HABTM_Relation('Term_Relationship'),
-			'Attendee'=>new EE_HABTM_Relation('Term_Relationship')
 		);
+		$cpt_models = array_keys( EE_Registry::instance()->cpt_models() );
+		foreach( $cpt_models  as $model_name ) {
+			$this->_model_relations[ $model_name ] = new EE_HABTM_Relation( 'Term_Relationship' );
+		}
 		$this->_indexes = array(
 			'term_id_taxonomy'=>new EE_Unique_Index(array('term_id','taxonomy'))
 		);

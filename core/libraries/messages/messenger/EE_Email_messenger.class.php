@@ -170,7 +170,7 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_test_settings_fields = array(
 			'to' => array(
 				'input' => 'text',
-				'label' => __('To', 'event_espresso'),
+				'label' => __('Send a test email to', 'event_espresso'),
 				'type' => 'email',
 				'required' => TRUE,
 				'validation' => TRUE,

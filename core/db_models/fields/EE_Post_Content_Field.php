@@ -14,4 +14,7 @@ class EE_Post_Content_Field extends EE_Text_Field_Base{
 		return parent::prepare_for_set($value_with_select_tags);
 	}
 	
+	function prepare_for_set_from_db($value_found_in_db_for_model_object){
+		return $value_found_in_db_for_model_object;
+	}
 }

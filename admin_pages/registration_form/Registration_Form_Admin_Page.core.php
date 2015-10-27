@@ -396,16 +396,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	protected function _insert_or_update_question($new_question = TRUE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
 		if($new_question){
-			$new_id=$this->_question_model->insert($set_column_values);
-			if($new_id){
-				$success=1;
-				$ID=$new_id;
-			}else{
-				$success = false;
-			}
+			$ID=$this->_question_model->insert($set_column_values);
+			$success = $ID ? true : false;
+			$action_desc = 'added';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
@@ -414,10 +409,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$success= $this->_question_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
+
 		if ($ID){
 			//save the related options
 			//trash removed options, save old ones
-				//get list of all options
+			//get list of all options
+			/** @type EE_Question $question */
 			$question=$this->_question_model->get_one_by_ID($ID);
 			$options=$question->options();
 			if(! empty($options)){
@@ -442,14 +439,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
-		$query_args=array('action'=>'edit_question','QST_ID'=>$question->ID());
-
+		$query_args = array( 'action' => 'edit_question', 'QST_ID' => $ID );
 		if ( $success !== FALSE ) {
 			$msg = $new_question ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
 
-		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
+		$this->_redirect_after_action( FALSE, '', $action_desc, $query_args, TRUE);
 	}
 
 
@@ -457,10 +453,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * Upon saving a question, there should be an array of 'question_options'. This array is index numerically, but not by ID
-	 * (this is done because new question optiosn don't have an ID, but we may want to add multiple simultaneously).
+	 * (this is done because new question options don't have an ID, but we may want to add multiple simultaneously).
 	 * So, this function gets the index in that request data array called question_options. Returns FALSE if not found.
 	 * @param int $ID of the question option to find
-	 * @return int indexin in question_options array if successful, FALSE if unsuccessful
+	 * @return int index in question_options array if successful, FALSE if unsuccessful
 	 */
 	protected function _get_option_req_data_index($ID){
 		$req_data_for_question_options=$this->_req_data['question_options'];
@@ -571,9 +567,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
+		/** @type EEM_Question_Group $questionGroupModel */
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$questionGroups=$questionGroupModel->get_all($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		$query_params=$this->get_query_params( $questionGroupModel, $per_page, $current_page );
+		$questionGroups=$questionGroupModel->get_all($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 		return $questionGroups;
 	}
 
@@ -603,7 +600,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
 				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
 			);
-		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->display_nice( 'recaptcha_theme' ) : 'clean';
+		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->get_pretty( 'recaptcha_theme' ) : 'clean';
 
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),
