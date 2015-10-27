@@ -101,7 +101,11 @@ final class EE_System {
 	 *	@return EE_System
 	 */
 	public static function instance() {
-		return EE_Registry::instance()->load_core( __CLASS__ );
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_System ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
 	}
 
 
@@ -127,9 +131,9 @@ final class EE_System {
 	 *    provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
 	 *    starting EE Addons from any other point may lead to problems
 	 *
-	 * @access    public
+	 * @access    private
 	 */
-	public function __construct() {
+	private function __construct() {
 		do_action( 'AHEE__EE_System__construct__begin', $this );
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
