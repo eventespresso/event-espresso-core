@@ -57,11 +57,13 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
 		$this->_load_class_tools();
+		// PSR4 Autoloaders
 		EE_Registry::instance()->load_core( 'EE_Psr4AutoloaderInit' );
-		EE_Registry::instance()->load_core( 'EE_Deprecated' );
-		EE_Registry::instance()->load_lib( 'EEI_Payment_Method_Interfaces' );
-		//require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
-		// WP cron jobs
+		// deprecated functions
+		espresso_load_required( 'EE_Deprecated', EE_CORE . 'EE_Deprecated.core.php' );
+		// load interfaces
+		espresso_load_required( 'EEI_Payment_Method_Interfaces', EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php' );
+		//// WP cron jobs
 		EE_Registry::instance()->load_core( 'Cron_Tasks' );
 		EE_Registry::instance()->load_core( 'EE_System' );
 
