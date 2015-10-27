@@ -62,7 +62,7 @@ class EE_Bootstrap {
 		espresso_load_required( 'EEH_Base', EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php' );
 		espresso_load_required( 'EEH_File', EE_CORE . 'helpers' . DS . 'EEH_File.helper.php' );
 		espresso_load_required( 'EEH_Autoloader', EE_CORE . 'helpers' . DS . 'EEH_Autoloader.helper.php' );
-		new EEH_Autoloader();
+		EEH_Autoloader::instance();
 	}
 
 
