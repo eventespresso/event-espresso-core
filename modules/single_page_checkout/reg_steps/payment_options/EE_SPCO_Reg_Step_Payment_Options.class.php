@@ -1777,8 +1777,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$valid_TXN = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 			$primary_registrant = $valid_TXN instanceof EE_Transaction ? $valid_TXN->primary_registration() : null;
 			// let's start by retrieving the cart for this TXN
-			$session = EE_Registry::instance()->load_core( 'Session' );
-			$cart = EE_Cart::get_cart_from_txn( $this->checkout->transaction, $session );
+			$cart = $this->checkout->get_cart_for_transaction( $this->checkout->transaction );
 			if ( $cart instanceof EE_Cart ) {
 				// verify that the current cart has tickets
 				$tickets = $cart->get_tickets();
