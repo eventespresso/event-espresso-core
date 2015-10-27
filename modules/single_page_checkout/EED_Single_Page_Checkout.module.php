@@ -658,27 +658,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EE_Cart
 	 */
 	private function _get_cart_for_transaction( $transaction ) {
-		$session = EE_Registry::instance()->load_core( 'Session' );
-		$cart = $transaction instanceof EE_Transaction ? EE_Cart::get_cart_from_txn( $transaction, $session ) : NULL;
-		// verify cart
-		if ( ! $cart instanceof EE_Cart ) {
-			$cart = EE_Registry::instance()->load_core( 'Cart', array( null, $session ) );
-		}
-		return $cart;
+		return $this->checkout->get_cart_for_transaction( $transaction );
 	}
 
 
 
 	/**
-	 * _get_cart_for_current_session_and_setup_new_transaction
-	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
+	 * get_cart_for_transaction
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * 	@return EE_Cart
+	 * @return EE_Cart
 	 */
 	public function get_cart_for_transaction( EE_Transaction $transaction ) {
-		return EE_Cart::get_cart_from_txn( $transaction );
+		return $this->checkout->get_cart_for_transaction( $transaction );
 	}
 
 
