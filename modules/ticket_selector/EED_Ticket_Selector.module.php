@@ -146,24 +146,44 @@ class EED_Ticket_Selector extends  EED_Module {
 		self::$_in_iframe = true;
 		/** @type EEM_Event $EEM_Event */
 		$EEM_Event = EE_Registry::instance()->load_model( 'Event' );
-		$event = $EEM_Event->get_one_by_ID( EE_Registry::instance()->REQ->get(
-			'event', 0 ));
+		$event = $EEM_Event->get_one_by_ID(
+			EE_Registry::instance()->REQ->get( 'event', 0 )
+		);
+		EE_Registry::instance()->REQ->set_espresso_page( true );
 		$template_args['ticket_selector'] = EED_Ticket_Selector::display_ticket_selector( $event );
-		$template_args['css'] = apply_filters( 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css', array(
-			TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_embed.css?ver=' . EVENT_ESPRESSO_VERSION,
-			TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css?ver=' . EVENT_ESPRESSO_VERSION,
-			includes_url( 'css/dashicons.min.css?ver=' . $GLOBALS['wp_version'] ),
-			EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
-			) );
-
-		$template_args['js'] = apply_filters( 'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js', array(
-			includes_url( 'js/jquery/jquery.js?ver=' . $GLOBALS['wp_version'] ),
-			EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
-			TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_iframe_embed.js?ver=' . EVENT_ESPRESSO_VERSION
-			) );
-
+		$template_args['css'] = apply_filters(
+			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__css',
+			array(
+				TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_embed.css?ver=' . EVENT_ESPRESSO_VERSION,
+				TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css?ver=' . EVENT_ESPRESSO_VERSION,
+				includes_url( 'css/dashicons.min.css?ver=' . $GLOBALS['wp_version'] ),
+				EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
+			)
+		);
+		EE_Registry::$i18n_js_strings[ 'ticket_selector_iframe' ] = true;
+		EE_Registry::$i18n_js_strings[ 'EEDTicketSelectorMsg' ] = __( 'Please choose at least one ticket before continuing.', 'event_espresso' );
+		$template_args['eei18n'] = apply_filters(
+			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__eei18n_js_strings',
+			EE_Registry::localize_i18n_js_strings()
+		);
+		$template_args['js'] = apply_filters(
+			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
+			array(
+				includes_url( 'js/jquery/jquery.js?ver=' . $GLOBALS['wp_version'] ),
+				EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
+				TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_iframe_embed.js?ver=' . EVENT_ESPRESSO_VERSION
+			)
+		);
 		EE_Registry::instance()->load_helper('Template');
-		EEH_Template::display_template( TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart_iframe.template.php', $template_args );
+		$template_args[ 'notices' ] = EEH_Template::display_template(
+			EE_TEMPLATES . 'espresso-ajax-notices.template.php',
+			array(),
+			true
+		);
+		EEH_Template::display_template(
+			TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart_iframe.template.php',
+			$template_args
+		);
 		exit;
 	}
 
@@ -551,8 +571,8 @@ class EED_Ticket_Selector extends  EED_Module {
 						}
 					}
 				}
-//				d( EE_Registry::instance()->CART );
-//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
+				//d( EE_Registry::instance()->CART );
+				//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
@@ -560,8 +580,8 @@ class EED_Ticket_Selector extends  EED_Module {
 						EE_Registry::instance()->CART->recalculate_all_cart_totals();
 						EE_Registry::instance()->CART->save_cart( FALSE );
 						EE_Registry::instance()->SSN->update();
-//						d( EE_Registry::instance()->CART );
-//						die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
+						//d( EE_Registry::instance()->CART );
+						//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 						// just return TRUE for registrations being made from admin
 						if ( is_admin() ) {
 							return TRUE;
@@ -581,6 +601,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					EE_Error::add_error( __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
+			//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT
 			// at this point, just return if registration is being made from admin
 			if ( is_admin() ) {
 				return FALSE;
