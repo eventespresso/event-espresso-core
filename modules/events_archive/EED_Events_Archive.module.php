@@ -26,10 +26,6 @@ class EED_Events_Archive  extends EED_Module {
 
 	public static $espresso_event_list_ID = 0;
 	public static $espresso_grid_event_lists = array();
-	protected static $display_order_tickets   = 100;
-	protected static $display_order_datetimes = 110;
-	protected static $display_order_event     = 120;
-	protected static $display_order_venue     = 130;
 
 	/**
 	 * @type EE_Template_Part_Manager $template_parts
@@ -140,23 +136,6 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * set_template_part_priorities
-	 *
-	 * @access    public
-	 * @param \EE_Events_Archive_Config $config
-	 * @return    void
-	 */
-	public function set_static_template_part_priorities( EE_Events_Archive_Config $config = null ) {
-		$config = $config instanceof EE_Events_Archive_Config ? $config : $this->config();
-		EED_Events_Archive::$display_order_tickets = $config->display_order_tickets;
-		EED_Events_Archive::$display_order_datetimes = $config->display_order_datetimes;
-		EED_Events_Archive::$display_order_event = $config->display_order_event;
-		EED_Events_Archive::$display_order_venue = $config->display_order_venue;
-	}
-
-
-
-	/**
 	 *    run - initial module setup - this gets called by the EE_Front_Controller if the module route is found in the incoming request
 	 *
 	 * @access    public
@@ -228,7 +207,6 @@ class EED_Events_Archive  extends EED_Module {
 			}
 			// if NOT a custom template
 			if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
-				$this->set_static_template_part_priorities( $config );
 				// don't display entry meta because the existing theme will take care of that
 				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
 				// load functions.php file for the theme (loaded by WP if using child theme)
@@ -356,11 +334,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * @return 	string
 	 */
 	protected static function use_filterable_display_order( $content ) {
-		static $applied = false;
-		if ( $applied ) {
-			return $content;
-		}
-		$applied = true;
 		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
@@ -493,14 +466,14 @@ class EED_Events_Archive  extends EED_Module {
 	public static function remove_all_events_archive_filters() {
 		//remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
 		remove_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100 );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets );
-		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), EED_Events_Archive::$display_order_datetimes );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), EED_Events_Archive::$display_order_tickets );
-		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), EED_Events_Archive::$display_order_venue );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 110 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 120 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 110 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 120 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130 );
 		// don't display entry meta because the existing theme will take care of that
 		remove_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 	}
