@@ -106,7 +106,7 @@ class EEH_Autoloader {
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
 				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
 				if ( WP_DEBUG && $debug ) {
-					printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
+					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
 				}
 			}
 		}
@@ -216,7 +216,7 @@ class EEH_Autoloader {
 					$class_to_filepath_map [ $class_name ] = str_replace( array( '\/', '/' ), DS, $filepath );
 				}
 			} else if ( $recursive ) {
-				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive );
+				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive, $debug );
 			}
 		}
 		// we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
