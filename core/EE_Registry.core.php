@@ -653,7 +653,7 @@ class EE_Registry {
 	 */
 	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = false ) {
 		$class_obj = null;
-		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) && empty( $arguments ) ? true : false;
+		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) && empty( $arguments ) ? true : $resolve_dependencies;
 		// don't give up! you gotta...
 		try {
 			// create reflection
