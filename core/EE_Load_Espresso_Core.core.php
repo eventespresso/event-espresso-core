@@ -57,7 +57,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
 		$this->_load_class_tools();
-		EE_Registry::instance()->load_core( 'Psr4AutoloaderInit' );
+		EE_Registry::instance()->load_core( 'EE_Psr4AutoloaderInit' );
 		EE_Registry::instance()->load_core( 'EE_Deprecated' );
 		EE_Registry::instance()->load_lib( 'EEI_Payment_Method_Interfaces' );
 		//require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';

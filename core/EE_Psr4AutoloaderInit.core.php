@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Class Psr4AutoloaderInit
+ * Class EE_Psr4AutoloaderInit
  *
  * Loads the Psr4Autoloader class and registers namespaces
  *
@@ -11,7 +11,7 @@
  *
  */
 
-class Psr4AutoloaderInit {
+class EE_Psr4AutoloaderInit {
 
 
 
@@ -35,5 +35,5 @@ class Psr4AutoloaderInit {
 
 
 }
-// End of file Psr4AutoloaderInit.core.php
-// Location: /core/Psr4AutoloaderInit.core.php
+// End of file EE_Psr4AutoloaderInit.core.php
+// Location: /core/EE_Psr4AutoloaderInit.core.php
