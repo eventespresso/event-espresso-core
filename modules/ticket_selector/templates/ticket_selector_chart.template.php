@@ -426,6 +426,14 @@ $hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hi
 //EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
+remove_filter(
+	'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+	array( 'EED_Ticket_Selector', 'no_tkt_slctr_end_dv' )
+);
+remove_filter(
+	'FHEE__EE_Ticket_Selector__after_view_details_btn',
+	array( 'EED_Ticket_Selector', 'no_tkt_slctr_end_dv' )
+);
 if ( ! $hide_ticket_selector ) {
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
@@ -512,9 +520,15 @@ if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 		<?php } ?>
 	</div>
 <?php
+		add_filter(
+			'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+			array( 'EED_Ticket_Selector', 'no_tkt_slctr_end_dv' )
+		);
+		add_filter(
+			'FHEE__EE_Ticket_Selector__after_view_details_btn',
+			array( 'EED_Ticket_Selector', 'no_tkt_slctr_end_dv' )
+		);
 		do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event );
-		add_filter( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', 'espresso_no_tkt_slctr_end_dv' );
-		add_filter( 'FHEE__EE_Ticket_Selector__after_view_details_btn', 'espresso_no_tkt_slctr_end_dv' );
 	}
 }
 ?>
