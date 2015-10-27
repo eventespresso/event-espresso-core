@@ -53,19 +53,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 	 */
 	public function handle( EE_Request $request ) {
 		$this->request = $request;
-		add_action( 'plugins_loaded', array( $this, 'initialize' ), 0 );
-		return $this->response;
-	}
-
-
-
-	/**
-	 *    initialize
-	 *
-	 * @access    protected
-	 * @return    void
-	 */
-	protected function initialize() {
 		// central repository for classes
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
@@ -77,6 +64,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 		// WP cron jobs
 		EE_Registry::instance()->load_core( 'Cron_Tasks' );
 		EE_Registry::instance()->load_core( 'EE_System' );
+
+		return $this->response;
 	}
 
 
