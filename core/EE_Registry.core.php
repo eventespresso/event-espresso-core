@@ -653,7 +653,7 @@ class EE_Registry {
 	 */
 	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = false ) {
 		$class_obj = null;
-		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) ? true : false;
+		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) && empty( $arguments ) ? true : false;
 		// don't give up! you gotta...
 		try {
 			// create reflection
@@ -680,6 +680,9 @@ class EE_Registry {
 				$class_obj = call_user_func_array( array( $class_name, 'instance' ), $arguments );
 			} else if ( $reflector->isInstantiable() ) {
 				//$instantiation_mode = "isInstantiable";
+				// if arguments array is NOT numerically indexed, then we want it to stay as an array,
+				// so wrap it in an additional array so that it doesn't get split into multiple parameters
+				$arguments = isset( $arguments[0] ) ? $arguments : array( $arguments );
 				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else if ( ! $load_only ) {
 				// heh ? something's not right !
