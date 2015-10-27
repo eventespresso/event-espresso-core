@@ -1041,7 +1041,7 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-//		EE_Registry::instance()->load_core( 'Session' );
+		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -1083,7 +1083,6 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
 		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
 //		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
-		EE_Registry::instance()->load_core( 'Session' );
 	}
 
 
