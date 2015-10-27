@@ -35,7 +35,7 @@ interface EEI_Request_Decorator {
 	 * converts a Request to a Response
 	 *
 	 * @param EE_Request $request
-	 * @return EE_Response Response
+	 * @return EE_Response
 	 */
 	public function handle( EE_Request $request );
 }
