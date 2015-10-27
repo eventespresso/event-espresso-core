@@ -899,8 +899,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+
 }
 
+
+
+function espresso_no_tkt_slctr_end_dv() {
+	return '<div class="clear"></div></div>';
+}
 
 
 // End of file EE_Ticket_Selector.class.php

@@ -513,9 +513,6 @@ if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 	</div>
 <?php
 		do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event );
-		function espresso_no_tkt_slctr_end_dv() {
-			return '<div class="clear"></div></div>';
-		}
 		add_filter( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', 'espresso_no_tkt_slctr_end_dv' );
 		add_filter( 'FHEE__EE_Ticket_Selector__after_view_details_btn', 'espresso_no_tkt_slctr_end_dv' );
 	}
