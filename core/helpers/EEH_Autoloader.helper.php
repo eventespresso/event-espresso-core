@@ -15,6 +15,15 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EEH_Autoloader extends EEH_Base {
 
+
+	/**
+	 *    instance of the EE_System object
+	 *
+	 * @var    $_instance
+	 * @access    private
+	 */
+	private static $_instance = null;
+
 	/**
 	* 	$_autoloaders
 	* 	@var array $_autoloaders
@@ -27,10 +36,10 @@ class EEH_Autoloader extends EEH_Base {
 	/**
 	 *    class constructor
 	 *
-	 * @access    public
+	 * @access    private
 	 * @return \EEH_Autoloader
 	 */
-	public function __construct() {
+	private function __construct() {
 		if ( self::$_autoloaders === null ) {
 			self::$_autoloaders = array();
 			$this->_register_custom_autoloaders();
@@ -45,7 +54,11 @@ class EEH_Autoloader extends EEH_Base {
 	 * @return EEH_Autoloader
 	 */
 	public static function instance() {
-		//return EE_Registry::instance()->load_helper( __CLASS__ );
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EEH_Autoloader ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
 	}
 
 
