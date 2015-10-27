@@ -68,24 +68,24 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return \EE_Cart
 	  */
 	 public static function instance( EE_Line_Item $grand_total = null, EE_Session $session = null ) {
-		EE_Registry::instance()->load_helper('Line_Item');
-		// rest cart with new grand total ?
+		 EE_Registry::instance()->load_helper('Line_Item');
+		// reset cart with new grand total ?
 		if ( ! empty( $grand_total ) ){
 			self::$_instance = new self( $grand_total, $session );
 		}
 		// or maybe retrieve an existing one ?
 		if ( ! self::$_instance instanceof EE_Cart ) {
 			// try getting the cart out of the session
-			 $saved_cart = $session instanceof EE_Session ? $session->cart() : null;
-			 self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total, $session );
-			 unset( $saved_cart );
+			$saved_cart = $session instanceof EE_Session ? $session->cart() : null;
+			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total, $session );
+			unset( $saved_cart );
 		}
 		// verify that cart is ok and grand total line item exists
 		if ( ! self::$_instance instanceof EE_Cart || ! self::$_instance->_grand_total instanceof EE_Line_Item ) {
 			self::$_instance = new self( $grand_total, $session );
 		}
 		self::$_instance->get_grand_total();
-		// once everything is all said and done, save the cart to the EE_Session
+		 // once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( self::$_instance, 'save_cart' ), 90 );
 		return self::$_instance;
 	}
@@ -130,8 +130,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 /**
 	  * @param EE_Session $session
 	  */
-	 public function set_session( EE_Session $session ) {
-		 $this->_session = $session;
+	 public function set_session( EE_Session $session = null ) {
+		 $this->_session = $session instanceof EE_Session ? $session : EE_Registry::instance()->load_core( 'Session' );
 	 }
 
 
