@@ -25,12 +25,11 @@ class EE_CVV_Input extends EE_Text_Input{
 				 $input_settings[ 'include_whats_this_link' ] == true ) ) {
 				$this->_html_label_text = sprintf( 
 						_x( 
-								'%1$s %2$s%3$s%4$s', 
+								'%1$s %2$s(What\'s this?)%3$s', 
 								'CVV (What\'s this?)', 
 								'event_espresso' ),
 						$this->_html_label_text,
 						'<a href="https://www.cvvnumber.com/" target="_blank">',
-						__( '(What\'s this?)', 'event_espresso' ),
 						'</a>');
 		}
 	}
