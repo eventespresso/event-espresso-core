@@ -11,12 +11,28 @@
 class EE_CVV_Input extends EE_Text_Input{
 
 	/**
-	 * @param array $input_settings
+	 * @param array $input_settings {
+	 *	@type boolean $include_whats_this_link defaults to true
+	 * }
 	 */
 	public function __construct($input_settings = array()) {
 		$this->set_sensitive_data_removal_strategy(new EE_CCV_Sensitive_Data_Removal());
 		$this->_add_validation_strategy( new EE_Int_Validation_Strategy(isset( $input_settings[ 'validation_error_message' ] ) ? $input_settings[ 'validation_error_message' ] : NULL ) );
 		parent::__construct($input_settings);
+		if( 
+				! isset( $input_settings[ 'include_whats_this_link' ] ) ||
+				( isset( $input_settings[ 'include_whats_this_link' ] ) &&
+				 $input_settings[ 'include_whats_this_link' ] == true ) ) {
+				$this->_html_label_text = sprintf( 
+						_x( 
+								'%1$s %2$s%3$s%4$s', 
+								'CVV (What\'s this?)', 
+								'event_espresso' ),
+						$this->_html_label_text,
+						'<a href="https://www.cvvnumber.com/" target="_blank">',
+						__( '(What\'s this?)', 'event_espresso' ),
+						'</a>');
+		}
 	}
 }
 
