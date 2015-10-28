@@ -41,6 +41,23 @@ class EE_Bootstrap {
 
 
 	public function __construct() {
+		// construct request stack and run middleware apps as soon as all WP plugins are loaded
+		add_action( 'plugins_loaded', array( $this, 'run_request_stack' ), 0 );
+		// set framework for the rest of EE to hook into when loading
+		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'load_espresso_addons' ), 1 );
+		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'detect_activations_or_upgrades' ), 3 );
+		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'load_core_configuration' ), 5 );
+		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'register_shortcodes_modules_and_widgets' ), 7 );
+		add_action( 'plugins_loaded', array( 'EE_Bootstrap', 'brew_espresso' ), 9 );
+	}
+
+
+
+	/**
+	 * run_request_stack
+	 * construct request stack and run middleware apps
+	 */
+	public function run_request_stack() {
 		$this->load_autoloader();
 		$this->set_autoloaders_for_required_files();
 		$this->request_stack_builder = $this->build_request_stack();
@@ -101,7 +118,7 @@ class EE_Bootstrap {
 			)
 		);
 		// load middleware onto stack : FILO (First In Last Out)
-		foreach ( $stack_apps as $stack_app ) {
+		foreach ( (array)$stack_apps as $stack_app ) {
 			//$request_stack_builder->push( $stack_app );
 			$request_stack_builder->unshift( $stack_app );
 		}
@@ -109,6 +126,51 @@ class EE_Bootstrap {
 			'FHEE__EE_Bootstrap__build_request_stack__request_stack_builder',
 			$request_stack_builder
 		);
+	}
+
+
+
+	/**
+	 * load_espresso_addons
+	 */
+	public static function load_espresso_addons() {
+		do_action( 'AHEE__EE_Bootstrap__load_espresso_addons' );
+	}
+
+
+
+	/**
+	 * detect_activations_or_upgrades
+	 */
+	public static function detect_activations_or_upgrades() {
+		do_action( 'AHEE__EE_Bootstrap__detect_activations_or_upgrades' );
+	}
+
+
+
+	/**
+	 * load_core_configuration
+	 */
+	public static function load_core_configuration() {
+		do_action( 'AHEE__EE_Bootstrap__load_core_configuration' );
+	}
+
+
+
+	/**
+	 * register_shortcodes_modules_and_widgets
+	 */
+	public static function register_shortcodes_modules_and_widgets() {
+		do_action( 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets' );
+	}
+
+
+
+	/**
+	 * brew_espresso
+	 */
+	public static function brew_espresso() {
+		do_action( 'AHEE__EE_Bootstrap__brew_espresso' );
 	}
 
 
