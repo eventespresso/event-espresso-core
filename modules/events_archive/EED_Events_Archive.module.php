@@ -341,6 +341,7 @@ class EED_Events_Archive  extends EED_Module {
 		//now add additional content depending on whether event is using the_excerpt() or the_content()
 		EED_Events_Archive::_add_additional_excerpt_filters();
 		EED_Events_Archive::_add_additional_content_filters();
+		do_action( 'AHEE__EED_Events_Archive__use_filterable_display_order__after_add_filters' );
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		// re-add our main filters (or else the next event won't have them)
@@ -349,6 +350,7 @@ class EED_Events_Archive  extends EED_Module {
 		add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 		// but remove the other filters so that they don't get applied to the next post
 		EED_Events_Archive::_remove_additional_events_archive_filters();
+		do_action( 'AHEE__EED_Events_Archive__use_filterable_display_order__after_remove_filters' );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
