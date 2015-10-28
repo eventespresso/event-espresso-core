@@ -136,18 +136,18 @@ final class EE_System {
 	private function __construct() {
 		do_action( 'AHEE__EE_System__construct__begin', $this );
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
-		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
+		add_action( 'AHEE__EE_Bootstrap__load_espresso_addons', array( $this, 'load_espresso_addons' ) );
 		// when an ee addon is activated, we want to call the core hook(s) again
 		// because the newly-activated addon didn't get a chance to run at all
 		add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
 		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
+		add_action( 'AHEE__EE_Bootstrap__detect_activations_or_upgrades', array( $this, 'detect_activations_or_upgrades' ), 3 );
 		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
+		add_action( 'AHEE__EE_Bootstrap__load_core_configuration', array( $this, 'load_core_configuration' ), 5 );
 		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
+		add_action( 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
-		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+		add_action( 'AHEE__EE_Bootstrap__brew_espresso', array( $this, 'brew_espresso' ), 9 );
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
 		add_filter( 'wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages' ), 10 );
