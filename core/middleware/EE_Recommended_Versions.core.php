@@ -17,25 +17,29 @@ class EE_Recommended_Versions extends EE_Middleware {
 
 	/**
 	 * converts a Request to a Response
-	 * @param 	EE_Request $request
+	 *
+	 * @param 	EE_Request 	$request
+	 * @param 	EE_Response $response
 	 * @return 	EE_Response
 	 */
-	public function handle( EE_Request $request ) {
-		//$this->response->add_output( "\n<br />" . __CLASS__ );
+	public function handle_request( EE_Request $request, EE_Response $response ) {
+		$this->request = $request;
+		$this->response = $response;
+		$this->response->add_output( "\n\t IN >>  " . __CLASS__ );
 		//$this->response->set_notice( 1, 'hey look at this' );
 		// check required WP version
 		if ( ! $this->_minimum_wp_version_required() ) {
-			$request->un_set( 'activate', true );
+			$this->request->un_set( 'activate', true );
 			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
-			//$this->response->add_output( "\n<br />" . 'minimum_wp_version_error' );
-			$this->response->set_terminate_request();
+			$this->response->add_output( "\n<br />" . 'minimum_wp_version_error' );
+			$this->response->terminate_request();
 		}
 		// check required PHP version
 		if ( ! $this->_minimum_php_version_required() ) {
-			$request->un_set( 'activate', true );
+			$this->request->un_set( 'activate', true );
 			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
-			//$this->response->add_output( "\n<br />" . 'minimum_php_version_error' );
-			$this->response->set_terminate_request();
+			$this->response->add_output( "\n<br />" . 'minimum_php_version_error' );
+			$this->response->terminate_request();
 		}
 		// check recommended WP version
 		if ( ! $this->_minimum_wp_version_recommended() ) {
@@ -45,10 +49,9 @@ class EE_Recommended_Versions extends EE_Middleware {
 		if ( ! $this->_minimum_php_version_recommended() ) {
 			$this->_display_minimum_recommended_php_version_notice();
 		}
-
-		$response = $this->process_request_stack( $request );
-		//$this->response->add_output( "\n<br />out " . __CLASS__ );
-		return $response;
+		$this->response = $this->process_request_stack( $this->request, $this->response );
+		$this->response->add_output( "\n\t OUT << " . __CLASS__ );
+		return $this->response;
 	}
 
 
