@@ -808,6 +808,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		return EEM_Answer::instance()->get_answer_value_to_question($this,$question_id,$pretty_value);
 	}
 
+
+
+	public function question_groups() {
+		$question_groups = array();
+		if ( $this->event() instanceof EE_Event ) {
+			$question_groups = $this->event()->question_groups(
+				array(
+					array(
+						'Event.EVT_ID'                     => $this->event()->ID(),
+						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
+					),
+					'order_by' => array( 'QSG_order' => 'ASC' )
+				)
+			);
+		}
+		return $question_groups;
+	}
+
+
+
 	/**
 	 * Returns the registration date in the 'standard' string format
 	 * (function may be improved in the future to allow for different formats and timezones)
