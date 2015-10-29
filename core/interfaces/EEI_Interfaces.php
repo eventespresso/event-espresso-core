@@ -35,25 +35,26 @@ interface EEI_Request_Decorator {
 	 * converts a Request to a Response
 	 *
 	 * @param EE_Request $request
+	 * @param EE_Response $response
 	 * @return EE_Response
 	 */
-	public function handle( EE_Request $request );
+	public function handle_request( EE_Request $request, EE_Response $response );
 }
 
 
 
 /**
- * Interface EEI_Final_Request
+ * Interface EEI_Request_Stack_Core_App
  */
-interface EEI_Final_Request {
+interface EEI_Request_Stack_Core_App {
 
 	/**
-	 * Denotes the final request in a request stack
+	 * gives the core app a chance to handle the response after the request stack has fully processed
 	 *
 	 * @param EE_Request $request
 	 * @param EE_Response $response
 	 */
-	public function terminate( EE_Request $request, EE_Response $response );
+	public function handle_response( EE_Request $request, EE_Response $response );
 }
 
 
