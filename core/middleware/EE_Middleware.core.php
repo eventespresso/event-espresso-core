@@ -2,9 +2,14 @@
 /**
  * Class EE_Middleware
  *
- * Parent class for EE_Middleware Request decorators
+ * Parent class for EE_Middleware Request decorators.
  * Accepts an instance of another EE_Middleware class,
  * and handles the passing of EE_Request and EE_Response objects to and from it
+ * EE_Middleware classes are for functionality that needs to run on nearly EVERY request.
+ * They can perform their logic either before or after the core application has run:
+ * 	(see documentation for the handle() method below)
+ * EE_Middleware classes should NOT depend on core functionality,
+ * because there is no guarantee that the core application has run
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -12,8 +17,7 @@
  * @since 				$VID:$
  *
  */
-
-abstract class EE_Middleware {
+abstract class EE_Middleware implements EEI_Request_Decorator {
 
 	/**
 	 * 	Request Stack
@@ -44,6 +48,24 @@ abstract class EE_Middleware {
 		$this->request_stack 	= $request_stack;
 		$this->response 		= new EE_Response();
 	}
+
+
+
+	/**
+	 * converts a Request to a Response
+	 * can perform their logic either before or after the core application has run like so:
+	 *
+	 * 	public function handle( EE_Request $request ) {
+	 *      // logic performed BEFORE core app has run
+	 *      $this->process_request_stack( $request );
+	 *      // logic performed AFTER core app has run
+	 *      return $response;
+	 * 	}
+ 	 *
+	 * @param    EE_Request $request
+	 * @return    EE_Response
+	 */
+	abstract public function handle( EE_Request $request );
 
 
 
