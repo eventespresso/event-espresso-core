@@ -45,8 +45,7 @@ abstract class EE_Middleware implements EEI_Request_Decorator {
 	 * @param 	\EEI_Request_Decorator $request_stack
 	 */
 	public function __construct( EEI_Request_Decorator $request_stack ) {
-		$this->request_stack 	= $request_stack;
-		$this->response 		= new EE_Response();
+		$this->request_stack = $request_stack;
 	}
 
 
@@ -55,17 +54,20 @@ abstract class EE_Middleware implements EEI_Request_Decorator {
 	 * converts a Request to a Response
 	 * can perform their logic either before or after the core application has run like so:
 	 *
-	 * 	public function handle( EE_Request $request ) {
+	 * 	public function handle_request( EE_Request $request, EE_Response $response ) {
+	 * 		$this->request = $request;
+	 * 		$this->response = $response;
 	 *      // logic performed BEFORE core app has run
-	 *      $this->process_request_stack( $request );
+	 *      $this->process_request_stack( $this->request, $this->response );
 	 *      // logic performed AFTER core app has run
 	 *      return $response;
 	 * 	}
  	 *
-	 * @param    EE_Request $request
-	 * @return    EE_Response
+	 * @param 	EE_Request 	$request
+	 * @param 	EE_Response $response
+	 * @return 	EE_Response
 	 */
-	abstract public function handle( EE_Request $request );
+	abstract public function handle_request( EE_Request $request, EE_Response $response );
 
 
 
@@ -73,39 +75,24 @@ abstract class EE_Middleware implements EEI_Request_Decorator {
 	 * process_request_stack
 	 *
 	 * @access 	protected
-	 * @param 	EE_Request $request
+	 * @param 	EE_Request  $request
+	 * @param 	EE_Response $response
 	 * @return 	EE_Response
 	 */
-	protected function process_request_stack( EE_Request $request ) {
-		if ( ! $this->response->terminate_request() ) {
-			$this->process_previous_response(
-				$this->request_stack->handle( $request )
-			);
+	protected function process_request_stack( EE_Request $request, EE_Response $response ) {
+		$this->request = $request;
+		$this->response = $response;
+		if ( ! $this->response->request_terminated() ) {
+			$this->response = $this->request_stack->handle_request( $this->request, $this->response );
 		} else {
 			if ( WP_DEBUG ) {
 				EEH_Debug_Tools::ee_plugin_activation_errors();
 			}
 			espresso_deactivate_plugin();
 		}
-		//echo $this->response->get_output();
 		return $this->response;
 	}
 
-
-
-	/**
-	 * process_previous_response
-	 *
-	 * @access    protected
-	 * @param    EE_Response $response
-	 * @return    EE_Response
-	 */
-	protected function process_previous_response( EE_Response $response ) {
-		$this->response->add_output( $response->get_output() );
-		foreach ( $response->get_notices() as $key => $value ) {
-			$this->response->set_notice( $key, $value );
-		}
-	}
 
 
 
