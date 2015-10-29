@@ -840,19 +840,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return int
 	 */
 	public function count_question_groups() {
-		$question_groups = array();
+		$qg_count = 0;
 		if ( $this->event() instanceof EE_Event ) {
-			$question_groups = $this->event()->count_related(
+			$qg_count = $this->event()->count_related(
 				'Question_Group',
 				array(
 					array(
 						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
-					),
-					'order_by' => array( 'QSG_order' => 'ASC' )
+					)
 				)
 			);
 		}
-		return $question_groups;
+		return $qg_count;
 	}
 
 
