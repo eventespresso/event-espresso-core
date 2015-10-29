@@ -810,13 +810,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 
+	/**
+	 * question_groups
+	 * returns an array of EE_Question_Group objects for this registration
+	 *
+	 * @return array|EE_Question_Group[]
+	 */
 	public function question_groups() {
 		$question_groups = array();
 		if ( $this->event() instanceof EE_Event ) {
 			$question_groups = $this->event()->question_groups(
 				array(
 					array(
-						'Event.EVT_ID'                     => $this->event()->ID(),
 						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
 					),
 					'order_by' => array( 'QSG_order' => 'ASC' )
