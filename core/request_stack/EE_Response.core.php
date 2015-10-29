@@ -29,7 +29,7 @@ class EE_Response {
 	 * @access 	protected
 	 * @type 		bool
 	 */
-	protected $terminate_request = false;
+	protected $request_terminated = false;
 
 
 
@@ -40,7 +40,7 @@ class EE_Response {
 	 * @return \EE_Response
 	 */
 	public function __construct() {
-		$this->set_terminate_request( false );
+		$this->terminate_request( false );
 	}
 
 
@@ -112,17 +112,17 @@ class EE_Response {
 	/**
 	 * @return boolean
 	 */
-	public function terminate_request() {
-		return $this->terminate_request;
+	public function request_terminated() {
+		return $this->request_terminated;
 	}
 
 
 
 	/**
-	 * @param boolean $terminate_request
+	 * @param boolean $request_terminated
 	 */
-	public function set_terminate_request( $terminate_request = true ) {
-		$this->terminate_request = filter_var( $terminate_request, FILTER_VALIDATE_BOOLEAN );
+	public function terminate_request( $request_terminated = true ) {
+		$this->request_terminated = filter_var( $request_terminated, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
