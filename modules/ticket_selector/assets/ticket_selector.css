@@ -209,6 +209,12 @@
 	border-width: 1px;
 	line-height: .8em;
 }
+.tckt-slctr-tkt-datetimes-sctn .tckt-slctr-tkt-details-tbl {
+	table-layout: auto; /* twentyfifteen override */
+	display: block;
+	overflow-x: auto;
+	font-size: 0.85em;
+}
 .tckt-slctr-tkt-details-tbl th {
 	padding: 5px;
 	font-size: 1em;
@@ -307,6 +313,25 @@
 	/*padding-right: 0;*/
 /*}*/
 
+
+.no-tkt-slctr-ticket-dv {
+	border: 1px solid #EEEEEE;
+	box-sizing: border-box;
+	margin: 0 0 1em;
+	padding: 1em;
+	width: 100%;
+}
+
+.no-tkt-slctr-ticket-content-dv {
+	float: left;
+	margin: 0;
+}
+.no-tkt-slctr-ticket-dv p,
+.no-tkt-slctr-ticket-dv h5 {
+	margin: 0;
+}
+
+
 @media (max-width: 600px) {
 
 	.tckt-slctr-tkt-details-tbl {
@@ -346,5 +371,10 @@
 	.tckt-slctr-tkt-details-dv .smaller-text {
 		display: inline;
 		font-size: inherit;
+	}
+	.tckt-slctr-tkt-datetimes-sctn .tckt-slctr-tkt-details-tbl {
+		table-layout: fixed;
+		display: table;
+		font-size: 1em;
 	}
 }
