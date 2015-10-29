@@ -62,11 +62,13 @@ class EE_Bootstrap {
 		$this->set_autoloaders_for_required_files();
 		$this->request_stack_builder = $this->build_request_stack();
 		$this->request_stack = $this->request_stack_builder->resolve(
-			new EE_Load_Espresso_Core( new EE_Response() )
+			new EE_Load_Espresso_Core()
 		);
-		$request = new EE_Request( $_REQUEST );
-		$response = $this->request_stack->handle( $request );
-		$this->request_stack->terminate( $request, $response );
+		$this->request_stack->handle_request(
+			new EE_Request( $_REQUEST ),
+			new EE_Response()
+		);
+		$this->request_stack->handle_response();
 	}
 
 
