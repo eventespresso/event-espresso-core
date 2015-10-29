@@ -16,12 +16,19 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 
 	/**
 	 * converts a Request to a Response
-	 * @param EE_Request $request
-	 * @return EE_Response Response
+	 *
+	 * @param 	EE_Request 	$request
+	 * @param 	EE_Response $response
+	 * @return 	EE_Response
 	 */
-	public function handle( EE_Request $request ) {
+	public function handle_request( EE_Request $request, EE_Response $response ) {
+		$this->request = $request;
+		$this->response = $response;
+		$this->response->add_output( "\n\t IN >>  " . __CLASS__ );
 		$this->display_alpha_banner_warning();
-		return $this->process_request_stack( $request );
+		$this->response = $this->process_request_stack( $this->request, $this->response );
+		$this->response->add_output( "\n\t OUT << " . __CLASS__ );
+		return $this->response;
 	}
 
 
