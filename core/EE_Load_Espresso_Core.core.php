@@ -108,6 +108,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 
 	/**
 	 * terminate
+	 * called after the request stack has been fully processed
+	 * nothing happening here at this moment...
 	 *
 	 * @access    public
 	 * @param \EE_Request $request
