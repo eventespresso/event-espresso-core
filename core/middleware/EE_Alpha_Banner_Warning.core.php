@@ -11,7 +11,7 @@
  *
  */
 
-class EE_Alpha_Banner_Warning extends EE_Middleware implements EEI_Request_Decorator {
+class EE_Alpha_Banner_Warning extends EE_Middleware {
 
 
 	/**
