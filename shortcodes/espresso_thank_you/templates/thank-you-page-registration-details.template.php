@@ -54,8 +54,7 @@ foreach ( $registrations as $registration ) {
 				?>
 					<p class="tiny-text" style="margin: .75em 0 0;">
 					<?php
-					$question_groups = $registration->question_groups();
-					if ( ! empty( $question_groups ) ) {
+					if ( $registration->count_question_groups() ) {
 					?>
 						<a class="ee-icon-only-lnk" href="<?php echo $registration->edit_attendee_information_url();?>" title="<?php esc_attr_e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></span><?php _e('edit info', 'event_espresso');?></a>
 					<?php } ?>
