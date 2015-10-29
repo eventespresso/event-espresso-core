@@ -13,15 +13,35 @@
 
 class EE_Request_Stack {
 
-	private $application;
+	/**
+	 * @access 	protected
+	 * @type 	array $application
+	 */
+	protected $application;
 
-	private $middlewares = array();
+	/**
+	 * @access 	protected
+	 * @type    array $middlewares
+	 */
+	protected $middlewares = array();
+
+	/**
+	 * @access 	protected
+	 * @type 	EE_Request $request
+	 */
+	protected $request;
+
+	/**
+	 * @access 	protected
+	 * @type 	EE_Response $response
+	 */
+	protected $response;
 
 
 
 	/**
-	 * @param \EEI_Request_Decorator $application
-	 * @param array $middlewares
+	 * @param 	EEI_Request_Decorator $application
+	 * @param 	array $middlewares
 	 */
 	public function __construct( EEI_Request_Decorator $application, array $middlewares ) {
 		$this->application = $application;
@@ -31,29 +51,28 @@ class EE_Request_Stack {
 
 
 	/**
-	 * @param \EE_Request $request
-	 * @return \EE_Response
+	 * @param 	EE_Request $request
+	 * @param 	EE_Response $response
+	 * @return 	EE_Response
 	 */
-	public function handle( EE_Request $request ) {
-		return $this->application->handle( $request );
+	public function handle_request( EE_Request $request, EE_Response $response ) {
+		$this->request = $request;
+		$this->response = $response;
+		return $this->application->handle_request( $request, $response );
 	}
 
 
 
 	/**
-	 * terminate
-	 * executes the terminate() method on the EEI_Final_Request object
+	 * handle_response
+	 * executes the handle_response() method on the EEI_Request_Stack_Core_App object
 	 * after the request stack has been fully processed
-	 *
-	 * @param \EE_Request $request
-	 * @param \EE_Response $response
 	 */
-	public function terminate( EE_Request $request, EE_Response $response ) {
+	public function handle_response() {
 		$prev_middleware = null;
 		foreach ( $this->middlewares as $middleware ) {
-			// if prev kernel was terminable we can assume this middleware has already been called
-			if ( ! $prev_middleware instanceof EEI_Final_Request && $middleware instanceof EEI_Final_Request ) {
-				$middleware->terminate( $request, $response );
+			if ( ! $prev_middleware instanceof EEI_Request_Stack_Core_App && $middleware instanceof EEI_Request_Stack_Core_App ) {
+				$middleware->handle_response( $this->request, $this->response );
 			}
 			$prev_middleware = $middleware;
 		}
