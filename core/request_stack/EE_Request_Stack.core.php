@@ -41,6 +41,10 @@ class EE_Request_Stack {
 
 
 	/**
+	 * terminate
+	 * executes the terminate() method on the EEI_Final_Request object
+	 * after the request stack has been fully processed
+	 *
 	 * @param \EE_Request $request
 	 * @param \EE_Response $response
 	 */
