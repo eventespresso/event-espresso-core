@@ -12,7 +12,7 @@
  *
  */
 
-class EE_Recommended_Versions extends EE_Middleware implements EEI_Request_Decorator {
+class EE_Recommended_Versions extends EE_Middleware {
 
 
 	/**
