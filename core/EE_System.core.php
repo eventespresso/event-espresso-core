@@ -159,13 +159,17 @@ final class EE_System {
 
 
 	/**
-	* load_espresso_addons
-	*
-	* allow addons to load first so that they can set hooks for running DMS's, etc
-	*
-	* @access public
-	* @return void
-	*/
+	 * load_espresso_addons
+	 *
+	 * allow addons to load first so that they can set hooks for running DMS's, etc
+	 * this is hooked into both:
+	 * 	'AHEE__EE_Bootstrap__load_core_configuration'
+	 * 		which runs during the WP 'plugins_loaded' action at priority 5
+	 * 	and the WP 'activate_plugin' hookpoint
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function load_espresso_addons() {
 		// set autoloaders for all of the classes implementing EEI_Plugin_API
 		// which provide helpers for EE plugin authors to more easily register certain components with EE.
@@ -177,8 +181,15 @@ final class EE_System {
 
 
 	/**
-	 * Checks for activation or upgrade of core first; then also checks if any registered
-	 * addons have been activated or upgraded
+	 * detect_activations_or_upgrades
+	 *
+	 * Checks for activation or upgrade of core first;
+	 * then also checks if any registered addons have been activated or upgraded
+	 * This is hooked into 'AHEE__EE_Bootstrap__detect_activations_or_upgrades'
+	 * which runs during the WP 'plugins_loaded' action at priority 3
+	 *
+	 * @access public
+	 * @return void
 	 */
 	public function detect_activations_or_upgrades(){
 		//first off: let's make sure to handle core
@@ -197,7 +208,7 @@ final class EE_System {
 	* Takes care of detecting whether this is a brand new install or code upgrade,
 	* and either setting up the DB or setting up maintenance mode etc.
 	*
-	* @access private
+	* @access public
 	* @return void
 	*/
 	public function detect_if_activation_or_upgrade() {
@@ -517,7 +528,10 @@ final class EE_System {
 
 
 	/**
-	 * load_core_configuration - runs during the WP plugins_loaded action at priority 5
+	 * load_core_configuration
+	 *
+	 * this is hooked into 'AHEE__EE_Bootstrap__load_core_configuration'
+	 * which runs during the WP 'plugins_loaded' action at priority 5
 	 *
 	 * @return void
 	 */
@@ -588,13 +602,15 @@ final class EE_System {
 
 
 	/**
-	* register_shortcodes_modules_and_widgets
-	*
-	* generate lists of shortcodes and modules, then verify paths and classes
-	*
-	* @access public
-	* @return void
-	*/
+	 * register_shortcodes_modules_and_widgets
+	 *
+	 * generate lists of shortcodes and modules, then verify paths and classes
+	 * This is hooked into 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets'
+	 * which runs during the WP 'plugins_loaded' action at priority 7
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 		// check for addons using old hookpoint
@@ -635,8 +651,9 @@ final class EE_System {
 	/**
 	 * brew_espresso
 	 *
-	 * begins the process of setting hooks for initializing EE in the order
-	 * runs during the WP plugins_loaded action at priority 9
+	 * begins the process of setting hooks for initializing EE in the correct order
+	 * This is happening on the 'AHEE__EE_Bootstrap__brew_espresso' hookpoint
+	 * which runs during the WP 'plugins_loaded' action at priority 9
 	 *
 	 * @return void
 	 */
