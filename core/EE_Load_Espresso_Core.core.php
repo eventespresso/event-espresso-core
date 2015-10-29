@@ -14,7 +14,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request {
+class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_Core_App {
 
 	/**
 	 * @access 	protected
@@ -33,10 +33,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 
 	/**
 	 * @access 	public
-	 * @param 	EE_Response $response
 	 */
-	public function __construct( EE_Response $response ) {
-		$this->response = $response;
+	public function __construct() {
 	}
 
 
@@ -48,11 +46,13 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 	 *    starting EE Addons from any other point may lead to problems
 	 *
 	 * @access 	public
-	 * @param 	EE_Request $request
+	 * @param 	EE_Request 	$request
+	 * @param 	EE_Response $response
 	 * @return 	EE_Response
 	 */
-	public function handle( EE_Request $request ) {
+	public function handle_request( EE_Request $request, EE_Response $response ) {
 		$this->request = $request;
+		$this->response = $response;
 		// central repository for classes
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
@@ -107,7 +107,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 
 
 	/**
-	 * terminate
+	 * handle_response
 	 * called after the request stack has been fully processed
 	 * nothing happening here at this moment...
 	 *
@@ -115,7 +115,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Final_Request 
 	 * @param \EE_Request $request
 	 * @param \EE_Response $response
 	 */
-	public function terminate( EE_Request $request, EE_Response $response ) {
+	public function handle_response( EE_Request $request, EE_Response $response ) {
 		//EEH_Debug_Tools::printr( $request, '$request', __FILE__, __LINE__ );
 		//EEH_Debug_Tools::printr( $response, '$response', __FILE__, __LINE__ );
 		//die();
