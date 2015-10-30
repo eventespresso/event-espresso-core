@@ -66,6 +66,19 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'html_label_text' => __( 'CVV', 'event_espresso' ) ) ),
 			)
 		));
+		$billing_form->add_subsections( array(
+			'company' => new EE_Text_Input( array(
+				'html_label_text' => __('Company', 'event_espresso')
+			))
+		), 'email', false );
+		$billing_form->add_subsections( 
+				array(
+					'fax' => new EE_Text_Input( array(
+						'html_label_text' => __('Fax', 'event_espresso')
+					))
+				), 
+				'phone', 
+				false );
 		$settings_form = $this->settings_form();
 		if( $settings_form->get_input( 'excluded_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
 				$billing_form->exclude( $settings_form->get_input( 'excluded_billing_inputs' )->normalized_value() );
@@ -127,6 +140,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 			'first_name' => __( 'First Name', 'event_espresso' ),
 			'last_name' => __('Last Name', 'event_espresso'),
 			'email' => __( 'Email', 'event_espresso' ),
+			'company' => __( 'Company', 'event_espresso' ),
 			'address' => __('Address', 'event_espresso'),
 			'address2' => __('Address2', 'event_espresso'),
 			'city' => __('City', 'event_espresso'),
@@ -134,6 +148,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 			'country' => __('Country', 'event_espresso'),
 			'zip' =>  __('Zip', 'event_espresso'),
 			'phone' => __('Phone', 'event_espresso'),
+			'fax' => __( 'Fax', 'event_espresso' ),
 			'cvv' => __('CVV', 'event_espresso')
 		);
 		return new EE_Payment_Method_Form(
@@ -160,7 +175,10 @@ class EE_PMT_Aim extends EE_PMT_Base{
 							array_diff_key( $billing_input_names,
 									array( 'cvv' ) ),
 					array( 
-						'default' => array()
+						'default' => array(
+							'company',
+							'fax',
+						)
 					)),
 					'required_billing_inputs' => new EE_Checkbox_Multi_Input( 
 							$billing_input_names,
