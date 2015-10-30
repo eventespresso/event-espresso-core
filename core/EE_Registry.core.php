@@ -215,6 +215,24 @@ final class EE_Registry {
 
 
 	/**
+	 * localize_i18n_js_strings
+	 *
+	 * @return string
+	 */
+	public static function localize_i18n_js_strings() {
+		$i18n_js_strings = (array)EE_Registry::$i18n_js_strings;
+		foreach ( $i18n_js_strings as $key => $value ) {
+			if ( is_scalar( $value ) ) {
+				$i18n_js_strings[ $key ] = html_entity_decode( (string)$value, ENT_QUOTES, 'UTF-8' );
+			}
+		}
+
+		return "/* <![CDATA[ */ var eei18n = " . wp_json_encode( $i18n_js_strings ) . '; /* ]]> */';
+	}
+
+
+
+	/**
 	 * @param mixed string | EED_Module $module
 	 */
 	public function add_module( $module ) {

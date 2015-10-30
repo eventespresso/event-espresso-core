@@ -345,6 +345,29 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_entity_map;
 
+	/**
+	 * constant used to show EEM_Base has not yet verified the db on this http request
+	 */
+	const db_verified_none 		= 0;
+	/**
+	 * constant used to show EEM_Base has verified the EE core db on this http request,
+	 * but not the addons' dbs
+	 */
+	const db_verified_core 		= 1;
+	/**
+	 * constant used to show EEM_Base has verified the addons' dbs (and implicitly
+	 * the EE core db too)
+	 */
+	const db_verified_addons 	= 2;
+
+	/**
+	 * indicates whether an EEM_Base child has already re-verified the DB
+	 * is ok (we don't want to do it repetitively). Should be set to one the constants
+	 * looking like EEM_Base::db_verified_*
+	 * @var int - 0 = none, 1 = core, 2 = addons
+	 */
+	protected static $_db_verification_level = EEM_Base::db_verified_none;
+
 
 
 
@@ -1718,12 +1741,10 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
 		}
 		if( WP_DEBUG ){
-			$wpdb->last_error = NULL;
 			$old_show_errors_value = $wpdb->show_errors;
 			$wpdb->show_errors( FALSE );
 		}
-
-		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
+		$result = $this->_process_wpdb_query( $wpdb_method, $arguments_to_provide );
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		if( WP_DEBUG ){
 			$wpdb->show_errors( $old_show_errors_value );
@@ -1737,6 +1758,102 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $result;
 	}
+
+
+
+	/**
+	 * Attempts to run the indicated WPDB method with the provided arguments,
+	 * and if there's an error tries to verify the DB is correct. Uses
+	 * the static property EEM_Base::$_db_verification_level to determine whether
+	 * we should try to fix the EE core db, the addons, or just give up
+	 * @param string $wpdb_method
+	 * @param array $arguments_to_provide
+	 * @return mixed
+	 */
+	private function _process_wpdb_query( $wpdb_method, $arguments_to_provide ) {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		$wpdb->last_error = null;
+		$result = call_user_func_array( array( $wpdb, $wpdb_method ), $arguments_to_provide );
+		// was there an error running the query?
+		if ( ( $result === false || ! empty( $wpdb->last_error ) ) ) {
+			switch ( EEM_Base::$_db_verification_level ) {
+
+				case EEM_Base::db_verified_none :
+					// let's double-check core's DB
+					$error_message = $this->_verify_core_db( $wpdb_method, $arguments_to_provide );
+					break;
+
+				case EEM_Base::db_verified_core :
+					// STILL NO LOVE?? verify all the addons too. Maybe they need to be fixed
+					$error_message = $this->_verify_addons_db( $wpdb_method, $arguments_to_provide );
+					break;
+
+				case EEM_Base::db_verified_addons :
+					// ummmm... you in trouble
+					return $result;
+					break;
+			}
+			if ( ! empty( $error_message ) ) {
+				EE_Log::instance()->log( __FILE__, __FUNCTION__, $error_message, 'error' );
+				trigger_error( $error_message );
+			}
+			return $this->_process_wpdb_query( $wpdb_method, $arguments_to_provide );
+
+		}
+
+		return $result;
+	}
+
+
+
+	/**
+	 * Verifies the EE core database is up-to-date and records that we've done it on
+	 * EEM_Base::$_db_verification_level
+	 * @param string $wpdb_method
+	 * @param array $arguments_to_provide
+	 * @return string
+	 */
+	private function _verify_core_db( $wpdb_method, $arguments_to_provide ){
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		//ok remember that we've already attempted fixing the core db, in case the problem persists
+		EEM_Base::$_db_verification_level = EEM_Base::db_verified_core;
+		$error_message = sprintf(
+			__( 'WPDB Error "%1$s" while running wpdb method "%2$s" with arguments %3$s. Automatically attempting to fix EE Core DB', 'event_espresso' ),
+			$wpdb->last_error,
+			$wpdb_method,
+			json_encode( $arguments_to_provide )
+		);
+		EE_System::instance()->initialize_db_if_no_migrations_required( false, true );
+		return $error_message;
+	}
+
+
+
+	/**
+	 * Verifies the EE addons' database is up-to-date and records that we've done it on
+	 * EEM_Base::$_db_verification_level
+	 * @param $wpdb_method
+	 * @param $arguments_to_provide
+	 * @return string
+	 */
+	private function _verify_addons_db( $wpdb_method, $arguments_to_provide ) {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		//ok remember that we've already attempted fixing the addons dbs, in case the problem persists
+		EEM_Base::$_db_verification_level = EEM_Base::db_verified_addons;
+		$error_message = sprintf(
+			__( 'WPDB AGAIN: Error "%1$s" while running the same method and arguments as before. Automatically attempting to fix EE Addons DB', 'event_espresso' ),
+			$wpdb->last_error,
+			$wpdb_method,
+			json_encode( $arguments_to_provide )
+		);
+		EE_System::instance()->initialize_addons();
+		return $error_message;
+	}
+
+
 
 	/**
 	 * In order to avoid repeating this code for the get_all, sum, and count functions, put the code parts
@@ -4274,4 +4391,8 @@ abstract class EEM_Base extends EE_Base{
 			);
 		}
 	}
+
+
+
+
 }
