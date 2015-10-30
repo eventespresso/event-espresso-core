@@ -155,6 +155,31 @@ if ( function_exists( 'espresso_version' ) ) {
 
 
 	/**
+	 *    espresso_plugin_activation
+	 *    adds a wp-option to indicate that EE has been activated via the WP admin plugins page
+	 */
+	function espresso_plugin_activation() {
+		update_option( 'ee_espresso_activation', true );
+	}
+	register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
+
+
+
+	/**
+	 *    espresso_plugin_deactivation
+	 */
+	function espresso_plugin_deactivation() {
+		//	if ( EE_System::instance()->minimum_php_version_required() ) {
+		//		espresso_load_required( EE_HELPERS . 'EEH_Activation.helper.php' );
+		//		EEH_Activation::plugin_deactivation();
+		//	}
+		//
+	}
+	register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
+
+
+
+	/**
 	 *    espresso_load_error_handling
 	 *    this function loads EE's class for handling exceptions and errors
 	 */
@@ -183,7 +208,11 @@ if ( function_exists( 'espresso_version' ) ) {
 	 * @throws    EE_Error
 	 */
 	function espresso_load_required( $classname, $full_path_to_file ) {
-		espresso_load_error_handling();
+		static $error_handling_loaded = false;
+		if ( ! $error_handling_loaded ) {
+			espresso_load_error_handling();
+			$error_handling_loaded = true;
+		}
 		if ( is_readable( $full_path_to_file ) ) {
 			require_once( $full_path_to_file );
 		} else {
@@ -194,52 +223,35 @@ if ( function_exists( 'espresso_version' ) ) {
 		}
 	}
 
-
+	espresso_load_required( 'EEH_Base', EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php' );
+	espresso_load_required( 'EEH_File', EE_CORE . 'helpers' . DS . 'EEH_File.helper.php' );
 	espresso_load_required( 'EE_Bootstrap', EE_CORE . 'EE_Bootstrap.core.php' );
 	new EE_Bootstrap();
 
+
+
 }
 
 
 
-/**
- *    espresso_plugin_activation
- *    adds a wp-option to indicate that EE has been activated via the WP admin plugins page
- */
-function espresso_plugin_activation() {
-	update_option( 'ee_espresso_activation', true );
-}
-register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
-
-
-
-/**
- *    espresso_plugin_deactivation
- */
-function espresso_plugin_deactivation() {
-	//	if ( EE_System::instance()->minimum_php_version_required() ) {
-	//		espresso_load_required( EE_HELPERS . 'EEH_Activation.helper.php' );
-	//		EEH_Activation::plugin_deactivation();
-	//	}
-	//
-}
-register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
-
-
-
-/**
- *    deactivate_plugin
- * usage:  espresso_deactivate_plugin( plugin_basename( __FILE__ ));
- *
- * @access public
- * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
- * @return    void
- */
-function espresso_deactivate_plugin( $plugin_basename = '' ) {
-	if ( ! function_exists( 'deactivate_plugins' ) ) {
-		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+if ( function_exists( 'espresso_deactivate_plugin' ) ) {
+	/**
+	*    deactivate_plugin
+	* usage:  espresso_deactivate_plugin( plugin_basename( __FILE__ ));
+	*
+	* @access public
+	* @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
+	* @return    void
+	*/
+	function espresso_deactivate_plugin( $plugin_basename = '' ) {
+		if ( ! function_exists( 'deactivate_plugins' ) ) {
+			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		}
+		unset( $_GET[ 'activate' ] );
+		unset( $_REQUEST[ 'activate' ] );
+		deactivate_plugins( $plugin_basename );
 	}
-	unset( $_GET[ 'activate' ] );
-	unset( $_REQUEST[ 'activate' ] );
-	deactivate_plugins( $plugin_basename );
 }
+
+
+
