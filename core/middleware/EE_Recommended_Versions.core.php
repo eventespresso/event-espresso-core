@@ -153,7 +153,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 			</p>
 		</div>
 		<?php
-		espresso_deactivate_plugin( EE_PLUGIN_BASENAME );
 	}
 
 
@@ -179,7 +178,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 			</p>
 		</div>
 		<?php
-		deactivate_plugins( EE_PLUGIN_BASENAME );
 	}
 
 
