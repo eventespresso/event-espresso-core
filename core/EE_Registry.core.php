@@ -705,7 +705,7 @@ final class EE_Registry {
 		$model = $this->load_model( $model_name );
 		$model_class_name = get_class( $model );
 		//get that model reset it and make sure we nuke the old reference to it
-		if ( is_callable( array( $model_class_name, 'reset' ))) {
+		if ( $model instanceof $model_class_name && is_callable( array( $model_class_name, 'reset' ))) {
 			$this->LIB->$model_class_name = $model::reset();
 		}else{
 			throw new EE_Error( sprintf( __( 'Model %s does not have a method "reset"', 'event_espresso' ), $model_name ) );
