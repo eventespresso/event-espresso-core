@@ -234,7 +234,7 @@ if ( function_exists( 'espresso_version' ) ) {
 
 
 
-if ( function_exists( 'espresso_deactivate_plugin' ) ) {
+if ( ! function_exists( 'espresso_deactivate_plugin' ) ) {
 	/**
 	*    deactivate_plugin
 	* usage:  espresso_deactivate_plugin( plugin_basename( __FILE__ ));
