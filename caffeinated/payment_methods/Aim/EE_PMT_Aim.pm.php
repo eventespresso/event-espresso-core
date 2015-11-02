@@ -172,8 +172,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						)
 					),
 					'excluded_billing_inputs' => new EE_Checkbox_Multi_Input( 
-							array_diff_key( $billing_input_names,
-									array( 'cvv' ) ),
+							$billing_input_names,
 					array( 
 						'html_label_text' => sprintf( __("Excluded Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
 						'default' => array(
@@ -187,7 +186,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 								'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
 								'default' => array_diff(
 											array_keys( $billing_input_names ),
-											array( 'address2', 'phone' )
+											array( 'address2', 'phone', 'company', 'fax' )
 								),
 								'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
 							)),
