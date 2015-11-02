@@ -141,7 +141,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	public function payment_overview_content( EE_Payment $payment ){
 		EE_Registry::instance()->load_helper('Template');
 		return EEH_Template::locate_template(
-			$this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php',
+			'payment_methods' . DS . 'Invoice'. DS . 'templates'.DS.'invoice_payment_details_content.template.php',
 			array_merge(
 				array(
 					'payment_method'			=> $this->_pm_instance,
