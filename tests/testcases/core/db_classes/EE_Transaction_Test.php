@@ -66,6 +66,9 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 	 */
 	public function test_datetime() {
 		$now = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
+		$DateTimeZoneAbbr = $now->format( 'T' );
+
+		// Now get the transaction's time
 		$format_to_use = get_option( 'date_format' ) . ' ' . 'H:i:s';
 		/** @type EE_Transaction $t */
 		$t = $this->factory->transaction->create();
@@ -81,10 +84,10 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 		$t->set( 'TXN_timestamp', $now->format( $t->get_format( $format_to_use ) ) );
 
 		//test getting pretty (should return formatted item in the correct timezone)
-		$this->assertEquals( $now->format( $format_to_use ) . ' <span class="ee_dtt_timezone_string">(PDT)</span>', $t->datetime( true ), 'datetime( true ) test' );
+		$this->assertEquals( $now->format( $format_to_use ) . ' <span class="ee_dtt_timezone_string">('. $DateTimeZoneAbbr.')</span>', $t->datetime( true ), 'datetime( true ) test' );
 
 		//test getting pretty with no_html
-		$this->assertEquals( $now->format( $format_to_use ) . ' (PDT)', $t->get_pretty( 'TXN_timestamp', 'no_html'), 'get_pretty, no_html test' );
+		$this->assertEquals( $now->format( $format_to_use ) . ' ('. $DateTimeZoneAbbr.')', $t->get_pretty( 'TXN_timestamp', 'no_html'), 'get_pretty, no_html test' );
 
 		//test getting raw Unix timestamp
 		$this->assertEquals( $now->format( 'U' ), $t->datetime( false, true ), 'datetime( false, true) test' );
@@ -95,3 +98,4 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Transaction_Test.php
+// Location: wp-content/plugins/event-espresso-core/tests/testcases/core/db_classes/EE_Transaction_Test.php
