@@ -25,9 +25,13 @@
 		return $found_cc_data;
 	}
 	$found_cc_data = ee_show_billing_info_cleaned( $billing_form );
-	if( $found_cc_data ) {?>
+	if( apply_filters( 
+			'FHEE__txn_admin_details_side_meta_box_billing_info__show_default_note', 
+			$found_cc_data,
+			$billing_form ) ) {?>
 		<p class="help"><?php _e( 'Note: Card expiry dates and CCV are not stored. Only the last 4 digits of card numbers are stored.', 'event_espresso' );?></p>
-	<?php } 
+	<?php }
+	do_action( 'AHEE__txn_admin_details_side_meta_box_billing_info__billing_form_footer', $billing_form );
 	endif; ?>
 
 	</div>
