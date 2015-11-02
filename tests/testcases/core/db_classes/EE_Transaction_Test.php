@@ -65,13 +65,9 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 	 * @since 4.6
 	 */
 	public function test_datetime() {
-		// first create a timezone object
-		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
-		$now = new DateTime( "now", $DateTimeZone );
-		// because of Daylight Savings Time, we need to get the transitions in effect RIGHT NOW
-		$transition = $DateTimeZone->getTransitions( $now->format('U'), $now->format( 'U' ) );
-		// there should only be ONE transition in effect, so we'll just take the first, but check anyways
-		$DateTimeZoneAbbr = isset( $transition[ 0 ], $transition[ 0 ][ 'abbr' ] ) ? $transition[ 0 ][ 'abbr' ] : 'PDT';
+		$now = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
+		$DateTimeZoneAbbr = $now->format( 'T' );
+
 		// Now get the transaction's time
 		$format_to_use = get_option( 'date_format' ) . ' ' . 'H:i:s';
 		/** @type EE_Transaction $t */
