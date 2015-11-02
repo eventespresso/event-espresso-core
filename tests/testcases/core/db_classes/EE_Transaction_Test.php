@@ -65,7 +65,14 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 	 * @since 4.6
 	 */
 	public function test_datetime() {
-		$now = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
+		// first create a timezone object
+		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
+		$now = new DateTime( "now", $DateTimeZone );
+		// because of Daylight Savings Time, we need to get the transitions in effect RIGHT NOW
+		$transition = $DateTimeZone->getTransitions( $now->format('U'), $now->format( 'U' ) );
+		// there should only be ONE transition in effect, so we'll just take the first, but check anyways
+		$DateTimeZoneAbbr = isset( $transition[ 0 ], $transition[ 0 ][ 'abbr' ] ) ? $transition[ 0 ][ 'abbr' ] : 'PDT';
+		// Now get the transaction's time
 		$format_to_use = get_option( 'date_format' ) . ' ' . 'H:i:s';
 		/** @type EE_Transaction $t */
 		$t = $this->factory->transaction->create();
@@ -81,10 +88,10 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 		$t->set( 'TXN_timestamp', $now->format( $t->get_format( $format_to_use ) ) );
 
 		//test getting pretty (should return formatted item in the correct timezone)
-		$this->assertEquals( $now->format( $format_to_use ) . ' <span class="ee_dtt_timezone_string">(PDT)</span>', $t->datetime( true ), 'datetime( true ) test' );
+		$this->assertEquals( $now->format( $format_to_use ) . ' <span class="ee_dtt_timezone_string">('. $DateTimeZoneAbbr.')</span>', $t->datetime( true ), 'datetime( true ) test' );
 
 		//test getting pretty with no_html
-		$this->assertEquals( $now->format( $format_to_use ) . ' (PDT)', $t->get_pretty( 'TXN_timestamp', 'no_html'), 'get_pretty, no_html test' );
+		$this->assertEquals( $now->format( $format_to_use ) . ' ('. $DateTimeZoneAbbr.')', $t->get_pretty( 'TXN_timestamp', 'no_html'), 'get_pretty, no_html test' );
 
 		//test getting raw Unix timestamp
 		$this->assertEquals( $now->format( 'U' ), $t->datetime( false, true ), 'datetime( false, true) test' );
