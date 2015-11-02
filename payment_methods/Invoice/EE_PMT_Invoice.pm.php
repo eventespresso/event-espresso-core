@@ -140,7 +140,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 	 */
 	public function payment_overview_content( EE_Payment $payment ){
 		EE_Registry::instance()->load_helper('Template');
-		return EEH_Template::display_template(
+		return EEH_Template::locate_template(
 			$this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php',
 			array_merge(
 				array(
@@ -151,8 +151,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'invoice_url' 					=> $payment->transaction()->primary_registration()->invoice_url( 'html' )
 				),
 				$this->_pm_instance->all_extra_meta_array()
-			),
-			TRUE
+			)
 		);
 	}
 
