@@ -98,3 +98,4 @@ class EE_Transaction_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Transaction_Test.php
+// Location: wp-content/plugins/event-espresso-core/tests/testcases/core/db_classes/EE_Transaction_Test.php
