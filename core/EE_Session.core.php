@@ -474,6 +474,23 @@
 	  * @return string
 	  */
 	protected function _generate_session_id() {
+		// check if the SID was passed explicitly, otherwise get from session, then add salt and hash it to reduce length
+		if ( isset( $_REQUEST[ 'EESID' ] ) ) {
+			$session_id = sanitize_text_field( $_REQUEST[ 'EESID' ] );
+		} else {
+			$session_id = md5( session_id() . get_current_blog_id() . $this->_get_sid_salt() );
+		}
+		return apply_filters( 'FHEE__EE_Session___generate_session_id__session_id', $session_id );
+	}
+
+
+
+	 /**
+	  * _get_sid_salt
+	  *
+	  * @return string
+	  */
+	protected function _get_sid_salt() {
 		// was session id salt already saved to db ?
 		if ( empty( $this->_sid_salt ) ) {
 			// no?  then maybe use WP defined constant
@@ -487,12 +504,10 @@
 			}
 			// and save it as a permanent session setting
 			$session_settings = get_option( 'ee_session_settings' );
-			$session_settings['sid_salt'] = $this->_sid_salt;
+			$session_settings[ 'sid_salt' ] = $this->_sid_salt;
 			update_option( 'ee_session_settings', $session_settings );
 		}
-		// check if the SID was passed explicitly, otherwise get from session, then add salt and hash it to reduce length
-		$session_id = isset( $_REQUEST[ 'EESID' ] ) ? sanitize_text_field( $_REQUEST[ 'EESID' ] ) : md5( session_id() . $this->_sid_salt );
-		return apply_filters( 'FHEE__EE_Session___generate_session_id__session_id', $session_id );
+		return $this->_sid_salt;
 	}
 
 
