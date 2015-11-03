@@ -161,8 +161,9 @@ class EEH_Event_View extends EEH_Base {
 			// but NO excerpt actually exists, so we need to create one
 			if ( ! empty( $num_words )) {
 				if ( empty( $more )) {
-					$more = ' <a href="' . get_permalink() . '" class="more-link">' . __( '(more&hellip;)' ) . '</a>';
-					$more = apply_filters( 'the_content_more_link', $more );
+					$more_link_text = __( '(more&hellip;)' );
+					$more = ' <a href="' . get_permalink() . '" class="more-link">' . $more_link_text . '</a>';
+					$more = apply_filters( 'the_content_more_link', $more, $more_link_text );
 				}
 				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
 
