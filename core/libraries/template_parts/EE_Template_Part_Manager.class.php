@@ -77,7 +77,6 @@ class EE_Template_Part_Manager {
 		if ( isset( $this->priorities[ $priority ] ) ) {
 			$priority++;
 			$this->add_template_part( $name, $label, $template, $priority );
-
 			return;
 		}
 		// kk now we can mark this priority as being occupied
