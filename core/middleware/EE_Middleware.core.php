@@ -11,32 +11,31 @@
  * EE_Middleware classes should NOT depend on core functionality,
  * because there is no guarantee that the core application has run
  *
- * @package 			Event Espresso
+ * @package 	Event Espresso
  * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				$VID:$
+ * @author 		Brent Christensen
+ * @since       4.8.20
  *
  */
 abstract class EE_Middleware implements EEI_Request_Decorator {
 
 	/**
-	 * 	Request Stack
 	 * @access 	protected
-	 * @type 	$request_stack EEI_Request_Decorator
+	 * @type    EEI_Request_Decorator $_request_stack
 	 */
-	protected $request_stack = null;
+	protected $_request_stack = null;
 
 	/**
 	 * @access 	protected
-	 * @type 	EE_Request $request
+	 * @type 	EE_Request $_request
 	 */
-	protected $request;
+	protected $_request;
 
 	/**
 	 * @access 	protected
-	 * @type 	EE_Response $response
+	 * @type 	EE_Response $_response
 	 */
-	protected $response;
+	protected $_response;
 
 
 
@@ -59,14 +58,14 @@ abstract class EE_Middleware implements EEI_Request_Decorator {
 	 * @return 	EE_Response
 	 */
 	protected function process_request_stack( EE_Request $request, EE_Response $response ) {
-		$this->request = $request;
-		$this->response = $response;
-		if ( ! $this->response->request_terminated() ) {
-			$this->response = $this->request_stack->handle_request( $this->request, $this->response );
+		$this->_request = $request;
+		$this->_response = $response;
+		if ( ! $this->_response->request_terminated() ) {
+			$this->_response = $this->request_stack->handle_request( $this->_request, $this->_response );
 		} else {
 			espresso_deactivate_plugin( EE_PLUGIN_BASENAME );
 		}
-		return $this->response;
+		return $this->_response;
 	}
 
 
