@@ -563,7 +563,8 @@ final class EE_Config {
 		$config_set = get_option( $config_option_name );
 
 		if ( $config_set ) {
-			$this->{$section}->{$name} = maybe_unserialize( $config_set );
+			update_option( $config_option_name, $config_obj );
+			$this->{$section}->{$name} = $config_obj;
 			return $this->{$section}->{$name};
 		} else {
 			// create a wp-option for this config
