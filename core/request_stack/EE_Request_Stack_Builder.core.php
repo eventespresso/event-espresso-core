@@ -4,20 +4,21 @@
  *
  * Assembles the EE_Request_Stack
  *
- * @package 			Event Espresso
+ * @package 	Event Espresso
  * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				$VID:$
+ * @author 		Brent Christensen
+ * @since 		4.8.20
  *
  */
 class EE_Request_Stack_Builder {
 
 	/**
 	 * Stack of middleware objects
+	 *
 	 * @access    protected
-	 * @type array $middleware_stack
+	 * @type array $_middleware_stack
 	 */
-	protected $middleware_stack;
+	protected $_middleware_stack;
 
 
 
@@ -26,7 +27,7 @@ class EE_Request_Stack_Builder {
 	 */
 	public function __construct() {
 		//$this->middleware_stack = new SplStack();
-		$this->middleware_stack = array();
+		$this->_middleware_stack = array();
 	}
 
 
@@ -48,7 +49,7 @@ class EE_Request_Stack_Builder {
 		}
 		$middleware = func_get_args();
 		//$this->middleware_stack->unshift( $middleware );
-		array_unshift( $this->middleware_stack, $middleware );
+		array_unshift( $this->_middleware_stack, $middleware );
 		return $this;
 	}
 
@@ -70,7 +71,7 @@ class EE_Request_Stack_Builder {
 		}
 		$middleware = func_get_args();
 		//$this->middleware_stack->push( $middleware );
-		array_push( $this->middleware_stack, $middleware );
+		array_push( $this->_middleware_stack, $middleware );
 		return $this;
 	}
 
@@ -85,7 +86,7 @@ class EE_Request_Stack_Builder {
 	 */
 	public function resolve( EEI_Request_Decorator $application ) {
 		$middlewares = array( $application );
-		foreach ( $this->middleware_stack as $middleware_args ) {
+		foreach ( $this->_middleware_stack as $middleware_args ) {
 			$class_name = array_shift( $middleware_args );
 			if ( is_callable( $class_name ) ) {
 				$application = $class_name( $application );
