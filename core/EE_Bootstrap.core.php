@@ -17,26 +17,26 @@
  * If none of the middleware classes terminate the request,
  * then the Request Stack will terminate itself after everything else is finished.
  *
- * @package 			Event Espresso
+ * @package 	Event Espresso
  * @subpackage 	core
- * @author 				Brent Christensen
- * @since                4.7
+ * @author 		Brent Christensen
+ * @since 		4.8.20
  *
  */
 
 class EE_Bootstrap {
 
 	/**
-	 * @type $request_stack_builder EE_Request_Stack_Builder
-	 * @access    protected
+	 * @access 	protected
+	 * @type 	EE_Request_Stack_Builder $_request_stack_builder
 	 */
-	protected $request_stack_builder = null;
+	protected $_request_stack_builder = null;
 
 	/**
-	 * @type $request_stack EE_Request_Stack
-	 * @access    protected
+	 * @access 	protected
+	 * @type 	EE_Request_Stack $_request_stack
 	 */
-	protected $request_stack = null;
+	protected $_request_stack = null;
 
 
 
@@ -60,15 +60,15 @@ class EE_Bootstrap {
 	public function run_request_stack() {
 		$this->load_autoloader();
 		$this->set_autoloaders_for_required_files();
-		$this->request_stack_builder = $this->build_request_stack();
-		$this->request_stack = $this->request_stack_builder->resolve(
+		$this->_request_stack_builder = $this->build_request_stack();
+		$this->_request_stack = $this->_request_stack_builder->resolve(
 			new EE_Load_Espresso_Core()
 		);
-		$this->request_stack->handle_request(
+		$this->_request_stack->handle_request(
 			new EE_Request( $_REQUEST ),
 			new EE_Response()
 		);
-		$this->request_stack->handle_response();
+		$this->_request_stack->handle_response();
 	}
 
 
