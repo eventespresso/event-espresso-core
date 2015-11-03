@@ -687,6 +687,10 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				'TKT_deleted'    => false
 			)
 		));
+		// if all the tickets are just expired, then don't update the event status to sold out
+		if ( empty( $tickets )) {
+			return true;
+		}
 		// set initial value
 		$spaces_remaining = 0;
 		foreach( $tickets as $ticket ) {
@@ -906,7 +910,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return boolean
 	 */
 	public function is_sold_out( $actual = FALSE ) {
-		if ( !$actual ) {
+		if ( ! $actual ) {
 			return $this->status() == EEM_Event::sold_out;
 		}
 		else {
