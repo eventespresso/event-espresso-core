@@ -320,7 +320,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
-			$update_prices = $create_new_TKT = $ticket_sold = FALSE;
+			$update_prices = $create_new_TKT = FALSE;
 
 			//figure out what dtts were added to the ticket and what dtts were removed from the ticket in the session.
 
@@ -392,8 +392,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				if ( $TKT instanceof EE_Ticket ) {
 
 					$TKT = $this->_update_ticket_datetimes( $TKT, $saved_dtts, $dtts_added, $dtts_removed );
+					// are there any registrations using this ticket ?
+					$tickets_sold = $TKT->count_related(
+						'Registration',
+						array( array(
+								'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) )
+						) )
+					);
 					//set ticket formats
-					$ticket_sold = $TKT->count_related('Registration', array( array( 'STS_ID' => array( 'NOT IN', array( EEM_Registration::status_id_incomplete ) ) ) ) ) > 0 ? true : false;
 					$TKT->set_date_format( $this->_date_format_strings['date'] );
 					$TKT->set_time_format( $this->_date_format_strings['time'] );
 
@@ -401,8 +407,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					// and determine if it matches the new total price.
 					// if they are different then we create a new ticket (if tkts sold)
 					// if they aren't different then we go ahead and modify existing ticket.
-					$orig_price = $TKT->price();
-					$create_new_TKT = $ticket_sold && $ticket_price != $orig_price && ! $TKT->get('TKT_deleted')
+					$create_new_TKT = $tickets_sold > 0 && $ticket_price != $TKT->price() && ! $TKT->deleted()
 							? TRUE : FALSE;
 
 					//set new values
@@ -631,6 +636,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$new_ticket->set( 'TKT_deleted', 0 );
 		$new_ticket->set( 'TKT_price', $ticket_price );
 		$new_ticket->set( 'TKT_sold', 0 );
+		// let's get a new ID for this ticket
+		$new_ticket->save();
 		// we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
 		$datetimes_on_existing = $ticket->get_many_related( 'Datetime' );
 		$new_ticket = $this->_update_ticket_datetimes(

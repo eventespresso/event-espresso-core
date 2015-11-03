@@ -797,6 +797,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
+		if ( $post instanceof WP_Post && $post->post_type !== 'espresso_events' ) {
+			//getout we're not processing an event save.
+			return;
+		}
+
 		$event_values = array(
 			'EVT_display_desc' => !empty( $this->_req_data['display_desc'] ) ? 1 : 0,
 			'EVT_display_ticket_selector' => !empty( $this->_req_data['display_ticket_selector'] ) ? 1 : 0,

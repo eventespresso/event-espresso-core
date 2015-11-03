@@ -789,6 +789,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _insert_update_cpt_item( $post_id, $post ) {
+
+		if ( $post instanceof WP_Post && $post->post_type !== 'espresso_venues' ) {
+			return;// get out we're not processing the saving of venues.
+		}
+
 		$wheres = array( $this->_venue_model->primary_key_name() => $post_id );
 
 		$venue_values = array(
