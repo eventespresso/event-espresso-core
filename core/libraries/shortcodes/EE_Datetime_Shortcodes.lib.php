@@ -47,7 +47,8 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 			'[DATE_START]' => __('The datetime start date.', 'event_espresso'),
 			'[DATE_END]' => __('The datetime end date.', 'event_espresso'),
 			'[TIME_START]' => __('The datetime start time.', 'event_espresso'),
-			'[TIME_END]' => __('The datetime end time.', 'event_espresso')
+			'[TIME_END]' => __('The datetime end time.', 'event_espresso'),
+			'[ICAL_LINK_*]' => __('The datetime iCal link. The optional "link_text" attribute can be used to set custom text within the link (Default is "Add to iCal Calendar").', 'event_espresso')
 			);
 	}
 
@@ -91,6 +92,20 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 			case '[TIME_END]' :
 				return $this->_data->end_time();
 				break;
+		}
+
+		if ( strpos( $shortcode, '[ICAL_LINK_*') !== FALSE  ) {
+			$attrs = $this->_get_shortcode_attrs( $shortcode );
+			
+			$link_text = empty( $attrs['link_text'] ) ?  __( 'Add to iCal Calendar', 'event_espresso' ) : $attrs['link_text'];
+			
+			$URL = add_query_arg( array( 'ee' => 'download_ics_file', 'ics_id' => $this->_data->ID() ), site_url() );
+
+			$html = '<a class="ee-ical" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
+			$html .= '<span>' . $link_text	. '</span>';
+			$html .= '</a>';
+
+			return $html;
 		}
 
 		return '';
