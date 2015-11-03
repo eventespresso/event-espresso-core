@@ -4,10 +4,10 @@
  *
  * Displays a warning banner if an ALPHA version of EE is being run
  *
- * @package 			Event Espresso
+ * @package 	Event Espresso
  * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				$VID:$
+ * @author 		Brent Christensen
+ * @since 		4.8.20
  *
  */
 
@@ -22,13 +22,11 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 	 * @return 	EE_Response
 	 */
 	public function handle_request( EE_Request $request, EE_Response $response ) {
-		$this->request = $request;
-		$this->response = $response;
-		$this->response->add_output( "\n\t IN >>  " . __CLASS__ );
+		$this->_request = $request;
+		$this->_response = $response;
 		$this->display_alpha_banner_warning();
-		$this->response = $this->process_request_stack( $this->request, $this->response );
-		$this->response->add_output( "\n\t OUT << " . __CLASS__ );
-		return $this->response;
+		$this->_response = $this->process_request_stack( $this->_request, $this->_response );
+		return $this->_response;
 	}
 
 
