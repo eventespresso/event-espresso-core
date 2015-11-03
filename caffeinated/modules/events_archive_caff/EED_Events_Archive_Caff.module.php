@@ -162,7 +162,14 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 			foreach ( $template_parts as $key => $template_part ) {
 				$template_part = "display_order_$template_part";
 				$priority = ( $key * 10 ) + 100;
-				EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->$template_part = $priority;
+				if (
+					property_exists(
+						EE_Registry::instance()->CFG->template_settings->EED_Events_Archive,
+						$template_part
+					)
+				) {
+					EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->$template_part = $priority;
+				}
 				do_action( "AHEE__EED_Events_Archive__update_event_archive_order__$template_part", $priority );
 			}
 			$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );
