@@ -1844,11 +1844,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		return TRUE;
 	}
 
+
+
 	/**
 	 * _delete_event
 	 *
 	 * @access protected
-	 * @return void
+	 * @param bool $redirect_after
 	 */
 	protected function _delete_event( $redirect_after = TRUE ) {
 		//determine the event id and set to array.
@@ -1890,13 +1892,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
 		// loop thru events
 		foreach ($EVT_IDs as $EVT_ID) {
-			if ($EVT_ID = absint($EVT_ID)) {
-				$results = $this->_permanently_delete_event($EVT_ID);
-				$success = $results !== FALSE ? $successs : FALSE;
+			$EVT_ID = absint( $EVT_ID );
+			if ( $EVT_ID ) {
+				$results = $this->_permanently_delete_event( $EVT_ID );
+				$success = $results !== FALSE ? $success : FALSE;
 				// remove this event from the list of events with no prices
-				if (isset($espresso_no_ticket_prices[$EVT_ID])) {
-					unset($espresso_no_ticket_prices[$EVT_ID]);
-				}
+				unset( $espresso_no_ticket_prices[ $EVT_ID ] );
 			} else {
 				$success = FALSE;
 				$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
@@ -1916,16 +1917,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @param  int $EVT_ID
 	 * @return bool
 	 */
-	private function _permanently_delete_event($EVT_ID = 0) {
+	private function _permanently_delete_event( $EVT_ID = 0 ) {
 		// grab event id
-		if (!$EVT_ID = absint($EVT_ID)) {
+		if ( ! $EVT_ID ) {
 			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-
-
-		$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID($EVT_ID);
+		$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 
 		//need to delete related tickets and prices first.
 		$datetimes = $this->_cpt_model_obj->get_many_related('Datetime');
@@ -1960,8 +1959,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//Message Template Groups
 		$this->_cpt_model_obj->_remove_relations( 'Message_Template_Group' );
 
-
-		//term taxonomies
+		/** @type EE_Term_Taxonomy[] $term_taxonomies */
 		$term_taxonomies = $this->_cpt_model_obj->term_taxonomies();
 
 		foreach ( $term_taxonomies as $term_taxonomy ) {
