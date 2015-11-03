@@ -4,10 +4,10 @@
  *
  * Basically a container class for holding EE_Middleware classes and the core application
  *
- * @package 			Event Espresso
+ * @package 	Event Espresso
  * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				$VID:$
+ * @author 		Brent Christensen
+ * @since 		4.8.20
  *
  */
 
@@ -15,27 +15,27 @@ class EE_Request_Stack {
 
 	/**
 	 * @access 	protected
-	 * @type 	array $application
+	 * @type    EEI_Request_Decorator $_application
 	 */
-	protected $application;
+	protected $_application;
 
 	/**
 	 * @access 	protected
-	 * @type    array $middlewares
+	 * @type    array $_middlewares
 	 */
-	protected $middlewares = array();
+	protected $_middlewares = array();
 
 	/**
 	 * @access 	protected
-	 * @type 	EE_Request $request
+	 * @type 	EE_Request $_request
 	 */
-	protected $request;
+	protected $_request;
 
 	/**
 	 * @access 	protected
-	 * @type 	EE_Response $response
+	 * @type 	EE_Response $_response
 	 */
-	protected $response;
+	protected $_response;
 
 
 
@@ -43,9 +43,9 @@ class EE_Request_Stack {
 	 * @param 	EEI_Request_Decorator $application
 	 * @param 	array $middlewares
 	 */
-	public function __construct( EEI_Request_Decorator $application, array $middlewares ) {
-		$this->application = $application;
-		$this->middlewares = $middlewares;
+	public function __construct( EEI_Request_Decorator $application, $middlewares = array() ) {
+		$this->_application = $application;
+		$this->_middlewares = $middlewares;
 	}
 
 
@@ -56,9 +56,9 @@ class EE_Request_Stack {
 	 * @return 	EE_Response
 	 */
 	public function handle_request( EE_Request $request, EE_Response $response ) {
-		$this->request = $request;
-		$this->response = $response;
-		return $this->application->handle_request( $request, $response );
+		$this->_request = $request;
+		$this->_response = $response;
+		return $this->_application->handle_request( $request, $response );
 	}
 
 
@@ -70,9 +70,9 @@ class EE_Request_Stack {
 	 */
 	public function handle_response() {
 		$prev_middleware = null;
-		foreach ( $this->middlewares as $middleware ) {
+		foreach ( $this->_middlewares as $middleware ) {
 			if ( ! $prev_middleware instanceof EEI_Request_Stack_Core_App && $middleware instanceof EEI_Request_Stack_Core_App ) {
-				$middleware->handle_response( $this->request, $this->response );
+				$middleware->handle_response( $this->_request, $this->_response );
 			}
 			$prev_middleware = $middleware;
 		}
