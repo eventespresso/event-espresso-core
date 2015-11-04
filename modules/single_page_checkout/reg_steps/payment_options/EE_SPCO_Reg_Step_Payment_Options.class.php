@@ -159,14 +159,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			&& ! is_callable( array( $this, $this->checkout->action ) )
 			&& ! $this->completed()
 		) {
-				// and if so, then we no longer need the Payment Options step
-				$this->checkout->remove_reg_step( $this->_slug );
-				if ( $this->is_current_step() ) {
-					$this->checkout->generate_reg_form = false;
-				}
-				// DEBUG LOG
-				//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
-				return false;
+			// and if so, then we no longer need the Payment Options step
+			if ( $this->is_current_step() ) {
+				$this->checkout->generate_reg_form = false;
+			}
+			$this->checkout->remove_reg_step( $this->_slug );
+			// DEBUG LOG
+			//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+			return false;
 		}
 		// load EEM_Payment_Method
 		EE_Registry::instance()->load_model( 'Payment_Method' );
