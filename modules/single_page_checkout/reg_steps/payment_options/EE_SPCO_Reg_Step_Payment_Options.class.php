@@ -144,7 +144,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * initialize_reg_step
-	 * @return void
+	 * @return boolean
 	 */
 	public function initialize_reg_step() {
 		// TODO: if /when we implement donations, then this will need overriding
@@ -161,18 +161,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		) {
 				// and if so, then we no longer need the Payment Options step
 				$this->checkout->remove_reg_step( $this->_slug );
-				$this->checkout->reset_reg_steps();
 				if ( $this->is_current_step() ) {
 					$this->checkout->generate_reg_form = false;
 				}
 				// DEBUG LOG
 				//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
-				return;
+				return false;
 		}
 		// load EEM_Payment_Method
 		EE_Registry::instance()->load_model( 'Payment_Method' );
 		// get all active payment methods
-		$this->checkout->available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
+		$this->checkout->available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction(
+			$this->checkout->transaction, EEM_Payment_Method::scope_cart
+		);
+		return true;
 	}
 
 
@@ -769,7 +771,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
             );
         }
 		// now generate billing form for selected method of payment
-		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
+		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
 		// fill form with attendee info if applicable
 		if ( $payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form && $this->checkout->transaction_has_primary_registrant() ) {
 			$payment_method_billing_form->populate_from_attendee( $this->checkout->transaction->primary_registration()->attendee() );
@@ -1051,7 +1053,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->redirect_url = $this->checkout->cancel_page_url;
 				$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 				// mark this reg step as completed
-				$this->checkout->current_step->set_completed();
+				$this->set_completed();
 				return FALSE;
 				break;
 
@@ -1060,7 +1062,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 				// mark this reg step as completed
-				$this->checkout->current_step->set_completed();
+				$this->set_completed();
 				return TRUE;
 				break;
 
@@ -1069,7 +1071,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 				// mark this reg step as completed
-				$this->checkout->current_step->set_completed();
+				$this->set_completed();
 				return TRUE;
 				break;
 
@@ -1102,7 +1104,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			case EE_PMT_Base::onsite :
 			case EE_PMT_Base::offline :
 				// mark this reg step as completed
-			$this->checkout->current_step->set_completed();
+			$this->set_completed();
 				break;
 		}
 		return;
@@ -1747,7 +1749,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// mark this reg step as completed, as long as gateway doesn't use a separate IPN request,
 				// because we will complete this step during the IPN processing then
 				if ( $gateway instanceof EE_Offsite_Gateway && ! $gateway->uses_separate_IPN_request() ) {
-					$this->checkout->current_step->set_completed();
+					$this->set_completed();
 				}
 				return true;
 			}
