@@ -81,16 +81,16 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes {
 				return $this->_data->get_timezone();
 				break;
 			case '[DATE_START]' :
-				return $this->_data->start_date();
+				return $this->_data->get_i18n_datetime( 'DTT_EVT_start', get_option( 'date_format' ) );
 				break;
 			case '[DATE_END]' :
-				return $this->_data->end_date();
+				return $this->_data->get_i18n_datetime( 'DTT_EVT_end', get_option( 'date_format' ) );
 				break;
 			case '[TIME_START]' :
-				return $this->_data->start_time();
+				return $this->_data->get_i18n_datetime( 'DTT_EVT_start', get_option( 'time_format' ) );
 				break;
 			case '[TIME_END]' :
-				return $this->_data->end_time();
+				return $this->_data->get_i18n_datetime( 'DTT_EVT_end', get_option( 'time_format' ) );
 				break;
 		}
 
