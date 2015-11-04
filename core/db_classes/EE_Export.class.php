@@ -22,13 +22,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	var $EE_CSV = NULL;
 
-	var $_basic_header = array();
-	var $_question_groups = array();
-	var $_event_id = FALSE;
-	var $_event_identifier = FALSE;
-	var $_event_name = FALSE;
-	var $_event_description = FALSE;
-	var $_event_meta = FALSE;
 
 	private $_req_data = array();
 
@@ -88,9 +81,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			case 'report':
 				switch ($this->_req_data['action']) {
 
-					case 'everything':
-						$this->export_freakin_everything();
-					break;
 
 					case "event";
 					case "export_events";
@@ -123,29 +113,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		exit;
 
-	}
-
-
-
-	/**
-	 *		Export data for FREAKIN EVERYTHING !!!
-	 *
-	 *		usage: http://your-domain.tld/wp-admin/admin.php?event_espresso&export=report&action=everything&type=csv
-	 *
-	 *		@access public
-	 *		@return void
-	 */
-	function export_freakin_everything() {
-
-		$models_to_export = EE_Registry::instance()->non_abstract_db_models;
-
-		$table_data = $this->_get_export_data_for_models( array_keys( $models_to_export ) );
-
-		$filename = $this->generate_filename ( 'full-db-export' );
-
-		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			EE_Error::add_error(__("An error occurred and the Event details could not be exported from the database.", "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
-		}
 	}
 
 	/**
