@@ -59,10 +59,12 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'required'=>true,
 					'html_label_text' => __( 'Expiry Month', 'event_espresso' )
 				)),
-				'exp_year'=>new EE_Credit_Card_Year_Input( array( '
-					required'=> true,
-					'html_label_text' => __( 'Expiry Year', 'event_espresso' ) ) ),
+				'exp_year'=>new EE_Credit_Card_Year_Input( array( 
+					'required'=>true,
+					'html_label_text' => __( 'Expiry Year', 'event_espresso' ) 
+				)),
 				'cvv'=>new EE_CVV_Input( array(
+					'required'=>true,
 					'html_label_text' => __( 'CVV', 'event_espresso' ) ) ),
 			)
 		));

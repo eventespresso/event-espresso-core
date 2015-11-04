@@ -156,8 +156,9 @@ class EEH_Event_View extends EEH_Base {
 			//echo '<h2 style="color:#E76700;">get_the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span><b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			if ( ! empty( $num_words )) {
 				if ( empty( $more )) {
-					$more = ' <a href="' . get_permalink() . '" class="more-link">' . __( '(more&hellip;)' ) . '</a>';
-					$more = apply_filters( 'the_content_more_link', $more );
+					$more_link_text = __( '(more&hellip;)' );
+					$more = ' <a href="' . get_permalink() . '" class="more-link">' . $more_link_text . '</a>';
+					$more = apply_filters( 'the_content_more_link', $more, $more_link_text );
 				}
 				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
 
