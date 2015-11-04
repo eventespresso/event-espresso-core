@@ -201,7 +201,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $registration->status_ID() !== EEM_Registration::status_id_approved ) {
 				// and only do this if NOT a revisit
 				if ( ! $this->checkout->revisit ) {
-					if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( true ) ) {
+					if ( $registration->event()->is_sold_out() ) {
 						// add event to list of events that are sold out
 						$sold_out_events[ $registration->event()->ID() ] = $registration->event();
 						do_action(
