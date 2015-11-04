@@ -49,7 +49,7 @@ if ( function_exists( 'espresso_version' ) ) {
 	function espresso_duplicate_plugin_error() {
 		?>
 		<div class="error">
-			<p><?php _e( 'Can not run multiple versions of Event Espresso! Please deactivate one of the versions.', 'event_espresso' ); ?></p>
+			<p><?php _e( 'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.', 'event_espresso' ); ?></p>
 		</div>
 		<?php
 		espresso_deactivate_plugin( plugin_basename( __FILE__ ) );
