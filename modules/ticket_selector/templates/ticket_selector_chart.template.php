@@ -478,7 +478,7 @@ if ( ! $hide_ticket_selector ) {
 	</table>
 
 	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL );?>" />
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url();?>" />
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
@@ -499,7 +499,7 @@ if ( ! $hide_ticket_selector ) {
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
 <input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
 <input type="hidden" name="noheader" value="true"/>
-<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL ); ?>"/>
+<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url(); ?>"/>
 <input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>"/>
 <input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>"/>
 <input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>"/>

@@ -282,10 +282,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @internal param float $amount
 	 * @return EE_Payment
 	 */
-	public function process_refund( $payment_method, $payment_to_refund, $refund_info = array() ){
-		/** @type EE_Payment_Method $payment_method */
-		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
-		if ( $payment_method->type_obj()->supports_sending_refunds() ) {
+	public function process_refund( EE_Payment_Method $payment_method, EE_Payment $payment_to_refund, $refund_info = array() ){
+		if ( $payment_method instanceof EE_Payment_Method && $payment_method->type_obj()->supports_sending_refunds() ) {
 			$payment_method->type_obj()->process_refund( $payment_to_refund, $refund_info );
 			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
 		}
