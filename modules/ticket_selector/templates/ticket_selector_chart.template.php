@@ -20,7 +20,7 @@ ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
-		$remaining = max( $ticket->remaining() - $ticket->reserved(), 0 );
+		$remaining = max( $ticket->remaining(), 0 );
 		// max tickets or $max_atndz, whichever is smaller
 		$max = min( $ticket->max(), $max_atndz );;
 		// offer the number of $tickets_remaining or $max, whichever is smaller
@@ -416,7 +416,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 $ticket_row_html = ob_get_clean();
 // if there is only ONE ticket with a max qty of ONE, and it is free... then not much need for the ticket selector
-$hide_ticket_selector = $ticket_count == 1 && $max == 1 && $ticket->is_free() ? true : false;
+$hide_ticket_selector = $ticket_count == 1 && $max_atndz == 1 && $ticket->is_free() ? true : false;
 $hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_selector', $hide_ticket_selector, $EVT_ID );
 //EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
@@ -484,12 +484,12 @@ if ( ! $hide_ticket_selector ) {
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
 
 <?php
-if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
-	echo apply_filters(
-		'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
-		''
-	);
-}
+	if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
+		echo apply_filters(
+			'FHEE__ticket_selector_chart_template__maximum_tickets_purchased_footnote',
+			''
+		);
+	}
 ?>
 
 	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event ); ?>
