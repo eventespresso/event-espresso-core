@@ -34,7 +34,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 *		@Constructor
 	 *		@access private
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket','event_espresso');
@@ -91,8 +90,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * @return EE_Ticket[]
 	 */
 	public function get_all_default_tickets() {
+		/** @type EE_Ticket[] $tickets */
 		$tickets = $this->get_all( array( array('TKT_is_default' => 1), 'order_by' => array('TKT_order' => 'ASC')) );
-
 		//we need to set the start date and end date to today's date and the start of the default dtt
 		return $this->_set_default_dates( $tickets );
 	}
@@ -114,36 +113,20 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		return $tickets;
 	}
 
+
+
 	/**
 	 * Gets the total number of tickets available at a particular datetime (does
 	 * NOT take int account the datetime's spaces available)
 	 * @param int $DTT_ID
 	 * @param array $query_params
-	 * @return int|boolean of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 * @return int
 	 */
 	public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = array()){
-		$sum = 0;
-		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
-		$remaining_per_ticket = $this->_get_all_wpdb_results(
-				$query_params,
-				ARRAY_A,
-				array(
-					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold','%d'),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
-					'initially_available'=>array('Ticket.TKT_qty','%d')));
-
-		if ( empty( $remaining_per_ticket ) )
-			return FALSE;
-
-
-		foreach($remaining_per_ticket as $remaining){
-			if(intval($remaining['initially_available'])==EE_INF_IN_DB){//infinite in DB
-				return INF;
-			}
-			$sum+=intval($remaining['tickets_remaining']);
-		}
-
-		return $sum;
+		return EEM_Datetime::instance()->sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params );
 	}
+
+
 
 	/**
 	 * Updates the TKT_sold quantity on all the tickets matching $query_params
@@ -156,6 +139,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			$ticket->update_tickets_sold();
 		}
 	}
+
+
 
 }
 //end EEM_Ticket model

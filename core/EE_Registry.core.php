@@ -132,7 +132,9 @@ final class EE_Registry {
 	 * $non_abstract_db_models
 	 * @access public
 	 * @var array this is an array of all implemented model names (i.e. not the parent abstract models, or models
-	 * which don't actually fetch items from the DB in the normal way (ie, are not children of EEM_Base))
+	 * which don't actually fetch items from the DB in the normal way (ie, are not children of EEM_Base)).
+	 * Keys are model "shortnames" (eg "Event") as used in model relations, and values are
+	 * classnames (eg "EEM_Event")
 	 */
 	public $non_abstract_db_models = array();
 
@@ -208,6 +210,24 @@ final class EE_Registry {
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
 		self::$i18n_js_strings['wp_debug'] = defined( 'WP_DEBUG' ) ? WP_DEBUG : FALSE;
+	}
+
+
+
+	/**
+	 * localize_i18n_js_strings
+	 *
+	 * @return string
+	 */
+	public static function localize_i18n_js_strings() {
+		$i18n_js_strings = (array)EE_Registry::$i18n_js_strings;
+		foreach ( $i18n_js_strings as $key => $value ) {
+			if ( is_scalar( $value ) ) {
+				$i18n_js_strings[ $key ] = html_entity_decode( (string)$value, ENT_QUOTES, 'UTF-8' );
+			}
+		}
+
+		return "/* <![CDATA[ */ var eei18n = " . wp_json_encode( $i18n_js_strings ) . '; /* ]]> */';
 	}
 
 
@@ -726,6 +746,20 @@ final class EE_Registry {
 			$instance->reset_model( $model_name );
 		}
 		return $instance;
+	}
+
+	/**
+	 * Gets all the custom post type models defined
+	 * @return array keys are model "short names" (Eg "Event") and keys are classnames (eg "EEM_Event")
+	 */
+	public function cpt_models() {
+		$cpt_models = array();
+		foreach( $this->non_abstract_db_models as $shortname => $classname ) {
+			if( is_subclass_of(  $classname, 'EEM_CPT_Base' ) ) {
+				$cpt_models[ $shortname ] = $classname;
+			}
+		}
+		return $cpt_models;
 	}
 
 

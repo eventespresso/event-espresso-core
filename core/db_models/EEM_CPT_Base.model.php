@@ -81,6 +81,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		if( ! isset( $this->_fields[$primary_table_name]['post_content_filtered'])){
 			$this->_fields[$primary_table_name]['post_content_filtered'] = new EE_DB_Only_Text_Field('post_content_filtered', __( 'Post Content Filtered', 'event_espresso' ), FALSE, '');
 		}
+		if( ! isset( $this->_model_relations[ 'Post_Meta' ] ) ) {
+			//don't block deletes though because we want to maintain the current behaviour
+			$this->_model_relations[ 'Post_Meta' ] = new EE_Has_Many_Relation( false );
+		}
 		parent::__construct($timezone);
 
 	}

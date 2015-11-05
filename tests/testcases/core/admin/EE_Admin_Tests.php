@@ -33,7 +33,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ), 10 );
 		$this->assertEquals( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ), 10 );
 		$this->assertEquals( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ), 100 );
-		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded'), 100 ), 100 );
+		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded') ), 100 );
 		$this->assertEquals( has_action('admin_init', array($admin_instance, 'admin_init') ), 100 );
 		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
@@ -126,7 +126,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	function test_init() {
 		$admin = EE_Admin::instance();
 
-		//test when maintainence mode is set at level 2
+		//test when maintenance mode is set at level 2
 		$this->setMaintenanceMode(2);
 		$admin->init();
 		$this->assertFalse( has_action('wp_ajax_dismiss_ee_nag_notice', array( $admin, 'dismiss_ee_nag_notice_callback' ) ) );
@@ -202,7 +202,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		add_meta_box( 'add-espresso_events', __('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
 
 		//need to set the current user
-		$current_user = get_current_user_id();
+		//$current_user = get_current_user_id();
 		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
 
 		//set the current page to the be the nav-menus.php page
@@ -231,20 +231,21 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	function test_dashboard_glance_items() {
 		//add some events and registrations
 		$this->factory->event->create_many(10);
-		$this->factory->registration->create_many(5);
+		$this->factory->registration->create_many(5, array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
+		$this->factory->registration->create_many(3);
 
 		//expected events dashboard items
 		EE_Registry::instance()->load_helper('URL');
 		$xpct_events_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_events'), admin_url('admin.php') );
 		$xpct_events_text = sprintf( _n( '%s Event', '%s Events', 10 ), number_format_i18n( 10 ) );
 		$xpct_events_title = __('Click to view all Events', 'event_espresso');
-		$xpct_event_assembled = sprintf( '<a href="%s" title="%s">%s</a>', $xpct_events_url, $xpct_events_title, $xpct_events_text );
+		$xpct_event_assembled = sprintf( '<a class="ee-dashboard-link-events" href="%s" title="%s">%s</a>', $xpct_events_url, $xpct_events_title, $xpct_events_text );
 
 		//expected registration dashboard items
 		$xpct_registration_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
 		$xpct_registration_text = sprintf( _n( '%s Registration', '%s Registrations', 5 ), number_format_i18n(5) );
 		$xpct_registration_title = __('Click to view all registrations', 'event_espresso');
-		$xpct_registration_assembled = sprintf( '<a href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
+		$xpct_registration_assembled = sprintf( '<a class="ee-dashboard-link-registrations" href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
 
 		$generated_items = EE_Admin::instance()->dashboard_glance_items( '' );
 		//first assert the elements are an array.

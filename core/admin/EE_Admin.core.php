@@ -644,15 +644,21 @@ final class EE_Admin {
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
 		$items['events']['title'] = __('Click to view all Events', 'event_espresso');
-		$registrations = EEM_Registration::instance()->count();
+		$registrations = EEM_Registration::instance()->count(
+			array(
+				array(
+					'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete )
+				)
+			)
+		);
 		$items['registrations']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
 		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
-		foreach ( $items as $item ) {
-			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );
+		foreach ( $items as $type => $item_properties ) {
+			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
 		}
 		return $elements;
 	}

@@ -26,7 +26,7 @@ class EEH_Activation {
 	/**
 	 * constant used to indicate a cron task is no longer in use
 	 */
-	const cron_task_no_longer_in_use = null;
+	const cron_task_no_longer_in_use = 'no_longer_in_use';
 
 	private static $_default_creator_id = null;
 
@@ -136,6 +136,7 @@ class EEH_Activation {
 			array(
 				'AHEE__EE_Cron_Tasks__clean_up_junk_transactions' => 'hourly',
 //				'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions' => EEH_Activation::cron_task_no_longer_in_use, actually this is still in use
+				'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use, //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
 			)
 		);
 		if( $which_to_include === 'all' ) {
@@ -173,11 +174,33 @@ class EEH_Activation {
 	 */
 	public static function remove_cron_tasks( $remove_all = true ) {
 		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
+		$crons = _get_cron_array();
+		$crons = is_array( $crons ) ? $crons : array();
+		/* reminder that $crons looks like: top-level keys are timestamps,
+		 * and their values are arrays.
+		 * The 2nd level arrays have keys with each of the cron task hooknames to run at that time
+		 * and their values are arrays.
+		 * The 3rd level level arrays are keys which are hashes of the cron task's arguments,
+		 *  and their values are the UN-hashed arguments
+		 * eg
+		 * array (size=13)
+		 *		1429903276 =>
+		 *		  array (size=1)
+		 *			'AHEE__EE_Cron_Tasks__update_transaction_with_payment' =>
+		 *			  array (size=1)
+		 *				'561299d6e42c8e079285870ade0e47e6' =>
+		 *				  array (size=2)
+		 *					...
+		 *      ...
+		 */
 		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
-			while( $scheduled_time = wp_next_scheduled( $hook_name ) ) {
-				wp_unschedule_event( $scheduled_time, $hook_name );
+			foreach( $crons as $timestamp => $hooks_to_fire_at_time ) {
+				if ( array_key_exists( $hook_name, $hooks_to_fire_at_time ) )  {
+					unset( $crons[ $timestamp ][ $hook_name ] );
+				}
 			}
 		}
+		_set_cron_array( $crons );
 	}
 
 
@@ -824,7 +847,7 @@ class EEH_Activation {
 									'QSG_order' => 1,
 									'QSG_show_group_name' => 1,
 									'QSG_show_group_desc' => 1,
-									'QSG_system' => 1,
+									'QSG_system' => EEM_Question_Group::system_personal,
 									'QSG_deleted' => 0
 								);
 						break;
@@ -837,7 +860,7 @@ class EEH_Activation {
 									'QSG_order' => 2,
 									'QSG_show_group_name' => 1,
 									'QSG_show_group_desc' => 1,
-									'QSG_system' => 2,
+									'QSG_system' => EEM_Question_Group::system_address,
 									'QSG_deleted' => 0
 								);
 						break;
@@ -1049,7 +1072,30 @@ class EEH_Activation {
 					$QST_ID = $wpdb->insert_id;
 
 					// QUESTION GROUP QUESTIONS
-					$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;
+					if(  in_array( $QST_system, array( 'fname', 'lname', 'email' ) ) ) {
+						$system_question_we_want = EEM_Question_Group::system_personal;
+					} else {
+						$system_question_we_want = EEM_Question_Group::system_address;
+					}
+					if( isset( $QSG_IDs[ $system_question_we_want ] ) ) {
+						$QSG_ID = $QSG_IDs[ $system_question_we_want ];
+					} else {
+						$id_col = EEM_Question_Group::instance()->get_col( array( array( 'QSG_system' => $system_question_we_want ) ) );
+						if( is_array( $id_col ) ) {
+							$QSG_ID = reset( $id_col );
+						} else {
+							//ok so we didn't find it in the db either?? that's weird because we should have inserted it at the start of this method
+                                                        EE_Log::instance()->log( 
+                                                                __FILE__, 
+                                                                __FUNCTION__, 
+                                                                sprintf( 
+                                                                        __( 'Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'), 
+                                                                        $QST_ID ), 
+                                                                'error' );
+                                                        continue;
+						}
+					}
+                                        
 					// add system questions to groups
 					$wpdb->insert(
 						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
@@ -1496,11 +1542,11 @@ class EEH_Activation {
 		//there are some tables whose models were removed.
 		//they should be removed when removing all EE core's data
 		$tables_without_models = array(
-			'wp_esp_promotion',
-			'wp_esp_promotion_applied',
-			'wp_esp_promotion_object',
-			'wp_esp_promotion_rule',
-			'wp_esp_rule'
+			'esp_promotion',
+			'esp_promotion_applied',
+			'esp_promotion_object',
+			'esp_promotion_rule',
+			'esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
 			EEH_Activation::delete_db_table_if_empty( $table );
@@ -1512,7 +1558,7 @@ class EEH_Activation {
 			'ee_active_messengers' => true,
 			'ee_has_activated_messenger' => true,
 			'ee_flush_rewrite_rules' => true,
-			'ee_config' => true,
+			'ee_config' => false,
 			'ee_data_migration_current_db_state' => true,
 			'ee_data_migration_mapping_' => false,
 			'ee_data_migration_script_' => false,
@@ -1539,6 +1585,9 @@ class EEH_Activation {
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
 		);
+		if( is_main_site() ) {
+			$wp_options_to_delete[ 'ee_network_config' ] = true;
+		}
 
 		$undeleted_options = array();
 		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
@@ -1556,6 +1605,8 @@ class EEH_Activation {
 				}
 			}
 		}
+                //also, let's make sure the "ee_config_option_names" wp option stays out by removing the action that adds it
+                remove_action( 'shutdown', array( EE_Config::instance(), 'shutdown' ), 10 );
 
 		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
 			$db_update_sans_ee4 = array();

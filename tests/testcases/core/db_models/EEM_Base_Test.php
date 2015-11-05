@@ -821,8 +821,8 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$e2 = $this->new_model_obj_with_dependencies( 'Event', array() );
 		$this->assertEquals( array( $e1->ID(), $e2->ID() ), EEM_Event::instance()->get_IDs( array( $e1, $e2 ), true ) );
 	}
-
-
+        
+ 
 }
 
 // End of file EEM_Base_Test.php

@@ -294,17 +294,22 @@ class EE_Transaction_Payments {
 	 * @throws \EE_Error
 	 */
 	public function delete_registration_payments_and_update_registrations( EE_Payment $payment, $reg_payment_query_params = array() ) {
+		$save_payment = false;
 		$reg_payment_query_params = ! empty( $reg_payment_query_params ) ? $reg_payment_query_params : array( array( 'PAY_ID' => $payment->ID() ) );
 		$registration_payments = EEM_Registration_Payment::instance()->get_all( $reg_payment_query_params );
 		if ( ! empty( $registration_payments )) {
 			foreach ( $registration_payments as $registration_payment ) {
 				if ( $registration_payment instanceof EE_Registration_Payment ) {
 					$amount_paid = $registration_payment->amount();
-					$registration = $registration_payment->get_first_related( 'Registration' );
+					$registration = $registration_payment->registration();
 					if ( $registration instanceof EE_Registration ) {
 						$registration->set_paid( $registration->paid() - $amount_paid );
 						if ( $registration->save() ) {
-							$registration_payment->delete();
+							if ( $registration_payment->delete() ) {
+								$registration->_remove_relation_to( $payment, 'Payment' );
+								$payment->_remove_relation_to( $registration, 'Registration' );
+							}
+							$save_payment = true;
 						}
 					} else {
 						EE_Error::add_error(
@@ -327,6 +332,9 @@ class EE_Transaction_Payments {
 					return false;
 				}
 			}
+		}
+		if ( $save_payment ) {
+			$payment->save();
 		}
 		return true;
 	}

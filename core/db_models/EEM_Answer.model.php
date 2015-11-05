@@ -31,6 +31,7 @@ class EEM_Answer extends EEM_Base {
 	/**
 	 * Mapping from system question ids to attendee field names
 	 * @type array
+	 * @deprecated since version 4.8.8
 	 */
 	protected $_question_id_to_att_field_map = array(
 		EEM_Attendee::fname_question_id => 'ATT_fname',
@@ -115,31 +116,45 @@ class EEM_Answer extends EEM_Base {
 	/**
 	 * Gets the string answer to the question for this registration's attendee
 	 * @param EE_Registration $registration
-	 * @param int $question_id
+	 * @param int|string $question_system_id if an INT this is understood to be the question's ID; if a string then it should be its QST_system value.
+	 *	Passing in the QST_system value is more efficient
 	 * @param boolean $pretty_answer
-	 * @return string
+	 * @return string|null (if the registration has no attendee, or the question_system_id is not a QST_ID or QST_system for 
+	 * a question corresponding to an attendee field, returns null)
 	 */
-	public function get_attendee_property_answer_value( EE_Registration $registration, $question_id = NULL, $pretty_answer = FALSE ){
+	public function get_attendee_property_answer_value( EE_Registration $registration, $question_system_id = NULL, $pretty_answer = FALSE ){
 		$field_name = NULL;
 		$value = NULL;
+                //backward compat: we still want to find the question's ID
+                if( is_numeric( $question_system_id ) ) {
+                    //find this question's QST_system value
+                    $question_id = $question_system_id;
+                    $question_system_id = EEM_Question::instance()->get_var( array( array( 'QST_ID' => $question_system_id ) ), 'QST_system' );
+                } else {
+                    $question_id = intval( EEM_Question::instance()->get_var( array( array( 'QST_system' => $question_system_id ) ), 'QST_ID' ) );
+                }
 		//only bother checking if the registration has an attendee
-		if( $registration->attendee() instanceof EE_Attendee && isset($this->_question_id_to_att_field_map[$question_id])){
-			$field_name = $this->_question_id_to_att_field_map[$question_id];
-			if($pretty_answer){
-				if($field_name == 'STA_ID'){
-					$state = $registration->attendee()->state_obj();
-					$value = $state instanceof EE_State ? $state->name() : sprintf(__('Unknown State (%s)', 'event_espresso'),$registration->attendee()->state_ID());
-				}else if($field_name == 'CNT_ISO'){
-					$country = $registration->attendee()->country_obj();
-					$value = $country instanceof EE_Country ? $country->name() : sprintf(__('Unknown Country (%s)', "event_espresso"),$registration->attendee()->country_ID());
+		if( $registration->attendee() instanceof EE_Attendee ) {
+			$field_name = EEM_Attendee::instance()->get_attendee_field_for_system_question( $question_system_id );
+			if( $field_name ) {
+				if( $pretty_answer ) {
+					if( $field_name == 'STA_ID' ) {
+						$state = $registration->attendee()->state_obj();
+						$value = $state instanceof EE_State ? $state->name() : sprintf( __('Unknown State (%s)', 'event_espresso'), $registration->attendee()->state_ID() );
+					} else if($field_name == 'CNT_ISO') {
+						$country = $registration->attendee()->country_obj();
+						$value = $country instanceof EE_Country ? $country->name() : sprintf(__('Unknown Country (%s)', "event_espresso"),$registration->attendee()->country_ID());
+					} else {
+						$value = $registration->attendee()->get_pretty( $field_name );
+					}
+					//if field name is blank, leave the value as null too
 				}else{
-					$value = $registration->attendee()->get_pretty($field_name);
+					$value = $registration->attendee()->get( $field_name );
 				}
-			}else{
-				$value = $registration->attendee()->get($field_name);
 			}
+			//if no field was found, leave value blank
 		}
-		return apply_filters( 'FHEE__EEM_Answer__get_attendee_question_answer_value__answer_value', $value, $registration, $question_id );
+		return apply_filters( 'FHEE__EEM_Answer__get_attendee_question_answer_value__answer_value', $value, $registration, $question_id, $question_system_id );
 	}
 
 

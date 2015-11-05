@@ -18,10 +18,11 @@ class EEH_URL{
 	 * @access public
 	 * @param array       $args
 	 * @param string $url
+	 * @param bool  $exclude_nonce  If true then the nonce will be excluded from the generated url.
 	 * @return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = '' ) {
-		if ( empty( $url )) {
+	public static function add_query_args_and_nonce( $args = array(), $url = '', $exclude_nonce = false ) {
+		if ( empty( $url ) ) {
 			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf(
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
@@ -29,15 +30,17 @@ class EEH_URL{
 				);
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		// check that an action exists
-		if ( isset( $args['action'] ) && ! empty( $args['action'] )) {
-			$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' )));
-		} else {
-			$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' )));
+		// check that an action exists and add nonce
+		if ( ! $exclude_nonce ) {
+			if ( isset( $args['action'] ) && ! empty( $args['action'] ) ) {
+				$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' ) ) );
+			} else {
+				$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' ) ) );
+			}
 		}
 
 		//finally, let's always add a return address (if present) :)
-		$args = !empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
+		$args = ! empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
 
 		return add_query_arg( $args, $url );
 

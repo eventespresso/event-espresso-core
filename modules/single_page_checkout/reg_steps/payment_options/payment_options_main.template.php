@@ -7,7 +7,7 @@
 		<table id="spco-payment-info-table">
 			<thead>
 				<tr>
-					<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
+					<th scope="col" width=""><?php _e('Name and Description', 'event_espresso');?></th>
 					<th scope="col" width="15%" class="jst-cntr"><?php _e('Price', 'event_espresso');?></th>
 					<th scope="col" width="5%" class="jst-cntr"><?php _e( 'Qty', 'event_espresso' ); ?></th>
 					<th scope="col" width="15%" class="jst-cntr"><?php _e('Total', 'event_espresso');?></th>

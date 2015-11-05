@@ -652,7 +652,20 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}
 		return  $this->_get_cached_property( $field_name, TRUE, $extra_cache_ref );
 	}
-}
 
+
+
+	/**
+	 * Gets details regarding which registrations this payment was applied to
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Registration_Payment[]
+	 */
+	public function registration_payments( $query_params = array() ) {
+		return $this->get_many_related( 'Registration_Payment', $query_params );
+	}
+
+
+
+}
 /* End of file EE_Payment.class.php */
 /* Location: /includes/classes/EE_Payment.class.php */

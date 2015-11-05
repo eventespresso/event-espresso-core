@@ -36,64 +36,64 @@ final class EE_Config {
 	 * and values are their config classes
 	 * @var StdClass
 	 */
-	public $addons;
+	public $addons = null;
 
 	/**
 	 *
 	 * @var EE_Admin_Config
 	 */
-	public $admin;
+	public $admin = null;
 
 	/**
 	 *
 	 * @var EE_Core_Config
 	 */
-	public $core;
+	public $core = null;
 
 	/**
 	 *
 	 * @var EE_Currency_Config
 	 */
-	public $currency;
+	public $currency = null;
 
 	/**
 	 *
 	 * @var EE_Organization_Config
 	 */
-	public $organization;
+	public $organization = null;
 
 	/**
 	 *
 	 * @var EE_Registration_Config
 	 */
-	public $registration;
+	public $registration = null;
 
 	/**
 	 *
 	 * @var EE_Template_Config
 	 */
-	public $template_settings;
+	public $template_settings = null;
 
 	/**
 	 * Holds EE environment values.
 	 *
 	 * @var EE_Environment_Config
 	 */
-	public $environment;
+	public $environment = null;
 
 	/**
 	 * settings pertaining to Google maps
 	 *
 	 * @var EE_Map_Config
 	 */
-	public $map_settings;
+	public $map_settings = null;
 
 	/**
 	*
 	* @deprecated
 	* @var EE_Gateway_Config
 	*/
-	public $gateway;
+	public $gateway = null;
 
 	/**
 	 *	@var 	array	$_config_option_names
@@ -180,6 +180,8 @@ final class EE_Config {
 		$this->_initialize_config();
 		// load existing EE site settings
 		$this->_load_core_config();
+		// confirm everything loaded correctly and set filtered defaults if not
+		$this->_verify_config();
 		//  register shortcodes and modules
 		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_and_modules' ), 999 );
 		//  initialize shortcodes and modules
@@ -216,16 +218,6 @@ final class EE_Config {
 	 */
 	private function _initialize_config() {
 		//set defaults
-
-		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', new EE_Core_Config() );
-		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', new EE_Organization_Config() );
-		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', new EE_Currency_Config() );
-		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', new EE_Registration_Config() );
-		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', new EE_Admin_Config() );
-		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', new EE_Template_Config() );
-		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', new EE_Map_Config() );
-		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', new EE_Environment_Config() );
-		$this->gateway =  apply_filters( 'FHEE__EE_Config___initialize_config__gateway', new EE_Gateway_Config() );
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -251,12 +243,14 @@ final class EE_Config {
 		foreach ( $espresso_config as $config => $settings ) {
 			// load_core_config__start hook
 			$settings = apply_filters( 'FHEE__EE_Config___load_core_config__config_settings', $settings, $config, $this );
-			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
-			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
+			if ( is_object( $settings ) && property_exists( $this, $config ) ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 				//call configs populate method to ensure any defaults are set for empty values.
 				if ( method_exists( $settings, 'populate' ) ) {
 					$this->$config->populate();
+				}
+				if ( method_exists( $settings, 'do_hooks' ) ) {
+					$this->$config->do_hooks();
 				}
 			}
 		}
@@ -265,6 +259,54 @@ final class EE_Config {
 		}
 		// load_core_config__end hook
 		do_action( 'AHEE__EE_Config___load_core_config__end', $this );
+	}
+
+
+
+	/**
+	 *    _verify_config
+	 *
+	 *  @access    protected
+	 *  @return 	void
+	 */
+	protected function _verify_config() {
+
+		$this->core = $this->core instanceof EE_Core_Config
+			? $this->core  : new EE_Core_Config();
+		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', $this->core );
+
+		$this->organization = $this->organization instanceof EE_Organization_Config
+			? $this->organization  : new EE_Organization_Config();
+		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', $this->organization );
+
+		$this->currency = $this->currency instanceof EE_Currency_Config
+			? $this->currency : new EE_Currency_Config();
+		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', $this->currency );
+
+		$this->registration = $this->registration instanceof EE_Registration_Config
+			? $this->registration : new EE_Registration_Config();
+		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', $this->registration );
+
+		$this->admin = $this->admin instanceof EE_Admin_Config
+			? $this->admin : new EE_Admin_Config();
+		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', $this->admin );
+
+		$this->template_settings = $this->template_settings instanceof EE_Template_Config
+			? $this->template_settings : new EE_Template_Config();
+		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', $this->template_settings );
+
+		$this->map_settings = $this->map_settings instanceof EE_Map_Config
+			? $this->map_settings : new EE_Map_Config();
+		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', $this->map_settings );
+
+		$this->environment = $this->environment instanceof EE_Environment_Config
+			? $this->environment : new EE_Environment_Config();
+		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', $this->environment );
+
+		$this->gateway = $this->gateway instanceof EE_Gateway_Config
+			? $this->gateway : new EE_Gateway_Config();
+		$this->gateway = apply_filters( 'FHEE__EE_Config___initialize_config__gateway', $this->gateway );
+
 	}
 
 
@@ -539,6 +581,7 @@ final class EE_Config {
 
 	/**
 	 *    update_config
+         * Important: the config object must ALREADY be set, otherwise this will produce an error.
 	 *
 	 * @access    public
 	 * @param    string                 $section
@@ -1863,6 +1906,18 @@ class EE_Registration_Config extends EE_Config_Base {
       public $reg_confirmation_last;
 
 	  /**
+	   * Whether or not to enable the EE Bot Trap
+	   * @var boolean $use_bot_trap
+	   */
+      public $use_bot_trap;
+
+	  /**
+	   * Whether or not to encrypt some data sent by the EE Bot Trap
+	   * @var boolean $use_encryption
+	   */
+      public $use_encryption;
+
+	  /**
 	   * Whether or not to use ReCaptcha
 	   * @var boolean $use_captcha
 	   */
@@ -1924,6 +1979,8 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
+		$this->use_bot_trap = true;
+		$this->use_encryption = true;
 		$this->use_captcha = FALSE;
 		$this->recaptcha_theme = 'light';
 		$this->recaptcha_type = 'image';
@@ -1931,10 +1988,16 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
 		$this->recaptcha_width = 500;
-		add_action( 'AHEE__EE_Config___load_core_config__end', array( $this, 'set_default_reg_status_on_EEM_Event' ));
-
 	}
 
+
+	/**
+	 * This is called by the config loader and hooks are initialized AFTER the config has been populated.
+	 * @since 4.8.8.rc.019
+	 */
+	public function do_hooks() {
+		add_action( 'AHEE__EE_Config___load_core_config__end', array( $this, 'set_default_reg_status_on_EEM_Event' ));
+	}
 
 
 	/**

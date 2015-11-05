@@ -165,15 +165,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->increase_sold();
-					$datetime->save();
-				}
-			}
-		}
 		// possibly set event status to sold out
 		$this->event()->perform_sold_out_status_check();
 	}
@@ -231,15 +222,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->decrease_sold();
-					$datetime->save();
-				}
-			}
-		}
 	}
 
 
@@ -836,6 +818,54 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$question_id = EEM_Question::instance()->ensure_is_ID($question);
 		return EEM_Answer::instance()->get_answer_value_to_question($this,$question_id,$pretty_value);
 	}
+
+
+
+	/**
+	 * question_groups
+	 * returns an array of EE_Question_Group objects for this registration
+	 *
+	 * @return EE_Question_Group[]
+	 */
+	public function question_groups() {
+		$question_groups = array();
+		if ( $this->event() instanceof EE_Event ) {
+			$question_groups = $this->event()->question_groups(
+				array(
+					array(
+						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
+					),
+					'order_by' => array( 'QSG_order' => 'ASC' )
+				)
+			);
+		}
+		return $question_groups;
+	}
+
+
+
+	/**
+	 * count_question_groups
+	 * returns a count of the number of EE_Question_Group objects for this registration
+	 *
+	 * @return int
+	 */
+	public function count_question_groups() {
+		$qg_count = 0;
+		if ( $this->event() instanceof EE_Event ) {
+			$qg_count = $this->event()->count_related(
+				'Question_Group',
+				array(
+					array(
+						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
+					)
+				)
+			);
+		}
+		return $qg_count;
+	}
+
+
 
 	/**
 	 * Returns the registration date in the 'standard' string format
