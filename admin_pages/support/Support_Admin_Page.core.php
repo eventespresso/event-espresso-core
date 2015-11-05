@@ -210,6 +210,32 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($template_path, array(), true );
 		$this->display_admin_page_with_sidebar();
 	}
+	
+	/**
+	 * Invokes the report-generating code
+	 */
+	protected function _generate_csv_report() {
+		//creates a job based on the request variable
+		$request_data = array_diff_key( 
+				$this->_req_data, 
+				array_flip( array( 'action',  'page' ) ) );
+		$report_job_id = EE_Export::instance()->create_job( $request_data);
+		//enqueues the javascript (which maybe shows job progress, and when done converts
+		//the temp file into a properly named file and sends it to the user, and deletes it?)
+		//with all the variables it needs to run the job
+		//and shows the page
+	}
+	
+	/**
+	 * Receives ajax calls for generating a report
+	 */
+	protected function _generate_csv_report_ajax() { 
+		$job_id = sanitize_text_field( $this->_req_data[ 'report_job_id' ] );
+		
+		//sorta just a heartbeat
+		//might only need the job id
+		//returns an array describing the job's progress
+	}
 
 
 

@@ -1584,6 +1584,7 @@ class EEH_Activation {
 			'ee_rss_' => false,
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
+			'ee_report_job_' => false,
 		);
 		if( is_main_site() ) {
 			$wp_options_to_delete[ 'ee_network_config' ] = true;
