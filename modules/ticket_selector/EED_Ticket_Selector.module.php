@@ -83,10 +83,10 @@ class EED_Ticket_Selector extends  EED_Module {
 		EE_Config::register_route( 'iframe', 'EED_Ticket_Selector', 'ticket_selector_iframe', 'ticket_selector' );
 		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
-		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
+		//add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
-		add_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 10, 1 );
-		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
+		//add_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 10, 1 );
+		//add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
 
@@ -240,12 +240,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			global $post;
 			$event = $post;
 		}
-		//		d( $event );
 		if ( $event instanceof EE_Event ) {
 			self::$_event = $event;
 		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
 			self::$_event = $event->EE_Event;
-		} else if ( $event instanceof WP_Post && ( ! isset( $event->EE_Event ) || ! $event->EE_Event instanceof EE_Event ) ) {
+		} else if ( $event instanceof WP_Post && $event->post_type == 'espresso_events' ) {
 			$event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object( $event );
 			self::$_event = $event->EE_Event;
 		} else {
@@ -401,7 +400,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( ! $checkout_url ) {
 			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		EED_Ticket_Selector::set_event();
 		$extra_params = self::$_in_iframe ? ' target="_blank"' : '';
 		$html = '<form method="POST" action="' . $checkout_url . '"' . $extra_params . '>';
 		$html .= wp_nonce_field( 	'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
@@ -460,7 +458,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	 * 	display_ticket_selector_submit
+	 *    display_view_details_btn
 	 *
 	 *	@access public
 	 * 	@access 		public
