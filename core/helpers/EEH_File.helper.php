@@ -66,13 +66,13 @@ class EEH_File extends EEH_Base {
 					require_once( ABSPATH . 'wp-admin/includes/file.php' );
 					require_once( ABSPATH . 'wp-admin/includes/template.php' );
 				}
+				// turn on output buffering so that we can capture the credentials form
+				ob_start();
+				$credentials = request_filesystem_credentials( '' );
+				// store credentials form for the time being
+				EEH_File::$_credentials_form = ob_get_clean();
 				// basically check for direct or previously configured access
-				if ( ! WP_Filesystem() ) {
-					// turn on output buffering so that we can capture the credentials form
-					ob_start();
-					$credentials = request_filesystem_credentials( '' );
-					// store credentials form for the time being
-					EEH_File::$_credentials_form = ob_get_clean();
+				if ( ! WP_Filesystem( $credentials ) ) {
 					// if credentials do NOT exist
 					if ( $credentials === FALSE ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );

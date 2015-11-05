@@ -1028,6 +1028,10 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function perform_activations_upgrades_and_migrations() {
+		//first check if we had previously attempted to setup EE's directories but failed
+		if( EEH_Activation::upload_directories_incomplete() ) {
+			EEH_Activation::create_upload_directories();
+		}
 		do_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' );
 	}
 
@@ -1104,7 +1108,6 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
-//		EE_Cron_Tasks::check_for_abandoned_transactions( 802 );
 	}
 
 
