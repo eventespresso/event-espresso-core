@@ -50,7 +50,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 				'DTT_description' => new EE_Full_HTML_Field('DTT_description', __('Description for Datetime', 'event_espresso'), false, ''),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, time(), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, time(), $timezone ),
-				'DTT_reg_limit'=>new EE_Infinite_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, INF),
+				'DTT_reg_limit'=>new EE_Infinite_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, EE_INF),
 				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0 ),
 				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
 				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
@@ -86,7 +86,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 				'DTT_EVT_start' => $this->current_time_for_query( 'DTT_EVT_start', true ) + (60 * 60 * 24 * 30),
 				'DTT_EVT_end' => $this->current_time_for_query( 'DTT_EVT_end', true ) + (60 * 60 * 24 * 30),
 				'DTT_order' => 1,
-				'DTT_reg_limit' => INF
+				'DTT_reg_limit' => EE_INF
 			),
 			$this->_timezone
 		);
@@ -427,7 +427,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 *
 	 * @param int   $DTT_ID
 	 * @param array $query_params
-	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns EE_INF,  IF there are NO tickets attached to datetime then FALSE is returned.
 	 */
 	public function sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params = array() ) {
 		$datetime = $this->get_one_by_ID( $DTT_ID );
