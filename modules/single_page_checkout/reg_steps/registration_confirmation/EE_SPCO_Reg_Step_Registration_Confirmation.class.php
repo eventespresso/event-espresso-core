@@ -44,6 +44,7 @@ class EE_SPCO_Reg_Step_Registration_Confirmation extends EE_SPCO_Reg_Step {
 	 */
 	public function initialize_reg_step() {
 		$this->checkout->remove_reg_step( $this->_slug );
+		return false;
 	}
 
 
