@@ -179,9 +179,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		//		d( $datetimes );
 		// if datetime reg limit is not unlimited
 		if ( ! empty( $datetimes ) ) {
-			// although TKT_qty and $datetime->spaces_remaining() could both be INF
-			// we only need to check for INF explicitly if we want to optimize.
-			// because INF - x = INF; and min(x,INF) = x;
+			// although TKT_qty and $datetime->spaces_remaining() could both be EE_INF
+			// we only need to check for EE_INF explicitly if we want to optimize.
+			// because EE_INF - x = EE_INF; and min(x,EE_INF) = x;
 			$tickets_remaining = $this->qty() - $this->sold();
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
@@ -779,8 +779,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		// first we need to calculate the maximum number of tickets available for the datetime
 		// without really factoring this ticket into the calculations
 		// initialize with no restrictions
-		// ( but because of an obscure PHP bug on Solaris servers where INF = 0, confirm that INF > PHP_INT_MAX )
-		$qty = INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX;
+		$qty = EE_INF;
 		//echo '$qty: ' . $qty . "<br />";
 		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
