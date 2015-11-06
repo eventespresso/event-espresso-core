@@ -770,24 +770,32 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return int
 	 */
 	function real_quantity_on_ticket( $context = 'reg_limit' ) {
+		// start with the original db value for ticket quantity
 		$raw = $this->get_raw( 'TKT_qty' );
+		// return immediately if it's zero
 		if ( $raw === 0 ) {
 			return $raw;
 		}
 		// first we need to calculate the maximum number of tickets available for the datetime
 		// without really factoring this ticket into the calculations
 		// initialize with no restrictions
-		$qty = INF;
+		// ( but because of an obscure PHP bug on Solaris servers where INF = 0, confirm that INF > PHP_INT_MAX )
+		$qty = INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX;
+		//echo '$qty: ' . $qty . "<br />";
 		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
+				//echo '&nbsp; $datetime->name(): ' . $datetime->name() . "<br />";
 				// adjust qty based on reg limit for ALL datetimes
 				$qty = min( $qty, $datetime->reg_limit() );
+				//echo '&nbsp;&nbsp; $qty: ' . $qty . "<br />";
 				// if we want the actual saleable amount, then we need to consider OTHER ticket sales
 				// for this datetime, that do NOT include sales for this ticket
 				if ( $context == 'saleable' ) {
 					$qty = max( $qty - ( $datetime->sold() - $this->sold() ), 0 );
+					//echo '&nbsp;&nbsp; $qty: ' . $qty . "<br />";
 					$qty = ! $datetime->sold_out() ? $qty : 0;
+					//echo '&nbsp;&nbsp; $qty: ' . $qty . "<br />";
 				}
 			}
 		}
@@ -796,9 +804,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( $qty > 0 && $context == 'saleable' ) {
 			// ensure qty doesn't exceed raw value for THIS ticket
 			$qty = min( $qty, $raw );
+			//echo '&nbsp; $qty: ' . $qty . "<br />";
 			// and subtract the sales for THIS ticket
 			$qty = max( $qty - $this->sold(), 0 );
+			//echo '&nbsp; $qty: ' . $qty . "<br />";
 		}
+		//echo '$qty: ' . $qty . "<br />";
 		return $qty;
 	}
 
