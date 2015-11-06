@@ -9,7 +9,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *      - D2 - reg limit 20, DTT_sold = 3
  *      - D3 - reg limit 3, DTT_sold = 3
  * - Four Tickets
- *      - TA - qty INF (D1, D2, D3), TKT_sold = 3
+ *      - TA - qty EE_INF (D1, D2, D3), TKT_sold = 3
  *      - TB - qty 15 (D1,D2), TKT_sold = 0
  *      - TC - qty 20 (D1), TKT_sold = 2
  *
@@ -68,7 +68,7 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 				'A' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket A',
-						'TKT_qty' => INF,
+						'TKT_qty' => EE_INF,
 						'TKT_sold' => 3,
 					),
 					'relations' => array(
