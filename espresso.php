@@ -139,7 +139,8 @@ define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) || isset( $_REQUEST['
 //just a handy constant occasionally needed for finding values representing infinity in the DB
 //you're better to use this than its straight value (currently -1) in case you ever
 //want to change its default value! or find when -1 means infinity
-define('EE_INF_IN_DB', -1);
+define( 'EE_INF_IN_DB', -1 );
+define( 'EE_INF', INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX );
 
 
 
