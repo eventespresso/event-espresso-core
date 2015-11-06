@@ -678,7 +678,11 @@ class EE_Registry {
 		try {
 			// create reflection
 			$reflector = new ReflectionClass( $class_name );
+			// make sure arguments are an array
 			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
+			// and if arguments array is NOT numerically indexed, then we want it to stay as an array,
+			// so wrap it in an additional array so that it doesn't get split into multiple parameters
+			$arguments = isset( $arguments[ 0 ] ) ? $arguments : array( $arguments );
 			// attempt to inject dependencies ?
 			if ( $resolve_dependencies && ! $from_db && ! $load_only && ! $reflector->isSubclassOf( 'EE_Base_Class' ) ) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
@@ -700,9 +704,6 @@ class EE_Registry {
 				$class_obj = call_user_func_array( array( $class_name, 'instance' ), $arguments );
 			} else if ( $reflector->isInstantiable() ) {
 				//$instantiation_mode = "isInstantiable";
-				// if arguments array is NOT numerically indexed, then we want it to stay as an array,
-				// so wrap it in an additional array so that it doesn't get split into multiple parameters
-				$arguments = isset( $arguments[0] ) ? $arguments : array( $arguments );
 				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else if ( ! $load_only ) {
 				// heh ? something's not right !
