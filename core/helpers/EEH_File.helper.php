@@ -77,7 +77,7 @@ class EEH_File extends EEH_Base {
 					if ( $credentials === FALSE ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
 						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
-					} elseif( is_wp_error( $wp_filesystem->errors ) ) {
+					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {						
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
 						throw new EE_Error( 
 								sprintf( 
