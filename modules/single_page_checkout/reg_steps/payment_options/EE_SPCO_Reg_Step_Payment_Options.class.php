@@ -197,32 +197,33 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		foreach ( $registrations as $registration ) {
 			/** @var $registration EE_Registration */
 			$reg_count++;
-			// if returning registrant is Approved then do NOT do this
-			if ( $registration->status_ID() !== EEM_Registration::status_id_approved ) {
-				// and only do this if NOT a revisit
-				if ( ! $this->checkout->revisit ) {
-					if ( $registration->event()->is_sold_out() ) {
-						// add event to list of events that are sold out
-						$sold_out_events[ $registration->event()->ID() ] = $registration->event();
-						do_action(
-							'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__sold_out_event',
-							$registration->event(),
-							$this
-						);
-						continue;
-					}
-					// event requires admin approval
-					if ( $registration->status_ID() === EEM_Registration::status_id_not_approved ) {
-						// add event to list of events with pre-approval reg status
-						$registrations_requiring_pre_approval[ $registration->ID() ] = $registration;
-						do_action(
-							'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_pre_approval',
-							$registration->event(),
-							$this
-						);
-						continue;
-					}
-				}
+			// registrant is NOT Approved
+			if ( $registration->status_ID() === EEM_Registration::status_id_not_approved ) {
+				// add event to list of events with pre-approval reg status
+				$registrations_requiring_pre_approval[ $registration->ID() ] = $registration;
+				do_action(
+					'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_pre_approval',
+					$registration->event(),
+					$this
+				);
+				continue;
+			}
+			if (
+				// returning registrant
+				$this->checkout->revisit
+				// anything other than Approved
+				&& $registration->status_ID() !== EEM_Registration::status_id_approved
+				// event hasn't sold out since initial visit
+				&& $registration->event()->is_sold_out()
+			) {
+				// add event to list of events that are sold out
+				$sold_out_events[ $registration->event()->ID() ] = $registration->event();
+				do_action(
+					'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__sold_out_event',
+					$registration->event(),
+					$this
+				);
+				continue;
 			}
 			// are they allowed to pay now and is there monies owing?
 			if ( $registration->owes_monies_and_can_pay() ) {
@@ -871,7 +872,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function switch_payment_method() {
 		if ( ! $this->_verify_payment_method_is_set() ) {
-			return FALSE;
+			return false;
 		}
 		if ( apply_filters( 'FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success', false ) ) {
 			EE_Error::add_success(
@@ -918,6 +919,42 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( empty( $this->checkout->selected_method_of_payment )) {
 			// how have they chosen to pay?
 			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
+		} else {
+			// choose your own adventure based on method_of_payment
+			switch ( $this->checkout->selected_method_of_payment ) {
+				case 'events_sold_out' :
+					EE_Error::add_attention(
+						apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
+							__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
+								'event_espresso' )
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					return false;
+					break;
+				case 'payments_closed' :
+					EE_Error::add_attention(
+						apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__payments_closed_msg',
+							__( 'It appears that the event you were about to make a payment for is not accepting payments at this time. Please contact the event administrator if you believe this is an error.', 'event_espresso' )
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					return false;
+					break;
+				case 'no_payment_required' :
+					EE_Error::add_attention(
+						apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__no_payment_required_msg',
+							__( 'It appears that the event you were about to make a payment for does not require payment. Please contact the event administrator if you believe this is an error.', 'event_espresso' )
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					return false;
+					break;
+				default:
+			}
 		}
 		// verify payment method
 		if ( ! $this->checkout->payment_method instanceof EE_Payment_Method ) {
