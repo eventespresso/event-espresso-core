@@ -766,7 +766,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
             );
         }
 		// now generate billing form for selected method of payment
-		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method, FALSE );
+		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
 		// fill form with attendee info if applicable
 		if ( $payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form && $this->checkout->transaction_has_primary_registrant() ) {
 			$payment_method_billing_form->populate_from_attendee( $this->checkout->transaction->primary_registration()->attendee() );
@@ -925,8 +925,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				case 'events_sold_out' :
 					EE_Error::add_attention(
 						apply_filters(
-							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
-							__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___verify_payment_method_is_set__sold_out_events_msg',
+							__( 'It appears that the event you were about to make a payment for has sold out since this form first loaded. Please contact the event administrator if you believe this is an error.',
 								'event_espresso' )
 						),
 						__FILE__, __FUNCTION__, __LINE__
