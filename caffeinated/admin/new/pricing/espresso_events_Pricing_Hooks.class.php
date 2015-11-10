@@ -211,7 +211,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_description' => !empty( $dtt['DTT_description'] ) ? $dtt['DTT_description'] : '',
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
+				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : trim( $dtt['DTT_reg_limit'] ),
 				'DTT_order' => !isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
 				);
 
@@ -362,10 +362,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => $tkt['TKT_start_date'],
 				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
-				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
+				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : trim( $tkt['TKT_qty'] ),
+				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : trim( $tkt['TKT_uses'] ),
+				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : trim( $tkt['TKT_min'] ),
+				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : trim( $tkt['TKT_max'] ),
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
 				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
