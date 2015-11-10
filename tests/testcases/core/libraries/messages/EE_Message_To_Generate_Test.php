@@ -22,7 +22,7 @@ class EE_Message_To_Generate_Test extends EE_UnitTestCase {
 	 * @return EE_Message_To_Generate
 	 */
 	function test_construct() {
-		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		$ee_msg = EE_Registry::instance()->load_lib( 'Messages' );
 		$mtg = new EE_Message_To_Generate(
 			'email',
 			'registration',
@@ -34,7 +34,7 @@ class EE_Message_To_Generate_Test extends EE_UnitTestCase {
 
 		//verify public properties setup properly
 		$this->assertInstanceOf( 'EE_Registration_message_type', $mtg->message_type );
-		$this->assertInstanceOf( 'EE_Email_messenger', $mtg->messenger );
+		$this->assertInstanceOf( 'EE_Email_Messenger', $mtg->messenger );
 		$this->assertEquals( array(), $mtg->data );
 		$this->assertEquals( 'admin', $mtg->context );
 		$this->assertTrue( $mtg->preview );
