@@ -1,6 +1,6 @@
 <?php
 /**
- * Contains test class for /core/libraries/messages/EE_messages.lib.php
+ * Contains test class for /core/libraries/messages/EE_Messages.lib.php
  *
  * @since  		4.5.0
  * @package 		Event Espresso
@@ -8,7 +8,7 @@
  */
 
 /**
- * All tests for the EE_messages class.
+ * All tests for the EE_Messages class.
  *
  * @since 		4.5.0
  * @package 		Event Espresso
@@ -26,8 +26,8 @@ class EE_messages_Test extends EE_UnitTestCase {
 	public function test_ensure_messenger_is_active() {
 		EE_Registry::instance()->load_lib('messages');
 		EE_Registry::instance()->load_helper('Activation');
-		$msg = new EE_messages();
-		$this->assertInstanceOf( 'EE_messages', $msg );
+		$msg = new EE_Messages();
+		$this->assertInstanceOf( 'EE_Messages', $msg );
 
 		//make sure html messenger is setup (should be by default)
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
@@ -55,7 +55,7 @@ class EE_messages_Test extends EE_UnitTestCase {
 	 * @since 4.9.0
 	 */
 	function test_get_all_contexts() {
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		$eemsg = EE_Registry::instance()->load_lib( 'Messages' );
 		$contexts = $eemsg->get_all_contexts();
 
 		//expected four contexts.
