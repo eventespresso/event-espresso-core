@@ -18,7 +18,8 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
 	/**
 	 * This messenger is used to send the generated message.
-	 * @type EE_messenger
+	 *
+*@type EE_Messenger
 	 */
 	protected $_sending_messenger = '';
 
@@ -33,10 +34,11 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	/**
 	 * Constructor
 	 * This instantiates the object using arguments from the given request and calling the parent constructor.
-	 * @param   EE_messages $ee_msg
+	 *
+*@param   EE_Messages              $ee_msg
 	 * @param   EE_Request_Handler $request
 	 */
-	public function __construct( EE_messages $ee_msg, EE_Request_Handler $request ) {
+	public function __construct( EE_Messages $ee_msg, EE_Request_Handler $request ) {
 		parent::__construct( $request->get( 'gen_msgr' ), $request->get( 'message_type' ), array(), $ee_msg, $request->get( 'context' ) );
 		if ( ! $this->valid() ) {
 			return;
@@ -51,7 +53,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
 
 	/**
-	 * @return EE_messenger
+	 * @return EE_Messenger
 	 */
 	public function sending_messenger() {
 		return $this->_sending_messenger;
@@ -64,8 +66,8 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	 * @throws EE_Error
 	 */
 	protected function _validate_request() {
-		if ( ! $this->_sending_messenger instanceof EE_messenger
-		     || ! $this->messenger instanceof EE_messenger
+		if ( ! $this->_sending_messenger instanceof EE_Messenger
+		     || ! $this->messenger instanceof EE_Messenger
 		     || ! $this->message_type instanceof EE_message_type
 		     || empty( $this->context )
 			 || empty( $this->token ) ) {
