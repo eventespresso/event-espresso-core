@@ -342,7 +342,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * This is a public wrapper for the protected _do_messenger_hooks() method.
 	 * For backward compat reasons, this was done rather than making the protected method public.
-	 * @param   EE_messenger $messenger  This is used to set the $_active_messenger property, so message types are able to know
+	 * @param   EE_Messenger $messenger This is used to set the $_active_messenger property, so message types are able to know
 	 *                          what messenger is being used to send the message at the time of sending.
 	 * @since 4.9.0
 	 */
