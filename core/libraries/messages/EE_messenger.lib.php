@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_messenger class
+ * EE_Messenger class
  *
  * Abstract class for setting up messengers.
  * Different messengers (i.e. email, sms) can be setup by extending this class and adding them to the /includes/core/messages/messengers' directory. View examples there.
@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_messenger extends EE_Messages_Base {
+abstract class EE_Messenger extends EE_Messages_Base {
 
 
 
@@ -813,7 +813,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/**
-	 * This is a method called from EE_messages when this messenger is a generating messenger and the sending messenger is a different messenger.  Child messengers can set hooks for the sending messenger to callback on if necessary (i.e. swap out css files or something else).
+	 * This is a method called from EE_Messages when this messenger is a generating messenger and the sending messenger is a different messenger.  Child messengers can set hooks for the sending messenger to callback on if necessary (i.e. swap out css files or something else).
 	 *
 	 * @since 4.5.0
 	 *
@@ -827,4 +827,4 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 }
-// end EE_messenger class
+// end EE_Messenger class
