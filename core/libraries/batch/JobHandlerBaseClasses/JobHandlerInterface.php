@@ -1,6 +1,6 @@
 <?php 
-namespace EventEspressoBatch\JobHandlerBaseClasses;
-use EventEspressoBatch\Helpers\JobHandlerException;
+namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+use EventEspressoBatchRequest\Helpers\JobHandlerException;
 
 /* 
  * Interface describing classes that BatchRunner can send jobs to for processing.

@@ -1,6 +1,6 @@
 <?php 
-namespace EventEspressoBatch\JobHandlerBaseClasses;
-use EventEspressoBatch\Helpers\JobHandlerException;
+namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+use EventEspressoBatchRequest\Helpers\JobHandlerException;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates

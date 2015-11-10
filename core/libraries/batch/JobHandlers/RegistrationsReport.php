@@ -1,5 +1,5 @@
-<?php namespace EventEspressoBatch\JobHandlers;
-use EventEspressoBatch\JobHandlerBaseClasses\JobHandlerFile;
+<?php namespace EventEspressoBatchRequest\JobHandlers;
+use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 /* 
  * Generates the registrations report for the specified event,
  * or for all events
