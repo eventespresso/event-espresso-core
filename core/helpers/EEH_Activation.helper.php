@@ -1209,7 +1209,7 @@ class EEH_Activation {
 
 		//let's setup the $installed messengers in an array AND the messengers that are set to be activated on install.
 		foreach ( $installed['messengers'] as $msgr ) {
-			if ( $msgr instanceof EE_messenger ) {
+			if ( $msgr instanceof EE_Messenger ) {
 				$installed_messengers[$msgr->name] = $msgr;
 				if ( $msgr->activate_on_install ) {
 					$default_messengers[] = $msgr->name;
@@ -1244,7 +1244,7 @@ class EEH_Activation {
 				if ( ! isset( $installed_messengers[$messenger] )) {
 					continue;
 				}
-				/** @var EE_messenger[] $installed_messengers  */
+				/** @var EE_Messenger[] $installed_messengers  */
 				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
 				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
 				foreach ( $default_mts as $index => $mt ) {
@@ -1293,7 +1293,7 @@ class EEH_Activation {
 		//still need to see if there are any message types to activate for active messengers
 		foreach ( $active_messengers as $messenger => $settings ) {
 			$msg_obj = $settings['obj'];
-			if ( ! $msg_obj instanceof EE_messenger ) {
+			if ( ! $msg_obj instanceof EE_Messenger ) {
 				continue;
 			}
 
@@ -1367,7 +1367,7 @@ class EEH_Activation {
 		$installed_messengers = $installed_mts = array();
 		//set up the arrays so they can be handled easier.
 		foreach( $installed['messengers'] as $im ) {
-			if ( $im instanceof EE_messenger ) {
+			if ( $im instanceof EE_Messenger ) {
 				$installed_messengers[$im->name] = $im;
 			}
 		}
