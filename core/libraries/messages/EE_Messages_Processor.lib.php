@@ -2,7 +2,7 @@
 
 /**
  * This class contains all business logic related to generating, queuing, and scheduling of
- * messages in the EE_messages system.
+ * messages in the EE_Messages system.
  *
  * @package    Event Espresso
  * @subpackage messages
@@ -14,7 +14,8 @@ class EE_Messages_Processor {
 
 	/**
 	 * This is set on instantiation.  Is an instance of the EE_messages object.
-	 * @type EE_messages
+	 *
+	 * @type EE_Messages
 	 */
 	protected $_EEMSG;
 
@@ -38,9 +39,10 @@ class EE_Messages_Processor {
 
 	/**
 	 * constructor
-	 * @param EE_messages $ee_messages
+	 *
+	 * @param EE_Messages $ee_messages
 	 */
-	public function __construct( EE_messages $ee_messages ) {
+	public function __construct( EE_Messages $ee_messages ) {
 		$this->_init_queue_and_generator( $ee_messages );
 
 	}
@@ -51,13 +53,13 @@ class EE_Messages_Processor {
 	/**
 	 * This method sets (or resets) the various properties for use.
 	 *
-	 * - $_EEMSG = holds the EE_messages object
+	 * - $_EEMSG = holds the EE_Messages object
 	 * - $_queue = holds the messages queue
 	 * - $_generator = holds the messages generator
 	 *
-	 * @param EE_messages $ee_messages
+	 * @param EE_Messages $ee_messages
 	 */
-	protected function _init_queue_and_generator( EE_messages $ee_messages ) {
+	protected function _init_queue_and_generator( EE_Messages $ee_messages ) {
 		$this->_EEMSG = $ee_messages;
 		$this->_queue = new EE_Messages_Queue( $ee_messages );
 		$this->_generator = new EE_Messages_Generator( $this->_queue, $ee_messages );
