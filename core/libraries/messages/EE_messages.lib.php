@@ -17,9 +17,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_messages class
+ * EE_Messages class
  *
- * This class is the main controller class for EE_messages, it delegates messages to the messengers and contains other methods for obtaining various details about the active messengers and message types.
+ * This class is the main controller class for EE_Messages, it delegates messages to the messengers and contains other methods for obtaining various details about the active messengers and message types.
  *
  * @package			Event Espresso
  * @subpackage	includes/core/messages
@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EE_messages {
+class EE_Messages {
 
 
 	/**
@@ -36,7 +36,8 @@ class EE_messages {
 	 * array(
 	 *      'messenger_name' => EE_messenger
 	 * )
-	 * @type EE_messenger[]
+	 *
+*@type EE_Messenger[]
 	 */
 	protected $_active_messengers = array();
 
@@ -74,7 +75,8 @@ class EE_messages {
 
 	/**
 	 * When setting up values this is a temporary holder of the current EE_messenger object.
-	 * @type EE_messenger
+	 *
+*@type EE_Messenger
 	 */
 	protected $_messenger;
 
@@ -90,9 +92,9 @@ class EE_messages {
 
 
 	/**
-	 * @type EE_messenger[]
+	 * @type EE_Messenger_Collection
 	 */
-	protected $_installed_messengers = array();
+	protected $_messenger_collection;
 
 
 
@@ -129,8 +131,14 @@ class EE_messages {
 	 * @var object
 	 */
 	private $_EEM_data;
-	// main controller
-	function __construct() {
+
+
+
+	/**
+	 * EE_Messages constructor.
+	 */
+	function __construct( EE_Messenger_Collection $messengers ) {
+		$this->set_messenger_collection( $messengers );
 		//load helper
 		EE_Registry::instance()->load_helper('MSG_Template');
 
@@ -141,6 +149,29 @@ class EE_messages {
 		//load debug tools
 		EE_Registry::instance()->load_helper('Debug_Tools');
 	}
+
+
+
+	/**
+	 * @return EE_Messenger_Collection
+	 */
+	public function get_messenger_collection() {
+		return $this->_messenger_collection;
+	}
+
+
+
+	/**
+	 * @param mixed $messengers
+	 */
+	public function set_messenger_collection( EE_Messenger_Collection $messengers ) {
+		$this->_messenger_collection = $messengers;
+	}
+
+
+
+
+
 
 	/**
 	 * get active messengers from db and instantiate them.
@@ -196,7 +227,7 @@ class EE_messages {
 	 */
 	public function ensure_message_type_is_active( $message_type, $messenger ) {
 		//first validate that the incoming messenger allows this message type to be activated.
-		$messengers = $this->get_installed_messengers();
+		$messengers = $this->get_messenger_collection();
 		if ( ! isset( $messengers[$messenger] ) ) {
 			throw new EE_Error( sprintf( __('The messenger sent to %s is not installed', 'event_espresso'), __METHOD__ ) );
 		}
@@ -229,7 +260,7 @@ class EE_messages {
 	public function activate_messenger( $messenger_name, $mts_to_activate = array() ){
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$message_types = $this->get_installed_message_types();
-		$installed_messengers = $this->get_installed_messengers();
+		$installed_messengers = $this->get_messenger_collection();
 		$templates = false;
 		$settings = array();
 		//get has_active so we can be sure its kept up to date.
@@ -240,10 +271,10 @@ class EE_messages {
 
 		//it's inactive. Activate it.
 
-		if( $messenger instanceof EE_messenger ) {
+		if( $messenger instanceof EE_Messenger ) {
 			$active_messengers[ $messenger->name ][ 'obj' ] = $messenger;
 
-			/** @var EE_messenger[] $installed_messengers  */
+			/** @var EE_Messenger[] $installed_messengers  */
 			$mts_to_activate = ! empty( $mts_to_activate ) ? $mts_to_activate :  $messenger->get_default_message_types();
 			foreach ( $mts_to_activate as $message_type ) {
 				//we need to setup any initial settings for message types
@@ -375,12 +406,12 @@ class EE_messages {
 	/**
 	 * Used to verify if a message can be sent for the given messenger and message type and that it is a generating messenger (used for generating message templates).
 	 *
-	 * @param EE_messenger $messenger    messenger used in trigger
+	 * @param EE_Messenger    $messenger    messenger used in trigger
 	 * @param EE_message_type $message_type message type used in trigger
 	 *
 	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
 	 */
-	public function is_generating_messenger_and_active( EE_messenger $messenger, EE_message_type $message_type ) {
+	public function is_generating_messenger_and_active( EE_Messenger $messenger, EE_message_type $message_type ) {
 		//get the $messengers the message type says it can be used with.
 		$used_with = $message_type->with_messengers();
 
@@ -395,10 +426,10 @@ class EE_messages {
 
 
 	/**
-	 * This returns the corresponding EE_messenger object for the given string if it is active.
+	 * This returns the corresponding EE_Messenger object for the given string if it is active.
 	 *
 	 * @param string    $messenger
-	 * @return EE_messenger | null
+	 * @return EE_Messenger | null
 	 */
 	public function get_messenger_if_active( $messenger ) {
 		return ! empty( $this->_active_messengers[$messenger] ) ? $this->_active_messengers[$messenger] : null;
@@ -615,7 +646,7 @@ class EE_messages {
 
 	/**
 	 * _validate_setup
-	 * @param  string $messenger    EE_messenger
+	 * @param  string $messenger    EE_Messenger
 	 * @param  string $message_type EE_message_type
 	 * @param bool $is_global whether this is a global template or not.
 	 * @throws EE_Error
@@ -780,7 +811,7 @@ class EE_messages {
 	/**
 	 * get_fields
 	 * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
-	 * @param  string $messenger    EE_messenger
+	 * @param  string $messenger    EE_Messenger
 	 * @param  string $message_type EE_message_type
 	 * @return array|WP_Error  template fields indexed by context.
 	 */
@@ -809,9 +840,11 @@ class EE_messages {
 	 * gets an array of installed messengers and message types objects.
 	 *
 	 * @access public
-	 * @param string $type we can indicate just returning installed message types or messengers (or both) via this parameter.
-	 * @param bool  $set if true then we skip the cache and retrieve via files.
-	 * @return array multidimensional array of messenger and message_type objects (messengers index, and message_type index);
+	 * @param string $type 				we can indicate just returning installed message types
+	 *                     				or messengers (or both) via this parameter.
+	 * @param bool 		$skip_cache 	if true then we skip the cache and retrieve via files.
+	 * @return array                    multidimensional array of messenger and message_type objects
+	 *                                    (messengers index, and message_type index);
 	 */
 	public function get_installed( $type = 'all', $skip_cache = false ) {
 		$installed = array();
@@ -831,7 +864,7 @@ class EE_messages {
 			$installed['messengers'] = !empty($messenger_files ) ? $this->_get_installed($messenger_files) : '';
 			$installed['message_types'] = !empty($messagetype_files) ? $this->_get_installed($messagetype_files) : '';
 		} else {
-			$installed['messengers'] = $this->get_installed_messengers();
+			$installed['messengers'] = $this->get_messenger_collection();
 			$installed['message_types'] = $this->get_installed_message_types();
 		}
 
@@ -964,12 +997,6 @@ class EE_messages {
 	}
 
 
-	public function get_installed_messengers() {
-		$this->_installed_messengers = empty( $this->_installed_messengers ) ? $this->get_installed( 'messengers', true ) : $this->_installed_messengers;
-		return $this->_installed_messengers;
-	}
-
-
 
 
 	/**
@@ -1046,7 +1073,23 @@ class EE_messages {
 
 		return $class_name;
 	}
-}
-//end EE_messages class
 
-// end of file:	includes/core/messages/EE_messages.core.php
+
+
+	/**
+	 * @deprecated
+	 * @return array
+	 */
+	public function get_installed_messengers() {
+		//return $this->get_messenger_collection();
+		$this->_installed_messengers = empty( $this->_installed_messengers )
+			? $this->get_installed( 'messengers', true )
+			: $this->_installed_messengers;
+		return $this->_installed_messengers;
+	}
+
+
+
+}
+//end EE_Messages class
+// end of file:	includes/core/messages/EE_Messages.core.php
