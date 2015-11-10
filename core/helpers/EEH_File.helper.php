@@ -13,6 +13,7 @@
  *
  */
 require_once( EE_HELPERS . 'EEH_Base.helper.php' );
+require_once( EE_CORE . 'EEI_Interfaces.php' );
 /**
  *
  * Class EEH_File
@@ -25,7 +26,7 @@ require_once( EE_HELPERS . 'EEH_Base.helper.php' );
  * @since 				$VID:$
  *
  */
-class EEH_File extends EEH_Base {
+class EEH_File extends EEH_Base implements EEHI_File {
 
 	/**
 	 * @var string $_credentials_form

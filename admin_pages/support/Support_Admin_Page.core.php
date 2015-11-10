@@ -74,6 +74,10 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'func' => '_developers',
 				'capability' => 'ee_read_ee'
 				),
+			'batch' => array( 
+				'func' => '_generate_csv_report',
+				'capability' => 'ee_read_registrations',
+			)
 			);
 	}
 
@@ -102,6 +106,9 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				),
+			'batch' => array(
+				'require_nonce' => false
+			)
 			);
 	}
 
@@ -219,7 +226,8 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
-		$report_job_id = EE_Export::instance()->create_job( $request_data);
+		$batch_runner = new EventEspresso\Core\Libraries\Batch\BatchRunner();
+		$job_id = $batch_runner->create_job( 'EventEspresso\Core\Libraries\Batch\JobHandlers\RegistrationsReport', $_REQUEST );
 		//enqueues the javascript (which maybe shows job progress, and when done converts
 		//the temp file into a properly named file and sends it to the user, and deletes it?)
 		//with all the variables it needs to run the job
