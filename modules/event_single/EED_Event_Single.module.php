@@ -151,10 +151,6 @@ class EED_Event_Single  extends EED_Module {
 		// load css
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		EE_Registry::instance()->load_helper( 'Venue_View' );
-
-
-
-
 	}
 
 
@@ -174,7 +170,10 @@ class EED_Event_Single  extends EED_Module {
 			add_filter( 'the_title', array( 'EED_Event_Single', 'the_title' ), 100, 2 );
 		}
 		// not a custom template?
-		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' && ! post_password_required( $post ) ) {
+		if (
+			EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php'
+			&& ! post_password_required( $post )
+		) {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
@@ -246,11 +245,6 @@ class EED_Event_Single  extends EED_Module {
 	 * @return string
 	 */
 	protected static function use_filterable_display_order( $content ) {
-		static $applied = false;
-		if ( $applied ) {
-			return $content;
-		}
-		$applied = true;
 		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 		// it uses the_content() for displaying the $post->post_content
 		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
