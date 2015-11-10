@@ -11,7 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 /**
  *
- * EE_Html_messenger class
+ * EE_Html_Messenger class
  *
  * @since 4.3.0
  *
@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @subpackage		messages
  * @author			Darren Ethier
  */
-class EE_Html_messenger extends EE_messenger  {
+class EE_Html_Messenger extends EE_Messenger  {
 
 
 	/**
@@ -87,7 +87,7 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
-	 * @see abstract declaration in EE_messenger for details.
+	 * @see abstract declaration in EE_Messenger for details.
 	 */
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array( 'events_edit' => true );
@@ -96,7 +96,7 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
-	 * @see abstract declaration in EE_messenger for details.
+	 * @see abstract declaration in EE_Messenger for details.
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array();
@@ -105,7 +105,7 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
-	 * @see abstract declaration in EE_messenger for details.
+	 * @see abstract declaration in EE_Messenger for details.
 	 */
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
