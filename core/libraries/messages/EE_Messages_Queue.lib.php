@@ -64,7 +64,7 @@ class EE_Messages_Queue {
 
 
 	/**
-	 * @type  EE_messages $_EEMSG
+	 * @type  EE_Messages $_EEMSG
 	 */
 	protected $_EEMSG;
 
@@ -75,9 +75,9 @@ class EE_Messages_Queue {
 	 * Constructor.
 	 * Setup all the initial properties and load a EE_Message_Repository.
 	 *
-	 * @param  EE_messages  $msg  dependency on EE_messages.
+	 * @param  EE_Messages $msg dependency on EE_messages.
 	 */
-	public function __construct( EE_messages $msg ) {
+	public function __construct( EE_Messages $msg ) {
 		$this->_batch_count = apply_filters( 'FHEE__EE_Messages_Queue___batch_count', 50 );
 		$this->_rate_limit = $this->get_rate_limit();
 		$this->_EEMSG = $msg;
@@ -454,11 +454,11 @@ class EE_Messages_Queue {
 			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
 
 			//error checking
-			if ( ! $messenger instanceof EE_messenger ) {
+			if ( ! $messenger instanceof EE_Messenger ) {
 				$error_messages[] = sprintf( __( 'The %s messenger is not active at time of sending.', 'event_espresso' ), $message->messenger() );
 			}
 
-			if ( $sending_messenger_slug && ! $sending_messenger instanceof EE_messenger ) {
+			if ( $sending_messenger_slug && ! $sending_messenger instanceof EE_Messenger ) {
 				$error_messages[] = sprintf( __( 'There was a specific sending messenger requested for the send action.  However, the %s messenger is not active at time of sending.', 'event_espresso' ), $sending_messenger_slug );
 			}
 
@@ -468,8 +468,8 @@ class EE_Messages_Queue {
 
 			//do actions for sending messenger if it differs from generating messenger and swap values.
 			if ( $sending_messenger_slug
-			     && $sending_messenger instanceof EE_messenger
-			     && $messenger instanceof EE_messenger ) {
+			     && $sending_messenger instanceof EE_Messenger
+			     && $messenger instanceof EE_Messenger ) {
 				if ( $sending_messenger_slug != $messenger->name) {
 					$messenger->do_secondary_messenger_hooks( $sending_messenger->name );
 					$messenger = $sending_messenger;
@@ -477,7 +477,7 @@ class EE_Messages_Queue {
 			}
 
 			//send using messenger
-			if ( $messenger instanceof EE_messenger && $message_type instanceof $message_type ) {
+			if ( $messenger instanceof EE_Messenger && $message_type instanceof $message_type ) {
 
 				//set hook for message type (but only if not using another messenger to send).
 				if ( ! isset( $did_hook[$message_type->name] ) ) {
@@ -530,13 +530,14 @@ class EE_Messages_Queue {
 
 	/**
 	 * Executes the get_preview method on the provided messenger.
-	 * @param EE_Message $message
-	 * @param EE_messenger $messenger
+	 *
+*@param EE_Message            $message
+	 * @param EE_Messenger    $messenger
 	 * @param EE_message_type $message_type
 	 * @param $test_send
 	 * @return bool   true means all went well, false means, not so much.
 	 */
-	protected function _do_preview( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type, $test_send ) {
+	protected function _do_preview( EE_Message $message, EE_Messenger $messenger, EE_message_type $message_type, $test_send ) {
 		if ( $preview = $messenger->get_preview( $message, $message_type, $test_send ) ) {
 			if ( ! $test_send ) {
 				$message->set_content( $preview );
@@ -554,12 +555,13 @@ class EE_Messages_Queue {
 
 	/**
 	 * Executes the send method on the provided messenger
-	 * @param EE_Message $message
-	 * @param EE_messenger $messenger
+	 *
+*@param EE_Message            $message
+	 * @param EE_Messenger    $messenger
 	 * @param EE_message_type $message_type
 	 * @return bool true means all went well, false means, not so much.
 	 */
-	protected function _do_send( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type ) {
+	protected function _do_send( EE_Message $message, EE_Messenger $messenger, EE_message_type $message_type ) {
 		if ( $messenger->send_message( $message, $message_type ) ) {
 			$message->set_STS_ID( EEM_Message::status_sent );
 			return true;
@@ -576,8 +578,7 @@ class EE_Messages_Queue {
 	/**
 	 * This sets any necessary error messages on the message object and its status to failed.
 	 * @param EE_Message $message
-	 * @param array      $error_messages
-	 * @param mixed      This is the response from the messenger.
+	 * @param array      $error_messages the response from the messenger.
 	 */
 	protected function _set_error_message( EE_Message $message, $error_messages ) {
 		$error_messages = (array) $error_messages;
