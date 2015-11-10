@@ -30,14 +30,14 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	/**
 	 * This returns an array of components used in testing.
 	 * An array with the following:
-	 * - EE_messages object
+	 * - EE_Messages object
 	 * - EE_Messages_Processor object (clean)
 	 * - EE_Message_To_Generate object.
 	 * @return array
 	 */
 	protected function _test_components() {
 		//setup up new processor
-		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		$ee_msg = EE_Registry::instance()->load_lib( 'Messages' );
 		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $ee_msg );
 
 		//set up a EE_Message_To_Generate object
@@ -65,7 +65,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Processor
 	 */
 	function test_construct_and_get_queue() {
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		$eemsg = EE_Registry::instance()->load_lib( 'Messages' );
 		try {
 			$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $eemsg );
 		} catch( Exception $e ) {
@@ -271,8 +271,8 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 	function test_setup_messages_from_ids_and_send() {
 		//setup processor to work with
-		/** @type EE_messages $ee_msg */
-		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
+		/** @type EE_Messages $ee_msg */
+		$ee_msg = EE_Registry::instance()->load_lib( 'Messages' );
 		/** @type EE_Messages_Processor $proc */
 		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $ee_msg );
 
