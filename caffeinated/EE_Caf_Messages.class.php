@@ -81,7 +81,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function email_messenger_validator_config( $validator_config, EE_Email_messenger $messenger ) {
+	public function email_messenger_validator_config( $validator_config, EE_Email_Messenger $messenger ) {
 		$validator_config['attendee_list'] = array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
 				'required' => array('[ATTENDEE_LIST]')
@@ -95,7 +95,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function html_messenger_validator_config( $validator_config, EE_Html_messenger $messenger ) {
+	public function html_messenger_validator_config( $validator_config, EE_Html_Messenger $messenger ) {
 		$validator_config['attendee_list'] = array(
 			'shortcodes' => array('attendee', 'question_list'),
 			'required' => array('[ATTENDEE_LIST]')
@@ -109,7 +109,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function pdf_messenger_validator_config( $validator_config, EE_Pdf_messenger $messenger ) {
+	public function pdf_messenger_validator_config( $validator_config, EE_Pdf_Messenger $messenger ) {
 		$validator_config['attendee_list'] = array(
 			'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
 			'required' => array('[ATTENDEE_LIST]')
@@ -124,7 +124,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function email_messenger_template_fields( $template_fields, EE_Email_messenger $messenger ) {
+	public function email_messenger_template_fields( $template_fields, EE_Email_Messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
 						'input' => 'textarea',
 						'label' => '[QUESTION_LIST]',
@@ -140,7 +140,7 @@ class EE_Caf_Messages  {
 	}
 
 
-	public function html_messenger_template_fields( $template_fields, EE_Html_messenger $messenger ) {
+	public function html_messenger_template_fields( $template_fields, EE_Html_Messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
 			'input' => 'textarea',
 			'label' => '[QUESTION_LIST]',
@@ -157,7 +157,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function pdf_messenger_template_fields( $template_fields, EE_Pdf_messenger $messenger ) {
+	public function pdf_messenger_template_fields( $template_fields, EE_Pdf_Messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
 			'input' => 'textarea',
 			'label' => '[QUESTION_LIST]',
@@ -174,7 +174,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function new_default_templates( $contents, $actual_path, EE_messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack  ) {
+	public function new_default_templates( $contents, $actual_path, EE_Messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack  ) {
 
 		//we're only modifying templates for the default template pack
 		if ( ! $template_pack instanceof EE_Messages_Template_Pack_Default ) {
