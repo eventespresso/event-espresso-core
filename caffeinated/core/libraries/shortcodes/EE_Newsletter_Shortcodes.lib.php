@@ -49,11 +49,11 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
      * 'FHEE__EE_messenger__get_validator_config' filter.
      *
      * @since    4.3.0
-     * @param  array                $validator_config  current validator configuration array
-     * @param  EE_messenger  $messenger
+     * @param  array        $validator_config  current validator configuration array
+     * @param  EE_Messenger $messenger
      * @return  array                                             new validator config.
      */
-    public static function messenger_validator_config( $validator_config, EE_messenger $messenger ) {
+    public static function messenger_validator_config( $validator_config, EE_Messenger $messenger ) {
         if ( $messenger->name !== 'email' )
             return $validator_config;
 
@@ -77,11 +77,11 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
      *
      * @since    4.3.0
      *
-     * @param  array                $template_fields current template fields setup array.
-     * @param  EE_messenger  $messenger
+     * @param  array        $template_fields current template fields setup array.
+     * @param  EE_Messenger $messenger
      * @return  array                                           new/modified template fields array.
      */
-    public static function messenger_template_fields( $template_fields, EE_messenger $messenger ) {
+    public static function messenger_template_fields( $template_fields, EE_Messenger $messenger ) {
         if ( $messenger->name !== 'email' )
             return $template_fields;
 
