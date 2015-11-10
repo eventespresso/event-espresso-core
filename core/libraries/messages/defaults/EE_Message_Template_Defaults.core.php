@@ -202,8 +202,8 @@ class EE_Message_Template_Defaults extends EE_Base {
 		$this->_message_type = $active_message_types[$this->_mt_name];
 
 		//verify we have the messenger and message type objects
-		if ( ! $this->_messenger instanceof EE_messenger ) {
-			throw new EE_Error( sprintf( __('The _messenger property must be an instance of EE_messenger by this point.  It isn\'t. Something has gone wrong. Here is the value it holds:<br /> %s', 'event_espresso' ), print_r( $this->_messenger, TRUE ) ) );
+		if ( ! $this->_messenger instanceof EE_Messenger ) {
+			throw new EE_Error( sprintf( __('The _messenger property must be an instance of EE_Messenger by this point.  It isn\'t. Something has gone wrong. Here is the value it holds:<br /> %s', 'event_espresso' ), print_r( $this->_messenger, TRUE ) ) );
 		}
 
 		if ( ! $this->_message_type instanceof EE_message_type ) {
