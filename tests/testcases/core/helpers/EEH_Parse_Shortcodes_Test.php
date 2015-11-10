@@ -184,7 +184,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		//instantiate messenger and message type objects
 		$msg_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) ) . '_messenger';
 		$mt_class = 'EE_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) ) . '_message_type';
-		/** @type EE_messenger $messenger */
+		/** @type EE_Messenger $messenger */
 		$messenger = new $msg_class();
 		/** @type EE_message_type $message_type */
 		$message_type = new $mt_class();
