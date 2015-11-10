@@ -186,7 +186,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * template group to inactive, and save to db.  Then return null so client code can handle
 	 * appropriately.
 	 *
-	 * @return EE_messenger
+	 * @return EE_Messenger
 	 */
 	public function messenger_obj() {
 		$messenger = $this->messenger();
