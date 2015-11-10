@@ -33,7 +33,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$installed_messengers = EEH_MSG_Template::get_installed_message_objects();
 		$should_be_installed = array();
 		foreach( $installed_messengers['messengers'] as $msgr ) {
-			$this->assertInstanceOf( 'EE_messenger', $msgr );
+			$this->assertInstanceOf( 'EE_Messenger', $msgr );
 			if ( $msgr->activate_on_install ) {
 				$should_be_installed[] = $msgr->name;
 			}
