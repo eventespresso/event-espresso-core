@@ -140,9 +140,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 *                                       EE_{Messagetype_Name}_message_type class. (eg. EE_Declined_Registration_message_type.class.php). Required.
 	*               @type array $autoloadpaths An array of paths to add to the messages autoloader for the new message type. Required.
 	*               @type array $messengers_to_activate_with An array of messengers that this message
-	*                           type should activate with. Each value in the array should match the name property of a EE_messenger. Optional.
+	*                           type should activate with. Each value in the array should match the name property of a EE_Messenger. Optional.
 	*               @type array $messengers_to_validate_with An array of messengers that this message
-	 *                          type should validate with. Each value in the array should match the name property of an EE_messenger. Optional.
+	 *                          type should validate with. Each value in the array should match the name property of an EE_Messenger. Optional.
 	 *       	}
 	 *			@type array $custom_post_types
 	 *			@type array $custom_taxonomies
