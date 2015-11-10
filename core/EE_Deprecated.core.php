@@ -145,14 +145,14 @@ add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifi
  * @deprecated 4.5.0
  * @deprecated Use FHEE__EE_Template_Pack___get_templates__templates filter instead.
  *
- * @param array                            $templates      array of generated templates
- * @param EE_messenger              $messenger
- * @param EE_message_type         $message_type
+ * @param array                     $templates      array of generated templates
+ * @param EE_Messenger              $messenger
+ * @param EE_message_type           $message_type
  * @param EE_Messages_Template_Pack $template_pack
  *
  * @return array
  */
-function ee_deprecated_get_templates( $templates, EE_messenger $messenger, EE_message_type $message_type, EE_Messages_Template_Pack $template_pack ) {
+function ee_deprecated_get_templates( $templates, EE_Messenger $messenger, EE_message_type $message_type, EE_Messages_Template_Pack $template_pack ) {
 	$old_default_classnames = array(
 		'EE_Messages_Email_Cancelled_Registration_Defaults',
 		'EE_Messages_Email_Declined_Registration_Defaults',
@@ -222,14 +222,14 @@ add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', 'ee_
 
 
 /**
- * wrapper for the now deprecated FHEE__*__get_default_field_content filter.  Note depending on how this was used, it may or may not degrade gracefully for clients using the  filter format that is "FHEE__EE_Messages_Base__get_default_field_content" as that format might have had either a EE_messenger or EE_message_type object as a param.  The backward_compat implementation assumed EE_message_type.
+ * wrapper for the now deprecated FHEE__*__get_default_field_content filter.  Note depending on how this was used, it may or may not degrade gracefully for clients using the  filter format that is "FHEE__EE_Messages_Base__get_default_field_content" as that format might have had either a EE_Messenger or EE_message_type object as a param.  The backward_compat implementation assumed EE_message_type.
  *
  * @deprecated 4.5.0
  * @deprecated Use FHEE__EE_Messages_Template_Pack__get_specific_template__contents filter instead.
  *
  * @param string                    $contents        The template contents being used.
  * @param string                    $actual_path   The actual path for the template contents.
- * @param EE_messenger              $messenger
+ * @param EE_Messenger              $messenger
  * @param EE_message_type           $message_type
  * @param string                    $field         The field the contents are for.
  * @param string                    $context       The context the contents are for.
@@ -237,7 +237,7 @@ add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', 'ee_
  *
  * @return string                    The default contents for the messenger, message type, context and field.
  */
-function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack ) {
+function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_Messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack ) {
 
 	$classnames_to_try = array(
 		get_class( $messenger ) => $messenger,
@@ -273,7 +273,7 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
  * @deprecated Use the new FHEE__EE_Messages_Template_Pack__get_variation filter instead.
  *
  * @param string                    $variation_path The current css path.
- * @param string                    $messenger      EE_messenger slug.
+ * @param string                    $messenger      EE_Messenger slug.
  * @param string                    $messenger      EE_message_type slug
  * @param string                    $type                The type of css file being returned (wpeditor, default etc.)
  * @param string                    $variation         Introduced by the new template pack system. The variation slug.
