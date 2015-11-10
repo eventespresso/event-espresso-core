@@ -447,12 +447,12 @@ class EE_Messages {
 	 *                available.
 	 *                Eg. Valid Messenger and Message Type:
 	 *                array(
-	 *                  'messenger' => new EE_Email_messenger(),
+	 *                  'messenger' => new EE_Email_Messenger(),
 	 *                  'message_type' => new EE_Registration_Approved_message_type()
 	 *                )
 	 *                Valid Messenger and Invalid Message Type:
 	 *                array(
-	 *                  'messenger' => new EE_Email_messenger(),
+	 *                  'messenger' => new EE_Email_Messenger(),
 	 *                  'message_type' => null
 	 *                )
 	 */
