@@ -20,12 +20,12 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	public $queue = array();
 
 	/**
-	 * @param string   $messenger  The messenger being used to send the message
-	 * @param string   $message_type  The message type being used to grab variations etc.
-	 * @param EE_messages $ee_msg
+	 * @param string            $messenger  The messenger being used to send the message
+	 * @param string            $message_type  The message type being used to grab variations etc.
+	 * @param EE_Messages       $ee_msg
 	 * @param EE_Messages_Queue $queue
 	 */
-	public function __construct( $messenger, $message_type, EE_messages $ee_msg, EE_Messages_Queue $queue ) {
+	public function __construct( $messenger, $message_type, EE_Messages $ee_msg, EE_Messages_Queue $queue ) {
 		parent::__construct( $messenger, $message_type, array(), $ee_msg );
 		$this->queue = $queue;
 	}
