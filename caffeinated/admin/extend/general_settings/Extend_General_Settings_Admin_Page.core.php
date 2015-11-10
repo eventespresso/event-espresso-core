@@ -76,12 +76,16 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 
 		require_once( ABSPATH . 'wp-admin/includes/file.php' );
 		$url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'request_filesystem_credentials' ), $this->_admin_base_url );
+		//note: if we filesystem credentials arent available in wp-config we will be asking the user for them on every request,
+		//so the form that wp displays is useless because it doesn't save their password
+		//also note: the form request_filesystem_credentials() normally shows won't be visible because the user is immediately redirected
+		//from this headless page
 		$credentials = request_filesystem_credentials( $url );
 		if ( $credentials == FALSE ) {
 			if ( $show_errors ) {
 				EE_Error::get_notices( FALSE );
 				EE_Error::reset_notices();
-				EE_Error::add_error( __('Connection settings are missing or incorrect. Please verify that the connection settings below are correct.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __('FTP/SSH Connection settings are missing or incorrect. Please verify that the connection settings in your wp-config.php file are correct, then try enabling logging again.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				add_filter( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__success', '__return_false' );
 			}
 			return FALSE;
@@ -92,11 +96,9 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 			if ( $show_errors ) {
 				EE_Error::get_notices( FALSE );
 				EE_Error::reset_notices();
-				EE_Error::add_error( __('There was an error connecting to the server. Please verify that the connection settings below are correct.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __('There was an error connecting to the server. Please verify that the connection settings in your wp-config.php file are correct.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				add_filter( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__success', '__return_false' );
 			}
-			// our credentials were no good, ask the user for them again
-			request_filesystem_credentials( $url );
 			return FALSE;
 		}
 		EE_Registry::instance()->CFG->admin->use_full_logging = TRUE;
