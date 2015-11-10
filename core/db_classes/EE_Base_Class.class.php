@@ -332,7 +332,7 @@ abstract class EE_Base_Class{
 	 *
 	 * Example Usage:
 	 * Via EE_Message child class:
-	 * Due to the dynamic nature of the EE_messages system, EE_messengers will always have a "to",
+	 * Due to the dynamic nature of the EE_Messages system, EE_messengers will always have a "to",
 	 * "from", "subject", and "content" field (as represented in the EE_Message schema), however they may
 	 * also have additional main fields specific to the messenger.  The system accommodates those extra
 	 * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
