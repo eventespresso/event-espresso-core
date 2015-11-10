@@ -776,10 +776,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		}
 		// first we need to calculate the maximum number of tickets available for the datetime
 		// without really factoring this ticket into the calculations
-		// initialize with no restrictions
-		$qty = INF;
 		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
+			// initialize with no restrictions for each datetime
+			$qty = INF;
 			if ( $datetime instanceof EE_Datetime ) {
 				// adjust qty based on reg limit for ALL datetimes
 				$qty = min( $qty, $datetime->reg_limit() );
@@ -791,6 +791,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 				}
 			}
 		}
+		// ensure something is set for qty
+		$qty = isset( $qty ) ? $qty : INF;
 		// NOW that we know the  maximum number of tickets available for the datetime
 		// we need to factor in the details for this specific ticket
 		if ( $qty > 0 && $context == 'saleable' ) {
