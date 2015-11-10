@@ -67,17 +67,23 @@ class EEH_File extends EEH_Base implements EEHI_File {
 					require_once( ABSPATH . 'wp-admin/includes/file.php' );
 					require_once( ABSPATH . 'wp-admin/includes/template.php' );
 				}
+				// turn on output buffering so that we can capture the credentials form
+				ob_start();
+				$credentials = request_filesystem_credentials( '' );
+				// store credentials form for the time being
+				EEH_File::$_credentials_form = ob_get_clean();
 				// basically check for direct or previously configured access
-				if ( ! WP_Filesystem() ) {
-					// turn on output buffering so that we can capture the credentials form
-					ob_start();
-					$credentials = request_filesystem_credentials( '' );
-					// store credentials form for the time being
-					EEH_File::$_credentials_form = ob_get_clean();
+				if ( ! WP_Filesystem( $credentials ) ) {
 					// if credentials do NOT exist
 					if ( $credentials === FALSE ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
 						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
+					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {						
+						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
+						throw new EE_Error( 
+								sprintf( 
+										__( 'WP Filesystem Error: $1%s', 'event_espresso' ), 
+										$wp_filesystem->errors->get_error_message() ) );
 					}
 				}
 			}

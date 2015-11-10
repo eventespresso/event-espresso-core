@@ -182,5 +182,35 @@ class EEH_URL{
 //		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
 	}
 
+
+
+	/**
+	 * filter_input_server_url
+	 * uses filter_input() to sanitize one of the INPUT_SERVER URL values
+	 * but adds a backup in case filter_input() returns nothing, which can erringly happen on some servers
+	 *
+	 * @param string $server_variable
+	 * @return string
+	 */
+	public static function filter_input_server_url( $server_variable = 'REQUEST_URI' ){
+		$URL = '';
+		$server_variables = array(
+			'REQUEST_URI' => 1,
+			'HTTP_HOST' => 1,
+			'PHP_SELF' => 1,
+		);
+		$server_variable = strtoupper( $server_variable );
+		// whitelist INPUT_SERVER var
+		if ( isset( $server_variables[ $server_variable ] ) ) {
+			$URL = filter_input( INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
+			if ( empty( $URL ) ) {
+				$URL = esc_url( $_SERVER[ $server_variable ] );
+			}
+		}
+		return $URL;
+	}
+
+
+
 }
 // End of file EEH_URL.helper.php

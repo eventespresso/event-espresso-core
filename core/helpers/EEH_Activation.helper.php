@@ -28,6 +28,13 @@ class EEH_Activation {
 	 */
 	const cron_task_no_longer_in_use = 'no_longer_in_use';
 
+	/**
+	 * option name that will indicate whether or not we still
+	 * need to create EE's folders in the uploads directory
+	 * (because if EE was installed without file system access, 
+	 * we need to request credentials before we can create them)
+	 */
+	const upload_directories_incomplete_option_name = 'ee_upload_directories_incomplete';
 	private static $_default_creator_id = null;
 
 	/**
@@ -1221,10 +1228,26 @@ class EEH_Activation {
 					),
 					__FILE__, __FUNCTION__, __LINE__
 				);
+				//indicate we'll need to fix this later
+				update_option( EEH_Activation::upload_directories_incomplete_option_name, true );
 				return FALSE;
 			}
 		}
+		//remember EE's folders are all good
+		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
 		return TRUE;
+	}
+	
+	/**
+	 * Whether the upload directories need to be fixed or not.
+	 * If EE is installed but filesystem access isn't initially available,
+	 * we need to get the user's filesystem credentials and THEN create them,
+	 * so there might be period of time when EE is installed but its 
+	 * upload directories aren't available. This indicates such a state
+	 * @return boolean
+	 */
+	public static function upload_directories_incomplete() {
+		return get_option( EEH_Activation::upload_directories_incomplete_option_name, false );
 	}
 
 
@@ -1584,7 +1607,8 @@ class EEH_Activation {
 			'ee_rss_' => false,
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
-			'ee_report_job_' => false,
+			'ee_job_parameters_' => false,
+			'ee_upload_directories_incomplete' => true,
 		);
 		if( is_main_site() ) {
 			$wp_options_to_delete[ 'ee_network_config' ] = true;
