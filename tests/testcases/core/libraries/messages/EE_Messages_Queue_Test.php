@@ -25,7 +25,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Queue
 	 */
 	protected function _get_queue() {
-		$msg = new EE_messages();
+		$msg = new EE_Messages();
 		return new EE_Messages_Queue( $msg );
 	}
 
