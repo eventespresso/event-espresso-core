@@ -14,7 +14,8 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 
 	/**
 	 * Sending messenger
-	 * @type EE_messenger
+	 *
+	 * @type EE_Messenger
 	 */
 	protected $_sending_messenger = '';
 
@@ -35,7 +36,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 	 *                          used to populate the properties in here.
 	 * @param   EE_messages
 	 */
-	public function __construct( $token, $sending_messenger = 'html', EE_messages $ee_msg ) {
+	public function __construct( $token, $sending_messenger = 'html', EE_Messages $ee_msg ) {
 		$this->token = $token;
 		$this->_sending_messenger = $sending_messenger;
 		$this->_EEMSG = $ee_msg;
@@ -48,7 +49,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 
 
 	/**
-	 * @return EE_messenger
+	 * @return EE_Messenger
 	 */
 	public function sending_messenger() {
 		return $this->_sending_messenger;
@@ -73,11 +74,11 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 		}
 		$this->_EE_Message->set_STS_ID( EEM_Message::status_idle );
 
-		//set sending messenger to EE_messenger object
+		//set sending messenger to EE_Messenger object
 		$sending_messenger_slug = $this->_sending_messenger;
 		$this->_sending_messenger = $this->_EEMSG->get_messenger_if_active( $sending_messenger_slug );
 
-		if ( ! $this->_sending_messenger instanceof EE_messenger ) {
+		if ( ! $this->_sending_messenger instanceof EE_Messenger ) {
 			$this->_EE_Message->set_STS_ID( EEM_Message::status_failed );
 			$this->_EE_Message->set_error_message( sprintf(
 				__( 'Unable to send message because the %s messenger is not active or not installed', 'event_espresso' ),
