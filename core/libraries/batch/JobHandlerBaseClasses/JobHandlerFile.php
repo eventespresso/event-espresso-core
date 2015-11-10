@@ -1,6 +1,6 @@
 <?php 
 namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
-use EventEspressoBatchRequest\Helpers\JobHandlerException;
+use EventEspressoBatchRequest\Helpers\BatchRequestException;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -41,12 +41,12 @@ abstract class JobHandlerFile extends JobHandler {
 				__( 'An unknown error occurred', 'event_espresso' ));
 			}
 		}catch( \EE_Error $e ) {
-			throw new JobHandlerException( 
-					'could_not_create_temp_file', 
+			throw new BatchRequestException( 
 					sprintf( 
 							__( 'Could not create temporary file for job %1$s, because: %2$s ', 'event_espresso' ),
 							$job_id,
 							$e->getMessage() ),
+					500,
 					$e );
 		}
 		return $filepath;

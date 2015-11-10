@@ -164,7 +164,7 @@ final class EE_System {
 			// register the base directories for the namespace prefix
 			$psr4_loader->addNamespace( 'EventEspresso', EE_PLUGIN_DIR_PATH );
 			$psr4_loader->addNamespace( 'EventEspressoLibraries', EE_LIBRARIES );
-			$psr4_loader->addNamespace( 'EventEspressoBatch', EE_LIBRARIES . DS . 'batch' );
+			$psr4_loader->addNamespace( 'EventEspressoBatchRequest', EE_LIBRARIES . DS . 'batch' );
 			require_once EE_CORE . 'EE_Deprecated.core.php';
 			// load interfaces
 			require_once EE_CORE . 'EEI_Interfaces.php';
