@@ -32,6 +32,20 @@ class JobParameters {
 	protected $_extra_data;
 	
 	/**
+	 * Estimate of how many units HAVE been processed
+	 * @var int
+	 */
+	protected $_units_processed = 0;
+	
+	/**
+	 * The size of the total job in whatever units you want.
+	 * If you can't provide an estimate leave as 0.
+	 * Once _units_processed equals _job_size, we should be done
+	 * @var int
+	 */
+	protected $_job_size = 0;
+	
+	/**
 	 * Gets the job's unique string
 	 * @return string
 	 */
@@ -98,6 +112,49 @@ class JobParameters {
 	function extra_data() {
 		return $this->_extra_data;
 	}
+	
+	/**
+	 * Returns the job size, in whatever units you want
+	 * @return int
+	 */
+	function job_size() {
+		return $this->_job_size;
+	}
+	
+	/**
+	 * Sets the job size. You decide what units to use
+	 * @param int $size
+	 */
+	function set_job_size( $size ) {
+		$this->_job_size = $size;
+	}
+	
+	/**
+	 * The number of "units" processed, in the same units as the "job size"
+	 * @return int
+	 */
+	function units_processed() {
+		return $this->_units_processed;
+	}
+	
+	/**
+	 * Marks more units as processed
+	 * @param int $newly_processed
+	 * @return int updated units processed
+	 */
+	function mark_processed( $newly_processed ) {
+		$this->_units_processed += $newly_processed;
+		return $this->_units_processed;
+	}
+	
+	/**
+	 * Sets the total count of units processed. You might prefer to use mark_processed
+	 * @param int $total_units_processed
+	 */
+	function set_units_processed( $total_units_processed ) {
+		$this->_units_processed = $total_units_processed;
+	}
+	
 	/**
 	 * Sets the job's ID
 	 * @param string $job_id
