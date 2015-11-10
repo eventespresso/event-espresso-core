@@ -28,7 +28,6 @@ class RegistrationsReport extends JobHandlerFile {
 		if( $job_parameters->job_size() ) {
 			$job_parameters->mark_processed( 1 );
 		}
-		
 	}
 	
 	/**
@@ -59,11 +58,10 @@ class RegistrationsReport extends JobHandlerFile {
 	 * } and anything more we want to add
 	 * @throws 
 	 */
-	public function continue_job( JobParameters $job_parameters, $step_size = 50 ) {
-		echo "ocntinue job ";die;
-		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $step_size );
-		
-		
+	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
+		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $batch_size );
+		$success = \EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
+		$job_parameters->mark_processed( count( $csv_data ) );
 	}
 	
 	function get_csv_data_for( $event_id, $offset, $limit ) {

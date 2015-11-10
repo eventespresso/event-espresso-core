@@ -42,6 +42,7 @@ class BatchRunner {
 	/**
 	 * Retrieves the job's arguments
 	 * @param string $job_id
+	 * @param int $batch_size
 	 * @return array{
 	 *	@type string $status
 	 *	@type int $records_processed
@@ -50,17 +51,18 @@ class BatchRunner {
 	 * } and anything
 	 * @throws BatchRequestException
 	 */
-	public function continue_job( $job_id ) {
+	public function continue_job( $job_id, $batch_size = 50 ) {
 		//get the corresponding worpdress option for the job
 		$job_parameters = JobParameters::load( $job_id );
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
 		//continue it
-		$response = $handler_obj->continue_job( $job_parameters );
+		$response = $handler_obj->continue_job( $job_parameters, $batch_size );
 		//if its done, call finish job on it
 		if( isset( $response[ 'status' ] ) &&
 				$response[ 'status' ] === JobHandlerInterface::status_complete ) {
 			$handler_obj->finish_job( $job_id, $job_parameters );
 		}
+		$job_parameters->save();
 		return $response;
 	}
 	
@@ -100,7 +102,10 @@ class BatchRunner {
 		$job_parameters = JobParameters::load( $job_id );
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
 		//continue it
-		return $handler_obj->finish_job( $job_parameters );
+		$success = $handler_obj->finish_job( $job_parameters );
+		$job_parameters->save();
+		return $success;
+		
 	}
 }
 

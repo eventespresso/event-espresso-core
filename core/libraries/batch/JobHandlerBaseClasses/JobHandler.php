@@ -20,6 +20,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	/**
 	 * Performs another step of the job
 	 * @param JobParameters $job_parameters
+	 * @param int $batch_size
 	 * @return array{
 	 *	@type string $status
 	 *	@type int $records_processed
@@ -28,7 +29,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * } and anything more we want to add
 	 * @throws 
 	 */
-	abstract public function continue_job( JobParameters $job_parameters );
+	abstract public function continue_job( JobParameters $job_parameters, $batch_size = 50 );
 	
 	/**
 	 * Performs any clean-up logic when we know the job is completed

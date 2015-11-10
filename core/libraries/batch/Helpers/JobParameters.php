@@ -221,7 +221,7 @@ class JobParameters {
 	 * @throws BatchRequestException
 	 */
 	static function load( $job_id ) {
-		$job_parameters = get_option( BatchRunner::wp_option_prefix . $job_id );
+		$job_parameters = get_option(JobParameters::wp_option_prefix . $job_id );
 		if( $job_parameters === false ) {
 			throw new BatchRequestException(
 				sprintf( 

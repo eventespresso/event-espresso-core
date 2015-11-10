@@ -74,10 +74,14 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'func' => '_developers',
 				'capability' => 'ee_read_ee'
 				),
-			'batch' => array( 
+			'batch_start' => array( 
 				'func' => '_generate_csv_report',
 				'capability' => 'ee_read_registrations',
-			)
+			),
+			'batch_continue' => array( 
+				'func' => '_generate_csv_report_ajax',
+				'capability' => 'ee_read_registrations',
+			),
 			);
 	}
 
@@ -106,7 +110,10 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				),
-			'batch' => array(
+			'batch_start' => array(
+				'require_nonce' => false
+			),
+			'batch_continue' => array(
 				'require_nonce' => false
 			)
 			);
@@ -228,6 +235,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 				array_flip( array( 'action',  'page' ) ) );
 		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
 		$job_id = $batch_runner->create_job( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport', $_REQUEST );
+		echo 'job id ' . $job_id;
 		//enqueues the javascript (which maybe shows job progress, and when done converts
 		//the temp file into a properly named file and sends it to the user, and deletes it?)
 		//with all the variables it needs to run the job
@@ -238,8 +246,9 @@ class Support_Admin_Page extends EE_Admin_Page {
 	 * Receives ajax calls for generating a report
 	 */
 	protected function _generate_csv_report_ajax() { 
-		$job_id = sanitize_text_field( $this->_req_data[ 'report_job_id' ] );
-		
+		$job_id = sanitize_text_field( $this->_req_data[ 'job_id' ] );
+		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
+		$batch_runner->continue_job( $job_id );
 		//sorta just a heartbeat
 		//might only need the job id
 		//returns an array describing the job's progress
