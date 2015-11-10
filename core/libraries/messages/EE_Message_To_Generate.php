@@ -52,7 +52,7 @@ class EE_Message_To_Generate {
 
 
 	/**
-	 * @type EE_messages
+	 * @type EE_Messages
 	 */
 	protected $_EEMSG;
 
@@ -88,7 +88,7 @@ class EE_Message_To_Generate {
 
 	/**
 	 * Can be accessed via the send_now() method, this is set in the validation
-	 * routine via the EE_messenger::send_now() method.
+	 * routine via the EE_Messenger::send_now() method.
 	 * @type bool
 	 */
 	protected $_send_now = false;
@@ -107,14 +107,15 @@ class EE_Message_To_Generate {
 
 	/**
 	 * Constructor
-	 * @param string    $messenger  Slug representing messenger
-	 * @param string    $message_type   Slug representing message type.
-	 * @param mixed     $data           Data used for generating message.
-	 * @param EE_messages $ee_msg       The message_type and messenger repository.
-	 * @param string    $context        Optional context to restrict message generated for.
-	 * @param bool|false $preview       Whether this is being used to generate a preview or not.
+	 *
+*@param string            $messenger    Slug representing messenger
+	 * @param string      $message_type Slug representing message type.
+	 * @param mixed       $data         Data used for generating message.
+	 * @param EE_Messages $ee_msg       The message_type and messenger repository.
+	 * @param string      $context      Optional context to restrict message generated for.
+	 * @param bool|false  $preview      Whether this is being used to generate a preview or not.
 	 */
-	public function __construct( $messenger, $message_type, $data,  EE_messages $ee_msg, $context = '', $preview = false ) {
+	public function __construct( $messenger, $message_type, $data, EE_Messages $ee_msg, $context = '', $preview = false ) {
 		$this->data = is_array( $data ) ? $data : array( $data );
 		$this->context = $context;
 		$this->preview = $preview;
@@ -137,7 +138,7 @@ class EE_Message_To_Generate {
 			'MSG_message_type' => $message_type_slug
 		) ) );
 
-		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
+		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_Messenger ) {
 			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $messenger_slug );
 			$this->_valid = false;
 		} else {
