@@ -39,7 +39,7 @@ class EE_Messages_Generator {
 
 
 	/**
-	 * @type  EE_messages
+	 * @type  EE_Messages
 	 */
 	protected $_EEMSG;
 
@@ -89,7 +89,8 @@ class EE_Messages_Generator {
 
 	/**
 	 * This will hold the current messenger object corresponding with the current EE_Message in the generation queue.
-	 * @type EE_messenger
+	 *
+	 * @type EE_Messenger
 	 */
 	protected $_current_messenger;
 
@@ -116,9 +117,9 @@ class EE_Messages_Generator {
 
 	/**
 	 * @param EE_Messages_Queue $queue
-	 * @param EE_messages $eemsg
+	 * @param EE_Messages       $eemsg
 	 */
-	public function __construct( EE_Messages_Queue $queue, EE_messages $eemsg ) {
+	public function __construct( EE_Messages_Queue $queue, EE_Messages $eemsg ) {
 		$this->_generation_queue = $queue;
 		$this->_ready_queue = new EE_Messages_Queue( $eemsg );
 		$this->_EEMSG = $eemsg;
@@ -507,7 +508,7 @@ class EE_Messages_Generator {
 
 
 	/**
-	 * This verifies that the incoming array has a EE_messenger object and a EE_message_type object and sets appropriate
+	 * This verifies that the incoming array has a EE_Messenger object and a EE_message_type object and sets appropriate
 	 * error message if either is missing.
 	 *
 	 * @return bool         true means there were no errors, false means there were errors.
@@ -567,7 +568,7 @@ class EE_Messages_Generator {
 
 		$validated_for_use = $this->_EEMSG->validate_for_use( $this->_generation_queue->get_queue()->current() );
 
-		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_messenger ) {
+		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_Messenger ) {
 			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $this->_generation_queue->get_queue()->current()->messenger() );
 		} else {
 			$this->_current_messenger = $validated_for_use['messenger'];
