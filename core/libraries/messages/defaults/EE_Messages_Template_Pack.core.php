@@ -238,12 +238,12 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param EE_messenger    $messenger
+	 * @param EE_Messenger    $messenger
 	 * @param EE_message_type $message_type
 	 *
 	 * @return array
 	 */
-	public function get_templates( EE_messenger $messenger, EE_message_type $message_type ) {
+	public function get_templates( EE_Messenger $messenger, EE_message_type $message_type ) {
 		return isset( $this->_templates[$messenger->name][$message_type->name] ) ? $this->_templates[$messenger->name][$message_type->name] : $this->_get_templates( $messenger, $message_type );
 	}
 
@@ -255,13 +255,13 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param EE_messenger      $messenger
+	 * @param EE_Messenger    $messenger
 	 * @param EE_message_type $message_type
 	 *
 	 * @return array          Returns an multi-level associative array indexed by template context and field in the format:
 	 *                                array( 'context' => array( 'field' => 'value', 'another-field', 'value' ) );
 	 */
-	protected function _get_templates( EE_messenger $messenger, EE_message_type $message_type ) {
+	protected function _get_templates( EE_Messenger $messenger, EE_message_type $message_type ) {
 		$templates = array();
 
 		/**
@@ -312,14 +312,14 @@ abstract class  EE_Messages_Template_Pack {
 	 * Utility method for retrieving a specific template matching the given parameters
 	 *
 	 * @param null | EE_Messages_Template_Pack_Default $default_pack
-	 * @param EE_messenger    $messenger
-	 * @param EE_message_type $message_type
-	 * @param string          $field          The field reference for the specific template being looked up.
-	 * @param string          $context      The context reference for the specific template being looked up
+	 * @param EE_Messenger                             $messenger
+	 * @param EE_message_type                          $message_type
+	 * @param string                                   $field          The field reference for the specific template being looked up.
+	 * @param string                                   $context      The context reference for the specific template being looked up
 	 *
 	 * @return string          The template contents.
 	 */
-	protected function _get_specific_template( $default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context ) {
+	protected function _get_specific_template( $default_pack, EE_Messenger $messenger, EE_message_type $message_type, $field, $context ) {
 
 		//default templates
 		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
@@ -445,7 +445,7 @@ abstract class  EE_Messages_Template_Pack {
 
 
 	/**
-	 * This is typically called by EE_messenger objects to get the specific css variation defined for the messenger, message_type and type (i.e. inline, wpeditor, preview etc.)
+	 * This is typically called by EE_Messenger objects to get the specific css variation defined for the messenger, message_type and type (i.e. inline, wpeditor, preview etc.)
 	 *
 	 * @since 4.5.0
 	 *
