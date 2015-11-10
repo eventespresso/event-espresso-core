@@ -21,7 +21,14 @@ class RegistrationsReport extends JobHandlerFile {
 		$filepath = $this->create_file_from_job_with_name($job_parameters->job_id(), $this->get_filename_from_event( $event_id ));
 		$job_parameters->add_extra_data( 'filepath', $filepath );
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
-		//we should also set the header columns, and remember them
+		//we should also set the header columns
+		$csv_data_for_row = $this->get_csv_data_for( $event_id, 0, 1 );
+		$success = \EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
+		//if we actually processed a row there, record it
+		if( $job_parameters->job_size() ) {
+			$job_parameters->mark_processed( 1 );
+		}
+		
 	}
 	
 	/**
@@ -52,9 +59,15 @@ class RegistrationsReport extends JobHandlerFile {
 	 * } and anything more we want to add
 	 * @throws 
 	 */
-	public function continue_job( JobParameters $job_parameters ) {
+	public function continue_job( JobParameters $job_parameters, $step_size = 50 ) {
 		echo "ocntinue job ";die;
-		$event_id = $job_parameters->request_datum( 'EVT_ID' );
+		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $step_size );
+		
+		
+	}
+	
+	function get_csv_data_for( $event_id, $offset, $limit ) {
+		\EE_Registry::instance()->load_helper( 'Export' );
 		$reg_fields_to_include = array(
 				'TXN_ID',
 				'ATT_ID',
@@ -79,21 +92,22 @@ class RegistrationsReport extends JobHandlerFile {
 		);
 
 		$registrations_csv_ready_array = array();
-		$reg_model = EE_Registry::instance()->load_model('Registration');
+		$reg_model = \EE_Registry::instance()->load_model('Registration');
 		$query_params = apply_filters(
 			'FHEE__EE_Export__report_registration_for_event',
 			array(
 				array(
 					'OR' => array(
 						//don't include registrations from failed or abandoned transactions...
-						'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+						'Transaction.STS_ID' => array( 'NOT IN', array( \EEM_Transaction::failed_status_code, \EEM_Transaction::abandoned_status_code ) ),
 						//unless the registration is approved, in which case include it regardless of transaction status
-						'STS_ID' => EEM_Registration::status_id_approved
+						'STS_ID' => \EEM_Registration::status_id_approved
 						),
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' )
+				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
+				'limit' => array( $offset, $limit ),
 			),
 			$event_id
 		);
@@ -109,35 +123,40 @@ class RegistrationsReport extends JobHandlerFile {
 			$registration_ids[] = intval( $reg_row[ 'Registration.REG_ID'] );
 		}
 //		EEM_Question::instance()->show_next_x_db_queries();
-		$questions_for_these_regs_rows = EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.REG_ID'=>array('IN',$registration_ids))));
+		if( $event_id ) {
+			$questions_for_these_regs_rows = \EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.Registration.EVT_ID'=> $event_id ) ) );
+		} else {
+			$questions_for_these_regs_rows = \EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.ANS_ID'=> array( 'IS_NOT_NULL' ) ) ) );
+		}
+		
 		foreach($registration_rows as $reg_row){
 			if ( is_array( $reg_row ) ) {
 				$reg_csv_array = array();
 				if( ! $event_id ){
 					//get the event's name and Id
-					$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = sprintf( __( '%1$s (%2$s)', 'event_espresso' ), $this->_prepare_value_from_db_for_display( EEM_Event::instance(), 'EVT_name', $reg_row[ 'Event_CPT.post_title'] ), $reg_row[ 'Event_CPT.ID' ] );
+					$reg_csv_array[ __( 'Event', 'event_espresso' ) ] = sprintf( __( '%1$s (%2$s)', 'event_espresso' ), \EEH_Export::prepare_value_from_db_for_display( \EEM_Event::instance(), 'EVT_name', $reg_row[ 'Event_CPT.post_title'] ), $reg_row[ 'Event_CPT.ID' ] );
 				}
 				$is_primary_reg = $reg_row[ 'Registration.REG_count' ] == '1' ? true : false;
 				/*@var $reg_row EE_Registration */
 				foreach($reg_fields_to_include as $field_name){
 					$field = $reg_model->field_settings_for($field_name);
 					if($field_name == 'REG_final_price'){
-						$value = $this->_prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ 'Registration.REG_final_price'], 'localized_float' );
+						$value = \EEH_Export::prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ 'Registration.REG_final_price'], 'localized_float' );
 					}elseif( $field_name == 'REG_count' ){
-						$value = sprintf( __( '%s of %s', 'event_espresso' ), $this->_prepare_value_from_db_for_display( $reg_model, 'REG_count', $reg_row['Registration.REG_count'] ), $this->_prepare_value_from_db_for_display( $reg_model, 'REG_group_size', $reg_row['Registration.REG_group_size' ] ) );
+						$value = sprintf( __( '%s of %s', 'event_espresso' ), \EEH_Export::prepare_value_from_db_for_display( $reg_model, 'REG_count', $reg_row['Registration.REG_count'] ), \EEH_Export::prepare_value_from_db_for_display( $reg_model, 'REG_group_size', $reg_row['Registration.REG_group_size' ] ) );
 					}elseif( $field_name == 'REG_date' ) {
-						$value = $this->_prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ 'Registration.REG_date'], 'no_html' );
+						$value = \EEH_Export::prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ 'Registration.REG_date'], 'no_html' );
 					}else{
-						$value = $this->_prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ $field->get_qualified_column() ] );
+						$value = \EEH_Export::prepare_value_from_db_for_display( $reg_model, $field_name, $reg_row[ $field->get_qualified_column() ] );
 					}
-					$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
+					$reg_csv_array[\EEH_Export::get_column_name_for_field($field)] = $value;
 					if($field_name == 'REG_final_price'){
 						//add a column named Currency after the final price
-						$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
+						$reg_csv_array[__("Currency", "event_espresso")] = \EE_Config::instance()->currency->code;
 					}
 				}
 				//get pretty status
-				$stati = EEM_Status::instance()->localized_status( array(
+				$stati = \EEM_Status::instance()->localized_status( array(
 					$reg_row[ 'Registration.STS_ID' ] => __( 'unknown', 'event_espresso' ),
 					$reg_row[ 'Transaction.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
 						FALSE,
@@ -145,17 +164,17 @@ class RegistrationsReport extends JobHandlerFile {
 				$reg_csv_array[__("Registration Status", 'event_espresso')] = $stati[ $reg_row[ 'Registration.STS_ID' ] ];
 				//get pretty trnasaction status
 				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'Transaction.STS_ID' ] ];
-				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
-				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
 				$payment_methods = array();
 				$gateway_txn_ids_etc = array();
 				$payment_times = array();
 				if( $is_primary_reg && $reg_row[ 'Transaction.TXN_ID' ] ){
-					$payments_info = EEM_Payment::instance()->get_all_wpdb_results(
+					$payments_info = \EEM_Payment::instance()->get_all_wpdb_results(
 							array(
 								array(
 									'TXN_ID' => $reg_row[ 'Transaction.TXN_ID' ],
-									'STS_ID' => EEM_Payment::status_id_approved
+									'STS_ID' => \EEM_Payment::status_id_approved
 								),
 								'force_join' => array( 'Payment_Method' ),
 
@@ -177,12 +196,12 @@ class RegistrationsReport extends JobHandlerFile {
 				//get whether or not the user has checked in
 				$reg_csv_array[__("Check-Ins", "event_espresso")] = $reg_model->count_related( $reg_row[ 'Registration.REG_ID'] , 'Checkin' );
 				//get ticket of registration and its price
-				$ticket_model = EE_Registry::instance()->load_model('Ticket');
+				$ticket_model = \EE_Registry::instance()->load_model('Ticket');
 				if( $reg_row[ 'Ticket.TKT_ID'] ) {
-					$ticket_name = $this->_prepare_value_from_db_for_display( $ticket_model, 'TKT_name', $reg_row[ 'Ticket.TKT_name' ] );
+					$ticket_name = \EEH_Export::prepare_value_from_db_for_display( $ticket_model, 'TKT_name', $reg_row[ 'Ticket.TKT_name' ] );
 					$datetimes_strings = array();
-					foreach( EEM_Datetime::instance()->get_all_wpdb_results( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ), 'default_where_conditions' => 'none' ) ) as $datetime){
-						$datetimes_strings[] = $this->_prepare_value_from_db_for_display( EEM_Datetime::instance(), 'DTT_EVT_start', $datetime[ 'Datetime.DTT_EVT_start'] );
+					foreach( \EEM_Datetime::instance()->get_all_wpdb_results( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ), 'default_where_conditions' => 'none' ) ) as $datetime){
+						$datetimes_strings[] = \EEH_Export::prepare_value_from_db_for_display( \EEM_Datetime::instance(), 'DTT_EVT_start', $datetime[ 'Datetime.DTT_EVT_start'] );
 					}
 
 				} else {
@@ -195,20 +214,20 @@ class RegistrationsReport extends JobHandlerFile {
 
 				//add attendee columns
 				foreach($att_fields_to_include as $att_field_name){
-					$field_obj = EEM_Attendee::instance()->field_settings_for($att_field_name);
+					$field_obj = \EEM_Attendee::instance()->field_settings_for($att_field_name);
 					if( $reg_row[ 'Attendee_CPT.ID' ]){
 						if($att_field_name == 'STA_ID'){
-							$value = EEM_State::instance()->get_var( array( array( 'STA_ID' => $reg_row[ 'Attendee_Meta.STA_ID' ] ) ), 'STA_name' );
+							$value = \EEM_State::instance()->get_var( array( array( 'STA_ID' => $reg_row[ 'Attendee_Meta.STA_ID' ] ) ), 'STA_name' );
 						}elseif($att_field_name == 'CNT_ISO'){
-							$value = EEM_Country::instance()->get_var( array( array( 'CNT_ISO' => $reg_row[ 'Attendee_Meta.CNT_ISO' ] ) ), 'CNT_name' );
+							$value = \EEM_Country::instance()->get_var( array( array( 'CNT_ISO' => $reg_row[ 'Attendee_Meta.CNT_ISO' ] ) ), 'CNT_name' );
 						}else{
-							$value = $this->_prepare_value_from_db_for_display( EEM_Attendee::instance(), $att_field_name, $reg_row[ $field_obj->get_qualified_column() ] );
+							$value = \EEH_Export::prepare_value_from_db_for_display( \EEM_Attendee::instance(), $att_field_name, $reg_row[ $field_obj->get_qualified_column() ] );
 						}
 					}else{
 						$value = '';
 					}
 
-					$reg_csv_array[$this->_get_column_name_for_field($field_obj)] = $value;
+					$reg_csv_array[ \EEH_Export::get_column_name_for_field($field_obj) ] = $value;
 				}
 
 				//make sure each registration has the same questions in the same order
@@ -218,17 +237,17 @@ class RegistrationsReport extends JobHandlerFile {
 					}
 				}
 				//now fill out the questions THEY answered
-				foreach( EEM_Answer::instance()->get_all_wpdb_results( array( array( 'REG_ID' => $reg_row[ 'Registration.REG_ID' ] ), 'force_join' => array( 'Question' ) ) ) as $answer_row){
+				foreach( \EEM_Answer::instance()->get_all_wpdb_results( array( array( 'REG_ID' => $reg_row[ 'Registration.REG_ID' ] ), 'force_join' => array( 'Question' ) ) ) as $answer_row){
 					/* @var $answer EE_Answer */
 					if( $answer_row[ 'Question.QST_ID' ] ){
-						$question_label = $this->_prepare_value_from_db_for_display( EEM_Question::instance(), 'QST_admin_label', $answer_row[ 'Question.QST_admin_label' ] );
+						$question_label = \EEH_Export::prepare_value_from_db_for_display( \EEM_Question::instance(), 'QST_admin_label', $answer_row[ 'Question.QST_admin_label' ] );
 					}else{
 						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer_row[ 'Answer.QST_ID' ] );
 					}
-                                        if( isset( $answer_row[ 'Question.QST_type'] ) && $answer_row[ 'Question.QST_type' ] == EEM_Question::QST_type_state ) {
-                                            $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID( $answer_row[ 'Answer.ANS_value' ] );
+                                        if( isset( $answer_row[ 'Question.QST_type'] ) && $answer_row[ 'Question.QST_type' ] == \EEM_Question::QST_type_state ) {
+                                            $reg_csv_array[ $question_label ] = \EEM_State::instance()->get_state_name_by_ID( $answer_row[ 'Answer.ANS_value' ] );
                                         } else {
-                                            $reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display( EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
+                                            $reg_csv_array[ $question_label ] = \EEH_Export::prepare_value_from_db_for_display( \EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
                                         }
 				}
 				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $reg_row );
@@ -243,14 +262,15 @@ class RegistrationsReport extends JobHandlerFile {
 				'Attendee' => $att_fields_to_include
 			);
 			foreach($model_and_fields_to_include as $model_name => $field_list){
-				$model = EE_Registry::instance()->load_model($model_name);
+				$model = \EE_Registry::instance()->load_model($model_name);
 				foreach($field_list as $field_name){
 					$field = $model->field_settings_for($field_name);
-					$reg_csv_array[$this->_get_column_name_for_field($field)] = null;//$registration->get($field->get_name());
+					$reg_csv_array[ \EEH_Export::get_column_name_for_field($field)] = null;
 				}
 			}
 			$registrations_csv_ready_array [] = $reg_csv_array;
 		}
+		return $registrations_csv_ready_array;
 	}
 	
 	/**
@@ -265,9 +285,9 @@ class RegistrationsReport extends JobHandlerFile {
 				array(
 					'OR' => array(
 						//don't include registrations from failed or abandoned transactions...
-						'Transaction.STS_ID' => array( 'NOT IN', array( EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code ) ),
+						'Transaction.STS_ID' => array( 'NOT IN', array( \EEM_Transaction::failed_status_code, \EEM_Transaction::abandoned_status_code ) ),
 						//unless the registration is approved, in which case include it regardless of transaction status
-						'STS_ID' => EEM_Registration::status_id_approved
+						'STS_ID' => \EEM_Registration::status_id_approved
 						),
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
