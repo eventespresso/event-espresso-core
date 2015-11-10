@@ -54,8 +54,9 @@ class EEH_Parse_Shortcodes {
 
 	/**
 	 * will hold an array of EE_Shortcodes library objects.
+	 *
 	 * @access private
-	 * @var array
+	 * @var EE_Shortcodes[]
 	 */
 	private $_shortcode_objs = array();
 
@@ -74,59 +75,50 @@ class EEH_Parse_Shortcodes {
 
 	/**
 	 * This kicks off the parsing of shortcodes in message templates
-	 * @param  string 				 $template         This is the incoming string to be parsed
-	 * @param  EE_Messages_Addressee $data        This is the incoming data object
-	 * @param  array 				 $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
-	 * @param EE_message_type   			 $message_type      The message type that called the parser
-	 * @param EE_messenger   			$messenger 	       The active messenger for this parsing session.
+	 *
+*@param  string                      $template         This is the incoming string to be parsed
+	 * @param  EE_Messages_Addressee $data             This is the incoming data object
+	 * @param  array                 $valid_shortcodes An array of strings that correspond to EE_Shortcode libraries
+	 * @param EE_message_type        $message_type     The message type that called the parser
+	 * @param EE_Messenger           $messenger        The active messenger for this parsing session.
 	 * @param EE_Message             $message
 	 * @return string                   The parsed template string
 	 */
-	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes, EE_message_type $message_type, EE_messenger $messenger, EE_Message $message) {
+	public function parse_message_template(
+		$template, EE_Messages_Addressee $data,
+		$valid_shortcodes,
+		EE_message_type $message_type,
+		EE_Messenger $messenger,
+		EE_Message $message
+	) {
 		$extra_data = array(
 			'messenger' => $messenger,
 			'message_type' => $message_type,
 			'message' => $message
 			);
-
 		$this->_init_data( $template, $data, $valid_shortcodes, $extra_data );
-
-
 		$this->_template = is_array($template) ? $template['main'] : $template;
-
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
 	public function parse_attendee_list_template( $template, EE_Registration $registration, $valid_shortcodes, $extra_data = array() ) {
-
 		$this->_init_data( $template, $registration, $valid_shortcodes, $extra_data );
-
 		$this->_template = is_array($template) ? $template['attendee_list'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 	public function parse_event_list_template( $template, EE_Event $event, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $event, $valid_shortcodes, $extra_data );
-
 		$this->_template = is_array($template) ? $template['event_list'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
 	public function parse_ticket_list_template( $template, EE_Ticket $ticket, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $ticket, $valid_shortcodes, $extra_data );
-
 		$this->_template = is_array($template) ? $template['ticket_list'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
@@ -134,38 +126,28 @@ class EEH_Parse_Shortcodes {
 	public function parse_line_item_list_template( $template, EE_Line_Item $line_item, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $line_item, $valid_shortcodes, $extra_data );
 		$this->_template = is_array( $template ) ? $template['ticket_line_item_no_pms'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
 	public function parse_payment_list_template( $template, EE_Payment $payment_item, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $payment_item, $valid_shortcodes, $extra_data );
 		$this->_template = is_array( $template ) ? $template['payment_list'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
 	public function parse_datetime_list_template( $template, EE_Datetime $datetime, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $datetime, $valid_shortcodes, $extra_data );
-
 		$this->_template = is_array($template) ? $template['datetime_list'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
 	public function parse_question_list_template( $template, EE_Answer $answer, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $answer, $valid_shortcodes, $extra_data );
-
 		$this->_template = is_array($template) ? $template['question_list'] : $template;
-
-		$parsed = $this->_parse_message_template();
-		return $parsed;
+		return $this->_parse_message_template();
 	}
 
 
@@ -174,7 +156,6 @@ class EEH_Parse_Shortcodes {
 		$this->_data['template'] = $template;
 		$this->_data['data'] = $data;
 		$this->_data['extra_data'] = $extra_data;
-
 		$this->_set_shortcodes( $valid_shortcodes );
 	}
 
@@ -187,14 +168,13 @@ class EEH_Parse_Shortcodes {
 
 	/**
 	 * takes the given template and parses it with the $_shortcodes property
-	 * @return void
+	 *
 	 * @access private
+	 * @return string
 	 */
 	private function _parse_message_template() {
-
-
 		//now let's get a list of shortcodes that are found in the given template
-		$possible_shortcodes = preg_match_all( '/(\[.+?\])/', $this->_template, $matches );
+		preg_match_all( '/(\[.+?\])/', $this->_template, $matches );
 		$shortcodes = (array) $matches[0]; //this should be an array of shortcodes in the template string.
 
 		$matched_code = array();
@@ -225,28 +205,28 @@ class EEH_Parse_Shortcodes {
 		foreach ( $shortcodes as $shortcode ) {
 
 			foreach ( $this->_shortcode_objs as $sc_obj ) {
-				$data_send = '';
+				if ( $sc_obj instanceof EE_Shortcodes ){
+					//we need to setup any dynamic shortcodes so that they work with the array_key_exists
+					preg_match_all( '/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches );
+					$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
 
-				//we need to setup any dynamic shortcodes so that they work with the array_key_exists
-				$sc = preg_match_all( '/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches );
-				$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
+					if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) {
+						continue; //the given shortcode isn't in this object
+					}
 
-				if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) {
-					continue; //the given shortcode isn't in this object
+					//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
+					if ( ! in_array( $sc_to_verify, $list_type_shortcodes ) ) {
+						$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
+					} else {
+						$data_send = $this->_data;
+					}
+
+
+					$parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] );
+
+					$matched_code[] = $shortcode;
+					$sc_values[] = $parsed;
 				}
-
-				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( ! in_array( $sc_to_verify, $list_type_shortcodes ) ) {
-					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
-				} else {
-					$data_send = $this->_data;
-				}
-
-
-				$parsed = $sc_obj->parser( $shortcode, $data_send, $this->_data['extra_data'] );
-
-				$matched_code[] = $shortcode;
-				$sc_values[] = $parsed;
 			}
 		}
 
