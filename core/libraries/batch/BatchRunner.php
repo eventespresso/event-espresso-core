@@ -1,7 +1,7 @@
-<?php namespace EventEspresso\Core\Libraries\Batch;
+<?php namespace EventEspressoBatch;
 
-use EventEspresso\Core\Libraries\Batch\JobHandlers\JobHandlerInterface;
-use EventEspresso\Core\Libraries\Batch\Helpers\JobHandlerException;
+use EventEspressoBatch\JobHandlerBaseClasses\JobHandlerInterface;
+use EventEspressoBatch\Helpers\JobHandlerException;
 
 /* 
  * Responsible for receiving a request to start a job and assign it a job Id.

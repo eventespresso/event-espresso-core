@@ -226,8 +226,8 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
-		$batch_runner = new EventEspresso\Core\Libraries\Batch\BatchRunner();
-		$job_id = $batch_runner->create_job( 'EventEspresso\Core\Libraries\Batch\JobHandlers\RegistrationsReport', $_REQUEST );
+		$batch_runner = new EventEspressoBatch\BatchRunner();
+		$job_id = $batch_runner->create_job( 'EventEspressoBatch\JobHandlers\RegistrationsReport', $_REQUEST );
 		//enqueues the javascript (which maybe shows job progress, and when done converts
 		//the temp file into a properly named file and sends it to the user, and deletes it?)
 		//with all the variables it needs to run the job

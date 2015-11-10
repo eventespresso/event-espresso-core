@@ -1,6 +1,6 @@
 <?php 
-namespace EventEspresso\Core\Libraries\Batch\JobHandlerBaseClass;
-use EventEspresso\Core\Libraries\Batch\JobHandlerBaseClass\JobHandlerInterface;
+namespace EventEspressoBatch\JobHandlerBaseClasses;
+use EventEspressoBatch\JobHandlerBaseClasses\JobHandlerInterface;
 
 /* 
  * Base class for common implementations of JobHandlerInterface.

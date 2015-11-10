@@ -1,5 +1,5 @@
 <?php 
-namespace EventEspresso\Core\Libraries\Batch\Helpers;
+namespace EventEspressoBatch\Helpers;
 
 /* 
  * Exception class for whenever we have trouble running start, continuing, or finishing
