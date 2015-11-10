@@ -124,7 +124,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
      *
      * @since    4.3.0
      *
-     * @param array $paths array of paths to be checked by EE_messages autoloader.
+     * @param array $paths array of paths to be checked by EE_Messages autoloader.
      * @return array
      */
     public static function register_msgs_autoload_paths( $paths  ) {
