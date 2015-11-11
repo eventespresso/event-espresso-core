@@ -78,7 +78,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_CPT_Strategy )) {
+		if ( ! self::$_instance instanceof EE_CPT_Strategy ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -100,7 +100,7 @@ class EE_CPT_Strategy extends EE_BASE {
 //		d( $this->_CPTs );
 //		d( $this->_CPT_endpoints );
 //		d( $this->_CPT_taxonomies );
-		// load EE_Request_Handler
+		
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
 
