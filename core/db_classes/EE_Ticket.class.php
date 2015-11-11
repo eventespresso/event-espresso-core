@@ -786,9 +786,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 				// but adjust datetime qty based on datetime reg limit
 				$datetime_qty = min( INF, $datetime->reg_limit() );
 				// if we want the actual saleable amount, then we need to consider OTHER ticket sales
-				// for this datetime, that do NOT include sales for this ticket
+				// for this datetime, that do NOT include sales for this ticket (so we add THIS ticket's sales back in)
 				if ( $context == 'saleable' ) {
-					$datetime_qty = max( $datetime_qty - ( $datetime->sold() - $this->sold() ), 0 );
+					$datetime_qty = max( $datetime_qty - $datetime->sold() + $this->sold(), 0 );
 					$datetime_qty = ! $datetime->sold_out() ? $datetime_qty : 0;
 				}
 				$qty = min( $datetime_qty, $qty );
