@@ -933,14 +933,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$saved_dtt = null;
 		$saved_tickets = array();
 		$incoming_date_formats = array( 'Y-m-d', 'h:i a' );
+
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
+			//trim all values to ensure any excess whitespace is removed.
+			$dtt =  array_map( 'trim', $dtt );
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
-				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
+				'DTT_ID' 		=> ! empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
-				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
+				'DTT_EVT_end' 	=> $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? EE_INF : $dtt['DTT_reg_limit'],
-				'DTT_order' => $row,
+				'DTT_order' 	=> $row,
 			);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
@@ -992,6 +995,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$update_prices = false;
 			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
 
+			// trim inputs to ensure any excess whitespace is removed.
+			$tkt = array_map( 'trim', $tkt );
+
 			if ( empty( $tkt['TKT_start_date'] ) ) {
 				//let's use now in the set timezone.
 				$now = new DateTime( 'now', new DateTimeZone( $evtobj->get_timezone() ) );
@@ -1005,19 +1011,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			}
 
 			$TKT_values = array(
-				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
-				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
-				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
-				'TKT_description' => !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
-				'TKT_start_date' => $tkt['TKT_start_date'],
-				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? EE_INF : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? EE_INF : $tkt['TKT_uses'],
-				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? EE_INF : $tkt['TKT_max'],
-				'TKT_row' => $row,
-				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : $row,
-				'TKT_price' => $ticket_price
+				'TKT_ID' 			=> !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
+				'TTM_ID' 			=> !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
+				'TKT_name' 			=> !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
+				'TKT_description' 	=> !empty( $tkt['TKT_description'] ) ? $tkt['TKT_description'] : '',
+				'TKT_start_date' 	=> $tkt['TKT_start_date'],
+				'TKT_end_date' 		=> $tkt['TKT_end_date'],
+				'TKT_qty' 			=> ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? EE_INF : $tkt['TKT_qty'],
+				'TKT_uses' 			=> ! isset( $tkt[ 'TKT_uses' ] ) || $tkt[ 'TKT_uses' ] === '' ? EE_INF : $tkt[ 'TKT_uses' ],
+				'TKT_min' 			=> empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
+				'TKT_max' 			=> empty( $tkt['TKT_max'] ) ? EE_INF : $tkt['TKT_max'],
+				'TKT_row' 			=> $row,
+				'TKT_order' 		=> isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : $row,
+				'TKT_price' 		=> $ticket_price
 			);
 
 
