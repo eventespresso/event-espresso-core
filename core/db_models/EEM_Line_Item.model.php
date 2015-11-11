@@ -253,6 +253,42 @@ class EEM_Line_Item extends EEM_Base {
 
 
 	/**
+	 * get_all_ticket_line_items_for_transaction
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function get_all_ticket_line_items_for_transaction( EE_Transaction $transaction ) {
+		return $this->get_all( array(
+		   array(
+			   'TXN_ID'   => $transaction->ID(),
+			   'OBJ_type' => 'Ticket',
+		   )
+	   ) );
+	}
+
+
+
+	/**
+	 * get_ticket_line_item_for_transaction
+	 *
+	 * @param int $TXN_ID
+	 * @param int $TKT_ID
+	 * @return \EE_Line_Item
+	 */
+	public function get_ticket_line_item_for_transaction( $TXN_ID, $TKT_ID ) {
+		return $this->get_one( array(
+		   array(
+			   'TXN_ID'   => EEM_Transaction::instance()->ensure_is_ID( $TXN_ID ),
+			   'OBJ_ID'   => $TKT_ID,
+			   'OBJ_type' => 'Ticket',
+		   )
+	   ) );
+	}
+
+
+
+	/**
 	 * get_existing_promotion_line_item
 	 * searches the cart for existing line items for the specified promotion
 	 *
