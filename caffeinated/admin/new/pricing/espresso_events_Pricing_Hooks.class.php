@@ -204,16 +204,18 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$saved_dtt_objs = array();
 
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
+			//trim all values to ensure any excess whitespace is removed.
+			$dtt =  array_map( 'trim', $dtt );
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
-				'DTT_ID' => !empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
-				'DTT_name' => !empty( $dtt['DTT_name'] ) ? $dtt['DTT_name'] : '',
-				'DTT_description' => !empty( $dtt['DTT_description'] ) ? $dtt['DTT_description'] : '',
-				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
-				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
-				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
-				'DTT_order' => !isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
-				);
+				'DTT_ID' 			=> ! empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
+				'DTT_name' 			=> ! empty( $dtt['DTT_name'] ) ? $dtt['DTT_name'] : '',
+				'DTT_description' 	=> ! empty( $dtt['DTT_description'] ) ? $dtt['DTT_description'] : '',
+				'DTT_EVT_start' 	=> $dtt['DTT_EVT_start'],
+				'DTT_EVT_end' 		=> $dtt['DTT_EVT_end'],
+				'DTT_reg_limit' 	=> empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt[ 'DTT_reg_limit' ],
+				'DTT_order' 		=> ! isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
+			);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
 
@@ -328,6 +330,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$tkt_dtt_rows = explode(',', $data['ticket_datetime_rows'][$row] );
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
+
+			// trim inputs to ensure any excess whitespace is removed.
+			$tkt = array_map( 'trim', $tkt );
+
 			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
 			//note incoming ['TKT_price'] value is already in standard notation (via js).
 			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
@@ -356,21 +362,21 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			}
 
 			$TKT_values = array(
-				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
-				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
-				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
-				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
-				'TKT_start_date' => $tkt['TKT_start_date'],
-				'TKT_end_date' => $tkt['TKT_end_date'],
-				'TKT_qty' => ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : $tkt['TKT_qty'],
-				'TKT_uses' => empty( $tkt['TKT_uses'] ) ? INF : $tkt['TKT_uses'],
-				'TKT_min' => empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
-				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
-				'TKT_row' => $row,
-				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
-				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
-				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0,
-				'TKT_price' => $ticket_price
+				'TKT_ID' 			=> ! empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
+				'TTM_ID' 			=> ! empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
+				'TKT_name' 			=> ! empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
+				'TKT_description' 	=> ! empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
+				'TKT_start_date' 	=> $tkt['TKT_start_date'],
+				'TKT_end_date' 		=> $tkt['TKT_end_date'],
+				'TKT_qty' 			=> ! isset( $tkt[ 'TKT_qty' ] ) || $tkt[ 'TKT_qty' ] === '' ? INF : $tkt[ 'TKT_qty' ],
+				'TKT_uses' 			=> ! isset( $tkt[ 'TKT_uses' ] ) || $tkt[ 'TKT_uses' ] === '' ? INF : $tkt['TKT_uses'],
+				'TKT_min' 			=> empty( $tkt['TKT_min'] ) ? 0 : $tkt['TKT_min'],
+				'TKT_max' 			=> empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
+				'TKT_row' 			=> $row,
+				'TKT_order' 		=> isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
+				'TKT_taxable' 		=> ! empty( $tkt['TKT_taxable'] ) ? 1 : 0,
+				'TKT_required' 		=> ! empty( $tkt['TKT_required'] ) ? 1 : 0,
+				'TKT_price' 		=> $ticket_price
 			);
 
 
