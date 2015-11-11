@@ -597,7 +597,6 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		}
 		try {
 			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
-			return true;
 		} catch ( EE_Error $e ) {
 			EE_Error::add_error(
 				sprintf(
@@ -610,6 +609,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			);
 			return false;
 		}
+		if ( $update_txn ) {
+			return $transaction->save() ? true : false;
+		}
+		return true;
 	}
 
 
@@ -619,12 +622,18 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * cycles thru related registrations and checks their statuses
 	 * if ALL registrations are Cancelled or Declined, then this sets the TXN status to
 	 *
-	 * @access private
-	 * @param EE_Transaction 	$transaction
-	 * @param array          			$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
-	 * @return boolean				true if TXN status was updated, false if not
+	 * @access 	private
+	 * @param 	EE_Transaction 	$transaction
+	 * @param 	array 			$registration_query_params - array of query WHERE params to use when
+	 *                                                     retrieving cached registrations from a transaction
+	 * @param 	array 			$closed_reg_statuses
+	 * @return 	boolean			true if TXN status was updated, false if not
 	 */
-	public function toggle_transaction_status_if_all_registrations_canceled_or_declined( EE_Transaction $transaction, $registration_query_params = array() ) {
+	public function toggle_transaction_status_if_all_registrations_canceled_or_declined(
+		EE_Transaction $transaction,
+		$registration_query_params = array(),
+		$closed_reg_statuses = array()
+	) {
 		// make sure some query params are set for retrieving registrations
 		$this->_set_registration_query_params( $registration_query_params );
 		// these reg statuses should not be considered in any calculations involving monies owing
