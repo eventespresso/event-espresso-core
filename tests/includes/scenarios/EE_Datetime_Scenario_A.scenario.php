@@ -68,7 +68,7 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 				'A' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket A',
-						'TKT_qty' => INF,
+						'TKT_qty' => 3,
 						'TKT_sold' => 3,
 					),
 					'relations' => array(
@@ -78,7 +78,7 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 				'B' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket B',
-						'TKT_qty' => 15,
+						'TKT_qty' => 5,
 						'TKT_sold' => 0,
 					),
 					'relations' => array(
@@ -88,7 +88,7 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 				'C' => array(
 					'fields' => array(
 						'TKT_name' => 'Ticket C',
-						'TKT_qty' => 20,
+						'TKT_qty' => 5,
 						'TKT_sold' => 2,
 					),
 					'relations' => array(
