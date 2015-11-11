@@ -204,8 +204,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$saved_dtt_objs = array();
 
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
+			//trim all values to ensure any excess whitespace is removed.
+			$dtt =  array_map( 'trim', $dtt );
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
-			$dtt[ 'DTT_reg_limit' ] = isset( $dtt[ 'DTT_reg_limit' ] ) ? trim( $dtt[ 'DTT_reg_limit' ] ) : INF;
 			$datetime_values = array(
 				'DTT_ID' 			=> ! empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_name' 			=> ! empty( $dtt['DTT_name'] ) ? $dtt['DTT_name'] : '',
@@ -329,6 +330,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$tkt_dtt_rows = explode(',', $data['ticket_datetime_rows'][$row] );
 			$dtts_added = array_diff($tkt_dtt_rows, $starting_tkt_dtt_rows);
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
+
+			// trim inputs to ensure any excess whitespace is removed.
+			$tkt = array_map( 'trim', $tkt );
+
 			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
 			//note incoming ['TKT_price'] value is already in standard notation (via js).
 			$ticket_price = isset( $tkt['TKT_price'] ) ?  round ( (float) $tkt['TKT_price'], 3 ) : 0;
@@ -355,11 +360,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$first_dtt = $saved_dtts[reset( $tkt_dtt_rows )];
 				$tkt['TKT_end_date'] = $first_dtt->start_date_and_time( $this->_date_format_strings['date'] . ' ' . $this->_date_format_string['time'] );
 			}
-			// trim inputs
-			$tkt[ 'TKT_qty' ] 	= isset( $tkt[ 'TKT_qty' ] ) ? trim( $tkt[ 'TKT_qty' ] ) : INF;
-			$tkt[ 'TKT_uses' ] 	= isset( $tkt[ 'TKT_uses' ] ) ? trim( $tkt[ 'TKT_uses' ] ) : INF;
-			$tkt[ 'TKT_min' ] 	= isset( $tkt[ 'TKT_min' ] ) ? trim( $tkt[ 'TKT_min' ] ) : 0;
-			$tkt[ 'TKT_max' ] 	= isset( $tkt[ 'TKT_max' ] ) ? trim( $tkt[ 'TKT_max' ] ) : INF;
 
 			$TKT_values = array(
 				'TKT_ID' 			=> ! empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,

@@ -933,9 +933,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$saved_dtt = null;
 		$saved_tickets = array();
 		$incoming_date_formats = array( 'Y-m-d', 'h:i a' );
+
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
+			//trim all values to ensure any excess whitespace is removed.
+			$dtt =  array_map( 'trim', $dtt );
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
-			$dtt[ 'DTT_reg_limit' ] = isset( $dtt[ 'DTT_reg_limit' ] ) ? trim( $dtt[ 'DTT_reg_limit' ] ) : INF;
 			$datetime_values = array(
 				'DTT_ID' 		=> ! empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
@@ -993,6 +995,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$update_prices = false;
 			$ticket_price = isset( $data['edit_prices'][$row][1]['PRC_amount'] ) ? $data['edit_prices'][$row][1]['PRC_amount'] : 0;
 
+			// trim inputs to ensure any excess whitespace is removed.
+			$tkt = array_map( 'trim', $tkt );
+
 			if ( empty( $tkt['TKT_start_date'] ) ) {
 				//let's use now in the set timezone.
 				$now = new DateTime( 'now', new DateTimeZone( $evtobj->get_timezone() ) );
@@ -1004,11 +1009,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$dtt = $evtobj->first_datetime();
 				$tkt['TKT_end_date'] = $dtt->start_date_and_time( $incoming_date_formats[0], $incoming_date_formats[1] );
 			}
-			// trim inputs
-			$tkt[ 'TKT_qty' ] 	= isset( $tkt[ 'TKT_qty' ] ) ? trim( $tkt[ 'TKT_qty' ] ) : INF;
-			$tkt[ 'TKT_uses' ] 	= isset( $tkt[ 'TKT_uses' ] ) ? trim( $tkt[ 'TKT_uses' ] ) : INF;
-			$tkt[ 'TKT_min' ] 	= isset( $tkt[ 'TKT_min' ] ) ? trim( $tkt[ 'TKT_min' ] ) : 0;
-			$tkt[ 'TKT_max' ] 	= isset( $tkt[ 'TKT_max' ] ) ? trim( $tkt[ 'TKT_max' ] ) : INF;
 
 			$TKT_values = array(
 				'TKT_ID' 			=> !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
