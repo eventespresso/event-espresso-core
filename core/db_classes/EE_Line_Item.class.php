@@ -177,7 +177,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return boolean
 	 */
 	function set_quantity( $quantity ) {
-		$this->set( 'LIN_quantity', $quantity );
+		$this->set( 'LIN_quantity', max( $quantity, 0 ) );
 	}
 
 
