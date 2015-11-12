@@ -2,6 +2,7 @@
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
+use EventEspressoBatchRequest\Helpers\JobStepResponse;
 /* 
  * Generates the registrations report for the specified event,
  * or for all events
@@ -14,7 +15,7 @@ class RegistrationsReport extends JobHandlerFile {
 	 * when continue_job will be called
 	 * @param JobParameters $job_parameters
 	 * @throws BatchRequestException
-	 * @return array
+	 * @return JobStepResponse
 	 */
 	public function start_job( JobParameters $job_parameters ) {
 		$event_id = intval( $job_parameters->request_datum( 'EVT_ID', '0' ) );
@@ -28,6 +29,7 @@ class RegistrationsReport extends JobHandlerFile {
 		if( $job_parameters->job_size() ) {
 			$job_parameters->mark_processed( 1 );
 		}
+		return new JobStepResponse( $job_parameters, __( 'Registrations report started successfully...', 'event_espresso' ) );
 	}
 	
 	/**
@@ -61,7 +63,21 @@ class RegistrationsReport extends JobHandlerFile {
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
 		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $batch_size );
 		$success = \EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
-		$job_parameters->mark_processed( count( $csv_data ) );
+		$units_processed = count( $csv_data );
+		$job_parameters->mark_processed( $units_processed );
+		$extra_response_data = array(
+			'file_url' => ''
+		);
+		if( $units_processed < $batch_size ) {
+			$job_parameters->set_status( JobParameters::status_complete );
+			$extra_response_data[ 'file_url' ] = $this->convert_filepath_to_url( $job_parameters->extra_datum( 'filepath' ) );
+		}
+		return new JobStepResponse( 
+				$job_parameters, 
+				sprintf( 
+					__( 'Wrote %1$s rows to report CSV file...', 'event_espresso' ),
+					count( $csv_data ) ),
+				$extra_response_data );
 	}
 	
 	function get_csv_data_for( $event_id, $offset, $limit ) {
@@ -303,12 +319,25 @@ class RegistrationsReport extends JobHandlerFile {
 	}
 	
 	/**
-	 * Performs any clean-up logic when we know the job is completed
+	 * Performs any clean-up logic when we know the job is completed.
+	 * In this case, we delete the temporary file
 	 * @param JobParameters $job_parameters
 	 * @return boolean
 	 */
-	public function finish_job( JobParameters $job_parameters ){
-		
+	public function cleanup_job( JobParameters $job_parameters ){
+		return $this->_file_helper->delete( 
+				\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ), 
+				true, 
+				'd' );
+	}
+	
+	/**
+	 * Gets the URL to download teh file
+	 * @param type $filepath
+	 * @return string
+	 */
+	public function convert_filepath_to_url( $filepath ) {
+		return str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, $filepath );
 	}
 }
 

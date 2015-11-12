@@ -3,6 +3,7 @@
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
+use EventEspressoBatchRequest\Helpers\JobStepResponse;
 
 /* 
  * Responsible for receiving a request to start a job and assign it a job Id.
@@ -19,14 +20,14 @@ class BatchRunner {
 	 * and the specified request data
 	 * @param string $batch_job_handler_class of an auto-loaded class implementing JobHandlerInterface
 	 * @param array $request_data to be used by the batch job handler
-	 * @return string job_id
+	 * @return JobStepResponse
 	 * @throws BatchRequestException
 	 */
 	public function create_job( $batch_job_handler_class, $request_data ) {
 		$job_id = wp_generate_password( 15, false );
 		$obj = $this->instantiate_batch_job_handler_from_classname( $batch_job_handler_class );
 		$job_parameters = new JobParameters( $job_id, $batch_job_handler_class, $request_data );
-		$obj->start_job( $job_parameters );
+		$response = $obj->start_job( $job_parameters );
 		$success = $job_parameters->save( true );
 		if( ! $success ) {
 			throw new BatchRequestException(
@@ -36,32 +37,22 @@ class BatchRunner {
 						wp_json_encode( $job_arguments )
 					) );
 		}
-		return $job_id;
+		return $response;
 	}
 	
 	/**
 	 * Retrieves the job's arguments
 	 * @param string $job_id
 	 * @param int $batch_size
-	 * @return array{
-	 *	@type string $status
-	 *	@type int $records_processed
-	 *	@type int $records_to_process
-	 *	@type string $message
-	 * } and anything
+	 * @return JobStepResponse
 	 * @throws BatchRequestException
 	 */
-	public function continue_job( $job_id, $batch_size = 50 ) {
+	public function continue_job( $job_id, $batch_size = 5 ) {
 		//get the corresponding worpdress option for the job
 		$job_parameters = JobParameters::load( $job_id );
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
 		//continue it
 		$response = $handler_obj->continue_job( $job_parameters, $batch_size );
-		//if its done, call finish job on it
-		if( isset( $response[ 'status' ] ) &&
-				$response[ 'status' ] === JobHandlerInterface::status_complete ) {
-			$handler_obj->finish_job( $job_id, $job_parameters );
-		}
 		$job_parameters->save();
 		return $response;
 	}
@@ -94,16 +85,17 @@ class BatchRunner {
 		return $obj;
 	}
 	/**
-	 * Forces a job to be cancelled
+	 * Forces a job to be cleaned up
 	 * @param string $job_id
-	 * @return boolean success
+	 * @return JobStepResponse
 	 */
-	public function cancel_job( $job_id ) {
+	public function cleanup_job( $job_id ) {
 		$job_parameters = JobParameters::load( $job_id );
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
 		//continue it
-		$success = $handler_obj->finish_job( $job_parameters );
-		$job_parameters->save();
+		$success = $handler_obj->cleanup_job( $job_parameters );
+		$job_parameters->set_status( JobParameters::status_cleaned_up );
+		$job_parameters->delete();
 		return $success;
 		
 	}

@@ -46,7 +46,9 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		//todo: all hooks for ajax goes here.
+		add_action('wp_ajax_batch_continue',array($this,'batch_continue'));
+		add_action('wp_ajax_batch_cleanup',array($this,'batch_cleanup'));
+		
 	}
 
 
@@ -225,6 +227,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_sidebar();
 	}
 	
+	public function load_scripts_styles_batch_start() {
+		wp_register_script( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.js', array( 'jquery' ) );
+		
+		wp_enqueue_script( 'batch_runner', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js', array( 'progress_bar' ));
+		wp_enqueue_script( 'support_batch_runner', EE_SUPPORT_ASSETS_URL . 'support_batch_runner.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION,true);
+		wp_enqueue_style( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css' );
+	}
 	/**
 	 * Invokes the report-generating code
 	 */
@@ -234,24 +243,36 @@ class Support_Admin_Page extends EE_Admin_Page {
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
 		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
-		$job_id = $batch_runner->create_job( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport', $_REQUEST );
-		echo 'job id ' . $job_id;
+		$job_response = $batch_runner->create_job( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport', $_REQUEST );
+		$success = wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
 		//enqueues the javascript (which maybe shows job progress, and when done converts
 		//the temp file into a properly named file and sends it to the user, and deletes it?)
 		//with all the variables it needs to run the job
 		//and shows the page
+		echo EEH_Template::locate_template( EE_SUPPORT_ADMIN . 'templates' . DS . 'admin_batch_runner.template.html' );
 	}
 	
 	/**
-	 * Receives ajax calls for generating a report
+	 * Receives ajax calls for continuing a job
 	 */
-	protected function _generate_csv_report_ajax() { 
+	public function batch_continue() { 
 		$job_id = sanitize_text_field( $this->_req_data[ 'job_id' ] );
 		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
-		$batch_runner->continue_job( $job_id );
-		//sorta just a heartbeat
-		//might only need the job id
-		//returns an array describing the job's progress
+		$responseobj = $batch_runner->continue_job( $job_id);
+		$this->_template_args[ 'data' ] = $responseobj->to_array();
+		$this->_return_json();
+	}
+	
+	/**
+	 * Receives the ajax call to cleanup a job
+	 * @return type
+	 */
+	public function batch_cleanup() {
+		$job_id = sanitize_text_field( $this->_req_data[ 'job_id' ] );
+		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
+		$response_obj = $batch_runner->cleanup_job( $job_id );
+		$this->_template_args[ 'data' ] = $response_obj->to_array();
+		$this->_return_json();
 	}
 
 

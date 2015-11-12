@@ -2,6 +2,7 @@
 namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
+use EventEspressoBatchRequest\Helpers\JobStepResponse;
 
 /* 
  * Interface describing classes that BatchRunner can send jobs to for processing.
@@ -10,16 +11,13 @@ use EventEspressoBatchRequest\Helpers\JobParameters;
  * when completed
  */
 interface JobHandlerInterface {
-	const status_continue = 'continue';
-	const status_complete = 'complete';
-	const status_error = 'error';
 	/**
 	 * Performs any necessary setup for starting the job. This is also a good
 	 * place to setup the $job_arguments which will be used for subsequent HTTP requests
 	 * when continue_job will be called
 	 * @param JobParameters $job_parameters
 	 * @throws \helpers\BatchRequestException
-	 * @return boolean success
+	 * @return JobStepResponse
 	 */
 	public function start_job( JobParameters $job_parameters );
 	
@@ -27,12 +25,7 @@ interface JobHandlerInterface {
 	 * Performs another step of the job
 	 * @param JobParameters $job_parameters
 	 * @param int $batch_size
-	 * @return array{
-	 *	@type string $status
-	 *	@type int $records_processed
-	 *	@type int $records_to_process
-	 *	@type string message
-	 * } and anything more we want to add
+	 * @return JobStepResponse
 	 * @throws 
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 );
@@ -41,7 +34,7 @@ interface JobHandlerInterface {
 	 * Performs any clean-up logic when we know the job is completed
 	 * @param string $job_id
 	 * @param array $job_arguments
-	 * @return boolean
+	 * @return JobStepResponse
 	 */
-	public function finish_job( JobParameters $job_parameters );
+	public function cleanup_job( JobParameters $job_parameters );
 }

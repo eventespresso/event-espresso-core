@@ -13,7 +13,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * when continue_job will be called
 	 * @param JobParameters $job_parameters
 	 * @throws \helpers\BatchRequestException
-	 * @return array updated job arguments to be used when continuing and finishing the job
+	 * @return JobStepResponse
 	 */
 	abstract public function start_job( JobParameters $job_parameters );
 	
@@ -21,12 +21,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * Performs another step of the job
 	 * @param JobParameters $job_parameters
 	 * @param int $batch_size
-	 * @return array{
-	 *	@type string $status
-	 *	@type int $records_processed
-	 *	@type int $records_to_process
-	 *	@type string message
-	 * } and anything more we want to add
+	 * @return JobStepResponse
 	 * @throws 
 	 */
 	abstract public function continue_job( JobParameters $job_parameters, $batch_size = 50 );
@@ -35,8 +30,8 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * Performs any clean-up logic when we know the job is completed
 	 * @param string $job_id
 	 * @param array $job_arguments
-	 * @return boolean
+	 * @return JobStepResponse
 	 */
-	abstract public function finish_job( JobParameters $job_parameters );
+	abstract public function cleanup_job( JobParameters $job_parameters );
 }
 

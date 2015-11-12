@@ -6,7 +6,23 @@
  */
 
 class JobParameters {
-	
+	/**
+	 * status indicating the job should continue
+	 */
+	const status_continue = 'continue';
+	/**
+	 * status indicated the job has been completed successfully and should be cleaned up next
+	 */
+	const status_complete = 'complete';
+	/**
+	 * status indicating there was an error and the job should be cleaned up
+	 */
+	const status_error = 'error';
+	/**
+	 * status indicating the job has been cleaned up, and so this is probably the last
+	 * time you'll see this job
+	 */
+	const status_cleaned_up = 'cleaned_up';
 	const wp_option_prefix = 'ee_job_parameters_';
 	/**
 	 * String uniquely identifying the job
@@ -37,6 +53,8 @@ class JobParameters {
 	 */
 	protected $_units_processed = 0;
 	
+	protected $_status;
+	
 	/**
 	 * The size of the total job in whatever units you want.
 	 * If you can't provide an estimate leave as 0.
@@ -44,6 +62,74 @@ class JobParameters {
 	 * @var int
 	 */
 	protected $_job_size = 0;
+	
+	/**
+	 * 
+	 * @param string $job_id
+	 * @param string $classname
+	 * @param array $request_data
+	 * @param array $extra_data
+	 */
+	function __construct( $job_id, $classname, $request_data, $extra_data = array() ) {
+		$this->set_job_id( $job_id );
+		$this->set_classname( $classname );
+		$this->set_request_data( $request_data );
+		$this->set_extra_data( $extra_data );
+		$this->set_status( JobParameters::status_continue );
+	}
+	
+	/**
+	 * Returns the array of strings of valid stati
+	 * @return array
+	 */
+	public static function valid_stati() {
+		return array(
+			JobParameters::status_complete,
+			JobParameters::status_continue,
+			JobParameters::status_error,
+			JobParameters::status_cleaned_up,
+		);
+	}
+	
+	/**
+	 * Saves this option to the database (wordpress options table)
+	 * @param boolean $first
+	 * @return boolean success
+	 */
+	function save( $first = false ) {
+		if( $first ) {
+			return add_option( $this->option_name(), $this, null, 'no' );
+		} else{
+			return update_option( $this->option_name(), $this );
+		}
+	}
+	
+	/**
+	 * Deletes the job from teh database, although this object is still usable
+	 * for the rest of the request
+	 * @return boolean
+	 */
+	function delete() {
+		return delete_option( $this->option_name() );
+	}
+	
+	/**
+	 * Loads the specified job from the database
+	 * @param string $job_id
+	 * @return JobParameters
+	 * @throws BatchRequestException
+	 */
+	static function load( $job_id ) {
+		$job_parameters = get_option(JobParameters::wp_option_prefix . $job_id );
+		if( $job_parameters === false ) {
+			throw new BatchRequestException(
+				sprintf( 
+					__('Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue.', 'event_espresso'),
+					$job_id
+					) );
+		}
+		return $job_parameters;
+	}
 	
 	/**
 	 * Gets the job's unique string
@@ -188,56 +274,26 @@ class JobParameters {
 	}
 	
 	/**
-	 * 
-	 * @param string $job_id
-	 * @param string $classname
-	 * @param array $request_data
-	 * @param array $extra_data
-	 */
-	function __construct( $job_id, $classname, $request_data, $extra_data = array() ) {
-		$this->set_job_id( $job_id );
-		$this->set_classname( $classname );
-		$this->set_request_data( $request_data );
-		$this->set_extra_data( $extra_data );
-	}
-	
-	/**
-	 * Saves this option to the database (wordpress options table)
-	 * @param boolean $first
-	 * @return boolean success
-	 */
-	function save( $first = false ) {
-		if( $first ) {
-			return add_option( $this->option_name(), $this, null, 'no' );
-		} else{
-			return update_option( $this->option_name(), $this );
-		}
-	}
-	
-	/**
-	 * Loads the specified job from the database
-	 * @param string $job_id
-	 * @return JobParameters
-	 * @throws BatchRequestException
-	 */
-	static function load( $job_id ) {
-		$job_parameters = get_option(JobParameters::wp_option_prefix . $job_id );
-		if( $job_parameters === false ) {
-			throw new BatchRequestException(
-				sprintf( 
-					__('Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue.', 'event_espresso'),
-					$job_id
-					) );
-		}
-		return $job_parameters;
-	}
-	
-	/**
 	 * Gets the naem of the wordpress option that should store these job parameters
 	 * @return string
 	 */
 	function option_name() {
 		return JobParameters::wp_option_prefix . $this->job_id();
+	}
+	
+	/**
+	 * Gets the job\s current status. One of JobParameters::valid_stati();
+	 * @return string
+	 */
+	public function status() {
+		return $this->_status;
+	}
+	/**
+	 * 
+	 * @param string $status on eof JobParameters::valid_stati()
+	 */
+	public function set_status( $status ) {
+		$this->_status = $status;
 	}
 }
 
