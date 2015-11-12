@@ -128,7 +128,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			/** @type EE_Transaction_Payments $transaction_payments */
 			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			$transaction_processor->update_transaction_after_canceled_or_declined_registration( $this, null, false );
+			// these reg statuses should not be considered in any calculations involving monies owing
+			$closed_reg_statuses = ! empty( $closed_reg_statuses )
+				? $closed_reg_statuses
+				: EEM_Registration::closed_reg_statuses();
+			if (
+				in_array( $new_STS_ID, $closed_reg_statuses )
+				&& ! in_array( $old_STS_ID, $closed_reg_statuses )
+			) {
+				// cancelled or declined registration
+				$transaction_processor->update_transaction_after_canceled_or_declined_registration(
+					$this,
+					$closed_reg_statuses,
+					false
+				);
+			} else if (
+				in_array( $old_STS_ID, $closed_reg_statuses )
+				&& ! in_array( $new_STS_ID, $closed_reg_statuses )
+			) {
+				// reinstating cancelled or declined registration
+				$transaction_processor->update_transaction_after_reinstating_canceled_registration( $this );
+			}
 			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
 			$transaction_payments->update_transaction_status_based_on_total_paid( $this->transaction(), true );
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
