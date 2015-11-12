@@ -325,10 +325,11 @@ class RegistrationsReport extends JobHandlerFile {
 	 * @return boolean
 	 */
 	public function cleanup_job( JobParameters $job_parameters ){
-		return $this->_file_helper->delete( 
+		$success = $this->_file_helper->delete( 
 				\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ), 
 				true, 
 				'd' );
+		return new JobStepResponse( $job_parameters, __( 'Cleaned up temporary file', 'event_espresso' ) );
 	}
 	
 	/**

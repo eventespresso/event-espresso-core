@@ -18,9 +18,7 @@ to look like a responsive progress bar
 /* PROGRESS BAR STUFF */
 
 .progress-responsive {
-	width: 70%;
-	float: left;
-
+	margin-right:2em;
 }
 /* Progress bar containers */
 .progress-responsive figure {

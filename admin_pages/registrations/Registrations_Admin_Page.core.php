@@ -2311,19 +2311,27 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function _registrations_report(){
-		EE_Registry::instance()->load_helper( 'File' );
-		$new_request_args = array(
-			'export' => 'report',
-			'action' => 'registrations_report_for_event',
-			'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
-		);
-		$this->_req_data = array_merge($this->_req_data, $new_request_args);
-
-		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance($this->_req_data);
-			$EE_Export->export();
-		}
+		wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+				array(
+					'page' => 'espresso_support',
+					'action' => 'batch_file_create',
+					'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
+					'job_handler' => urlencode( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport' ),
+					'redirect_url' => urlencode( EE_Admin_Page::add_query_args_and_nonce( array( 'registrations_report' ), REG_ADMIN_URL ) ),
+				)) );
+//		EE_Registry::instance()->load_helper( 'File' );
+//		$new_request_args = array(
+//			'export' => 'report',
+//			'action' => 'registrations_report_for_event',
+//			'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
+//		);
+//		$this->_req_data = array_merge($this->_req_data, $new_request_args);
+//
+//		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
+//			require_once(EE_CLASSES . 'EE_Export.class.php');
+//			$EE_Export = EE_Export::instance($this->_req_data);
+//			$EE_Export->export();
+//		}
 	}
 
 

@@ -35,6 +35,7 @@ jQuery(document).ready(function() {
 		//once we're all done, downthe file
 		if( response.data.status == 'complete' &&
 				response.data.file_url != '' ) {
+			jQuery('#message-area').html( ee_job_i18n.download_and_redirecting );
 			window.location.href=response.data.file_url;
 			runner.cleanup_job( 
 				eei18n.ajax_url, 
@@ -44,8 +45,9 @@ jQuery(document).ready(function() {
 					'ee_admin_ajax' : true
 				},
 				function( response, data, xhr ) {
-					
-					window.history.back();
+					//redirect them as if this page didn't exist
+					//(so clicking "back" won't get them here)
+					window.location.replace( ee_job_i18n.redirect_url );
 				});
 		}
 	}
