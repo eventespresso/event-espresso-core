@@ -19,7 +19,7 @@ interface JobHandlerInterface {
 	 * @throws \helpers\BatchRequestException
 	 * @return JobStepResponse
 	 */
-	public function start_job( JobParameters $job_parameters );
+	public function create_job( JobParameters $job_parameters );
 	
 	/**
 	 * Performs another step of the job

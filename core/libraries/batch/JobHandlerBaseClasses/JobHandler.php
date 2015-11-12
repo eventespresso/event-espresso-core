@@ -15,7 +15,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * @throws \helpers\BatchRequestException
 	 * @return JobStepResponse
 	 */
-	abstract public function start_job( JobParameters $job_parameters );
+	abstract public function create_job( JobParameters $job_parameters );
 	
 	/**
 	 * Performs another step of the job

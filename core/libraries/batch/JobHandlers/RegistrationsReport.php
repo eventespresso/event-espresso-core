@@ -17,7 +17,7 @@ class RegistrationsReport extends JobHandlerFile {
 	 * @throws BatchRequestException
 	 * @return JobStepResponse
 	 */
-	public function start_job( JobParameters $job_parameters ) {
+	public function create_job( JobParameters $job_parameters ) {
 		$event_id = intval( $job_parameters->request_datum( 'EVT_ID', '0' ) );
 		$filepath = $this->create_file_from_job_with_name($job_parameters->job_id(), $this->get_filename_from_event( $event_id ));
 		$job_parameters->add_extra_data( 'filepath', $filepath );

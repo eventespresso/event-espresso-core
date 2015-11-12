@@ -27,7 +27,7 @@ class BatchRunner {
 		$job_id = wp_generate_password( 15, false );
 		$obj = $this->instantiate_batch_job_handler_from_classname( $batch_job_handler_class );
 		$job_parameters = new JobParameters( $job_id, $batch_job_handler_class, $request_data );
-		$response = $obj->start_job( $job_parameters );
+		$response = $obj->create_job( $job_parameters );
 		$success = $job_parameters->save( true );
 		if( ! $success ) {
 			throw new BatchRequestException(
