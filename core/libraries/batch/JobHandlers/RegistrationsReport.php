@@ -19,6 +19,9 @@ class RegistrationsReport extends JobHandlerFile {
 	 */
 	public function create_job( JobParameters $job_parameters ) {
 		$event_id = intval( $job_parameters->request_datum( 'EVT_ID', '0' ) );
+		if( \EE_Capabilities::instance()->current_user_can( 'ee_read_registrations', 'generating_report' ) ) {
+			throw new BatchRequestException( __( 'You do not have permission to view registrations', 'event_espresso') );
+		}
 		$filepath = $this->create_file_from_job_with_name($job_parameters->job_id(), $this->get_filename_from_event( $event_id ));
 		$job_parameters->add_extra_data( 'filepath', $filepath );
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
