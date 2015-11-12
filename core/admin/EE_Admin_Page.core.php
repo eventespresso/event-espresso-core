@@ -2190,11 +2190,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @param	string	$name		key used for the action ID (i.e. event_id)
 	 * @param	int		$id	id attached to the item published
-	 * @param	string	$delete	page route callback for the delete action
-	 * @param	string	$post_save_redirect_URL	custom URL to redirect to after Save & Close has been completed
+	 * @param	bool|string	$delete	page route callback for the delete action
+	 * @param	string $save_close_redirect_URL	custom URL to redirect to after Save & Close has been completed
 	 * @param	boolean	$both_btns	whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
 	 */
-	protected function _set_publish_post_box_vars( $name = NULL, $id = FALSE, $delete = FALSE, $save_close_redirect_URL = NULL, $both_btns = TRUE ) {
+	protected function _set_publish_post_box_vars( $name = NULL, $id = 0, $delete = false, $save_close_redirect_URL = '', $both_btns = TRUE ) {
 
 		// if Save & Close, use a custom redirect URL or default to the main page?
 		$save_close_redirect_URL = ! empty( $save_close_redirect_URL ) ? $save_close_redirect_URL : $this->_admin_base_url;
@@ -2394,7 +2394,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @access private
 	 * @param  boolean $sidebar true with sidebar, false without
 	 * @param  boolean $about   use the about admin wrapper instead of the default.
-	 * @return html           admin_page
+	 * @return void
 	 */
 	private function _display_admin_page($sidebar = false, $about = FALSE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -2461,7 +2461,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * generates HTML wrapper for an admin_page with list_table
 	 *
 	 * @access public
-	 * @return html
+	 * @return void
 	 */
 	public function display_admin_list_table_page_with_sidebar() {
 		$this->_display_admin_list_table_page(TRUE);
@@ -2472,7 +2472,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * generates HTML wrapper for an admin_page with list_table (but with no sidebar)
 	 *
 	 * @access public
-	 * @return html
+	 * @return void
 	 */
 	public function display_admin_list_table_page_with_no_sidebar() {
 		$this->_display_admin_list_table_page();
@@ -2484,7 +2484,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * generates html wrapper for an admin_list_table page
 	 * @access private
 	 * @param boolean $sidebar whether to display with sidebar or not.
-	 * @return html
+	 * @return void
 	 */
 	private function _display_admin_list_table_page( $sidebar = false ) {
 		//setup search attributes
@@ -2568,7 +2568,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * The json object is populated by whatever is set in the $_template_args property.
 	 *
-	 * @return json object
+	 * @return void
 	 */
 	protected function _return_json( $sticky_notices = FALSE ) {
 
@@ -2603,7 +2603,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * Simply a wrapper for the protected method so we can call this outside the class (ONLY when doing ajax)
-	 * @return json_obj|EE_Error
+	 *
+	 * @return void
+	 * @throws EE_Error
 	 */
 	public function return_json() {
 		if ( defined('DOING_AJAX') && DOING_AJAX )
@@ -2616,14 +2618,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 	/**
 	 * This provides a way for child hook classes to send along themselves by reference so methods/properties within them can be accessed by EE_Admin_child pages. This is assigned to the $_hook_obj property.
 	 *
-	 * @param EE_Admin_Hooks object $hook_obj This will be the object for the EE_Admin_Hooks child
+	 * @param EE_Admin_Hooks $hook_obj This will be the object for the EE_Admin_Hooks child
 	 *
-	 * @access public
-	 * @return void
+	 * @access   public
 	 */
 	public function set_hook_object( EE_Admin_Hooks $hook_obj ) {
 		$this->_hook_obj = $hook_obj;
@@ -2686,16 +2686,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
-
-
-
 	/**
-	*		sort nav tabs
-	*		@access public
-	*		@return void
-	*/
+	 *        sort nav tabs
+	 *
+	 * @access public
+	 * @param $a
+	 * @param $b
+	 * @return int
+	 */
 	private function _sort_nav_tabs( $a, $b ) {
 		if ($a['order'] == $b['order']) {
 	        return 0;
@@ -2711,7 +2709,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	generates HTML for the forms used on admin pages
 	 * 	@access protected
 	 * 	@param	array $input_vars - array of input field details
-	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@param string $generator (options are 'string' or 'array', basically use this to indicate which generator to use)
 	 * 	@return string
 	 * 	@uses EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
@@ -2745,7 +2742,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$text = (array) $text;
 		$actions = (array) $actions;
 		$referrer_url = empty($referrer) ? '' : $referrer;
-		$referrer_url = !$referrer ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $referrer .'" />';
+		$referrer_url = ! $referrer ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $_SERVER['REQUEST_URI'] .'" />' : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="' . $referrer .'" />';
 
 		$button_text = !empty($text) ? $text : array( __('Save', 'event_espresso'), __('Save and Close', 'event_espresso') );
 		$default_names = array( 'save', 'save_and_close' );
@@ -2764,12 +2761,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
 	/**
 	 * Wrapper for the protected function.  Allows plugins/addons to call this to set the form tags.
 	 *
-	 * @see $this->_set_add_edit_form_tags() for details on params
+	 * @see   $this->_set_add_edit_form_tags() for details on params
 	 * @since 4.6.0
-	 *
+	 * @param string $route
+	 * @param array  $additional_hidden_fields
 	 */
 	public function set_add_edit_form_tags( $route = '', $additional_hidden_fields = array() ) {
 		$this->_set_add_edit_form_tags( $route, $additional_hidden_fields );
@@ -2807,7 +2806,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// generate form fields
 		$form_fields = $this->_generate_admin_form_fields( $hidden_fields, 'array' );
 		// add fields to form
-		foreach ( $form_fields as $field_name => $form_field ) {
+		foreach ( (array)$form_fields as $field_name => $form_field ) {
 			$this->_template_args['before_admin_page_content'] .= "\n\t" . $form_field['field'];
 		}
 
@@ -2856,15 +2855,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( ! $override_overwrite || ! empty( $notices['errors'] )) {
 			EE_Error::overwrite_success();
 		}
-		// how many records affected ? more than one record ? or just one ?
-		if ( $success > 1 && empty( $notices['errors'] )) {
-			// set plural msg
-			EE_Error::add_success( sprintf( __('The "%s" have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
-		} else if ( $success == 1 && empty( $notices['errors'] )) {
-			// set singular msg
-			EE_Error::add_success( sprintf( __('The "%s" has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! empty( $what ) && ! empty( $action_desc ) ) {
+			// how many records affected ? more than one record ? or just one ?
+			if ( $success > 1 && empty( $notices[ 'errors' ] ) ) {
+				// set plural msg
+				EE_Error::add_success(
+					sprintf(
+						__( 'The "%s" have been successfully %s.', 'event_espresso' ),
+						$what,
+						$action_desc
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			} else if ( $success == 1 && empty( $notices[ 'errors' ] ) ) {
+				// set singular msg
+				EE_Error::add_success(
+					sprintf(
+						__( 'The "%s" has been successfully %s.', 'event_espresso' ),
+						$what,
+						$action_desc
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
 		}
-
 		// check that $query_args isn't something crazy
 		if ( ! is_array( $query_args )) {
 			$query_args = array();
@@ -2885,7 +2899,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
 			// even though we have the save_and_close referrer, we need to parse the url for the action in order to generate a nonce
 			$parsed_url = parse_url( $this->_req_data['save_and_close_referrer'] );
-			// regenerate query args array from refferer URL
+			// regenerate query args array from referrer URL
 			parse_str( $parsed_url['query'], $query_args );
 			// correct page and action will be in the query args now
 			$redirect_url = admin_url( 'admin.php' );
@@ -3114,8 +3128,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This makes available the WP transient system for temporarily moving data between routes
 	 *
 	 * @access protected
-	 * @param route $route the route that should receive the transient
-	 * @param data $data  the data that gets sent
+	 * @param string $route the route that should receive the transient
+	 * @param array $data  the data that gets sent
 	 * @param bool $notices If this is for notices then we use this to indicate so, otherwise its just a normal route transient.
 	 * @param bool $skip_route_verify Used to indicate we want to skip route verification.  This is usually ONLY used when we are adding a transient before page_routes have been defined.
 	 * @return void
