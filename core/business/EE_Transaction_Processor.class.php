@@ -575,6 +575,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		}
 		try {
 			$transaction = $registration->transaction();
+			if ( ! $transaction instanceof EE_Transaction ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ),
+						$registration->ID()
+					)
+				);
+			}
 			$ticket_line_item = $transaction_processor->get_ticket_line_item_for_transaction_registration(
 				$transaction,
 				$registration
@@ -623,6 +631,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		}
 		try {
 			$transaction = $registration->transaction();
+			if ( ! $transaction instanceof EE_Transaction ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ),
+						$registration->ID()
+					)
+				);
+			}
 			$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
 			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
 		} catch ( EE_Error $e ) {
