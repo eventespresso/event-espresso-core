@@ -112,18 +112,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce' => FALSE
 				),
-			'batch_create' => array(
-				'require_nonce' => false
-			),
-			'batch_file_create' => array(
-				'require_nonce' => false
-			),
-			'batch_continue' => array(
-				'require_nonce' => false
-			),
-			'batch_cleanup' => array(
-				'reuqire_nonce'  => false
-			)
 			);
 	}
 
@@ -276,7 +264,10 @@ class Support_Admin_Page extends EE_Admin_Page {
 		wp_localize_script( 'support_batch_file_runner', 'ee_job_response', $job_response->to_array() );
 		wp_localize_script( 'support_batch_file_runner', 'ee_job_i18n', 
 				array(
-					'download_and_redirecting' => __('Your file is being downloaded and you are being redirected to your previous page...', 'event_espresso'),
+					'download_and_redirecting' => sprintf( 
+							__('File Generation complete. Downloading, and %1$sredirecting%2$s...', 'event_espresso'),
+							'<a href="' . $this->_req_data['redirect_url' ] .'">',
+							'</a>' ),
 					'redirect_url' => $this->_req_data['redirect_url' ],
 				));
 		echo EEH_Template::locate_template( 
