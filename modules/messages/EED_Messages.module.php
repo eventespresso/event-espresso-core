@@ -617,10 +617,10 @@ class EED_Messages  extends EED_Module {
 					return false;
 				}
 
-				if ( self::$_EEMSG->send_message( $status_match_array[$status_id], array( $registrations, $status_id ) ) ) {
+				$success = self::$_EEMSG->send_message( $status_match_array[ $status_id ], array( $registrations, $status_id ) );
+				if ( $success ) {
 					EE_Error::overwrite_success();
 					EE_Error::add_success( __('The message for this registration has been re-sent', 'event_espresso') );
-					$success = true;
 				} else {
 					EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 				}
