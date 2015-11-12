@@ -1112,18 +1112,40 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return int count of items saved
 	 */
 	public function save_this_and_descendants_to_txn( $txn_id = NULL ) {
+		$count = 0;
 		if ( ! $txn_id ) {
 			$txn_id = $this->TXN_ID();
 		}
 		$this->set_TXN_ID( $txn_id );
 		$children = $this->children();
-		$this->save();
+		$count += $this->save() ? 1 : 0;
 		foreach ( $children as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
 				$child_line_item->set_parent_ID( $this->ID() );
-				$child_line_item->save_this_and_descendants_to_txn( $txn_id );
+				$count += $child_line_item->save_this_and_descendants_to_txn( $txn_id );
 			}
 		}
+		return $count;
+	}
+
+
+
+	/**
+	 * Saves this line item to the DB, and recursively saves its descendants.
+	 *
+	 * @return int count of items saved
+	 */
+	public function save_this_and_descendants() {
+		$count = 0;
+		$children = $this->children();
+		$count += $this->save() ? 1 : 0;
+		foreach ( $children as $child_line_item ) {
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				$child_line_item->set_parent_ID( $this->ID() );
+				$count += $child_line_item->save_this_and_descendants();
+			}
+		}
+		return $count;
 	}
 
 
