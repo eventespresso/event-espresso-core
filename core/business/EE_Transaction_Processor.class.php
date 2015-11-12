@@ -574,25 +574,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$transaction = $registration->transaction();
 		if ( ! $transaction instanceof EE_Transaction ) {
 			EE_Error::add_error(
-				sprintf( __( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ), $registration->ID() ),
+				sprintf( __( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ),
+						 $registration->ID() ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
-			return false;
+			return null;
 		}
-		EE_Registry::instance()->load_helper( 'Line_Item' );
-		$ticket_line_item = EEM_Line_Item::instance()->get_ticket_line_item_for_transaction(
-			$transaction->ID(),
-			$registration->ticket_ID()
-		);
+		$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
 		if ( ! $ticket_line_item instanceof EE_Line_Item ) {
-			EE_Error::add_error(
-				sprintf(
-					__( 'The Line Item for Transaction %1$d and Ticket %2$d was not found or is invalid.', 'event_espresso' ),
-					$transaction->ID(),
-					$registration->ticket_ID()
-				),
-				__FILE__, __FUNCTION__, __LINE__
-			);
 			return false;
 		}
 		try {
@@ -613,6 +602,40 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			return $transaction->save() ? true : false;
 		}
 		return true;
+	}
+
+
+
+	/**
+	 * get_ticket_line_item_for_transaction_registration
+	 *
+	 * @access 	public
+	 * @param 	EE_Transaction $transaction
+	 * @param 	EE_Registration $registration
+	 * @return 	EE_Line_Item
+	 */
+	public function get_ticket_line_item_for_transaction_registration(
+		EE_Transaction $transaction,
+		EE_Registration $registration
+	) {
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		$ticket_line_item = EEM_Line_Item::instance()->get_ticket_line_item_for_transaction(
+			$transaction->ID(),
+			$registration->ticket_ID()
+		);
+		if ( ! $ticket_line_item instanceof EE_Line_Item ) {
+			EE_Error::add_error(
+				sprintf(
+					__( 'The Line Item for Transaction %1$d and Ticket %2$d was not found or is invalid.',
+						'event_espresso' ),
+					$transaction->ID(),
+					$registration->ticket_ID()
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return null;
+		}
+		return $ticket_line_item;
 	}
 
 
