@@ -14,6 +14,7 @@ var EE_BatchRunner = function( continue_url, continue_data, continue_callback ){
 	this.job_id = null;
 	this.progress_bar = null;
 	this.progress_area = null;
+	this.progress_area_gets = 'append';//or 'prepend', or 'overwrite'
 	this.continue_url = continue_url;
 	this.continue_data = continue_data;
 	this.continue_callback = continue_callback;
@@ -38,8 +39,32 @@ EE_BatchRunner.prototype.set_progress_bar_div = function( div_id ) {
 	this.progress_bar = new EE_ProgressBar( div_id, 1 );
 	return this;
 };
-EE_BatchRunner.prototype.set_progress_area = function( div_id ) {
-	//@todo
+/**
+ * Sets teh element where progress updaets will appear
+ * @param string div_id
+ * @param string what_happens 'prepend', 'append', or 'overwrite'
+ * @returns EE_BatchRunner
+ */
+EE_BatchRunner.prototype.set_progress_area = function( div_id, what_happens ) {
+	this.progress_area = div_id;
+	this.progress_area_gets = what_happens;
+	return this;
+};
+/**
+ * Updates the update text to this. You may specify to append to it, or 
+ * @param string new_update_text
+ * @param string append, 'append', 'prepend', or 'overwrite'. Default is overwrite
+ * @returns void
+ */
+EE_BatchRunner.prototype.update_progress = function( new_update_text  ) {
+	new_update_text = new_update_text + '<br>';
+	if( this.progress_area_gets == 'append' ) {
+		jQuery('#' + this.progress_area ).append( new_update_text );
+	} else if( this.progress_area_gets == 'prepend' ) {
+		jQuery('#' + this.progress_area ).prepend( new_update_text );
+	} else {
+		jQuery('#' + this.progress_area ).html(new_update_text) ;
+	}
 };
 EE_BatchRunner.prototype.create_job = function( url, data, callback_when_done ) {
 	//@todo
@@ -63,7 +88,9 @@ EE_BatchRunner.prototype.continue_job = function() {
 		if( batch_runner.progress_bar instanceof EE_ProgressBar ) {
 			batch_runner.progress_bar.update_progress_to( response.data.units_processed, response.data.job_size );
 		}
-		//@todo: update progress update-area
+		if( typeof( batch_runner.progress_area ) !== 'undefined' ) {
+			batch_runner.update_progress( response.data.update_text);
+		}
 		if( typeof( batch_runner.continue_callback ) !== 'undefined'  ) {
 			batch_runner.continue_callback( response, status, xhr );
 		}
@@ -86,6 +113,7 @@ EE_BatchRunner.prototype.cleanup_job = function( url, data, callback_when_done )
 	});
 };
 EE_BatchRunner.prototype.do_ajax = function ( url, data, callback ) {
+	var batch_runner = this;
 	jQuery.ajax({
 		type: "POST",
 		url: url,
@@ -93,25 +121,12 @@ EE_BatchRunner.prototype.do_ajax = function ( url, data, callback ) {
 		success: function(response, status, xhr) {
 			var ct = xhr.getResponseHeader("content-type") || "";
 			if (ct.indexOf('html') > -1) {
-				//@todo: handle html in response
-//				Maintenance_helper.display_content(response,setup.where,setup.what);
-//				if( typeof(setup.dont_report) === 'undefined'){
-//					Maintenance_helper.report_general_migration_error(response);
-//					Maintenance_helper.display_content(ee_maintenance.fatal_error, '#main-message', 'clear');
-//					Maintenance_helper.finish();
-//				}
+				if( typeof( batch_runner.progress_area ) !== 'undefined' ) {
+					batch_runner.update_progress( response );
+				}
 			}
 
 			if (ct.indexOf('json') > -1 ) {
-				//@todo: handle proper json response
-//				var resp = response,
-//				wht = typeof(resp.data.what) === 'undefined' ? setup.what : resp.data.what,
-//				whr = typeof(resp.data.where) === 'undefined' ? setup.where : resp.data.where,
-//				display_content = resp.error ? resp.error : resp.content;
-//
-//				Maintenance_helper.display_notices(resp.notices);
-//				Maintenance_helper.display_content(display_content, whr, wht);
-				//call the callback that was passed in
 				if (typeof(callback) !== 'undefined'){
 					callback( response, status, xhr );
 				}

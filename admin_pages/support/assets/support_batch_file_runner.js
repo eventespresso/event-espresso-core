@@ -21,6 +21,7 @@ jQuery(document).ready(function() {
 			ee_support_download_file);
 	runner.set_job_id( ee_job_response.job_id );
 	runner.set_progress_bar_div( 'batch-progress' );
+	runner.set_progress_area( 'progress-area', 'append' );
 	runner.continue_job();
 	/**
 	 * Checks for once the download is complete,
