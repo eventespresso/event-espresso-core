@@ -1268,6 +1268,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _get_reg_statuses() {
 		$reg_status_array = EEM_Registration::instance()->reg_status_array();
+		unset ( $reg_status_array[ EEM_Registration::status_id_incomplete ] );
 		// get current reg status
 		$current_status = $this->_registration->status_ID();
 		// is registration for free event? This will determine whether to display the pending payment option
@@ -1448,6 +1449,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$this->cancel_registration( $notify );
 				break;
 
+			case EEM_Registration::status_id_incomplete :
 			default :
 				$result['success'] = false;
 				unset( $this->_req_data['return'] );
