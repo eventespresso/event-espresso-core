@@ -614,9 +614,11 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 					'OBJ_type' => '',//?
 					'LIN_unit_price' => 10,
 					'LIN_quantity' => 1,
-					'LIN_order' => 1,
+					'LIN_total' => 10,
+					'LIN_order' => 3,
 					'LIN_parent' => $normal_line_item->ID()
 				));
+		$cancellation_subitem->save();
 		$percent_line_item = EE_Line_Item::new_instance(
 				array(
 					'LIN_code' => 'dscntfry',
@@ -631,7 +633,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 				));
 		$percent_line_item->save();
 		$event_subtotal->recalculate_total_including_taxes();
-//		EEH_Line_Item::visualize( $event_subtotal );
+		EEH_Line_Item::visualize( $event_subtotal );
 		$this->assertEquals( 60, $normal_line_item->total() );
 		$this->assertEquals( 45, $event_subtotal->total() );
 		$this->assertEquals( -15, $percent_line_item->total() );
@@ -649,6 +651,84 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 2, $the_only_cancellation_item->quantity() );
 		$this->assertEquals( 0, $the_only_cancellation_item->total() );
 	}
+	
+	/**
+	 * Create a line item tree which was originaly for 6 tickets and a discount,
+	 * but 2 got cancelled and so shouldn't count towards the grand total. When
+	 * we reinstate a ticket, the ticke's quantity should change from 4 to 5, and
+	 * then when both are reinstated it should increase to 6 and the cancellation
+	 * line item should be removed
+	 * @group 5580
+	 */
+	function test_reinstate_canceled_ticket_line_item(){
+		$event_subtotal = EE_Line_Item::new_instance(
+				array(
+					'LIN_code'	=> 'event1',
+					'LIN_name' 	=> 'EventA',
+					'LIN_type'	=> EEM_Line_Item::type_sub_total,
+					'OBJ_type' 	=> 'Event',
+					'LIN_total' => 1,
+				));
+		$event_subtotal->save();
+		$normal_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => '12354',
+					'LIN_name' => 'ticketA',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => 'Ticket',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 4,
+					'LIN_order' => 1,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$normal_line_item->save();
+		$subitem_base_price = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'baseprice',
+					'LIN_name' => 'basepriceA',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'OBJ_type' => 'Price',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 4,
+					'LIN_order' => 1,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$cancellation_subitem = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'cancellationoruny',
+					'LIN_name' => 'cancellationOfA',
+					'LIN_type' => EEM_Line_Item::type_cancellation,
+					'OBJ_type' => '',//?
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 2,
+					'LIN_order' => 1,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$cancellation_subitem->save();
+		$event_subtotal->recalculate_total_including_taxes();
+		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 40, $normal_line_item->total() );
+
+		//ok now cancel a few and make sure the totals add up correctly
+		EEH_Line_Item::reinstate_canceled_ticket_line_item( $normal_line_item );
+		$event_subtotal->recalculate_total_including_taxes();
+		
+		$this->assertEquals( 5, $normal_line_item->quantity() );
+		$this->assertEquals( 50, $normal_line_item->total() );
+		$this->assertEquals( 1, $cancellation_subitem->quantity() );
+		
+		//remove the last cancellation
+		EEH_Line_Item::reinstate_canceled_ticket_line_item( $normal_line_item );
+		$event_subtotal->recalculate_total_including_taxes();
+		
+		EEH_Line_Item::cancel_ticket_line_item( $normal_line_item );
+		$this->assertTrue( false, 'We havent decided what exactly shoul dhappen here anyways. '
+				. 'Should we remove the cancellation line item? Mike thinks so, because its '
+				. 'consistent with how the line item tree was organized before any '
+				. 'cancellation occurred, but its not a big deal if it has a quantity of 0' );
+	}
+	
+	
 
 
 }
