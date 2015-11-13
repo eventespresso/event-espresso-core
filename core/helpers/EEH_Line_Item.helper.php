@@ -329,8 +329,14 @@ class EEH_Line_Item {
 				)
 			);
 		}
-		// decrement ticket quantity
+		// decrement ticket quantity; don't rely on auto-fixing when recalculating totals to do this
 		$ticket_line_item->set_quantity( $ticket_line_item->quantity() - 1 );
+		foreach( $ticket_line_item->children() as $child_line_item ) {
+			if( $child_line_item->type() == EEM_Line_Item::type_sub_line_item &&
+					! $child_line_item->is_percent() ) {
+				$child_line_item->set_quantity( $child_line_item->quantity() - 1 );
+			}
+		}
 		// get cancellation sub line item
 		$cancellation_line_item = EEH_Line_Item::get_descendants_of_type(
 			$ticket_line_item,
