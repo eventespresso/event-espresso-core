@@ -18,7 +18,7 @@
 
 
 /**
- * Event Question Group Model
+ * EE_Event
  *
  * @package 			Event Espresso
  * @subpackage 	includes/models/
@@ -48,7 +48,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 *                          		used.)
 	 * @param array $date_formats  incoming date_formats in an array where the first value is the
 	 *                             		    date_format and the second value is the time format
-	 * @return EE_Attendee
+	 * @return EE_Event
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -61,10 +61,33 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param array $props_n_values  incoming values from the database
 	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
 	 *                          		the website will be used.
-	 * @return EE_Attendee
+	 * @return EE_Event
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
+	}
+
+
+
+	/**
+	 * Gets all the datetimes for this event
+	 *
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes( $query_params = array() ) {
+		return $this->get_many_related( 'Datetime', $query_params );
+	}
+
+
+
+	/**
+	 * Gets all the datetimes for this event, ordered by DTT_EVT_start in ascending order
+	 *
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes_in_chronological_order() {
+		return $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
 	}
 
 
@@ -74,11 +97,13 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
 	 * after running our query, so that this timezone isn't set for EVERY query
 	 * on EEM_Datetime for the rest of the request, no?
+	 *
 	 * @param boolean $show_expired whether or not to include expired events
 	 * @param boolean $show_deleted whether or not to include deleted events
-	 * @return EE_Datetime[]
+	 * @param null $limit
+	 * @return \EE_Datetime[]
 	 */
-	public function datetimes_ordered( $show_expired = TRUE, $show_deleted = FALSE, $limit = NULL ) {
+	public function datetimes_ordered( $show_expired = true, $show_deleted = false, $limit = null ) {
 		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted, $limit );
 	}
 
@@ -555,7 +580,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$upcoming = FALSE;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is expired then we continue cause one of the other datetimes might be upcoming.
@@ -586,7 +611,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$active = FALSE;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is expired then we continue cause one of the other datetimes might be active.
@@ -617,7 +642,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$expired = FALSE;
 		//first let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is upcoming or active then we return false.
@@ -655,20 +680,22 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return bool    return the ACTUAL sold out state.
 	 */
 	public function perform_sold_out_status_check() {
+		// get all unexpired untrashed tickets
+		$tickets = $this->tickets( array(
+			array(
+				'TKT_end_date'   => array( '>=', EEM_Ticket::instance()->current_time_for_query( 'TKT_end_date' ) ),
+				'TKT_deleted'    => false
+			)
+		));
+		// if all the tickets are just expired, then don't update the event status to sold out
+		if ( empty( $tickets )) {
+			return true;
+		}
 		// set initial value
 		$spaces_remaining = 0;
-		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				$dtt_spaces_remaining = $datetime->spaces_remaining( TRUE );
-				// if datetime has unlimited reg limit then the event can never be sold out
-				if ( $dtt_spaces_remaining === INF ) {
-					return FALSE;
-				}
-				else {
-					$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
-				}
+		foreach( $tickets as $ticket ) {
+			if ( $ticket instanceof EE_Ticket ) {
+				$spaces_remaining += $ticket->qty( 'saleable' );
 			}
 		}
 		if ( $spaces_remaining === 0 ) {
@@ -767,7 +794,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				if ( $ticket->is_remaining() ) {
 					$remaining = $ticket->remaining();
 				} else {
-					$spaces_available += $ticket->get( 'TKT_sold' );
+					$spaces_available += $ticket->sold();
 					//and we don't cache this ticket to our list because its sold out.
 					continue;
 				}
@@ -812,54 +839,63 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 		//now let's loop through the sorted tickets and simulate sellouts
 		foreach ( $ticket_sums as $ticket_info ) {
-			$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
-			//need to sort these $datetimes by remaining (only if $current_total_available)
-			//setup datetimes for simulation
-			$ticket_datetimes_remaining = array();
-			foreach( $datetimes as $datetime ) {
-				$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
-				$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
-			}
-			usort( $ticket_datetimes_remaining, function( $a, $b ) {
-				if ( $a['rem'] == $b['rem'] ) {
-					return 0;
+			if ( $ticket_info['ticket'] instanceof EE_Ticket ) {
+
+				$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
+				//need to sort these $datetimes by remaining (only if $current_total_available)
+				//setup datetimes for simulation
+				$ticket_datetimes_remaining = array();
+				foreach( $datetimes as $datetime ) {
+					$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
+					$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
 				}
-				return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
-			});
+				usort( $ticket_datetimes_remaining, function( $a, $b ) {
+					if ( $a['rem'] == $b['rem'] ) {
+						return 0;
+					}
+					return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
+				});
 
 
-			//get the remaining on the first datetime (which should be the one with the least remaining) and that is
-			//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
-			$lowest_datetime = reset( $ticket_datetimes_remaining );
+				//get the remaining on the first datetime (which should be the one with the least remaining) and that is
+				//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
+				$lowest_datetime = reset( $ticket_datetimes_remaining );
 
-			//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
-			// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
-			// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
-			// to the next ticket.
-			$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
+				// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
+				// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
+				// to the next ticket.
+				if ( $current_total_available ) {
+					$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				} else {
+					$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->qty() );
+				}
 
-			//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
-			//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
-			//available.
-			if ( $remaining === INF ) {
-				$spaces_available += $ticket_info['ticket']->qty();
-				continue;
-			}
+				//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
+				//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
+				//available.
+				if ( $remaining === INF ) {
+					$spaces_available += $ticket_info['ticket']->qty();
+					continue;
+				}
 
-			//if ticket has sold amounts then we also need to add that (but only if doing live counts)
-			if ( $current_total_available ) {
-				$spaces_available += $ticket_info['ticket']->sold();
-			}
+				//if ticket has sold amounts then we also need to add that (but only if doing live counts)
+				if ( $current_total_available ) {
+					$spaces_available += $ticket_info['ticket']->sold();
+				}
 
-			if ( $remaining <= 0 ) {
-				continue;
-			} else {
-				$spaces_available += $remaining;
-			}
+				if ( $remaining <= 0 ) {
+					continue;
+				} else {
+					$spaces_available += $remaining;
+				}
 
-			//loop through the datetimes and sell them out!
-			foreach ( $ticket_datetimes_remaining as $datetime_info ) {
-				$datetime_limits[$datetime_info['datetime']->ID()] += - $remaining;
+				//loop through the datetimes and sell them out!
+				foreach ( $ticket_datetimes_remaining as $datetime_info ) {
+					if ( $datetime_info['datetime'] instanceof EE_Datetime ) {
+						$datetime_limits[ $datetime_info['datetime']->ID() ] += - $remaining;
+					}
+				}
 			}
 		}
 
@@ -874,7 +910,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return boolean
 	 */
 	public function is_sold_out( $actual = FALSE ) {
-		if ( !$actual ) {
+		if ( ! $actual ) {
 			return $this->status() == EEM_Event::sold_out;
 		}
 		else {
@@ -922,7 +958,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			return FALSE;
 		}
 		//first get all datetimes ordered by date
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		//next loop through $datetimes and setup status array
 		$status_array = array();
 		foreach ( $datetimes as $datetime ) {
@@ -981,9 +1017,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		$status = '<span class="ee-status event-active-status-' . $active_status . '">' . EEH_Template::pretty_status( $active_status, FALSE, 'sentence' ) . '</span>';
 		if ( $echo ) {
 			echo $status;
-		} else {
-			return $status;
+			return '';
 		}
+		return $status;
 	}
 
 
@@ -996,9 +1032,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		if ( !$this->ID() ) {
 			return 0;
 		}
-		$datetimes = $this->get_many_related( 'Datetime' );
+		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
-			$tkt_sold += $datetime->get( 'DTT_sold' );
+			if ( $datetime instanceof EE_Datetime ) {
+				$tkt_sold += $datetime->sold();
+			}
 		}
 		return $tkt_sold;
 	}
@@ -1141,7 +1179,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * Implementation for EEI_Admin_Links interface method.
 	 * @see EEI_Admin_Links for comments
-	 * @return return string
+	 * @return string
 	 */
 	public function get_admin_edit_link() {
 		EE_Registry::instance()->load_helper('URL');

@@ -45,7 +45,8 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 						)
 					)
 				),
-			1 => array(
+			/** temporarily remove status qtips for for list table */
+			/**1 => array(
 				'content_id' => 'ee-event-status-' . EE_Datetime::active,
 				'target' => '.event-status-' . EE_Datetime::active,
 				'content' => $this->_event_status_legend(EE_Datetime::active),
@@ -114,7 +115,7 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 						'target' => 'mouse'
 						)
 					)
-				),
+				),/**/
 			);
 	}
 

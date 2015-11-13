@@ -23,6 +23,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private $_attendee_data = array();
 
+	/**
+	 * @type array $_required_questions
+	 */
+	private $_required_questions = array();
+
 
 
 	/**
@@ -65,6 +70,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
+		return true;
 	}
 
 
@@ -425,7 +431,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
 
 		// if this question was for an attendee detail, then check for that answer
-		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
+		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->system_ID() );
 		$answer = $answer_value === null
 				? EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() )	) )
 				: null;
@@ -501,6 +507,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		//add "-lbl" to the end of the label id
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
+		$input_constructor_args = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
+				$input_constructor_args,
+				$registration,
+				$question,
+				$answer
+				);
+
+		$this->_required_questions[ $identifier ] = $question->required() ? true : false;
 
 		switch ( $question->type() ) {
 			// Text
@@ -648,7 +662,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		// mark this reg step as completed
-		$this->checkout->current_step->set_completed();
+		$this->set_completed();
 		$this->_set_success_message( __('The Attendee Information Step has been successfully completed.', 'event_espresso' ));
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
@@ -858,6 +872,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			if (  $answer_is_obj ) {
 				// and delete the corresponding answer since we won't be storing this data in that object
 				$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
+				$answers[ $answer_cache_id ]->delete_permanently();
 			}
 			return TRUE;
 		} elseif ( $answer_is_obj ) {
@@ -888,6 +903,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private function _verify_critical_attendee_details_are_set_and_validate_email( $form_input = '', $input_value = '' ) {
 		if ( empty( $input_value )) {
+			// if the form input isn't marked as being required, then just return
+			if ( ! isset( $this->_required_questions[ $form_input ]  ) || ! $this->_required_questions[ $form_input ] ) {
+				return true;
+			}
 			switch( $form_input ) {
 				case 'fname' :
 					EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );

@@ -122,4 +122,31 @@ class EEH_Money extends EEH_Base  {
 		return false;
 	}
 
+
+	/**
+	 * This returns a localized format string suitable for jQplot.
+	 *
+	 * @param string $CNT_ISO  If this is provided, then will attempt to get the currency settings for the country.
+	 *                         Otherwise will use currency settings for current active country on site.
+	 *
+	 * @return string
+	 */
+	public static function get_format_for_jqplot( $CNT_ISO = '') {
+		//default format
+		$format = 'f';
+		//if CNT_ISO passed lets try to get currency settings for it.
+		$currency_config = $CNT_ISO !== '' ? new EE_Currency_Config( $CNT_ISO ) : null;
+		//default currency settings for site if not set
+		if ( ! $currency_config instanceof EE_Currency_Config ) {
+			$currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();
+		}
+
+		//first get the decimal place and number of places
+		$format = "%'." . $currency_config->dec_plc . $format;
+
+		//currency symbol on right side.
+		$format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
+		return $format;
+	}
+
 } //end class EEH_Money

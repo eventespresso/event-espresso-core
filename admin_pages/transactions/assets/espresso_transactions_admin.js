@@ -62,8 +62,7 @@ jQuery(document).ready(function($) {
 		} else {
 			//payment
 			$('.txn-reg-status-change-reg-status').val('NAN');
-			$('#admin-modal-dialog-edit-payment-h2').show();
-			$('#admin-modal-dialog-edit-payment-h2' ).find('span').html(PAY_ID);
+			$('#admin-modal-dialog-edit-payment-h2').show().find('span').html(PAY_ID);
 			// transfer values from table to modal box form
 			$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
             $('#txn-admin-payment-type-inp').val(1);
@@ -290,25 +289,33 @@ jQuery(document).ready(function($) {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {
-						/*console.log(response);/**/
+
 						if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
-						} else if ( response.errors ) {
-							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 						} else {
-							response.errors = eei18n.invalid_server_response;
-							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+                                                        if( typeof(response.errors) == 'undefined' ||  response.errors == false || response.errors == null || response.errors == '' ) {
+                                                            response.errors = eei18n.invalid_server_response;
+                                                        }
+                                                        //hide the modal dialogue and show the errors
+                                                        overlay.trigger('click');
+							show_admin_page_ajax_msg( response );
+                                                        
 						}
 					},
 					error: function(response) {
-						/*console.log(response);/**/
 						if ( typeof(response.errors) === 'undefined' ) {
 							response.errors = eei18n.error_occurred;
 						}
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+						show_admin_page_ajax_msg( response );
 					}
 			});
+	}
+
+
+	function process_notifications( response, show_before ) {
+		show_before = typeof( show_before ) !== 'undefined' && show_before !== '' ? show_before : '.nav-tab-wrapper';
+		show_admin_page_ajax_msg( response, show_before );
 	}
 
 
@@ -351,18 +358,18 @@ jQuery(document).ready(function($) {
 							delBtn.closest('tr').remove();
 							process_delete_payment( response );
 						} else if ( response.errors ) {
-							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper' );
+							show_admin_page_ajax_msg( response );
 						} else {
 							response = {};
 							response.errors = eei18n.invalid_server_response;
-							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+							show_admin_page_ajax_msg( response );
 						}
 					},
 					error: function(response) {
 						if ( typeof(response.errors) === 'undefined' ) {
 							response.errors = eei18n.error_occurred;
 						}
-						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+						show_admin_page_ajax_msg( response );
 					}
 			});
 	}
@@ -379,7 +386,7 @@ jQuery(document).ready(function($) {
 		var PAY_ID = response.return_data.PAY_ID;
 
 		if ( response.edit_or_apply === 'apply' ) {
-			// grab empty paymnet table row
+			// grab empty payment table row
 			var newRow = '\n				<tr id="txn-admin-payment-tr-PAY_ID">' + $('#txn-admin-payment-empty-row-tr').html() + '\n				</tr>\n';
 			// insert new PAY_ID
 			newRow = newRow.replace( /PAY_ID/g, PAY_ID );
@@ -390,8 +397,7 @@ jQuery(document).ready(function($) {
 		update_payment( PAY_ID, response );
 		update_payment_totals( response );
 		update_registration_payment_totals( response );
-
-		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+		process_notifications( response );
 
 	}
 
@@ -530,7 +536,7 @@ jQuery(document).ready(function($) {
 			update_payment_totals( response );
 			update_registration_payment_totals( response );
 		}
-		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', false );
+		show_admin_page_ajax_msg( response );
 	}
 
 

@@ -100,6 +100,28 @@ class EEM_Transaction extends EEM_Base {
 
 	}
 
+
+
+	/**
+	 *    txn_status_array
+	 * get list of transaction statuses
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function txn_status_array() {
+		return apply_filters(
+			'FHEE__EEM_Transaction__txn_status_array',
+			array(
+				EEM_Transaction::overpaid_status_code,
+				EEM_Transaction::complete_status_code,
+				EEM_Transaction::incomplete_status_code,
+				EEM_Transaction::abandoned_status_code,
+				EEM_Transaction::failed_status_code,
+			)
+		);
+	}
+
 	/**
 	 *        get the revenue per day  for the Transaction Admin page Reports Tab
 	 *

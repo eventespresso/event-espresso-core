@@ -9,10 +9,15 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *      - D2 - reg limit 20
  *      - D3 - reg limit 12
  * - Four Tickets
- *      - TA - qty 5 (D1, D2, D3)
- *      - TB - qty 5 (D1,D2)
- *      - TC - qty 5 (D1, D3)
- *      - TD - qty 10 (D2, D3)
+ *      - TA - qty 5 	( D1, D2, D3 )
+ *      - TB - qty 5 	( D1, D2 )
+ *      - TC - qty 5 	( D1, D3 )
+ *      - TD - qty 10 	( D2, D3 )
+ *
+ *  MAX SELLOUT:
+ *        5 TA tickets for D1 ( D1 sold out + TA, TB, & TC sold out )
+ *        10 TD tickets for D3 ( TD sold out )
+ *        ( D2 + D3 sold out because ALL tickets sold out )
  *
  * @package    Event Espresso
  * @subpackage tests/scenarios

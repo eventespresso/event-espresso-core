@@ -495,7 +495,8 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 			$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
+					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID();
+					$html .= '" class="ee-event-datetimes-li ee-event-datetimes-li-' . $datetime->get_active_status() . '">';
 					$datetime_name = $datetime->name();
 					$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
 					$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
@@ -736,8 +737,8 @@ if ( ! function_exists( 'espresso_organization_address' )) {
 				EE_Registry::instance()->CFG->organization->address_2,
 				EE_Registry::instance()->CFG->organization->city,
 				EE_Registry::instance()->CFG->organization->STA_ID,
-				EE_Registry::instance()->CFG->organization->CNT_ISO,
-				EE_Registry::instance()->CFG->organization->zip
+				EE_Registry::instance()->CFG->organization->zip,
+				EE_Registry::instance()->CFG->organization->CNT_ISO
 			);
 			return EEH_Address::format( $address, $type );
 		}

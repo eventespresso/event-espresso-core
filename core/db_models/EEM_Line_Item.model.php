@@ -139,6 +139,7 @@ class EEM_Line_Item extends EEM_Base {
 				),
 				'OBJ_ID' 					=> new EE_Foreign_Key_Int_Field( 'OBJ_ID', __( 'ID of Item purchased.', 'event_espresso' ), TRUE, NULL, $line_items_can_be_for ),
 				'OBJ_type'				=>new EE_Any_Foreign_Model_Name_Field( 'OBJ_type', __( "Model Name this Line Item is for", "event_espresso" ), TRUE, NULL, $line_items_can_be_for ),
+				'LIN_timestamp' => new EE_Datetime_Field('LIN_timestamp', __('When the line item was created','event_espresso'), false, time(), $timezone ),
 			)
 		);
 		$this->_model_relations = array(
@@ -188,19 +189,26 @@ class EEM_Line_Item extends EEM_Base {
 	}
 
 	/**
-	 * Deletes line items with no transaction. This needs to be very efficient
+	 * Deletes line items with no transaction who have passed the transaction cutoff time.
+	 * This needs to be very efficient
 	 * because if there are spam bots afoot there will be LOTS of line items
 	 * @return int count of how many deleted
 	 */
 	public function delete_line_items_with_no_transaction(){
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		return $wpdb->query(
-			'DELETE li
-			FROM ' . $this->table() . ' li
-			LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
-			WHERE t.TXN_ID IS NULL'
+		$time_to_leave_alone = apply_filters(
+			'FHEE__EEM_Line_Item__delete_line_items_with_no_transaction__time_to_leave_alone', WEEK_IN_SECONDS
 		);
+		$query = $wpdb->prepare(
+				'DELETE li
+				FROM ' . $this->table() . ' li
+				LEFT JOIN ' . EEM_Transaction::instance()->table(). ' t ON li.TXN_ID = t.TXN_ID
+				WHERE t.TXN_ID IS NULL AND li.LIN_timestamp < %s',
+				// use GMT time because that's what TXN_timestamps are in
+				gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+				);
+		return $wpdb->query( $query );
 	}
 
 
@@ -242,6 +250,42 @@ class EEM_Line_Item extends EEM_Base {
 			$query_params['TXN_ID'] = $TXN_ID;
 		}
 		return $this->get_all( array( $query_params ));
+	}
+
+
+
+	/**
+	 * get_all_ticket_line_items_for_transaction
+	 *
+	 * @param EE_Transaction $transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function get_all_ticket_line_items_for_transaction( EE_Transaction $transaction ) {
+		return $this->get_all( array(
+		   array(
+			   'TXN_ID'   => $transaction->ID(),
+			   'OBJ_type' => 'Ticket',
+		   )
+	   ) );
+	}
+
+
+
+	/**
+	 * get_ticket_line_item_for_transaction
+	 *
+	 * @param int $TXN_ID
+	 * @param int $TKT_ID
+	 * @return \EE_Line_Item
+	 */
+	public function get_ticket_line_item_for_transaction( $TXN_ID, $TKT_ID ) {
+		return $this->get_one( array(
+		   array(
+			   'TXN_ID'   => EEM_Transaction::instance()->ensure_is_ID( $TXN_ID ),
+			   'OBJ_ID'   => $TKT_ID,
+			   'OBJ_type' => 'Ticket',
+		   )
+	   ) );
 	}
 
 

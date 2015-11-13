@@ -69,6 +69,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_cpt_edit_routes = array(
 			'espresso_attendees' => 'edit_attendee'
 			);
+		$this->_pagenow_map = array(
+				'add_new_attendee' => 'post-new.php',
+				'edit_attendee' => 'post.php',
+				'trash' => 'post.php'
+			);
 
 		add_action('edit_form_after_title', array($this, 'after_title_form_fields'), 10 );
 		//add filters so that the comment urls don't take users to a confusing 404 page
@@ -753,7 +758,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			'view_transaction' => array(
 				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
-				)
+				),
+			'view_invoice' => array(
+				'class' => 'dashicons dashicons-media-spreadsheet',
+				'desc' => __('View Transaction Invoice', 'event_espresso')
+				),
  			);
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
 			$fc_items['resend_registration'] = array(
@@ -956,12 +965,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error("not yet supported");
 		}
 
-		if ( isset( $this->_req_data['s'] ) ) {
+		if ( ! empty( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Event.EVT_name' => array( 'LIKE', $sstr),
 				'Event.EVT_desc' => array( 'LIKE', $sstr ),
 				'Event.EVT_short_desc' => array( 'LIKE' , $sstr ),
+				'Attendee.ATT_full_name' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_fname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_lname' => array( 'LIKE', $sstr ),
 				'Attendee.ATT_short_bio' => array( 'LIKE', $sstr ),
@@ -974,7 +984,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_count' => array( 'LIKE' , $sstr ),
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Ticket.TKT_description' => array( 'LIKE', $sstr )
+				'Ticket.TKT_description' => array( 'LIKE', $sstr ),
+				'Transaction.Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $sstr )
 				);
 		}
 
@@ -1136,7 +1147,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function set_reg_status_buttons_metabox() {
 		$this->_set_registration_object();
 		$change_reg_status_form = $this->_generate_reg_status_change_form();
-		echo $change_reg_status_form->form_open( REG_ADMIN_URL );
+		echo $change_reg_status_form->form_open(
+			self::add_query_args_and_nonce(
+				array(
+					'action' => 'change_reg_status'
+				),
+				REG_ADMIN_URL
+			)
+		);
 		echo $change_reg_status_form->get_html_and_js();
 		echo $change_reg_status_form->form_close();
 
@@ -1155,18 +1173,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'html_id'         => 'reg-status-change-form',
 				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
 				'subsections'     => array(
-					'action'             => new EE_Hidden_Input( array(
-						'name'    => 'action',
-						'default' => 'change_reg_status'
-					) ),
+					//'action'             => new EE_Hidden_Input( array(
+					//	'name'    => 'action',
+					//	'default' => 'change_reg_status'
+					//) ),
 					'return'             => new EE_Hidden_Input( array(
 						'name'    => 'return',
 						'default' => 'view_registration'
 					) ),
-					'nonce'              => new EE_Hidden_Input( array(
-						'name'    => 'nonce',
-						'default' => wp_nonce_field( 'change_reg_status_nonce', 'change_reg_status_nonce', false, false )
-					) ),
+					//'nonce'              => new EE_Hidden_Input( array(
+					//	'name'    => 'nonce',
+					//	'default' => wp_nonce_field( 'change_reg_status_nonce', 'change_reg_status_nonce', false, false )
+					//) ),
 					'REG_ID'             => new EE_Hidden_Input( array(
 						'name'    => 'REG_ID',
 						'default' => $this->_registration->ID()
@@ -1250,6 +1268,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _get_reg_statuses() {
 		$reg_status_array = EEM_Registration::instance()->reg_status_array();
+		unset ( $reg_status_array[ EEM_Registration::status_id_incomplete ] );
 		// get current reg status
 		$current_status = $this->_registration->status_ID();
 		// is registration for free event? This will determine whether to display the pending payment option
@@ -1272,12 +1291,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return array  (array with reg_id(s) updated and whether update was successful.
 	 */
 	protected function _set_registration_status_from_request( $status = false, $notify = false ) {
-		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? (array) $this->_req_data['_REG_ID'] : array();
-
-		$success = $this->_set_registration_status( $REG_ID, $status );
-
+		if ( isset( $this->_req_data[ 'reg_status_change_form' ] ) ) {
+			$REG_IDs = isset( $this->_req_data[ 'reg_status_change_form' ][ 'REG_ID' ] )
+				? (array)$this->_req_data[ 'reg_status_change_form' ][ 'REG_ID' ]
+				: array();
+		} else {
+			$REG_IDs = isset( $this->_req_data[ '_REG_ID' ] ) ? (array)$this->_req_data[ '_REG_ID' ] : array();
+		}
+		$success = $this->_set_registration_status( $REG_IDs, $status );
 		//notify?
-		if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ) {
+		if (
+			$success
+			&& $notify
+			&& EE_Registry::instance()->CAP->current_user_can(
+				'ee_send_message',
+				'espresso_registrations_resend_registration'
+			)
+		) {
 			$this->_process_resend_registration();
 		}
 
@@ -1291,35 +1321,35 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 *
 	 * Note, this method does NOT take care of possible notifications.  That is required by calling code.
 	 *
-	 * @param bool $REG_ID
+	 * @param array $REG_IDs
 	 * @param bool $status
 	 * @return array (an array with 'success' key representing whether status change was successful, and 'REG_ID' as the array of updated registrations).
 	 */
-	protected function _set_registration_status( $REG_ID, $status = false ) {
-		$success = true;
-		// set default status if none is passed
-		$status = $status ? $status : EEM_Registration::status_id_pending_payment;
-
-		//typecast and sanitize reg_id
-		$reg_ids = array_filter( (array) $REG_ID, 'absint' );
-
-		//loop through REG_ID's and change status
-		foreach ( $reg_ids as $r_id ) {
-			$registration = EEM_Registration::instance()->get_one_by_ID( $r_id );
-			if ( $registration instanceof EE_Registration ) {
-				$registration->set_status( $status );
-				$result = $registration->save();
-
-				//verifying explicit fails because update *may* just return 0 for 0 rows affected
-				$success = $success !== false && $result !== false;
+	protected function _set_registration_status( $REG_IDs = array(), $status = false ) {
+		$success = false;
+		// typecast $REG_IDs
+		$REG_IDs = (array)$REG_IDs;
+		if ( ! empty( $REG_IDs ) ) {
+			$success = true;
+			// set default status if none is passed
+			$status = $status ? $status : EEM_Registration::status_id_pending_payment;
+			// sanitize $REG_IDs
+			$REG_IDs = array_filter( $REG_IDs, 'absint' );
+			//loop through REG_ID's and change status
+			foreach ( $REG_IDs as $REG_ID ) {
+				$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
+				if ( $registration instanceof EE_Registration ) {
+					$registration->set_status( $status );
+					$result = $registration->save();
+					// verifying explicit fails because update *may* just return 0 for 0 rows affected
+					$success = $result !== false ? $success : false;
+				}
 			}
 		}
-
 		//reset _req_data['_REG_ID'] for any potential future messages notifications
-		$this->_req_data['_REG_ID'] = $reg_ids;
-
+		$this->_req_data['_REG_ID'] = $REG_IDs;
 		//return $success and processed registrations
-		return array( 'REG_ID' => $reg_ids, 'success' => $success );
+		return array( 'REG_ID' => $REG_IDs, 'success' => $success );
 	}
 
 
@@ -1332,21 +1362,33 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _reg_status_change_return( $STS_ID, $notify = false ) {
-
 		$result = ! empty( $STS_ID ) ? $this->_set_registration_status_from_request( $STS_ID, $notify ) : array( 'success' => false );
-
-
 		$success = isset( $result['success'] ) && $result['success'];
-
 		//setup success message
 		if ( $success ) {
-			$msg = is_array( $result['REG_ID'] ) && count( $result['REG_ID'] ) > 1  ? sprintf( __('Registration status has been set to %s', 'event_espresso'), EEH_Template::pretty_status($STS_ID, false, 'lower' ) ) :  sprintf( __('Registrations have been set to %s.', 'event_espresso'), EEH_Template::pretty_status($STS_ID, false, 'lower' ) ) ;
+			if ( is_array( $result[ 'REG_ID' ] ) && count( $result[ 'REG_ID' ] ) === 1 ) {
+				$msg = sprintf(
+					__( 'Registration status has been set to %s', 'event_espresso' ),
+					EEH_Template::pretty_status( $STS_ID, false, 'lower' )
+				);
+			} else {
+				$msg = sprintf(
+					__( 'Registrations have been set to %s.', 'event_espresso' ),
+					EEH_Template::pretty_status( $STS_ID, false, 'lower' )
+				);
+			}
 			EE_Error::add_success( $msg );
 		} else {
-			EE_Error::add_error( __('Something went wrong, and the status was not changed', 'event_espresso' ), __FILE__, __LINE__, __FUNCTION__ );
+			EE_Error::add_error(
+				__( 'Something went wrong, and the status was not changed', 'event_espresso' ),
+				__FILE__, __LINE__, __FUNCTION__
+			);
 		}
-
-		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'][0] ) : array( 'action' => 'default' );
+		if ( isset( $this->_req_data[ 'return' ] ) && $this->_req_data[ 'return' ] == 'view_registration' ) {
+			$route = array( 'action' => 'view_registration', '_REG_ID' => reset( $result[ 'REG_ID' ] ) );
+		} else {
+			$route = array( 'action' => 'default' );
+		}
 		//unset nonces
 		foreach ( $this->_req_data as $ref => $value ) {
 			if ( strpos( $ref, 'nonce' ) !== false ) {
@@ -1357,12 +1399,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$value = is_array( $value ) ? array_map( 'urlencode', $value ) : urlencode( $value );
 			$this->_req_data[$ref] = $value;
 		}
-
 		//merge request vars so that the reloaded list table contains any existing filter query params
 		$route = array_merge( $this->_req_data, $route );
+		$this->_redirect_after_action( $success, '', '', $route, true );
 
-		$this->_redirect_after_action( false, '', '', $route, true );
-	}
+		}
 
 
 
@@ -1372,26 +1413,43 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _change_reg_status() {
 		$this->_req_data['return'] = 'view_registration';
-
 		//set notify based on whether the send notifications toggle is set or not
 		$notify = ! empty( $this->_req_data['reg_status_change_form']['send_notifications'] );
+		//$notify = ! empty( $this->_req_data['txn_reg_status_change']['send_notifications'] );
+		$this->_req_data[ 'reg_status_change_form' ][ 'reg_status' ] = isset(
+			$this->_req_data[ 'reg_status_change_form' ][ 'reg_status' ]
+		)
+			? $this->_req_data[ 'reg_status_change_form' ][ 'reg_status' ]
+			: '';
 
-		switch ( $this->_req_data['_reg_status_id'] ) {
+		switch ( $this->_req_data[ 'reg_status_change_form' ]['reg_status'] ) {
+
+			case EEM_Registration::status_id_approved :
 			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, false, 'sentence' ) :
 				$this->approve_registration( $notify );
 				break;
+
+			case EEM_Registration::status_id_pending_payment :
 			case EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, false, 'sentence' ) :
 				$this->pending_registration( $notify );
 				break;
+
+			case EEM_Registration::status_id_not_approved :
 			case EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, false, 'sentence' ) :
 				$this->not_approve_registration( $notify );
 				break;
+
+			case EEM_Registration::status_id_declined :
 			case EEH_Template::pretty_status( EEM_Registration::status_id_declined, false, 'sentence' ) :
 				$this->decline_registration( $notify );
 				break;
+
+			case EEM_Registration::status_id_cancelled :
 			case EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, false, 'sentence' ) :
 				$this->cancel_registration( $notify );
 				break;
+
+			case EEM_Registration::status_id_incomplete :
 			default :
 				$result['success'] = false;
 				unset( $this->_req_data['return'] );
@@ -1890,7 +1948,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$REG = $REGM->get_one_by_ID($REG_ID);
 				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
 				if ( $payment_count > 0 ) {
-					$name = $REG->attendee()->full_name();
+					$name = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' );
 					$error = 1;
 					$success = 0;
 					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );

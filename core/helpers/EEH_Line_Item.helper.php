@@ -161,6 +161,8 @@ class EEH_Line_Item {
 		return null;
 	}
 
+
+
 	/**
 	 * Increments the line item and all its children's quantity by $qty (but percent line items are unaffected).
 	 * Does NOT save or recalculate other line items totals
@@ -211,7 +213,13 @@ class EEH_Line_Item {
 	 */
 	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$datetimes = $ticket->datetimes();
-		$event = sprintf( __( '(For %1$s)', 'event_espresso' ), reset( $datetimes )->event()->name() );
+		$first_datetime = reset( $datetimes );
+		if( $first_datetime instanceof EE_Datetime && $first_datetime->event() instanceof EE_Event ) {
+			$first_datetime_name = $first_datetime->event()->name();
+		} else {
+			$first_datetime_name = __( 'Event', 'event_espresso' );
+		}
+		$event = sprintf( _x( '(For %1$s)', '(For Event Name)', 'event_espresso' ), $first_datetime_name );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
 		if ( ! $events_sub_total instanceof EE_Line_Item ) {
@@ -305,31 +313,93 @@ class EEH_Line_Item {
 	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item, EE_Payment $payment = null ) {
 		// validate incoming line_item
 		if ( $ticket_line_item->OBJ_type() !== 'Ticket' ) {
-			throw new EE_Error( sprintf( __( 'The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso' ), $ticket_line_item->type() ) );
+			throw new EE_Error(
+				sprintf(
+					__( 'The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso' ),
+					$ticket_line_item->type()
+				)
+			);
 		}
 		if ( $ticket_line_item->quantity() < 1 ) {
-			throw new EE_Error( sprintf( __( 'The supplied line item has a quantity of %1$d and therefore can not be cancelled.', 'event_espresso' ), $ticket_line_item->quantity() ) );
+			throw new EE_Error(
+				sprintf(
+					__( 'The supplied line item has a quantity of %1$d and therefore can not be cancelled.',
+						'event_espresso' ),
+					$ticket_line_item->quantity()
+				)
+			);
 		}
 		// decrement ticket quantity
 		$ticket_line_item->set_quantity( $ticket_line_item->quantity() - 1 );
-		// add $ticket to cart
-		$cancellation_line_item = EE_Line_Item::new_instance( array(
-			'LIN_name'       	=> __( 'Cancellation', 'event_espresso' ),
-			'LIN_desc' 			=> sprintf( __( 'Cancelled %1$s', 'event_espresso' ), $ticket_line_item->name() ),
-			'LIN_unit_price' 	=> $ticket_line_item->unit_price(),
-			'LIN_quantity'   	=> 1,
-			'LIN_is_taxable' 	=> $ticket_line_item->is_taxable(),
-			'LIN_order'      	=> count( $ticket_line_item->children() ),
-			'LIN_total'      		=> $ticket_line_item->unit_price(),
-			'LIN_type'       		=> EEM_Line_Item::type_cancellation,
-		) );
+		// get cancellation sub line item
+		$cancellation_line_item = EEH_Line_Item::get_descendants_of_type(
+			$ticket_line_item,
+			EEM_Line_Item::type_cancellation
+		);
+		$cancellation_line_item = reset( $cancellation_line_item );
+		// verify that this ticket was indeed previously cancelled
+		if ( $cancellation_line_item instanceof EE_Line_Item ) {
+			// increment cancelled quantity
+			$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() + 1 );
+		} else {
+			// create cancellation sub line item
+			$cancellation_line_item = EE_Line_Item::new_instance( array(
+			  'LIN_name'       => __( 'Cancellation', 'event_espresso' ),
+			  'LIN_desc'       => sprintf( __( 'Cancelled %1$s', 'event_espresso' ), $ticket_line_item->name() ),
+			  'LIN_unit_price' => $ticket_line_item->unit_price(),
+			  'LIN_quantity'   => 1,
+			  'LIN_is_taxable' => $ticket_line_item->is_taxable(),
+			  'LIN_order'      => count( $ticket_line_item->children() ),
+			  'LIN_total'      => $ticket_line_item->unit_price(),
+			  'LIN_type'       => EEM_Line_Item::type_cancellation,
+		  ) );
+		}
 		if ( $payment instanceof EE_Payment ) {
 			$cancellation_line_item->set_OBJ_ID( $payment->ID() );
 			$cancellation_line_item->set_OBJ_type( 'Payment' );
 		}
 		$ticket_line_item->add_child_line_item( $cancellation_line_item );
-		return $ticket_line_item->save();
+		return $ticket_line_item->save_this_and_descendants() > 0 ? true : false;
 	}
+
+
+
+	/**
+	 * reinstates (un-cancels?) a previously canceled ticket line item,
+	 * by incrementing it's quantity by 1, and decrementing it's "type_cancellation" sub-line-item.
+	 * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
+	 *
+	 * @param EE_Line_Item $ticket_line_item
+	 * @return bool success
+	 * @throws \EE_Error
+	 */
+	public static function reinstate_canceled_ticket_line_item( EE_Line_Item $ticket_line_item ) {
+		// validate incoming line_item
+		if ( $ticket_line_item->OBJ_type() !== 'Ticket' ) {
+			throw new EE_Error(
+				sprintf(
+					__( 'The supplied line item must have an Object Type of "Ticket", not %1$s.', 'event_espresso' ),
+					$ticket_line_item->type()
+				)
+			);
+		}
+		// get cancellation sub line item
+		$cancellation_line_item = EEH_Line_Item::get_descendants_of_type(
+			$ticket_line_item,
+			EEM_Line_Item::type_cancellation
+		);
+		$cancellation_line_item = reset( $cancellation_line_item );
+		// verify that this ticket was indeed previously cancelled
+		if ( ! $cancellation_line_item instanceof EE_Line_Item ) {
+			return false;
+		}
+		// increment ticket quantity
+		$ticket_line_item->set_quantity( $ticket_line_item->quantity() + 1 );
+		// decrement cancelled quantity
+		$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() - 1 );
+		return $ticket_line_item->save_this_and_descendants() > 0 ? true : false;
+	}
+
 
 
 	/**

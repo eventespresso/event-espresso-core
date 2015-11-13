@@ -18,6 +18,10 @@
 <strong><?php _e('Display Venue Details', 'event_espresso'); ?></strong><br />
 <?php _e('Whether Venue information, such as the address and Google Map should be shown on the Single Event pages.', 'event_espresso'); ?>
 </li>
+<li>
+<strong><?php _e('Display Order', 'event_espresso'); ?></strong><br />
+<?php _e('This setting controls the order of the event elements on the single event page. For example, if you want the venue details to appear above the ticket selector on the single event pages, just set the "Venue Display Order" setting to "1", and set the "Tickets Display Order" setting to "2". The lower the number, the further down the page the venue details will appear.', 'event_espresso'); ?>
+</li>
 </ul>
 <h3>
 <?php _e('Event List Pages', 'event_espresso'); ?>

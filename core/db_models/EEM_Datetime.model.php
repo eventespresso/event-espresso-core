@@ -34,7 +34,6 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 *		@Constructor
 	 *		@access private
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Datetime','event_espresso');
@@ -82,24 +81,18 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	*		@return 		EE_Datetime[]		array on success, FALSE on fail
 	*/
 	public function create_new_blank_datetime() {
-		$times = array(
-				EE_Datetime::new_instance(
-					array(
-						'DTT_EVT_start' => $this->current_time_for_query( 'DTT_EVT_start', true ) + (60 * 60 * 24 * 30),
-						'DTT_EVT_end' => $this->current_time_for_query( 'DTT_EVT_end', true ) + (60 * 60 * 24 * 30),
-//						'DTT_is_primary' => 1,
-						'DTT_order' => 1,
-						'DTT_reg_limit' => INF
-						/*NULL,
-						NULL*/
-					),
-					$this->_timezone
-				)
+		$blank_datetime = EE_Datetime::new_instance(
+			array(
+				'DTT_EVT_start' => $this->current_time_for_query( 'DTT_EVT_start', true ) + (60 * 60 * 24 * 30),
+				'DTT_EVT_end' => $this->current_time_for_query( 'DTT_EVT_end', true ) + (60 * 60 * 24 * 30),
+				'DTT_order' => 1,
+				'DTT_reg_limit' => INF
+			),
+			$this->_timezone
 		);
-
-		$times[0]->set_start_time( $this->convert_datetime_for_query( 'DTT_EVT_start', '8am', 'ga', $this->_timezone ) );
-		$times[0]->set_end_time( $this->convert_datetime_for_query( 'DTT_EVT_end', '5pm', 'ga', $this->_timezone ) );
-		return $times;
+		$blank_datetime->set_start_time( $this->convert_datetime_for_query( 'DTT_EVT_start', '8am', 'ga', $this->_timezone ) );
+		$blank_datetime->set_end_time( $this->convert_datetime_for_query( 'DTT_EVT_end', '5pm', 'ga', $this->_timezone ) );
+		return array( $blank_datetime );
 	}
 
 
@@ -113,7 +106,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	* 		@param		int 			$EVT_ID
 	*		@return 		EE_Datetime[]		array on success, FALSE on fail
 	*/
-	public function get_all_event_dates( $EVT_ID = FALSE ) {
+	public function get_all_event_dates( $EVT_ID = 0 ) {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
 			return $this->create_new_blank_datetime();
 		}
@@ -134,8 +127,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * get all datetimes attached to an event ordered by the DTT_order field
 	 * @public
 	 * @param  int   			$EVT_ID event id
-	 * @param bolean 			$include_expired
-	 * @param boolean 			$inlude_deleted
+	 * @param boolean 			$include_expired
+	 * @param boolean 			$include_deleted
 	 * @param  int 				$limit If included then limit the count of results by
 	 *                        	the given number
 	 * @return EE_Datetime[]
@@ -174,17 +167,20 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @param int $limit
 	 * @return EE_Datetime[]
 	 */
-	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = FALSE, $limit = NULL){
+	public function get_datetimes_for_event_ordered_by_importance( $EVT_ID = 0, $limit = NULL){
 		return $this->get_all( array(array('Event.EVT_ID'=>$EVT_ID),
 			'limit'=>$limit,
 			'order_by'=>array('DTT_EVT_start'=>'ASC'),
 			'default_where_conditions' => 'none'));
 	}
+
+
+
 	/**
 	 *
-	 * @param type $EVT_ID
-	 * @param type $include_expired
-	 * @param type $include_deleted
+	 * @param int $EVT_ID
+	 * @param boolean $include_expired
+	 * @param boolean $include_deleted
 	 * @return EE_Datetime
 	 */
 	public function get_oldest_datetime_for_event($EVT_ID, $include_expired = false,$include_deleted = false){
@@ -195,10 +191,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			return NULL;
 		}
 	}
+
+
+
 	/**
 	 * Gets the 'primary' datetime for an event.
-	 * @param int $EVT_ID
-	 * @return EE_Datetime
+	 * @param int  $EVT_ID
+	 * @param bool $try_to_exclude_expired
+	 * @param bool $try_to_exclude_deleted
+	 * @return \EE_Datetime
 	 */
 	public function get_primary_datetime_for_event($EVT_ID,$try_to_exclude_expired = true, $try_to_exclude_deleted = true){
 		if($try_to_exclude_expired){
@@ -216,12 +217,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$deleted_even = $this->get_oldest_datetime_for_event($EVT_ID, true, true);
 		return $deleted_even;
 	}
+
+
+
 	/**
 	 * Gets ALL the datetimes for an event (including trashed ones, for now), ordered
 	 * only by start date
 	 * @param int $EVT_ID
-	 * @param bolean $include_expired
-	 * @param boolean $inlude_deleted
+	 * @param boolean $include_expired
+	 * @param boolean $include_deleted
 	 * @param int $limit
 	 * @return EE_Datetime[]
 	 */
@@ -249,8 +253,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * Gets ALL the datetimes for an ticket (including trashed ones, for now), ordered
 	 * only by start date
 	 * @param int $TKT_ID
-	 * @param bolean $include_expired
-	 * @param boolean $inlude_deleted
+	 * @param boolean $include_expired
+	 * @param boolean $include_deleted
 	 * @param int $limit
 	 * @return EE_Datetime[]
 	 */
@@ -278,7 +282,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * Gets all the datetimes for a ticket (including trashed ones, fo rnow), ordered by the DTT_order for the datetimes.
+	 * Gets all the datetimes for a ticket (including trashed ones, for now), ordered by the DTT_order for the datetimes.
 	 * @param  int     $TKT_ID          ID of ticket to retrieve the datetimes for
 	 * @param  boolean $include_expired whether to include expired datetimes or not
 	 * @param  boolean $include_deleted whether to include trashed datetimes or not.
@@ -326,19 +330,18 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * This returns a wpdb->results array of all DTT month and years matching the incoming query params and grouped by month and year.
-	 * @param  array  $query_params Array of query_parms as described in the comments for EEM_Base::get_all()
-	 * @param  string  $evt_active_status  A string representing the evt active status to filter the months by. Can be:
-	 *                                     - '' = no filter
-	 *                                     - upcoming = Published events with at least one upcoming datetime.
-	 *                                     - expired = Events with all datetimes expired.
-	 *                                     - active = Events that are published and have at least one datetime that starts before now and ends after
-	 *                                     		now.
-	 *                                     - inactive = Events that are either not published.
+	 * This returns a wpdb->results 		Array of all DTT month and years matching the incoming query params and grouped by month and year.
+	 * @param  array $where_params 		Array of query_params as described in the comments for EEM_Base::get_all()
+	 * @param  string $evt_active_status 		A string representing the evt active status to filter the months by.
+	 * 		Can be:
+	 * 			- '' = no filter
+	 * 			- upcoming = Published events with at least one upcoming datetime.
+	 * 			- expired = Events with all datetimes expired.
+	 * 			- active = Events that are published and have at least one datetime that starts before now and ends after now.
+	 * 			- inactive = Events that are either not published.
 	 * @return wpdb results array
 	 */
 	public function get_dtt_months_and_years( $where_params, $evt_active_status = '' ) {
-		$where_params;
 
 		switch ( $evt_active_status ) {
 			case 'upcoming' :
@@ -415,6 +418,26 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			$datetime->update_sold();
 		}
 	}
+
+
+
+	/**
+	 * 	Gets the total number of tickets available at a particular datetime
+	 * 	(does NOT take into account the datetime's spaces available)
+	 *
+	 * @param int   $DTT_ID
+	 * @param array $query_params
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 */
+	public function sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params = array() ) {
+		$datetime = $this->get_one_by_ID( $DTT_ID );
+		if ( $datetime instanceof EE_Datetime ) {
+			return $datetime->tickets_remaining( $query_params );
+		}
+		return 0;
+	}
+
+
 
 }
 // End of file EEM_Datetime.model.php
