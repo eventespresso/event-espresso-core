@@ -24,10 +24,14 @@ jQuery(document).ready(function() {
 					'action' : 'batch_cleanup',
 					'ee_admin_ajax' : true
 				};
+	cancel_job_on_leave = true;
 	jQuery(window).bind('beforeunload', function(){
+		if( cancel_job_on_leave ) {
+		cancel_job_on_leave = false;
 		runner.cleanup_job( 
 				eei18n.ajax_url, 
 				cancel_job_args );
+			}
 	  });
 	runner.set_job_id( ee_job_response.job_id );
 	runner.set_progress_bar_div( 'batch-progress' );
@@ -48,14 +52,17 @@ jQuery(document).ready(function() {
 				response.data.file_url != '' ) {
 			jQuery('#message-area').html( ee_job_i18n.download_and_redirecting );
 			window.location.href=response.data.file_url;
-			runner.cleanup_job( 
-				eei18n.ajax_url, 
-				cancel_job_args,
-				function( response, data, xhr ) {
-					//redirect them as if this page didn't exist
-					//(so clicking "back" won't get them here)
-					window.location.replace( ee_job_i18n.redirect_url );
-				});
+			if( cancel_job_on_leave ) {
+				cancel_job_on_leave = false;
+				runner.cleanup_job( 
+					eei18n.ajax_url, 
+					cancel_job_args,
+					function( response, data, xhr ) {
+						//redirect them as if this page didn't exist
+						//(so clicking "back" won't get them here)
+						window.location.replace( ee_job_i18n.redirect_url );
+					});
+			}
 		}
 	}
 });
