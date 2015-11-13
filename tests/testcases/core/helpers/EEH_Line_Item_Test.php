@@ -550,6 +550,102 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 10, $totals[ $ticket_line_item_a->ID() ] );
 		$this->assertEquals( 5, $totals[ $ticket_line_item_b->ID() ] );
 	}
+	
+	
+	/**
+	 * Create a line item tree which was originaly for 6 tickets and a discount,
+	 * but 2 got cancelled and so shouldn't count towards the grand total,
+	 * and so the ticket line item's quantity should be 4
+	 * @group 5580
+	 */
+	function test_cancel_ticket_line_item__with_sub_items_already(){
+		$event_subtotal = EE_Line_Item::new_instance(
+				array(
+					'LIN_code'	=> 'event1',
+					'LIN_name' 	=> 'EventA',
+					'LIN_type'	=> EEM_Line_Item::type_sub_total,
+					'OBJ_type' 	=> 'Event',
+					'LIN_total' => 0,
+				));
+		$event_subtotal->save();
+		$normal_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => '12354',
+					'LIN_name' => 'ticketA',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => 'Ticket',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 6,
+					'LIN_order' => 1,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$normal_line_item->save();
+		$subitem_base_price = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'baseprice',
+					'LIN_name' => 'basepriceA',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'OBJ_type' => 'Price',
+					'LIN_unit_price' => 20,
+					'LIN_quantity' => 6,
+					'LIN_order' => 1,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$subitem_base_price->save();
+		$subitem_percent_price = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'percentdiscount',
+					'LIN_name' => 'percentprice',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'OBJ_type' => 'Price',
+					'LIN_unit_price' => 0,
+					'LIN_percent' => -50,
+					'LIN_quantity' => 1,
+					'LIN_order' => 2,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$subitem_percent_price->save();
+		
+		$cancellation_subitem = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'cancellationoruny',
+					'LIN_name' => 'cancellationOfA',
+					'LIN_type' => EEM_Line_Item::type_cancellation,
+					'OBJ_type' => '',//?
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 1,
+					'LIN_order' => 1,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$percent_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'dscntfry',
+					'LIN_name' => 'Discounto',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => '',
+					'LIN_unit_price' => null,
+					'LIN_quantity' => null,
+					'LIN_percent' => -25,
+					'LIN_order' => 1000,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$percent_line_item->save();
+		$event_subtotal->recalculate_total_including_taxes();
+//		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 60, $normal_line_item->total() );
+		$this->assertEquals( 45, $event_subtotal->total() );
+		$this->assertEquals( -15, $percent_line_item->total() );
+
+		//ok now cancel a few and make sure the totals add up correctly
+		EEH_Line_Item::cancel_ticket_line_item( $normal_line_item );
+		EEH_Line_Item::cancel_ticket_line_item( $normal_line_item );
+		$event_subtotal->recalculate_total_including_taxes();
+		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 40, $normal_line_item->total() );
+		$this->assertEquals( 30, $event_subtotal->total() );
+		$this->assertEquals( -10, $percent_line_item->total() );
+//		$this->new
+	}
 
 
 }
