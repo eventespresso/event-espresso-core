@@ -104,7 +104,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
 					//if this is a re-attempt at paying, don't re-add PayPal's shipping
-					if ( $line_item->code() == 'paypal_shipping' ) {
+					//and ignore line items with a quantity of 0
+					if ( $line_item->code() == 'paypal_shipping' || $line_item->quantity() == 0 ) {
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(

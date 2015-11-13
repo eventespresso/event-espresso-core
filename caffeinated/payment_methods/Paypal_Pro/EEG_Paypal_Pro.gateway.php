@@ -98,6 +98,10 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$total_line_item = $transaction->total_line_item();
 			$order_items = array();
 			foreach ($total_line_item->get_items() as $line_item) {
+				//ignore line items with a quantity of 0
+				if( $line_item->quantity() == 0 ) {
+					continue;
+				}
 				$item = array(
 						// Item Name.  127 char max.
 						'l_name' => substr($line_item->name(),0,127),
