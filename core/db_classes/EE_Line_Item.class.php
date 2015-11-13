@@ -891,7 +891,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		}
 		//get the total of all its children
 		foreach ( $my_children as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
+			if ( $child_line_item instanceof EE_Line_Item &&
+					! $child_line_item->is_cancellation() ) {
 				if ( $child_line_item->is_percent() ) {
 					$percent_total = $calculated_total_so_far * $child_line_item->percent() / 100;
 					$child_line_item->set_total( $percent_total );
@@ -936,7 +937,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		$quantity_for_total = 1;
 		//get the total of all its children
 		foreach ( $my_children as $child_line_item ) {
-			if ( $child_line_item instanceof EE_Line_Item ) {
+			if ( $child_line_item instanceof EE_Line_Item &&
+					! $child_line_item->is_cancellation()) {
 				if ( $child_line_item->is_percent() ) {
 					//it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
 					//not total multiplied by percent, because that ignores rounding along-the-way

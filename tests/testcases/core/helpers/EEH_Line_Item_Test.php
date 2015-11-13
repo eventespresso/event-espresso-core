@@ -648,8 +648,92 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( -10, $percent_line_item->total() );
 		$cancellation_line_items = EEH_Line_Item::get_descendants_of_type( $event_subtotal, EEM_Line_Item::type_cancellation );
 		$the_only_cancellation_item = reset( $cancellation_line_items );
+		$this->assertEquals( 3, $the_only_cancellation_item->quantity() );
+		$this->assertEquals( 10, $the_only_cancellation_item->total() );
+	}
+	
+	/**
+	 * Checks we correctly add a cancellation line item
+	 * @group 5580
+	 */
+	function test_cancel_ticket_line_item__with_no_previous_cancellations(){
+		$event_subtotal = EE_Line_Item::new_instance(
+				array(
+					'LIN_code'	=> 'event1',
+					'LIN_name' 	=> 'EventA',
+					'LIN_type'	=> EEM_Line_Item::type_sub_total,
+					'OBJ_type' 	=> 'Event',
+					'LIN_total' => 0,
+				));
+		$event_subtotal->save();
+		$normal_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => '12354',
+					'LIN_name' => 'ticketA',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => 'Ticket',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 6,
+					'LIN_order' => 1,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$normal_line_item->save();
+		$subitem_base_price = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'baseprice',
+					'LIN_name' => 'basepriceA',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'OBJ_type' => 'Price',
+					'LIN_unit_price' => 20,
+					'LIN_quantity' => 6,
+					'LIN_order' => 1,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$subitem_base_price->save();
+		$subitem_percent_price = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'percentdiscount',
+					'LIN_name' => 'percentprice',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'OBJ_type' => 'Price',
+					'LIN_unit_price' => 0,
+					'LIN_percent' => -50,
+					'LIN_quantity' => 1,
+					'LIN_order' => 2,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$subitem_percent_price->save();
+		$percent_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'dscntfry',
+					'LIN_name' => 'Discounto',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => '',
+					'LIN_unit_price' => null,
+					'LIN_quantity' => null,
+					'LIN_percent' => -25,
+					'LIN_order' => 1000,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$percent_line_item->save();
+		$event_subtotal->recalculate_total_including_taxes();
+		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 60, $normal_line_item->total() );
+		$this->assertEquals( 45, $event_subtotal->total() );
+		$this->assertEquals( -15, $percent_line_item->total() );
+
+		//ok now cancel a few and make sure the totals add up correctly
+		EEH_Line_Item::cancel_ticket_line_item( $normal_line_item );
+		EEH_Line_Item::cancel_ticket_line_item( $normal_line_item );
+		$event_subtotal->recalculate_total_including_taxes();
+		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 40, $normal_line_item->total() );
+		$this->assertEquals( 30, $event_subtotal->total() );
+		$this->assertEquals( -10, $percent_line_item->total() );
+		$cancellation_line_items = EEH_Line_Item::get_descendants_of_type( $event_subtotal, EEM_Line_Item::type_cancellation );
+		$the_only_cancellation_item = reset( $cancellation_line_items );
 		$this->assertEquals( 2, $the_only_cancellation_item->quantity() );
-		$this->assertEquals( 0, $the_only_cancellation_item->total() );
+		$this->assertEquals( 10, $the_only_cancellation_item->total() );
 	}
 	
 	/**
@@ -693,6 +777,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 					'LIN_order' => 1,
 					'LIN_parent' => $normal_line_item->ID()
 				));
+		$subitem_base_price->save();
 		$cancellation_subitem = EE_Line_Item::new_instance(
 				array(
 					'LIN_code' => 'cancellationoruny',
@@ -701,7 +786,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 					'OBJ_type' => '',//?
 					'LIN_unit_price' => 10,
 					'LIN_quantity' => 2,
-					'LIN_order' => 1,
+					'LIN_order' => 2,
 					'LIN_parent' => $normal_line_item->ID()
 				));
 		$cancellation_subitem->save();
