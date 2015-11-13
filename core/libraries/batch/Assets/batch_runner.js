@@ -10,7 +10,7 @@
  * to send an ajax request to get the job initialized and run it
  */
 
-var EE_BatchRunner = function( continue_url, continue_data, continue_callback ){
+var EE_BatchRunner = function( continue_url, continue_data, continue_callback, cleanup_url, cleanup_data, cleanup_callback ){
 	this.job_id = null;
 	this.progress_bar = null;
 	this.progress_area = null;
@@ -18,6 +18,14 @@ var EE_BatchRunner = function( continue_url, continue_data, continue_callback ){
 	this.continue_url = continue_url;
 	this.continue_data = continue_data;
 	this.continue_callback = continue_callback;
+	this.cleanup_url = cleanup_url;
+	this.cleanup_data = cleanup_data;
+	this.cleanup_callback = cleanup_callback;
+	this.cleanup_required = true;
+	var runner = this;
+	window.onbeforeunload = function(){
+		runner.cleanup_job();
+	};
 };
 /**
  * If the job has already been initialized server-side, and you have access
@@ -99,16 +107,20 @@ EE_BatchRunner.prototype.continue_job = function() {
 		}
 	});
 };
-EE_BatchRunner.prototype.cleanup_job = function( url, data, callback_when_done ) {
+EE_BatchRunner.prototype.cleanup_job = function() {
+	if( this.cleanup_required === false ) {
+		return;
+	}
+	var data = this.cleanup_data;
 	data[ 'job_id' ] = this.job_id;
 	var batch_runner = this;
-	this.do_ajax( url, data, function( response, status, xhr ) {
+	this.do_ajax( this.cleanup_url, data, function( response, status, xhr ) {
 		if( batch_runner.progress_bar instanceof EE_ProgressBar ) {
 			batch_runner.progress_bar.update_progress_to( response.data.units_processed, response.data.job_size );
 		}
-		//@todo: update progress update-area
-		if( typeof( callback_when_done ) !== 'undefined'  ) {
-			callback_when_done( response, status, xhr );
+		batch_runner.cleanup_required = false;
+		if( typeof( batch_runner.cleanup_callback ) !== 'undefined'  ) {
+			batch_runner.cleanup_callback( response, status, xhr );
 		}
 	});
 };
