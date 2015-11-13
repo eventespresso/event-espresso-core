@@ -84,11 +84,13 @@ class EEM_Line_Item extends EEM_Base {
 	/**
 	 * When a line item is cancelled, a sub-line-item of type 'cancellation'
 	 * should be created, indicating the quantity that were cancelled
-	 * (because a line item could have a quantity of 4, and its cancellation item
-	 * could be for 3, indicating that there is still 1 item purchased).
+	 * (because a line item could have a quantity of 1, and its cancellation item
+	 * could be for 3, indicating that originally 4 were purchased, but 3 have been
+	 * cancelled, and only one remains).
 	 * When items are refunded, a cancellation line item should be made, which points
 	 * to teh payment model object which actually refunded the payment.
-	 * Cancellations should NOT have any children line items.
+	 * Cancellations should NOT have any children line items; the should NOT affect
+	 * any calculations, and are only meant as a record that cancellations have occurred.
 	 */
 	const type_cancellation = 'cancellation';
 
