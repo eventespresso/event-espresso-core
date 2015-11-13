@@ -644,7 +644,10 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 40, $normal_line_item->total() );
 		$this->assertEquals( 30, $event_subtotal->total() );
 		$this->assertEquals( -10, $percent_line_item->total() );
-//		$this->new
+		$cancellation_line_items = EEH_Line_Item::get_descendants_of_type( $event_subtotal, EEM_Line_Item::type_cancellation );
+		$the_only_cancellation_item = reset( $cancellation_line_items );
+		$this->assertEquals( 2, $the_only_cancellation_item->quantity() );
+		$this->assertEquals( 0, $the_only_cancellation_item->total() );
 	}
 
 
