@@ -456,116 +456,147 @@ final class EE_Config {
 		$display_errors = TRUE
 	) {
 		try {
-			// TEST #1 : check that section was set
-			if ( in_array( 1, $tests_to_run ) && empty( $section )) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						sprintf(
-							__( 'No configuration section has been provided while attempting to save "%s".', 'event_espresso' ),
-							$config_class
-						)
-					);
+			foreach ( $tests_to_run as $test ) {
+				switch ( $test ) {
+
+					// TEST #1 : check that section was set
+					case 1 :
+						if ( empty( $section ) ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf(
+										__( 'No configuration section has been provided while attempting to save "%s".', 'event_espresso' ),
+										$config_class
+									)
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #2 : check that settings section exists
+					case 2 :
+						if ( ! isset( $this->{$section} ) ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf( __( 'The "%s" configuration section does not exist.', 'event_espresso' ),
+											 $section )
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #3 : check that section is the proper format
+					case 3 :
+						if (
+							! ( $this->{$section} instanceof EE_Config_Base || $this->{$section} instanceof stdClass )
+						) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf(
+										__( 'The "%s" configuration settings have not been formatted correctly.', 'event_espresso' ),
+										$section
+									)
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #4 : check that config section name has been set
+					case 4 :
+						if ( empty( $name ) ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									__( 'No name has been provided for the specific configuration section.', 'event_espresso' )
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #5 : check that a config class name has been set
+					case 5 :
+						if ( empty( $config_class ) ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									__( 'No class name has been provided for the specific configuration section.', 'event_espresso' )
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #6 : verify config class is accessible
+					case 6 :
+						if ( ! class_exists( $config_class ) ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf(
+										__( 'The "%s" class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ),
+										$config_class
+									)
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #7 : check that config has even been set
+					case 7 :
+						if ( ! isset( $this->{$section}->{$name} ) ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf(
+										__( 'No configuration has been set for "%1$s->%2$s".', 'event_espresso' ),
+										$section,
+										$name
+									)
+								);
+							}
+							return false;
+						} else {
+							// and make sure it's not serialized
+							$this->{$section}->{$name} = maybe_unserialize( $this->{$section}->{$name} );
+						}
+						break;
+
+					// TEST #8 : check that config is the requested type
+					case 8 :
+						if ( ! $this->{$section}->{$name} instanceof $config_class ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf(
+										__( 'The configuration for "%1$s->%2$s" is not of the "%3$s" class.', 'event_espresso' ),
+										$section,
+										$name,
+										$config_class
+									)
+								);
+							}
+							return false;
+						}
+						break;
+
+					// TEST #9 : verify config object
+					case 9 :
+						if ( ! $config_obj instanceof EE_Config_Base ) {
+							if ( $display_errors ) {
+								throw new EE_Error(
+									sprintf(
+										__( 'The "%s" class is not an instance of EE_Config_Base.', 'event_espresso' ),
+										print_r( $config_obj, true )
+									)
+								);
+							}
+							return false;
+						}
+						break;
+
 				}
-				return FALSE;
 			}
-			// TEST #2 : check that settings section exists
-			if ( in_array( 2, $tests_to_run ) && ! isset( $this->{$section} )) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						sprintf( __( 'The "%s" configuration section does not exist.', 'event_espresso' ), $section )
-					);
-				}
-				return FALSE;
-			}
-			// TEST #3 : check that section is the proper format
-			if (
-				in_array( 3, $tests_to_run )
-				&& ! ( $this->{$section} instanceof EE_Config_Base || $this->{$section} instanceof stdClass )
-			) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						sprintf(
-							__( 'The "%s" configuration settings have not been formatted correctly.', 'event_espresso' ),
-							$section
-						)
-					);
-				}
-				return FALSE;
-			}
-			// TEST #4 : check that config section name has been set
-			if ( in_array( 4, $tests_to_run ) && empty( $name )) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						__( 'No name has been provided for the specific configuration section.', 'event_espresso' )
-					);
-				}
-				return FALSE;
-			}
-			// TEST #5 : check that a config class name has been set
-			if ( in_array( 5, $tests_to_run ) && empty( $config_class )) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						__( 'No class name has been provided for the specific configuration section.', 'event_espresso' )
-					);
-				}
-				return FALSE;
-			}
-			// TEST #6 : verify config class is accessible
-			if ( in_array( 6, $tests_to_run ) && ! class_exists( $config_class )) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						sprintf(
-							__( 'The "%s" class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ),
-							$config_class
-						)
-					);
-				}
-				return FALSE;
-			}
-			// TEST #7 : check that config has even been set
-			if ( in_array( 7, $tests_to_run )) {
-				if ( ! isset( $this->{$section}->{$name} )) {
-					if ( $display_errors ) {
-						throw new EE_Error(
-							sprintf(
-								__( 'No configuration has been set for "%1$s->%2$s".', 'event_espresso' ),
-								$section,
-								$name
-							)
-						);
-					}
-					return FALSE;
-				} else {
-					// and make sure it's not serialized
-					$this->{$section}->{$name} = maybe_unserialize( $this->{$section}->{$name} );
-				}
-			}
-			// TEST #8 : check that config is the requested type
-			if ( in_array( 8, $tests_to_run ) && ! $this->{$section}->{$name} instanceof $config_class ) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						sprintf(
-							__( 'The configuration for "%1$s->%2$s" is not of the "%3$s" class.', 'event_espresso' ),
-							$section,
-							$name,
-							$config_class
-						)
-					);
-				}
-				return FALSE;
-			}
-			// TEST #9 : verify config object
-			if ( in_array( 9, $tests_to_run ) && ! $config_obj instanceof EE_Config_Base ) {
-				if ( $display_errors ) {
-					throw new EE_Error(
-						sprintf(
-							__( 'The "%s" class is not an instance of EE_Config_Base.', 'event_espresso' ),
-							print_r( $config_obj, TRUE )
-						)
-					);
-				}
-				return FALSE;
-			}
+
 		} catch( EE_Error $e ) {
 			$e->get_error();
 		}
@@ -584,7 +615,7 @@ final class EE_Config {
 	 * @return        string
 	 */
 	private function _generate_config_option_name( $section = '', $name = '' ) {
-		return 'ee_config-' . $section . '-' . $name;
+		return 'ee_config-' . strtolower( $section . '-' . str_replace( array( 'EE_', 'EED_' ), '', $name ) );
 	}
 
 
@@ -601,26 +632,26 @@ final class EE_Config {
 	private function _set_config_class( $config_class = '', $name = '' ) {
 		return ! empty( $config_class )
 			? $config_class
-			: str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $name ))) . '_Config';
+			: str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $name ) ) ) . '_Config';
 	}
 
 
 	/**
 	 *    set_config
 	 *
-	 * @access        protected
-	 * @param        string  $section
-	 * @param        string  $name
-	 * @param        string  $config_class
-	 * @param        \EE_Config_Base $config_obj
-	 * @return        \EE_Config_Base|bool
+	 * @access 	protected
+	 * @param 	string  $section
+	 * @param 	string  $name
+	 * @param 	string  $config_class
+	 * @param 	EE_Config_Base $config_obj
+	 * @return 	EE_Config_Base
 	 */
-	public function set_config( $section = '', $name = '', $config_class = '', EE_Config_Base $config_obj = NULL ) {
+	public function set_config( $section = '', $name = '', $config_class = '', EE_Config_Base $config_obj = null ) {
 		// ensure config class is set to something
 		$config_class = $this->_set_config_class( $config_class, $name );
 		// run tests 1-4, 6, and 7 to verify all config params are set and valid
-		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 5, 6 ))) {
-			return FALSE;
+		if ( ! $this->_verify_config_params( $section, $name, $config_class, null, array( 1, 2, 3, 4, 5, 6 ))) {
+			return null;
 		}
 		$config_option_name = $this->_generate_config_option_name( $section, $name );
 		// if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
@@ -628,7 +659,7 @@ final class EE_Config {
 			$this->_config_option_names[ $config_option_name ] = $config_class;
 		}
 		// verify the incoming config object but suppress errors
-		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ), FALSE )) {
+		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ), false )) {
 			$config_obj = new $config_class();
 		}
 		if ( get_option( $config_option_name ) ) {
@@ -645,7 +676,7 @@ final class EE_Config {
 					sprintf( __( 'The "%s" could not be saved to the database.', 'event_espresso' ), $config_class ),
 					__FILE__, __FUNCTION__, __LINE__
 				);
-				return FALSE;
+				return null;
 			}
 		}
 	}
@@ -656,20 +687,20 @@ final class EE_Config {
 	 *    update_config
          * Important: the config object must ALREADY be set, otherwise this will produce an error.
 	 *
-	 * @access    public
-	 * @param    string                 $section
-	 * @param    string                 $name
-	 * @param    \EE_Config_Base|string $config_obj
-	 * @param bool                      $throw_errors
-	 * @return  bool
+	 * @access 	public
+	 * @param 	string 					$section
+	 * @param 	string 					$name
+	 * @param 	EE_Config_Base|string 	$config_obj
+	 * @param 	bool 					$throw_errors
+	 * @return 	bool
 	 */
-	public function update_config( $section = '', $name = '', $config_obj = '', $throw_errors = TRUE ) {
+	public function update_config( $section = '', $name = '', $config_obj = '', $throw_errors = true ) {
 		$config_obj = maybe_unserialize( $config_obj );
 		// get class name of the incoming object
 		$config_class = get_class( $config_obj );
 		// run tests 1-5 and 9 to verify config
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 1, 2, 3, 4, 7, 9 ))) {
-			return FALSE;
+			return false;
 		}
 		$config_option_name = $this->_generate_config_option_name( $section, $name );
 		// check if config object has been added to db by seeing if config option name is in $this->_config_option_names array
@@ -683,11 +714,11 @@ final class EE_Config {
 			// just return if db record is already up to date
 			if ( $existing_config == $config_obj ) {
 				$this->{$section}->{$name} = $config_obj;
-				return TRUE;
+				return true;
 			} else if ( update_option( $config_option_name, $config_obj )) {
 				// update wp-option for this config class
 				$this->{$section}->{$name} = $config_obj;
-				return $this->update_espresso_config();
+				return true;
 			} elseif ( $throw_errors ) {
 				EE_Error::add_error(
 					sprintf(
@@ -699,7 +730,7 @@ final class EE_Config {
 				);
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 
