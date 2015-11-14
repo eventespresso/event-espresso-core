@@ -42,7 +42,7 @@ class RegistrationsReport extends JobHandlerFile {
 	 */
 	protected function get_filename_from_event( $event_id ) {
 		if( $event_id ){
-			$event_slug =  EEM_Event::instance()->get_var( array( array( 'EVT_ID' => $event_id ) ), 'EVT_slug' );
+			$event_slug =  \EEM_Event::instance()->get_var( array( array( 'EVT_ID' => $event_id ) ), 'EVT_slug' );
 			if( ! $event_slug ) {
 				$event_slug = __( 'unknown', 'event_espresso' );
 			}
