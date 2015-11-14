@@ -221,7 +221,6 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 			}
 		}
-
 		return $template;
 	}
 
@@ -279,8 +278,8 @@ class EED_Events_Archive  extends EED_Module {
 			$post->post_type == 'espresso_events' &&
 			! post_password_required() &&
 			(
-				! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false ) ||
-				apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
+				apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false )
+				|| ! apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
 			)
 		) {
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->use_sortable_display_order ) {
