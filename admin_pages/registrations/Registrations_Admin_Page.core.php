@@ -2318,7 +2318,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'action' => 'batch_file_create',
 					'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
 					'job_handler' => urlencode( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport' ),
-					'redirect_url' => urlencode( EE_Admin_Page::add_query_args_and_nonce( array( 'registrations_report' ), REG_ADMIN_URL ) ),
+					'redirect_url' => urlencode( $this->_req_data[ 'return_url' ] ),
 				)) );
 		} else {
 			EE_Registry::instance()->load_helper( 'File' );
