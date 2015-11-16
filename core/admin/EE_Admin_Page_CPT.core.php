@@ -323,7 +323,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		add_action('post_updated_messages', array( $this, 'post_update_messages' ), 10 );
 
 		//add shortlink button to cpt edit screens.  We can do this as a universal thing BECAUSE, cpts use the same format for shortlinks as posts!
-		add_filter( 'get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
+		add_filter( 'pre_get_shortlink', array( $this, 'add_shortlink_button_to_editor' ), 10, 4 );
 
 		//This basically allows us to change the title of the "publish" metabox area on CPT pages by setting a 'publishbox' value in the $_labels property array in the child class.
 		if ( !empty($this->_labels['publishbox'] ) ) {
