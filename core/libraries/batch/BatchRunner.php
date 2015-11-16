@@ -45,7 +45,7 @@ class BatchRunner {
 				sprintf( 
 					__('Could not save job %1$s to the Wordpress Options table. These were the arguments used: %2$s', 'event_espresso'),
 					$job_id,
-						wp_json_encode( $job_arguments )
+						wp_json_encode( $request_data )
 					) );
 		}
 		return $response;
