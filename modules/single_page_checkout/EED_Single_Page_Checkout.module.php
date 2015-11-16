@@ -1053,6 +1053,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['process_registration'] = sprintf( __( 'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso' ), '<br/>', '<br/>' );
 		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 		EE_Registry::$i18n_js_strings['EESID'] = EE_Registry::instance()->SSN->id();
+		EE_Registry::$i18n_js_strings['currency'] = EE_Registry::instance()->CFG->currency;
 		EE_Registry::$i18n_js_strings['datepicker_yearRange'] = '-150:+20';
 		EE_Registry::$i18n_js_strings['timer_years'] = __( 'years', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_months'] = __( 'months', 'event_espresso' );
