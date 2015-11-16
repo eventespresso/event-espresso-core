@@ -178,6 +178,7 @@ class EEH_Event_View extends EEH_Base {
 
 		} else {
 			// admin has chosen "none" for the "Event Espresso - Events > Templates > Display Description" option
+			echo apply_filters( 'the_content', '' );
 		}
 		return ob_get_clean();
 	}
