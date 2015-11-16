@@ -1,11 +1,22 @@
 <?php 
+/**
+ *
+ * Class JobHandler
+ *
+ * Base class for common implementations of JobHandlerInterface.
+ *
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
+ */
 namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 
-/* 
- * Base class for common implementations of JobHandlerInterface.
- */
 abstract class JobHandler implements JobHandlerInterface {
 	/**
 	 * Performs any necessary setup for starting the job. This is also a good

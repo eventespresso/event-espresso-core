@@ -1,11 +1,21 @@
 <?php 
-namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ *
+ * Class JobHandlerFile
+ *
+ * Base class for common implementations of JobHandlerInterface, but ones
+ * which write to a temporary file
+ *
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
  */
+namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
+use EventEspressoBatchRequest\Helpers\BatchRequestException;
 
 abstract class JobHandlerFile extends JobHandler {
 	/**

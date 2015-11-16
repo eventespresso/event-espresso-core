@@ -1,9 +1,19 @@
-<?php namespace EventEspressoBatchRequest\Helpers;
-
-/* 
+<?php 
+/**
+ *
+ * Class JobParameters
+ *
  * Class for storing information about a job. Takes care of serializing the
  * data for storing in a wordpress option
+ *
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
  */
+namespace EventEspressoBatchRequest\Helpers;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
 class JobParameters {
 	/**

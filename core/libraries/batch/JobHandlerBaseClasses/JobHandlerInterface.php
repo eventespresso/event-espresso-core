@@ -1,22 +1,32 @@
 <?php 
-namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
-
-/* 
+/**
+ *
+ * Class JobHandlerInterface
+ *
  * Interface describing classes that BatchRunner can send jobs to for processing.
  * Takes care of initiating the job after it's been assigned an ID,
  * processing the job across multiple HTTP requests, and then wrapping up the job
  * when completed
+ *
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
  */
+namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+use EventEspressoBatchRequest\Helpers\BatchRequestException;
+use EventEspressoBatchRequest\Helpers\JobParameters;
+use EventEspressoBatchRequest\Helpers\JobStepResponse;
+
 interface JobHandlerInterface {
 	/**
 	 * Performs any necessary setup for starting the job. This is also a good
 	 * place to setup the $job_arguments which will be used for subsequent HTTP requests
 	 * when continue_job will be called
 	 * @param JobParameters $job_parameters
-	 * @throws \helpers\BatchRequestException
+	 * @throws BatchRequestException
 	 * @return JobStepResponse
 	 */
 	public function create_job( JobParameters $job_parameters );

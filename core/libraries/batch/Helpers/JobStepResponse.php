@@ -1,11 +1,19 @@
 <?php
-namespace EventEspressoBatchRequest\Helpers;
-
 /**
+ *
+ * Class JobStepResponse
+ *
  * Response object describing the current state of a job
  *
- * @author mnelson4
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
  */
+namespace EventEspressoBatchRequest\Helpers;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
 class JobStepResponse {
 	/**
 	 * Description fo what happened during this step

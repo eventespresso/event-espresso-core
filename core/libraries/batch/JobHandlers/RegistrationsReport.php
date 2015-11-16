@@ -1,12 +1,23 @@
-<?php namespace EventEspressoBatchRequest\JobHandlers;
+<?php 
+/**
+ *
+ * Class RegistrationsReport
+ *
+ * Generates the registrations report for the specified event,
+ * or for all events
+ *
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
+ */
+namespace EventEspressoBatchRequest\JobHandlers;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
-/* 
- * Generates the registrations report for the specified event,
- * or for all events
- */
 
 class RegistrationsReport extends JobHandlerFile {
 	/**

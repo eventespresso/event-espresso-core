@@ -1,18 +1,29 @@
-<?php namespace EventEspressoBatchRequest;
-
-use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
-use EventEspressoBatchRequest\Helpers\BatchRequestException;
-use EventEspressoBatchRequest\Helpers\JobParameters;
-use EventEspressoBatchRequest\Helpers\JobStepResponse;
-
-/* 
+<?php 
+ /**
+ *
+ * Class BatchRunner
+ *
  * Responsible for receiving a request to start a job and assign it a job Id.
  * Then when subsequent requests come in to continue that job, dispatches
  * the request to the appropriate JobHandler, which processes a step of the batch,
  * and then returns the job's new status. 
  * This class is used by controller code, and the controller code is sent HTTP
  * requests from the batch_runner.js library
+ *
+ * @package         Event Espresso
+ * @subpackage    batch
+ * @author				Mike Nelson
+ * @since		 	   $VID:$
+ *
  */
+namespace EventEspressoBatchRequest;
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
+use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
+use EventEspressoBatchRequest\Helpers\BatchRequestException;
+use EventEspressoBatchRequest\Helpers\JobParameters;
+use EventEspressoBatchRequest\Helpers\JobStepResponse;
+
 class BatchRunner {
 	
 	/**
@@ -47,7 +58,8 @@ class BatchRunner {
 	 * @return JobStepResponse
 	 * @throws BatchRequestException
 	 */
-	public function continue_job( $job_id, $batch_size = 5 ) {
+	public function continue_job( $job_id, $batch_size = 50 ) {
+		$batch_size = defined( 'EE_BATCHRUNNER_BATCH_SIZE' ) ? EE_BATCHRUNNER_BATCH_SIZE : $batch_size;
 		//get the corresponding worpdress option for the job
 		$job_parameters = JobParameters::load( $job_id );
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
