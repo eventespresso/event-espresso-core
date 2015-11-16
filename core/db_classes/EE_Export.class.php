@@ -618,47 +618,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 		return $table_data;
 	}
-	
-	/**
-	 * Creates a job for the given report type, and with the provided request data.
-	 * Creates a temporary file for this report, and a worpdress option for
-	 * storing the request data for it
-	 * @param array $request_data
-	 * @return string report job ID (used for name of temp file, and wp option)
-	 */
-	public function create_job( $request_data ) {
-		$report_job_id = md5( serialize( $request_data ) );
-		$request_data[ 'step' ] = 0;
-		$success = add_option( EE_Export::option_prefix . $report_job_id, $request_data, null, 'no' );
-		$success = $this->EE_CSV->write_local_csv( $report_job_id, '' );
-		return $report_job_id;
-	}
-	
-	/**
-	 * 
-	 * @param type $job_id
-	 * @return boolean whether complete or not
-	 */
-	public function job_step( $job_id ) {
-		$job_request_data = get_option( EE_Export::option_prefix . $job_id, false );
-		if( ! $job_request_data ) {
-			throw new EE_Error( sprintf( __( 'There is no job %1$s. Please start again', 'event_espresso'), $job_id ) );
-		}
-		switch( $job_request_data[ 'report_type' ] ) {
-			
-		}
-	}
-
-	
-
-
-
-
-
-
-
-
-
 }
 /* End of file EE_Export.class.php */
 /* Location: /includes/classes/EE_Export.class.php */

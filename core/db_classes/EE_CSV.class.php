@@ -282,16 +282,6 @@
 		EE_Error::doing_it_wrong('save_csv_to_db', __( 'Function moved to EE_Import and renamed to save_csv_data_array_to_db', 'event_espresso' ), '4.6.7' );
 		return EE_Import::instance()->save_csv_data_array_to_db( $csv_data_array, $model_name );
 	}
-	
-	/**
-	 * Writes $contents to the $filename in the uploads directory of EE
-	 * @param string $filename
-	 * @param string $contents
-	 * @return boolean success
-	 */
-	public function write_local_csv( $filename, $contents ) {
-		$success = EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'reports' . DS . $filename, $contents, 'csv' );
-	}
 
 	/**
 	 * Sends HTTP headers to indicate that the browser should download a file,
