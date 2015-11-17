@@ -236,7 +236,7 @@ class EED_Event_Single  extends EED_Module {
 			// We want to allow those plugins to still do their thing and have access to our content, but depending on
 			// how your event content is being displayed (shortcode, CPT route, etc), this filter can get applied twice,
 			// so the following allows this filter to be applied multiple times, but only once for real
-			$current_post_ID = did_action( 'AHEE_event_details_before_post' ) ? $post->ID : 0;
+			$current_post_ID = did_action( 'loop_start' ) ? $post->ID : 0;
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order ) {
 				// we need to first remove this callback from being applied to the_content()
 				// (otherwise it will recurse and blow up the interweb)
@@ -244,6 +244,7 @@ class EED_Event_Single  extends EED_Module {
 				EED_Event_Single::instance()->template_parts = EED_Event_Single::instance()->initialize_template_parts();
 				$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 				$content = EED_Event_Single::instance()->template_parts->apply_template_part_filters( $content );
+				add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 			} else {
 				$content = EED_Event_Single::use_filterable_display_order();
 			}
