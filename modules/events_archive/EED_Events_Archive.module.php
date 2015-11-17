@@ -290,7 +290,7 @@ class EED_Events_Archive  extends EED_Module {
 			// We want to allow those plugins to still do their thing and have access to our content, but depending on
 			// how your event content is being displayed (shortcode, CPT route, etc), this filter can get applied twice,
 			// so the following allows this filter to be applied multiple times, but only once for real
-			$current_post_ID = did_action( 'AHEE_event_details_before_post' ) ? $post->ID : 0;
+			$current_post_ID = did_action( 'loop_start' ) ? $post->ID : 0;
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->use_sortable_display_order ) {
 				$content = \EED_Events_Archive::use_sortable_display_order();
 			} else {
