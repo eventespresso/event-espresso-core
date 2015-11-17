@@ -87,7 +87,7 @@ class BatchRunner {
 			$handler_obj = $this->instantiate_batch_job_handler_from_classname( $this->_job_parameters->classname() );
 			//continue it
 			$response = $handler_obj->continue_job( $this->_job_parameters, $batch_size );
-			if( true ||  ! $response instanceof JobStepResponse ) {
+			if( ! $response instanceof JobStepResponse ) {
 				throw new BatchRequestException( 
 						sprintf( 
 							__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when continue_job was called with job $1%s. It needs to return one or throw an Exception', 'event_espresso' ),
