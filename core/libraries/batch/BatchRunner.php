@@ -100,8 +100,8 @@ class BatchRunner {
 			if( ! $response instanceof JobStepResponse ) {
 				throw new BatchRequestException(
 					sprintf(
-					__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when continue_job was called with job $1%s. It needs to return one or throw an Exception', 'event_espresso' ),
-					$this->_job_id
+						__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when continue_job was called with job %1$s. It needs to return one or throw an Exception', 'event_espresso' ),
+						$this->_job_id
 					)
 				);
 			}
@@ -162,7 +162,7 @@ class BatchRunner {
 			if( ! $response instanceof JobStepResponse ) {
 				throw new BatchRequestException(
 					sprintf(
-						__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when cleanup_job was called with job $1%s. It needs to return one or throw an Exception', 'event_espresso' ),
+						__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when cleanup_job was called with job %1$s. It needs to return one or throw an Exception', 'event_espresso' ),
 						$this->_job_id
 					)
 				);
