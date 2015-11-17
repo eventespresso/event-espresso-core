@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *
  * Class RegistrationsReport
@@ -13,13 +13,20 @@
  *
  */
 namespace EventEspressoBatchRequest\JobHandlers;
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+
+
+
 class RegistrationsReport extends JobHandlerFile {
+
 	/**
 	 * Performs any necessary setup for starting the job. This is also a good
 	 * place to setup the $job_arguments which will be used for subsequent HTTP requests
@@ -31,21 +38,31 @@ class RegistrationsReport extends JobHandlerFile {
 	public function create_job( JobParameters $job_parameters ) {
 		$event_id = intval( $job_parameters->request_datum( 'EVT_ID', '0' ) );
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_read_registrations', 'generating_report' ) ) {
-			throw new BatchRequestException( __( 'You do not have permission to view registrations', 'event_espresso') );
+			throw new BatchRequestException(
+				__( 'You do not have permission to view registrations', 'event_espresso')
+			);
 		}
-		$filepath = $this->create_file_from_job_with_name($job_parameters->job_id(), $this->get_filename_from_event( $event_id ));
+		$filepath = $this->create_file_from_job_with_name(
+			$job_parameters->job_id(),
+			$this->get_filename_from_event( $event_id )
+		);
 		$job_parameters->add_extra_data( 'filepath', $filepath );
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
 		//we should also set the header columns
 		$csv_data_for_row = $this->get_csv_data_for( $event_id, 0, 1 );
-		$success = \EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
+		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
 			$job_parameters->mark_processed( 1 );
 		}
-		return new JobStepResponse( $job_parameters, __( 'Registrations report started successfully...', 'event_espresso' ) );
+		return new JobStepResponse(
+			$job_parameters,
+			__( 'Registrations report started successfully...', 'event_espresso' )
+		);
 	}
-	
+
+
+
 	/**
 	 * Creates teh filename form the event id (or lack thereof)
 	 * @param int $event_id
@@ -62,7 +79,9 @@ class RegistrationsReport extends JobHandlerFile {
 		}
 		return sprintf( "registrations-for-%s.csv", $event_slug );
 	}
-	
+
+
+
 	/**
 	 * Performs another step of the job
 	 * @param JobParameters $job_parameters
@@ -72,11 +91,11 @@ class RegistrationsReport extends JobHandlerFile {
 	 *	@type int $records_to_process
 	 *	@type string message
 	 * } and anything more we want to add
-	 * @throws 
+	 * @throws
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
 		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $batch_size );
-		$success = \EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
+		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
 		$extra_response_data = array(
@@ -86,14 +105,14 @@ class RegistrationsReport extends JobHandlerFile {
 			$job_parameters->set_status( JobParameters::status_complete );
 			$extra_response_data[ 'file_url' ] = $this->convert_filepath_to_url( $job_parameters->extra_datum( 'filepath' ) );
 		}
-		return new JobStepResponse( 
-				$job_parameters, 
-				sprintf( 
+		return new JobStepResponse(
+				$job_parameters,
+				sprintf(
 					__( 'Wrote %1$s rows to report CSV file...', 'event_espresso' ),
 					count( $csv_data ) ),
 				$extra_response_data );
 	}
-	
+
 	function get_csv_data_for( $event_id, $offset, $limit ) {
 		\EE_Registry::instance()->load_helper( 'Export' );
 		$reg_fields_to_include = array(
@@ -156,7 +175,7 @@ class RegistrationsReport extends JobHandlerFile {
 		} else {
 			$questions_for_these_regs_rows = \EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.ANS_ID'=> array( 'IS_NOT_NULL' ) ) ) );
 		}
-		
+
 		foreach($registration_rows as $reg_row){
 			if ( is_array( $reg_row ) ) {
 				$reg_csv_array = array();
@@ -190,7 +209,7 @@ class RegistrationsReport extends JobHandlerFile {
 						FALSE,
 						'sentence' );
 				$reg_csv_array[__("Registration Status", 'event_espresso')] = $stati[ $reg_row[ 'Registration.STS_ID' ] ];
-				//get pretty trnasaction status
+				//get pretty transaction status
 				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'Transaction.STS_ID' ] ];
 				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
 				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
@@ -264,45 +283,68 @@ class RegistrationsReport extends JobHandlerFile {
 						$reg_csv_array[$question_row[ 'Question.QST_admin_label' ] ] = null;
 					}
 				}
+				$answers = \EEM_Answer::instance()->get_all_wpdb_results(
+					array(
+						array( 'REG_ID' => $reg_row[ 'Registration.REG_ID' ] ),
+						'force_join' => array( 'Question' )
+					)
+				);
 				//now fill out the questions THEY answered
-				foreach( \EEM_Answer::instance()->get_all_wpdb_results( array( array( 'REG_ID' => $reg_row[ 'Registration.REG_ID' ] ), 'force_join' => array( 'Question' ) ) ) as $answer_row){
-					/* @var $answer EE_Answer */
+				foreach( $answers as $answer_row ){
 					if( $answer_row[ 'Question.QST_ID' ] ){
-						$question_label = \EEH_Export::prepare_value_from_db_for_display( \EEM_Question::instance(), 'QST_admin_label', $answer_row[ 'Question.QST_admin_label' ] );
-					}else{
+						$question_label = \EEH_Export::prepare_value_from_db_for_display(
+							\EEM_Question::instance(),
+							'QST_admin_label',
+							$answer_row[ 'Question.QST_admin_label' ]
+						);
+					} else {
 						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer_row[ 'Answer.QST_ID' ] );
 					}
-                                        if( isset( $answer_row[ 'Question.QST_type'] ) && $answer_row[ 'Question.QST_type' ] == \EEM_Question::QST_type_state ) {
-                                            $reg_csv_array[ $question_label ] = \EEM_State::instance()->get_state_name_by_ID( $answer_row[ 'Answer.ANS_value' ] );
-                                        } else {
-                                            $reg_csv_array[ $question_label ] = \EEH_Export::prepare_value_from_db_for_display( \EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
-                                        }
+					if ( isset( $answer_row[ 'Question.QST_type' ] )
+						 && $answer_row[ 'Question.QST_type' ] == \EEM_Question::QST_type_state
+					) {
+						$reg_csv_array[ $question_label ] = \EEM_State::instance()->get_state_name_by_ID(
+							$answer_row[ 'Answer.ANS_value' ]
+						);
+					} else {
+						$reg_csv_array[ $question_label ] = \EEH_Export::prepare_value_from_db_for_display(
+							\EEM_Answer::instance(),
+							'ANS_value',
+							$answer_row[ 'Answer.ANS_value' ]
+						);
+					}
 				}
-				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $reg_row );
+				$registrations_csv_ready_array[] = apply_filters(
+					'FHEE__EE_Export__report_registrations__reg_csv_array',
+					$reg_csv_array, $reg_row
+				);
 			}
 		}
-
 		//if we couldn't export anything, we want to at least show the column headers
-		if(empty($registrations_csv_ready_array)){
+		if ( empty( $registrations_csv_ready_array ) ) {
 			$reg_csv_array = array();
 			$model_and_fields_to_include = array(
 				'Registration' => $reg_fields_to_include,
-				'Attendee' => $att_fields_to_include
+				'Attendee'     => $att_fields_to_include
 			);
-			foreach($model_and_fields_to_include as $model_name => $field_list){
-				$model = \EE_Registry::instance()->load_model($model_name);
-				foreach($field_list as $field_name){
-					$field = $model->field_settings_for($field_name);
-					$reg_csv_array[ \EEH_Export::get_column_name_for_field($field)] = null;
+			foreach ( $model_and_fields_to_include as $model_name => $field_list ) {
+				$model = \EE_Registry::instance()->load_model( $model_name );
+				foreach ( $field_list as $field_name ) {
+					$field = $model->field_settings_for( $field_name );
+					$reg_csv_array[ \EEH_Export::get_column_name_for_field( $field ) ] = null;
 				}
 			}
-			$registrations_csv_ready_array [] = $reg_csv_array;
+			$registrations_csv_ready_array[] = $reg_csv_array;
 		}
 		return $registrations_csv_ready_array;
 	}
-	
+
+
+
 	/**
 	 * Counts total unit to process
+	 *
+	 * @param int $event_id
 	 * @return int
 	 */
 	public function count_units_to_process( $event_id ) {
@@ -326,12 +368,14 @@ class RegistrationsReport extends JobHandlerFile {
 		);
 		if( $event_id ){
 			$query_params[0]['EVT_ID'] =  $event_id;
-		}else{
+		} else {
 			$query_params[ 'force_join' ][] = 'Event';
 		}
 		return \EEM_Registration::instance()->count( $query_params );
 	}
-	
+
+
+
 	/**
 	 * Performs any clean-up logic when we know the job is completed.
 	 * In this case, we delete the temporary file
@@ -339,16 +383,20 @@ class RegistrationsReport extends JobHandlerFile {
 	 * @return boolean
 	 */
 	public function cleanup_job( JobParameters $job_parameters ){
-		$success = $this->_file_helper->delete( 
-				\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ), 
-				true, 
-				'd' );
+		$this->_file_helper->delete(
+			\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ),
+			true,
+			'd'
+		);
 		return new JobStepResponse( $job_parameters, __( 'Cleaned up temporary file', 'event_espresso' ) );
 	}
-	
+
+
+
 	/**
 	 * Gets the URL to download teh file
-	 * @param type $filepath
+	 *
+	 * @param string $filepath
 	 * @return string
 	 */
 	public function convert_filepath_to_url( $filepath ) {
