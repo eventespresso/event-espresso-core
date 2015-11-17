@@ -36,15 +36,15 @@ interface JobHandlerInterface {
 	 * @param JobParameters $job_parameters
 	 * @param int $batch_size
 	 * @return JobStepResponse
-	 * @throws 
+	 * @throws BatchRequestException
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 );
 	
 	/**
 	 * Performs any clean-up logic when we know the job is completed
-	 * @param string $job_id
-	 * @param array $job_arguments
+	 * @param JobParameters $job_parameters
 	 * @return JobStepResponse
+	 * @throws BatchRequestException
 	 */
 	public function cleanup_job( JobParameters $job_parameters );
 }

@@ -39,6 +39,12 @@ class BatchRunner {
 		$obj = $this->instantiate_batch_job_handler_from_classname( $batch_job_handler_class );
 		$job_parameters = new JobParameters( $job_id, $batch_job_handler_class, $request_data );
 		$response = $obj->create_job( $job_parameters );
+		if( ! $response instanceof JobStepResponse ) {
+			throw new BatchRequestException( 
+					sprintf( 
+						__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when create_job was called with $1%s. It needs to return one or throw an Exception', 'event_espresso' ),
+						wp_json_encode( $request_data ) ) );
+		}
 		$success = $job_parameters->save( true );
 		if( ! $success ) {
 			throw new BatchRequestException(
@@ -65,6 +71,12 @@ class BatchRunner {
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
 		//continue it
 		$response = $handler_obj->continue_job( $job_parameters, $batch_size );
+		if( ! $response instanceof JobStepResponse ) {
+			throw new BatchRequestException( 
+					sprintf( 
+						__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when continue_job was called with job $1%s. It needs to return one or throw an Exception', 'event_espresso' ),
+						$job_id ) );
+		}
 		$job_parameters->save();
 		return $response;
 	}
@@ -105,10 +117,16 @@ class BatchRunner {
 		$job_parameters = JobParameters::load( $job_id );
 		$handler_obj = $this->instantiate_batch_job_handler_from_classname( $job_parameters->classname() );
 		//continue it
-		$success = $handler_obj->cleanup_job( $job_parameters );
+		$response = $handler_obj->cleanup_job( $job_parameters );
+		if( ! $response instanceof JobStepResponse ) {
+			throw new BatchRequestException( 
+					sprintf( 
+						__( 'The class implementing JobHandlerInterface did not return a JobStepResponse when cleanup_job was called with job $1%s. It needs to return one or throw an Exception', 'event_espresso' ),
+						$job_id ) );
+		}
 		$job_parameters->set_status( JobParameters::status_cleaned_up );
 		$job_parameters->delete();
-		return $success;
+		return $response;
 		
 	}
 }

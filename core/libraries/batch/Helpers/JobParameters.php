@@ -131,7 +131,7 @@ class JobParameters {
 	 */
 	static function load( $job_id ) {
 		$job_parameters = get_option(JobParameters::wp_option_prefix . $job_id );
-		if( $job_parameters === false ) {
+		if( ! $job_parameters instanceof JobParameters ) {
 			throw new BatchRequestException(
 				sprintf( 
 					__('Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue.', 'event_espresso'),

@@ -16,6 +16,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
 
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
 use EventEspressoBatchRequest\Helpers\JobParameters;
+use EventEspressoBatchRequest\Helpers\BatchRequestException;
 
 abstract class JobHandler implements JobHandlerInterface {
 	/**
@@ -23,7 +24,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * place to setup the $job_arguments which will be used for subsequent HTTP requests
 	 * when continue_job will be called
 	 * @param JobParameters $job_parameters
-	 * @throws \helpers\BatchRequestException
+	 * @throws BatchRequestException
 	 * @return JobStepResponse
 	 */
 	abstract public function create_job( JobParameters $job_parameters );
@@ -33,7 +34,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * @param JobParameters $job_parameters
 	 * @param int $batch_size
 	 * @return JobStepResponse
-	 * @throws 
+	 * @throws BatchRequestException
 	 */
 	abstract public function continue_job( JobParameters $job_parameters, $batch_size = 50 );
 	
@@ -42,6 +43,7 @@ abstract class JobHandler implements JobHandlerInterface {
 	 * @param string $job_id
 	 * @param array $job_arguments
 	 * @return JobStepResponse
+	 * @throws BatchRequestException
 	 */
 	abstract public function cleanup_job( JobParameters $job_parameters );
 }
