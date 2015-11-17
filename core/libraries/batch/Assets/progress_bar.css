@@ -1,6 +1,6 @@
 /*
 Styles for generic progress bars
-Would style HTML like this: 
+Would style HTML like this:
 <div class="progress-responsive">
 	<figure>
 		<div class="bar"></div>
@@ -10,7 +10,7 @@ Would style HTML like this:
 
 to look like a responsive progress bar
 */
-/* 
+/*
     Created on : 10-Nov-2015, 3:02:36 PM
     Author     : mnelson4
 */
@@ -36,7 +36,6 @@ to look like a responsive progress bar
 	width: 0;
 	height: 25px;
 	border-radius: 2px;
-	background:#2EA2CC;
 }
 
 /* Percent text */
