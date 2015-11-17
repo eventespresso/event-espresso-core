@@ -284,7 +284,13 @@ class EED_Events_Archive  extends EED_Module {
 				|| ! apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
 			)
 		) {
-			$current_post_ID = $post->ID;
+			// Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
+			// Reason being is that some plugins, like Yoast, need to run through a copy of the loop early
+			// BEFORE headers are sent in order to examine the post content and generate content for the HTML header.
+			// We want to allow those plugins to still do their thing and have access to our content, but depending on
+			// how your event content is being displayed (shortcode, CPT route, etc), this filter can get applied twice,
+			// so the following allows this filter to be applied multiple times, but only once for real
+			$current_post_ID = did_action( 'AHEE_event_details_before_post' ) ? $post->ID : 0;
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->use_sortable_display_order ) {
 				$content = \EED_Events_Archive::use_sortable_display_order();
 			} else {
