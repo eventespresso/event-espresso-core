@@ -326,9 +326,10 @@ class EEH_File extends EEH_Base implements EEHI_File {
 
 	/**
 	 * Wrapper for WP_Filesystem_Base::delete
+	 *
 	 * @param string $filepath
 	 * @param boolean $recursive
-	 * @param string $type 'd' for directory, 'f' for file
+	 * @param boolean|string $type 'd' for directory, 'f' for file
 	 * @return boolean
 	 */
 	public static function delete( $filepath, $recursive = false, $type = false ) {
