@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  *
  * Class JobHandlerInterface
@@ -15,10 +15,16 @@
  *
  */
 namespace EventEspressoBatchRequest\JobHandlerBaseClasses;
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+
+
 
 interface JobHandlerInterface {
 	/**
@@ -30,7 +36,7 @@ interface JobHandlerInterface {
 	 * @return JobStepResponse
 	 */
 	public function create_job( JobParameters $job_parameters );
-	
+
 	/**
 	 * Performs another step of the job
 	 * @param JobParameters $job_parameters
@@ -39,7 +45,7 @@ interface JobHandlerInterface {
 	 * @throws BatchRequestException
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 );
-	
+
 	/**
 	 * Performs any clean-up logic when we know the job is completed
 	 * @param JobParameters $job_parameters
