@@ -1,4 +1,4 @@
-<?php 
+<?php
  /**
  *
  * Class BatchRunner
@@ -6,7 +6,7 @@
  * Responsible for receiving a request to start a job and assign it a job Id.
  * Then when subsequent requests come in to continue that job, dispatches
  * the request to the appropriate JobHandler, which processes a step of the batch,
- * and then returns the job's new status. 
+ * and then returns the job's new status.
  * This class is used by controller code, and the controller code is sent HTTP
  * requests from the batch_runner.js library
  *
@@ -17,15 +17,20 @@
  *
  */
 namespace EventEspressoBatchRequest;
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
 use EventEspressoBatchRequest\Helpers\JobStepResponse;
 
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+
+
+
 class BatchRunner {
-	
+
 	/**
 	 * Current job's ID (if assigned)
 	 * @var string|null
@@ -71,7 +76,9 @@ class BatchRunner {
 		}
 		return $response;
 	}
-	
+
+
+
 	/**
 	 * Retrieves the job's arguments
 	 * @param string $job_id
@@ -99,7 +106,9 @@ class BatchRunner {
 		}
 		return $response;
 	}
-	
+
+
+
 	/**
 	 * Instantiates an object of type $classname, which implements
 	 * JobHandlerInterface
@@ -109,27 +118,34 @@ class BatchRunner {
 	public function instantiate_batch_job_handler_from_classname( $classname ) {
 		if( ! class_exists( $classname ) ) {
 			throw new BatchRequestException(
-					sprintf( 
-						__('The class %1$s does not exist, and so could not be used for running a job. It should implement JobHandlerInterface.', 'event_espresso'),
-						$classname
-						) );
-			
+				sprintf(
+					__('The class %1$s does not exist, and so could not be used for running a job. It should implement JobHandlerInterface.', 'event_espresso'),
+					$classname
+				)
+			);
+
 		}
 		$obj = new $classname;
 		if( ! $obj instanceof JobHandlerInterface ) {
 			throw new BatchRequestException(
-				sprintf( 
+				sprintf(
 					__('The class %1$s does not implement JobHandlerInterface and so could not be used for running a job', 'event_espresso'),
 					$classname
-					) );
-			
+				)
+			);
+
 		}
 		return $obj;
 	}
+
+
+
 	/**
 	 * Forces a job to be cleaned up
+	 *
 	 * @param string $job_id
 	 * @return JobStepResponse
+	 * @throws BatchRequestException
 	 */
 	public function cleanup_job( $job_id ) {
 		try{
@@ -170,8 +186,8 @@ class BatchRunner {
 					__('An exception of type %1$s occurred while running %2$s. Its message was %3$s and had trace %4$s', 'event_espresso'), 
 					get_class( $exception ),
 					'BatchRunner::' . $method_name,
-					$exception->getMessage(),
-					$exception->getTraceAsString() ) );
 	}
+
+
 }
 
