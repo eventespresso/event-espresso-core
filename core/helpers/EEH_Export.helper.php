@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------------
  *
  * EEH_Export Helper
- * 
+ *
  * Static class for helping in creating exports
  *
  * @package			Event Espresso
@@ -33,14 +33,24 @@ class EEH_Export {
 	public static function get_column_name_for_field(EE_Model_Field_Base $field){
 		return $field->get_nicename()."[".$field->get_name()."]";
 	}
-	
+
 	/**
 	 * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
-	 * @param array $data 2D array, first numerically-indexed, and next-level-down preferably indexed by string
-	 * @param boolean $add_csv_column_names whether or not we should add the keys in the bottom-most array as a row for headers in the CSV.
-	 * Eg, if $data looked like array(0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...), 1=>array(...),...))
-	 * then the first row we'd write to the CSV would be "EVT_ID,EVT_name,..."
-	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
+	 *
+	 * @param string 	$filepath
+	 * @param array 	$data 2D array, 		first numerically-indexed,
+	 *                    						and next-level-down preferably indexed by string
+	 * @param boolean 	$write_column_headers 	whether or not we should add the keys in the bottom-most array
+	 * 											as a row for headers in the CSV.
+	 *                                            Eg, if $data looked like:
+	 *                                            array(
+	 *                                              	0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...),
+	 * 													1=>array(...,...)
+	 *                                            )
+	 *
+	 * @return boolean 		if we successfully wrote to the CSV or not. If there's no $data,
+	 * 						we consider that a success (because we wrote everything there was...nothing)
+	 * @throws EE_Error
 	 */
 	public static function write_data_array_to_csv( $filepath, $data, $write_column_headers = true ){
 		EE_Registry::instance()->load_helper('Array');
@@ -55,12 +65,12 @@ class EEH_Export {
 			}
 			$item_in_top_level_array = EEH_Array::get_one_item_from_array($data);
 			//now, is the last item in the top-level array of $data an associative or numeric array?
-			if( $write_column_headers && 
+			if( $write_column_headers &&
 					EEH_Array::is_associative_array($item_in_top_level_array)){
 				//its associative, so we want to output its keys as column headers
 				$keys = array_keys($item_in_top_level_array);
 				$new_file_contents .=  EEH_Export::get_csv_row( $keys );
-				
+
 			}
 			//start writing data
 			foreach($data as $data_row){
@@ -72,17 +82,19 @@ class EEH_Export {
 			return true;
 		}
 	}
-	
+
+
+
 	 /**
-	  *			
+	  *
 	 *	Writes a row to the csv file
 	 *	@param array $row - individual row of csv data
 	 *	@param string $delimiter - csv delimiter
 	 *	@param string $enclosure - csv enclosure
-	 *	@param string $mysql_null - allows php NULL to be overridden with MySQl's insertable NULL value
+	 *	@param bool $mysql_null - allows php NULL to be overridden with MySQl's insertable NULL value
 	 *	@return string of text for teh csv file
 	 */
-	public static function get_csv_row ( array $row, $delimiter = ',', $enclosure = '"', $mysql_null = FALSE) {
+	public static function get_csv_row ( array $row, $delimiter = ',', $enclosure = '"', $mysql_null = false ) {
 		//Allow user to filter the csv delimiter and enclosure for other countries csv standards
 		$delimiter = apply_filters( 'FHEE__EE_CSV__fputcsv2__delimiter', $delimiter );
 		$enclosure = apply_filters( 'FHEE__EE_CSV__fputcsv2__enclosure', $enclosure );
@@ -95,7 +107,7 @@ class EEH_Export {
 			if(is_object($field_value) || is_array($field_value)){
 				$field_value = serialize($field_value);
 			}
-			if ($field_value === null && $mysql_null) {
+			if ($field_value === null && $mysql_null ) {
 				$output[] = 'NULL';
 				continue;
 			}
@@ -106,7 +118,9 @@ class EEH_Export {
 
 		return  implode($delimiter, $output) . PHP_EOL;
 	}
-	
+
+
+
 	/**
 	 * Shortcut for preparing a database result for display
 	 * @param EEM_Base $model
@@ -130,7 +144,9 @@ class EEH_Export {
 			return $field_obj->prepare_for_get( $value_on_model_obj );
 		}
 	}
-	
+
+
+
 	/**
 	 * Gets the date format to use in exports. filterable
 	 * @param string $current_format
@@ -140,6 +156,8 @@ class EEH_Export {
 		return apply_filters( 'FHEE__EE_CSV__get_date_format_for_csv__format', 'Y-m-d', $current_format );
 	}
 
+
+
 	/**
 	 * Gets the time format we want to use in exports. Filterable
 	 * @param string $current_format
@@ -148,4 +166,7 @@ class EEH_Export {
 	public static function get_time_format_for_export( $current_format = null ) {
 		return apply_filters( 'FHEE__EE_CSV__get_time_format_for_csv__format', 'H:i:s', $current_format );
 	}
+
+
+
 }
