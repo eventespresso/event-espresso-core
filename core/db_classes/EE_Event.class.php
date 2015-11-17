@@ -724,7 +724,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * ############################
 	 *
 	 * @uses EE_Event::total_available_spaces()
-	 * @return float|int  (INF is returned as float)
+	 * @return float|int  (EE_INF is returned as float)
 	 */
 	public function spaces_remaining_for_sale() {
 		//first get total available spaces including consideration for tickets that have already sold.
@@ -767,7 +767,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 *                                              may appear to equal remaining tickets.  However, the more tickets are
 	 *                                              sold out, the more accurate the "live" total is.
 	 *
-	 * @return  int|float  (Note: if INF is returned its considered a float by PHP)
+	 * @return  int|float  (Note: if EE_INF is returned its considered a float by PHP)
 	 */
 	public function total_available_spaces( $current_total_available = false ) {
 		$spaces_available = 0;
@@ -803,8 +803,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			}
 
 			//if $ticket_limit == infinity then let's drop out right away and just return that because any infinity amount trumps all other "available" amounts.
-			if ( $remaining == INF ) {
-				return INF;
+			if ( $remaining == EE_INF ) {
+				return EE_INF;
 			}
 
 			//multiply normalized $tkt quantity by the number of datetimes on the ticket as the "sum"
@@ -812,8 +812,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			$ticket_sums[$ticket->ID()]['sum'] = $remaining * count( $datetimes );
 			$ticket_sums[$ticket->ID()]['datetime_sums'] = 0;
 			foreach ( $datetimes as $datetime ) {
-				if ( $datetime->reg_limit() === INF ) {
-					$ticket_sums[$ticket->ID()]['datetime_sums'] = INF;
+				if ( $datetime->reg_limit() === EE_INF ) {
+					$ticket_sums[$ticket->ID()]['datetime_sums'] = EE_INF;
 				} else {
 					$ticket_sums[ $ticket->ID() ]['datetime_sums'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
 				}
@@ -874,7 +874,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
 				//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
 				//available.
-				if ( $remaining === INF ) {
+				if ( $remaining === EE_INF ) {
 					$spaces_available += $ticket_info['ticket']->qty();
 					continue;
 				}
