@@ -165,6 +165,7 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_process_next_reg_step_button();
 				SPCO.set_listener_for_display_payment_method();
 				SPCO.set_listener_for_input_validation_value_change();
+				SPCO.set_listener_for_datepicker_change();
 				SPCO.set_listener_close_notifications();
 				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
@@ -432,8 +433,19 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-					$(this).valid();
-			});
+				$(this).valid();
+            });
+		},
+
+
+
+		/**
+		 * @function set_listener_for_datepicker_change
+		 */
+		set_listener_for_datepicker_change : function() {
+			$('.datepicker').on('change', function () {
+                $(this).valid();
+            });
 		},
 
 

@@ -806,38 +806,37 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( $raw === 0 ) {
 			return $raw;
 		}
-		// first we need to calculate the maximum number of tickets available for the datetime
-		// without factoring this ticket's sales or reservations into the calculations
+		// ensure qty doesn't exceed raw value for THIS ticket
+		$qty = min( INF, $raw );
+		// calculate this ticket's total sales and reservations
 		$sold_and_reserved_for_this_ticket = $this->sold() + $this->reserved();
-		// initialize with no restrictions
-		$qty = INF;
+		// first we need to calculate the maximum number of tickets available for the datetime
 		// do we want data for one datetime or all of them ?
 		$query_params = $DTT_ID ? array( array( 'DTT_ID' => $DTT_ID ) ) : array();
 		$datetimes = $this->datetimes( $query_params );
 		if ( is_array( $datetimes ) && ! empty( $datetimes ) ) {
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					// adjust qty based on reg limit for ALL datetimes
-					$qty = min( $qty, $datetime->reg_limit() );
+					// initialize with no restrictions for each datetime
+					// but adjust datetime qty based on datetime reg limit
+					$datetime_qty = min( INF, $datetime->reg_limit() );
 					// if we want the actual saleable amount, then we need to consider OTHER ticket sales
-					// for this datetime that do NOT include sales or reservations for this ticket
+					// for this datetime, that do NOT include sales and reservations for this ticket
+					// (so we add $sold_and_reserved_for_this_ticket back in)
 					if ( $context == 'saleable' ) {
-						$qty = max(
-							$qty - ( $datetime->sold() + $datetime->reserved() - $sold_and_reserved_for_this_ticket ),
-							0
-						);
-						$qty = ! $datetime->sold_out() ? $qty : 0;
+						$datetime_qty = max( $datetime_qty - $datetime->sold() + $sold_and_reserved_for_this_ticket,
+											 0 );
+						$datetime_qty = ! $datetime->sold_out() ? $datetime_qty : 0;
 					}
+					$qty = min( $datetime_qty, $qty );
 				}
 			}
 		}
 		// NOW that we know the  maximum number of tickets available for the datetime
 		// we can finally factor in the details for this specific ticket
 		if ( $qty > 0 && $context == 'saleable' ) {
-			// ensure qty doesn't exceed raw value for THIS ticket
-			$qty = min( $qty, $raw );
-			// and subtract the sales and reservations for THIS ticket
-			$qty = max( ( $qty - $sold_and_reserved_for_this_ticket ), 0 );
+			// and subtract the sales for THIS ticket
+			$qty = max( $qty - $sold_and_reserved_for_this_ticket, 0 );
 		}
 		return $qty;
 	}
