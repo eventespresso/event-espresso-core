@@ -82,6 +82,7 @@ class JobStepResponse {
 		return 
 			apply_filters( 'FHEE__EventEspressoBatchRequest\Helpers\JobStepResponse__to_array__return',
 				array_merge( 
+					$this->extra_data() ),
 					array(
 						'status' => $this->job_parameters()->status(),
 						'units_processed' => $this->job_parameters()->units_processed(),
@@ -89,7 +90,6 @@ class JobStepResponse {
 						'job_id' => $this->job_parameters()->job_id(),
 						'update_text' => $this->update_text()
 						),
-					$this->extra_data() ),
 				$this );
 	}
 }
