@@ -120,7 +120,7 @@ class EED_Events_Archive  extends EED_Module {
 		$template_parts->add_template_part(
 			'event',
 			__( 'Event Description', 'event_espresso' ),
-			'content-espresso_events-event.php',
+			'content-espresso_events-details.php',
 			$config->display_order_event
 		);
 		$template_parts->add_template_part(
@@ -221,7 +221,6 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 			}
 		}
-
 		return $template;
 	}
 
@@ -239,8 +238,8 @@ class EED_Events_Archive  extends EED_Module {
 			return $excerpt;
 		}
 		if ( apply_filters( 'FHEE__EED_Events_Archive__get_the_excerpt__theme_uses_get_the_excerpt', false ) ) {
-			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
-			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), EED_Events_Archive::$display_order_event );
+			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			$excerpt = EED_Events_Archive::event_details( $excerpt );
 		}
 		return $excerpt;
@@ -275,18 +274,21 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function event_details( $content ) {
 		global $post;
+		static $current_post_ID = 0;
 		if (
+			$current_post_ID != $post->ID &&
 			$post->post_type == 'espresso_events' &&
 			! post_password_required() &&
 			(
-				! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false ) ||
-				apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
+				apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false )
+				|| ! apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
 			)
 		) {
+			$current_post_ID = $post->ID;
 			if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->use_sortable_display_order ) {
 				$content = \EED_Events_Archive::use_sortable_display_order();
 			} else {
-				$content = \EED_Events_Archive::use_filterable_display_order( $content );
+				$content = \EED_Events_Archive::use_filterable_display_order();
 			}
 		}
 		return $content;
@@ -308,14 +310,9 @@ class EED_Events_Archive  extends EED_Module {
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
 		// now add additional content depending on whether event is using the_excerpt() or the_content()
-		$content = EEH_Event_View::event_content_or_excerpt( 50 );
 		EED_Events_Archive::instance()->template_parts = EED_Events_Archive::instance()->initialize_template_parts();
+		$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		$content = EED_Events_Archive::instance()->template_parts->apply_template_part_filters( $content );
-		if ( ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false ) ) {
-			add_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
-			$content = EEH_Template::locate_template( 'content-espresso_events-details.php' ) . $content;
-			remove_filter( 'FHEE__content_espresso_events_details_template__display_the_content', '__return_false' );
-		}
 		// re-add our main filters (or else the next event won't have them)
 		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
@@ -330,11 +327,11 @@ class EED_Events_Archive  extends EED_Module {
 	 *    use_filterable_display_order
 	 *
 	 * @access 	protected
-	 * @param 	string $content
 	 * @return 	string
 	 */
-	protected static function use_filterable_display_order( $content ) {
-		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+	protected static function use_filterable_display_order() {
+		// we need to first remove this callback from being applied to the_content()
+		// (otherwise it will recurse and blow up the interweb)
 		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
@@ -343,7 +340,7 @@ class EED_Events_Archive  extends EED_Module {
 		EED_Events_Archive::_add_additional_content_filters();
 		do_action( 'AHEE__EED_Events_Archive__use_filterable_display_order__after_add_filters' );
 		// now load our template
-		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+		$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		// re-add our main filters (or else the next event won't have them)
 		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
@@ -352,7 +349,8 @@ class EED_Events_Archive  extends EED_Module {
 		EED_Events_Archive::_remove_additional_events_archive_filters();
 		do_action( 'AHEE__EED_Events_Archive__use_filterable_display_order__after_remove_filters' );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
-		return ! empty( $template ) ? $template : $content;
+		//return ! empty( $template ) ? $template : $content;
+		return $content;
 	}
 
 

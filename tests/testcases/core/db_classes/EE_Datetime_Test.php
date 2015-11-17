@@ -64,7 +64,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertFalse($d->sold_out());
 		$d->set_sold(10);
 		$this->assertTrue($d->sold_out());
-		$d->set('DTT_reg_limit',INF);
+		$d->set('DTT_reg_limit',EE_INF);
 		$this->assertFalse($d->sold_out());
 	}
 	function test_spaces_remaining(){

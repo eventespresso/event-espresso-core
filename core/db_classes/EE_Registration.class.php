@@ -978,11 +978,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			return false;
 		}
 
-		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : INF;
+		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : EE_INF;
 
 		// if max uses is not set or equals infinity then return true cause its not a factor for whether user can check-in
 		// or not.
-		if ( ! $max_uses || $max_uses === INF ) {
+		if ( ! $max_uses || $max_uses === EE_INF ) {
 			return true;
 		}
 

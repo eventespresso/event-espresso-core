@@ -594,7 +594,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function spaces_remaining( $consider_tickets = FALSE ) {
 		// tickets remaining available for purchase
-		//no need for special checks for infinite, because if DTT_reg_limit == INF, then INF - x = INF
+		//no need for special checks for infinite, because if DTT_reg_limit == EE_INF, then EE_INF - x = EE_INF
 		$dtt_remaining = $this->reg_limit() - $this->sold();
 		if ( ! $consider_tickets ) {
 			return $dtt_remaining;
@@ -619,8 +619,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 				if ( $ticket instanceof EE_Ticket ) {
 					// get the actual amount of tickets that can be sold
 					$qty = $ticket->qty( 'saleable' );
-					if ( $qty === INF ) {
-						return INF;
+					if ( $qty === EE_INF ) {
+						return EE_INF;
 					}
 					// no negative ticket quantities plz
 					if ( $qty > 0 ) {
