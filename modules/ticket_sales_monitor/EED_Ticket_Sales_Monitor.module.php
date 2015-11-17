@@ -438,12 +438,14 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// check if 'finalize_registration' step has been completed...
 		$finalized = $transaction_processor->reg_step_completed( $transaction, 'finalize_registration' );
-		// DEBUG LOG
-		EEH_Debug_Tools::log(
-			__CLASS__, __FUNCTION__, __LINE__,
-			array( 'finalized' => $finalized ),
-			false, 'EE_Transaction: ' . $transaction->ID()
-		);
+		if ( self::debug ) {
+			// DEBUG LOG
+			EEH_Debug_Tools::log(
+				__CLASS__, __FUNCTION__, __LINE__,
+				array( 'finalized' => $finalized ),
+				false, 'EE_Transaction: ' . $transaction->ID()
+			);
+		}
 		// how many tickets were released
 		$count = 0;
 		if ( self::debug ) {
@@ -659,12 +661,14 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	public static function process_abandoned_transactions( EE_Transaction $transaction ) {
 		// is this TXN free or has any money been paid towards this TXN? If so, then leave it alone
 		if ( $transaction->is_free() || $transaction->paid() > 0 ) {
-			// DEBUG LOG
-			EEH_Debug_Tools::log(
-				__CLASS__, __FUNCTION__, __LINE__,
-				array( $transaction ),
-				false, 'EE_Transaction: ' . $transaction->ID()
-			);
+			if ( self::debug ) {
+				// DEBUG LOG
+				EEH_Debug_Tools::log(
+					__CLASS__, __FUNCTION__, __LINE__,
+					array( $transaction ),
+					false, 'EE_Transaction: ' . $transaction->ID()
+				);
+			}
 			return;
 		}
 		// have their been any successful payments made ?
@@ -672,12 +676,14 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		foreach ( $payments as $payment ) {
 			if ( $payment instanceof EE_Payment ) {
 				if ( $payment->status() === EEM_Payment::status_id_approved ) {
-					// DEBUG LOG
-					EEH_Debug_Tools::log(
-						__CLASS__, __FUNCTION__, __LINE__,
-						array( $payment ),
-						false, 'EE_Transaction: ' . $transaction->ID()
-					);
+					if ( self::debug ) {
+						// DEBUG LOG
+						EEH_Debug_Tools::log(
+							__CLASS__, __FUNCTION__, __LINE__,
+							array( $payment ),
+							false, 'EE_Transaction: ' . $transaction->ID()
+						);
+					}
 					return;
 				}
 			}
