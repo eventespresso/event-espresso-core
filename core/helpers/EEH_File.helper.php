@@ -78,11 +78,11 @@ class EEH_File extends EEH_Base implements EEHI_File {
 					if ( $credentials === FALSE ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
 						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
-					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {						
+					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
-						throw new EE_Error( 
-								sprintf( 
-										__( 'WP Filesystem Error: $1%s', 'event_espresso' ), 
+						throw new EE_Error(
+								sprintf(
+										__( 'WP Filesystem Error: $1%s', 'event_espresso' ),
 										$wp_filesystem->errors->get_error_message() ) );
 					}
 				}
@@ -323,9 +323,9 @@ class EEH_File extends EEH_Base implements EEHI_File {
 		}
 		return TRUE;
 	}
-	
+
 	/**
-	 * Wrapper for WP_Filesytem_Base::delete
+	 * Wrapper for WP_Filesystem_Base::delete
 	 * @param string $filepath
 	 * @param boolean $recursive
 	 * @param string $type 'd' for directory, 'f' for file
