@@ -70,6 +70,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
+		return true;
 	}
 
 
@@ -661,7 +662,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		// mark this reg step as completed
-		$this->checkout->current_step->set_completed();
+		$this->set_completed();
 		$this->_set_success_message( __('The Attendee Information Step has been successfully completed.', 'event_espresso' ));
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
