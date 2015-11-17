@@ -107,10 +107,11 @@ class JobParameters {
 	 * @return boolean success
 	 */
 	function save( $first = false ) {
+		$object_vars = wp_json_encode( get_object_vars( $this ) );
 		if( $first ) {
-			return add_option( $this->option_name(), $this, null, 'no' );
+			return add_option( $this->option_name(), $object_vars, null, 'no' );
 		} else{
-			return update_option( $this->option_name(), $this );
+			return update_option( $this->option_name(), $object_vars );
 		}
 	}
 	
@@ -130,13 +131,23 @@ class JobParameters {
 	 * @throws BatchRequestException
 	 */
 	static function load( $job_id ) {
-		$job_parameters = get_option(JobParameters::wp_option_prefix . $job_id );
-		if( ! $job_parameters instanceof JobParameters ) {
+		$job_parameter_vars = json_decode( get_option( JobParameters::wp_option_prefix . $job_id ), true );
+		if( ! is_array( $job_parameter_vars ) ||
+				! isset( $job_parameter_vars[ '_classname' ] ) ||
+				! isset( $job_parameter_vars[ '_request_data' ] ) ) {
 			throw new BatchRequestException(
 				sprintf( 
-					__('Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue.', 'event_espresso'),
-					$job_id
+					__('Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue. The wordpress option was %2$s', 'event_espresso'),
+					$job_id,
+					get_option( JobParameters::wp_option_prefix . $job_id )
 					) );
+		}
+		$job_parameters = new JobParameters( 
+				$job_id, 
+				$job_parameter_vars[ '_classname' ], 
+				$job_parameter_vars[ '_request_data'] );
+		foreach( $job_parameter_vars as $key => $value ) {
+			$job_parameters->$key = $value;
 		}
 		return $job_parameters;
 	}
