@@ -59,6 +59,7 @@ jQuery(document).ready(function() {
                 //(so clicking "back" won't get them here)
                 window.location.replace( ee_job_i18n.redirect_url );
 			};
+			runner.cleanup_job();
 		}
 	}
 
