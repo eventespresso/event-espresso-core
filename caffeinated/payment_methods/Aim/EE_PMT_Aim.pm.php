@@ -121,6 +121,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						array(
 							'html_label_text'=>  sprintf( __("Send test transactions? %s", 'event_espresso'),  $this->get_help_tab_link() ),
 							'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso'),
+							'default' => false,
 							'required' => true
 						)
 					),
