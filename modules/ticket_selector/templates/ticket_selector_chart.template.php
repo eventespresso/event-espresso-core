@@ -307,12 +307,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_min_qty', __( 'Minimum Qty:', 'event_espresso' )); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?>
 										<?php if ( $ticket->min() > $remaining ) { ?> &nbsp; <span class="important-notice small-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_min_qty_message', __( 'The Minimum Quantity purchasable for this ticket exceeds the number of spaces remaining', 'event_espresso' )); ?></span><?php } ?><br/>
 										<?php //$max = min( $max, $max_atndz );?>
-										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_max_qty', __( 'Maximum Qty:', 'event_espresso' )); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
+										<span class="ticket-details-label-spn drk-grey-text"><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_max_qty', __( 'Maximum Qty:', 'event_espresso' )); ?></span><?php echo $ticket->max() === EE_INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
 									</section>
 									<br/>
 									<?php } ?>
 
-									<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) { ?>
+									<?php if ( $ticket->uses() !== EE_INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) { ?>
 									<section class="tckt-slctr-tkt-uses-sctn">
 										<h5><?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_date_ticket_uses_heading', __( 'Event Date Ticket Uses', 'event_espresso' )); ?></h5>
 										<span class="drk-grey-text small-text no-bold"> - <?php
@@ -383,14 +383,14 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 															<?php echo $ticket->sold(); ?>
 														</td>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left', __( 'Remaining', 'event_espresso' )); ?>" class="cntr small-text">
-															<?php echo $remaining === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $remaining; ?>
+															<?php echo $remaining === EE_INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $remaining; ?>
 														</td>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold', __( 'Total Sold', 'event_espresso' )); ?>" class="cntr small-text">
 															<?php echo $datetime->sold(); ?>
 														</td>
 												<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out smaller-text">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
 														<td data-th="<?php echo apply_filters( 'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left', __( 'Total Spaces Left', 'event_espresso' )); ?>" class="cntr small-text">
-															<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
+															<?php echo $tkts_left === EE_INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
 														</td>
 													<?php endif; //end $template_settings->show_ticket_sale_columns conditional ?>
 												</tr>
