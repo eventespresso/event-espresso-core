@@ -46,8 +46,8 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		add_action('wp_ajax_batch_continue',array($this,'batch_continue'));
-		add_action('wp_ajax_batch_cleanup',array($this,'batch_cleanup'));
+		add_action('wp_ajax_espresso_batch_continue',array($this,'batch_continue'));
+		add_action('wp_ajax_espresso_batch_cleanup',array($this,'batch_cleanup'));
 		
 	}
 

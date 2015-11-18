@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
         // continue_data
         {
             'page' : 'espresso_support',
-            'action' : 'batch_continue',
+            'action' : 'espresso_batch_continue',
             'ee_admin_ajax' : true
         },
         // continue_callback
@@ -28,7 +28,7 @@ jQuery(document).ready(function() {
         // cleanup_data
         {
             'page' : 'espresso_support',
-            'action' : 'batch_cleanup',
+            'action' : 'espresso_batch_cleanup',
             'ee_admin_ajax' : true
         }
         // cleanup_callback
