@@ -878,7 +878,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @param array $options {
 	 *	@type int $ticket_types the number of different ticket types in this transaction. Default 1
-	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default INF
+	 *	@type int $taxable_tickets how many of those ticket types should be taxable. Default EE_INF
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
@@ -894,7 +894,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if( isset( $options[ 'taxable_tickets' ] ) ){
 			$taxable_tickets = $options[ 'taxable_tickets' ];
 		}else{
-			$taxable_tickets = INF;
+			$taxable_tickets = EE_INF;
 		}
 		if( isset( $options[ 'fixed_ticket_price_modifiers' ] ) ) {
 			$fixed_ticket_price_modifiers = $options[ 'fixed_ticket_price_modifiers' ];
