@@ -1,8 +1,8 @@
 <?php
  /**
  *
- * Class BatchRunner
- *
+ * Class BatchRequetProcessor
+  * 
  * Responsible for receiving a request to start a job and assign it a job Id.
  * Then when subsequent requests come in to continue that job, dispatches
  * the request to the appropriate JobHandler, which processes a step of the batch,
@@ -29,7 +29,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 
-class BatchRunner {
+class BatchRequestProcessor {
 
 	/**
 	 * Current job's ID (if assigned)

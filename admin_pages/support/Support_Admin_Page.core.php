@@ -242,7 +242,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
-		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
+		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
 		$job_response = $batch_runner->create_job( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport', $_REQUEST );
 		$success = wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
 		echo EEH_Template::locate_template( EE_SUPPORT_ADMIN . 'templates' . DS . 'admin_batch_runner.template.html' );
@@ -258,7 +258,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
-		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
+		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
 		//eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
 		$job_response = $batch_runner->create_job( $job_handler_classname, $request_data );
 		wp_localize_script( 'support_batch_file_runner', 'ee_job_response', $job_response->to_array() );
@@ -282,7 +282,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 	 */
 	public function batch_continue() { 
 		$job_id = sanitize_text_field( $this->_req_data[ 'job_id' ] );
-		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
+		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
 		$responseobj = $batch_runner->continue_job( $job_id);
 		$this->_template_args[ 'data' ] = $responseobj->to_array();
 		$this->_return_json();
@@ -294,7 +294,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 	 */
 	public function batch_cleanup() {
 		$job_id = sanitize_text_field( $this->_req_data[ 'job_id' ] );
-		$batch_runner = new EventEspressoBatchRequest\BatchRunner();
+		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
 		$response_obj = $batch_runner->cleanup_job( $job_id );
 		$this->_template_args[ 'data' ] = $response_obj->to_array();
 		$this->_return_json();
