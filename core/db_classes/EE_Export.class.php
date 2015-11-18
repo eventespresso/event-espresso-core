@@ -2,7 +2,10 @@
 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * EE_Export class
- *
+ * 
+ * For creating csv file exports/reports in a single request.
+ * Note that if you're creating a large csv file this is likely to timeout,
+ * and so it would be better to use EventEspressoBatchRequest\BatchRequestProcessor
  * @package				Event Espresso
  * @subpackage			includes/functions
  * @author					Brent Christensen
