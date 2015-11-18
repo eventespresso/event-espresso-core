@@ -13,22 +13,32 @@
 jQuery(document).ready(function() {
 
     var runner = new EE_BatchRunner(
+		//continue url
         eei18n.ajax_url,
+		//continue args
         {
             'page' : 'espresso_support',
-            'action' : 'batch_continue',
+            'action' : 'espresso_batch_continue',
             'ee_admin_ajax' : true
         },
+		//continue callback
         ee_support_download_file,
+		//cleanup url
         eei18n.ajax_url,
+		//cleanup args
         {
             'page' : 'espresso_support',
-            'action' : 'batch_cleanup',
+            'action' : 'espresso_batch_cleanup',
             'ee_admin_ajax' : true
-        }
+        },
+		//cleanup callback
+		function( response, data, xhr ) {
+			window.location.replace( ee_job_i18n.redirect_url );
+		}
     );
 	runner.set_job_id( ee_job_response.job_id );
 	runner.set_progress_bar_div( 'batch-progress' );
+	runner.set_progress_area( 'progress-area', 'append' );
 	runner.continue_job();
 
 
@@ -43,12 +53,8 @@ jQuery(document).ready(function() {
 	 * @returns void
 	 */
 	function ee_support_download_file( response, status, xhr ) {
-		//once we're all done, download the file
-		if( response.data.status == 'complete' && response.data.file_url != '' ) {
-			window.location.href=response.data.file_url;
-			runner.cleanup_callback = function( response, data, xhr ) {
-                window.history.back();
-            };
+		//once we're all done, redirect them back to the indicated page
+		if( response.data.status == 'complete' ) {
 			runner.cleanup_job();
 		}
 	}

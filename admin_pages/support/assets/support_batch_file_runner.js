@@ -30,8 +30,13 @@ jQuery(document).ready(function() {
             'page' : 'espresso_support',
             'action' : 'espresso_batch_cleanup',
             'ee_admin_ajax' : true
-        }
+        },
         // cleanup_callback
+		function( response, data, xhr ) {
+                //redirect them as if this page didn't exist
+                //(so clicking "back" won't get them here)
+                window.location.replace( ee_job_i18n.redirect_url );
+			}
     );
     runner.set_job_id( ee_job_response.job_id );
 	runner.set_progress_bar_div( 'batch-progress' );
@@ -54,11 +59,6 @@ jQuery(document).ready(function() {
 		if( response.data.status == 'complete' && response.data.file_url != '' ) {
 			jQuery('#message-area').html( ee_job_i18n.download_and_redirecting );
 			window.location.href=response.data.file_url;
-			runner.cleanup_callback = function( response, data, xhr ) {
-                //redirect them as if this page didn't exist
-                //(so clicking "back" won't get them here)
-                window.location.replace( ee_job_i18n.redirect_url );
-			};
 			runner.cleanup_job();
 		}
 	}
