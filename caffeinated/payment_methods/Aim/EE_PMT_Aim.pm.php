@@ -68,6 +68,38 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'html_label_text' => __( 'CVV', 'event_espresso' ) ) ),
 			)
 		));
+		$billing_form->add_subsections( array(
+			'company' => new EE_Text_Input( array(
+				'html_label_text' => __('Company', 'event_espresso')
+			))
+		), 'email', false );
+		$billing_form->add_subsections( 
+				array(
+					'fax' => new EE_Text_Input( array(
+						'html_label_text' => __('Fax', 'event_espresso')
+					))
+				), 
+				'phone', 
+				false );
+		$settings_form = $this->settings_form();
+		if( $settings_form->get_input( 'excluded_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
+				$billing_form->exclude( $settings_form->get_input( 'excluded_billing_inputs' )->normalized_value() );
+		}
+		if( $settings_form->get_input( 'required_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
+			$required_inputs = array_merge( 
+					array(
+						'credit_card',
+						'exp_month',
+						'exp_year' ),
+					$settings_form->get_input( 'required_billing_inputs' )->normalized_value() );
+			foreach( $billing_form->inputs() as $input_name => $input ) {
+				if( in_array( $input_name, $required_inputs ) ) {
+					$input->set_required( true );
+				} else {
+					$input->set_required( false );
+				}
+			}
+		}
 		return $this->apply_billing_form_debug_settings( $billing_form );
 	}
 
@@ -84,7 +116,9 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		if ( $this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta( 'test_transactions', TRUE, FALSE )) {
 			$billing_form->get_input( 'credit_card' )->set_default( '4007000000027' );
 			$billing_form->get_input( 'exp_year' )->set_default( '2020' );
-			$billing_form->get_input( 'cvv' )->set_default(( '123' ));
+			if( $billing_form->get_subsection( 'cvv' ) instanceof EE_Form_Input_Base ) {
+				$billing_form->get_input( 'cvv' )->set_default(( '123' ));
+			}
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
 				'credit_card'
@@ -104,6 +138,21 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
+		$billing_input_names = array(
+			'first_name' => __( 'First Name', 'event_espresso' ),
+			'last_name' => __('Last Name', 'event_espresso'),
+			'email' => __( 'Email', 'event_espresso' ),
+			'company' => __( 'Company', 'event_espresso' ),
+			'address' => __('Address', 'event_espresso'),
+			'address2' => __('Address2', 'event_espresso'),
+			'city' => __('City', 'event_espresso'),
+			'state' => __('State', 'event_espresso'),
+			'country' => __('Country', 'event_espresso'),
+			'zip' =>  __('Zip', 'event_espresso'),
+			'phone' => __('Phone', 'event_espresso'),
+			'fax' => __( 'Fax', 'event_espresso' ),
+			'cvv' => __('CVV', 'event_espresso')
+		);
 		return new EE_Payment_Method_Form(
 			array(
 				'extra_meta_inputs'=>array(
@@ -125,6 +174,25 @@ class EE_PMT_Aim extends EE_PMT_Base{
 							'required' => true
 						)
 					),
+					'excluded_billing_inputs' => new EE_Checkbox_Multi_Input( 
+							$billing_input_names,
+					array( 
+						'html_label_text' => sprintf( __("Excluded Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
+						'default' => array(
+							'company',
+							'fax',
+						)
+					)),
+					'required_billing_inputs' => new EE_Checkbox_Multi_Input( 
+							$billing_input_names,
+							array(
+								'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
+								'default' => array_diff(
+											array_keys( $billing_input_names ),
+											array( 'address2', 'phone', 'company', 'fax' )
+								),
+								'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
+							)),
 				)
 			)
 		);
