@@ -909,6 +909,7 @@ final class EE_System {
 		//and this might be a frontend request, in which case they aren't available
 		$events_admin_url = admin_url("admin.php?page=espresso_events");
 		$reg_admin_url = admin_url("admin.php?page=espresso_registrations");
+		$extensions_admin_url = admin_url("admin.php?page=espresso_packages");
 
 		//Top Level
 		$admin_bar->add_menu(array(
@@ -1196,6 +1197,21 @@ final class EE_System {
 					'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
 					'meta' => array(
 							'title' => __('Cancelled', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
+
+		//Extensions & Services
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'ee_admin_bar_menu_espresso-toolbar-extensions-and-services' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-estensionse-and-services',
+					'parent' => 'espresso-toolbar',
+					'title' => __( 'Extensions & Services', 'event_espresso' ),
+					'href' => $extensions_admin_url,
+					'meta' => array(
+							'title' => __('Extensions & Services', 'event_espresso'),
 							'target' => '',
 							'class' => $menu_class
 					),
