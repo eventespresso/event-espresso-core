@@ -85,7 +85,7 @@ abstract class JobHandlerFile extends JobHandler {
 	 * @return string url to file
 	 */
 	public function get_url_to_file( $filepath ) {
-		str_replace( EVENT_ESPRESSO_UPLOAD_DIR, EVENT_ESPRESSO_UPLOAD_URL, $filepath );
+		return str_replace( EVENT_ESPRESSO_UPLOAD_DIR, EVENT_ESPRESSO_UPLOAD_URL, $filepath );
 	}
 }
 

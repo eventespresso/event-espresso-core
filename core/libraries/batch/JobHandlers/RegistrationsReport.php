@@ -50,6 +50,7 @@ class RegistrationsReport extends JobHandlerFile {
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
 		//we should also set the header columns
 		$csv_data_for_row = $this->get_csv_data_for( $event_id, 0, 1 );
+		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
@@ -95,6 +96,7 @@ class RegistrationsReport extends JobHandlerFile {
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
 		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $batch_size );
+		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
@@ -103,7 +105,7 @@ class RegistrationsReport extends JobHandlerFile {
 		);
 		if( $units_processed < $batch_size ) {
 			$job_parameters->set_status( JobParameters::status_complete );
-			$extra_response_data[ 'file_url' ] = $this->convert_filepath_to_url( $job_parameters->extra_datum( 'filepath' ) );
+			$extra_response_data[ 'file_url' ] = $this->get_url_to_file( $job_parameters->extra_datum( 'filepath' ) );
 		}
 		return new JobStepResponse(
 				$job_parameters,
@@ -389,18 +391,6 @@ class RegistrationsReport extends JobHandlerFile {
 			'd'
 		);
 		return new JobStepResponse( $job_parameters, __( 'Cleaned up temporary file', 'event_espresso' ) );
-	}
-
-
-
-	/**
-	 * Gets the URL to download teh file
-	 *
-	 * @param string $filepath
-	 * @return string
-	 */
-	public function convert_filepath_to_url( $filepath ) {
-		return str_replace( WP_CONTENT_DIR, WP_CONTENT_URL, $filepath );
 	}
 }
 

@@ -2349,11 +2349,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	public function _contact_list_report(){
-		EE_Registry::instance()->load_helper( 'File' );
-		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
-			require_once(EE_CLASSES . 'EE_Export.class.php');
-			$EE_Export = EE_Export::instance($this->_req_data);
-			$EE_Export->report_attendees();
+		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+				array(
+					'page' => 'espresso_support',
+					'action' => 'batch_file_create',
+					'job_handler' => urlencode( 'EventEspressoBatchRequest\JobHandlers\AttendeesReport' ),
+					'redirect_url' => urlencode( $this->_req_data[ 'return_url' ] ),
+				)) );
+		} else {
+			EE_Registry::instance()->load_helper( 'File' );
+			if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
+				require_once(EE_CLASSES . 'EE_Export.class.php');
+				$EE_Export = EE_Export::instance($this->_req_data);
+				$EE_Export->report_attendees();
+			}
 		}
 	}
 
