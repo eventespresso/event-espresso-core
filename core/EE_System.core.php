@@ -1206,7 +1206,7 @@ final class EE_System {
 		//Extensions & Services
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'ee_admin_bar_menu_espresso-toolbar-extensions-and-services' ) ) {
 			$admin_bar->add_menu(array(
-					'id' => 'espresso-toolbar-estensionse-and-services',
+					'id' => 'espresso-toolbar-extensions-and-services',
 					'parent' => 'espresso-toolbar',
 					'title' => __( 'Extensions & Services', 'event_espresso' ),
 					'href' => $extensions_admin_url,
