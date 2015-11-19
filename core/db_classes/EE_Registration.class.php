@@ -110,7 +110,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed
-		if ( $old_STS_ID != $new_STS_ID && ! empty( $old_STS_ID ) && ! empty( $new_STS_ID ) ) {
+		if (
+			$this->ID() // ensure registration is in the db
+			&& $old_STS_ID != $new_STS_ID // and that status has actually changed
+			&& ! empty( $old_STS_ID ) // and that old status is actually set
+			&& ! empty( $new_STS_ID ) // as well as the new status
+		) {
 			// TO approved
 			if ( $new_STS_ID == EEM_Registration::status_id_approved ) {
 				// reserve a space by incrementing ticket and datetime sold values
