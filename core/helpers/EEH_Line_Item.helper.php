@@ -372,10 +372,11 @@ class EEH_Line_Item {
 	 * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
 	 *
 	 * @param EE_Line_Item $ticket_line_item
+	 * @param int          $qty
 	 * @return bool success
 	 * @throws \EE_Error
 	 */
-	public static function reinstate_canceled_ticket_line_item( EE_Line_Item $ticket_line_item ) {
+	public static function reinstate_canceled_ticket_line_item( EE_Line_Item $ticket_line_item, $qty = 1 ) {
 		// validate incoming line_item
 		if ( $ticket_line_item->OBJ_type() !== 'Ticket' ) {
 			throw new EE_Error(
@@ -395,10 +396,25 @@ class EEH_Line_Item {
 		if ( ! $cancellation_line_item instanceof EE_Line_Item ) {
 			return false;
 		}
+		if ( $cancellation_line_item->quantity() > $qty ) {
+			// decrement cancelled quantity
+			$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() - $qty );
+		} else if ( $cancellation_line_item->quantity() == $qty ) {
+			// delete because quantity will end up as 0
+			$cancellation_line_item->delete();
+		} else {
+			// what ?!?! negative quantity ?!?!
+			throw new EE_Error(
+				sprintf(
+					__( 'Can not reinstate $1$d cancelled ticket(s) because the cancelled ticket quantity is only %2$d.',
+						'event_espresso' ),
+					$qty,
+					$cancellation_line_item->quantity()
+				)
+			);
+		}
 		// increment ticket quantity
-		$ticket_line_item->set_quantity( $ticket_line_item->quantity() + 1 );
-		// decrement cancelled quantity
-		$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() - 1 );
+		$ticket_line_item->set_quantity( $ticket_line_item->quantity() + $qty );
 		return $ticket_line_item->save_this_and_descendants() > 0 ? true : false;
 	}
 
