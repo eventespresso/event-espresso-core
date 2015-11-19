@@ -1179,8 +1179,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * 	@return 	bool
 	 */
 	private function _process_payment() {
-		// clear any previous errors related to not selecting a payment method
-//		EE_Error::overwrite_errors();
+		// basically confirm that the event hasn't sold out since they hit the page
+		if ( ! $this->_last_second_ticket_verifications() ) {
+			return false;
+		}
 		// ya gotta make a choice man
 		if ( empty( $this->checkout->selected_method_of_payment )) {
 			$this->checkout->json_response->set_plz_select_method_of_payment( __( 'Please select a method of payment before proceeding.', 'event_espresso' ));
@@ -1207,7 +1209,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// add some time to session expiration so that payment can be completed
 			EE_Registry::instance()->SSN->extend_expiration();
 		}
-
 		/** @type EE_Transaction_Processor $transaction_processor */
 		//$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// in case a registrant leaves to an Off-Site Gateway and never returns, we want to approve any registrations for events with a default reg status of Approved
@@ -1238,6 +1239,44 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// where's my money?
 		return false;
+	}
+
+
+
+	/**
+	 * _last_second_ticket_verifications
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	protected function _last_second_ticket_verifications() {
+		// don't bother re-validating if not a return visit
+		if ( ! $this->checkout->revisit ) {
+			return true;
+		}
+		$registrations = $this->checkout->transaction->registrations();
+		if ( empty( $registrations ) ) {
+			return false;
+		}
+		foreach ( $registrations as $registration ) {
+			if ( $registration instanceof EE_Registration ) {
+				$event = $registration->event_obj();
+				if ( ! ( $event instanceof EE_Event && $event->is_sold_out( true ) ) ) {
+
+					EE_Error::add_error(
+						apply_filters(
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
+							__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso' )
+						 ),
+						 __FILE__,
+						 __FUNCTION__,
+						 __LINE__
+					);
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 
