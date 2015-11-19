@@ -122,7 +122,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		if( isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ) {
 			$final_price = $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ;
 		}else{
-			$message = sprintf( __( 'The ticket line item (ID:%1$d) had no entry in the reg_final_price_per_tkt_line_item array.', 'event_espresso' ), $line_item->ID() );
+			$message = sprintf(
+				__( 'The ticket line item (ID:%1$d) had no entry in the reg_final_price_per_tkt_line_item array. This may have happened due to leftover data in your session. Try %2$sclearing your session%3$s and trying the registration process again.', 'event_espresso' ),
+				$line_item->ID(),
+				'<a href="' . EE_Registry::instance()->CFG->core->cancel_page_url() . '">',
+				'</a>'
+			);
 			if( WP_DEBUG ){
 				throw new EE_Error( $message );
 			}else{
