@@ -952,6 +952,28 @@ final class EE_System {
 			));
 		}
 
+		if ( is_single() && ( get_post_type() == 'espresso_events' ) ) {
+
+			//Current post
+			global $post;		
+    	
+	    	if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID ) ) {
+				//Events Edit Current Event
+				$admin_bar->add_menu(array(
+						'id' => 'espresso-toolbar-events-edit',
+						'parent' => 'espresso-toolbar-events',
+						'title' => __('Edit Event', 'event_espresso'),
+						'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$post->ID ), $events_admin_url ),
+						'meta' => array(
+								'title' => __('Edit Event', 'event_espresso'),
+								'target' => '',
+								'class' => $menu_class
+						),
+				));
+			}
+
+		}
+
 		//Events View
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_events', 'ee_admin_bar_menu_espresso-toolbar-events-view' ) ) {
 			$admin_bar->add_menu(array(
