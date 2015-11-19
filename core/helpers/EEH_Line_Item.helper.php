@@ -351,7 +351,11 @@ class EEH_Line_Item {
 			// create cancellation sub line item
 			$cancellation_line_item = EE_Line_Item::new_instance( array(
 			  'LIN_name'       => __( 'Cancellation', 'event_espresso' ),
-			  'LIN_desc'       => sprintf( __( 'Cancelled %1$s', 'event_espresso' ), $ticket_line_item->name() ),
+			  'LIN_desc'       => sprintf(
+				  __( 'Cancelled %1$s : %2$s', 'event_espresso' ),
+				  $ticket_line_item->name(),
+				  current_time( 'mysql' )
+			  ),
 			  'LIN_unit_price' => $ticket_line_item->unit_price(),
 			  'LIN_quantity'   => $qty,
 			  'LIN_is_taxable' => $ticket_line_item->is_taxable(),
