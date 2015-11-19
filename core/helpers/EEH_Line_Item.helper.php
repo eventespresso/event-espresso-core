@@ -306,10 +306,11 @@ class EEH_Line_Item {
 	 * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
 	 *
 	 * @param EE_Line_Item $ticket_line_item
- 	 * @return bool success
+	 * @param int          $qty
+	 * @return bool success
 	 * @throws \EE_Error
 	 */
-	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item ) {
+	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item, $qty = 1 ) {
 		// validate incoming line_item
 		if ( $ticket_line_item->OBJ_type() !== 'Ticket' ) {
 			throw new EE_Error(
@@ -319,21 +320,21 @@ class EEH_Line_Item {
 				)
 			);
 		}
-		if ( $ticket_line_item->quantity() < 1 ) {
+		if ( $ticket_line_item->quantity() < $qty ) {
 			throw new EE_Error(
 				sprintf(
-					__( 'The supplied line item has a quantity of %1$d and therefore can not be cancelled.',
-						'event_espresso' ),
+					__( 'Can not cancel $1$d ticket(s) because the supplied line item has a quantity of %2$d.', 'event_espresso' ),
+					$qty,
 					$ticket_line_item->quantity()
 				)
 			);
 		}
 		// decrement ticket quantity; don't rely on auto-fixing when recalculating totals to do this
-		$ticket_line_item->set_quantity( $ticket_line_item->quantity() - 1 );
+		$ticket_line_item->set_quantity( $ticket_line_item->quantity() - $qty );
 		foreach( $ticket_line_item->children() as $child_line_item ) {
 			if( $child_line_item->type() == EEM_Line_Item::type_sub_line_item &&
 					! $child_line_item->is_percent() ) {
-				$child_line_item->set_quantity( $child_line_item->quantity() - 1 );
+				$child_line_item->set_quantity( $child_line_item->quantity() - $qty );
 			}
 		}
 		// get cancellation sub line item
@@ -345,14 +346,14 @@ class EEH_Line_Item {
 		// verify that this ticket was indeed previously cancelled
 		if ( $cancellation_line_item instanceof EE_Line_Item ) {
 			// increment cancelled quantity
-			$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() + 1 );
+			$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() + $qty );
 		} else {
 			// create cancellation sub line item
 			$cancellation_line_item = EE_Line_Item::new_instance( array(
 			  'LIN_name'       => __( 'Cancellation', 'event_espresso' ),
 			  'LIN_desc'       => sprintf( __( 'Cancelled %1$s', 'event_espresso' ), $ticket_line_item->name() ),
 			  'LIN_unit_price' => $ticket_line_item->unit_price(),
-			  'LIN_quantity'   => 1,
+			  'LIN_quantity'   => $qty,
 			  'LIN_is_taxable' => $ticket_line_item->is_taxable(),
 			  'LIN_order'      => count( $ticket_line_item->children() ),
 			  'LIN_total'      => $ticket_line_item->unit_price(),
