@@ -22,7 +22,7 @@
 <li>
 <strong><?php _e('PayPal Calculates Taxes', 'event_espresso'); ?></strong><br />
 <?php printf( __('If set to "Yes", we will indicate to PayPal that it ought to calculate the taxes on the order and add it. This means PayPal\'s tax calculations will be used on the order instead of Event Espresso\'s. %1$sRead here for more information.%2$s', 'event_espresso'), "<a href='https://www.paypal.com/ca/cgi-bin/webscr?cmd=xpt/Marketing/shipping/EasyCalculateShipAndTax-outside' target='_blank'>", '</a>' ); ?><br/>
-<?php _e( 'Important Note: PayPal will charge taxes on the COMPLETE order (regardless of whether you mark tickets as taxable in Event Espresso or not), and on EACH payment (so if there are multiple payments for a transaction, PayPal will add taxes on each).', 'event_espresso' );?>
+<?php _e( 'Important Note: PayPal will only charge taxes if Event Espresso hasn\'t already added taxes onto the order, so do not mark tickets as taxable by Event Espresso if you want Paypal to do it.', 'event_espresso' );?>
 </li>
 <li>
 <strong><?php _e('PayPal Calculates Shipping', 'event_espresso'); ?></strong><br />

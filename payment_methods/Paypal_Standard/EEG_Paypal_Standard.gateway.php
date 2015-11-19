@@ -171,7 +171,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$item_num++;
 		}
 		//add our taxes to the order if we're NOT using PayPal's
-		if( ! $this->_paypal_taxes ){
+		//or if someone marked these tickets as taxable
+		if( ! $this->_paypal_taxes || $total_line_item->get_total_tax() != 0 ){
 			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 		}
 
