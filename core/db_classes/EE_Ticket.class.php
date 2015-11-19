@@ -179,9 +179,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		//		d( $datetimes );
 		// if datetime reg limit is not unlimited
 		if ( ! empty( $datetimes ) ) {
-			// although TKT_qty and $datetime->spaces_remaining() could both be INF
-			// we only need to check for INF explicitly if we want to optimize.
-			// because INF - x = INF; and min(x,INF) = x;
+			// although TKT_qty and $datetime->spaces_remaining() could both be EE_INF
+			// we only need to check for EE_INF explicitly if we want to optimize.
+			// because EE_INF - x = EE_INF; and min(x,EE_INF) = x;
 			$tickets_remaining = $this->qty() - $this->sold();
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
@@ -770,21 +770,23 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return int
 	 */
 	function real_quantity_on_ticket( $context = 'reg_limit' ) {
+		// start with the original db value for ticket quantity
 		$raw = $this->get_raw( 'TKT_qty' );
+		// return immediately if it's zero
 		if ( $raw === 0 ) {
 			return $raw;
 		}
 		// ensure qty doesn't exceed raw value for THIS ticket
-		$qty = min( INF, $raw );
-		// NOW that we know the  maximum number of tickets available for the datetime
-		// first we need to calculate the maximum number of tickets available for the datetime
+		$qty = min( EE_INF, $raw );
+		// NOW that we know the  maximum number of tickets available for the ticket
+		// we need to calculate the maximum number of tickets available for the datetime
 		// without really factoring this ticket into the calculations
 		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				// initialize with no restrictions for each datetime
 				// but adjust datetime qty based on datetime reg limit
-				$datetime_qty = min( INF, $datetime->reg_limit() );
+				$datetime_qty = min( EE_INF, $datetime->reg_limit() );
 				// if we want the actual saleable amount, then we need to consider OTHER ticket sales
 				// for this datetime, that do NOT include sales for this ticket (so we add THIS ticket's sales back in)
 				if ( $context == 'saleable' ) {
@@ -799,7 +801,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( $qty > 0 && $context == 'saleable' ) {
 			// and subtract the sales for THIS ticket
 			$qty = max( $qty - $this->sold(), 0 );
+			//echo '&nbsp; $qty: ' . $qty . "<br />";
 		}
+		//echo '$qty: ' . $qty . "<br />";
 		return $qty;
 	}
 

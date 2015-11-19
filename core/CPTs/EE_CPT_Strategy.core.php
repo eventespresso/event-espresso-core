@@ -292,9 +292,6 @@ class EE_CPT_Strategy extends EE_BASE {
 			return;
 		}
 
-		// load EE_Request_Handler (this was added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/9037
-		EE_Registry::instance()->load_core( 'Request_Handler' );
-
 		// add our conditionals
 		$this->_set_EE_tags_on_WP_Query( $WP_Query );
 		// check for terms
@@ -352,6 +349,8 @@ class EE_CPT_Strategy extends EE_BASE {
 						}
 						return;
 					}
+					// load EE_Request_Handler (this was added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/9037
+					EE_Registry::instance()->load_core( 'Request_Handler' );						
 					// grab details for the CPT the current query is for
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type

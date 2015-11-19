@@ -8,14 +8,15 @@
  * @ link			http://www.eventespresso.com
  * @ version		EE4+
  */
-get_header(); 
+get_header();
+//echo '<br/><h6 style="color:#2EA2CC;">' . __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
 ?>
 
 	<div id="primary" class="content-area">
 		<div id="content" class="site-content" role="main">
-		
+
 			<div id="espresso-event-details-wrap-dv" class="">
-				<div id="espresso-event-details-dv" class="" >				
+				<div id="espresso-event-details-dv" class="" >
 			<?php
 				// Start the Loop.
 				while ( have_posts() ) : the_post();
