@@ -789,6 +789,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _insert_update_cpt_item( $post_id, $post ) {
+
+		if ( $post instanceof WP_Post && $post->post_type !== 'espresso_venues' ) {
+			return;// get out we're not processing the saving of venues.
+		}
+
 		$wheres = array( $this->_venue_model->primary_key_name() => $post_id );
 
 		$venue_values = array(
@@ -799,7 +804,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'CNT_ISO' => !empty( $this->_req_data['cnt_iso'] ) ? $this->_req_data['cnt_iso'] : NULL,
 			'VNU_zip' => !empty( $this->_req_data['vnu_zip'] ) ? $this->_req_data['vnu_zip'] : NULL,
 			'VNU_phone' => !empty( $this->_req_data['vnu_phone'] ) ? $this->_req_data['vnu_phone'] : NULL,
-			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? str_replace( ',', '', $this->_req_data['vnu_capacity'] ) : INF,
+			'VNU_capacity' => !empty( $this->_req_data['vnu_capacity'] ) ? str_replace( ',', '', $this->_req_data['vnu_capacity'] ) : EE_INF,
 			'VNU_url' => !empty( $this->_req_data['vnu_url'] ) ? $this->_req_data['vnu_url'] : NULL,
 			'VNU_virtual_phone' => !empty( $this->_req_data['vnu_virtual_phone'] ) ? $this->_req_data['vnu_virtual_phone'] : NULL,
 			'VNU_virtual_url' => !empty( $this->_req_data['vnu_virtual_url'] ) ? $this->_req_data['vnu_virtual_url'] : NULL,
@@ -1126,7 +1131,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			$where['Term_Taxonomy.taxonomy'] = 'espresso_venue_categories';
 			$where['Term_Taxonomy.term_id'] = $category;
 		}
-		
+
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();

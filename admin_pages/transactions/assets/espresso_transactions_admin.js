@@ -294,8 +294,13 @@ jQuery(document).ready(function($) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
 						} else {
-							response.errors = eei18n.invalid_server_response;
+                                                        if( typeof(response.errors) == 'undefined' ||  response.errors == false || response.errors == null || response.errors == '' ) {
+                                                            response.errors = eei18n.invalid_server_response;
+                                                        }
+                                                        //hide the modal dialogue and show the errors
+                                                        overlay.trigger('click');
 							show_admin_page_ajax_msg( response );
+                                                        
 						}
 					},
 					error: function(response) {

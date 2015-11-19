@@ -188,6 +188,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @param        int $sold
 	 */
 	public function set_sold( $sold ) {
+		// sold can not go below zero
+		$sold = max( 0, $sold );
 		$this->set( 'DTT_sold', $sold );
 	}
 
@@ -198,7 +200,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @param int $qty
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->get_raw( 'DTT_sold' ) + $qty;
+		$sold = $this->sold() + $qty;
 		$this->set_sold( $sold );
 	}
 
@@ -209,9 +211,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @param int $qty
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->get_raw( 'DTT_sold' ) - $qty;
-		// sold can not go below zero
-		$sold = max( 0, $sold );
+		$sold = $this->sold() - $qty;
 		$this->set_sold( $sold );
 	}
 
@@ -575,7 +575,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return        boolean
 	 */
 	public function sold_out() {
-		return $this->get( 'DTT_reg_limit' ) > 0 && $this->get( 'DTT_sold' ) >= $this->get( 'DTT_reg_limit' ) ? TRUE : FALSE;
+		return $this->reg_limit() > 0 && $this->sold() >= $this->reg_limit() ? TRUE : FALSE;
 	}
 
 
@@ -584,15 +584,19 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 *    return the total number of spaces remaining at this venue.
 	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	 *
-	 * @access        public
-	 * @param      bool $consider_tickets Whether to consider tickets remaining when determining if there are any spaces left (because if all tickets attached to this datetime have no spaces left, then this datetime IS effectively sold out)  However, there are cases where we just want to know the spaces remaining for this particular datetime hence the flag.
-	 * @return        int
+	 * @access 	public
+	 * @param    bool $consider_tickets 	Whether to consider tickets remaining when determining if there are any spaces left
+	 *                                                           		Because if all tickets attached to this datetime have no spaces left,
+	 * 																	then this datetime IS effectively sold out.
+	 *                                                          		However, there are cases where we just want to know
+	 * 																	the spaces remaining for this particular datetime, hence the flag.
+	 * @return 	int
 	 */
 	public function spaces_remaining( $consider_tickets = FALSE ) {
 		// tickets remaining available for purchase
-		//no need for special checks for infinite, because if DTT_reg_limit == INF, then INF - x = INF
-		$dtt_remaining = $this->get( 'DTT_reg_limit' ) - $this->get( 'DTT_sold' );
-		if ( !$consider_tickets ) {
+		//no need for special checks for infinite, because if DTT_reg_limit == EE_INF, then EE_INF - x = EE_INF
+		$dtt_remaining = $this->reg_limit() - $this->sold();
+		if ( ! $consider_tickets ) {
 			return $dtt_remaining;
 		}
 		$tickets_remaining = $this->tickets_remaining();
@@ -602,13 +606,30 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Counts the total tickets available (from all the different types of tickets which are available for
-	 * this datetime).
+	 * Counts the total tickets available (from all the different types of tickets which are available for this datetime).
+	 *
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @return int
 	 */
 	public function tickets_remaining( $query_params = array() ) {
-		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime( $this->ID(), $query_params );
+		$sum = 0;
+		$tickets = $this->tickets( $query_params );
+		if ( ! empty( $tickets ) ) {
+			foreach ( $tickets as $ticket ) {
+				if ( $ticket instanceof EE_Ticket ) {
+					// get the actual amount of tickets that can be sold
+					$qty = $ticket->qty( 'saleable' );
+					if ( $qty === EE_INF ) {
+						return EE_INF;
+					}
+					// no negative ticket quantities plz
+					if ( $qty > 0 ) {
+						$sum += $qty;
+					}
+				}
+			}
+		}
+		return $sum;
 	}
 
 
@@ -632,7 +653,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return int
 	 */
 	public function total_tickets_available_at_this_datetime() {
-		return min( array( $this->tickets_remaining(), $this->spaces_remaining() ) );
+		return $this->spaces_remaining( true );
 	}
 
 
@@ -745,7 +766,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 			return array();
 		}
 		if ( empty( $query_params ) ) {
-			$query_params = array( array( 'TKT_start_date' => array( '<=', EEM_Ticket::instance()->current_time_for_query( 'TKT_start_date' ) ), 'TKT_end_date' => array( '>=', EEM_Ticket::instance()->current_time_for_query( 'TKT_end_date') ), 'TKT_deleted' => FALSE ) );
+			$query_params = array(
+				array(
+					'TKT_start_date' => array( '<=', EEM_Ticket::instance()->current_time_for_query( 'TKT_start_date' ) ),
+					'TKT_end_date'   => array( '>=', EEM_Ticket::instance()->current_time_for_query( 'TKT_end_date' ) ),
+					'TKT_deleted'    => false
+				)
+			);
 		}
 		return $this->tickets( $query_params );
 	}
@@ -768,7 +795,13 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return int
 	 */
 	public function update_sold() {
-		$count_regs_for_this_datetime = EEM_Registration::instance()->count( array( array( 'STS_ID' => EEM_Registration::status_id_approved, 'Ticket.Datetime.DTT_ID' => $this->ID(), 'REG_deleted' => 0 ) ) );
+		$count_regs_for_this_datetime = EEM_Registration::instance()->count(
+			array( array(
+				'STS_ID' 					=> EEM_Registration::status_id_approved,
+				'REG_deleted' 				=> 0,
+				'Ticket.Datetime.DTT_ID' 	=> $this->ID(),
+			) )
+		);
 		$this->set( 'DTT_sold', $count_regs_for_this_datetime );
 		$this->save();
 		return $count_regs_for_this_datetime;

@@ -79,6 +79,16 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage{
 			$this->add_error(sprintf(__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"),$old_event_venue_rel['venue_id']));
 			return 0;
 		}
+		//first ensure there are no other relation entries for this event
+		//because although EE4 supports it, EE3 didn't really
+		$wpdb->delete( $this->_new_table, 
+				array(
+					'EVT_ID' => $new_event_id,
+				),
+				array(
+					'%d',//EVT_ID
+				));
+//		echo "last query". $wpdb->last_query;die;
 		$cols_n_values = array(
 			'EVT_ID'=>$new_event_id,
 			'VNU_ID'=>$new_venue_id,

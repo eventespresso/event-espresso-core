@@ -45,14 +45,13 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
-
 		// there's actually no reg form to process if this is the final step
 		if ( $this->is_current_step() ) {
 			$this->checkout->step = $_REQUEST['step'] = $this->slug();
 			$this->checkout->action = $_REQUEST[ 'action' ] = 'process_reg_step';
 			$this->checkout->generate_reg_form = false;
 		}
-
+		return true;
 	}
 
 
@@ -106,7 +105,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 		$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 		if ( ! ( $this->checkout->payment_method instanceof EE_Payment_Method && $this->checkout->payment_method->is_off_site() ) ) {
 			// mark this reg step as completed
-			$this->checkout->current_step->set_completed();
+			$this->set_completed();
 		}
 		$this->checkout->set_exit_spco();
 		return true;

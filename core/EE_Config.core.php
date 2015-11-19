@@ -36,64 +36,64 @@ final class EE_Config {
 	 * and values are their config classes
 	 * @var StdClass
 	 */
-	public $addons;
+	public $addons = null;
 
 	/**
 	 *
 	 * @var EE_Admin_Config
 	 */
-	public $admin;
+	public $admin = null;
 
 	/**
 	 *
 	 * @var EE_Core_Config
 	 */
-	public $core;
+	public $core = null;
 
 	/**
 	 *
 	 * @var EE_Currency_Config
 	 */
-	public $currency;
+	public $currency = null;
 
 	/**
 	 *
 	 * @var EE_Organization_Config
 	 */
-	public $organization;
+	public $organization = null;
 
 	/**
 	 *
 	 * @var EE_Registration_Config
 	 */
-	public $registration;
+	public $registration = null;
 
 	/**
 	 *
 	 * @var EE_Template_Config
 	 */
-	public $template_settings;
+	public $template_settings = null;
 
 	/**
 	 * Holds EE environment values.
 	 *
 	 * @var EE_Environment_Config
 	 */
-	public $environment;
+	public $environment = null;
 
 	/**
 	 * settings pertaining to Google maps
 	 *
 	 * @var EE_Map_Config
 	 */
-	public $map_settings;
+	public $map_settings = null;
 
 	/**
 	*
 	* @deprecated
 	* @var EE_Gateway_Config
 	*/
-	public $gateway;
+	public $gateway = null;
 
 	/**
 	 *	@var 	array	$_config_option_names
@@ -180,6 +180,8 @@ final class EE_Config {
 		$this->_initialize_config();
 		// load existing EE site settings
 		$this->_load_core_config();
+		// confirm everything loaded correctly and set filtered defaults if not
+		$this->_verify_config();
 		//  register shortcodes and modules
 		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_and_modules' ), 999 );
 		//  initialize shortcodes and modules
@@ -216,16 +218,6 @@ final class EE_Config {
 	 */
 	private function _initialize_config() {
 		//set defaults
-
-		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', new EE_Core_Config() );
-		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', new EE_Organization_Config() );
-		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', new EE_Currency_Config() );
-		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', new EE_Registration_Config() );
-		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', new EE_Admin_Config() );
-		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', new EE_Template_Config() );
-		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', new EE_Map_Config() );
-		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', new EE_Environment_Config() );
-		$this->gateway =  apply_filters( 'FHEE__EE_Config___initialize_config__gateway', new EE_Gateway_Config() );
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -251,14 +243,12 @@ final class EE_Config {
 		foreach ( $espresso_config as $config => $settings ) {
 			// load_core_config__start hook
 			$settings = apply_filters( 'FHEE__EE_Config___load_core_config__config_settings', $settings, $config, $this );
-			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
-			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
+			if ( is_object( $settings ) && property_exists( $this, $config ) ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 				//call configs populate method to ensure any defaults are set for empty values.
 				if ( method_exists( $settings, 'populate' ) ) {
 					$this->$config->populate();
 				}
-
 				if ( method_exists( $settings, 'do_hooks' ) ) {
 					$this->$config->do_hooks();
 				}
@@ -269,6 +259,54 @@ final class EE_Config {
 		}
 		// load_core_config__end hook
 		do_action( 'AHEE__EE_Config___load_core_config__end', $this );
+	}
+
+
+
+	/**
+	 *    _verify_config
+	 *
+	 *  @access    protected
+	 *  @return 	void
+	 */
+	protected function _verify_config() {
+
+		$this->core = $this->core instanceof EE_Core_Config
+			? $this->core  : new EE_Core_Config();
+		$this->core = apply_filters( 'FHEE__EE_Config___initialize_config__core', $this->core );
+
+		$this->organization = $this->organization instanceof EE_Organization_Config
+			? $this->organization  : new EE_Organization_Config();
+		$this->organization = apply_filters( 'FHEE__EE_Config___initialize_config__organization', $this->organization );
+
+		$this->currency = $this->currency instanceof EE_Currency_Config
+			? $this->currency : new EE_Currency_Config();
+		$this->currency = apply_filters( 'FHEE__EE_Config___initialize_config__currency', $this->currency );
+
+		$this->registration = $this->registration instanceof EE_Registration_Config
+			? $this->registration : new EE_Registration_Config();
+		$this->registration = apply_filters( 'FHEE__EE_Config___initialize_config__registration', $this->registration );
+
+		$this->admin = $this->admin instanceof EE_Admin_Config
+			? $this->admin : new EE_Admin_Config();
+		$this->admin = apply_filters( 'FHEE__EE_Config___initialize_config__admin', $this->admin );
+
+		$this->template_settings = $this->template_settings instanceof EE_Template_Config
+			? $this->template_settings : new EE_Template_Config();
+		$this->template_settings = apply_filters( 'FHEE__EE_Config___initialize_config__template_settings', $this->template_settings );
+
+		$this->map_settings = $this->map_settings instanceof EE_Map_Config
+			? $this->map_settings : new EE_Map_Config();
+		$this->map_settings = apply_filters( 'FHEE__EE_Config___initialize_config__map_settings', $this->map_settings );
+
+		$this->environment = $this->environment instanceof EE_Environment_Config
+			? $this->environment : new EE_Environment_Config();
+		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', $this->environment );
+
+		$this->gateway = $this->gateway instanceof EE_Gateway_Config
+			? $this->gateway : new EE_Gateway_Config();
+		$this->gateway = apply_filters( 'FHEE__EE_Config___initialize_config__gateway', $this->gateway );
+
 	}
 
 
@@ -525,7 +563,8 @@ final class EE_Config {
 		$config_set = get_option( $config_option_name );
 
 		if ( $config_set ) {
-			$this->{$section}->{$name} = maybe_unserialize( $config_set );
+			update_option( $config_option_name, $config_obj );
+			$this->{$section}->{$name} = $config_obj;
 			return $this->{$section}->{$name};
 		} else {
 			// create a wp-option for this config
@@ -543,6 +582,7 @@ final class EE_Config {
 
 	/**
 	 *    update_config
+         * Important: the config object must ALREADY be set, otherwise this will produce an error.
 	 *
 	 * @access    public
 	 * @param    string                 $section
@@ -2135,6 +2175,16 @@ class EE_Template_Config extends EE_Config_Base {
 	*/
 	public $current_espresso_theme;
 
+	/**
+	* @var EE_Event_Single_Config $EED_Event_Single
+	*/
+	public $EED_Event_Single;
+
+	/**
+	* @var EE_Events_Archive_Config $EED_Events_Archive
+	*/
+	public $EED_Events_Archive;
+
 
 
 	/**
@@ -2151,6 +2201,8 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
 		$this->current_espresso_theme = 'Espresso_Arabica_2014';
+		$this->EED_Event_Single = null;
+		$this->EED_Events_Archive = null;
 	}
 
 }
@@ -2282,6 +2334,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $display_datetimes;
 	public $display_venue;
 	public $display_expired_events;
+	public $use_sortable_display_order;
+	public $display_order_tickets;
+	public $display_order_datetimes;
+	public $display_order_event;
+	public $display_order_venue;
 
 
 
@@ -2295,6 +2352,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->display_datetimes = 1;
 		$this->display_venue = 0;
 		$this->display_expired_events = 0;
+		$this->use_sortable_display_order = false;
+		$this->display_order_tickets = 100;
+		$this->display_order_datetimes = 110;
+		$this->display_order_event = 120;
+		$this->display_order_venue = 130;
 	}
 }
 
@@ -2304,8 +2366,14 @@ class EE_Events_Archive_Config extends EE_Config_Base{
  * Stores Event_Single_Config settings
  */
 class EE_Event_Single_Config extends EE_Config_Base{
+
 	public $display_status_banner_single;
 	public $display_venue;
+	public $use_sortable_display_order;
+	public $display_order_tickets;
+	public $display_order_datetimes;
+	public $display_order_event;
+	public $display_order_venue;
 
 	/**
 	 *	class constructor
@@ -2313,6 +2381,11 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
+		$this->use_sortable_display_order = false;
+		$this->display_order_tickets = 100;
+		$this->display_order_datetimes = 110;
+		$this->display_order_event = 120;
+		$this->display_order_venue = 130;
 	}
 }
 

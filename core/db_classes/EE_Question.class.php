@@ -35,7 +35,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	 *                          		used.)
 	 * @param array $date_formats  incoming date_formats in an array where the first value is the
 	 *                             		    date_format and the second value is the time format
-	 * @return EE_Attendee
+	 * @return EE_Question
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -48,7 +48,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	 * @param array $props_n_values  incoming values from the database
 	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
 	 *                          		the website will be used.
-	 * @return EE_Attendee
+	 * @return EE_Question
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );

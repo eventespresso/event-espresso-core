@@ -399,10 +399,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return string
 	 */
 	protected function _process_response_url() {
+		EE_Registry::instance()->load_helper('URL');
 		if ( isset( $_SERVER[ 'HTTP_HOST' ], $_SERVER[ 'REQUEST_URI' ] ) ) {
 			$url = is_ssl() ? 'https://' : 'http://';
-			$url .= filter_input( INPUT_SERVER, 'HTTP_HOST', FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
-			$url .= filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
+			$url .= EEH_URL::filter_input_server_url( 'HTTP_HOST' );
+			$url .= EEH_URL::filter_input_server_url();
 		} else {
 			$url = 'unknown';
 		}
