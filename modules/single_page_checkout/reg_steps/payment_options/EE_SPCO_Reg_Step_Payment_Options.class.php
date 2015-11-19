@@ -1262,12 +1262,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $registration instanceof EE_Registration ) {
 				$event = $registration->event_obj();
 				if ( ! ( $event instanceof EE_Event && $event->is_sold_out( true ) ) ) {
-
 					EE_Error::add_error(
 						apply_filters(
-							'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
-							__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso' )
-						 ),
+							'FHEE__EE_SPCO_Reg_Step_Payment_Options___last_second_ticket_verifications__sold_out_events_msg',
+							sprintf(
+								__( 'It appears that the %1$s event that you were about to make a payment for has sold out since you first registered and/or arrived at this page. Please refresh the page and try again. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso' ),
+								$event->name()
+							)
+						),
 						 __FILE__,
 						 __FUNCTION__,
 						 __LINE__
