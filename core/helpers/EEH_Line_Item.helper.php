@@ -306,11 +306,10 @@ class EEH_Line_Item {
 	 * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
 	 *
 	 * @param EE_Line_Item $ticket_line_item
-	 * @param \EE_Payment  $payment
-	 * @return bool success
+ 	 * @return bool success
 	 * @throws \EE_Error
 	 */
-	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item, EE_Payment $payment = null ) {
+	public static function cancel_ticket_line_item( EE_Line_Item $ticket_line_item ) {
 		// validate incoming line_item
 		if ( $ticket_line_item->OBJ_type() !== 'Ticket' ) {
 			throw new EE_Error(
@@ -359,10 +358,6 @@ class EEH_Line_Item {
 			  'LIN_total'      => $ticket_line_item->unit_price(),
 			  'LIN_type'       => EEM_Line_Item::type_cancellation,
 		  ) );
-		}
-		if ( $payment instanceof EE_Payment ) {
-			$cancellation_line_item->set_OBJ_ID( $payment->ID() );
-			$cancellation_line_item->set_OBJ_type( 'Payment' );
 		}
 		$ticket_line_item->add_child_line_item( $cancellation_line_item );
 		return $ticket_line_item->save_this_and_descendants() > 0 ? true : false;
