@@ -352,9 +352,9 @@ class EEH_Line_Item {
 			$cancellation_line_item = EE_Line_Item::new_instance( array(
 			  'LIN_name'       => __( 'Cancellation', 'event_espresso' ),
 			  'LIN_desc'       => sprintf(
-				  __( 'Cancelled %1$s : %2$s', 'event_espresso' ),
+				  _x( 'Cancelled %1$s : %2$s', 'Cancelled Ticket Name : 2015-01-01 11:11', 'event_espresso' ),
 				  $ticket_line_item->name(),
-				  current_time( 'mysql' )
+				  current_time( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) )
 			  ),
 			  'LIN_unit_price' => $ticket_line_item->unit_price(),
 			  'LIN_quantity'   => $qty,
