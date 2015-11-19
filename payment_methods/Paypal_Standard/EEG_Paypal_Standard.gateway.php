@@ -151,6 +151,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			if( $total_discounts_to_cart_total > 0 ) {
 				$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
 			}
+			//add our taxes to the order if we're NOT using PayPal's
+			//or if someone marked these tickets as taxable
+			if( ! $this->_paypal_taxes || $total_line_item->get_total_tax() != 0 ){
+				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
+			}
 		} else {
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			$redirect_args['item_name_' . $item_num] = substr(
@@ -169,11 +174,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args['tax_cart'] = '0';
 			}
 			$item_num++;
-		}
-		//add our taxes to the order if we're NOT using PayPal's
-		//or if someone marked these tickets as taxable
-		if( ! $this->_paypal_taxes || $total_line_item->get_total_tax() != 0 ){
-			$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 		}
 
 		if($this->_debug_mode){
