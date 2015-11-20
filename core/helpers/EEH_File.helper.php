@@ -183,6 +183,7 @@ class EEH_File extends EEH_Base {
 	 * ensure_folder_exists_and_is_writable
 	 * ensures that a folder exists and is writable, will attempt to create folder if it does not exist
 	 * Also ensures all the parent folders exist, and if not tries to create them.
+	 * Also, if this function creates the folder, adds a .htaccess file and index.html file
 	 * @param string $folder
 	 * @throws EE_Error if the folder exists and is writeable, but for some reason we 
 	 * can't write to it
@@ -214,6 +215,7 @@ class EEH_File extends EEH_Base {
 					}
 					return false;
 				}
+				EEH_File::add_htaccess_deny_from_all( $folder );
 			}
 		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
 			return false;
@@ -416,7 +418,8 @@ class EEH_File extends EEH_Base {
 
 
 	/**
-	 * add_htaccess_deny_from_all
+	 * add_htaccess_deny_from_all and an index.html file
+	 * in order to prevent folks from exploring filesystem at their leisure
 	 * @param string $folder
 	 * @return bool
 	 */
@@ -424,6 +427,11 @@ class EEH_File extends EEH_Base {
 		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
 		if ( ! EEH_File::exists( $folder . '.htaccess' ) ) {
 			if ( ! EEH_File::write_to_file( $folder . '.htaccess', 'deny from all', '.htaccess' )) {
+				return FALSE;
+			}
+		}
+		if ( ! EEH_File::exists( $folder . 'index.html' ) ) {
+			if ( ! EEH_File::write_to_file( $folder . 'index.html', 'cheating huh?', '.html' )) {
 				return FALSE;
 			}
 		}

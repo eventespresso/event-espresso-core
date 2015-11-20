@@ -85,7 +85,12 @@ class WP_Filesystem_MockEEFS extends WP_Filesystem_Base {
 	 * @return MockFS_Node 
 	 */
 	private function locate_node( $path ) {
-		return isset( $this->fs_map[ $path ] ) ? $this->fs_map[ $path ] : false;
+		if( isset( $this->fs_map[ $path ] ) ) {
+			return $this->fs_map[ $path ];
+		} elseif( isset( $this->fs_map[ $path . '/' ] ) ){
+			return $this->fs_map[ $path . '/' ];
+		}
+		return false;
 	}
 
 	/**
