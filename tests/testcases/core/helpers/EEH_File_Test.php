@@ -20,6 +20,7 @@ class EEH_File_Test extends EE_UnitTestCase {
 		parent::setUp();
 		add_filter( 'filesystem_method_file', array( $this, 'filter_abstraction_file' ) );
 		add_filter( 'filesystem_method', array( $this, 'filter_fs_method' ) );
+		add_filter( 'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct', '__return_false' );
 		WP_Filesystem();
 		global $wp_filesystem;
 		$wp_filesystem->init('/');
@@ -35,20 +36,19 @@ class EEH_File_Test extends EE_UnitTestCase {
 	}
 
 	function filter_fs_method( $method ) {
-		return 'MockFS';
+		return 'MockEEFS';
 	}
 	function filter_abstraction_file( $file ) {
-		return WP_TESTS_DIR . '/includes/mock-fs.php';
+		return EE_TESTS_DIR . '/includes/mock-ee-fs.php';
 	}
 
 	/**
 	 * Just makes sure we're really using the mock filesystem, not the real fileysstem
 	 * @global type $wp_filesystem
-	 * @group ignore
 	 */
 	function test_is_MockFS_sane() {
 		global $wp_filesystem;
-		$this->assertTrue( is_a( $wp_filesystem, 'WP_Filesystem_MockFS' ) );
+		$this->assertTrue( is_a( $wp_filesystem, 'WP_Filesystem_MockEEFS' ) );
 
 		$wp_filesystem->init('/');
 
@@ -64,7 +64,6 @@ class EEH_File_Test extends EE_UnitTestCase {
 	/**
 	 * 
 	 * @global type $wp_filesystem
-	 * @group ignore
 	 */
 	public function test_verify_filepath_and_permissions(){
 		global $wp_filesystem;
@@ -88,7 +87,6 @@ class EEH_File_Test extends EE_UnitTestCase {
 	/**
 	 * 
 	 * @global type $wp_filesystem
-	 * @group ignore
 	 */
 	public function test_ensure_folder_exists_and_is_writable__and__is_writable(){
 		global $wp_filesystem;
@@ -116,7 +114,6 @@ class EEH_File_Test extends EE_UnitTestCase {
 	/**
 	 * 
 	 * @global type $wp_filesystem
-	 * @group ignore
 	 */
 	public function test_ensure_file_exists_and_is_writable(){
 		global $wp_filesystem;
@@ -144,7 +141,6 @@ class EEH_File_Test extends EE_UnitTestCase {
 	/**
 	 * 
 	 * @global type $wp_filesystem
-	 * @group ignore
 	 */
 	public function test_get_file_contents(){
 		global $wp_filesystem;
@@ -160,7 +156,6 @@ class EEH_File_Test extends EE_UnitTestCase {
 	/**
 	 * 
 	 * @global type $wp_filesystem
-	 * @group ignore
 	 */
 	public function test_write_to_file(){
 		global $wp_filesystem;
@@ -202,25 +197,6 @@ class EEH_File_Test extends EE_UnitTestCase {
 	}
 	
 	/**
-	 * 
-	 * @global type $wp_filesystem
-	 * @group ignore
-	 * it looks like this method was rewritten in a way so it wouldn't work with wp filesystem and isn't unit testable
-	 */
-	public function test_get_contents_of_folders(){
-		global $wp_filesystem;
-		$wp_filesystem->mkdir('/test/');
-		$wp_filesystem->touch('/test/EE_Thingy.um.php');
-		$wp_filesystem->touch('/test/EEX_YEP.fe.ss');
-		$wp_filesystem->mkdir('/test/other/');
-		$classname_to_filepath_map = EEH_File::get_contents_of_folders( array( '/test/' ) );
-		$this->assertEquals(
-				array(
-					'EE_Thingy' => '/test/EE_Thingy.um.php',
-					'EEX_YEP' => '/test/EEX_YEP.fe.ss' ),
-				$classname_to_filepath_map );
-	}
-	/**
 	 * @group 9059
 	 */
 	public function test_is_in_uploads_folder__barely() {
@@ -247,6 +223,32 @@ class EEH_File_Test extends EE_UnitTestCase {
 	 */
 	public function test_is_in_uploads_folder__elsewhere_but_tricky() {
 		$this->assertFalse( EEH_File::is_in_uploads_folder( '/not/uploads/dir/' . EVENT_ESPRESSO_UPLOAD_DIR ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_get_parent_folder__file() {
+		$this->assertEquals( 
+				'/var/something/',
+				EEH_File::get_parent_folder( '/var/something/thingy.txt' ) );
+	}
+	/**
+	 * @group 9059
+	 */
+	public function test_get_parent_folder__file_with_one_character() {
+		$this->assertEquals( 
+				'/var/something/',
+				EEH_File::get_parent_folder( '/var/something/a' ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_get_parent_folder__folder() {
+		$this->assertEquals( 
+				'/var/something/',
+				EEH_File::get_parent_folder( '/var/something/somewhere/' ) );
 	}
 
 
