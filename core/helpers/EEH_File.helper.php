@@ -17,14 +17,30 @@ class EEH_File extends EEH_Base {
 	 * @var string $_credentials_form
 	 */
 	private static $_credentials_form;
-
-
-
+	
+	protected static $_wp_filesystem_direct;
+	
 	/**
+	 * @param string|null $filepath the filepath we want to work in. If its in the 
+	 * wp uploads directory, we'll want to just use the filesystem directly.
+	 * If not provided, we have to assume its not in the uploads directory
 	 * @throws EE_Error
 	 * @return WP_Filesystem_Base
 	 */
-	private static function _get_wp_filesystem() {
+	private static function _get_wp_filesystem( $filepath = null) {
+		if( apply_filters( 
+				'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct', 
+				$filepath && EEH_File::is_in_uploads_folder( $filepath ), 
+				$filepath ) ) {
+			if( ! EEH_File::$_wp_filesystem_direct instanceof WP_Filesystem_Direct ) {
+				require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
+				$method = 'direct';
+				$wp_filesystem_direct_file = apply_filters( 'filesystem_method_file', ABSPATH . 'wp-admin/includes/class-wp-filesystem-' . $method . '.php', $method );
+				require_once( $wp_filesystem_direct_file );
+				EEH_File::$_wp_filesystem_direct = new WP_Filesystem_Direct( array() );
+			}
+			return EEH_File::$_wp_filesystem_direct;
+		}
 		global $wp_filesystem;
 		// no filesystem setup ???
 		if ( ! $wp_filesystem instanceof WP_Filesystem_Base ) {
@@ -76,7 +92,6 @@ class EEH_File extends EEH_Base {
 		return $wp_filesystem;
 	}
 
-
 	/**
 	 * display_request_filesystem_credentials_form
 	 */
@@ -102,7 +117,7 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function verify_filepath_and_permissions( $full_file_path = '', $file_name = '', $file_ext = '', $type_of_file = '' ) {
 		// load WP_Filesystem and set file permissions
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		if ( ! $wp_filesystem->is_readable( $full_file_path )) {
 			$file_name = ! empty( $type_of_file ) ? $file_name . ' ' . $type_of_file : $file_name;
@@ -141,7 +156,7 @@ class EEH_File extends EEH_Base {
 	 */
 	private static function _permissions_error_for_unreadable_filepath( $full_file_path = '', $type_of_file = '' ){
 		// load WP_Filesystem and set file permissions
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		// check file permissions
 		$perms = $wp_filesystem->getchmod( $full_file_path );
 		if ( $perms ) {
@@ -183,7 +198,7 @@ class EEH_File extends EEH_Base {
 		$parent_folder = implode( DS, $folder_segments ) . DS;
 		// add DS to folder
 		$folder = EEH_File::end_with_directory_separator( $folder );
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $folder );
 		if ( ! $wp_filesystem->is_dir( $folder )) {
 			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder' )) {
 				return FALSE;
@@ -214,7 +229,7 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function verify_is_writable( $full_path = '', $file_or_folder = 'folder' ){
 		// load WP_Filesystem and set file permissions
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_path );
 		$full_path = EEH_File::standardise_directory_separators( $full_path );
 		if ( ! $wp_filesystem->is_writable( $full_path )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -238,7 +253,7 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function ensure_file_exists_and_is_writable( $full_file_path = '' ) {
 		// load WP_Filesystem and set file permissions
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		if ( ! EEH_File::exists( $full_file_path )) {
 			if ( ! $wp_filesystem->touch( $full_file_path )) {
@@ -267,7 +282,7 @@ class EEH_File extends EEH_Base {
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
 		if ( EEH_File::verify_filepath_and_permissions( $full_file_path, EEH_File::get_filename_from_filepath( $full_file_path ) , EEH_File::get_file_extension( $full_file_path ))) {
 			// load WP_Filesystem and set file permissions
-			$wp_filesystem = EEH_File::_get_wp_filesystem();
+			$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 			return $wp_filesystem->get_contents( $full_file_path );
 		}
 		return '';
@@ -296,7 +311,7 @@ class EEH_File extends EEH_Base {
 			return FALSE;
 		}
 		// load WP_Filesystem and set file permissions
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		// write the file
 		if ( ! $wp_filesystem->put_contents( $full_file_path, $file_contents )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -319,7 +334,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function exists( $full_file_path = '' ) {
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		return $wp_filesystem->exists( $full_file_path ) ? TRUE : FALSE;
 	}
 
@@ -333,7 +348,7 @@ class EEH_File extends EEH_Base {
 	 * @return bool
 	 */
 	public static function is_readable( $full_file_path = '' ) {
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		return $wp_filesystem->is_readable( $full_file_path ) ? TRUE : FALSE;
 	}
 
@@ -511,7 +526,7 @@ class EEH_File extends EEH_Base {
 		}
 
 		// load WP_Filesystem and set file permissions
-		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $destination_file );
 		// write the file
 		if ( ! $wp_filesystem->copy( $full_source_path, $full_dest_path, $overwrite )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
