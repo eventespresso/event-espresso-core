@@ -182,26 +182,29 @@ class EEH_File extends EEH_Base {
 	/**
 	 * ensure_folder_exists_and_is_writable
 	 * ensures that a folder exists and is writable, will attempt to create folder if it does not exist
+	 * Also ensures all the parent folders exist, and if not tries to create them.
 	 * @param string $folder
-	 * @throws EE_Error
-	 * @return bool
+	 * @throws EE_Error if the folder exists and is writeable, but for some reason we 
+	 * can't write to it
+	 * @return bool false if folder isn't writable; true if it exists and is writeable,
 	 */
 	public static function ensure_folder_exists_and_is_writable( $folder = '' ){
 		if ( empty( $folder )) {
-			return FALSE;
+			return false;
 		}
 		// remove ending DS
 		$folder = EEH_File::standardise_directory_separators( rtrim( $folder, '/\\' ));
-		// determine parent folder
-		$folder_segments = explode( DS, $folder );
-		array_pop( $folder_segments );
-		$parent_folder = implode( DS, $folder_segments ) . DS;
+		$parent_folder = EEH_File::get_parent_folder( $folder );
 		// add DS to folder
 		$folder = EEH_File::end_with_directory_separator( $folder );
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $folder );
 		if ( ! $wp_filesystem->is_dir( $folder )) {
+			//ok so it doesn't exist. Does its parent? Can we write to it?
+			if(	! EEH_File::ensure_folder_exists_and_is_writable( $parent_folder ) ) {
+				return false;
+			}
 			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder' )) {
-				return FALSE;
+				return false;
 			} else {
 				if ( ! $wp_filesystem->mkdir( $folder )) {
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
@@ -209,13 +212,13 @@ class EEH_File extends EEH_Base {
 						$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $folder );
 						throw new EE_Error( $msg );
 					}
-					return FALSE;
+					return false;
 				}
 			}
 		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
-			return FALSE;
+			return false;
 		}
-		return TRUE;
+		return true;
 	}
 
 
@@ -246,7 +249,8 @@ class EEH_File extends EEH_Base {
 
 	/**
 	 * ensure_file_exists_and_is_writable
-	 * ensures that a file exists and is writable, will attempt to create file if it does not exist
+	 * ensures that a file exists and is writable, will attempt to create file if it does not exist.
+	 * Also ensures all the parent folders exist, and if not tries to create them.
 	 * @param string $full_file_path
 	 * @throws EE_Error
 	 * @return bool
@@ -255,20 +259,42 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
+		$parent_folder = EEH_File::get_parent_folder( $full_file_path );
 		if ( ! EEH_File::exists( $full_file_path )) {
+			if( ! EEH_File::ensure_folder_exists_and_is_writable( $parent_folder ) ) {
+				return false;
+			}
 			if ( ! $wp_filesystem->touch( $full_file_path )) {
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					$msg = sprintf( __( 'The "%s" file could not be created.', 'event_espresso' ), $full_file_path );
 					$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
 					throw new EE_Error( $msg );
 				}
-				return FALSE;
+				return false;
 			}
 		}
 		if ( ! EEH_File::verify_is_writable( $full_file_path, 'file' )) {
-			return FALSE;
+			return false;
 		}
-		return TRUE;
+		return true;
+	}
+	
+	/**
+	 * Gets the parent folder. If provided with file, gets the folder that contains it.
+	 * If provided a folder, gets its parent folder.
+	 * @param string $file_or_folder_path
+	 * @return string parent folder, ENDING with a directory separator
+	 */
+	public static function get_parent_folder( $file_or_folder_path ) {
+		//find the last DS, ignoring a DS on the very end
+		//eg if given "/var/something/somewhere/", we want to get "somewhere"'s
+		//parent folder, "/var/something/"
+		$ds = strrpos( $file_or_folder_path, DS, -2 );
+		return substr( $file_or_folder_path, 0, $ds + 1 );
+	}
+	
+	public static function ensure_folder_exists_recursively( $folder ) {
+		
 	}
 
 

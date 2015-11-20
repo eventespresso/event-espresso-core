@@ -187,7 +187,7 @@ class WP_Filesystem_MockEEFS extends WP_Filesystem_Base {
 	}
 
 	function dirlist( $path = '.', $include_hidden = true, $recursive = false ) {
-
+		$path = trailingslashit( $path );
 		if ( empty( $path ) || '.' == $path )
 			$path = $this->cwd();
 

@@ -110,6 +110,38 @@ class EEH_File_Test extends EE_UnitTestCase {
 		}
 
 	}
+	
+	/**
+	 * @group 9059
+	 * @global type $wp_filesystem
+	 */
+	function test_ensure_folder_exists_and_is_writable__recursive_folders() {
+		global $wp_filesystem;
+		$folder_path = '/test/new/thing';
+		// Test creation/exists checks
+		$this->assertFalse( $wp_filesystem->is_dir( $folder_path ) );
+		$this->assertTrue( EEH_File::ensure_folder_exists_and_is_writable( $folder_path ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new/' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing' ] ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing' ] ) );
+	}
+	
+	/**
+	 * @group 9059
+	 * @global type $wp_filesystem
+	 */
+	function test_ensure_file_exists_and_is_writable__recursive_folders() {
+		global $wp_filesystem;
+		$folder_path = '/test/new/thing.txt';
+		// Test creation/exists checks
+		$this->assertFalse( $wp_filesystem->is_dir( $folder_path ) );
+		$this->assertTrue( EEH_File::ensure_file_exists_and_is_writable( $folder_path ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new/' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing.txt' ] ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing.txt' ] ) );
+	}
 
 	/**
 	 * 
@@ -250,7 +282,8 @@ class EEH_File_Test extends EE_UnitTestCase {
 				'/var/something/',
 				EEH_File::get_parent_folder( '/var/something/somewhere/' ) );
 	}
-
+	
+	
 
 
 
