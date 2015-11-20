@@ -12,7 +12,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author				Mike Nelson
  *
  * Based off wp core's tests/phpunit/tests/filesystem/base.php
- * @group ignore
+ * 
  *
  */
 class EEH_File_Test extends EE_UnitTestCase {
@@ -44,6 +44,7 @@ class EEH_File_Test extends EE_UnitTestCase {
 	/**
 	 * Just makes sure we're really using the mock filesystem, not the real fileysstem
 	 * @global type $wp_filesystem
+	 * @group ignore
 	 */
 	function test_is_MockFS_sane() {
 		global $wp_filesystem;
@@ -60,6 +61,11 @@ class EEH_File_Test extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 * @group ignore
+	 */
 	public function test_verify_filepath_and_permissions(){
 		global $wp_filesystem;
 
@@ -79,6 +85,11 @@ class EEH_File_Test extends EE_UnitTestCase {
 
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 * @group ignore
+	 */
 	public function test_ensure_folder_exists_and_is_writable__and__is_writable(){
 		global $wp_filesystem;
 		$folder_path = '/test/';
@@ -102,6 +113,11 @@ class EEH_File_Test extends EE_UnitTestCase {
 
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 * @group ignore
+	 */
 	public function test_ensure_file_exists_and_is_writable(){
 		global $wp_filesystem;
 		$file_path = '/test.txt';
@@ -125,6 +141,11 @@ class EEH_File_Test extends EE_UnitTestCase {
 
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 * @group ignore
+	 */
 	public function test_get_file_contents(){
 		global $wp_filesystem;
 		$file_path = '/test.txt';
@@ -136,6 +157,11 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$this->assertEquals( $content, EEH_File::get_file_contents( $file_path ) );
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 * @group ignore
+	 */
 	public function test_write_to_file(){
 		global $wp_filesystem;
 		$wp_filesystem->chmod( '/', '755' );
@@ -174,6 +200,13 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$file_path = '/well\\this/isnt\\very/consistent';
 		$this->assertEquals( '/well/this/isnt/very/consistent/', EEH_File::standardise_and_end_with_directory_separator($file_path));
 	}
+	
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 * @group ignore
+	 * it looks like this method was rewritten in a way so it wouldn't work with wp filesystem and isn't unit testable
+	 */
 	public function test_get_contents_of_folders(){
 		global $wp_filesystem;
 		$wp_filesystem->mkdir('/test/');
@@ -186,6 +219,34 @@ class EEH_File_Test extends EE_UnitTestCase {
 					'EE_Thingy' => '/test/EE_Thingy.um.php',
 					'EEX_YEP' => '/test/EEX_YEP.fe.ss' ),
 				$classname_to_filepath_map );
+	}
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__barely() {
+		$uploads = wp_upload_dir();
+		$this->assertTrue( EEH_File::is_in_uploads_folder( $uploads[ 'basedir' ] ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__subfolder() {
+		$this->assertTrue( EEH_File::is_in_uploads_folder( EVENT_ESPRESSO_UPLOAD_DIR . 'mazurky' ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__elsewhere() {
+		$this->assertFalse( EEH_File::is_in_uploads_folder( '/var/somewhere/else/entirely' ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__elsewhere_but_tricky() {
+		$this->assertFalse( EEH_File::is_in_uploads_folder( '/not/uploads/dir/' . EVENT_ESPRESSO_UPLOAD_DIR ) );
 	}
 
 

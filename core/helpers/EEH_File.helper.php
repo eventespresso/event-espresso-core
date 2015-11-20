@@ -523,6 +523,16 @@ class EEH_File extends EEH_Base {
 		}
 		return TRUE;
 	}
+	
+	/**
+	 * Reports whether or not the filepath is in the EE uploads folder or not
+	 * @param string $filepath
+	 * @return boolean
+	 */
+	public static function is_in_uploads_folder( $filepath ) {
+		$uploads = wp_upload_dir();
+		return strpos( $filepath, $uploads[ 'basedir' ] ) === 0 ? true : false;
+	}
 }
 // End of file EEH_File.helper.php
 // Location: /helpers/EEH_File.helper.php
