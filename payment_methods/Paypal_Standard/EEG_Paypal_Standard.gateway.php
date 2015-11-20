@@ -163,16 +163,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				0, 127
 			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
-
-			//if we aren't allowing PayPal to calculate shipping, set it to 0
-			if( ! $this->_paypal_shipping ) {
-				$redirect_args['shipping_' . $item_num ] = '0';
-				$redirect_args['shipping2_' . $item_num ] = '0';
-			}
-			//should we allow paypal to calculate taxes?
-			if( ! $this->_paypal_taxes ) {
-				$redirect_args['tax_cart'] = '0';
-			}
+			$redirect_args['shipping_' . $item_num ] = '0';
+			$redirect_args['shipping2_' . $item_num ] = '0';
+			$redirect_args['tax_cart'] = '0';
 			$item_num++;
 		}
 
