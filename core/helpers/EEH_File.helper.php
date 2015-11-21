@@ -119,7 +119,7 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		$full_file_path = EEH_File::standardise_directory_separators( $full_file_path );
-		if ( ! $wp_filesystem->is_readable( $full_file_path )) {
+		if ( ! $wp_filesystem->is_readable( EEH_File::convert_local_filepath_to_remote_filepath( $full_file_path ) )) {
 			$file_name = ! empty( $type_of_file ) ? $file_name . ' ' . $type_of_file : $file_name;
 			$file_name .= ! empty( $file_ext ) ? ' file' : ' folder';
 			$msg = sprintf(
@@ -158,7 +158,7 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		// check file permissions
-		$perms = $wp_filesystem->getchmod( $full_file_path );
+		$perms = $wp_filesystem->getchmod( EEH_File::convert_local_filepath_to_remote_filepath( $full_file_path ) );
 		if ( $perms ) {
 			// file permissions exist, but way be set incorrectly
 			$type_of_file = ! empty( $type_of_file ) ? $type_of_file . ' ' : '';
@@ -199,7 +199,7 @@ class EEH_File extends EEH_Base {
 		// add DS to folder
 		$folder = EEH_File::end_with_directory_separator( $folder );
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $folder );
-		if ( ! $wp_filesystem->is_dir( $folder )) {
+		if ( ! $wp_filesystem->is_dir( EEH_File::convert_local_filepath_to_remote_filepath( $folder ) ) ) {
 			//ok so it doesn't exist. Does its parent? Can we write to it?
 			if(	! EEH_File::ensure_folder_exists_and_is_writable( $parent_folder ) ) {
 				return false;
@@ -207,7 +207,7 @@ class EEH_File extends EEH_Base {
 			if ( ! EEH_File::verify_is_writable( $parent_folder, 'folder' )) {
 				return false;
 			} else {
-				if ( ! $wp_filesystem->mkdir( $folder )) {
+				if ( ! $wp_filesystem->mkdir( EEH_File::convert_local_filepath_to_remote_filepath(  $folder ) ) ) {
 					if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 						$msg = sprintf( __( '"%s" could not be created.', 'event_espresso' ), $folder );
 						$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $folder );
@@ -236,7 +236,7 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_path );
 		$full_path = EEH_File::standardise_directory_separators( $full_path );
-		if ( ! $wp_filesystem->is_writable( $full_path )) {
+		if ( ! $wp_filesystem->is_writable( EEH_File::convert_local_filepath_to_remote_filepath( $full_path ) ) ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$msg = sprintf( __( 'The "%1$s" %2$s is not writable.', 'event_espresso' ), $full_path, $file_or_folder );
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_path );
@@ -266,7 +266,7 @@ class EEH_File extends EEH_Base {
 			if( ! EEH_File::ensure_folder_exists_and_is_writable( $parent_folder ) ) {
 				return false;
 			}
-			if ( ! $wp_filesystem->touch( $full_file_path )) {
+			if ( ! $wp_filesystem->touch( EEH_File::convert_local_filepath_to_remote_filepath( $full_file_path ) ) ) {
 				if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 					$msg = sprintf( __( 'The "%s" file could not be created.', 'event_espresso' ), $full_file_path );
 					$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path );
@@ -311,7 +311,7 @@ class EEH_File extends EEH_Base {
 		if ( EEH_File::verify_filepath_and_permissions( $full_file_path, EEH_File::get_filename_from_filepath( $full_file_path ) , EEH_File::get_file_extension( $full_file_path ))) {
 			// load WP_Filesystem and set file permissions
 			$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
-			return $wp_filesystem->get_contents( $full_file_path );
+			return $wp_filesystem->get_contents(EEH_File::convert_local_filepath_to_remote_filepath( $full_file_path ) );
 		}
 		return '';
 	}
@@ -341,7 +341,7 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
 		// write the file
-		if ( ! $wp_filesystem->put_contents( $full_file_path, $file_contents )) {
+		if ( ! $wp_filesystem->put_contents(EEH_File::convert_local_filepath_to_remote_filepath( $full_file_path ), $file_contents )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$msg = sprintf( __( 'The %1$sfile located at "%2$s" could not be written to.', 'event_espresso' ), $file_type, $full_file_path );
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_file_path, 'f' );
@@ -363,7 +363,7 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function exists( $full_file_path = '' ) {
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
-		return $wp_filesystem->exists( $full_file_path ) ? TRUE : FALSE;
+		return $wp_filesystem->exists( EEH_File::convert_local_filepath_to_remote_filepath( $full_file_path ) ) ? TRUE : FALSE;
 	}
 
 
@@ -377,7 +377,11 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function is_readable( $full_file_path = '' ) {
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $full_file_path );
-		return $wp_filesystem->is_readable( $full_file_path ) ? TRUE : FALSE;
+		if( $wp_filesystem->is_readable( EEH_File::convert_local_filepath_to_remote_filepath(  $full_file_path ) ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 
@@ -562,7 +566,10 @@ class EEH_File extends EEH_Base {
 		// load WP_Filesystem and set file permissions
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $destination_file );
 		// write the file
-		if ( ! $wp_filesystem->copy( $full_source_path, $full_dest_path, $overwrite )) {
+		if ( ! $wp_filesystem->copy( 
+						EEH_File::convert_local_filepath_to_remote_filepath( $full_source_path ), 
+						EEH_File::convert_local_filepath_to_remote_filepath( $full_dest_path ), 
+						$overwrite )) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				$msg = sprintf( __( 'Attempted writing to file %1$s, but could not, probably because of permissions issues', 'event_espresso' ), $full_source_path );
 				$msg .= EEH_File::_permissions_error_for_unreadable_filepath( $full_source_path, 'f' );
@@ -596,8 +603,7 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function convert_local_filepath_to_remote_filepath( $local_filepath ) {
 		$wp_filesystem = EEH_File::_get_wp_filesystem( $local_filepath );
-		$uploads = wp_upload_dir();
-		return str_replace( $uploads[ 'basedir' ], $wp_filesystem->wp_content_dir(), $local_filepath );
+		return str_replace( WP_CONTENT_DIR . DS, $wp_filesystem->wp_content_dir(), $local_filepath );
 	}
 }
 // End of file EEH_File.helper.php
