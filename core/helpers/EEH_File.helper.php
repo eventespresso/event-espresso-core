@@ -582,6 +582,23 @@ class EEH_File extends EEH_Base {
 		$uploads = wp_upload_dir();
 		return strpos( $filepath, $uploads[ 'basedir' ] ) === 0 ? true : false;
 	}
+	
+	/**
+	 * Given a "local" filepath (what you probably thought was the only filepath),
+	 * converts it into a "remote" filepath (the filepath the currently-in-use 
+	 * $wp_filesystem needs to use access the folder or file).
+	 * See http://wordpress.stackexchange.com/questions/124900/using-wp-filesystem-in-plugins
+	 * @param WP_Filesystem_Base $wp_filesystem we aren't initially sure which one
+	 * is in use, so you need to provide it
+	 * @param string $local_filepath the filepath to the folder/file locally
+	 * @return string the remote filepath (eg the filepath the filesystem method, eg 
+	 * ftp or ssh, will use to access the folder
+	 */
+	public static function convert_local_filepath_to_remote_filepath( $local_filepath ) {
+		$wp_filesystem = EEH_File::_get_wp_filesystem( $local_filepath );
+		$uploads = wp_upload_dir();
+		return str_replace( $uploads[ 'basedir' ], $wp_filesystem->wp_content_dir(), $local_filepath );
+	}
 }
 // End of file EEH_File.helper.php
 // Location: /helpers/EEH_File.helper.php
