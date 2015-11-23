@@ -1171,7 +1171,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 } //end class Events_Admin_Page
 
-require_once ABSPATH . 'wp-admin/includes/template.php';
+/*
+// Walker_Radio_Checklist isn't used anywhere in EE4 core currently, commenting out for now
+// The version check was added to make sure Walker_Category_Checklist class is available
+global $wp_version;
+if ( $wp_version >= 4.4 ){
+	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php'; 
+} else {
+	require_once ABSPATH . 'wp-admin/includes/template.php';
+}
+
 class Walker_Radio_Checklist extends Walker_Category_Checklist {
 
 	function start_el( &$output, $category, $depth = 0, $args = array(), $id = 0 ) {
@@ -1188,3 +1197,4 @@ class Walker_Radio_Checklist extends Walker_Category_Checklist {
 		$output .= "\n<li id='{$taxonomy}-{$category->term_id}'$class>" . '<label class="selectit"><input value="' . $category->term_id . '" type="radio" name="'.$name.'[]" id="in-'.$taxonomy.'-' . $category->term_id . '"' . checked( in_array( $category->term_id, $selected_cats ), true, false ) . disabled( empty( $args['disabled'] ), false, false ) . ' /> ' . esc_html( apply_filters('the_category', $category->name )) . '</label>';
 	}
 }
+*/
