@@ -1,21 +1,6 @@
 <?php if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
-/**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
 
 /**
  * EE_Event
@@ -65,6 +50,67 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
+	}
+
+
+
+	/**
+	 * Overrides parent set() method so that all calls to set( 'status', $status ) can be routed to internal methods
+	 *
+	 * @param string $field_name
+	 * @param mixed  $field_value
+	 * @param bool   $use_default
+	 */
+	public function set( $field_name, $field_value, $use_default = false ) {
+		switch ( $field_name ) {
+			case 'status' :
+				$this->set_status( $field_value, $use_default );
+				break;
+			default :
+				parent::set( $field_name, $field_value, $use_default );
+		}
+	}
+
+
+
+	/**
+	 *    set_status
+	 *
+	 * Checks if event status is being changed to SOLD OUT
+	 * and updates event meta data with previous event status
+	 * so that we can revert things if/when the event is no longer sold out
+	 *
+	 * @access public
+	 * @param string $new_status
+	 * @param bool   $use_default
+	 * @return bool|void
+	 * @throws \EE_Error
+	 */
+	public function set_status( $new_status = null, $use_default = false ) {
+		// get current Event status
+		$old_status = $this->status();
+		// if status has changed
+		if ( $old_status != $new_status ) {
+			// TO sold_out
+			if ( $new_status == EEM_Event::sold_out ) {
+				// save the previous event status so that we can revert if the event is no longer sold out
+				$this->add_post_meta( 'previous_event_status', $old_status );
+				do_action( 'AHEE__EE_Event__set_status__to_sold_out', $this, $old_status, $new_status );
+				// OR FROM  sold_out
+			} else if ( $old_status == EEM_Event::sold_out ) {
+				$this->delete_post_meta( 'previous_event_status' );
+				do_action( 'AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status );
+			}
+			// update status
+			parent::set( 'status', $new_status, $use_default );
+			do_action( 'AHEE__EE_Event__set_status__after_update', $this );
+			return true;
+		} else {
+			// even though the old value matches the new value, it's still good to
+			// allow the parent set method to have a say
+			parent::set( 'status', $new_status, $use_default );
+			return true;
+		}
 	}
 
 
@@ -704,9 +750,16 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				$this->save();
 			}
 			$sold_out = TRUE;
-		}
-		else {
+		} else {
 			$sold_out = FALSE;
+			// was event previously marked as sold out ?
+			if ( $this->status() == EEM_Event::sold_out ) {
+				// revert status to previous value, if it was set
+				$previous_event_status = $this->get_post_meta( 'previous_event_status', true );
+				if ( $previous_event_status ) {
+					$this->set_status( $previous_event_status );
+				}
+			}
 		}
 		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out.
 		// So I'll forgo the automatic switch away from sold out status for now and instead just return the $sold out status... so this check can be used to validate the TRUE sold out status regardless of what the Event status is set to.
