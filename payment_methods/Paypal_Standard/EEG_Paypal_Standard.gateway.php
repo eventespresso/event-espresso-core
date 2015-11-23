@@ -152,7 +152,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
 			}
 			//add our taxes to the order if we're NOT using PayPal's
-			//or if someone marked these tickets as taxable
 			if( ! $this->_paypal_taxes ){
 				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 			}
@@ -458,8 +457,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
                             floatval( $update_info['tax'] ),
                             __( 'Taxes', 'event_espresso' ),
                             __( 'Calculated by Paypal', 'event_espresso' ),
-                            'paypal_tax',
-                            true
+                            'paypal_tax'
                     );
                     $grand_total_needs_resaving = TRUE;
 		}
@@ -469,12 +467,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( $this->_paypal_shipping && $shipping_amount ){
 			$this->_line_item->add_unrelated_item(
 				$transaction->total_line_item(),
-				sprintf( __('Shipping for payment %1$s', 'event_espresso'), $payment->ID() ),
+				sprintf( __('Shipping for transaction %1$s', 'event_espresso'), $transaction->ID() ),
 				$shipping_amount,
 				__('Shipping charges calculated by Paypal', 'event_espresso'),
 				1,
 				false,
-				'paypal_shipping_' . $payment->ID()
+				'paypal_shipping_' . $transaction->ID()
 			);
 			$grand_total_needs_resaving = true;
 		}
