@@ -115,6 +115,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						$itemized_sum += $line_item->total();
 						continue;
 					}
+					//dont include shipping again.
+					if( strpos( $line_item->code(), 'paypal_shipping_') === 0 ) {
+						continue;
+					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
 						sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
 						0, 127
