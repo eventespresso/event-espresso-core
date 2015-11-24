@@ -86,128 +86,132 @@ class EEM_Status extends EEM_Base {
 	     	EEM_Registration::status_id_pending_payment => array(
 				__('pending payment', 'event_espresso'), //singular
 				__('pending payments', 'event_espresso') //plural
-				),
+			),
 	  		EEM_Registration::status_id_approved => array(
 	  			__('approved', 'event_espresso'), //singular
 	  			__('approved', 'event_espresso') //plural
-	  			),
+  			),
 	  		EEM_Registration::status_id_not_approved => array(
 	  			__('not approved', 'event_espresso'),
 	  			__('not approved', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Registration::status_id_cancelled => array(
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Registration::status_id_incomplete => array(
 	  			__('incomplete', 'event_espresso'),
 	  			__('incomplete', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Registration::status_id_declined => array(
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Transaction::overpaid_status_code => array(
 	  			__('overpaid', 'event_espresso'),
 	  			__('overpaid', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Transaction::complete_status_code => array(
 	  			__('complete', 'event_espresso'),
 	  			__('complete', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Transaction::incomplete_status_code => array(
 	  			__('incomplete', 'event_espresso'),
 	  			__('incomplete', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Transaction::failed_status_code => array(
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Transaction::abandoned_status_code => array(
 	  			__('abandoned', 'event_espresso'),
 	  			__('abandoned', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Payment::status_id_approved => array(
 	  			__('accepted', 'event_espresso'),
 	  			__('accepted', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Payment::status_id_pending => array(
 	  			__('pending', 'event_espresso'),
 	  			__('pending', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Payment::status_id_cancelled => array(
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Payment::status_id_declined => array(
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Payment::status_id_failed => array(
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
-	  			),
+  			),
 	  		//following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
 	  		EEM_Event::sold_out => array(
 	  			__('sold out', 'event_espresso'),
 	  			__('sold out', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Event::postponed => array(
 	  			__('postponed', 'event_espresso'),
 	  			__('Postponed', 'event_espresso')
-	  			),
+  			),
 	  		EEM_Event::cancelled => array(
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
-	  			),
+  			),
 	  		EE_Ticket::archived => array(
 	  			__('archived', 'event_espresso'),
 	  			__('archived', 'event_espresso')
-	  			),
+  			),
 	  		EE_Ticket::expired => array(
 	  			__('expired', 'event_espresso'),
 	  			__('expired', 'event_espresso')
-	  			),
+  			),
 	  		EE_Ticket::sold_out => array(
 	  			__('sold out', 'event_espresso'),
 	  			__('sold out', 'event_espresso')
-	  			),
+  			),
 	  		EE_Ticket::pending => array(
 	  			__('upcoming', 'event_espresso'),
 	  			__('upcoming', 'event_espresso')
-	  			),
+  			),
 	  		EE_Ticket::onsale => array(
 	  			__('on sale', 'event_espresso'),
 	  			__('on sale', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::cancelled => array(
 	  			__('cancelled', 'event_espresso'),
 	  			__('cancelled', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::sold_out => array(
 	  			__('sold out', 'event_espresso'),
 	  			__('sold out', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::expired => array(
 	  			__('expired', 'event_espresso'),
 	  			__('expired', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::inactive => array(
 	  			__('inactive', 'event_espresso'),
 	  			__('inactive', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::upcoming => array(
 	  			__('upcoming', 'event_espresso'),
 	  			__('upcoming', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::active => array(
 	  			__('active', 'event_espresso'),
 	  			__('active', 'event_espresso')
-	  			),
+  			),
 	  		EE_Datetime::postponed => array(
 	  			__('postponed', 'event_espresso'),
 	  			__('postponed', 'event_espresso')
-	  			)
+  			),
+	  		'publish' => array(
+	  			__('published', 'event_espresso'),
+	  			__('published', 'event_espresso')
+  			)
 	    );
 
 		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
