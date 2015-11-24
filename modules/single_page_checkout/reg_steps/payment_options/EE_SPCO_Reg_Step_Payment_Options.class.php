@@ -196,7 +196,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// loop thru registrations to gather info
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		foreach ( $registrations as $registration ) {
-			//echo '<h3 style="color:#E76700;line-height:1em;">' . $registration->ID() . '<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h3>';
 			/** @var $registration EE_Registration */
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
@@ -260,14 +259,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			//EEH_Line_Item::visualize( $filtered_line_item_tree );
 			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
 			$this->checkout->amount_owing = $filtered_line_item_tree->total();
-
 			if ( $this->checkout->amount_owing > 0 ) {
 				EEH_Autoloader::register_line_item_display_autoloaders();
 				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
 				$subsections[ 'payment_options' ] = $this->_display_payment_options(
-					$this->line_item_display->display_line_item( $filtered_line_item_tree )
+					$this->line_item_display->display_line_item(
+						$filtered_line_item_tree,
+						array( 'registrations' => $registrations )
+					)
 				);
-				$this->_apply_transaction_payments_to_amount_owing();
+				$this->checkout->amount_owing = $this->line_item_display->grand_total();
 			}
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
@@ -532,25 +533,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			)
 		);
 
-	}
-
-
-
-	/**
-	 *    _apply_transaction_payments_to_amount_owing
-	 *
-	 * @access    protected
-	 * @return 	void
-	 */
-	protected function _apply_transaction_payments_to_amount_owing() {
-		$payments = $this->checkout->transaction->approved_payments();
-		if ( ! empty( $payments ) ) {
-			foreach ( $payments as $payment ) {
-				if ( $payment instanceof EE_Payment ) {
-					$this->checkout->amount_owing -= $payment->amount();
-				}
-			}
-		}
 	}
 
 
