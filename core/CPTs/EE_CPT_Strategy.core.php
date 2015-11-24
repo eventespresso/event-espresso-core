@@ -78,7 +78,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_CPT_Strategy )) {
+		if ( ! self::$_instance instanceof EE_CPT_Strategy ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -100,7 +100,7 @@ class EE_CPT_Strategy extends EE_BASE {
 //		d( $this->_CPTs );
 //		d( $this->_CPT_endpoints );
 //		d( $this->_CPT_taxonomies );
-		// load EE_Request_Handler
+
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
 
@@ -287,10 +287,11 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return void
 	 */
 	public function pre_get_posts( $WP_Query ) {
-		// check that postz-type is set
+		// check that post-type is set
 		if ( ! $WP_Query instanceof WP_Query ) {
 			return;
 		}
+
 		// add our conditionals
 		$this->_set_EE_tags_on_WP_Query( $WP_Query );
 		// check for terms
@@ -337,6 +338,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( isset( $WP_Query->query_vars['post_type'] )) {
 			// loop thru post_types as array
 			foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
+
 				// is current query for an EE CPT ?
 				if ( isset( $this->_CPTs[ $post_type ] )) {
 					// is EE on or off ?
@@ -347,6 +349,8 @@ class EE_CPT_Strategy extends EE_BASE {
 						}
 						return;
 					}
+					// load EE_Request_Handler (this was added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/9037
+					EE_Registry::instance()->load_core( 'Request_Handler' );						
 					// grab details for the CPT the current query is for
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type

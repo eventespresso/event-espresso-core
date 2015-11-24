@@ -1208,12 +1208,11 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
-				EVENT_ESPRESSO_UPLOAD_DIR,
 				EVENT_ESPRESSO_TEMPLATE_DIR,
 				EVENT_ESPRESSO_GATEWAY_DIR,
-				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
+				EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/'
 		);
 		foreach ( $folders as $folder ) {
 			try {

@@ -2143,6 +2143,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				}
 				break;
 			case 'questions' :
+				if( ! isset( $this->_req_data[ 'txn_reg_status_change' ], $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ] ) ) {
+					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
+				}
 				//process registration
 				$transaction = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
 				if ( ! $transaction instanceof EE_Transaction ) {
@@ -2211,9 +2214,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_attendees( $per_page, $count = FALSE, $trash = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		// start with an empty array
-		$attendees = array();
-
 		require_once( REG_ADMIN . 'EE_Attendee_Contact_List_Table.class.php' );
 		$ATT_MDL = EEM_Attendee::instance();
 
