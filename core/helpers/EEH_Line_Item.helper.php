@@ -356,11 +356,11 @@ class EEH_Line_Item {
 				  $ticket_line_item->name(),
 				  current_time( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) )
 			  ),
-			  'LIN_unit_price' => $ticket_line_item->unit_price(),
+			  'LIN_unit_price' => 0, // $ticket_line_item->unit_price()
 			  'LIN_quantity'   => $qty,
 			  'LIN_is_taxable' => $ticket_line_item->is_taxable(),
 			  'LIN_order'      => count( $ticket_line_item->children() ),
-			  'LIN_total'      => $ticket_line_item->unit_price(),
+			  'LIN_total'      => 0, // $ticket_line_item->unit_price()
 			  'LIN_type'       => EEM_Line_Item::type_cancellation,
 		  ) );
 		}
