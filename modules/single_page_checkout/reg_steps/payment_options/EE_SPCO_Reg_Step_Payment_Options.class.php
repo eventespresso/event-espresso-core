@@ -244,7 +244,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
 		}
 		if ( ! empty( $registrations_requiring_payment ) ) {
-			//EEH_Debug_Tools::printr( $registrations_requiring_payment, '$registrations_requiring_payment', __FILE__, __LINE__ );
 			// autoload Line_Item_Display classes
 			EEH_Autoloader::register_line_item_filter_autoloaders();
 			$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
@@ -255,10 +254,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->cart->get_grand_total()
 			);
 			$filtered_line_item_tree = $line_item_filter_processor->process();
-			//echo "\n<br />";
-			//EEH_Line_Item::visualize( $filtered_line_item_tree );
-			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
-			$this->checkout->amount_owing = $filtered_line_item_tree->total();
 			if ( $this->checkout->amount_owing > 0 ) {
 				EEH_Autoloader::register_line_item_display_autoloaders();
 				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
@@ -268,7 +263,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						array( 'registrations' => $registrations )
 					)
 				);
-				$this->checkout->amount_owing = $this->line_item_display->grand_total();
+				$this->checkout->amount_owing = $filtered_line_item_tree->total();
+				$this->_apply_registration_payments_to_amount_owing( $registrations );
 			}
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
@@ -535,6 +531,29 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	}
 
+
+
+	/**
+	 *    _apply_registration_payments_to_amount_owing
+	 *
+	 * @access    protected
+	 * @return    void
+	 */
+	protected function _apply_registration_payments_to_amount_owing( $registrations ) {
+		$payments = array();
+		foreach ( $registrations as $registration ) {
+			if ( $registration instanceof EE_Registration && $registration->owes_monies_and_can_pay() ) {
+				$payments = $payments + $registration->registration_payments();
+			}
+		}
+		if ( ! empty( $payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( $payment instanceof EE_Registration_Payment ) {
+					$this->checkout->amount_owing -= $payment->amount();
+				}
+			}
+		}
+	}
 
 
 	/**
