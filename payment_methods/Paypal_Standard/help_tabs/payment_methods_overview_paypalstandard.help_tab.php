@@ -22,7 +22,7 @@
 <li>
 <strong><?php _e('PayPal Calculates Taxes', 'event_espresso'); ?></strong><br />
 <?php printf( __('If set to "Yes", we will indicate to PayPal that it ought to calculate the taxes on the order and add it. This means PayPal\'s tax calculations will be used on the order instead of Event Espresso\'s. %1$sRead here for more information.%2$s', 'event_espresso'), "<a href='https://www.paypal.com/ca/cgi-bin/webscr?cmd=xpt/Marketing/shipping/EasyCalculateShipAndTax-outside' target='_blank'>", '</a>' ); ?><br/>
-<?php _e( 'Important Note: PayPal will only charge taxes if Event Espresso hasn\'t already added taxes onto the order, so do not mark tickets as taxable by Event Espresso if you want Paypal to do it.', 'event_espresso' );?>
+<?php _e( 'Note: It may confuse users if Event Espresso initially calculates taxes on the order, and then they go to PayPal and it calculates taxes differently. So it is recommended that if PayPal is calculating taxes, that you do not set any taxes in Event Espresso.', 'event_espresso' );?>
 </li>
 <li>
 <strong><?php _e('PayPal Calculates Shipping', 'event_espresso'); ?></strong><br />
@@ -31,7 +31,8 @@
 <li>
 <strong><?php _e( 'Notes Regarding Paypal Taxes and Shipping', 'event_espresso' );?></strong><br/>
 <?php _e( 'If you want PayPal to calculate taxes and shipping on an order, those changes will NOT appear during the initial registration process until the user is redirected to PayPal for payment.', 'event_espresso' );?><br/>
-<?php _e( 'However, after the user has returned from PayPal, their order in Event Espresso will be updated with the new taxes and added shipping charges (e.g. it will appear on their receipt.)', 'event_espresso' );?>
+<?php _e( 'However, after the user has returned from PayPal, their order in Event Espresso will be updated with the new taxes and added shipping charges (e.g. it will appear on their receipt.)', 'event_espresso' );?><br/>
+<?php _e( 'Also Note: In order for PayPal to properly calculate taxes and shipping, they need to receive the entire order at the same time. So if a user goes to make a payment using PayPal, and their order somehow already has a payment on it, PayPal CANNOT calculate taxes or shipping on that order.', 'event_espresso' );?>
 </li>
 <li>
 <strong><?php _e('Shipping Address Options', 'event_espresso'); ?></strong><br />
