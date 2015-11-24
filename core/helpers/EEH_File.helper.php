@@ -13,7 +13,7 @@
  *
  */
 require_once( EE_HELPERS . 'EEH_Base.helper.php' );
-require_once( EE_CORE . 'EEI_Interfaces.php' );
+require_once( EE_INTERFACES . 'EEI_Interfaces.php' );
 /**
  *
  * Class EEH_File
