@@ -94,11 +94,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			// TO sold_out
 			if ( $new_status == EEM_Event::sold_out ) {
 				// save the previous event status so that we can revert if the event is no longer sold out
-				$this->add_post_meta( 'previous_event_status', $old_status );
+				$this->add_post_meta( '_previous_event_status', $old_status );
 				do_action( 'AHEE__EE_Event__set_status__to_sold_out', $this, $old_status, $new_status );
 				// OR FROM  sold_out
 			} else if ( $old_status == EEM_Event::sold_out ) {
-				$this->delete_post_meta( 'previous_event_status' );
+				$this->delete_post_meta( '_previous_event_status' );
 				do_action( 'AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status );
 			}
 			// update status
@@ -755,7 +755,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			// was event previously marked as sold out ?
 			if ( $this->status() == EEM_Event::sold_out ) {
 				// revert status to previous value, if it was set
-				$previous_event_status = $this->get_post_meta( 'previous_event_status', true );
+				$previous_event_status = $this->get_post_meta( '_previous_event_status', true );
 				if ( $previous_event_status ) {
 					$this->set_status( $previous_event_status );
 				}
