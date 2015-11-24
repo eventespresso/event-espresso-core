@@ -79,6 +79,60 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertEquals( 2, $rargs[ 'rm' ] );//makes the user return with method=POST
 		$this->assertEquals( 1, $rargs[ 'no_shipping'] );
 	}
+	
+	/**
+	 * @group current
+	 */
+	public function test_set_redirection_info__with_paypal_taxes_and_shipping(){
+		//make sure paypal gateway is included
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
+		$ppg = $ppm->type_obj()->get_gateway();
+		$ppg->set_settings(array(
+			'paypal_id' => $this->_paypal_id,
+			'paypal_taxes' => TRUE,
+			'paypal_shipping' => TRUE
+		));
+		$t = $this->new_typical_transaction( 
+				array( 
+					'ticket_types' => 2,
+					'taxable_tickets' => 1) );
+		$original_txn_total = $t->total();
+		//pretend we previous used paypal to make a payment.
+		EEH_Line_Item::add_unrelated_item( 
+				$t->total_line_item(), 
+				'Shipping', 
+				8, 
+				'some shipping', 
+				1, 
+				false, 
+				'paypal_shipping_' . $t->ID() );
+		EEH_Line_Item::set_total_tax_to( $t->total_line_item(), 4, 'paypal taxes', 'paypal did thi', 'paypal_tax', false );
+		$t->total_line_item()->save_this_and_descendants_to_txn( $t->ID() );
+		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+		$registration_processor->update_registration_final_prices( $t );
+		
+		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
+		$this->assertEmpty( $p->redirect_url() );
+		//set redirection info; we should ignore previously-added paypal tax and shipping
+		//(so paypal can add calculate them again when we send them)
+		$p = $ppg->set_redirection_info( $p, NULL, self::return_url, self::notify_url, self::cancel_url );
+		$this->assertNotEmpty( $p->redirect_url() );
+		$this->assertEquals( self::paypal_url, $p->redirect_url() );
+		$this->assertNotEmpty( $p->redirect_args() );
+		$rargs = $p->redirect_args();
+		$items_purchased = $t->items_purchased();
+		$first_item = array_shift( $items_purchased );
+		$second_item = array_shift( $items_purchased );
+		$this->assertEquals( sprintf( '%s for %s', $first_item->ticket()->name(), $first_item->ticket_event_name() ), $rargs[ 'item_name_1' ] );
+		$this->assertEquals( $first_item->ticket()->price(), $rargs[ 'amount_1' ] );
+		$this->assertEquals( sprintf( '%s for %s', $second_item->ticket()->name(), $second_item->ticket_event_name() ), $rargs[ 'item_name_2' ] );
+		$this->assertEquals( $second_item->ticket()->price(), $rargs[ 'amount_2' ] );
+		$this->assertEquals( 1, $rargs[ 'quantity_1' ] );
+		//we shouldn't have told paypal how much tax to add. Let paypal decide.
+		$this->assertFalse( isset( $rargs[ 'tax_cart' ] ) );
+		//there should be no 3rd item for shipping
+		$this->assertFalse( isset( $rargs[ 'amount_3' ] ) );
+	}
 	//@todo test ipn with different tax and shipping
 	public function test_handle_payment_update(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );
@@ -396,7 +450,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertNotEquals( $old_tax_total, $t->tax_total(), 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total was updated' );
 		$this->assertEquals( $tax_in_1st_ipn, $t->tax_total() );
                 $pre_tax_total = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
-                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $p->ID() );
+                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $t->ID() );
                 $this->assertEquals( $ship_in_1st_ipn, $shipping1_line_item->total() );
 		
                 //ok now let's pretend they made another payment via paypal and added more onto the taxes. 
@@ -414,12 +468,10 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
                                 'mc_shipping' => "$ship_in_2nd_ipn")) );
                 $ppg->update_txn_based_on_payment( $p2 );
                 //assert that the total tax is now the SUM of both IPN's tax amounts
-                $this->assertEquals( $tax_in_1st_ipn + $tax_in_2nd_ipn, $t->tax_total() );
+                $this->assertEquals( $tax_in_2nd_ipn, $t->tax_total() );
                 //verify the old shipping is still there
-                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $p->ID() );
-                $this->assertEquals( $ship_in_1st_ipn, $shipping1_line_item->total() );
-                $shipping2_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $p2->ID() );
-                $this->assertEquals( $ship_in_2nd_ipn, $shipping2_line_item->total() );
+                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $t->ID() );
+                $this->assertEquals( $ship_in_2nd_ipn, $shipping1_line_item->total() );
 	}
 
 

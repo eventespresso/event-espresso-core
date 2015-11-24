@@ -106,6 +106,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//this payment is for the remaining transaction amount,
 			//keep track of exactly how much the itemized order amount equals
 			$itemized_sum = 0;
+			$shipping_previously_added = 0;
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
@@ -117,6 +118,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 					}
 					//dont include shipping again.
 					if( strpos( $line_item->code(), 'paypal_shipping_') === 0 ) {
+						$shipping_previously_added = $line_item->total();
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
@@ -135,17 +137,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				}
 			}
 			$taxes_li = $this->_line_item->get_taxes_subtotal( $total_line_item );
-			$itemized_sum += $taxes_li->total();
 			//ideally itemized sum equals the transaction total. but if not (which is weird)
 			//and the itemized sum is LESS than the transaction total
 			//add another line item
 			//if the itemized sum is MORE than the transaction total,
 			//add the difference it to the discounts
-			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum;
-			if( $transaction->total() < $itemized_sum ) {
+			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added;
+			if( $itemized_sum_diff_from_txn_total < 0 ) {
 				//itemized sum is too big
 				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
-			} elseif( $transaction->total() > $itemized_sum ) {
+			} elseif( $itemized_sum_diff_from_txn_total > 0 ) {
 				$redirect_args[ 'item_name_' . $item_num ] = substr(
 						__( 'Other charges', 'event_espresso' ), 0, 127 );
 				$redirect_args[ 'amount_' . $item_num ] = $itemized_sum_diff_from_txn_total;
@@ -466,7 +467,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
                     $grand_total_needs_resaving = TRUE;
 		}
 
-                $shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
+		$shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
 		if( $this->_paypal_shipping && $shipping_amount ){
 			$this->_line_item->add_unrelated_item(
