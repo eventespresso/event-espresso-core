@@ -208,10 +208,30 @@ class EEM_Status extends EEM_Base {
 	  			__('postponed', 'event_espresso'),
 	  			__('postponed', 'event_espresso')
   			),
-	  		'publish' => array(
+			EEM_CPT_Base::post_status_publish => array(
 	  			__('published', 'event_espresso'),
 	  			__('published', 'event_espresso')
-  			)
+  			),
+			EEM_CPT_Base::post_status_future => array(
+	  			__('scheduled', 'event_espresso'),
+	  			__('scheduled', 'event_espresso')
+  			),
+			EEM_CPT_Base::post_status_draft => array(
+	  			__('draft', 'event_espresso'),
+	  			__('draft', 'event_espresso')
+  			),
+			EEM_CPT_Base::post_status_pending => array(
+	  			__('pending', 'event_espresso'),
+	  			__('pending', 'event_espresso')
+  			),
+			EEM_CPT_Base::post_status_private => array(
+	  			__('private', 'event_espresso'),
+	  			__('private', 'event_espresso')
+  			),
+			EEM_CPT_Base::post_status_trashed => array(
+	  			__('trashed', 'event_espresso'),
+	  			__('trashed', 'event_espresso')
+  			),
 	    );
 
 		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
