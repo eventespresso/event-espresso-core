@@ -305,6 +305,7 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		));
 		$t = $this->new_typical_transaction();
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
+		$p->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true );
 		$old_pretax_total = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() )->total();
 		$old_taxable_total = $t->total_line_item()->taxable_total();
 		$this->assertNotEmpty( $old_taxable_total );
@@ -440,38 +441,40 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
                                 'mc_shipping' => "$ship_in_1st_ipn",//IMPORTANT
                             ),
                         ) );
+		$p->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
+		//taxes shouldn't have been changed, despite whatever paypal says, because
+		//we didnt send them an itemized total so they cant have calculated taxes right anyways
+		$this->assertNotEquals( $tax_in_1st_ipn, $old_tax_total, 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total wasnt updated' );
 		
-		//if the old tax matches what's going to be in the IPN data, we can't verify the IPN data
-		//updated the tax can we?
-		$this->assertNotEquals( $tax_in_1st_ipn, $old_tax_total );
 		
 		$ppg->update_txn_based_on_payment( $p );
-		//check the new tax is correct
-		$this->assertNotEquals( $old_tax_total, $t->tax_total(), 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total was updated' );
-		$this->assertEquals( $tax_in_1st_ipn, $t->tax_total() );
-                $pre_tax_total = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
-                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $t->ID() );
-                $this->assertEquals( $ship_in_1st_ipn, $shipping1_line_item->total() );
-		
-                //ok now let's pretend they made another payment via paypal and added more onto the taxes. 
-                //they should be ADDED onto the existing paypal taxes
-                $tax_in_2nd_ipn = 1.5;
-                $ship_in_2nd_ipn = 8.00;
-                $p2 = $this->new_model_obj_with_dependencies( 'Payment', 
-                        array(
-                            'TXN_ID'=>$t->ID(), 
-                            'STS_ID' => EEM_Payment::status_id_approved,
-                            'PMD_ID' => $ppm->ID(), 
-                            'PAY_amount' => $t->remaining(),
-                            'PAY_details' => array( 
-                                'tax' => "$tax_in_2nd_ipn",
-                                'mc_shipping' => "$ship_in_2nd_ipn")) );
-                $ppg->update_txn_based_on_payment( $p2 );
-                //assert that the total tax is now the SUM of both IPN's tax amounts
-                $this->assertEquals( $tax_in_2nd_ipn, $t->tax_total() );
-                //verify the old shipping is still there
-                $shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $t->ID() );
-                $this->assertEquals( $ship_in_2nd_ipn, $shipping1_line_item->total() );
+		//check the new tax wasnt changed
+		$this->assertEquals( $old_tax_total, $t->tax_total() );
+		$this->assertNotEquals( $tax_in_1st_ipn, $t->tax_total() );//taxes shouldnt have changed
+		$pre_tax_total = EEH_Line_Item::get_pre_tax_subtotal( $t->total_line_item() );
+		$shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $t->ID() );
+		$this->assertNull( $shipping1_line_item );
+
+		//ok now let's pretend they made another payment via paypal and added more onto the taxes. 
+		//but we only update taxes when paypal received an itemized payment from us, which it didn't
+		$tax_in_2nd_ipn = 1.5;
+		$ship_in_2nd_ipn = 8.00;
+		$p2 = $this->new_model_obj_with_dependencies( 'Payment', 
+				array(
+					'TXN_ID'=>$t->ID(), 
+					'STS_ID' => EEM_Payment::status_id_approved,
+					'PMD_ID' => $ppm->ID(), 
+					'PAY_amount' => $t->remaining(),
+					'PAY_details' => array( 
+						'tax' => "$tax_in_2nd_ipn",
+						'mc_shipping' => "$ship_in_2nd_ipn")) );
+		$p2->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
+		$ppg->update_txn_based_on_payment( $p2 );
+		//assert that the total tax is now the SUM of both IPN's tax amounts
+		$this->assertEquals( $tax_in_2nd_ipn, $t->tax_total() );
+		//verify the old shipping is still there
+		$shipping1_line_item = $pre_tax_total->get_child_line_item( 'paypal_shipping_' . $t->ID() );
+		$this->assertNull( $shipping1_line_item );
 	}
 
 

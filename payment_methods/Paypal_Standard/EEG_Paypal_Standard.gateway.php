@@ -16,6 +16,11 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  *
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
+	
+	/**
+	 * Name for the wp option used to save the itemized payment
+	 */
+	const itemized_payment_option_name = '_itemized_payment';
 
 	protected $_paypal_id = NULL;
 
@@ -103,6 +108,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$total_discounts_to_cart_total = $transaction->paid();
 		//only itemize the order if we're paying for the rest of the order's amount
 		if( $payment->amount() == $transaction->total() ) {
+			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true );
 			//this payment is for the remaining transaction amount,
 			//keep track of exactly how much the itemized order amount equals
 			$itemized_sum = 0;
@@ -161,6 +167,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 			}
 		} else {
+			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
 			//partial payment that's not for the remaining amount, so we can't send an itemized list
 			$redirect_args['item_name_' . $item_num] = substr(
 				sprintf( __('Payment of %1$s for %2$s', "event_espresso"), $payment->amount(), $primary_registrant->reg_code() ),
@@ -418,6 +425,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	public function update_txn_based_on_payment( $payment ) {
 		$update_info = $payment->details();
 		$transaction = $payment->transaction();
+		$payment_was_itemized = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true, false );
 		if( ! $transaction ){
 			$this->log( __( 'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldn\'t be executed properly', 'event_espresso' ), $payment );
 			return;
@@ -447,14 +455,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$grand_total_needs_resaving = false;
 
 		//might paypal have changed the taxes?
-		//$taxes_li = $this->_line_item->get_taxes_subtotal( $transaction->total_line_item() );
-		//if( $taxes_li instanceof EE_Line_Item ) {
-		//	$current_tax_amount = $taxes_li->total();
-		//} else {
-		//	$current_tax_amount = 0;
-		//}
-                //always add paypal's taxes
-		if( $this->_paypal_taxes ){
+		if( $this->_paypal_taxes && $payment_was_itemized ){
                     //note that we're doing this BEFORE adding shipping; we actually want PayPal's shipping to remain non-taxable
                     $this->_line_item->set_line_items_taxable( $transaction->total_line_item(), true, 'paypal_shipping' );
                     $this->_line_item->set_total_tax_to(
@@ -469,7 +470,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
 		//might paypal have added shipping?
-		if( $this->_paypal_shipping && $shipping_amount ){
+		if( $this->_paypal_shipping && $shipping_amount && $payment_was_itemized ){
 			$this->_line_item->add_unrelated_item(
 				$transaction->total_line_item(),
 				sprintf( __('Shipping for transaction %1$s', 'event_espresso'), $transaction->ID() ),
