@@ -1060,7 +1060,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			if ( WP_DEBUG ) {
 				global $wpdb;
 				$error = sprintf(
-					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 	'event_espresso' ),
+					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 'event_espresso' ),
 					'<br />',
 					$wpdb->last_error
 				);
