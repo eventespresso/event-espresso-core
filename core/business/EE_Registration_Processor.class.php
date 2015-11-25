@@ -471,7 +471,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 				throw new EE_Error( __( 'An invalid registration was received.', 'event_espresso' ) );
 			}
 			EE_Registry::instance()->load_helper( 'Debug_Tools' );
-			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), false, 'EE_Transaction: ' . $registration->transaction()->ID() );
+			EEH_Debug_Tools::log(
+				__CLASS__,
+				__FUNCTION__,
+				__LINE__,
+				array( $registration->transaction(), $additional_details ),
+				false,
+				'EE_Transaction: ' . $registration->transaction()->ID()
+			);
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
@@ -496,14 +503,22 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 
 		// if the registration status gets updated, then save the registration
-		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false, $additional_details )) {
+		if (
+			$this->toggle_registration_status_for_default_approved_events( $registration, false )
+			|| $this->toggle_registration_status_if_no_monies_owing( $registration, false, $additional_details )
+		) {
 			$registration->save();
 		}
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
-		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
+		return $this->reg_status_updated( $registration->ID() )
+			   && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved
+			? true
+			: false;
 	}
+
+
 
 	/**
 	 * Updates the registration' final prices based on the current line item tree (taking into account
@@ -526,6 +541,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		//and make sure there's no rounding problem
 		$this->fix_reg_final_price_rounding_issue( $transaction );
 	}
+
+
 
 	/**
 	 * Makes sure there is no rounding errors for the REG_final_prices.
@@ -569,6 +586,72 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		}
 	}
 
+
+
+	/**
+	 * update_registration_after_being_canceled_or_declined
+	 *
+	 * @param \EE_Registration 	$registration
+	 * @param array            	$closed_reg_statuses
+	 * @param bool        		$update_reg
+	 * @return bool
+	 */
+	public function update_registration_after_being_canceled_or_declined(
+		EE_Registration $registration,
+		$closed_reg_statuses = array(),
+		$update_reg = true
+	) {
+		// these reg statuses should not be considered in any calculations involving monies owing
+		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses
+			: EEM_Registration::closed_reg_statuses();
+		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+			return false;
+		}
+		$registration->set_final_price(0);
+		if ( $update_reg ) {
+			$registration->save();
+		}
+		return true;
+	}
+
+
+
+	/**
+	 * update_canceled_or_declined_registration_after_being_reinstated
+	 *
+	 * @param \EE_Registration $registration
+	 * @param array            $closed_reg_statuses
+	 * @param bool             $update_reg
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function update_canceled_or_declined_registration_after_being_reinstated(
+		EE_Registration $registration,
+		$closed_reg_statuses = array(),
+		$update_reg = true
+	) {
+		// these reg statuses should not be considered in any calculations involving monies owing
+		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses
+			: EEM_Registration::closed_reg_statuses();
+		if ( in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+			return false;
+		}
+		$ticket = $registration->ticket();
+		if ( ! $ticket instanceof EE_Ticket ) {
+			throw new EE_Error(
+				sprintf(
+					__( 'The Ticket for Registration %1$d was not found or is invalid.',
+						'event_espresso' ),
+					$registration->ticket_ID()
+				)
+			);
+		}
+		$registration->set_final_price( $ticket->price() );
+		if ( $update_reg ) {
+			$registration->save();
+		}
+		return true;
+	}
 
 
 }
