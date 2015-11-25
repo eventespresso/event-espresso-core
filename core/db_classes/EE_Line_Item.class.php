@@ -747,7 +747,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	function is_sub_total() {
 		return EEM_Line_Item::type_sub_total == $this->type();
 	}
-	
+
+
+
 	/**
 	 * Whether or not this line item is a cancellation line item
 	 * @return boolean
@@ -845,9 +847,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			$total = $this->_recalculate_pretax_total_for_line_item( $total, $my_children );
 		}
 		//ensure all non-line items and non-sub-line-items have a quantity of 1
-		if( ! $this->is_line_item() && 
-				! $this->is_sub_line_item() && 
-				! $this->is_cancellation() ) {
+		if(
+			! $this->is_line_item() &&
+			! $this->is_sub_line_item() &&
+			! $this->is_cancellation()
+		) {
 			$this->set_quantity( 1 );
 			if( ! $this->is_percent() ) {
 				$this->set_unit_price( $this->total() );
