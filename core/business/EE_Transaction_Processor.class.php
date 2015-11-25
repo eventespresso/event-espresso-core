@@ -562,29 +562,19 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @param bool             $update_txn
 	 * @return bool
 	 */
-	public static function update_transaction_after_reinstating_canceled_registration(
+	public function update_transaction_after_reinstating_canceled_registration(
 		EE_Registration $registration,
 		$closed_reg_statuses = array(),
 		$update_txn = true
 	) {
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// these reg statuses should not be considered in any calculations involving monies owing
 		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses : EEM_Registration::closed_reg_statuses();
 		if ( in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
 			return false;
 		}
 		try {
-			$transaction = $registration->transaction();
-			if ( ! $transaction instanceof EE_Transaction ) {
-				throw new EE_Error(
-					sprintf(
-						__( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ),
-						$registration->ID()
-					)
-				);
-			}
-			$ticket_line_item = $transaction_processor->get_ticket_line_item_for_transaction_registration(
+			$transaction = $this->get_transaction_for_registration( $registration );
+			$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration(
 				$transaction,
 				$registration
 			);
@@ -631,15 +621,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			return false;
 		}
 		try {
-			$transaction = $registration->transaction();
-			if ( ! $transaction instanceof EE_Transaction ) {
-				throw new EE_Error(
-					sprintf(
-						__( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ),
-						$registration->ID()
-					)
-				);
-			}
+			$transaction = $this->get_transaction_for_registration( $registration );
 			$ticket_line_item = $this->get_ticket_line_item_for_transaction_registration( $transaction, $registration );
 			EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
 		} catch ( EE_Error $e ) {
@@ -658,6 +640,29 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			return $transaction->save() ? true : false;
 		}
 		return true;
+	}
+
+
+
+	/**
+	 * get_transaction_for_registration
+	 *
+	 * @access 	public
+	 * @param 	EE_Registration $registration
+	 * @return 	EE_Transaction
+	 * @throws 	EE_Error
+	 */
+	public function get_transaction_for_registration( EE_Registration $registration ) {
+		$transaction = $registration->transaction();
+		if ( ! $transaction instanceof EE_Transaction ) {
+			throw new EE_Error(
+				sprintf(
+					__( 'The Transaction for Registration %1$d was not found or is invalid.', 'event_espresso' ),
+					$registration->ID()
+				)
+			);
+		}
+		return $transaction;
 	}
 
 
