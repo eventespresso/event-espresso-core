@@ -1027,8 +1027,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
 			EE_Error::add_error(
 					sprintf(
-						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d),
-						because the registration does not have access', 'event_espresso'),
+						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d), because the registration does not have access', 'event_espresso'),
 						$this->ID(),
 						$DTT_ID
 					),
