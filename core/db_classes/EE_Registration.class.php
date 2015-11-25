@@ -129,6 +129,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			// update status
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
+			/** @type EE_Registration_Processor $registration_processor */
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			/** @type EE_Transaction_Payments $transaction_payments */
@@ -142,6 +144,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				&& ! in_array( $old_STS_ID, $closed_reg_statuses )
 			) {
 				// cancelled or declined registration
+				$registration_processor->update_registration_after_being_canceled_or_declined(
+					$this,
+					$closed_reg_statuses
+				);
 				$transaction_processor->update_transaction_after_canceled_or_declined_registration(
 					$this,
 					$closed_reg_statuses,
@@ -152,6 +158,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				&& ! in_array( $new_STS_ID, $closed_reg_statuses )
 			) {
 				// reinstating cancelled or declined registration
+				$registration_processor->update_canceled_or_declined_registration_after_being_reinstated(
+					$this,
+					$closed_reg_statuses
+				);
 				$transaction_processor->update_transaction_after_reinstating_canceled_registration( $this );
 			}
 			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
