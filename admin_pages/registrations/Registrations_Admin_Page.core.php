@@ -1538,29 +1538,72 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_session = $transaction->session_data();
 
 		$filters = new EE_Line_Item_Filter_Collection();
+		//$filters->add( new EE_Non_Zero_Line_Item_Filter() );
 		$filters->add( new EE_Single_Registration_Line_Item_Filter( $this->_registration ) );
-		$filters->add( new EE_Non_Zero_Line_Item_Filter() );
 		$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item() );
 		$filtered_line_item_tree = $line_item_filter_processor->process();
-
-		$this->_template_args['REG_ID'] = $this->_registration->ID();
-		$line_item_display = new EE_Line_Item_Display( 'reg_admin_table', 'EE_Admin_Table_Registration_Line_Item_Display_Strategy' );
-		$this->_template_args['line_item_table'] = $line_item_display->display_line_item( $filtered_line_item_tree, array( 'EE_Registration' => $this->_registration ) );
-
-
+		$line_item_display = new EE_Line_Item_Display(
+			'reg_admin_table',
+			'EE_Admin_Table_Registration_Line_Item_Display_Strategy'
+		);
+		$this->_template_args['line_item_table'] = $line_item_display->display_line_item(
+			$filtered_line_item_tree,
+			array( 'EE_Registration' => $this->_registration )
+		);
 		$attendee = $this->_registration->attendee();
 
+		if (
+			EE_Registry::instance()->CAP->current_user_can(
+				'ee_read_transaction',
+				'espresso_transactions_view_transaction'
+			)
+		) {
+			$this->_template_args[ 'view_transaction_button' ] =  EEH_Template::get_button_or_link(
+				EE_Admin_Page::add_query_args_and_nonce(
+					array(
+						'action' => 'view_transaction',
+						'TXN_ID' => $transaction->ID()
+					),
+					TXN_ADMIN_URL
+				),
+				__( ' View Transaction' ),
+				'button secondary-button right',
+				'dashicons dashicons-cart'
+			);
+		} else {
+			$this->_template_args[ 'view_transaction_button' ] = '';
+		}
 
-		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
-		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
-
+		if (
+			$attendee instanceof EE_Attendee
+			&& EE_Registry::instance()->CAP->current_user_can(
+				'ee_send_message',
+				'espresso_registrations_resend_registration'
+			)
+		) {
+			$this->_template_args[ 'resend_registration_button' ] = EEH_Template::get_button_or_link(
+				EE_Admin_Page::add_query_args_and_nonce(
+					array(
+						'action' 		=> 'resend_registration',
+						'_REG_ID'     	=> $this->_registration->ID(),
+						'redirect_to' 	=> 'view_registration'
+					),
+					REG_ADMIN_URL
+				),
+				__( ' Resend Registration' ),
+				'button secondary-button right',
+				'dashicons dashicons-email-alt'
+			);
+		} else {
+			$this->_template_args[ 'resend_registration_button' ] = '';
+		}
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
 		$payment = ! $payment instanceof EE_Payment ? EE_Payment::new_instance() : $payment;
 		$payment_method = $payment->get_first_related( 'Payment_Method' );
 		$payment_method = ! $payment_method instanceof EE_Payment_Method ? EE_Payment_Method::new_instance() : $payment_method;
-		$reg_status_class = 'status-' . $this->_registration->status_ID();
+
 		$reg_details = array(
 			'payment_method' => $payment_method->name(),
 			'response_msg' => $payment->gateway_response(),
@@ -1598,7 +1641,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['reg_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->_template_args['reg_details']['user_agent']['class'] = 'large-text';
 
-		$this->_template_args['event_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'event_id' => $this->_registration->event_ID()), REG_ADMIN_URL );
+		$this->_template_args['event_link'] = EE_Admin_Page::add_query_args_and_nonce(
+			array(
+				'action' => 'default',
+				'event_id' => $this->_registration->event_ID()
+			),
+			REG_ADMIN_URL
+		);
 		$this->_template_args['event_id'] = $this->_registration->event_ID();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_details.template.php';
