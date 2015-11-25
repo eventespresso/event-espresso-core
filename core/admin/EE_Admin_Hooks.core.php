@@ -366,8 +366,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		//first make sure $this->_name is set
 		if ( empty( $this->_name ) ) {
 			$msg[] = __('We can\'t load the page object', 'event_espresso');
-			$msg[] = sprintf( __("This is because the %s child class has not set the
-				'_name' property", 'event_espresso'), $this->caller );
+			$msg[] = sprintf( __("This is because the %s child class has not set the '_name' property", 'event_espresso'), $this->caller );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 
