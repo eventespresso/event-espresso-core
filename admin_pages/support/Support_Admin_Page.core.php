@@ -280,7 +280,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 	/**
 	 * Receives ajax calls for continuing a job
 	 */
-	public function batch_continue() { 
+	public function batch_continue() {
 		$job_id = sanitize_text_field( $this->_req_data[ 'job_id' ] );
 		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
 		$responseobj = $batch_runner->continue_job( $job_id);
