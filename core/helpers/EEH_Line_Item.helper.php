@@ -323,7 +323,7 @@ class EEH_Line_Item {
 		if ( $ticket_line_item->quantity() < $qty ) {
 			throw new EE_Error(
 				sprintf(
-					__( 'Can not cancel $1$d ticket(s) because the supplied line item has a quantity of %2$d.', 'event_espresso' ),
+					__( 'Can not cancel %1$d ticket(s) because the supplied line item has a quantity of %2$d.', 'event_espresso' ),
 					$qty,
 					$ticket_line_item->quantity()
 				)
@@ -332,8 +332,11 @@ class EEH_Line_Item {
 		// decrement ticket quantity; don't rely on auto-fixing when recalculating totals to do this
 		$ticket_line_item->set_quantity( $ticket_line_item->quantity() - $qty );
 		foreach( $ticket_line_item->children() as $child_line_item ) {
-			if( $child_line_item->type() == EEM_Line_Item::type_sub_line_item &&
-					! $child_line_item->is_percent() ) {
+			if(
+				$child_line_item->is_sub_line_item()
+				&& ! $child_line_item->is_percent()
+				&& ! $child_line_item->is_cancellation()
+			) {
 				$child_line_item->set_quantity( $child_line_item->quantity() - $qty );
 			}
 		}
@@ -350,22 +353,26 @@ class EEH_Line_Item {
 		} else {
 			// create cancellation sub line item
 			$cancellation_line_item = EE_Line_Item::new_instance( array(
-			  'LIN_name'       => __( 'Cancellation', 'event_espresso' ),
-			  'LIN_desc'       => sprintf(
-				  _x( 'Cancelled %1$s : %2$s', 'Cancelled Ticket Name : 2015-01-01 11:11', 'event_espresso' ),
-				  $ticket_line_item->name(),
-				  current_time( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) )
-			  ),
-			  'LIN_unit_price' => 0, // $ticket_line_item->unit_price()
-			  'LIN_quantity'   => $qty,
-			  'LIN_is_taxable' => $ticket_line_item->is_taxable(),
-			  'LIN_order'      => count( $ticket_line_item->children() ),
-			  'LIN_total'      => 0, // $ticket_line_item->unit_price()
-			  'LIN_type'       => EEM_Line_Item::type_cancellation,
-		  ) );
+				'LIN_name'       => __( 'Cancellation', 'event_espresso' ),
+				'LIN_desc'       => sprintf(
+					_x( 'Cancelled %1$s : %2$s', 'Cancelled Ticket Name : 2015-01-01 11:11', 'event_espresso' ),
+					$ticket_line_item->name(),
+					current_time( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) )
+				),
+				'LIN_unit_price' => 0, // $ticket_line_item->unit_price()
+				'LIN_quantity'   => $qty,
+				'LIN_is_taxable' => $ticket_line_item->is_taxable(),
+				'LIN_order'      => count( $ticket_line_item->children() ),
+				'LIN_total'      => 0, // $ticket_line_item->unit_price()
+				'LIN_type'       => EEM_Line_Item::type_cancellation,
+			) );
+			$ticket_line_item->add_child_line_item( $cancellation_line_item );
 		}
-		$ticket_line_item->add_child_line_item( $cancellation_line_item );
-		return $ticket_line_item->save_this_and_descendants() > 0 ? true : false;
+		if ( $ticket_line_item->save_this_and_descendants() > 0 ) {
+			EEH_Line_Item::get_grand_total_and_recalculate_everything( $ticket_line_item );
+			return true;
+		}
+		return false;
 	}
 
 
@@ -410,7 +417,7 @@ class EEH_Line_Item {
 			// what ?!?! negative quantity ?!?!
 			throw new EE_Error(
 				sprintf(
-					__( 'Can not reinstate $1$d cancelled ticket(s) because the cancelled ticket quantity is only %2$d.',
+					__( 'Can not reinstate %1$d cancelled ticket(s) because the cancelled ticket quantity is only %2$d.',
 						'event_espresso' ),
 					$qty,
 					$cancellation_line_item->quantity()
@@ -419,7 +426,25 @@ class EEH_Line_Item {
 		}
 		// increment ticket quantity
 		$ticket_line_item->set_quantity( $ticket_line_item->quantity() + $qty );
-		return $ticket_line_item->save_this_and_descendants() > 0 ? true : false;
+		if ( $ticket_line_item->save_this_and_descendants() > 0 ) {
+			EEH_Line_Item::get_grand_total_and_recalculate_everything( $ticket_line_item );
+			return true;
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * calls EEH_Line_Item::find_transaction_grand_total_for_line_item()
+	 * then EE_Line_Item::recalculate_total_including_taxes() on the result
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @return \EE_Line_Item
+	 */
+	public static function get_grand_total_and_recalculate_everything( EE_Line_Item $line_item ){
+		$grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item( $line_item );
+		return $grand_total_line_item->recalculate_total_including_taxes();
 	}
 
 
@@ -1028,6 +1053,39 @@ class EEH_Line_Item {
 			}
 		}
 		return NULL;
+	}
+
+
+
+	/**
+	 * if passed line item has a TXN ID, uses that to jump directly to the grand total line item for the transaction,
+	 * else recursively walks up the line item tree until a parent of type total is found,
+	 *
+	 * @param EE_Line_Item $line_item
+	 * @return \EE_Line_Item
+	 * @throws \EE_Error
+	 */
+	public static function find_transaction_grand_total_for_line_item( EE_Line_Item $line_item ){
+		if ( $line_item->TXN_ID() ) {
+			$total_line_item = $line_item->transaction()->total_line_item( false );
+			if ( $total_line_item instanceof EE_Line_Item ) {
+				return $total_line_item;
+			}
+		} else {
+			$line_item_parent = $line_item->parent();
+			if ( $line_item_parent instanceof EE_Line_Item ) {
+				if ( $line_item_parent->is_total() ) {
+					return $line_item_parent;
+				}
+				return EEH_Line_Item::find_transaction_grand_total_for_line_item( $line_item_parent );
+			}
+		}
+		throw new EE_Error(
+			sprintf(
+				__( 'A valid grand total for line item %1$d was not found.', 'event_espresso' ),
+				$line_item->ID()
+			)
+		);
 	}
 
 
