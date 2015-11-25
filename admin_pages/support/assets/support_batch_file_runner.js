@@ -59,7 +59,10 @@ jQuery(document).ready(function() {
 		if( response.data.status == 'complete' && response.data.file_url != '' ) {
 			jQuery('#message-area').html( ee_job_i18n.download_and_redirecting );
 			window.location.href=response.data.file_url;
-			runner.cleanup_job();
+			//and redirect a little later
+			setTimeout(function() {
+				runner.cleanup_job();
+			}, 2000 );
 		}
 	}
 
