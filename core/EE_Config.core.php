@@ -563,7 +563,8 @@ final class EE_Config {
 		$config_set = get_option( $config_option_name );
 
 		if ( $config_set ) {
-			$this->{$section}->{$name} = maybe_unserialize( $config_set );
+			update_option( $config_option_name, $config_obj );
+			$this->{$section}->{$name} = $config_obj;
 			return $this->{$section}->{$name};
 		} else {
 			// create a wp-option for this config
@@ -2174,6 +2175,16 @@ class EE_Template_Config extends EE_Config_Base {
 	*/
 	public $current_espresso_theme;
 
+	/**
+	* @var EE_Event_Single_Config $EED_Event_Single
+	*/
+	public $EED_Event_Single;
+
+	/**
+	* @var EE_Events_Archive_Config $EED_Events_Archive
+	*/
+	public $EED_Events_Archive;
+
 
 
 	/**
@@ -2190,6 +2201,8 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
 		$this->current_espresso_theme = 'Espresso_Arabica_2014';
+		$this->EED_Event_Single = null;
+		$this->EED_Events_Archive = null;
 	}
 
 }
@@ -2321,6 +2334,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $display_datetimes;
 	public $display_venue;
 	public $display_expired_events;
+	public $use_sortable_display_order;
+	public $display_order_tickets;
+	public $display_order_datetimes;
+	public $display_order_event;
+	public $display_order_venue;
 
 
 
@@ -2334,6 +2352,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->display_datetimes = 1;
 		$this->display_venue = 0;
 		$this->display_expired_events = 0;
+		$this->use_sortable_display_order = false;
+		$this->display_order_tickets = 100;
+		$this->display_order_datetimes = 110;
+		$this->display_order_event = 120;
+		$this->display_order_venue = 130;
 	}
 }
 
@@ -2343,8 +2366,14 @@ class EE_Events_Archive_Config extends EE_Config_Base{
  * Stores Event_Single_Config settings
  */
 class EE_Event_Single_Config extends EE_Config_Base{
+
 	public $display_status_banner_single;
 	public $display_venue;
+	public $use_sortable_display_order;
+	public $display_order_tickets;
+	public $display_order_datetimes;
+	public $display_order_event;
+	public $display_order_venue;
 
 	/**
 	 *	class constructor
@@ -2352,6 +2381,11 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
+		$this->use_sortable_display_order = false;
+		$this->display_order_tickets = 100;
+		$this->display_order_datetimes = 110;
+		$this->display_order_event = 120;
+		$this->display_order_venue = 130;
 	}
 }
 

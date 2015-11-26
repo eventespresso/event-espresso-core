@@ -358,6 +358,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// if not redirecting to another site for registration
 		if ( ! $external_url ) {
 			EE_Registry::instance()->load_helper( 'Template' );
+			EE_Registry::instance()->load_helper( 'URL' );
 			// then display the ticket selector
 			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
 		} else {

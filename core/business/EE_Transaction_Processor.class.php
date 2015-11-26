@@ -382,6 +382,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		// get reg steps array
 		$txn_reg_steps = $transaction->reg_steps();
 		unset( $txn_reg_steps[ $reg_step_slug ] );
+		$transaction->set_reg_steps( $txn_reg_steps );
 	}
 
 
@@ -634,9 +635,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 								$PMD_ID = $first_payment_method->ID();
 							} else {
 								EE_Error::add_error(
-									__( 'A valid Payment Method could not be determined. Please ensure that at least
-									one Payment Method is activated.',
-										'event_espresso' ),
+									__( 'A valid Payment Method could not be determined. Please ensure that at least one Payment Method is activated.', 'event_espresso' ),
 									__FILE__, __LINE__, __FUNCTION__
 								);
 							}

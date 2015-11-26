@@ -1,6 +1,7 @@
 <?php
 /**
- * This template will display The Loop that displays your events 
+ * This template will display The Loop that displays your events
+ * DO NOT COPY THIS TEMPLATE TO YOUR THEMES FOLDER
  *
  * @ package		Event Espresso
  * @ author		Seth Shoultes
@@ -30,15 +31,16 @@
 				endif;
 			?>
 		</h1>
+		<?php //echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';?>
 	</header><!-- .page-header -->
-	
-	<?php 
+
+	<?php
 		// allow other stuff
-		do_action( 'AHEE__archive_espresso_events_template__before_loop' ); 
+		do_action( 'AHEE__archive_espresso_events_template__before_loop' );
 		// Start the Loop.
-		while ( have_posts() ) : the_post(); 
+		while ( have_posts() ) : the_post();
 			// Include the post TYPE-specific template for the content.
-			espresso_get_template_part( 'content', 'espresso_events' );
+			espresso_get_template_part( 'content', 'espresso_events-shortcode' );
 		endwhile;
 		// Previous/next page navigation.
 		espresso_pagination();
@@ -48,6 +50,6 @@
 	else :
 		// If no content, include the "No posts found" template.
 		espresso_get_template_part( 'content', 'none' );
-		
+
 	endif;
-	
+

@@ -123,11 +123,13 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$this->setField('first_name', $billing_info['first_name']);
 			$this->setField('last_name', $billing_info['last_name']);
 			$this->setField('email', $billing_info['email']);
+			$this->setField('company', $billing_info['company']);
 			$this->setField('address', $billing_info['address'].' '.$billing_info['address2']);
 			$this->setField('city', $billing_info['city']);
 			$this->setField('state', $billing_info['state'] );
 			$this->setField('country', $billing_info['country'] );
 			$this->setField('zip', $billing_info['zip']);
+			$this->setField('fax', $billing_info['fax']);
 			$this->setField('cust_id', $primary_registrant->ID());
 			$this->setField('phone', $billing_info['phone']);
 			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
