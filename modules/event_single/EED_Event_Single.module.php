@@ -119,7 +119,7 @@ class EED_Event_Single  extends EED_Module {
 		$template_parts->add_template_part(
 			'event',
 			__( 'Event Description', 'event_espresso' ),
-			'content-espresso_events-event.php',
+			'content-espresso_events-details.php',
 			$config->display_order_event
 		);
 		$template_parts->add_template_part(
@@ -190,9 +190,9 @@ class EED_Event_Single  extends EED_Module {
 	/**
 	 * 	loop_start
 	 *
-	 *  	@access 	public
-	 * 	@param		array 	$wp_query_array an array containing the WP_Query object
-	 *  	@return 		void
+	 * @access 	public
+	 * @param 	array $wp_query_array an array containing the WP_Query object
+	 * @return 	void
 	 */
 	public static function loop_start( $wp_query_array ) {
 		global $post;
@@ -218,18 +218,35 @@ class EED_Event_Single  extends EED_Module {
 	/**
 	 * 	event_details
 	 *
-	 * 	@access 	public
-	 * 	@param 	string 	$content
-	 * 	@return 	string
+	 * @access 	public
+	 * @param 	string 	$content
+	 * @return 	string
 	 */
 	public static function event_details( $content ) {
 		global $post;
-		if ( $post->post_type == 'espresso_events' && ! post_password_required() ) {
-			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order /*&& false*/ ) {
+		static $current_post_ID = 0;
+		if (
+			$current_post_ID != $post->ID
+			&& $post->post_type == 'espresso_events'
+			&& ! post_password_required()
+		) {
+			// Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
+			// Reason being is that some plugins, like Yoast, need to run through a copy of the loop early
+			// BEFORE headers are sent in order to examine the post content and generate content for the HTML header.
+			// We want to allow those plugins to still do their thing and have access to our content, but depending on
+			// how your event content is being displayed (shortcode, CPT route, etc), this filter can get applied twice,
+			// so the following allows this filter to be applied multiple times, but only once for real
+			$current_post_ID = did_action( 'loop_start' ) ? $post->ID : 0;
+			if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->use_sortable_display_order ) {
+				// we need to first remove this callback from being applied to the_content()
+				// (otherwise it will recurse and blow up the interweb)
+				remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 				EED_Event_Single::instance()->template_parts = EED_Event_Single::instance()->initialize_template_parts();
+				$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 				$content = EED_Event_Single::instance()->template_parts->apply_template_part_filters( $content );
+				add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 			} else {
-				$content = \EED_Event_Single::use_filterable_display_order( $content );
+				$content = EED_Event_Single::use_filterable_display_order();
 			}
 		}
  		return $content;
@@ -241,10 +258,9 @@ class EED_Event_Single  extends EED_Module {
 	 *    use_filterable_display_order
 	 *
 	 * @access    protected
-	 * @param        string $content
 	 * @return string
 	 */
-	protected static function use_filterable_display_order( $content ) {
+	protected static function use_filterable_display_order() {
 		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 		// it uses the_content() for displaying the $post->post_content
 		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
@@ -256,14 +272,14 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130, 1 );
 		do_action( 'AHEE__EED_Event_Single__use_filterable_display_order__after_add_filters' );
 		// now load our template
-		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+		$content = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
 		add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110 );
 		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120 );
 		remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130 );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
-		return ! empty( $template ) ? $template : $content;
+		return $content;
 	}
 
 

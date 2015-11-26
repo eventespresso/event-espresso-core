@@ -978,11 +978,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			return false;
 		}
 
-		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : INF;
+		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : EE_INF;
 
 		// if max uses is not set or equals infinity then return true cause its not a factor for whether user can check-in
 		// or not.
-		if ( ! $max_uses || $max_uses === INF ) {
+		if ( ! $max_uses || $max_uses === EE_INF ) {
 			return true;
 		}
 
@@ -1027,8 +1027,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
 			EE_Error::add_error(
 					sprintf(
-						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d),
-						because the registration does not have access', 'event_espresso'),
+						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d), because the registration does not have access', 'event_espresso'),
 						$this->ID(),
 						$DTT_ID
 					),
@@ -1061,7 +1060,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			if ( WP_DEBUG ) {
 				global $wpdb;
 				$error = sprintf(
-					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 	'event_espresso' ),
+					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 'event_espresso' ),
 					'<br />',
 					$wpdb->last_error
 				);
