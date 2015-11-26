@@ -188,9 +188,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				continue;
 			}
 			foreach( $payment_method_type->help_tabs_config() as $help_tab_name => $config ){
+				$template_args = isset( $config[ 'template_args' ] ) ? $config[ 'template_args' ] : array();
+				$template_args[ 'admin_page_obj' ] = $this;
 				$all_pmt_help_tabs_config[$help_tab_name] = array(
 					'title'=>$config['title'],
-					'content'=>EEH_Template::display_template( $payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', array('admin_page_obj'=>$this), true)
+					'content'=>EEH_Template::display_template( 
+							$payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', 
+							$template_args, 
+							true)
 				);
 			}
 		}
