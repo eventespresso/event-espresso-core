@@ -5,11 +5,11 @@
 		<table class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
-					<th class="jst-left"><?php _e( 'Event Name', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'REG ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'TXN ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Reg Code', 'event_espresso' );?></th>
-					<th class="jst-rght"><?php _e( 'Ticket Price', 'event_espresso' );?></th>
+					<th class="jst-left"><?php esc_html_e( 'Event Name', 'event_espresso' );?></th>
+					<th class="jst-left"><?php esc_html_e( 'REG ID', 'event_espresso' );?></th>
+					<th class="jst-left"><?php esc_html_e( 'TXN ID', 'event_espresso' );?></th>
+					<th class="jst-left"><?php esc_html_e( 'Reg Code', 'event_espresso' );?></th>
+					<th class="jst-rght"><?php esc_html_e( 'Ticket Price', 'event_espresso' );?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -26,7 +26,7 @@
 							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
 							echo EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
 							<a href="'.$reg_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . 
-								__( 'View Registration', 'event_espresso' ) .
+								esc_html__( 'View Registration', 'event_espresso' ) .
 							'</a>' : $registration->ID();
 					?>
 					</td>
@@ -35,7 +35,7 @@
 						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
 						echo EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ? '
 						<a href="'.$txn_url.'" title="' . esc_attr__( 'View Transaction Details', 'event_espresso' ) . '">' .
-							sprintf( __('View Transaction %d', 'event_espresso'), $registration->transaction_ID() ) .
+							sprintf( esc_html__('View Transaction %d', 'event_espresso'), $registration->transaction_ID() ) .
 						'</a>' : $registration->transaction_ID();
 					?>
 					</td>
