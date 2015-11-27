@@ -36,6 +36,13 @@ class EEH_File extends EEH_Base {
 				require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
 				$method = 'direct';
 				$wp_filesystem_direct_file = apply_filters( 'filesystem_method_file', ABSPATH . 'wp-admin/includes/class-wp-filesystem-' . $method . '.php', $method );
+				//check constants defined, just like in wp-admin/includes/file.php's WP_Filesystem()
+				if ( ! defined('FS_CHMOD_DIR') ) {
+					define('FS_CHMOD_DIR', ( fileperms( ABSPATH ) & 0777 | 0755 ) );
+				}
+				if ( ! defined('FS_CHMOD_FILE') ) {
+					define('FS_CHMOD_FILE', ( fileperms( ABSPATH . 'index.php' ) & 0777 | 0644 ) );
+				}
 				require_once( $wp_filesystem_direct_file );
 				EEH_File::$_wp_filesystem_direct = new WP_Filesystem_Direct( array() );
 			}
