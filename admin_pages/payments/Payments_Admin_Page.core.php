@@ -243,7 +243,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_helper( 'HTML' );
 		//setup tabs, one for each payment method type
-		$tabs = array();
+		$payment_methods = array();
 		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj ) {
 			// we don't want to show admin-only PMTs for now
 			if ( $pmt_obj instanceof EE_PMT_Admin_Only ) {
@@ -265,7 +265,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					)
 				);
 			}
-
+			$payment_methods[ $payment_method->slug() ] = $payment_method;
+		}
+		$payment_methods = apply_filters( 'FHEE__Payments_Admin_Page___payment_methods_list__payment_methods', $payment_methods );
+		foreach( $payment_methods as $payment_method ) {
 			add_meta_box(
 				//html id
 				'espresso_' . $payment_method->slug() . '_payment_settings',
@@ -292,7 +295,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'slug' => $payment_method->slug()
 			);
 		}
-
 		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $this->_get_active_payment_method_slug() );
 		$this->display_admin_page_with_sidebar();
 
@@ -408,7 +410,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'update_' . $payment_method->slug()										=> $this->_update_payment_method_button( $payment_method ),
 						'deactivate_' . $payment_method->slug()								=> $this->_deactivate_payment_method_button( $payment_method ),
 						'fine_print_' . $payment_method->slug()									=> $this->_fine_print()
-					)
+					),
+					$payment_method
 				)
 			)
 		);

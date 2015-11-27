@@ -208,44 +208,23 @@ class EE_Payment_Method_Manager {
 	public function activate_a_payment_method_of_type( $payment_method_type ){
 		$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
 		if( ! $payment_method){
-			global $current_user;
 			$pm_type_class = $this->payment_method_class_from_type($payment_method_type);
 			if(class_exists($pm_type_class)){
 				/** @var $pm_type_obj EE_PMT_Base */
 				$pm_type_obj = new $pm_type_class;
 				$payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
 				if( ! $payment_method){
-					$payment_method = EE_Payment_Method::new_instance(array(
-						'PMD_type'=>$pm_type_obj->system_name(),
-						'PMD_name'=>$pm_type_obj->pretty_name(),
-						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
-						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
-						'PMD_wp_user'=>$current_user->ID,
-						'PMD_order' => EEM_Payment_Method::instance()->count( array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))) * 10,
-					));
+					$payment_method = $this->create_payment_method_of_type( $pm_type_obj );
 				}
-				$payment_method->set_active();
-				$payment_method->set_description( $pm_type_obj->default_description() );
-				//handles the goofy case where someone activates the invoice gateway which is also
-				$payment_method->set_type($pm_type_obj->system_name());
-				if( ! $payment_method->button_url() ){
-					$payment_method->set_button_url( $pm_type_obj->default_button_url() );
-				}
-				$payment_method->save();
-				foreach($payment_method->get_all_usable_currencies() as $currency_obj){
-					$payment_method->_add_relation_to($currency_obj, 'Currency');
-				}
-				//now add setup its default extra meta properties
-				$extra_metas = $payment_method->type_obj()->settings_form()->extra_meta_inputs();
-				foreach( $extra_metas as $meta_name => $input ){
-					$payment_method->update_extra_meta($meta_name, $input->raw_value() );
-				}
+			} else {
+				throw new EE_Error( 
+						sprintf( 
+								__( 'There is no payment method of type %1$s, so it could not be activated', 'event_espresso'), 
+								$pm_type_class ));
 			}
-
-		}else{
-			$payment_method->set_active();
-			$payment_method->save();
 		}
+		$this->activate_and_initialize_payment_method( $payment_method );
+		$this->set_usable_currencies_on_payment_method( $payment_method );
 		if( $payment_method->type() == 'Invoice' ){
 			$messages = EE_Registry::instance()->load_lib( 'messages' );
 			$messages->ensure_message_type_is_active( 'invoice', 'html' );
@@ -254,6 +233,61 @@ class EE_Payment_Method_Manager {
 		}
 		return $payment_method;
 	}
+	
+	/**
+	 * Creates a payment method of the specified type
+	 * @global type $current_user
+	 * @param EE_PMT_Base $pm_type_obj
+	 * @return EE_Payment_Method
+	 */
+	public function create_payment_method_of_type( $pm_type_obj ) {
+		global $current_user;
+		$payment_method = EE_Payment_Method::new_instance(array(
+					'PMD_type'=>$pm_type_obj->system_name(),
+					'PMD_name'=>$pm_type_obj->pretty_name(),
+					'PMD_admin_name'=>$pm_type_obj->pretty_name(),
+					'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
+					'PMD_wp_user'=>$current_user->ID,
+					'PMD_order' => EEM_Payment_Method::instance()->count( array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))) * 10,
+				));
+		//handles the goofy case where someone activates the invoice gateway which is also
+		$payment_method->set_type($pm_type_obj->system_name());
+		$payment_method->set_description( $pm_type_obj->default_description() );
+		if( ! $payment_method->button_url() ){
+			$payment_method->set_button_url( $pm_type_obj->default_button_url() );
+		}
+		return $payment_method;
+	}
+	
+	/**
+	 * Activates the paymetn method, 
+	 * @param EE_Payment_Method $payment_method
+	 * @return EE_Payment_Method
+	 */
+	public function activate_and_initialize_payment_method( $payment_method ) {
+		$payment_method->set_active();
+		$payment_method->save();
+		//now add setup its default extra meta properties
+		$extra_metas = $payment_method->type_obj()->settings_form()->extra_meta_inputs();
+		foreach( $extra_metas as $meta_name => $input ){
+			$payment_method->update_extra_meta($meta_name, $input->raw_value() );
+		}
+		return $payment_method;
+	}
+	
+	/**
+	 * Makes sure the payment method is related to the specified payment method
+	 * @param EE_Payment_Method $payment_method
+	 * @return EE_Payment_Method
+	 */
+	public function set_usable_currencies_on_payment_method( $payment_method ) {
+		foreach($payment_method->get_all_usable_currencies() as $currency_obj){
+			$payment_method->_add_relation_to($currency_obj, 'Currency');
+		}
+		return $payment_method;
+	}
+	
+	
 
 
 

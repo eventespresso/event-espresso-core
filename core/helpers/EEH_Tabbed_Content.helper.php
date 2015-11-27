@@ -165,6 +165,7 @@ class EEH_Tabbed_Content {
 	 * @return string                  a html snippet of of all the formatted link elements.
 	 */
 	public static function tab_text_links( $item_array, $container_class = '', $sep = '|', $default = '' ) {
+		$item_array = apply_filters( 'FHEE__EEH_Tabbed_Content__tab_text_links', $item_array, $container_class );
 		if ( !is_array($item_array) || empty( $item_array ) )
 			return false; //get out we don't have even the basic thing we need!
 
