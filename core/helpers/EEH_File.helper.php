@@ -237,7 +237,7 @@ class EEH_File extends EEH_Base implements EEHI_File {
 					}
 					return false;
 				}
-				EEH_File::add_htaccess_deny_from_all( $folder );
+				EEH_File::add_index_file( $folder );
 			}
 		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
 			return false;
@@ -457,8 +457,7 @@ class EEH_File extends EEH_Base implements EEHI_File {
 
 
 	/**
-	 * add_htaccess_deny_from_all and an index.html file
-	 * in order to prevent folks from exploring filesystem at their leisure
+	 * add_htaccess_deny_from_all so the webserver cannot access this folder
 	 * @param string $folder
 	 * @return bool
 	 */
@@ -469,12 +468,23 @@ class EEH_File extends EEH_Base implements EEHI_File {
 				return FALSE;
 			}
 		}
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds an index file to this folder, so folks can't list all the file's contents
+	 * @param string $folder
+	 * @return boolean
+	 */
+	public static function add_index_file( $folder ) {
+		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
 		if ( ! EEH_File::exists( $folder . 'index.html' ) ) {
-			if ( ! EEH_File::write_to_file( $folder . 'index.html', 'cheating huh?', '.html' )) {
-				return FALSE;
+			if ( ! EEH_File::write_to_file( $folder . 'index.html', 'You are not permitted to read from this folder', '.html' )) {
+				return false;
 			}
 		}
-		return TRUE;
+		return true;
 	}
 
 
