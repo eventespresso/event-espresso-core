@@ -1590,8 +1590,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// not a payment
 			EE_Error::add_error(
 				sprintf(
-					__( 'A valid payment was not generated due to a technical issue.%1$sPlease try again or contact
-					%2$s for assistance.', 'event_espresso' ),
+					__( 'A valid payment was not generated due to a technical issue.%1$sPlease try again or contact %2$s for assistance.', 'event_espresso' ),
 					'<br/>',
 					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 				), __FILE__, __FUNCTION__, __LINE__
@@ -1924,9 +1923,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( ! $primary_registrant instanceof EE_Registration ) {
 				EE_Error::add_error(
 					sprintf(
-						__( 'Invalid information was received from the Off-Site Payment Processor and your
-						Transaction details could not be retrieved from the database.%1$sPlease try again or contact
-						%2$s for assistance.', 'event_espresso' ),
+						__( 'Invalid information was received from the Off-Site Payment Processor and your Transaction details could not be retrieved from the database.%1$sPlease try again or contact %2$s for assistance.', 'event_espresso' ),
 						'<br/>',
 						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					),

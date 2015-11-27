@@ -273,7 +273,6 @@ class EEH_Debug_Tools{
 			espresso_load_required( 'EEH_File', EE_HELPERS . 'EEH_File.helper.php' );
 			if ( class_exists( 'EEH_File' )) {
 				try {
-					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
 					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
 					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $activation_errors );
 				} catch( EE_Error $e ){
