@@ -13,16 +13,21 @@
  *
  */
 class EE_Payment_Method_Manager {
+
 	/**
 	 * 	instance of the EE_Payment_Method_Manager object
 	 *	@var 	$_instance
 	 * 	@access 	private
 	 */
 	private static $_instance = NULL;
+
 	/**
 	 * @var array keys are classnames without 'EE_PMT_', values are their filepaths
 	 */
 	protected $_payment_method_types = array();
+
+
+
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
@@ -30,7 +35,7 @@ class EE_Payment_Method_Manager {
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Payment_Method_Manager )) {
+		if ( ! self::$_instance instanceof EE_Payment_Method_Manager ) {
 			self::$_instance = new self();
 		}
 		EE_Registry::instance()->load_lib('PMT_Base');
@@ -199,15 +204,18 @@ class EE_Payment_Method_Manager {
 		return "EE_PMT_".$type;
 	}
 
+
+
 	/**
 	 * Activates a payment method of the given type.
-	 * @global type $current_user
+	 *
 	 * @param string $payment_method_type the PMT_type; for EE_PMT_Invoice this would be 'Invoice'
-	 * @return EE_Payment_Method
+	 * @return \EE_Payment_Method
+	 * @throws \EE_Error
 	 */
 	public function activate_a_payment_method_of_type( $payment_method_type ){
 		$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
-		if( ! $payment_method){
+		if( ! $payment_method ){
 			$pm_type_class = $this->payment_method_class_from_type($payment_method_type);
 			if(class_exists($pm_type_class)){
 				/** @var $pm_type_obj EE_PMT_Base */
@@ -217,10 +225,11 @@ class EE_Payment_Method_Manager {
 					$payment_method = $this->create_payment_method_of_type( $pm_type_obj );
 				}
 			} else {
-				throw new EE_Error( 
-						sprintf( 
-								__( 'There is no payment method of type %1$s, so it could not be activated', 'event_espresso'), 
-								$pm_type_class ));
+				throw new EE_Error(
+					sprintf(
+						__( 'There is no payment method of type %1$s, so it could not be activated', 'event_espresso'),
+						$pm_type_class )
+				);
 			}
 		}
 		$payment_method->set_type( $payment_method_type );
@@ -230,27 +239,37 @@ class EE_Payment_Method_Manager {
 			$messages = EE_Registry::instance()->load_lib( 'messages' );
 			$messages->ensure_message_type_is_active( 'invoice', 'html' );
 			$messages->ensure_messenger_is_active( 'pdf' );
-			EE_Error::add_attention( sprintf( __( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso' ), '<a href="' . admin_url( 'admin.php?page=espresso_messages') . '">', '</a>' ) );
+			EE_Error::add_attention(
+				sprintf(
+					__( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso' ),
+					'<a href="' . admin_url( 'admin.php?page=espresso_messages') . '">',
+					'</a>'
+				)
+			);
 		}
 		return $payment_method;
 	}
-	
+
 	/**
 	 * Creates a payment method of the specified type
-	 * @global type $current_user
+	 * @global WP_User $current_user
 	 * @param EE_PMT_Base $pm_type_obj
 	 * @return EE_Payment_Method
 	 */
 	public function create_payment_method_of_type( $pm_type_obj ) {
 		global $current_user;
-		$payment_method = EE_Payment_Method::new_instance(array(
-					'PMD_type'=>$pm_type_obj->system_name(),
-					'PMD_name'=>$pm_type_obj->pretty_name(),
-					'PMD_admin_name'=>$pm_type_obj->pretty_name(),
-					'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
-					'PMD_wp_user'=>$current_user->ID,
-					'PMD_order' => EEM_Payment_Method::instance()->count( array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))) * 10,
-				));
+		$payment_method = EE_Payment_Method::new_instance(
+			array(
+				'PMD_type' 		 => $pm_type_obj->system_name(),
+				'PMD_name' 		 => $pm_type_obj->pretty_name(),
+				'PMD_admin_name' => $pm_type_obj->pretty_name(),
+				'PMD_slug' 		 => $pm_type_obj->system_name(),//automatically converted to slug
+				'PMD_wp_user' 	 => $current_user->ID,
+				'PMD_order' 	 => EEM_Payment_Method::instance()->count(
+						array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))
+					) * 10,
+			)
+		);
 		//handles the goofy case where someone activates the invoice gateway which is also
 		$payment_method->set_type($pm_type_obj->system_name());
 		$payment_method->set_description( $pm_type_obj->default_description() );
@@ -259,9 +278,9 @@ class EE_Payment_Method_Manager {
 		}
 		return $payment_method;
 	}
-	
+
 	/**
-	 * Activates the paymetn method, 
+	 * Activates the payment method,
 	 * @param EE_Payment_Method $payment_method
 	 * @return EE_Payment_Method
 	 */
@@ -275,7 +294,7 @@ class EE_Payment_Method_Manager {
 		}
 		return $payment_method;
 	}
-	
+
 	/**
 	 * Makes sure the payment method is related to the specified payment method
 	 * @param EE_Payment_Method $payment_method
@@ -287,8 +306,8 @@ class EE_Payment_Method_Manager {
 		}
 		return $payment_method;
 	}
-	
-	
+
+
 
 
 
@@ -307,12 +326,12 @@ class EE_Payment_Method_Manager {
 
 
 
-
 	/**
 	 * callback for FHEE__EE_Capabilities__init_caps_map__caps filter to add dynamic payment method
 	 * access caps.
 	 *
 	 * @param array $caps capabilities being filtered
+	 * @return array
 	 */
 	public function add_payment_method_caps( $caps ) {
 		/* add dynamic caps from payment methods
