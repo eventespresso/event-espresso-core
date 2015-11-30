@@ -223,6 +223,7 @@ class EE_Payment_Method_Manager {
 								$pm_type_class ));
 			}
 		}
+		$payment_method->set_type( $payment_method_type );
 		$this->activate_and_initialize_payment_method( $payment_method );
 		$this->set_usable_currencies_on_payment_method( $payment_method );
 		if( $payment_method->type() == 'Invoice' ){

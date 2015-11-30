@@ -621,7 +621,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 								)
 							)
 						)
-					)
+					),
+					$payment_method
 				)
 			)
 		);
