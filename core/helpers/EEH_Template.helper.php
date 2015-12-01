@@ -204,24 +204,41 @@ class EEH_Template {
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
-
+			$templates = is_array( $templates ) ? $templates : array( $templates );
+			$template_folder_paths = is_array( $template_folder_paths ) ? $template_folder_paths : array( $template_folder_paths );
 			// array to hold all possible template paths
 			$full_template_paths = array();
-
 			// loop through $templates
-			foreach ( (array)$templates as $template ) {
+			foreach ( $templates as $template ) {
+				// normalize directory separators
+				$template = str_replace( array( '\\', '/' ), DS, $template );
+				$file_name = basename( $template );
+				$template_path_minus_file_name = substr( $template, 0, ( strlen( $file_name ) * -1 ) );
 				// while looping through all template folder paths
-				foreach ( (array)$template_folder_paths as $template_folder_path ) {
-					// build up our template locations array by combining our template folder paths with our templates
-					$full_template_paths[] = rtrim( $template_folder_path, DS ) . DS . $template;
+				foreach ( $template_folder_paths as $template_folder_path ) {
+					// normalize directory separators
+					$template_folder_path = str_replace( array( '\\', '/' ), DS, $template_folder_path );
+					// determine if any common base path exists between the two paths
+					$common_base_path = EEH_Template::_find_common_base_path(
+						array( $template_folder_path, $template_path_minus_file_name )
+					);
+					if ( $common_base_path !== '' ) {
+						// both paths have a common base, so just tack the filename onto our search path
+						$resolved_path = rtrim( $template_folder_path, DS ) . DS . $file_name;
+					} else {
+						// no common base path, so let's just concatenate
+						$resolved_path = rtrim( $template_folder_path, DS ) . DS . $template;
+					}
+					// build up our template locations array by adding our resolved paths
+					$full_template_paths[] = $resolved_path;
 				}
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
+				// absolute path to the directory of the current theme: /wp-content/themes/(current WP theme)/
+				array_unshift( $full_template_paths, get_template_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
-
-
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
@@ -239,6 +256,33 @@ class EEH_Template {
 			}
 		}
 		return $check_if_custom && ! empty( $template_path ) ? TRUE : $template_path;
+	}
+
+
+
+	/**
+	 * _find_common_base_path
+	 *
+	 * given two paths, this determines if there is a common base path between the two
+	 *
+	 * @param array $paths
+	 * @return string
+	 */
+	protected static function _find_common_base_path( $paths ) {
+		$last_offset = 0;
+		$common_base_path = '';
+		while ( ( $index = strpos( $paths[ 0 ], DS, $last_offset ) ) !== false ) {
+			$dir_length = $index - $last_offset + 1;
+			$directory = substr( $paths[ 0 ], $last_offset, $dir_length );
+			foreach ( $paths as $path ) {
+				if ( substr( $path, $last_offset, $dir_length ) != $directory ) {
+					return $common_base_path;
+				}
+			}
+			$common_base_path .= $directory;
+			$last_offset = $index + 1;
+		}
+		return substr( $common_base_path, 0, -1 );
 	}
 
 
