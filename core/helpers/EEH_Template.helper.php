@@ -141,12 +141,27 @@ class EEH_Template {
 	 *    locate_template
 	 *
 	 *    locate a template file by looking in the following places, in the following order:
+	 *        <server path up to>/wp-content/themes/<current active WordPress theme>/
 	 *        <assumed full absolute server path>
 	 *        <server path up to>/wp-content/uploads/espresso/templates/<current EE theme>/
 	 *        <server path up to>/wp-content/uploads/espresso/templates/
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/templates/<current EE theme>/
 	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
+	 *
+	 * 		Example:
+	 * 		  You are using the WordPress Twenty Sixteen theme,
+	 *        and you want to customize the "some-event.template.php" template,
+	 * 		  which is located in the "/relative/path/to/" folder relative to the main EE plugin folder.
+	 * 		  Assuming WP is installed on your server in the "/home/public_html/" folder,
+	 *        EEH_Template::locate_template() will look at the following paths in order until the template is found:
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/relative/path/to/some-event.template.php
 	 *
 	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
@@ -208,33 +223,35 @@ class EEH_Template {
 			$template_folder_paths = is_array( $template_folder_paths ) ? $template_folder_paths : array( $template_folder_paths );
 			// array to hold all possible template paths
 			$full_template_paths = array();
+
+			EE_Registry::instance()->load_helper('File');
 			// loop through $templates
 			foreach ( $templates as $template ) {
 				// normalize directory separators
-				$template = str_replace( array( '\\', '/' ), DS, $template );
+				$template = EEH_File::standardise_directory_separators( $template );
 				$file_name = basename( $template );
 				$template_path_minus_file_name = substr( $template, 0, ( strlen( $file_name ) * -1 ) );
 				// while looping through all template folder paths
 				foreach ( $template_folder_paths as $template_folder_path ) {
 					// normalize directory separators
-					$template_folder_path = str_replace( array( '\\', '/' ), DS, $template_folder_path );
+					$template_folder_path = EEH_File::standardise_directory_separators( $template_folder_path );
 					// determine if any common base path exists between the two paths
 					$common_base_path = EEH_Template::_find_common_base_path(
 						array( $template_folder_path, $template_path_minus_file_name )
 					);
 					if ( $common_base_path !== '' ) {
 						// both paths have a common base, so just tack the filename onto our search path
-						$resolved_path = rtrim( $template_folder_path, DS ) . DS . $file_name;
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $file_name;
 					} else {
 						// no common base path, so let's just concatenate
-						$resolved_path = rtrim( $template_folder_path, DS ) . DS . $template;
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $template;
 					}
 					// build up our template locations array by adding our resolved paths
 					$full_template_paths[] = $resolved_path;
 				}
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
-				// absolute path to the directory of the current theme: /wp-content/themes/(current WP theme)/
+				// path to the directory of the current theme: /wp-content/themes/(current WP theme)/
 				array_unshift( $full_template_paths, get_template_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
@@ -243,7 +260,7 @@ class EEH_Template {
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
 					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
-				    break;
+					break;
 				}
 			}
 		}
