@@ -479,8 +479,8 @@ class EEH_File extends EEH_Base implements EEHI_File {
 	 */
 	public static function add_index_file( $folder ) {
 		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
-		if ( ! EEH_File::exists( $folder . 'index.html' ) ) {
-			if ( ! EEH_File::write_to_file( $folder . 'index.html', 'You are not permitted to read from this folder', '.html' )) {
+		if ( ! EEH_File::exists( $folder . 'index.php' ) ) {
+			if ( ! EEH_File::write_to_file( $folder . 'index.php', 'You are not permitted to read from this folder', '.php' )) {
 				return false;
 			}
 		}
