@@ -335,7 +335,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$set_column_values[$fieldName] = 0;
 			}
 			
-			else if ( $fieldName == 'QST_max' && empty( $this->_req_data[ 'QST_max' ] ) ) {
+			else if ( $fieldName == 'QST_max' ) {
 				$qst_system = EEM_Question::instance()->get_var( 
 					array(
 						array(
@@ -343,12 +343,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						)
 					), 
 					'QST_system' );
-				$set_column_values[ $fieldName ] = EEM_Question::instance()->max_max_for_system_question( $qst_system );
+				$max_max = EEM_Question::instance()->max_max_for_system_question( $qst_system );
+				if( empty( $this->_req_data[ 'QST_max' ] ) ||
+					 $this->_req_data[ 'QST_max' ] > $max_max ) {
+					$set_column_values[ $fieldName ] = $max_max;
+				}
 			}
 
 
 			//only add a property to the array if it's not null (otherwise the model should just use the default value)
-			else if(isset($this->_req_data[$fieldName])){
+			if(
+				! isset( $set_column_values[ $fieldName ] ) &&
+				isset($this->_req_data[$fieldName] ) ){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
 
