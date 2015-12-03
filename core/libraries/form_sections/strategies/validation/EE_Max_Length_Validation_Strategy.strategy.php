@@ -36,7 +36,11 @@ class EE_Max_Length_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @return array
 	 */
 	function get_jquery_validation_rule_array(){
-		return array( 'maxlength'=> $this->_max_length, 'messages' => array( 'maxlength' => $this->get_validation_error_message() ) );
+		if( $this->_max_length !== EE_INF ) {
+			return array( 'maxlength'=> $this->_max_length, 'messages' => array( 'maxlength' => $this->get_validation_error_message() ) );
+		} else {
+			return array();
+		}
 	}
 }
 
