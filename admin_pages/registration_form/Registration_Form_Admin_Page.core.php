@@ -374,7 +374,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$question_types = $question->has_answers() ?  $this->_question_model->question_types_in_same_category( $question->type() ) : $this->_question_model->allowed_question_types();
 		$this->_template_args['QST_ID']=$ID;
 		$this->_template_args['question']=$question;
-		$this->_template_args['question_types']= $question_types;;
+		$this->_template_args['question_types']= $question_types;
+		$this->_template_args['max_max'] = $this->max_max_for_system_question( $question->system_ID() );
 
 		$this->_set_publish_post_box_vars( 'id', $ID );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
@@ -383,6 +384,40 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_sidebar();
 	}
 
+	/**
+	 * Returns an array where keys are system question QST_system values,
+	 * and values are the highest question max the admin can set on the question
+	 * (aka the "max max"; eg, a site admin can change the zip question to have a max
+	 * of 5, but no larger than 12)
+	 * @return array
+	 */
+	public function system_question_maxes() {
+		return array(
+			'fname' => 45,
+			'lname' => 45,
+			'address' => 255,
+			'address2' => 255,
+			'city' => 45,
+			'zip' => 12,
+			'email' => 255,
+			'phone' => 45,
+		);
+	}
+	
+	/**
+	 * Given a QST_system value, gets the question's largest allowable max input.
+	 * See Registraiton_Form_Admin_Page::system_question_maxes()
+	 * @param string $system_question_value
+	 * @return int|float
+	 */
+	public function max_max_for_system_question( $system_question_value ) {
+		$maxes = $this->system_question_maxes();
+		if( isset( $maxes[ $system_question_value ] ) ) {
+			return $maxes[ $system_question_value ];
+		} else {
+			return EE_INF;
+		}
+	}
 
 
 

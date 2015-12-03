@@ -105,7 +105,21 @@ $has_answers = $question->has_answers();
 
 				</td>
 			</tr>
-
+			<tr id="open_answer_question_options">
+				<th>
+					<label>
+						<?php _e( 'Maximum Allowed Response Size', 'event_espresso' );?>
+					</label>
+				</th>
+				<td>
+					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max == EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>">
+					<p>
+						<span class="description">
+							<?php _e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
+						</span>
+					</p>
+				</td>
+			</tr>
 			<tr id="question_options">
 				<th>
 					<label>

@@ -49,6 +49,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 		if( $value_on_field_to_be_outputted === EE_INF ){
 			switch($schema){
 				case 'input':
+				case 'form_input':
 					return '';
 				case 'symbol':
 					return "&infin;";
