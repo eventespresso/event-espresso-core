@@ -14,6 +14,9 @@ class EE_Max_Length_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 	public function __construct( $validation_error_message = NULL, $max_length = EE_INF ) {
 		$this->_max_length = $max_length;
+		if( $validation_error_message === null ) {
+			$validation_error_message = sprintf( __( 'Input is too long. Maximum number of characters is %1$s', 'event_espresso' ), $max_length );
+		}
 		parent::__construct( $validation_error_message );
 	}
 
