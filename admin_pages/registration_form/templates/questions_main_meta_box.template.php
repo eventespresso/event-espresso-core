@@ -118,6 +118,13 @@ $has_answers = $question->has_answers();
 							<?php _e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
 						</span>
 					</p>
+					<p>
+						<span class="description" style="color:#D54E21;">
+							<?php printf(
+									__( 'System question! The maximum number of characters that can be used for this question is %1$s', 'event_espresso' ),
+									$max_max );?>
+						</span>
+					</p>
 				</td>
 			</tr>
 			<tr id="question_options">

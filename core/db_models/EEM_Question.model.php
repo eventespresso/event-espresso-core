@@ -261,6 +261,41 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		$max = $this->_get_all_wpdb_results( array(), ARRAY_A, $columns_to_select );
 		return $max[0]['max_order'];
 	}
+	
+	/**
+	 * Returns an array where keys are system question QST_system values,
+	 * and values are the highest question max the admin can set on the question
+	 * (aka the "max max"; eg, a site admin can change the zip question to have a max
+	 * of 5, but no larger than 12)
+	 * @return array
+	 */
+	public function system_question_maxes() {
+		return array(
+			'fname' => 45,
+			'lname' => 45,
+			'address' => 255,
+			'address2' => 255,
+			'city' => 45,
+			'zip' => 12,
+			'email' => 255,
+			'phone' => 45,
+		);
+	}
+	
+	/**
+	 * Given a QST_system value, gets the question's largest allowable max input.
+	 * See Registraiton_Form_Admin_Page::system_question_maxes()
+	 * @param string $system_question_value
+	 * @return int|float
+	 */
+	public function max_max_for_system_question( $system_question_value ) {
+		$maxes = $this->system_question_maxes();
+		if( isset( $maxes[ $system_question_value ] ) ) {
+			return $maxes[ $system_question_value ];
+		} else {
+			return EE_INF;
+		}
+	}
 
 
 
