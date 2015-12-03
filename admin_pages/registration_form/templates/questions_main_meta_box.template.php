@@ -105,7 +105,7 @@ $has_answers = $question->has_answers();
 
 				</td>
 			</tr>
-			<tr id="open_answer_question_options">
+			<tr id="text_input_question_options">
 				<th>
 					<label>
 						<?php _e( 'Maximum Allowed Response Size', 'event_espresso' );?>
