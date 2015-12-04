@@ -9,7 +9,7 @@
  * @package         Event Espresso
  * @subpackage    batch
  * @author				Mike Nelson
- * @since		 	   $VID:$
+ * @since		 	   4.8.26
  *
  */
 namespace EventEspressoBatchRequest\JobHandlers;

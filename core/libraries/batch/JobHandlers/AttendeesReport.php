@@ -8,7 +8,7 @@
  * @package         Event Espresso
  * @subpackage    
  * @author				Mike Nelson
- * @since		 	   $VID:$
+ * @since		 	   4.8.26
  *
  */
 
