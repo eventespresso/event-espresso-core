@@ -75,7 +75,8 @@ class EE_Register_Config implements EEI_Plugin_API {
 			'name' => $setup_args['config_name']
 		);
 
-		add_filter( 'AHEE__EE_Config___load_core_config__end', array( 'EE_Register_Config', 'set_config' ), 15 );
+		add_action( 'AHEE__EE_Config___load_core_config__end', array( 'EE_Register_Config', 'set_config' ), 15, 1 );
+		add_action( 'AHEE__EE_Config__update_espresso_config__end', array( 'EE_Register_Config', 'set_config' ), 15, 1 );
 	}
 
 
