@@ -163,6 +163,15 @@ class EEH_Template {
 	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
 	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/relative/path/to/some-event.template.php
 	 *
+	 * 		  Had you passed an absolute path to your template that was in some other location,
+	 *        ie: "/absolute/path/to/some-event.template.php"
+	 * 		  then the search would have been :
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /absolute/path/to/some-event.template.php
+	 *
+	 * 		  and stopped there upon finding it in the second location
+	 *
 	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
