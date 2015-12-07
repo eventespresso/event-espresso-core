@@ -160,7 +160,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 
 		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
 	}
-	
+
 	/**
 	 * Determines if the given question type is in the given question type category
 	 * @param string $question_type one of EEM_Question::allowed_question_types()
@@ -173,7 +173,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		}
 		return in_array( $question_type, $this->_question_type_categories[ $category ] );
 	}
-	
+
 	/**
 	 * Returns the question type categories 2d array
 	 * @return array see EEM_Question::_question_type_categories
@@ -261,7 +261,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		$max = $this->_get_all_wpdb_results( array(), ARRAY_A, $columns_to_select );
 		return $max[0]['max_order'];
 	}
-	
+
 	/**
 	 * Returns an array where keys are system question QST_system values,
 	 * and values are the highest question max the admin can set on the question
@@ -281,10 +281,10 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			'phone' => 45,
 		);
 	}
-	
+
 	/**
 	 * Given a QST_system value, gets the question's largest allowable max input.
-	 * See Registraiton_Form_Admin_Page::system_question_maxes()
+	 * @see Registration_Form_Admin_Page::system_question_maxes()
 	 * @param string $system_question_value
 	 * @return int|float
 	 */
