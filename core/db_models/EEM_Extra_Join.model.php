@@ -4,7 +4,16 @@
  *
  * Class EEM_Extra_Join
  *
- * Description here
+ * Special model that can be used as a join model between any two models. This
+ * helps prevent the addition of further tables.
+ * This model has two foreign keys EXJ_first_model_ID and EXJ_second_model_ID.
+ * The first always points to the model which is ALPHABETICALLY LOWER than the other 
+ * (ie comes earlier in the alphabet). Eg if an entry in this model's table
+ * joins an event to a venue, the event id will be in EXJ_first_model_ID, and the
+ * venue's id will be in EXJ_seonc_model_ID.
+ * However, if the entry in this model's table joins event to attendee,
+ * the attendee id will be in EXJ_first_model_ID, and the event id will be in
+ * EXJ_second_model_ID. 
  *
  * @package         Event Espresso
  * @subpackage    
@@ -35,9 +44,13 @@ class EEM_Extra_Join extends EEM_Base{
 				
 			)
 		);
-		foreach($models_this_can_join as $model){
-			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
-		}
+		//this model is weird in that it has two foreign key columns which can point to any model/table.
+		//eg a foreign key to event will be in "EXJ_first_model_ID", provided the other
+		//model linked to is alphabetically greater than event (eg venue).
+		//but if the model linked to is alphabetically lower (eg attendee), 
+		//the foreign key to the event will be in "EXJ_second_model_ID"
+		//so normal usage of foreign keys is weird. So don't define any
+		//relations to other models because they won't work properly with this model
 		parent::__construct($timezone);
 	}
 }
