@@ -215,7 +215,7 @@ class EE_Payment_Method_Manager {
 	 */
 	public function activate_a_payment_method_of_type( $payment_method_type ){
 		$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
-		if( ! $payment_method ){
+		if( ! $payment_method instanceof EE_Payment_Method ){
 			$pm_type_class = $this->payment_method_class_from_type($payment_method_type);
 			if(class_exists($pm_type_class)){
 				/** @var $pm_type_obj EE_PMT_Base */
@@ -224,6 +224,8 @@ class EE_Payment_Method_Manager {
 				if( ! $payment_method){
 					$payment_method = $this->create_payment_method_of_type( $pm_type_obj );
 				}
+				$payment_method->set_type( $payment_method_type );
+				$this->initialize_payment_method( $payment_method );
 			} else {
 				throw new EE_Error(
 					sprintf(
@@ -232,8 +234,8 @@ class EE_Payment_Method_Manager {
 				);
 			}
 		}
-		$payment_method->set_type( $payment_method_type );
-		$this->activate_and_initialize_payment_method( $payment_method );
+		$payment_method->set_active();
+		$payment_method->save();
 		$this->set_usable_currencies_on_payment_method( $payment_method );
 		if( $payment_method->type() == 'Invoice' ){
 			$messages = EE_Registry::instance()->load_lib( 'messages' );
@@ -251,7 +253,7 @@ class EE_Payment_Method_Manager {
 	}
 
 	/**
-	 * Creates a payment method of the specified type
+	 * Creates a payment method of the specified type. Does not save it.
 	 * @global WP_User $current_user
 	 * @param EE_PMT_Base $pm_type_obj
 	 * @return EE_Payment_Method
@@ -270,25 +272,22 @@ class EE_Payment_Method_Manager {
 					) * 10,
 			)
 		);
-		//handles the goofy case where someone activates the invoice gateway which is also
-		$payment_method->set_type($pm_type_obj->system_name());
-		$payment_method->set_description( $pm_type_obj->default_description() );
-		if( ! $payment_method->button_url() ){
-			$payment_method->set_button_url( $pm_type_obj->default_button_url() );
-		}
 		return $payment_method;
 	}
 
 	/**
-	 * Activates the payment method,
+	 * Sets the initial payment method properties (including extra meta)
 	 * @param EE_Payment_Method $payment_method
 	 * @return EE_Payment_Method
 	 */
-	public function activate_and_initialize_payment_method( $payment_method ) {
-		$payment_method->set_active();
-		$payment_method->save();
+	public function initialize_payment_method( $payment_method ) {
+		$pm_type_obj = $payment_method->type_obj();
+		$payment_method->set_description( $pm_type_obj->default_description() );
+		if( ! $payment_method->button_url() ){
+			$payment_method->set_button_url( $pm_type_obj->default_button_url() );
+		}	
 		//now add setup its default extra meta properties
-		$extra_metas = $payment_method->type_obj()->settings_form()->extra_meta_inputs();
+		$extra_metas = $pm_type_obj->settings_form()->extra_meta_inputs();
 		foreach( $extra_metas as $meta_name => $input ){
 			$payment_method->update_extra_meta($meta_name, $input->raw_value() );
 		}
