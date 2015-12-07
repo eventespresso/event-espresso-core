@@ -1,6 +1,10 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * CSV Import Export class
+ * 
+ * For dealing with CSV files directly. For exports/reports, it would generally
+ * be preferred to use EventEspressoBatchRequest\BatchRequestProcessor and
+ * EEH_Export to create csv files on the server and then direct the user to download them
  *
  * @package				Event Espresso
  * @subpackage		includes/functions
