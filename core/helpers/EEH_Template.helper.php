@@ -145,8 +145,9 @@ class EEH_Template {
 	 *        <assumed full absolute server path>
 	 *        <server path up to>/wp-content/uploads/espresso/templates/<current EE theme>/
 	 *        <server path up to>/wp-content/uploads/espresso/templates/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/templates/<current EE theme>/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/public/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/core/templates/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
 	 * 		Example:
@@ -160,7 +161,8 @@ class EEH_Template {
 	 *        /relative/path/to/some-event.template.php
 	 *        /home/public_html/wp-content/uploads/espresso/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
 	 *        /home/public_html/wp-content/uploads/espresso/templates/relative/path/to/some-event.template.php
-	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/public/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/core/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
 	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/relative/path/to/some-event.template.php
 	 *
 	 * 		  Had you passed an absolute path to your template that was in some other location,
