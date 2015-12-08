@@ -507,7 +507,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		//add "-lbl" to the end of the label id
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
-		$max_max_for_question = EEM_Question::instance()->max_max_for_system_question( $question->system_ID() );
+		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $question->system_ID() );
 		if( EEM_Question::instance()->question_type_is_in_category(  $question->type(), 'text' ) ) {
 			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy( 
 				null, 

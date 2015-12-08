@@ -288,7 +288,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 * @param string $system_question_value
 	 * @return int|float
 	 */
-	public function max_max_for_system_question( $system_question_value ) {
+	public function absolute_max_for_system_question( $system_question_value ) {
 		$maxes = $this->system_question_maxes();
 		if( isset( $maxes[ $system_question_value ] ) ) {
 			return $maxes[ $system_question_value ];
