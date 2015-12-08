@@ -51,7 +51,11 @@ class RegistrationsReport extends JobHandlerFile {
 		$job_parameters->add_extra_data( 'questions_data', $question_data_for_columns );
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
 		//we should also set the header columns
-		$csv_data_for_row = $this->get_csv_data_for( $event_id, 0, 1, $job_parameters->extra_datum( 'questions_data' ) );
+		$csv_data_for_row = $this->get_csv_data_for( 
+			$event_id, 
+			0, 
+			1, 
+			$job_parameters->extra_datum( 'questions_data' ) );
 		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
@@ -114,7 +118,11 @@ class RegistrationsReport extends JobHandlerFile {
 	 * @throws
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
-		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $batch_size );
+		$csv_data = $this->get_csv_data_for( 
+			$job_parameters->request_datum( 'EVT_ID', '0'), 
+			$job_parameters->units_processed(), 
+			$batch_size,
+			$job_parameters->extra_datum( 'questions_data' ) );
 		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
