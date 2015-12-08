@@ -3607,9 +3607,24 @@ abstract class EEM_Base extends EE_Base{
 			return array();
 		}
 		$count_if_model_has_no_primary_key = 0;
+		$has_primary_key = $this->has_primary_key_field();
+		if( $has_primary_key ) {
+			$primary_key_field = $this->get_primary_key_field();
+		} else {
+			$primary_key_field = null;
+		}
 		foreach ( $rows as $row ) {
 			if(empty($row)){//wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
 				return array();
+			}
+			//check if we've already set this object in the results array, 
+			//in which case there's no need to process it further (again)
+			if( $has_primary_key ) {
+				$table_pk_value = $this->_get_column_value_with_table_alias_or_not($row, $primary_key_field->get_qualified_column(), $primary_key_field->get_table_column() );
+				if( $table_pk_value && 
+					isset( $array_of_objects[ $table_pk_value ] ) ) {
+					continue;
+				}
 			}
 			$classInstance=$this->instantiate_class_from_array_or_object($row);
 			if( ! $classInstance ) {
@@ -3618,7 +3633,7 @@ abstract class EEM_Base extends EE_Base{
 			//set the timezone on the instantiated objects
 			$classInstance->set_timezone( $this->_timezone );
 			//make sure if there is any timezone setting present that we set the timezone for the object
-			$array_of_objects[$this->has_primary_key_field() ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
+			$array_of_objects[ $has_primary_key ? $classInstance->ID() : $count_if_model_has_no_primary_key++]=$classInstance;
 			//also, for all the relations of type BelongsTo, see if we can cache
 			//those related models
 			//(we could do this for other relations too, but if there are conditions
