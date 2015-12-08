@@ -51,10 +51,10 @@ class RegistrationsReport extends JobHandlerFile {
 		$job_parameters->add_extra_data( 'questions_data', $question_data_for_columns );
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
 		//we should also set the header columns
-		$csv_data_for_row = $this->get_csv_data_for( 
-			$event_id, 
-			0, 
-			1, 
+		$csv_data_for_row = $this->get_csv_data_for(
+			$event_id,
+			0,
+			1,
 			$job_parameters->extra_datum( 'questions_data' ) );
 		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
@@ -86,7 +86,7 @@ class RegistrationsReport extends JobHandlerFile {
 		}
 		return sprintf( "registrations-for-%s.csv", $event_slug );
 	}
-	
+
 	/**
 	 * Gets the questions which are to be used for this report, so they
 	 * can be remembered for later
@@ -105,22 +105,21 @@ class RegistrationsReport extends JobHandlerFile {
 		}
 		return \EEM_Question::instance()->get_all_wpdb_results( $question_query_params );
 	}
-	
+
+
+
 	/**
 	 * Performs another step of the job
+	 *
 	 * @param JobParameters $job_parameters
-	 * @return array{
-	 *	@type string $status
-	 *	@type int $records_processed
-	 *	@type int $records_to_process
-	 *	@type string message
-	 * } and anything more we want to add
-	 * @throws
+	 * @param int           $batch_size
+	 * @return JobStepResponse
+	 * @throws \EE_Error
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
-		$csv_data = $this->get_csv_data_for( 
-			$job_parameters->request_datum( 'EVT_ID', '0'), 
-			$job_parameters->units_processed(), 
+		$csv_data = $this->get_csv_data_for(
+			$job_parameters->request_datum( 'EVT_ID', '0'),
+			$job_parameters->units_processed(),
 			$batch_size,
 			$job_parameters->extra_datum( 'questions_data' ) );
 		\EE_Registry::instance()->load_helper( 'Export' );
@@ -149,19 +148,18 @@ class RegistrationsReport extends JobHandlerFile {
 	 * @param int $limit
 	 * @param array $questions_for_these_regs_rows results of $wpdb->get_results( $something, ARRAY_A) when querying for questions
 	 * @return array top-level keys are numeric, next-level keys are column headers
-	 * 
+	 *
 	 */
 	function get_csv_data_for( $event_id, $offset, $limit, $questions_for_these_regs_rows ) {
 		\EE_Registry::instance()->load_helper( 'Export' );
 		$reg_fields_to_include = array(
-				'TXN_ID',
-				'ATT_ID',
-				'REG_ID',
-				'REG_date',
-				'REG_code',
-				'REG_count',
-				'REG_final_price'
-
+			'TXN_ID',
+			'ATT_ID',
+			'REG_ID',
+			'REG_date',
+			'REG_code',
+			'REG_count',
+			'REG_final_price',
 		);
 		$att_fields_to_include = array(
 			'ATT_fname',
