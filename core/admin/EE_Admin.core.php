@@ -252,9 +252,11 @@ final class EE_Admin {
 		$hidden_meta_boxes = get_user_option( 'metaboxhidden_nav-menus', $user->ID );
 		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories', 'add-post-type-post', 'add-post-type-page' ) );
 
-		foreach( $hidden_meta_boxes as $key => $meta_box_id ) {
-			if ( in_array( $meta_box_id, $initial_meta_boxes ) ) {
-				unset( $hidden_meta_boxes[$key] );
+		if ( is_array( $hidden_meta_boxes ) ) {
+			foreach ( $hidden_meta_boxes as $key => $meta_box_id ) {
+				if ( in_array( $meta_box_id, $initial_meta_boxes ) ) {
+					unset( $hidden_meta_boxes[ $key ] );
+				}
 			}
 		}
 
