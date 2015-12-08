@@ -251,6 +251,3 @@ if ( ! function_exists( 'espresso_deactivate_plugin' ) ) {
 		deactivate_plugins( $plugin_basename );
 	}
 }
-
-
-
