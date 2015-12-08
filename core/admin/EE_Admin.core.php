@@ -240,26 +240,26 @@ final class EE_Admin {
 	 */
 	public function enable_hidden_ee_nav_menu_metaboxes() {
 		global $wp_meta_boxes, $pagenow;
-		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
+		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' ) {
 			return;
+		}
+		$user = wp_get_current_user();
+		//has this been done yet?
+		if ( get_user_option( 'ee_nav_menu_initialized', $user->ID ) ) {
+			return;
+		}
 
-		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' ) );
-		$hidden_meta_boxes = array();
+		$hidden_meta_boxes = get_user_option( 'metaboxhidden_nav-menus', $user->ID );
+		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories', 'add-post-type-post', 'add-post-type-page' ) );
 
-		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
-			foreach ( array_keys($wp_meta_boxes['nav-menus'][$context]) as $priority ) {
-				foreach ( $wp_meta_boxes['nav-menus'][$context][$priority] as $box ) {
-					if ( in_array( $box['id'], $initial_meta_boxes ) ) {
-						unset( $box['id'] );
-					} else {
-						$hidden_meta_boxes[] = $box['id'];
-					}
-				}
+		foreach( $hidden_meta_boxes as $key => $meta_box_id ) {
+			if ( in_array( $meta_box_id, $initial_meta_boxes ) ) {
+				unset( $hidden_meta_boxes[$key] );
 			}
 		}
 
-		$user = wp_get_current_user();
 		update_user_option( $user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes, true );
+		update_user_option( $user->ID, 'ee_nav_menu_initialized', 1, true );
 	}
 
 
