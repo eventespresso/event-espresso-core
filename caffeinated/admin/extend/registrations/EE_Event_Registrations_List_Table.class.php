@@ -68,7 +68,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$this->_bottom_buttons = array(
 				'report'=> array(
 					'route' => 'registrations_report',
-					'extra_request' => !empty($evt_id) ? array('EVT_ID'=>$evt_id) : NULL
+					'extra_request' => 
+						array( 
+							'EVT_ID'=> $evt_id, 
+							'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}") )
 				)
 			);
 		}
