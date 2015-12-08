@@ -341,7 +341,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$qst_system = EEM_Question::instance()->get_var(
 					array(
 						array(
-							'QST_ID' => $this->_req_data[ 'QST_ID' ]
+							'QST_ID' => isset( $this->_req_data[ 'QST_ID' ] ) ? $this->_req_data[ 'QST_ID' ] : 0
 						)
 					),
 					'QST_system' );
