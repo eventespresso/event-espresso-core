@@ -39,7 +39,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.9.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
-			new EE_DMS_4_8_0_Email_System_Question(),
+			new EE_DMS_4_9_0_Email_System_Question(),
 		);
 		parent::__construct();
 	}

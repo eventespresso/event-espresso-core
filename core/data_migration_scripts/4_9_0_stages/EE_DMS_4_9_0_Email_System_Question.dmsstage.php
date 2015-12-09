@@ -6,21 +6,21 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  *
- * EE_DMS_4_8_0_Email_System_Question
+ * EE_DMS_4_9_0_Email_System_Question
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Brent Christensen
  *
  */
-class EE_DMS_4_8_0_Email_System_Question extends EE_Data_Migration_Script_Stage_Table{
+class EE_DMS_4_9_0_Email_System_Question extends EE_Data_Migration_Script_Stage_Table{
 
 
 
 	/**
 	 * Just initializes the status of the migration
 	 *
-	 * @return EE_DMS_4_8_0_Email_System_Question
+	 * @return EE_DMS_4_9_0_Email_System_Question
 	 */
 	public function __construct() {
 		global $wpdb;
