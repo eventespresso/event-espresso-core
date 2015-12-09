@@ -505,11 +505,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		switch ( $question->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				if( $identifier == 'email' ){
-					return new EE_Email_Input( $input_constructor_args );
-				}else{
-					return new EE_Text_Input( $input_constructor_args );
-				}
+				return new EE_Text_Input( $input_constructor_args );
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
@@ -566,6 +562,28 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
 				return $input;
 			// fallback
+			case EEM_Question::QST_type_email :
+				return new EE_Email_Input( $input_constructor_args );
+			case EEM_Question::QST_type_us_phone :
+				return new EE_Phone_Input( $input_constructor_args );
+			case EEM_Question::QST_type_int :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Int_Validation_Strategy();
+				return new EE_Text_Input( $input_constructor_args );
+			case EEM_Question::QST_type_decimal :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Float_Validation_Strategy();
+				return new EE_Text_Input( $input_constructor_args );
+			case EEM_Question::QST_type_url :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_URL_Validation_Strategy();
+				return new EE_Text_Input( $input_constructor_args );
+			case EEM_Question::QST_type_year :
+				return new EE_Year_Input(
+						$input_constructor_args,
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__four_digit', true, $question ),
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__early_range', 100, $question ),
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__end_range', 100, $question )
+						);
+			case EEM_Question::QST_type_multi_select :
+				return new EE_Select_Multiple_Input( $question->options(), $input_constructor_args );
 			default :
 				$default_input = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default', null, $question->type(), $question, $input_constructor_args );
 				if( ! $default_input ){
