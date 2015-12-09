@@ -41,7 +41,7 @@ CREATE TABLE `wp_events_question` (
 				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
 			)
 		);
- * 
+ *
  * AND Question Option model was just a CSV'd list on questions in 3.1, but in 4.1 looks like this:
  * $this->_tables = array(
 			'Question_Option'=>new EE_Primary_Table('esp_question_option','QSG_ID')
@@ -89,7 +89,7 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 	}
 	private function _insert_new_question($old_question){
 		global $wpdb;
-		//if this pretends to be a 'system' question, check if we already have a 
+		//if this pretends to be a 'system' question, check if we already have a
 		//system question for that string. If so, pretend THAT new question
 		//is what we just isnerted
 		if($old_question['system_name']){
@@ -99,7 +99,7 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 			}
 			//ok so this must be the first one. Carry on.
 		}
-		
+
 		$cols_n_values = array(
 			'QST_display_text'=>stripslashes($old_question['question']),
 			'QST_admin_label'=> $old_question['system_name'] ? $old_question['system_name'] : sanitize_title($old_question['question']),
@@ -152,13 +152,11 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 		$cols_n_values = array(
 			'QST_ID'=>$question_id,
 			'QSO_value'=>$option,
-			'QSO_desc'=>$option,
 			'QSO_deleted'=>false
 		);
 		$datatypes= array(
 			'%d',//QST_ID
 			'%s',//QSO_value
-			'%s',//QSO_option
 			'%d',//QSO_deleted
 		);
 		$success = $wpdb->insert($this->_option_table,$cols_n_values,$datatypes);

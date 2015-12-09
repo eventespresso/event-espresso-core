@@ -52,6 +52,7 @@ class EEH_Form_Fields {
 	 * 		'db-col' => 'column_in_db' //used to indicate which column the field corresponds with in the db
 	 * 		'options' => optiona, optionb || array('value' => 'label', '') //if the input type is "select", this allows you to set the args for the different <option> tags.
 	 * 		'tabindex' => 1 //this allows you to set the tabindex for the field.
+	 *      'append_content' => '' //this allows you to send in html content to append to the field.
 	 * 	)
 	 * 	@param	array $id - used for defining unique identifiers for the form.
 	 * 	@return string
@@ -82,7 +83,8 @@ class EEH_Form_Fields {
 				'format' => '%d',
 				'db-col' => 'column_in_db',
 				'options' => array(),
-				'tabindex' => ''
+				'tabindex' => '',
+				'append_content' => ''
 				);
 
 			$input_value = wp_parse_args( $input_value, $defaults );
@@ -99,6 +101,9 @@ class EEH_Form_Fields {
 			//rows or cols?
 			$rows = isset($input_value['rows'] ) ? $input_value['rows'] : '10';
 			$cols = isset($input_value['cols'] ) ? $input_value['cols'] : '80';
+
+			//any content?
+			$append_content = $input_value['append_content'];
 
 			$output .= (!$close) ? '<ul>' : '';
 			$output .= '<li>';
@@ -162,6 +167,9 @@ class EEH_Form_Fields {
 					$output .= '</li>';
 					$output .= '</ul>';
 					$output .= '<h4>' . $input_value['label'] . '</h4>';
+					if ( $append_content ) {
+						$output .= $append_content;
+					}
 					ob_start();
 					wp_editor( $input_value['value'], $field_id, $editor_settings);
 					$editor = ob_get_contents();
@@ -169,6 +177,9 @@ class EEH_Form_Fields {
 					$output .= $editor;
 					break;
 
+				}
+				if ( $append_content && $input_value['input'] !== 'wp_editor' ) {
+					$output .= $append_content;
 				}
 				$output .= ($close) ? '</li>' : '';
 
@@ -332,7 +343,7 @@ class EEH_Form_Fields {
 	 * @param  string  $name       field name
 	 * @param  array  $values     option values, numbered array starting at 0, where each value is an array with a key 'text' (meaning text to display' and 'id' (meaning the internal value)
 	 * eg: array(1=>array('text'=>'Monday','id'=>1),2=>array('text'=>'Tuesday','id'=>2)...). or as an array of key-value pairs, where the key is to be used for the
-	 * select input's name, and the value will be the text shown to the user
+	 * select input's name, and the value will be the text shown to the user.  Optionally you can also include an additional key of "class" which will add a specific class to the option for that value.
 	 * @param  string  $default    default value
 	 * @param  string  $parameters extra paramaters
 	 * @param  string  $class      css class
@@ -365,8 +376,9 @@ class EEH_Form_Fields {
 						$size = 'wide';
 				}
 			}
-		} else
+		} else {
 			$size = '';
+		}
 
 		$field .= ' class="' . $class . ' ' . $size . '">';
 
@@ -378,6 +390,9 @@ class EEH_Form_Fields {
 			$field .= '<option value="' . $values[$i]['id'] . '"';
 			if ($default == $values[$i]['id']) {
 				$field .= ' selected = "selected"';
+			}
+			if ( isset( $values[$i]['class'] ) ) {
+				$field .= ' class="' . $values[$i]['class'] . '"';
 			}
 			$field .= '>' . $values[$i]['text'] . '</option>';
 		}
@@ -1368,8 +1383,6 @@ class EEH_Form_Fields {
 	 * @return string                    html
 	 */
 	public static function generate_event_months_dropdown( $cur_date = '', $status = NULL, $evt_category = NULL, $evt_active_status = NULL ) {
-		//what we need to do is get all PRIMARY datetimes for all events to filter on. Note we need to include any other filters that are set!
-
 		//determine what post_status our condition will have for the query.
 		switch ( $status ) {
 			case 'month' :
@@ -1394,36 +1407,10 @@ class EEH_Form_Fields {
 			$where['Event.Term_Taxonomy.term_id'] = $evt_category;
 		}
 
-		//what about active status for the event?
-		if ( !empty( $evt_active_status ) ) {
-			switch ( $evt_active_status ) {
-				case 'upcoming' :
-					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>', date('Y-m-d g:i:s', time() ) );
-					break;
-
-				case 'expired' :
-					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'AND' => array('Event.status' => 'publish', 'DTT_EVT_end' => array( '<',  date('Y-m-d g:i:s', time() ) ) ) );
-					break;
-
-				case 'active' :
-					$where['Event.status'] = 'publish';
-					$where['DTT_EVT_start'] = array('>',  date('Y-m-d g:i:s', time() ) );
-					$where['DTT_EVT_end'] = array('<', date('Y-m-d g:i:s', time() ) );
-					break;
-
-				case 'inactive' :
-					if ( isset( $where['Event.status'] ) ) unset( $where['Event.status'] );
-					$where['OR'] = array( 'Event.status' => array( '!=', 'publish' ), 'DTT_EVT_end' => array( '<', date('Y-m-d g:i:s', time() ) ) );
-					break;
-			}
-		}
-
 
 //		$where['DTT_is_primary'] = 1;
 
-		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where);
+		$DTTS = EE_Registry::instance()->load_model('Datetime')->get_dtt_months_and_years($where, $evt_active_status );
 
 		//let's setup vals for select input helper
 		$options = array(
@@ -1437,10 +1424,11 @@ class EEH_Form_Fields {
 		global $wp_locale;
 
 		foreach ( $DTTS as $DTT ) {
-			$date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
+			$localized_date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
+			$id = $DTT->dtt_month . ' ' . $DTT->dtt_year;
 			$options[] = array(
-				'text' => $date,
-				'id' => $date
+				'text' => $localized_date,
+				'id' => $id
 				);
 		}
 

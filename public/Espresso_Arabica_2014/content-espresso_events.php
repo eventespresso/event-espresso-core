@@ -1,5 +1,4 @@
 <?php
-//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
 /**
  * This template will display a single event - copy it to your theme folder
  *
@@ -10,6 +9,18 @@
  * @ link			http://www.eventespresso.com
  * @ version		4+
  */
+
+/*************************** IMPORTANT *************************
+ * if you are creating a custom template based on this file,
+ * and do not wish to use the template display order controls in the admin,
+ * then remove the following filter and position the additional template parts
+ * that are loaded via the espresso_get_template_part() function to your liking
+ * and/or use any of the template tags functions found in:
+ * \wp-content\plugins\event-espresso-core\public\template_tags.php
+ ************************** IMPORTANT **************************/
+add_filter( 'FHEE__content_espresso_events__template_loaded', '__return_true' );
+
+//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
 
 global $post;
 $event_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';

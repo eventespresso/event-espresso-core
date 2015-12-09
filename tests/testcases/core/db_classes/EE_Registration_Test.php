@@ -64,7 +64,7 @@ class EE_Registration_Test extends EE_UnitTestCase{
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$q1 = $this->new_model_obj_with_dependencies( 'Question' );
 		//also grab the default firstname question
-		$q2 = EEM_Question::instance()->get_one_by_ID(EEM_Attendee::fname_question_id);
+		$q2 = EEM_Question::instance()->get_Question_ID_from_system_string(EEM_Attendee::system_question_fname);
 		$this->assertNotNull($q2);
 		$a1 = $this->new_model_obj_with_dependencies( 'Answer', array('REG_ID'=>$r->ID(), 'QST_ID'=>$q1->ID()));
 		$this->assertEquals( $a1->value(), $r->answer_value_to_question( $q1, false ) );

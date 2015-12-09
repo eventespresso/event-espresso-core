@@ -1,8 +1,8 @@
 #Event Espresso 4 Core
 
 [![Build Status](https://circleci.com/gh/eventespresso/event-espresso-core.svg?style=shield&circle-token=fa8a74e72f3f7c85b8e754044268cafdc9765437)](https://circleci.com/gh/eventespresso)
-[![GitHub release](https://img.shields.io/badge/Release%20Candidate-4.7.6.rc-orange.svg?style=plastic)](https://github.com/eventespresso/event-espresso-core)
-[![WordPress](https://img.shields.io/badge/WordPress-v4.2.2%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
+[![Latest Tag](https://img.shields.io/github/tag/eventespresso/event-espresso-core.svg?style=flat&label=latest%20tag)](https://github.com/eventespresso/event-espresso-core/releases)
+[![WordPress](https://img.shields.io/badge/WordPress-v4.3.x+%20tested-brightgreen.svg?style=plastic)](http://eventespresso.com/)
 [![License](https://img.shields.io/badge/License-GPLv2-blue.svg?style=plastic)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![License](https://img.shields.io/badge/Now%20100%-Gluten%20Free-ff69b4.svg?style=plastic)](http://eventespresso.com/)
 
@@ -10,20 +10,29 @@
 
 [Event Espresso](http://eventespresso.com/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=event+espresso+link) is an event ticketing and registration platform for [WordPress](http://wordpress.org/). Event Espresso makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports.
 
+## Support License
+Purchase a [Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=premium+support+license) to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=one+click+upgrades), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=growing+list+of+addons)).
+
+## Installing Event Espresso
+Event Espresso can be installed via the WordPress Dashboard or through FTP or SFTP.
+
+[View Event Espresso 4 Install Documentation →](http://eventespresso.com/wiki/installing-event-espresso/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+install+documentation)
+
+## Documentation
+Resources on Event Espresso 4 for a beginner to advanced users.
+
+[View Event Espresso 4 Documentation →](http://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
+
+
 ## Developers
 
-**This is the full version of the plugin** and provides everything that you need to [sell tickets]( http://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=sell+tickets), [collect payments](http://eventespresso.com/features/payment-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=collect+payments), and [manage events](http://eventespresso.com/features/event-management/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=manage+events) all from within your WordPress dashboard.
+**This is the full version of the plugin** and provides everything that you need to [sell tickets](http://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=sell+tickets), [collect payments](http://eventespresso.com/features/payment-options/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=collect+payments), and [manage events](http://eventespresso.com/features/event-management/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=manage+events) all from within your WordPress dashboard.
 
 
-Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=premium+support+license)** to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=one+click+upgrades), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=growing+list+of+addons)).
+Buy a **[Premium Support License](http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=premium+support+license)** to get access to more features (including [one-click upgrades](http://eventespresso.com/features/one-click-upgrades/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=one+click+upgrades), [growing list of add-ons](http://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=growing+list+of+addons)).
 
 **Note:** for non stable versions. We currently use minor versioning numbers such as (4.1.rc.125) for rapid development occurring.  On master, minor versions represent minor releases i.e. (4.1.1.p) that typically only include bug fixes and minor features.  Releases including bigger features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  "rc" in the version number indicates that it is a non-stable release candidate version.  "p" in the version number indicates a released version (usually only tags will have .p) In the list below we **do not** include minor version numbers.
 
-***
-
-**Current Stable Version:** 4.6.x.p
-
-***
 
 This is the Core for Event Espresso 4. This README.md file is targeted for display with our GitHub repo.  For detailed information via traditional readme, see the readme.txt file.
 

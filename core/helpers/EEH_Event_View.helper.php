@@ -141,23 +141,29 @@ class EEH_Event_View extends EEH_Base {
 	 * @return    string
 	 */
 	public static function event_content_or_excerpt( $num_words = NULL, $more = NULL ) {
-
 		global $post;
-		$content = '';
 
 		ob_start();
 		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
-			//echo '<h2 style="color:#E76700;">the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+
+			// admin has chosen "full description" for the "Event Espresso - Events > Templates > Display Description" option
 			the_content();
-		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) || apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
-			//echo '<h2 style="color:#E76700;">the_excerpt<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+
+		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) ) {
+
+			// admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
+			// AND an excerpt actually exists
 			the_excerpt();
+
 		} else if (( is_archive() && ! has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() )) {
-			//echo '<h2 style="color:#E76700;">get_the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span><b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+
+			// admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
+			// but NO excerpt actually exists, so we need to create one
 			if ( ! empty( $num_words )) {
 				if ( empty( $more )) {
-					$more = ' <a href="' . get_permalink() . '" class="more-link">' . __( '(more&hellip;)' ) . '</a>';
-					$more = apply_filters( 'the_content_more_link', $more );
+					$more_link_text = __( '(more&hellip;)' );
+					$more = ' <a href="' . get_permalink() . '" class="more-link">' . $more_link_text . '</a>';
+					$more = apply_filters( 'the_content_more_link', $more, $more_link_text );
 				}
 				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
 
@@ -171,8 +177,8 @@ class EEH_Event_View extends EEH_Base {
 			echo apply_filters( 'the_content', $content );
 
 		} else {
-			//echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-			echo apply_filters( 'the_content', $content );
+			// admin has chosen "none" for the "Event Espresso - Events > Templates > Display Description" option
+			echo apply_filters( 'the_content', '' );
 		}
 		return ob_get_clean();
 	}
@@ -184,7 +190,7 @@ class EEH_Event_View extends EEH_Base {
 	 *
 	 *  @access 	public
 	 * @param    int $EVT_ID
-	 *  @return 	string
+	 *  @return 	EE_Ticket[]
 	 */
 	public static function event_tickets_available( $EVT_ID = 0 ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
@@ -239,7 +245,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ? $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) :  '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime( 'DTT_EVT_start', $format ) :  '';
 	}
 
 
@@ -255,7 +262,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_last_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ? $datetime->end_date_and_time( $dt_frmt, $tm_frmt ) : '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime( 'DTT_EVT_end', $format ) : '';
 	}
 
 
@@ -271,7 +279,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_earliest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_earliest_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ?  $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) : '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ?  $datetime->get_i18n_datetime( 'DTT_EVT_start', $format ) : '';
 	}
 
 
@@ -287,7 +296,8 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function the_latest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = 0 ) {
 		$datetime = EEH_Event_View::get_last_date_obj( $EVT_ID );
-		return $datetime instanceof EE_Datetime ?  $datetime->end_date_and_time( $dt_frmt, $tm_frmt ) : '';
+		$format = ! empty( $dt_frmt ) && ! empty( $tm_frmt ) ? $dt_frmt . ' ' . $tm_frmt : $dt_frmt . $tm_frmt;
+		return $datetime instanceof EE_Datetime ?  $datetime->get_i18n_datetime( 'DTT_EVT_end', $format ) : '';
 	}
 
 
@@ -304,7 +314,7 @@ class EEH_Event_View extends EEH_Base {
 		if ( $datetime instanceof EE_Datetime ) {
 	?>
 		<div class="event-date-calendar-page-dv">
-			<div class="event-date-calendar-page-month-dv"><?php echo date_i18n( 'M', strtotime( $datetime->start_date()));?></div>
+			<div class="event-date-calendar-page-month-dv"><?php echo $datetime->get_i18n_datetime( 'DTT_EVT_start', 'M' );?></div>
 			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date( 'd' );?></div>
 		</div>
 	<?php
@@ -423,17 +433,16 @@ class EEH_Event_View extends EEH_Base {
 	 * @param null $limit
 	 * @return EE_Datetime[]
 	 */
-	public static function get_all_date_obj( $EVT_ID = 0, $include_expired = NULL, $include_deleted = false, $limit = NULL ) {
+	public static function get_all_date_obj( $EVT_ID = 0, $include_expired = null, $include_deleted = false, $limit = NULL ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
-		if($include_expired === NULL){
-			if($event->is_expired()){
-				$include_expired = TRUE;
+		if($include_expired === null){
+			if($event instanceof EE_Event && $event->is_expired()){
+				$include_expired = true;
 			}else{
-				$include_expired = FALSE;
+				$include_expired = false;
 			}
-		}else{
-			$include_expired = TRUE;
 		}
+
 		if ( $event instanceof EE_Event ) {
 			return $event->datetimes_ordered($include_expired, $include_deleted, $limit);
 		} else {

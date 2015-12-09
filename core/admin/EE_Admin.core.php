@@ -240,26 +240,28 @@ final class EE_Admin {
 	 */
 	public function enable_hidden_ee_nav_menu_metaboxes() {
 		global $wp_meta_boxes, $pagenow;
-		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
+		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' ) {
 			return;
+		}
+		$user = wp_get_current_user();
+		//has this been done yet?
+		if ( get_user_option( 'ee_nav_menu_initialized', $user->ID ) ) {
+			return;
+		}
 
-		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' ) );
-		$hidden_meta_boxes = array();
+		$hidden_meta_boxes = get_user_option( 'metaboxhidden_nav-menus', $user->ID );
+		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories', 'add-post-type-post', 'add-post-type-page' ) );
 
-		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
-			foreach ( array_keys($wp_meta_boxes['nav-menus'][$context]) as $priority ) {
-				foreach ( $wp_meta_boxes['nav-menus'][$context][$priority] as $box ) {
-					if ( in_array( $box['id'], $initial_meta_boxes ) ) {
-						unset( $box['id'] );
-					} else {
-						$hidden_meta_boxes[] = $box['id'];
-					}
+		if ( is_array( $hidden_meta_boxes ) ) {
+			foreach ( $hidden_meta_boxes as $key => $meta_box_id ) {
+				if ( in_array( $meta_box_id, $initial_meta_boxes ) ) {
+					unset( $hidden_meta_boxes[ $key ] );
 				}
 			}
 		}
 
-		$user = wp_get_current_user();
 		update_user_option( $user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes, true );
+		update_user_option( $user->ID, 'ee_nav_menu_initialized', 1, true );
 	}
 
 
@@ -484,7 +486,48 @@ final class EE_Admin {
 			}
 		}
 
+
+		/**
+		 * This code is for removing any set EE critical pages from the "Static Page" option dropdowns on the
+		 * 'options-reading.php' core WordPress admin settings page.  This is for user-proofing.
+		 */
+		global $pagenow;
+		if ( $pagenow == 'options-reading.php' ) {
+			add_filter( 'wp_dropdown_pages', array( $this, 'modify_dropdown_pages' ) );
+		}
+
 	}
+
+
+	/**
+	 * Callback for wp_dropdown_pages hook to remove ee critical pages from the dropdown selection.
+	 *
+	 * @param string $output  Current output.
+	 * @return string
+	 */
+	public function modify_dropdown_pages( $output ) {
+		//get critical pages
+		$critical_pages = EE_Registry::instance()->CFG->core->get_critical_pages_array();
+
+		//split current output by line break for easier parsing.
+		$split_output = explode( "\n", $output );
+
+		//loop through to remove any critical pages from the array.
+		foreach ( $critical_pages as $page_id ) {
+			$needle = 'value="' . $page_id . '"';
+			foreach( $split_output as $key => $haystack ) {
+				if( strpos( $haystack, $needle ) !== false ) {
+					unset( $split_output[$key] );
+				}
+			}
+		}
+
+		//replace output with the new contents
+		$output = implode( "\n", $split_output );
+
+		return $output;
+	}
+
 
 
 	/**
@@ -603,15 +646,21 @@ final class EE_Admin {
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
 		$items['events']['title'] = __('Click to view all Events', 'event_espresso');
-		$registrations = EEM_Registration::instance()->count();
+		$registrations = EEM_Registration::instance()->count(
+			array(
+				array(
+					'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete )
+				)
+			)
+		);
 		$items['registrations']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
 		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
-		foreach ( $items as $item ) {
-			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );
+		foreach ( $items as $type => $item_properties ) {
+			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
 		}
 		return $elements;
 	}
@@ -638,16 +687,22 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-			// whether to proceed with update
-			$update_post_shortcodes = FALSE;
 			// post on frontpage ?
 			$page_for_posts = EE_Config::get_page_for_posts();
+			$maybe_remove_from_posts = array();
 			// critical page shortcodes that we do NOT want added to the Posts page (blog)
 			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
+			// whether to proceed with update, if an entry already exists for this post, then we want to update
+			$update_post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] ) ? true : false;
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
+			// check that posts page is already being tracked
+			if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] ) ) {
+				// if not, then ensure that it is properly added
+				EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+			}
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
 				// convert to UPPERCASE to get actual shortcode
@@ -658,18 +713,28 @@ final class EE_Admin {
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
 					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
-						// check that posts page is already being tracked
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-							// if not, then ensure that it is properly added
-							EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
-						}
 						// add shortcode to "Posts page" tracking
 						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
 					}
 					$update_post_shortcodes = TRUE;
+					unset( $maybe_remove_from_posts[ $EES_Shortcode ] );
+				} else {
+					$maybe_remove_from_posts[ $EES_Shortcode ] = $post_ID;
 				}
 			}
 			if ( $update_post_shortcodes ) {
+				// remove shortcodes from $maybe_remove_from_posts that are still being used
+				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $shortcodes ) {
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
+					// compute difference between active post_shortcodes array and $maybe_remove_from_posts array
+					$maybe_remove_from_posts = array_diff_key( $maybe_remove_from_posts, $shortcodes );
+				}
+				// now unset unused shortcodes from the $page_for_posts post_shortcodes
+				foreach ( $maybe_remove_from_posts as $shortcode => $post_ID ) {
+					unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode ] );
+				}
 				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
 			}
 		}
@@ -689,6 +754,7 @@ final class EE_Admin {
 	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		// check for date_format or time_format
 		switch ( $option ) {
 			case 'date_format' :
@@ -702,22 +768,25 @@ final class EE_Admin {
 		}
 		// do we have a date_time format to check ?
 		if ( $date_time_format ) {
-			// because DateTime chokes on some formats, check first that strtotime can parse it
-			$date_string = strtotime( date( $date_time_format ));
-			// invalid date time formats will evaluate to either "0" or ""
-			if ( empty( $date_string )) {
+			$error_msg = EEH_DTT_Helper::validate_format_string( $date_time_format );
+
+			if ( is_array( $error_msg ) ) {
+				$msg = '<p>' . sprintf( __( 'The following date time "%s" ( %s ) is difficult to be properly parsed by PHP for the following reasons:', 'event_espresso' ), date( $date_time_format ) , $date_time_format  ) . '</p><p><ul>';
+
+
+				foreach ( $error_msg as $error ) {
+					$msg .= '<li>' . $error . '</li>';
+				}
+
+				$msg .= '</ul></p><p>' . sprintf( __( '%sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ), '<span style="color:#D54E21;">', '</span>' ) . '</p>';
+
 				// trigger WP settings error
 				add_settings_error(
 					'date_format',
 					'date_format',
-					sprintf(
-						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to its format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
-						date( $date_time_format ),
-						$date_time_format,
-						'<br /><span style="color:#D54E21;">',
-						'</span>'
-					)
+					$msg
 				);
+
 				// set format to something valid
 				switch ( $option ) {
 					case 'date_format' :

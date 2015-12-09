@@ -68,6 +68,8 @@ class EEH_Debug_Tools{
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
+		$plugin = basename( EE_PLUGIN_DIR_PATH );
+		add_action( "activate_{$plugin}", array( 'EEH_Debug_Tools', 'ee_plugin_activation_errors' ));
 		add_action( 'activated_plugin', array( 'EEH_Debug_Tools', 'ee_plugin_activation_errors' ));
 		add_action( 'shutdown', array( 'EEH_Debug_Tools', 'show_db_name' ));
 	}
@@ -213,7 +215,7 @@ class EEH_Debug_Tools{
 				$bold = 'bold';
 				break;
 		}
-		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0em 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
+		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
 	 }
 	 /**
 	  * Measure the memory usage by PHP so far.
@@ -263,20 +265,18 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public static function ee_plugin_activation_errors() {
-		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+		if ( WP_DEBUG ) {
 			$activation_errors = ob_get_contents();
-			if ( class_exists( 'EE_Registry' )) {
-				EE_Registry::instance()->load_helper( 'File' );
-			} else {
-				include_once( EE_HELPERS . 'EEH_File.helper.php' );
+			if ( ! empty( $activation_errors ) ) {
+				$activation_errors = date( 'Y-m-d H:i:s' ) . "\n" . $activation_errors;
 			}
+			espresso_load_required( 'EEH_File', EE_HELPERS . 'EEH_File.helper.php' );
 			if ( class_exists( 'EEH_File' )) {
 				try {
-					EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS );
 					EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html' );
 					EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_plugin_activation_errors.html', $activation_errors );
 				} catch( EE_Error $e ){
-					EE_Error::add_error( sprintf( __(  'The Event Espresso activation errors file could not be setup because: %s', 'event_espresso' ), $e->getMessage() ));
+					EE_Error::add_error( sprintf( __(  'The Event Espresso activation errors file could not be setup because: %s', 'event_espresso' ), $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			} else {
 				// old school attempt
@@ -294,14 +294,15 @@ class EEH_Debug_Tools{
 	 *
 	 * @access public
 	 * @param  string $function The function that was called
-	 * @param  string $message  A message explaining what has been done incorrectly
-	 * @param  string $version  The version of Event Espresso where the error was added
+	 * @param  string $message A message explaining what has been done incorrectly
+	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param int     $error_type
 	 * @uses trigger_error()
 	 */
-	public function doing_it_wrong( $function, $message, $version ) {
+	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
 		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
-		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), E_USER_DEPRECATED );
+		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), $error_type );
 	}
 
 

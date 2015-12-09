@@ -97,6 +97,7 @@ jQuery(document).ready(function($) {
 			//eeThnx.console_log( 'init' );
 			eeThnx.ajax_content_dv = $( '#espresso-thank-you-page-ajax-content-dv' );
 			eeThnx.transaction_details_dv = $( '#espresso-thank-you-page-ajax-transaction-dv' );
+			eeThnx.ajax_notices = $( '#espresso-ajax-notices' );
 			eeThnx.ajax_success_notices = $( '#espresso-ajax-notices-success' );
 			eeThnx.ajax_error_notices = $( '#espresso-ajax-notices-error' );
 			eeThnx.ajax_loading = $( '#espresso-ajax-loading' );

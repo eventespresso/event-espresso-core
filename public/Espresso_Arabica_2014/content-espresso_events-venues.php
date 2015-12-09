@@ -12,7 +12,7 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 
 <div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
 	<h3 class="event-venues-h3 ee-event-h3">
-		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
+		<?php _e( 'Location', 'event_espresso' ); ?>
 	</h3>
 	<h4><strong><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; <strong> <?php echo $venue_name; ?></strong></h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
@@ -34,7 +34,7 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 		<?php if ( $venue_description ) : ?>
 	<p>
 		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
-		<?php echo $venue_description; ?>
+		<?php echo do_shortcode( $venue_description ); ?>
 	</p>
 		<?php endif;  ?>
 	<?php else : ?>

@@ -321,7 +321,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$req .= "&$key=$value";
 		}
 		// HTTP POST the complete, unaltered IPN back to PayPal
-		$response = wp_remote_post( $this->_gateway_url, array( 'body' => $req, 'sslverify' => false, 'timeout' => 60 ) );
+		$response = wp_remote_post(
+			$this->_gateway_url,
+			array(
+				'body' 				=> $req,
+				'sslverify' 		=> false,
+				'timeout' 		=> 60 ,
+				// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
+				// plz see: https://github.com/websharks/s2member/issues/610
+				'user-agent' 	=> 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url(),
+			)
+		);
 		// then check the response
 		if ( ! is_wp_error( $response ) && array_key_exists( 'body', $response ) && strcmp( $response[ 'body' ], "VERIFIED" ) == 0 ) {
 			return true;
@@ -351,10 +361,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return string
 	 */
 	protected function _process_response_url() {
+		EE_Registry::instance()->load_helper('URL');
 		if ( isset( $_SERVER[ 'HTTP_HOST' ], $_SERVER[ 'REQUEST_URI' ] ) ) {
 			$url = is_ssl() ? 'https://' : 'http://';
-			$url .= filter_input( INPUT_SERVER, 'HTTP_HOST', FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
-			$url .= filter_input( INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
+			$url .= EEH_URL::filter_input_server_url( 'HTTP_HOST' );
+			$url .= EEH_URL::filter_input_server_url();
 		} else {
 			$url = 'unknown';
 		}

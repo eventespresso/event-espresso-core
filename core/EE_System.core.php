@@ -25,11 +25,24 @@ final class EE_System {
 
 
 	/**
-	 * 	instance of the EE_System object
-	 *	@var 	$_instance
-	 * 	@access 	private
+	 *    instance of the EE_System object
+	 *
+	 * @var    $_instance
+	 * @access    private
 	 */
-	private static $_instance = NULL;
+	private static $_instance = null;
+
+	/**
+	 * @access    protected
+	 * @type    $config EE_Registry
+	 */
+	protected $registry;
+
+	/**
+	 * @access    protected
+	 * @type    $config EE_Config
+	 */
+	protected $config;
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
@@ -88,12 +101,14 @@ final class EE_System {
 	 *	@return EE_System
 	 */
 	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_System )) {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_System ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
 	}
+
+
 	/**
 	 * resets the instance and returns it
 	 * @return EE_System
@@ -112,71 +127,30 @@ final class EE_System {
 
 
 	/**
-	 *    class constructor
-	 *
-	 *    checks recommended versions for both WP and PHP
-	 *    loads minimum files for bootstrapping system
 	 *    sets hooks for running rest of system
 	 *    provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
 	 *    starting EE Addons from any other point may lead to problems
 	 *
 	 * @access    private
-	 * @return \EE_System
 	 */
 	private function __construct() {
-		do_action( 'AHEE__EE_System__construct__begin',$this );
-		// check required WP version
-		if ( ! $this->_minimum_wp_version_required() ) {
-			unset( $_GET['activate'] );
-			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
-			return;
-		}
-		// check required PHP version
-		if ( ! $this->_minimum_php_version_required() ) {
-			unset( $_GET['activate'] );
-			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
-			return;
-		}
-		// check recommended WP version
-		if ( ! $this->_minimum_wp_version_recommended() ) {
-			$this->_display_minimum_recommended_wp_version_notice();
-		}
-		// check recommended PHP version
-		if ( ! $this->_minimum_php_version_recommended() ) {
-			$this->_display_minimum_recommended_php_version_notice();
-		}
-		$this->display_alpha_banner_warning();
-		// central repository for classes
-		$this->_load_registry();
-		// workarounds for PHP < 5.3
-		$this->_load_class_tools();
-		// load a few helper files
-		EE_Registry::instance()->load_helper( 'File' );
-		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		require_once EE_CORE . 'EE_Deprecated.core.php';
-		// load interfaces
-		require_once EE_CORE . 'EEI_Interfaces.php';
-		require_once EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php';
-		// WP cron jobs
-		EE_Registry::instance()->load_core( 'Cron_Tasks' );
-
+		do_action( 'AHEE__EE_System__construct__begin', $this );
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
-		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
+		add_action( 'AHEE__EE_Bootstrap__load_espresso_addons', array( $this, 'load_espresso_addons' ) );
 		// when an ee addon is activated, we want to call the core hook(s) again
 		// because the newly-activated addon didn't get a chance to run at all
 		add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
 		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
+		add_action( 'AHEE__EE_Bootstrap__detect_activations_or_upgrades', array( $this, 'detect_activations_or_upgrades' ), 3 );
 		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
+		add_action( 'AHEE__EE_Bootstrap__load_core_configuration', array( $this, 'load_core_configuration' ), 5 );
 		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
+		add_action( 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
-		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
-
+		add_action( 'AHEE__EE_Bootstrap__brew_espresso', array( $this, 'brew_espresso' ), 9 );
 		//other housekeeping
 		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+		add_filter( 'wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages' ), 10 );
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -185,284 +159,17 @@ final class EE_System {
 
 
 	/**
-	 *    display_alpha_banner_warning
+	 * load_espresso_addons
 	 *
-	 *    displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
-	 *
-	 * @access    public
-	 * @return    string
-	 */
-	public function display_alpha_banner_warning() {
-		// skip AJAX requests
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
-		// skip stable releases
-		if ( strpos( EVENT_ESPRESSO_VERSION, '.alpha' ) === false ) {
-			return;
-		}
-		// post release candidate warning
-		if ( is_admin() ) {
-			add_action( 'admin_notices', array( $this, 'alpha_banner_admin_notice' ), -999 );
-		} else {
-			// site admin has authorized use of non-stable release candidate for production
-			if ( defined( 'ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE' ) && ALLOW_NON_STABLE_RELEASE_ON_LIVE_SITE ) {
-				return;
-			}
-			add_action( 'shutdown', array( $this, 'alpha_banner_warning_notice' ), 10 );
-		}
-	}
-
-
-
-	/**
-	 *    alpha_banner_admin_notice
-	 *    displays admin notice that current version of EE is not a stable release
+	 * allow addons to load first so that they can set hooks for running DMS's, etc
+	 * this is hooked into both:
+	 * 	'AHEE__EE_Bootstrap__load_core_configuration'
+	 * 		which runs during the WP 'plugins_loaded' action at priority 5
+	 * 	and the WP 'activate_plugin' hookpoint
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function alpha_banner_admin_notice() {
-		EE_Error::add_attention(
-			sprintf(
-				__( 'This version of Event Espresso is for testing and/or evaluation purposes only. It is %1$snot%2$s considered a stable release and should therefore %1$snot%2$s be activated on a live or production website.', 'event_espresso' ),
-				'<strong>',
-				'</strong>'
-			),
-			__FILE__, __FUNCTION__, __LINE__
-		);
-	}
-
-
-
-	/**
-	 *    alpha_banner_warning_notice
-	 *    displays message on frontend of site notifying admin that current version of EE is not a stable release
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function alpha_banner_warning_notice() {
-		global $pagenow;
-		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
-			return;
-		}
-		printf(
-			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
-			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
-			'<strong>',
-			'</strong>',
-			'</p></div>'
-		);
-	}
-
-
-
-	/**
-	 *    _check_wp_version
-	 *
-	 * @access private
-	 * @param string $min_version
-	 * @return boolean
-	 */
-	private function _check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
-		global $wp_version;
-		return version_compare( $wp_version, $min_version, '>=' ) ? TRUE : FALSE;
-	}
-
-	/**
-	 * 	_minimum_wp_version_required
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private function _minimum_wp_version_required() {
-		return $this->_check_wp_version( EE_MIN_WP_VER_REQUIRED );
-	}
-
-	/**
-	 * 	_minimum_wp_version_recommended
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private function _minimum_wp_version_recommended() {
-		return $this->_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
-	}
-
-
-
-	/**
-	 *    _check_php_version
-	 *
-	 * @access private
-	 * @param string $min_version
-	 * @return boolean
-	 */
-	private function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
-		return version_compare( PHP_VERSION, $min_version, '>=' ) ? TRUE : FALSE;
-	}
-
-	/**
-	 * 	_minimum_php_version_required
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private function _minimum_php_version_required() {
-		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
-	}
-
-	/**
-	 * 	_minimum_php_version_recommended
-	 *
-	 * 	@access private
-	 * 	@return boolean
-	 */
-	private function _minimum_php_version_recommended() {
-		return $this->_check_php_version( EE_MIN_PHP_VER_RECOMMENDED );
-	}
-
-
-
-	/**
-	 * 	minimum_wp_version_error
-	 *
-	 * 	@return void
-	 */
-	public function minimum_wp_version_error() {
-		global $wp_version;
-		?>
-		<div class="error">
-		<p>
-		<?php
-		printf(
-			__( 'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
-			EE_MIN_WP_VER_REQUIRED,
-			$wp_version,
-			'<br/>',
-			'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
-		);
-		?>
-		</p>
-		</div>
-		<?php
-		EE_System::deactivate_plugin( EE_PLUGIN_BASENAME );
-	}
-
-
-
-	/**
-	 * 	minimum_php_version_error
-	 *
-	 * 	@return void
-	 */
-	public function minimum_php_version_error() {
-		?>
-		<div class="error">
-		<p>
-		<?php
-		printf(
-			__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
-			EE_MIN_PHP_VER_REQUIRED,
-			PHP_VERSION,
-			'<br/>',
-			'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
-		);
-		?>
-		</p>
-		</div>
-		<?php
-		deactivate_plugins( EE_PLUGIN_BASENAME );
-	}
-
-
-
-	/**
-	 * 	_display_minimum_recommended_wp_version_notice
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _display_minimum_recommended_wp_version_notice() {
-		global $wp_version;
-		EE_Error::add_persistent_admin_notice(
-			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended',
-			sprintf(
-				__( 'Event Espresso recommends WordPress version %1$s or greater in order for everything to operate properly. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.', 'event_espresso' ),
-				EE_MIN_WP_VER_RECOMMENDED,
-				$wp_version,
-				'<br/>',
-				'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
-			)
-		);
-	}
-
-
-
-	/**
-	 * 	_display_minimum_recommended_php_version_notice
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _display_minimum_recommended_php_version_notice() {
-		EE_Error::add_persistent_admin_notice(
-			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
-			sprintf(
-				__( 'Event Espresso recommends PHP version %1$s or greater for optimal performance. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
-				EE_MIN_PHP_VER_RECOMMENDED,
-				PHP_VERSION,
-				'<br/>',
-				'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
-			)
-		);
-	}
-
-
-
-	/**
-	 * 	_load_registry
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _load_registry() {
-		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
-			require_once( EE_CORE . 'EE_Registry.core.php' );
-		} else {
-			$msg = __( 'The EE_Registry core class could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			wp_die( EE_Error::get_notices() );
-		}
-	}
-
-
-	/**
-	 * 	_load_registry
-	 *
-	 * 	@access private
-	 * 	@return void
-	 */
-	private function _load_class_tools() {
-		if ( is_readable( EE_HELPERS . 'EEH_Class_Tools.helper.php' )) {
-			require_once( EE_HELPERS . 'EEH_Class_Tools.helper.php' );
-		} else {
-			$msg = __( 'The EEH_Class_Tools helper could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
-	}
-
-
-
-	/**
-	* load_espresso_addons
-	*
-	* allow addons to load first so that they can set hooks for running DMS's, etc
-	*
-	* @access public
-	* @return void
-	*/
 	public function load_espresso_addons() {
 		// set autoloaders for all of the classes implementing EEI_Plugin_API
 		// which provide helpers for EE plugin authors to more easily register certain components with EE.
@@ -474,8 +181,15 @@ final class EE_System {
 
 
 	/**
-	 * Checks for activation or upgrade of core first; then also checks if any registered
-	 * addons have been activated or upgraded
+	 * detect_activations_or_upgrades
+	 *
+	 * Checks for activation or upgrade of core first;
+	 * then also checks if any registered addons have been activated or upgraded
+	 * This is hooked into 'AHEE__EE_Bootstrap__detect_activations_or_upgrades'
+	 * which runs during the WP 'plugins_loaded' action at priority 3
+	 *
+	 * @access public
+	 * @return void
 	 */
 	public function detect_activations_or_upgrades(){
 		//first off: let's make sure to handle core
@@ -485,13 +199,16 @@ final class EE_System {
 			$addon->detect_activation_or_upgrade();
 		}
 	}
+
+
+
 	/**
 	* detect_if_activation_or_upgrade
 	*
 	* Takes care of detecting whether this is a brand new install or code upgrade,
 	* and either setting up the DB or setting up maintenance mode etc.
 	*
-	* @access private
+	* @access public
 	* @return void
 	*/
 	public function detect_if_activation_or_upgrade() {
@@ -628,10 +345,7 @@ final class EE_System {
 			}
 			EEH_Activation::initialize_db_content();
 			if( $initialize_addons_too ) {
-				//foreach registered addon, make sure its db is up-to-date too
-				foreach(EE_Registry::instance()->addons as $addon){
-					$addon->initialize_db_if_no_migrations_required();
-				}
+				$this->initialize_addons();
 			}
 		}else{
 			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( 'Core' );
@@ -641,6 +355,15 @@ final class EE_System {
 		}
 	}
 
+	/**
+	 * Initializes the db for all registered addons
+	 */
+	public function initialize_addons(){
+		//foreach registered addon, make sure its db is up-to-date too
+		foreach(EE_Registry::instance()->addons as $addon){
+			$addon->initialize_db_if_no_migrations_required();
+		}
+	}
 
 
 	/**
@@ -668,7 +391,7 @@ final class EE_System {
 	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
 	 *
-	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
+	 * @param array $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
 	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
@@ -805,19 +528,22 @@ final class EE_System {
 
 
 	/**
-	 * load_core_configuration - runs during the WP plugins_loaded action at priority 5
+	 * load_core_configuration
+	 *
+	 * this is hooked into 'AHEE__EE_Bootstrap__load_core_configuration'
+	 * which runs during the WP 'plugins_loaded' action at priority 5
 	 *
 	 * @return void
 	 */
 	public function load_core_configuration(){
 		do_action( 'AHEE__EE_System__load_core_configuration__begin', $this );
+		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
+		//load textdomain
+		EE_Load_Textdomain::load_textdomain();
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		EE_Registry::instance()->load_core( 'Network_Config' );
 		// setup autoloaders
-		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
-		//load textdomain
-		EE_Load_Textdomain::load_textdomain();
 		// enable logging?
 		if ( EE_Registry::instance()->CFG->admin->use_full_logging ) {
 			EE_Registry::instance()->load_core( 'Log' );
@@ -876,13 +602,15 @@ final class EE_System {
 
 
 	/**
-	* register_shortcodes_modules_and_widgets
-	*
-	* generate lists of shortcodes and modules, then verify paths and classes
-	*
-	* @access public
-	* @return void
-	*/
+	 * register_shortcodes_modules_and_widgets
+	 *
+	 * generate lists of shortcodes and modules, then verify paths and classes
+	 * This is hooked into 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets'
+	 * which runs during the WP 'plugins_loaded' action at priority 7
+	 *
+	 * @access public
+	 * @return void
+	 */
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 		// check for addons using old hookpoint
@@ -923,8 +651,9 @@ final class EE_System {
 	/**
 	 * brew_espresso
 	 *
-	 * begins the process of setting hooks for initializing EE in the order
-	 * runs during the WP plugins_loaded action at priority 9
+	 * begins the process of setting hooks for initializing EE in the correct order
+	 * This is happening on the 'AHEE__EE_Bootstrap__brew_espresso' hookpoint
+	 * which runs during the WP 'plugins_loaded' action at priority 9
 	 *
 	 * @return void
 	 */
@@ -977,28 +706,11 @@ final class EE_System {
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
 						unset( $_GET['activate'] );
-						EE_System::deactivate_plugin( $active_plugin );
+						espresso_deactivate_plugin( $active_plugin );
 					}
 				}
 			}
 		}
-	}
-
-
-
-	/**
-	 *    deactivate_plugin
-	 * usage:  EE_System::deactivate_plugin( plugin_basename( __FILE__ ));
-	 *
-	 * @access public
-	 * @param string $plugin_basename - the results of plugin_basename( __FILE__ ) for the plugin's main file
-	 * @return    void
-	 */
-	public static function deactivate_plugin( $plugin_basename = '' ) {
-		if ( ! function_exists( 'deactivate_plugins' )) {
-			require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-		}
-		deactivate_plugins( $plugin_basename );
 	}
 
 
@@ -1010,6 +722,10 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function perform_activations_upgrades_and_migrations() {
+		//first check if we had previously attempted to setup EE's directories but failed
+		if( EEH_Activation::upload_directories_incomplete() ) {
+			EEH_Activation::create_upload_directories();
+		}
 		do_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' );
 	}
 
@@ -1022,14 +738,9 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function load_CPTs_and_session() {
-//		$e = EEM_Event::instance()->get_one();
-//		EEM_Datetime::instance()->show_next_x_db_queries();
-//		$ds = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time($e->ID(),false);
-//
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-//		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -1086,7 +797,6 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
-//		EE_Cron_Tasks::check_for_abandoned_transactions( 802 );
 	}
 
 
@@ -1199,6 +909,7 @@ final class EE_System {
 		//and this might be a frontend request, in which case they aren't available
 		$events_admin_url = admin_url("admin.php?page=espresso_events");
 		$reg_admin_url = admin_url("admin.php?page=espresso_registrations");
+		$extensions_admin_url = admin_url("admin.php?page=espresso_packages");
 
 		//Top Level
 		$admin_bar->add_menu(array(
@@ -1240,6 +951,28 @@ final class EE_System {
 							'class' => $menu_class
 					),
 			));
+		}
+
+		if ( is_single() && ( get_post_type() == 'espresso_events' ) ) {
+
+			//Current post
+			global $post;		
+    	
+	    	if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID ) ) {
+				//Events Edit Current Event
+				$admin_bar->add_menu(array(
+						'id' => 'espresso-toolbar-events-edit',
+						'parent' => 'espresso-toolbar-events',
+						'title' => __('Edit Event', 'event_espresso'),
+						'href' => EEH_URL::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$post->ID ), $events_admin_url ),
+						'meta' => array(
+								'title' => __('Edit Event', 'event_espresso'),
+								'target' => '',
+								'class' => $menu_class
+						),
+				));
+			}
+
 		}
 
 		//Events View
@@ -1469,6 +1202,21 @@ final class EE_System {
 					),
 			));
 		}
+
+		//Extensions & Services
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_ee', 'ee_admin_bar_menu_espresso-toolbar-extensions-and-services' ) ) {
+			$admin_bar->add_menu(array(
+					'id' => 'espresso-toolbar-extensions-and-services',
+					'parent' => 'espresso-toolbar',
+					'title' => __( 'Extensions & Services', 'event_espresso' ),
+					'href' => $extensions_admin_url,
+					'meta' => array(
+							'title' => __('Extensions & Services', 'event_espresso'),
+							'target' => '',
+							'class' => $menu_class
+					),
+			));
+		}
 	}
 
 
@@ -1515,7 +1263,5 @@ final class EE_System {
 
 
 }
-//EE_System::instance();
-
 // End of file EE_System.core.php
 // Location: /core/EE_System.core.php

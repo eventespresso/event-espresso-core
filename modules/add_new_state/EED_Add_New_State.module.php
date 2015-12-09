@@ -28,7 +28,8 @@ class EED_Add_New_State  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		add_action( 'wp_loaded', array( 'EED_Add_New_State', 'set_definitions' ), 2 );
-		add_action( 'wp_enqueue_scripts', array( 'EED_Add_New_State', 'translate_js_strings' ), 1 );
+		add_action( 'wp_enqueue_scripts', array( 'EED_Add_New_State', 'translate_js_strings' ), 0 );
+		add_action( 'wp_enqueue_scripts', array( 'EED_Add_New_State', 'wp_enqueue_scripts' ), 10 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 1 );
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
@@ -110,8 +111,10 @@ class EED_Add_New_State  extends EED_Module {
 	 * 	@return 		void
 	 */
 	public static function wp_enqueue_scripts() {
-		wp_register_script( 'add_new_state', ANS_ASSETS_URL . 'add_new_state.js', array( 'espresso_core', 'single_page_checkout' ), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'add_new_state' );
+		if ( apply_filters( 'EED_Single_Page_Checkout__SPCO_active', false ) ) {
+			wp_register_script( 'add_new_state', ANS_ASSETS_URL . 'add_new_state.js', array( 'espresso_core', 'single_page_checkout' ), EVENT_ESPRESSO_VERSION, true );
+			wp_enqueue_script( 'add_new_state' );
+		}
 	}
 
 
@@ -137,8 +140,6 @@ class EED_Add_New_State  extends EED_Module {
 		if ( $input instanceof EE_State_Select_Input ) {
 			// load helpers
 			EE_Registry::instance()->load_helper( 'HTML' );
-			// load JS
-			add_action( 'wp_enqueue_scripts', array( 'EED_Add_New_State', 'wp_enqueue_scripts' ), 10 );
 			// grab any set values from the request
 			$country_name = str_replace( 'state', 'new_state_country', $input->html_name() );
 			$state_name = str_replace( 'state', 'new_state_name', $input->html_name() );
@@ -263,7 +264,7 @@ class EED_Add_New_State  extends EED_Module {
 					)
 				)
 			);
-			$question_group_reg_form->add_subsections( array( 'new_state_micro_form' => $new_state_micro_form ), 'country' );
+			$question_group_reg_form->add_subsections( array( 'new_state_micro_form' => $new_state_micro_form ), 'state', false );
 		}
 		return $question_group_reg_form;
 	}
@@ -400,8 +401,7 @@ class EED_Add_New_State  extends EED_Module {
 			// if not non-ajax admin
 			$new_state_key = $new_state->country_iso() . '-' . $new_state->abbrev();
 			$new_state_notice = sprintf(
-					__( 'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%5$sTo verify, edit, and/or delete this new State, please go to the %4$s and update the States / Provinces section.%5$sCheck "Yes" to have this new State
-					 added to dropdown select lists in forms.', 'event_espresso' ),
+					__( 'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%5$sTo verify, edit, and/or delete this new State, please go to the %4$s and update the States / Provinces section.%5$sCheck "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',
