@@ -1,0 +1,51 @@
+/*
+Styles for generic progress bars
+Would style HTML like this:
+<div class="progress-responsive">
+	<figure>
+		<div class="bar"></div>
+		<div class="percent"></div>
+	</figure>
+</div>
+
+to look like a responsive progress bar
+*/
+/*
+    Created on : 10-Nov-2015, 3:02:36 PM
+    Author     : mnelson4
+*/
+
+/* PROGRESS BAR STUFF */
+
+.progress-responsive {
+	margin-right:2em;
+}
+/* Progress bar containers */
+.progress-responsive figure {
+	position: relative;
+	height: 25px;
+	border: 2px solid #A39D9C;
+	border-radius: 3px;
+	background: #fff;
+	margin: 0 0 1em;
+}
+
+/* blue bar */
+.progress-responsive .bar {
+	background: #2EA2CC;
+	width: 0;
+	height: 25px;
+	border-radius: 2px;
+}
+
+/* Percent text */
+.progress-responsive .percent {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+	font-size: 15px;
+	line-height: 15px;
+	font-weight: normal;
+	font-family: sans-serif;
+	color: #59595B;
+}

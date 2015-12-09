@@ -144,7 +144,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
 		$this->_current_txn = $TXN_model->get_transaction_from_reg_url_link( $this->_reg_url_link );
 		// verify TXN
-		if ( ! $this->_current_txn instanceof EE_Transaction ) {
+		if ( WP_DEBUG && ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error(
 				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
@@ -192,7 +192,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			return;
 		}
 		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+		if ( WP_DEBUG && ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			EE_Error::add_error(
 				__( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
@@ -227,8 +227,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
+		// remove site_url() from thank you page URL
+		$thank_you_page_URL = substr( EE_Registry::instance()->CFG->core->thank_you_page_url(), strlen( home_url() ) );
+		// remove other non-essential details from URL
+		$thank_you_page_URL = trim( parse_url( $thank_you_page_URL, PHP_URL_PATH ), '/' );
 		// ensure this shortcode doesn't trigger on anything BUT the thank you page
-		if ( isset( $WP->request ) && basename( $WP->request ) != basename( EE_Registry::instance()->CFG->core->thank_you_page_url() )) {
+		if ( isset( $WP->request ) && trim( $WP->request, '/' ) != $thank_you_page_URL ) {
 			return;
 		} else if ( isset( $WP->query_vars['page_id'] ) && $WP->query_vars['page_id'] != EE_Registry::instance()->CFG->core->thank_you_page_id ) {
 			return;
@@ -296,6 +300,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function init() {
 		$this->_get_reg_url_link();
 		if ( ! $this->get_txn() ) {
+			EE_Registry::instance()->load_helper( 'HTML' );
+
+			echo EEH_HTML::div(
+				EEH_HTML::h4( __( 'We\'re sorry...', 'event_espresso' ), '', '' ) .
+				sprintf(
+					__( 'This is a system page for displaying transaction information after a purchase.%1$sYou are most likely seeing this notice because you have navigated to this page%1$sthrough some means other than completing a transaction.%1$sSorry for the disappointment, but you will most likely find nothing of interest here.%1$s%1$s', 'event_espresso' ),
+					'<br/>'
+				),
+				'', 'ee-attention'
+			);
 			return NULL;
 		}
 		// if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"

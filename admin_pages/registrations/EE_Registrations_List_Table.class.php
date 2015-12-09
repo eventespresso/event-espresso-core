@@ -117,7 +117,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$this->_bottom_buttons = array(
 					'report'=> array(
 					'route' => 'registrations_report',
-					'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
+					'extra_request' =>  
+						array( 
+							'EVT_ID'=> isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null, 
+							'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" ) ) 
 				),
 			);
 		} else {
@@ -134,7 +137,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 			$this->_bottom_buttons = array(
 				'report_all'=> array(
-				'route' => 'registrations_report'
+				'route' => 'registrations_report',
+				'extra_request' => array( 
+					'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" ) )
 				),
 			);
 		}
@@ -373,7 +378,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_set_related_details($item);
        		 //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=> $this->_transaction_details['id'] ), TXN_ADMIN_URL );
-		return EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a class="ee-status-color-' . $this->_transaction_details['status'] . '" href="'.$view_lnk_url.'" title="' . esc_attr( $this->_transaction_details['title_attr'] ) . '">' . $item->get_i18n_datetime( 'REG_date' ) . '</a>' : $item->get_i18n_datetime( 'REG_date' );
+		$view_link = EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a class="ee-status-color-' . $this->_transaction_details['status'] . '" href="'.$view_lnk_url.'" title="' . esc_attr( $this->_transaction_details['title_attr'] ) . '">' . $item->get_i18n_datetime( 'REG_date' ) . '</a>' : $item->get_i18n_datetime( 'REG_date' );
+		$view_link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $this->_transaction_details['status'], false, 'sentence' ) . '</span>';
+		return $view_link;
 	}
 
 
@@ -448,6 +455,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 	    //append reg_code
 	    $link .= '<br>' . sprintf( __( 'Reg Code: %s', 'event_espresso' ), $item->get('REG_code') );
+
+	    //reg status text for accessibility
+	    $link .= '<br><span class="ee-status-text-small">' . EEH_Template::pretty_status( $item->status_ID(), false, 'sentence' ) . '</span>';
 
 		//trash/restore/delete actions
 		$actions = array();
@@ -606,7 +616,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column_actions(EE_Registration $item) {
-
+		EE_Registry::instance()->load_helper('MSG_Template');
 		$attendee = $item->attendee();
 		$ticket = $item->ticket();
 		$this->_set_related_details( $item );
@@ -651,7 +661,21 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 			</li>' : '';
 
-			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk, $item, 'ul', 'reg-overview-actions-ul' );
+		//invoice link
+		$dl_invoice_lnk_url = $item->invoice_url();
+		//only show invoice link if message type is active.
+		if ( $item->is_primary_registrant() && $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'invoice' ) ) {
+			$dl_invoice_lnk = '
+		<li>
+			<a title="' . esc_attr__( 'View Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
+				<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
+			</a>
+		</li>';
+		} else {
+			$dl_invoice_lnk = '';
+		}
+
+			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . $dl_invoice_lnk, $item, 'ul', 'reg-overview-actions-ul' );
 	}
 
 }

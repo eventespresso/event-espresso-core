@@ -2,7 +2,10 @@
 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * EE_Export class
- *
+ * 
+ * For creating csv file exports/reports in a single request.
+ * Note that if you're creating a large csv file this is likely to timeout,
+ * and so it would be better to use EventEspressoBatchRequest\BatchRequestProcessor
  * @package				Event Espresso
  * @subpackage			includes/functions
  * @author					Brent Christensen
@@ -10,6 +13,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  * ------------------------------------------------------------------------
  */
  class EE_Export {
+	 
+	 const option_prefix = 'ee_report_job_';
 
 
   // instance of the EE_Export object
@@ -22,13 +27,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	var $EE_CSV = NULL;
 
-	var $_basic_header = array();
-	var $_question_groups = array();
-	var $_event_id = FALSE;
-	var $_event_identifier = FALSE;
-	var $_event_name = FALSE;
-	var $_event_description = FALSE;
-	var $_event_meta = FALSE;
 
 	private $_req_data = array();
 
@@ -88,9 +86,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			case 'report':
 				switch ($this->_req_data['action']) {
 
-					case 'everything':
-						$this->export_freakin_everything();
-					break;
 
 					case "event";
 					case "export_events";
@@ -123,29 +118,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		exit;
 
-	}
-
-
-
-	/**
-	 *		Export data for FREAKIN EVERYTHING !!!
-	 *
-	 *		usage: http://your-domain.tld/wp-admin/admin.php?event_espresso&export=report&action=everything&type=csv
-	 *
-	 *		@access public
-	 *		@return void
-	 */
-	function export_freakin_everything() {
-
-		$models_to_export = EE_Registry::instance()->non_abstract_db_models;
-
-		$table_data = $this->_get_export_data_for_models( array_keys( $models_to_export ) );
-
-		$filename = $this->generate_filename ( 'full-db-export' );
-
-		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			EE_Error::add_error(__("An error occurred and the Event details could not be exported from the database.", "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
-		}
 	}
 
 	/**
@@ -311,6 +283,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	protected function _prepare_value_from_db_for_display( $model, $field_name,  $raw_db_value, $pretty_schema = true ) {
 		$field_obj = $model->field_settings_for( $field_name );
 		$value_on_model_obj = $field_obj->prepare_for_set_from_db( $raw_db_value );
+		if( $field_obj instanceof EE_Datetime_Field ) {
+			$field_obj->set_date_format( EE_CSV::instance()->get_date_format_for_csv( $field_obj->get_date_format( $pretty_schema ) ), $pretty_schema );
+			$field_obj->set_time_format( EE_CSV::instance()->get_time_format_for_csv( $field_obj->get_time_format( $pretty_schema ) ), $pretty_schema );
+		}
 		if( $pretty_schema === true){
 			return $field_obj->prepare_for_pretty_echoing( $value_on_model_obj );
 		}elseif( is_string( $pretty_schema ) ) {
@@ -452,8 +428,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				if( $reg_row[ 'Ticket.TKT_ID'] ) {
 					$ticket_name = $this->_prepare_value_from_db_for_display( $ticket_model, 'TKT_name', $reg_row[ 'Ticket.TKT_name' ] );
 					$datetimes_strings = array();
-					foreach( EEM_Datetime::instance()->get_all( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ), 'default_where_conditions' => 'none' ) ) as $datetime){
-						$datetimes_strings[] = $datetime->start_date_and_time();
+					foreach( EEM_Datetime::instance()->get_all_wpdb_results( array( array( 'Ticket.TKT_ID' => $reg_row[ 'Ticket.TKT_ID' ] ), 'order_by' => array( 'DTT_EVT_start' => 'ASC' ), 'default_where_conditions' => 'none' ) ) as $datetime){
+						$datetimes_strings[] = $this->_prepare_value_from_db_for_display( EEM_Datetime::instance(), 'DTT_EVT_start', $datetime[ 'Datetime.DTT_EVT_start'] );
 					}
 
 				} else {
@@ -496,7 +472,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					}else{
 						$question_label = sprintf( __( 'Question $s', 'event_espresso' ), $answer_row[ 'Answer.QST_ID' ] );
 					}
-					$reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display( EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
+                                        if( isset( $answer_row[ 'Question.QST_type'] ) && $answer_row[ 'Question.QST_type' ] == EEM_Question::QST_type_state ) {
+                                            $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID( $answer_row[ 'Answer.ANS_value' ] );
+                                        } else {
+                                            $reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display( EEM_Answer::instance(), 'ANS_value', $answer_row[ 'Answer.ANS_value' ] );
+                                        }
 				}
 				$registrations_csv_ready_array[] = apply_filters( 'FHEE__EE_Export__report_registrations__reg_csv_array', $reg_csv_array, $reg_row );
 			}
@@ -641,16 +621,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 		return $table_data;
 	}
-
-
-
-
-
-
-
-
-
-
 }
 /* End of file EE_Export.class.php */
 /* Location: /includes/classes/EE_Export.class.php */

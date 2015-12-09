@@ -36,19 +36,19 @@ class EEM_System_Status{
 	 */
 	function get_system_stati(){
 		return array(
-			'ee_version'=>$this->get_ee_version(),
-			'ee_activation_history'=>$this->get_ee_activation_history(),
-			'ee_config'=>$this->get_ee_config(),
-			'ee_migration_history'=>$this->get_ee_migration_history(),
-			'active_plugins'=>$this->get_active_plugins(),
-			'wp_settings'=>$this->get_wp_settings(),
-			'https_enabled'=>$this->get_https_enabled(),
-			'logging_enabled' => $this->get_logging_enabled(),
-			'remote_posting' => $this->get_remote_posting(),
-			'php_version'=>$this->php_version(),
-			'php.ini_settings'=>$this->get_php_ini_all(),
-			'php_info'=>$this->get_php_info(),
-
+				'ee_version'=>$this->get_ee_version(),
+				'ee_activation_history'=>$this->get_ee_activation_history(),
+				'ee_config'=>$this->get_ee_config(),
+				'ee_migration_history'=>$this->get_ee_migration_history(),
+				'active_plugins'=>$this->get_active_plugins(),
+				'wp_settings'=>$this->get_wp_settings(),
+				'wp_maintenance_mode' => $this->get_wp_maintenance_mode(),
+				'https_enabled'=>$this->get_https_enabled(),
+				'logging_enabled' => $this->get_logging_enabled(),
+				'remote_posting' => $this->get_remote_posting(),
+				'php_version'=>$this->php_version(),
+				'php.ini_settings'=>$this->get_php_ini_all(),
+				'php_info'=>$this->get_php_info(),
 		);
 	}
 	/**
@@ -212,12 +212,20 @@ class EEM_System_Status{
 		return "ok!";
 	}
 	/**
+	 * Whether or not a .maintenance file is detected
+	 * @return string descripting wp_maintenance_mode status
+	 */
+    function get_wp_maintenance_mode() {
+        $opened = file_exists( ABSPATH . '.maintenance' );
+        return $opened ? sprintf( __('%s.maintenance file detected.%s Wordpress may have a failed auto-update which could prevent Event Espresso from updating the database correctly.', 'event_espresso'), '<strong>','</strong>' ) : __('.maintenance file not detected. WordPress is not in maintenance mode.', 'event_espresso')  ;
+    }
+	/**
 	 * Whether or not logging is enabled
 	 * @return string descripting logging's status
 	 */
 	function get_logging_enabled(){
-		$opened = @fopen( EVENT_ESPRESSO_UPLOAD_DIR . '/logs/espresso_log.txt', 'a' );
-		return $opened ? __('Log Directory is writable', 'event_espresso') : sprintf( __('%sLog directory is NOT writable%s', 'event_espresso'), '<mark class="error"','</mark>' ) ;
+            $opened = @fopen( EVENT_ESPRESSO_UPLOAD_DIR . '/logs/espresso_log.txt', 'a' );
+            return $opened ? __('Log Directory is writable', 'event_espresso') : sprintf( __('%sLog directory is NOT writable%s', 'event_espresso'), '<mark class="error"','</mark>' ) ;
 	}
 	/**
 	 *  Whether curl ro fsock works

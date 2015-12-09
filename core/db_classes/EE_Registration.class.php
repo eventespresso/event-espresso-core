@@ -154,15 +154,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->increase_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->increase_sold();
-					$datetime->save();
-				}
-			}
-		}
 		// possibly set event status to sold out
 		$this->event()->perform_sold_out_status_check();
 	}
@@ -220,15 +211,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		$ticket = $this->ticket();
 		$ticket->decrease_sold();
 		$ticket->save();
-		$datetimes = $ticket->datetimes();
-		if ( is_array( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime->decrease_sold();
-					$datetime->save();
-				}
-			}
-		}
 	}
 
 
@@ -826,6 +808,54 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		return EEM_Answer::instance()->get_answer_value_to_question($this,$question_id,$pretty_value);
 	}
 
+
+
+	/**
+	 * question_groups
+	 * returns an array of EE_Question_Group objects for this registration
+	 *
+	 * @return EE_Question_Group[]
+	 */
+	public function question_groups() {
+		$question_groups = array();
+		if ( $this->event() instanceof EE_Event ) {
+			$question_groups = $this->event()->question_groups(
+				array(
+					array(
+						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
+					),
+					'order_by' => array( 'QSG_order' => 'ASC' )
+				)
+			);
+		}
+		return $question_groups;
+	}
+
+
+
+	/**
+	 * count_question_groups
+	 * returns a count of the number of EE_Question_Group objects for this registration
+	 *
+	 * @return int
+	 */
+	public function count_question_groups() {
+		$qg_count = 0;
+		if ( $this->event() instanceof EE_Event ) {
+			$qg_count = $this->event()->count_related(
+				'Question_Group',
+				array(
+					array(
+						'Event_Question_Group.EQG_primary' => $this->count() == 1 ? true : false
+					)
+				)
+			);
+		}
+		return $qg_count;
+	}
+
+
+
 	/**
 	 * Returns the registration date in the 'standard' string format
 	 * (function may be improved in the future to allow for different formats and timezones)
@@ -948,11 +978,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			return false;
 		}
 
-		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : INF;
+		$max_uses = $this->ticket() instanceof EE_Ticket ? $this->ticket()->uses() : EE_INF;
 
 		// if max uses is not set or equals infinity then return true cause its not a factor for whether user can check-in
 		// or not.
-		if ( ! $max_uses || $max_uses === INF ) {
+		if ( ! $max_uses || $max_uses === EE_INF ) {
 			return true;
 		}
 
@@ -997,8 +1027,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		} elseif ( ! $this->can_checkin( $DTT_ID, $verify ) ) {
 			EE_Error::add_error(
 					sprintf(
-						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d),
-						because the registration does not have access', 'event_espresso'),
+						__( 'The given registration (ID:%1$d) can not be checked in to the given DTT_ID (%2$d), because the registration does not have access', 'event_espresso'),
 						$this->ID(),
 						$DTT_ID
 					),
@@ -1031,7 +1060,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			if ( WP_DEBUG ) {
 				global $wpdb;
 				$error = sprintf(
-					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 	'event_espresso' ),
+					__( 'Registration check in update failed because of the following database error: %1$s%2$s', 'event_espresso' ),
 					'<br />',
 					$wpdb->last_error
 				);
