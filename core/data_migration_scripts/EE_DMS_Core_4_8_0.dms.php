@@ -233,7 +233,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				EXM_key VARCHAR(45) DEFAULT NULL,
 				EXM_value TEXT,
 				PRIMARY KEY  (EXM_ID),
-				KEY EXM_type (EXM_type, OBJ_ID, EXM_key(45))";
+				KEY EXM_type (EXM_type,OBJ_ID,EXM_key)";
 		$this->_table_is_changed_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name='esp_line_item';
@@ -400,7 +400,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					QGQ_order INT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QGQ_ID),
 					KEY QST_ID (QST_ID),
-					KEY QSG_ID_order (QSG_ID, QGQ_order)";
+					KEY QSG_ID_order (QSG_ID,QGQ_order)";
 		$this->_table_is_changed_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
