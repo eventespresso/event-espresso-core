@@ -282,8 +282,6 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
-
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 					MTP_user_id INT(10) NOT NULL DEFAULT '1',
