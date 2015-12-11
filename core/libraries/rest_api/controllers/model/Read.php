@@ -138,36 +138,32 @@ class Read extends Base {
 	 * @param string $include @see Read:handle_request_get_all
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public static function handle_request_get_related( $_path, $id, $filter = array(), $include = '*' ) {
+	public static function handle_request_get_related( \WP_REST_Request $request ) {
 		$controller = new Read();
-		try{
-			$regex = '~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~';
-			$success = preg_match( $regex, $_path, $matches );
-			if ( is_array( $matches ) && isset( $matches[ 1 ] ) && isset( $matches[ 2 ] ) &&  isset( $matches[ 4 ] ) ) {
-				$requested_version = $matches[ 1 ];
-				$controller->set_requested_version( $requested_version );
-				$main_model_name_plural = $matches[ 2 ];
-				$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $main_model_name_plural );
-				if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $main_model_name_singular ) ) {
-					return $controller->send_response( new WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $main_model_name_singular ) ) );
-				}
-				$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
-				$related_model_name_maybe_plural = $matches[ 4 ];
-				$related_model_name_singular = EEH_Inflector::singularize_and_upper( $related_model_name_maybe_plural );
-				if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $related_model_name_singular ) ) {
-					return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $related_model_name_singular ) ) );
-				}
-
-				return $controller->send_response(
-						$controller->get_entities_from_relation(
-								$id,
-								$main_model->related_settings_for( $related_model_name_singular ) ,
-								$filter,
-								$include ) );
-			}
-		}catch( \EE_Error $e ){
-			return $controller->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		$matches = $controller->parse_route( 
+			$request->get_route(), 
+			'~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~', 
+			array( 'version', 'model', 'id', 'related_model' ) ); 
+		if( $matches instanceof \WP_REST_Response ) {
+			return $matches;
 		}
+		$controller->set_requested_version( $matches[ 'version' ] );
+		$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $main_model_name_singular ) ) {
+			return $controller->send_response( new WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $main_model_name_singular ) ) );
+		}
+		$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
+		$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
+		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $related_model_name_singular ) ) {
+			return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $related_model_name_singular ) ) );
+		}
+
+		return $controller->send_response(
+				$controller->get_entities_from_relation(
+						$request->get_param( 'id' ),
+						$main_model->related_settings_for( $related_model_name_singular ) ,
+						$request->get_param( 'filter' ),
+						$request->get_param( 'include' ) ) );
 	}
 
 
@@ -220,12 +216,12 @@ class Read extends Base {
 	 * @return array
 	 */
 	public function get_entities_from_relation( $id,  $relation, $filter, $include ) {
-		$context = $this->validate_context( isset( $filter[ 'caps' ] ) ? $filter[ 'caps' ] : EEM_Base::caps_read);
+		$context = $this->validate_context( isset( $filter[ 'caps' ] ) ? $filter[ 'caps' ] : \EEM_Base::caps_read);
 		$model = $relation->get_this_model();
 		$related_model = $relation->get_other_model();
 		//check if they can access the 1st model object
 		$query_params = array( array( $model->primary_key_name() => $id ),'limit' => 1 );
-		if( $model instanceof EEM_Soft_Delete_Base ){
+		if( $model instanceof \EEM_Soft_Delete_Base ){
 			$query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		}
 		$restricted_query_params = $query_params;
@@ -235,10 +231,10 @@ class Read extends Base {
 
 		if( ! ( Capabilities::current_user_has_partial_access_to( $related_model, $context ) &&
 				$model->exists( $restricted_query_params ) ) ){
-			if( $relation instanceof EE_Belongs_To_Relation ) {
+			if( $relation instanceof \EE_Belongs_To_Relation ) {
 				$related_model_name_maybe_plural = strtolower( $related_model->get_this_model_name() );
 			}else{
-				$related_model_name_maybe_plural = EEH_Inflector::pluralize_and_lower( $related_model->get_this_model_name() );
+				$related_model_name_maybe_plural = \EEH_Inflector::pluralize_and_lower( $related_model->get_this_model_name() );
 			}
 			return new WP_Error( sprintf( 'json_%s_cannot_list', $related_model_name_maybe_plural ), sprintf( __( 'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s' ), $related_model_name_maybe_plural, $related_model->get_this_model_name(), implode(',', array_keys( Capabilities::get_missing_permissions( $related_model, $context ) ) )  ), array( 'status' => 403 ) );
 		}
@@ -250,7 +246,7 @@ class Read extends Base {
 		$nice_results = array();
 		foreach( $results as $result ) {
 			$nice_result = $this->create_entity_from_wpdb_result( $relation->get_other_model(), $result, $include, $query_params[ 'caps' ] );
-			if( $relation instanceof EE_HABTM_Relation ) {
+			if( $relation instanceof \EE_HABTM_Relation ) {
 				//put the unusual stuff (properties from the HABTM relation) first, and make sure
 				//if there are conflicts we prefer the properties from the main model
 				$join_model_result = $this->create_entity_from_wpdb_result( $relation->get_join_model(), $result, $include, $query_params[ 'caps' ] );
@@ -263,7 +259,7 @@ class Read extends Base {
 			}
 			$nice_results[] = $nice_result;
 		}
-		if( $relation instanceof EE_Belongs_To_Relation ){
+		if( $relation instanceof \EE_Belongs_To_Relation ){
 			return array_shift( $nice_results );
 		}else{
 			return $nice_results;
@@ -281,6 +277,12 @@ class Read extends Base {
 	 * @return array ready for being converted into json for sending to client
 	 */
 	public function create_entity_from_wpdb_result( $model, $db_row, $include, $context ) {
+		if( $include == null ) {
+			$include = '*';
+		}
+		if( $context == null ) {
+			$context = \EEM_Base::caps_read;
+		}
 		$result = $model->deduce_fields_n_values_from_cols_n_values( $db_row );
 		$result = array_intersect_key( $result, $this->get_model_version_info()->fields_on_model_in_this_version( $model ) );
 		foreach( $result as $field_name => $raw_field_value ) {
@@ -379,9 +381,6 @@ class Read extends Base {
 	 * @return array
 	 */
 	public function get_entity_from_model( $model, $id, $include, $context ) {
-		if( $include == null ) {
-			$include = '*';
-		}
 		if( $context == null ) {
 			$context = \EEM_Base::caps_read;
 		}
@@ -417,6 +416,9 @@ class Read extends Base {
 	 * @return string array key of EEM_Base::cap_contexts_to_cap_action_map()
 	 */
 	public function validate_context( $context ) {
+		if( $context === null ) {
+			$context = \EEM_Base::caps_read;
+		}
 		$valid_contexts = \EEM_Base::valid_cap_contexts();
 		if( in_array( $context, $valid_contexts )  ){
 			return $context;
