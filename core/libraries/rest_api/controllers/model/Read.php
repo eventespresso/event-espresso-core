@@ -314,9 +314,11 @@ class Read extends Base {
 			'self' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] ),
 			'collection' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) ),
 		);
-
-		if( $model instanceof EEM_CPT_Base ) {
-			$result[ '_links' ][ 'self_wp_post' ] =  json_url( '/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
+		global $wp_rest_server;
+		if( $model instanceof \EEM_CPT_Base &&
+			$wp_rest_server instanceof \WP_REST_Server &&
+			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
+			$result[ '_links' ][ 'self_wp_post' ] =  rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
 
 		//filter fields if specified
