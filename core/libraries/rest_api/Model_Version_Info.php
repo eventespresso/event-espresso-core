@@ -264,7 +264,7 @@ class Model_Version_Info {
 		if( $this->is_model_name_in_this_verison(  $model_name ) ) {
 			return \EE_Registry::instance()->load_model( $model_name );
 		}else{
-			throw new EE_Error( sprintf( __( 'Cannot load model "%1$s" because it does not exist in version %2$s of Event Espresso', 'event_espresso' ), $model_name, $this->requested_version() ) );
+			throw new \EE_Error( sprintf( __( 'Cannot load model "%1$s" because it does not exist in version %2$s of Event Espresso', 'event_espresso' ), $model_name, $this->requested_version() ) );
 		}
 	}
 

@@ -98,31 +98,34 @@ class Read extends Base {
 	 * @param string $filter @see handle_request_get_all, for now only the 'caps' item is used
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public static function handle_request_get_one( $_path, $id, $include = '*', $filter = array() ) {
+	public static function handle_request_get_one( \WP_Rest_Request $request, $id, $include = '*', $filter = array() ) {
 		$controller = new Read();
-		try{
-			$regex = '~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)~';
-			$success = preg_match( $regex, $_path, $matches );
-			if ( $success && is_array( $matches ) && isset( $matches[ 1 ] ) && isset( $matches[ 2 ] ) ) {
-				$requested_version = $matches[ 1 ];
-				$controller->set_requested_version( $requested_version );
-				$model_name_plural = $matches[ 2 ];
-				$model_name_singular = \EEH_Inflector::singularize_and_upper( $model_name_plural );
-				if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
-					return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
-				}
-				return $controller->send_response(
-						$controller->get_entity_from_model(
-								$controller->get_model_version_info()->load_model( $model_name_singular ),
-								$id,
-								$include,
-								$controller->validate_context( isset( $filter[ 'caps' ] ) ? $filter[ 'caps' ] : EEM_Base::caps_read ) ) );
-			}else{
-				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', __( 'We could not parse the URL. Please contact event espresso support', 'event_espresso' ) ) );
-			}
-		}catch( \EE_Error $e ){
-			return $controller->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		$matches = $controller->parse_route( 
+			$request->get_route(), 
+			'~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)~', 
+			array( 'version', 'model', 'id' ) ); 
+		if( $matches instanceof \WP_REST_Response ) {
+			return $matches;
 		}
+		$controller->set_requested_version( $matches[ 'version' ] );
+		$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
+			return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
+		}
+		$filter_param = $request->get_param( 'filter' );
+		if( is_array( $filter_param ) &&
+			isset( $filter_param[ 'caps' ] ) ) {
+			$caps = $filter_param[ 'caps' ];
+		} else { 
+			$caps = \EEM_Base::caps_read;
+		}
+		return $controller->send_response(
+				$controller->get_entity_from_model(
+						$controller->get_model_version_info()->load_model( $model_name_singular ),
+						$request->get_param( 'id' ),
+						$request->get_param( 'include' ),
+						$controller->validate_context( $caps ) ) 
+			);
 	}
 
 	/**
@@ -188,9 +191,6 @@ class Read extends Base {
 	public function get_entities_from_model( $model, $filter, $include ) {
 		if( ! $filter ) { 
 			$filter = array();
-		}
-		if( $include === null ) {
-			$include = '*';
 		}
 		$query_params = $this->create_model_query_params( $model, $filter );
 		if( ! Capabilities::current_user_has_partial_access_to( $model, $query_params[ 'caps' ] ) ) {
@@ -379,6 +379,12 @@ class Read extends Base {
 	 * @return array
 	 */
 	public function get_entity_from_model( $model, $id, $include, $context ) {
+		if( $include == null ) {
+			$include = '*';
+		}
+		if( $context == null ) {
+			$context = \EEM_Base::caps_read;
+		}
 		$query_params = array( array( $model->primary_key_name() => $id ),'limit' => 1);
 		if( $model instanceof \EEM_Soft_Delete_Base ){
 			$query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
