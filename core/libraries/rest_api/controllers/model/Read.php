@@ -310,12 +310,13 @@ class Read extends Base {
 			$result[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
 		//add links to related data
-		$result['meta']['links'] = array(
-			'self' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ]
-		) );
+		$result['_links'] = array(
+			'self' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] ),
+			'collection' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) ),
+		);
 
 		if( $model instanceof EEM_CPT_Base ) {
-			$result[ 'meta' ][ 'links' ][ 'self_wp_post' ] =  json_url( '/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
+			$result[ '_links' ][ 'self_wp_post' ] =  json_url( '/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
 
 		//filter fields if specified
@@ -331,7 +332,7 @@ class Read extends Base {
 		foreach( apply_filters( 'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include', $model->relation_settings() ) as $relation_name => $relation_obj ) {
 			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
 			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['meta']['links'][$related_model_part] = $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part );
+				$result['_links'][$related_model_part] = $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part );
 			}
 			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
 			if( $related_fields_to_include ) {
