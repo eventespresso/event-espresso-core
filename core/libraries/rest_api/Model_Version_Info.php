@@ -224,7 +224,7 @@ class Model_Version_Info {
 	public function models_for_requested_version() {
 		if( $this->_cached_models_for_requested_version === null ) {
 			$all_models_in_current_version = \EE_Registry::instance()->non_abstract_db_models;
-			$current_version = EED_REST_API::core_version();
+			$current_version = \EED_REST_API::core_version();
 			$requested_version = $this->requested_version();
 			foreach( $this->model_changes_between_requested_version_and_current() as $version => $models_changed ) {
 				foreach( $models_changed as $model_name => $new_indicator_or_fields_added ) {

@@ -35,9 +35,8 @@ class Base {
 	 */
 	protected $_requested_version;
 
-	public function __construct() { 
-		$api_config = EE_Config::instance()->get_config( 'addons', 'EE_REST_API', 'EE_REST_API_Config' );
-		$this->_debug_mode = $api_config->api_debug_mode;
+	public function __construct() { 		
+		$this->_debug_mode = defined( 'EE_REST_API_DEBUG_MODE' ) ? EE_REST_API_DEBUG_MODE : false;
 	}
 
 
@@ -75,7 +74,7 @@ class Base {
 					$data[] = array( 'code' => $code, 'message' => $message );
 				}
 			}
-			$response = new WP_REST_Response( $data, $status );
+			$response = new \WP_REST_Response( $data, $status );
 		}else{
 			$status = 200;
 		}
@@ -86,7 +85,7 @@ class Base {
 			}
 			$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 		}
-		return new WP_REST_Response( $response, $status,  $headers );
+		return new \WP_REST_Response( $response, $status,  $headers );
 	}
 }
 

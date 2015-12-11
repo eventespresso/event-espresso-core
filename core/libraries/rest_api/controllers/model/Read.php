@@ -26,46 +26,68 @@ class Read extends Base {
 		parent::__construct();
 		\EE_Registry::instance()->load_helper( 'Inflector' );
 	}
+	
+	/**
+	 * Applies the regex to the route, then creates an array using the values of
+	 * $match_keys as keys (but ignores the full pattern match). Returns the array of matches.
+	 * For example, if you call 
+	 * parse_route( '/ee/v4.8/events', '~\/ee\/v([^/]*)\/(.*)~', array( 'version', 'model' ) )
+	 * it will return array( 'version' => '4.8', 'model' => 'events' )
+	 * @param string $route
+	 * @param string $regex
+	 * @param int $expected_matches, EXCLUDING matching the entire regex
+	 * @return array where  $match_keys are the keys (the first value of $match_keys
+	 * becomes the first key of the return value, etc. Eg passing in $match_keys of
+	 *	array( 'model', 'id' ), will, if the regex is successful, will return
+	 *	array( 'model' => 'foo', 'id' => 'bar' )      
+	 */
+	public function parse_route( $route, $regex, $match_keys ) {
+		$indexed_matches = array();
+		try{
+			$success = preg_match( $regex, $route, $matches );
+			if( 
+				is_array( $matches ) ) {
+				//skip the overall regex match. Who cares
+				for( $i = 1; $i <= count( $match_keys ); $i++ ) {
+					if( ! isset( $matches[ $i ] ) ) {
+						$success = false;
+					} else {
+						$indexed_matches[ $match_keys[ $i - 1 ] ] = $matches[ $i ];
+					}
+				}
+			}
+			if( ! $success ) {
+				return $this->send_response( new \WP_Error( 'endpoint_parsing_error', __( 'We could not parse the URL. Please contact event espresso support', 'event_espresso' ) ) );
+			}
+		} catch ( \EE_Error $e) {
+			return $this->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		}
+		return $indexed_matches;
+	}
 	/**
 	 * Handles requests to get all (or a filtered subset) of entities for a particular model
-	 * @param string $_path
-	 * @param array $filter The query parameters to be passed onto the EE models system.
-	 * Using syntax like "/wp-json/ee4/v2/events?filter[where][EVT_name][]=like&filter[where][EVT_name][]=%25monkey%25 to create a query params array like "array(array('EVT_name' => array('LIKE','%monkey%'))", which
-	 * will create SQL like "WHERE EVT_name LIKE '%monkey%'"
-	 * @param string $include string indicating which fields to include in the response, including fields
-	 * on related entities. Eg, when querying for events, an include string like
-	 * "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price" instructs us to only include the event's name and description, each related datetime, and
-	 * each related datetime's ticket's name and price. Eg json would be:
-	 * '{"EVT_ID":12,"EVT_name":"star wars party","EVT_desc":"so cool...","datetimes":[{"DTT_ID":123,...,
-	 * "tickets":[{"TKT_ID":234,"TKT_name":"student rate","TKT_price":32.0},...]}]}', ie, events with all
-	 * their associated datetimes (including ones that are trashed) embedded in the json object, and each
-	 * datetime also has each associated ticket embedded in its json object.
-	 * @return WP_JSON_Response|WP_Error
+	 * @param \WP_REST_Request $request
+	 * @return WP_REST_Response|WP_Error
 	 */
-	public static function handle_request_get_all( $_path, $filter = array(), $include = '*' ) {
+	public static function handle_request_get_all( \WP_REST_Request $request) {
 		$controller = new Read();
-		try{
-			$regex = '~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)~';
-			$success = preg_match( $regex, $_path, $matches );
-			if ( is_array( $matches ) && isset( $matches[ 1 ] ) && isset( $matches[ 2 ] ) ) {
-				$requested_version = $matches[ 1 ];
-				$controller->set_requested_version( $requested_version );
-				$model_name_plural = $matches[ 2 ];
-				$model_name_singular = \EEH_Inflector::singularize_and_upper( $model_name_plural );
-				if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
-					return $controller->send_response( new WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
-				}
-				return $controller->send_response(
-						$controller->get_entities_from_model(
-								$controller->get_model_version_info()->load_model( $model_name_singular ),
-								$filter,
-								$include ) );
-			} else {
-				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', __( 'We could not parse the URL. Please contact event espresso support', 'event_espresso' ) ) );
-			}
-		}catch( \EE_Error $e ){
-			return $controller->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		$matches = $controller->parse_route( 
+			$request->get_route(), 
+			'~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)~', 
+			array( 'version', 'model' ) ); 
+		if( $matches instanceof \WP_REST_Response ) {
+			return $matches;
 		}
+		$controller->set_requested_version( $matches[ 'version' ] );
+		$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
+			return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
+		}
+		return $controller->send_response(
+				$controller->get_entities_from_model(
+						$controller->get_model_version_info()->load_model( $model_name_singular ),
+						$request->get_param('filter'),
+						$request->get_param( 'include' ) ) );
 	}
 
 	/**
@@ -74,7 +96,7 @@ class Read extends Base {
 	 * @param string $id ID of the thing to be retrieved
 	 * @param string $include @see Read:handle_request_get_all
 	 * @param string $filter @see handle_request_get_all, for now only the 'caps' item is used
-	 * @return WP_JSON_Response|WP_Error
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function handle_request_get_one( $_path, $id, $include = '*', $filter = array() ) {
 		$controller = new Read();
@@ -111,7 +133,7 @@ class Read extends Base {
 	 * @param string $id
 	 * @param array $filter @see Read:handle_request_get_all
 	 * @param string $include @see Read:handle_request_get_all
-	 * @return WP_JSON_Response|WP_Error
+	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function handle_request_get_related( $_path, $id, $filter = array(), $include = '*' ) {
 		$controller = new Read();
@@ -150,11 +172,26 @@ class Read extends Base {
 	/**
 	 * Gets a collection for the given model and filters
 	 * @param EEM_Base $model
-	 * @param array $filter @see Read:handle_request_get_all
-	 * @param string $include @see Read:handle_request_get_all
+	 * @param array $filter The query parameters to be passed onto the EE models system.
+		* Using syntax like "/wp-json/ee4/v2/events?filter[where][EVT_name][]=like&filter[where][EVT_name][]=%25monkey%25 to create a query params array like "array(array('EVT_name' => array('LIKE','%monkey%'))", which
+		* will create SQL like "WHERE EVT_name LIKE '%monkey%'"
+	 * @param string $include string indicating which fields to include in the response, including fields
+		* on related entities. Eg, when querying for events, an include string like
+		* "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price" instructs us to only include the event's name and description, each related datetime, and
+		* each related datetime's ticket's name and price. Eg json would be:
+		* '{"EVT_ID":12,"EVT_name":"star wars party","EVT_desc":"so cool...","datetimes":[{"DTT_ID":123,...,
+		* "tickets":[{"TKT_ID":234,"TKT_name":"student rate","TKT_price":32.0},...]}]}', ie, events with all
+		* their associated datetimes (including ones that are trashed) embedded in the json object, and each
+		* datetime also has each associated ticket embedded in its json object.
 	 * @return array
 	 */
 	public function get_entities_from_model( $model, $filter, $include ) {
+		if( ! $filter ) { 
+			$filter = array();
+		}
+		if( $include === null ) {
+			$include = '*';
+		}
 		$query_params = $this->create_model_query_params( $model, $filter );
 		if( ! Capabilities::current_user_has_partial_access_to( $model, $query_params[ 'caps' ] ) ) {
 			$model_name_plural = \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() );
@@ -272,7 +309,7 @@ class Read extends Base {
 		}
 		//add links to related data
 		$result['meta']['links'] = array(
-			'self' => $this->get_versioned_link_to( EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ]
+			'self' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ]
 		) );
 
 		if( $model instanceof EEM_CPT_Base ) {
@@ -292,7 +329,7 @@ class Read extends Base {
 		foreach( apply_filters( 'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include', $model->relation_settings() ) as $relation_name => $relation_obj ) {
 			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
 			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['meta']['links'][$related_model_part] = $this->get_versioned_link_to( EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part );
+				$result['meta']['links'][$related_model_part] = $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part );
 			}
 			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
 			if( $related_fields_to_include ) {
@@ -312,7 +349,7 @@ class Read extends Base {
 	 * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
 	 */
 	public function get_versioned_link_to( $link_part_after_version_and_slash ) {
-		return json_url( EED_REST_API::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
+		return rest_url( \EED_REST_API::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
 	}
 
 	/**
@@ -454,7 +491,7 @@ class Read extends Base {
 		if( isset( $filter[ 'caps' ] ) ) {
 			$model_query_params[ 'caps' ] = $this->validate_context( $filter[ 'caps' ] );
 		}else{
-			$model_query_params[ 'caps' ] = EEM_Base::caps_read;
+			$model_query_params[ 'caps' ] = \EEM_Base::caps_read;
 		}
 		return apply_filters( 'FHEE__Read__create_model_query_params', $model_query_params, $filter, $model );
 	}

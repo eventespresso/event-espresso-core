@@ -245,7 +245,6 @@ class EED_REST_API extends EED_Module {
 	 * @param unknown $route_data
 	 */
 	public function hide_old_endpoints( $route_data, $routes ) {
-		var_dump($routes);
 		foreach( EED_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
