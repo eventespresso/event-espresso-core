@@ -272,9 +272,7 @@ class EED_REST_API extends EED_Module {
 	public static function version_compatibilities() {
 		return  apply_filters( 'FHEE__EED_REST_API__version_compatibilities',
 				array(
-					'4.6' => '4.6',
-					'4.7' => '4.6',
-					'4.8' => '4.6'
+					'4.8.28' => '4.6.28'
 				));
 	}
 
@@ -289,16 +287,14 @@ class EED_REST_API extends EED_Module {
 	public static function versions_served() {
 		$version_compatibilities = EED_REST_API::version_compatibilities();
 		$versions_served = array();
-		if( $version_compatibilities[ EED_REST_API::core_version() ] ) {
-			$lowest_compatible_version = $version_compatibilities[ EED_REST_API::core_version() ];
-			//for each version of core we have ever served:
-			foreach( array_keys( EED_REST_API::version_compatibilities() ) as $possibly_served_version ) {
-				//if it's not above the current core version, and it's compatible with the current version of core
-				if( $possibly_served_version < EED_REST_API::core_version() && $possibly_served_version >= $lowest_compatible_version ) {
-					$versions_served[ $possibly_served_version ] = true;
-				}elseif( $possibly_served_version == EED_REST_API::core_version() ) {
-					$versions_served[ $possibly_served_version ] = false;
-				}
+		$lowest_compatible_version = $version_compatibilities[ EED_REST_API::core_version() ];
+		//for each version of core we have ever served:
+		foreach( array_keys( EED_REST_API::version_compatibilities() ) as $possibly_served_version ) {
+			//if it's not above the current core version, and it's compatible with the current version of core
+			if( $possibly_served_version < EED_REST_API::core_version() && $possibly_served_version >= $lowest_compatible_version ) {
+				$versions_served[ $possibly_served_version ] = true;
+			}else {
+				$versions_served[ $possibly_served_version ] = false;
 			}
 		}
 		return $versions_served;
@@ -311,7 +307,7 @@ class EED_REST_API extends EED_Module {
 	 * @return string
 	 */
 	public static function core_version() {
-		return apply_filters( 'FHEE__EED_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 2 ) ) );
+		return apply_filters( 'FHEE__EED_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 3 ) ) );
 	}
 
 

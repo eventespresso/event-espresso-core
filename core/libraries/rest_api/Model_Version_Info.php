@@ -86,49 +86,17 @@ class Model_Version_Info {
 	public function __construct( $requested_version ) {
 		$this->_requested_version = $requested_version;
 		$this->_model_changes = array(
-			'4.6' => array(
-				//this is the first version of the API supported,
-				//so we don't need to say how it's different from 4.5
-			),
-			'4.7' => array(
-				'Registration_Payment' => Model_Version_Info::model_added,
-				'Registration' => array(
-					'REG_paid',
-				)
-			),
-			'4.8' => array(
-				//these changes actually happend at various points in EE
-				'Post_Meta' => Model_Version_Info::model_added,
-				'Line_Item' => array(
-					'LIN_timestamp'
-				),
-				'Question_Option' => array(
-					'QSO_system'
-				)
+			'4.8.26' => array(
+				//first version where the REST API is in EE core, so no need
+				//to specify how its different from the previous
 			)
 		);
 
 		//setup data for "extra" fields added onto resources which don't actually exist on models
 		$this->_resource_changes = apply_filters(
 				'FHEE__Model_Version_Info___construct__extra_resource_properties_for_models',
-				array( '4.6' =>
-					array(
-						'EEM_CPT_Base' => array(
-							'featured_image_url' => array(
-								'name' => 'featured_image_url',
-								'nicename' => __( 'Featured Image URL', 'event_espresso' ),
-								'datatype' => 'String',
-								'nullable' => true,
-							),
-							'link' => array(
-								'name' => 'link',
-								'nicename' => __( 'Link', 'event_espresso' ),
-								'datatype' => 'String',
-								'nullable' => true
-							)
-					)
-				),
-		));
+				array()
+			);
 		$defaults = array(
 			'raw' => false,
 			'type' => 'N/A',
