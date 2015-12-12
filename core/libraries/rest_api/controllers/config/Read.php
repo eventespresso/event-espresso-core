@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\rest_api\controllers\model;
+namespace EventEspresso\core\libraries\rest_api\controllers\config;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -16,7 +16,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Read {
-	public static function handle_request() {
+	public static function handle_request( \WP_REST_Request $request) {
 		$cap = \EE_Restriction_Generator_Base::get_default_restrictions_cap();
 		if( \EE_Capabilities::instance()->current_user_can( $cap, 'read_over_api' ) ){
 			return \EE_Config::instance();

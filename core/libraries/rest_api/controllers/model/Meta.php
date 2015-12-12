@@ -18,21 +18,17 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Meta extends Base {
 
 
-	public static function handle_request_models_meta( $_path ) {
+	public static function handle_request_models_meta( \WP_REST_Request $request ) {
 		$controller = new Meta();
-		try{
-			$regex = '~' . \EED_REST_API::ee_api_namespace_for_regex . 'resources~';
-			$success = preg_match( $regex, $_path, $matches );
-			if ( $success && is_array( $matches ) && isset( $matches[ 1 ] )) {
-				$controller->set_requested_version( $matches[ 1 ] );
-				return $controller->send_response( $controller->_get_models_metadata_entity() );
-			} else {
-				return $controller->send_response( new WP_Error( 'endpoint_parsing_error', __( 'We could not parse the URL. Please contact event espresso support', 'event_espresso' ) ) );
-			}
-		}catch( \EE_Error $e ){
-			return $controller->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		$matches = $controller->parse_route( 
+			$request->get_route(), 
+			'~' . \EED_REST_API::ee_api_namespace_for_regex . 'resources~', 
+			array( 'version' ) ); 
+		if( $matches instanceof \WP_REST_Response ) {
+			return $matches;
 		}
-
+		$controller->set_requested_version( $matches[ 'version' ] );
+		return $controller->send_response( $controller->_get_models_metadata_entity() );
 	}
 
 	/*

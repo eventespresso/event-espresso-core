@@ -87,6 +87,44 @@ class Base {
 		}
 		return new \WP_REST_Response( $response, $status,  $headers );
 	}
+	
+	/**
+	 * Applies the regex to the route, then creates an array using the values of
+	 * $match_keys as keys (but ignores the full pattern match). Returns the array of matches.
+	 * For example, if you call 
+	 * parse_route( '/ee/v4.8/events', '~\/ee\/v([^/]*)\/(.*)~', array( 'version', 'model' ) )
+	 * it will return array( 'version' => '4.8', 'model' => 'events' )
+	 * @param string $route
+	 * @param string $regex
+	 * @param int $expected_matches, EXCLUDING matching the entire regex
+	 * @return array where  $match_keys are the keys (the first value of $match_keys
+	 * becomes the first key of the return value, etc. Eg passing in $match_keys of
+	 *	array( 'model', 'id' ), will, if the regex is successful, will return
+	 *	array( 'model' => 'foo', 'id' => 'bar' )      
+	 */
+	public function parse_route( $route, $regex, $match_keys ) {
+		$indexed_matches = array();
+		try{
+			$success = preg_match( $regex, $route, $matches );
+			if( 
+				is_array( $matches ) ) {
+				//skip the overall regex match. Who cares
+				for( $i = 1; $i <= count( $match_keys ); $i++ ) {
+					if( ! isset( $matches[ $i ] ) ) {
+						$success = false;
+					} else {
+						$indexed_matches[ $match_keys[ $i - 1 ] ] = $matches[ $i ];
+					}
+				}
+			}
+			if( ! $success ) {
+				return $this->send_response( new \WP_Error( 'endpoint_parsing_error', __( 'We could not parse the URL. Please contact event espresso support', 'event_espresso' ) ) );
+			}
+		} catch ( \EE_Error $e) {
+			return $this->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		}
+		return $indexed_matches;
+	}
 }
 
 // End of file Base.php

@@ -119,7 +119,7 @@ class EED_REST_API extends EED_Module {
 	public static function save_ee_routes() {
 		if( EE_Maintenance_Mode::instance()->models_can_query() ){
 			$instance = self::instance();
-			$routes = array_merge( $instance->_register_config_routes(),  $instance->_register_meta_routes(), $instance->_register_model_routes() );
+			$routes = array_replace_recursive( $instance->_register_config_routes(),  $instance->_register_meta_routes(), $instance->_register_model_routes() );
 			update_option( self::saved_routes_option_names, $routes, true );
 		}
 	}
@@ -210,7 +210,7 @@ class EED_REST_API extends EED_Module {
 			$config_routes[ self::ee_api_namespace . $version ][ 'config' ] = array(
 					array( 
 						'callback' => array( 
-							'EE_REST_API_Controller_Config_Read', 
+							'EventEspresso\core\libraries\rest_api\controllers\config\Read', 
 							'handle_request' ), 
 						'methods' => WP_REST_Server::READABLE,
 						'hidden_endpoint' => $hidden_endpoint
@@ -230,7 +230,7 @@ class EED_REST_API extends EED_Module {
 			$meta_routes[ self::ee_api_namespace . $version ][ '/resources' ] = array(
 				array( 
 					'callback' => array( 
-						'EE_REST_API_Controller_Model_Meta', 
+						'EventEspresso\core\libraries\rest_api\controllers\model\Meta', 
 						'handle_request_models_meta' ), 
 					'methods' => WP_REST_Server::READABLE,
 					'hidden_endpoint' => $hidden_endpoint
