@@ -439,6 +439,47 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 
 
+
+	/**
+	 * This returns an array of counts of datetimes in the database for each Datetime status that can be queried.
+	 *
+	 * @param  array  $query_params  If included can be used to refine the conditions for returning the count (i.e. only for
+	 *                               Datetimes connected to a specific event, or specific ticket.
+	 *
+	 * @return array  The value returned is an array indexed by Datetime Status and the values are the counts.  The stati used as index keys are:
+	 *                EE_Datetime::active
+	 *                EE_Datetime::upcoming
+	 *                EE_Datetime::expired
+	 */
+	public function get_datetime_counts_by_status( $query_params = array() ) {
+		//only accept where conditions for this query.
+		$_where = isset( $query_params[0] ) ? $query_params[0] : array();
+		$status_query_args = array(
+				EE_Datetime::active => array_merge(
+						$_where,
+						array( 'DTT_EVT_start' => array( '<', time() ), 'DTT_EVT_end' => array( '>', time() ) )
+				),
+				EE_Datetime::upcoming => array_merge(
+						$_where,
+						array( 'DTT_EVT_start' => array( '>', time() ) )
+				),
+				EE_Datetime::expired => array_merge(
+						$_where,
+						array( 'DTT_EVT_end' => array('<', time() ) )
+				)
+		);
+
+		//loop through and query counts for each stati.
+		$status_query_results = array();
+		foreach( $status_query_args as $status => $status_where_conditions ) {
+			$status_query_results[ $status ] = EEM_Datetime::count( array( $status_where_conditions ), 'DTT_ID', true );
+		}
+
+		return $status_query_results;
+	}
+
+
+
 }
 // End of file EEM_Datetime.model.php
 // Location: /includes/models/EEM_Datetime.model.php
