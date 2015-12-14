@@ -1,5 +1,20 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ */
+require_once( EE_HELPERS . 'EEH_Base.helper.php' );
+require_once( EE_INTERFACES . 'EEI_Interfaces.php' );
+/**
  *
  * Class EEH_File
  *
@@ -11,7 +26,7 @@
  * @since 				$VID:$
  *
  */
-class EEH_File extends EEH_Base {
+class EEH_File extends EEH_Base implements EEHI_File {
 
 	/**
 	 * @var string $_credentials_form
@@ -86,11 +101,11 @@ class EEH_File extends EEH_Base {
 					if ( $credentials === FALSE ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
 						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
-					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {						
+					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
-						throw new EE_Error( 
-								sprintf( 
-										__( 'WP Filesystem Error: $1%s', 'event_espresso' ), 
+						throw new EE_Error(
+								sprintf(
+										__( 'WP Filesystem Error: $1%s', 'event_espresso' ),
 										$wp_filesystem->errors->get_error_message() ) );
 					}
 				}
@@ -222,7 +237,7 @@ class EEH_File extends EEH_Base {
 					}
 					return false;
 				}
-				EEH_File::add_htaccess_deny_from_all( $folder );
+				EEH_File::add_index_file( $folder );
 			}
 		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
 			return false;
@@ -359,6 +374,19 @@ class EEH_File extends EEH_Base {
 		return TRUE;
 	}
 
+	/**
+	 * Wrapper for WP_Filesystem_Base::delete
+	 *
+	 * @param string $filepath
+	 * @param boolean $recursive
+	 * @param boolean|string $type 'd' for directory, 'f' for file
+	 * @return boolean
+	 */
+	public static function delete( $filepath, $recursive = false, $type = false ) {
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		return $wp_filesystem->delete( $filepath, $recursive, $type ) ? TRUE : FALSE;
+	}
+
 
 
 	/**
@@ -429,8 +457,7 @@ class EEH_File extends EEH_Base {
 
 
 	/**
-	 * add_htaccess_deny_from_all and an index.html file
-	 * in order to prevent folks from exploring filesystem at their leisure
+	 * add_htaccess_deny_from_all so the webserver cannot access this folder
 	 * @param string $folder
 	 * @return bool
 	 */
@@ -441,12 +468,23 @@ class EEH_File extends EEH_Base {
 				return FALSE;
 			}
 		}
-		if ( ! EEH_File::exists( $folder . 'index.html' ) ) {
-			if ( ! EEH_File::write_to_file( $folder . 'index.html', 'cheating huh?', '.html' )) {
-				return FALSE;
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds an index file to this folder, so folks can't list all the file's contents
+	 * @param string $folder
+	 * @return boolean
+	 */
+	public static function add_index_file( $folder ) {
+		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
+		if ( ! EEH_File::exists( $folder . 'index.php' ) ) {
+			if ( ! EEH_File::write_to_file( $folder . 'index.php', 'You are not permitted to read from this folder', '.php' )) {
+				return false;
 			}
 		}
-		return TRUE;
+		return true;
 	}
 
 
