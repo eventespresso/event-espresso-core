@@ -443,6 +443,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	/**
 	 * This returns an array of counts of datetimes in the database for each Datetime status that can be queried.
 	 *
+	 * @param  array $stati_to_include        If included you can restrict the statuses we return counts for by including the stati
+	 *                               you want counts for as values in the array.  An empty array returns counts for all valid
+	 *                               stati.
 	 * @param  array  $query_params  If included can be used to refine the conditions for returning the count (i.e. only for
 	 *                               Datetimes connected to a specific event, or specific ticket.
 	 *
@@ -451,7 +454,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 *                EE_Datetime::upcoming
 	 *                EE_Datetime::expired
 	 */
-	public function get_datetime_counts_by_status( $query_params = array() ) {
+	public function get_datetime_counts_by_status( $stati_to_include = array(), $query_params = array() ) {
 		//only accept where conditions for this query.
 		$_where = isset( $query_params[0] ) ? $query_params[0] : array();
 		$status_query_args = array(
@@ -469,6 +472,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 				)
 		);
 
+		if ( ! empty( $stati_to_include ) ) {
+			foreach( array_keys( $status_query_args ) as $status ) {
+				if ( ! in_array( $status, $stati_to_include ) ) {
+					unset( $status_query_args[$status] );
+				}
+			}
+		}
+
 		//loop through and query counts for each stati.
 		$status_query_results = array();
 		foreach( $status_query_args as $status => $status_where_conditions ) {
@@ -476,6 +487,19 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		}
 
 		return $status_query_results;
+	}
+
+
+	/**
+	 * Returns the specific count for a given Datetime status matching any given query_params.
+	 *
+	 * @param string $status  Valid string representation for Datetime status requested. (Defaults to Active).
+	 * @param array $query_params
+	 * @return int
+	 */
+	public function get_datetime_count_for_status( $status = EE_Datetime::active, $query_params = array() ) {
+		$count = $this->get_datetime_counts_by_status( array( $status ), $query_params );
+		return ! empty( $count[$status] ) ? $count[$status] : 0;
 	}
 
 
