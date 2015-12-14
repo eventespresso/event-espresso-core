@@ -965,21 +965,20 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			return false;
 		}
 
-		//let's get a count of datetimes for each status (this only returns results for Datetime Specific Statuses.
-		$datetime_count_by_status = EEM_Datetime::instance()->get_datetime_counts_by_status( array( array( 'EVT_ID' => $this->ID() ) ) );
+		$where_params_for_event  = array( array( 'EVT_ID' => $this->ID() ) );
 
 		//if event is published:
 		if ( $this->status() === 'publish' ) {
 			//active?
-			if ( $datetime_count_by_status[ EE_Datetime::active ] > 0 ) {
+			if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::active, $where_params_for_event ) > 0 ) {
 				$this->_active_status = EE_Datetime::active;
 			} else {
 				//upcoming?
-				if ( $datetime_count_by_status[ EE_Datetime::upcoming ] > 0 ) {
+				if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::upcoming, $where_params_for_event  ) > 0 ) {
 					$this->_active_status = EE_Datetime::upcoming;
 				} else {
 					//expired?
-					if ( $datetime_count_by_status[ EE_Datetime::expired ] > 0 ) {
+					if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired, $where_params_for_event  ) > 0 ) {
 						$this->_active_status = EE_Datetime::expired;
 					} else {
 						//it would be odd if things make it this far because it basically means there are no datetime's
