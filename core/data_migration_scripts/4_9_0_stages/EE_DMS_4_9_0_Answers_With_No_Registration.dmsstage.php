@@ -24,11 +24,10 @@ class EE_DMS_4_9_0_Answers_With_No_Registration extends EE_Data_Migration_Script
 	 * @return EE_DMS_4_9_0_Answers_With_No_Registration
 	 */
 	public function __construct() {
-		global $wpdb;
 		$this->_pretty_name = __( 'Answer Cleanup', 'event_espresso' );
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Counts the records to migrate; the public version may cache it
 	 * @return int
@@ -36,7 +35,7 @@ class EE_DMS_4_9_0_Answers_With_No_Registration extends EE_Data_Migration_Script
 	protected function _count_records_to_migrate() {
 		return 1;
 	}
-	
+
 	/**
 	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
 	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
@@ -48,12 +47,16 @@ class EE_DMS_4_9_0_Answers_With_No_Registration extends EE_Data_Migration_Script
 	 */
 	protected function _migration_step($num_items_to_migrate = 50) {
 		global $wpdb;
-		$rows_updated = $wpdb->delete(
+		$wpdb->delete(
 			$wpdb->prefix . 'esp_answer',
 			array( 'REG_ID' => 0 ),
-			array( '%d' ) );
+			array( '%d' )
+		);
 		$this->set_completed();
 		return 1;
 	}
+
+
+
 }
 // End of file EE_DMS_4_6_0_question_types.dmsstage.php
