@@ -22,7 +22,7 @@ class Meta extends Base {
 		$controller = new Meta();
 		$matches = $controller->parse_route( 
 			$request->get_route(), 
-			'~' . \EED_REST_API::ee_api_namespace_for_regex . 'resources~', 
+			'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . 'resources~', 
 			array( 'version' ) ); 
 		if( $matches instanceof \WP_REST_Response ) {
 			return $matches;
@@ -118,7 +118,7 @@ class Meta extends Base {
 			'version' => \EEM_System_Status::instance()->get_ee_version(),
 			'addons' => $addons,
 			'maintenance_mode' => \EE_Maintenance_Mode::instance()->real_level(),
-			'served_core_versions' => array_keys( \EED_REST_API::versions_served() )
+			'served_core_versions' => array_keys( \EED_Core_REST_API::versions_served() )
 		);
 		return $existing_index_info;
 	}

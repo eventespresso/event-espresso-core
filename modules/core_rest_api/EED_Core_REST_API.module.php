@@ -1,5 +1,4 @@
 <?php
-use EventEspresso;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -19,7 +18,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 
 /**
- * Class  EED_REST_API
+ * Class  EED_Core_REST_API
  *
  * @package			Event Espresso
  * @subpackage		eea-rest-api
@@ -27,14 +26,14 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * ------------------------------------------------------------------------
  */
-class EED_REST_API extends EED_Module {
+class EED_Core_REST_API extends \EED_Module {
 
 	const ee_api_namespace = 'ee/v';
 	const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 	const saved_routes_option_names = 'ee_routes';
 
 	/**
-	 * @return EED_REST_API
+	 * @return EED_Core_REST_API
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
@@ -67,9 +66,9 @@ class EED_REST_API extends EED_Module {
 
 
 	public static function set_hooks_both() {
-		add_action( 'rest_api_init', array( 'EED_REST_API', 'register_routes' ) );
-		add_filter( 'rest_route_data', array( 'EED_REST_API', 'hide_old_endpoints' ), 10, 2 );
-		add_filter( 'json_index', array( 'EE_REST_API_Controller_Model_Meta', 'filter_ee_metadata_into_index' ) );
+		add_action( 'rest_api_init', array( 'EED_Core_REST_API', 'register_routes' ) );
+		add_filter( 'rest_route_data', array( 'EED_Core_REST_API', 'hide_old_endpoints' ), 10, 2 );
+		add_filter( 'json_index', array( 'EE_Core_REST_API_Controller_Model_Meta', 'filter_ee_metadata_into_index' ) );
 	}
 
 
@@ -78,7 +77,7 @@ class EED_REST_API extends EED_Module {
 	 * so we actually prefer to only do it when an EE plugin is activated or upgraded
 	 */
 	public static function register_routes() {
-		foreach( EED_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
+		foreach( EED_Core_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
 					register_rest_route( 
@@ -130,7 +129,7 @@ class EED_REST_API extends EED_Module {
 	 */
 	protected function _register_model_routes() {
 		EE_Registry::instance()->load_helper( 'Inflector' );
-		$models_to_register = apply_filters( 'FHEE__EED_REST_API___register_model_routes', EE_Registry::instance()->non_abstract_db_models );
+		$models_to_register = apply_filters( 'FHEE__EED_Core_REST_API___register_model_routes', EE_Registry::instance()->non_abstract_db_models );
 		//let's not bother having endpoints for extra metas
 		unset($models_to_register['Extra_Meta']);
 		unset($models_to_register['Extra_Join']);
@@ -245,7 +244,7 @@ class EED_REST_API extends EED_Module {
 	 * @param unknown $route_data
 	 */
 	public function hide_old_endpoints( $route_data, $routes ) {
-		foreach( EED_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
+		foreach( EED_Core_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
 					if( $route[ 'hidden_endpoint' ] ) {
@@ -270,14 +269,14 @@ class EED_REST_API extends EED_Module {
 	 * @return array
 	 */
 	public static function version_compatibilities() {
-		return  apply_filters( 'FHEE__EED_REST_API__version_compatibilities',
+		return  apply_filters( 'FHEE__EED_Core_REST_API__version_compatibilities',
 				array(
 					'4.8.28' => '4.6.28'
 				));
 	}
 
 	/**
-	 * Using EED_REST_API::version_compatibilities(), determines what version of
+	 * Using EED_Core_REST_API::version_compatibilities(), determines what version of
 	 * EE the API can serve requests for. Eg, if we are on 4.15 of core, and
 	 * we can serve reqeusts from 4.12 or later, this will return array( '4.12', '4.13', '4.14', '4.15' ).
 	 * We also indicate whether or not this version should be put in the index or not
@@ -285,13 +284,13 @@ class EED_REST_API extends EED_Module {
 	 * are whether or not they should be hidden
 	 */
 	public static function versions_served() {
-		$version_compatibilities = EED_REST_API::version_compatibilities();
+		$version_compatibilities = EED_Core_REST_API::version_compatibilities();
 		$versions_served = array();
-		$lowest_compatible_version = $version_compatibilities[ EED_REST_API::core_version() ];
+		$lowest_compatible_version = $version_compatibilities[ EED_Core_REST_API::core_version() ];
 		//for each version of core we have ever served:
-		foreach( array_keys( EED_REST_API::version_compatibilities() ) as $possibly_served_version ) {
+		foreach( array_keys( EED_Core_REST_API::version_compatibilities() ) as $possibly_served_version ) {
 			//if it's not above the current core version, and it's compatible with the current version of core
-			if( $possibly_served_version < EED_REST_API::core_version() && $possibly_served_version >= $lowest_compatible_version ) {
+			if( $possibly_served_version < EED_Core_REST_API::core_version() && $possibly_served_version >= $lowest_compatible_version ) {
 				$versions_served[ $possibly_served_version ] = true;
 			}else {
 				$versions_served[ $possibly_served_version ] = false;
@@ -307,18 +306,7 @@ class EED_REST_API extends EED_Module {
 	 * @return string
 	 */
 	public static function core_version() {
-		return apply_filters( 'FHEE__EED_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 3 ) ) );
-	}
-
-
-
-	/**
-	 *    config
-	 *
-	 * @return EE_REST_API_Config
-	 */
-	public function config() {
-		return EE_Registry::instance()->addons->EE_REST_API->config();
+		return apply_filters( 'FHEE__EED_Core_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 3 ) ) );
 	}
 
 
@@ -338,5 +326,5 @@ class EED_REST_API extends EED_Module {
 
 }
 
-// End of file EED_REST_API.module.php
-// Location: /wp-content/plugins/eea-rest-api/EED_REST_API.module.php
+// End of file EED_Core_REST_API.module.php
+// Location: /wp-content/plugins/eea-rest-api/EED_Core_REST_API.module.php

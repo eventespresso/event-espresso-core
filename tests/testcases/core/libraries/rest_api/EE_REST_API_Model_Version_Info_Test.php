@@ -99,7 +99,7 @@ class EE_REST_API_Model_Version_Info_Test extends EE_UnitTestCase{
 	}
 
 	protected function _pretend_current_version_48(){
-		add_filter( 'FHEE__EED_REST_API__core_version', array( $this, '_tell_EED_REST_API_current_version_is_48' ) );
+		add_filter( 'FHEE__EED_Core_REST_API__core_version', array( $this, '_tell_EED_Core_REST_API_current_version_is_48' ) );
 	}
 
 	/**
@@ -107,7 +107,7 @@ class EE_REST_API_Model_Version_Info_Test extends EE_UnitTestCase{
 	 * @param type $current_version
 	 * @return string
 	 */
-	public function _tell_EED_REST_API_current_version_is_48( $current_version ) {
+	public function _tell_EED_Core_REST_API_current_version_is_48( $current_version ) {
 		return '4.8';
 	}
 

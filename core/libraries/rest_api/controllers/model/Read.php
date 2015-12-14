@@ -33,62 +33,62 @@ class Read extends Base {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function handle_request_get_all( \WP_REST_Request $request) {
-		$controller = new Read();
-		$matches = $controller->parse_route( 
-			$request->get_route(), 
-			'~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)~', 
-			array( 'version', 'model' ) ); 
-		if( $matches instanceof \WP_REST_Response ) {
-			return $matches;
+		try{
+			$controller = new Read();
+			$matches = $controller->parse_route( 
+				$request->get_route(), 
+				'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . '(.*)~', 
+				array( 'version', 'model' ) );
+			$controller->set_requested_version( $matches[ 'version' ] );
+			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
+				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
+			}
+			return $controller->send_response(
+					$controller->get_entities_from_model(
+							$controller->get_model_version_info()->load_model( $model_name_singular ),
+							$request->get_param('filter'),
+							$request->get_param( 'include' ) ) );
+		} catch( \Exception $e ) {
+			return $this->send_response( $e );
 		}
-		$controller->set_requested_version( $matches[ 'version' ] );
-		$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
-			return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
-		}
-		return $controller->send_response(
-				$controller->get_entities_from_model(
-						$controller->get_model_version_info()->load_model( $model_name_singular ),
-						$request->get_param('filter'),
-						$request->get_param( 'include' ) ) );
 	}
 
 	/**
 	 * Gets a single entity related to the model indicated in the path and its id
 	 * @param string $_path
 	 * @param string $id ID of the thing to be retrieved
-	 * @param string $include @see Read:handle_request_get_all
-	 * @param string $filter @see handle_request_get_all, for now only the 'caps' item is used
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public static function handle_request_get_one( \WP_Rest_Request $request, $id, $include = '*', $filter = array() ) {
-		$controller = new Read();
-		$matches = $controller->parse_route( 
-			$request->get_route(), 
-			'~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)~', 
-			array( 'version', 'model', 'id' ) ); 
-		if( $matches instanceof \WP_REST_Response ) {
-			return $matches;
+	public static function handle_request_get_one( \WP_Rest_Request $request, $id ) {
+		try{ 
+			$controller = new Read();
+			$matches = $controller->parse_route( 
+				$request->get_route(), 
+				'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)~', 
+				array( 'version', 'model', 'id' ) ); 
+			$controller->set_requested_version( $matches[ 'version' ] );
+			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
+				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
+			}
+			$filter_param = $request->get_param( 'filter' );
+			if( is_array( $filter_param ) &&
+				isset( $filter_param[ 'caps' ] ) ) {
+				$caps = $filter_param[ 'caps' ];
+			} else { 
+				$caps = \EEM_Base::caps_read;
+			}
+			return $controller->send_response(
+					$controller->get_entity_from_model(
+							$controller->get_model_version_info()->load_model( $model_name_singular ),
+							$request->get_param( 'id' ),
+							$request->get_param( 'include' ),
+							$controller->validate_context( $caps ) ) 
+				);
+		} catch( \Exception $e ) {
+			return $this->send_response( $e );
 		}
-		$controller->set_requested_version( $matches[ 'version' ] );
-		$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
-			return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
-		}
-		$filter_param = $request->get_param( 'filter' );
-		if( is_array( $filter_param ) &&
-			isset( $filter_param[ 'caps' ] ) ) {
-			$caps = $filter_param[ 'caps' ];
-		} else { 
-			$caps = \EEM_Base::caps_read;
-		}
-		return $controller->send_response(
-				$controller->get_entity_from_model(
-						$controller->get_model_version_info()->load_model( $model_name_singular ),
-						$request->get_param( 'id' ),
-						$request->get_param( 'include' ),
-						$controller->validate_context( $caps ) ) 
-			);
 	}
 
 	/**
@@ -102,31 +102,32 @@ class Read extends Base {
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public static function handle_request_get_related( \WP_REST_Request $request ) {
-		$controller = new Read();
-		$matches = $controller->parse_route( 
-			$request->get_route(), 
-			'~' . \EED_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~', 
-			array( 'version', 'model', 'id', 'related_model' ) ); 
-		if( $matches instanceof \WP_REST_Response ) {
-			return $matches;
-		}
-		$controller->set_requested_version( $matches[ 'version' ] );
-		$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $main_model_name_singular ) ) {
-			return $controller->send_response( new WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $main_model_name_singular ) ) );
-		}
-		$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
-		$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
-		if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $related_model_name_singular ) ) {
-			return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $related_model_name_singular ) ) );
-		}
+		try{
+			$controller = new Read();
+			$matches = $controller->parse_route( 
+				$request->get_route(), 
+				'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~', 
+				array( 'version', 'model', 'id', 'related_model' ) ); 
+			$controller->set_requested_version( $matches[ 'version' ] );
+			$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $main_model_name_singular ) ) {
+				return $controller->send_response( new WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $main_model_name_singular ) ) );
+			}
+			$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
+			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $related_model_name_singular ) ) {
+				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $related_model_name_singular ) ) );
+			}
 
-		return $controller->send_response(
-				$controller->get_entities_from_relation(
-						$request->get_param( 'id' ),
-						$main_model->related_settings_for( $related_model_name_singular ) ,
-						$request->get_param( 'filter' ),
-						$request->get_param( 'include' ) ) );
+			return $controller->send_response(
+					$controller->get_entities_from_relation(
+							$request->get_param( 'id' ),
+							$main_model->related_settings_for( $related_model_name_singular ) ,
+							$request->get_param( 'filter' ),
+							$request->get_param( 'include' ) ) );
+		} catch( \Exception $e ) {
+			return $this->send_response( $e );
+		}
 	}
 
 
@@ -317,7 +318,7 @@ class Read extends Base {
 	 * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
 	 */
 	public function get_versioned_link_to( $link_part_after_version_and_slash ) {
-		return rest_url( \EED_REST_API::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
+		return rest_url( \EED_Core_REST_API::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
 	}
 
 	/**

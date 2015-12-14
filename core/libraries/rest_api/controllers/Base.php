@@ -53,9 +53,12 @@ class Base {
 	 * are handy for debugging.
 	 * Specifically, we assume folks will want to know what exactly was the DB query that got run,
 	 * what exactly was the Models query that got run, what capabilities came into play, what fields were ommitted from the response, others?
-	 * @param array|WP_Error $response
+	 * @param array|WP_Error|Exception $response
 	 */
 	public function send_response( $response ) {
+		if( $response instanceof \Exception ) {
+			$response = new \WP_Error( $response->getCode(), $response->getMessage() );
+		}
 		if( $response instanceof \WP_Error ) {
 			//we want to send a "normal"-looking WP error response, but we also
 			//want to add headers. It doesn't seem WP API 1.2 supports this.
@@ -100,28 +103,27 @@ class Base {
 	 * @return array where  $match_keys are the keys (the first value of $match_keys
 	 * becomes the first key of the return value, etc. Eg passing in $match_keys of
 	 *	array( 'model', 'id' ), will, if the regex is successful, will return
-	 *	array( 'model' => 'foo', 'id' => 'bar' )      
+	 *	array( 'model' => 'foo', 'id' => 'bar' )    
+	 * @throw EE_Error if it couldn't be parsed
 	 */
 	public function parse_route( $route, $regex, $match_keys ) {
 		$indexed_matches = array();
-		try{
-			$success = preg_match( $regex, $route, $matches );
-			if( 
-				is_array( $matches ) ) {
-				//skip the overall regex match. Who cares
-				for( $i = 1; $i <= count( $match_keys ); $i++ ) {
-					if( ! isset( $matches[ $i ] ) ) {
-						$success = false;
-					} else {
-						$indexed_matches[ $match_keys[ $i - 1 ] ] = $matches[ $i ];
-					}
+		$success = preg_match( $regex, $route, $matches );
+		if( 
+			is_array( $matches ) ) {
+			//skip the overall regex match. Who cares
+			for( $i = 1; $i <= count( $match_keys ); $i++ ) {
+				if( ! isset( $matches[ $i ] ) ) {
+					$success = false;
+				} else {
+					$indexed_matches[ $match_keys[ $i - 1 ] ] = $matches[ $i ];
 				}
 			}
-			if( ! $success ) {
-				return $this->send_response( new \WP_Error( 'endpoint_parsing_error', __( 'We could not parse the URL. Please contact event espresso support', 'event_espresso' ) ) );
-			}
-		} catch ( \EE_Error $e) {
-			return $this->send_response( new \WP_Error( 'ee_exception', $e->getMessage() . ( defined('WP_DEBUG') && WP_DEBUG ? $e->getTraceAsString() : '' ) ) );
+		}
+		if( ! $success ) {
+			throw new \EE_Error(
+				__( 'We could not parse the URL. Please contact Event Espresso Support', 'event_espresso' ),
+				'endpoint_parsing_error' );
 		}
 		return $indexed_matches;
 	}
