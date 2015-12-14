@@ -1208,12 +1208,11 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
-				EVENT_ESPRESSO_UPLOAD_DIR,
 				EVENT_ESPRESSO_TEMPLATE_DIR,
 				EVENT_ESPRESSO_GATEWAY_DIR,
-				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
+				EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/'
 		);
 		foreach ( $folders as $folder ) {
 			try {
@@ -1233,6 +1232,9 @@ class EEH_Activation {
 				return FALSE;
 			}
 		}
+		//just add the .htaccess file to the logs directory to begin with. Even if logging
+		//is disabled, there might be activation errors recorded in there
+		EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' );
 		//remember EE's folders are all good
 		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
 		return TRUE;
@@ -1607,6 +1609,7 @@ class EEH_Activation {
 			'ee_rss_' => false,
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
+			'ee_job_parameters_' => false,
 			'ee_upload_directories_incomplete' => true,
 		);
 		if( is_main_site() ) {
