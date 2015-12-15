@@ -203,9 +203,10 @@ class Read extends Base {
 			return new WP_Error( sprintf( 'rest_%s_cannot_list', $related_model_name_maybe_plural ), sprintf( __( 'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s' ), $related_model_name_maybe_plural, $related_model->get_this_model_name(), implode(',', array_keys( Capabilities::get_missing_permissions( $related_model, $context ) ) )  ), array( 'status' => 403 ) );
 		}
 		$query_params = $this->create_model_query_params( $relation->get_other_model(), $filter, $context );
-		$this->_set_debug_info( 'model query params', $query_params );
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
 		$query_params[ 'default_where_conditions' ] = 'none';
+		$query_params[ 'caps' ] = $context;
+		$this->_set_debug_info( 'model query params', $query_params );
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
 		foreach( $results as $result ) {
@@ -559,18 +560,6 @@ class Read extends Base {
 		}
 		return $extracted_fields_to_include;
 
-	}
-
-
-
-
-	/**
-	 * Sets some debug info that we'll send back in headers
-	 * @param string $key
-	 * @param string|array $info
-	 */
-	protected function _set_debug_info( $key, $info ){
-		$this->_debug_info[ $key ] = $info;
 	}
 }
 

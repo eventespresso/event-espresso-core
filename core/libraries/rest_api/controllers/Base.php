@@ -47,6 +47,15 @@ class Base {
 	public function set_requested_version( $version ) {
 		$this->_requested_version = $version;
 	}
+	
+	/**
+	 * Sets some debug info that we'll send back in headers
+	 * @param string $key
+	 * @param string|array $info
+	 */
+	protected function _set_debug_info( $key, $info ){
+		$this->_debug_info[ $key ] = $info;
+	}
 
 	/**
 	 * Sends a response, but also makes sure to attach headers that
@@ -88,11 +97,13 @@ class Base {
 			$rest_response = new \WP_REST_Response( $response, 200 );
 		}
 		$headers = array();
-		foreach( $this->_debug_info  as $debug_key => $debug_info ) {
-			if( is_array( $debug_info ) ) {
-				$debug_info = json_encode( $debug_info );
+		if( $this->_debug_mode && is_array( $this->_debug_info ) ) {
+			foreach( $this->_debug_info  as $debug_key => $debug_info ) {
+				if( is_array( $debug_info ) ) {
+					$debug_info = json_encode( $debug_info );
+				}
+				$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 			}
-			$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 		}
 		$rest_response->set_headers( $headers );
 		return $rest_response;
