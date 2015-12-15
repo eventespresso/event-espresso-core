@@ -71,15 +71,21 @@ class Base {
 				$status = 500;
 			}
 
-			$data = array();
+			$errors = array();
 			foreach ( (array) $response->errors as $code => $messages ) {
 				foreach ( (array) $messages as $message ) {
-					$data[] = array( 'code' => $code, 'message' => $message );
+					$errors[] = array( 'code' => $code, 'message' => $message, 'data' => $response->get_error_data( $code ) );
 				}
 			}
-			$response = new \WP_REST_Response( $data, $status );
+			$data = $errors[0];
+			if ( count( $errors ) > 1 ) {
+				// Remove the primary error.
+				array_shift( $errors );
+				$data['additional_errors'] = $errors;
+			}
+			$rest_response = new \WP_REST_Response( $data, $status );
 		}else{
-			$status = 200;
+			$rest_response = new \WP_REST_Response( $response, 200 );
 		}
 		$headers = array();
 		foreach( $this->_debug_info  as $debug_key => $debug_info ) {
@@ -88,7 +94,8 @@ class Base {
 			}
 			$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 		}
-		return new \WP_REST_Response( $response, $status,  $headers );
+		$rest_response->set_headers( $headers );
+		return $rest_response;
 	}
 	
 	/**

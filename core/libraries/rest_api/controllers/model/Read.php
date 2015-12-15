@@ -155,7 +155,7 @@ class Read extends Base {
 		$query_params = $this->create_model_query_params( $model, $filter );
 		if( ! Capabilities::current_user_has_partial_access_to( $model, $query_params[ 'caps' ] ) ) {
 			$model_name_plural = \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() );
-			return new WP_Error( sprintf( 'json_%s_cannot_list', $model_name_plural), sprintf( __( 'Sorry, you are not allowed to list %s. Missing permissions: %s' ), $model_name_plural, Capabilities::get_missing_permissions_string( $model,  $query_params[ 'caps' ] ) ), array( 'status' => 403 ) );
+			return new WP_Error( sprintf( 'rest_%s_cannot_list', $model_name_plural), sprintf( __( 'Sorry, you are not allowed to list %s. Missing permissions: %s' ), $model_name_plural, Capabilities::get_missing_permissions_string( $model,  $query_params[ 'caps' ] ) ), array( 'status' => 403 ) );
 		}
 
 		$this->_set_debug_info( 'model query params', $query_params );
@@ -200,7 +200,7 @@ class Read extends Base {
 			}else{
 				$related_model_name_maybe_plural = \EEH_Inflector::pluralize_and_lower( $related_model->get_this_model_name() );
 			}
-			return new WP_Error( sprintf( 'json_%s_cannot_list', $related_model_name_maybe_plural ), sprintf( __( 'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s' ), $related_model_name_maybe_plural, $related_model->get_this_model_name(), implode(',', array_keys( Capabilities::get_missing_permissions( $related_model, $context ) ) )  ), array( 'status' => 403 ) );
+			return new WP_Error( sprintf( 'rest_%s_cannot_list', $related_model_name_maybe_plural ), sprintf( __( 'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s' ), $related_model_name_maybe_plural, $related_model->get_this_model_name(), implode(',', array_keys( Capabilities::get_missing_permissions( $related_model, $context ) ) )  ), array( 'status' => 403 ) );
 		}
 		$query_params = $this->create_model_query_params( $relation->get_other_model(), $filter, $context );
 		$this->_set_debug_info( 'model query params', $query_params );
@@ -260,8 +260,11 @@ class Read extends Base {
 			}elseif( $this->is_subclass_of_one( $field_obj, $this->get_model_version_info()->fields_pretty() ) ){
 				$result[ $field_name ] = $field_obj->prepare_for_get( $field_value );
 				$result[ $field_name . '_pretty' ] = $field_obj->prepare_for_pretty_echoing( $field_value );
-			}elseif( $field_obj instanceof EE_Datetime_Field ){
-				$result[ $field_name ] = json_mysql_to_rfc3339( $raw_field_value );
+			}elseif( $field_obj instanceof \EE_Datetime_Field ){
+				if( $raw_field_value instanceof \DateTime ) {
+					$raw_field_value = $raw_field_value->format( 'c' );
+				}
+				$result[ $field_name ] = mysql_to_rfc3339( $raw_field_value );
 			}else{
 				$value_prepared = $field_obj->prepare_for_get( $field_value );
 
@@ -367,10 +370,10 @@ class Read extends Base {
 			$model_rows_found_sans_restrictions = $model->get_all_wpdb_results( $query_params );
 			if( ! empty( $model_rows_found_sans_restrictions ) ) {
 				//you got shafted- it existed but we didn't want to tell you!
-				return new \WP_Error( 'json_user_cannot_read', sprintf( __( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ), strtolower( $model->get_this_model_name() ), Capabilities::get_missing_permissions_string( $model, $context ) ), array( 'status' => 403 ) );
+				return new \WP_Error( 'rest_user_cannot_read', sprintf( __( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ), strtolower( $model->get_this_model_name() ), Capabilities::get_missing_permissions_string( $model, $context ) ), array( 'status' => 403 ) );
 			}else{
 				//it's not you. It just doesn't exist
-				return new \WP_Error( sprintf( 'json_%s_invalid_id', $lowercase_model_name ), sprintf( __( 'Invalid %s ID.', 'event_espresso' ), $lowercase_model_name ), array( 'status' => 404 ) );
+				return new \WP_Error( sprintf( 'rest_%s_invalid_id', $lowercase_model_name ), sprintf( __( 'Invalid %s ID.', 'event_espresso' ), $lowercase_model_name ), array( 'status' => 404 ) );
 			}
 		}
 	}
