@@ -85,7 +85,8 @@ class EED_Core_REST_API extends \EED_Module {
 						$endpoint,
 						array(
 							'callback' => $route[ 'callback' ],
-							'methods' => $route[ 'methods' ]
+							'methods' => $route[ 'methods' ],
+							'args' => isset( $route[ 'args' ] ) ? $route[ 'args' ] : array(),
 						)
 					);
 				}
@@ -148,29 +149,53 @@ class EED_Core_REST_API extends \EED_Module {
 								'EventEspresso\core\libraries\rest_api\controllers\model\Read', 
 								'handle_request_get_all' ), 
 							'methods' => WP_REST_Server::READABLE,
-							'hidden_endpoint' => $hidden_endpoint
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => array(
+								'filter' => array(
+									'required' => false,
+									'default' => array(),
+									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Filtering_Results for documentation', 'event_espresso' ),
+									),
+								'include' => array(
+									'required' => false,
+									'default' => '*',
+									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+								),
 							),
-						array(
-							'callback' => array(
-								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-								'handle_request_create_one' ),
-							'methods' => WP_REST_Server::CREATABLE,
-							'hidden_endpoint' => $hidden_endpoint
-						)
+							'_links' => array(
+								'self' => rest_url( $ee_namespace . $singular_model_route ),
+							)
+						),
+//						array(
+//							'callback' => array(
+//								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+//								'handle_request_create_one' ),
+//							'methods' => WP_REST_Server::CREATABLE,
+//							'hidden_endpoint' => $hidden_endpoint
+//						)
 					);
 				$model_routes[ $ee_namespace ][ $singular_model_route ] = array(
 						array( 
 							'callback' => array( 
 								'EventEspresso\core\libraries\rest_api\controllers\model\Read', 
 								'handle_request_get_one' ), 
-							'methods' => WP_REST_Server::READABLE ),
-						array(
-							'callback' => array(
-								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-								'handle_request_edit_one' ),
-							'methods' => WP_REST_Server::EDITABLE,
-							'hidden_endpoint' => $hidden_endpoint
-							),
+							'methods' => WP_REST_Server::READABLE,
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => array(
+								'include' => array(
+									'required' => false,
+									'default' => '*',
+									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+								),
+							)
+						),
+//						array(
+//							'callback' => array(
+//								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+//								'handle_request_edit_one' ),
+//							'methods' => WP_REST_Server::EDITABLE,
+//							'hidden_endpoint' => $hidden_endpoint
+//							),
 				);
 				//@todo: also handle  DELETE for a single item
 				$model = EE_Registry::instance()->load_model( $model_classname );
@@ -182,15 +207,27 @@ class EED_Core_REST_API extends \EED_Module {
 									'EventEspresso\core\libraries\rest_api\controllers\model\Read',
 									'handle_request_get_related' ), 
 								'methods' => WP_REST_Server::READABLE,
-								'hidden_endpoint' => $hidden_endpoint
+								'hidden_endpoint' => $hidden_endpoint,
+								'args' => array(
+									'filter' => array(
+										'required' => false,
+										'default' => array(),
+										'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Filtering_Results for documentation', 'event_espresso' ),
+									),
+									'include' => array(
+										'required' => false,
+										'default' => '*',
+										'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+									)
 								),
-							array(
-								'callback' => array(
-									'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-									'handle_request_create_or_update_related' ),
-								'methods' => WP_REST_Server::EDITABLE,
-								'hidden_endpoint' => $hidden_endpoint
-							)
+							),
+//							array(
+//								'callback' => array(
+//									'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+//									'handle_request_create_or_update_related' ),
+//								'methods' => WP_REST_Server::EDITABLE,
+//								'hidden_endpoint' => $hidden_endpoint
+//							)
 						);
 					//@todo: handle delete related and possibly remove relation (not sure hwo to distinguish)
 				}
