@@ -234,8 +234,8 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				EXJ_second_model_id  VARCHAR(6) NOT NULL,
 				EXJ_second_model_name VARCHAR(20) NOT NULL,
 				PRIMARY KEY  (EXJ_ID),
-				KEY first_model (EXJ_first_model_name, EXJ_first_model_id),
-				KEY second_model (EXJ_second_model_name, EXJ_second_model_id)";
+				KEY first_model (EXJ_first_model_name,EXJ_first_model_id),
+				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name='esp_line_item';
