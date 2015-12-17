@@ -21,12 +21,12 @@ class Capabilities {
 	 * @param string $model_context one of the return values from EEM_Base::valid_cap_contexts()
 	 * @return boolean
 	 */
-	public static function current_user_has_partial_access_to( $model, $model_context = EEM_Base::caps_read ) {
+	public static function current_user_has_partial_access_to( $model, $model_context = \EEM_Base::caps_read ) {
 		if( apply_filters( 'FHEE__Capabilities__current_user_has_partial_access_to__override_begin', false, $model, $model ) ) {
 			return true;
 		}
 		foreach( $model->caps_missing( $model_context ) as $capability_name => $restriction_obj ) {
-			if( $restriction_obj instanceof EE_Return_None_Where_Conditions ){
+			if( $restriction_obj instanceof \EE_Return_None_Where_Conditions ){
 				return false;
 			}
 		}
@@ -42,7 +42,7 @@ class Capabilities {
 	 * @param int $request_type one of the consts on WP_JSON_Server
 	 * @return array
 	 */
-	public static function get_missing_permissions( $model, $request_type = EEM_Base::caps_read ) {
+	public static function get_missing_permissions( $model, $request_type = \EEM_Base::caps_read ) {
 		return $model->caps_missing( $request_type );
 	}
 	/**
@@ -52,7 +52,7 @@ class Capabilities {
 	 * @param int $model_context one of the return values from EEM_Base::valid_cap_contexts()
 	 * @return string
 	 */
-	public static function get_missing_permissions_string( $model, $model_context = EEM_Base::caps_read ) {
+	public static function get_missing_permissions_string( $model, $model_context = \EEM_Base::caps_read ) {
 		return implode(',', array_keys( self::get_missing_permissions( $model, $model_context ) ) );
 	}
 
