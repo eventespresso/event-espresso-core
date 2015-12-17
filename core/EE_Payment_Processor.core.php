@@ -65,6 +65,13 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @return EE_Payment
 	 */
 	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE, $cancel_url = '' ) {
+		if( $amount < 0 ) {
+			throw new EE_Error( 
+					sprintf(
+							__( 'Attempting to make a payment for a negative amount of %1$d for transaction %2$d. That should be a refund', 'event_espresso' ),
+							$amount,
+							$transaction->ID() ) );
+		}
 		// verify payment method
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		// verify transaction

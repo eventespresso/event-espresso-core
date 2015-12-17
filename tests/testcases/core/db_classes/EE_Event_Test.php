@@ -114,11 +114,11 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$d_upcoming->_add_relation_to( $ticket_3, 'Ticket' );
 
 		//test
-		$this->assertEquals(EE_Datetime::active,$e->get_active_status( TRUE ));
-		$e->_remove_relation_to($d_now, 'Datetime');
-		$this->assertEquals(EE_Datetime::upcoming,$e->get_active_status( TRUE ));
+		$this->assertEquals(EE_Datetime::active,$e->get_active_status( true ));
+	$e->_remove_relation_to($d_now, 'Datetime');
+		$this->assertEquals(EE_Datetime::upcoming,$e->get_active_status( true ));
 		$e->_remove_relation_to($d_upcoming, 'Datetime');
-		$this->assertEquals(EE_Datetime::expired,$e->get_active_status( TRUE ));
+		$this->assertEquals(EE_Datetime::expired,$e->get_active_status( true ));
 	}
 
 
