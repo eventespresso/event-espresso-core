@@ -311,11 +311,11 @@ class Read extends Base {
 			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
 			if( $related_fields_to_include ) {
 				 $related_results = $this->get_entities_from_relation( $result[ $model->primary_key_name() ], $relation_obj, array('caps' => $context ), implode(',',$this->extract_includes_for_this_model( $include, $relation_name ) )  );
-				 $result[ $related_model_part ] = $related_results instanceof WP_Error ? null : $related_results;
+				 $result[ $related_model_part ] = $related_results instanceof \WP_Error ? null : $related_results;
 			}
 		}
 		$result = apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_before_innaccessible_field_removal', $result, $model, $context );
-		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields( $result, $model, $context );
+		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields( $result, $model, $context, $this->get_model_version_info() );
 		$this->_set_debug_info( 'inaccessible fields', array_keys( array_diff_key( $result, $result_without_inaccessible_fields ) ) );
 		return apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_return', $result_without_inaccessible_fields, $model, $context );
 	}

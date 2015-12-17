@@ -61,9 +61,10 @@ class Capabilities {
 	 * @param array $entity
 	 * @param \EEM_Base $model
 	 * @param string $request_type one of the return values from EEM_Base::valid_cap_contexts()
+	 * @param Model_Version_Info $model_version_info
 	 * @return array ready for converting into json
 	 */
-	public static function filter_out_inaccessible_entity_fields( $entity,  $model, $request_type = EEM_Base::caps_read ) {
+	public static function filter_out_inaccessible_entity_fields( $entity,  $model, $request_type, $model_version_info ) {
 		//we only care to do this for frontend reads and when the user can't edit the item
 		if(  $request_type !== \EEM_Base::caps_read ||
 				$model->exists( array(
@@ -73,8 +74,10 @@ class Capabilities {
 			return $entity;
 		}
 		foreach( $model->field_settings() as $field_name => $field_obj ){
-			if( $field_obj instanceof EE_Post_Content_Field && isset( $entity[ $field_name . '_raw' ] )) {
-				unset( $entity[ $field_name . '_raw' ] );
+			if( $model_version_info->field_has_rendered_format( $field_obj ) 
+				&& isset( $entity[ $field_name ][ 'raw' ] )
+			) {
+				unset( $entity[ $field_name ][ 'raw' ] );
 			}
 		}
 		//theoretically we may want to filter out specific fields for specific models
