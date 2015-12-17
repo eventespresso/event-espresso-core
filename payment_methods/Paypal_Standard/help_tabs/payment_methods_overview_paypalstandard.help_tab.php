@@ -21,12 +21,12 @@
 </li>
 <li>
 <strong><?php _e('PayPal Calculates Taxes', 'event_espresso'); ?></strong><br />
-<?php printf( __('If set to "Yes", we will indicate to PayPal that it ought to calculate the taxes on the order and add it. This means PayPal\'s tax calculations will be used on the order instead of Event Espresso\'s. %1$sRead here for more information.%2$s', 'event_espresso'), "<a href='https://www.paypal.com/ca/cgi-bin/webscr?cmd=xpt/Marketing/shipping/EasyCalculateShipAndTax-outside' target='_blank'>", '</a>' ); ?><br/>
+<?php printf( __('If set to "Yes", we will indicate to PayPal that it should calculate the taxes on the order and add it. This means PayPal\'s tax calculations will be used on the order instead of Event Espresso\'s. %1$sRead here for more information.%2$s', 'event_espresso'), "<a href='https://www.paypal.com/ca/cgi-bin/webscr?cmd=xpt/Marketing/shipping/EasyCalculateShipAndTax-outside' target='_blank'>", '</a>' ); ?><br/>
 <?php _e( 'Note: It may confuse users if Event Espresso initially calculates taxes on the order, and then they go to PayPal and it calculates taxes differently. So it is recommended that if PayPal is calculating taxes, that you do not set any taxes in Event Espresso.', 'event_espresso' );?>
 </li>
 <li>
 <strong><?php _e('PayPal Calculates Shipping', 'event_espresso'); ?></strong><br />
-<?php _e('Similar to the "PayPal Calculates Taxes" setting, if this is set to "Yes", we will indicate to PayPal that it ought to calculate the shipping on each payment (if there are multiple payments for a single transaction, PayPal is permitted to add shipping charges to each payment.)', 'event_espresso'); ?><br/>
+<?php _e('Similar to the "PayPal Calculates Taxes" setting, if this is set to "Yes", we will indicate to PayPal that it should calculate the shipping on each payment (if there are multiple payments for a single transaction, PayPal is permitted to add shipping charges to each payment.)', 'event_espresso'); ?><br/>
 <?php _e( 'Important Note: PayPal will ONLY calculate shipping on an order if "Shipping Address Options" is set to "Prompt for an Address" (otherwise how will PayPal know how much to charge for shipping if it doesn\'t know where it\'s shipping to?)', 'event_espresso' );?>
 <li>
 <strong><?php _e( 'Notes Regarding Paypal Taxes and Shipping', 'event_espresso' );?></strong><br/>
