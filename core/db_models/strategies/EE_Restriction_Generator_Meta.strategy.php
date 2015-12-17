@@ -48,7 +48,8 @@ class EE_Restriction_Generator_Meta extends EE_Restriction_Generator_Base{
 		$whitelisted_meta_keys = apply_filters( 'FHEE__EE_Restriction_Generator_Meta___generate_restrictions__whitelisted_meta_keys', array() );
 		$blacklisted_meta_keys = apply_filters( 'FHEE__EE_Restriction_Generator_Meta___generate_restrictions__blacklisted_meta_keys', array() );
 		$conditions = array(
-			$this->_key_field_name => array( 'NOT_LIKE', '\_*' ),
+			$this->_key_field_name => array( 'NOT_LIKE', "\\\\_%" ),//each slash is escaped because we are using double quotes, and 
+			//stripslashes will be called on this because the models assume this is from user input
 			$this->_value_field_name => array( 'NOT_REGEXP', '^[aOs]:[\d]:.*$')					
 		);
 		if( ! empty( $blacklisted_meta_keys ) ) {
@@ -57,7 +58,7 @@ class EE_Restriction_Generator_Meta extends EE_Restriction_Generator_Base{
 		if( ! empty( $whitelisted_meta_keys ) ) {
 			$conditions = array(
 				'OR*whitelisted-or-normal' => array(
-					$conditions,
+					'AND' => $conditions,
 					$this->_key_field_name . '*whitelisted' => array( 'IN', $whitelisted_meta_keys ) 
 				)
 			);
