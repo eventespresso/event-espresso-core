@@ -255,12 +255,16 @@ class Read extends Base {
 			$field_value = $field_obj->prepare_for_set_from_db( $raw_field_value );
 			if( $this->is_subclass_of_one(  $field_obj, $this->get_model_version_info()->fields_ignored() ) ){
 				unset( $result[ $field_name ] );
-			}elseif( $this->is_subclass_of_one(  $field_obj, $this->get_model_version_info()->fields_raw() ) ){
-				$result[ $field_name . '_raw' ] = $field_obj->prepare_for_get( $field_value );
-				$result[ $field_name ] = $field_obj->prepare_for_pretty_echoing( $field_value );
-			}elseif( $this->is_subclass_of_one( $field_obj, $this->get_model_version_info()->fields_pretty() ) ){
-				$result[ $field_name ] = $field_obj->prepare_for_get( $field_value );
-				$result[ $field_name . '_pretty' ] = $field_obj->prepare_for_pretty_echoing( $field_value );
+			}elseif( $this->is_subclass_of_one(  $field_obj, $this->get_model_version_info()->fields_that_have_rendered_format() ) ){
+				$result[ $field_name ] = array(
+					'raw' => $field_obj->prepare_for_get( $field_value ),
+					'rendered' => $field_obj->prepare_for_pretty_echoing( $field_value ) 
+					);
+			}elseif( $this->is_subclass_of_one( $field_obj, $this->get_model_version_info()->fields_that_have_pretty_format() ) ){
+				$result[ $field_name ] = array(
+					'raw' => $field_obj->prepare_for_get( $field_value ),
+					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
+				);
 			}elseif( $field_obj instanceof \EE_Datetime_Field ){
 				if( $raw_field_value instanceof \DateTime ) {
 					$raw_field_value = $raw_field_value->format( 'c' );

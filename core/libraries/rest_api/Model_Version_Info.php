@@ -292,21 +292,21 @@ class Model_Version_Info {
 	}
 
 	/**
-	 * Returns the list of model field classes that have a "_raw" and non-raw versions.
-	 * Normally the "_raw" versions are only accessible to those who can edit them.
+	 * Returns the list of model field classes that have a "raw" and non-raw formats.
+	 * Normally the "raw" versions are only accessible to those who can edit them.
 	 * @return array an array of EE_Model_Field_Base child classnames
 	 */
-	public function fields_raw() {
+	public function fields_that_have_rendered_format() {
 		return apply_filters( 'FHEE__Controller_Model_Read__fields_raw', array ('EE_Post_Content_Field', 'EE_Full_HTML_Field' ) );
 	}
 
 	/**
-	 * If this field one that is raw
+	 * If this field one that has a raw format
 	 * @param EE_Model_Field_Base
 	 * @return boolean
 	 */
-	public function field_is_raw( $field_obj ){
-		 return $this->is_subclass_of_one( $field_obj, $this->fields_raw() );
+	public function field_has_rendered_format( $field_obj ){
+		 return $this->is_subclass_of_one( $field_obj, $this->fields_that_have_rendered_format() );
 	}
 
 	/**
@@ -315,7 +315,7 @@ class Model_Version_Info {
 	 * to view
 	 * @return array an array of EE_Model_Field_Base child classnames
 	 */
-	public function fields_pretty() {
+	public function fields_that_have_pretty_format() {
 		return apply_filters( 'FHEE__Controller_Model_Read__fields_pretty', array ( 'EE_Enum_Integer_Field', 'EE_Enum_Text_Field', 'EE_Money_Field' ) );
 	}
 
@@ -324,8 +324,8 @@ class Model_Version_Info {
 	 * @param EE_Model_Field_Base
 	 * @return boolean
 	 */
-	public function field_is_pretty( $field_obj ){
-		 return $this->is_subclass_of_one( $field_obj, $this->fields_pretty() );
+	public function field_has_pretty_format( $field_obj ){
+		 return $this->is_subclass_of_one( $field_obj, $this->fields_that_have_pretty_format() );
 	}
 
 	/**

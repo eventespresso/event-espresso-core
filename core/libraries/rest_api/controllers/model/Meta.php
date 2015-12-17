@@ -41,7 +41,9 @@ class Meta extends Base {
 			$model = $this->get_model_version_info()->load_model( $model_name );
 			$fields_json = array();
 			foreach( $this->get_model_version_info()->fields_on_model_in_this_version( $model ) as $field_name => $field_obj ) {
-
+				if( $this->get_model_version_info()->field_is_ignored( $field_obj ) ) {
+					continue;
+				}
 				if( $field_obj instanceof \EE_Boolean_Field ) {
 					$datatype = 'Boolean';
 				}elseif( $field_obj->get_wpdb_data_type() == '%d' ) {
@@ -51,42 +53,25 @@ class Meta extends Base {
 				}else{
 					$datatype = 'String';
 				}
+				$default_value = $field_obj->get_default_value();
+				if( $default_value === EE_INF ) {
+					$default_value = EE_INF_IN_DB;
+				} elseif( $field_obj instanceof \EE_Datetime_Field &&
+					$default_value instanceof \DateTime ) {
+					$default_value = $default_value->format( 'c' );
+				}
 				$field_json = array(
 					'name' => $field_name,
 					'nicename' => $field_obj->get_nicename(),
-					'raw' => true,
+					'has_rendered_format' => $this->get_model_version_info()->field_has_rendered_format( $field_obj ),
+					'has_pretty_format' => $this->get_model_version_info()->field_has_pretty_format( $field_obj ),
 					'type' => str_replace('EE_', '', get_class( $field_obj ) ),
 					'datatype' => $datatype,
 					'nullable' => $field_obj->is_nullable(),
-					'default' => $field_obj->get_default_value() === INF ? EE_INF_IN_DB : $field_obj->get_default_value(),
+					'default' => $default_value,
 					'table_alias' => $field_obj->get_table_alias(),
 					'table_column' => $field_obj->get_table_column(),
-					'always_available' => true
 				);
-				if( $this->get_model_version_info()->field_is_ignored( $field_obj ) ) {
-					continue;
-				}
-				if( $this->get_model_version_info()->field_is_raw( $field_obj ) ) {
-					$raw_field_json = $field_json;
-					//specify that the non-raw version isn't queryable or editable
-					$field_json[ 'raw' ] = false;
-					$field_json[ 'always_available' ] = false;
-
-					//change the name of the 'raw' version
-					$raw_field_json[ 'name' ] = $field_json[ 'name' ] . '_raw';
-					$raw_field_json[ 'nicename' ] = sprintf( __( '%1$s (%2$s)', 'event_espresso'), $field_json[ 'nicename' ], 'raw' );
-					$fields_json[ $raw_field_json[ 'name' ] ] = $raw_field_json;
-				}
-				if( $this->get_model_version_info()->field_is_pretty( $field_obj ) ) {
-					$pretty_field_json = $field_json;
-					//specify that the non-raw version isn't queryable or editable
-					$pretty_field_json[ 'raw' ] = false;
-
-					//change the name of the 'raw' version
-					$pretty_field_json[ 'name' ] = $field_json[ 'name' ] . '_pretty';
-					$pretty_field_json[ 'nicename' ] = sprintf( __( '%1$s (%2$s)', 'event_espresso'), $field_json[ 'nicename' ], 'pretty' );
-					$fields_json[ $pretty_field_json[ 'name' ] ] = $pretty_field_json;
-				}
 				$fields_json[ $field_json[ 'name' ] ] = $field_json;
 
 			}
