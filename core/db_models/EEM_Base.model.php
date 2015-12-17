@@ -271,7 +271,14 @@ abstract class EEM_Base extends EE_Base{
 		'IS_NULL' => 'IS NULL',
 		'is_null' => 'IS NULL',
 		'IS NULL' => 'IS NULL',
-		'is null' => 'IS NULL');
+		'is null' => 'IS NULL',
+		'REGEXP' => 'REGEXP', 
+		'regexp' => 'REGEXP',
+		'NOT_REGEXP' => 'NOT REGEXP',
+		'not_regexp' => 'NOT REGEXP',
+		'NOT REGEXP' => 'NOT REGEXP',
+		'not regexp' => 'NOT REGEXP',
+	);
 
 	/**
 	 * operators that work like 'IN', accepting a comma-separated list of values inside brackets. Eg '(1,2,3)'
