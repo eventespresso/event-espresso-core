@@ -148,19 +148,22 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//add another line item
 			//if the itemized sum is MORE than the transaction total,
 			//add the difference it to the discounts
-			$itemized_sum_diff_from_txn_total = $transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added;
+			$itemized_sum_diff_from_txn_total = round(
+					$transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added,
+					2 
+				);
 			if( $itemized_sum_diff_from_txn_total < 0 ) {
 				//itemized sum is too big
 				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
 			} elseif( $itemized_sum_diff_from_txn_total > 0 ) {
 				$redirect_args[ 'item_name_' . $item_num ] = substr(
 						__( 'Other charges', 'event_espresso' ), 0, 127 );
-				$redirect_args[ 'amount_' . $item_num ] = $itemized_sum_diff_from_txn_total;
+				$redirect_args[ 'amount_' . $item_num ] = $this->format_currency( $itemized_sum_diff_from_txn_total );
 				$redirect_args[ 'quantity_' . $item_num ] = 1;
 				$item_num++;
 			}
 			if( $total_discounts_to_cart_total > 0 ) {
-				$redirect_args[ 'discount_amount_cart' ] = $total_discounts_to_cart_total;
+				$redirect_args[ 'discount_amount_cart' ] = $this->format_currency( $total_discounts_to_cart_total );
 			}
 			//add our taxes to the order if we're NOT using PayPal's
 			if( ! $this->_paypal_taxes ){
