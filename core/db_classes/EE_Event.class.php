@@ -994,51 +994,54 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 	/**
-	 * Get the logical active status in a hierarchical order for all the datetimes.
+	 * Get the logical active status in a hierarchical order for all the datetimes.  Note
 	 *
-	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then the event is considered expired.
+	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its
+	 * NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an
+	 * event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then
+	 * the event is considered expired.
+	 *
+	 * NOTE: this method does NOT calculate whether the datetimes are sold out when event is published.  Sold Out is a status
+	 * set on the EVENT when it is not published and thus is done
 	 *
 	 * @param bool $reset
+	 *
 	 * @return bool | string - based on EE_Datetime active constants or FALSE if error.
 	 */
-	public function get_active_status( $reset = FALSE ) {
+	public function get_active_status( $reset = false ) {
 		// if the active status has already been set, then just use that value (unless we are resetting it)
 		if ( ! empty( $this->_active_status ) && ! $reset ) {
 			return $this->_active_status;
 		}
 		//first check if event id is present on this object
 		if ( ! $this->ID() ) {
-			return FALSE;
+			return false;
 		}
-		//first get all datetimes ordered by date
-		$datetimes = $this->datetimes_in_chronological_order();
-		//next loop through $datetimes and setup status array
-		$status_array = array();
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				$status_array[] = $datetime->get_active_status();
-			}
-		}
-		//now we can conditionally determine status
-		if ( $this->status() == 'publish' ) {
-			if ( in_array( EE_Datetime::active, $status_array ) ) {
+
+		$where_params_for_event  = array( array( 'EVT_ID' => $this->ID() ) );
+
+		//if event is published:
+		if ( $this->status() === 'publish' ) {
+			//active?
+			if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::active, $where_params_for_event ) > 0 ) {
 				$this->_active_status = EE_Datetime::active;
 			} else {
-				if ( in_array( EE_Datetime::upcoming, $status_array ) ) {
+				//upcoming?
+				if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::upcoming, $where_params_for_event  ) > 0 ) {
 					$this->_active_status = EE_Datetime::upcoming;
 				} else {
-					if ( in_array( EE_Datetime::expired, $status_array ) ) {
+					//expired?
+					if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired, $where_params_for_event  ) > 0 ) {
 						$this->_active_status = EE_Datetime::expired;
 					} else {
-						if ( in_array( EE_Datetime::sold_out, $status_array ) ) {
-							$this->_active_status = EE_Datetime::sold_out;
-						} else {
-							$this->_active_status = EE_Datetime::expired; //catchall
-						}
+						//it would be odd if things make it this far because it basically means there are no datetime's
+						//attached to the event.  So in this case it will just be considered inactive.
+						$this->_active_status = EE_Datetime::inactive;
 					}
 				}
 			}
 		} else {
+			//the event is not published, so let's just set it's active status according to its' post status
 			switch ( $this->status() ) {
 				case EEM_Event::sold_out :
 					$this->_active_status = EE_Datetime::sold_out;
