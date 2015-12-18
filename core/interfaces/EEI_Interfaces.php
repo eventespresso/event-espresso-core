@@ -22,6 +22,48 @@ interface EEI_Base{
 	 * @return boolean success on insert; or int on update (ID of newly inserted thing)
 	 */
 	function save();
+
+	/**
+	 * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
+	 * A $previous_value can be specified in case there are many meta rows with the same key
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @param string $previous_value
+	 * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+	 * NOTE: if the values haven't changed, returns 0
+	 */
+	public function update_extra_meta($meta_key,$meta_value,$previous_value = NULL);
+
+	/**
+	 * Adds a new extra meta record. If $unique is set to TRUE, we'll first double-check
+	 * no other extra meta for this model object have the same key. Returns TRUE if the
+	 * extra meta row was entered, false if not
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @param boolean $unique
+	 * @return boolean
+	 */
+	public function add_extra_meta($meta_key,$meta_value,$unique = false);
+
+	/**
+	 * Deletes all the extra meta rows for this record as specified by key. If $meta_value
+	 * is specified, only deletes extra meta records with that value.
+	 * @param string $meta_key
+	 * @param string $meta_value
+	 * @return int number of extra meta rows deleted
+	 */
+	public function delete_extra_meta($meta_key,$meta_value = NULL);
+
+	/**
+	 * Gets the extra meta with the given meta key. If you specify "single" we just return 1, otherwise
+	 * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
+	 * You can specify $default is case you haven't found the extra meta
+	 * @param string $meta_key
+	 * @param boolean $single
+	 * @param mixed $default if we don't find anything, what should we return?
+	 * @return mixed single value if $single; array if ! $single
+	 */
+	public function get_extra_meta($meta_key,$single = FALSE,$default = NULL);
 }
 
 
@@ -101,6 +143,13 @@ interface EEI_Transaction extends EEI_Base {
 	 * @return float
 	 */
 	function remaining();
+
+	/**
+	 *        get Total Amount Paid to Date
+	 * @access        public
+	 * @return float
+	 */
+	public function paid();
 }
 
 
@@ -246,9 +295,23 @@ interface EEHI_Line_Item{
 	 * @param float $amount
 	 * @param string $name
 	 * @param string $description
+         * @param string $code 
+         * @param boolean $add_to_existing_line_item if true and a duplicate line item with 
+         *  the same code is found, $amount will be added onto it; otherwise will simply
+         *  set the taxes to match $amount
 	 * @return EE_Line_Item the new tax created
 	 */
-	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL );
+	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false );
+        
+         /**
+         * Makes all the line items which are children of $line_item taxable (or not).
+         * Does NOT save the line items
+         * @param EE_Line_Item $line_item
+         * @param boolean $taxable
+         * @param string $code_substring_for_whitelist if this string is part of the line item's code
+         *  it will be whitelisted (ie, except from becoming taxable)
+         */
+        public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true, $code_substring_for_whitelist = null );
 
 	/**
 	 * Adds a simple item ( unrelated to any other model object) to the total line item,
@@ -259,9 +322,17 @@ interface EEHI_Line_Item{
 	 * @param string $description
 	 * @param int $quantity
 	 * @param boolean $taxable
+	 * @param boolean $code if set to a value, ensures there is only one line item with that code
 	 * @return boolean success
 	 */
-	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE );
+	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE, $code = null );
+
+	/**
+	 * Gets the line item for the taxes subtotal
+	 * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+	 * @return \EE_Line_Item
+	 */
+	public static function get_taxes_subtotal( EE_Line_Item $total_line_item );
 }
 
 
@@ -272,11 +343,11 @@ interface EEHI_Money{
 		/**
 	 * For comparing floats. Default operator is '=', but see the $operator below for all options.
 	 * This should be used to compare floats instead of normal '==' because floats
-	 * are inherently inprecise, and so you can sometimes have two floats that appear to be identical
+	 * are inherently imprecise, and so you can sometimes have two floats that appear to be identical
 	 * but actually differ by 0.00000001.
 	 * @param float $float1
 	 * @param float $float2
-	 * $param string $operator  The operator. Valid options are =, <=, <, >=, >, <>, eq, lt, lte, gt, gte, ne
+	 * @param string $operator  The operator. Valid options are =, <=, <, >=, >, <>, eq, lt, lte, gt, gte, ne
 	 * @return boolean whether the equation is true or false
 	 */
 	function compare_floats( $float1, $float2, $operator='=' );

@@ -21,7 +21,8 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 		if($value_inputted_for_field_on_model_object === EE_INF_IN_DB ||
 				$value_inputted_for_field_on_model_object === EE_INF ||
-				$value_inputted_for_field_on_model_object === "EE_INF"
+				$value_inputted_for_field_on_model_object === "EE_INF" || 
+				$value_inputted_for_field_on_model_object === "" 
 				){
 			return EE_INF;
 		}else{
@@ -49,6 +50,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base{
 		if( $value_on_field_to_be_outputted === EE_INF ){
 			switch($schema){
 				case 'input':
+				case 'form_input':
 					return '';
 				case 'symbol':
 					return "&infin;";

@@ -398,6 +398,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					QST_required_text VARCHAR(100) NULL,
 					QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
+					QST_max SMALLINT NOT NULL DEFAULT -1,
 					QST_wp_user BIGINT UNSIGNED NULL,
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID),

@@ -82,7 +82,6 @@ class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test ex
 	 * like test_REG_final_price_matches_total_of_filtering_line_item_tree,
 	 * but makes sure the tickets have sub-prices, because that has shown to have some
 	 * bugs with calculations so far
-	 * @group current
 	 */
 	function test_REG_final_price_matches_total_of_filtering_line_item_tree__with_sub_line_items() {
 		$transaction = $this->new_typical_transaction(
