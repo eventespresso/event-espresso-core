@@ -57,10 +57,9 @@ class Read extends Base {
 	/**
 	 * Gets a single entity related to the model indicated in the path and its id
 	 * @param string $_path
-	 * @param string $id ID of the thing to be retrieved
 	 * @return WP_REST_Response|WP_Error
 	 */
-	public static function handle_request_get_one( \WP_Rest_Request $request, $id ) {
+	public static function handle_request_get_one( \WP_Rest_Request $request ) {
 		try{ 
 			$controller = new Read();
 			$matches = $controller->parse_route( 
@@ -276,7 +275,7 @@ class Read extends Base {
 				$result[ $field_name ] = $value_prepared === INF ? EE_INF_IN_DB : $value_prepared;
 			}
 		}
-		if( $model instanceof EEM_CPT_Base ) {
+		if( $model instanceof \EEM_CPT_Base ) {
 			$attachment = wp_get_attachment_image_src( get_post_thumbnail_id( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ), 'full' );
 			$result[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
 			$result[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
@@ -337,7 +336,7 @@ class Read extends Base {
 	 * @return string
 	 */
 	public static function get_related_entity_name( $relation_name, $relation_obj ){
-		if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+		if( $relation_obj instanceof \EE_Belongs_To_Relation ) {
 			return strtolower( $relation_name );
 		}else{
 			return \EEH_Inflector::pluralize_and_lower( $relation_name );
