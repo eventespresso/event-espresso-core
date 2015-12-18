@@ -19,6 +19,7 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 	/**
 	 * pretend currently we're on 4.8, but they send in a request for 4.6. So this
 	 * shoudl return all the changes from 4.7 and 4.8
+	 * @group ignore
 	 */
 	function test_get_all_model_changes_between_requested_version_and_current__req_46_cur_48() {
 		$this->_pretend_current_version_48();
