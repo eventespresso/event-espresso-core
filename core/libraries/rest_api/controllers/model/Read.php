@@ -37,7 +37,7 @@ class Read extends Base {
 			$controller = new Read();
 			$matches = $controller->parse_route( 
 				$request->get_route(), 
-				'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . '(.*)~', 
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~', 
 				array( 'version', 'model' ) );
 			$controller->set_requested_version( $matches[ 'version' ] );
 			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
@@ -64,7 +64,7 @@ class Read extends Base {
 			$controller = new Read();
 			$matches = $controller->parse_route( 
 				$request->get_route(), 
-				'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)~', 
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~', 
 				array( 'version', 'model', 'id' ) ); 
 			$controller->set_requested_version( $matches[ 'version' ] );
 			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
@@ -105,7 +105,7 @@ class Read extends Base {
 			$controller = new Read();
 			$matches = $controller->parse_route( 
 				$request->get_route(), 
-				'~' . \EED_Core_REST_API::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~', 
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~', 
 				array( 'version', 'model', 'id', 'related_model' ) ); 
 			$controller->set_requested_version( $matches[ 'version' ] );
 			$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
@@ -337,7 +337,7 @@ class Read extends Base {
 	 * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
 	 */
 	public function get_versioned_link_to( $link_part_after_version_and_slash ) {
-		return rest_url( \EED_Core_REST_API::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
+		return rest_url( \EED_Core_Rest_Api::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
 	}
 
 	/**

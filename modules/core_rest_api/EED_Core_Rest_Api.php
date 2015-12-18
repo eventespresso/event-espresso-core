@@ -26,14 +26,14 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * ------------------------------------------------------------------------
  */
-class EED_Core_REST_API extends \EED_Module {
+class EED_Core_Rest_Api extends \EED_Module {
 
 	const ee_api_namespace = 'ee/v';
 	const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 	const saved_routes_option_names = 'ee_routes';
 
 	/**
-	 * @return EED_Core_REST_API
+	 * @return EED_Core_Rest_Api
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
@@ -77,7 +77,7 @@ class EED_Core_REST_API extends \EED_Module {
 	 * so we actually prefer to only do it when an EE plugin is activated or upgraded
 	 */
 	public static function register_routes() {
-		foreach( EED_Core_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
+		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
 					register_rest_route( 
@@ -281,7 +281,7 @@ class EED_Core_REST_API extends \EED_Module {
 	 * @param unknown $route_data
 	 */
 	public function hide_old_endpoints( $route_data, $routes ) {
-		foreach( EED_Core_REST_API::get_ee_route_data() as $namespace => $relative_urls ) {
+		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
 					if( $route[ 'hidden_endpoint' ] ) {
@@ -321,13 +321,13 @@ class EED_Core_REST_API extends \EED_Module {
 	 * are whether or not they should be hidden
 	 */
 	public static function versions_served() {
-		$version_compatibilities = EED_Core_REST_API::version_compatibilities();
+		$version_compatibilities = EED_Core_Rest_Api::version_compatibilities();
 		$versions_served = array();
-		$lowest_compatible_version = $version_compatibilities[ EED_Core_REST_API::core_version() ];
+		$lowest_compatible_version = $version_compatibilities[ EED_Core_Rest_Api::core_version() ];
 		//for each version of core we have ever served:
-		foreach( array_keys( EED_Core_REST_API::version_compatibilities() ) as $possibly_served_version ) {
+		foreach( array_keys( EED_Core_Rest_Api::version_compatibilities() ) as $possibly_served_version ) {
 			//if it's not above the current core version, and it's compatible with the current version of core
-			if( $possibly_served_version < EED_Core_REST_API::core_version() && $possibly_served_version >= $lowest_compatible_version ) {
+			if( $possibly_served_version < EED_Core_Rest_Api::core_version() && $possibly_served_version >= $lowest_compatible_version ) {
 				$versions_served[ $possibly_served_version ] = true;
 			}else {
 				$versions_served[ $possibly_served_version ] = false;

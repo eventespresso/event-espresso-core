@@ -131,7 +131,7 @@ class Model_Version_Info {
 		if( $this->_cached_model_changes_between_requested_version_and_current === null ) {
 			$model_changes = array();
 			foreach( $this->model_changes() as $version => $models_changed_in_version ) {
-				if( $version <= \EED_Core_REST_API::core_version()  && $version > $this->requested_version()  ) {
+				if( $version <= \EED_Core_Rest_Api::core_version()  && $version > $this->requested_version()  ) {
 					$model_changes[ $version ] = $models_changed_in_version;
 				}
 			}
@@ -152,7 +152,7 @@ class Model_Version_Info {
 		if( $this->_cached_resource_changes_between_requested_version_and_current === null ) {
 			$resouce_changes = array();
 			foreach( $this->resource_changes() as $version => $model_classnames ) {
-				if( $version <= \EED_Core_REST_API::core_version()  && $version > $this->requested_version()  ) {
+				if( $version <= \EED_Core_Rest_Api::core_version()  && $version > $this->requested_version()  ) {
 					$resouce_changes[ $version ] = $model_classnames;
 				}
 			}
@@ -192,7 +192,7 @@ class Model_Version_Info {
 	public function models_for_requested_version() {
 		if( $this->_cached_models_for_requested_version === null ) {
 			$all_models_in_current_version = \EE_Registry::instance()->non_abstract_db_models;
-			$current_version = \EED_Core_REST_API::core_version();
+			$current_version = \EED_Core_Rest_Api::core_version();
 			$requested_version = $this->requested_version();
 			foreach( $this->model_changes_between_requested_version_and_current() as $version => $models_changed ) {
 				foreach( $models_changed as $model_name => $new_indicator_or_fields_added ) {
