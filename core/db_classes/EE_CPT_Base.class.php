@@ -272,6 +272,23 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * Wrapper for delete_post_meta, http://codex.wordpress.org/Function_Reference/delete_post_meta
+	 *
+	 * @param mixed $meta_key
+	 * @param mixed $meta_value
+	 * @throws EE_Error
+	 * @return boolean False for failure. True for success.
+	 */
+	public function delete_post_meta( $meta_key, $meta_value = '' ) {
+		if ( ! $this->ID() ) {
+			throw new EE_Error( sprintf( __( "Can not delete post meta field for a post that has never been saved.", "event_espresso" ) ) );
+		}
+		return delete_post_meta( $this->ID(), $meta_key, $meta_value );
+	}
+
+
+
+	/**
 	 * Gets the URL for viewing this event on the front-end
 	 * @return string
 	 */
