@@ -81,7 +81,8 @@ class Meta extends Base {
 			foreach( $model->relation_settings()  as $relation_name => $relation_obj ) {
 				$relation_json = array(
 					'name' => $relation_name,
-					'type' => str_replace( 'EE_', '', get_class( $relation_obj ) )
+					'type' => str_replace( 'EE_', '', get_class( $relation_obj ) ),
+					'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false,
 				);
 				$relations_json[ $relation_name ] = $relation_json;
 			}
