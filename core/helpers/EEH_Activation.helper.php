@@ -1617,6 +1617,7 @@ class EEH_Activation {
 			'ee_rss_' => false,
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
+			'ee_job_parameters_' => false,
 			'ee_upload_directories_incomplete' => true,
 		);
 		if( is_main_site() ) {

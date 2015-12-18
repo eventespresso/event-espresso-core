@@ -39,9 +39,12 @@ class EEH_Tabbed_Content {
 	 * assembles and returns the html structure for tabs
 	 *
 	 * @static
-	 * @param  array $tabs_names   an unassociative array of names for each tab [optional] - if this isn't included then we use the indexes for $tabs_content as the tab names)
-	 * @param  array $tabs_content an array of the content for each tab [required]
-	 * @return string               the assembled html string containing the tabbed content for display.
+	 * @param  array $tabs_contents an array of the content for each tab [required]
+	 * @param  array $tabs_names    an unassociative array of names for each tab [optional] - if this isn't included then we use the indexes for $tabs_content as the tab names)
+	 * @param bool   $small_tabs
+	 * @param bool   $tabs_content
+	 * @return string the assembled html string containing the tabbed content for display.
+	 * @throws \EE_Error
 	 */
 	public static function display($tabs_contents, $tabs_names = array(), $small_tabs = true, $tabs_content = TRUE ) {
 
@@ -80,22 +83,23 @@ class EEH_Tabbed_Content {
 
 
 
-
 	/**
 	 * display_admin_nav_tabs
 	 * this returns the properly formatted tab html for EE_Admin_Pages.
 	 * We are expecting an array of tabs in the following format
 	 * array(
-	 * 	'nav_tab_name' => array(
-	 * 		'url' => 'url for tab',
-	 * 		'link_text' => 'tab text',
-	 * 		'css_class' => 'tab class' //including the nav-tab-active class if its active
-	 * 	)
+	 *    'nav_tab_name' => array(
+	 *        'url' => 'url for tab',
+	 *        'link_text' => 'tab text',
+	 *        'css_class' => 'tab class' //including the nav-tab-active class if its active
+	 *    )
 	 * )
 	 *
 	 * @access public
 	 * @static
 	 * @param array $nav_tabs tab array for nav tabs
+	 * @return string
+	 * @throws \EE_Error
 	 */
 	public static function display_admin_nav_tabs($nav_tabs = array()) {
 		if ( empty($nav_tabs) )
@@ -128,11 +132,15 @@ class EEH_Tabbed_Content {
 		return $tab;
 	}
 
+
+
 	/**
 	 * this just returns the properly formatted tab content for our tab box.
-	 * @param  string $name    name of tab (used for selector)
-	 * @param  string $content content of tab
-	 * @return string          html for content area
+	 *
+	 * @param  string $name        name of tab (used for selector)
+	 * @param  string $tab_content content of tab
+	 * @param  bool   $active
+	 * @return string html for content area
 	 */
 	private static function tab_content($name, $tab_content, $active = false) {
 		$class = $active ? 'nav-tab-content' : 'nav-tab-content hidden';
@@ -165,6 +173,7 @@ class EEH_Tabbed_Content {
 	 * @return string                  a html snippet of of all the formatted link elements.
 	 */
 	public static function tab_text_links( $item_array, $container_class = '', $sep = '|', $default = '' ) {
+		$item_array = apply_filters( 'FHEE__EEH_Tabbed_Content__tab_text_links', $item_array, $container_class );
 		if ( !is_array($item_array) || empty( $item_array ) )
 			return false; //get out we don't have even the basic thing we need!
 

@@ -117,7 +117,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$this->_bottom_buttons = array(
 					'report'=> array(
 					'route' => 'registrations_report',
-					'extra_request' => isset( $this->_req_data['event_id'] ) ? array('EVT_ID'=>$this->_req_data['event_id']) : NULL
+					'extra_request' =>  
+						array( 
+							'EVT_ID'=> isset( $this->_req_data['event_id'] ) ? $this->_req_data['event_id'] : null, 
+							'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" ) ) 
 				),
 			);
 		} else {
@@ -134,7 +137,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 			$this->_bottom_buttons = array(
 				'report_all'=> array(
-				'route' => 'registrations_report'
+				'route' => 'registrations_report',
+				'extra_request' => array( 
+					'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" ) )
 				),
 			);
 		}

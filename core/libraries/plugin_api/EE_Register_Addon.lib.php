@@ -429,7 +429,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				// initiate the class and start the plugin update engine!
 				new PluginUpdateEngineChecker(
 				// host file URL
-					'http://eventespresso.com',
+					'https://eventespresso.com',
 					// plugin slug(s)
 					array(
 						'premium' => array( 'p' => $settings['pue_options']['pue_plugin_slug'] ),
