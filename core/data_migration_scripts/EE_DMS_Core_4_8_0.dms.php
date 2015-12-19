@@ -167,6 +167,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				  DTT_EVT_end DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
 				  DTT_reg_limit MEDIUMINT(8) DEFAULT -1,
 				  DTT_sold MEDIUMINT(8) UNSIGNED DEFAULT 0,
+				  DTT_reserved SMALLINT(6) NOT NULL DEFAULT 0,
 				  DTT_is_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				  DTT_order MEDIUMINT(3) UNSIGNED DEFAULT 0,
 				  DTT_parent INT(10) UNSIGNED DEFAULT 0,
@@ -226,7 +227,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				EXM_value TEXT,
 				PRIMARY KEY  (EXM_ID)";
 		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
-		
+
 		$table_name = 'esp_extra_join';
 		$sql = "EXJ_ID INT(11) NOT NULL AUTO_INCREMENT,
 				EXJ_first_model_id  VARCHAR(6) NOT NULL,
@@ -635,7 +636,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	public function migration_page_hooks(){
 
 	}
-	
+
 	/**
 	 * verifies each of the new countries exists that somehow we missed in 4.1
 	 */
