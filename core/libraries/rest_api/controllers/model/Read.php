@@ -9,7 +9,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * Read controller for models
  *
- * Handles requests relating to GETting model information
+ * Handles requests relating to GET-ting model information
  *
  * @package			Event Espresso
  * @subpackage
@@ -26,56 +26,76 @@ class Read extends Base {
 		parent::__construct();
 		\EE_Registry::instance()->load_helper( 'Inflector' );
 	}
-	
+
 	/**
 	 * Handles requests to get all (or a filtered subset) of entities for a particular model
 	 * @param \WP_REST_Request $request
-	 * @return WP_REST_Response|WP_Error
+	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public static function handle_request_get_all( \WP_REST_Request $request) {
+		$controller = new Read();
 		try{
-			$controller = new Read();
-			$matches = $controller->parse_route( 
-				$request->get_route(), 
-				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~', 
-				array( 'version', 'model' ) );
+			$matches = $controller->parse_route(
+				$request->get_route(),
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)~',
+				array( 'version', 'model' )
+			);
 			$controller->set_requested_version( $matches[ 'version' ] );
 			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
-				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
+				return $controller->send_response(
+					new \WP_Error(
+						'endpoint_parsing_error',
+						sprintf(
+							__( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
+							$model_name_singular
+						)
+					)
+				);
 			}
 			return $controller->send_response(
 					$controller->get_entities_from_model(
 							$controller->get_model_version_info()->load_model( $model_name_singular ),
 							$request->get_param( 'filter' ),
-							$request->get_param( 'include' ) ) );
+							$request->get_param( 'include' )
+					)
+			);
 		} catch( \Exception $e ) {
-			return $this->send_response( $e );
+			return $controller->send_response( $e );
 		}
 	}
 
 	/**
 	 * Gets a single entity related to the model indicated in the path and its id
-	 * @param string $_path
-	 * @return WP_REST_Response|WP_Error
+	 *
+	 * @param \WP_Rest_Request $request
+	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public static function handle_request_get_one( \WP_Rest_Request $request ) {
-		try{ 
-			$controller = new Read();
-			$matches = $controller->parse_route( 
-				$request->get_route(), 
-				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~', 
-				array( 'version', 'model', 'id' ) ); 
+		$controller = new Read();
+		try{
+			$matches = $controller->parse_route(
+				$request->get_route(),
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)~',
+				array( 'version', 'model', 'id' ) );
 			$controller->set_requested_version( $matches[ 'version' ] );
 			$model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $model_name_singular ) ) {
-				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $model_name_singular ) ) );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $model_name_singular ) ) {
+				return $controller->send_response(
+					new \WP_Error(
+						'endpoint_parsing_error',
+						sprintf(
+							__( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
+							$model_name_singular
+						)
+					)
+				);
 			}
 			$filter_param = $request->get_param( 'filter' );
 			if( is_array( $filter_param ) &&
 				isset( $filter_param[ 'caps' ] ) ) {
 				$caps = $filter_param[ 'caps' ];
-			} else { 
+			} else {
 				$caps = \EEM_Base::caps_read;
 			}
 			return $controller->send_response(
@@ -83,10 +103,10 @@ class Read extends Base {
 							$controller->get_model_version_info()->load_model( $model_name_singular ),
 							$request->get_param( 'id' ),
 							$request->get_param( 'include' ),
-							$controller->validate_context( $caps ) ) 
+							$controller->validate_context( $caps ) )
 				);
 		} catch( \Exception $e ) {
-			return $this->send_response( $e );
+			return $controller->send_response( $e );
 		}
 	}
 
@@ -94,28 +114,43 @@ class Read extends Base {
 	 *
 	 * Gets all the related entities (or if its a belongs-to relation just the one)
 	 * to the item with the given id
-	 * @param string $_path
-	 * @param string $id
-	 * @param array $filter @see Read:handle_request_get_all
-	 * @param string $include @see Read:handle_request_get_all
-	 * @return WP_REST_Response|WP_Error
+	 *
+	 * @param \WP_REST_Request $request
+	 * @return \WP_REST_Response|\WP_Error
 	 */
 	public static function handle_request_get_related( \WP_REST_Request $request ) {
+		$controller = new Read();
 		try{
-			$controller = new Read();
-			$matches = $controller->parse_route( 
-				$request->get_route(), 
-				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~', 
-				array( 'version', 'model', 'id', 'related_model' ) ); 
+			$matches = $controller->parse_route(
+				$request->get_route(),
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '(.*)/(.*)/(.*)~',
+				array( 'version', 'model', 'id', 'related_model' )
+			);
 			$controller->set_requested_version( $matches[ 'version' ] );
 			$main_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'model' ] );
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $main_model_name_singular ) ) {
-				return $controller->send_response( new WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $main_model_name_singular ) ) );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $main_model_name_singular ) ) {
+				return $controller->send_response(
+					new \WP_Error(
+						'endpoint_parsing_error',
+						sprintf(
+							__( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
+							$main_model_name_singular
+						)
+					)
+				);
 			}
 			$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
 			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
-			if ( ! $controller->get_model_version_info()->is_model_name_in_this_verison( $related_model_name_singular ) ) {
-				return $controller->send_response( new \WP_Error( 'endpoint_parsing_error', sprintf( __( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ), $related_model_name_singular ) ) );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
+				return $controller->send_response(
+					new \WP_Error(
+						'endpoint_parsing_error',
+						sprintf(
+							__( 'There is no model for endpoint %s. Please contact event espresso support', 'event_espresso' ),
+							$related_model_name_singular
+						)
+					)
+				);
 			}
 
 			return $controller->send_response(
@@ -125,7 +160,7 @@ class Read extends Base {
 							$request->get_param( 'filter' ),
 							$request->get_param( 'include' ) ) );
 		} catch( \Exception $e ) {
-			return $this->send_response( $e );
+			return $controller->send_response( $e );
 		}
 	}
 
@@ -133,28 +168,55 @@ class Read extends Base {
 
 	/**
 	 * Gets a collection for the given model and filters
-	 * @param EEM_Base $model
+	 *
+	 * @param \EEM_Base $model
 	 * @param array $filter The query parameters to be passed onto the EE models system.
-		* Using syntax like "/wp-json/ee4/v2/events?filter[where][EVT_name][]=like&filter[where][EVT_name][]=%25monkey%25 to create a query params array like "array(array('EVT_name' => array('LIKE','%monkey%'))", which
-		* will create SQL like "WHERE EVT_name LIKE '%monkey%'"
-	 * @param string $include string indicating which fields to include in the response, including fields
-		* on related entities. Eg, when querying for events, an include string like
-		* "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price" instructs us to only include the event's name and description, each related datetime, and
-		* each related datetime's ticket's name and price. Eg json would be:
-		* '{"EVT_ID":12,"EVT_name":"star wars party","EVT_desc":"so cool...","datetimes":[{"DTT_ID":123,...,
-		* "tickets":[{"TKT_ID":234,"TKT_name":"student rate","TKT_price":32.0},...]}]}', ie, events with all
-		* their associated datetimes (including ones that are trashed) embedded in the json object, and each
-		* datetime also has each associated ticket embedded in its json object.
+	 *                      Using syntax like:
+	 *                      "/wp-json/ee4/v2/events?filter[where][EVT_name][]=like&filter[where][EVT_name][]=%25monkey%25
+	 *                      to create a query params array like:
+	 *                      "array(array('EVT_name' => array('LIKE','%monkey%'))",
+	 *                      which will create SQL like "WHERE EVT_name LIKE '%monkey%'"
+	 * @param string $include string indicating which fields to include in the response,
+	 *                        including fields on related entities.
+	 *                        Eg, when querying for events, an include string like:
+	 *                        "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price"
+	 *                        instructs us to only include the event's name and description,
+	 *                        each related datetime, and each related datetime's ticket's name and price.
+	 *                        Eg json would be:
+	 *                          '{
+	 *                              "EVT_ID":12,
+	 * 								"EVT_name":"star wars party",
+	 * 								"EVT_desc":"so cool...",
+	 * 								"datetimes":[{
+	 * 									"DTT_ID":123,...,
+	 * 									"tickets":[{
+	 * 										"TKT_ID":234,
+	 * 										"TKT_name":"student rate",
+	 * 										"TKT_price":32.0
+	 * 									},...]
+	 * 								}]
+	 * 							}',
+	 *                        ie, events with all their associated datetimes
+	 *                        (including ones that are trashed) embedded in the json object,
+	 *                        and each datetime also has each associated ticket embedded in its json object.
 	 * @return array
 	 */
 	public function get_entities_from_model( $model, $filter, $include ) {
-		if( ! $filter ) { 
+		if( ! $filter ) {
 			$filter = array();
 		}
 		$query_params = $this->create_model_query_params( $model, $filter );
 		if( ! Capabilities::current_user_has_partial_access_to( $model, $query_params[ 'caps' ] ) ) {
 			$model_name_plural = \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() );
-			return new \WP_Error( sprintf( 'rest_%s_cannot_list', $model_name_plural), sprintf( __( 'Sorry, you are not allowed to list %s. Missing permissions: %s' ), $model_name_plural, Capabilities::get_missing_permissions_string( $model,  $query_params[ 'caps' ] ) ), array( 'status' => 403 ) );
+			return new \WP_Error(
+				sprintf( 'rest_%s_cannot_list', $model_name_plural ),
+				sprintf(
+					__( 'Sorry, you are not allowed to list %s. Missing permissions: %s' ),
+					$model_name_plural,
+					Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] )
+				),
+				array( 'status' => 403 )
+			);
 		}
 
 		$this->_set_debug_info( 'model query params', $query_params );
@@ -167,13 +229,13 @@ class Read extends Base {
 	}
 
 	/**
-	 * Gets the coollection for given relation object
+	 * Gets the collection for given relation object
 	 *
 	 * The same as Read::get_entities_from_model(), except if the relation
 	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
 	 * the join-model-object into the results
 	 * @param string $id the ID of the thing we are fetching related stuff from
-	 * @param EE_Model_Relation_Base $relation
+	 * @param \EE_Model_Relation_Base $relation
 	 * @param array $filter @see Read:handle_request_get_all
 	 * @param string $include @see Read:handle_request_get_all
 	 * @return array
@@ -192,14 +254,34 @@ class Read extends Base {
 		$this->_set_debug_info( 'main model query params', $restricted_query_params );
 		$this->_set_debug_info( 'missing caps', Capabilities::get_missing_permissions_string( $related_model, $context ) );
 
-		if( ! ( Capabilities::current_user_has_partial_access_to( $related_model, $context ) &&
-				$model->exists( $restricted_query_params ) ) ){
+		if(
+			! (
+				Capabilities::current_user_has_partial_access_to( $related_model, $context )
+				&& $model->exists( $restricted_query_params )
+			)
+		){
 			if( $relation instanceof \EE_Belongs_To_Relation ) {
 				$related_model_name_maybe_plural = strtolower( $related_model->get_this_model_name() );
 			}else{
 				$related_model_name_maybe_plural = \EEH_Inflector::pluralize_and_lower( $related_model->get_this_model_name() );
 			}
-			return new WP_Error( sprintf( 'rest_%s_cannot_list', $related_model_name_maybe_plural ), sprintf( __( 'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s' ), $related_model_name_maybe_plural, $related_model->get_this_model_name(), implode(',', array_keys( Capabilities::get_missing_permissions( $related_model, $context ) ) )  ), array( 'status' => 403 ) );
+			return new \WP_Error(
+				sprintf( 'rest_%s_cannot_list', $related_model_name_maybe_plural ),
+				sprintf(
+					__(
+						'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s'
+					),
+					$related_model_name_maybe_plural,
+					$related_model->get_this_model_name(),
+					implode(
+						',',
+						array_keys(
+							Capabilities::get_missing_permissions( $related_model, $context )
+						)
+					)
+				),
+				array( 'status' => 403 )
+			);
 		}
 		$query_params = $this->create_model_query_params( $relation->get_other_model(), $filter, $context );
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
@@ -209,11 +291,21 @@ class Read extends Base {
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
 		foreach( $results as $result ) {
-			$nice_result = $this->create_entity_from_wpdb_result( $relation->get_other_model(), $result, $include, $query_params[ 'caps' ] );
+			$nice_result = $this->create_entity_from_wpdb_result(
+				$relation->get_other_model(),
+				$result,
+				$include,
+				$query_params[ 'caps' ]
+			);
 			if( $relation instanceof \EE_HABTM_Relation ) {
 				//put the unusual stuff (properties from the HABTM relation) first, and make sure
 				//if there are conflicts we prefer the properties from the main model
-				$join_model_result = $this->create_entity_from_wpdb_result( $relation->get_join_model(), $result, $include, $query_params[ 'caps' ] );
+				$join_model_result = $this->create_entity_from_wpdb_result(
+					$relation->get_join_model(),
+					$result,
+					$include,
+					$query_params[ 'caps' ]
+				);
 				$joined_result = array_merge( $nice_result, $join_model_result );
 				//but keep the meta stuff from the main model
 				if( isset( $nice_result['meta'] ) ){
@@ -234,7 +326,7 @@ class Read extends Base {
 
 	/**
 	 * Changes database results into REST API entities
-	 * @param EEM_Base $model
+	 * @param \EEM_Base $model
 	 * @param array $db_row like results from $wpdb->get_results()
 	 * @param string $include @see Read:handle_request_get_all
 	 * @param string $context one of the return values from EEM_Base::valid_cap_contexts()
@@ -254,12 +346,16 @@ class Read extends Base {
 			$field_value = $field_obj->prepare_for_set_from_db( $raw_field_value );
 			if( $this->is_subclass_of_one(  $field_obj, $this->get_model_version_info()->fields_ignored() ) ){
 				unset( $result[ $field_name ] );
-			}elseif( $this->is_subclass_of_one(  $field_obj, $this->get_model_version_info()->fields_that_have_rendered_format() ) ){
+			}elseif(
+				$this->is_subclass_of_one( $field_obj, $this->get_model_version_info()->fields_that_have_rendered_format() )
+			){
 				$result[ $field_name ] = array(
 					'raw' => $field_obj->prepare_for_get( $field_value ),
-					'rendered' => $field_obj->prepare_for_pretty_echoing( $field_value ) 
-					);
-			}elseif( $this->is_subclass_of_one( $field_obj, $this->get_model_version_info()->fields_that_have_pretty_format() ) ){
+					'rendered' => $field_obj->prepare_for_pretty_echoing( $field_value )
+				);
+			}elseif(
+				$this->is_subclass_of_one( $field_obj, $this->get_model_version_info()->fields_that_have_pretty_format() )
+			){
 				$result[ $field_name ] = array(
 					'raw' => $field_obj->prepare_for_get( $field_value ),
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
@@ -276,23 +372,38 @@ class Read extends Base {
 			}
 		}
 		if( $model instanceof \EEM_CPT_Base ) {
-			$attachment = wp_get_attachment_image_src( get_post_thumbnail_id( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ), 'full' );
+			$attachment = wp_get_attachment_image_src(
+				get_post_thumbnail_id( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
+				'full'
+			);
 			$result[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
 			$result[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
 		//add links to related data
 		$result['_links'] = array(
-			'self' => array( array( 'href' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] ) ) ),
-			'collection' => array( array( 'href' => $this->get_versioned_link_to( \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) ) ) ),
+			'self' => array(
+				array(
+					'href' => $this->get_versioned_link_to(
+						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ]
+					)
+				)
+			),
+			'collection' => array(
+				array(
+					'href' => $this->get_versioned_link_to(
+						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() )
+					)
+				)
+			),
 		);
 		global $wp_rest_server;
 		if( $model instanceof \EEM_CPT_Base &&
 			$wp_rest_server instanceof \WP_REST_Server &&
 			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
 			$result[ '_links' ][ 'https://api.eventespresso.com/self_wp_post' ] = array(
-				array( 
+				array(
 					'href' => rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
-					'single' => true 
+					'single' => true
 				)
 			);
 		}
@@ -307,13 +418,17 @@ class Read extends Base {
 			$result = array_intersect_key( $result, array_flip( $includes_for_this_model ) );
 		}
 		//add meta links and possibly include related models
-		foreach( apply_filters( 'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include', $model->relation_settings() ) as $relation_name => $relation_obj ) {
+		$relation_settings = apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
+			$model->relation_settings()
+		);
+		foreach( $relation_settings as $relation_name => $relation_obj ) {
 			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
 			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['_links']['https://api.eventespresso.com/' . $related_model_part] = array( 
-					array( 
-						'href' => $this->get_versioned_link_to( 
-							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part 
+				$result['_links']['https://api.eventespresso.com/' . $related_model_part] = array(
+					array(
+						'href' => $this->get_versioned_link_to(
+							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part
 						),
 						'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
 					)
@@ -321,14 +436,43 @@ class Read extends Base {
 			}
 			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
 			if( $related_fields_to_include ) {
-				 $related_results = $this->get_entities_from_relation( $result[ $model->primary_key_name() ], $relation_obj, array('caps' => $context ), implode(',',$this->extract_includes_for_this_model( $include, $relation_name ) )  );
-				 $result[ $related_model_part ] = $related_results instanceof \WP_Error ? null : $related_results;
+				$related_results = $this->get_entities_from_relation(
+					$result[ $model->primary_key_name() ],
+					$relation_obj,
+					array( 'caps' => $context ),
+					implode(
+						',',
+						$this->extract_includes_for_this_model(
+							$include,
+							$relation_name
+						)
+					)
+				);
+				$result[ $related_model_part ] = $related_results instanceof \WP_Error ? null : $related_results;
 			}
 		}
-		$result = apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_before_innaccessible_field_removal', $result, $model, $context );
-		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields( $result, $model, $context, $this->get_model_version_info() );
-		$this->_set_debug_info( 'inaccessible fields', array_keys( array_diff_key( $result, $result_without_inaccessible_fields ) ) );
-		return apply_filters( 'FHEE__Read__create_entity_from_wpdb_results__entity_return', $result_without_inaccessible_fields, $model, $context );
+		$result = apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
+			$result,
+			$model,
+			$context
+		);
+		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
+			$result,
+			$model,
+			$context,
+			$this->get_model_version_info()
+		);
+		$this->_set_debug_info(
+			'inaccessible fields',
+			array_keys( array_diff_key( $result, $result_without_inaccessible_fields ) )
+		);
+		return apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_return',
+			$result_without_inaccessible_fields,
+			$model,
+			$context
+		);
 	}
 
 	/**
@@ -344,7 +488,7 @@ class Read extends Base {
 	 * Gets the correct lowercase name for the relation in the API according
 	 * to the relation's type
 	 * @param string $relation_name
-	 * @param EE_Model_Relation_Base $relation_obj
+	 * @param \EE_Model_Relation_Base $relation_obj
 	 * @return string
 	 */
 	public static function get_related_entity_name( $relation_name, $relation_obj ){
@@ -360,7 +504,7 @@ class Read extends Base {
 
 	/**
 	 * Gets the one model object with the specified id for the specified model
-	 * @param EEM_Base $model
+	 * @param \EEM_Base $model
 	 * @param string $id ID of the entity we want to retrieve
 	 * @param string $include @see Read:handle_request_get_all
 	 * @param string string one of the return values from EEM_Base::valid_cap_contexts()
@@ -386,10 +530,22 @@ class Read extends Base {
 			$model_rows_found_sans_restrictions = $model->get_all_wpdb_results( $query_params );
 			if( ! empty( $model_rows_found_sans_restrictions ) ) {
 				//you got shafted- it existed but we didn't want to tell you!
-				return new \WP_Error( 'rest_user_cannot_read', sprintf( __( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ), strtolower( $model->get_this_model_name() ), Capabilities::get_missing_permissions_string( $model, $context ) ), array( 'status' => 403 ) );
-			}else{
+				return new \WP_Error(
+					'rest_user_cannot_read',
+					sprintf(
+						__( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ),
+						strtolower( $model->get_this_model_name() ),
+						Capabilities::get_missing_permissions_string( $model, $context )
+					),
+					array( 'status' => 403 )
+				);
+			} else {
 				//it's not you. It just doesn't exist
-				return new \WP_Error( sprintf( 'rest_%s_invalid_id', $lowercase_model_name ), sprintf( __( 'Invalid %s ID.', 'event_espresso' ), $lowercase_model_name ), array( 'status' => 404 ) );
+				return new \WP_Error(
+					sprintf( 'rest_%s_invalid_id', $lowercase_model_name ),
+					sprintf( __( 'Invalid %s ID.', 'event_espresso' ), $lowercase_model_name ),
+					array( 'status' => 404 )
+				);
 			}
 		}
 	}
@@ -397,8 +553,8 @@ class Read extends Base {
 	/**
 	 * If a context is provided which isn't valid, maybe it was added in a future
 	 * version so just treat it as a default read
+	 *
 	 * @param string $context
-	 * @param EEM_Base $model
 	 * @return string array key of EEM_Base::cap_contexts_to_cap_action_map()
 	 */
 	public function validate_context( $context ) {
@@ -417,10 +573,12 @@ class Read extends Base {
 
 	/**
 	 * Translates API filter get parameter into $query_params array used by EEM_Base::get_all()
-	 * @param EEM_Base $model
-	 * @param array $filter from $_GET['filter'] parameter @see Read:handle_request_get_all
+	 *
+	 * @param \EEM_Base $model
+	 * @param array     $filter from $_GET['filter'] parameter @see Read:handle_request_get_all
 	 * @return array like what EEM_Base::get_all() expects or FALSE to indicate
-	 * that absolutely no results should be returned
+	 *                          that absolutely no results should be returned
+	 * @throws \EE_Error
 	 */
 	public function create_model_query_params( $model, $filter ) {
 		$model_query_params = array( );
@@ -450,7 +608,7 @@ class Read extends Base {
 			if( is_array( $group_by ) ) {
 				$group_by = $this->prepare_rest_query_params_values_for_models( $model, $group_by );
 			}else{
-				$group_by = $this->prepare_raw_field_for_use_in_models( $models, $group_by );
+				$group_by = $this->prepare_raw_field_for_use_in_models( $model, $group_by );
 			}
 			$model_query_params[ 'group_by' ] = $group_by;
 		}
@@ -474,7 +632,12 @@ class Read extends Base {
 			$sanitized_limit = array();
 			foreach( $limit_array as $key => $limit_part ) {
 				if( $this->_debug_mode && ( ! is_numeric( $limit_part ) || count( $sanitized_limit ) > 2 ) ) {
-					throw new \EE_Error( sprintf( __( 'An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.', 'event_espresso' ), json_encode( $filter[ 'limit' ] ) ) );
+					throw new \EE_Error(
+						sprintf(
+							__( 'An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.', 'event_espresso' ),
+							json_encode( $filter[ 'limit' ] )
+						)
+					);
 				}
 				$sanitized_limit[] = intval( $limit_part );
 			}
@@ -490,10 +653,14 @@ class Read extends Base {
 		return apply_filters( 'FHEE__Read__create_model_query_params', $model_query_params, $filter, $model );
 	}
 
+
+
 	/**
 	 * Changes the REST-style query params for use in the models
-	 * @param EEM_Base $model
-	 * @param array $query_params sub-array from @see EEM_Base::get_all()
+	 *
+	 * @param \EEM_Base $model
+	 * @param array     $query_params sub-array from @see EEM_Base::get_all()
+	 * @return array
 	 */
 	public function prepare_rest_query_params_key_for_models( $model,  $query_params ) {
 		$model_ready_query_params = array();
@@ -522,7 +689,7 @@ class Read extends Base {
 	/**
 	 * Changes a string like 'Event.EVT_desc_raw*foobar' into
 	 * 'Event.EVT_desc*foobar' in order to prepare it for use by EE models
-	 * @param type $query_param
+	 * @param mixed $query_param
 	 * @return string
 	 */
 	public function prepare_raw_field_for_use_in_models( $query_param ) {
@@ -568,7 +735,10 @@ class Read extends Base {
 			//look for ones with no period
 			foreach( $includes as $field_to_include ) {
 				$field_to_include = trim( $field_to_include );
-				if( strpos($field_to_include, '.' ) === FALSE && ! $this->get_model_version_info()->is_model_name_in_this_verison( $field_to_include ) ) {
+				if (
+					strpos( $field_to_include, '.' ) === false
+					&& ! $this->get_model_version_info()->is_model_name_in_this_version( $field_to_include )
+				) {
 					$extracted_fields_to_include[] = $field_to_include;
 				}
 			}
