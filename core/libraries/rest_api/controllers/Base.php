@@ -35,7 +35,7 @@ class Base {
 	 */
 	protected $_requested_version;
 
-	public function __construct() { 		
+	public function __construct() {
 		$this->_debug_mode = defined( 'EE_REST_API_DEBUG_MODE' ) ? EE_REST_API_DEBUG_MODE : false;
 	}
 
@@ -47,7 +47,7 @@ class Base {
 	public function set_requested_version( $version ) {
 		$this->_requested_version = $version;
 	}
-	
+
 	/**
 	 * Sets some debug info that we'll send back in headers
 	 * @param string $key
@@ -57,12 +57,17 @@ class Base {
 		$this->_debug_info[ $key ] = $info;
 	}
 
+
+
 	/**
 	 * Sends a response, but also makes sure to attach headers that
 	 * are handy for debugging.
 	 * Specifically, we assume folks will want to know what exactly was the DB query that got run,
-	 * what exactly was the Models query that got run, what capabilities came into play, what fields were ommitted from the response, others?
-	 * @param array|WP_Error|Exception $response
+	 * what exactly was the Models query that got run, what capabilities came into play, what fields were omitted from
+	 * the response, others?
+	 *
+	 * @param array|\WP_Error|\Exception $response
+	 * @return \WP_REST_Response
 	 */
 	public function send_response( $response ) {
 		if( $response instanceof \Exception ) {
@@ -83,7 +88,11 @@ class Base {
 			$errors = array();
 			foreach ( (array) $response->errors as $code => $messages ) {
 				foreach ( (array) $messages as $message ) {
-					$errors[] = array( 'code' => $code, 'message' => $message, 'data' => $response->get_error_data( $code ) );
+					$errors[] = array(
+						'code'    => $code,
+						'message' => $message,
+						'data'    => $response->get_error_data( $code )
+					);
 				}
 			}
 			$data = $errors[0];
@@ -108,26 +117,29 @@ class Base {
 		$rest_response->set_headers( $headers );
 		return $rest_response;
 	}
-	
+
+
+
 	/**
 	 * Applies the regex to the route, then creates an array using the values of
 	 * $match_keys as keys (but ignores the full pattern match). Returns the array of matches.
-	 * For example, if you call 
+	 * For example, if you call
 	 * parse_route( '/ee/v4.8/events', '~\/ee\/v([^/]*)\/(.*)~', array( 'version', 'model' ) )
 	 * it will return array( 'version' => '4.8', 'model' => 'events' )
+	 *
 	 * @param string $route
 	 * @param string $regex
-	 * @param int $expected_matches, EXCLUDING matching the entire regex
+	 * @param array  $match_keys EXCLUDING matching the entire regex
 	 * @return array where  $match_keys are the keys (the first value of $match_keys
 	 * becomes the first key of the return value, etc. Eg passing in $match_keys of
-	 *	array( 'model', 'id' ), will, if the regex is successful, will return
-	 *	array( 'model' => 'foo', 'id' => 'bar' )    
-	 * @throw EE_Error if it couldn't be parsed
+	 * array( 'model', 'id' ), will, if the regex is successful, will return
+	 * array( 'model' => 'foo', 'id' => 'bar' )
+	 * @throws \EE_Error if it couldn't be parsed
 	 */
 	public function parse_route( $route, $regex, $match_keys ) {
 		$indexed_matches = array();
 		$success = preg_match( $regex, $route, $matches );
-		if( 
+		if(
 			is_array( $matches ) ) {
 			//skip the overall regex match. Who cares
 			for( $i = 1; $i <= count( $match_keys ); $i++ ) {
@@ -141,7 +153,8 @@ class Base {
 		if( ! $success ) {
 			throw new \EE_Error(
 				__( 'We could not parse the URL. Please contact Event Espresso Support', 'event_espresso' ),
-				'endpoint_parsing_error' );
+				'endpoint_parsing_error'
+			);
 		}
 		return $indexed_matches;
 	}
