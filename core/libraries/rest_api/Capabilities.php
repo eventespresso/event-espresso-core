@@ -14,7 +14,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Capabilities {
-	
+
 	/**
 	 * The current user can see at least SOME of these entities.
 	 * @param \EEM_Base $model
@@ -38,8 +38,9 @@ class Capabilities {
 	/**
 	 * Gets an array of all the capabilities the current user is missing that affected
 	 * the query
+	 *
 	 * @param \EEM_Base $model
-	 * @param int $request_type one of the consts on WP_JSON_Server
+	 * @param string $request_type one of the constants on WP_JSON_Server
 	 * @return array
 	 */
 	public static function get_missing_permissions( $model, $request_type = \EEM_Base::caps_read ) {
@@ -48,8 +49,9 @@ class Capabilities {
 	/**
 	 * Gets a string of all the capabilities the current user is missing that affected
 	 * the query
+	 *
 	 * @param \EEM_Base $model
-	 * @param int $model_context one of the return values from EEM_Base::valid_cap_contexts()
+	 * @param string $model_context one of the return values from EEM_Base::valid_cap_contexts()
 	 * @return string
 	 */
 	public static function get_missing_permissions_string( $model, $model_context = \EEM_Base::caps_read ) {
@@ -74,7 +76,7 @@ class Capabilities {
 			return $entity;
 		}
 		foreach( $model->field_settings() as $field_name => $field_obj ){
-			if( $model_version_info->field_has_rendered_format( $field_obj ) 
+			if( $model_version_info->field_has_rendered_format( $field_obj )
 				&& isset( $entity[ $field_name ][ 'raw' ] )
 			) {
 				unset( $entity[ $field_name ][ 'raw' ] );
