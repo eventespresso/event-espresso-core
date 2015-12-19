@@ -20,7 +20,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class Base extends Controller_Base {
 	/**
-	 * Holds reference to the model versio info, which knows the requested version
+	 * Holds reference to the model version info, which knows the requested version
 	 * @var Model_Version_Info
 	 */
 	protected $_model_version_info;
@@ -34,14 +34,25 @@ class Base extends Controller_Base {
 		$this->_model_version_info = new Model_Version_Info( $version );
 	}
 
+
+
 	/**
 	 * Gets the object that should be used for getting any info from the models,
 	 * because it's takes the requested and current core version into account
-	 * @return Model_Version_Info
+	 *
+	 * @return \EventEspresso\core\libraries\rest_api\Model_Version_Info
+	 * @throws \EE_Error
 	 */
 	public function get_model_version_info(){
 		if( ! $this->_model_version_info ) {
-			throw new \EE_Error( sprintf( __( 'Cannot use model version info before setting the requested version in the controller', 'event_espresso' ) ) );
+			throw new \EE_Error(
+				sprintf(
+					__(
+						'Cannot use model version info before setting the requested version in the controller',
+						'event_espresso'
+					)
+				)
+			);
 		}
 		return $this->_model_version_info;
 	}
@@ -50,8 +61,9 @@ class Base extends Controller_Base {
 	 * Determines if $object is of one of the classes of $classes. Similar to
 	 * in_array(), except this checks if $object is a subclass of the classnames provided
 	 * in $classnames
-	 * @param type $object
-	 * @param type $classnames
+	 *
+	 * @param object $object
+	 * @param array $classnames
 	 * @return boolean
 	 */
 	public function is_subclass_of_one( $object, $classnames ) {
