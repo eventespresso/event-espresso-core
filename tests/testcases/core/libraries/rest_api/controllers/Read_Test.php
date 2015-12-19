@@ -61,7 +61,7 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_one__event_includes() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $event->ID() );
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
 					'id' => $event->ID()
 				)
@@ -83,7 +83,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $event->ID() );
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
 					'id' => $event->ID()
 				)
@@ -102,8 +102,8 @@ class Read_Test extends \EE_UnitTestCase{
 					'rendered' => $event->get('EVT_desc'),
 					'raw' => $event->get_pretty( 'EVT_desc')
 					),
-			), 
-			$result 
+			),
+			$result
 		);
 	}
 	public function test_extract_includes_for_this_model__null() {
@@ -115,13 +115,13 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $event->ID() );
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
 					'id' => $event->ID()
 				)
 			);
 		$response = Read::handle_request_get_one( $req );
-		
+
 		$result = $response->get_data();
 		$this->assertTrue( is_array( $result ) );
 		unset( $result[ 'EVT_created' ] );
@@ -134,7 +134,7 @@ class Read_Test extends \EE_UnitTestCase{
 				'EVT_name' => $event->get( 'EVT_name' ) ,
 				'EVT_desc' => array(
 					'raw' => $event->get( 'EVT_desc' ),
-					'rendered' => $event->get_pretty( 'EVT_desc' ) 
+					'rendered' => $event->get_pretty( 'EVT_desc' )
 					),
 				'EVT_slug' => $event->get( 'EVT_slug' ) ,
 				'EVT_short_desc' => $event->get( 'EVT_short_desc' ) ,
@@ -169,8 +169,8 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_one__registration_include_attendee(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
-		$req = new \WP_REST_Request( 
-					'GET', 
+		$req = new \WP_REST_Request(
+					'GET',
 					\EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations/' . $r->ID()
 				);
 		$req->set_query_params(
@@ -178,7 +178,7 @@ class Read_Test extends \EE_UnitTestCase{
 					'include' => 'Attendee.*'
 				)
 			);
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
 					'id' => $r->ID()
 				)
@@ -191,16 +191,16 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_one__registration_include_answers_and_questions(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
-		$a = $this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
+		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.Question.*'
 				)
 			);
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
-					'id' => $r->ID() 
+					'id' => $r->ID()
 				)
 			);
 		$response = Read::handle_request_get_one( $req );
@@ -215,16 +215,16 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_one__registration_include_answers_and_question_bare_min_from_each(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
-		$a = $this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
+		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.ATT_ID, Answer.Question.QST_ID'
 				)
 			);
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
-					'id' => $r->ID() 
+					'id' => $r->ID()
 				)
 			);
 		$response = Read::handle_request_get_one( $req );
@@ -240,7 +240,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$e = $this->new_model_obj_with_dependencies('Event');
 		$non_existent_id = $e->ID() + 100;
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $non_existent_id );
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
 					'id' => $non_existent_id
 				)
@@ -249,10 +249,10 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 404, $response->get_status() );
 	}
-	public function test_handle_request_get_one__cannot_accesss(){
+	public function test_handle_request_get_one__cannot_access(){
 		$e = $this->new_model_obj_with_dependencies('Event', array( 'status' => 'draft' ) );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $e->ID() );
-		$req->set_url_params( 
+		$req->set_url_params(
 				array(
 					'id' => $e->ID()
 				)
@@ -263,8 +263,10 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 
 	public function test_handle_request_get_all__not_logged_in(){
-		$r = $this->new_model_obj_with_dependencies('Registration');
-		$response = Read::handle_request_get_all( new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations' ) );
+		$this->new_model_obj_with_dependencies('Registration');
+		$response = Read::handle_request_get_all(
+			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations' )
+		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 403, $response->get_status() );
 	}
@@ -274,7 +276,7 @@ class Read_Test extends \EE_UnitTestCase{
 	* @return \WP_User
 	*/
 	public function get_wp_user_mock( $role = 'administrator' ) {
-	   /** @type WP_User $user */
+	   /** @type \WP_User $user */
 	   $user = $this->factory->user->create_and_get();
 	   $user->add_role( $role );
 	   return $user;
@@ -282,9 +284,10 @@ class Read_Test extends \EE_UnitTestCase{
 
 	/**
 	 * Creates a new wp user with the specified role and makes them the new current user
-	 * @global type $current_user
-	 * @param type $role
-	 * @return WP_User
+	 *
+	 * @global \WP_User $current_user
+	 * @param string $role
+	 * @return \WP_User
 	 */
 	public function set_current_user_to_new( $role = 'administrator' ){
 		global $current_user;
