@@ -680,7 +680,7 @@ class Read extends Base {
 			if( is_array( $value ) ) {
 				$model_ready_query_params[ $key ] = $this->prepare_rest_query_params_values_for_models( $model, $value );
 			}else{
-				$model_ready_query_params[ $key ] = $this->prepare_raw_field_for_use_in_models( $value );;
+				$model_ready_query_params[ $key ] = $this->prepare_raw_field_for_use_in_models( $value );
 			}
 		}
 		return $model_ready_query_params;
