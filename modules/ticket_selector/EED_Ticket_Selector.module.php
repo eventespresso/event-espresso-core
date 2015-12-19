@@ -776,7 +776,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 			$qty = apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty', $qty, $ticket );
 			// add event to cart
-			if( EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
+			if( $qty && EE_Registry::instance()->CART->add_ticket_to_cart( $ticket, $qty )) {
 				self::_recalculate_ticket_datetime_availability( $ticket, $qty );
 				return $qty;
 			} else {
