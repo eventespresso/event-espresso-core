@@ -188,18 +188,14 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		}
 		$ticket->refresh_from_db();
 		// first let's determine the ticket availability based on sales
-		$available = $ticket->qty() - $ticket->sold() - $ticket->reserved();
+		$available = $ticket->qty( 'saleable' );
 		if ( self::debug ) {
 			echo "\n . . . ticket->qty: " . $ticket->qty() . '<br />';
 			echo "\n . . . ticket->sold: " . $ticket->sold() . '<br />';
 			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+			echo "\n . . . ticket->qty(saleable): " . $ticket->qty( 'saleable' ) . '<br />';
 			echo "\n . . . available: " . $available . '<br />';
 		}
-		if ( $available < 1 ) {
-			$this->_ticket_sold_out( $ticket );
-			return 0;
-		}
-		$available = $this->_get_all_datetimes_availability( $ticket, $available );
 		if ( $available < 1 ) {
 			$this->_ticket_sold_out( $ticket );
 			return 0;
@@ -220,78 +216,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		$ticket->increase_reserved( $qty );
 		$ticket->save();
 		return $qty;
-	}
-
-
-
-	/**
-	 *    _get_datetime_availability
-	 * determines the number of available tickets for a particular datetime
-	 *
-	 * @access 	protected
-	 * @param 	EE_Ticket $ticket
-	 * @return 	int
-	 */
-	protected function _get_all_datetimes_availability( EE_Ticket $ticket, $available ) {
-		$datetimes = $ticket->datetimes();
-		if ( ! empty( $datetimes ) ) {
-			foreach ( $datetimes as $datetime ) {
-				if ( $datetime instanceof EE_Datetime ) {
-					$datetime_availability = $this->_get_datetime_availability( $datetime );
-					if ( self::debug ) {
-						echo "\n . . . FINAL AVAILABLE: " . $datetime_availability . '<br />';
-					}
-					$available = min( $available, $datetime_availability );
-					if ( $available < 1 ) {
-						return $available;
-					}
-				}
-			}
-		}
-		return $available;
-	}
-
-
-
-	/**
-	 *    _get_datetime_availability
-	 * determines the number of available tickets for a particular datetime
-	 *
-	 * @access 	protected
-	 * @param 	\EE_Datetime $datetime
-	 * @return 	int
-	 */
-	protected function _get_datetime_availability( EE_Datetime $datetime ) {
-		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . . datetime->ID: " . $datetime->ID() . '<br />';
-		}
-		// don't track datetimes with unlimited reg limits
-		if ( $datetime->reg_limit() < 0 ) {
-			return false;
-		}
-		// now let's determine ticket availability based on ALL sales for the datetime
-		// because multiple tickets can apply to the same datetime,
-		// so the tickets themselves may not be sold out, but the datetime may be
-		// ex: 20 seats are available for a dinner where the choice of ticket is your meal preference...
-		// you could get 20 people wanting chicken or 20 people wanting steak, you don't know...
-		// so you have to set each ticket quantity to the maximum number of seats, which is 20,
-		// but we don't want 40 people showing up, only 20, so we can't go by ticket quantity alone
-		$available = $datetime->reg_limit() - $datetime->sold();
-		if ( self::debug ) {
-			echo "\n . . . available: " . $available . '<br />';
-			echo "\n . . . datetime->reg_limit: " . $datetime->reg_limit() . '<br />';
-			echo "\n . . . datetime->reg_limit: " . $datetime->reg_limit() . '<br />';
-		}
-		// we also need to factor reserved quantities for ALL tickets into this equation
-		$all_tickets = $datetime->tickets();
-		foreach ( $all_tickets as $one_of_many_tickets ) {
-			if ( self::debug ) {
-				echo "\n . . . ticket->reserved: " . $one_of_many_tickets->reserved() . '<br />';
-			}
-			$available = $available - $one_of_many_tickets->reserved();
-		}
-		return $available;
 	}
 
 
