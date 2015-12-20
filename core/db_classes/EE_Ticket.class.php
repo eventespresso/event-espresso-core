@@ -656,8 +656,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 */
 	function increase_sold( $qty = 1 ) {
 		$sold = $this->sold() + $qty;
-		// remove ticket reservation
-		$this->decrease_reserved( $qty );
+		// remove ticket reservation, but don't adjust datetime reservations,  because that will happen
+		// via \EE_Datetime::increase_sold() when \EE_Ticket::_increase_sold_for_datetimes() is called
+		$this->decrease_reserved( $qty, false );
 		$this->_increase_sold_for_datetimes( $qty );
 		return $this->set_sold( $sold );
 	}
@@ -745,20 +746,67 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return boolean
 	 */
 	function increase_reserved( $qty = 1 ) {
-		$reserved = $this->reserved() + absint( $qty );
+		$qty = absint( $qty );
+		$reserved = $this->reserved() + $qty;
+		$this->_increase_reserved_for_datetimes( $qty );
 		return $this->set_reserved( $reserved );
 	}
 
 
 
 	/**
-	 * decrements (subtracts) reserved by amount passed by $qty
+	 * Increases sold on related datetimes
+	 *
 	 * @param int $qty
 	 * @return boolean
 	 */
-	function decrease_reserved( $qty = 1 ) {
+	protected function _increase_reserved_for_datetimes( $qty = 1 ) {
+		$datetimes = $this->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->increase_reserved( $qty );
+					$datetime->save();
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * decrements (subtracts) reserved by amount passed by $qty
+	 *
+	 * @param int  $qty
+	 * @param bool $adjust_datetimes
+	 * @return bool
+	 */
+	function decrease_reserved( $qty = 1, $adjust_datetimes = true ) {
 		$reserved = $this->reserved() - absint( $qty );
+		if ( $adjust_datetimes ) {
+			$this->_decrease_reserved_for_datetimes( $qty );
+		}
 		return $this->set_reserved( $reserved );
+	}
+
+
+
+	/**
+	 * Increases sold on related datetimes
+	 *
+	 * @param int $qty
+	 * @return boolean
+	 */
+	protected function _decrease_reserved_for_datetimes( $qty = 1 ) {
+		$datetimes = $this->datetimes();
+		if ( is_array( $datetimes ) ) {
+			foreach ( $datetimes as $datetime ) {
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->decrease_reserved( $qty );
+					$datetime->save();
+				}
+			}
+		}
 	}
 
 
@@ -830,9 +878,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 					//echo "\n  datetime reg_limit: " . $datetime->reg_limit() . "\n";
 					//echo "\n   datetime_qty: " . $datetime_qty . "\n";
 					// if we want the actual saleable amount, then we need to consider OTHER ticket sales
-					// for this datetime, that do NOT include sales for this ticket (so we add $this->sold() back in)
+					// and reservations for this datetime, that do NOT include sales and reservations
+					// for this ticket (so we add $this->sold() and $this->reserved() back in)
 					if ( $context == 'saleable' ) {
-						$datetime_qty = max( $datetime_qty - $datetime->sold() + $this->sold(), 0 );
+						$datetime_qty = max(
+							$datetime_qty - $datetime->sold_and_reserved() + $sold_and_reserved_for_this_ticket,
+							0
+						);
 						//echo "\n  datetime sold: " . $datetime->sold() . "\n";
 						//echo "\n   datetime_qty: " . $datetime_qty . "\n";
 						$datetime_qty = ! $datetime->sold_out() ? $datetime_qty : 0;
