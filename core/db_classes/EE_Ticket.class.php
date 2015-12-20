@@ -855,15 +855,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( $raw === 0 ) {
 			return $raw;
 		}
-		//echo "\nTicket: " . $this->name() . "\n";
+		//echo "\n\n<br />Ticket: " . $this->name() . '<br />';
 		// ensure qty doesn't exceed raw value for THIS ticket
 		$qty = min( EE_INF, $raw );
-		//echo "\n qty: " . $qty . "\n";
+		//echo "\n . qty: " . $qty . '<br />';
 		// calculate this ticket's total sales and reservations
 		$sold_and_reserved_for_this_ticket = $this->sold() + $this->reserved();
-		//echo "\r sold: " . $this->sold() . "\n";
-		//echo "\r reserved: " . $this->reserved() . "\n";
-		//echo "\n sold_and_reserved_for_this_ticket: " . $sold_and_reserved_for_this_ticket . "\n";
+		//echo "\n . sold: " . $this->sold() . '<br />';
+		//echo "\n . reserved: " . $this->reserved() . '<br />';
+		//echo "\n . sold_and_reserved_for_this_ticket: " . $sold_and_reserved_for_this_ticket . '<br />';
 		// first we need to calculate the maximum number of tickets available for the datetime
 		// do we want data for one datetime or all of them ?
 		$query_params = $DTT_ID ? array( array( 'DTT_ID' => $DTT_ID ) ) : array();
@@ -871,12 +871,14 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( is_array( $datetimes ) && ! empty( $datetimes ) ) {
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					//echo "\n  datetime name: " . $datetime->name() . "\n";
+					$datetime->refresh_from_db();
+					//echo "\n . . datetime name: " . $datetime->name() . '<br />';
+					//echo "\n . . datetime ID: " . $datetime->ID() . '<br />';
 					// initialize with no restrictions for each datetime
 					// but adjust datetime qty based on datetime reg limit
 					$datetime_qty = min( EE_INF, $datetime->reg_limit() );
-					//echo "\n  datetime reg_limit: " . $datetime->reg_limit() . "\n";
-					//echo "\n   datetime_qty: " . $datetime_qty . "\n";
+					//echo "\n . . . datetime reg_limit: " . $datetime->reg_limit() . '<br />';
+					//echo "\n . . . datetime_qty: " . $datetime_qty . '<br />';
 					// if we want the actual saleable amount, then we need to consider OTHER ticket sales
 					// and reservations for this datetime, that do NOT include sales and reservations
 					// for this ticket (so we add $this->sold() and $this->reserved() back in)
@@ -885,13 +887,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 							$datetime_qty - $datetime->sold_and_reserved() + $sold_and_reserved_for_this_ticket,
 							0
 						);
-						//echo "\n  datetime sold: " . $datetime->sold() . "\n";
-						//echo "\n   datetime_qty: " . $datetime_qty . "\n";
+						//echo "\n . . . datetime sold: " . $datetime->sold() . '<br />';
+						//echo "\n . . . datetime reserved: " . $datetime->reserved() . '<br />';
+						//echo "\n . . . datetime sold_and_reserved: " . $datetime->sold_and_reserved() . '<br />';
+						//echo "\n . . . datetime_qty: " . $datetime_qty . '<br />';
 						$datetime_qty = ! $datetime->sold_out() ? $datetime_qty : 0;
-						//echo "\n   datetime_qty: " . $datetime_qty . "\n";
+						//echo "\n . . . datetime_qty: " . $datetime_qty . '<br />';
 					}
 					$qty = min( $datetime_qty, $qty );
-					//echo "\n qty: " . $qty . "\n";
+					//echo "\n . . qty: " . $qty . '<br />';
 				}
 			}
 		}
@@ -900,9 +904,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		if ( $qty > 0 && $context == 'saleable' ) {
 			// and subtract the sales for THIS ticket
 			$qty = max( $qty - $sold_and_reserved_for_this_ticket, 0 );
-			//echo "\n qty: " . $qty . "\n";
+			//echo "\n . qty: " . $qty . '<br />';
 		}
-		//echo "\nFINAL QTY: " . $qty . "\n";
+		//echo "\nFINAL QTY: " . $qty . "<br /><br />";
 		return $qty;
 	}
 
