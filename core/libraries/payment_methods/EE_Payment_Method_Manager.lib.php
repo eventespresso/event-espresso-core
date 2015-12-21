@@ -238,7 +238,7 @@ class EE_Payment_Method_Manager {
 		$payment_method->save();
 		$this->set_usable_currencies_on_payment_method( $payment_method );
 		if( $payment_method->type() == 'Invoice' ){
-			$messages = EE_Registry::instance()->load_lib( 'messages' );
+			$messages = EE_Registry::instance()->load_lib( 'Messages' );
 			$messages->ensure_message_type_is_active( 'invoice', 'html' );
 			$messages->ensure_messenger_is_active( 'pdf' );
 			EE_Error::add_attention(
@@ -268,8 +268,8 @@ class EE_Payment_Method_Manager {
 				'PMD_slug' 		 => $pm_type_obj->system_name(),//automatically converted to slug
 				'PMD_wp_user' 	 => $current_user->ID,
 				'PMD_order' 	 => EEM_Payment_Method::instance()->count(
-						array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))
-					) * 10,
+					array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))
+				) * 10,
 			)
 		);
 		return $payment_method;
@@ -285,7 +285,7 @@ class EE_Payment_Method_Manager {
 		$payment_method->set_description( $pm_type_obj->default_description() );
 		if( ! $payment_method->button_url() ){
 			$payment_method->set_button_url( $pm_type_obj->default_button_url() );
-		}	
+		}
 		//now add setup its default extra meta properties
 		$extra_metas = $pm_type_obj->settings_form()->extra_meta_inputs();
 		foreach( $extra_metas as $meta_name => $input ){
