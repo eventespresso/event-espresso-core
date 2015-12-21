@@ -63,8 +63,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		/** @type EE_messages $eemsg */
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		/** @type EE_Messages $eemsg */
+		$eemsg = EE_Registry::instance()->load_lib( 'Messages' );
 		$messengers = $this->_admin_page->get_active_messengers();
 		$message_types = $this->_admin_page->get_installed_message_types();
 		$contexts = $eemsg->get_all_contexts();
