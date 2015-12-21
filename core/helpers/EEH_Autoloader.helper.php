@@ -13,14 +13,16 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-class EEH_Autoloader {
+class EEH_Autoloader extends EEH_Base {
+
 
 	/**
-	 * 	instance of the EEH_Autoloader object
-	 *	@var 	$_instance
-	 * 	@access 	private
+	 *    instance of the EE_System object
+	 *
+	 * @var    $_instance
+	 * @access    private
 	 */
-	private static $_instance = NULL;
+	private static $_instance = null;
 
 	/**
 	* 	$_autoloaders
@@ -32,30 +34,31 @@ class EEH_Autoloader {
 
 
 	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 *	@return EEH_Autoloader
-	 */
-	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( ! self::$_instance instanceof  EEH_Autoloader ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
-
-
-	/**
 	 *    class constructor
 	 *
 	 * @access    private
 	 * @return \EEH_Autoloader
 	 */
 	private function __construct() {
-		self::$_autoloaders = array();
-		$this->_register_custom_autoloaders();
-		spl_autoload_register( array( $this, 'espresso_autoloader' ));
+		if ( self::$_autoloaders === null ) {
+			self::$_autoloaders = array();
+			$this->_register_custom_autoloaders();
+			spl_autoload_register( array( $this, 'espresso_autoloader' ) );
+		}
+	}
+
+
+
+	/**
+	 * @access public
+	 * @return EEH_Autoloader
+	 */
+	public static function instance() {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EEH_Autoloader ) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
 	}
 
 
@@ -184,6 +187,19 @@ class EEH_Autoloader {
 
 
 
+
+	/**
+	 * 	register template part 'autoloaders'
+	 *
+	 * 	@access public
+	 * 	@return void
+	 */
+	public static function register_template_part_autoloaders() {
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'template_parts', true );
+	}
+
+
+
 	/**
 	 * Assumes all the files in this folder have the normal naming scheme (namely that their classname
 	 * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
@@ -213,7 +229,7 @@ class EEH_Autoloader {
 			if ( substr( $filepath, -4, 4 ) == '.php' ) {
 				$class_name = EEH_File::get_classname_from_filepath_with_standard_filename( $filepath );
 				if ( ! in_array( $class_name, $exclude )) {
-					$class_to_filepath_map [ $class_name ] = str_replace( array( '\/', '/' ), DS, $filepath );
+					$class_to_filepath_map [ $class_name ] = $filepath;
 				}
 			} else if ( $recursive ) {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive, $debug );

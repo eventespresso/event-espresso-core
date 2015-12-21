@@ -564,11 +564,16 @@ abstract class EE_PMT_Base{
 	 * @throws EE_Error
 	 * @return EE_Payment
 	 */
-	public function process_refund($payment, $refund_info = array()){
-		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
+	public function process_refund( EE_Payment $payment, $refund_info = array()){
+		if ( $this->_gateway && $this->_gateway instanceof EE_Gateway ) {
 			return $this->_gateway->do_direct_refund( $payment, $refund_info );
-		}else{
-			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
+		} else {
+			throw new EE_Error(
+				sprintf(
+					__( 'Payment Method Type "%s" does not support sending refund requests', 'event_espresso' ),
+					get_class( $this )
+				)
+			);
 		}
 	}
 

@@ -287,7 +287,8 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 		EE_Registry::instance()->load_helper('DTT_Helper');
 		//make sure now is in the timezone we want to test with.
-		$now =  new Datetime( "now +30 days", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+		$now =  new Datetime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
+		$now->setTimeZone( new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 		$now->setTime( '8', '0', '0' );
 		$now->setTimeZone( new DateTimeZone( 'America/Toronto' ) );
 
@@ -303,6 +304,9 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$actual = $default_date->get_DateTime_object( 'DTT_EVT_start');
 
 		$this->assertInstanceOf( 'DateTime', $actual );
+
+		//assert timezones are the same
+		$this->assertEquals( $now->getTimezone(), $actual->getTimeZone() );
 
 		//assert that we have the correct values on the date... we'll do each part separately to verify.
 		$this->assertEquals( $now->format('Y'), $actual->format('Y' ) );
@@ -331,7 +335,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ), 'DTT_EVT_end' => $current_end_date->add( new DateInterval( "PT2H" ) )->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
 			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
 			'inactive_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
-			);
+		);
 
 
 		$events = $this->factory->event->create_many(5);

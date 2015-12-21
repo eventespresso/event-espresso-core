@@ -259,6 +259,7 @@ class EE_Checkout {
 				return true;
 			}
 		}
+		return false;
 	}
 
 
@@ -345,13 +346,38 @@ class EE_Checkout {
 
 
 	/**
-	 *    remove_reg_step
+	 * skip_reg_step
+	 *
+	 * if the current reg step does not need to run for some reason,
+	 * then this will advance SPCO to the next reg step,
+	 * and mark the skipped step as completed
 	 *
 	 * @access    public
 	 * @param string $reg_step_slug
 	 * @return    void
 	 */
-	public function remove_reg_step( $reg_step_slug = '' ) {
+	public function skip_reg_step( $reg_step_slug = '' ) {
+		$step_to_skip = $this->find_reg_step( $reg_step_slug );
+		if ( $step_to_skip instanceof EE_SPCO_Reg_Step && $step_to_skip->is_current_step() ) {
+			// advance to the next step
+			$this->set_current_step( $this->next_step->slug() );
+			$step_to_skip->set_is_current_step( false );
+			$step_to_skip->set_completed();
+			$this->set_reg_step_initiated( $this->current_step );
+		}
+	}
+
+
+
+	/**
+	 *    remove_reg_step
+	 *
+	 * @access    public
+	 * @param string $reg_step_slug
+	 * @param bool   $reset whether to reset reg steps after removal
+	 * @throws EE_Error
+	 */
+	public function remove_reg_step( $reg_step_slug = '', $reset = true ) {
 		unset( $this->reg_steps[ $reg_step_slug  ] );
 		if ( $this->transaction instanceof EE_Transaction ) {
 			/** @type EE_Transaction_Processor $transaction_processor */
@@ -359,6 +385,9 @@ class EE_Checkout {
 			// now remove reg step from TXN and save
 			$transaction_processor->remove_reg_step( $this->transaction, $reg_step_slug );
 			$this->transaction->save();
+		}
+		if ( $reset ) {
+			$this->reset_reg_steps();
 		}
 	}
 
@@ -486,6 +515,34 @@ class EE_Checkout {
 
 
 	/**
+	 * find_reg_step
+	 * finds a reg step by the given slug
+	 *
+	 * @access    public
+	 * @param string $reg_step_slug
+	 * @return EE_SPCO_Reg_Step|null
+	 */
+	public function find_reg_step( $reg_step_slug = '' ) {
+		if ( ! empty( $reg_step_slug ) ) {
+			// copy reg step array
+			$reg_steps = $this->reg_steps;
+			// set pointer to start of array
+			reset( $reg_steps );
+			// if there is more than one step
+			if ( count( $reg_steps ) > 1 ) {
+				// advance to the current step and set pointer
+				while ( key( $reg_steps ) != $reg_step_slug && key( $reg_steps ) != '' ) {
+					next( $reg_steps );
+				}
+				return current( $reg_steps );
+			}
+		}
+		return null;
+	}
+
+
+
+	/**
 	 * reg_step_sorting_callback
 	 *
 	 * @access public
@@ -504,6 +561,39 @@ class EE_Checkout {
 			return 0;
 		}
 		return ( $reg_step_A->order() > $reg_step_B->order() ) ? 1 : -1;
+	}
+
+
+
+	/**
+	 * set_reg_step_initiated
+	 *
+	 * @access 	public
+	 * @param 	EE_SPCO_Reg_Step $reg_step
+	 */
+	public function set_reg_step_initiated( EE_SPCO_Reg_Step $reg_step ) {
+		// call set_reg_step_initiated ???
+		if (
+			// first time visiting SPCO ?
+			! $this->revisit
+			// and displaying the reg step form for the first time ?
+			&& $this->action === 'display_spco_reg_step'
+		) {
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			// set the start time for this reg step
+			if ( ! $transaction_processor->set_reg_step_initiated( $this->transaction, $reg_step->slug() ) ) {
+				if ( WP_DEBUG ) {
+					EE_Error::add_error(
+						sprintf(
+							__( 'The "%1$s" registration step was not initialized properly.', 'event_espresso' ),
+							$reg_step->name()
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+				}
+			};
+		}
 	}
 
 

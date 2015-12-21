@@ -282,11 +282,9 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @internal param float $amount
 	 * @return EE_Payment
 	 */
-	public function process_refund( $payment_method, $payment_to_refund, $refund_info = array() ){
-		/** @type EE_Payment_Method $payment_method */
-		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
-		if ( $payment_method->type_obj()->supports_sending_refunds() ) {
-			$payment_method->do_direct_refund( $payment_to_refund,$refund_info );
+	public function process_refund( EE_Payment_Method $payment_method, EE_Payment $payment_to_refund, $refund_info = array() ){
+		if ( $payment_method instanceof EE_Payment_Method && $payment_method->type_obj()->supports_sending_refunds() ) {
+			$payment_method->type_obj()->process_refund( $payment_to_refund, $refund_info );
 			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
 		}
 		return $payment_to_refund;
@@ -340,7 +338,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			EE_Cron_Tasks::schedule_update_transaction_with_payment(
 				time(),
 				$transaction->ID(),
-				$payment
+				$payment->ID()
 			);
 		} else {
 			// verify payment and that it has been saved
@@ -375,6 +373,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 			// granular hook for others to use.
 			do_action( $do_action, $transaction, $payment );
+			do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $do_action, '$do_action' );
 			//global hook for others to use.
 			do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment );
 		}

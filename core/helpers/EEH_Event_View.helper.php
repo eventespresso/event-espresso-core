@@ -141,23 +141,29 @@ class EEH_Event_View extends EEH_Base {
 	 * @return    string
 	 */
 	public static function event_content_or_excerpt( $num_words = NULL, $more = NULL ) {
-
 		global $post;
-		$content = '';
 
 		ob_start();
 		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
-			//echo '<h2 style="color:#E76700;">the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+
+			// admin has chosen "full description" for the "Event Espresso - Events > Templates > Display Description" option
 			the_content();
-		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) || apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
-			//echo '<h2 style="color:#E76700;">the_excerpt<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+
+		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) ) {
+
+			// admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
+			// AND an excerpt actually exists
 			the_excerpt();
+
 		} else if (( is_archive() && ! has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() )) {
-			//echo '<h2 style="color:#E76700;">get_the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span><b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+
+			// admin has chosen "excerpt (short desc)" for the "Event Espresso - Events > Templates > Display Description" option
+			// but NO excerpt actually exists, so we need to create one
 			if ( ! empty( $num_words )) {
 				if ( empty( $more )) {
-					$more = ' <a href="' . get_permalink() . '" class="more-link">' . __( '(more&hellip;)' ) . '</a>';
-					$more = apply_filters( 'the_content_more_link', $more );
+					$more_link_text = __( '(more&hellip;)' );
+					$more = ' <a href="' . get_permalink() . '" class="more-link">' . $more_link_text . '</a>';
+					$more = apply_filters( 'the_content_more_link', $more, $more_link_text );
 				}
 				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
 
@@ -171,8 +177,8 @@ class EEH_Event_View extends EEH_Base {
 			echo apply_filters( 'the_content', $content );
 
 		} else {
-			//echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-			echo apply_filters( 'the_content', $content );
+			// admin has chosen "none" for the "Event Espresso - Events > Templates > Display Description" option
+			echo apply_filters( 'the_content', '' );
 		}
 		return ob_get_clean();
 	}

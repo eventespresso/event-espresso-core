@@ -172,7 +172,7 @@ class EE_Email_Messenger extends EE_Messenger  {
 		$this->_test_settings_fields = array(
 			'to' => array(
 				'input' => 'text',
-				'label' => __('To', 'event_espresso'),
+				'label' => __('Send a test email to', 'event_espresso'),
 				'type' => 'email',
 				'required' => TRUE,
 				'validation' => TRUE,
@@ -402,7 +402,7 @@ class EE_Email_Messenger extends EE_Messenger  {
 		//but wait!  Header's for the from is NOT reliable because some plugins don't respect From: as set in the header.
 		add_filter( 'wp_mail_from',  array( $this, 'set_from_address' ), 100 );
 		add_filter( 'wp_mail_from_name', array( $this, 'set_from_name' ), 100 );
-		return $headers;
+		return apply_filters( 'FHEE__EE_Email_messenger___headers', $headers, $this->_incoming_message_type, $this );
 	}
 
 

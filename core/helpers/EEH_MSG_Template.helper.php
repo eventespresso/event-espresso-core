@@ -222,7 +222,6 @@ class EEH_MSG_Template {
 		$shortcodes = array();
 		foreach( $valid_shortcodes as $field => $validators ) {
 			$shortcodes[$field] = $validators['shortcodes'];
-			$fields[] = $field;
 		}
 		$valid_shortcodes = $shortcodes;
 

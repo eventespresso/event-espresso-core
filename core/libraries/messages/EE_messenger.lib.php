@@ -644,6 +644,7 @@ abstract class EE_Messenger extends EE_Messages_Base {
 		if ( ! $send ) {
 			// the below may seem like duplication.  However, typically if a messenger enqueues scripts/styles,
 			// it deregisters all existing wp scripts and styles first.  So the second hook ensures our previewer still gets setup.
+			add_action( 'admin_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_preview_script' ), 10 );
 			add_action( 'AHEE__EE_messenger__enqueue_scripts_styles', array( $this, 'add_preview_script' ), 10 );
 		}
@@ -719,6 +720,9 @@ abstract class EE_Messenger extends EE_Messages_Base {
 		//check file exists and is readable
 		if ( !is_readable( $wrapper_template ) )
 			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular']) , $wrapper_template ) );
+
+		//add message type to template args
+		$this->_template_args['message_type'] = $this->_incoming_message_type;
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );

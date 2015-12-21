@@ -34,7 +34,7 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 		<?php if ( $venue_description ) : ?>
 	<p>
 		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
-		<?php echo $venue_description; ?>
+		<?php echo do_shortcode( $venue_description ); ?>
 	</p>
 		<?php endif;  ?>
 	<?php else : ?>
