@@ -224,8 +224,6 @@ if ( function_exists( 'espresso_version' ) ) {
 
 	espresso_load_required( 'EEH_Base', EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php' );
 	espresso_load_required( 'EEH_File', EE_CORE . 'helpers' . DS . 'EEH_File.helper.php' );
-	EEH_Activation::plugin_deactivation();
-}
 	espresso_load_required( 'EE_Bootstrap', EE_CORE . 'EE_Bootstrap.core.php' );
 	new EE_Bootstrap();
 
