@@ -27,6 +27,11 @@
  */
 class Messages_Admin_Page extends EE_Admin_Page {
 
+	/**
+	 * @type EE_Messages $_messages_controller
+	 */
+	 protected $_messages_controller;
+
 	protected $_active_messengers = array();
 	protected $_active_message_types = array();
 	protected $_active_message_type_name = '';
@@ -91,7 +96,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : null;
 
-		EE_Registry::instance()->load_lib( 'messages' );
+
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
@@ -101,6 +106,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//what about saving the objects in the active_messengers and active_message_types?
 		$this->_load_active_messenger_objects();
 		$this->_load_active_message_type_objects();
+	}
+
+
+
+
+	/**
+	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 *
+	 *
+	 * @throws EE_Error
+	*/
+	protected function _load_messages_controller() {
+		$Messenger_Collection_Loader = new EE_Messenger_Collection_Loader( new EE_Messenger_Collection() );
+		$Messenger_Collection_Loader->load_messengers_from_folder();
+		$messenger_collection = $Messenger_Collection_Loader->messenger_collection();
+		$this->_messages_controller = EE_Registry::instance()->load_lib( 'Messages', $messenger_collection );
 	}
 
 
@@ -609,7 +630,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function wp_editor_css( $mce_css ) {
 		//if we're on the edit_message_template route
-		if ( $this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_messenger  ) {
+		if ( $this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_Messenger  ) {
 			$message_type_name = $this->_active_message_type_name;
 
 			//we're going to REPLACE the existing mce css
@@ -925,11 +946,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
 	protected function _get_installed_message_objects() {
+		$this->_load_messages_controller();
 		//get all installed messengers and message_types
-		$EE_MSG = new EE_messages();
 		$installed_message_objects = array(
-			'messengers' => $EE_MSG->get_installed_messengers(),
-			'message_types' => $EE_MSG->get_installed_message_types()
+			'messengers' => $this->_messages_controller->get_messenger_collection(),
+			'message_types' => $this->_messages_controller->get_installed_message_types()
 			);
 		return $installed_message_objects;
 	}
@@ -1049,8 +1070,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//let's get the EE_messages_controller so we can get template form fields
-		$MSG = new EE_messages();
-		$template_field_structure = $MSG->get_fields($message_template_group->messenger(), $message_template_group->message_type());
+		//$MSG = new EE_Messages();
+		$this->_load_messages_controller();
+
+		$template_field_structure = $this->_messages_controller->get_fields($message_template_group->messenger(), $message_template_group->message_type());
 
 		if ( !$template_field_structure ) {
 			$template_field_structure = false;
