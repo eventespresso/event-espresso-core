@@ -148,7 +148,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	/**
 	 * Returns corresponding messenger object for the set messenger on this message
 	 *
-	 * @return EE_messenger | null
+	 * @return EE_Messenger | null
 	 */
 	public function messenger_object() {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
@@ -159,7 +159,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 	/**
 	 * This returns the set localized label for the messenger on this message.
-	 * Note, if unable to retrieve the EE_messenger object then will just return the messenger slug saved
+	 * Note, if unable to retrieve the EE_Messenger object then will just return the messenger slug saved
 	 * with this message.
 	 *
 	 * @param   bool    $plural whether to return the plural label or not.
@@ -168,7 +168,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	public function messenger_label( $plural = false ) {
 		$label_type = $plural ? 'plural' : 'singular';
 		$messenger = $this->messenger_object();
-		return $messenger instanceof EE_messenger ? $messenger->label[ $label_type ] : $this->messenger();
+		return $messenger instanceof EE_Messenger ? $messenger->label[ $label_type ] : $this->messenger();
 	}
 
 
@@ -253,8 +253,8 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return string
 	 */
 	public function context_label() {
-		/** @type EE_messages $eemsg */
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		/** @type EE_Messages $eemsg */
+		$eemsg = EE_Registry::instance()->load_lib( 'Messages' );
 		$contexts = $eemsg->get_all_contexts();
 		return isset( $contexts[ $this->context() ] ) ? $contexts[ $this->context() ] : $this->context();
 	}
