@@ -13,6 +13,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group rest_api
  *
  */
 class Model_Version_Info_Test extends \EE_UnitTestCase{

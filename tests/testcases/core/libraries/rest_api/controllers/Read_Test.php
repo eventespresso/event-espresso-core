@@ -11,6 +11,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
+ * @group rest_api
  *
  */
 class Read_Test extends \EE_UnitTestCase{
@@ -90,7 +91,7 @@ class Read_Test extends \EE_UnitTestCase{
 			);
 		$req->set_query_params(
 				array(
-					'include' =>  'EVT_desc_raw, EVT_desc'
+					'include' =>  'EVT_desc'
 				)
 			);
 		$response = Read::handle_request_get_one( $req );
@@ -311,11 +312,11 @@ class Read_Test extends \EE_UnitTestCase{
 		$controller->prepare_rest_query_params_key_for_models(
 				\EEM_Event::instance(),
 				array(
-					'EVT_desc_raw' => 'foobar',
+					'EVT_desc' => 'foobar',
 					'OR' => array(
-						'EVT_desc_raw*gotcha' => array('LIKE', '%foobar%' ),
+						'EVT_desc*gotcha' => array('LIKE', '%foobar%' ),
 						'EVT_name' => 'yep',
-						'EVT_desc_raw*gotchaagain' => array( 'IN', array( '1', '2' ) ) ) ) ) );
+						'EVT_desc*gotchaagain' => array( 'IN', array( '1', '2' ) ) ) ) ) );
 	}
 
 	/**
@@ -335,7 +336,7 @@ class Read_Test extends \EE_UnitTestCase{
 						'EVT_desc' => 'ASC'
 					),
 					'group_by' => array(
-						'EVT_desc*foobar'
+						'EVT_desc'
 					),
 					'having' => array(
 						'EVT_desc' => 'monkey'
@@ -347,20 +348,20 @@ class Read_Test extends \EE_UnitTestCase{
 				\EEM_Event::instance(),
 				array(
 					'where' => array(
-						'EVT_desc_raw*foobar' => array( 'LIKE', '%frogs%' ),
+						'EVT_desc*foobar' => array( 'LIKE', '%frogs%' ),
 						'OR*otherfunanimals' => array(
 							'EVT_name' => array( 'IN', array( 'chickens', 'cows' ) ),
 							'EVT_slug' => 'cowbunga'
 						)
 					),
 					'order_by' => array(
-						'EVT_desc_raw' => 'ASC'
+						'EVT_desc' => 'ASC'
 					),
 					'group_by' => array(
-						'EVT_desc_raw*foobar'
+						'EVT_desc'
 					),
 					'having' => array(
-						'EVT_desc_raw' => 'monkey'
+						'EVT_desc' => 'monkey'
 					),
 					'caps' => \EEM_Base::caps_read_admin
 				) ) );

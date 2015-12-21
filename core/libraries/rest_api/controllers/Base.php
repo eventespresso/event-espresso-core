@@ -95,7 +95,7 @@ class Base {
 					);
 				}
 			}
-			$data = $errors[0];
+			$data = isset( $errors[0] ) ? $errors[0] : array();
 			if ( count( $errors ) > 1 ) {
 				// Remove the primary error.
 				array_shift( $errors );

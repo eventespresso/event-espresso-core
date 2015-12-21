@@ -421,17 +421,20 @@ class Read extends Base {
 			}
 			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
 			if( $related_fields_to_include ) {
+				$pretend_related_request = new \WP_REST_Request();
+				$pretend_related_request->set_query_params( 
+					array(
+						'caps' => $context, 
+						'include' => $this->extract_includes_for_this_model(
+								$include,
+								$relation_name
+							) 
+					)
+				);
 				$related_results = $this->get_entities_from_relation(
 					$result[ $model->primary_key_name() ],
 					$relation_obj,
-					array( 'caps' => $context ),
-					implode(
-						',',
-						$this->extract_includes_for_this_model(
-							$include,
-							$relation_name
-						)
-					)
+					$pretend_related_request
 				);
 				$result[ $related_model_part ] = $related_results instanceof \WP_Error ? null : $related_results;
 			}
@@ -507,7 +510,7 @@ class Read extends Base {
 				$model, 
 				array_shift( $model_rows ), 
 				$request->get_param( 'include' ), 
-				$request->get_param( 'caps' ) );
+				$this->validate_context( $request->get_param( 'caps' ) ) );
 		} else {
 			//ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
 			$lowercase_model_name = strtolower( $model->get_this_model_name() );
@@ -519,7 +522,9 @@ class Read extends Base {
 					sprintf(
 						__( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ),
 						strtolower( $model->get_this_model_name() ),
-						Capabilities::get_missing_permissions_string( $model, $request->get_param( 'caps' ) )
+						Capabilities::get_missing_permissions_string( 
+							$model, 
+							$this->validate_context( $request->get_param( 'caps' ) ) )
 					),
 					array( 'status' => 403 )
 				);
@@ -542,7 +547,7 @@ class Read extends Base {
 	 * @return string array key of EEM_Base::cap_contexts_to_cap_action_map()
 	 */
 	public function validate_context( $context ) {
-		if( $context === null ) {
+		if( ! $context ) {
 			$context = \EEM_Base::caps_read;
 		}
 		$valid_contexts = \EEM_Base::valid_cap_contexts();
@@ -658,6 +663,8 @@ class Read extends Base {
 		foreach( $query_params as $key => $value ) {
 			if( is_array( $value ) ) {
 				$model_ready_query_params[ $key ] = $this->prepare_rest_query_params_values_for_models( $model, $value );
+			} else {
+				$model_ready_query_params[ $key ] = $value;
 			}
 		}
 		return $model_ready_query_params;
