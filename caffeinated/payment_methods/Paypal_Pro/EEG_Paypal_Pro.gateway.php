@@ -405,6 +405,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		curl_setopt($curl, CURLOPT_URL, $EndPointURL);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
+		curl_setopt($curl, CURL_HTTP_VERSION_1_1);
 
 		//execute the curl POST
 		$Response = curl_exec($curl);
