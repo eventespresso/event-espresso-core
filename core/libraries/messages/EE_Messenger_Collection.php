@@ -154,18 +154,21 @@ class EE_Messenger_Collection extends EE_Object_Collection {
 
 
 	/**
-	 * set_current_by_info
+	 * show_collection_classes
 	 *
-	 * advances pointer to the object whose info matches that which was provided
+	 * displays list of collection classes if WP_DEBUG is on
 	 *
 	 * @access public
 	 * @return void
 	 */
 	public function show_collection_classes() {
-		$this->rewind();
-		while ( $this->valid() ) {
-			echo '<h5 style="color:#2EA2CC;">collection class : <span style="color:#E76700">' . $this->getInfo() . '</span></h5>';
-			$this->next();
+		if ( WP_DEBUG ) {
+			$this->rewind();
+			while ( $this->valid() ) {
+				echo '<h5 style="color:#2EA2CC;">collection class : <span style="color:#E76700">' . $this->getInfo()
+					 . '</span></h5>';
+				$this->next();
+			}
 		}
 	}
 
