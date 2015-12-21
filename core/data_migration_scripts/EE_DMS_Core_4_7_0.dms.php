@@ -608,7 +608,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 					QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					QSG_wp_user BIGINT UNSIGNED NULL,
 					PRIMARY KEY  (QSG_ID),
-					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC),
+					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier),
 					KEY QSG_order (QSG_order)';
 		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
 
