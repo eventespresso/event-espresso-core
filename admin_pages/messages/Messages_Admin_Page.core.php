@@ -118,10 +118,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @throws EE_Error
 	*/
 	protected function _load_messages_controller() {
-		$Messenger_Collection_Loader = new EE_Messenger_Collection_Loader( new EE_Messenger_Collection() );
-		$Messenger_Collection_Loader->load_messengers_from_folder();
-		$messenger_collection = $Messenger_Collection_Loader->messenger_collection();
-		$this->_messages_controller = EE_Registry::instance()->load_lib( 'Messages', $messenger_collection );
+		$this->_messages_controller = EE_Registry::instance()->load_lib( 'Messages' );
 	}
 
 
@@ -139,11 +136,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_messenger';
 			require_once( EE_LIBRARIES . 'messages'. DS .'messenger' . DS . $classname . '.class.php' );
-			if ( !class_exists($classname) )
-				{throw new EE_Error( sprintf( __('There is no messenger for the given classname (%s)', 'event_espresso'), $classname ) );}
-
-			$a = new ReflectionClass( $classname );
-			$this->_active_messengers[$messenger]['obj'] = $a->newInstance();
+			if ( ! class_exists( $classname ) ) {
+				throw new EE_Error(
+					sprintf( __( 'There is no messenger for the given classname (%s)', 'event_espresso' ), $classname )
+				);
+			}
+			$this->_active_messengers[$messenger]['obj'] = new $classname;
 		}
 	}
 
@@ -161,12 +159,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$ref = ucwords( str_replace( '_' , ' ', $message_type) );
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_message_type';
-
-			if ( !class_exists($classname) )
-				{throw new EE_Error( sprintf( __('There is no message type for the given classname (%s)', 'event_espresso'), $classname ) );}
-
-			$a = new ReflectionClass( $classname );
-			$this->_active_message_types[$message_type]['obj'] = $a->newInstance();
+			if ( ! class_exists( $classname ) ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'There is no message type for the given classname (%s)', 'event_espresso' ),
+						$classname
+					)
+				);
+			}
+			$this->_active_message_types[$message_type]['obj'] = new $classname;
 		}
 	}
 
@@ -209,133 +210,139 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _set_page_routes() {
-		$grp_id = ! empty( $this->_req_data['GRP_ID'] ) && ! is_array( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
-		$grp_id = empty( $grp_id ) && !empty( $this->_req_data['id'] ) ? $this->_req_data['id'] : $grp_id;
-		$msg_id = ! empty( $this->_req_data['MSG_ID'] ) && ! is_array( $this->_req_data['MSG_ID'] ) ? $this->_req_data['MSG_ID'] : 0;
+		$grp_id = ! empty( $this->_req_data['GRP_ID'] ) && ! is_array( $this->_req_data['GRP_ID'] )
+			? $this->_req_data['GRP_ID']
+			: 0;
+		$grp_id = empty( $grp_id ) && !empty( $this->_req_data['id'] )
+			? $this->_req_data['id']
+			: $grp_id;
+		$msg_id = ! empty( $this->_req_data['MSG_ID'] ) && ! is_array( $this->_req_data['MSG_ID'] )
+			? $this->_req_data['MSG_ID']
+			: 0;
 
 		$this->_page_routes = array(
-				'default' => array(
-					'func' => '_message_queue_list_table',
-					'capability' => 'ee_read_messages'
-				),
-				'global_mtps'=> array(
-					'func' => '_ee_default_messages_overview_list_table',
-					'capability' => 'ee_read_global_messages'
-					),
-				'custom_mtps' => array(
-					'func' => '_custom_mtps_preview',
-					'capability' => 'ee_read_messages'
-					),
-				'add_new_message_template'	=>array(
-					 'func' => '_add_message_template',
-					 'capability' => 'ee_edit_messages',
-					 'noheader' => true
-					),
-				'edit_message_template' => array(
-					'func' => '_edit_message_template',
-					'capability' => 'ee_edit_message',
-					'obj_id' => $grp_id
-					),
-				'preview_message' => array(
-					'func' => '_preview_message',
-					'capability' => 'ee_read_message',
-					'obj_id' => $grp_id,
-					'noheader' => true,
-					'headers_sent_route' => 'display_preview_message'
-					),
-				'display_preview_message' => array(
-					'func' => '_display_preview_message',
-					'capability' => 'ee_read_message',
-					'obj_id' => $grp_id
-					),
-				'insert_message_template' => array(
-					'func' => '_insert_or_update_message_template',
-					'capability' => 'ee_edit_messages',
-					'args' => array( 'new_template' => true ),
-					'noheader' => true
-					 ),
-				'update_message_template' => array(
-					'func' => '_insert_or_update_message_template',
-					'capability' => 'ee_edit_message',
-					'obj_id' => $grp_id,
-					'args' => array( 'new_template' => false ),
-					'noheader' => true
-					),
-				'trash_message_template' => array(
-					'func' => '_trash_or_restore_message_template',
-					'capability' => 'ee_delete_message',
-					'obj_id' => $grp_id,
-					'args' => array( 'trash' => true, 'all' => true ),
-					'noheader' => true
-					),
-				'trash_message_template_context' => array(
-					'func' => '_trash_or_restore_message_template',
-					'capability' => 'ee_delete_message',
-					'obj_id' => $grp_id,
-					'args' => array( 'trash' => true ),
-					'noheader' => true
-					),
-				'restore_message_template' => array(
-					'func' => '_trash_or_restore_message_template',
-					'capability' => 'ee_delete_message',
-					'obj_id' => $grp_id,
-					'args' => array( 'trash' => false, 'all' => true ),
-					'noheader' => true
-					),
-				'restore_message_template_context' => array(
-					'func' => '_trash_or_restore_message_template',
-					'capability' => 'ee_delete_message',
-					'obj_id' => $grp_id,
-					'args' => array('trash' => false),
-					'noheader' => true
-					),
-				'delete_message_template' => array(
-					'func' => '_delete_message_template',
-					'capability' => 'ee_delete_message',
-					'obj_id' => $grp_id,
-					'noheader' => true
-					),
-				'reset_to_default' => array(
-					'func' => '_reset_to_default_template',
-					'capability' => 'ee_edit_message',
-					'obj_id' => $grp_id,
-					'noheader' => true
-					),
-				'settings' => array(
-					'func' => '_settings',
-					'capability' => 'manage_options'
-					),
-				'generate_now' => array(
-					'func' => '_generate_now',
-					'capability' => 'ee_send_message',
-					'noheader' => true
-				),
-				'generate_and_send_now' => array(
-					'func' => '_generate_and_send_now',
-					'capability' => 'ee_send_message',
-					'noheader' => true
-				),
-				'queue_for_resending' => array(
-					'func' => '_queue_for_resending',
-					'capability' => 'ee_send_message',
-					'noheader' => true
-				),
-				'send_now' => array(
-					'func' => '_send_now',
-					'capability' => 'ee_send_message',
-					'noheader' => true
-				),
-				'delete_ee_message' => array(
-					'func' => '_delete_ee_messages',
-					'capability' => 'ee_delete_message',
-					'noheader' => true
-				),
-				'delete_ee_messages' => array(
-					'func' => '_delete_ee_messages',
-					'capability' => 'ee_delete_messages',
-					'noheader' => true,
-					'obj_id' => $msg_id
-				)
+			'default' => array(
+				'func' => '_message_queue_list_table',
+				'capability' => 'ee_read_messages'
+			),
+			'global_mtps'=> array(
+				'func' => '_ee_default_messages_overview_list_table',
+				'capability' => 'ee_read_global_messages'
+			),
+			'custom_mtps' => array(
+				'func' => '_custom_mtps_preview',
+				'capability' => 'ee_read_messages'
+			),
+			'add_new_message_template'	=>array(
+				 'func' => '_add_message_template',
+				 'capability' => 'ee_edit_messages',
+				 'noheader' => true
+			),
+			'edit_message_template' => array(
+				'func' => '_edit_message_template',
+				'capability' => 'ee_edit_message',
+				'obj_id' => $grp_id
+			),
+			'preview_message' => array(
+				'func' => '_preview_message',
+				'capability' => 'ee_read_message',
+				'obj_id' => $grp_id,
+				'noheader' => true,
+				'headers_sent_route' => 'display_preview_message'
+			),
+			'display_preview_message' => array(
+				'func' => '_display_preview_message',
+				'capability' => 'ee_read_message',
+				'obj_id' => $grp_id
+			),
+			'insert_message_template' => array(
+				'func' => '_insert_or_update_message_template',
+				'capability' => 'ee_edit_messages',
+				'args' => array( 'new_template' => true ),
+				'noheader' => true
+			 ),
+			'update_message_template' => array(
+				'func' => '_insert_or_update_message_template',
+				'capability' => 'ee_edit_message',
+				'obj_id' => $grp_id,
+				'args' => array( 'new_template' => false ),
+				'noheader' => true
+			),
+			'trash_message_template' => array(
+				'func' => '_trash_or_restore_message_template',
+				'capability' => 'ee_delete_message',
+				'obj_id' => $grp_id,
+				'args' => array( 'trash' => true, 'all' => true ),
+				'noheader' => true
+			),
+			'trash_message_template_context' => array(
+				'func' => '_trash_or_restore_message_template',
+				'capability' => 'ee_delete_message',
+				'obj_id' => $grp_id,
+				'args' => array( 'trash' => true ),
+				'noheader' => true
+			),
+			'restore_message_template' => array(
+				'func' => '_trash_or_restore_message_template',
+				'capability' => 'ee_delete_message',
+				'obj_id' => $grp_id,
+				'args' => array( 'trash' => false, 'all' => true ),
+				'noheader' => true
+			),
+			'restore_message_template_context' => array(
+				'func' => '_trash_or_restore_message_template',
+				'capability' => 'ee_delete_message',
+				'obj_id' => $grp_id,
+				'args' => array('trash' => false),
+				'noheader' => true
+			),
+			'delete_message_template' => array(
+				'func' => '_delete_message_template',
+				'capability' => 'ee_delete_message',
+				'obj_id' => $grp_id,
+				'noheader' => true
+			),
+			'reset_to_default' => array(
+				'func' => '_reset_to_default_template',
+				'capability' => 'ee_edit_message',
+				'obj_id' => $grp_id,
+				'noheader' => true
+			),
+			'settings' => array(
+				'func' => '_settings',
+				'capability' => 'manage_options'
+			),
+			'generate_now' => array(
+				'func' => '_generate_now',
+				'capability' => 'ee_send_message',
+				'noheader' => true
+			),
+			'generate_and_send_now' => array(
+				'func' => '_generate_and_send_now',
+				'capability' => 'ee_send_message',
+				'noheader' => true
+			),
+			'queue_for_resending' => array(
+				'func' => '_queue_for_resending',
+				'capability' => 'ee_send_message',
+				'noheader' => true
+			),
+			'send_now' => array(
+				'func' => '_send_now',
+				'capability' => 'ee_send_message',
+				'noheader' => true
+			),
+			'delete_ee_message' => array(
+				'func' => '_delete_ee_messages',
+				'capability' => 'ee_delete_message',
+				'noheader' => true
+			),
+			'delete_ee_messages' => array(
+				'func' => '_delete_ee_messages',
+				'capability' => 'ee_delete_messages',
+				'noheader' => true,
+				'obj_id' => $msg_id
+			)
 		);
 	}
 
@@ -347,28 +354,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
-
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
 					'label' => __('Message Activity', 'event_espresso'),
 					'order' => 10
-					),
+				),
 				'list_table' => 'EE_Message_List_Table',
 				'qtips' => array( 'EE_Message_List_Table_Tips' ),
 				'require_nonce' => false
-				),
+			),
 			'global_mtps' => array(
 				'nav' => array(
 					'label' => __('Default Message Templates', 'event_espresso'),
 					'order' => 20
-					),
+				),
 				'list_table' => 'Messages_Template_List_Table',
 				'help_tabs' => array(
 					'messages_overview_help_tab' => array(
 						'title' => __('Messages Overview', 'event_espresso'),
 						'filename' => 'messages_overview'
-						),
+					),
 					'messages_overview_messages_table_column_headings_help_tab' => array(
 						'title' => __('Messages Table Column Headings', 'event_espresso'),
 						'filename' => 'messages_overview_table_column_headings'
@@ -396,12 +402,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				),
 				'help_tour' => array( 'Messages_Overview_Help_Tour' ),
 				'require_nonce' => false
-				),
+			),
 			'custom_mtps' => array(
 				'nav' => array(
 					'label' => __('Custom Message Templates', 'event_espresso'),
 					'order' => 30
-					),
+				),
 				'help_tabs' => array(),
 				'help_tour' => array(),
 				'require_nonce' => false
@@ -411,9 +417,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'label' => __('Add New Message Templates', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false
-					),
-				'require_nonce' => false
 				),
+				'require_nonce' => false
+			),
 			'edit_message_template' => array(
 				'labels' => array(
 					'buttons' => array(
@@ -426,70 +432,69 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 5,
 					'persistent' => false,
 					'url' => ''
-					),
+				),
 				'metaboxes' => array('_publish_post_box', '_register_edit_meta_boxes'),
 				'has_metaboxes' => true,
 				'help_tour' => array( 'Message_Templates_Edit_Help_Tour' ),
 				'help_tabs' => array(
-						'edit_message_template' => array(
-							'title' => __('Message Template Editor', 'event_espresso'),
-							'callback' => 'edit_message_template_help_tab'
-							),
-						'message_templates_help_tab' => array(
-							'title' => __('Message Templates', 'event_espresso'),
-							'filename' => 'messages_templates'
-							),
-						'message_template_shortcodes' => array(
-							'title' => __('Message Shortcodes', 'event_espresso'),
-							'callback' => 'message_template_shortcodes_help_tab'
-							),
-						'message_preview_help_tab' => array(
-							'title' => __('Message Preview', 'event_espresso'),
-							'filename' => 'messages_preview'
-							),
+					'edit_message_template' => array(
+						'title' => __('Message Template Editor', 'event_espresso'),
+						'callback' => 'edit_message_template_help_tab'
 					),
-				'require_nonce' => false
+					'message_templates_help_tab' => array(
+						'title' => __('Message Templates', 'event_espresso'),
+						'filename' => 'messages_templates'
+					),
+					'message_template_shortcodes' => array(
+						'title' => __('Message Shortcodes', 'event_espresso'),
+						'callback' => 'message_template_shortcodes_help_tab'
+					),
+					'message_preview_help_tab' => array(
+						'title' => __('Message Preview', 'event_espresso'),
+						'filename' => 'messages_preview'
+					),
 				),
+				'require_nonce' => false
+			),
 			'display_preview_message' => array(
 				'nav' => array(
 					'label' => __('Message Preview', 'event_espresso'),
 					'order' => 5,
 					'url' => '',
 					'persistent' => false
-					),
-				'help_tabs' => array(
-						'preview_message' => array(
-							'title' => __('About Previews', 'event_espresso'),
-							'callback' => 'preview_message_help_tab'
-							)
-					),
-				'require_nonce' => false
 				),
+				'help_tabs' => array(
+					'preview_message' => array(
+						'title' => __('About Previews', 'event_espresso'),
+						'callback' => 'preview_message_help_tab'
+					)
+				),
+				'require_nonce' => false
+			),
 			'settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 40
-					),
+				),
 				'metaboxes' => array('_messages_settings_metaboxes'),
 				'help_tabs' => array(
-						'messages_settings_help_tab' => array(
-							'title' => __('Messages Settings', 'event_espresso'),
-							'filename' => 'messages_settings'
-							),
-						'messages_settings_message_types_help_tab' => array(
-							'title' => __('Activating / Deactivating Message Types', 'event_espresso'),
-							'filename' => 'messages_settings_message_types'
-							),
-						'messages_settings_messengers_help_tab' => array(
-							'title' => __('Activating / Deactivating Messengers', 'event_espresso'),
-							'filename' => 'messages_settings_messengers'
-							),
+					'messages_settings_help_tab' => array(
+						'title' => __('Messages Settings', 'event_espresso'),
+						'filename' => 'messages_settings'
 					),
+					'messages_settings_message_types_help_tab' => array(
+						'title' => __('Activating / Deactivating Message Types', 'event_espresso'),
+						'filename' => 'messages_settings_message_types'
+					),
+					'messages_settings_messengers_help_tab' => array(
+						'title' => __('Activating / Deactivating Messengers', 'event_espresso'),
+						'filename' => 'messages_settings_messengers'
+					),
+				),
 				'help_tour' => array( 'Messages_Settings_Help_Tour' ),
 				'require_nonce' => false
-				)
+			)
 		);
-
 	}
 
 
@@ -541,43 +546,37 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function messages_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_help_tab.template.php';
-		EEH_Template::display_template( $templatepath, array());
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_help_tab.template.php' );
 	}
 
 
 	public function messengers_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php';
-		EEH_Template::display_template( $templatepath, array());
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_messenger_help_tab.template.php' );
 	}
 
 
 	public function message_types_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_type_help_tab.template.php';
-		EEH_Template::display_template( $templatepath, array());
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_message_type_help_tab.template.php' );
 	}
 
 
 	public function messages_overview_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_overview_help_tab.template.php';
-		EEH_Template::display_template( $templatepath, array());
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_overview_help_tab.template.php' );
 	}
 
 
 	public function message_templates_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php';
-		EEH_Template::display_template( $templatepath, array());
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_message_templates_help_tab.template.php' );
 	}
 
 
 	public function edit_message_template_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php';
 		$args['img1'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/editor.png' . '" alt="' . esc_attr__('Editor Title', 'event_espresso') . '" />';
 		$args['img2'] = '<img src="' . EE_MSG_ASSETS_URL . 'images/switch-context.png' . '" alt="' . esc_attr__('Context Switcher and Preview', 'event_espresso') . '" />';
 		$args['img3'] = '<img class="left" src="' . EE_MSG_ASSETS_URL . 'images/form-fields.png' . '" alt="' . esc_attr__('Message Template Form Fields', 'event_espresso') . '" />';
 		$args['img4'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/shortcodes-metabox.png' . '" alt="' . esc_attr__('Shortcodes Metabox', 'event_espresso') . '" />';
 		$args['img5'] = '<img class="right" src="' . EE_MSG_ASSETS_URL . 'images/publish-meta-box.png' . '" alt="' . esc_attr__('Publish Metabox', 'event_espresso') . '" />';
-		EEH_Template::display_template( $templatepath, $args);
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_templates_editor_help_tab.template.php', $args);
 	}
 
 
@@ -585,25 +584,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function message_template_shortcodes_help_tab() {
 		$this->_set_shortcodes();
 		$args['shortcodes'] = $this->_shortcodes;
-		$template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_shortcodes_help_tab.template.php';
-		EEH_Template::display_template( $template_path, $args );
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_shortcodes_help_tab.template.php', $args );
 	}
 
 
 
 	public function preview_message_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php';
-		EEH_Template::display_template( $templatepath, array());
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_preview_help_tab.template.php' );
 	}
 
 
 	public function settings_help_tab() {
-		$templatepath = EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php';
 		$args['img1'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-active.png' . '" alt="' . esc_attr__('Active Email Tab', 'event_espresso') . '" />';
 		$args['img2'] = '<img class="inline-text" src="' . EE_MSG_ASSETS_URL . 'images/email-tab-inactive.png' . '" alt="' . esc_attr__('Inactive Email Tab', 'event_espresso') . '" />';
 		$args['img3'] = '<div class="switch"><input id="ee-on-off-toggle-on" class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked="checked"><label for="ee-on-off-toggle-on"></label>';
 		$args['img4'] = '<div class="switch"><input id="ee-on-off-toggle-on" class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox"><label for="ee-on-off-toggle-on"></label>';
-		EEH_Template::display_template( $templatepath, $args);
+		EEH_Template::display_template( EE_MSG_TEMPLATE_PATH . 'ee_msg_messages_settings_help_tab.template.php', $args);
 	}
 
 
@@ -1416,7 +1412,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['before_admin_page_content'] .= $this->_add_form_element_before();
 		$this->_template_args['after_admin_page_content'] = $this->_add_form_element_after();
 
-		$this->_template_path = $this->_template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
+		$this->_template_path = $this->_template_args['GRP_ID']
+			? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php'
+			: EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
 		//send along EE_Message_Template_Group object for further template use.
 		$this->_template_args['MTP'] = $message_template_group;
@@ -1464,7 +1462,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @return json json object
+	 * @return string json object
 	 */
 	public function switch_template_pack() {
 		$GRP_ID = ! empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
@@ -1530,7 +1528,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 
 
-			//note this is ONLY deleteing the template fields (Message Template rows) NOT the message template group.
+			//note this is ONLY deleting the template fields (Message Template rows) NOT the message template group.
 			$success = $this->_delete_mtp_permanently( $GRP_ID, false );
 
 			if ( $success ) {
@@ -1574,7 +1572,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * Retrieve and set the message preview for display.
 	 *
 	 * @param bool $send if TRUE then we are doing an actual TEST send with the results of the preview.
-	 *
+	 * @return string
 	 */
 	public function _preview_message( $send = false ) {
 		//first make sure we've got the necessary parameters
@@ -1840,7 +1838,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 *
 	 * @access  protected
 	 *
-	 * @param  array   $fields include an array of specific field name sthat you want to be used to get the shortcodes for.
+	 * @param  array   $fields include an array of specific field names that you want to be used to get the shortcodes for.
 	 *                        Defaults to all (for the given context)
 	 * @param  boolean $merged Whether to merge all the shortcodes into one list of unique shortcodes
 	 *
