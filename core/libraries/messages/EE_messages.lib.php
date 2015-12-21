@@ -4,26 +4,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license				http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_Messages class
  *
  * This class is the main controller class for EE_Messages, it delegates messages to the messengers and contains other methods for obtaining various details about the active messengers and message types.
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage	includes/core/messages
- * @author				Darren Ethier, Brent Christensen
+ * @author		Darren Ethier, Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -37,7 +24,7 @@ class EE_Messages {
 	 *      'messenger_name' => EE_messenger
 	 * )
 	 *
-*@type EE_Messenger[]
+	 * @type EE_Messenger[]
 	 */
 	protected $_active_messengers = array();
 
@@ -113,7 +100,7 @@ class EE_Messages {
 	 * array(
 	 *      'message_type_name' => array(
 	 *          'context_slug' => array(
-	 *              'label' => 'localized lable for context',
+	 *              'label' => 'localized label for context',
 	 *              'description' => 'localized description for context'
 	 *          )
 	 *      )
@@ -136,18 +123,21 @@ class EE_Messages {
 
 	/**
 	 * EE_Messages constructor.
+	 *
+	 * @param \EE_Messenger_Collection_Loader $Messenger_Collection_Loader
 	 */
-	function __construct( EE_Messenger_Collection $messengers ) {
-		$this->set_messenger_collection( $messengers );
+	function __construct( EE_Messenger_Collection_Loader $Messenger_Collection_Loader ) {
+		$Messenger_Collection_Loader = new EE_Messenger_Collection_Loader( new EE_Messenger_Collection() );
+		$Messenger_Collection_Loader->load_messengers_from_folder();
+		$this->set_messenger_collection( $Messenger_Collection_Loader->messenger_collection() );
 		//load helper
 		EE_Registry::instance()->load_helper('MSG_Template');
-
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
 
 		//load debug tools
-		EE_Registry::instance()->load_helper('Debug_Tools');
+		//EE_Registry::instance()->load_helper('Debug_Tools');
 	}
 
 
