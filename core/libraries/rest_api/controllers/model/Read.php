@@ -56,8 +56,7 @@ class Read extends Base {
 			return $controller->send_response(
 					$controller->get_entities_from_model(
 							$controller->get_model_version_info()->load_model( $model_name_singular ),
-							$request->get_param( 'filter' ),
-							$request->get_param( 'include' )
+							$request
 					)
 			);
 		} catch( \Exception $e ) {
@@ -91,19 +90,11 @@ class Read extends Base {
 					)
 				);
 			}
-			$filter_param = $request->get_param( 'filter' );
-			if( is_array( $filter_param ) &&
-				isset( $filter_param[ 'caps' ] ) ) {
-				$caps = $filter_param[ 'caps' ];
-			} else {
-				$caps = \EEM_Base::caps_read;
-			}
 			return $controller->send_response(
 					$controller->get_entity_from_model(
 							$controller->get_model_version_info()->load_model( $model_name_singular ),
-							$request->get_param( 'id' ),
-							$request->get_param( 'include' ),
-							$controller->validate_context( $caps ) )
+							$request
+						)
 				);
 		} catch( \Exception $e ) {
 			return $controller->send_response( $e );
@@ -155,10 +146,11 @@ class Read extends Base {
 
 			return $controller->send_response(
 					$controller->get_entities_from_relation(
-							$request->get_param( 'id' ),
-							$main_model->related_settings_for( $related_model_name_singular ) ,
-							$request->get_param( 'filter' ),
-							$request->get_param( 'include' ) ) );
+						$request->get_param( 'id' ),
+						$main_model->related_settings_for( $related_model_name_singular ) ,
+						$request 
+					)
+				);
 		} catch( \Exception $e ) {
 			return $controller->send_response( $e );
 		}
@@ -170,42 +162,11 @@ class Read extends Base {
 	 * Gets a collection for the given model and filters
 	 *
 	 * @param \EEM_Base $model
-	 * @param array $filter The query parameters to be passed onto the EE models system.
-	 *                      Using syntax like:
-	 *                      "/wp-json/ee4/v2/events?filter[where][EVT_name][]=like&filter[where][EVT_name][]=%25monkey%25
-	 *                      to create a query params array like:
-	 *                      "array(array('EVT_name' => array('LIKE','%monkey%'))",
-	 *                      which will create SQL like "WHERE EVT_name LIKE '%monkey%'"
-	 * @param string $include string indicating which fields to include in the response,
-	 *                        including fields on related entities.
-	 *                        Eg, when querying for events, an include string like:
-	 *                        "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price"
-	 *                        instructs us to only include the event's name and description,
-	 *                        each related datetime, and each related datetime's ticket's name and price.
-	 *                        Eg json would be:
-	 *                          '{
-	 *                              "EVT_ID":12,
-	 * 								"EVT_name":"star wars party",
-	 * 								"EVT_desc":"so cool...",
-	 * 								"datetimes":[{
-	 * 									"DTT_ID":123,...,
-	 * 									"tickets":[{
-	 * 										"TKT_ID":234,
-	 * 										"TKT_name":"student rate",
-	 * 										"TKT_price":32.0
-	 * 									},...]
-	 * 								}]
-	 * 							}',
-	 *                        ie, events with all their associated datetimes
-	 *                        (including ones that are trashed) embedded in the json object,
-	 *                        and each datetime also has each associated ticket embedded in its json object.
+	 * @param \WP_REST_Request $request
 	 * @return array
 	 */
-	public function get_entities_from_model( $model, $filter, $include ) {
-		if( ! $filter ) {
-			$filter = array();
-		}
-		$query_params = $this->create_model_query_params( $model, $filter );
+	public function get_entities_from_model( $model, $request) {
+		$query_params = $this->create_model_query_params( $model, $request->get_params() );
 		if( ! Capabilities::current_user_has_partial_access_to( $model, $query_params[ 'caps' ] ) ) {
 			$model_name_plural = \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() );
 			return new \WP_Error(
@@ -223,7 +184,12 @@ class Read extends Base {
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
 		foreach ( $results as $result ) {
-			$nice_results[ ] = $this->create_entity_from_wpdb_result( $model, $result, $include,  $query_params[ 'caps' ] );
+			$nice_results[ ] = $this->create_entity_from_wpdb_result( 
+					$model, 
+					$result, 
+					$request->get_param( 'include' ),  
+					$query_params[ 'caps' ] 
+				);
 		}
 		return $nice_results;
 	}
@@ -236,12 +202,11 @@ class Read extends Base {
 	 * the join-model-object into the results
 	 * @param string $id the ID of the thing we are fetching related stuff from
 	 * @param \EE_Model_Relation_Base $relation
-	 * @param array $filter @see Read:handle_request_get_all
-	 * @param string $include @see Read:handle_request_get_all
+	 * @param \WP_REST_Request $request
 	 * @return array
 	 */
-	public function get_entities_from_relation( $id,  $relation, $filter, $include ) {
-		$context = $this->validate_context( isset( $filter[ 'caps' ] ) ? $filter[ 'caps' ] : \EEM_Base::caps_read);
+	public function get_entities_from_relation( $id,  $relation, $request ) {
+		$context = $this->validate_context( $request->get_param( 'caps' ));
 		$model = $relation->get_this_model();
 		$related_model = $relation->get_other_model();
 		//check if they can access the 1st model object
@@ -272,7 +237,7 @@ class Read extends Base {
 						'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s'
 					),
 					$related_model_name_maybe_plural,
-					$related_model->get_this_model_name(),
+					$relation->get_this_model()->get_this_model_name(),
 					implode(
 						',',
 						array_keys(
@@ -283,7 +248,7 @@ class Read extends Base {
 				array( 'status' => 403 )
 			);
 		}
-		$query_params = $this->create_model_query_params( $relation->get_other_model(), $filter, $context );
+		$query_params = $this->create_model_query_params( $relation->get_other_model(), $request->get_params() );
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
@@ -294,7 +259,7 @@ class Read extends Base {
 			$nice_result = $this->create_entity_from_wpdb_result(
 				$relation->get_other_model(),
 				$result,
-				$include,
+				$request->get_param( 'include' ),
 				$query_params[ 'caps' ]
 			);
 			if( $relation instanceof \EE_HABTM_Relation ) {
@@ -303,7 +268,7 @@ class Read extends Base {
 				$join_model_result = $this->create_entity_from_wpdb_result(
 					$relation->get_join_model(),
 					$result,
-					$include,
+					$request->get_param( 'include' ),
 					$query_params[ 'caps' ]
 				);
 				$joined_result = array_merge( $nice_result, $join_model_result );
@@ -328,7 +293,29 @@ class Read extends Base {
 	 * Changes database results into REST API entities
 	 * @param \EEM_Base $model
 	 * @param array $db_row like results from $wpdb->get_results()
-	 * @param string $include @see Read:handle_request_get_all
+	 * @param string $include string indicating which fields to include in the response,
+	 *                        including fields on related entities.
+	 *                        Eg, when querying for events, an include string like:
+	 *                        "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price"
+	 *                        instructs us to only include the event's name and description,
+	 *                        each related datetime, and each related datetime's ticket's name and price.
+	 *                        Eg json would be:
+	 *                          '{
+	 *                              "EVT_ID":12,
+	 * 								"EVT_name":"star wars party",
+	 * 								"EVT_desc":"so cool...",
+	 * 								"datetimes":[{
+	 * 									"DTT_ID":123,...,
+	 * 									"tickets":[{
+	 * 										"TKT_ID":234,
+	 * 										"TKT_name":"student rate",
+	 * 										"TKT_price":32.0
+	 * 									},...]
+	 * 								}]
+	 * 							}',
+	 *                        ie, events with all their associated datetimes
+	 *                        (including ones that are trashed) embedded in the json object,
+	 *                        and each datetime also has each associated ticket embedded in its json object.
 	 * @param string $context one of the return values from EEM_Base::valid_cap_contexts()
 	 * @return array ready for being converted into json for sending to client
 	 */
@@ -505,25 +492,24 @@ class Read extends Base {
 	/**
 	 * Gets the one model object with the specified id for the specified model
 	 * @param \EEM_Base $model
-	 * @param string $id ID of the entity we want to retrieve
-	 * @param string $include @see Read:handle_request_get_all
-	 * @param string string one of the return values from EEM_Base::valid_cap_contexts()
+	 * @param \WP_REST_Request $request
 	 * @return array
 	 */
-	public function get_entity_from_model( $model, $id, $include, $context ) {
-		if( $context == null ) {
-			$context = \EEM_Base::caps_read;
-		}
-		$query_params = array( array( $model->primary_key_name() => $id ),'limit' => 1);
+	public function get_entity_from_model( $model, $request ) {
+		$query_params = array( array( $model->primary_key_name() => $request->get_param( 'id' ) ),'limit' => 1);
 		if( $model instanceof \EEM_Soft_Delete_Base ){
 			$query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		}
 		$restricted_query_params = $query_params;
-		$restricted_query_params[ 'caps' ] =  $context;
+		$restricted_query_params[ 'caps' ] =  $this->validate_context(  $request->get_param( 'caps' ) );
 		$this->_set_debug_info( 'model query params', $restricted_query_params );
 		$model_rows = $model->get_all_wpdb_results( $restricted_query_params );
 		if ( ! empty ( $model_rows ) ) {
-			return $this->create_entity_from_wpdb_result( $model, array_shift( $model_rows ), $include, $context );
+			return $this->create_entity_from_wpdb_result( 
+				$model, 
+				array_shift( $model_rows ), 
+				$request->get_param( 'include' ), 
+				$request->get_param( 'caps' ) );
 		} else {
 			//ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
 			$lowercase_model_name = strtolower( $model->get_this_model_name() );
@@ -535,7 +521,7 @@ class Read extends Base {
 					sprintf(
 						__( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ),
 						strtolower( $model->get_this_model_name() ),
-						Capabilities::get_missing_permissions_string( $model, $context )
+						Capabilities::get_missing_permissions_string( $model, $request->get_param( 'caps' ) )
 					),
 					array( 'status' => 403 )
 				);
@@ -575,20 +561,20 @@ class Read extends Base {
 	 * Translates API filter get parameter into $query_params array used by EEM_Base::get_all()
 	 *
 	 * @param \EEM_Base $model
-	 * @param array     $filter from $_GET['filter'] parameter @see Read:handle_request_get_all
+	 * @param array     $query_parameters from $_GET parameter @see Read:handle_request_get_all
 	 * @return array like what EEM_Base::get_all() expects or FALSE to indicate
 	 *                          that absolutely no results should be returned
 	 * @throws \EE_Error
 	 */
-	public function create_model_query_params( $model, $filter ) {
+	public function create_model_query_params( $model, $query_parameters ) {
 		$model_query_params = array( );
-		if ( isset( $filter[ 'where' ] ) ) {
-			$model_query_params[ 0 ] = $this->prepare_rest_query_params_key_for_models( $model, $filter[ 'where' ] );
+		if ( isset( $query_parameters[ 'where' ] ) ) {
+			$model_query_params[ 0 ] = $this->prepare_rest_query_params_key_for_models( $model, $query_parameters[ 'where' ] );
 		}
-		if ( isset( $filter[ 'order_by' ] ) ) {
-			$order_by = $filter[ 'order_by' ];
-		} elseif ( isset( $filter[ 'orderby' ] ) ) {
-			$order_by = $filter[ 'orderby' ];
+		if ( isset( $query_parameters[ 'order_by' ] ) ) {
+			$order_by = $query_parameters[ 'order_by' ];
+		} elseif ( isset( $query_parameters[ 'orderby' ] ) ) {
+			$order_by = $query_parameters[ 'orderby' ];
 		}else{
 			$order_by = null;
 		}
@@ -597,10 +583,10 @@ class Read extends Base {
 				$this->prepare_rest_query_params_key_for_models( $model, $order_by ) :
 				$this->prepare_raw_field_for_use_in_models( $order_by );
 		}
-		if ( isset( $filter[ 'group_by' ] ) ) {
-			$group_by = $filter[ 'group_by' ];
-		} elseif ( isset( $filter[ 'groupby' ] ) ) {
-			$group_by = $filter[ 'groupby' ];
+		if ( isset( $query_parameters[ 'group_by' ] ) ) {
+			$group_by = $query_parameters[ 'group_by' ];
+		} elseif ( isset( $query_parameters[ 'groupby' ] ) ) {
+			$group_by = $query_parameters[ 'groupby' ];
 		}else{
 			$group_by = null;
 		}
@@ -612,22 +598,22 @@ class Read extends Base {
 			}
 			$model_query_params[ 'group_by' ] = $group_by;
 		}
-		if ( isset( $filter[ 'having' ] ) ) {
+		if ( isset( $query_parameters[ 'having' ] ) ) {
 			//@todo: no good for permissions
-			$model_query_params[ 'having' ] = $this->prepare_rest_query_params_key_for_models( $model, $filter[ 'having' ] );
+			$model_query_params[ 'having' ] = $this->prepare_rest_query_params_key_for_models( $model, $query_parameters[ 'having' ] );
 		}
-		if ( isset( $filter[ 'order' ] ) ) {
-			$model_query_params[ 'order' ] = $filter[ 'order' ];
+		if ( isset( $query_parameters[ 'order' ] ) ) {
+			$model_query_params[ 'order' ] = $query_parameters[ 'order' ];
 		}
-		if ( isset( $filter[ 'mine' ] ) ){
+		if ( isset( $query_parameters[ 'mine' ] ) ){
 			$model_query_params = $model->alter_query_params_to_only_include_mine( $model_query_params );
 		}
-		if( isset( $filter[ 'limit' ] ) ) {
+		if( isset( $query_parameters[ 'limit' ] ) ) {
 			//limit should be either a string like '23' or '23,43', or an array with two items in it
-			if( is_string( $filter[ 'limit' ] ) ) {
-				$limit_array = explode(',', $filter['limit']);
+			if( is_string( $query_parameters[ 'limit' ] ) ) {
+				$limit_array = explode(',', $query_parameters['limit']);
 			}else {
-				$limit_array = $filter[ 'limit' ];
+				$limit_array = $query_parameters[ 'limit' ];
 			}
 			$sanitized_limit = array();
 			foreach( $limit_array as $key => $limit_part ) {
@@ -635,7 +621,7 @@ class Read extends Base {
 					throw new \EE_Error(
 						sprintf(
 							__( 'An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.', 'event_espresso' ),
-							json_encode( $filter[ 'limit' ] )
+							json_encode( $query_parameters[ 'limit' ] )
 						)
 					);
 				}
@@ -645,12 +631,12 @@ class Read extends Base {
 		}else{
 			$model_query_params[ 'limit' ] = 50;
 		}
-		if( isset( $filter[ 'caps' ] ) ) {
-			$model_query_params[ 'caps' ] = $this->validate_context( $filter[ 'caps' ] );
+		if( isset( $query_parameters[ 'caps' ] ) ) {
+			$model_query_params[ 'caps' ] = $this->validate_context( $query_parameters[ 'caps' ] );
 		}else{
 			$model_query_params[ 'caps' ] = \EEM_Base::caps_read;
 		}
-		return apply_filters( 'FHEE__Read__create_model_query_params', $model_query_params, $filter, $model );
+		return apply_filters( 'FHEE__Read__create_model_query_params', $model_query_params, $query_parameters, $model );
 	}
 
 
