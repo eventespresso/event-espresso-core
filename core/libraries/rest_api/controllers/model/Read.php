@@ -577,9 +577,7 @@ class Read extends Base {
 			$order_by = null;
 		}
 		if( $order_by !== null ){
-			$model_query_params[ 'order_by' ] = is_array( $order_by ) ?
-				$this->prepare_rest_query_params_key_for_models( $model, $order_by ) :
-				$this->prepare_raw_field_for_use_in_models( $order_by );
+			$model_query_params[ 'order_by' ] = $this->prepare_rest_query_params_key_for_models( $model, $order_by );
 		}
 		if ( isset( $query_parameters[ 'group_by' ] ) ) {
 			$group_by = $query_parameters[ 'group_by' ];
@@ -591,8 +589,6 @@ class Read extends Base {
 		if( $group_by !== null ){
 			if( is_array( $group_by ) ) {
 				$group_by = $this->prepare_rest_query_params_values_for_models( $model, $group_by );
-			}else{
-				$group_by = $this->prepare_raw_field_for_use_in_models( $model, $group_by );
 			}
 			$model_query_params[ 'group_by' ] = $group_by;
 		}
@@ -649,7 +645,6 @@ class Read extends Base {
 	public function prepare_rest_query_params_key_for_models( $model,  $query_params ) {
 		$model_ready_query_params = array();
 		foreach( $query_params as $key => $value ) {
-			$key = $this->prepare_raw_field_for_use_in_models( $key );
 			if( is_array( $value ) ) {
 				$model_ready_query_params[ $key ] = $this->prepare_rest_query_params_key_for_models( $model, $value );
 			}else{
@@ -663,28 +658,11 @@ class Read extends Base {
 		foreach( $query_params as $key => $value ) {
 			if( is_array( $value ) ) {
 				$model_ready_query_params[ $key ] = $this->prepare_rest_query_params_values_for_models( $model, $value );
-			}else{
-				$model_ready_query_params[ $key ] = $this->prepare_raw_field_for_use_in_models( $value );
 			}
 		}
 		return $model_ready_query_params;
 	}
 
-	/**
-	 * Changes a string like 'Event.EVT_desc_raw*foobar' into
-	 * 'Event.EVT_desc*foobar' in order to prepare it for use by EE models
-	 * @param mixed $query_param
-	 * @return string
-	 */
-	public function prepare_raw_field_for_use_in_models( $query_param ) {
-		$parts = explode( '*', $query_param );
-		$key_sans_star = count( $parts) > 1 ? reset( $parts ) : $query_param;
-		$after_star_content = count( $parts ) > 1 ? end( $parts) : '';
-		if(  strpos( $key_sans_star, '_raw' ) == strlen( $key_sans_star ) - strlen( '_raw' ) ){
-			$key_sans_star = substr( $key_sans_star, 0, strpos( $key_sans_star, '_raw' ) );
-		}
-		return $after_star_content ? $key_sans_star . '*' . $after_star_content : $key_sans_star;
-	}
 
 	/**
 	 * Parses the $include_string so we fetch all the field names relating to THIS model
