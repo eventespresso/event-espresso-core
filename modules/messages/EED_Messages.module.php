@@ -22,9 +22,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 class EED_Messages  extends EED_Module {
 
 	/**
-	 * This holds the EE_messages controller
+	 * This holds the EE_Messages controller
 	 *
-	 * @var EE_messages
+	 * @var EE_Messages
 	 */
 	protected  static $_EEMSG;
 
@@ -346,10 +346,10 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	protected static function _load_controller() {
-		if ( ! self::$_EEMSG instanceof EE_messages ) {
+		if ( ! self::$_EEMSG instanceof EE_Messages ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
-			self::$_EEMSG = EE_Registry::instance()->load_lib( 'messages' );
+			self::$_EEMSG = EE_Registry::instance()->load_lib( 'Messages' );
 			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor', self::$_EEMSG );
 		}
 	}
@@ -436,7 +436,7 @@ class EED_Messages  extends EED_Module {
 
 		$mtgs = $mtgs + self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers( 'registration_summary', array( $registration->transaction(), null ) );
 
-		//batchqueue and initiate request
+		//batch queue and initiate request
 		self::$_MSG_PROCESSOR->batch_queue_for_generation_and_persist( $mtgs );
 		self::$_MSG_PROCESSOR->get_queue()->initiate_request_by_priority();
 	}
