@@ -172,7 +172,7 @@ class Read extends Base {
 			return new \WP_Error(
 				sprintf( 'rest_%s_cannot_list', $model_name_plural ),
 				sprintf(
-					__( 'Sorry, you are not allowed to list %s. Missing permissions: %s' ),
+					__( 'Sorry, you are not allowed to list %s. Missing permissions: %s', 'event_espresso' ),
 					$model_name_plural,
 					Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] )
 				),
@@ -233,9 +233,7 @@ class Read extends Base {
 			return new \WP_Error(
 				sprintf( 'rest_%s_cannot_list', $related_model_name_maybe_plural ),
 				sprintf(
-					__(
-						'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s'
-					),
+					__(	'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s', 'event_espresso' ),
 					$related_model_name_maybe_plural,
 					$relation->get_this_model()->get_this_model_name(),
 					implode(
