@@ -72,7 +72,7 @@ final class EE_Front_Controller {
 		EE_Module_Request_Router $Module_Request_Router
 	) {
 		$this->EE_Registry = $Registry;
-		$this->EE_Request_Handler = $Request_Handler;
+		$this->Request_Handler = $Request_Handler;
 		$this->Module_Request_Router = $Module_Request_Router;
 		// make sure template tags are loaded immediately so that themes don't break
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'load_espresso_template_tags' ), 10 );
@@ -107,6 +107,24 @@ final class EE_Front_Controller {
 		if ( apply_filters( 'FHEE__EE_Front_Controller____construct__set_test_cookie', true )) {
 			setcookie( 'ee_cookie_test', uniqid(), time() + 24 * HOUR_IN_SECONDS, '/' );
 		}
+	}
+
+
+
+	/**
+	 * @return EE_Request_Handler
+	 */
+	public function Request_Handler() {
+		return $this->Request_Handler;
+	}
+
+
+
+	/**
+	 * @return EE_Module_Request_Router
+	 */
+	public function Module_Request_Router() {
+		return $this->Module_Request_Router;
 	}
 
 
