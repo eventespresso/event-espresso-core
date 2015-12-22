@@ -148,7 +148,7 @@ class Read extends Base {
 					$controller->get_entities_from_relation(
 						$request->get_param( 'id' ),
 						$main_model->related_settings_for( $related_model_name_singular ) ,
-						$request 
+						$request
 					)
 				);
 		} catch( \Exception $e ) {
@@ -172,7 +172,7 @@ class Read extends Base {
 			return new \WP_Error(
 				sprintf( 'rest_%s_cannot_list', $model_name_plural ),
 				sprintf(
-					__( 'Sorry, you are not allowed to list %s. Missing permissions: %s', 'event_espresso' ),
+					__( 'Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso' ),
 					$model_name_plural,
 					Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] )
 				),
@@ -184,11 +184,11 @@ class Read extends Base {
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
 		foreach ( $results as $result ) {
-			$nice_results[ ] = $this->create_entity_from_wpdb_result( 
-					$model, 
-					$result, 
-					$request->get_param( 'include' ),  
-					$query_params[ 'caps' ] 
+			$nice_results[ ] = $this->create_entity_from_wpdb_result(
+					$model,
+					$result,
+					$request->get_param( 'include' ),
+					$query_params[ 'caps' ]
 				);
 		}
 		return $nice_results;
@@ -233,7 +233,7 @@ class Read extends Base {
 			return new \WP_Error(
 				sprintf( 'rest_%s_cannot_list', $related_model_name_maybe_plural ),
 				sprintf(
-					__(	'Sorry, you are not allowed to list %s related to %s. Missing permissions: %s', 'event_espresso' ),
+					__(	'Sorry, you are not allowed to list %1$s related to %2$s. Missing permissions: %3$s', 'event_espresso' ),
 					$related_model_name_maybe_plural,
 					$relation->get_this_model()->get_this_model_name(),
 					implode(
@@ -422,13 +422,13 @@ class Read extends Base {
 			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
 			if( $related_fields_to_include ) {
 				$pretend_related_request = new \WP_REST_Request();
-				$pretend_related_request->set_query_params( 
+				$pretend_related_request->set_query_params(
 					array(
-						'caps' => $context, 
+						'caps' => $context,
 						'include' => $this->extract_includes_for_this_model(
 								$include,
 								$relation_name
-							) 
+							)
 					)
 				);
 				$related_results = $this->get_entities_from_relation(
@@ -506,10 +506,10 @@ class Read extends Base {
 		$this->_set_debug_info( 'model query params', $restricted_query_params );
 		$model_rows = $model->get_all_wpdb_results( $restricted_query_params );
 		if ( ! empty ( $model_rows ) ) {
-			return $this->create_entity_from_wpdb_result( 
-				$model, 
-				array_shift( $model_rows ), 
-				$request->get_param( 'include' ), 
+			return $this->create_entity_from_wpdb_result(
+				$model,
+				array_shift( $model_rows ),
+				$request->get_param( 'include' ),
 				$this->validate_context( $request->get_param( 'caps' ) ) );
 		} else {
 			//ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
@@ -522,8 +522,8 @@ class Read extends Base {
 					sprintf(
 						__( 'Sorry, you cannot read this %1$s. Missing permissions are: %2$s', 'event_espresso' ),
 						strtolower( $model->get_this_model_name() ),
-						Capabilities::get_missing_permissions_string( 
-							$model, 
+						Capabilities::get_missing_permissions_string(
+							$model,
 							$this->validate_context( $request->get_param( 'caps' ) ) )
 					),
 					array( 'status' => 403 )
