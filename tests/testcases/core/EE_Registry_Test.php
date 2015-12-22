@@ -16,8 +16,44 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 	public function setUp() {
-		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.php';
+		add_filter(
+			'FHEE__EE_Registry____construct___class_abbreviations',
+			array( $this, 'unit_test_registry_class_abbreviations' )
+		);
+		add_filter(
+			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
+			array( $this, 'unit_test_auto_resolve_dependencies' )
+		);
+		add_filter(
+			'FHEE__EE_Registry__load_core__core_paths',
+			array( $this, 'unit_test_registry_core_paths' )
+		);
+		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.core.php';
 		parent::setUp();
+	}
+
+
+
+	public function unit_test_registry_class_abbreviations( $class_abbreviations = array() ) {
+		$class_abbreviations[ 'EE_Session_Mock' ] = 'SSN';
+		return $class_abbreviations;
+	}
+
+
+
+	public function unit_test_auto_resolve_dependencies( $class_dependencies = array() ) {
+		$class_dependencies[ 'EE_Session_Mock' ] = array( 'EE_Encryption' );
+		$class_dependencies[ 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' ] = array(
+			null, 'EE_Session_Mock', null
+		);
+		return $class_dependencies;
+	}
+
+
+
+	public function unit_test_registry_core_paths( $core_paths = array() ) {
+		$core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
+		return $core_paths;
 	}
 
 
@@ -121,7 +157,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// try to find the path to the EE_Session class
 		$this->assertEquals(
 			// expected
-			EE_CORE . 'EE_Session.core.php',
+			str_replace( array( '\\', '/' ), DS, EE_CORE . 'EE_Session.core.php' ),
 			// actual
 			EE_Registry_Mock::instance()->resolve_path(
 				'EE_Session',
@@ -330,6 +366,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertEquals( true, class_exists( 'EE_Front_Controller' ) );
 		// now attempt instantiation knowing that the EE_Front_Controller class
 		// injects the EE_Module_Request_Router class in the constructor
+		/** @type EE_Front_Controller $class_object */
 		$class_object = EE_Registry_Mock::instance()->create_object(
 			'EE_Front_Controller',
 			array(),
@@ -338,12 +375,13 @@ class EE_Registry_Test extends EE_UnitTestCase{
 			false,
 			true // RESOLVE DEPENDENCIES FLAG SET TO TRUE
 		);
-		//echo "\n\n EE_Front_Controller\n";
-		//var_dump( $class_object );
-		$this->assertEquals( true, $class_object instanceof EE_Front_Controller );
-		//echo "\n class_object->Module_Request_Router()\n";
+		$this->assertInstanceOf( 'EE_Front_Controller', $class_object );
+		//echo "\n Request_Handler: \n";
+		//var_dump( $class_object->Request_Handler() );
+		//echo "\n Module_Request_Router: \n";
 		//var_dump( $class_object->Module_Request_Router() );
-		$this->assertEquals( true, $class_object->Module_Request_Router() instanceof EE_Module_Request_Router );
+		$this->assertInstanceOf( 'EE_Request_Handler', $class_object->Request_Handler() );
+		$this->assertInstanceOf( 'EE_Module_Request_Router', $class_object->Module_Request_Router() );
 	}
 
 
@@ -441,7 +479,75 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
 		$this->assertNotSame( $model_a, $model_b2);
 	}
-}
 
+
+
+	/**
+	 * checks that type hinted classes in constructors are properly instantiated and passed
+	 * without negatively affecting other constructor parameters
+	 *
+	 * @author    Brent Christensen
+	 */
+	public function test_dependency_injection() {
+		// either need to set an autoloader for any dependency classes or just pre-load them
+		EE_Registry_Mock::instance()->load_core('EE_Session_Mock');
+		add_filter(
+			'FHEE__EE_Registry__load_service__service_paths',
+			function() {
+				return array(
+					EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'services' . DS
+				);
+			}
+		);
+		// test EE_Injector_Tester_With_Array_Session_Int_Constructor_Params
+		// with NO passed arguments
+		/** @type EE_Injector_Tester_With_Array_Session_Int_Constructor_Params $class */
+		$class = EE_Registry_Mock::instance()->load_service(
+			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params'
+		);
+		$this->assertEquals( array(), $class->array_property() );
+		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
+		$this->assertEquals( 0, $class->integer_property() );
+		// reset
+		EE_Registry_Mock::instance()->LIB->EE_Injector_Tester_With_Array_Session_Int_Constructor_Params = null;
+		// test EE_Injector_Tester_With_Array_Session_Int_Constructor_Params
+		// with numerically indexed array passed as argument 1
+		$numerically_indexed_array = array(
+			0 => 'zero',
+			1 => 'one',
+			2 => 'two',
+			3 => 'three',
+		);
+		/** @type EE_Injector_Tester_With_Array_Session_Int_Constructor_Params $class */
+		$class = EE_Registry_Mock::instance()->load_service(
+			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params',
+			array( $numerically_indexed_array )
+		);
+		$this->assertEquals( $numerically_indexed_array, $class->array_property() );
+		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
+		$this->assertEquals( 0, $class->integer_property() );
+		// reset
+		EE_Registry_Mock::instance()->LIB->EE_Injector_Tester_With_Array_Session_Int_Constructor_Params = null;
+		// test EE_Injector_Tester_With_Array_Session_Int_Constructor_Params
+		// with string indexed array passed as argument 1
+		// and the integer 2 passed as argument 3
+		$string_indexed_array = array(
+			'zero'  => 0,
+			'one'   => 1,
+			'two'   => 2,
+			'three' => 3,
+		);
+		/** @type EE_Injector_Tester_With_Array_Session_Int_Constructor_Params $class */
+		$class = EE_Registry_Mock::instance()->load_service(
+			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params',
+			array( $string_indexed_array, null, 2 )
+		);
+		$this->assertEquals( $string_indexed_array, $class->array_property() );
+		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
+		$this->assertEquals( 2, $class->integer_property() );
+	}
+
+
+}
 // End of file EE_Registry_Test.php
 // Location: /tests/testcases/core/EE_Registry_Test.php
