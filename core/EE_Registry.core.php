@@ -139,7 +139,7 @@ class EE_Registry {
 	 * @access public
 	 * @var array this is an array of all implemented model names (i.e. not the parent abstract models, or models
 	 * which don't actually fetch items from the DB in the normal way (ie, are not children of EEM_Base)).
-	 * Keys are model "shortnames" (eg "Event") as used in model relations, and values are
+	 * Keys are model "short names" (eg "Event") as used in model relations, and values are
 	 * classnames (eg "EEM_Event")
 	 */
 	public $non_abstract_db_models = array();
@@ -161,6 +161,14 @@ class EE_Registry {
 	 * @var    array
 	 */
 	public $main_file;
+
+	/**
+	 * array of ReflectionClass objects where the key is the class name
+	 *
+	 * @access    public
+	 * @var ReflectionClass[]
+	 */
+	public $_reflectors;
 
 
 
@@ -186,18 +194,24 @@ class EE_Registry {
 	 * @return \EE_Registry
 	 */
 	protected function __construct() {
-		$this->_class_abbreviations = array(
-			'EE_Config'          	=> 'CFG',
-			'EE_Session'         	=> 'SSN',
-			'EE_Capabilities'    	=> 'CAP',
-			'EE_Cart' 				=> 'CART',
-			'EE_Network_Config'  	=> 'NET_CFG',
-			'EE_Request_Handler' 	=> 'REQ',
+		$this->_class_abbreviations = apply_filters(
+			'FHEE__EE_Registry____construct___class_abbreviations',
+			array(
+				'EE_Config'          	=> 'CFG',
+				'EE_Session'         	=> 'SSN',
+				'EE_Capabilities'    	=> 'CAP',
+				'EE_Cart' 				=> 'CART',
+				'EE_Network_Config'  	=> 'NET_CFG',
+				'EE_Request_Handler' 	=> 'REQ',
+			)
 		);
-		$this->_auto_resolve_dependencies = array(
-			'EE_Session'         	=> array( 'EE_Encryption' ),
-			'EE_Cart' 				=> array( null, 'EE_Session' ),
-			'EE_Front_Controller' 	=> array( 'EE_Registry', 'EE_Request_Handler', 'EE_Module_Request_Router' ),
+		$this->_auto_resolve_dependencies = apply_filters(
+			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
+			array(
+				'EE_Session'         	=> array( 'EE_Encryption' ),
+				'EE_Cart' 				=> array( null, 'EE_Session' ),
+				'EE_Front_Controller' 	=> array( 'EE_Registry', 'EE_Request_Handler', 'EE_Module_Request_Router' ),
+			)
 		);
 		// class library
 		$this->LIB = new StdClass();
@@ -496,7 +510,17 @@ class EE_Registry {
 	 * @return null|object
 	 * @internal param string $file_path - file path including file name
 	 */
-	private function _load( $file_paths = array(), $class_prefix = 'EE_', $class_name = false, $type = 'class', $arguments = array(), $from_db = false, $cache = true, $load_only = false, $resolve_dependencies = false ) {
+	private function _load(
+		$file_paths = array(),
+		$class_prefix = 'EE_',
+		$class_name = false,
+		$type = 'class',
+		$arguments = array(),
+		$from_db = false,
+		$cache = true,
+		$load_only = false,
+		$resolve_dependencies = false
+	) {
 		// strip php file extension
 		$class_name = str_replace( '.php', '', trim( $class_name ) );
 		// does the class have a prefix ?
@@ -677,7 +701,7 @@ class EE_Registry {
 		// don't give up! you gotta...
 		try {
 			// create reflection
-			$reflector = new ReflectionClass( $class_name );
+			$reflector = $this->get_ReflectionClass( $class_name );
 			// make sure arguments are an array
 			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
 			// and if arguments array is NOT numerically indexed, then we want it to stay as an array,
@@ -720,6 +744,28 @@ class EE_Registry {
 			$e->get_error();
 		}
 		return $class_obj;
+	}
+
+
+
+	/**
+	 * getReflectionClass
+	 *
+	 * checks if a ReflectionClass object has already been generated for a class
+	 * and returns that instead of creating a new one
+	 *
+	 * @access public
+	 * @param string $class_name
+	 * @return ReflectionClass
+	 */
+	public function get_ReflectionClass( $class_name ) {
+		if (
+			! isset( $this->_reflectors[ $class_name ] )
+			|| ! $this->_reflectors[ $class_name ] instanceof ReflectionClass
+		) {
+			$this->_reflectors[ $class_name ] = new ReflectionClass( $class_name );
+		}
+		return $this->_reflectors[ $class_name ];
 	}
 
 
@@ -772,7 +818,10 @@ class EE_Registry {
 			) {
 				// so let's skip this argument and move on to the next
 				continue;
-			} else if ( in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] ) ) {
+			} else if (
+				isset( $this->_auto_resolve_dependencies[ $class_name ] )
+				&& in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] )
+			) {
 				// we might have a dependency... let's try and find it in our cache
 				$cached_class = $this->_get_cached_class( $param_class );
 				$dependency = null;
@@ -826,13 +875,13 @@ class EE_Registry {
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
-			$this->$class_abbreviation = $class_obj;
+			$this->{$class_abbreviation} = $class_obj;
 		} else if ( property_exists( $this, $class_name ) ) {
 			$this->{$class_name} = $class_obj;
 		} else if ( $class_prefix == 'addon' && $cache ) {
-			$this->addons->$class_name = $class_obj;
+			$this->addons->{$class_name} = $class_obj;
 		} else if ( ! $from_db && $cache ) {
-			$this->LIB->$class_name = $class_obj;
+			$this->LIB->{$class_name} = $class_obj;
 		}
 	}
 
@@ -1019,9 +1068,9 @@ class EE_Registry {
 	 */
 	public function cpt_models() {
 		$cpt_models = array();
-		foreach( $this->non_abstract_db_models as $shortname => $classname ) {
+		foreach( $this->non_abstract_db_models as $short_name => $classname ) {
 			if( is_subclass_of(  $classname, 'EEM_CPT_Base' ) ) {
-				$cpt_models[ $shortname ] = $classname;
+				$cpt_models[ $short_name ] = $classname;
 			}
 		}
 		return $cpt_models;
