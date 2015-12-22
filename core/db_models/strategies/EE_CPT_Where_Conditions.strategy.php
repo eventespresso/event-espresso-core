@@ -7,7 +7,7 @@ class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 
 	protected $_post_type;
 	protected $_meta_field;
-	function __construct($post_type, $meta_field_to_chk){
+	function __construct($post_type, $meta_field_to_chk = ''){
 		$this->_post_type = $post_type;
 		$this->_meta_field = $meta_field_to_chk;
 	}
