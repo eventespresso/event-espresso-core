@@ -120,5 +120,5 @@ class EE_Registry_Mock extends EE_Registry {
 
 
 
-// End of file EE_Registry_Mock.php
-// Location: /tests/mocks/core/EE_Registry_Mock.php
+// End of file EE_Registry_Mock.core.php
+// Location: /tests/mocks/core/EE_Registry_Mock.core.php

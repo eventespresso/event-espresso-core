@@ -44,6 +44,9 @@ class EE_Session_Mock extends EE_Session {
 	 * @param \EE_Encryption $encryption
 	 */
 	protected function __construct( EE_Encryption $encryption = null ) {
+		add_filter( 'FHEE_load_EE_Session', '__return_false' );
+		$this->encryption = $encryption;
+		parent::__construct( $encryption );
 	}
 
 
@@ -52,5 +55,5 @@ class EE_Session_Mock extends EE_Session {
 	}
 
 }
-// End of file EE_Session_Mock.php
-// Location: /tests/mocks/core/EE_Session_Mock.php
+// End of file EE_Session_Mock.core.php
+// Location: /tests/mocks/core/EE_Session_Mock.core.php
