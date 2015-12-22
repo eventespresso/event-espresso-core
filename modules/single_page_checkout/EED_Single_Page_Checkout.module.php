@@ -549,7 +549,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// skip the registration_confirmation page ?
 			if ( EE_Registry::instance()->CFG->registration->skip_reg_confirmation ) {
 				// just remove it from the reg steps array
-				$this->checkout->remove_reg_step( 'registration_confirmation' );
+				$this->checkout->remove_reg_step( 'registration_confirmation', false );
 			} else if ( EE_Registry::instance()->CFG->registration->reg_confirmation_last && isset( 	$this->checkout->reg_steps['registration_confirmation'] )) {
 				// set the order to something big like 100
 				$this->checkout->set_reg_step_order( 'registration_confirmation', 100 );
@@ -871,35 +871,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+
 	/**
-	 * 	_initialize_reg_steps
+	 *    _initialize_reg_steps
 	 *
 	 * first makes sure that EE_Transaction_Processor::set_reg_step_initiated() is called as required
 	 * then loops thru all of the active reg steps and calls the initialize_reg_step() method
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 * @access    private
+	 * @param bool $reinitializing
 	 */
-	private function _initialize_reg_steps() {
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		// call set_reg_step_initiated ???
-		if (
-			// first time visiting SPCO ?
-			! $this->checkout->revisit
-			// and displaying the reg step form for the first time ?
-			&& $this->checkout->action === 'display_spco_reg_step'
-		) {
-			// set the start time for this reg step
-			if ( ! $transaction_processor->set_reg_step_initiated( $this->checkout->transaction, $this->checkout->current_step->slug() ) ) {
-				if ( WP_DEBUG ) {
-					EE_Error::add_error( sprintf(__( 'The "%1$s" registration step was not initialized properly.', 'event_espresso' ), $this->checkout->current_step->name() ), __FILE__, __FUNCTION__, __LINE__ );
-				}
-			};
-		}
+	private function _initialize_reg_steps( $reinitializing = false ) {
+		$this->checkout->set_reg_step_initiated( $this->checkout->current_step );
 		// loop thru all steps to call their individual "initialize" methods and set i18n strings for JS
 		foreach ( $this->checkout->reg_steps as $reg_step ) {
-			$reg_step->initialize_reg_step();
+			if ( ! $reg_step->initialize_reg_step() ) {
+				// if not initialized then maybe this step is being removed...
+				if ( $reg_step->is_current_step() && ! $reinitializing ) {
+					// if it was the current step, then we need to start over here
+					$this->_initialize_reg_steps( true );
+					return;
+				}
+				continue;
+			}
 			// i18n
 			$reg_step->translate_js_strings();
 			if ( $reg_step->is_current_step() ) {
@@ -1053,6 +1047,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['process_registration'] = sprintf( __( 'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso' ), '<br/>', '<br/>' );
 		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 		EE_Registry::$i18n_js_strings['EESID'] = EE_Registry::instance()->SSN->id();
+		EE_Registry::$i18n_js_strings['currency'] = EE_Registry::instance()->CFG->currency;
 		EE_Registry::$i18n_js_strings['datepicker_yearRange'] = '-150:+20';
 		EE_Registry::$i18n_js_strings['timer_years'] = __( 'years', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_months'] = __( 'months', 'event_espresso' );
@@ -1069,11 +1064,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['timer_minute'] = __( 'minute', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_second'] = __( 'second', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
-			__( '%1$sWe\'re sorry, but you\'re registration time has expired
-			.%2$s%3$s%4$sIf you still wish to complete your registration, please
-			return to the %5$sEvent List%6$sEvent List%7$s and reselect your
-			tickets if available. Please except our apologies for any inconvenience this
-			may have caused.%8$s', 'event_espresso' ),
+			__( '%1$sWe\'re sorry, but your registration time has expired.%2$s%3$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s', 'event_espresso' ),
 			'<h4 class="important-notice">',
 			'</h4>',
 			'<br />',

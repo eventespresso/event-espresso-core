@@ -12,7 +12,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author				Mike Nelson
  *
  * Based off wp core's tests/phpunit/tests/filesystem/base.php
- * @group ignore
+ * 
  *
  */
 class EEH_File_Test extends EE_UnitTestCase {
@@ -20,6 +20,7 @@ class EEH_File_Test extends EE_UnitTestCase {
 		parent::setUp();
 		add_filter( 'filesystem_method_file', array( $this, 'filter_abstraction_file' ) );
 		add_filter( 'filesystem_method', array( $this, 'filter_fs_method' ) );
+		add_filter( 'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct', '__return_false' );
 		WP_Filesystem();
 		global $wp_filesystem;
 		$wp_filesystem->init('/');
@@ -35,10 +36,10 @@ class EEH_File_Test extends EE_UnitTestCase {
 	}
 
 	function filter_fs_method( $method ) {
-		return 'MockFS';
+		return 'MockEEFS';
 	}
 	function filter_abstraction_file( $file ) {
-		return WP_TESTS_DIR . '/includes/mock-fs.php';
+		return EE_TESTS_DIR . '/includes/mock-ee-fs.php';
 	}
 
 	/**
@@ -47,7 +48,7 @@ class EEH_File_Test extends EE_UnitTestCase {
 	 */
 	function test_is_MockFS_sane() {
 		global $wp_filesystem;
-		$this->assertTrue( is_a( $wp_filesystem, 'WP_Filesystem_MockFS' ) );
+		$this->assertTrue( is_a( $wp_filesystem, 'WP_Filesystem_MockEEFS' ) );
 
 		$wp_filesystem->init('/');
 
@@ -60,6 +61,10 @@ class EEH_File_Test extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 */
 	public function test_verify_filepath_and_permissions(){
 		global $wp_filesystem;
 
@@ -79,6 +84,10 @@ class EEH_File_Test extends EE_UnitTestCase {
 
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 */
 	public function test_ensure_folder_exists_and_is_writable__and__is_writable(){
 		global $wp_filesystem;
 		$folder_path = '/test/';
@@ -101,7 +110,43 @@ class EEH_File_Test extends EE_UnitTestCase {
 		}
 
 	}
+	
+	/**
+	 * @group 9059
+	 * @global type $wp_filesystem
+	 */
+	function test_ensure_folder_exists_and_is_writable__recursive_folders() {
+		global $wp_filesystem;
+		$folder_path = '/test/new/thing';
+		// Test creation/exists checks
+		$this->assertFalse( $wp_filesystem->is_dir( $folder_path ) );
+		$this->assertTrue( EEH_File::ensure_folder_exists_and_is_writable( $folder_path ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new/' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing' ] ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing' ] ) );
+	}
+	
+	/**
+	 * @group 9059
+	 * @global type $wp_filesystem
+	 */
+	function test_ensure_file_exists_and_is_writable__recursive_folders() {
+		global $wp_filesystem;
+		$folder_path = '/test/new/thing.txt';
+		// Test creation/exists checks
+		$this->assertFalse( $wp_filesystem->is_dir( $folder_path ) );
+		$this->assertTrue( EEH_File::ensure_file_exists_and_is_writable( $folder_path ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new/' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing.txt' ] ) );
+		$folders_in_new_folder = $wp_filesystem->dirlist( '/test/new' );
+		$this->assertTrue( isset( $folders_in_new_folder[ 'thing.txt' ] ) );
+	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 */
 	public function test_ensure_file_exists_and_is_writable(){
 		global $wp_filesystem;
 		$file_path = '/test.txt';
@@ -125,6 +170,10 @@ class EEH_File_Test extends EE_UnitTestCase {
 
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 */
 	public function test_get_file_contents(){
 		global $wp_filesystem;
 		$file_path = '/test.txt';
@@ -136,6 +185,10 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$this->assertEquals( $content, EEH_File::get_file_contents( $file_path ) );
 	}
 
+	/**
+	 * 
+	 * @global type $wp_filesystem
+	 */
 	public function test_write_to_file(){
 		global $wp_filesystem;
 		$wp_filesystem->chmod( '/', '755' );
@@ -174,20 +227,63 @@ class EEH_File_Test extends EE_UnitTestCase {
 		$file_path = '/well\\this/isnt\\very/consistent';
 		$this->assertEquals( '/well/this/isnt/very/consistent/', EEH_File::standardise_and_end_with_directory_separator($file_path));
 	}
-	public function test_get_contents_of_folders(){
-		global $wp_filesystem;
-		$wp_filesystem->mkdir('/test/');
-		$wp_filesystem->touch('/test/EE_Thingy.um.php');
-		$wp_filesystem->touch('/test/EEX_YEP.fe.ss');
-		$wp_filesystem->mkdir('/test/other/');
-		$classname_to_filepath_map = EEH_File::get_contents_of_folders( array( '/test/' ) );
-		$this->assertEquals(
-				array(
-					'EE_Thingy' => '/test/EE_Thingy.um.php',
-					'EEX_YEP' => '/test/EEX_YEP.fe.ss' ),
-				$classname_to_filepath_map );
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__barely() {
+		$uploads = wp_upload_dir();
+		$this->assertTrue( EEH_File::is_in_uploads_folder( $uploads[ 'basedir' ] ) );
 	}
-
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__subfolder() {
+		$this->assertTrue( EEH_File::is_in_uploads_folder( EVENT_ESPRESSO_UPLOAD_DIR . 'mazurky' ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__elsewhere() {
+		$this->assertFalse( EEH_File::is_in_uploads_folder( '/var/somewhere/else/entirely' ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_is_in_uploads_folder__elsewhere_but_tricky() {
+		$this->assertFalse( EEH_File::is_in_uploads_folder( '/not/uploads/dir/' . EVENT_ESPRESSO_UPLOAD_DIR ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_get_parent_folder__file() {
+		$this->assertEquals( 
+				'/var/something/',
+				EEH_File::get_parent_folder( '/var/something/thingy.txt' ) );
+	}
+	/**
+	 * @group 9059
+	 */
+	public function test_get_parent_folder__file_with_one_character() {
+		$this->assertEquals( 
+				'/var/something/',
+				EEH_File::get_parent_folder( '/var/something/a' ) );
+	}
+	
+	/**
+	 * @group 9059
+	 */
+	public function test_get_parent_folder__folder() {
+		$this->assertEquals( 
+				'/var/something/',
+				EEH_File::get_parent_folder( '/var/something/somewhere/' ) );
+	}
+	
+	
 
 
 

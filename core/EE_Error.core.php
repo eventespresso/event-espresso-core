@@ -1058,9 +1058,8 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 
 		EE_Registry::instance()->load_helper( 'File' );
 		try {
-			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
-			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
 			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
+			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' ); 
 			if ( ! $clear ) {
 				//get existing log file and append new log info
 				$exception_log = EEH_File::get_file_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file ) . $exception_log;

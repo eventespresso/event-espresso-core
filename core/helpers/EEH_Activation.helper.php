@@ -28,6 +28,13 @@ class EEH_Activation {
 	 */
 	const cron_task_no_longer_in_use = 'no_longer_in_use';
 
+	/**
+	 * option name that will indicate whether or not we still
+	 * need to create EE's folders in the uploads directory
+	 * (because if EE was installed without file system access, 
+	 * we need to request credentials before we can create them)
+	 */
+	const upload_directories_incomplete_option_name = 'ee_upload_directories_incomplete';
 	private static $_default_creator_id = null;
 
 	/**
@@ -921,6 +928,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 1,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -936,6 +944,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 2,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -951,6 +960,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 3,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -966,6 +976,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 4,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -981,6 +992,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 5,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -996,6 +1008,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 6,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1041,6 +1054,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 9,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1056,6 +1070,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 10,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1201,12 +1216,11 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
-				EVENT_ESPRESSO_UPLOAD_DIR,
 				EVENT_ESPRESSO_TEMPLATE_DIR,
 				EVENT_ESPRESSO_GATEWAY_DIR,
-				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
+				EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/'
 		);
 		foreach ( $folders as $folder ) {
 			try {
@@ -1221,10 +1235,29 @@ class EEH_Activation {
 					),
 					__FILE__, __FUNCTION__, __LINE__
 				);
+				//indicate we'll need to fix this later
+				update_option( EEH_Activation::upload_directories_incomplete_option_name, true );
 				return FALSE;
 			}
 		}
+		//just add the .htaccess file to the logs directory to begin with. Even if logging
+		//is disabled, there might be activation errors recorded in there
+		EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' );
+		//remember EE's folders are all good
+		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
 		return TRUE;
+	}
+	
+	/**
+	 * Whether the upload directories need to be fixed or not.
+	 * If EE is installed but filesystem access isn't initially available,
+	 * we need to get the user's filesystem credentials and THEN create them,
+	 * so there might be period of time when EE is installed but its 
+	 * upload directories aren't available. This indicates such a state
+	 * @return boolean
+	 */
+	public static function upload_directories_incomplete() {
+		return get_option( EEH_Activation::upload_directories_incomplete_option_name, false );
 	}
 
 
@@ -1584,6 +1617,8 @@ class EEH_Activation {
 			'ee_rss_' => false,
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
+			'ee_job_parameters_' => false,
+			'ee_upload_directories_incomplete' => true,
 		);
 		if( is_main_site() ) {
 			$wp_options_to_delete[ 'ee_network_config' ] = true;

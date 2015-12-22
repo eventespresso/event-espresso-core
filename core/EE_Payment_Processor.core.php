@@ -65,6 +65,13 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @return EE_Payment
 	 */
 	public function process_payment( EE_Payment_Method $payment_method, EE_Transaction $transaction, $amount = NULL, $billing_form = NULL, $return_url = NULL, $method = 'CART', $by_admin = FALSE, $update_txn = TRUE, $cancel_url = '' ) {
+		if( $amount < 0 ) {
+			throw new EE_Error( 
+					sprintf(
+							__( 'Attempting to make a payment for a negative amount of %1$d for transaction %2$d. That should be a refund', 'event_espresso' ),
+							$amount,
+							$transaction->ID() ) );
+		}
 		// verify payment method
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		// verify transaction
@@ -282,10 +289,8 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * @internal param float $amount
 	 * @return EE_Payment
 	 */
-	public function process_refund( $payment_method, $payment_to_refund, $refund_info = array() ){
-		/** @type EE_Payment_Method $payment_method */
-		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
-		if ( $payment_method->type_obj()->supports_sending_refunds() ) {
+	public function process_refund( EE_Payment_Method $payment_method, EE_Payment $payment_to_refund, $refund_info = array() ){
+		if ( $payment_method instanceof EE_Payment_Method && $payment_method->type_obj()->supports_sending_refunds() ) {
 			$payment_method->type_obj()->process_refund( $payment_to_refund, $refund_info );
 			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
 		}

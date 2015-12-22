@@ -70,6 +70,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
+		return true;
 	}
 
 
@@ -506,6 +507,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		//add "-lbl" to the end of the label id
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
+		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $question->system_ID() );
+		if( EEM_Question::instance()->question_type_is_in_category(  $question->type(), 'text' ) ) {
+			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy( 
+				null, 
+				min( 
+					$max_max_for_question, 
+					$question->max() 
+				) 
+			);
+		}
 		$input_constructor_args = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
 				$input_constructor_args,
 				$registration,
@@ -661,7 +672,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		// mark this reg step as completed
-		$this->checkout->current_step->set_completed();
+		$this->set_completed();
 		$this->_set_success_message( __('The Attendee Information Step has been successfully completed.', 'event_espresso' ));
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data

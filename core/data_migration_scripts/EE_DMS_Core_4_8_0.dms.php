@@ -226,6 +226,17 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 				EXM_value TEXT,
 				PRIMARY KEY  (EXM_ID)";
 		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
+		
+		$table_name = 'esp_extra_join';
+		$sql = "EXJ_ID INT(11) NOT NULL AUTO_INCREMENT,
+				EXJ_first_model_id  VARCHAR(6) NOT NULL,
+				EXJ_first_model_name VARCHAR(20) NOT NULL,
+				EXJ_second_model_id  VARCHAR(6) NOT NULL,
+				EXJ_second_model_name VARCHAR(20) NOT NULL,
+				PRIMARY KEY  (EXJ_ID),
+				KEY first_model (EXJ_first_model_name,EXJ_first_model_id),
+				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name='esp_line_item';
 		$sql="LIN_ID INT(11) NOT NULL AUTO_INCREMENT,
@@ -370,10 +381,11 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					QST_required_text VARCHAR(100) NULL,
 					QST_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					QST_admin_only TINYINT(1) NOT NULL DEFAULT 0,
+					QST_max SMALLINT NOT NULL DEFAULT -1,
 					QST_wp_user BIGINT UNSIGNED NULL,
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
-		$this->_table_has_not_changed_since_previous($table_name,$sql, 'ENGINE=InnoDB');
+		$this->_table_is_changed_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name='esp_question_group_question';
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,

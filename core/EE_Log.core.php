@@ -109,11 +109,9 @@ class EE_Log {
 	public function verify_filesystem() {
 		try {
 			EE_Registry::instance()->load_helper( 'File' );
-			EEH_File::ensure_folder_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR );
-			EEH_File::ensure_folder_exists_and_is_writable( $this->_logs_folder );
-			EEH_File::add_htaccess_deny_from_all( $this->_logs_folder );
 			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_log_file );
 			EEH_File::ensure_file_exists_and_is_writable( $this->_logs_folder . $this->_debug_file );
+			EEH_File::add_htaccess_deny_from_all( $this->_logs_folder );
 		} catch( EE_Error $e ){
 			EE_Error::add_error( sprintf( __(  'Event Espresso logging could not be setup because: %s', 'event_espresso' ), ' &nbsp; &nbsp; ' . $e->getMessage() ), __FILE__, __FUNCTION__, __LINE__ );
 			return;

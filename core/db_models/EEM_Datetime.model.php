@@ -50,7 +50,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 				'DTT_description' => new EE_Full_HTML_Field('DTT_description', __('Description for Datetime', 'event_espresso'), false, ''),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, time(), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, time(), $timezone ),
-				'DTT_reg_limit'=>new EE_Infinite_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, INF),
+				'DTT_reg_limit'=>new EE_Infinite_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, EE_INF),
 				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0 ),
 				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
 				'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
@@ -86,7 +86,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 				'DTT_EVT_start' => $this->current_time_for_query( 'DTT_EVT_start', true ) + (60 * 60 * 24 * 30),
 				'DTT_EVT_end' => $this->current_time_for_query( 'DTT_EVT_end', true ) + (60 * 60 * 24 * 30),
 				'DTT_order' => 1,
-				'DTT_reg_limit' => INF
+				'DTT_reg_limit' => EE_INF
 			),
 			$this->_timezone
 		);
@@ -427,7 +427,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 *
 	 * @param int   $DTT_ID
 	 * @param array $query_params
-	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns INF,  IF there are NO tickets attached to datetime then FALSE is returned.
+	 * @return int of tickets available. If sold out, return less than 1. If infinite, returns EE_INF,  IF there are NO tickets attached to datetime then FALSE is returned.
 	 */
 	public function sum_tickets_currently_available_at_datetime( $DTT_ID, $query_params = array() ) {
 		$datetime = $this->get_one_by_ID( $DTT_ID );
@@ -435,6 +435,71 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			return $datetime->tickets_remaining( $query_params );
 		}
 		return 0;
+	}
+
+
+
+
+	/**
+	 * This returns an array of counts of datetimes in the database for each Datetime status that can be queried.
+	 *
+	 * @param  array $stati_to_include        If included you can restrict the statuses we return counts for by including the stati
+	 *                               you want counts for as values in the array.  An empty array returns counts for all valid
+	 *                               stati.
+	 * @param  array  $query_params  If included can be used to refine the conditions for returning the count (i.e. only for
+	 *                               Datetimes connected to a specific event, or specific ticket.
+	 *
+	 * @return array  The value returned is an array indexed by Datetime Status and the values are the counts.  The stati used as index keys are:
+	 *                EE_Datetime::active
+	 *                EE_Datetime::upcoming
+	 *                EE_Datetime::expired
+	 */
+	public function get_datetime_counts_by_status( $stati_to_include = array(), $query_params = array() ) {
+		//only accept where conditions for this query.
+		$_where = isset( $query_params[0] ) ? $query_params[0] : array();
+		$status_query_args = array(
+				EE_Datetime::active => array_merge(
+						$_where,
+						array( 'DTT_EVT_start' => array( '<', time() ), 'DTT_EVT_end' => array( '>', time() ) )
+				),
+				EE_Datetime::upcoming => array_merge(
+						$_where,
+						array( 'DTT_EVT_start' => array( '>', time() ) )
+				),
+				EE_Datetime::expired => array_merge(
+						$_where,
+						array( 'DTT_EVT_end' => array('<', time() ) )
+				)
+		);
+
+		if ( ! empty( $stati_to_include ) ) {
+			foreach( array_keys( $status_query_args ) as $status ) {
+				if ( ! in_array( $status, $stati_to_include ) ) {
+					unset( $status_query_args[$status] );
+				}
+			}
+		}
+
+		//loop through and query counts for each stati.
+		$status_query_results = array();
+		foreach( $status_query_args as $status => $status_where_conditions ) {
+			$status_query_results[ $status ] = EEM_Datetime::count( array( $status_where_conditions ), 'DTT_ID', true );
+		}
+
+		return $status_query_results;
+	}
+
+
+	/**
+	 * Returns the specific count for a given Datetime status matching any given query_params.
+	 *
+	 * @param string $status  Valid string representation for Datetime status requested. (Defaults to Active).
+	 * @param array $query_params
+	 * @return int
+	 */
+	public function get_datetime_count_for_status( $status = EE_Datetime::active, $query_params = array() ) {
+		$count = $this->get_datetime_counts_by_status( array( $status ), $query_params );
+		return ! empty( $count[$status] ) ? $count[$status] : 0;
 	}
 
 
