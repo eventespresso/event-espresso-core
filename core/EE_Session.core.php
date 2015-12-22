@@ -80,7 +80,7 @@
 	  * EE_Encryption object
 	  * @var EE_Encryption
 	  */
-	 private $encryption = NULL;
+	 protected $encryption = NULL;
 
 	 /**
 	  * well... according to the server...
