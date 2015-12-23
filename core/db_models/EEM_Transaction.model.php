@@ -11,7 +11,7 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
  */
 class EEM_Transaction extends EEM_Base {
 
-  	// private instance of the Transaction object
+	// private instance of the Transaction object
 	protected static $_instance = NULL;
 
 	/**
@@ -19,7 +19,7 @@ class EEM_Transaction extends EEM_Base {
 	 * but payment is pending. This is the state for transactions where payment is promised
 	 * from an offline gateway.
 	 */
-//	const open_status_code = 'TPN';
+	//	const open_status_code = 'TPN';
 
 	/**
 	 * Status ID(STS_ID on esp_status table) to indicate the transaction failed,
@@ -114,14 +114,14 @@ class EEM_Transaction extends EEM_Base {
 			array(
 				array(
 					'TXN_timestamp' => array('>=', $sql_date)),
-					'group_by' => 'txnDate',
-					'order_by' => array('TXN_timestamp' => 'DESC' )
-					),
-				OBJECT,
-				array(
-					'txnDate' => array('DATE(Transaction.TXN_timestamp)','%s'),
-					'revenue' => array('SUM(Transaction.TXN_paid)', '%d')
-					));
+				'group_by' => 'txnDate',
+				'order_by' => array('TXN_timestamp' => 'DESC' )
+			),
+			OBJECT,
+			array(
+				'txnDate' => array('DATE(Transaction.TXN_timestamp)','%s'),
+				'revenue' => array('SUM(Transaction.TXN_paid)', '%d')
+			));
 		return $results;
 	}
 
@@ -246,14 +246,14 @@ class EEM_Transaction extends EEM_Base {
 		);
 
 		//now that we have the ids to delete, let's get deletin'
+		//Why no wpdb->prepare?  Because the data is trusted.  We got the ids from the original query to get them FROM
+		//the db (which is sanitized) so no need to prepare them again.
 		if ( $txn_ids ) {
-			$query   = $wpdb->prepare( '
+			$query   = '
 				DELETE
 				FROM ' . $this->table() . '
 				WHERE
-					STS_ID IN %s',
-				implode( ',', $txn_ids )
-			);
+					TXN_ID IN ( ' . implode( ",", $txn_ids ) . ')';
 			$deleted = $wpdb->query( $query );
 		}
 		if ( $deleted ) {
@@ -262,6 +262,7 @@ class EEM_Transaction extends EEM_Base {
 			 */
 			do_action( 'AHEE__EEM_Transaction__delete_junk_transactions__successful_deletion', $txn_ids );
 		}
+		return $deleted;
 	}
 
 
