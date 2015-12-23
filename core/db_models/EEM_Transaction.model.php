@@ -212,20 +212,56 @@ class EEM_Transaction extends EEM_Base {
 	public function delete_junk_transactions() {
 		/** @type WPDB $wpdb */
 		global $wpdb;
+		$deleted = false;
 		$time_to_leave_alone = apply_filters(
 			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', WEEK_IN_SECONDS
 		);
-		$query = $wpdb->prepare( '
-			DELETE
-			FROM '. $this->table() . '
-			WHERE
-				STS_ID = %s AND
-				TXN_timestamp < %s',
-			EEM_Transaction::failed_status_code,
-			// use GMT time because that's what TXN_timestamps are in
-			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+
+
+		/**
+		 * This allows code to filter the query arguments used for retrieving the transaction IDs to delete.
+		 * Useful for plugins that want to exclude transactions matching certain query parameters.
+		 * The query parameters should be in the format accepted by the EEM_Base model queries.
+		 */
+		$ids_query = apply_filters(
+			'FHEE__EEM_Transaction__delete_junk_transactions__initial_query_args',
+			array(
+				0 => array(
+					'STS_ID' => EEM_Transaction::failed_status_code,
+					'TXN_timestamp' => array( '<', time() - $time_to_leave_alone )
+				)
+			),
+			$time_to_leave_alone
 		);
-		return $wpdb->query( $query );
+
+
+		/**
+		 * This filter is for when code needs to filter the list of transaction ids that represent transactions
+		 * about to be deleted based on some other criteria that isn't easily done via the query args filter.
+		 */
+		$txn_ids = apply_filters(
+			'FHEE__EEM_Transaction__delete_junk_transactions__transaction_ids_to_delete',
+			EEM_Transaction::instance()->get_col( $ids_query, 'TXN_ID' ),
+			$time_to_leave_alone
+		);
+
+		//now that we have the ids to delete, let's get deletin'
+		if ( $txn_ids ) {
+			$query   = $wpdb->prepare( '
+				DELETE
+				FROM ' . $this->table() . '
+				WHERE
+					STS_ID IN %s',
+				implode( ',', $txn_ids )
+			);
+			$deleted = $wpdb->query( $query );
+		}
+		if ( $deleted ) {
+			/**
+			 * Allows code to do something after the transactions have been deleted.
+			 */
+			do_action( 'AHEE__EEM_Transaction__delete_junk_transactions__successful_deletion', $txn_ids );
+		}
 	}
 
 
