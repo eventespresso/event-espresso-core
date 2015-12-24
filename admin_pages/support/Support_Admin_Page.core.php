@@ -237,14 +237,20 @@ class Support_Admin_Page extends EE_Admin_Page {
 	/**
 	 * Invokes the report-generating code
 	 */
-	protected function batch_create() {
+	protected function batch_create() {		
 		//creates a job based on the request variable
+		$job_handler_classname = str_replace( '\\\\', '\\', $this->_req_data[ 'job_handler' ] );
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
 		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
-		$job_response = $batch_runner->create_job( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport', $_REQUEST );
-		$success = wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
+		//eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
+		$job_response = $batch_runner->create_job( $job_handler_classname, $request_data );
+		wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
+		wp_localize_script( 'support_batch_runner', 'ee_job_i18n', 
+				array(
+					'redirect_url' => $this->_req_data['redirect_url' ],
+				));
 		echo EEH_Template::locate_template( EE_SUPPORT_ADMIN . 'templates' . DS . 'admin_batch_runner.template.html' );
 	}
 	
