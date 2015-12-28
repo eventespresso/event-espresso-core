@@ -239,7 +239,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function batch_create() {		
 		//creates a job based on the request variable
-		$job_handler_classname = str_replace( '\\\\', '\\', $this->_req_data[ 'job_handler' ] );
+		$job_handler_classname = stripslashes( $this->_req_data[ 'job_handler' ] );
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
@@ -260,7 +260,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function batch_file_create() {
 		//creates a job based on the request variable
-		$job_handler_classname = str_replace( '\\\\', '\\', $this->_req_data[ 'job_handler' ] );
+		$job_handler_classname = stripslashes( $this->_req_data[ 'job_handler' ] );
 		$request_data = array_diff_key( 
 				$this->_req_data, 
 				array_flip( array( 'action',  'page' ) ) );
