@@ -16,7 +16,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 	const ee_api_namespace = 'ee/v';
 	const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
-	const saved_routes_option_names = 'ee_routes';
+	const saved_routes_option_names = 'ee_core_routes';
 
 	/**
 	 * @return EED_Core_Rest_Api
