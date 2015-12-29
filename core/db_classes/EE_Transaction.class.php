@@ -681,7 +681,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return EE_Line_Item
 	 */
 	public function tax_total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		return EEH_Line_Item::get_taxes_subtotal( $this->total_line_item() );
 	}
 
 

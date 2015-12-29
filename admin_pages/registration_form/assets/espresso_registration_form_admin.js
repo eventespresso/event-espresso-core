@@ -59,6 +59,11 @@ function espresso_reg_forms_show_or_hide_question_options(){
 	}else{
 		jQuery('#question_options').hide();
 	}
+	if ( val === 'TEXT' || val === 'TEXTAREA' || val === 'HTML_TEXTAREA' ){
+		jQuery('#text_input_question_options').show();
+	}else{
+		jQuery('#text_input_question_options').hide();
+	}
 }
 
 
