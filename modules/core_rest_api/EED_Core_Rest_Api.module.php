@@ -54,7 +54,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function set_hooks_both() {
 		add_action( 'rest_api_init', array( 'EED_Core_REST_API', 'register_routes' ) );
 		add_filter( 'rest_route_data', array( 'EED_Core_REST_API', 'hide_old_endpoints' ), 10, 2 );
-		add_filter( 'json_index', array( 'EE_Core_REST_API_Controller_Model_Meta', 'filter_ee_metadata_into_index' ) );
+		add_filter( 'rest_index', array( 'EE_Core_REST_API_Controller_Model_Meta', 'filter_ee_metadata_into_index' ) );
 	}
 
 
