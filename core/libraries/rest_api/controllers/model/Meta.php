@@ -91,7 +91,13 @@ class Meta extends Base {
 		return $response;
 	}
 
-	public static function filter_ee_metadata_into_index( $existing_index_info ) {
+	/**
+	 * Adds EE metadata to the index
+	 * @param WP_REST_Response $rest_response_obj
+	 * @return WP_REST_Response
+	 */
+	public static function filter_ee_metadata_into_index( $rest_response_obj ) {
+		$response_data = $rest_response_obj->get_data();
 		$addons = array();
 		foreach( \EE_Registry::instance()->addons as $addon){
 			$addon_json = array(
@@ -100,13 +106,14 @@ class Meta extends Base {
 			);
 			$addons[ $addon_json[ 'name' ] ] = $addon_json;
 		}
-		$existing_index_info[ 'ee' ] = array(
+		$response_data[ 'ee' ] = array(
 			'version' => \EEM_System_Status::instance()->get_ee_version(),
 			'addons' => $addons,
 			'maintenance_mode' => \EE_Maintenance_Mode::instance()->real_level(),
 			'served_core_versions' => array_keys( \EED_Core_Rest_Api::versions_served() )
 		);
-		return $existing_index_info;
+		$rest_response_obj->set_data( $response_data );
+		return $rest_response_obj;
 	}
 }
 
