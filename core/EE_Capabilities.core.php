@@ -117,9 +117,28 @@ final class EE_Capabilities extends EE_Base {
 	 * @return void
 	 */
 	private function _set_meta_caps() {
-		//make sure we're only initializing the _meta_caps array if it's empty.
-		if ( empty( $this->_meta_caps ) ) {
-			$this->_meta_caps = array(
+		//make sure we're only ever initializing the default _meta_caps array once if it's empty.
+		$this->_meta_caps = $this->_get_default_meta_caps_array();
+
+		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
+
+		//add filter for map_meta_caps but only if models can query.
+		if ( EE_Maintenance_Mode::instance()->models_can_query() && ! has_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ) ) ) {
+			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
+		}
+	}
+
+
+	/**
+	 * This builds and returns the default meta_caps array only once.
+	 *
+	 * @since  4.8.28.rc.012
+	 * @return array
+	 */
+	private function _get_default_meta_caps_array() {
+		static $default_meta_caps = array();
+		if ( empty( $default_meta_caps ) ) {
+			$default_meta_caps = array(
 				//edits
 				new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( 'Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
 				new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( 'Venue', 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues' ) ),
@@ -151,13 +170,7 @@ final class EE_Capabilities extends EE_Base {
 				new EE_Meta_Capability_Map_Delete( 'ee_delete_payment_method', array( 'Payment_Method', '', 'ee_delete_others_payment_methods', '' ) ),
 			);
 		}
-
-		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
-
-		//add filter for map_meta_caps but only if models can query.
-		if ( EE_Maintenance_Mode::instance()->models_can_query() && ! has_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ) ) ) {
-			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
-		}
+		return $default_meta_caps;
 	}
 
 
