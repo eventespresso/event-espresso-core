@@ -68,6 +68,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			)
 		);
 		$this->_subsections['PMD_order'] = new EE_Text_Input( array(
+			'html_label_text' => __( 'Order', 'event_espresso' ),
 			'html_help_text' => __( 'Lowest numbers will be shown first', 'event_espresso' ),
 			'normalization_strategy' => new EE_Int_Normalization(),
 			'validation_strategies' => array(
