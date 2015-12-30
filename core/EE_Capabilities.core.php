@@ -117,37 +117,8 @@ final class EE_Capabilities extends EE_Base {
 	 * @return void
 	 */
 	private function _set_meta_caps() {
-		$this->_meta_caps = array(
-			//edits
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( 'Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( 'Venue', 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_registration', array( 'Registration', '', 'ee_edit_others_registrations', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_checkin', array( 'Registration', '', 'ee_edit_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_edit_message', array( 'Message_Template_Group', '', 'ee_edit_others_messages', 'ee_edit_global_messages' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_default_ticket', array( 'Ticket', '', 'ee_edit_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question', array( 'Question', '', '', 'ee_edit_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question_group', array( 'Question_Group', '', '', 'ee_edit_system_question_groups' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_payment_method', array( 'Payment_Method', '', 'ee_edit_others_payment_methods', '' ) ),
-			//reads
-			new EE_Meta_Capability_Map_Read( 'ee_read_event', array( 'Event', '', 'ee_read_others_events', 'ee_read_private_events' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( 'Venue', '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( 'Registration', '', '', 'ee_edit_others_registrations' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( 'Registration', '', '', 'ee_read_others_checkins' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( 'Message_Template_Group', '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( 'Ticket', '', '', 'ee_read_others_default_tickets' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_payment_method', array( 'Payment_Method', '', '', 'ee_read_others_payment_methods' ) ),
-
-			//deletes
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( 'Event', 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( 'Venue', 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( 'Registration', '', 'ee_delete_others_registrations', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( 'Registration', '', 'ee_delete_others_checkins', '' ) ),
-			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( 'Message_Template_Group', '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( 'Ticket', '', 'ee_delete_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( 'Question', '', '', 'delete_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( 'Question_Group', '', '', 'delete_system_question_groups' ) ),
-			new EE_Meta_Capability_Map_Delete( 'ee_delete_payment_method', array( 'Payment_Method', '', 'ee_delete_others_payment_methods', '' ) ),
-		);
+		//make sure we're only ever initializing the default _meta_caps array once if it's empty.
+		$this->_meta_caps = $this->_get_default_meta_caps_array();
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
 
@@ -155,6 +126,51 @@ final class EE_Capabilities extends EE_Base {
 		if ( EE_Maintenance_Mode::instance()->models_can_query() && ! has_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ) ) ) {
 			add_filter( 'map_meta_cap', array( $this, 'map_meta_caps' ), 10, 4 );
 		}
+	}
+
+
+	/**
+	 * This builds and returns the default meta_caps array only once.
+	 *
+	 * @since  4.8.28.rc.012
+	 * @return array
+	 */
+	private function _get_default_meta_caps_array() {
+		static $default_meta_caps = array();
+		if ( empty( $default_meta_caps ) ) {
+			$default_meta_caps = array(
+				//edits
+				new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( 'Event', 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
+				new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( 'Venue', 'ee_edit_published_venues', 'ee_edit_others_venues', 'ee_edit_private_venues' ) ),
+				new EE_Meta_Capability_Map_Edit( 'ee_edit_registration', array( 'Registration', '', 'ee_edit_others_registrations', '' ) ),
+				new EE_Meta_Capability_Map_Edit( 'ee_edit_checkin', array( 'Registration', '', 'ee_edit_others_checkins', '' ) ),
+				new EE_Meta_Capability_Map_Messages_Cap( 'ee_edit_message', array( 'Message_Template_Group', '', 'ee_edit_others_messages', 'ee_edit_global_messages' ) ),
+				new EE_Meta_Capability_Map_Edit( 'ee_edit_default_ticket', array( 'Ticket', '', 'ee_edit_others_default_tickets', '' ) ),
+				new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question', array( 'Question', '', '', 'ee_edit_system_questions' ) ),
+				new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_edit_question_group', array( 'Question_Group', '', '', 'ee_edit_system_question_groups' ) ),
+				new EE_Meta_Capability_Map_Edit( 'ee_edit_payment_method', array( 'Payment_Method', '', 'ee_edit_others_payment_methods', '' ) ),
+				//reads
+				new EE_Meta_Capability_Map_Read( 'ee_read_event', array( 'Event', '', 'ee_read_others_events', 'ee_read_private_events' ) ),
+				new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( 'Venue', '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
+				new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( 'Registration', '', '', 'ee_edit_others_registrations' ) ),
+				new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( 'Registration', '', '', 'ee_read_others_checkins' ) ),
+				new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( 'Message_Template_Group', '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
+				new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( 'Ticket', '', '', 'ee_read_others_default_tickets' ) ),
+				new EE_Meta_Capability_Map_Read( 'ee_read_payment_method', array( 'Payment_Method', '', '', 'ee_read_others_payment_methods' ) ),
+
+				//deletes
+				new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( 'Event', 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
+				new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( 'Venue', 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
+				new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( 'Registration', '', 'ee_delete_others_registrations', '' ) ),
+				new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( 'Registration', '', 'ee_delete_others_checkins', '' ) ),
+				new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( 'Message_Template_Group', '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
+				new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( 'Ticket', '', 'ee_delete_others_default_tickets', '' ) ),
+				new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( 'Question', '', '', 'delete_system_questions' ) ),
+				new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( 'Question_Group', '', '', 'delete_system_question_groups' ) ),
+				new EE_Meta_Capability_Map_Delete( 'ee_delete_payment_method', array( 'Payment_Method', '', 'ee_delete_others_payment_methods', '' ) ),
+			);
+		}
+		return $default_meta_caps;
 	}
 
 
