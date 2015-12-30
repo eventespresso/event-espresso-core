@@ -16,6 +16,11 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  *
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
+	
+	/**
+	 * Name for the wp option used to save the itemized payment
+	 */
+	const itemized_payment_option_name = '_itemized_payment';
 
 	protected $_paypal_id = NULL;
 
@@ -23,9 +28,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 	protected $_shipping_details = NULL;
 
-	protected $_paypal_shipping = FALSE;
+	protected $_paypal_shipping = NULL;
 
-	protected $_paypal_taxes = FALSE;
+	protected $_paypal_taxes = NULL;
 
 	protected $_gateway_url = NULL;
 
@@ -97,51 +102,87 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
+		/** @type EE_Line_Item $total_line_item */
 		$total_line_item = $transaction->total_line_item();
-		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
-			//this payment is for the entire transaction,
+
+		$total_discounts_to_cart_total = $transaction->paid();
+		//only itemize the order if we're paying for the rest of the order's amount
+		if( $payment->amount() == $transaction->total() ) {
+			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true );
+			//this payment is for the remaining transaction amount,
+			//keep track of exactly how much the itemized order amount equals
+			$itemized_sum = 0;
+			$shipping_previously_added = 0;
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
 				if ( $line_item instanceof EE_Line_Item ) {
-					//if this is a re-attempt at paying, don't re-add PayPal's shipping
-					//and ignore line items with a quantity of 0
-					if ( $line_item->code() == 'paypal_shipping' || $line_item->quantity() == 0 ) {
+					//it's some kind of discount
+					if( $line_item->total() < 0 ) {
+						$total_discounts_to_cart_total += abs( $line_item->total() );
+						$itemized_sum += $line_item->total();
+						continue;
+					}
+					//dont include shipping again.
+					if( strpos( $line_item->code(), 'paypal_shipping_') === 0 ) {
+						$shipping_previously_added = $line_item->total();
 						continue;
 					}
 					$redirect_args[ 'item_name_' . $item_num ] = substr(
-						sprintf( __( '%1$s for %2$s', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ), 0, 127 );
+						sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
+						0, 127
+					);
 					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
 					$redirect_args[ 'quantity_' . $item_num ] = $line_item->quantity();
-					if ( ! $line_item->is_taxable() ) {
-						$redirect_args[ 'tax_' . $item_num ] = 0;
-					}
 					//if we're not letting PayPal calculate shipping, tell them its 0
 					if ( ! $this->_paypal_shipping ) {
 						$redirect_args[ 'shipping_' . $item_num ] = '0';
 						$redirect_args[ 'shipping2_' . $item_num ] = '0';
 					}
 					$item_num++;
+					$itemized_sum += $line_item->total();
 				}
+			}
+			$taxes_li = $this->_line_item->get_taxes_subtotal( $total_line_item );
+			//ideally itemized sum equals the transaction total. but if not (which is weird)
+			//and the itemized sum is LESS than the transaction total
+			//add another line item
+			//if the itemized sum is MORE than the transaction total,
+			//add the difference it to the discounts
+			$itemized_sum_diff_from_txn_total = round(
+					$transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added,
+					2 
+				);
+			if( $itemized_sum_diff_from_txn_total < 0 ) {
+				//itemized sum is too big
+				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
+			} elseif( $itemized_sum_diff_from_txn_total > 0 ) {
+				$redirect_args[ 'item_name_' . $item_num ] = substr(
+						__( 'Other charges', 'event_espresso' ), 0, 127 );
+				$redirect_args[ 'amount_' . $item_num ] = $this->format_currency( $itemized_sum_diff_from_txn_total );
+				$redirect_args[ 'quantity_' . $item_num ] = 1;
+				$item_num++;
+			}
+			if( $total_discounts_to_cart_total > 0 ) {
+				$redirect_args[ 'discount_amount_cart' ] = $this->format_currency( $total_discounts_to_cart_total );
 			}
 			//add our taxes to the order if we're NOT using PayPal's
 			if( ! $this->_paypal_taxes ){
 				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
 			}
-		}else{
-			//this is a partial payment, so we can't really show all the line items
-			$redirect_args['item_name_' . $item_num] = substr( sprintf(__('Payment of %1$s for  %2$s', "event_espresso"),$payment->amount(), $primary_registrant->reg_code()), 0, 127 );
+		} else {
+			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
+			//partial payment that's not for the remaining amount, so we can't send an itemized list
+			$redirect_args['item_name_' . $item_num] = substr(
+				sprintf( __('Payment of %1$s for %2$s', "event_espresso"), $payment->amount(), $primary_registrant->reg_code() ),
+				0, 127
+			);
 			$redirect_args['amount_' . $item_num] = $payment->amount();
-			//if we aren't allowing PayPal to calculate shipping, set it to 0
 			$redirect_args['shipping_' . $item_num ] = '0';
 			$redirect_args['shipping2_' . $item_num ] = '0';
-			//PayPal can't calculate taxes because we don't know what parts of it are taxable
 			$redirect_args['tax_cart'] = '0';
-
 			$item_num++;
-
-
-
 		}
+
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
 			$redirect_args['amount_' . $item_num] = 0;
@@ -168,10 +209,13 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$redirect_args['no_shipping'] = $this->_shipping_details;
 		$redirect_args['bn'] = 'EventEspresso_SP';//EE will blow up if you change this
 
-		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args );
+		$redirect_args = apply_filters( "FHEE__EEG_Paypal_Standard__set_redirection_info__arguments", $redirect_args, $this );
 
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
+//                echo "redirect info";
+//                var_dump( $redirect_args );
+//                die;
 		return $payment;
 	}
 
@@ -331,6 +375,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
 				// plz see: https://github.com/websharks/s2member/issues/610
 				'user-agent' 	=> 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url(),
+				'httpversion' => '1.1'
 			)
 		);
 		// then check the response
@@ -383,8 +428,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 */
 	public function update_txn_based_on_payment( $payment ) {
 		$update_info = $payment->details();
-		$redirect_args = $payment->redirect_args();
 		$transaction = $payment->transaction();
+		$payment_was_itemized = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true, false );
 		if( ! $transaction ){
 			$this->log( __( 'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldn\'t be executed properly', 'event_espresso' ), $payment );
 			return;
@@ -400,28 +445,52 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			);
 			return;
 		}
-		//take note of whether or not we COULD have allowed PayPal to add taxes and shipping
-		//when we sent the customer to PayPal (because if we couldn't itemize the transaction, we
-		//wouldn't have known what parts were taxable, meaning we would have had to tell PayPal
-		//NONE of it was taxable otherwise it would re-add taxes each time a payment attempt occurred)
-//		$could_allow_paypal_to_add_taxes_and_shipping = $this->_can_easily_itemize_transaction_for( $payment );
-
-		$grand_total_needs_resaving = FALSE;
-
-		//might PayPal have added shipping?
-		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
-			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso'), 1, FALSE,  'paypal_shipping' );
-			$grand_total_needs_resaving = TRUE;
-
+		if( $payment->status() !== $this->_pay_model->approved_status() ) {
+			$this->log(
+				array(
+					'url' 				=> $this->_process_response_url(),
+					'message' 	=> __( 'We shouldn\'t update transactions taxes or shipping data from non-approved payments', 'event_espresso' ),
+					'payment' 	=> $payment->model_field_array()
+				),
+				$payment
+			);
+			return;
 		}
-		//might PayPal have changed the taxes?
-		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $redirect_args[ 'tax_cart' ] ){
-			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
-			$grand_total_needs_resaving = TRUE;
+		$grand_total_needs_resaving = false;
+
+		//might paypal have changed the taxes?
+		if( $this->_paypal_taxes && $payment_was_itemized ){
+                    //note that we're doing this BEFORE adding shipping; we actually want PayPal's shipping to remain non-taxable
+                    $this->_line_item->set_line_items_taxable( $transaction->total_line_item(), true, 'paypal_shipping' );
+                    $this->_line_item->set_total_tax_to(
+                            $transaction->total_line_item(),
+                            floatval( $update_info['tax'] ),
+                            __( 'Taxes', 'event_espresso' ),
+                            __( 'Calculated by Paypal', 'event_espresso' ),
+                            'paypal_tax'
+                    );
+                    $grand_total_needs_resaving = TRUE;
+		}
+
+		$shipping_amount = floatval( $update_info[ 'mc_shipping' ] );
+		//might paypal have added shipping?
+		if( $this->_paypal_shipping && $shipping_amount && $payment_was_itemized ){
+			$this->_line_item->add_unrelated_item(
+				$transaction->total_line_item(),
+				sprintf( __('Shipping for transaction %1$s', 'event_espresso'), $transaction->ID() ),
+				$shipping_amount,
+				__('Shipping charges calculated by Paypal', 'event_espresso'),
+				1,
+				false,
+				'paypal_shipping_' . $transaction->ID()
+			);
+			$grand_total_needs_resaving = true;
 		}
 
 		if( $grand_total_needs_resaving ){
 			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+			$registration_processor->update_registration_final_prices( $transaction );
 		}
 		$this->log(
 			array(

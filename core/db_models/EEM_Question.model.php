@@ -115,6 +115,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),
 				'QST_order'=>new EE_Integer_Field('QST_order', __('Question Order','event_espresso'), false, 0),
 				'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?','event_espresso'), false, false),
+				'QST_max' => new EE_Infinite_Integer_Field( 'QST_max', __( 'Max Size', 'event_espresso'	), false, EE_INF ),
 				'QST_wp_user'=>new EE_WP_User_Field('QST_wp_user', __('Question Creator ID','event_espresso'), false ),
 				'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
 			)
@@ -160,58 +161,79 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		return array_intersect_key( $this->allowed_question_types(), array_flip( $question_types ) );
 	}
 
-        /**
-         * Returns an array of all the QST_system values that can be allowed in the system question group
-         * identified by $system_question_group_id
-         * @param string $system_question_group_id QSG_system
-         * @return array of system question names (QST_system)
-         */
-        public function allowed_system_questions_in_system_question_group( $system_question_group_id ) {
-            $question_system_ids = array();
-            switch( $system_question_group_id ) {
-                case EEM_Question_Group::system_personal:
-                    $question_system_ids = array(
-                        EEM_Attendee::system_question_fname,
-                        EEM_Attendee::system_question_lname,
-                        EEM_Attendee::system_question_email,
-                        EEM_Attendee::system_question_phone
-                    );
-                    break;
-                case EEM_Question_Group::system_address:
-                    $question_system_ids = array(
-						EEM_Attendee::system_question_address,
-                        EEM_Attendee::system_question_address2,
-                        EEM_Attendee::system_question_city,
-                        EEM_Attendee::system_question_state,
-                        EEM_Attendee::system_question_country,
-                        EEM_Attendee::system_question_zip,
-                        EEM_Attendee::system_question_phone
-                    );
-                    break;
-            }
-            return apply_filters( 'FHEE__EEM_Question__system_questions_allowed_in_system_question_group__return', $question_system_ids, $system_question_group_id );
-        }
+	/**
+	 * Determines if the given question type is in the given question type category
+	 * @param string $question_type one of EEM_Question::allowed_question_types()
+	 * @param string $category one of the top-level keys of EEM_Question::question_type_categories()
+	 * @return boolean
+	 */
+	public function question_type_is_in_category( $question_type, $category ) {
+		if( ! isset( $this->_question_type_categories[ $category ] ) ) {
+			return false;
+		}
+		return in_array( $question_type, $this->_question_type_categories[ $category ] );
+	}
 
-        /**
-         * Returns an array of all the QST_system values that are required in the system question group
-         * identified by $system_question_group_id
-         * @param string $system_question_group_id QSG_system
-         * @return array of system question names (QST_system)
-         */
-        public function required_system_questions_in_system_question_group( $system_question_group_id ) {
-            $question_system_ids = null;
-            switch( $system_question_group_id ) {
-                case EEM_Question_Group::system_personal:
-                    $question_system_ids =  array(
-						EEM_Attendee::system_question_fname,
-						EEM_Attendee::system_question_email,
-					);
-                    break;
-                default:
-                    $question_system_ids = array();
-            }
-            return apply_filters( 'FHEE__EEM_Question__system_questions_required_in_system_question_group', $question_system_ids, $system_question_group_id );
-        }
+	/**
+	 * Returns the question type categories 2d array
+	 * @return array see EEM_Question::_question_type_categories
+	 */
+	public function question_type_categories() {
+		return $this->_question_type_categories;
+	}
+
+	/**
+	 * Returns an array of all the QST_system values that can be allowed in the system question group
+	 * identified by $system_question_group_id
+	 * @param string $system_question_group_id QSG_system
+	 * @return array of system question names (QST_system)
+	 */
+	public function allowed_system_questions_in_system_question_group( $system_question_group_id ) {
+		$question_system_ids = array();
+		switch( $system_question_group_id ) {
+			case EEM_Question_Group::system_personal:
+				$question_system_ids = array(
+					EEM_Attendee::system_question_fname,
+					EEM_Attendee::system_question_lname,
+					EEM_Attendee::system_question_email,
+					EEM_Attendee::system_question_phone
+				);
+				break;
+			case EEM_Question_Group::system_address:
+				$question_system_ids = array(
+					EEM_Attendee::system_question_address,
+					EEM_Attendee::system_question_address2,
+					EEM_Attendee::system_question_city,
+					EEM_Attendee::system_question_state,
+					EEM_Attendee::system_question_country,
+					EEM_Attendee::system_question_zip,
+					EEM_Attendee::system_question_phone
+				);
+				break;
+		}
+		return apply_filters( 'FHEE__EEM_Question__system_questions_allowed_in_system_question_group__return', $question_system_ids, $system_question_group_id );
+	}
+
+	/**
+	 * Returns an array of all the QST_system values that are required in the system question group
+	 * identified by $system_question_group_id
+	 * @param string $system_question_group_id QSG_system
+	 * @return array of system question names (QST_system)
+	 */
+	public function required_system_questions_in_system_question_group( $system_question_group_id ) {
+		$question_system_ids = null;
+		switch( $system_question_group_id ) {
+			case EEM_Question_Group::system_personal:
+				$question_system_ids =  array(
+					EEM_Attendee::system_question_fname,
+					EEM_Attendee::system_question_email,
+				);
+				break;
+			default:
+				$question_system_ids = array();
+		}
+		return apply_filters( 'FHEE__EEM_Question__system_questions_required_in_system_question_group', $question_system_ids, $system_question_group_id );
+	}
 
 
 
@@ -238,6 +260,41 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		);
 		$max = $this->_get_all_wpdb_results( array(), ARRAY_A, $columns_to_select );
 		return $max[0]['max_order'];
+	}
+
+	/**
+	 * Returns an array where keys are system question QST_system values,
+	 * and values are the highest question max the admin can set on the question
+	 * (aka the "max max"; eg, a site admin can change the zip question to have a max
+	 * of 5, but no larger than 12)
+	 * @return array
+	 */
+	public function system_question_maxes() {
+		return array(
+			'fname' => 45,
+			'lname' => 45,
+			'address' => 255,
+			'address2' => 255,
+			'city' => 45,
+			'zip' => 12,
+			'email' => 255,
+			'phone' => 45,
+		);
+	}
+
+	/**
+	 * Given a QST_system value, gets the question's largest allowable max input.
+	 * @see Registration_Form_Admin_Page::system_question_maxes()
+	 * @param string $system_question_value
+	 * @return int|float
+	 */
+	public function absolute_max_for_system_question( $system_question_value ) {
+		$maxes = $this->system_question_maxes();
+		if( isset( $maxes[ $system_question_value ] ) ) {
+			return $maxes[ $system_question_value ];
+		} else {
+			return EE_INF;
+		}
 	}
 
 
