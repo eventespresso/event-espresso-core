@@ -28,6 +28,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class Support_Admin_Page extends EE_Admin_Page {
+	
+	/**
+	 * Because we want to use the response in both the localized JS and in the body
+	 * we need to make this response available between method calls
+	 * @var \EventEspressoBatchRequest\Helpers\JobStepResponse
+	 */
+	protected $_job_step_response = null;
 
 
 	public function __construct( $routing = TRUE ) {
@@ -221,46 +228,19 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_sidebar();
 	}
 	
-	public function load_scripts_styles_batch_create() {
-		wp_register_script( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.js', array( 'jquery' ) );
-		
+	public function load_scripts_styles_batch_create() {	
+		$job_response = $this->_enqueue_batch_job_scripts_and_styles_and_start_job();
 		wp_enqueue_script( 'batch_runner', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js', array( 'progress_bar' ));
-		wp_enqueue_script( 'support_batch_runner', EE_SUPPORT_ASSETS_URL . 'support_batch_runner.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION,true);
-		wp_enqueue_style( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css' );
+		wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
+		wp_localize_script( 'support_batch_runner', 'ee_job_i18n', 
+			array(
+				'redirect_url' => $this->_req_data['redirect_url' ],
+			));
 	}
 	public function load_scripts_styles_batch_file_create() {
-		wp_register_script( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.js', array( 'jquery' ) );
-		wp_enqueue_style( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css', array(), EVENT_ESPRESSO_VERSION );
-		wp_enqueue_script( 'batch_runner', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js', array( 'progress_bar' ));
+		//creates a job based on the request variable
+		$job_response = $this->_enqueue_batch_job_scripts_and_styles_and_start_job();
 		wp_enqueue_script( 'support_batch_file_runner', EE_SUPPORT_ASSETS_URL . 'support_batch_file_runner.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION,true);
-	}
-	/**
-	 * Invokes the report-generating code
-	 */
-	protected function batch_create() {
-		//creates a job based on the request variable
-		$request_data = array_diff_key( 
-				$this->_req_data, 
-				array_flip( array( 'action',  'page' ) ) );
-		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
-		$job_response = $batch_runner->create_job( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport', $_REQUEST );
-		$success = wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
-		echo EEH_Template::locate_template( EE_SUPPORT_ADMIN . 'templates' . DS . 'admin_batch_runner.template.html' );
-	}
-	
-	/**
-	 * Loads a page for running a batch job that creates and downloads a file, 
-	 * and then sends the user back to wherever they were before
-	 */
-	protected function batch_file_create() {
-		//creates a job based on the request variable
-		$job_handler_classname = str_replace( '\\\\', '\\', $this->_req_data[ 'job_handler' ] );
-		$request_data = array_diff_key( 
-				$this->_req_data, 
-				array_flip( array( 'action',  'page' ) ) );
-		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
-		//eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
-		$job_response = $batch_runner->create_job( $job_handler_classname, $request_data );
 		wp_localize_script( 'support_batch_file_runner', 'ee_job_response', $job_response->to_array() );
 		wp_localize_script( 'support_batch_file_runner', 'ee_job_i18n', 
 				array(
@@ -270,11 +250,52 @@ class Support_Admin_Page extends EE_Admin_Page {
 							'</a>' ),
 					'redirect_url' => $this->_req_data['redirect_url' ],
 				));
+	}
+	
+	/**
+	 * Enqueues scripts and styles common to any batch job, and creates 
+	 * a job from the request data, and stores the response in the
+	 * $this->_job_step_response property
+	 * @return \EventEspressoBatchRequest\Helpers\JobStepResponse
+	 */
+	protected function _enqueue_batch_job_scripts_and_styles_and_start_job() {
+		wp_register_script( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.js', array( 'jquery' ) );
+		wp_enqueue_style( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_script( 'batch_runner', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js', array( 'progress_bar' ));
+		$job_handler_classname = stripslashes( $this->_req_data[ 'job_handler' ] );
+		$request_data = array_diff_key( 
+				$this->_req_data, 
+				array_flip( array( 'action',  'page' ) ) );
+		$batch_runner = new EventEspressoBatchRequest\BatchRequestProcessor();
+		//eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
+		$job_response = $batch_runner->create_job( $job_handler_classname, $request_data );
+		//remember the response for later. We need it to display the page body
+		$this->_job_step_response = $job_response;
+		return $job_response;
+	}
+	/**
+	 * Invokes the report-generating code
+	 */
+	protected function batch_create() {		
+		echo EEH_Template::locate_template( EE_SUPPORT_ADMIN . 'templates' . DS . 'admin_batch_runner.template.html' );
+	}
+	
+	/**
+	 * Loads a page for running a batch job that creates and downloads a file, 
+	 * and then sends the user back to wherever they were before
+	 */
+	protected function batch_file_create() {
+		if( $this->_job_step_response instanceof \EventEspressoBatchRequest\Helpers\JobStepResponse ) {
+			$filename = EEH_File::get_filename_from_filepath( $this->_job_step_response->job_parameters()->extra_datum( 'filepath' ) );
+		} else {
+			$filename = __( 'Unknown', 'event_espresso' );
+		}
 		echo EEH_Template::locate_template( 
 				EE_SUPPORT_ADMIN . 'templates' . DS . 'admin_batch_file_runner.template.html', 
 				array( 
-					'filename' => EEH_File::get_filename_from_filepath( $job_response->job_parameters()->extra_datum( 'filepath' ) )
-				));
+					'filename' => $filename 
+				)
+			);
 	}
 	
 	/**

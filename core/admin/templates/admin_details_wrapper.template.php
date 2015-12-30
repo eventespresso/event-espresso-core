@@ -1,6 +1,7 @@
 <?php
+global $post_type, $post;
 //action for registering metaboxes
-do_action( 'add_meta_boxes' );
+do_action( 'add_meta_boxes', $post_type, $post );
 ?>
 <div id="admin-page-header">
 	<?php echo $admin_page_header; ?>
