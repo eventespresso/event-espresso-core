@@ -33,7 +33,10 @@ class Extend_EE_Attendee_Contact_List_Table extends EE_Attendee_Contact_List_Tab
 		parent::_set_properties();
 		$this->_bottom_buttons = array(
 			'contact_list_report' => array(
-				'route' => 'contact_list_report'
+				'route' => 'contact_list_report',
+				'extra_request' =>  
+						array( 
+							'return_url' => urlencode( "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}" ) ) 
 			),
 //			'contact_list_export'=> array(
 //				'route' => 'contact_list_export'
