@@ -1,21 +1,6 @@
 <?php if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
-/**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
 
 /**
  * EE_Event
@@ -65,6 +50,67 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
+	}
+
+
+
+	/**
+	 * Overrides parent set() method so that all calls to set( 'status', $status ) can be routed to internal methods
+	 *
+	 * @param string $field_name
+	 * @param mixed  $field_value
+	 * @param bool   $use_default
+	 */
+	public function set( $field_name, $field_value, $use_default = false ) {
+		switch ( $field_name ) {
+			case 'status' :
+				$this->set_status( $field_value, $use_default );
+				break;
+			default :
+				parent::set( $field_name, $field_value, $use_default );
+		}
+	}
+
+
+
+	/**
+	 *    set_status
+	 *
+	 * Checks if event status is being changed to SOLD OUT
+	 * and updates event meta data with previous event status
+	 * so that we can revert things if/when the event is no longer sold out
+	 *
+	 * @access public
+	 * @param string $new_status
+	 * @param bool   $use_default
+	 * @return bool|void
+	 * @throws \EE_Error
+	 */
+	public function set_status( $new_status = null, $use_default = false ) {
+		// get current Event status
+		$old_status = $this->status();
+		// if status has changed
+		if ( $old_status != $new_status ) {
+			// TO sold_out
+			if ( $new_status == EEM_Event::sold_out ) {
+				// save the previous event status so that we can revert if the event is no longer sold out
+				$this->add_post_meta( '_previous_event_status', $old_status );
+				do_action( 'AHEE__EE_Event__set_status__to_sold_out', $this, $old_status, $new_status );
+				// OR FROM  sold_out
+			} else if ( $old_status == EEM_Event::sold_out ) {
+				$this->delete_post_meta( '_previous_event_status' );
+				do_action( 'AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status );
+			}
+			// update status
+			parent::set( 'status', $new_status, $use_default );
+			do_action( 'AHEE__EE_Event__set_status__after_update', $this );
+			return true;
+		} else {
+			// even though the old value matches the new value, it's still good to
+			// allow the parent set method to have a say
+			parent::set( 'status', $new_status, $use_default );
+			return true;
+		}
 	}
 
 
@@ -704,9 +750,16 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				$this->save();
 			}
 			$sold_out = TRUE;
-		}
-		else {
+		} else {
 			$sold_out = FALSE;
+			// was event previously marked as sold out ?
+			if ( $this->status() == EEM_Event::sold_out ) {
+				// revert status to previous value, if it was set
+				$previous_event_status = $this->get_post_meta( '_previous_event_status', true );
+				if ( $previous_event_status ) {
+					$this->set_status( $previous_event_status );
+				}
+			}
 		}
 		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out.
 		// So I'll forgo the automatic switch away from sold out status for now and instead just return the $sold out status... so this check can be used to validate the TRUE sold out status regardless of what the Event status is set to.
@@ -941,51 +994,54 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 	/**
-	 * Get the logical active status in a hierarchical order for all the datetimes.
+	 * Get the logical active status in a hierarchical order for all the datetimes.  Note
 	 *
-	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then the event is considered expired.
+	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its
+	 * NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an
+	 * event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then
+	 * the event is considered expired.
+	 *
+	 * NOTE: this method does NOT calculate whether the datetimes are sold out when event is published.  Sold Out is a status
+	 * set on the EVENT when it is not published and thus is done
 	 *
 	 * @param bool $reset
+	 *
 	 * @return bool | string - based on EE_Datetime active constants or FALSE if error.
 	 */
-	public function get_active_status( $reset = FALSE ) {
+	public function get_active_status( $reset = false ) {
 		// if the active status has already been set, then just use that value (unless we are resetting it)
 		if ( ! empty( $this->_active_status ) && ! $reset ) {
 			return $this->_active_status;
 		}
 		//first check if event id is present on this object
 		if ( ! $this->ID() ) {
-			return FALSE;
+			return false;
 		}
-		//first get all datetimes ordered by date
-		$datetimes = $this->datetimes_in_chronological_order();
-		//next loop through $datetimes and setup status array
-		$status_array = array();
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				$status_array[] = $datetime->get_active_status();
-			}
-		}
-		//now we can conditionally determine status
-		if ( $this->status() == 'publish' ) {
-			if ( in_array( EE_Datetime::active, $status_array ) ) {
+
+		$where_params_for_event  = array( array( 'EVT_ID' => $this->ID() ) );
+
+		//if event is published:
+		if ( $this->status() === 'publish' ) {
+			//active?
+			if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::active, $where_params_for_event ) > 0 ) {
 				$this->_active_status = EE_Datetime::active;
 			} else {
-				if ( in_array( EE_Datetime::upcoming, $status_array ) ) {
+				//upcoming?
+				if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::upcoming, $where_params_for_event  ) > 0 ) {
 					$this->_active_status = EE_Datetime::upcoming;
 				} else {
-					if ( in_array( EE_Datetime::expired, $status_array ) ) {
+					//expired?
+					if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired, $where_params_for_event  ) > 0 ) {
 						$this->_active_status = EE_Datetime::expired;
 					} else {
-						if ( in_array( EE_Datetime::sold_out, $status_array ) ) {
-							$this->_active_status = EE_Datetime::sold_out;
-						} else {
-							$this->_active_status = EE_Datetime::expired; //catchall
-						}
+						//it would be odd if things make it this far because it basically means there are no datetime's
+						//attached to the event.  So in this case it will just be considered inactive.
+						$this->_active_status = EE_Datetime::inactive;
 					}
 				}
 			}
 		} else {
+			//the event is not published, so let's just set it's active status according to its' post status
 			switch ( $this->status() ) {
 				case EEM_Event::sold_out :
 					$this->_active_status = EE_Datetime::sold_out;

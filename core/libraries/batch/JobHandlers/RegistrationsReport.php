@@ -47,9 +47,15 @@ class RegistrationsReport extends JobHandlerFile {
 			$this->get_filename_from_event( $event_id )
 		);
 		$job_parameters->add_extra_data( 'filepath', $filepath );
+		$question_data_for_columns = $this->_get_questions_for_report( $event_id );
+		$job_parameters->add_extra_data( 'questions_data', $question_data_for_columns );
 		$job_parameters->set_job_size( $this->count_units_to_process( $event_id ) );
 		//we should also set the header columns
-		$csv_data_for_row = $this->get_csv_data_for( $event_id, 0, 1 );
+		$csv_data_for_row = $this->get_csv_data_for(
+			$event_id,
+			0,
+			1,
+			$job_parameters->extra_datum( 'questions_data' ) );
 		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
@@ -81,21 +87,41 @@ class RegistrationsReport extends JobHandlerFile {
 		return sprintf( "registrations-for-%s.csv", $event_slug );
 	}
 
+	/**
+	 * Gets the questions which are to be used for this report, so they
+	 * can be remembered for later
+	 * @param int|null $event_id
+	 * @return array of wpdb results for questions which are to be used for this report
+	 */
+	protected function _get_questions_for_report( $event_id ) {
+		$question_query_params = array(
+			array(
+				'Answer.ANS_ID' => array( 'IS_NOT_NULL' ),
+			),
+			'group_by' => array( 'QST_ID' )
+		);
+		if( $event_id ) {
+			$question_query_params[0]['Answer.Registration.EVT_ID'] = $event_id;
+		}
+		return \EEM_Question::instance()->get_all_wpdb_results( $question_query_params );
+	}
+
 
 
 	/**
 	 * Performs another step of the job
+	 *
 	 * @param JobParameters $job_parameters
-	 * @return array{
-	 *	@type string $status
-	 *	@type int $records_processed
-	 *	@type int $records_to_process
-	 *	@type string message
-	 * } and anything more we want to add
-	 * @throws
+	 * @param int           $batch_size
+	 * @return JobStepResponse
+	 * @throws \EE_Error
 	 */
 	public function continue_job( JobParameters $job_parameters, $batch_size = 50 ) {
-		$csv_data = $this->get_csv_data_for( $job_parameters->request_datum( 'EVT_ID', '0'), $job_parameters->units_processed(), $batch_size );
+		$csv_data = $this->get_csv_data_for(
+			$job_parameters->request_datum( 'EVT_ID', '0'),
+			$job_parameters->units_processed(),
+			$batch_size,
+			$job_parameters->extra_datum( 'questions_data' ) );
 		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
@@ -115,17 +141,25 @@ class RegistrationsReport extends JobHandlerFile {
 				$extra_response_data );
 	}
 
-	function get_csv_data_for( $event_id, $offset, $limit ) {
+	/**
+	 * Gets the csv data for a batch of registrations
+	 * @param int|null $event_id
+	 * @param int $offset
+	 * @param int $limit
+	 * @param array $questions_for_these_regs_rows results of $wpdb->get_results( $something, ARRAY_A) when querying for questions
+	 * @return array top-level keys are numeric, next-level keys are column headers
+	 *
+	 */
+	function get_csv_data_for( $event_id, $offset, $limit, $questions_for_these_regs_rows ) {
 		\EE_Registry::instance()->load_helper( 'Export' );
 		$reg_fields_to_include = array(
-				'TXN_ID',
-				'ATT_ID',
-				'REG_ID',
-				'REG_date',
-				'REG_code',
-				'REG_count',
-				'REG_final_price'
-
+			'TXN_ID',
+			'ATT_ID',
+			'REG_ID',
+			'REG_date',
+			'REG_code',
+			'REG_count',
+			'REG_final_price',
 		);
 		$att_fields_to_include = array(
 			'ATT_fname',
@@ -170,12 +204,6 @@ class RegistrationsReport extends JobHandlerFile {
 		$registration_ids = array();
 		foreach( $registration_rows as $reg_row ) {
 			$registration_ids[] = intval( $reg_row[ 'Registration.REG_ID'] );
-		}
-//		EEM_Question::instance()->show_next_x_db_queries();
-		if( $event_id ) {
-			$questions_for_these_regs_rows = \EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.Registration.EVT_ID'=> $event_id ) ) );
-		} else {
-			$questions_for_these_regs_rows = \EEM_Question::instance()->get_all_wpdb_results(array(array('Answer.ANS_ID'=> array( 'IS_NOT_NULL' ) ) ) );
 		}
 
 		foreach($registration_rows as $reg_row){
