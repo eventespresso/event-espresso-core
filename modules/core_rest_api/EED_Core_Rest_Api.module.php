@@ -135,7 +135,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 				$ee_namespace = self::ee_api_namespace . $version;
 				$plural_model_route = EEH_Inflector::pluralize_and_lower( $model_name );
 				$singular_model_route = $plural_model_route . '/(?P<id>\d+)' ;
-
 				$model_routes[ $ee_namespace ][ $plural_model_route ] = array(
 						array(
 							'callback' => array(
@@ -143,18 +142,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 								'handle_request_get_all' ),
 							'methods' => WP_REST_Server::READABLE,
 							'hidden_endpoint' => $hidden_endpoint,
-							'args' => array(
-								'filter' => array(
-									'required' => false,
-									'default' => array(),
-									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Filtering_Results for documentation', 'event_espresso' ),
-									),
-								'include' => array(
-									'required' => false,
-									'default' => '*',
-									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
-								),
-							),
+							'args' => $this->_get_read_query_params( $model_name ),
 							'_links' => array(
 								'self' => rest_url( $ee_namespace . $singular_model_route ),
 							)
@@ -204,18 +192,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 									'handle_request_get_related' ),
 								'methods' => WP_REST_Server::READABLE,
 								'hidden_endpoint' => $hidden_endpoint,
-								'args' => array(
-									'filter' => array(
-										'required' => false,
-										'default' => array(),
-										'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Filtering_Results for documentation', 'event_espresso' ),
-									),
-									'include' => array(
-										'required' => false,
-										'default' => '*',
-										'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
-									)
-								),
+								'args' => $this->_get_read_query_params( $relation_name ),
 							),
 //							array(
 //								'callback' => array(
@@ -231,6 +208,56 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 
 		return $model_routes;
+	}
+	
+	/**
+	 * Gets info about reading query params that are accceptable
+	 * @param string $model_name eg 'Event' or 'Venue'
+	 * @return array describing the args acceptable when querying this model
+	 */
+	protected function _get_read_query_params( $model_name ) {
+		$model = EE_Registry::instance()->load_model( $model_name );
+		$default_orderby = array();
+		foreach( $model->get_combined_primary_key_fields() as $key_field ) {
+			$default_orderby[ $key_field->get_name() ] = 'ASC';
+		}
+		return array(
+			'where' => array(
+				'required' => false,
+				'default' => array(),
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterwhere for documentation', 'event_espresso' ),
+				),
+			'limit' => array(
+				'required' => false,
+				'default' => 50,
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterlimit for documentation', 'event_espresso' )
+			),
+			'order_by' => array(
+				'required' => false,
+				'default' => $default_orderby,
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterorder_by for documentation', 'event_espresso' )
+			),
+			'group_by' => array(
+				'required' => false,
+				'default' => null,
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filtergroup_by for documentation', 'event_espresso' )
+			),
+			'having' => array(
+				'required' => false,
+				'default' => null,
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterhaving for documentation', 'event_espresso' )
+			),
+			'caps' => array(
+				'required' => false,
+				'default' => EEM_Base::caps_read,
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filtercaps for documentation', 'event_espresso' )
+			),
+			'include' => array(
+				'required' => false,
+				'default' => '*',
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+			),
+		);
 	}
 
 	/**
