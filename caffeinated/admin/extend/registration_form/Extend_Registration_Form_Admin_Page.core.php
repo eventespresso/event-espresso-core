@@ -441,22 +441,32 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_question(){
-		$this->_delete_items( $this->_question_model );
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted',
+			array( 'action' => 'default', 'status' => 'all' )
+		);
 	}
 
 
 	protected function _delete_questions() {
-		$success = $this->_delete_items($this->_question_model);
-		$this->_redirect_after_action( $success, $this->_question_model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'trash' ));
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted permanently',
+			array( 'action' => 'default', 'status' => 'trash' )
+		);
 	}
 
 
 /**
  * Performs the deletion of a single or multiple questions or question groups.
- * @param EEM_Base $model
- * @return int number of items deleted permanenetly
+ *
+ * @param EEM_Soft_Delete_Base $model
+ * @return int number of items deleted permanently
  */
 	private function _delete_items(EEM_Soft_Delete_Base $model){
 		$success = 0;
@@ -481,7 +491,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		return $success;
 	}
-	
+
 	/**
 	 * Deletes the specified question (and its associated question options) or question group
 	 * @param int $id
