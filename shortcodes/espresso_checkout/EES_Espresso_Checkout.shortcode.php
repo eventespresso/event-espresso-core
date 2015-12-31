@@ -52,16 +52,16 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	 * @return    void
 	 */
 	public function run( WP $WP ) {
-		if ( ! did_action( 'pre_get_posts' )) {
+		if ( did_action( 'pre_get_posts' ) && did_action( 'send_headers' ) ) {
+			global $wp_query;
+			EED_Single_Page_Checkout::load_reg_steps();
+			EED_Single_Page_Checkout::init( $wp_query );
+		} else {
 			// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
 			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 			// this will trigger the EED_Single_Page_Checkout module's run() method during the pre_get_posts hook point,
 			// this allows us to initialize things, enqueue assets, etc,
 			add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'init' ), 10, 1 );
-		} else {
-			global $wp_query;
-			EED_Single_Page_Checkout::load_reg_steps();
-			EED_Single_Page_Checkout::init( $wp_query );
 		}
 	}
 
