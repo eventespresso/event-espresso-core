@@ -248,7 +248,7 @@ class EED_Events_Archive  extends EED_Module {
 			$excerpt = EED_Events_Archive::event_details( $excerpt );
 		} else {
 			EED_Events_Archive::$using_get_the_excerpt = true;
-			add_filter( 'wp_trim_excerpt', array( 'EED_Events_Archive', 'end_get_the_excerpt' ), 999 );
+			add_filter( 'wp_trim_excerpt', array( 'EED_Events_Archive', 'end_get_the_excerpt' ), 999, 1 );
 		}
 		return $excerpt;
 	}
@@ -256,13 +256,15 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 *    the_title
+	 * end_get_the_excerpt
 	 *
-	 * @access    	public
-	 * @return 		void
+	 * @access public
+	 * @param  string $text
+	 * @return string
 	 */
-	public static function end_get_the_excerpt() {
+	public static function end_get_the_excerpt( $text = '' ) {
 		EED_Events_Archive::$using_get_the_excerpt = false;
+		return $text;
 	}
 
 
