@@ -176,6 +176,9 @@ final class EE_System {
 		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
 		//load and setup EE_Capabilities
 		EE_Registry::instance()->load_core( 'Capabilities' );
+		//caps need to be initialized on every request so that capability maps are set.
+		//@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+		EE_Registry::instance()->CAP->init_caps();
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
 	}
 

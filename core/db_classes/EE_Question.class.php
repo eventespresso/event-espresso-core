@@ -458,6 +458,23 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			return null;
 		}
 	}
+	
+	/**
+	 * Returns the question's maximum allowed response size
+	 * @return int|float
+	 */
+	public function max() {
+		return $this->get( 'QST_max' );
+	}
+	
+	/**
+	 * Sets the question's maximum allowed response size
+	 * @param int|float $new_max
+	 * @return int|float
+	 */
+	public function set_max( $new_max ) {
+		return $this->set( 'QST_max', $new_max );
+	}
 
 
 }
