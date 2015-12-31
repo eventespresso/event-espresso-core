@@ -37,7 +37,10 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 		return array(
 			$this->get_help_tab_name() => array(
 				'title' => __('New Payment Method Offsite Settings', 'event_espresso'),
-				'filename' => 'new_payment_method_offsite'
+				'filename' => 'new_payment_method_offsite',
+				'template_args' => array(
+					'variable_x' => 'VARIABLE X',
+				)
 				),
 		);
 	}
