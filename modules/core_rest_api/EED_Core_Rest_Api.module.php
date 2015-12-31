@@ -334,7 +334,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function version_compatibilities() {
-		return apply_filters( 'FHEE__EED_Core_REST_API__version_compatibilities', array( '4.8.29' => '4.6.29' ) );
+		return apply_filters( 'FHEE__EED_Core_REST_API__version_compatibilities', array( '4.8.29' => '4.8.29' ) );
 	}
 
 	/**
