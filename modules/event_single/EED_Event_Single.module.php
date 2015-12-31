@@ -23,6 +23,11 @@
  */
 class EED_Event_Single  extends EED_Module {
 
+	/**
+	 * @type bool $using_get_the_excerpt
+	 */
+	protected static $using_get_the_excerpt = false;
+
 
 	/**
 	 * @type EE_Template_Part_Manager $template_parts
@@ -177,6 +182,7 @@ class EED_Event_Single  extends EED_Module {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
+			add_filter( 'get_the_excerpt', array( 'EED_Event_Single', 'get_the_excerpt' ), 1, 1 );
 			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 			add_action( 'loop_end', array( 'EED_Event_Single', 'loop_end' ));
 			// don't display entry meta because the existing theme will take car of that
@@ -215,6 +221,36 @@ class EED_Event_Single  extends EED_Module {
 	}
 
 
+
+	/**
+	 *    get_the_excerpt - kinda hacky, but if a theme is using get_the_excerpt(), then we need to remove our filters on the_content()
+	 *
+	 * @access    public
+	 * @param        string $excerpt
+	 * @return        string
+	 */
+	public static function get_the_excerpt( $excerpt = '' ) {
+		EED_Event_Single::$using_get_the_excerpt = true;
+		add_filter( 'wp_trim_excerpt', array( 'EED_Event_Single', 'end_get_the_excerpt' ), 999, 1 );
+		return $excerpt;
+	}
+
+
+
+	/**
+	 * end_get_the_excerpt
+	 *
+	 * @access public
+	 * @param  string $text
+	 * @return string
+	 */
+	public static function end_get_the_excerpt( $text = '' ) {
+		EED_Event_Single::$using_get_the_excerpt = false;
+		return $text;
+	}
+
+
+
 	/**
 	 * 	event_details
 	 *
@@ -228,6 +264,7 @@ class EED_Event_Single  extends EED_Module {
 		if (
 			$current_post_ID != $post->ID
 			&& $post->post_type == 'espresso_events'
+			&& ! EED_Event_Single::$using_get_the_excerpt
 			&& ! post_password_required()
 		) {
 			// Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
