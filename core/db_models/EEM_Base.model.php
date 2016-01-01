@@ -271,7 +271,14 @@ abstract class EEM_Base extends EE_Base{
 		'IS_NULL' => 'IS NULL',
 		'is_null' => 'IS NULL',
 		'IS NULL' => 'IS NULL',
-		'is null' => 'IS NULL');
+		'is null' => 'IS NULL',
+		'REGEXP' => 'REGEXP',
+		'regexp' => 'REGEXP',
+		'NOT_REGEXP' => 'NOT REGEXP',
+		'not_regexp' => 'NOT REGEXP',
+		'NOT REGEXP' => 'NOT REGEXP',
+		'not regexp' => 'NOT REGEXP',
+	);
 
 	/**
 	 * operators that work like 'IN', accepting a comma-separated list of values inside brackets. Eg '(1,2,3)'
@@ -768,7 +775,7 @@ abstract class EEM_Base extends EE_Base{
 	 * useful for finding if model objects of this type are 'owned' by the current user.
 	 * This is an empty string when the foreign key is on this model and when it isn't,
 	 * but is only non-empty when this model's ownership is indicated by a RELATED model
-	 * (or transietly-related model)
+	 * (or transiently-related model)
 	 * @return string
 	 */
 	public function model_chain_to_wp_user(){
@@ -806,7 +813,7 @@ abstract class EEM_Base extends EE_Base{
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
 	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
-	 * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 * @return array | stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		//remember the custom selections, if any
@@ -830,14 +837,15 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets an array of rows from the database just like $wpdb->get_results would,
 	 * but you can use the $query_params like on EEM_Base::get_all() to more easily
 	 * take care of joins, field preparation etc.
-	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 *
+*@param array $query_params like EEM_Base::get_all's $query_params
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
 	 * @param mixed $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
 	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
 	 * and 1 is the data type. Eg, array('count'=>array('COUNT(REG_ID)','%d'))
-	 * @return stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
+	 * @return array|stdClass[] like results of $wpdb->get_results($sql,OBJECT), (ie, output type is OBJECT)
 	 */
 	public function  get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
 		return $this->_get_all_wpdb_results($query_params, $output, $columns_to_select);
@@ -857,10 +865,30 @@ abstract class EEM_Base extends EE_Base{
 
 			foreach($columns_to_select as $alias => $selection_and_datatype){
 				if( ! is_array($selection_and_datatype) || ! isset($selection_and_datatype[1])){
-					throw new EE_Error(sprintf(__("Custom selection %s (alias %s) needs to be an array like array('COUNT(REG_ID)','%%d')", "event_espresso"),$selection_and_datatype,$alias));
+					throw new EE_Error(
+						sprintf(
+							__(
+								"Custom selection %s (alias %s) needs to be an array like array('COUNT(REG_ID)','%%d')",
+								"event_espresso"
+							),
+							$selection_and_datatype,
+							$alias
+						)
+					);
 				}
 				if( ! in_array( $selection_and_datatype[1],$this->_valid_wpdb_data_types)){
-					throw new EE_Error(sprintf(__("Datatype %s (for selection '%s' and alias '%s') is not a valid wpdb datatype (eg %%s)", "event_espresso"),$selection_and_datatype[1],$selection_and_datatype[0],$alias,implode(",",$this->_valid_wpdb_data_types)));
+					throw new EE_Error(
+						sprintf(
+							__(
+								"Datatype %s (for selection '%s' and alias '%s') is not a valid wpdb datatype (eg %%s)",
+								"event_espresso"
+							),
+							$selection_and_datatype[ 1 ],
+							$selection_and_datatype[ 0 ],
+							$alias,
+							implode( ",", $this->_valid_wpdb_data_types )
+						)
+					);
 				}
 				$select_sql_array[] = "{$selection_and_datatype[0]} AS $alias";
 			}
@@ -1314,7 +1342,7 @@ abstract class EEM_Base extends EE_Base{
 				if( $this->has_primary_key_field() ){
 					$main_table_pk_value = $wpdb_result[ $this->get_primary_key_field()->get_qualified_column() ];
 				}else{
-					//if there's no primary key, we basically can't support having a 2nd table on the model (we could but it woudl be lots of work)
+					//if there's no primary key, we basically can't support having a 2nd table on the model (we could but it would be lots of work)
 					$main_table_pk_value = null;
 				}
 				//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
@@ -1911,7 +1939,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $extra_join_model_fields_n_values = array()){
 		$relation_obj = $this->related_settings_for($relationName);
-		return $relation_obj->add_relation_to($id_or_obj, $other_model_id_or_obj, $extra_join_model_fields_n_values);
+		return $relation_obj->add_relation_to( $id_or_obj, $other_model_id_or_obj, $extra_join_model_fields_n_values);
 	}
 
 	/**
