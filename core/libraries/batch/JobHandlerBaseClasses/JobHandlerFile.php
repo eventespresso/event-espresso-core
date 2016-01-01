@@ -45,7 +45,7 @@ abstract class JobHandlerFile extends JobHandler {
 	 * @return string
 	 * @throws BatchRequestException
 	 */
-	public function create_file_from_job_with_name( $job_id, $filename ) {
+	public function create_file_from_job_with_name( $job_id, $filename, $filetype = 'application/ms-excel' ) {
 		$filepath = '';
 		try{
 			$success = $this->_file_helper->ensure_folder_exists_and_is_writable(
@@ -59,6 +59,11 @@ abstract class JobHandlerFile extends JobHandler {
 			if( $success ) {
 				$filepath = EVENT_ESPRESSO_UPLOAD_DIR . JobHandlerFile::temp_folder_name . DS . $job_id . DS. $filename;
 				$success = $this->_file_helper->ensure_file_exists_and_is_writable( $filepath );
+			}
+			//let's add the .htaccess file so safari will open the file properly
+			if( $success ) {
+				$extension = \EEH_File::get_file_extension( $filepath );
+				\EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . JobHandlerFile::temp_folder_name . DS . $job_id . DS . '.htaccess', 'AddType ' . $filetype . ' ' . $extension, '.htaccess' );
 			}
 			//those methods normally fail with an exception, but if not, let's do it
 			if( ! $success ) {
