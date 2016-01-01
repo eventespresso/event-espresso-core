@@ -53,6 +53,9 @@ class EEM_Extra_Meta extends EEM_Base {
 		foreach($models_this_can_attach_to as $model){
 			$this->_model_relations[$model] = new EE_Belongs_To_Any_Relation();
 		}
+		foreach( $this->cap_contexts_to_cap_action_map() as $cap_context => $action ) {
+			$this->_cap_restriction_generators[ $cap_context ] = new EE_Restriction_Generator_Meta( 'EXM_key', 'EXM_value' );
+		}
 		parent::__construct( $timezone );
 	}
 

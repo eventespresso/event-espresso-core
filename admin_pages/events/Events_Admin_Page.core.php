@@ -1997,7 +1997,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action( 'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted' );
+		do_action( 'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $EVT_ID );
 		return TRUE;
 	}
 
