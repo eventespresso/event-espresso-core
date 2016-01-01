@@ -16,6 +16,12 @@
 <?php _e('The login used to login to New Payment Method.', 'event_espresso'); ?>
 </li>
 <li>
+<strong><?php _e('Other Important Information', 'event_espresso'); ?></strong><br />
+<?php printf( 
+		__('This is a good place to mention how to setup an account with the payment gateway, and any important gotchas. You can use variables set from EE_PMT_New_Payment_method_Offsite::help_tabs_config() in here. Like this: %1$s', 'event_espresso'),
+		$variable_x );?>
+</li>
+<li>
 <strong><?php _e('Button Image URL', 'event_espresso'); ?></strong><br />
 <?php _e('Change the image that is used for this payment gateway.', 'event_espresso'); ?>
 </li>
