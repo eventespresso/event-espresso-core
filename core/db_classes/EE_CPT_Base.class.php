@@ -281,7 +281,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 */
 	public function delete_post_meta( $meta_key, $meta_value = '' ) {
 		if ( ! $this->ID() ) {
-			throw new EE_Error( sprintf( __( "Can not delete post meta field for a post that has never been saved.", "event_espresso" ) ) );
+			//there are obviously no postmetas for this if it's not saved
+			//so let's just report this as a success
+			return true;
 		}
 		return delete_post_meta( $this->ID(), $meta_key, $meta_value );
 	}
