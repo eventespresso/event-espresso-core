@@ -242,7 +242,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @param string $meta_key
 	 * @param mixed  $meta_value
 	 * @param mixed  $prev_value
-	 * @throws EE_Error
 	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
 	 */
 	public function update_post_meta( $meta_key, $meta_value, $prev_value = NULL ) {
@@ -259,7 +258,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @param mixed $meta_key
 	 * @param mixed $meta_value
 	 * @param bool  $unique . If postmeta for this $meta_key already exists, whether to add an additional item or not
-	 * @throws EE_Error
 	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
 	 */
 	public function add_post_meta( $meta_key, $meta_value, $unique = FALSE ) {
@@ -276,7 +274,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 *
 	 * @param mixed $meta_key
 	 * @param mixed $meta_value
-	 * @throws EE_Error
 	 * @return boolean False for failure. True for success.
 	 */
 	public function delete_post_meta( $meta_key, $meta_value = '' ) {
