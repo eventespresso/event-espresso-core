@@ -47,10 +47,10 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _setup_data() {
-		$trashed = $this->_admin_page->get_view() == 'trashed' ? TRUE : FALSE;
-		$this->_data = $this->_admin_page->get_prices_overview_data( $this->_per_page, FALSE, $trashed );
-		$this->_all_data_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, FALSE );
-		$this->_trashed_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, TRUE, TRUE );
+		$trashed = $this->_admin_page->get_view() == 'trashed' ? true : false;
+		$this->_data = $this->_admin_page->get_prices_overview_data( $this->_per_page, false, $trashed );
+		$this->_all_data_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, true, false );
+		$this->_trashed_count = $this->_admin_page->get_prices_overview_data( $this->_per_page, true, true );
 	}
 
 
@@ -60,7 +60,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 		$this->_wp_list_args = array(
 				'singular' => __('price', 'event_espresso'),
 				'plural' => __('prices', 'event_espresso'),
-				'ajax' => TRUE,
+				'ajax' => true,
 				'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
@@ -73,10 +73,10 @@ class Prices_List_Table extends EE_Admin_List_Table {
 			);
 
 			$this->_sortable_columns = array(
-						// TRUE means its already sorted
-						'name' => array( 'name' => FALSE ),
-						'type' => array( 'type' => FALSE ),
-						'amount' => array( 'amount' => FALSE )
+						// true means its already sorted
+						'name' => array( 'name' => false ),
+						'type' => array( 'type' => false ),
+						'amount' => array( 'amount' => false )
 			);
 
         $this->_hidden_columns = array(
@@ -156,19 +156,19 @@ class Prices_List_Table extends EE_Admin_List_Table {
 			if ($this->_view == 'all') {
 				// trash price link
 				if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price', 'pricing_trash_price', $item->ID() ) ) {
-					$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
+					$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_price', 'id'=>$item->ID(), 'noheader' => true ), PRICING_ADMIN_URL );
 					$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . esc_attr__( 'Move Price to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 				}
 			} else {
 				if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price', 'pricing_restore_price', $item->ID() ) ) {
 					// restore price link
-					$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
+					$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_price', 'id'=>$item->ID(), 'noheader' => true ), PRICING_ADMIN_URL );
 					$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . esc_attr__( 'Restore Price', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 				}
 
 				// delete price link
 				if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price', 'pricing_delete_price', $item->ID() ) ) {
-					$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
+					$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_price', 'id'=>$item->ID(), 'noheader' => true ), PRICING_ADMIN_URL );
 					$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . esc_attr__( 'Delete Price Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 				}
 			}
