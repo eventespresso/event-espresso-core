@@ -487,9 +487,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
 		$_where = array(
-				'PRC_is_default' => 1,
-				'PRC_deleted'=>$trashed
+				'PRC_is_default' => 1
 				);
+
+		if ( $trashed ) {
+			$_where['PRC_deleted'] = true;
+		}
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
@@ -512,7 +515,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			);
 
 		if($count){
-			return EEM_Price::instance()->count_deleted_and_undeleted(array($_where));
+			return $trashed ? EEM_Price::instance()->count( array( $_where ) ) : EEM_Price::instance()->count_deleted_and_undeleted(array($_where));
 		}else{
 			return EEM_Price::instance()->get_all_deleted_and_undeleted($query_params);
 		}
