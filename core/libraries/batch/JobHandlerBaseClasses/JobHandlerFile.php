@@ -23,13 +23,23 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 abstract class JobHandlerFile extends JobHandler {
+
+	const temp_folder_name = 'batch_temp_folder';
+
 	/**
 	 *
-	 * @var EEHI_File
+	 * @var \EEHI_File
 	 */
 	protected $_file_helper = null;
-	const temp_folder_name = 'batch_temp_folder';
-	public function __construct( EEHI_File $file_helper = null ) {
+
+
+
+	/**
+	 * JobHandlerFile constructor.
+	 *
+	 * @param \EEHI_File|null $file_helper
+	 */
+	public function __construct( \EEHI_File $file_helper = null ) {
 		if( ! $file_helper ) {
 			$this->_file_helper = new \EEH_File();
 		}
@@ -42,8 +52,9 @@ abstract class JobHandlerFile extends JobHandler {
 	 *
 	 * @param string $job_id
 	 * @param string $filename
+	 * @param string $filetype
 	 * @return string
-	 * @throws BatchRequestException
+	 * @throws \EventEspressoBatchRequest\Helpers\BatchRequestException
 	 */
 	public function create_file_from_job_with_name( $job_id, $filename, $filetype = 'application/ms-excel' ) {
 		$filepath = '';
@@ -63,7 +74,11 @@ abstract class JobHandlerFile extends JobHandler {
 			//let's add the .htaccess file so safari will open the file properly
 			if( $success ) {
 				$extension = \EEH_File::get_file_extension( $filepath );
-				\EEH_File::write_to_file( EVENT_ESPRESSO_UPLOAD_DIR . JobHandlerFile::temp_folder_name . DS . $job_id . DS . '.htaccess', 'AddType ' . $filetype . ' ' . $extension, '.htaccess' );
+				\EEH_File::write_to_file(
+					EVENT_ESPRESSO_UPLOAD_DIR . JobHandlerFile::temp_folder_name . DS . $job_id . DS . '.htaccess',
+					'AddType ' . $filetype . ' ' . $extension,
+					'.htaccess'
+				);
 			}
 			//those methods normally fail with an exception, but if not, let's do it
 			if( ! $success ) {
