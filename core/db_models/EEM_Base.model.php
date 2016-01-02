@@ -2726,12 +2726,20 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
-		$allowed_used_default_where_conditions_values = array('all','this_model_only', 'other_models_only','none');
+		$allowed_used_default_where_conditions_values = array(
+				'all',
+				'this_model_only', 
+				'other_models_only',
+				'minimum',
+				'none'
+			);
 		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
 			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
 		}
 		if( in_array($use_default_where_conditions, array('all','this_model_only')) ){
 			$universal_query_params = $this->_get_default_where_conditions();
+		}elseif( in_array( $use_default_where_conditions, array( 'minimum' ) ) ) {
+			$universal_query_params = $this->_get_minimum_where_conditions();
 		}else{
 			$universal_query_params = array();
 		}
@@ -2799,6 +2807,21 @@ abstract class EEM_Base extends EE_Base{
 			return array();
 
 		return $this->_default_where_conditions_strategy->get_default_where_conditions($model_relation_path);
+	}
+	/**
+	 * Uses the _minimum_where_conditions_strategy set during __construct() to get
+	 * minimum where conditions on all get_all, update, and delete queries done by this model.
+	 * Use the same syntax as client code. Eg on the Event model, use array('Event.EVT_post_type'=>'esp_event'),
+	 * NOT array('Event_CPT.post_type'=>'esp_event').
+	 * Similar to _get_default_where_conditions
+	 * @param string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
+	 * @return array like EEM_Base::get_all's $query_params[0] (where conditions)
+	 */
+	protected function _get_minimum_where_conditions($model_relation_path = null){
+		if ( $this->_ignore_where_strategy )
+			return array();
+
+		return $this->_minimum_where_conditions_strategy->get_default_where_conditions($model_relation_path);
 	}
 	/**
 	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
