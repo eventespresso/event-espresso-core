@@ -118,6 +118,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Default_Where_Conditions
 	 */
 	protected $_default_where_conditions_strategy;
+	
+	/**
+	 * Strategy for getting conditions on this model when 'default_where_conditions' equals 'minimum'.
+	 * This is particularly useful when you want something between 'none' and 'default'
+	 * @var EE_Default_Where_Conditions
+	 */
+	protected $_minimum_where_conditions_strategy;
 
 	/**
 	 * String describing how to find the "owner" of this model's objects.
@@ -472,6 +479,11 @@ abstract class EEM_Base extends EE_Base{
 			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
 		}
 		$this->_default_where_conditions_strategy->_finalize_construct($this);
+		if( ! $this->_minimum_where_conditions_strategy){
+			//nothing was set during child constructor, so set default
+			$this->_minimum_where_conditions_strategy = new EE_Default_Where_Conditions();
+		}
+		$this->_minimum_where_conditions_strategy->_finalize_construct($this);
 
 		//if the cap slug hasn't been set, and we haven't set it to false on purpose
 		//to indicate to NOT set it, set it to the logical default

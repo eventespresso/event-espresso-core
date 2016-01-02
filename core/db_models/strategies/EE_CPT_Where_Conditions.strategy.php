@@ -14,7 +14,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since		 	   4.8.29 at least
  *
  */
-class EE_CPT_Where_Conditions extends EE_Default_Minimum_Where_Conditions{
+class EE_CPT_Where_Conditions extends EE_CPT_Minimum_Where_Conditions{
 	/**
 	 * Gets the where default where conditions for a custom post type model
 	 * @param string $model_relation_path. Eg, from Event to Payment, this should be "Registration.Transaction.Payment"
