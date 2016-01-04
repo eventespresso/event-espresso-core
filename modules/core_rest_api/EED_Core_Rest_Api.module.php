@@ -166,7 +166,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 								'include' => array(
 									'required' => false,
 									'default' => '*',
-									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
 								),
 							)
 						),
@@ -225,37 +225,37 @@ class EED_Core_Rest_Api extends \EED_Module {
 			'where' => array(
 				'required' => false,
 				'default' => array(),
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterwhere for documentation', 'event_espresso' ),
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#where for documentation', 'event_espresso' ),
 				),
 			'limit' => array(
 				'required' => false,
 				'default' => 50,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterlimit for documentation', 'event_espresso' )
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#limit for documentation', 'event_espresso' )
 			),
 			'order_by' => array(
 				'required' => false,
 				'default' => $default_orderby,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterorder_by for documentation', 'event_espresso' )
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#order_by for documentation', 'event_espresso' )
 			),
 			'group_by' => array(
 				'required' => false,
 				'default' => null,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filtergroup_by for documentation', 'event_espresso' )
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#group_by for documentation', 'event_espresso' )
 			),
 			'having' => array(
 				'required' => false,
 				'default' => null,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filterhaving for documentation', 'event_espresso' )
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#having for documentation', 'event_espresso' )
 			),
 			'caps' => array(
 				'required' => false,
 				'default' => EEM_Base::caps_read,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#filtercaps for documentation', 'event_espresso' )
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#caps for documentation', 'event_espresso' )
 			),
 			'include' => array(
 				'required' => false,
 				'default' => '*',
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-json-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
 			),
 		);
 	}

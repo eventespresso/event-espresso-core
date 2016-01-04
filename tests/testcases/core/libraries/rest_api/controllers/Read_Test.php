@@ -100,8 +100,8 @@ class Read_Test extends \EE_UnitTestCase{
 			array (
 				'EVT_ID' => $event->ID(),
 				'EVT_desc' => array(
-					'rendered' => $event->get('EVT_desc'),
-					'raw' => $event->get_pretty( 'EVT_desc')
+					'rendered' => $event->get_pretty( 'EVT_desc' ),
+					'raw' => $event->get( 'EVT_desc')
 					),
 			),
 			$result
