@@ -1128,7 +1128,7 @@ class EEH_Form_Fields {
 	 * @return string
 	 */
 	static function prep_option_value( $option_value ){
-		return trim( stripslashes( $option_value ));
+		return esc_attr( trim( stripslashes( $option_value ) ) );
 	}
 
 
