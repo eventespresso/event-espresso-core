@@ -603,7 +603,7 @@ class EEH_Form_Fields {
 				break;
 
 			case 'CHECKBOX' :
-					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $label_b4, $system_ID, $use_html_entities );
 				break;
 
 			case 'DATE' :
@@ -924,7 +924,7 @@ class EEH_Form_Fields {
 
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
-			$answer[$key] = self::prep_answer( $value );
+			$answer[$key] = self::prep_answer( $value, $use_html_entities );
 		}
 
 		// prep the required array

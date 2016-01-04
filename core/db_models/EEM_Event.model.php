@@ -373,9 +373,9 @@ class EEM_Event  extends EEM_CPT_Base{
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'] = array();
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
-
+					//leave responses as-is, don't convert stuff into html entities please!
+					$questions[ $qg->ID() ][ 'QSG_questions'][ $qst->ID() ][ 'htmlentities' ] = false;
 					if ( $qst->type() == 'RADIO_BTN' || $qst->type() == 'CHECKBOX' || $qst->type() == 'DROPDOWN' ) {
-						$questions[ $qg->ID() ][ 'QSG_questions'][ $qst->ID() ][ 'htmlentities' ] = false;
 						$QSOs = $qst->options(TRUE,$answer->value());
 						if ( is_array( $QSOs ) ) {
 							foreach ( $QSOs as $QSO_ID => $QSO ) {
