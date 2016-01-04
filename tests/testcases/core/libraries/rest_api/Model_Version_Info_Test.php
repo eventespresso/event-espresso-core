@@ -27,7 +27,7 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 		$model_info = new Model_Version_Info( '4.6' );
 		$changes = $model_info->model_changes_between_requested_version_and_current();
 		$this->assertArrayNotHasKey( '4.8', $changes );
-		$this->assertArrayHasKey( '4.8.28', $changes );
+		$this->assertArrayHasKey( '4.8.29', $changes );
 	}
 	
 	/**

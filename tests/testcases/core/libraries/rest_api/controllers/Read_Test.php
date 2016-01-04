@@ -17,7 +17,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Read_Test extends \EE_UnitTestCase{
 	public function test_extract_includes_for_this_model__basic(){
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'EVT_ID',
 			'EVT_name'
@@ -25,7 +25,7 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 	public function test_extract_includes_for_this_model__extra_whitespace() {
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'EVT_ID',
 			'EVT_name',
@@ -34,25 +34,25 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 	public function test_extract_includes_for_this_model__related_model() {
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(), $controller->extract_includes_for_this_model( 'Registration.*' ) );
 	}
 	public function test_extract_includes_for_this_model__related_model_all() {
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'*'
 		), $controller->extract_includes_for_this_model( 'Registration.*', 'Registration' ) );
 	}
 	public function test_extract_includes_for_this_model__related_models_but_searching_for_this_one() {
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 		), $controller->extract_includes_for_this_model( 'Registration.REG_ID, Registration.Attendee.ATT_ID' ) );
 	}
 	public function test_extract_includes_for_this_model__related_models_but_searching_for_other() {
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'REG_ID',
 			'Attendee.ATT_ID'
@@ -61,7 +61,7 @@ class Read_Test extends \EE_UnitTestCase{
 
 	public function test_handle_request_get_one__event_includes() {
 		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -83,7 +83,7 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_one__event_include_non_model_field() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -100,8 +100,8 @@ class Read_Test extends \EE_UnitTestCase{
 			array (
 				'EVT_ID' => $event->ID(),
 				'EVT_desc' => array(
-					'rendered' => $event->get('EVT_desc'),
-					'raw' => $event->get_pretty( 'EVT_desc')
+					'rendered' => $event->get_pretty( 'EVT_desc' ),
+					'raw' => $event->get( 'EVT_desc')
 					),
 			),
 			$result
@@ -109,13 +109,13 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 	public function test_extract_includes_for_this_model__null() {
 		$controller = new Read();
-		$controller->set_requested_version( '4.8.28' );
+		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(), $controller->extract_includes_for_this_model( '*' ) );
 	}
 	public function test_handle_request_get_one__event() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $event->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $event->ID()
@@ -172,7 +172,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$req = new \WP_REST_Request(
 					'GET',
-					\EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations/' . $r->ID()
+					\EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID()
 				);
 		$req->set_query_params(
 				array(
@@ -193,7 +193,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations/' . $r->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.Question.*'
@@ -217,7 +217,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations/' . $r->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
 		$req->set_query_params(
 				array(
 					'include' => 'Answer.ATT_ID, Answer.Question.QST_ID'
@@ -240,7 +240,7 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_one__doesnt_exist(){
 		$e = $this->new_model_obj_with_dependencies('Event');
 		$non_existent_id = $e->ID() + 100;
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $non_existent_id );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $non_existent_id );
 		$req->set_url_params(
 				array(
 					'id' => $non_existent_id
@@ -252,7 +252,7 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 	public function test_handle_request_get_one__cannot_access(){
 		$e = $this->new_model_obj_with_dependencies('Event', array( 'status' => 'draft' ) );
-		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/events/' . $e->ID() );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $e->ID() );
 		$req->set_url_params(
 				array(
 					'id' => $e->ID()
@@ -266,7 +266,7 @@ class Read_Test extends \EE_UnitTestCase{
 	public function test_handle_request_get_all__not_logged_in(){
 		$this->new_model_obj_with_dependencies('Registration');
 		$response = Read::handle_request_get_all(
-			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.28/registrations' )
+			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations' )
 		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 403, $response->get_status() );
