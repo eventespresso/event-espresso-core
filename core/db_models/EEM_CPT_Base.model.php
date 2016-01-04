@@ -182,8 +182,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @return array
 	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
-		$post_status_field_name=$this->post_status_field_name();
-		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->get_status_array()));
+		$query_params[ 'default_where_conditions' ] = 'minimum';
 		return $query_params;
 	}
 

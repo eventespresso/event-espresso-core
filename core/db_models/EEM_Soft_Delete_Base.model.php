@@ -51,26 +51,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		}
 	}
 
-	/**
-	 * Overrides parent's 'get_all' to only get undeleted ones. If you REALLY
-	 * want to fetch both deleted and undeleted ones, call get_all_deleted_and_undeleted()
-	 * For 'soft deletable' models, gets all whicha re not yet deleted.
-	 * @param array $query_params like EEM_Base::get_all
-	 * @return EE_Soft_Delete_Base_Class[]
-	 */
-	public function get_all($query_params = array()){
-		return parent::get_all($query_params);
-	}
 
-	/**
-	 *  Gets one item, so long as it's not soft-deleted. If you want to get soft-deleted
-	 * items, consider using get_one_deleted() or get_one_deleted_or_undeleted()
-	 * @param array $query_params like EEM_Base::get_all's $query_params
-	 * @return EE_Soft_Delete_Base_Class
-	 */
-	public function get_one($query_params = array()){
-		return parent::get_one($query_params);
-	}
 	/**
 	 * Gets one item that's been deleted, according to $query_params
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -92,35 +73,17 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 
 	/**
-	 * Unlike many other soft delete functions, get_one_by_ID returns the one item requested, regardless
-	 * of whether it's been flagged as deleted or not.
-	 * @param mixed $id int/string
-	 * @return EE_Soft_Delete_Base_Class
-	 */
-	public function get_one_by_ID($id) {
-		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
-		return $this->get_one_deleted_or_undeleted($query_params);
-	}
-
-	/**
 	 * Gets the item indicated by its ID. But if it's soft-deleted, pretends it doesn't exist.
 	 * @param int|string $id
 	 * @return EE_Soft_Delete_Base_Class
 	 */
 	public function get_one_by_ID_but_ignore_deleted($id){
-		return parent::get_one_by_ID($id);
-	}
-	/**
-	 * counts all NON-SOFT-DELETED items. If you want to include all soft-deleted
-	 * items too, consider count_deleted or count_deleted_and_undeleted
-	 * @param array $query_params like EEM_Base::get_all's $query_params
-	 * @param string $field_to_count
-	 * @param boolean $distinct
-	 * @return int count
-	 */
-	public function count($query_params = array(), $field_to_count = null, $distinct = false){
-		//just calls parent, but changes PHP docs for this function
-		return parent::count($query_params, $field_to_count, $distinct);
+		return $this->get_one( 
+			$this->alter_query_params_to_restrict_by_ID( 
+				$id,
+				array( 'default_where_conditions' => 'default' ) 
+			) 
+		);
 	}
 
 	/**
@@ -161,7 +124,9 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @return array
 	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
-		$query_params['default_where_conditions'] = 'other_models_only';
+		if( ! isset( $query_params[ 'default_where_conditions' ] ) ) {
+			$query_params['default_where_conditions'] = 'minimum';
+		}
 		return $query_params;
 	}
 
@@ -176,18 +141,6 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return parent::count($query_params,$field_to_count, $distinct);
 	}
-
-	/**
-	 * Sums all NON-SOFT-DELETED objects that meet the criteria in $query_params.
-	 * @param array $query_params like EEM_Base::get_all's $query_params
-	 * @param string $field_to_sum name of field
-	 * @return int count
-	 */
-	public function sum($query_params =null,$field_to_sum= null){
-		//just calls parent, but changes PHP doc
-		return parent::sum($query_params,$field_to_sum);
-	}
-
 
 	/**
 	 * Sum all the deleted items.
@@ -246,36 +199,9 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 */
 	public function delete_permanently($query_params = array(), $allow_blocking = true){
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-		return parent::delete($query_params, $allow_blocking);
+		return parent::delete_permanently($query_params, $allow_blocking);
 	}
 
-	/**
-	 * Permanently deletes the object given its ID. Ignores whether the item has been soft-deleted or not
-	 * @param mixed $ID int or string, depending on the table's primary key type. Because this will
-	 * cause a real deletion, related models may block this deletion (ie, add an error
-	 * and abort the delete)
-	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
-	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
-	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
-	 * @return boolean success
-	 */
-	public function delete_permanently_by_ID($ID=FALSE, $allow_blocking = true){
-		$query_params = array();
-		$query_params[0] = array($this->get_primary_key_field()->get_name() => $ID);
-		$query_params['limit'] = 1;
-		return $this->delete_permanently($query_params, $allow_blocking);
-	}
-
-	/**
-	 * Handles special logic for deleting a single item. Ignores whether the item
-	 * has been soft-deletd or not. Note: because this item will be soft-deleted only,
-	 * doesn't block because of model dependencies
-	 * @param mixed $ID value of the primary_key or primary_text_key
-	 * @return boolean success
-	 */
-	public function delete_by_ID($ID){
-		return $this->delete_or_restore_by_ID(true,$ID);
-	}
 	/**
 	 * Restores a particular item by its ID (primary key). Ignores the fact whether the item
 	 * has been soft-deleted or not.
@@ -296,11 +222,12 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		if ( ! $ID ) {
 			return FALSE;
 		}
-		$primaryKeyName=$this->primary_key_name();
-		// retrieve a particular transaction
-		$query_params = array();
-		$query_params[0] = array( $primaryKeyName => $ID );
-		if ( $this->delete_or_restore ($delete, $query_params )) {
+		if ( 
+			$this->delete_or_restore(
+				$delete, 
+				$this->alter_query_params_to_restrict_by_ID( $ID ) 
+			)
+		) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -363,23 +290,4 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return $this->update($fields_n_values, $query_params, $keep_model_objs_in_sync );
 	}
-
-	/**
-	 * Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
-	 * items are ignored in queries. So for this update, soft-deleted items will be ignroed.
-	 * If you want to update soft-deleted items also, use update_deleted_and_undeleted instead.
-	 * @param array $fields_n_values like EEM_base::update's $fields_n_values
-	 * @param array $query_params like EEM_base::get_all's $query_params
-	 * @param boolean $keep_model_objs_in_sync if TRUE, makes sure we ALSO update model objects
-	 * in this model's entity map according to $fields_n_values that match $query_params. This
-	 * obviously has some overhead, so you can disable it by setting this to FALSE, but
-	 * be aware that model objects being used could get out-of-sync with the database
-	 * @return int how many items were updated
-	 */
-	public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE ){
-		return parent::update($fields_n_values,$query_params, $keep_model_objs_in_sync );
-	}
-
-
-
 }
