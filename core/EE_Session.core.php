@@ -491,6 +491,8 @@
 		if ( $session_data['user_agent'] != $this->_user_agent ) {
 			return FALSE;
 		}
+		// make event espresso session data available to plugin
+		$this->_session_data = array_merge( $this->_session_data, $session_data );
 		// wait a minute... how old are you?
 		if ( $this->_time > $this->_expiration ) {
 			// yer too old fer me!
@@ -498,8 +500,6 @@
 			// wipe out everything that isn't a default session datum, and set expired flag to true
 			$this->clear_session( __CLASS__, __FUNCTION__ );
 		}
-		// make event espresso session data available to plugin
-		$this->_session_data = array_merge( $this->_session_data, $session_data );
 		return TRUE;
 
 	}
