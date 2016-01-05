@@ -68,7 +68,13 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			array( 'EED_Ticket_Sales_Monitor', 'post_notices' ),
 			10
 		);
-		// handle tickets removed from cart
+		// handle ticket quantities adjusted in cart
+		add_action(
+			'FHEE__EED_Multi_Event_Registration__adjust_line_item_quantity__line_item_quantity_updated',
+			array( 'EED_Ticket_Sales_Monitor', 'ticket_quantity_updated' ),
+			10, 2
+		);
+		// handle tickets deleted from cart
 		add_action(
 			'FHEE__EED_Multi_Event_Registration__delete_ticket__ticket_removed_from_cart',
 			array( 'EED_Ticket_Sales_Monitor', 'ticket_removed_from_cart' ),
@@ -219,9 +225,51 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		if ( self::debug ) {
 			echo "\n\n . . . INCREASE RESERVED: " . $qty . '<br/><br/>';
 		}
-		$ticket->increase_reserved( $qty );
-		$ticket->save();
+		$this->_reserve_ticket( $ticket, $qty );
 		return $qty;
+	}
+
+
+
+	/**
+	 *  _reserve_ticket
+	 *    increments ticket reserved based on quantity passed
+	 *
+	 * @access    protected
+	 * @param    \EE_Ticket $ticket
+	 * @param int           $quantity
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	protected function _reserve_ticket( EE_Ticket $ticket, $quantity = 1 ) {
+		if ( self::debug ) {
+			echo "\n\n . . . INCREASE RESERVED: " . $quantity . '<br/><br/>';
+		}
+		$ticket->increase_reserved( $quantity );
+		return $ticket->save();
+	}
+
+
+
+	/**
+	 * _release_reserved_ticket
+	 *
+	 * @access protected
+	 * @param  EE_Ticket $ticket
+	 * @param  int       $quantity
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	protected function _release_reserved_ticket( EE_Ticket $ticket, $quantity = 1 ) {
+		if ( self::debug ) {
+			echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
+			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+		}
+		$ticket->decrease_reserved( $quantity );
+		if ( self::debug ) {
+			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+		}
+		return $ticket->save() ? 1 : 0;
 	}
 
 
@@ -283,6 +331,47 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			$ticket_name = $ticket->name();
 		}
 		return $ticket_name;
+	}
+
+
+
+	/********************************** EVENT CART  **********************************/
+
+
+
+	/**
+	 * ticket_quantity_updated
+	 * releases or reserves ticket(s) based on quantity passed
+	 *
+	 * @access public
+	 * @param  EE_Line_Item $line_item
+	 * @param  int          $quantity
+	 * @return void
+	 */
+	public static function ticket_quantity_updated( EE_Line_Item $line_item, $quantity = 1 ) {
+		$ticket = EEM_Ticket::instance()->get_one_by_ID( absint( $line_item->OBJ_ID() ) );
+		if ( $ticket instanceof EE_Ticket ) {
+			if ( $quantity > 0 ) {
+				EED_Ticket_Sales_Monitor::instance()->_reserve_ticket( $ticket, $quantity );
+			} else {
+				EED_Ticket_Sales_Monitor::instance()->_release_reserved_ticket( $ticket, $quantity );
+			}
+		}
+	}
+
+
+
+	/**
+	 * ticket_removed_from_cart
+	 * releases reserved ticket(s) based on quantity passed
+	 *
+	 * @access public
+	 * @param  EE_Ticket $ticket
+	 * @param  int       $quantity
+	 * @return void
+	 */
+	public static function ticket_removed_from_cart( EE_Ticket $ticket, $quantity = 1 ) {
+		EED_Ticket_Sales_Monitor::instance()->_release_reserved_ticket( $ticket, $quantity );
 	}
 
 
@@ -441,44 +530,6 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 
 
 
-	/**
-	 * ticket_removed_from_cart
-	 * releases reserved ticket(s) based on quantity passed
-	 *
-	 * @access public
-	 * @param  EE_Ticket $ticket
-	 * @param  int       $qty
-	 * @return void
-	 */
-	public static function ticket_removed_from_cart( EE_Ticket $ticket, $qty = 1 ) {
-		EED_Ticket_Sales_Monitor::instance()->_release_reserved_ticket( $ticket, $qty );
-	}
-
-
-
-	/**
-	 * _release_reserved_ticket
-	 *
-	 * @access protected
-	 * @param  EE_Ticket $ticket
-	 * @param  int 		 $qty
-	 * @return bool
-	 * @throws \EE_Error
-	 */
-	protected function _release_reserved_ticket( EE_Ticket $ticket, $qty = 1 ) {
-		if ( self::debug ) {
-			echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
-			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
-		}
-		$ticket->decrease_reserved( $qty );
-		if ( self::debug ) {
-			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
-		}
-		return $ticket->save() ? 1 : 0;
-	}
-
-
-
 	/********************************** SESSION_CART_RESET  **********************************/
 
 
@@ -501,6 +552,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 				echo "\n\n cart instanceof EE_Cart: " . "<br />";
 			}
 			EED_Ticket_Sales_Monitor::instance()->_session_cart_reset( $cart );
+		} else {
+			if ( self::debug ) {
+				echo "\n\n invalid EE_Cart: " . "<br />";
+				var_dump( $cart );
+			}
 		}
 	}
 
