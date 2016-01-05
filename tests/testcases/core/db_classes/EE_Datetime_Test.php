@@ -127,14 +127,14 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	 */
 	public function test_ticket_types_available_for_purchase() {
 		//@todo remove once test fixed
-		$this->markTestSkipped(
+		/*$this->markTestSkipped(
 			'See https://events.codebasehq.com/projects/event-espresso/tickets/8971'
-		);
+		);/**/
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
 		$upcoming_start_date = new DateTime( "now +1day", $timezone );
 		$past_start_date = new DateTime( "now -2days", $timezone );
-		$current_end_date = new DateTime( "now +2days", $timezone );
+		$upcoming_end_date = new DateTime( "now +2days", $timezone );
 		$current = new DateTime( "now", $timezone );
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
@@ -147,8 +147,8 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 
 		$datetimes = array(
 			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
-			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
-			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
+			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $upcoming_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
 			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
 			);
 
@@ -158,7 +158,6 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 				$tkt = $this->factory->ticket->create ( $ticket_args );
 				$datetime->_add_relation_to( $tkt, 'Ticket' );
 				$datetime->save();
-				$dtt_id = $datetime;
 			}
 		}
 

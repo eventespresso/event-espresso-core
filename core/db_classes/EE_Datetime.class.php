@@ -826,7 +826,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function ticket_types_available_for_purchase( $query_params = array() ) {
 		// first check if datetime is valid
-		if ( !( $this->is_upcoming() || $this->is_active() ) || $this->sold_out() ) {
+		if ( ! ( $this->is_upcoming() || $this->is_active() ) || $this->sold_out() ) {
 			return array();
 		}
 		if ( empty( $query_params ) ) {
