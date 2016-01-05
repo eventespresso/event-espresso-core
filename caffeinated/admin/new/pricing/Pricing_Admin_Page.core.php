@@ -487,12 +487,9 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
 		$_where = array(
-				'PRC_is_default' => 1
+				'PRC_is_default' => 1,
+				'PRC_deleted' => $trashed
 				);
-
-		if ( $trashed ) {
-			$_where['PRC_deleted'] = true;
-		}
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
