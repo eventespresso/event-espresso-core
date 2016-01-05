@@ -54,6 +54,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+
+	/**
+	 * Will contain the count of trashed items for the view label.
+	 * @var int
+	 */
+	protected $_trashed_count;
+
+
+
 	/**
 	 * _screen
 	 * This is what will be referenced as the slug for the current screen
