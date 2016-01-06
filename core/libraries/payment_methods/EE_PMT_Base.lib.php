@@ -564,11 +564,16 @@ abstract class EE_PMT_Base{
 	 * @throws EE_Error
 	 * @return EE_Payment
 	 */
-	public function process_refund($payment, $refund_info = array()){
-		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
+	public function process_refund( EE_Payment $payment, $refund_info = array()){
+		if ( $this->_gateway && $this->_gateway instanceof EE_Gateway ) {
 			return $this->_gateway->do_direct_refund( $payment, $refund_info );
-		}else{
-			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
+		} else {
+			throw new EE_Error(
+				sprintf(
+					__( 'Payment Method Type "%s" does not support sending refund requests', 'event_espresso' ),
+					get_class( $this )
+				)
+			);
 		}
 	}
 
@@ -609,7 +614,12 @@ abstract class EE_PMT_Base{
 
 
 	/**
-	 * @return array exactly like EE_Admin_Page _page_config's 'help_tabs' attribute. @see EE_Admin_Page::_set_page_config()
+	 * @return array where keys are the help tab name,
+	 * values are: array {
+	 *	@type string $title i18n name for the help tab
+	 *	@type string $filename name of the file located in ./help_tabs/ (ie, in a folder next to this file)
+	 *	@type array $template_args any arguments you want passed to the template file while rendering. 
+	 *				Keys will be variable names and values with be their values.
 	 */
 	public function help_tabs_config(){
 		return array();

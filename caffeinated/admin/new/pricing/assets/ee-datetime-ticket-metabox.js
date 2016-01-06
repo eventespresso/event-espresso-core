@@ -1177,7 +1177,7 @@ jQuery(document).ready(function($) {
 						price_amount = $(this).val();
 						idref = 'add-new-ticket-PRC_amount';
 						price_amount = price_amount !== '' ? parseFloat(price_amount) : 0;
-						price_amount = price_amount.toFixed(2);
+						price_amount = accounting.toFixed( price_amount );
 					}
 
 					if ( $(this).hasClass('add-new-ticket-TKT_name') ) {
@@ -1580,7 +1580,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			totals.subtotal = accounting.formatNumber(runningtotal);
+			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
@@ -1591,7 +1591,7 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			totals.finalTotal = accounting.formatNumber(runningtotal);
+			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal ) );
 
 			return totals;
 		},

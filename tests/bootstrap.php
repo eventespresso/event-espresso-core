@@ -6,8 +6,9 @@
  * @package 		Event Espresso
  * @subpackage 	Tests
  */
-
 require( dirname( __FILE__ ) . '/includes/define-constants.php' );
+// load PSR4 autoloader
+require_once( EE_PLUGIN_DIR . 'core/Psr4Autoloader.php' );
 if ( ! file_exists( WP_TESTS_DIR . '/includes/functions.php' ) ) {
 	die( "The WordPress PHPUnit test suite could not be found.\n" );
 }

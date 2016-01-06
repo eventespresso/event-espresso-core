@@ -1,0 +1,31 @@
+.single-sortable-li,
+.archive-sortable-li {
+	background: #EEEEEE;
+	border: 1px solid #ccc;
+	display: block;
+	min-width: 200px;
+	padding: .75em 1em;
+	position: relative;
+	width: 25%;
+}
+.single-sortable-li.ui-sortable-handle,
+.archive-sortable-li.ui-sortable-handle {
+	background: #FFFFFF;
+}
+
+.single-sortable-li.ui-sortable-handle:hover,
+.archive-sortable-li.ui-sortable-handle:hover {
+	cursor: move;
+}
+
+.single-sortable-li span,
+.archive-sortable-li span {
+	position: absolute;
+	top: .5em;
+	right: .5em;
+}
+.single-sortable-li span + span,
+.archive-sortable-li span + span {
+	top: auto;
+	bottom: .5em;
+}

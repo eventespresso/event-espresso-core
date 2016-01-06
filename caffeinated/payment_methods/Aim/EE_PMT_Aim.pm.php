@@ -59,13 +59,47 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'required'=>true,
 					'html_label_text' => __( 'Expiry Month', 'event_espresso' )
 				)),
-				'exp_year'=>new EE_Credit_Card_Year_Input( array( '
-					required'=> true,
-					'html_label_text' => __( 'Expiry Year', 'event_espresso' ) ) ),
+				'exp_year'=>new EE_Credit_Card_Year_Input( array( 
+					'required'=>true,
+					'html_label_text' => __( 'Expiry Year', 'event_espresso' ) 
+				)),
 				'cvv'=>new EE_CVV_Input( array(
+					'required'=>true,
 					'html_label_text' => __( 'CVV', 'event_espresso' ) ) ),
 			)
 		));
+		$billing_form->add_subsections( array(
+			'company' => new EE_Text_Input( array(
+				'html_label_text' => __('Company', 'event_espresso')
+			))
+		), 'email', false );
+		$billing_form->add_subsections( 
+				array(
+					'fax' => new EE_Text_Input( array(
+						'html_label_text' => __('Fax', 'event_espresso')
+					))
+				), 
+				'phone', 
+				false );
+		$settings_form = $this->settings_form();
+		if( $settings_form->get_input( 'excluded_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
+				$billing_form->exclude( $settings_form->get_input( 'excluded_billing_inputs' )->normalized_value() );
+		}
+		if( $settings_form->get_input( 'required_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
+			$required_inputs = array_merge( 
+					array(
+						'credit_card',
+						'exp_month',
+						'exp_year' ),
+					$settings_form->get_input( 'required_billing_inputs' )->normalized_value() );
+			foreach( $billing_form->inputs() as $input_name => $input ) {
+				if( in_array( $input_name, $required_inputs ) ) {
+					$input->set_required( true );
+				} else {
+					$input->set_required( false );
+				}
+			}
+		}
 		return $this->apply_billing_form_debug_settings( $billing_form );
 	}
 
@@ -82,7 +116,9 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		if ( $this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta( 'test_transactions', TRUE, FALSE )) {
 			$billing_form->get_input( 'credit_card' )->set_default( '4007000000027' );
 			$billing_form->get_input( 'exp_year' )->set_default( '2020' );
-			$billing_form->get_input( 'cvv' )->set_default(( '123' ));
+			if( $billing_form->get_subsection( 'cvv' ) instanceof EE_Form_Input_Base ) {
+				$billing_form->get_input( 'cvv' )->set_default(( '123' ));
+			}
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
 				'credit_card'
@@ -102,6 +138,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
+		$billing_input_names = $this->billing_input_names();
 		return new EE_Payment_Method_Form(
 			array(
 				'extra_meta_inputs'=>array(
@@ -119,12 +156,72 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						array(
 							'html_label_text'=>  sprintf( __("Send test transactions? %s", 'event_espresso'),  $this->get_help_tab_link() ),
 							'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso'),
+							'default' => false,
 							'required' => true
 						)
 					),
+					'excluded_billing_inputs' => new EE_Checkbox_Multi_Input( 
+							$billing_input_names,
+					array( 
+						'html_label_text' => sprintf( __("Excluded Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
+						'default' => array(
+							'company',
+							'fax',
+						)
+					)),
+					'required_billing_inputs' => new EE_Checkbox_Multi_Input( 
+							$billing_input_names,
+							array(
+								'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
+								'default' => array_diff(
+											array_keys( $billing_input_names ),
+											array( 'address2', 'phone', 'company', 'fax' )
+								),
+								'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
+							)),
 				)
 			)
 		);
+	}
+	
+	/**
+	 * Returns an array where keys are the slugs for billing inputs, and values
+	 * are their i18n names
+	 * @return array
+	 */
+	public function billing_input_names() {
+		return array(
+			'first_name' => __( 'First Name', 'event_espresso' ),
+			'last_name' => __('Last Name', 'event_espresso'),
+			'email' => __( 'Email', 'event_espresso' ),
+			'company' => __( 'Company', 'event_espresso' ),
+			'address' => __('Address', 'event_espresso'),
+			'address2' => __('Address2', 'event_espresso'),
+			'city' => __('City', 'event_espresso'),
+			'state' => __('State', 'event_espresso'),
+			'country' => __('Country', 'event_espresso'),
+			'zip' =>  __('Zip', 'event_espresso'),
+			'phone' => __('Phone', 'event_espresso'),
+			'fax' => __( 'Fax', 'event_espresso' ),
+			'cvv' => __('CVV', 'event_espresso')
+		);
+	}
+	
+	/**
+	 * Overrides parent so we always have all billing inputs in the returned array,
+	 * not just the ones included at the time. This helps simplify the gateway code
+	 * @param type $billing_form
+	 * @return array
+	 */
+	protected function _get_billing_values_from_form( $billing_form ){
+		$all_billing_values_empty = array();
+		foreach( array_keys( $this->billing_input_names() ) as $input_name ) {
+			$all_billing_values_empty[ $input_name ] = '';
+		}
+		return array_merge(
+				$all_billing_values_empty,
+				parent::_get_billing_values_from_form($billing_form) );
+		
 	}
 
 

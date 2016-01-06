@@ -64,7 +64,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'capability' => 'ee_edit_questions',
 				'noheader' => TRUE
 				),
-
+			'duplicate_question' => array(
+				'func' => '_duplicate_question',
+				'capability' => 'ee_edit_questions',
+				'noheader' => TRUE
+				),
 			'trash_question' => array(
 				'func' => '_trash_question',
 				'capability' => 'ee_delete_question',
@@ -437,22 +441,32 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_question(){
-		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted',
+			array( 'action' => 'default', 'status' => 'all' )
+		);
 	}
 
 
 	protected function _delete_questions() {
-		$success = $this->_delete_items($this->_question_model);
-		$this->_redirect_after_action( $success, $this->_question_model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'trash' ));
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted permanently',
+			array( 'action' => 'default', 'status' => 'trash' )
+		);
 	}
 
 
 /**
  * Performs the deletion of a single or multiple questions or question groups.
- * @param EEM_Base $model
- * @return int number of items deleted permanenetly
+ *
+ * @param EEM_Soft_Delete_Base $model
+ * @return int number of items deleted permanently
  */
 	private function _delete_items(EEM_Soft_Delete_Base $model){
 		$success = 0;
@@ -462,21 +476,33 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
-
-				if (!$model->delete_permanently_by_ID(absint($ID))) {
+				if ( ! $this->_delete_item( $ID, $model ) ) {
 					$success = 0;
 				}
 			}
 
 		}elseif( !empty($this->_req_data['QSG_ID'])){
-			$success = $model->delete_permanently_by_ID($this->_req_data['QSG_ID']);
+			$success = $this->_delete_item( $this->_req_data['QSG_ID'], $model );
 
 		}elseif( !empty($this->_req_data['QST_ID'])){
-			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
+			$success = $this->_delete_item( $this->_req_data['QST_ID'], $model );
 		}else{
 			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $success;
+	}
+
+	/**
+	 * Deletes the specified question (and its associated question options) or question group
+	 * @param int $id
+	 * @param EEM_Soft_Delete_Base $model
+	 * @return boolean
+	 */
+	protected function _delete_item( $id, $model ) {
+		if( $model instanceof EEM_Question ) {
+			EEM_Question_Option::instance()->delete_permanently( array( array( 'QST_ID' => absint( $id ) ) ) );
+		}
+		return $model->delete_permanently_by_ID( absint( $id ) );
 	}
 
 
@@ -537,18 +563,19 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			unset( $set_column_values[ 'QSG_ID' ] );
 			$success= $this->_question_group_model->update( $set_column_values, array( array( 'QSG_ID' => $QSG_ID )));
 		}
+		$phone_question_id = EEM_Question::instance()->get_Question_ID_from_system_string( EEM_Attendee::system_question_phone );
 		// update the existing related questions
 		// BUT FIRST...  delete the phone question from the Question_Group_Question if it is being added to this question group (therefore removed from the existing group)
-		if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ EEM_Attendee::phone_question_id ] )) {
+		if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $phone_question_id ] )) {
 			// delete where QST ID = system phone question ID and Question Group ID is NOT this group
-			EEM_Question_Group_Question::instance()->delete( array( array( 'QST_ID' => EEM_Attendee::phone_question_id, 'QSG_ID' => array( '!=', $QSG_ID ))));
+			EEM_Question_Group_Question::instance()->delete( array( array( 'QST_ID' => $phone_question_id, 'QSG_ID' => array( '!=', $QSG_ID ))));
 		}
 		/** @type EE_Question_Group $question_group */
 		$question_group=$this->_question_group_model->get_one_by_ID( $QSG_ID );
 		$questions = $question_group->questions();
 		// make sure system phone question is added to list of questions for this group
-		if ( ! isset( $questions[ EEM_Attendee::phone_question_id ] )) {
-			$questions[ EEM_Attendee::phone_question_id ] = EEM_Question::instance()->get_one_by_ID( EEM_Attendee::phone_question_id );
+		if ( ! isset( $questions[$phone_question_id ] )) {
+			$questions[ $phone_question_id ] = EEM_Question::instance()->get_one_by_ID( $phone_question_id );
 		}
 
 		foreach( $questions as $question_ID => $question ){
@@ -562,8 +589,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			if ( isset( $this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ] )) {
 				$question_group->add_question( $question_ID );
 			} else {
-				// not found, remove it (but only if not a system question for the personal group)
-				if ( ! ( $question->is_system_question() && $question_group->system_group() === EEM_Question_Group::system_personal )) {
+				// not found, remove it (but only if not a system question for the personal group with the exception of lname system question - we allow removal of it)
+				if (
+					in_array(
+						$question->system_ID(),
+						EEM_Question::instance()->required_system_questions_in_system_question_group( $question_group->system_group() )
+					)
+				) {
+					continue;
+				} else {
 					$question_group->remove_question( $question_ID );
 				}
 			}
@@ -584,6 +618,27 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
 
+	}
+
+	/**
+	 * duplicates a question and all its question options and redirects to the new question.
+	 */
+	public function _duplicate_question() {
+		$question_ID = intval( $this->_req_data[ 'QST_ID' ] );
+		$question = EEM_Question::instance()->get_one_by_ID( $question_ID );
+		if( $question instanceof EE_Question ) {
+			$new_question = $question->duplicate();
+			if( $new_question instanceof EE_Question ) {
+				$this->_redirect_after_action( true, __( 'Question', 'event_espresso' ), __( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+			} else {
+				global $wpdb;
+				EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %1$d because: %2$s', 'event_espresso' ), $question_ID, $wpdb->last_error ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action(false, '', '', array('action'=>'default'), false );
+			}
+		} else {
+			EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( false, '', '', array( 'action' => 'default' ), false );
+		}
 	}
 
 
@@ -670,11 +725,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
 
 		if( $count ){
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$results=$this->_question_model->count_deleted($where);
 		}else{
-			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+			//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 			$results=$this->_question_model->get_all_deleted($query_params);
 		}
 		return $results;
@@ -682,7 +737,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
+	public function get_question_groups( $per_page, $current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
 		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if ($count){

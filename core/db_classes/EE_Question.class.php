@@ -26,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Question extends EE_Soft_Delete_Base_Class {
+class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable {
 
 	/**
 	 *
@@ -35,7 +35,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class {
 	 *                          		used.)
 	 * @param array $date_formats  incoming date_formats in an array where the first value is the
 	 *                             		    date_format and the second value is the time format
-	 * @return EE_Attendee
+	 * @return EE_Question
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -48,7 +48,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class {
 	 * @param array $props_n_values  incoming values from the database
 	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
 	 *                          		the website will be used.
-	 * @return EE_Attendee
+	 * @return EE_Question
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
@@ -432,6 +432,48 @@ class EE_Question extends EE_Soft_Delete_Base_Class {
 		$questionModel = $this->get_model();
 		/* @var $questionModel EEM_Question */
 		return $questionModel->allowed_question_types();
+	}
+
+	/**
+	 * Duplicates this question and its question options
+	 * @return \EE_Question
+	 */
+	public function duplicate( $options = array() ) {
+		$new_question = clone $this;
+		$new_question->set( 'QST_ID', null );
+		$new_question->set_display_text( sprintf( __( '%s **Duplicate**', 'event_espresso' ), $this->display_text() ) );
+		$new_question->set_admin_label( sprintf( __( '%s **Duplicate**', 'event_espresso' ), $this->admin_label() ) );
+		$new_question->set_system_ID( null );
+		$new_question->set_wp_user( get_current_user_id() );
+                //if we're duplicating a trashed question, assume we don't want the new one to be trashed
+                $new_question->set_deleted( false );
+		$success = $new_question->save();
+		if( $success ) {
+			//we don't totally want to duplicate the question options, because we want them to be for the NEW question
+			foreach( $this->options() as $question_option ) {
+				$question_option->duplicate( array( 'QST_ID' => $new_question->ID() ) );
+			}
+			return $new_question;
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Returns the question's maximum allowed response size
+	 * @return int|float
+	 */
+	public function max() {
+		return $this->get( 'QST_max' );
+	}
+	
+	/**
+	 * Sets the question's maximum allowed response size
+	 * @param int|float $new_max
+	 * @return int|float
+	 */
+	public function set_max( $new_max ) {
+		return $this->set( 'QST_max', $new_max );
 	}
 
 

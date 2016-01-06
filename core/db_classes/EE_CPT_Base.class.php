@@ -170,10 +170,19 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * This is a method for restoring this_obj using details from the given $revision_id
-	 * @param  int         $revision_id ID of the revision we're getting data from
-	 * @param array|string $related_obj_names
-	 * @param array        $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
-	 * @internal param array|string $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
+	 *
+	 * @param int $revision_id 		ID of the revision we're getting data from
+	 * @param array $related_obj_names if included this will be used to restore for related obj
+	 *                                 if not included then we just do restore on the meta.
+	 *                                 We will accept an array of related_obj_names for restoration here.
+	 * @param array $where_query       You can optionally include an array of key=>value pairs
+	 *                                 that allow you to further constrict the relation to being added.
+	 *                                 However, keep in mind that the columns (keys) given
+	 *                                 must match a column on the JOIN table and currently
+	 *                                 only the HABTM models accept these additional conditions.
+	 *                                 Also remember that if an exact match isn't found for these extra cols/val pairs,
+	 *                                 then a NEW row is created in the join table.
+	 *                                 This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
 	 * @return void
 	 */
 	public function restore_revision( $revision_id, $related_obj_names = array(), $where_query = array() ) {
@@ -233,12 +242,11 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @param string $meta_key
 	 * @param mixed  $meta_value
 	 * @param mixed  $prev_value
-	 * @throws EE_Error
 	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
 	 */
 	public function update_post_meta( $meta_key, $meta_value, $prev_value = NULL ) {
-		if ( !$this->ID() ) {
-			throw new EE_Error( sprintf( __( "You must save this custom post type before adding or updating a post meta field", "event_espresso" ) ) );
+		if ( ! $this->ID() ) {
+			$this->save();
 		}
 		return update_post_meta( $this->ID(), $meta_key, $meta_value, $prev_value );
 	}
@@ -250,14 +258,31 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @param mixed $meta_key
 	 * @param mixed $meta_value
 	 * @param bool  $unique . If postmeta for this $meta_key already exists, whether to add an additional item or not
-	 * @throws EE_Error
 	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
 	 */
 	public function add_post_meta( $meta_key, $meta_value, $unique = FALSE ) {
-		if ( !$this->ID() ) {
-			throw new EE_Error( sprintf( __( "You must save this custom post type before adding or updating a post meta field", "event_espresso" ) ) );
+		if ( $this->ID() ) {
+			$this->save();
 		}
 		return add_post_meta( $this->ID(), $meta_key, $meta_value, $unique );
+	}
+
+
+
+	/**
+	 * Wrapper for delete_post_meta, http://codex.wordpress.org/Function_Reference/delete_post_meta
+	 *
+	 * @param mixed $meta_key
+	 * @param mixed $meta_value
+	 * @return boolean False for failure. True for success.
+	 */
+	public function delete_post_meta( $meta_key, $meta_value = '' ) {
+		if ( ! $this->ID() ) {
+			//there are obviously no postmetas for this if it's not saved
+			//so let's just report this as a success
+			return true;
+		}
+		return delete_post_meta( $this->ID(), $meta_key, $meta_value );
 	}
 
 

@@ -19,6 +19,31 @@ define('EE_Event_Category_Taxonomy','espresso_event_category');
 abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 	/**
+	 * @var string post_status_publish - the wp post status for published cpts
+	 */
+	const post_status_publish = 'publish';
+
+	/**
+	 * @var string post_status_future - the wp post status for scheduled cpts
+	 */
+	const post_status_future = 'future';
+
+	/**
+	 * @var string post_status_draft - the wp post status for draft cpts
+	 */
+	const post_status_draft = 'draft';
+
+	/**
+	 * @var string post_status_pending - the wp post status for pending cpts
+	 */
+	const post_status_pending = 'pending';
+
+	/**
+	 * @var string post_status_private - the wp post status for private cpts
+	 */
+	const post_status_private = 'private';
+
+	/**
 	 * @var string post_status_trashed - the wp post status for trashed cpts
 	 */
 	const post_status_trashed = 'trash';
@@ -80,6 +105,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 		if( ! isset( $this->_fields[$primary_table_name]['post_content_filtered'])){
 			$this->_fields[$primary_table_name]['post_content_filtered'] = new EE_DB_Only_Text_Field('post_content_filtered', __( 'Post Content Filtered', 'event_espresso' ), FALSE, '');
+		}
+		if( ! isset( $this->_model_relations[ 'Post_Meta' ] ) ) {
+			//don't block deletes though because we want to maintain the current behaviour
+			$this->_model_relations[ 'Post_Meta' ] = new EE_Has_Many_Relation( false );
 		}
 		parent::__construct($timezone);
 

@@ -88,7 +88,10 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 				'subsections' => apply_filters(
 					'FHEE__EED_Ticket_Selector_Caff___ticket_selector_settings_form__form_subsections',
 					array(
-						'appearance_settings_hdr' 				=> new EE_Form_Section_HTML( EEH_HTML::h3( __( 'Ticket Selector Template Settings', 'event_espresso' ))),
+						'appearance_settings_hdr' 	=> new EE_Form_Section_HTML(
+							EEH_HTML::br(2) .
+							EEH_HTML::h2( __( 'Ticket Selector Template Settings', 'event_espresso' ))
+						),
 						'appearance_settings' 			=> EED_Ticket_Selector_Caff::_ticket_selector_appearance_settings()
 					)
 				)

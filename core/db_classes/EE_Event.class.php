@@ -1,24 +1,9 @@
 <?php if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
-/**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
 
 /**
- * Event Question Group Model
+ * EE_Event
  *
  * @package 			Event Espresso
  * @subpackage 	includes/models/
@@ -48,7 +33,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 *                          		used.)
 	 * @param array $date_formats  incoming date_formats in an array where the first value is the
 	 *                             		    date_format and the second value is the time format
-	 * @return EE_Attendee
+	 * @return EE_Event
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
@@ -61,10 +46,94 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @param array $props_n_values  incoming values from the database
 	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
 	 *                          		the website will be used.
-	 * @return EE_Attendee
+	 * @return EE_Event
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
+	}
+
+
+
+	/**
+	 * Overrides parent set() method so that all calls to set( 'status', $status ) can be routed to internal methods
+	 *
+	 * @param string $field_name
+	 * @param mixed  $field_value
+	 * @param bool   $use_default
+	 */
+	public function set( $field_name, $field_value, $use_default = false ) {
+		switch ( $field_name ) {
+			case 'status' :
+				$this->set_status( $field_value, $use_default );
+				break;
+			default :
+				parent::set( $field_name, $field_value, $use_default );
+		}
+	}
+
+
+
+	/**
+	 *    set_status
+	 *
+	 * Checks if event status is being changed to SOLD OUT
+	 * and updates event meta data with previous event status
+	 * so that we can revert things if/when the event is no longer sold out
+	 *
+	 * @access public
+	 * @param string $new_status
+	 * @param bool   $use_default
+	 * @return bool|void
+	 * @throws \EE_Error
+	 */
+	public function set_status( $new_status = null, $use_default = false ) {
+		// get current Event status
+		$old_status = $this->status();
+		// if status has changed
+		if ( $old_status != $new_status ) {
+			// TO sold_out
+			if ( $new_status == EEM_Event::sold_out ) {
+				// save the previous event status so that we can revert if the event is no longer sold out
+				$this->add_post_meta( '_previous_event_status', $old_status );
+				do_action( 'AHEE__EE_Event__set_status__to_sold_out', $this, $old_status, $new_status );
+				// OR FROM  sold_out
+			} else if ( $old_status == EEM_Event::sold_out ) {
+				$this->delete_post_meta( '_previous_event_status' );
+				do_action( 'AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status );
+			}
+			// update status
+			parent::set( 'status', $new_status, $use_default );
+			do_action( 'AHEE__EE_Event__set_status__after_update', $this );
+			return true;
+		} else {
+			// even though the old value matches the new value, it's still good to
+			// allow the parent set method to have a say
+			parent::set( 'status', $new_status, $use_default );
+			return true;
+		}
+	}
+
+
+
+	/**
+	 * Gets all the datetimes for this event
+	 *
+	 * @param array $query_params like EEM_Base::get_all
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes( $query_params = array() ) {
+		return $this->get_many_related( 'Datetime', $query_params );
+	}
+
+
+
+	/**
+	 * Gets all the datetimes for this event, ordered by DTT_EVT_start in ascending order
+	 *
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes_in_chronological_order() {
+		return $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
 	}
 
 
@@ -74,11 +143,13 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
 	 * after running our query, so that this timezone isn't set for EVERY query
 	 * on EEM_Datetime for the rest of the request, no?
+	 *
 	 * @param boolean $show_expired whether or not to include expired events
 	 * @param boolean $show_deleted whether or not to include deleted events
-	 * @return EE_Datetime[]
+	 * @param null $limit
+	 * @return \EE_Datetime[]
 	 */
-	public function datetimes_ordered( $show_expired = TRUE, $show_deleted = FALSE, $limit = NULL ) {
+	public function datetimes_ordered( $show_expired = true, $show_deleted = false, $limit = null ) {
 		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted, $limit );
 	}
 
@@ -555,7 +626,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$upcoming = FALSE;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is expired then we continue cause one of the other datetimes might be upcoming.
@@ -586,7 +657,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$active = FALSE;
 		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is expired then we continue cause one of the other datetimes might be active.
@@ -617,7 +688,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		// set initial value
 		$expired = FALSE;
 		//first let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
+		$datetimes = $this->datetimes_in_chronological_order();
 		foreach ( $datetimes as $datetime ) {
 			if ( $datetime instanceof EE_Datetime ) {
 				//if this dtt is upcoming or active then we return false.
@@ -655,20 +726,22 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return bool    return the ACTUAL sold out state.
 	 */
 	public function perform_sold_out_status_check() {
+		// get all unexpired untrashed tickets
+		$tickets = $this->tickets( array(
+			array(
+				'TKT_end_date'   => array( '>=', EEM_Ticket::instance()->current_time_for_query( 'TKT_end_date' ) ),
+				'TKT_deleted'    => false
+			)
+		));
+		// if all the tickets are just expired, then don't update the event status to sold out
+		if ( empty( $tickets )) {
+			return true;
+		}
 		// set initial value
 		$spaces_remaining = 0;
-		//next let's get all datetimes and loop through them
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				$dtt_spaces_remaining = $datetime->spaces_remaining( TRUE );
-				// if datetime has unlimited reg limit then the event can never be sold out
-				if ( $dtt_spaces_remaining === INF ) {
-					return FALSE;
-				}
-				else {
-					$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
-				}
+		foreach( $tickets as $ticket ) {
+			if ( $ticket instanceof EE_Ticket ) {
+				$spaces_remaining += $ticket->qty( 'saleable' );
 			}
 		}
 		if ( $spaces_remaining === 0 ) {
@@ -677,9 +750,16 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				$this->save();
 			}
 			$sold_out = TRUE;
-		}
-		else {
+		} else {
 			$sold_out = FALSE;
+			// was event previously marked as sold out ?
+			if ( $this->status() == EEM_Event::sold_out ) {
+				// revert status to previous value, if it was set
+				$previous_event_status = $this->get_post_meta( '_previous_event_status', true );
+				if ( $previous_event_status ) {
+					$this->set_status( $previous_event_status );
+				}
+			}
 		}
 		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out.
 		// So I'll forgo the automatic switch away from sold out status for now and instead just return the $sold out status... so this check can be used to validate the TRUE sold out status regardless of what the Event status is set to.
@@ -697,7 +777,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * ############################
 	 *
 	 * @uses EE_Event::total_available_spaces()
-	 * @return float|int  (INF is returned as float)
+	 * @return float|int  (EE_INF is returned as float)
 	 */
 	public function spaces_remaining_for_sale() {
 		//first get total available spaces including consideration for tickets that have already sold.
@@ -740,7 +820,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 *                                              may appear to equal remaining tickets.  However, the more tickets are
 	 *                                              sold out, the more accurate the "live" total is.
 	 *
-	 * @return  int|float  (Note: if INF is returned its considered a float by PHP)
+	 * @return  int|float  (Note: if EE_INF is returned its considered a float by PHP)
 	 */
 	public function total_available_spaces( $current_total_available = false ) {
 		$spaces_available = 0;
@@ -767,7 +847,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 				if ( $ticket->is_remaining() ) {
 					$remaining = $ticket->remaining();
 				} else {
-					$spaces_available += $ticket->get( 'TKT_sold' );
+					$spaces_available += $ticket->sold();
 					//and we don't cache this ticket to our list because its sold out.
 					continue;
 				}
@@ -776,8 +856,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			}
 
 			//if $ticket_limit == infinity then let's drop out right away and just return that because any infinity amount trumps all other "available" amounts.
-			if ( $remaining == INF ) {
-				return INF;
+			if ( $remaining == EE_INF ) {
+				return EE_INF;
 			}
 
 			//multiply normalized $tkt quantity by the number of datetimes on the ticket as the "sum"
@@ -785,8 +865,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			$ticket_sums[$ticket->ID()]['sum'] = $remaining * count( $datetimes );
 			$ticket_sums[$ticket->ID()]['datetime_sums'] = 0;
 			foreach ( $datetimes as $datetime ) {
-				if ( $datetime->reg_limit() === INF ) {
-					$ticket_sums[$ticket->ID()]['datetime_sums'] = INF;
+				if ( $datetime->reg_limit() === EE_INF ) {
+					$ticket_sums[$ticket->ID()]['datetime_sums'] = EE_INF;
 				} else {
 					$ticket_sums[ $ticket->ID() ]['datetime_sums'] += $current_total_available ? $datetime->spaces_remaining() : $datetime->reg_limit();
 				}
@@ -812,54 +892,63 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 		//now let's loop through the sorted tickets and simulate sellouts
 		foreach ( $ticket_sums as $ticket_info ) {
-			$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
-			//need to sort these $datetimes by remaining (only if $current_total_available)
-			//setup datetimes for simulation
-			$ticket_datetimes_remaining = array();
-			foreach( $datetimes as $datetime ) {
-				$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
-				$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
-			}
-			usort( $ticket_datetimes_remaining, function( $a, $b ) {
-				if ( $a['rem'] == $b['rem'] ) {
-					return 0;
+			if ( $ticket_info['ticket'] instanceof EE_Ticket ) {
+
+				$datetimes = $ticket_info['ticket']->datetimes( array( 'order_by' => array( 'DTT_reg_limit' => 'ASC' ) ) );
+				//need to sort these $datetimes by remaining (only if $current_total_available)
+				//setup datetimes for simulation
+				$ticket_datetimes_remaining = array();
+				foreach( $datetimes as $datetime ) {
+					$ticket_datetimes_remaining[$datetime->ID()]['rem'] = $datetime_limits[$datetime->ID()];
+					$ticket_datetimes_remaining[$datetime->ID()]['datetime'] = $datetime;
 				}
-				return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
-			});
+				usort( $ticket_datetimes_remaining, function( $a, $b ) {
+					if ( $a['rem'] == $b['rem'] ) {
+						return 0;
+					}
+					return ( $a['rem'] < $b['rem'] ) ? -1 : 1;
+				});
 
 
-			//get the remaining on the first datetime (which should be the one with the least remaining) and that is
-			//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
-			$lowest_datetime = reset( $ticket_datetimes_remaining );
+				//get the remaining on the first datetime (which should be the one with the least remaining) and that is
+				//what we add to the spaces_available running total.  Then we need to decrease the remaining on our datetime tracker.
+				$lowest_datetime = reset( $ticket_datetimes_remaining );
 
-			//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
-			// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
-			// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
-			// to the next ticket.
-			$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				//need to get the lower of; what the remaining is on the lowest datetime, and the remaining on the ticket.
+				// If this ends up being 0 (because of previous tickets in our simulation selling out), then it has already
+				// been tracked on $spaces available and this ticket is now sold out for the simulation, so we can continue
+				// to the next ticket.
+				if ( $current_total_available ) {
+					$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->remaining() );
+				} else {
+					$remaining = min( $lowest_datetime['rem'], $ticket_info['ticket']->qty() );
+				}
 
-			//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
-			//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
-			//available.
-			if ( $remaining === INF ) {
-				$spaces_available += $ticket_info['ticket']->qty();
-				continue;
-			}
+				//if $remaining is infinite that means that all datetimes on this ticket are infinite but we've made it here because all
+				//tickets have a quantity.  So we don't have to track datetimes, we can just use ticket quantities for total
+				//available.
+				if ( $remaining === EE_INF ) {
+					$spaces_available += $ticket_info['ticket']->qty();
+					continue;
+				}
 
-			//if ticket has sold amounts then we also need to add that (but only if doing live counts)
-			if ( $current_total_available ) {
-				$spaces_available += $ticket_info['ticket']->sold();
-			}
+				//if ticket has sold amounts then we also need to add that (but only if doing live counts)
+				if ( $current_total_available ) {
+					$spaces_available += $ticket_info['ticket']->sold();
+				}
 
-			if ( $remaining <= 0 ) {
-				continue;
-			} else {
-				$spaces_available += $remaining;
-			}
+				if ( $remaining <= 0 ) {
+					continue;
+				} else {
+					$spaces_available += $remaining;
+				}
 
-			//loop through the datetimes and sell them out!
-			foreach ( $ticket_datetimes_remaining as $datetime_info ) {
-				$datetime_limits[$datetime_info['datetime']->ID()] += - $remaining;
+				//loop through the datetimes and sell them out!
+				foreach ( $ticket_datetimes_remaining as $datetime_info ) {
+					if ( $datetime_info['datetime'] instanceof EE_Datetime ) {
+						$datetime_limits[ $datetime_info['datetime']->ID() ] += - $remaining;
+					}
+				}
 			}
 		}
 
@@ -874,7 +963,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return boolean
 	 */
 	public function is_sold_out( $actual = FALSE ) {
-		if ( !$actual ) {
+		if ( ! $actual ) {
 			return $this->status() == EEM_Event::sold_out;
 		}
 		else {
@@ -905,51 +994,54 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 	/**
-	 * Get the logical active status in a hierarchical order for all the datetimes.
+	 * Get the logical active status in a hierarchical order for all the datetimes.  Note
 	 *
-	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then the event is considered expired.
+	 * Basically, we order the datetimes by EVT_start_date.  Then first test on whether the event is published.  If its
+	 * NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an
+	 * event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then
+	 * the event is considered expired.
+	 *
+	 * NOTE: this method does NOT calculate whether the datetimes are sold out when event is published.  Sold Out is a status
+	 * set on the EVENT when it is not published and thus is done
 	 *
 	 * @param bool $reset
+	 *
 	 * @return bool | string - based on EE_Datetime active constants or FALSE if error.
 	 */
-	public function get_active_status( $reset = FALSE ) {
+	public function get_active_status( $reset = false ) {
 		// if the active status has already been set, then just use that value (unless we are resetting it)
 		if ( ! empty( $this->_active_status ) && ! $reset ) {
 			return $this->_active_status;
 		}
 		//first check if event id is present on this object
 		if ( ! $this->ID() ) {
-			return FALSE;
+			return false;
 		}
-		//first get all datetimes ordered by date
-		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ) ) );
-		//next loop through $datetimes and setup status array
-		$status_array = array();
-		foreach ( $datetimes as $datetime ) {
-			if ( $datetime instanceof EE_Datetime ) {
-				$status_array[] = $datetime->get_active_status();
-			}
-		}
-		//now we can conditionally determine status
-		if ( $this->status() == 'publish' ) {
-			if ( in_array( EE_Datetime::active, $status_array ) ) {
+
+		$where_params_for_event  = array( array( 'EVT_ID' => $this->ID() ) );
+
+		//if event is published:
+		if ( $this->status() === 'publish' ) {
+			//active?
+			if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::active, $where_params_for_event ) > 0 ) {
 				$this->_active_status = EE_Datetime::active;
 			} else {
-				if ( in_array( EE_Datetime::upcoming, $status_array ) ) {
+				//upcoming?
+				if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::upcoming, $where_params_for_event  ) > 0 ) {
 					$this->_active_status = EE_Datetime::upcoming;
 				} else {
-					if ( in_array( EE_Datetime::expired, $status_array ) ) {
+					//expired?
+					if ( EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired, $where_params_for_event  ) > 0 ) {
 						$this->_active_status = EE_Datetime::expired;
 					} else {
-						if ( in_array( EE_Datetime::sold_out, $status_array ) ) {
-							$this->_active_status = EE_Datetime::sold_out;
-						} else {
-							$this->_active_status = EE_Datetime::expired; //catchall
-						}
+						//it would be odd if things make it this far because it basically means there are no datetime's
+						//attached to the event.  So in this case it will just be considered inactive.
+						$this->_active_status = EE_Datetime::inactive;
 					}
 				}
 			}
 		} else {
+			//the event is not published, so let's just set it's active status according to its' post status
 			switch ( $this->status() ) {
 				case EEM_Event::sold_out :
 					$this->_active_status = EE_Datetime::sold_out;
@@ -981,9 +1073,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		$status = '<span class="ee-status event-active-status-' . $active_status . '">' . EEH_Template::pretty_status( $active_status, FALSE, 'sentence' ) . '</span>';
 		if ( $echo ) {
 			echo $status;
-		} else {
-			return $status;
+			return '';
 		}
+		return $status;
 	}
 
 
@@ -996,9 +1088,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 		if ( !$this->ID() ) {
 			return 0;
 		}
-		$datetimes = $this->get_many_related( 'Datetime' );
+		$datetimes = $this->datetimes();
 		foreach ( $datetimes as $datetime ) {
-			$tkt_sold += $datetime->get( 'DTT_sold' );
+			if ( $datetime instanceof EE_Datetime ) {
+				$tkt_sold += $datetime->sold();
+			}
 		}
 		return $tkt_sold;
 	}
@@ -1141,7 +1235,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	/**
 	 * Implementation for EEI_Admin_Links interface method.
 	 * @see EEI_Admin_Links for comments
-	 * @return return string
+	 * @return string
 	 */
 	public function get_admin_edit_link() {
 		EE_Registry::instance()->load_helper('URL');

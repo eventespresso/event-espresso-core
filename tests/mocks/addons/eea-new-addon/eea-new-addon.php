@@ -2,7 +2,7 @@
 /*
   Plugin Name: Event Espresso - New Addon (EE4.x+)
   Plugin URI: http://www.eventespresso.com
-  Description: The Event Espresso New Addon adds NEW stuff to Event Espresso. Compatible with Event Espresso 4.x or higher
+  Description: The Event Espresso New Addon adds NEW stuff to Event Espresso.
   Version: 1.0.0.dev.000
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
@@ -36,9 +36,31 @@
  *
  * ------------------------------------------------------------------------
  */
+// define versions and this file
 define( 'EE_NEW_ADDON_CORE_VERSION_REQUIRED', '4.8.0.rc.0000' );
 define( 'EE_NEW_ADDON_VERSION', '1.0.0.dev.000' );
 define( 'EE_NEW_ADDON_PLUGIN_FILE',  __FILE__ );
+
+
+
+
+/**
+ *    captures plugin activation errors for debugging
+ */
+function espresso_new_addon_plugin_activation_errors() {
+
+	if ( WP_DEBUG ) {
+		$activation_errors = ob_get_contents();
+		file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . 'espresso_new_addon_plugin_activation_errors.html', $activation_errors );
+	}
+}
+add_action( 'activated_plugin', 'espresso_new_addon_plugin_activation_errors' );
+
+
+
+/**
+ *    registers addon with EE core
+ */
 function load_espresso_new_addon() {
   if ( class_exists( 'EE_Addon' )) {
       // new_addon version
@@ -52,6 +74,9 @@ add_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' )
 
 
 
+/**
+ *    verifies that addon was activated
+ */
 function espresso_new_addon_activation_check() {
   if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) ) {
     add_action( 'admin_notices', 'espresso_new_addon_activation_error' );
@@ -61,6 +86,9 @@ add_action( 'init', 'espresso_new_addon_activation_check', 1 );
 
 
 
+/**
+ *    displays activation error admin notice
+ */
 function espresso_new_addon_activation_error() {
   unset( $_GET[ 'activate' ] );
   unset( $_REQUEST[ 'activate' ] );
@@ -74,6 +102,7 @@ function espresso_new_addon_activation_error() {
   </div>
 <?php
 }
+
 
 
 // End of file espresso_new_addon.php
