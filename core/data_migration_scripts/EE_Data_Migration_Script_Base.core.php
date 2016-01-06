@@ -467,7 +467,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 	/**
 	 * It is preferred to use _table_has_not_changed_since_previous or _table_is_changed_in_this_version
-	 * as these are significantly more efficient.
+	 * as these are significantly more efficient or explicit.
 	 * Please see description of _table_is_new_in_this_version. This function will only set
 	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
 	 * new activation. ie, a more accurate name for this method would be "_table_added_previously_by_this_plugin" because the table will be cleared out if this is a new activation (ie, if its a new activation, it actually should exisy previously).

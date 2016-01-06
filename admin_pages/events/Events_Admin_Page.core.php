@@ -607,14 +607,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		$orig_status = $event->status();
 		//made it here so it IS active... next check that any of the tickets are sold.
-		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) ) {
+		if ( $event->is_sold_out( true ) ) {
 			if ( $event->status() !== $orig_status && $orig_status !== EEM_Event::sold_out  ) {
-				EE_Error::add_attention( sprintf(
-					__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
-					EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' )
-				));
+				EE_Error::add_attention(
+					sprintf(
+						__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
+						EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' )
+					)
+				);
 			}
 			return;
+		} else if ( $orig_status === EEM_Event::sold_out ) {
+			EE_Error::add_attention(
+				sprintf(
+					__( 'Please note that the Event Status has automatically been changed to %s because more spaces have become available for this event, most likely due to abandoned transactions freeing up reserved tickets.  However, this change is not permanent until you update the event. If you wish, you can change the status back to something else before updating.',
+						'event_espresso' ),
+					EEH_Template::pretty_status( $event->status(), false, 'sentence' )
+				)
+			);
 		}
 		//now we need to determine if the event has any tickets on sale.  If not then we dont' show the error
 		if ( ! $event->tickets_on_sale() ) {
@@ -1987,7 +1997,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action( 'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted' );
+		do_action( 'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $EVT_ID );
 		return TRUE;
 	}
 

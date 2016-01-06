@@ -205,7 +205,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		foreach ( $data['edit_event_datetimes'] as $row => $dtt ) {
 			//trim all values to ensure any excess whitespace is removed.
-			$dtt =  array_map( 'trim', $dtt );
+			$dtt = array_map(
+				function( $datetime_data ) {
+					return is_array( $datetime_data ) ? $datetime_data : trim( $datetime_data );
+				},
+				$dtt
+			);
 			$dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty( $dtt['DTT_EVT_end'] ) ? $dtt['DTT_EVT_end'] : $dtt['DTT_EVT_start'];
 			$datetime_values = array(
 				'DTT_ID' 			=> ! empty( $dtt['DTT_ID'] ) ? $dtt['DTT_ID'] : NULL,
@@ -332,7 +337,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$dtts_removed = array_diff($starting_tkt_dtt_rows, $tkt_dtt_rows);
 
 			// trim inputs to ensure any excess whitespace is removed.
-			$tkt = array_map( 'trim', $tkt );
+			$tkt = array_map(
+				function( $ticket_data ) {
+					return is_array( $ticket_data ) ? $ticket_data : trim( $ticket_data );
+				},
+				$tkt
+			);
 
 			//note we are doing conversions to floats here instead of allowing EE_Money_Field to handle because we're doing calcs prior to using the models.
 			//note incoming ['TKT_price'] value is already in standard notation (via js).
