@@ -39,16 +39,6 @@ abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class {
 
 
 	/**
-	 * Permanently deletes this object (not just archive)
-	 * @return boolean success
-	 */
-	public function delete_permanently() {
-		return $this->get_model()->delete_permanently_by_ID( $this->ID() );
-	}
-
-
-
-	/**
 	 * Deletes or restores this object.
 	 * @param bool $delete true=>delete, false=>restore
 	 * @return bool

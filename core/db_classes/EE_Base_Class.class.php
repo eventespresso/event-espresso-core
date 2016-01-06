@@ -1267,15 +1267,15 @@ abstract class EE_Base_Class{
 	 */
 	public function delete(){
 		/**
-		 * Called just before deleting a model object
+		 * Called just before SOFT deleting a model object
 		 *
 		 * @param EE_Base_Class $model_object about to be 'deleted'
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
 		$result = $this->get_model()->delete_by_ID( $this->ID() );
-                $this->refresh_cache_of_related_objects();
+		$this->refresh_cache_of_related_objects();
 		/**
-		 * Called just after deleting a model object
+		 * Called just after SOFT deleting a model object
 		 * @param EE_Base_Class $model_object that was just 'deleted'
 		 * @param boolean $result
 		 */
@@ -1290,13 +1290,21 @@ abstract class EE_Base_Class{
 	 * @return bool
 	 */
 	public function delete_permanently(){
+		/**
+		 * Called just before HARD deleting a model object
+		 *
+		 * @param EE_Base_Class $model_object about to be 'deleted'
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete_permanently__before', $this );
 		$model=$this->get_model();
-		if($model instanceof EEM_Soft_Delete_Base){
-			$result=$model->delete_permanently_by_ID($this->ID());
-                        $this->refresh_cache_of_related_objects();
-		}else{
-			$result = $this->delete();
-		}
+		$result=$model->delete_permanently_by_ID($this->ID());
+		$this->refresh_cache_of_related_objects();
+		/**
+		 * Called just after HARD deleting a model object
+		 * @param EE_Base_Class $model_object that was just 'deleted'
+		 * @param boolean $result
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete_permanently__end', $this, $result );
 		return $result ? true : false;
 	}
 
