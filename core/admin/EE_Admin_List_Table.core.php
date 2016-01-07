@@ -430,7 +430,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 				return parent::handle_row_actions( $item, $column_name, $primary );
 			}
 		}
-		'';
+		return '';
 	}
 
 
