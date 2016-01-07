@@ -29,16 +29,6 @@
 abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class {
 
 	/**
-	 * Performs a soft delete (archive) fo this object
-	 * @return boolean success
-	 */
-	public function delete() {
-		return $this->delete_or_restore( TRUE );
-	}
-
-
-
-	/**
 	 * Deletes or restores this object.
 	 * @param bool $delete true=>delete, false=>restore
 	 * @return bool
