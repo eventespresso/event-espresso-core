@@ -241,6 +241,20 @@ class EEH_Autoloader extends EEH_Base {
 
 
 
+	/**
+	 * add_alias
+	 * register additional autoloader based on variation of the classname for an existing autoloader
+	 *
+	 * @access    public
+	 * @param string $class_name - simple class name ie: EE_Session
+	 * @param string $alias - variation on class name ie: EE_session, session, etc
+	 */
+	public static function add_alias( $class_name, $alias ) {
+		if ( isset( self::$_autoloaders[ $class_name ] ) ) {
+			self::$_autoloaders[ $alias ] = self::$_autoloaders[ $class_name ];
+		}
+	}
+
 
 
 }
