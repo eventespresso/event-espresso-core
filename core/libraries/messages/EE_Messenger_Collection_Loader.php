@@ -79,7 +79,8 @@ class EE_Messenger_Collection_Loader {
 				continue;
 			}
 			$this->messenger_collection()->add(
-				new $messenger_class_name(), $messenger_class_name
+				new $messenger_class_name(),
+				$messenger_class_name
 			);
 		}
 	}
@@ -103,7 +104,8 @@ class EE_Messenger_Collection_Loader {
 				continue;
 			}
 			$this->messenger_collection()->add(
-				$active_messenger
+				$active_messenger,
+				$active_messenger_classname
 			);
 		}
 	}
