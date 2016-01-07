@@ -1018,6 +1018,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$this->_maybe_send_notifications( $payment );
 				//prepare to render page
 				$json_response_data[ 'return_data' ] = $this->_build_payment_json_response( $payment, $REG_IDs );
+				do_action( 'AHEE__Transactions_Admin_Page__apply_payments_or_refund__after_recording', $transaction, $payment );
 			} else {
 				EE_Error::add_error(
 					__( 'A valid Transaction for this payment could not be retrieved.', 'event_espresso' ),
@@ -1027,6 +1028,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		} else {
 			EE_Error::add_error( __( 'The payment form data could not be processed. Please try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
+
 		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
 		echo json_encode( array_merge( $json_response_data, $notices ));
 		die();
