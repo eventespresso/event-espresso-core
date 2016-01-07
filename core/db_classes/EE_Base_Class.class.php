@@ -1267,7 +1267,8 @@ abstract class EE_Base_Class{
 	 */
 	public function delete(){
 		/**
-		 * Called just before SOFT deleting a model object
+		 * Called just before SOFT deleting a model object (if soft deleting is
+		 * possible for this model; otherwise a regular hard delete it performed)
 		 *
 		 * @param EE_Base_Class $model_object about to be 'deleted'
 		 */
@@ -1275,7 +1276,8 @@ abstract class EE_Base_Class{
 		$result = $this->get_model()->delete_by_ID( $this->ID() );
 		$this->refresh_cache_of_related_objects();
 		/**
-		 * Called just after SOFT deleting a model object
+		 * Called just after SOFT deleting a model object (if soft deleting is
+		 * possible for this model; otherwise a regular hard delete it performed)
 		 * @param EE_Base_Class $model_object that was just 'deleted'
 		 * @param boolean $result
 		 */
