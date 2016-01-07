@@ -304,6 +304,9 @@ class EED_Messages  extends EED_Module {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $path );
 			}
 		}
+		// add aliases
+		EEH_Autoloader::add_alias( 'EE_messages', 'EE_Messages');
+		EEH_Autoloader::add_alias( 'EE_messenger', 'EE_Messenger');
 	}
 
 
