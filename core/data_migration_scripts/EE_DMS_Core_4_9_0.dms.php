@@ -667,6 +667,11 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 		$script_4_6_defaults = EE_Registry::instance()->load_dms('Core_4_6_0');
 		$script_4_6_defaults->add_default_admin_only_payments();
 		$script_4_6_defaults->insert_default_currencies();
+		
+		/** @var EE_DMS_Core_4_8_0 $script_4_8_defaults */
+		$script_4_8_defaults = EE_Registry::instance()->load_dms('Core_4_8_0');
+		$script_4_8_defaults->verify_new_countries();
+		$script_4_8_defaults->verify_new_currencies();
 
 		return true;
 	}
