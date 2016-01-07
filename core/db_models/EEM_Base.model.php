@@ -434,6 +434,7 @@ abstract class EEM_Base extends EE_Base{
 		 * @param EE_Model_Field_Base[] $_fields
 		 */
 		$this->_fields = apply_filters('FHEE__'.get_class($this).'__construct__fields',$this->_fields);
+		$this->_invalidate_field_caches();
 		foreach($this->_fields as $table_alias => $fields_for_table){
 			if ( ! array_key_exists( $table_alias, $this->_tables )){
 				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
@@ -4530,6 +4531,16 @@ abstract class EEM_Base extends EE_Base{
 				)
 			);
 		}
+	}
+	
+	/**
+	 * Clears all the models field caches. This is only useful when a sub-class
+	 * might have added a field or something and these caches might be invaldiated
+	 */
+	protected function _invalidate_field_caches() {
+		$this->_cache_foreign_key_to_fields = array();
+		$this->_cached_fields = null;
+		$this->_cached_fields_non_db_only = null;
 	}
 
 
