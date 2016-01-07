@@ -10,9 +10,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * But only sets the minimum, so any row of the right type will get used
  *
  * @package         Event Espresso
- * @subpackage    batch
+ * @subpackage    core/db_models
  * @author				Mike Nelson
- * @since		 	   4.8.29 at least
+ * @since		 	   4.8.29.rc.010
  *
  */
 class EE_CPT_Minimum_Where_Conditions extends EE_Default_Where_Conditions{

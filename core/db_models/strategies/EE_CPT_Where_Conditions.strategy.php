@@ -9,9 +9,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Strategy specifically for adding where conditions specific to CPT models.
  *
  * @package         Event Espresso
- * @subpackage    batch
+ * @subpackage    core/db_models
  * @author				Mike Nelson
- * @since		 	   4.8.29 at least
+ * * @since		 	   4.6.0
  *
  */
 class EE_CPT_Where_Conditions extends EE_CPT_Minimum_Where_Conditions{

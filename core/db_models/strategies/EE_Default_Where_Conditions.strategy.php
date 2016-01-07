@@ -10,9 +10,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Should be initialized and set on construction of model
  *
  * @package         Event Espresso
- * @subpackage    batch
+ * @subpackage    core/db_models
  * @author				Mike Nelson
- * @since		 	   4.8.29 at least
+ * @since		 	    4.6.0
  *
  */
 class EE_Default_Where_Conditions{
