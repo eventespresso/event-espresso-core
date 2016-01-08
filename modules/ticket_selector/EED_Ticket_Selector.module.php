@@ -82,6 +82,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		// routing
 		EE_Config::register_route( 'iframe', 'EED_Ticket_Selector', 'ticket_selector_iframe', 'ticket_selector' );
 		EE_Config::register_route( 'process_ticket_selections', 'EED_Ticket_Selector', 'process_ticket_selections' );
+		EE_Config::register_route( 'cancel_ticket_selections', 'EED_Ticket_Selector', 'cancel_ticket_selections' );
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		//add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
@@ -435,9 +436,58 @@ class EED_Ticket_Selector extends  EED_Module {
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
+			} else if ( EE_Registry::instance()->SSN->cart() instanceof EE_Cart ) {
+				if ( ! EE_Registry::instance()->SSN->cart()->all_ticket_quantity_count() ) {
+					return '';
+				}
+				return EED_Ticket_Selector::display_proceed_btn_when_tickets_in_cart();
 			}
 		}
 		return '';
+	}
+
+
+
+
+	/**
+	 *    display_proceed_btn_when_tickets_in_cart
+	 *
+	 *	@access public
+	 * 	@access 		public
+	 * 	@return		string
+	 */
+	public static function display_proceed_btn_when_tickets_in_cart() {
+		$html = '<a class="ticket-selector-submit-btn button" href="';
+		$html .= apply_filters(
+			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_url',
+			EE_Registry::instance()->CFG->core->reg_page_url()
+		);
+		$html .= '">';
+		$html .= apply_filters(
+			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_txt',
+			__( 'Proceed to Registration', 'event_espresso' )
+		);
+		$html .= ' <span class="dashicons dashicons-arrow-right-alt2"></span>';
+		$html .= '</a>';
+		$html .= '<div class="clear"></div>';
+		$cancel_url = EEH_Event_View::event_link_url( self::$_event->ID() );
+		$cancel_url = add_query_arg(
+			array(
+				'ee'       => 'cancel_ticket_selections',
+				'event_id' => self::$_event->ID(),
+				'noheader' => true
+			),
+			$cancel_url
+		);
+		$cancel_url = wp_nonce_url( $cancel_url, 'cancel_ticket_selections', 'cancel_ticket_selections_nonce' );
+		$html .= '<a class="ticket-selector-submit-btn small-text" href="' . $cancel_url . '">';
+		$html .= apply_filters(
+			'FHEE__EED_Ticket_Selector__cancel_ticket_selections_txt',
+			__( 'cancel ticket selection', 'event_espresso' )
+		);
+		$html .= '</a>';
+		$html .= '<div class="clear"><br/></div>';
+		return $html;
 	}
 
 
@@ -469,7 +519,13 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( ! self::$_event->get_permalink() ) {
 			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$view_details_btn = '<form method="POST" action="' . self::$_event->get_permalink() . '">';
+		$view_details_btn = '<form method="POST" action="';
+		$view_details_btn .= apply_filters(
+			'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_url',
+			self::$_event->get_permalink(),
+			self::$_event
+		);
+		$view_details_btn .= '">';
 		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __( 'View Details', 'event_espresso' ), self::$_event );
 		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn view-details-btn" type="submit" value="' . $btn_text . '" />';
 		$view_details_btn .= apply_filters( 'FHEE__EE_Ticket_Selector__after_view_details_btn', '', self::$_event );
@@ -480,6 +536,70 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	/**
+	 *    cancel_ticket_selections
+	 *
+	 * @access        public
+	 * @access        public
+	 * @return        string
+	 */
+	public static function cancel_ticket_selections() {
+		// check nonce
+		if ( ! EED_Ticket_Selector::process_ticket_selector_nonce( 'cancel_ticket_selections_nonce' ) ) {
+			return false;
+		}
+		EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__ );
+		if ( EE_Registry::instance()->REQ->is_set( 'event_id' ) ) {
+			wp_safe_redirect(
+				EEH_Event_View::event_link_url(
+					EE_Registry::instance()->REQ->get( 'event_id' )
+				)
+			);
+		} else {
+			wp_safe_redirect(
+				site_url( '/' . EE_Registry::instance()->CFG->core->event_cpt_slug . '/' )
+			);
+		}
+		die();
+	}
+
+
+
+	/**
+	 *    process_ticket_selector_nonce
+	 *
+	 * @access public
+	 * @param  string $nonce_name
+	 * @return bool
+	 */
+	public static function process_ticket_selector_nonce( $nonce_name ) {
+		if (
+			! is_admin()
+			&& (
+				! EE_Registry::instance()->REQ->is_set( $nonce_name )
+				||
+				! wp_verify_nonce(
+					EE_Registry::instance()->REQ->get( $nonce_name ),
+					str_replace( '_nonce', '', $nonce_name )
+				)
+			)
+		) {
+			EE_Error::add_error(
+				sprintf(
+					__(
+						'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.',
+						'event_espresso'
+					),
+					'<br/>'
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return false;
+		}
+		return true;
+	}
 
 
 
@@ -494,18 +614,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		// check nonce
-		if (
-			! is_admin() &&
-			(
-				! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) ||
-				! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )
-			)
-		) {
-			EE_Error::add_error(
-				sprintf( __( 'We\'re sorry but your request failed to pass a security check.%sPlease click the back button on your browser and try again.', 'event_espresso' ), '<br/>' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
+		if ( ! EED_Ticket_Selector::process_ticket_selector_nonce( 'process_ticket_selections_nonce' ) ) {
+			return false;
 		}
 
 		self::$_available_spaces = array(
@@ -542,7 +652,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				// all data appears to be valid
 				$tckts_slctd = false;
-				$success = true;
+				$tickets_added = 0;
 				// validate/sanitize data
 				$valid = apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data', $valid );
 				if ( $valid[ 'total_tickets' ] >0 ) {
@@ -558,10 +668,7 @@ class EED_Ticket_Selector extends  EED_Module {
 							// d( $valid['ticket_obj'][$x] );
 							if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
 								// then add ticket to cart
-								$tickets_added = self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
-								if ( $tickets_added < 1 ) {
-									$success = false;
-								}
+								$tickets_added += self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] );
 								//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
 								//echo "\n . ticket_added: " . $ticket_added . '<br />';
 								if ( EE_Error::has_error() ) {
@@ -582,7 +689,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__tckts_slctd', $tckts_slctd ) ) {
-					if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__success', $success ) ) {
+					if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added ) ) {
 						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
 						EE_Registry::instance()->CART->recalculate_all_cart_totals();
 						EE_Registry::instance()->CART->save_cart( FALSE );
@@ -771,7 +878,15 @@ class EED_Ticket_Selector extends  EED_Module {
 		// compare available spaces against the number of tickets being purchased
 		if ( $available_spaces >= $qty ) {
 			// allow addons to prevent a ticket from being added to cart
-			if ( ! apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart', true, $ticket, $qty, $available_spaces ) ) {
+			if (
+				! apply_filters(
+					'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart',
+					true,
+					$ticket,
+					$qty,
+					$available_spaces
+				)
+			) {
 				return 0;
 			}
 			$qty = apply_filters( 'FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty', $qty, $ticket );
@@ -783,29 +898,72 @@ class EED_Ticket_Selector extends  EED_Module {
 				return 0;
 			}
 		} else {
-			// tickets can not be purchased but let's find the exact number left for the last ticket selected PRIOR to subtracting tickets
+			// tickets can not be purchased but let's find the exact number left
+			// for the last ticket selected PRIOR to subtracting tickets
 			$available_spaces = self::_ticket_datetime_availability( $ticket, true );
 			// greedy greedy greedy eh?
 			if ( $available_spaces > 0 ) {
-				// add error messaging - we're using the _n function that will generate the appropriate singular or plural message based on the number of $available_spaces
-				EE_Error::add_error(
-					sprintf(
-						_n(
-							'We\'re sorry, but there is only %s available space left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
-							'We\'re sorry, but there are only %s available spaces left for this event at this particular date and time.%sPlease select a different number (or different combination) of tickets.',
-							$available_spaces,
-							'event_espresso'
-						),
-						$available_spaces,
-						'<br />'
-					),
-					__FILE__, __FUNCTION__, __LINE__
-				);
+				if (
+					apply_filters(
+						'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_display_availability_error',
+						true,
+						$ticket,
+						$qty,
+						$available_spaces
+					)
+				) {
+					EED_Ticket_Selector::_display_availability_error( $available_spaces );
+				}
 			} else {
-				EE_Error::add_error( __('We\'re sorry, but there are no available spaces left for this event at this particular date and time.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					__(
+						'We\'re sorry, but there are no available spaces left for this event at this particular date and time.',
+						'event_espresso'
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
 			}
 			return 0;
 		}
+	}
+
+
+
+	/**
+	 *  _display_availability_error
+	 *
+	 * @access    private
+	 * @param int $available_spaces
+	 */
+	private static function _display_availability_error( $available_spaces = 1 ) {
+		// add error messaging - we're using the _n function that will generate
+		// the appropriate singular or plural message based on the number of $available_spaces
+		if ( EE_Registry::instance()->CART->all_ticket_quantity_count() ) {
+			$msg = sprintf(
+				_n(
+					'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
+					'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets by cancelling the current selection and choosing again, or proceed to registration.',
+					$available_spaces,
+					'event_espresso'
+				),
+				$available_spaces,
+				'<br />'
+			);
+		} else {
+			$msg = sprintf(
+				_n(
+					'We\'re sorry, but there is only %1$s available space left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
+					'We\'re sorry, but there are only %1$s available spaces left for this event at this particular date and time. Please select a different number (or different combination) of tickets.',
+					$available_spaces,
+					'event_espresso'
+				),
+				$available_spaces,
+				'<br />'
+			);
+		}
+		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
 
 
