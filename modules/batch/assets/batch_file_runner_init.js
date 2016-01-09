@@ -35,7 +35,7 @@ jQuery(document).ready(function() {
 		function( response, data, xhr ) {
                 //redirect them as if this page didn't exist
                 //(so clicking "back" won't get them here)
-                window.location.replace( ee_job_i18n.redirect_url );
+                window.location.replace( ee_job_i18n.return_url );
 			}
     );
     runner.set_job_id( ee_job_response.job_id );

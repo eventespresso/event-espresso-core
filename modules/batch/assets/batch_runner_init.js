@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
         },
 		//cleanup callback
 		function( response, data, xhr ) {
-			window.location.replace( ee_job_i18n.redirect_url );
+			window.location.replace( ee_job_i18n.return_url );
 		}
     );
 	runner.set_job_id( ee_job_response.job_id );
