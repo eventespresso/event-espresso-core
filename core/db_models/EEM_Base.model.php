@@ -118,6 +118,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Default_Where_Conditions
 	 */
 	protected $_default_where_conditions_strategy;
+	
+	/**
+	 * Strategy for getting conditions on this model when 'default_where_conditions' equals 'minimum'.
+	 * This is particularly useful when you want something between 'none' and 'default'
+	 * @var EE_Default_Where_Conditions
+	 */
+	protected $_minimum_where_conditions_strategy;
 
 	/**
 	 * String describing how to find the "owner" of this model's objects.
@@ -427,6 +434,7 @@ abstract class EEM_Base extends EE_Base{
 		 * @param EE_Model_Field_Base[] $_fields
 		 */
 		$this->_fields = apply_filters('FHEE__'.get_class($this).'__construct__fields',$this->_fields);
+		$this->_invalidate_field_caches();
 		foreach($this->_fields as $table_alias => $fields_for_table){
 			if ( ! array_key_exists( $table_alias, $this->_tables )){
 				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
@@ -472,6 +480,11 @@ abstract class EEM_Base extends EE_Base{
 			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
 		}
 		$this->_default_where_conditions_strategy->_finalize_construct($this);
+		if( ! $this->_minimum_where_conditions_strategy){
+			//nothing was set during child constructor, so set default
+			$this->_minimum_where_conditions_strategy = new EE_Default_Where_Conditions();
+		}
+		$this->_minimum_where_conditions_strategy->_finalize_construct($this);
 
 		//if the cap slug hasn't been set, and we haven't set it to false on purpose
 		//to indicate to NOT set it, set it to the logical default
@@ -921,13 +934,33 @@ abstract class EEM_Base extends EE_Base{
 	function get_one_by_ID($id){
 		if( $this->get_from_entity_map( $id ) ){
 			return $this->get_from_entity_map( $id );
-		}elseif( $this->has_primary_key_field ( ) ) {
-			$primary_key_name = $this->get_primary_key_field()->get_name();
-			return $this->get_one(array(array($primary_key_name => $id)));
+		}
+		return $this->get_one( 
+			$this->alter_query_params_to_restrict_by_ID( 
+				$id,
+				array( 'default_where_conditions' => 'minimum' )
+			) 
+		);
+	}
+	
+	/**
+	 * Alters query parameters to only get items with this ID are returned. 
+	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string()
+	 * @param int $id
+	 * @param array $query_params
+	 * @return array of normal query params, @see EEM_Base::get_all
+	 */
+	public function alter_query_params_to_restrict_by_ID( $id, $query_params = array() ) {
+		if( ! isset( $query_params[ 0 ] ) ) {
+			$query_params[ 0 ] = array();
+		}
+		if( $this->has_primary_key_field ( ) ) {
+			$query_params[ 0 ][ $this->primary_key_name() ] = $id ;
 		}else{
 			//no primary key, so the $id must be from the get_index_primary_key_string()
-			return $this->get_one( array( $this->parse_index_primary_key_string( $id ) ) );
+			$query_params[0] = array_replace_recursive( $query_params[ 0 ], $this->parse_index_primary_key_string( $id ) );
 		}
+		return $query_params;
 	}
 
 
@@ -1495,6 +1528,23 @@ abstract class EEM_Base extends EE_Base{
 		return implode(",",$cols_n_values);
 
 	}
+	
+	/**
+	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
+	 * Performs a HARD delete, meaning the database row should always be removed, 
+	 * not just have a flag field on it switched
+	 * Wrapper for EEM_Base::delete_permanently()
+	 * @param mixed $id
+	 * @return boolean whether the row got deleted or not
+	 */
+	public function delete_permanently_by_ID( $id ) {
+		return $this->delete_permanently( 
+			array(
+				array( $this->get_primary_key_field()->get_name() => $id ),
+				'limit' 	=> 1
+			) 
+		);
+	}
 
 
 
@@ -1505,10 +1555,24 @@ abstract class EEM_Base extends EE_Base{
 	 * @return boolean whether the row got deleted or not
 	 */
 	public function delete_by_ID( $id ){
-		return $this->delete( array(
-			array( $this->get_primary_key_field()->get_name() => $id ),
-			'limit' 	=> 1
-		) );
+		return $this->delete( 
+			array(
+				array( $this->get_primary_key_field()->get_name() => $id ),
+				'limit' 	=> 1
+			) 
+		);
+	}
+	
+	/**
+	 * Identical to delete_permanently, but does a "soft" delete if possible,
+	 * meaning if the model has a field that indicates its been "trashed" or
+	 * "soft deleted", we will just set that instead of actually deleting the rows.
+	 * @param array $query_params
+	 * @param boolean $allow_blocking
+	 * @return @see EEM_Base::delete_permanently
+	 */
+	function delete($query_params,$allow_blocking = true){
+		return $this->delete_permanently($query_params, $allow_blocking);
 	}
 
 
@@ -1523,7 +1587,7 @@ abstract class EEM_Base extends EE_Base{
 	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return int how many rows got deleted
 	 */
-	function delete($query_params,$allow_blocking = true){
+	function delete_permanently($query_params,$allow_blocking = true){
 		/**
 		 * Action called just before performing a real deletion query. You can use the
 		 * model and its $query_params to find exactly which items will be deleted
@@ -2714,12 +2778,20 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
-		$allowed_used_default_where_conditions_values = array('all','this_model_only', 'other_models_only','none');
+		$allowed_used_default_where_conditions_values = array(
+				'all',
+				'this_model_only', 
+				'other_models_only',
+				'minimum',
+				'none'
+			);
 		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
 			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
 		}
 		if( in_array($use_default_where_conditions, array('all','this_model_only')) ){
 			$universal_query_params = $this->_get_default_where_conditions();
+		}elseif( in_array( $use_default_where_conditions, array( 'minimum' ) ) ) {
+			$universal_query_params = $this->_get_minimum_where_conditions();
 		}else{
 			$universal_query_params = array();
 		}
@@ -2787,6 +2859,21 @@ abstract class EEM_Base extends EE_Base{
 			return array();
 
 		return $this->_default_where_conditions_strategy->get_default_where_conditions($model_relation_path);
+	}
+	/**
+	 * Uses the _minimum_where_conditions_strategy set during __construct() to get
+	 * minimum where conditions on all get_all, update, and delete queries done by this model.
+	 * Use the same syntax as client code. Eg on the Event model, use array('Event.EVT_post_type'=>'esp_event'),
+	 * NOT array('Event_CPT.post_type'=>'esp_event').
+	 * Similar to _get_default_where_conditions
+	 * @param string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
+	 * @return array like EEM_Base::get_all's $query_params[0] (where conditions)
+	 */
+	protected function _get_minimum_where_conditions($model_relation_path = null){
+		if ( $this->_ignore_where_strategy )
+			return array();
+
+		return $this->_minimum_where_conditions_strategy->get_default_where_conditions($model_relation_path);
 	}
 	/**
 	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
@@ -4445,6 +4532,16 @@ abstract class EEM_Base extends EE_Base{
 				)
 			);
 		}
+	}
+	
+	/**
+	 * Clears all the models field caches. This is only useful when a sub-class
+	 * might have added a field or something and these caches might be invaldiated
+	 */
+	protected function _invalidate_field_caches() {
+		$this->_cache_foreign_key_to_fields = array();
+		$this->_cached_fields = null;
+		$this->_cached_fields_non_db_only = null;
 	}
 
 

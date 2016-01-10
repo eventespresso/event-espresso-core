@@ -110,6 +110,15 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			//don't block deletes though because we want to maintain the current behaviour
 			$this->_model_relations[ 'Post_Meta' ] = new EE_Has_Many_Relation( false );
 		}
+		if( ! $this->_minimum_where_conditions_strategy instanceof EE_Default_Where_Conditions ){
+			//nothing was set during child constructor, so set default
+			$this->_minimum_where_conditions_strategy = new EE_CPT_Minimum_Where_Conditions( $this->post_type() );
+		}
+		if( ! $this->_default_where_conditions_strategy instanceof EE_Default_Where_Conditions ) {
+			//nothing was set during child constructor, so set default
+			//it's ok for child classes to specify this, but generally this is more DRY
+			$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions( $this->post_type() );
+		}
 		parent::__construct($timezone);
 
 	}
@@ -173,8 +182,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @return array
 	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
-		$post_status_field_name=$this->post_status_field_name();
-		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->get_status_array()));
+		$query_params[ 'default_where_conditions' ] = 'minimum';
 		return $query_params;
 	}
 
