@@ -16,22 +16,30 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public $template_pack;
 
-
-
 	/**
 	 * @deprecated 4.9.0 Added for backward compat with add-on's
 	 * @type null
 	 */
 	public $template_variation;
 
-
-
-
 	/**
 	 * @deprecated 4.9.0 Added for backward compat with add-on's
 	 * @type string
 	 */
 	public $content = '';
+
+
+	/**
+	 * @type EE_Messenger $_messenger
+	 */
+	protected $_messenger = null;
+
+	/**
+	 * @type EE_Message_Type $_message_type
+	 */
+	protected $_message_type = null;
+
+
 
 	/**
 	 *
@@ -144,6 +152,16 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 
+	/**
+	 * Sets messenger
+	 *
+	 * @param string $messenger
+	 */
+	public function set_messenger( $messenger ) {
+		$this->set( 'MSG_messenger', $messenger );
+	}
+
+
 
 	/**
 	 * Returns corresponding messenger object for the set messenger on this message
@@ -151,8 +169,20 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return EE_Messenger | null
 	 */
 	public function messenger_object() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return EEH_MSG_Template::messenger_obj( $this->messenger() );
+		return $this->_messenger;
+		//EE_Registry::instance()->load_helper( 'MSG_Template' );
+		//return EEH_MSG_Template::messenger_obj( $this->messenger() );
+	}
+
+
+
+	/**
+	 * Sets messenger
+	 *
+	 * @param EE_Messenger $messenger
+	 */
+	public function set_messenger_object( EE_Messenger $messenger ) {
+		$this->_messenger = $messenger;
 	}
 
 
@@ -174,34 +204,12 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 	/**
-	 * Sets messenger
-	 *
-	 * @param string $messenger
-	 */
-	public function set_messenger( $messenger ) {
-		$this->set( 'MSG_messenger', $messenger );
-	}
-
-
-
-	/**
 	 * Gets message_type
 	 *
 	 * @return string
 	 */
 	public function message_type() {
 		return $this->get( 'MSG_message_type' );
-	}
-
-
-	/**
-	 * Returns the message type object for the set message type on this message
-	 *
-	 * @return EE_message_type | null
-	 */
-	public function message_type_object() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return EEH_MSG_Template::message_type_obj( $this->message_type() );
 	}
 
 
@@ -213,6 +221,30 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public function set_message_type( $message_type ) {
 		$this->set( 'MSG_message_type', $message_type );
+	}
+
+
+
+	/**
+	 * Returns the message type object for the set message type on this message
+	 *
+	 * @return EE_message_type | null
+	 */
+	public function message_type_object() {
+		return $this->_message_type;
+		//EE_Registry::instance()->load_helper( 'MSG_Template' );
+		//return EEH_MSG_Template::message_type_obj( $this->message_type() );
+	}
+
+
+
+	/**
+	 * Sets message_type
+	 *
+	 * @param EE_Message_Type $message_type
+	 */
+	public function set_message_type_object( EE_Message_Type $message_type ) {
+		$this->_message_type = $message_type;
 	}
 
 
