@@ -124,6 +124,20 @@ class EE_Messenger_Collection extends EE_Object_Collection {
 
 
 	/**
+	 * current
+	 *
+	 * current object from the Collection
+	 *
+	 * @access public
+	 * @return EE_Messenger
+	 */
+	public function current() {
+		return parent::current();
+	}
+
+
+
+	/**
 	 * set_current
 	 *
 	 * advances pointer to the provided object
