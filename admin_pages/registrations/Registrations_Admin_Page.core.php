@@ -24,11 +24,18 @@
 class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
-	 *
 	 * @var EE_Registration
 	 */
 	private $_registration;
+
+	/**
+	 * @var EE_Event
+	 */
 	private $_reg_event;
+
+	/**
+	 * @var EE_Session
+	 */
 	private $_session;
 	private static $_reg_status;
 
@@ -194,10 +201,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 
 				'process_reg_step'	=> array(
-						'func' => 'process_reg_step',
-						'noheader' => TRUE,
-						'capability' => 'ee_edit_registrations'
-					),
+					'func' => 'process_reg_step',
+					'noheader' => TRUE,
+					'capability' => 'ee_edit_registrations'
+				),
+
+				'redirect_to_txn'	=> array(
+					'func' => 'redirect_to_txn',
+					'noheader' => TRUE,
+				),
 
 				'change_reg_status' => array(
 					'func' => '_change_reg_status',
@@ -2033,28 +2045,27 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _get_registration_step_content() {
 
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php';
 		$template_args = array(
 			'title' => '',
 			'content' => '',
 			'step_button_text' => ''
-			);
+		);
 
 		//to indicate we're processing a new registration
 		$hidden_fields = array(
 			'processing_registration' => array(
 				'type' => 'hidden',
 				'value' => 1
-				),
+			),
 			'event_id' => array(
 				'type' => 'hidden',
 				'value' => $this->_reg_event->ID()
-				)
-			);
+			)
+		);
 
 		//if the cart is empty then we know we're at step one so we'll display ticket selector
-		$cart = EE_Registry::instance()->SSN->get_session_data('cart');
-		$step = empty( $cart ) ? 'ticket' : 'questions';
+		$cart = EE_Registry::instance()->SSN->cart();
+		$step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';
 		switch ( $step ) {
 			case 'ticket' :
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
@@ -2073,7 +2084,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_set_add_edit_form_tags( 'process_reg_step', $hidden_fields ); //we come back to the process_registration_step route.
 
-		return EEH_Template::display_template( $template_path, $template_args, TRUE );
+		return EEH_Template::display_template(
+			REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php', $template_args, TRUE
+		);
 	}
 
 
@@ -2115,16 +2128,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 
 		//what step are we on?
-		$cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
-		$step = empty( $cart ) ? 'ticket' : 'questions';
+		$cart = EE_Registry::instance()->SSN->cart();
+		$step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';
 
 		//if doing ajax then we need to verify the nonce
-		if ( 'DOING_AJAX' ) {
+		if ( defined( 'DOING_AJAX' ) ) {
 			$nonce = isset( $this->_req_data[$this->_req_nonce] ) ? sanitize_text_field( $this->_req_data[$this->_req_nonce] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );
 		}
 
 		switch ( $step ) {
+
 			case 'ticket' :
 				//process ticket selection
 				$success = EED_Ticket_Selector::instance()->process_ticket_selections();
@@ -2142,12 +2156,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 				}
 				break;
+
 			case 'questions' :
 				if( ! isset( $this->_req_data[ 'txn_reg_status_change' ], $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ] ) ) {
 					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
 				}
 				//process registration
 				$transaction = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
+				//EEH_Debug_Tools::printr( EE_Registry::instance()->SSN->cart(), 'EE_Registry::instance()->SSN->cart()', __FILE__, __LINE__ );
+				if ( EE_Registry::instance()->SSN->cart() instanceof EE_Cart ) {
+					$grand_total = EE_Registry::instance()->SSN->cart()->get_cart_grand_total();
+					if ( $grand_total instanceof EE_Line_Item ) {
+						$grand_total->save_this_and_descendants_to_txn();
+					}
+				}
 				if ( ! $transaction instanceof EE_Transaction ) {
 					$query_args = array(
 						'action' => 'new_registration',
@@ -2170,23 +2192,39 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				if ( ! $transaction_payments->update_transaction_status_based_on_total_paid( $transaction )) {
 					$transaction->save();
 				}
+				EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+				$this->_req_data = array();
 				$query_args = array(
-					'action' => 'view_transaction',
+					'action' => 'redirect_to_txn',
 					'TXN_ID' => $transaction->ID(),
-					'page' => 'espresso_transactions'
 				);
-				EE_Error::add_success( __('Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso') );
-				$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+				$this->_redirect_after_action( false, '', '', $query_args, true );
 				break;
-			}
+		}
 
-			//what are you looking here for?  Should be nothing to do at this point.
+		//what are you looking here for?  Should be nothing to do at this point.
 	}
 
 
 
-
-
+	/**
+	 * redirect_to_txn
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function redirect_to_txn() {
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		$query_args = array(
+			'action' => 'view_transaction',
+			'TXN_ID' => isset( $this->_req_data['TXN_ID'] ) ? absint( $this->_req_data[ 'TXN_ID' ] )  : 0,
+			'page'   => 'espresso_transactions'
+		);
+		EE_Error::add_success(
+			__( 'Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso' )
+		);
+		$this->_redirect_after_action( false, '', '', $query_args, true );
+	}
 
 
 
@@ -2312,7 +2350,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _registrations_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
@@ -2350,7 +2388,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _contact_list_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
