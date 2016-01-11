@@ -64,33 +64,6 @@ class EED_Batch extends EED_Module{
 	}
 	
 	/**
-	 * Gets the job step response which was done during the enqueuing of scripts
-	 * @return \EventEspressoBatchRequest\Helpers\JobStepResponse
-	 */
-	public function job_step_response() {
-		return $this->_job_step_response;
-	}
-	/**
-	 * Gets the batch request type indicated in the $_REQUEST
-	 * @return string: EED_Batch::batch_job, EED_Batch::batch_file_job, EED_Batch::batch_not_job
-	 */
-	public function batch_request_type() {
-		if( $this->_batch_request_type === null ) {
-			if( isset( $_GET[ 'batch' ] ) ) {
-				if( $_GET[ 'batch' ] == self::batch_job ) {
-					$this->_batch_request_type = self::batch_job;
-				} elseif( $_GET[ 'batch' ] == self::batch_file_job ) {
-					$this->_batch_request_type = self::batch_file_job;
-				}
-			}
-			//if we didn't find that it was a batch request, indicate it wasn't
-			if( $this->_batch_request_type === null ) {
-				$this->_batch_request_type = self::batch_not_job;
-			}
-		}
-		return $this->_batch_request_type;
-	}
-	/**
 	 * Sets hooks to enable batch jobs on the frontend. Disabled by default
 	 * because it's an attack vector and there are currently no implementations
 	 */
@@ -101,6 +74,20 @@ class EED_Batch extends EED_Module{
 			add_action( 'wp_enqueue_scripts', array( self::instance(), 'enqueue_scripts' ) );
 			add_filter( 'template_include', array( self::instance(), 'override_template' ), 99 );
 		}
+	}
+	
+	/**
+	 * Initializes some hooks for the admin in order to run batch jobs
+	 */
+	public static function set_hooks_admin() {
+		add_action( 'admin_menu', array( self::instance(), 'register_admin_pages' ) );
+		add_action( 'admin_enqueue_scripts', array( self::instance(), 'enqueue_scripts' ) );
+		
+		//ajax
+		add_action('wp_ajax_espresso_batch_continue',array(self::instance(),'batch_continue'));
+		add_action('wp_ajax_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
+		add_action('wp_ajax_no_priv_espresso_batch_continue',array(self::instance(),'batch_continue'));
+		add_action('wp_ajax_no_priv_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
 	}
 	
 	/**
@@ -193,20 +180,6 @@ class EED_Batch extends EED_Module{
 	}
 	
 	/**
-	 * Initializes some hooks for the admin in order to run batch jobs
-	 */
-	public static function set_hooks_admin() {
-		add_action( 'admin_menu', array( self::instance(), 'register_admin_pages' ) );
-		add_action( 'admin_enqueue_scripts', array( self::instance(), 'enqueue_scripts' ) );
-		
-		//ajax
-		add_action('wp_ajax_espresso_batch_continue',array(self::instance(),'batch_continue'));
-		add_action('wp_ajax_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
-		add_action('wp_ajax_no_priv_espresso_batch_continue',array(self::instance(),'batch_continue'));
-		add_action('wp_ajax_no_priv_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
-	}
-	
-	/**
 	 * Adds an admin page which doesn't appear in the admin menu
 	 */
 	public function register_admin_pages() {
@@ -252,25 +225,6 @@ class EED_Batch extends EED_Module{
 		$this->_return_json( $response_obj->to_array() );
 	}
 	
-	/**
-	 * process any notices before redirecting (or returning ajax request)
-	 * This method sets the $this->_template_args['notices'] attribute;
-	 *
-	 * @param  array  $query_args any query args that need to be used for notice transient ('action')
-	 * @param bool    $skip_route_verify This is typically used when we are processing notices REALLY early and page_routes haven't been defined yet.
-	 * @param bool    $sticky_notices      This is used to flag that regardless of whether this is doing_ajax or not, we still save a transient for the notice.
-	 * @return void
-	 */
-	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
-
-		
-
-		//IF this isn't ajax we need to create a transient for the notices using the route (however, overridden if $sticky_notices == true)
-		if ( ! defined( 'DOING_AJAX' ) || $sticky_notices ) {
-			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
-			$this->_add_transient( $route, $this->_template_args['notices'], TRUE, $skip_route_verify );
-		}
-	}
 	
 	/**
 	 * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
@@ -308,6 +262,34 @@ class EED_Batch extends EED_Module{
 			echo json_encode( $json );
 		}
 		exit();
+	}
+	
+	/**
+	 * Gets the job step response which was done during the enqueuing of scripts
+	 * @return \EventEspressoBatchRequest\Helpers\JobStepResponse
+	 */
+	public function job_step_response() {
+		return $this->_job_step_response;
+	}
+	/**
+	 * Gets the batch request type indicated in the $_REQUEST
+	 * @return string: EED_Batch::batch_job, EED_Batch::batch_file_job, EED_Batch::batch_not_job
+	 */
+	public function batch_request_type() {
+		if( $this->_batch_request_type === null ) {
+			if( isset( $_GET[ 'batch' ] ) ) {
+				if( $_GET[ 'batch' ] == self::batch_job ) {
+					$this->_batch_request_type = self::batch_job;
+				} elseif( $_GET[ 'batch' ] == self::batch_file_job ) {
+					$this->_batch_request_type = self::batch_file_job;
+				}
+			}
+			//if we didn't find that it was a batch request, indicate it wasn't
+			if( $this->_batch_request_type === null ) {
+				$this->_batch_request_type = self::batch_not_job;
+			}
+		}
+		return $this->_batch_request_type;
 	}
 	
 	/**
