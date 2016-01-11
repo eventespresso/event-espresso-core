@@ -86,8 +86,8 @@ class EED_Batch extends EED_Module{
 		//ajax
 		add_action('wp_ajax_espresso_batch_continue',array(self::instance(),'batch_continue'));
 		add_action('wp_ajax_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
-		add_action('wp_ajax_no_priv_espresso_batch_continue',array(self::instance(),'batch_continue'));
-		add_action('wp_ajax_no_priv_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
+		add_action('wp_ajax_nopriv_espresso_batch_continue',array(self::instance(),'batch_continue'));
+		add_action('wp_ajax_nopriv_espresso_batch_cleanup',array(self::instance(),'batch_cleanup'));
 	}
 	
 	/**
