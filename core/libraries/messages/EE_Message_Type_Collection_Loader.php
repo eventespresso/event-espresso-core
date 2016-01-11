@@ -19,7 +19,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EE_Message_Type_Collection_Loader {
 
 
-	protected $_message_type_collection;
+	/**
+	 * @type EE_Message_Type_Collection $_message_type_collection
+	 */
+	protected $_message_type_collection = null;
 
 
 
