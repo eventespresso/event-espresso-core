@@ -227,22 +227,16 @@ class EED_Batch extends EED_Module{
 	
 	
 	/**
-	 * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
+	 * Returns a json response
 	 *
-	 * @param bool $sticky_notices Used to indicate whether you want to ensure notices are added to a transient instead of displayed.
+	 * @param array $data The data we want to send echo via in the JSON response's "data" element
 	 *
 	 * The returned json object is created from an array in the following format:
 	 * array(
-	 * 	'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
-	 * 	'success' => FALSE, //(default FALSE) - contains any special success message.
 	 * 	'notices' => '', // - contains any EE_Error formatted notices
-	 * 	'content' => 'string can be html', //this is a string of formatted content (can be html)
 	 * 	'data' => array() //this can be any key/value pairs that a method returns for later json parsing by the js. We're also going to include the template args with every package (so js can pick out any specific template args that might be included in here)
+	 *	'isEEajax' => true,//indicates this is a response from EE
 	 * )
-	 *
-	 * The json object is populated by whatever is set in the $_template_args property.
-	 *
-	 * @return json object
 	 */
 	protected function _return_json( $data ) {
 		$json = array(
