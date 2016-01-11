@@ -315,7 +315,7 @@ class EEH_MSG_Template {
 	 * Get Messenger object.
 	 *
 	 * @since 4.3.0
-	 *
+	 * @deprecated
 	 * @param string $messenger messenger slug for the messenger object we want to retrieve.
 	 * @throws \EE_Error
 	 * @return EE_Messenger
@@ -331,7 +331,7 @@ class EEH_MSG_Template {
 	 * get Message type object
 	 *
 	 * @since 4.3.0
-	 *
+	 * @deprecated
 	 * @param string $message_type the slug for the message type object to retrieve
 	 * @throws \EE_Error
 	 * @return EE_message_type
