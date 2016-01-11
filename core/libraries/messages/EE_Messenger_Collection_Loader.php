@@ -58,7 +58,7 @@ class EE_Messenger_Collection_Loader {
 	 * globs the supplied filepath and adds any found
 	 *
 	 * @param  string $folder
-	 * @return array
+	 * @return void
 	 */
 	public function load_messengers_from_folder( $folder = '' ) {
 		//make sure autoloaders are set (fail-safe)
