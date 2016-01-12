@@ -33,7 +33,6 @@ class EE_Message_Type_Collection_Loader {
 	 */
 	public function __construct( EE_Message_Type_Collection $message_types ) {
 		$this->set_message_type_collection( $message_types );
-		//$this->load_message_types_from_folder();
 	}
 
 
