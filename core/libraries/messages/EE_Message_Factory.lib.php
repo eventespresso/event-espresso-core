@@ -106,7 +106,7 @@ class EE_Message_Factory {
 		if ( ! $messenger instanceof  EE_Messenger ) {
 			throw new EE_Error(
 				sprintf(
-					__( 'The %1$s messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
+					__( 'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
 					$message->messenger()
 				)
 			);
