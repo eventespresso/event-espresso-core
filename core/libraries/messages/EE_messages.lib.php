@@ -78,12 +78,6 @@ class EE_Messages {
 	protected $_message_type;
 
 
-	/**
-	 * @type EE_Messenger_Collection
-	 */
-	protected $_messenger_collection;
-
-
 
 
 
@@ -135,23 +129,6 @@ class EE_Messages {
 		//EE_Registry::instance()->load_helper('Debug_Tools');
 	}
 
-
-
-	/**
-	 * @return EE_Messenger_Collection
-	 */
-	public function get_messenger_collection() {
-		return $this->_messenger_collection;
-	}
-
-
-
-	/**
-	 * @param mixed $messengers
-	 */
-	public function set_messenger_collection( EE_Messenger_Collection $messengers ) {
-		$this->_messenger_collection = $messengers;
-	}
 
 
 
@@ -212,13 +189,13 @@ class EE_Messages {
 	 */
 	public function ensure_message_type_is_active( $message_type, $messenger ) {
 		//first validate that the incoming messenger allows this message type to be activated.
-		$messengers = $this->get_messenger_collection();
+		$messengers = $this->get_installed_messengers();
 		if ( ! isset( $messengers[$messenger] ) ) {
 			throw new EE_Error( sprintf( __('The messenger sent to %s is not installed', 'event_espresso'), __METHOD__ ) );
 		}
 
 		$msgr = $messengers[$messenger];
-		$valid_message_types = $msgr->get_valid_message_types();
+		$valid_message_types = $msgr instanceof EE_Messenger ? $msgr->get_valid_message_types() : array();
 		if ( ! in_array( $message_type, $valid_message_types ) ) {
 			throw new EE_Error(
 				sprintf(
@@ -245,7 +222,7 @@ class EE_Messages {
 	public function activate_messenger( $messenger_name, $mts_to_activate = array() ){
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$message_types = $this->get_installed_message_types();
-		$installed_messengers = $this->get_messenger_collection();
+		$installed_messengers = $this->get_installed_messengers();
 		$templates = false;
 		$settings = array();
 		//get has_active so we can be sure its kept up to date.
