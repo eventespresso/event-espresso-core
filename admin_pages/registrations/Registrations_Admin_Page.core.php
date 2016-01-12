@@ -1490,117 +1490,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@return void
 	*/
 	public function _reg_questions_meta_box() {
-
-//		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-//		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );
-//		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-//		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
-//
-//		//old style
-//		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
-//
-//		//EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//
-//		EE_Registry::instance()->load_helper( 'Form_Fields' );
-//		$this->_template_args['att_questions'] = EEH_Form_Fields::generate_question_groups_html( $question_groups );
-//		
-		//new style
 		$form = $this->_get_reg_custom_questions_form( $this->_registration->ID() );
-//		$form->_construct_finalize(null, 'custom_questions_form' );
 		$this->_template_args[ 'att_questions' ] = $form->get_html_and_js();
 		$this->_template_args['reg_questions_form_action'] = 'edit_registration';
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-
 	}
 
-
-
-
-
 	/**
-	 * 		form_before_question_group
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
-	 */
-	public function form_before_question_group( $output ) {
-		return '
-	<table class="form-table ee-width-100">
-		<tbody>
-			';
-	}
-
-
-
-
-	/**
-	 * 		form_after_question_group
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
-	 */
-	public function form_after_question_group( $output ) {
-		return  '
-			<tr class="hide-if-no-js">
-				<th> </th>
-				<td class="reg-admin-edit-attendee-question-td">
-					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . esc_attr__( 'click to edit question', 'event_espresso' ) . '">
-						<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
-						<div class="dashicons dashicons-edit"></div>
-					</a>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-';
-	}
-
-
-
-
-	/**
-	 * 		form_form_field_label_wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function form_form_field_label_wrap( $label ) {
-		return '
-			<tr>
-				<th>
-					' . $label  . '
-				</th>';
-	}
-
-
-
-
-	/**
-	 * 		form_form_field_input__wrap
-	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
-	 */
-	public function form_form_field_input__wrap( $input ) {
-		return '
-				<td class="reg-admin-attendee-questions-input-td disabled-input">
-					' . $input . '
-				</td>
-			</tr>';
-	}
-
-
-
-
-	/**
-	 * 		generates HTML for the Registration main meta box
+	 * 		Updates the registration's custom questions according to the form info, if the form is submitted.
+	 *		If it's not a post, the "view_registrations" route will be called next on the SAME request
+	 *		to display the page
 	*		@access protected
 	*		@return void
 	*/
@@ -1634,10 +1536,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 *        _save_attendee_registration_form
+	 * Saves 
 	 * @access private
 	 * @param bool $REG_ID
-	 * @param bool $qstns
 	 * @return bool
 	 */
 	private function _save_reg_custom_questions_form( $REG_ID = FALSE ) {

@@ -12,6 +12,17 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
  * @version		3.2.P
+ * @deprecated usage of this helper is discouraged since 4.8.30.rc.009, instead
+ * consider using the form system classes in core/libraries/form_sections. See
+ * http://developer.eventespresso.com/docs/ee4-forms-system/.
+ * The reason this is discouraged is because the forms system partially duplicates the
+ * same behaviour (displaying HTML inputs), but also simplifies form validation
+ * server-side and client-side and normalization (putting form data into the expected
+ * datatypes in PHP). Also there have been a few bugs noticed (see https://events.codebasehq.com/projects/event-espresso/tickets/9165)
+ * and maintaining this class AND the forms system is extra work.
+ * Once we have removed all usage of this from EE core, it's expected that we will
+ * start issuing deprecation notices
+ * 
  *
  * ------------------------------------------------------------------------
  *
@@ -59,7 +70,7 @@ class EEH_Form_Fields {
 	 * 	@todo: at some point we can break this down into other static methods to abstract it a bit better.
 	 */
 	static public function get_form_fields( $input_vars = array(), $id = FALSE ) {
-
+		
 		if ( empty($input_vars) ) {
 			EE_Error::add_error( __('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
