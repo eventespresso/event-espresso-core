@@ -109,6 +109,26 @@ class EE_Messenger_And_Message_Type_Manager {
 
 
 	/**
+	 * @param string $messenger_classname
+	 * @return \EE_Messenger
+	 */
+	public function get_messenger( $messenger_classname ) {
+		return $this->messenger_collection()->get_by_info( $messenger_classname );
+	}
+
+
+
+	/**
+	 * @param string $message_type_classname
+	 * @return \EE_Message_Type
+	 */
+	public function get_message_type( $message_type_classname ) {
+		return $this->message_type_collection()->get_by_info( $message_type_classname );
+	}
+
+
+
+	/**
 	 * Used to return active messengers array stored in the wp options table.
 	 * If no value is present in the option then an empty array is returned.
 	 *
