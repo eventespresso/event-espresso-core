@@ -188,9 +188,32 @@ class EE_Registry {
 		$this->_auto_resolve_dependencies = apply_filters(
 			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
 			array(
-				'EE_Session'         	=> array( 'EE_Encryption' ),
-				'EE_Cart' 				=> array( null, 'EE_Session' ),
-				'EE_Front_Controller' 	=> array( 'EE_Registry', 'EE_Request_Handler', 'EE_Module_Request_Router' ),
+				'EE_Session'         	=> array(
+					'EE_Encryption' => 'load_core'
+				),
+				'EE_Cart' 				=> array(
+					null,
+					'EE_Session' => 'load_core'
+				),
+				'EE_Front_Controller' 	=> array(
+					'EE_Registry' => 'load_core',
+					'EE_Request_Handler' => 'load_core',
+					'EE_Module_Request_Router' => 'load_core'
+				),
+				'EE_Messenger_Collection_Loader' 	=> array(
+					'EE_Messenger_Collection' => 'load_lib'
+				),
+				'EE_Message_Type_Collection_Loader' 	=> array(
+					'EE_Message_Type_Collection' => 'load_lib'
+				),
+				'EE_Messenger_And_Message_Type_Manager' 	=> array(
+					'EE_Messenger_Collection_Loader' => 'load_lib',
+					'EE_Message_Type_Collection_Loader' => 'load_lib',
+					'EEM_Message_Template_Group' => 'load_lib'
+				),
+				'EE_Message_Factory' 	=> array(
+					'EE_Messenger_And_Message_Type_Manager' => 'load_lib'
+				),
 			)
 		);
 		// class library
@@ -675,9 +698,9 @@ class EE_Registry {
 	 * @return null | object
 	 * @throws \EE_Error
 	 */
-	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = false ) {
+	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = true ) {
 		$class_obj = null;
-		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) && empty( $arguments ) ? true : $resolve_dependencies;
+		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) /*&& empty( $arguments )*/ ? true : $resolve_dependencies;
 		// don't give up! you gotta...
 		try {
 			// create reflection
@@ -800,7 +823,7 @@ class EE_Registry {
 				continue;
 			} else if (
 				isset( $this->_auto_resolve_dependencies[ $class_name ] )
-				&& in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] )
+				&& isset( $this->_auto_resolve_dependencies[ $class_name ][ $param_class ] )
 			) {
 				// we might have a dependency... let's try and find it in our cache
 				$cached_class = $this->_get_cached_class( $param_class );
@@ -809,8 +832,9 @@ class EE_Registry {
 				if ( $cached_class instanceof $param_class ) {
 					$dependency = $cached_class;
 				} else if ( $param_class != $class_name ) {
+					$loader = $this->_auto_resolve_dependencies[ $class_name ][ $param_class ];
 					// or if not cached, then let's try and load it directly
-					$core_class = $this->load_core( $param_class );
+					$core_class = $this->$loader( $param_class );
 					// as long as we aren't creating some recursive loading loop
 					if ( $core_class instanceof $param_class ) {
 						$dependency = $core_class;
