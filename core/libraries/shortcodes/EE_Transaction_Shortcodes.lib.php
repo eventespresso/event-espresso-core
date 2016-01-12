@@ -42,11 +42,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[TXN_ID]' => __('The transaction id for the purchase.', 'event_espresso'),
 			'[PAYMENT_URL]' => __('This is a link to make a payment for the event', 'event_espresso'),
-			'[PAYMENT_LINK_IF_NEEDED_*]' => __('This is a special dynamic shortcode that allows one to insert a payment link conditional on there being amount owing on the transaction. Three params are available on this shortcode:') . '<ul>'
-				. '<li>' . sprintf( __('%class:%s Thisis can be used to indicate css class is given to the containing css element (default is "callout").', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+			'[PAYMENT_LINK_IF_NEEDED_*]' => __('This is a special dynamic shortcode that allows one to insert a payment link conditional on there being amount owing on the transaction. Three params are available on this shortcode:', 'event_espresso') . '<ul>'
+				. '<li>' . sprintf( __('%class:%s This can be used to indicate css class is given to the containing css element (default is "callout").', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
 				. '<li>' . sprintf( __('%scustom_text:%s This should be a sprintf format text string (with %%s for where the hyperlink tags go) that is used for the generated link text (The default is "You can %%smake a payment here »%%s.)', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
 				. '<li>' . sprintf( __('%scontainer_tag:%s Use this to indicate what container tag you want surrounding the payment link (default is "p").', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
 				. '</ul>',
+			'[PAYMENT_DUE_DATE_*]' => __( 'This is a special dynamic shortcode that allows one to output a payment due date.  It will only result in a date shown if there is money owing.  Three parameters are available on this shortcode:', 'event_espresso' )
+				. '<ul>'
+				. '<li>' . sprintf( __( '%sformat:%s This is used to indicate what format the date is in.  Default is whatever is set as date formats for your website.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '<li>' . sprintf( __( '%days_until_due:%s This is the number of days form the transaction creation date that the payment is due.  Defaults to 30.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '<li>' . sprintf( __( '%sprefix_text:%s You can use this to indicate what text will prefix the date string.  Defaults to "Payment in full due by:"', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>',
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[INVOICE_LOGO_URL]' => __('This returns the url for the logo uploaded via the invoice settings page.', 'event_espresso'),
@@ -230,6 +235,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( strpos( $shortcode, '[PAYMENT_LINK_IF_NEEDED_*' ) !== FALSE ) {
 			return $this->_get_payment_link_if_needed( $shortcode );
+		}
+
+		if ( strpos( $shortcode, '[PAYMENT_DUE_DATE_*' ) !== false ) {
+			return $this->_get_payment_due_date( $shortcode, $transaction );
 		}
 
 		return '';
@@ -576,6 +585,45 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		return $owing_content;
+	}
+
+
+
+
+	/**
+	 * Parser for the [PAYMENT_DUE_DATE_*] attribute type shortcode
+	 *
+	 * @since 4.8.28.rc.011
+	 *
+	 * @param string $shortcode  The shortcode being parsed.
+	 * @param EE_Transaction $transaction
+	 * @return string
+	 */
+	protected function _get_payment_due_date( $shortcode, EE_Transaction $transaction ) {
+		//if transaction is paid in full then we can just return an empty string
+		if ( $transaction->remaining() === 0 ) {
+			return '';
+		}
+
+		$attrs = $this->_get_shortcode_attrs( $shortcode );
+		$format = isset( $attrs['format'] ) ? $attrs['format'] : get_option( 'date_format' );
+		$days_until_due = isset( $attrs['days_until_due'] ) ? (int) $attrs['days_until_due'] : 30;
+		$prefix_text = isset( $attrs['prefix_text'] ) ? $attrs['prefix_text'] : __( 'Payment in full due by: ', 'event_espresso' );
+		$transaction_created = $transaction->get_DateTime_object( 'TXN_timestamp' );
+
+		//setup date due:
+		try {
+			if ( $transaction_created instanceof DateTime ) {
+				$date_due = $transaction_created->add( new DateInterval( 'P' . $days_until_due . 'D' ) )->format( $format );
+			} else {
+				throw new Exception();
+			}
+		} catch( Exception $e ) {
+			//format was likely invalid.
+			$date_due = 'Unable to calculate date due, likely the format string is invalid.';
+		}
+
+		return $prefix_text . $date_due;
 	}
 
 } //end EE_Transaction Shortcodes library

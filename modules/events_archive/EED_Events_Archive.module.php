@@ -28,6 +28,11 @@ class EED_Events_Archive  extends EED_Module {
 	public static $espresso_grid_event_lists = array();
 
 	/**
+	 * @type bool $using_get_the_excerpt
+	 */
+	protected static $using_get_the_excerpt = false;
+
+	/**
 	 * @type EE_Template_Part_Manager $template_parts
 	 */
 	protected $template_parts;
@@ -206,10 +211,13 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 			}
 			// if NOT a custom template
-			if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+			if (
+				EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true )->get_selected_template() != 'archive-espresso_events.php'
+				|| apply_filters( 'FHEE__EED_Event_Archive__template_include__allow_custom_selected_template', FALSE )
+			) {
 				// don't display entry meta because the existing theme will take care of that
 				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
-				// load functions.php file for the theme (loaded by WP if using child theme)
+			// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
 				add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
@@ -241,8 +249,25 @@ class EED_Events_Archive  extends EED_Module {
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			$excerpt = EED_Events_Archive::event_details( $excerpt );
+		} else {
+			EED_Events_Archive::$using_get_the_excerpt = true;
+			add_filter( 'wp_trim_excerpt', array( 'EED_Events_Archive', 'end_get_the_excerpt' ), 999, 1 );
 		}
 		return $excerpt;
+	}
+
+
+
+	/**
+	 * end_get_the_excerpt
+	 *
+	 * @access public
+	 * @param  string $text
+	 * @return string
+	 */
+	public static function end_get_the_excerpt( $text = '' ) {
+		EED_Events_Archive::$using_get_the_excerpt = false;
+		return $text;
 	}
 
 
@@ -276,10 +301,11 @@ class EED_Events_Archive  extends EED_Module {
 		global $post;
 		static $current_post_ID = 0;
 		if (
-			$current_post_ID != $post->ID &&
-			$post->post_type == 'espresso_events' &&
-			! post_password_required() &&
-			(
+			$current_post_ID != $post->ID
+			&& $post->post_type == 'espresso_events'
+			&& ! EED_Events_Archive::$using_get_the_excerpt
+			&& ! post_password_required()
+			&& (
 				apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', false )
 				|| ! apply_filters( 'FHEE__content_espresso_events__template_loaded', false )
 			)

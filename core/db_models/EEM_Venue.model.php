@@ -74,7 +74,6 @@ class EEM_Venue extends EEM_CPT_Base {
 			'Event_Venue'=>new EE_Has_Many_Relation(),
 			'WP_User' => new EE_Belongs_To_Relation()
 		);
-		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_venues', 'VNUM_ID');
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
 		parent::__construct( $timezone );

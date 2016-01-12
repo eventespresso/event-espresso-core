@@ -176,6 +176,9 @@ final class EE_System {
 		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
 		//load and setup EE_Capabilities
 		EE_Registry::instance()->load_core( 'Capabilities' );
+		//caps need to be initialized on every request so that capability maps are set.
+		//@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
+		EE_Registry::instance()->CAP->init_caps();
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
 	}
 
@@ -760,7 +763,7 @@ final class EE_System {
 		// let's get it started
 		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
-			EE_Registry::instance()->load_core( 'Front_Controller' );
+			EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true );
 		} else if ( ! EE_FRONT_AJAX ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
@@ -781,8 +784,8 @@ final class EE_System {
 	public function core_loaded_and_ready() {
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
 		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
-//		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
 		EE_Registry::instance()->load_core( 'Session' );
+		//		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
 	}
 
 
