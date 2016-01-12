@@ -30,8 +30,13 @@ abstract class EES_Shortcode extends EE_Base {
 	protected $_attributes = array();
 
 	/**
-	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
-	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 * run - initial shortcode module setup called during "parse_request" hook by
+	 * \EE_Front_Controller::_initialize_shortcodes() IF this shortcode is going to execute during this request !
+	 * It may also get called by \EES_Shortcode::fallback_shortcode_processor() if the shortcode is being implemented
+	 * by a theme or plugin in a non-standard way.
+	 * Basically this method is primarily used for loading resources and assets like CSS or JS
+	 * that will be required by the shortcode when it is actually processed.
+	 * Please note that assets may not load if the fallback_shortcode_processor() is being used.
 	 *
 	 * @access    public
 	 * @param WP $WP

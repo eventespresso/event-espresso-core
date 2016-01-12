@@ -196,7 +196,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// loop thru registrations to gather info
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
 		foreach ( $registrations as $registration ) {
-			//echo '<h3 style="color:#E76700;line-height:1em;">' . $registration->ID() . '<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h3>';
 			/** @var $registration EE_Registration */
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
@@ -245,7 +244,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$subsections[ 'no_payment_required' ] = $this->_no_payment_required( $registrations_for_free_events );
 		}
 		if ( ! empty( $registrations_requiring_payment ) ) {
-			//EEH_Debug_Tools::printr( $registrations_requiring_payment, '$registrations_requiring_payment', __FILE__, __LINE__ );
 			// autoload Line_Item_Display classes
 			EEH_Autoloader::register_line_item_filter_autoloaders();
 			$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
@@ -256,18 +254,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->cart->get_grand_total()
 			);
 			$filtered_line_item_tree = $line_item_filter_processor->process();
-			//echo "\n<br />";
-			//EEH_Line_Item::visualize( $filtered_line_item_tree );
-			//EEH_Debug_Tools::printr( $filtered_line_item_tree->total(), '$filtered_line_item_tree->total()', __FILE__, __LINE__ );
-			$this->checkout->amount_owing = $filtered_line_item_tree->total();
-
 			if ( $this->checkout->amount_owing > 0 ) {
 				EEH_Autoloader::register_line_item_display_autoloaders();
 				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
 				$subsections[ 'payment_options' ] = $this->_display_payment_options(
-					$this->line_item_display->display_line_item( $filtered_line_item_tree )
+					$this->line_item_display->display_line_item(
+						$filtered_line_item_tree,
+						array( 'registrations' => $registrations )
+					)
 				);
-				$this->_apply_transaction_payments_to_amount_owing();
+				$this->checkout->amount_owing = $filtered_line_item_tree->total();
+				$this->_apply_registration_payments_to_amount_owing( $registrations );
 			}
 		} else {
 			$this->_hide_reg_step_submit_button_if_revisit();
@@ -537,22 +534,26 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 *    _apply_transaction_payments_to_amount_owing
+	 *    _apply_registration_payments_to_amount_owing
 	 *
 	 * @access    protected
-	 * @return 	void
+	 * @return    void
 	 */
-	protected function _apply_transaction_payments_to_amount_owing() {
-		$payments = $this->checkout->transaction->approved_payments();
+	protected function _apply_registration_payments_to_amount_owing( $registrations ) {
+		$payments = array();
+		foreach ( $registrations as $registration ) {
+			if ( $registration instanceof EE_Registration && $registration->owes_monies_and_can_pay() ) {
+				$payments = $payments + $registration->registration_payments();
+			}
+		}
 		if ( ! empty( $payments ) ) {
 			foreach ( $payments as $payment ) {
-				if ( $payment instanceof EE_Payment ) {
+				if ( $payment instanceof EE_Registration_Payment ) {
 					$this->checkout->amount_owing -= $payment->amount();
 				}
 			}
 		}
 	}
-
 
 
 	/**
@@ -1226,6 +1227,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 	private function _billing_form_is_valid() {
+		if ( ! $this->checkout->payment_method->type_obj()->has_billing_form() ) {
+			return TRUE;
+		}
 		if ( $this->checkout->billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->checkout->billing_form->was_submitted() ) {
 				$this->checkout->billing_form->receive_form_submission();
@@ -1510,8 +1514,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			// not a payment
 			EE_Error::add_error(
 				sprintf(
-					__( 'A valid payment was not generated due to a technical issue.%1$sPlease try again or contact
-					%2$s for assistance.', 'event_espresso' ),
+					__( 'A valid payment was not generated due to a technical issue.%1$sPlease try again or contact %2$s for assistance.', 'event_espresso' ),
 					'<br/>',
 					EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 				), __FILE__, __FUNCTION__, __LINE__
@@ -1844,9 +1847,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( ! $primary_registrant instanceof EE_Registration ) {
 				EE_Error::add_error(
 					sprintf(
-						__( 'Invalid information was received from the Off-Site Payment Processor and your
-						Transaction details could not be retrieved from the database.%1$sPlease try again or contact
-						%2$s for assistance.', 'event_espresso' ),
+						__( 'Invalid information was received from the Off-Site Payment Processor and your Transaction details could not be retrieved from the database.%1$sPlease try again or contact %2$s for assistance.', 'event_espresso' ),
 						'<br/>',
 						EE_Registry::instance()->CFG->organization->get_pretty( 'email' )
 					),

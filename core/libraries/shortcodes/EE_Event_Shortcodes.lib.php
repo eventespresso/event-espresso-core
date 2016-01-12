@@ -199,7 +199,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			$method = empty( $attrs['method'] ) ? 'current' : $attrs['method'];
 			$method = $method === 'current';
 			$available = $this->_event->total_available_spaces($method);
-			return $available === INF ? '&infin;' : $available;
+			return $available === EE_INF ? '&infin;' : $available;
 		}
 
 		return '';

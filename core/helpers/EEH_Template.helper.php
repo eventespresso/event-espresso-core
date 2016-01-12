@@ -141,12 +141,38 @@ class EEH_Template {
 	 *    locate_template
 	 *
 	 *    locate a template file by looking in the following places, in the following order:
+	 *        <server path up to>/wp-content/themes/<current active WordPress theme>/
 	 *        <assumed full absolute server path>
 	 *        <server path up to>/wp-content/uploads/espresso/templates/<current EE theme>/
 	 *        <server path up to>/wp-content/uploads/espresso/templates/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/templates/<current EE theme>/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/public/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/core/templates/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
+	 *
+	 * 		Example:
+	 * 		  You are using the WordPress Twenty Sixteen theme,
+	 *        and you want to customize the "some-event.template.php" template,
+	 * 		  which is located in the "/relative/path/to/" folder relative to the main EE plugin folder.
+	 * 		  Assuming WP is installed on your server in the "/home/public_html/" folder,
+	 *        EEH_Template::locate_template() will look at the following paths in order until the template is found:
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/public/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/core/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/relative/path/to/some-event.template.php
+	 *
+	 * 		  Had you passed an absolute path to your template that was in some other location,
+	 *        ie: "/absolute/path/to/some-event.template.php"
+	 * 		  then the search would have been :
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /absolute/path/to/some-event.template.php
+	 *
+	 * 		  and stopped there upon finding it in the second location
 	 *
 	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
@@ -204,29 +230,48 @@ class EEH_Template {
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
-
+			$templates = is_array( $templates ) ? $templates : array( $templates );
+			$template_folder_paths = is_array( $template_folder_paths ) ? $template_folder_paths : array( $template_folder_paths );
 			// array to hold all possible template paths
 			$full_template_paths = array();
 
+			EE_Registry::instance()->load_helper('File');
 			// loop through $templates
-			foreach ( (array)$templates as $template ) {
+			foreach ( $templates as $template ) {
+				// normalize directory separators
+				$template = EEH_File::standardise_directory_separators( $template );
+				$file_name = basename( $template );
+				$template_path_minus_file_name = substr( $template, 0, ( strlen( $file_name ) * -1 ) );
 				// while looping through all template folder paths
-				foreach ( (array)$template_folder_paths as $template_folder_path ) {
-					// build up our template locations array by combining our template folder paths with our templates
-					$full_template_paths[] = rtrim( $template_folder_path, DS ) . DS . $template;
+				foreach ( $template_folder_paths as $template_folder_path ) {
+					// normalize directory separators
+					$template_folder_path = EEH_File::standardise_directory_separators( $template_folder_path );
+					// determine if any common base path exists between the two paths
+					$common_base_path = EEH_Template::_find_common_base_path(
+						array( $template_folder_path, $template_path_minus_file_name )
+					);
+					if ( $common_base_path !== '' ) {
+						// both paths have a common base, so just tack the filename onto our search path
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $file_name;
+					} else {
+						// no common base path, so let's just concatenate
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $template;
+					}
+					// build up our template locations array by adding our resolved paths
+					$full_template_paths[] = $resolved_path;
 				}
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
+				// path to the directory of the current theme: /wp-content/themes/(current WP theme)/
+				array_unshift( $full_template_paths, get_stylesheet_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
-			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
-
-
+			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths, $file_name );
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
 					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
-				    break;
+					break;
 				}
 			}
 		}
@@ -239,6 +284,33 @@ class EEH_Template {
 			}
 		}
 		return $check_if_custom && ! empty( $template_path ) ? TRUE : $template_path;
+	}
+
+
+
+	/**
+	 * _find_common_base_path
+	 *
+	 * given two paths, this determines if there is a common base path between the two
+	 *
+	 * @param array $paths
+	 * @return string
+	 */
+	protected static function _find_common_base_path( $paths ) {
+		$last_offset = 0;
+		$common_base_path = '';
+		while ( ( $index = strpos( $paths[ 0 ], DS, $last_offset ) ) !== false ) {
+			$dir_length = $index - $last_offset + 1;
+			$directory = substr( $paths[ 0 ], $last_offset, $dir_length );
+			foreach ( $paths as $path ) {
+				if ( substr( $path, $last_offset, $dir_length ) != $directory ) {
+					return $common_base_path;
+				}
+			}
+			$common_base_path .= $directory;
+			$last_offset = $index + 1;
+		}
+		return substr( $common_base_path, 0, -1 );
 	}
 
 

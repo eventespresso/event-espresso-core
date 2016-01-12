@@ -188,9 +188,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				continue;
 			}
 			foreach( $payment_method_type->help_tabs_config() as $help_tab_name => $config ){
+				$template_args = isset( $config[ 'template_args' ] ) ? $config[ 'template_args' ] : array();
+				$template_args[ 'admin_page_obj' ] = $this;
 				$all_pmt_help_tabs_config[$help_tab_name] = array(
 					'title'=>$config['title'],
-					'content'=>EEH_Template::display_template( $payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', array('admin_page_obj'=>$this), true)
+					'content'=>EEH_Template::display_template( 
+							$payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', 
+							$template_args, 
+							true)
 				);
 			}
 		}
@@ -244,6 +249,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->load_helper( 'HTML' );
 		//setup tabs, one for each payment method type
 		$tabs = array();
+		$payment_methods = array();
 		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj ) {
 			// we don't want to show admin-only PMTs for now
 			if ( $pmt_obj instanceof EE_PMT_Admin_Only ) {
@@ -265,34 +271,37 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					)
 				);
 			}
-
-			add_meta_box(
-				//html id
-				'espresso_' . $payment_method->slug() . '_payment_settings',
-				//title
-				sprintf( __('%s Settings', 'event_espresso'), $payment_method->admin_name() ),
-				//callback
-				array( $this, 'payment_method_settings_meta_box' ),
-				//post type
-				NULL,
-				//context
-				'normal',
-				//priority
-				'default',
-				//callback args
-				array( 'payment_method' => $payment_method )
-			);
-
-			//setup for tabbed content
-			$tabs[$payment_method->slug()] = array(
-				'label' => $payment_method->admin_name(),
-				'class' =>  $payment_method->active() ? 'gateway-active' : '',
-				'href' => 'espresso_' . $payment_method->slug() . '_payment_settings',
-				'title' => __('Modify this Payment Method', 'event_espresso'),
-				'slug' => $payment_method->slug()
-			);
+			$payment_methods[ $payment_method->slug() ] = $payment_method;
 		}
-
+		$payment_methods = apply_filters( 'FHEE__Payments_Admin_Page___payment_methods_list__payment_methods', $payment_methods );
+		foreach( $payment_methods as $payment_method ) {
+			if ( $payment_method instanceof EE_Payment_Method ) {
+				add_meta_box(
+					//html id
+					'espresso_' . $payment_method->slug() . '_payment_settings',
+					//title
+					sprintf( __( '%s Settings', 'event_espresso' ), $payment_method->admin_name() ),
+					//callback
+					array( $this, 'payment_method_settings_meta_box' ),
+					//post type
+					null,
+					//context
+					'normal',
+					//priority
+					'default',
+					//callback args
+					array( 'payment_method' => $payment_method )
+				);
+				//setup for tabbed content
+				$tabs[ $payment_method->slug() ] = array(
+					'label' => $payment_method->admin_name(),
+					'class' => $payment_method->active() ? 'gateway-active' : '',
+					'href'  => 'espresso_' . $payment_method->slug() . '_payment_settings',
+					'title' => __( 'Modify this Payment Method', 'event_espresso' ),
+					'slug'  => $payment_method->slug()
+				);
+			}
+		}
 		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $this->_get_active_payment_method_slug() );
 		$this->display_admin_page_with_sidebar();
 
@@ -408,7 +417,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'update_' . $payment_method->slug()										=> $this->_update_payment_method_button( $payment_method ),
 						'deactivate_' . $payment_method->slug()								=> $this->_deactivate_payment_method_button( $payment_method ),
 						'fine_print_' . $payment_method->slug()									=> $this->_fine_print()
-					)
+					),
+					$payment_method
 				)
 			)
 		);
@@ -618,7 +628,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 								)
 							)
 						)
-					)
+					),
+					$payment_method
 				)
 			)
 		);

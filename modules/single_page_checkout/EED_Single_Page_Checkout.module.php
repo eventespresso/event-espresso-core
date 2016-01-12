@@ -1053,6 +1053,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['process_registration'] = sprintf( __( 'Please wait while we process your registration.%sDo not refresh the page or navigate away while this is happening.%sThank you for your patience.', 'event_espresso' ), '<br/>', '<br/>' );
 		EE_Registry::$i18n_js_strings['language'] = get_bloginfo( 'language' );
 		EE_Registry::$i18n_js_strings['EESID'] = EE_Registry::instance()->SSN->id();
+		EE_Registry::$i18n_js_strings['currency'] = EE_Registry::instance()->CFG->currency;
 		EE_Registry::$i18n_js_strings['datepicker_yearRange'] = '-150:+20';
 		EE_Registry::$i18n_js_strings['timer_years'] = __( 'years', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_months'] = __( 'months', 'event_espresso' );
@@ -1069,11 +1070,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::$i18n_js_strings['timer_minute'] = __( 'minute', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['timer_second'] = __( 'second', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['registration_expiration_notice'] = sprintf(
-			__( '%1$sWe\'re sorry, but you\'re registration time has expired
-			.%2$s%3$s%4$sIf you still wish to complete your registration, please
-			return to the %5$sEvent List%6$sEvent List%7$s and reselect your
-			tickets if available. Please except our apologies for any inconvenience this
-			may have caused.%8$s', 'event_espresso' ),
+			__( '%1$sWe\'re sorry, but your registration time has expired.%2$s%3$s%4$sIf you still wish to complete your registration, please return to the %5$sEvent List%6$sEvent List%7$s and reselect your tickets if available. Please except our apologies for any inconvenience this may have caused.%8$s', 'event_espresso' ),
 			'<h4 class="important-notice">',
 			'</h4>',
 			'<br />',

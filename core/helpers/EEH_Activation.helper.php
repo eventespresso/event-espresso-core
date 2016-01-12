@@ -928,6 +928,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 1,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -943,6 +944,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 2,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -958,6 +960,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 3,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -973,6 +976,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 4,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -988,6 +992,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 5,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1003,6 +1008,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 6,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1048,6 +1054,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 9,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1063,6 +1070,7 @@ class EEH_Activation {
 									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
 									'QST_order' => 10,
 									'QST_admin_only' => 0,
+									'QST_max' => EEM_Question::instance()->absolute_max_for_system_question( $QST_system ),
 									'QST_wp_user' => self::get_default_creator_id(),
 									'QST_deleted' => 0
 								);
@@ -1208,12 +1216,11 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
-				EVENT_ESPRESSO_UPLOAD_DIR,
 				EVENT_ESPRESSO_TEMPLATE_DIR,
 				EVENT_ESPRESSO_GATEWAY_DIR,
-				EVENT_ESPRESSO_UPLOAD_DIR . '/logs/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/css/',
-				EVENT_ESPRESSO_UPLOAD_DIR . '/tickets/'
+				EVENT_ESPRESSO_UPLOAD_DIR . 'logs/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'css/',
+				EVENT_ESPRESSO_UPLOAD_DIR . 'tickets/'
 		);
 		foreach ( $folders as $folder ) {
 			try {
@@ -1233,6 +1240,9 @@ class EEH_Activation {
 				return FALSE;
 			}
 		}
+		//just add the .htaccess file to the logs directory to begin with. Even if logging
+		//is disabled, there might be activation errors recorded in there
+		EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs/' );
 		//remember EE's folders are all good
 		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
 		return TRUE;
@@ -1607,6 +1617,7 @@ class EEH_Activation {
 			'ee_rss_' => false,
 			'ee_rte_n_tx_' => false,
 			'ee_pers_admin_notices' => true,
+			'ee_job_parameters_' => false,
 			'ee_upload_directories_incomplete' => true,
 		);
 		if( is_main_site() ) {

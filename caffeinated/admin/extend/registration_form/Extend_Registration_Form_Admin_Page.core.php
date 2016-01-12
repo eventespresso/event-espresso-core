@@ -441,22 +441,32 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _delete_question(){
-		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
-		$query_args=array('action'=>'default','status'=>'all');
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), 'deleted', $query_args);
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted',
+			array( 'action' => 'default', 'status' => 'all' )
+		);
 	}
 
 
 	protected function _delete_questions() {
-		$success = $this->_delete_items($this->_question_model);
-		$this->_redirect_after_action( $success, $this->_question_model->item_name($success), 'deleted permanently', array( 'action'=>'default', 'status'=>'trash' ));
+		$success = $this->_delete_items( $this->_question_model );
+		$this->_redirect_after_action(
+			$success,
+			$this->_question_model->item_name( $success ),
+			'deleted permanently',
+			array( 'action' => 'default', 'status' => 'trash' )
+		);
 	}
 
 
 /**
  * Performs the deletion of a single or multiple questions or question groups.
- * @param EEM_Base $model
- * @return int number of items deleted permanenetly
+ *
+ * @param EEM_Soft_Delete_Base $model
+ * @return int number of items deleted permanently
  */
 	private function _delete_items(EEM_Soft_Delete_Base $model){
 		$success = 0;
@@ -466,21 +476,33 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
 			while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
-
-				if (!$model->delete_permanently_by_ID(absint($ID))) {
+				if ( ! $this->_delete_item( $ID, $model ) ) {
 					$success = 0;
 				}
 			}
 
 		}elseif( !empty($this->_req_data['QSG_ID'])){
-			$success = $model->delete_permanently_by_ID($this->_req_data['QSG_ID']);
+			$success = $this->_delete_item( $this->_req_data['QSG_ID'], $model );
 
 		}elseif( !empty($this->_req_data['QST_ID'])){
-			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
+			$success = $this->_delete_item( $this->_req_data['QST_ID'], $model );
 		}else{
 			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $success;
+	}
+
+	/**
+	 * Deletes the specified question (and its associated question options) or question group
+	 * @param int $id
+	 * @param EEM_Soft_Delete_Base $model
+	 * @return boolean
+	 */
+	protected function _delete_item( $id, $model ) {
+		if( $model instanceof EEM_Question ) {
+			EEM_Question_Option::instance()->delete_permanently( array( array( 'QST_ID' => absint( $id ) ) ) );
+		}
+		return $model->delete_permanently_by_ID( absint( $id ) );
 	}
 
 
