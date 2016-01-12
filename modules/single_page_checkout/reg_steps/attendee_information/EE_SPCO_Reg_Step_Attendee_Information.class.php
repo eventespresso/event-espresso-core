@@ -465,8 +465,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return EE_Form_Input_Base
 	 */
 	private function _generate_question_input( EE_Registration $registration, EE_Question $question, $answer ){
-		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
-		$this->_required_questions[ $identifier ] = $this->required() ? true : false;
+		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
+		$this->_required_questions[ $identifier ] = $question->required() ? true : false;
 		add_filter( 'FHEE__EE_Question__generate_form_input__country_options', array( $this, 'use_cached_countries_for_form_input' ), 10, 3 );
 		add_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ), 10, 3 );
 		$input_constructor_args = array(
@@ -510,7 +510,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this, $registration, $this, $answer );
+		$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this, $registration, $question, $answer );
 		return $country_options;
 	}
 	
@@ -533,7 +533,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this, $registration, $this, $answer );
+		$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this, $registration, $question, $answer );
 		return $state_options;
 	}
 

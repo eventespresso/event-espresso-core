@@ -584,6 +584,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
+		$this->_get_reg_custom_questions_form( $this->_registration->ID() );
+		$this->_reg_custom_questions_form->wp_enqueue_scripts( true );
 	}
 
 
