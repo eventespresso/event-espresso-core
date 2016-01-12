@@ -160,7 +160,9 @@ class EE_Message_Factory {
 	 */
 	protected function _set_messenger( EE_Message $message, $validate = true ) {
 		$messenger = $this->_messenger_and_message_type_manager->get_messenger( $message->messenger() );
-		if ( ! $messenger instanceof  EE_Messenger && $validate ) {
+		if ( $messenger instanceof EE_Messenger ) {
+			$message->set_messenger_object( $messenger );
+		} else if ( $validate ) {
 			throw new EE_Error(
 				sprintf(
 					__( 'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
@@ -168,7 +170,6 @@ class EE_Message_Factory {
 				)
 			);
 		}
-		$message->set_messenger_object( $messenger );
 		return $message;
 	}
 
@@ -183,7 +184,9 @@ class EE_Message_Factory {
 	 */
 	protected function _set_message_type( EE_Message $message, $validate = true ) {
 		$message_type = $this->_messenger_and_message_type_manager->get_message_type( $message->message_type() );
-		if ( ! $message_type instanceof  EE_Message_Type && $validate ) {
+		if ( $message_type instanceof EE_Message_Type ) {
+			$message->set_message_type_object( $message_type );
+		} else if ( $validate ) {
 			throw new EE_Error(
 				sprintf(
 					__( 'The %1$s message type set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
@@ -191,9 +194,10 @@ class EE_Message_Factory {
 				)
 			);
 		}
-		$message->set_message_type_object( $message_type );
 		return $message;
 	}
+
+
 
 }
 // End of file EE_Message_Factory.lib.php
