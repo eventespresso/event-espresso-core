@@ -456,7 +456,7 @@ class EE_Messages_Generator {
 			$message_fields['MSG_recipient_ID'] = $recipient->recipient_id;
 			$message_fields['MSG_recipient_type'] = $recipient->recipient_type;
 		}
-		$message = EE_Message::new_instance( $message_fields );
+		$message = EE_Message_Factory::create( $message_fields );
 
 		//grab valid shortcodes for shortcode parser
 		$mt_shortcodes = $this->_current_message_type->get_valid_shortcodes();
