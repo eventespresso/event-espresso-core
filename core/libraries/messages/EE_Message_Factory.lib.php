@@ -66,11 +66,26 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  array $props_n_values
+	 * @param  bool  $validate - whether or not to throw exceptions if resources are invalid
 	 * @return mixed
 	 */
-	public static function create( $props_n_values = array() ) {
+	public static function create( $props_n_values = array(), $validate = true ) {
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
-		return $Message_Factory->_create( $props_n_values );
+		return $Message_Factory->_create( $props_n_values, $validate );
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param  \EE_Message $message
+	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
+	 * @return \EE_Message
+	 * @throws \EE_Error
+	 */
+	public static function set_messenger_and_message_type( EE_Message $message, $validate = true ) {
+		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
+		return $Message_Factory->_set_messenger_and_message_type( $message, $validate );
 	}
 
 
@@ -78,7 +93,7 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  array $props_n_values
-	 * @param  bool  $validate
+	 * @param  bool  $validate - whether or not to throw exceptions if resources are invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
@@ -88,10 +103,22 @@ class EE_Message_Factory {
 		} else {
 			$message = EE_Message::new_instance( $props_n_values );
 		}
+		return $this->_set_messenger_and_message_type( $message, $validate );
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param  \EE_Message $message
+	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
+	 * @return \EE_Message
+	 * @throws \EE_Error
+	 */
+	protected function _set_messenger_and_message_type( EE_Message $message, $validate = true ) {
 		$message = $this->_set_messenger( $message, $validate );
 		$message = $this->_set_message_type( $message, $validate );
 		return $message;
-
 	}
 
 
@@ -99,7 +126,7 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate
+	 * @param  bool        $validate - whether or not to throw an exception if messenger is invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
@@ -122,7 +149,7 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate
+	 * @param  bool        $validate - whether or not to throw an exception if message_type is invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
