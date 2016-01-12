@@ -438,7 +438,7 @@ final class EE_Front_Controller {
 			// load core js
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
-			wp_localize_script( 'espresso_core', 'eei18n', Registry::$i18n_js_strings );
+			wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );
 
 		}
 
