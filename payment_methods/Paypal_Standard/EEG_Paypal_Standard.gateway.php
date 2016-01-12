@@ -375,6 +375,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				// make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
 				// plz see: https://github.com/websharks/s2member/issues/610
 				'user-agent' 	=> 'Event Espresso v' . EVENT_ESPRESSO_VERSION . '; ' . home_url(),
+				'httpversion' => '1.1'
 			)
 		);
 		// then check the response

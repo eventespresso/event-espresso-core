@@ -1227,6 +1227,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 	private function _billing_form_is_valid() {
+		if ( ! $this->checkout->payment_method->type_obj()->has_billing_form() ) {
+			return TRUE;
+		}
 		if ( $this->checkout->billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->checkout->billing_form->was_submitted() ) {
 				$this->checkout->billing_form->receive_form_submission();
