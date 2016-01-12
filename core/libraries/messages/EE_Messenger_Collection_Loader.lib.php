@@ -69,7 +69,10 @@ class EE_Messenger_Collection_Loader {
 		$folder = ! empty( $folder ) ? $folder : EE_LIBRARIES . 'messages' . DS . 'messenger';
 		$folder .= $folder[ strlen( $folder ) - 1 ] != DS ? DS : '';
 		// get all the files in that folder that end in ".class.php
-		$filepaths = glob( $folder . '*.class.php' );
+		$filepaths = apply_filters(
+			'FHEE__EE_messages__get_installed__messenger_files',
+			glob( $folder . '*.class.php' )
+		);
 		if ( empty( $filepaths ) ) {
 			return;
 		}
@@ -78,13 +81,7 @@ class EE_Messenger_Collection_Loader {
 			$file_path = basename( $file_path );
 			// now remove any file extensions
 			$messenger_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
-			if ( $this->messenger_collection()->has_by_classname( $messenger_class_name ) ) {
-				continue;
-			}
-			$this->messenger_collection()->add(
-				new $messenger_class_name(),
-				$messenger_class_name
-			);
+			$this->_load_messenger( new $messenger_class_name() );
 		}
 	}
 
@@ -103,14 +100,26 @@ class EE_Messenger_Collection_Loader {
 			get_option( 'ee_active_messengers', array() )
 		);
 		foreach ( (array)$active_messengers as $active_messenger_classname => $active_messenger ) {
-			if ( $this->messenger_collection()->has_by_classname( $active_messenger_classname ) ) {
-				continue;
-			}
-			$this->messenger_collection()->add(
-				$active_messenger,
-				$active_messenger_classname
-			);
+			$this->_load_messenger( $active_messenger );
 		}
+	}
+
+
+
+	/**
+	 * load_messenger
+	 *
+	 * @param \EE_Messenger $messenger
+	 * @return bool
+	 */
+	protected function _load_messenger( EE_Messenger $messenger ) {
+		if ( $this->messenger_collection()->has_by_classname( $messenger->name ) ) {
+			return true;
+		}
+		return $this->messenger_collection()->add(
+			$messenger,
+			$messenger->name
+		);
 	}
 
 
