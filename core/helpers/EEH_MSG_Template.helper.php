@@ -160,17 +160,10 @@ class EEH_MSG_Template {
 	 * @return int  count of updated records.
 	 */
 	public static function update_to_inactive( $messenger = '', $message_type = '' ) {
-		$query_args = array();
-		if ( empty( $messenger ) && empty( $message_type ) ) {
-			return 0;
-		}
-		if ( ! empty( $messenger ) ) {
-			$query_args[ 0 ][ 'MTP_messenger' ] = $messenger;
-		}
-		if ( ! empty( $message_type ) ) {
-			$query_args[ 0 ][ 'MTP_message_type' ] = $message_type;
-		}
-		return EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => false ), $query_args );
+		return EEM_Message_Template_Group::instance()->deactivate_message_template_groups_for(
+			$messenger,
+			$message_type
+		);
 	}
 
 
