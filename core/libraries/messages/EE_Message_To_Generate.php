@@ -23,15 +23,11 @@ class EE_Message_To_Generate {
 	 */
 	public $message_type = null;
 
-
-
 	/**
 	 * Identifier for the context the message is to be generated for.
 	 * @type string
 	 */
 	public $context = '';
-
-
 
 	/**
 	 * Data that will be used to generate message.
@@ -39,32 +35,21 @@ class EE_Message_To_Generate {
 	 */
 	public $data = array();
 
-
-
 	/**
 	 * Whether this message is for a preview or not.
 	 * @type bool
 	 */
 	public $preview = false;
 
-
-
-
-
 	/**
 	 * @type EE_Messages
 	 */
 	protected $_EEMSG;
 
-
-
-
-
 	/**
 	 * @type EE_Message
 	 */
 	protected $_EE_Message;
-
 
 	/**
 	 * This is set by the constructor to indicate whether the incoming messenger
@@ -74,7 +59,6 @@ class EE_Message_To_Generate {
 	 */
 	protected $_valid = false;
 
-
 	/**
 	 * If there are any errors (non exception errors) they get added to this array for callers to decide
 	 * how to handle.
@@ -82,17 +66,12 @@ class EE_Message_To_Generate {
 	 */
 	protected $_error_msg = array();
 
-
-
-
-
 	/**
 	 * Can be accessed via the send_now() method, this is set in the validation
 	 * routine via the EE_Messenger::send_now() method.
 	 * @type bool
 	 */
 	protected $_send_now = false;
-
 
 	/**
 	 * Holds the classname for the data handler used by the current message type.
@@ -104,18 +83,24 @@ class EE_Message_To_Generate {
 
 
 
-
 	/**
 	 * Constructor
 	 *
-*@param string            $messenger    Slug representing messenger
-	 * @param string      $message_type Slug representing message type.
-	 * @param mixed       $data         Data used for generating message.
-	 * @param EE_Messages $ee_msg       The message_type and messenger repository.
-	 * @param string      $context      Optional context to restrict message generated for.
-	 * @param bool|false  $preview      Whether this is being used to generate a preview or not.
+	 * @param string              $messenger    Slug representing messenger
+	 * @param string              $message_type Slug representing message type.
+	 * @param mixed               $data         Data used for generating message.
+	 * @param EE_Messages         $ee_msg       The message_type and messenger repository.
+	 * @param string              $context      Optional context to restrict message generated for.
+	 * @param bool          	  $preview      Whether this is being used to generate a preview or not.
 	 */
-	public function __construct( $messenger, $message_type, $data, EE_Messages $ee_msg, $context = '', $preview = false ) {
+	public function __construct(
+		$messenger,
+		$message_type,
+		$data,
+		EE_Messages $ee_msg,
+		$context = '',
+		$preview = false
+	) {
 		$this->data = is_array( $data ) ? $data : array( $data );
 		$this->context = $context;
 		$this->preview = $preview;
@@ -133,10 +118,14 @@ class EE_Message_To_Generate {
 	 */
 	protected function _set_valid( $messenger_slug , $message_type_slug ) {
 		$this->_valid = true;
-		$validated_for_use = $this->_EEMSG->validate_for_use( EE_Message::new_instance( array(
-			'MSG_messenger' => $messenger_slug,
-			'MSG_message_type' => $message_type_slug
-		) ) );
+		$validated_for_use = $this->_EEMSG->validate_for_use(
+			EE_Message_Factory::create(
+				array(
+					'MSG_messenger'    => $messenger_slug,
+					'MSG_message_type' => $message_type_slug
+				)
+			)
+		);
 
 		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_Messenger ) {
 			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $messenger_slug );
@@ -181,13 +170,15 @@ class EE_Message_To_Generate {
 		if ( $this->_EE_Message instanceof EE_Message ) {
 			return $this->_EE_Message;
 		}
-		$this->_EE_Message = EE_Message::new_instance( array(
-			'MSG_messenger' => $this->messenger->name,
-			'MSG_message_type' => $this->message_type->name,
-			'MSG_context' => $this->context,
-			'STS_ID' => EEM_Message::status_incomplete,
-			'MSG_priority' => $this->_get_priority_for_message_type()
-		) );
+		$this->_EE_Message = EE_Message_Factory::create(
+			array(
+				'MSG_messenger' => $this->messenger->name,
+				'MSG_message_type' => $this->message_type->name,
+				'MSG_context' => $this->context,
+				'STS_ID' => EEM_Message::status_incomplete,
+				'MSG_priority' => $this->_get_priority_for_message_type()
+			)
+		);
 		return $this->_EE_Message;
 	}
 
