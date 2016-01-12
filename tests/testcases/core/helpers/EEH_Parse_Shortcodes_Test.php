@@ -241,7 +241,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$data = $addressee instanceof EE_Messages_Addressee ? $addressee : $this->_get_addressee();
 
 		//parser needs EE_Message object
-		$message = EE_Message::new_instance(
+		$message = EE_Message_Factory::create(
 			array(
 				'MSG_messenger' => $messenger->name,
 				'MSG_message_type' => $message_type->name,
