@@ -117,23 +117,18 @@ class EE_Messages {
 	 * holds the EEM_message_templates model for interacting with the database and retrieving active templates for the messenger
 	 * @var object
 	 */
-	private $_EEM_data;
+	//private $_EEM_data;
 
 
 
 	/**
 	 * EE_Messages constructor.
-	 *
-	 * @param \EE_Messenger_Collection_Loader $Messenger_Collection_Loader
 	 */
-	function __construct( EE_Messenger_Collection_Loader $Messenger_Collection_Loader ) {
-		$Messenger_Collection_Loader = new EE_Messenger_Collection_Loader( new EE_Messenger_Collection() );
-		$Messenger_Collection_Loader->load_messengers_from_folder();
-		$this->set_messenger_collection( $Messenger_Collection_Loader->messenger_collection() );
+	function __construct() {
 		//load helper
 		EE_Registry::instance()->load_helper('MSG_Template');
 		// get list of active messengers and active message types
-		$this->_EEM_data = EEM_Message_Template::instance();
+		//$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
 
 		//load debug tools
@@ -854,7 +849,7 @@ class EE_Messages {
 			$installed['messengers'] = !empty($messenger_files ) ? $this->_get_installed($messenger_files) : '';
 			$installed['message_types'] = !empty($messagetype_files) ? $this->_get_installed($messagetype_files) : '';
 		} else {
-			$installed['messengers'] = $this->get_messenger_collection();
+			$installed['messengers'] = $this->get_installed_messengers();
 			$installed['message_types'] = $this->get_installed_message_types();
 		}
 
@@ -982,10 +977,20 @@ class EE_Messages {
 
 
 	public function get_installed_message_types() {
-		$this->_installed_message_types = empty( $this->_installed_message_types ) ? $this->get_installed( 'message_types', true ) : $this->_installed_message_types;
+		$this->_installed_message_types = empty( $this->_installed_message_types )
+			? $this->get_installed( 'message_types', true )
+			: $this->_installed_message_types;
 		return $this->_installed_message_types;
 	}
 
+
+
+	public function get_installed_messengers() {
+		$this->_installed_messengers = empty( $this->_installed_messengers )
+			? $this->get_installed( 'messengers', true )
+			: $this->_installed_messengers;
+		return $this->_installed_messengers;
+	}
 
 
 
@@ -1062,20 +1067,6 @@ class EE_Messages {
 		}
 
 		return $class_name;
-	}
-
-
-
-	/**
-	 * @deprecated
-	 * @return array
-	 */
-	public function get_installed_messengers() {
-		//return $this->get_messenger_collection();
-		$this->_installed_messengers = empty( $this->_installed_messengers )
-			? $this->get_installed( 'messengers', true )
-			: $this->_installed_messengers;
-		return $this->_installed_messengers;
 	}
 
 
