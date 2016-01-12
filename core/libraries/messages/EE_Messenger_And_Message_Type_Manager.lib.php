@@ -211,5 +211,5 @@ class EE_Messenger_And_Message_Type_Manager {
 
 
 }
-// End of file EE_Messenger_And_Message_Type_Manager.php
-// Location: /EE_Messenger_And_Message_Type_Manager.php
+// End of file EE_Messenger_And_Message_Type_Manager.lib.php
+// Location: /EE_Messenger_And_Message_Type_Manager.lib.php

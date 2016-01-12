@@ -138,5 +138,5 @@ class EE_Message_Factory {
 	}
 
 }
-// End of file EE_Message_Factory.php
-// Location: /EE_Message_Factory.php
+// End of file EE_Message_Factory.lib.php
+// Location: /EE_Message_Factory.lib.php

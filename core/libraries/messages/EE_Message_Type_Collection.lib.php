@@ -176,5 +176,5 @@ class EE_Message_Type_Collection extends EE_Object_Collection {
 
 
 }
-// End of file EE_Message_Type_Collection.php
-// Location: /core/libraries/messages/EE_Message_Type_Collection.php
+// End of file EE_Message_Type_Collection.lib.php
+// Location: /core/libraries/messages/EE_Message_Type_Collection.lib.php

@@ -94,5 +94,5 @@ class EE_Message_Type_Collection_Loader {
 
 
 
-// End of file EE_Message_Type_Collection_Loader.php
-// Location: /core/libraries/messages/EE_Message_Type_Collection_Loader.php
+// End of file EE_Message_Type_Collection_Loader.lib.php
+// Location: /core/libraries/messages/EE_Message_Type_Collection_Loader.lib.php

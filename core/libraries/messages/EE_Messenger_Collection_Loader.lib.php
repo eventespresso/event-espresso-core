@@ -119,5 +119,5 @@ class EE_Messenger_Collection_Loader {
 
 
 
-// End of file EE_Messenger_Collection_Loader.php
-// Location: /core/libraries/messages/EE_Messenger_Collection_Loader.php
+// End of file EE_Messenger_Collection_Loader.lib.php
+// Location: /core/libraries/messages/EE_Messenger_Collection_Loader.lib.php

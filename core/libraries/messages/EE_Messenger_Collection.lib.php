@@ -190,5 +190,5 @@ class EE_Messenger_Collection extends EE_Object_Collection {
 
 
 }
-// End of file EE_Messenger_Collection.php
-// Location: /core/libraries/messages/EE_Messenger_Collection.php
+// End of file EE_Messenger_Collection.lib.php
+// Location: /core/libraries/messages/EE_Messenger_Collection.lib.php
