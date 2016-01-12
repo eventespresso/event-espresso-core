@@ -274,10 +274,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// start of row
 		$row_class = $options['odd'] ? 'item odd' : 'item';
 		$html = EEH_HTML::tr( '', '', $row_class );
+		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type() . ': ' : '';
 		// name && desc
 		$name_and_desc = apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
-			$line_item->OBJ_type() . ': ' . $line_item->name(),
+			 $obj_name . $line_item->name(),
 			$line_item
 		);
 		$name_and_desc .= apply_filters(
@@ -299,7 +300,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html .= EEH_HTML::td( $line_item->quantity(), '', 'item_l jst-rght' );
 		//$total = $line_item->total() * $line_item->quantity();
 		$total = $line_item->total();
-		$this->_events[ $options[ 'event_id' ] ] += $total;
+		if( isset( $options[ 'event_id' ] ) && isset( $this->_events[ $options[ 'event_id' ] ] ) ) {
+			$this->_events[ $options[ 'event_id' ] ] += $total;
+		}
 		// total td
 		$html .= EEH_HTML::td( EEH_Template::format_currency( $total, false, false ), '',  'item_r jst-rght' );
 		// end of row

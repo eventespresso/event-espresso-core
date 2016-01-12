@@ -1,8 +1,19 @@
 <?php
-
-/*
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+/**
+ *
+ * Class EE_Default_Where_Conditions
+  * 
  * Strategy to be used for getting default where conditions for EEM_Base children.
  * Should be initialized and set on construction of model
+ *
+ * @package         Event Espresso
+ * @subpackage    core/db_models
+ * @author				Mike Nelson
+ * @since		 	    4.6.0
+ *
  */
 class EE_Default_Where_Conditions{
 	/**
