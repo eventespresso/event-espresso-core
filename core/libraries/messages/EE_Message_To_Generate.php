@@ -199,13 +199,44 @@ class EE_Message_To_Generate {
 			$this->data = $this->message_type->get_data();
 
 			//verify
-			$this->_data_handler_class_name = $this->_EEMSG->verify_and_retrieve_class_name_for_data_handler_reference( $ref );
+			$this->_data_handler_class_name = EE_Message_To_Generate::verify_and_retrieve_class_name_for_data_handler_reference( $ref );
 			if ( $this->_data_handler_class_name === '' ) {
 				$this->_valid = false;
 			}
 		}
 		return $this->_data_handler_class_name;
 	}
+
+
+
+	/**
+	 * Validates the given string as a reference for an existing, accessible data handler and returns the class name
+	 * For the handler the reference matches.
+	 *
+	 * @param string $data_handler_reference
+	 * @return string
+	 */
+	public static function verify_and_retrieve_class_name_for_data_handler_reference( $data_handler_reference ) {
+		$class_name = 'EE_Messages_' . $data_handler_reference . '_incoming_data';
+		if ( ! class_exists( $class_name ) ) {
+			EE_Error::add_error(
+				sprintf(
+					__(
+						'The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.',
+						'event_espresso'
+					),
+					$data_handler_reference,
+					$class_name
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			$class_name = ''; //clear out class_name so caller knows this isn't valid.
+		}
+		return $class_name;
+	}
+
 
 
 	/**
