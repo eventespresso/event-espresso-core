@@ -659,7 +659,7 @@ class EEH_MSG_Template {
 	public static function get_message_action_urls( EE_Message $message = null, $query_params = array() ) {
 		EE_Registry::instance()->load_helper( 'URL' );
 		//if $message is not an instance of EE_Message then let's just do a dummy.
-		$message = empty( $message ) ? EE_Message::new_instance() : $message;
+		$message = empty( $message ) ? EE_Message_Factory::create() : $message;
 		$action_urls =  apply_filters(
 			'FHEE__EEH_MSG_Template__get_message_action_url',
 			array(
