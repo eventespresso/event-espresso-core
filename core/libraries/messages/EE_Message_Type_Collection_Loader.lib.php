@@ -68,7 +68,10 @@ class EE_Message_Type_Collection_Loader {
 		$folder = ! empty( $folder ) ? $folder : EE_LIBRARIES . 'messages' . DS . 'message_type';
 		$folder .= $folder[ strlen( $folder ) - 1 ] != DS ? DS : '';
 		// get all the files in that folder that end in ".class.php
-		$filepaths = glob( $folder . '*.class.php' );
+		$filepaths = apply_filters(
+			'FHEE__EE_messages__get_installed__messagetype_files',
+			glob( $folder . '*.class.php' )
+		);
 		if ( empty( $filepaths ) ) {
 			return;
 		}
@@ -77,12 +80,13 @@ class EE_Message_Type_Collection_Loader {
 			$file_path = basename( $file_path );
 			// now remove any file extensions
 			$message_type_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
-			if ( $this->message_type_collection()->has_by_classname( $message_type_class_name ) ) {
+			$message_type = new $message_type_class_name();
+			if ( $this->message_type_collection()->has_by_classname( $message_type->name ) ) {
 				continue;
 			}
 			$this->message_type_collection()->add(
-				new $message_type_class_name(),
-				$message_type_class_name
+				$message_type,
+				$message_type->name
 			);
 		}
 	}
