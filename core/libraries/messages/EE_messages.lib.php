@@ -1032,18 +1032,9 @@ class EE_Messages {
 	 * @return string
 	 */
 	public function verify_and_retrieve_class_name_for_data_handler_reference( $data_handler_reference ) {
-		$class_name = 'EE_Messages_' . $data_handler_reference . '_incoming_data';
-		if (  ! class_exists( $class_name ) ) {
-			EE_Error::add_error( sprintf(
-				__('The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
-				$data_handler_reference,
-				$class_name ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			$class_name = ''; //clear out class_name so caller knows this isn't valid.
-		}
-
-		return $class_name;
+		return EE_Message_To_Generate::verify_and_retrieve_class_name_for_data_handler_reference(
+			$data_handler_reference
+		);
 	}
 
 
