@@ -161,7 +161,7 @@
 															<ul class="plugin-action-buttons-custom">
 																<li>
 																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-people-addon/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=people_add_on&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/people-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=people_add_on&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/people-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=people_add_on&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
@@ -216,7 +216,7 @@
 																<h3>REST API Add-on</h3>
 															</div>
 															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/2015/07/event-espresso-4-rest-api-add-on-available/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_addon_link&ap_id=EEspresso" target="_blank"><img class="alignright " alt="REST API Add-on" src="https://ee-screenshots.s3.amazonaws.com/ee4/rest-api.jpg" width="231" height="151" /></a>
+																<p><a href="http://developer.eventespresso.com/docs/ee4-rest-api-introduction/" target="_blank"><img class="alignright " alt="REST API Add-on" src="https://ee-screenshots.s3.amazonaws.com/ee4/rest-api.jpg" width="231" height="151" /></a>
 																	WordPress and Event Espresso Developers will be most interested in the REST API add-on, because it will allow for faster development of a wide array of features, including custom reporting tools, mobile application development, and theme development.</p>
 															</div>
 														</div>
@@ -356,7 +356,7 @@
 															<ul class="plugin-action-buttons-custom">
 																<li>
 																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-sage-pay-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/sage-pay-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/sage-pay-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
