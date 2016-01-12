@@ -91,6 +91,34 @@ class EE_Message_Factory {
 
 
 	/**
+	 * @access public
+	 * @param  \EE_Message $message
+	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
+	 * @return \EE_Message
+	 * @throws \EE_Error
+	 */
+	public static function set_messenger( EE_Message $message, $validate = true ) {
+		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
+		return $Message_Factory->_set_messenger( $message, $validate );
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param  \EE_Message $message
+	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
+	 * @return \EE_Message
+	 * @throws \EE_Error
+	 */
+	public static function set_message_type( EE_Message $message, $validate = true ) {
+		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
+		return $Message_Factory->_set_message_type( $message, $validate );
+	}
+
+
+
+	/**
 	 * @access protected
 	 * @param  array $props_n_values
 	 * @param  bool  $validate - whether or not to throw exceptions if resources are invalid
