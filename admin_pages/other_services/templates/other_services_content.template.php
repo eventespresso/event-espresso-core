@@ -209,28 +209,7 @@
 													</div>
 													
 												</div>
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h3>REST API Add-on</h3>
-															</div>
-															<div class="desc column-description">
-																<p><a href="http://developer.eventespresso.com/docs/ee4-rest-api-introduction/" target="_blank"><img class="alignright " alt="REST API Add-on" src="https://ee-screenshots.s3.amazonaws.com/ee4/rest-api.jpg" width="231" height="151" /></a>
-																	WordPress and Event Espresso Developers will be most interested in the REST API add-on, because it will allow for faster development of a wide array of features, including custom reporting tools, mobile application development, and theme development.</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/ee4-events-calendar/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=events_calendar_add_on&ap_id=EEspresso" target="_blank">Download Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/rest-api/" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div>
+												
 												
 												<h1 class="service-settings-heading">Payment Gateways</h1>
 												<div class="service-div-settings">
