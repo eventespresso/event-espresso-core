@@ -945,7 +945,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_load_messages_controller();
 		//get all installed messengers and message_types
 		$installed_message_objects = array(
-			'messengers' => $this->_messages_controller->get_messenger_collection(),
+			'messengers' => $this->_messages_controller->get_installed_messengers(),
 			'message_types' => $this->_messages_controller->get_installed_message_types()
 			);
 		return $installed_message_objects;
