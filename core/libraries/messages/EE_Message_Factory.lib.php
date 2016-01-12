@@ -78,17 +78,18 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  array $props_n_values
+	 * @param  bool  $validate
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _create( $props_n_values = array() ) {
+	protected function _create( $props_n_values = array(), $validate = true ) {
 		if ( ! empty( $props_n_values['MSG_ID'] ) ) {
 			$message = EE_Message::new_instance_from_db( $props_n_values );
 		} else {
 			$message = EE_Message::new_instance( $props_n_values );
 		}
-		$message = $this->_set_messenger( $message );
-		$message = $this->_set_message_type( $message );
+		$message = $this->_set_messenger( $message, $validate );
+		$message = $this->_set_message_type( $message, $validate );
 		return $message;
 
 	}
@@ -98,12 +99,13 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
+	 * @param  bool        $validate
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_messenger( EE_Message $message ) {
+	protected function _set_messenger( EE_Message $message, $validate = true ) {
 		$messenger = $this->_messenger_and_message_type_manager->get_messenger( $message->messenger() );
-		if ( ! $messenger instanceof  EE_Messenger ) {
+		if ( ! $messenger instanceof  EE_Messenger && $validate ) {
 			throw new EE_Error(
 				sprintf(
 					__( 'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
@@ -120,12 +122,13 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
+	 * @param  bool        $validate
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_message_type( EE_Message $message ) {
+	protected function _set_message_type( EE_Message $message, $validate = true ) {
 		$message_type = $this->_messenger_and_message_type_manager->get_message_type( $message->message_type() );
-		if ( ! $message_type instanceof  EE_Message_Type ) {
+		if ( ! $message_type instanceof  EE_Message_Type && $validate ) {
 			throw new EE_Error(
 				sprintf(
 					__( 'The %1$s message type set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
