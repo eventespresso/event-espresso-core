@@ -34,7 +34,6 @@ class EE_Messenger_Collection_Loader {
 	 */
 	public function __construct( EE_Messenger_Collection $messengers ) {
 		$this->set_messenger_collection( $messengers );
-		//$this->load_messengers_from_folder();
 	}
 
 
