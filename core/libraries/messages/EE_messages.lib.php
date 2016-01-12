@@ -579,7 +579,7 @@ class EE_Messages {
 		$queue = new EE_Messages_Queue( $this );
 		//make sure we have a proper message object
 		if ( ! $message instanceof EE_Message && is_object( $message ) && isset( $message->content ) ) {
-			$msg = EE_Message::new_instance(
+			$msg = EE_Message_Factory::create(
 				array(
 					'MSG_messenger' => $messenger,
 					'MSG_message_type' => $message_type,
