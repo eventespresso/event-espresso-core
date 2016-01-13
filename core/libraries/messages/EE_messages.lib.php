@@ -146,15 +146,22 @@ class EE_Messages {
 
 		if ( is_array($active_names) ) {
 			foreach ( $active_names as $name => $class ) {
-				$a = new ReflectionClass( $class );
-				$active = $a->newInstance();
-				if ( is_wp_error($active) ) {
+				$active = new $class();
+				if ( ! $active instanceof EE_Messenger ) {
 					//we've got an error so let's bubble up the error_object to be caught by caller.
 					//todo: would be better to just catch the errors and then return any aggregated errors later.
-					EE_Error::add_error($active->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error(
+						sprintf(
+							__( 'The "%1$s" messenger is not installed or is invalid', 'event_espresso' ),
+							$class
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
 				}
 				$this->_active_messengers[$name] = $active;
-				$this->_active_message_types[$name] = ! empty( $_actives[$name]['settings'][$name . '-message_types'] ) ? $_actives[$name]['settings'][$name . '-message_types'] : array();
+				$this->_active_message_types[$name] = ! empty( $_actives[$name]['settings'][$name . '-message_types'] )
+					? $_actives[$name]['settings'][$name . '-message_types']
+					: array();
 			}
 		}
 	}
