@@ -489,7 +489,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		$input_constructor_args = array_merge( 
 				array(
 					'required' 				=> $this->required() ? true : false,
-					'html_label_class'	=> 'ee-reg-qstn',
 					'html_label_text'		=> $this->display_text(),
 					'required_validation_error_message' => $this->required_text()
 				),
@@ -546,12 +545,12 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				$state_options = apply_filters( 'FHEE__EE_Question__generate_form_input__state_options', null, $this, $registration );
+				$state_options = apply_filters( 'FHEE__EE_Question__generate_form_input__state_options', null, $this, $registration, $answer );
 				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				$country_options = apply_filters( 'FHEE__EE_Question__generate_form_input__country_options', null, $this, $registration );
+				$country_options = apply_filters( 'FHEE__EE_Question__generate_form_input__country_options', null, $this, $registration, $answer );
 				$result = new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
