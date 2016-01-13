@@ -7,7 +7,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 /**
- * Class EE_Messenger_And_Message_Type_Manager
+ * Class EE_Message_Resource_Manager
  *
  * Description
  *
@@ -17,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since         $VID:$
  *
  */
-class EE_Messenger_And_Message_Type_Manager {
+class EE_Message_Resource_Manager {
 
 
 
@@ -69,7 +69,7 @@ class EE_Messenger_And_Message_Type_Manager {
 
 
 	/**
-	 * EE_Messenger_And_Message_Type_Manager constructor.
+	 * EE_Message_Resource_Manager constructor.
 	 *
 	 * @param \EE_Messenger_Collection_Loader    $Messenger_Collection_Loader
 	 * @param \EE_Message_Type_Collection_Loader $Message_Type_Collection_Loader
@@ -186,7 +186,7 @@ class EE_Messenger_And_Message_Type_Manager {
 		unset( $this->_active_messengers[ $messenger ] );
 		unset( $this->_active_message_types[ $messenger ] );
 		$this->_message_template_group_model->deactivate_message_template_groups_for( $messenger );
-		EE_Messenger_And_Message_Type_Manager::update_active_messengers_option( $this->_active_messengers );
+		EE_Message_Resource_Manager::update_active_messengers_option( $this->_active_messengers );
 	}
 
 
@@ -206,10 +206,10 @@ class EE_Messenger_And_Message_Type_Manager {
 		}
 		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type );
 		unset( $this->_active_message_types[ $message_type ] );
-		EE_Messenger_And_Message_Type_Manager::update_active_messengers_option( $this->_active_messengers );
+		EE_Message_Resource_Manager::update_active_messengers_option( $this->_active_messengers );
 	}
 
 
 }
-// End of file EE_Messenger_And_Message_Type_Manager.lib.php
-// Location: /EE_Messenger_And_Message_Type_Manager.lib.php
+// End of file EE_Message_Resource_Manager.lib.php
+// Location: /EE_Message_Resource_Manager.lib.php
