@@ -470,19 +470,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		add_filter( 'FHEE__EE_Question__generate_form_input__country_options', array( $this, 'use_cached_countries_for_form_input' ), 10, 3 );
 		add_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ), 10, 3 );
 		$input_constructor_args = array(
-				'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
-				'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-				'html_class' 			=> 'ee-reg-qstn ee-reg-qstn-' . $identifier,
-				'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-			);
-		if ( $answer instanceof EE_Answer 
-			&& $answer->ID() ) {
-			$input_constructor_args['html_name'] 		.= '[' . $answer->ID() . ']';
-			$input_constructor_args['html_id'] 				.= '-' . $answer->ID();
-			$input_constructor_args['html_label_id'] 	.= '-' . $answer->ID();
+			'html_name'     => 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
+			'html_id'       => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
+			'html_class'    => 'ee-reg-qstn ee-reg-qstn-' . $identifier,
+			'html_label_id' => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
+		);
+		if ( $answer instanceof EE_Answer && $answer->ID() ) {
+			$input_constructor_args[ 'html_name' ] .= '[' . $answer->ID() . ']';
+			$input_constructor_args[ 'html_id' ] .= '-' . $answer->ID();
+			$input_constructor_args[ 'html_label_id' ] .= '-' . $answer->ID();
 		}
-		$form_input =  $question->generate_form_input( 
-			$registration, 
+		$form_input =  $question->generate_form_input(
+			$registration,
 			$answer,
 			$input_constructor_args
 		);
@@ -490,11 +489,15 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		remove_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ) );
 		return $form_input;
 	}
+
+
+
 	/**
 	 * Gets the list of countries for the form input
 	 * (I'm not sure why we don't just use the default list for
 	 * the input; but I assume there's a reason)
-	 * @param array|null $states_list
+	 *
+	 * @param array|null $countries_list
 	 * @param EE_Question $question
 	 * @param EE_Registration $registration
 	 * @return array 2d keys are country IDs, values are their names
@@ -510,20 +513,30 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this, $registration, $question, $answer );
+		$country_options = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
+			$country_options,
+			$this,
+			$registration,
+			$question,
+			$answer
+		);
 		return $country_options;
 	}
-	
+
+
+
 	/**
 	 * Gets the list of states for the form input
 	 * (I'm not sure why we don't just use the default list for
 	 * the input; but I assume there's a reason)
+	 *
 	 * @param array|null $states_list
 	 * @param EE_Question $question
 	 * @param EE_Registration $registration
 	 * @return array 2d keys are state IDs, values are their names
 	 */
-	public function use_cached_states_for_form_inpt( $states_list, $question, $registration ) {
+	public function use_cached_states_for_form_input( $states_list, $question, $registration ) {
 		$state_options = array( '' => array( '' => ''));
 		$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
 		if ( ! empty( $states )) {
@@ -533,7 +546,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this, $registration, $question, $answer );
+		$state_options = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
+			$state_options,
+			$this,
+			$registration,
+			$question,
+			$answer
+		);
 		return $state_options;
 	}
 
