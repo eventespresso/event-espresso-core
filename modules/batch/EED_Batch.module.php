@@ -154,7 +154,7 @@ class EED_Batch extends EED_Module{
 		wp_enqueue_style( 'progress_bar', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/progress_bar.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script( 'batch_runner', EE_PLUGIN_DIR_URL . 'core/libraries/batch/Assets/batch_runner.js', array( 'progress_bar' ));
 		//just copy the bits of EE admin's eei18n that we need in the JS
-		wp_localize_script( 'batch_runner', 'eei18n', array( 'ajax_url' => WP_AJAX_URL ) );
+		wp_localize_script( 'batch_runner', 'eei18n', array( 'ajax_url' => WP_AJAX_URL, 'is_admin' => (bool)is_admin() ) );
 		$job_handler_classname = stripslashes( $_GET[ 'job_handler' ] );
 		$request_data = array_diff_key( 
 				$_REQUEST, 

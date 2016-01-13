@@ -18,8 +18,8 @@ jQuery(document).ready(function() {
         // continue_data
         {
             'action' : 'espresso_batch_continue',
-            'ee_admin_ajax' : true,
-			'ee_front_ajax' : true
+            'ee_admin_ajax' : eei18n.is_admin,
+			'ee_front_ajax' : ! eei18n.is_admin
         },
         // continue_callback
         ee_support_download_file,
@@ -28,8 +28,8 @@ jQuery(document).ready(function() {
         // cleanup_data
         {
             'action' : 'espresso_batch_cleanup',
-            'ee_admin_ajax' : true,
-			'ee_front_ajax' : true
+            'ee_admin_ajax' : eei18n.is_admin,
+			'ee_front_ajax' : ! eei18n.is_admin
         },
         // cleanup_callback
 		function( response, data, xhr ) {
