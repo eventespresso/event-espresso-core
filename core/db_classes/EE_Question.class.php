@@ -488,15 +488,14 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
 		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
-		$input_constructor_args = array_merge(
-			array(
-				'required'                          => $this->required() ? true : false,
-				'html_label_class'                  => 'ee-reg-qstn',
-				'html_label_text'                   => $this->display_text(),
-				'required_validation_error_message' => $this->required_text()
-			),
-			$input_constructor_args
-		);
+		$input_constructor_args = array_merge( 
+				array(
+					'required' => $this->required() ? true : false,
+					'html_label_text' => $this->display_text(),
+					'required_validation_error_message' => $this->required_text()
+				),
+				$input_constructor_args
+			);
 		if( ! $answer instanceof EE_Answer && $registration instanceof EE_Registration ) {
 			$answer = EEM_Answer::instance()->get_registration_question_answer_object( $registration, $this->ID() );
 		}
@@ -549,9 +548,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 					'FHEE__EE_Question__generate_form_input__state_options',
 					null,
 					$this,
-					$registration
-				);
-				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
+					$registration,
+					$answer
+				);				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
@@ -559,7 +558,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 					'FHEE__EE_Question__generate_form_input__country_options',
 					null,
 					$this,
-					$registration
+					$registration,
+					$answer
 				);
 				$result = new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;

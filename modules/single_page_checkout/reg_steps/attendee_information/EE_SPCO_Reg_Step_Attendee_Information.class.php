@@ -467,13 +467,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	private function _generate_question_input( EE_Registration $registration, EE_Question $question, $answer ){
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
 		$this->_required_questions[ $identifier ] = $question->required() ? true : false;
-		add_filter( 'FHEE__EE_Question__generate_form_input__country_options', array( $this, 'use_cached_countries_for_form_input' ), 10, 3 );
-		add_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ), 10, 3 );
+		add_filter( 'FHEE__EE_Question__generate_form_input__country_options', array( $this, 'use_cached_countries_for_form_input' ), 10, 4 );
+		add_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ), 10, 4 );
 		$input_constructor_args = array(
 			'html_name'     => 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
 			'html_id'       => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 			'html_class'    => 'ee-reg-qstn ee-reg-qstn-' . $identifier,
 			'html_label_id' => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
+			'html_label_class'	=> 'ee-reg-qstn',
 		);
 		if ( $answer instanceof EE_Answer && $answer->ID() ) {
 			$input_constructor_args[ 'html_name' ] .= '[' . $answer->ID() . ']';
@@ -500,7 +501,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @param EE_Registration $registration
 	 * @return array 2d keys are country IDs, values are their names
 	 */
-	public function use_cached_countries_for_form_input( $countries_list, $question, $registration ) {
+	public function use_cached_countries_for_form_input( $countries_list, $question, $registration, $answer ) {
 		$country_options = array( '' => '' );
 		// get possibly cached list of countries
 		$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
@@ -538,7 +539,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @param EE_Registration $registration
 	 * @return array 2d keys are state IDs, values are their names
 	 */
-	public function use_cached_states_for_form_input( $states_list, $question, $registration ) {
+	public function use_cached_states_for_form_input( $states_list, $question, $registration, $answer ) {
 		$state_options = array( '' => array( '' => ''));
 		$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
 		if ( ! empty( $states )) {
