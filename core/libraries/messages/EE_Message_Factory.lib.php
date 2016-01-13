@@ -27,7 +27,7 @@ class EE_Message_Factory {
 
 
 	/**
-	 * @type EE_Messenger_And_Message_Type_Manager $_messenger_and_message_type_manager
+	 * @type EE_Message_Resource_Manager $_messenger_and_message_type_manager
 	 */
 	protected $_messenger_and_message_type_manager;
 
@@ -37,10 +37,10 @@ class EE_Message_Factory {
 	 * EE_Message_Factory constructor.
 	 *
 	 * @access protected
-	 * @param \EE_Messenger_And_Message_Type_Manager    $Messenger_And_Message_Type_Manager
+	 * @param \EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager
 	 */
 	protected function __construct(
-		EE_Messenger_And_Message_Type_Manager $Messenger_And_Message_Type_Manager
+		EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager
 	) {
 		$this->_messenger_and_message_type_manager = $Messenger_And_Message_Type_Manager;
 	}
@@ -50,10 +50,10 @@ class EE_Message_Factory {
 	/**
 	 * @singleton method used to instantiate class object
 	 * @access    public
-	 * @param \EE_Messenger_And_Message_Type_Manager $Messenger_And_Message_Type_Manager
+	 * @param \EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager
 	 * @return \EE_Message_Factory instance
 	 */
-	public static function instance( EE_Messenger_And_Message_Type_Manager $Messenger_And_Message_Type_Manager = null ) {
+	public static function instance( EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager = null ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( ! self::$_instance instanceof EE_Message_Factory ) {
 			self::$_instance = new EE_Message_Factory( $Messenger_And_Message_Type_Manager );
