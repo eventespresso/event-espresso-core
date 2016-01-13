@@ -32,9 +32,9 @@ class EEW_New_Addon extends WP_Widget {
 	public function __construct() {
 		parent::__construct(
 			'ee-new_addon-widget',
-			__( 'Event Espresso New_Addon Widget', 'event_espresso' ),
+			__( 'Event Espresso New Addon Widget', 'event_espresso' ),
 			 array(
-			 	'description' => __( 'Displays Espresso New_Addon in a widget.', 'event_espresso' )
+			 	'description' => __( 'Displays Espresso New Addon in a widget.', 'event_espresso' )
 			 ),
 			array(
 				'width' => 300,
@@ -61,7 +61,7 @@ class EEW_New_Addon extends WP_Widget {
 
 		// Set up some default widget settings.
 		$defaults = array(
-			'title' => 'New_Addon'
+			'title' => 'New Addon'
 		);
 
 		$instance = wp_parse_args((array) $instance, $defaults);

@@ -357,5 +357,25 @@ class EEM_Payment_Method extends EEM_Base {
 	}
 
 
+	/**
+	 * Returns the payment method used for the last payment made for a registration.
+	 *
+	 * Note: if an offline payment method was selected on the related transaction then this will have no payment methods returned.
+	 * It will ONLY return a payment method for a PAYMENT recorded against the registration.
+	 *
+	 * @param EE_Registration|int $registration_or_reg_id  Either the EE_Registration object or the id for the registration.
+	 * @return EE_Payment|null
+	 */
+	public function get_last_used_for_registration( $registration_or_reg_id ) {
+		$registration_id = EEM_Registration::instance()->ensure_is_ID( $registration_or_reg_id );
+
+		$query_params = array(
+			0 => array(
+				'Payment.Registration.REG_ID' => $registration_id,
+			),
+			'order_by' => array( 'Payment.PAY_ID' => 'DESC' )
+		);
+		return $this->get_one( $query_params );
+	}
 
 }
