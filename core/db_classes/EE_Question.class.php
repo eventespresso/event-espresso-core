@@ -495,7 +495,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				),
 				$input_constructor_args
 			);
-		if( ! $answer instanceof EE_Answer ) {
+		if( ! $answer instanceof EE_Answer
+			&& $registration instanceof EE_Registration ) {
 			$answer = EEM_Answer::instance()->get_registration_question_answer_object( $registration, $this->ID() );
 		}
 		// has this question been answered ?
