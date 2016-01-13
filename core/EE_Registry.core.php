@@ -206,13 +206,13 @@ class EE_Registry {
 				'EE_Message_Type_Collection_Loader' 	=> array(
 					'EE_Message_Type_Collection' => 'load_lib'
 				),
-				'EE_Messenger_And_Message_Type_Manager' 	=> array(
+				'EE_Message_Resource_Manager' 	=> array(
 					'EE_Messenger_Collection_Loader' => 'load_lib',
 					'EE_Message_Type_Collection_Loader' => 'load_lib',
 					'EEM_Message_Template_Group' => 'load_lib'
 				),
 				'EE_Message_Factory' 	=> array(
-					'EE_Messenger_And_Message_Type_Manager' => 'load_lib'
+					'EE_Message_Resource_Manager' => 'load_lib'
 				),
 			)
 		);
