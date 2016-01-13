@@ -494,8 +494,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 	/**
 	 * Gets the list of countries for the form input
-	 * (I'm not sure why we don't just use the default list for
-	 * the input; but I assume there's a reason)
 	 *
 	 * @param array|null $countries_list
 	 * @param EE_Question $question
@@ -528,8 +526,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
 	/**
 	 * Gets the list of states for the form input
-	 * (I'm not sure why we don't just use the default list for
-	 * the input; but I assume there's a reason)
 	 *
 	 * @param array|null $states_list
 	 * @param EE_Question $question
