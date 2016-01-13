@@ -56,7 +56,16 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 			throw new EE_Error( __( 'We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso') );
 		}
 		//we want to get all their question groups
-		$question_groups = EEM_Event::instance()->get_question_groups_for_event( $reg->event_ID(), $reg );
+		$question_groups = EEM_Question_Group::instance()->get_all( 
+			array( 
+				array(
+					'Event_Question_Group.EVT_ID' => $reg->event_ID(),
+					'Event_Question_Group.EQG_primary' => $reg->count() == 1 ? TRUE : FALSE,
+					'Question.QST_system' =>  ''
+				),
+				'order_by' => array( 'QSG_order' => 'ASC' ) 
+			)
+		);
 		//get each question groups questions
 		foreach( $question_groups as $question_group ) {
 			if ( $question_group instanceof EE_Question_Group ) {
