@@ -8,7 +8,7 @@
  * and questions
  *
  * @package         Event Espresso
- * @subpackage    
+ * @subpackage
  * @author				Mike Nelson
  * @since		 	   4.8.30.rc.009
  *
@@ -23,9 +23,9 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 	 * @var EE_Registration
 	 */
 	protected $_registration = null;
-	
+
 	/**
-	 * 
+	 *
 	 * @param EE_Registration $reg
 	 * @param array $options
 	 */
@@ -44,12 +44,12 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 
 	/**
 	 * Gets the registration object this form is about
-	 * @return EE_Registraiton
+	 * @return EE_Registration
 	 */
 	public function get_registration() {
 		return $this->_registration;
 	}
-	
+
 	public function build_form_from_registration() {
 		$reg = $this->get_registration();
 		if( ! $reg instanceof EE_Registration ) {
@@ -59,35 +59,44 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 		$question_groups = EEM_Event::instance()->get_question_groups_for_event( $reg->event_ID(), $reg );
 		//get each question groups questions
 		foreach( $question_groups as $question_group ) {
-			$this->_subsections[ $question_group->ID() ] = $this->build_subform_from_question_group( $question_group, $reg );
+			if ( $question_group instanceof EE_Question_Group ) {
+				$this->_subsections[ $question_group->ID() ] = $this->build_subform_from_question_group(
+					$question_group,
+					$reg
+				);
+			}
 		}
 	}
-	
+
+
+
 	/**
-	 * 
+	 *
 	 * @param EE_Question_Group $question_group
-	 * @param EE_Registration $registration
+	 * @param EE_Registration   $registration
+	 * @return \EE_Form_Section_Proper
+	 * @throws \EE_Error
 	 */
 	public function build_subform_from_question_group( $question_group, $registration ) {
 		if( ! $question_group instanceof EE_Question_Group ||
 			! $registration instanceof EE_Registration) {
-			throw new EE_Error( __( 'A valid question group and registraiton must be passed to EE_Registration_Custom_Question_Form', 'event_espresso' ) );
+			throw new EE_Error( __( 'A valid question group and registration must be passed to EE_Registration_Custom_Question_Form', 'event_espresso' ) );
 		}
 		$parts_of_subsection = array(
-			'title' => new EE_Form_Section_HTML( 
+			'title' => new EE_Form_Section_HTML(
 					EEH_HTML::h5( $question_group->name(),
 					$question_group->identifier(),
-					'espresso-question-group-title-h5 section-title' ) 
+					'espresso-question-group-title-h5 section-title' )
 				)
 		);
 		foreach( $question_group->questions( array( array( 'QST_system' => '' ))) as $question ) {
 			$parts_of_subsection[ $question->ID() ] = $question->generate_form_input( $registration );
 		}
-		$parts_of_subsection[ 'edit_link' ] = new EE_Form_Section_HTML( 
+		$parts_of_subsection[ 'edit_link' ] = new EE_Form_Section_HTML(
 				'<tr><th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . esc_attr__( 'click to edit question', 'event_espresso' ) . '">
 					<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
 					<div class="dashicons dashicons-edit"></div>
-				</a></td></tr>' 
+				</a></td></tr>'
 			);
 		return new EE_Form_Section_Proper(
 			array(

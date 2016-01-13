@@ -476,14 +476,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 				'html_label_class'	=> 'ee-reg-qstn',
 			);
-		if ( $answer instanceof EE_Answer 
-			&& $answer->ID() ) {
-			$input_constructor_args['html_name'] 		.= '[' . $answer->ID() . ']';
-			$input_constructor_args['html_id'] 				.= '-' . $answer->ID();
-			$input_constructor_args['html_label_id'] 	.= '-' . $answer->ID();
+		if ( $answer instanceof EE_Answer && $answer->ID() ) {
+			$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
+			$input_constructor_args['html_id'] .= '-' . $answer->ID();
+			$input_constructor_args['html_label_id'] .= '-' . $answer->ID();
 		}
-		$form_input =  $question->generate_form_input( 
-			$registration, 
+		$form_input =  $question->generate_form_input(
+			$registration,
 			$answer,
 			$input_constructor_args
 		);
@@ -491,11 +490,13 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		remove_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ) );
 		return $form_input;
 	}
+
+
+
 	/**
 	 * Gets the list of countries for the form input
-	 * (I'm not sure why we don't just use the default list for
-	 * the input; but I assume there's a reason)
-	 * @param array|null $states_list
+	 *
+	 * @param array|null $countries_list
 	 * @param EE_Question $question
 	 * @param EE_Registration $registration
 	 * @return array 2d keys are country IDs, values are their names
@@ -511,14 +512,22 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this, $registration, $question, $answer );
+		$country_options = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
+			$country_options,
+			$this,
+			$registration,
+			$question,
+			$answer
+		);
 		return $country_options;
 	}
-	
+
+
+
 	/**
 	 * Gets the list of states for the form input
-	 * (I'm not sure why we don't just use the default list for
-	 * the input; but I assume there's a reason)
+	 *
 	 * @param array|null $states_list
 	 * @param EE_Question $question
 	 * @param EE_Registration $registration
@@ -534,7 +543,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this, $registration, $question, $answer );
+		$state_options = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
+			$state_options,
+			$this,
+			$registration,
+			$question,
+			$answer
+		);
 		return $state_options;
 	}
 
