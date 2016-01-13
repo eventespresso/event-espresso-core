@@ -1491,7 +1491,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	public function _reg_questions_meta_box() {
 		$form = $this->_get_reg_custom_questions_form( $this->_registration->ID() );
-		$this->_template_args[ 'att_questions' ] = $form->get_html_and_js();
+		$this->_template_args[ 'att_questions' ] = count( $form->subforms() ) > 0 ? $form->get_html_and_js() : '';
 		$this->_template_args['reg_questions_form_action'] = 'edit_registration';
 		$this->_template_args['REG_ID'] = $this->_registration->ID();
 
