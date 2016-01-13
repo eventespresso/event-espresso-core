@@ -1548,8 +1548,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		$form = $this->_get_reg_custom_questions_form( $REG_ID );
 		$form->receive_form_submission( $this->_req_data );
-		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $REG_ID, $qstns );
 		$success = false;
 		if( $form->is_valid() ) {
 			foreach( $form->subforms() as $question_group_id => $question_group_form ) {
@@ -1567,7 +1565,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					} else {
 						//insert it then
 						$cols_n_vals = array_merge( $where_conditions, $possibly_new_values );
-						$answer = new EE_Answer( $cols_n_vals );
+						$answer = EE_Answer::new_instance( $cols_n_vals );
 						$success = $answer->save();
 					}
 				}
@@ -1575,6 +1573,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		} else {
 			EE_Error::add_error( $form->get_validation_error_string(), __FILE__, __FUNCTION__ );
 		}
+		// allow others to get in on this awesome fun   :D
+		do_action( 'AHEE__Registrations_Admin_Page___save_reg_custom_questions_form__after_reg_and_attendee_save', $REG_ID );
 		return $success;
 	}
 
