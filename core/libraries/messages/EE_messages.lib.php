@@ -856,9 +856,8 @@ class EE_Messages {
 			if ( !$classname || 0 !== stripos($classname, 'EE') ) continue;
 
 			//note: I'm not sure if this will work without including the file.  We do have autoloaders so it "may" work.
-			$a = new ReflectionClass($classname);
-			$obj = $a->newInstance();
-			$the_goods[$obj->name] = $obj;
+			$object = new $classname();
+			$the_goods[ $object->name ] = $object;
 		}
 		return $the_goods;
 	}
@@ -983,7 +982,7 @@ class EE_Messages {
 	 * array(
 	 *      'message_type_name' => array(
 	 *          'context_slug' => array(
-	 *              'label' => 'localized lable for context',
+	 *              'label' => 'localized label for context',
 	 *              'description' => 'localized description for context'
 	 *          )
 	 *      )
