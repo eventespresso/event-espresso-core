@@ -458,7 +458,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the question's maximum allowed response size
 	 * @return int|float
@@ -466,16 +466,18 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function max() {
 		return $this->get( 'QST_max' );
 	}
-	
+
 	/**
 	 * Sets the question's maximum allowed response size
 	 * @param int|float $new_max
-	 * @return int|float
+	 * @return void
 	 */
 	public function set_max( $new_max ) {
-		return $this->set( 'QST_max', $new_max );
+		$this->set( 'QST_max', $new_max );
 	}
-	
+
+
+
 	/**
 	 * Creates a form input from this question which can be used in HTML forms
 	 * @param EE_Registration $registration
@@ -486,17 +488,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
 		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
-		$input_constructor_args = array_merge( 
-				array(
-					'required' 				=> $this->required() ? true : false,
-					'html_label_class'	=> 'ee-reg-qstn',
-					'html_label_text'		=> $this->display_text(),
-					'required_validation_error_message' => $this->required_text()
-				),
-				$input_constructor_args
-			);
-		if( ! $answer instanceof EE_Answer
-			&& $registration instanceof EE_Registration ) {
+		$input_constructor_args = array_merge(
+			array(
+				'required'                          => $this->required() ? true : false,
+				'html_label_class'                  => 'ee-reg-qstn',
+				'html_label_text'                   => $this->display_text(),
+				'required_validation_error_message' => $this->required_text()
+			),
+			$input_constructor_args
+		);
+		if( ! $answer instanceof EE_Answer && $registration instanceof EE_Registration ) {
 			$answer = EEM_Answer::instance()->get_registration_question_answer_object( $registration, $this->ID() );
 		}
 		// has this question been answered ?
@@ -507,21 +508,19 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		$input_constructor_args['html_label_id'] 	.= '-lbl';
 		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $this->system_ID() );
 		if( EEM_Question::instance()->question_type_is_in_category(  $this->type(), 'text' ) ) {
-			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy( 
-				null, 
-				min( 
-					$max_max_for_question, 
-					$this->max() 
-				) 
+			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy(
+				null,
+				min( $max_max_for_question, $this->max() )
 			);
 		}
-		$input_constructor_args = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
-				$input_constructor_args,
-				$registration,
-				$this,
-				$answer
-				);
-		
+		$input_constructor_args = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
+			$input_constructor_args,
+			$registration,
+			$this,
+			$answer
+		);
+
 		$result = null;
 		switch ( $this->type() ) {
 			// Text
@@ -546,12 +545,22 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				break;
 			// State Dropdown
 			case EEM_Question::QST_type_state :
-				$state_options = apply_filters( 'FHEE__EE_Question__generate_form_input__state_options', null, $this, $registration );
+				$state_options = apply_filters(
+					'FHEE__EE_Question__generate_form_input__state_options',
+					null,
+					$this,
+					$registration
+				);
 				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
-				$country_options = apply_filters( 'FHEE__EE_Question__generate_form_input__country_options', null, $this, $registration );
+				$country_options = apply_filters(
+					'FHEE__EE_Question__generate_form_input__country_options',
+					null,
+					$this,
+					$registration
+				);
 				$result = new EE_Country_Select_Input( $country_options, $input_constructor_args );
 				break;
 			// Checkboxes
@@ -567,9 +576,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				$input =  new EE_Text_Area_Input( $input_constructor_args );
 				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
 				$result = $input;
+				break;
 			// fallback
 			default :
-				$default_input = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default', null, $this->type(), $this, $input_constructor_args );
+				$default_input = apply_filters(
+					'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default',
+					null,
+					$this->type(),
+					$this,
+					$input_constructor_args
+				);
 				if( ! $default_input ){
 					$default_input = new EE_Text_Input( $input_constructor_args );
 				}
