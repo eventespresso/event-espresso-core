@@ -71,9 +71,8 @@ class EEH_MSG_Template {
 		}
 
 		self::_set_autoloader();
-
-
-		$MSG = EE_Registry::instance()->load_lib( 'Messages' );
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
 
 		foreach ( $message_types as $message_type ) {
 			//if global then let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.
@@ -87,7 +86,7 @@ class EEH_MSG_Template {
 				continue; //get out we've already got generated templates for this.
 			}
 
-			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $GRP_ID, $global);
+			$new_message_template_group = $messages_controller->create_new_templates($messenger, $message_type, $GRP_ID, $global);
 
 			if ( !$new_message_template_group ) {
 				$success = FALSE;
@@ -177,8 +176,9 @@ class EEH_MSG_Template {
 	public static function get_installed_message_objects($type = 'all') {
 		self::_set_autoloader();
 		//get all installed messengers and message_types
-		$EE_MSG = EE_Registry::instance()->load_lib( 'Messages' );
-		$installed_message_objects = $EE_MSG->get_installed($type);
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$installed_message_objects = $messages_controller->get_installed($type);
 		return $installed_message_objects;
 	}
 
@@ -314,8 +314,9 @@ class EEH_MSG_Template {
 	 * @return EE_Messenger
 	 */
 	public static function messenger_obj( $messenger ) {
-		$ee_msg = EE_Registry::instance()->load_lib( 'Messages' );
-		$installed_messengers = $ee_msg->get_installed_messengers();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$installed_messengers = $messages_controller->get_installed_messengers();
 		return isset( $installed_messengers[ $messenger ] ) ? $installed_messengers[ $messenger ] : null;
 	}
 
@@ -330,8 +331,9 @@ class EEH_MSG_Template {
 	 * @return EE_message_type
 	 */
 	public static function message_type_obj( $message_type ) {
-		$ee_msg = EE_Registry::instance()->load_lib( 'Messages' );
-		$installed_message_types = $ee_msg->get_installed_message_types();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$installed_message_types = $messages_controller->get_installed_message_types();
 		return isset( $installed_message_types[ $message_type ] ) ? $installed_message_types[ $message_type ] : null;
 	}
 
@@ -348,7 +350,9 @@ class EEH_MSG_Template {
 	 */
 	public static function is_mt_active( $message_type ) {
 		self::_set_autoloader();
-		$active_mts = EE_Registry::instance()->load_lib( 'Messages' )->get_active_message_types();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$active_mts = $messages_controller->get_active_message_types();
 		return in_array( $message_type, $active_mts );
 	}
 
@@ -364,7 +368,9 @@ class EEH_MSG_Template {
 	 */
 	public static function is_messenger_active( $messenger ) {
 		self::_set_autoloader();
-		$active_messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$active_messengers = $messages_controller->get_active_messengers();
 		return isset( $active_messengers[ $messenger ] );
 	}
 
