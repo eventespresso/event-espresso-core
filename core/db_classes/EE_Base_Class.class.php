@@ -1267,16 +1267,17 @@ abstract class EE_Base_Class{
 	 */
 	public function delete(){
 		/**
-		 * Called just before ANY soft delete calls (which may be a trash call for EE_Soft_Delete_Base_Class children or a
-		 * delete permanently call for non EE_Soft_Delete_Base_Class children).
+		 * Called just before SOFT deleting a model object (if soft deleting is
+		 * possible for this model; otherwise a regular hard delete it performed)
 		 *
 		 * @param EE_Base_Class $model_object about to be 'deleted'
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
-		$result = $this->_delete();
+		$result = $this->get_model()->delete_by_ID( $this->ID() );
+		$this->refresh_cache_of_related_objects();
 		/**
-		 * Called just before ANY soft delete calls (which may be a trash call for EE_Soft_Delete_Base_Class children or a
-		 * delete permanently call for non EE_Soft_Delete_Base_Class children).
+		 * Called just after SOFT deleting a model object (if soft deleting is
+		 * possible for this model; otherwise a regular hard delete it performed)
 		 * @param EE_Base_Class $model_object that was just 'deleted'
 		 * @param boolean $result
 		 */
@@ -1285,20 +1286,10 @@ abstract class EE_Base_Class{
 	}
 
 
-	/**
-	 * Calls the specific delete method for the instantiated class.
-	 * @return bool|int
-	 */
-	protected function _delete() {
-		$result = $this->delete_permanently();
-		return $result;
-	}
-
-
 
 	/**
 	 * Deletes this model object permanently from db (but keep in mind related models my block the delete and return an error)
-	 * @return bool | int
+	 * @return bool
 	 */
 	public function delete_permanently(){
 		/**
@@ -1316,7 +1307,7 @@ abstract class EE_Base_Class{
 		 * @param boolean $result
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete_permanently__end', $this, $result );
-		return $result;
+		return $result ? true : false;
 	}
 
         /**
