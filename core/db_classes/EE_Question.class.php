@@ -501,10 +501,17 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		}
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {
-			$input_constructor_args['default'] = $answer->value();
+			//answer gets htmlspecialchars called on it, undo that please
+			//beceause the form input's display strategy may call esc_attr too
+			//which also does html special characters
+			$values_with_html_special_chars = $answer->value();
+			if( is_array( $values_with_html_special_chars ) ) {
+				$default_value = array_map( 'htmlspecialchars_decode', $values_with_html_special_chars );
+			} else {
+				$default_value = htmlspecialchars_decode( $values_with_html_special_chars );
+			}
+			$input_constructor_args['default'] = $default_value;
 		}
-		//add "-lbl" to the end of the label id
-		$input_constructor_args['html_label_id'] 	.= '-lbl';
 		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $this->system_ID() );
 		if( EEM_Question::instance()->question_type_is_in_category(  $this->type(), 'text' ) ) {
 			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy(

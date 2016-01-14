@@ -476,6 +476,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
 				'html_label_class'	=> 'ee-reg-qstn',
 			);
+		//add "-lbl" to the end of the label id
+		$input_constructor_args['html_label_id'] 	.= '-lbl';
 		if ( $answer instanceof EE_Answer && $answer->ID() ) {
 			$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
 			$input_constructor_args['html_id'] .= '-' . $answer->ID();
