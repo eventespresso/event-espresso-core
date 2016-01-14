@@ -24,8 +24,8 @@ class EE_messages_Test extends EE_UnitTestCase {
 	 * @since 4.5.0
 	 */
 	public function test_ensure_messenger_is_active() {
-		EE_Registry::instance()->load_lib('messages');
-		EE_Registry::instance()->load_helper('Activation');
+		EE_Registry::instance()->load_lib( 'messages' );
+		EE_Registry::instance()->load_helper( 'Activation' );
 		$msg = new EE_Messages();
 		$this->assertInstanceOf( 'EE_Messages', $msg );
 
@@ -55,8 +55,9 @@ class EE_messages_Test extends EE_UnitTestCase {
 	 * @since 4.9.0
 	 */
 	function test_get_all_contexts() {
-		$eemsg = EE_Registry::instance()->load_lib( 'Messages' );
-		$contexts = $eemsg->get_all_contexts();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$contexts = $messages_controller->get_all_contexts();
 
 		//expected four contexts.
 		$this->assertEquals( 4, count( $contexts ) );
