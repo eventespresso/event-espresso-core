@@ -127,10 +127,9 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		$this->_req_data['EVT_ID'] = empty($this->_req_data['EVT_ID'] ) && isset($this->_req_data['evt_id'] )
 			? $this->_req_data['evt_id']
 			: $this->_req_data['EVT_ID'];
-
-
-		$EEM_controller = EE_Registry::instance()->load_lib( 'Messages' );
-		$active_messengers = $EEM_controller->get_active_messengers();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$active_messengers = $messages_controller->get_active_messengers();
 		$tabs = array();
 
 		//empty messengers?
@@ -159,7 +158,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		//get content for active messengers
 		foreach ( $active_messengers as $name => $messenger ) {
 			//first check if there are any active message types for this messenger.
-			$active_mts = $EEM_controller->get_active_message_types_per_messenger( $name );
+			$active_mts = $messages_controller->get_active_message_types_per_messenger( $name );
 			if ( empty( $active_mts ) ) {
 				continue;
 			}
