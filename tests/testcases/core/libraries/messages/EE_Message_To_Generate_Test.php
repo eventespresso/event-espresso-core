@@ -22,12 +22,13 @@ class EE_Message_To_Generate_Test extends EE_UnitTestCase {
 	 * @return EE_Message_To_Generate
 	 */
 	function test_construct() {
-		$ee_msg = EE_Registry::instance()->load_lib( 'Messages' );
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
 		$mtg = new EE_Message_To_Generate(
 			'email',
 			'registration',
 			array(),
-			$ee_msg,
+			$messages_controller,
 			'admin',
 			true
 		);
