@@ -1,8 +1,8 @@
-<h2><?php _e('Admin Options', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Admin Options', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e("This page shows various options for your organization.", 'event_espresso'); ?>
 </p>
-<h3><?php _e('Debug / Logging Options', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Debug / Logging Options', 'event_espresso'); ?></strong></p>
 <p class="ee-attention">
 <?php _e('Notice: Your log files may be publicly accessible. Logging should be turned off when its not needed.', 'event_espresso'); ?>
 </p>

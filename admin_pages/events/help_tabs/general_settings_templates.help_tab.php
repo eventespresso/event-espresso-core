@@ -1,12 +1,16 @@
-<h2>
+<p>
+	<strong>
 <?php _e('Templates', 'event_espresso'); ?>
-</h2>
+	</strong>
+</p>
 <p>
 <?php _e('This page shows options for single event pages and event list pages.', 'event_espresso'); ?>
 </p>
-<h3>
+<p>
+	<strong>
 <?php _e('Single Event Pages', 'event_espresso'); ?>
-</h3>
+	</strong>
+</p>
 <ul>
 <li>
 <strong><?php _e('Display Status Banner', 'event_espresso'); ?></strong><br />

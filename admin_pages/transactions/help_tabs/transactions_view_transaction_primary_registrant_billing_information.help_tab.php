@@ -1,4 +1,4 @@
-<h3><?php _e('Primary Contact', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Primary Contact', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Shows contact information about the primary registrant.', 'event_espresso'); ?>
 </p>

@@ -1,4 +1,4 @@
-<h3><?php _e('Transactions Table Column Headings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Transactions Table Column Headings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <p><strong><?php _e('ID', 'event_espresso'); ?></strong><br />
