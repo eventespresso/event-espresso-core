@@ -285,9 +285,9 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return string
 	 */
 	public function context_label() {
-		/** @type EE_Messages $eemsg */
-		$eemsg = EE_Registry::instance()->load_lib( 'Messages' );
-		$contexts = $eemsg->get_all_contexts();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$contexts = $messages_controller->get_all_contexts();
 		return isset( $contexts[ $this->context() ] ) ? $contexts[ $this->context() ] : $this->context();
 	}
 
