@@ -118,7 +118,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @throws EE_Error
 	*/
 	protected function _load_messages_controller() {
-		$this->_messages_controller = EE_Registry::instance()->load_lib( 'Messages' );
+		$this->_messages_controller = EE_Registry::instance()->load_lib( 'messages' );
 	}
 
 
