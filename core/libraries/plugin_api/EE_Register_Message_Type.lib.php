@@ -137,12 +137,13 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 		//only set defaults if we're not in EE_Maintenance mode
     	EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
-		$MSG = EE_Registry::instance()->load_lib( 'Messages' );
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
 		//for any message types with force activation, let's ensure they are activated
 		foreach ( self::$_ee_message_type_registry as $message_type_name => $settings ) {
 			if ( $settings['force_activation'] ) {
 				foreach ( $settings['messengers_to_activate_with'] as $messenger ) {
-					$MSG->ensure_message_type_is_active( $message_type_name, $messenger );
+					$messages_controller->ensure_message_type_is_active( $message_type_name, $messenger );
 				}
 			}
 		}
