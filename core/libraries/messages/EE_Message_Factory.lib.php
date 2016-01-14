@@ -66,12 +66,11 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  array $props_n_values
-	 * @param  bool  $validate - whether or not to throw exceptions if resources are invalid
 	 * @return mixed
 	 */
-	public static function create( $props_n_values = array(), $validate = true ) {
+	public static function create( $props_n_values = array() ) {
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
-		return $Message_Factory->_create( $props_n_values, $validate );
+		return $Message_Factory->_create( $props_n_values );
 	}
 
 
@@ -79,13 +78,12 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	public static function set_messenger_and_message_type( EE_Message $message, $validate = true ) {
+	public static function set_messenger_and_message_type( EE_Message $message ) {
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
-		return $Message_Factory->_set_messenger_and_message_type( $message, $validate );
+		return $Message_Factory->_set_messenger_and_message_type( $message );
 	}
 
 
@@ -93,13 +91,12 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	public static function set_messenger( EE_Message $message, $validate = true ) {
+	public static function set_messenger( EE_Message $message ) {
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
-		return $Message_Factory->_set_messenger( $message, $validate );
+		return $Message_Factory->_set_messenger( $message );
 	}
 
 
@@ -107,13 +104,12 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	public static function set_message_type( EE_Message $message, $validate = true ) {
+	public static function set_message_type( EE_Message $message ) {
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
-		return $Message_Factory->_set_message_type( $message, $validate );
+		return $Message_Factory->_set_message_type( $message );
 	}
 
 
@@ -121,17 +117,16 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  array $props_n_values
-	 * @param  bool  $validate - whether or not to throw exceptions if resources are invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _create( $props_n_values = array(), $validate = true ) {
+	protected function _create( $props_n_values = array() ) {
 		if ( ! empty( $props_n_values['MSG_ID'] ) ) {
 			$message = EE_Message::new_instance_from_db( $props_n_values );
 		} else {
 			$message = EE_Message::new_instance( $props_n_values );
 		}
-		return $this->_set_messenger_and_message_type( $message, $validate );
+		return $this->_set_messenger_and_message_type( $message );
 	}
 
 
@@ -139,13 +134,12 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate - whether or not to throw exceptions if resources are invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_messenger_and_message_type( EE_Message $message, $validate = true ) {
-		$message = $this->_set_messenger( $message, $validate );
-		$message = $this->_set_message_type( $message, $validate );
+	protected function _set_messenger_and_message_type( EE_Message $message ) {
+		$message = $this->_set_messenger( $message );
+		$message = $this->_set_message_type( $message );
 		return $message;
 	}
 
@@ -154,21 +148,13 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate - whether or not to throw an exception if messenger is invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_messenger( EE_Message $message, $validate = true ) {
+	protected function _set_messenger( EE_Message $message ) {
 		$messenger = $this->_messenger_and_message_type_manager->get_messenger( $message->messenger() );
 		if ( $messenger instanceof EE_Messenger ) {
 			$message->set_messenger_object( $messenger );
-		} else if ( $validate ) {
-			throw new EE_Error(
-				sprintf(
-					__( 'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
-					$message->messenger()
-				)
-			);
 		}
 		return $message;
 	}
@@ -178,21 +164,13 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
-	 * @param  bool        $validate - whether or not to throw an exception if message_type is invalid
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_message_type( EE_Message $message, $validate = true ) {
+	protected function _set_message_type( EE_Message $message ) {
 		$message_type = $this->_messenger_and_message_type_manager->get_message_type( $message->message_type() );
 		if ( $message_type instanceof EE_Message_Type ) {
 			$message->set_message_type_object( $message_type );
-		} else if ( $validate ) {
-			throw new EE_Error(
-				sprintf(
-					__( 'The %1$s message type set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.', 'event_espresso' ),
-					$message->message_type()
-				)
-			);
 		}
 		return $message;
 	}
