@@ -111,6 +111,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 			array(
 				'subsections' => $parts_of_subsection,
 				'html_class' => 'question-group-questions',
+				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
 			));
 	}
 	

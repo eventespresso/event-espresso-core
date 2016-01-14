@@ -1509,11 +1509,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _update_attendee_registration_form() {
 		if( $_SERVER['REQUEST_METHOD'] == 'POST'){
 			$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
-			$success = $this->_save_reg_custom_questions_form( $REG_ID );
-			if( $success ) {
-				$what = __('Registration Form', 'event_espresso');
+			$answers_updated = $this->_save_reg_custom_questions_form( $REG_ID );
+			$form = $this->_get_reg_custom_questions_form( $REG_ID );
+			if( $form->is_valid() ) {
 				$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
-				$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
+				$this->_redirect_after_action( 
+					$answers_updated, 
+					EEM_Answer::instance()->item_name( $answers_updated ), 
+					__('updated', 'event_espresso'), 
+					$route );
 			}
 		}
 	}
@@ -1539,7 +1543,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * Saves 
 	 * @access private
 	 * @param bool $REG_ID
-	 * @return bool
+	 * @return int the number of answer records that were inserted/updated
 	 */
 	private function _save_reg_custom_questions_form( $REG_ID = FALSE ) {
 		
@@ -1548,7 +1552,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		$form = $this->_get_reg_custom_questions_form( $REG_ID );
 		$form->receive_form_submission( $this->_req_data );
-		$success = false;
+		$answers_saved = 0;
 		if( $form->is_valid() ) {
 			foreach( $form->subforms() as $question_group_id => $question_group_form ) {
 				foreach( $question_group_form->inputs() as $question_id => $input ) {
@@ -1568,6 +1572,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						$answer = EE_Answer::new_instance( $cols_n_vals );
 						$success = $answer->save();
 					}
+					if( $success ) {
+						$answers_saved ++;
+					}
 				}
 			}
 		} else {
@@ -1575,7 +1582,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE__Registrations_Admin_Page___save_reg_custom_questions_form__after_reg_and_attendee_save', $REG_ID );
-		return $success;
+		return $answers_saved;
 	}
 
 	/**
