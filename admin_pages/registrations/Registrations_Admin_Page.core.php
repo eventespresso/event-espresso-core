@@ -629,8 +629,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//for notification related bulk actions we need to make sure only active messengers have an option.
 		EED_Messages::set_autoloaders();
-		$EEMSG = EE_Registry::instance()->load_lib('messages');
-		$active_mts = $EEMSG->get_active_message_types();
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		$active_mts = $messages_controller->get_active_message_types();
 		//key= bulk_action_slug, value= message type.
 		$match_array = array(
 			'approve_registration' => 'registration',
@@ -2312,7 +2313,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _registrations_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
@@ -2350,7 +2351,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _contact_list_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
