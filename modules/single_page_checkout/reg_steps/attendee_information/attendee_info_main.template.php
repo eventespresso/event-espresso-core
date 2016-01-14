@@ -13,7 +13,7 @@ if ( count( $registrations ) > 0 ) {
 			$att_nmbr++;
 ?>
 
-		<div id="spco-attendee-panel-dv-<?php echo $registration->reg_url_link();?>" class="spco-attendee-panel-dv">
+		<div id="spco-attendee-panel-dv-<?php echo $registration->reg_url_link();?>" class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo $registration->ticket()->ID();?>">
 
 			<?php if ( $registration->event()->ID() != $prev_event ) { ?>
 			<h4 id="event_title-<?php echo $registration->event()->ID() ?>" class="big-event-title-hdr">

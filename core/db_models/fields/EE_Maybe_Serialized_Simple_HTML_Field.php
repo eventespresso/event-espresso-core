@@ -56,7 +56,7 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 	 * @return array|string
 	 */
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
-		return $this->_remove_tags( parent::prepare_for_set_from_db( $value_found_in_db_for_model_object ) );
+		return parent::prepare_for_set_from_db( $this->_remove_tags(  $value_found_in_db_for_model_object ) );
 	}
 
 

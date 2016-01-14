@@ -385,13 +385,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * However, registering the form js and localizing it can happen when we
 	 * actually output the form (which is preferred, seeing how teh form's fields
 	 * could change until it's actually outputted)
-	 * @param boolean $init_form_validation_automatically whether or not we want the form validation to be triggered automatically or not
 	 * @return void
 	 */
-	public static function wp_enqueue_scripts( $init_form_validation_automatically = false ){
+	public static function wp_enqueue_scripts(){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_validation_init', $init_form_validation_automatically );
 	}
 
 
