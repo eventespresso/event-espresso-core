@@ -188,6 +188,33 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 	/**
+	 * validates messenger
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function valid_messenger( $throw_exceptions = false ) {
+		if ( $this->_messenger instanceof EE_Messenger ) {
+			return true;
+		}
+		if ( $throw_exceptions ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.',
+						'event_espresso'
+					),
+					$this->messenger()
+				)
+			);
+		}
+		return false;
+	}
+
+
+
+	/**
 	 * This returns the set localized label for the messenger on this message.
 	 * Note, if unable to retrieve the EE_Messenger object then will just return the messenger slug saved
 	 * with this message.
@@ -247,6 +274,32 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 		$this->_message_type = $message_type;
 	}
 
+
+
+	/**
+	 * validates message_type
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function valid_message_type( $throw_exceptions = false ) {
+		if ( $this->_message_type instanceof EE_Message_Type ) {
+			return true;
+		}
+		if ( $throw_exceptions ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'The %1$s message type set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.',
+						'event_espresso'
+					),
+					$this->message_type()
+				)
+			);
+		}
+		return false;
+	}
 
 
 
