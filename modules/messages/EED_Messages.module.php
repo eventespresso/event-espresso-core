@@ -24,7 +24,7 @@ class EED_Messages  extends EED_Module {
 	/**
 	 * This holds the EE_Messages controller
 	 *
-	 * @var EE_Messages
+	 * @var EE_Messages $_EEMSG
 	 */
 	protected  static $_EEMSG;
 
@@ -352,7 +352,7 @@ class EED_Messages  extends EED_Module {
 		if ( ! self::$_EEMSG instanceof EE_Messages ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
-			self::$_EEMSG = EE_Registry::instance()->load_lib( 'Messages' );
+			self::$_EEMSG = EE_Registry::instance()->load_lib( 'messages' );
 			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor', self::$_EEMSG );
 		}
 	}
