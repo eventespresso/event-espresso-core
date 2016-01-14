@@ -1571,7 +1571,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				}
 			}
 		} else {
-			EE_Error::add_error( $form->get_validation_error_string(), __FILE__, __FUNCTION__ );
+			EE_Error::add_error( $form->get_validation_error_string(), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		// allow others to get in on this awesome fun   :D
 		do_action( 'AHEE__Registrations_Admin_Page___save_reg_custom_questions_form__after_reg_and_attendee_save', $REG_ID );

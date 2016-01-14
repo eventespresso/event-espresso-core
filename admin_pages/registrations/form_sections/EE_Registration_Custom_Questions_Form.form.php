@@ -113,4 +113,45 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 				'html_class' => 'question-group-questions',
 			));
 	}
+	
+	/**
+	 * Overrides parent so if inputs were disabled, we leave those with their defaults
+	 * from the answers in the DB
+	 * @param array $req_data like $_POST
+	 * @return void
+	 */
+	protected function _normalize($req_data) {
+		$this->_received_submission = TRUE;
+		$this->_validation_errors = array();
+		foreach($this->get_validatable_subsections() as $subsection){
+			if( $subsection->form_data_present_in( $req_data ) ) {
+				try{
+					$subsection->_normalize($req_data);
+				}catch( EE_Validation_Error $e ){
+					$subsection->add_validation_error( $e );
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * Performs validation on this form section and its subsections. For each subsection,
+	 * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls _validate on that subsection.
+	 * If you need to perform validation on the form as a whole (considering multiple) you would be best to override this _validate method,
+	 * calling parent::_validate() first.
+	 */
+	protected function _validate() {
+		foreach($this->get_validatable_subsections() as $subsection_name => $subsection){
+			if( $subsection->form_data_present_in( $req_data ) ) {
+				if(method_exists($this,'_validate_'.$subsection_name)){
+					call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
+				}
+				$subsection->_validate();
+			} elseif( $subsection instanceof EE_Form_Section_Proper ) {
+				$subsection->_received_submission = true;
+			}
+		}
+	}
 }
