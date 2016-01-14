@@ -304,6 +304,22 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 	/**
+	 * validates messenger and message_type
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function is_valid( $throw_exceptions = false ) {
+		if ( $this->valid_messenger( $throw_exceptions ) && $this->valid_message_type( $throw_exceptions ) ) {
+			return true;
+		}
+		return false;
+	}
+
+
+
+	/**
 	 * This returns the set localized label for the message type on this message.
 	 * Note, if unable to retrieve the EE_message_type object then will just return the message type slug saved
 	 * with this message.
