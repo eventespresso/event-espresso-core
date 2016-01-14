@@ -40,9 +40,10 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	protected function _init_props() {
 		$this->label = __('Messenger Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes that are messenger specific.', 'event_espresso');
-
+		/** @type EE_Messages $messages_controller */
+		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
 		//add messages about what happens  when the messenger is active.
-		$this->_active_messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
+		$this->_active_messengers = $messages_controller->get_active_messengers();
 
 		$this->_shortcodes['[DISPLAY_HTML_URL]'] =__('This will return a link to view the template in a browser if the html messenger is active.', 'event_espresso');
 		$this->_shortcodes['[DISPLAY_PDF_URL]'] = __('This will return a link to generate a pdf for the template if the pdf messenger is active.', 'event_espresso' );
