@@ -27,9 +27,9 @@
 <?php _e('This setting controls the order of the event elements on the single event page. For example, if you want the venue details to appear above the ticket selector on the single event pages, just set the "Venue Display Order" setting to "1", and set the "Tickets Display Order" setting to "2". The lower the number, the further down the page the venue details will appear.', 'event_espresso'); ?>
 </li>
 </ul>
-<h3>
+<p><strong>
 <?php _e('Event List Pages', 'event_espresso'); ?>
-</h3>
+</strong></p>
 <ul>
 <li>
 <strong><?php _e('Event Listings URL', 'event_espresso'); ?></strong><br />
