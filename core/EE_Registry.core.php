@@ -80,6 +80,15 @@ class EE_Registry {
 	public $CAP = null;
 
 	/**
+	 * holds the EE_Message_Resource_Manager object.
+	 *
+	 * @since 4.9.0
+	 *
+	 * @var EE_Message_Resource_Manager
+	 */
+	public $MRM = null;
+
+	/**
 	 *    $addons - StdClass object for holding addons which have registered themselves to work with EE core
 	 * @access    public
 	 * @var    EE_Addon[]
@@ -183,6 +192,7 @@ class EE_Registry {
 				'EE_Cart' 				=> 'CART',
 				'EE_Network_Config'  	=> 'NET_CFG',
 				'EE_Request_Handler' 	=> 'REQ',
+				'EE_Message_Resource_Manager' => 'MRM',
 			)
 		);
 		$this->_auto_resolve_dependencies = apply_filters(
