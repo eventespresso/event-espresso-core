@@ -23,6 +23,10 @@ class EE_Boolean_Field extends EE_Integer_Field{
 	 * @return string Yes or No
 	 */
 	function prepare_for_pretty_echoing( $value_on_field_to_be_outputted ) {
-		return $value_on_field_to_be_outputted ? __( 'Yes', 'event_espresso' ) : __( 'No', 'event_espresso' );
+		return apply_filters( 
+			'FHEE__EE_Boolean_Field__prepare_for_pretty_echoing__return',
+			$value_on_field_to_be_outputted ? __( 'Yes', 'event_espresso' ) : __( 'No', 'event_espresso' ),
+			$value_on_field_to_be_outputted
+		);
 	}
 }
