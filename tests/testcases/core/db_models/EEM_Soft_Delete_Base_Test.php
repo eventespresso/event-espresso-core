@@ -100,6 +100,26 @@ class EEM_Soft_Delete_Base_Test extends EE_UnitTestCase {
 		$this->assertFalse( $status == 'trash' );
 	}
 
+	/**
+	 * @group 9179
+	 */
+	public function test_get_minimum_where_conditions_during_query() {
+		$this->new_model_obj_with_dependencies( 'Registration', array( 'REG_deleted' => true ) );
+		$this->new_model_obj_with_dependencies( 'Registration', array( 'REG_deleted' => false ) );
+		//count using the default where conditions, which excludes the deleted one
+		$this->assertEquals(
+			1,
+			EEM_Registration::instance()->count() 
+		);
+		//count using the MINIMUM where conditions, which INCLUDES the deleted one
+		$this->assertEquals( 
+			2,
+			EEM_Registration::instance()->count(
+				array(
+					'default_where_conditions' => 'minimum'
+				)) 
+		);
+	}
 
 
 }
