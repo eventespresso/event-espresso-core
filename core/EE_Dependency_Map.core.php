@@ -25,15 +25,19 @@ class EE_Dependency_Map {
 	protected static $_instance = null;
 
 	/**
-	 * @type array $dependency_map
+	 * @type array $_dependency_map
 	 */
 	protected static $_dependency_map = array();
 
 
+	/**
+	 * This is a protected array of dependencies that cannot be overwritten
+	 * @type array $_core_dependency_map
+	 */
 	private static $_core_dependency_map = array();
 
 	/**
-	 * @type array $class_loaders
+	 * @type array $_class_loaders
 	 */
 	protected static $_class_loaders = array();
 
