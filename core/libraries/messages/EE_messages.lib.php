@@ -169,6 +169,10 @@ class EE_Messages {
 	/**
 	 * Ensures that the specified messenger is currently active.
 	 * If not, activates it and its default message types.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Payment_Method_Manager::activate_a_payment_method_of_type()
+	 * >>>>>>>>>>>> 2 usages in \EE_messages_Test::test_ensure_messenger_is_active()
+	 *
 	 * @param string $messenger_name
 	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
 	 */
@@ -188,6 +192,9 @@ class EE_Messages {
 	/**
 	 * Ensures that the specified message type for the given messenger is currently active, if not activates it.
 	 * This ALSO ensures that the given messenger is active as well!.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Payment_Method_Manager::activate_a_payment_method_of_type()
+	 * >>>>>>>>>>>> 1 usage in \EE_Register_Message_Type::set_defaults()
 	 *
 	 * @param string $message_type message type name
 	 * @param        $messenger
@@ -220,6 +227,9 @@ class EE_Messages {
 
 	/**
 	 * Activates the specified messenger
+	 *
+	 * >>>>>>>>>>>> 2 usages found in this file: ensure_message_type_is_active() and ensure_messenger_is_active()
+	 *
 	 * @param string $messenger_name
 	 * @param array $mts_to_activate (optional) An array of message types to activate with this messenger.  If
 	 *                             				included we do NOT setup the default message types (assuming
@@ -293,6 +303,9 @@ class EE_Messages {
 
 	/**
 	 * load the active files needed (key word... NEEDED)
+	 *
+	 * >>>>>>>>> 1 usage in \EE_Messages::_set_active_messengers_and_message_types()
+	 *
 	 * @param string $kind    indicates what kind of files we are loading.
 	 * @param array  $actives indicates what active types of the $kind are actually to be loaded.
 	 * @return array|void
@@ -375,6 +388,8 @@ class EE_Messages {
 	/**
 	 * Used to verify if a message can be sent for the given messenger and message type and that it is a generating messenger (used for generating message templates).
 	 *
+	 * >>>>>>>>>>>> NO usages found
+	 *
 	 * @param EE_Messenger    $messenger    messenger used in trigger
 	 * @param EE_message_type $message_type message type used in trigger
 	 *
@@ -397,6 +412,11 @@ class EE_Messages {
 	/**
 	 * This returns the corresponding EE_Messenger object for the given string if it is active.
 	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Message_Generated_From_Token::get_EE_Message()
+	 * >>>>>>>>>>>> 1 usage in \EE_Message_To_Generate_From_Request::__construct()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::validate_for_use()
+	 * >>>>>>>>>>>> 2 usages in \EE_Messages_Queue::execute()
+	 *
 	 * @param string    $messenger
 	 * @return EE_Messenger | null
 	 */
@@ -409,6 +429,9 @@ class EE_Messages {
 	 * This validates whether the given EE_Message object can be used for either sending or generation.
 	 * This is done by grabbing the messenger and message type on the EE_Message and verifying that both are installed
 	 * and active.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Message_To_Generate::_set_valid()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages_Generator::_validate_messenger_and_message_type()
 	 *
 	 * @param EE_Message $message
 	 *
@@ -435,6 +458,11 @@ class EE_Messages {
 
 	/**
 	 * Delegates message sending to messengers
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EED_Ticketing::_generate_tickets()
+	 * >>>>>>>>>>>> 1 usage in \EED_Ticketing::maybe_ticket_notice()
+	 * >>>>>>>>>>>> 1 usage in \EED_Ticketing::process_resend_ticket_notice()
+	 *
 	 * @deprecated 4.9.0
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
 	 * @param  mixed  $vars    Data being sent for parsing in the message
@@ -558,6 +586,9 @@ class EE_Messages {
 
 	/**
 	 * Use to generate and return a message preview!
+	 *
+	 * >>>>>>>>>>>> NO usages found
+	 *
 	 * @deprecated 4.9.0
 	 * @param  string $type    This should correspond with a valid message type
 	 * @param  string $context This should correspond with a valid context for the message type
@@ -572,6 +603,8 @@ class EE_Messages {
 
 	/**
 	 * This is a method that allows for sending a message using a messenger matching the string given and the provided EE_Message stdClass objects.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EED_Ticketing::_generate_tickets()
 	 *
 	 * @since 4.5.0
 	 * @deprecated 4.9.0   Moved to EED_Messages Module
@@ -615,6 +648,10 @@ class EE_Messages {
 
 	/**
 	 * _validate_setup
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::create_new_templates()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_fields()
+	 *
 	 * @param  string $messenger    EE_Messenger
 	 * @param  string $message_type EE_message_type
 	 * @param bool $is_global whether this is a global template or not.
@@ -639,13 +676,28 @@ class EE_Messages {
 
 
 		//do we have the necessary objects loaded?
-		if ( empty( $this->_messenger) || empty($this->_message_type) )
-			throw new EE_Error( sprintf( __(' The %s messenger or the %s message_type are not active. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
-
+		if ( empty( $this->_messenger ) || empty( $this->_message_type ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						' The %s messenger or the %s message_type are not active. Are you sure they exist?',
+						'event_espresso'
+					),
+					$messenger,
+					$message_type
+				)
+			);
+		}
 		//is given message_type valid for given messenger (if this is not a global save)
 		if ( !$is_global ) {
-			$has_active = EEM_Message_Template_Group::instance()->count( array( array( 'MTP_is_active' => TRUE, 'MTP_messenger' => $this->_messenger->name, 'MTP_message_type' => $message_type ) ) );
-
+			$has_active = EEM_Message_Template_Group::instance()->count(
+				array(
+					array(
+						'MTP_is_active' => true, 'MTP_messenger' => $this->_messenger->name,
+						'MTP_message_type' => $message_type
+					)
+				)
+			);
 			if ( $has_active == 0 ) {
 				EE_Error::add_error(
 					sprintf(
@@ -666,6 +718,9 @@ class EE_Messages {
 
 	/**
 	 * This is a wrapper for the protected _create_new_templates function
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EEH_MSG_Template::generate_new_templates()
+	 *
 	 * @param         $messenger
 	 * @param  string $message_type message type that the templates are being created for
 	 * @param int     $GRP_ID
@@ -691,7 +746,14 @@ class EE_Messages {
 		return $this->_create_new_templates($GRP_ID, $is_global);
 	}
 
-	protected function _create_new_templates($GRP_ID, $is_global) {
+
+
+	/**
+	 * @param $GRP_ID
+	 * @param $is_global
+	 * @return array|mixed
+	 */
+	protected function _create_new_templates( $GRP_ID, $is_global) {
 
 		//if we're creating a custom template then we don't need to use the defaults class
 		if ( ! $is_global )
@@ -780,6 +842,9 @@ class EE_Messages {
 	/**
 	 * get_fields
 	 * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
+	 *
+	 * >>>>>>>>>>>> 1 usage in \Messages_Admin_Page::_edit_message_template()
+	 *
 	 * @param  string $messenger    EE_Messenger
 	 * @param  string $message_type EE_message_type
 	 * @return array|WP_Error  template fields indexed by context.
@@ -807,6 +872,10 @@ class EE_Messages {
 
 	/**
 	 * gets an array of installed messengers and message types objects.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EEH_MSG_Template::get_installed_message_objects()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_installed_message_types()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_installed_messengers()
 	 *
 	 * @access public
 	 * @param string $type 				we can indicate just returning installed message types
@@ -845,6 +914,7 @@ class EE_Messages {
 		return $installed;
 	}
 
+
 	/**
 	 * _get_installed
 	 * takes an array of filenames and returns an array of objects instantiated from the class name found in the filename.
@@ -875,7 +945,15 @@ class EE_Messages {
 
 
 	/**
-	 * This does NOT return the _active_message_types property but simply returns an array of active message types from that property.  (The _active_message_types property is indexed by messenger and active message_types per messenger).
+	 * This does NOT return the _active_message_types property but
+	 * simply returns an array of active message types from that property.
+	 * (The _active_message_types property is indexed by messenger and active message_types per messenger).
+	 *
+	 * >>>>>>>>>>>> 1 usage in \Registrations_Admin_Page::_set_list_table_views_default()
+	 * >>>>>>>>>>>> 1 usage in \EEH_MSG_Template::is_mt_active()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_active_message_type_objects()
+	 * >>>>>>>>>>>> 1 usage in \EED_Ticketing::process_resend_ticket_notice()
+	 *
 	 *
 	 * @return array array of message_type references (string)
 	 */
@@ -894,6 +972,8 @@ class EE_Messages {
 
 	/**
 	 * Same as get_active_message_types() except this returns actual EE_message_type objects
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_all_contexts()
 	 *
 	 * @since 4.9.0
 	 * @return EE_message_type[]
@@ -915,6 +995,8 @@ class EE_Messages {
 
 	/**
 	 * This checks the _active_message_types property for any active message types that are present for the given messenger and returns them.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \espresso_events_Messages_Hooks_Extend::messages_metabox()
 	 *
 	 * @since 4.5.0
 	 *
@@ -943,6 +1025,9 @@ class EE_Messages {
 	/**
 	 * This returns the EE_message_type from the active message types array ( if present );
 	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::validate_for_use()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages_Queue::execute()
+	 *
 	 * @param string $messenger      The string should correspond to the messenger (message types are
 	 *                               		    assigned to a messenger in the messages settings)
 	 * @param string $message_type The string should correspond to a message type.
@@ -959,6 +1044,20 @@ class EE_Messages {
 
 
 
+	/**
+	 *
+	 * >>>>>>>>>>>> 1 usage in \Messages_Admin_Page::_get_installed_message_objects()
+	 * >>>>>>>>>>>> 1 usage in \EEH_MSG_Template::message_type_obj()
+	 * >>>>>>>>>>>> 1 usage in \EE_Message_Template_Defaults::_init()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::_validate_setup()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::activate_messenger()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_active_message_type()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_active_message_type_objects()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_active_message_types_per_messenger()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_installed()
+	 *
+	 * @return array|\EE_message_type[]
+	 */
 	public function get_installed_message_types() {
 		$this->_installed_message_types = empty( $this->_installed_message_types )
 			? $this->get_installed( 'message_types', true )
@@ -968,6 +1067,15 @@ class EE_Messages {
 
 
 
+	/**
+	 * >>>>>>>>>>>> 1 usage in \Messages_Admin_Page::_get_installed_message_objects()
+	 * >>>>>>>>>>>> 1 usage in \EEH_MSG_Template::messenger_obj()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::activate_messenger()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::ensure_message_type_is_active()
+	 * >>>>>>>>>>>> 1 usage in \EE_Messages::get_installed()
+	 *
+	 * @return array
+	 */
 	public function get_installed_messengers() {
 		$this->_installed_messengers = empty( $this->_installed_messengers )
 			? $this->get_installed( 'messengers', true )
@@ -997,6 +1105,10 @@ class EE_Messages {
 	 *
 	 * Keep in mind that although different message types may share the same context slugs, it is possible that the context
 	 * is described differently by the message type.
+	 *
+	 * >>>>>>>>>>>> 1 usage in \EE_Message_List_Table::_get_table_filters()
+	 * >>>>>>>>>>>> 1 usage in \EE_Message::context_label()
+	 * >>>>>>>>>>>> 1 usage in \EE_messages_Test::test_get_all_contexts()
 	 *
 	 * @since 4.9.0
 	 * @param   bool    $slugs_only     Whether to return an array of just slugs and labels (true) or all contexts indexed by message type.
@@ -1034,6 +1146,9 @@ class EE_Messages {
 	/**
 	 * Validates the given string as a reference for an existing, accessible data handler and returns the class name
 	 * For the handler the reference matches.
+	 *
+	 * >>>>>>>>>>>> No usages found
+	 *
 	 * @param string $data_handler_reference
 	 * @return string
 	 */
