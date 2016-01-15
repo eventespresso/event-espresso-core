@@ -134,9 +134,9 @@ class EE_Message_Resource_Manager {
 	 *
 	 * @return array
 	 */
-	public static function get_active_messengers_option() {
+	public function get_active_messengers_option() {
 		return apply_filters(
-			'FHEE__EE_Messenger_And_Message_Type_Manager__get_active_messengers_option',
+			'FHEE__EE_Message_Resource_Manager__get_active_messengers_option',
 			get_option( 'ee_active_messengers', array() )
 		);
 	}
@@ -149,7 +149,7 @@ class EE_Message_Resource_Manager {
 	 * @param array $active_messengers Incoming data to save.
 	 * @return bool FALSE if not updated, TRUE if updated.
 	 */
-	public static function update_active_messengers_option( $active_messengers ) {
+	public function update_active_messengers_option( $active_messengers ) {
 		return update_option( 'ee_active_messengers', $active_messengers );
 	}
 
@@ -160,16 +160,22 @@ class EE_Message_Resource_Manager {
 	 * generate list of active messengers and message types from collection
 	 */
 	protected function _set_active_messengers_and_message_types() {
-		$this->messenger_collection()->rewind();
-		while ( $this->messenger_collection()->valid() ) {
-			$this->_active_messengers[ $this->messenger_collection()->current()->name ] = $this->messenger_collection()->current();
-			$this->messenger_collection()->next();
 
-			//$this->_active_message_types[ $name ] = ! empty( $_actives[ $name ][ 'settings' ][ $name . '-message_types' ] )
-			//	? $_actives[ $name ][ 'settings' ][ $name . '-message_types' ]
-			//	: array();
+		$active_messengers = $this->get_active_messengers_option();
+		$active_messengers = is_array( $active_messengers ) ? array_keys( $active_messengers ) : $active_messengers;
 
+		foreach ( $active_messengers as $active_messenger => $properties ) {
+			if ( $this->messenger_collection()->has_by_classname( $active_messenger ) ) {
+				$this->_active_messengers[ $active_messenger ] = $this->messenger_collection()->get_by_info(
+					$active_messenger
+				);
+				$this->_active_message_types[ $active_messenger ] = ! empty( $properties[ 'settings' ][ $active_messenger . '-message_types' ] )
+					? $properties[ 'settings' ][ $active_messenger . '-message_types' ]
+					: array();
+			}
 		}
+		EEH_Debug_Tools::printr( $this->_active_messengers, '$this->_active_messengers', __FILE__, __LINE__ );
+		EEH_Debug_Tools::printr( $this->_active_message_types, '$this->_active_message_types', __FILE__, __LINE__ );
 
 	}
 
@@ -186,7 +192,7 @@ class EE_Message_Resource_Manager {
 		unset( $this->_active_messengers[ $messenger ] );
 		unset( $this->_active_message_types[ $messenger ] );
 		$this->_message_template_group_model->deactivate_message_template_groups_for( $messenger );
-		EE_Message_Resource_Manager::update_active_messengers_option( $this->_active_messengers );
+		$this->update_active_messengers_option( $this->_active_messengers );
 	}
 
 
@@ -206,7 +212,7 @@ class EE_Message_Resource_Manager {
 		}
 		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type );
 		unset( $this->_active_message_types[ $message_type ] );
-		EE_Message_Resource_Manager::update_active_messengers_option( $this->_active_messengers );
+		$this->update_active_messengers_option( $this->_active_messengers );
 	}
 
 
