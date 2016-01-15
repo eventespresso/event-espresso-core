@@ -115,7 +115,7 @@ class EE_Dependency_Map {
 	 * @return array
 	 */
 	public static function register_class_loader( $class_name, $loader = 'load_core' ) {
-		if ( isset( self::$_class_loaders[ $class_name ] ) ) {
+		if ( ! isset( self::$_class_loaders[ $class_name ] ) ) {
 			self::$_class_loaders[ $class_name ] = $loader;
 		}
 	}
