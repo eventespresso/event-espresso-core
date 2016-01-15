@@ -540,7 +540,9 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * You can pass it special content to put inside the form, or use
 	 * the default inner content (or possibly generate this all yourself using
 	 * redirect_url() and redirect_args() or redirect_args_as_inputs()).
-	 * Creates a POST request by default, but if no redirect args are specified, creates a GET request instead.
+	 * Creates a POST request by default, but if no redirect args are specified, creates a GET request instead
+	 * (and any querystring variables in the redirect_url are converted into html inputs
+	 * so browsers submit them properly)
 	 * @param string $inside_form_html
 	 * @return string html
 	 */
