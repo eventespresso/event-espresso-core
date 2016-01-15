@@ -197,34 +197,7 @@ class EE_Registry {
 		);
 		$this->_auto_resolve_dependencies = apply_filters(
 			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
-			array(
-				'EE_Session'         	=> array(
-					'EE_Encryption' => 'load_core'
-				),
-				'EE_Cart' 				=> array(
-					null,
-					'EE_Session' => 'load_core'
-				),
-				'EE_Front_Controller' 	=> array(
-					'EE_Registry' => 'load_core',
-					'EE_Request_Handler' => 'load_core',
-					'EE_Module_Request_Router' => 'load_core'
-				),
-				'EE_Messenger_Collection_Loader' 	=> array(
-					'EE_Messenger_Collection' => 'load_lib'
-				),
-				'EE_Message_Type_Collection_Loader' 	=> array(
-					'EE_Message_Type_Collection' => 'load_lib'
-				),
-				'EE_Message_Resource_Manager' 	=> array(
-					'EE_Messenger_Collection_Loader' => 'load_lib',
-					'EE_Message_Type_Collection_Loader' => 'load_lib',
-					'EEM_Message_Template_Group' => 'load_lib'
-				),
-				'EE_Message_Factory' 	=> array(
-					'EE_Message_Resource_Manager' => 'load_lib'
-				),
-			)
+			EE_Dependency_Map::dependency_map()
 		);
 		// class library
 		$this->LIB = new StdClass();
@@ -833,7 +806,7 @@ class EE_Registry {
 				continue;
 			} else if (
 				isset( $this->_auto_resolve_dependencies[ $class_name ] )
-				&& isset( $this->_auto_resolve_dependencies[ $class_name ][ $param_class ] )
+				&& in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] )
 			) {
 				// we might have a dependency... let's try and find it in our cache
 				$cached_class = $this->_get_cached_class( $param_class );
@@ -842,7 +815,7 @@ class EE_Registry {
 				if ( $cached_class instanceof $param_class ) {
 					$dependency = $cached_class;
 				} else if ( $param_class != $class_name ) {
-					$loader = $this->_auto_resolve_dependencies[ $class_name ][ $param_class ];
+					$loader = EE_Dependency_Map::class_loader( $param_class );
 					// or if not cached, then let's try and load it directly
 					$core_class = $this->$loader( $param_class );
 					// as long as we aren't creating some recursive loading loop
