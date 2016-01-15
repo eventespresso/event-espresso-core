@@ -83,7 +83,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	private function _load_dependency_map() {
 		if ( is_readable( EE_CORE . 'EE_Dependency_Map.core.php' ) ) {
 			require_once( EE_CORE . 'EE_Dependency_Map.core.php' );
-			new EE_Dependency_Map();
+			EE_Dependency_Map::instance();
 		} else {
 			EE_Error::add_error(
 				__( 'The EE_Dependency_Map core class could not be loaded.', 'event_espresso' ),
