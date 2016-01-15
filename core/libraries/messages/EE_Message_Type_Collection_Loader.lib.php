@@ -81,7 +81,7 @@ class EE_Message_Type_Collection_Loader {
 			// now remove any file extensions
 			$message_type_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
 			$message_type = new $message_type_class_name();
-			if ( $this->message_type_collection()->has_by_classname( $message_type->name ) ) {
+			if ( $this->message_type_collection()->has_by_name( $message_type->name ) ) {
 				continue;
 			}
 			$this->message_type_collection()->add(
