@@ -75,7 +75,7 @@ class EE_Message_Type_Collection_Loader {
 		if ( empty( $filepaths ) ) {
 			return;
 		}
-		foreach ( (array)$filepaths as $file_path ) {
+		foreach ( (array) $filepaths as $file_path ) {
 			// extract filename from path
 			$file_path = basename( $file_path );
 			// now remove any file extensions
