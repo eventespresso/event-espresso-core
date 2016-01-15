@@ -560,7 +560,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column__REG_paid(EE_Registration $item){
-		return '<span class="reg-pad-rght">' .  $item->pretty_paid() . '</span>';
+		$payment_method = $item->payment_method();
+		$payment_method_name = $payment_method instanceof EE_Payment_Method ? $payment_method->admin_name() : __( 'Unknown', 'event_espresso' );
+
+		$content = '<span class="reg-pad-rght">' .  $item->pretty_paid() . '</span>';
+		if ( $item->paid() > 0 ) {
+			$content .= '<br><span class="ee-status-text-small">' . sprintf( __( '...via %s', 'event_espresso' ), $payment_method_name ) . '</span>';
+		}
+		return $content;
 	}
 
 

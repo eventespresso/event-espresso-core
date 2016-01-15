@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage		/shortcodes/
- * @author			Brent Christensen 
+ * @author			Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -41,29 +41,32 @@ class EES_Espresso_Ticket_Selector  extends EES_Shortcode {
 	public static function set_hooks_admin() {
 	}
 
+
+
 	/**
-	 * 	run - initial shortcode module setup called during "wp_loaded" hook
-	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 *    run - initial shortcode module setup called during "wp_loaded" hook
+	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param \WP $WP
 	 */
 	public function run( WP $WP ) {
 	}
 
 	/**
-	 * 	process_shortcode - ESPRESSO_TICKET_SELECTOR 
-	 * 
+	 * 	process_shortcode - ESPRESSO_TICKET_SELECTOR
+	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		extract( $attributes );
+		$event_id = isset( $event_id ) ? $event_id : 0;
 		$event = EE_Registry::instance()->load_model( 'Event' )->get_one_by_ID( $event_id );
 		ob_start();
 		do_action( 'AHEE_event_details_before_post', $event_id );
-		espresso_ticket_selector( $event );	
+		espresso_ticket_selector( $event );
 		do_action( 'AHEE_event_details_after_post' );
 		return ob_get_clean();
 	}
