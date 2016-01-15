@@ -29,13 +29,6 @@ class EE_Dependency_Map {
 	 */
 	protected static $_dependency_map = array();
 
-
-	/**
-	 * This is a protected array of dependencies that cannot be overwritten
-	 * @type array $_core_dependency_map
-	 */
-	private static $_core_dependency_map = array();
-
 	/**
 	 * @type array $_class_loaders
 	 */
@@ -47,7 +40,7 @@ class EE_Dependency_Map {
 	 * EE_Dependency_Map constructor.
 	 */
 	protected function __construct() {
-		$this->_register_core_dependencies();
+		$this->set_dependency_map();
 		$this->set_class_loaders();
 		do_action( 'EE_Dependency_Map____construct' );
 	}
@@ -86,10 +79,7 @@ class EE_Dependency_Map {
 	public static function register_dependencies( $class, $dependencies ) {
 		if ( ! isset( self::$_dependency_map[ $class ] ) ) {
 			self::$_dependency_map[ $class ] = $dependencies;
-		}
-
-		//allow overriding any registered dependencies that are not core protected dependencies.
-		if ( ! isset( self::$_core_dependency_map[ $class ] ) ) {
+		} else {
 			self::$_dependency_map[ $class ] = array_merge(
 				self::$_dependency_map[ $class ],
 				$dependencies
@@ -125,42 +115,66 @@ class EE_Dependency_Map {
 	/**
 	 * @access protected
 	 */
-	protected function _register_core_dependencies() {
-		self::$_core_dependency_map = array(
-			'EE_Session' => array(
-				'EE_Encryption'
-			),
-			'EE_Cart' => array(
+	protected function set_dependency_map() {
+		EE_Dependency_Map::register_dependencies(
+			'EE_Session',
+			array(
+				'EE_Encryption',
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Cart',
+			array(
 				null,
 				'EE_Session',
-			),
-			'EE_Front_Controller' => array(
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Front_Controller',
+			array(
 				'EE_Registry',
 				'EE_Request_Handler',
 				'EE_Module_Request_Router',
-			),
-			'EE_Messenger_Collection_Loader' => array(
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Messenger_Collection_Loader',
+			array(
 				'EE_Messenger_Collection',
-			),
-			'EE_Message_Type_Collection_Loader' => array(
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Message_Type_Collection_Loader',
+			array(
 				'EE_Message_Type_Collection',
-			),
-			'EE_Message_Resource_Manager' => array(
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Message_Resource_Manager',
+			array(
 				'EE_Messenger_Collection_Loader',
 				'EE_Message_Type_Collection_Loader',
 				'EEM_Message_Template_Group',
-			),
-			'EE_Message_Factory' => array(
-				'EE_Message_Resource_Manager',
-			),
-			'EE_Messages' => array(
-				'EE_Message_Resource_Manager',
-			),
-			'EE_messages' => array(
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Message_Factory',
+			array(
 				'EE_Message_Resource_Manager',
 			)
 		);
-		self::$_dependency_map = self::$_core_dependency_map;
+		EE_Dependency_Map::register_dependencies(
+			'EE_Messages',
+			array(
+				'EE_Message_Resource_Manager',
+			)
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_messages',
+			array(
+				'EE_Message_Resource_Manager',
+			)
+		);
 	}
 
 
