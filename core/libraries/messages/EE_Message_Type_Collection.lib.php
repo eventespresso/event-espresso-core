@@ -105,7 +105,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection {
 	 * @return bool
 	 */
 	public function has_by_name( $message_type_name ) {
-		return $this->get_by_info( $message_type_name ) instanceof $this->interface ? true :false;
+		return $this->get_by_info( $message_type_name ) instanceof $this->interface ? true : false;
 	}
 
 
