@@ -849,7 +849,7 @@ final class EE_Admin {
 	public function espresso_admin_footer() {
 		return sprintf(
 			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
-			'<a href="http://eventespresso.com/" title="',
+			'<a href="https://eventespresso.com/" title="',
 			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
 		);
 	}
