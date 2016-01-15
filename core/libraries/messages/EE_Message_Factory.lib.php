@@ -27,9 +27,9 @@ class EE_Message_Factory {
 
 
 	/**
-	 * @type EE_Message_Resource_Manager $_messenger_and_message_type_manager
+	 * @type EE_Message_Resource_Manager $_message_resource_manager
 	 */
-	protected $_messenger_and_message_type_manager;
+	protected $_message_resource_manager;
 
 
 
@@ -37,12 +37,12 @@ class EE_Message_Factory {
 	 * EE_Message_Factory constructor.
 	 *
 	 * @access protected
-	 * @param \EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager
+	 * @param \EE_Message_Resource_Manager $Message_Resource_Manager
 	 */
 	protected function __construct(
-		EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager
+		EE_Message_Resource_Manager $Message_Resource_Manager
 	) {
-		$this->_messenger_and_message_type_manager = $Messenger_And_Message_Type_Manager;
+		$this->_message_resource_manager = $Message_Resource_Manager;
 	}
 
 
@@ -50,13 +50,13 @@ class EE_Message_Factory {
 	/**
 	 * @singleton method used to instantiate class object
 	 * @access    public
-	 * @param \EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager
+	 * @param \EE_Message_Resource_Manager $Message_Resource_Manager
 	 * @return \EE_Message_Factory instance
 	 */
-	public static function instance( EE_Message_Resource_Manager $Messenger_And_Message_Type_Manager = null ) {
+	public static function instance( EE_Message_Resource_Manager $Message_Resource_Manager = null ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( ! self::$_instance instanceof EE_Message_Factory ) {
-			self::$_instance = new EE_Message_Factory( $Messenger_And_Message_Type_Manager );
+			self::$_instance = new EE_Message_Factory( $Message_Resource_Manager );
 		}
 		return self::$_instance;
 	}
@@ -152,7 +152,7 @@ class EE_Message_Factory {
 	 * @throws \EE_Error
 	 */
 	protected function _set_messenger( EE_Message $message ) {
-		$messenger = $this->_messenger_and_message_type_manager->get_messenger( $message->messenger() );
+		$messenger = $this->_message_resource_manager->get_messenger( $message->messenger() );
 		if ( $messenger instanceof EE_Messenger ) {
 			$message->set_messenger_object( $messenger );
 		}
@@ -168,7 +168,7 @@ class EE_Message_Factory {
 	 * @throws \EE_Error
 	 */
 	protected function _set_message_type( EE_Message $message ) {
-		$message_type = $this->_messenger_and_message_type_manager->get_message_type( $message->message_type() );
+		$message_type = $this->_message_resource_manager->get_message_type( $message->message_type() );
 		if ( $message_type instanceof EE_Message_Type ) {
 			$message->set_message_type_object( $message_type );
 		}
