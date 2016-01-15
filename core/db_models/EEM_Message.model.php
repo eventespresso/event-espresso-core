@@ -148,7 +148,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	public function create_default_object() {
 		/** @type EE_Message $message */
 		$message = parent::create_default_object();
-		return EE_Message_Factory::set_messenger_and_message_type( $message, false );
+		if ( $message instanceof EE_Message ) {
+			return EE_Message_Factory::set_messenger_and_message_type( $message );
+		}
+		return null;
 	}
 
 
@@ -160,7 +163,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	public function instantiate_class_from_array_or_object( $cols_n_values ) {
 		/** @type EE_Message $message */
 		$message = parent::instantiate_class_from_array_or_object( $cols_n_values );
-		return EE_Message_Factory::set_messenger_and_message_type( $message );
+		if ( $message instanceof EE_Message ) {
+			return EE_Message_Factory::set_messenger_and_message_type( $message );
+		}
+		return null;
 	}
 
 
