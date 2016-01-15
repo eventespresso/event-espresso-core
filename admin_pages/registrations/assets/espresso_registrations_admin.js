@@ -30,7 +30,7 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$( '.question-group-questions' ).each(function() {
+	$( '.reg-admin-attendee-questions-input-td' ).each(function() {
 		$(this).find('input').prop( 'disabled', true );
 		$(this).find('select').prop( 'disabled', true );
 		$(this).find('textarea').prop( 'disabled', true );
@@ -38,7 +38,7 @@ jQuery(document).ready(function($) {
 
 	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
 		e.preventDefault();
-		$(this).closest('table').find('td' ).each(function() {
+		$(this).closest('table').find('.reg-admin-attendee-questions-input-td' ).each(function() {
 			$(this).removeClass('disabled-input');
 			$(this).find('input').prop( 'disabled', false ).addClass('editable-input');
 			$(this).find('select').prop( 'disabled', false ).addClass('editable-input');

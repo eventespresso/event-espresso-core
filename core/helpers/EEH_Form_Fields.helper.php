@@ -12,17 +12,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link		http://www.eventespresso.com
  * @version		3.2.P
- * @deprecated usage of this helper is discouraged since 4.8.30.rc.009, instead
- * consider using the form system classes in core/libraries/form_sections. See
- * http://developer.eventespresso.com/docs/ee4-forms-system/.
- * The reason this is discouraged is because the forms system partially duplicates the
- * same behaviour (displaying HTML inputs), but also simplifies form validation
- * server-side and client-side and normalization (putting form data into the expected
- * datatypes in PHP). Also there have been a few bugs noticed (see https://events.codebasehq.com/projects/event-espresso/tickets/9165)
- * and maintaining this class AND the forms system is extra work.
- * Once we have removed all usage of this from EE core, it's expected that we will
- * start issuing deprecation notices
- * 
  *
  * ------------------------------------------------------------------------
  *
@@ -70,7 +59,7 @@ class EEH_Form_Fields {
 	 * 	@todo: at some point we can break this down into other static methods to abstract it a bit better.
 	 */
 	static public function get_form_fields( $input_vars = array(), $id = FALSE ) {
-		
+
 		if ( empty($input_vars) ) {
 			EE_Error::add_error( __('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
@@ -614,7 +603,7 @@ class EEH_Form_Fields {
 				break;
 
 			case 'CHECKBOX' :
-					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $label_b4, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::checkbox( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
 				break;
 
 			case 'DATE' :
@@ -670,7 +659,7 @@ class EEH_Form_Fields {
 		// filter label but ensure required text comes before it
 		$label_html = apply_filters( 'FHEE__EEH_Form_Fields__label_html', $label_html, $required_text );
 
-		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . esc_attr( $answer ) . '"  title="' . esc_attr( $required['msg'] ) . '" ' . $disabled .' ' . $extra . '/>';
+		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . esc_attr( $required['msg'] ) . '" ' . $disabled .' ' . $extra . '/>';
 
 		$input_html =  apply_filters( 'FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
@@ -753,7 +742,7 @@ class EEH_Form_Fields {
 			return NULL;
 		}
 		// prep the answer
-		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer ), $use_html_entities) : self::prep_answer( $answer, $use_html_entities );
+		$answer = is_array( $answer ) ? self::prep_answer( array_shift( $answer )) : self::prep_answer( $answer, $use_html_entities );
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
@@ -778,7 +767,7 @@ class EEH_Form_Fields {
 		}
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
-			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer, $use_html_entities ) : self::_generate_select_option( $value->value(), $value->desc(), $answer, $only_option, $use_html_entities );
+			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->value(), $value->desc(), $answer, $only_option );
 		}
 
 		$input_html .= "\n\t\t\t" . '</select>';
@@ -801,13 +790,12 @@ class EEH_Form_Fields {
 	 * @param mixed $opt_group
 	 * @param mixed $QSOs
 	 * @param mixed $answer
-	 * @param boolean $use_html_entities
 	 * @return string
 	 */
-	private static function _generate_select_option_group( $opt_group, $QSOs, $answer, $use_html_entities = true ){
+	private static function _generate_select_option_group( $opt_group, $QSOs, $answer ){
 		$html = "\n\t\t\t\t" . '<optgroup label="' . self::prep_option_value( $opt_group ) . '">';
 		foreach ( $QSOs as $QSO ) {
-			$html .= self::_generate_select_option( $QSO->value(), $QSO->desc(), $answer, false, $use_html_entities );
+			$html .= self::_generate_select_option( $QSO->value(), $QSO->desc(), $answer );
 		}
 		$html .= "\n\t\t\t\t" . '</optgroup>';
 		return $html;
@@ -821,12 +809,11 @@ class EEH_Form_Fields {
 	 * @param mixed $value
 	 * @param mixed $answer
 	 * @param int $only_option
-	 * @param boolean $use_html_entities
 	 * @return string
 	 */
-	private static function _generate_select_option( $key, $value, $answer, $only_option = FALSE, $use_html_entities = true ){
-		$key = self::prep_answer( $key, $use_html_entities );
-		$value = self::prep_answer( $value, $use_html_entities );
+	private static function _generate_select_option( $key, $value, $answer, $only_option = FALSE ){
+		$key = self::prep_answer( $key );
+		$value = self::prep_answer( $value );
 		$value = ! empty( $value ) ? $value : $key;
 		$selected = ( $answer == $key || $only_option ) ? ' selected="selected"' : '';
 		return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';
@@ -937,7 +924,7 @@ class EEH_Form_Fields {
 
 		foreach ( $answer as $key => $value ) {
 			$key = self::prep_option_value( $key );
-			$answer[$key] = self::prep_answer( $value, $use_html_entities );
+			$answer[$key] = self::prep_answer( $value );
 		}
 
 		// prep the required array
@@ -1141,7 +1128,7 @@ class EEH_Form_Fields {
 	 * @return string
 	 */
 	static function prep_option_value( $option_value ){
-		return esc_attr( trim( stripslashes( $option_value ) ) );
+		return trim( stripslashes( $option_value ));
 	}
 
 
