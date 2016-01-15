@@ -109,21 +109,21 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * @param string $messenger_classname
+	 * @param string $messenger_name
 	 * @return \EE_Messenger
 	 */
-	public function get_messenger( $messenger_classname ) {
-		return $this->messenger_collection()->get_by_info( $messenger_classname );
+	public function get_messenger( $messenger_name ) {
+		return $this->messenger_collection()->get_by_info( $messenger_name );
 	}
 
 
 
 	/**
-	 * @param string $message_type_classname
+	 * @param string $message_type_name
 	 * @return \EE_Message_Type
 	 */
-	public function get_message_type( $message_type_classname ) {
-		return $this->message_type_collection()->get_by_info( $message_type_classname );
+	public function get_message_type( $message_type_name ) {
+		return $this->message_type_collection()->get_by_info( $message_type_name );
 	}
 
 
@@ -162,21 +162,30 @@ class EE_Message_Resource_Manager {
 	protected function _set_active_messengers_and_message_types() {
 
 		$active_messengers = $this->get_active_messengers_option();
-		$active_messengers = is_array( $active_messengers ) ? array_keys( $active_messengers ) : $active_messengers;
-
-		foreach ( $active_messengers as $active_messenger => $properties ) {
-			if ( $this->messenger_collection()->has_by_classname( $active_messenger ) ) {
+		$active_messengers = is_array( $active_messengers ) ? $active_messengers : array( $active_messengers );
+		$not_installed = array();
+		foreach ( $active_messengers as $active_messenger => $data ) {
+			if ( $this->messenger_collection()->has_by_name( $active_messenger ) ) {
 				$this->_active_messengers[ $active_messenger ] = $this->messenger_collection()->get_by_info(
 					$active_messenger
 				);
-				$this->_active_message_types[ $active_messenger ] = ! empty( $properties[ 'settings' ][ $active_messenger . '-message_types' ] )
-					? $properties[ 'settings' ][ $active_messenger . '-message_types' ]
+				$this->_active_message_types[ $active_messenger ] = ! empty( $data[ 'settings' ][ $active_messenger . '-message_types' ] )
+					? $data[ 'settings' ][ $active_messenger . '-message_types' ]
 					: array();
+			} else {
+				$not_installed[] = $active_messenger;
 			}
 		}
-		EEH_Debug_Tools::printr( $this->_active_messengers, '$this->_active_messengers', __FILE__, __LINE__ );
-		EEH_Debug_Tools::printr( $this->_active_message_types, '$this->_active_message_types', __FILE__, __LINE__ );
-
+		if ( ! empty( $not_installed ) ) {
+			EE_Error::add_error(
+				sprintf(
+					__( 'The following messengers are either not installed or are invalid:%1$s %2$s', 'event_espresso' ),
+					'<br />',
+					implode( ', ', $not_installed )
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
 	}
 
 
