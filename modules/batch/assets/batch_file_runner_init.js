@@ -17,9 +17,9 @@ jQuery(document).ready(function() {
         eei18n.ajax_url,
         // continue_data
         {
-            'page' : 'espresso_support',
             'action' : 'espresso_batch_continue',
-            'ee_admin_ajax' : true
+            'ee_admin_ajax' : eei18n.is_admin,
+			'ee_front_ajax' : ! eei18n.is_admin
         },
         // continue_callback
         ee_support_download_file,
@@ -27,21 +27,21 @@ jQuery(document).ready(function() {
         eei18n.ajax_url,
         // cleanup_data
         {
-            'page' : 'espresso_support',
             'action' : 'espresso_batch_cleanup',
-            'ee_admin_ajax' : true
+            'ee_admin_ajax' : eei18n.is_admin,
+			'ee_front_ajax' : ! eei18n.is_admin
         },
         // cleanup_callback
 		function( response, data, xhr ) {
                 //redirect them as if this page didn't exist
                 //(so clicking "back" won't get them here)
-                window.location.replace( ee_job_i18n.redirect_url );
+                window.location.replace( ee_job_i18n.return_url );
 			}
     );
     runner.set_job_id( ee_job_response.job_id );
 	runner.set_progress_bar_div( 'batch-progress' );
 	runner.set_progress_area( 'progress-area', 'append' );
-	runner.continue_job();
+	runner.handle_continue_response( { 'data' : ee_job_response } );
 
 
 
