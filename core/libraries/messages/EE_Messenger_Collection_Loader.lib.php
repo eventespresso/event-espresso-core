@@ -99,7 +99,7 @@ class EE_Messenger_Collection_Loader {
 			'FHEE__EEH_MSG_Template__get_active_messengers_in_db',
 			get_option( 'ee_active_messengers', array() )
 		);
-		foreach ( (array)$active_messengers as $active_messenger_classname => $active_messenger ) {
+		foreach ( (array) $active_messengers as $active_messenger_classname => $active_messenger ) {
 			$this->_load_messenger( $active_messenger );
 		}
 	}
