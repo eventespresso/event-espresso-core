@@ -8,12 +8,12 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Dependency_Map
  *
- * Description
+ * info about how to load classes required by other classes
  *
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  *
  */
 class EE_Dependency_Map {
@@ -74,17 +74,14 @@ class EE_Dependency_Map {
 	/**
 	 * @param string $class
 	 * @param array $dependencies
-	 * @return void
+	 * @return boolean
 	 */
 	public static function register_dependencies( $class, $dependencies ) {
 		if ( ! isset( self::$_dependency_map[ $class ] ) ) {
-			self::$_dependency_map[ $class ] = $dependencies;
-		} else {
-			self::$_dependency_map[ $class ] = array_merge(
-				self::$_dependency_map[ $class ],
-				$dependencies
-			);
+			self::$_dependency_map[ $class ] = (array)$dependencies;
+			return true;
 		}
+		return false;
 	}
 
 
@@ -102,12 +99,24 @@ class EE_Dependency_Map {
 	/**
 	 * @param string $class_name
 	 * @param string $loader
-	 * @return array
+	 * @return bool
+	 * @throws \EE_Error
 	 */
 	public static function register_class_loader( $class_name, $loader = 'load_core' ) {
+		// check that loader method starts with "load_" and exists in EE_Registry
+		if ( strpos( $loader, 'load_' ) !== 0 || ! method_exists( EE_Registry::instance(), $loader ) ) {
+			throw new EE_Error(
+				sprintf(
+					__( '"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso' ),
+					$loader
+				)
+			);
+		}
 		if ( ! isset( self::$_class_loaders[ $class_name ] ) ) {
 			self::$_class_loaders[ $class_name ] = $loader;
+			return true;
 		}
+		return false;
 	}
 
 
