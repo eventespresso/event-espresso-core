@@ -2,7 +2,7 @@
 <p>
 <?php _e('This page shows various options for your organization.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Countries and States/Provinces', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Countries and States/Provinces', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Select your country from the dropdown field. Selecting a different country will partially re-load the page and show updated information.', 'event_espresso'); ?>
 </p>
