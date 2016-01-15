@@ -26,7 +26,7 @@
 </li>
 </ul>
 </p>
-<h3><?php _e('Transaction Filters', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Transaction Filters', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Filters are a way to show transactions that fall into certain criteria.', 'event_espresso'); ?>
 </p>
