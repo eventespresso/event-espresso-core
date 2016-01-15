@@ -4,7 +4,7 @@
 	<?php echo $resend_registration_button; ?>
 	<br/>
 
-	<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span><?php _e( 'Registration Items', 'event_espresso' );?></h4>
+	<h3 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span><?php _e( 'Registration Items', 'event_espresso' );?></h3>
 
 	<?php echo $line_item_table; ?>
 
@@ -52,7 +52,7 @@
 		</a>
 	<br class="clear"/>
 
-		<h4 class="admin-primary-mbox-h4"><?php _e( 'Registration Session Details', 'event_espresso' );?></h4>
+		<h3 class="admin-primary-mbox-h4"><?php _e( 'Registration Session Details', 'event_espresso' );?></h3>
 
 		<table id="admin-primary-mbox-reg-extra-session-info-tbl" class="form-table skinny-rows">
 			<tbody>
