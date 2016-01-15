@@ -25,7 +25,7 @@
 <p>
 <?php _e('You can edit information about an Registrant by clicking on the View/Edit this Contact link.', 'event_espresso'); ?><br />
 </p>
-<h3><?php _e('Billing Information', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Billing Information', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Shows the billing information associated with this transaction.', 'event_espresso'); ?>
 </p>
