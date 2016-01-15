@@ -113,7 +113,7 @@ class EE_Messenger_Collection_Loader {
 	 * @return bool
 	 */
 	protected function _load_messenger( EE_Messenger $messenger ) {
-		if ( $this->messenger_collection()->has_by_classname( $messenger->name ) ) {
+		if ( $this->messenger_collection()->has_by_name( $messenger->name ) ) {
 			return true;
 		}
 		return $this->messenger_collection()->add(
