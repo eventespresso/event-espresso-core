@@ -170,8 +170,6 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public function messenger_object() {
 		return $this->_messenger;
-		//EE_Registry::instance()->load_helper( 'MSG_Template' );
-		//return EEH_MSG_Template::messenger_obj( $this->messenger() );
 	}
 
 
@@ -259,8 +257,6 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public function message_type_object() {
 		return $this->_message_type;
-		//EE_Registry::instance()->load_helper( 'MSG_Template' );
-		//return EEH_MSG_Template::message_type_obj( $this->message_type() );
 	}
 
 
