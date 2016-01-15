@@ -595,7 +595,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<h3>' . __('Status Legend', 'event_espresso') . '</h3>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
