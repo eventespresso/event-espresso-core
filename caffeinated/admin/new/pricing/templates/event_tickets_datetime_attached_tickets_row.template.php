@@ -4,7 +4,7 @@
 			<div class="datetime-description-container">
 				<textarea name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_description]" class="event-datetime-DTT_description ee-full-textarea-inp" placeholder="Datetime Description (optional)"><?php echo $DTT_description; ?></textarea>
 			</div>
-			<h5 class="datetime-tickets-heading"><?php _e('Assigned Tickets', 'event_espresso'); ?></h5>
+			<h4 class="datetime-tickets-heading"><?php _e('Assigned Tickets', 'event_espresso'); ?></h4>
 
 			<ul class="datetime-tickets-list">
 				<?php echo $datetime_tickets_list; ?>
@@ -12,7 +12,7 @@
 			
 			
 			<div class="add-datetime-ticket-container">
-				<h5 class="datetime-tickets-heading"><?php _e('Add New Ticket', 'event_espresso'); ?></h5><?php echo $add_new_datetime_ticket_help_link; ?><br>
+				<h4 class="datetime-tickets-heading"><?php _e('Add New Ticket', 'event_espresso'); ?></h4><?php echo $add_new_datetime_ticket_help_link; ?><br>
 				<table class="add-new-ticket-table">
 					<thead>
 						<tr valign="top">
