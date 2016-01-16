@@ -185,6 +185,15 @@ class EE_Dependency_Map {
 	}
 
 
+	/**
+	 * This is used to reset the internal map and class_loaders to their original default state at the beginning of the request
+	 * Primarily used by unit tests.
+	 */
+	public function reset() {
+		self::_register_core_class_loaders();
+		self::_register_core_dependencies();
+	}
+
 
 }
 // End of file EE_Dependency_Map.core.php
