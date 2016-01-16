@@ -125,62 +125,37 @@ class EE_Dependency_Map {
 	 * Registers the core dependencies
 	 */
 	protected function _register_core_dependencies() {
-		EE_Dependency_Map::register_dependencies(
-			'EE_Session',
-			array(
-				'EE_Encryption',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Cart',
-			array(
+		self::$_dependency_map = array(
+			'EE_Session' => array(
+				'EE_Encryption'
+			),
+			'EE_Cart' => array(
 				null,
 				'EE_Session',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Front_Controller',
-			array(
+			),
+			'EE_Front_Controller' => array(
 				'EE_Registry',
 				'EE_Request_Handler',
 				'EE_Module_Request_Router',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Messenger_Collection_Loader',
-			array(
+			),
+			'EE_Messenger_Collection_Loader' => array(
 				'EE_Messenger_Collection',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Message_Type_Collection_Loader',
-			array(
+			),
+			'EE_Message_Type_Collection_Loader' => array(
 				'EE_Message_Type_Collection',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Message_Resource_Manager',
-			array(
+			),
+			'EE_Message_Resource_Manager' => array(
 				'EE_Messenger_Collection_Loader',
 				'EE_Message_Type_Collection_Loader',
 				'EEM_Message_Template_Group',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Message_Factory',
-			array(
+			),
+			'EE_Message_Factory' => array(
 				'EE_Message_Resource_Manager',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_Messages',
-			array(
+			),
+			'EE_Messages' => array(
 				'EE_Message_Resource_Manager',
-			)
-		);
-		EE_Dependency_Map::register_dependencies(
-			'EE_messages',
-			array(
+			),
+			'EE_messages' => array(
 				'EE_Message_Resource_Manager',
 			)
 		);
@@ -192,19 +167,21 @@ class EE_Dependency_Map {
 	 * Registers the core class loaders.
 	 */
 	protected function _register_core_class_loaders() {
-		// load_core
-		EE_Dependency_Map::register_class_loader( 'EE_Encryption' );
-		EE_Dependency_Map::register_class_loader( 'EE_Module_Request_Router' );
-		EE_Dependency_Map::register_class_loader( 'EE_Registry' );
-		EE_Dependency_Map::register_class_loader( 'EE_Request_Handler' );
-		EE_Dependency_Map::register_class_loader( 'EE_Session' );
-		// load_lib
-		EE_Dependency_Map::register_class_loader( 'EE_Message_Type_Collection', 'load_lib' );
-		EE_Dependency_Map::register_class_loader( 'EE_Message_Resource_Manager', 'load_lib' );
-		EE_Dependency_Map::register_class_loader( 'EE_Message_Type_Collection_Loader', 'load_lib' );
-		EE_Dependency_Map::register_class_loader( 'EE_Messenger_Collection', 'load_lib' );
-		EE_Dependency_Map::register_class_loader( 'EE_Messenger_Collection_Loader', 'load_lib' );
-		EE_Dependency_Map::register_class_loader( 'EEM_Message_Template_Group', 'load_lib' );
+		self::$_class_loaders = array(
+			//load_core
+			'EE_Encryption' => 'load_core',
+			'EE_Module_Request_Router' => 'load_core',
+			'EE_Registry' => 'load_core',
+			'EE_Request_Handler' => 'load_core',
+			'EE_Session' => 'load_core',
+			//load_lib
+			'EE_Message_Type_Collection' => 'load_lib',
+			'EE_Message_Resource_Manager' => 'load_lib',
+			'EE_Message_Type_Collection_Loader', 'load_lib',
+			'EE_Messenger_Collection' => 'load_lib',
+			'EE_Messenger_Collection_Loader' => 'load_lib',
+			'EEM_Message_Template_Group', 'load_lib'
+		);
 	}
 
 
