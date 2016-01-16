@@ -40,8 +40,8 @@ class EE_Dependency_Map {
 	 * EE_Dependency_Map constructor.
 	 */
 	protected function __construct() {
-		$this->set_dependency_map();
-		$this->set_class_loaders();
+		$this->_register_core_dependencies();
+		$this->_register_core_class_loaders();
 		do_action( 'EE_Dependency_Map____construct' );
 	}
 
@@ -122,9 +122,9 @@ class EE_Dependency_Map {
 
 
 	/**
-	 * @access protected
+	 * Registers the core dependencies
 	 */
-	protected function set_dependency_map() {
+	protected function _register_core_dependencies() {
 		EE_Dependency_Map::register_dependencies(
 			'EE_Session',
 			array(
@@ -189,9 +189,9 @@ class EE_Dependency_Map {
 
 
 	/**
-	 * @access protected
+	 * Registers the core class loaders.
 	 */
-	protected function set_class_loaders() {
+	protected function _register_core_class_loaders() {
 		// load_core
 		EE_Dependency_Map::register_class_loader( 'EE_Encryption' );
 		EE_Dependency_Map::register_class_loader( 'EE_Module_Request_Router' );
