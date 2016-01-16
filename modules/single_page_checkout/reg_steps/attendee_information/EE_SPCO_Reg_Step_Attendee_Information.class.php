@@ -511,6 +511,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
+		if( $question instanceof EE_Question 
+			&& $registration instanceof EE_Registration ) {
+			$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() ) ) );
+		} else {
+			$answer = EE_Answer::new_instance();
+		}
 		$country_options = apply_filters(
 			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
 			$country_options,
@@ -541,6 +547,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
 				}
 			}
+		}
+		if( $question instanceof EE_Question 
+			&& $registration instanceof EE_Registration ) {
+			$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() ) ) );
+		} else {
+			$answer = EE_Answer::new_instance();
 		}
 		$state_options = apply_filters(
 			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
