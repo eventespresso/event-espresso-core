@@ -117,9 +117,9 @@ class EED_Batch extends EED_Module{
 	 */
 	public function enqueue_scripts_styles_batch_create() {	
 		$job_response = $this->_enqueue_batch_job_scripts_and_styles_and_start_job();
-		wp_enqueue_script( 'batch_runner', BATCH_URL . '/assets/batch_runner_init.js', array( 'progress_bar' ));
-		wp_localize_script( 'support_batch_runner', 'ee_job_response', $job_response->to_array() );
-		wp_localize_script( 'support_batch_runner', 'ee_job_i18n', 
+		wp_enqueue_script( 'batch_runner_init', BATCH_URL . '/assets/batch_runner_init.js', array( 'batch_runner' ), EVENT_ESPRESSO_VERSION, true );
+		wp_localize_script( 'batch_runner_init', 'ee_job_response', $job_response->to_array() );
+		wp_localize_script( 'batch_runner_init', 'ee_job_i18n', 
 			array(
 				'return_url' => $_REQUEST['return_url' ],
 			));
