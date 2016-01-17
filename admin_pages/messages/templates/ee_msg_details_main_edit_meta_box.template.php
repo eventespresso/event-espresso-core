@@ -1,6 +1,6 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
-	<h4 class="admin-primary-mbox-h4"><?php echo isset($event_name) ? $event_name . ' Custom Template' : ''; ?></h4>
+	<h3 class="admin-primary-mbox-h4"><?php echo isset($event_name) ? $event_name . ' Custom Template' : ''; ?></h3>
 		<input type="hidden" id="ee-msg-current-context" name="MTP_context" value="<?php echo $context; ?>"  />
 		<!-- if this is not a global template then let's show the name and description fields -->
 		<?php if ( ! $MTP->is_global() ) : ?>
