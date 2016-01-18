@@ -1141,25 +1141,6 @@ class EE_Messages {
 	}
 
 
-
-
-	/**
-	 * Validates the given string as a reference for an existing, accessible data handler and returns the class name
-	 * For the handler the reference matches.
-	 *
-	 * >>>>>>>>>>>> No usages found
-	 *
-	 * @param string $data_handler_reference
-	 * @return string
-	 */
-	public function verify_and_retrieve_class_name_for_data_handler_reference( $data_handler_reference ) {
-		return EE_Message_To_Generate::verify_and_retrieve_class_name_for_data_handler_reference(
-			$data_handler_reference
-		);
-	}
-
-
-
 }
 //end EE_Messages class
 // end of file:	includes/core/messages/EE_Messages.core.php
