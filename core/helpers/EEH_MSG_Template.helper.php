@@ -1133,4 +1133,42 @@ class EEH_MSG_Template {
 	}
 
 
+
+	/**
+	 * get_fields
+	 * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
+	 *
+	 * @param  string $messenger_name    name of EE_Messenger
+	 * @param  string $message_type_name name of EE_message_type
+	 * @return array
+	 */
+	public function get_fields( $messenger_name, $message_type_name ) {
+		$template_fields = array();
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$messenger = $Message_Resource_Manager->valid_messenger( $messenger_name );
+		$message_type = $Message_Resource_Manager->valid_message_type( $message_type_name );
+		/** @type EEH_MSG_Template $MSG_Template */
+		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
+		if ( $MSG_Template->message_type_has_active_templates_for_messenger( $messenger, $message_type ) ) {
+			return array();
+		}
+		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
+		foreach ( $message_type->get_contexts() as $context => $details ) {
+			foreach ( $messenger->get_template_fields() as $field => $value ) {
+				$template_fields[ $context ][ $field ] = $value;
+			}
+		}
+		if ( empty( $template_fields ) ) {
+			EE_Error::add_error(
+				__( 'Something went wrong and we couldn\'t get any templates assembled', 'event_espresso' ),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return array();
+		}
+		return $template_fields;
+	}
+
 }
