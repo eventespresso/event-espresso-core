@@ -173,13 +173,12 @@ class EEH_MSG_Template {
 	 * @param string $type
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
-	public static function get_installed_message_objects($type = 'all') {
+	public static function get_installed_message_objects( $type = 'all' ) {
 		self::_set_autoloader();
 		//get all installed messengers and message_types
 		/** @type EE_Messages $messages_controller */
 		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$installed_message_objects = $messages_controller->get_installed($type);
-		return $installed_message_objects;
+		return $messages_controller->get_installed($type);
 	}
 
 
@@ -939,6 +938,199 @@ class EEH_MSG_Template {
 		return self::$_template_pack_collection;
 	}
 
+
+
+	/**
+	 * This is a wrapper for the protected _create_new_templates function
+	 *
+	 * @param string $messenger_name
+	 * @param string $message_type_name message type that the templates are being created for
+	 * @param int    $GRP_ID
+	 * @param bool   $global
+	 * @return array
+	 * @throws \EE_Error
+	 */
+	public function create_new_templates( $messenger_name, $message_type_name, $GRP_ID = 0, $global = false ) {
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$messenger = $Message_Resource_Manager->valid_messenger( $messenger_name );
+		$message_type = $Message_Resource_Manager->valid_message_type( $message_type_name );
+		if ( ! $this->message_type_has_active_templates_for_messenger( $messenger, $message_type, $global ) ) {
+			return array();
+		}
+		//whew made it this far!  Okay, let's go ahead and create the templates then
+		return $this->_create_new_templates( $messenger, $message_type, $GRP_ID, $global );
+	}
+
+
+
+	/**
+	 * @param \EE_Messenger    $messenger
+	 * @param \EE_message_type $message_type
+	 * @param                  $GRP_ID
+	 * @param                  $global
+	 * @return array|mixed
+	 */
+	protected function _create_new_templates( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID, $global ) {
+		//if we're creating a custom template then we don't need to use the defaults class
+		if ( ! $global ) {
+			return $this->_create_custom_template_group( $messenger, $message_type, $GRP_ID );
+		}
+		$Message_Template_Defaults = new EE_Message_Template_Defaults(
+			EE_Registry::instance()->load_lib( 'messages' ),
+			$messenger->name,
+			$message_type->name,
+			$GRP_ID
+		);
+		//generate templates
+		$success = $Message_Template_Defaults->create_new_templates();
+		/**
+		 * $success is in an array in the following format
+		 * array(
+		 *    'GRP_ID' => $new_grp_id,
+		 *    'MTP_context' => $first_context_in_new_templates,
+		 * )
+		 */
+		return $success;
+	}
+
+
+
+	/**
+	 * This creates a custom template using the incoming GRP_ID
+	 *
+	 * @param \EE_Messenger    $messenger
+	 * @param \EE_message_type $message_type
+	 * @param  int             $GRP_ID 		GRP_ID for the template_group being used as the base
+	 * @return  array $success 				This will be an array in the format:
+	 *                                      array(
+	 * 											'GRP_ID' => $new_grp_id,
+	 * 											'MTP_context' => $first_context_in_created_template
+	 * 										)
+	 * @access private
+	 */
+	private function _create_custom_template_group( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID ) {
+		//defaults
+		$success = array( 'GRP_ID' => null, 'MTP_context' => '' );
+		//get the template group to use as a template from the db.  If $GRP_ID is empty then we'll assume the base will be the global template matching the messenger and message type.
+		$Message_Template_Group = empty( $GRP_ID )
+			? EEM_Message_Template_Group::instance()->get_one(
+				array(
+					array(
+						'MTP_messenger'    => $messenger->name,
+						'MTP_message_type' => $message_type->name,
+						'MTP_is_global'    => true
+					)
+				)
+			)
+			: EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
+		//if we don't have a mtg at this point then we need to bail.
+		if ( ! $Message_Template_Group instanceof EE_Message_Template_Group ) {
+			EE_Error::add_error(
+				sprintf(
+					__(
+						'Something went wrong with generating the custom template from this group id: %s.  This usually happens when there is no matching message template group in the db.',
+						'event_espresso'
+					),
+					$GRP_ID
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return $success;
+		}
+		//let's get all the related message_template objects for this group.
+		$mtts = $Message_Template_Group->message_templates();
+		//now we have what we need to setup the new template
+		$new_mtg = clone $Message_Template_Group;
+		$new_mtg->set( 'GRP_ID', 0 );
+		$new_mtg->set( 'MTP_is_global', false );
+		$template_name = defined( 'DOING_AJAX' ) && ! empty( $_POST[ 'templateName' ] )
+			? $_POST[ 'templateName' ]
+			: __(
+				'New Custom Template',
+				'event_espresso'
+			);
+		$template_description = defined( "DOING_AJAX" ) && ! empty( $_POST[ 'templateDescription' ] )
+			? $_POST[ 'templateDescription' ]
+			: sprintf(
+				__(
+					'This is a custom template that was created for the %s messenger and %s message type.',
+					'event_espresso'
+				),
+				$new_mtg->messenger_obj()->label[ 'singular' ],
+				$new_mtg->message_type_obj()->label[ 'singular' ]
+			);
+		$new_mtg->set( 'MTP_name', $template_name );
+		$new_mtg->set( 'MTP_description', $template_description );
+		//remove ALL relations on this template group so they don't get saved!
+		$new_mtg->_remove_relations( 'Message_Template' );
+		$new_mtg->save();
+		$success[ 'GRP_ID' ] = $new_mtg->ID();
+		$success[ 'template_name' ] = $template_name;
+		//add new message templates and add relation to.
+		foreach ( $mtts as $mtt ) {
+			if ( ! $mtt instanceof EE_Message_Template ) {
+				continue;
+			}
+			$nmtt = clone $mtt;
+			$nmtt->set( 'MTP_ID', 0 );
+			$nmtt->set( 'GRP_ID', $new_mtg->ID() ); //relation
+			$nmtt->save();
+			if ( empty( $success[ 'MTP_context' ] ) ) {
+				$success[ 'MTP_context' ] = $nmtt->get( 'MTP_context' );
+			}
+		}
+		return $success;
+	}
+
+
+
+	/**
+	 * message_type_has_active_templates_for_messenger
+	 *
+	 * @param \EE_Messenger    $messenger
+	 * @param \EE_message_type $message_type
+	 * @param bool             $global
+	 * @return bool
+	 */
+	public function message_type_has_active_templates_for_messenger(
+		EE_Messenger $messenger,
+		EE_message_type $message_type,
+		$global = false
+	) {
+		//is given message_type valid for given messenger (if this is not a global save)
+		if ( $global ) {
+			return true;
+		}
+		$active_templates = EEM_Message_Template_Group::instance()->count(
+			array(
+				array(
+					'MTP_is_active'    => true,
+					'MTP_messenger'    => $messenger->name,
+					'MTP_message_type' => $message_type->name
+				)
+			)
+		);
+		if ( $active_templates > 0 ) {
+			return true;
+		}
+		EE_Error::add_error(
+			sprintf(
+				__(
+					'The %1$s message type is not registered with the %2$s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.',
+					'event_espresso'
+				),
+				$message_type->name,
+				$messenger->name
+			),
+			__FILE__,
+			__FUNCTION__,
+			__LINE__
+		);
+		return false;
+	}
 
 
 }
