@@ -114,14 +114,13 @@ class EE_Message_Template_Defaults extends EE_Base {
 
 	/**
 	 * constructor
-	 * @param EE_Messages $messages the EE_Messages object.
-	 * @param $messenger_name	should be the name of a valid active messenger
-	 * @param $message_type_name  should be the name of a valid active message type
-	 * @param int $GRP_ID Optional.  If included then we're just regenerating the template
-	 *                    		 fields for the given group not the message template group itself
 	 *
-	 * @access public
-	 * @return void
+	 * @param EE_Messages $messages          the EE_Messages object.
+	 * @param string      $messenger_name    should be the name of a valid active messenger
+	 * @param string      $message_type_name should be the name of a valid active message type
+	 * @param int         $GRP_ID            Optional.  If included then we're just regenerating the template
+	 *                                       fields for the given group not the message template group itself
+	 * @throws \EE_Error
 	 */
 	public function __construct( EE_Messages $messages, $messenger_name, $message_type_name, $GRP_ID = 0 ) {
 		$this->_EE_MSG = $messages;
@@ -172,13 +171,12 @@ class EE_Message_Template_Defaults extends EE_Base {
 
 
 
-
 	/**
 	 * initializes all required properties
 	 *
 	 * @final
 	 * @access private
-	 * @return void
+	 * @throws \EE_Error
 	 */
 	final private function _init() {
 		$active_messengers = $this->_EE_MSG->get_active_messengers();
@@ -193,8 +191,17 @@ class EE_Message_Template_Defaults extends EE_Base {
 
 		//check if message type is installed
 		if ( !isset($active_messengers[$this->_m_name] ) ) {
-			$msg[] = __('Message Templates cannot be generated because the given message type is not installed', 'event_espresso');
-			$msg[] = sprintf( __('The "$_mt_name" property has "%s" as its value.  Check the spelling and make sure it matches an available message type', 'event_espresso'), $this->_mt_name );
+			$msg[] = __(
+				'Message Templates cannot be generated because the given message type is not installed',
+				'event_espresso'
+			);
+			$msg[] = sprintf(
+				__(
+					'The "$_mt_name" property has "%s" as its value.  Check the spelling and make sure it matches an available message type',
+					'event_espresso'
+				),
+				$this->_mt_name
+			);
 			throw new EE_Error( implode( '||', $msg ) );
 		}
 
@@ -203,14 +210,27 @@ class EE_Message_Template_Defaults extends EE_Base {
 
 		//verify we have the messenger and message type objects
 		if ( ! $this->_messenger instanceof EE_Messenger ) {
-			throw new EE_Error( sprintf( __('The _messenger property must be an instance of EE_Messenger by this point.  It isn\'t. Something has gone wrong. Here is the value it holds:<br /> %s', 'event_espresso' ), print_r( $this->_messenger, TRUE ) ) );
+			throw new EE_Error(
+				sprintf(
+					__(
+						'The _messenger property must be an instance of EE_Messenger by this point.  It isn\'t. Something has gone wrong. Here is the value it holds: %s',
+						'event_espresso'
+					),
+					'<br />' . print_r( $this->_messenger, true )
+				)
+			);
 		}
-
 		if ( ! $this->_message_type instanceof EE_message_type ) {
-			throw new EE_Error( sprintf( __('The _message_type property must be an instance of EE_message_type by this point.  It isn\'t. Something has gone wrong. Here is the value it holds:<br /> %s', 'event_espresso' ), print_r( $this->_message_type, TRUE ) ) );
+			throw new EE_Error(
+				sprintf(
+					__(
+						'The _message_type property must be an instance of EE_message_type by this point.  It isn\'t. Something has gone wrong. Here is the value it holds: %s',
+						'event_espresso'
+					),
+					'<br />' . print_r( $this->_message_type, true )
+				)
+			);
 		}
-
-
 		$this->_fields = $this->_messenger->get_template_fields();
 		$this->_contexts = $this->_message_type->get_contexts();
 	}
