@@ -90,16 +90,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	 * @return void
 	 */
 	public function load_scripts_styles_reports() {
-		//styles
-		wp_enqueue_style('jquery-jqplot-css');
-		//scripts
-		global $is_IE;
-		if ( $is_IE ) {
-			wp_enqueue_script( 'excanvas' );
-		}
 		EE_Registry::instance()->load_helper('Money');
-		EE_Registry::$i18n_js_strings['currency_format'] = EEH_Money::get_format_for_jqplot();
-		wp_enqueue_script('jqplot-all');
 	}
 
 

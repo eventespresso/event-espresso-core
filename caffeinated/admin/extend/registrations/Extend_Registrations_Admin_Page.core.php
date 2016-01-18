@@ -183,17 +183,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 	public function load_scripts_styles_reports() {
-		//styles
-		wp_enqueue_style('jquery-jqplot-css');
-
-		//scripts
-		global $is_IE;
-		if ( $is_IE ) {
-			wp_enqueue_script( 'excanvas' );
-		}
-
-		wp_register_script('espresso_reg_admin_regs_per_day', REG_CAF_ASSETS_URL  . 'espresso_reg_admin_regs_per_day_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script('espresso_reg_admin_regs_per_event', REG_CAF_ASSETS_URL . 'espresso_reg_admin_regs_per_event_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
 	}
 
 
