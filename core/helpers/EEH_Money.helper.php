@@ -149,4 +149,39 @@ class EEH_Money extends EEH_Base  {
 		return $format;
 	}
 
+
+	/**
+	 * This returns a localized format string suitable for usage with the Google Charts API format param.
+	 *
+	 * @param string $CNT_ISO If this is provided, then will attempt to get the currency settings for the country.
+	 *                         Otherwise will use currency settings for current active country on site.
+	 *
+	 * Note: GoogleCharts uses ICU pattern set (@see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
+	 *
+	 * @return string
+	 */
+	public static function get_format_for_google_charts( $CNT_ISO = '' ) {
+		//default format
+		$format = 'currency';
+		//if CNT_ISO passed lets try to get currency settings for it.
+		$currency_config = $CNT_ISO !== '' ? new EE_Currency_Config( $CNT_ISO ) : null;
+		//default currency settings for site if not set
+		if ( ! $currency_config instanceof EE_Currency_Config ) {
+			$currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();
+		}
+
+		$decimal_places_placeholder = '';
+		while ( $currency_config->dec_plc ) {
+			$decimal_places_placeholder .= '0';
+			$currency_config->dec_plc--;
+		}
+
+		//first get the decimal place and number of places
+		$format = '#' . $currency_config->thsnds . '##0' . $currency_config->dec_mrk . $decimal_places_placeholder;
+
+		//currency symbol on right side.
+		$format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
+		return $format;
+	}
+
 } //end class EEH_Money
