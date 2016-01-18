@@ -1148,9 +1148,7 @@ class EEH_MSG_Template {
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$messenger = $Message_Resource_Manager->valid_messenger( $messenger_name );
 		$message_type = $Message_Resource_Manager->valid_message_type( $message_type_name );
-		/** @type EEH_MSG_Template $MSG_Template */
-		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
-		if ( $MSG_Template->message_type_has_active_templates_for_messenger( $messenger, $message_type ) ) {
+		if ( ! $this->message_type_has_active_templates_for_messenger( $messenger, $message_type ) ) {
 			return array();
 		}
 		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
