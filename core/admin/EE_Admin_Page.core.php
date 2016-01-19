@@ -2568,7 +2568,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * The json object is populated by whatever is set in the $_template_args property.
 	 *
-	 * @return json object
+	 * @return string json object
 	 */
 	protected function _return_json( $sticky_notices = FALSE ) {
 
