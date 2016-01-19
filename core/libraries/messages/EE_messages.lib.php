@@ -115,13 +115,16 @@ class EE_Messages {
 	 * EE_Messages constructor.
 	 *
 	 * @deprecated 4.9.0
-	 * @param \EE_Message_Resource_Manager $Message_Resource_Manager
 	 */
-	function __construct( EE_Message_Resource_Manager $Message_Resource_Manager ) {
-		$this->_message_resource_manager = $Message_Resource_Manager;
+	function __construct() {
+		EE_Error::doing_it_wrong(
+			'construct',
+			__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
+			'4.9.0'
+		);
+		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		// get list of active messengers and active message types
 		//$this->_set_active_messengers_and_message_types();
-
 	}
 
 
