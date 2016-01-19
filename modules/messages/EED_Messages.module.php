@@ -322,7 +322,6 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _set_messages_paths() {
 		$dir_ref = array(
-			'messages',
 			'messages/message_type',
 			'messages/messenger',
 			'messages/defaults',
