@@ -940,33 +940,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return array an array of message type objects
 	 */
 	public function get_installed_message_types() {
-		$installed_objects = $this->_get_installed_message_objects();
-		$imts = $installed_objects['message_types'];
+		$installed_message_types = $this->_message_resource_manager->installed_message_types();
 		$installed = array();
 
-		foreach ( $imts as $message_type ) {
+		foreach ( $installed_message_types as $message_type ) {
 			$installed[$message_type->name]['obj'] = $message_type;
 		}
 
 		return $installed;
 	}
 
-
-
-	/**
-	 * The purpose of this function is to return all installed message objects (messengers and message type regardless
-	 * of whether they are ACTIVE or not)
-	 * @return array array consisting of installed messenger objects and installed message type objects.
-	 */
-	protected function _get_installed_message_objects() {
-		$this->_load_message_resource_manager();
-		//get all installed messengers and message_types
-		$installed_message_objects = array(
-			'messengers' => $this->_message_resource_manager->installed_messengers(),
-			'message_types' => $this->_message_resource_manager->installed_message_types()
-		);
-		return $installed_message_objects;
-	}
 
 
 	/**
@@ -1031,7 +1014,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _edit_message_template() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '');
-
+		$template_fields = '';
+		$sidebar_fields = '';
 		//we filter the tinyMCE settings to remove the validation since message templates by their nature will not have valid html in the templates.
 		add_filter( 'tiny_mce_before_init', array( $this, 'filter_tinymce_init'), 10, 2 );
 
@@ -1082,9 +1066,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['is_extra_fields'] = false;
 
 
-		//let's get the EE_messages_controller so we can get template form fields
-		//$MSG = new EE_Messages();
-		$this->_load_message_resource_manager();
+		//let's get EEH_MSG_Template so we can get template form fields
 		/** @type EEH_MSG_Template $MSG_Template */
 		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
 		$template_field_structure = $MSG_Template->get_fields( $message_template_group->messenger(), $message_template_group->message_type());
@@ -1104,9 +1086,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				unset( $template_field_structure[$context][$reference_field] );
 			}
 		}
-
-		$template_fields = '';
-		$sidebar_fields = '';
 
 		//let's loop through the template_field_structure and actually assemble the input fields!
 		if ( !empty($template_field_structure) ) {
@@ -2209,13 +2188,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_req_data['message_type'] = $message_type;
 		$this->_req_data['context'] = $context;
 		$this->_req_data['GRP_ID'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
+		$active_messenger = $this->_active_messengers[ $messenger ][ 'obj' ];
 
 		//let's save any existing fields that might be required by the messenger
 		if (
 			isset( $this->_req_data['test_settings_fld'] )
-			&& $this->_active_messengers[ $messenger ][ 'obj' ] instanceof EE_Messenger
+			&& $active_messenger instanceof EE_Messenger
 		) {
-			$this->_active_messengers[$messenger]['obj']->set_existing_test_settings( $this->_req_data['test_settings_fld'] );
+			$active_messenger->set_existing_test_settings( $this->_req_data['test_settings_fld'] );
 		}
 
 		$success = $this->_preview_message(true);
@@ -2441,11 +2421,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 
 		//get all installed messengers and message_types
-		$installed_message_objects = $this->_get_installed_message_objects();
 		/** @type EE_Messenger[] $messengers */
-		$messengers = $installed_message_objects[ 'messengers'];
+		$messengers = $this->_message_resource_manager->installed_messengers();
 		/** @type EE_Message_Type[] $message_types */
-		$message_types = $installed_message_objects['message_types'];
+		$message_types = $this->_message_resource_manager->installed_message_types();
 
 		//assemble the array for the _tab_text_links helper
 
@@ -2870,6 +2849,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers
 			$this->_active_messengers[$messenger]['settings'] = !isset($this->_active_messengers[$messenger]['settings']) ? array() : $this->_active_messengers[$messenger]['settings'];
 			$this->_active_messengers[$messenger]['obj'] = $this->_m_mt_settings['messenger_tabs'][$messenger]['obj'];
+			/** @type EE_Messenger $active_messenger */
+			$active_messenger = $this->_active_messengers[ $messenger ][ 'obj' ];
 
 			//get has_active so we can sure its kept up to date.
 			$has_activated = get_option( 'ee_has_activated_messages' );
@@ -2881,10 +2862,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//k we need to get what default message types are to be associated with the messenger that's been activated.
 			$default_types = $message_type
 				? (array) $message_type
-				: $this->_active_messengers[$messenger]['obj']->get_default_message_types();
+				: $active_messenger->get_default_message_types();
 
 			foreach ( $default_types as $type ) {
-				$settings_fields = $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$type]['obj']->get_admin_settings_fields();
+				/** @type EE_Message_Type $active_message_type */
+				$active_message_type = $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'inactive' ][ $type ][ 'obj' ];
+				$settings_fields = $active_message_type->get_admin_settings_fields();
 				$settings = array();
 				if ( !empty( $settings_fields ) ) {
 					//we have fields for this message type so let's get the defaults for saving.
@@ -2902,7 +2885,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 
 			//any default settings for the messenger?
-			$msgr_settings = $this->_active_messengers[$messenger]['obj']->get_admin_settings_fields();
+			$msgr_settings = $active_messenger->get_admin_settings_fields();
 
 			if ( !empty( $msgr_settings ) ) {
 				foreach ( $msgr_settings as $field => $value ) {
@@ -2947,9 +2930,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			//we're deactivating
 
-			$MTP = EEM_Message_Template_Group::instance();
-
-
 			//okay let's update the message templates that match this messenger so that they are deactivated in the database as well.
 			$update_array = array(
 				'MTP_messenger' => $messenger);
@@ -2957,8 +2937,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			if ( $message_type ) {
 				$update_array['MTP_message_type'] = $message_type;
 			}
-
-			$success = $MTP->update( array( 'MTP_is_active' => 0 ), array($update_array) );
+			EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => 0 ), array($update_array) );
 
 			$messenger_obj = $this->_active_messengers[$messenger]['obj'];
 
@@ -3004,7 +2983,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function update_mt_form() {
 		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) ) {
 			EE_Error::add_error( __('Require message type or messenger to send an updated form'), __FILE__, __FUNCTION__, __LINE__ );
-			$this->_return_json();
+			return $this->_return_json();
 		}
 
 		$message_types = $this->get_installed_message_types();
@@ -3015,7 +2994,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$content = $this->_message_type_settings_content ( $message_type, $messenger, true );
 		$this->_template_args['success'] = true;
 		$this->_template_args['content'] = $content;
-		$this->_return_json();
+		return $this->_return_json();
 	}
 
 
@@ -3023,7 +3002,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * this handles saving the settings for a messenger or message type
-	 * @return json success or fail message
+	 *
+	 * @return string json success or fail message
 	 */
 	public function save_settings() {
 		if ( !isset( $this->_req_data['type'] ) ) {
@@ -3098,7 +3078,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_template_args['success'] = $success;
-		$this->_return_json();
+		return $this->_return_json();
 	}
 
 
