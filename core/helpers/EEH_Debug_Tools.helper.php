@@ -98,7 +98,7 @@ class EEH_Debug_Tools{
 		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
-//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
+			//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
 			$this->espresso_list_hooked_functions();
 			$this->show_times();
 		}
@@ -216,30 +216,30 @@ class EEH_Debug_Tools{
 				break;
 		}
 		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
-	 }
-	 /**
-	  * Measure the memory usage by PHP so far.
-	  * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
-	  * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
-	  * @return void
-	  */
-	 public function measure_memory( $label, $output_now = false ) {
-		 $memory_used = $this->convert( memory_get_peak_usage( true ) );
-		 $this->_memory_usage_points[ $label ] = $memory_used;
-		 if( $output_now ) {
-			 echo "\r\n<br>$label : $memory_used";
-		 }
-	 }
+	}
+	/**
+	 * Measure the memory usage by PHP so far.
+	 * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
+	 * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+	 * @return void
+	 */
+	public function measure_memory( $label, $output_now = false ) {
+		$memory_used = $this->convert( memory_get_peak_usage( true ) );
+		$this->_memory_usage_points[ $label ] = $memory_used;
+		if( $output_now ) {
+			echo "\r\n<br>$label : $memory_used";
+		}
+	}
 
-	 /**
-	  * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
-	  * @param int $size
-	  * @return string
-	  */
-	 public function convert( $size ) {
+	/**
+	 * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
+	 * @param int $size
+	 * @return string
+	 */
+	public function convert( $size ) {
 		$unit=array('b','kb','mb','gb','tb','pb');
 		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
-	 }
+	}
 
 
 
@@ -250,12 +250,12 @@ class EEH_Debug_Tools{
 	 */
 	public function show_times($output_now=true){
 		$output = '<h2>Times:</h2>' . implode("<br>",$this->_times) . '<h2>Memory</h2>' . implode('<br>', $this->_memory_usage_points );
-		 if($output_now){
-			 echo $output;
-			 return '';
-		 }
+		if($output_now){
+			echo $output;
+			return '';
+		}
 		return $output;
-	 }
+	}
 
 
 
@@ -302,7 +302,20 @@ class EEH_Debug_Tools{
 	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
 		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
-		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), $error_type );
+		$error_message = sprintf( esc_html__('%1$s was called %2$sincorrectly%3$s. %4$s %5$s','event_espresso' ), $function, '<strong>', '</strong>', $message, $version );
+
+		//don't trigger error if doing ajax, instead we'll add a transient EE_Error notice that in theory should show on the next request.
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$error_message .= esc_html__( 'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ', 'event_espresso' );
+			$error_message .= '<ul><li>';
+			$error_message .= implode( '</li><li>', EE_Registry::instance()->REQ->params() );
+			$error_message .= '</ul>';
+			EE_Error::add_error( $error_message, 'debug::doing_it_wrong', $function, '42' );
+			//now we set this on the transient so it shows up on the next request.
+			EE_Error::get_notices( is_admin(), true );
+		} else {
+			trigger_error( $error_message, $error_type );
+		}
 	}
 
 
