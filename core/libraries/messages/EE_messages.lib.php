@@ -117,11 +117,12 @@ class EE_Messages {
 	 * @deprecated 4.9.0
 	 */
 	function __construct() {
-		EE_Error::doing_it_wrong(
-			'construct',
-			__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
-			'4.9.0'
-		);
+		// not yet
+		//EE_Error::doing_it_wrong(
+		//	'construct',
+		//	__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
+		//	'4.9.0'
+		//);
 		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		// get list of active messengers and active message types
 		//$this->_set_active_messengers_and_message_types();
@@ -916,6 +917,9 @@ class EE_Messages {
 	 *                                    (messengers index, and message_type index);
 	 */
 	public function get_installed( $type = 'all', $skip_cache = false ) {
+		if ( $skip_cache ) {
+			$this->_message_resource_manager->reset_active_messengers_and_message_types();
+		}
 		switch ( $type ) {
 
 			case 'messengers' :
