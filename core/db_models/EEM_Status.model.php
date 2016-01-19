@@ -231,7 +231,7 @@ class EEM_Status extends EEM_Base {
 	        ),
 			EEM_Message::status_retry => array(
 				__('failed sending, can be retried', 'event_espresso'),
-				__('failed sending, can be retried', 'event_espresso')
+				__('failed sending, can be retried', 'event_espresso'),
   			),
 			EEM_CPT_Base::post_status_publish => array(
 	  			__('published', 'event_espresso'),

@@ -1,4 +1,4 @@
-<h3><?php _e('Add New Venue Category', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Add New Venue Category', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to add a new venue category.', 'event_espresso'); ?>
 </p>

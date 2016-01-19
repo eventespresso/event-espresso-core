@@ -841,13 +841,25 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			// datetime on the event.
 			if ( empty ( $related_tickets ) && count( $times ) < 2 ) {
 				$related_tickets = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
+
+				//this should be ordered by TKT_ID, so let's grab the first default ticket (which will be the main default) and ensure it has any default prices added to it (but do NOT save).
+				$default_prices = EEM_Price::instance()->get_all_default_prices();
+
+				$main_default_ticket = reset( $related_tickets );
+				if ( $main_default_ticket instanceof EE_Ticket ) {
+					foreach ( $default_prices as $default_price ) {
+						if ( $default_price->is_base_price() ) {
+							continue;
+						}
+						$main_default_ticket->cache( 'Price', $default_price );
+					}
+				}
 			}
 
 
 			//we can't actually setup rows in this loop yet cause we don't know all the unique tickets for this event yet (tickets are linked through all datetimes). So we're going to temporarily cache some of that information.
 
 			//loop through and setup the ticket rows and make sure the order is set.
-			$order = 0;
 			foreach ( $related_tickets as $ticket ) {
 				$tktid = $ticket->get('TKT_ID');
 				$tktrow = $ticket->get('TKT_row');
@@ -1034,8 +1046,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		//if $ticket is not an instance of EE_Ticket then force default to true.
 		$default =  ! $ticket instanceof EE_Ticket ? true : false;
 
+		$prices = ! empty( $ticket ) && ! $default ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none', 'order_by' => array('PRC_order' => 'ASC') ) ) : array();
 
-		$prices = !empty($ticket) && !$default ? $ticket->get_many_related('Price', array('default_where_conditions' => 'none', 'order_by' => array('PRC_order' => 'ASC') ) ) : array();
+		//if there is only one price (which would be the base price) or NO prices and this ticket is a default ticket, let's just make sure there are no cached default prices on
+		//the object.  This is done by not including any query_params.
+		if ( $ticket instanceof EE_Ticket && $ticket->is_default() && ( count( $prices ) === 1  || empty( $prices ) ) ) {
+			$prices = $ticket->get_many_related( 'Price' );
+		}
 
 		// check if we're dealing with a default ticket in which case we don't want any starting_ticket_datetime_row values set (otherwise there won't be any new relationships created for tickets based off of the default ticket).  This will future proof in case there is ever any behaviour change between what the primary_key defaults to.
 		$default_dtt = $default || ($ticket instanceof EE_Ticket && $ticket->get('TKT_is_default') ) ? TRUE : FALSE;

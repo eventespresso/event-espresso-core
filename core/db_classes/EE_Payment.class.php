@@ -540,7 +540,9 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * You can pass it special content to put inside the form, or use
 	 * the default inner content (or possibly generate this all yourself using
 	 * redirect_url() and redirect_args() or redirect_args_as_inputs()).
-	 * Creates a POST request by default, but if no redirect args are specified, creates a GET request instead.
+	 * Creates a POST request by default, but if no redirect args are specified, creates a GET request instead
+	 * (and any querystring variables in the redirect_url are converted into html inputs
+	 * so browsers submit them properly)
 	 * @param string $inside_form_html
 	 * @return string html
 	 */
@@ -560,7 +562,20 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 					'', '', 'text-align:center;'
 				);
 			}
-			$method = $this->redirect_args() ? 'POST' : 'GET';
+			$method = apply_filters( 
+				'FHEE__EE_Payment__redirect_form__method',
+				$this->redirect_args() ? 'POST' : 'GET',
+				$this
+			);
+			//if it's a GET request, we need to remove all the GET params in the querystring
+			//and put them into the form instead
+			if( $method == 'GET' ) {
+				$querystring = parse_url( $redirect_url, PHP_URL_QUERY );
+				$get_params = null;
+				parse_str( $querystring, $get_params );
+				$inside_form_html .= $this->_args_as_inputs( $get_params );
+				$redirect_url = str_replace( '?' . $querystring, '', $redirect_url );
+			}
 			$form = EEH_HTML::nl(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
 			$form .= EEH_HTML::nl(1) . $this->redirect_args_as_inputs();
 			$form .= $inside_form_html;
@@ -575,14 +590,25 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	 * Changes all the name-value pairs of
+	 * Changes all the name-value pairs of the redirect args into html inputs
+	 * and returns the html as a string
 	 * @return string
 	 */
 	function redirect_args_as_inputs(){
+		return $this->_args_as_inputs( $this->redirect_args() );
+	}
+	
+	/**
+	 * Converts a 1d array of key-value pairs into html hidden inputs
+	 * and returns the string of html
+	 * @param array $args key-value pairs
+	 * @return string
+	 */
+	protected function _args_as_inputs( $args ) {
 		$html = '';
-		if( $this->redirect_args() !== NULL && is_array( $this->redirect_args() )) {
+		if( $args !== NULL && is_array( $args )) {
 			EE_Registry::instance()->load_helper('HTML');
-			foreach($this->redirect_args() as $name => $value){
+			foreach( $args as $name => $value){
 				$html .= EEH_HTML::nl(0) . '<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>';
 			}
 		}

@@ -39,7 +39,7 @@ class Model_Version_Info {
 	 *
 	 * @var array
 	 */
-	protected $_model_changes = null;
+	protected $_model_changes = array();
 
 	/**
 	 *
@@ -94,6 +94,9 @@ class Model_Version_Info {
 			'4.8.29' => array(
 				//first version where the REST API is in EE core, so no need
 				//to specify how its different from the previous
+			),
+			'4.9.0' => array(
+				'Message' => Model_Version_Info::model_added,
 			)
 		);
 
