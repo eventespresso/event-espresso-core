@@ -2,22 +2,6 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package 		Event Espresso
- * @ author 		Event Espresso
- * @ copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link 				{@link http://www.eventespresso.com}
- * @ since 			4.0
- *
- */
-
-
-
-/**
  * EE_Message_Template_Group class
  *
  *
@@ -115,7 +99,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Wrapper for the user function() (preserve bacward compat)
+	 * Wrapper for the user function() (preserve backward compat)
 	 *
 	 * @since  4.5.0
 	 *
@@ -331,23 +315,23 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * @throws EE_Error
 	 * @return array    an array of EE_Shortcode objects
 	 */
-	private function _get_shortcode_objects( $sc_refs ) {
-		$sc_objs = array();
-		EED_Messages::set_autoloaders();
-		foreach ( $sc_refs as $shortcode_ref ) {
-			$ref = ucwords( str_replace( '_', ' ', $shortcode_ref ) );
-			$ref = str_replace( ' ', '_', $ref );
-			$classname = 'EE_' . $ref . '_Shortcodes';
-			if ( ! class_exists( $classname ) ) {
-				$msg[ ] = __( 'Shortcode library loading fail.', 'event_espresso' );
-				$msg[ ] = sprintf( __( 'The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate shortcode library file name (minus the extension) in the "/library/shortcodes/" directory', 'event_espresso' ), $classname );
-				throw new EE_Error( implode( '||', $msg ) );
-			}
-			$a = new ReflectionClass( $classname );
-			$sc_objs[ ] = $a->newInstance();
-		}
-		return $sc_objs;
-	}
+	//private function _get_shortcode_objects( $sc_refs ) {
+	//	$sc_objs = array();
+	//	EED_Messages::set_autoloaders();
+	//	foreach ( $sc_refs as $shortcode_ref ) {
+	//		$ref = ucwords( str_replace( '_', ' ', $shortcode_ref ) );
+	//		$ref = str_replace( ' ', '_', $ref );
+	//		$classname = 'EE_' . $ref . '_Shortcodes';
+	//		if ( ! class_exists( $classname ) ) {
+	//			$msg[ ] = __( 'Shortcode library loading fail.', 'event_espresso' );
+	//			$msg[ ] = sprintf( __( 'The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate shortcode library file name (minus the extension) in the "/library/shortcodes/" directory', 'event_espresso' ), $classname );
+	//			throw new EE_Error( implode( '||', $msg ) );
+	//		}
+	//		$a = new ReflectionClass( $classname );
+	//		$sc_objs[ ] = $a->newInstance();
+	//	}
+	//	return $sc_objs;
+	//}
 
 
 
@@ -366,7 +350,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * This returns the specific template pack object referenced by the template pack name attached to this message template group.  If no template pack is assigned then the default template pack is retreived.
+	 * This returns the specific template pack object referenced by the template pack name attached to this message template group.  If no template pack is assigned then the default template pack is retrieved.
 	 *
 	 * @since 4.5.0
 	 *
@@ -393,13 +377,12 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 
-
 	/**
 	 * This just sets the template pack name attached to this message template group.
 	 *
 	 * @since 4.5.0
-	 *
 	 * @param string $template_pack_name What message template pack is assigned.
+	 * @return int
 	 */
 	public function set_template_pack_name( $template_pack_name ) {
 		return $this->update_extra_meta( 'MTP_template_pack', $template_pack_name );
@@ -407,13 +390,12 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 
-
 	/**
 	 * This just sets the template pack variation attached to this message template group.
 	 *
 	 * @since 4.5.0
-	 *
 	 * @param string $variation What variation is being set on the message template group.
+	 * @return int
 	 */
 	public function set_template_pack_variation( $variation ) {
 		return $this->update_extra_meta( 'MTP_variation', $variation );
