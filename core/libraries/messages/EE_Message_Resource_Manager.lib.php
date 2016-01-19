@@ -518,24 +518,23 @@ class EE_Message_Resource_Manager {
 	}
 
 
-
 	/**
-	 * _get_settings_for_message_type
+	 * Activates given message types for the given EE_Messenger object.
 	 *
-	 * @access protected
 	 * @param \EE_Messenger $messenger
-	 * @param  array        $message_types
+	 * @param  array        $message_type_names
+	 *
 	 * @return array
 	 */
-	protected function _activate_message_types( EE_Messenger $messenger, $message_types = array() ) {
+	protected function _activate_message_types( EE_Messenger $messenger, $message_type_names = array() ) {
 		// get has_active so we can be sure its kept up to date.
 		$has_activated = $this->get_has_activated_messengers_option();
 		// use incoming list of message types or if that's empty, then get defaults
-		$message_types = ! empty( $message_types )
-			? $message_types
+		$message_type_names = ! empty( $message_type_names )
+			? $message_type_names
 			: $messenger->get_default_message_types();
 		// cycle thru message types
-		foreach ( $message_types as $message_type_name ) {
+		foreach ( $message_type_names as $message_type_name ) {
 			$this->_add_settings_for_message_type( $messenger, $message_type_name );
 			$has_activated = $this->_set_messenger_has_activated_message_type(
 				$messenger,
@@ -547,7 +546,7 @@ class EE_Message_Resource_Manager {
 		$this->_add_settings_for_messenger( $messenger );
 		$this->_active_message_types[ $messenger->name ][ 'obj' ] = $messenger;
 		$this->update_has_activated_messengers_option( $has_activated );
-		return $message_types;
+		return $message_type_names;
 	}
 
 
