@@ -98,7 +98,7 @@ class EEH_Debug_Tools{
 		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
-//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
+			//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
 			$this->espresso_list_hooked_functions();
 			$this->show_times();
 		}
@@ -216,30 +216,30 @@ class EEH_Debug_Tools{
 				break;
 		}
 		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
-	 }
-	 /**
-	  * Measure the memory usage by PHP so far.
-	  * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
-	  * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
-	  * @return void
-	  */
-	 public function measure_memory( $label, $output_now = false ) {
-		 $memory_used = $this->convert( memory_get_peak_usage( true ) );
-		 $this->_memory_usage_points[ $label ] = $memory_used;
-		 if( $output_now ) {
-			 echo "\r\n<br>$label : $memory_used";
-		 }
-	 }
+	}
+	/**
+	 * Measure the memory usage by PHP so far.
+	 * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
+	 * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+	 * @return void
+	 */
+	public function measure_memory( $label, $output_now = false ) {
+		$memory_used = $this->convert( memory_get_peak_usage( true ) );
+		$this->_memory_usage_points[ $label ] = $memory_used;
+		if( $output_now ) {
+			echo "\r\n<br>$label : $memory_used";
+		}
+	}
 
-	 /**
-	  * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
-	  * @param int $size
-	  * @return string
-	  */
-	 public function convert( $size ) {
+	/**
+	 * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
+	 * @param int $size
+	 * @return string
+	 */
+	public function convert( $size ) {
 		$unit=array('b','kb','mb','gb','tb','pb');
 		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
-	 }
+	}
 
 
 
@@ -250,12 +250,12 @@ class EEH_Debug_Tools{
 	 */
 	public function show_times($output_now=true){
 		$output = '<h2>Times:</h2>' . implode("<br>",$this->_times) . '<h2>Memory</h2>' . implode('<br>', $this->_memory_usage_points );
-		 if($output_now){
-			 echo $output;
-			 return '';
-		 }
+		if($output_now){
+			echo $output;
+			return '';
+		}
 		return $output;
-	 }
+	}
 
 
 
