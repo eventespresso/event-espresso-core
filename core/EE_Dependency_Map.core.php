@@ -169,18 +169,19 @@ class EE_Dependency_Map {
 	protected function _register_core_class_loaders() {
 		self::$_class_loaders = array(
 			//load_core
-			'EE_Encryption' => 'load_core',
-			'EE_Module_Request_Router' => 'load_core',
-			'EE_Registry' => 'load_core',
-			'EE_Request_Handler' => 'load_core',
-			'EE_Session' => 'load_core',
+			'EE_Encryption'                     => 'load_core',
+			'EE_Module_Request_Router'          => 'load_core',
+			'EE_Registry'                       => 'load_core',
+			'EE_Request_Handler'                => 'load_core',
+			'EE_Session'                        => 'load_core',
 			//load_lib
-			'EE_Message_Type_Collection' => 'load_lib',
-			'EE_Message_Resource_Manager' => 'load_lib',
-			'EE_Message_Type_Collection_Loader', 'load_lib',
-			'EE_Messenger_Collection' => 'load_lib',
-			'EE_Messenger_Collection_Loader' => 'load_lib',
-			'EEM_Message_Template_Group', 'load_lib'
+			'EE_Message_Resource_Manager'       => 'load_lib',
+			'EE_Message_Type_Collection'        => 'load_lib',
+			'EE_Message_Type_Collection_Loader' => 'load_lib',
+			'EE_Messenger_Collection'           => 'load_lib',
+			'EE_Messenger_Collection_Loader'    => 'load_lib',
+			//load_model
+			'EEM_Message_Template_Group'        => 'load_model'
 		);
 	}
 
