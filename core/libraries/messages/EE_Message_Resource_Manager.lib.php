@@ -727,7 +727,7 @@ class EE_Message_Resource_Manager {
 				}
 			}
 		}
-		return $this->_contexts[ $key ];
+		return ! empty( $this->_contexts[ $key ] ) ? $this->_contexts[ $key ] : array();
 	}
 
 
