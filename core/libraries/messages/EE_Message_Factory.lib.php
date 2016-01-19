@@ -53,7 +53,7 @@ class EE_Message_Factory {
 	 * @param \EE_Message_Resource_Manager $Message_Resource_Manager
 	 * @return \EE_Message_Factory instance
 	 */
-	public static function instance( EE_Message_Resource_Manager $Message_Resource_Manager = null ) {
+	public static function instance( EE_Message_Resource_Manager $Message_Resource_Manager ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( ! self::$_instance instanceof EE_Message_Factory ) {
 			self::$_instance = new EE_Message_Factory( $Message_Resource_Manager );
