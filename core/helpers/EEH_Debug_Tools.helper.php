@@ -306,7 +306,7 @@ class EEH_Debug_Tools{
 
 		//don't trigger error if doing ajax, instead we'll add a transient EE_Error notice that in theory should show on the next request.
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			$error_message .= 'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ';
+			$error_message .= esc_html__( 'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ', 'event_espresso' );
 			$error_message .= '<ul><li>';
 			$error_message .= implode( '</li><li>', EE_Registry::instance()->REQ->params() );
 			$error_message .= '</ul>';
