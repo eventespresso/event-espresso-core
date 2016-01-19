@@ -302,8 +302,7 @@ class EEH_Debug_Tools{
 	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
 		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
-
-		$error_message = sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version );
+		$error_message = sprintf( esc_html__('%1$s was called %2$sincorrectly%3$s. %4$s %5$s','event_espresso' ), $function, '<strong>', '</strong>', $message, $version );
 
 		//don't trigger error if doing ajax, instead we'll add a transient EE_Error notice that in theory should show on the next request.
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
@@ -311,7 +310,7 @@ class EEH_Debug_Tools{
 			$error_message .= '<ul><li>';
 			$error_message .= implode( '</li><li>', EE_Registry::instance()->REQ->params() );
 			$error_message .= '</ul>';
-			EE_Error::add_error( $message, 'debug::doing_it_wrong', $function, '42' );
+			EE_Error::add_error( $error_message, 'debug::doing_it_wrong', $function, '42' );
 			//now we set this on the transient so it shows up on the next request.
 			EE_Error::get_notices( is_admin(), true );
 		} else {
