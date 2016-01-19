@@ -376,10 +376,8 @@ class EE_Message_Resource_Manager {
 	 * @return array
 	 */
 	public function get_active_messengers_option() {
-		return apply_filters(
-			'FHEE__EE_Message_Resource_Manager__get_active_messengers_option',
-			get_option( 'ee_active_messengers', array() )
-		);
+		return get_option( 'ee_active_messengers', array() );
+
 	}
 
 
@@ -403,10 +401,7 @@ class EE_Message_Resource_Manager {
 	 * @return array
 	 */
 	public function get_has_activated_messengers_option() {
-		return apply_filters(
-			'FHEE__EE_Message_Resource_Manager__get_has_activated_messengers_option',
-			get_option( 'ee_has_activated_messenger', array() )
-		);
+			get_option( 'ee_has_activated_messenger', array() );
 	}
 
 
