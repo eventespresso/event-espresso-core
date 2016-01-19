@@ -287,10 +287,10 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * Same as get_active_message_types() except this returns actual EE_message_type objects
+	 * Same as list_of_active_message_types() except this returns actual EE_message_type objects
 	 *
 	 * @since 4.9.0
-	 * @return EE_message_type[]
+	 * @return \EE_message_type[]
 	 */
 	public function get_active_message_type_objects() {
 		$message_types = array();
