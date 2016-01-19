@@ -629,21 +629,18 @@ class EE_Message_Resource_Manager {
 	}
 
 
-
 	/**
-	 * _deactivate_message_type
+	 * Deactivates a message type (note this will deactivate across all messenger's it is active on.
 	 *
-	 * @access protected
-	 * @param  string $message_type name of message type
-	 * @return void
+	 * @param  string $message_type_name name of message type being deactivated
 	 */
-	protected function _deactivate_message_type( $message_type ) {
+	protected function _deactivate_message_type( $message_type_name ) {
 		foreach ( $this->_active_message_types as $messenger => $settings ) {
 			unset(
-				$this->_active_message_types[ $messenger ][ 'settings' ][ $messenger . '-message_types' ][ $message_type ]
+				$this->_active_message_types[ $messenger ][ 'settings' ][ $messenger . '-message_types' ][ $message_type_name ]
 			);
 		}
-		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type );
+		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type_name );
 		$this->update_active_messengers_option( $this->_active_message_types );
 	}
 
