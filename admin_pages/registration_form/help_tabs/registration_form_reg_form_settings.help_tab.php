@@ -1,9 +1,9 @@
-<h2><?php _e('Registration Form Settings', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Registration Form Settings', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows options for reCAPTCHA which can help prevent SPAM registrations on your site.', 'event_espresso'); ?>
 </p>
 <div id="recaptcha_info">
-<h3><?php _e('reCAPTCHA Information', 'event_espresso'); ?></h3>
+<p><strong><?php _e('reCAPTCHA Information', 'event_espresso'); ?></strong></p>
 <p><?php echo sprintf(__('%s helps prevent automated abuse of your site (such as comment spam or bogus registrations) by using a %s to ensure that only humans perform certain actions.', 'event_espresso'), '<a href="https://www.google.com/recaptcha/intro/index.html" target="_blank">reCAPTCHA</a>', '<a href="https://www.google.com/recaptcha/admin#whyrecaptcha">reCAPTCHA</a>'); ?> </p>
 <p><?php echo sprintf(__('You must sign up for a free %s account to use it with this plugin. If you already have a reCAPTCHA account enter your "Public" and "Private" keys on this page.', 'event_espresso'), '<a href="https://www.google.com/recaptcha/admin#createsite" target="_blank">reCAPTCHA</a>'); ?> </p>
 <p><strong><?php _e('Helpful Links:', 'event_espresso'); ?></strong></p>

@@ -64,7 +64,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		$this->assertFalse($d->sold_out());
 		$d->set_sold(10);
 		$this->assertTrue($d->sold_out());
-		$d->set('DTT_reg_limit',INF);
+		$d->set('DTT_reg_limit',EE_INF);
 		$this->assertFalse($d->sold_out());
 	}
 	function test_spaces_remaining(){
@@ -126,11 +126,15 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	 * @since 4.6.0
 	 */
 	public function test_ticket_types_available_for_purchase() {
+		//@todo remove once test fixed
+		/*$this->markTestSkipped(
+			'See https://events.codebasehq.com/projects/event-espresso/tickets/8971'
+		);/**/
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
 		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
 		$past_start_date = new DateTime( "now -2days", $timezone );
-		$current_end_date = new DateTime( "now +2days", $timezone );
+		$upcoming_end_date = new DateTime( "now +2days", $timezone );
 		$current = new DateTime( "now", $timezone );
 		$formats = array( 'Y-d-m',  'h:i a' );
 		$full_format = implode( ' ', $formats );
@@ -143,8 +147,8 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 
 		$datetimes = array(
 			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
-			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
-			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
+			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
+			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $upcoming_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
 			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
 			);
 
@@ -154,7 +158,6 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 				$tkt = $this->factory->ticket->create ( $ticket_args );
 				$datetime->_add_relation_to( $tkt, 'Ticket' );
 				$datetime->save();
-				$dtt_id = $datetime;
 			}
 		}
 
@@ -186,7 +189,13 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		//setup a datetime for testing
 		$start_date = new DateTime( 'now' );
 		$end_date = new DateTime( 'now + 3 hours' );
-		$datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ), 'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ), 'timezone' => 'UTC', 'formats' => array( 'Y-m-d', 'H:i:s' ) ) );
+		$datetime = $this->factory->datetime->create(
+			array(
+				'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ),
+				'DTT_EVT_end' => $end_date->format( 'Y-m-d H:i:s' ),
+				'timezone' => 'UTC', 'formats' => array( 'Y-m-d', 'H:i:s' )
+			)
+		);
 
 		//assert we have a datetime
 		$this->assertInstanceOf( 'EE_Datetime', $datetime );
@@ -196,6 +205,28 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	}
 
 
+
+	/**
+	 * @group 8861
+	 */
+	public function test_tickets_remaining() {
+		$scenarios = $this->scenarios->get_scenarios_by_type( 'datetime' );
+		foreach ( $scenarios as $scenario ) {
+			/* @type EE_Datetime $datetime */
+			$datetime = $scenario->get_scenario_object();
+			$datetime_id_to_tickets_map = $scenario->get_expected( 'datetime_id_to_tickets_map' );
+			if ( isset( $datetime_id_to_tickets_map[ $datetime->ID() ] ) ) {
+				$tickets_remaining = $datetime->tickets_remaining();
+				//echo "\n tickets_remaining: " . $tickets_remaining;
+				$tickets_expected = $datetime_id_to_tickets_map[ $datetime->ID() ];
+				//echo "\n tickets_expected: " . $tickets_expected;
+				$this->assertEquals( $tickets_expected, $tickets_remaining );
+			}
+		}
+	}
+
+
 }
 
 // End of file EE_Datetime_Test.php
+// Location: tests/testcases/core/db_classes/EE_Datetime_Test.php

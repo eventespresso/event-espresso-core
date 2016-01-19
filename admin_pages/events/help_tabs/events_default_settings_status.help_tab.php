@@ -1,4 +1,4 @@
-<h3><?php _e('Default Registration Status', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Default Registration Status', 'event_espresso'); ?></strong></p>
 <p>
 <strong><?php echo EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ); ?></strong><br />
 <?php printf( __('A status of %s means that a registration has been accepted as complete. The registration will count towards the registration limit, remaining tickets, and calculations for available seats. Payments (if necessary) can also be made by primary registrants with this status.', 'event_espresso'), EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) ); ?>

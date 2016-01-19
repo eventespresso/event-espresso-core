@@ -306,6 +306,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * Extracts the question field's values from the POST request to update or insert them
+	 *
+	 * @param \EEM_Base $model
 	 * @return array where each key is the name of a model's field/db column, and each value is its value.
 	 */
 	protected function _set_column_values_for(EEM_Base $model){
@@ -335,9 +337,26 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				$set_column_values[$fieldName] = 0;
 			}
 
+			else if ( $fieldName == 'QST_max' ) {
+				$qst_system = EEM_Question::instance()->get_var(
+					array(
+						array(
+							'QST_ID' => isset( $this->_req_data[ 'QST_ID' ] ) ? $this->_req_data[ 'QST_ID' ] : 0
+						)
+					),
+					'QST_system' );
+				$max_max = EEM_Question::instance()->absolute_max_for_system_question( $qst_system );
+				if( empty( $this->_req_data[ 'QST_max' ] ) ||
+					 $this->_req_data[ 'QST_max' ] > $max_max ) {
+					$set_column_values[ $fieldName ] = $max_max;
+				}
+			}
+
 
 			//only add a property to the array if it's not null (otherwise the model should just use the default value)
-			else if(isset($this->_req_data[$fieldName])){
+			if(
+				! isset( $set_column_values[ $fieldName ] ) &&
+				isset($this->_req_data[$fieldName] ) ){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
 
@@ -347,7 +366,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-
+	/**
+	 *_questions_overview_list_table
+	 */
 	protected function _questions_overview_list_table() {
 		$this->_search_btn_label = __('Questions', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
@@ -355,6 +376,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
+	/**
+	 * @param string $action
+	 */
 	protected function _edit_question( $action= 'add' ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
@@ -374,7 +398,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$question_types = $question->has_answers() ?  $this->_question_model->question_types_in_same_category( $question->type() ) : $this->_question_model->allowed_question_types();
 		$this->_template_args['QST_ID']=$ID;
 		$this->_template_args['question']=$question;
-		$this->_template_args['question_types']= $question_types;;
+		$this->_template_args['question_types']= $question_types;
+		$this->_template_args['max_max'] = EEM_Question::instance()->absolute_max_for_system_question( $question->system_ID() );
 
 		$this->_set_publish_post_box_vars( 'id', $ID );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
@@ -385,27 +410,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-
-
-
-
-
-
-
-
-
-	protected function _insert_or_update_question($new_question = TRUE) {
+	/**
+	 * @param bool|true $new_question
+	 * @throws \EE_Error
+	 */
+	protected function _insert_or_update_question( $new_question = TRUE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$success=0;
 		$set_column_values=$this->_set_column_values_for($this->_question_model);
 		if($new_question){
-			$new_id=$this->_question_model->insert($set_column_values);
-			if($new_id){
-				$success=1;
-				$ID=$new_id;
-			}else{
-				$success = false;
-			}
+			$ID=$this->_question_model->insert($set_column_values);
+			$success = $ID ? true : false;
+			$action_desc = 'added';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
@@ -414,10 +429,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			$success= $this->_question_model->update($set_column_values,array($wheres));
 			$action_desc='updated';
 		}
+
 		if ($ID){
 			//save the related options
 			//trash removed options, save old ones
-				//get list of all options
+			//get list of all options
+			/** @type EE_Question $question */
 			$question=$this->_question_model->get_one_by_ID($ID);
 			$options=$question->options();
 			if(! empty($options)){
@@ -442,14 +459,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				}
 			}
 		}
-		$query_args=array('action'=>'edit_question','QST_ID'=>$question->ID());
-
+		$query_args = array( 'action' => 'edit_question', 'QST_ID' => $ID );
 		if ( $success !== FALSE ) {
 			$msg = $new_question ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
 
-		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
+		$this->_redirect_after_action( FALSE, '', $action_desc, $query_args, TRUE);
 	}
 
 
@@ -457,10 +473,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * Upon saving a question, there should be an array of 'question_options'. This array is index numerically, but not by ID
-	 * (this is done because new question optiosn don't have an ID, but we may want to add multiple simultaneously).
+	 * (this is done because new question options don't have an ID, but we may want to add multiple simultaneously).
 	 * So, this function gets the index in that request data array called question_options. Returns FALSE if not found.
 	 * @param int $ID of the question option to find
-	 * @return int indexin in question_options array if successful, FALSE if unsuccessful
+	 * @return int index in question_options array if successful, FALSE if unsuccessful
 	 */
 	protected function _get_option_req_data_index($ID){
 		$req_data_for_question_options=$this->_req_data['question_options'];
@@ -477,13 +493,14 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/***********/
 	/* QUERIES */
-
-
-
 	/**
-	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
-	 * for both when searching for trashed and untrashed dones)
+	 * For internal use in getting all the query parameters
+	 * (because it's pretty well the same between question, question groups,
+	 * and for both when searching for trashed and untrashed ones)
+	 *
 	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
+	 * @param int      $per_page
+	 * @param int      $current_page
 	 * @return array lik EEM_Base::get_all's $query_params parameter
 	 */
 	protected function get_query_params($model, $per_page=10,$current_page=10){
@@ -546,7 +563,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
+	/**
+	 * @param int        $per_page
+	 * @param int        $current_page
+	 * @param bool|false $count
+	 * @return \EE_Soft_Delete_Base_Class[]|int
+	 */
+	public function get_questions( $per_page=10, $current_page = 1, $count = FALSE ) {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
@@ -561,19 +584,32 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
-		$query_params=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page);
-		$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
-		$questions=$count ? EEM_Question::instance()->count_deleted($where) : EEM_Question::instance()->get_all_deleted($query_params);
+	/**
+	 * @param            $per_page
+	 * @param int        $current_page
+	 * @param bool|false $count
+	 * @return \EE_Soft_Delete_Base_Class[]|int
+	 */
+	public function get_trashed_questions( $per_page, $current_page = 1, $count = FALSE ) {
+		$query_params =$this->get_query_params( EEM_Question::instance(), $per_page, $current_page);
+		$where        = isset( $query_params[0] ) ? array($query_params[0]) : array();
+		$questions    =$count ? EEM_Question::instance()->count_deleted($where) : EEM_Question::instance()->get_all_deleted($query_params);
 		return $questions;
 	}
 
 
 
-	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
+	/**
+	 * @param            $per_page
+	 * @param int        $current_page
+	 * @param bool|false $count
+	 * @return \EE_Soft_Delete_Base_Class[]
+	 */
+	public function get_question_groups( $per_page, $current_page = 1, $count = FALSE ) {
+		/** @type EEM_Question_Group $questionGroupModel */
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
-		$questionGroups=$questionGroupModel->get_all($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
+		$query_params=$this->get_query_params( $questionGroupModel, $per_page, $current_page );
+		$questionGroups=$questionGroupModel->get_all($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
 		return $questionGroups;
 	}
 
@@ -603,7 +639,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
 				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
 			);
-		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->display_nice( 'recaptcha_theme' ) : 'clean';
+		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->get_pretty( 'recaptcha_theme' ) : 'clean';
 
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),

@@ -1,8 +1,8 @@
-<h2><?php _e('Critical Pages', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Critical Pages', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows all critical pages that Event Espresso needs to work correctly.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Shortcodes', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Shortcodes', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Registration Checkout Page', 'event_espresso'); ?></strong><br />
@@ -29,6 +29,18 @@
 </li>
 <li style="list-style-type: circle;">
 <?php printf( __('Build a template for a single event - create a theme template named %1$s Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be %2$s.', 'event_espresso'), '<strong>single-espresso_events.php</strong>','wp-content/themes/twenty-fourteen' ); ?>
+</li>
+</ul>
+</li>
+<li>
+<strong><?php _e('Venue List', 'event_espresso'); ?></strong><br />
+<?php printf(__('If you would like to style the look of your venues archive page, then follow the WordPress instructions for %1$screating a custom template for archive pages%2$s.', 'event_espresso'), '<a href="http://codex.wordpress.org/Post_Type_Templates">','</a>'); ?>
+<ul>
+<li style="list-style-type: circle;">
+<?php printf( __('Build a template for your events - create a theme template named %1$s Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be %2$s.', 'event_espresso'), '<strong>archive-espresso_venues.php</strong>','wp-content/themes/twenty-fourteen' ); ?>
+</li>
+<li style="list-style-type: circle;">
+<?php printf( __('Build a template for a single event - create a theme template named %1$s Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be %2$s.', 'event_espresso'), '<strong>single-espresso_venues.php</strong>','wp-content/themes/twenty-fourteen' ); ?>
 </li>
 </ul>
 </li>

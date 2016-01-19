@@ -121,7 +121,7 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 				) );
 				$events = empty( $events ) ? EEM_Event::instance()->get_upcoming_events( array( 'limit'    => 1,
 				                                                                              'order_by' => array( 'Datetime.DTT_EVT_start' => 'ASC' )
-				) ) : array();
+				) ) : $events;
 				$event = reset( $events );
 				if ( $event instanceof EE_Event ) {
 					$query[0]['Registration.EVT_ID'] = $event->ID();

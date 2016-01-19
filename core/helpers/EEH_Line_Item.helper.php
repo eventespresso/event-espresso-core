@@ -56,7 +56,8 @@ class EEH_Line_Item {
 		));
 		$line_item = apply_filters(
 			'FHEE__EEH_Line_Item__add_unrelated_item__line_item',
-			$line_item
+			$line_item,
+			$parent_line_item
 		);
 		return self::add_item( $parent_line_item, $line_item );
 	}
@@ -208,7 +209,14 @@ class EEH_Line_Item {
 	 */
 	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
 		$datetimes = $ticket->datetimes();
-		$event = sprintf( __( '(For %1$s)', 'event_espresso' ), reset( $datetimes )->event()->name() );
+		$first_datetime = reset( $datetimes );
+		if( $first_datetime instanceof EE_Datetime &&
+				$first_datetime->event() instanceof EE_Event ) {
+			$first_datetime_name = $first_datetime->event()->name();
+		} else {
+			$first_datetime_name = __( 'Event', 'event_espresso' );
+		}
+		$event = sprintf( _x( '(For %1$s)', '(For Event Name)', 'event_espresso' ), $first_datetime_name );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
 		if ( ! $events_sub_total instanceof EE_Line_Item ) {
@@ -478,6 +486,18 @@ class EEH_Line_Item {
 		if ( ! $event instanceof EE_Event ) {
 			throw new EE_Error( sprintf( __( 'The supplied ticket (ID %d) has no event data associated with it.','event_espresso' ), $ticket->ID() ) );
 		}
+		return EEH_Line_Item::get_event_line_item( $grand_total, $event );
+	}
+
+	/**
+	 * Gets the event line item
+	 * @param EE_Line_Item $grand_total
+	 * @param EE_Event $event
+	 * @return EE_Line_Item for the event subtotal which is a child of $grand_total
+	 */
+	public static function get_event_line_item( EE_Line_Item $grand_total, $event ) {
+		/** @type EE_Event $event */
+		$event = EEM_Event::instance()->ensure_is_obj( $event, true );
 		$event_line_item = NULL;
 		$found = false;
 		foreach ( EEH_Line_Item::get_event_subtotals( $grand_total ) as $event_line_item ) {
@@ -649,6 +669,8 @@ class EEH_Line_Item {
 		}
 	}
 
+
+
 	/**
 	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
 	 * tax and updates the total line item accordingly
@@ -656,32 +678,74 @@ class EEH_Line_Item {
 	 * @param float $amount
 	 * @param string $name
 	 * @param string $description
+	 * @param string $code
+	 * @param boolean $add_to_existing_line_item
+	 *                                           if true, and a duplicate line item with the same code is found,
+	 *                                           $amount will be added onto it; otherwise will simply set the taxes to match $amount
 	 * @return EE_Line_Item the new tax line item created
 	 */
-	public static function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name = NULL, $description = NULL ){
-		//first: remove all tax descendants
-		//add this as a new tax descendant
-		$tax_subtotal = self::get_taxes_subtotal( $total_line_item );
-		$tax_subtotal->delete_children_line_items();
-		$taxable_total = $total_line_item->taxable_total();
-		$new_tax_subtotal = EE_Line_Item::new_instance(array(
-			'TXN_ID' => $total_line_item->TXN_ID(),
-			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
-			'LIN_desc' => $description ? $description : '',
-			'LIN_percent' => $taxable_total ? ( $amount / $total_line_item->taxable_total()  * 100 ) : 0,
-			'LIN_total' => $amount,
-			'LIN_parent' => $tax_subtotal->ID(),
-			'LIN_type' => EEM_Line_Item::type_tax
-		));
-		$new_tax_subtotal = apply_filters(
-			'FHEE__EEH_Line_Item__set_total_tax_to__new_tax_subtotal',
-			$new_tax_subtotal
-		);
-		$new_tax_subtotal->save();
-		$tax_subtotal->set_total( $amount );
-		$tax_subtotal->save();
-		$total_line_item->recalculate_total_including_taxes();
-		return $new_tax_subtotal;
+	public static function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false ){
+            $tax_subtotal = self::get_taxes_subtotal( $total_line_item );
+            $taxable_total = $total_line_item->taxable_total();
+
+            if( $add_to_existing_line_item ) {
+                $new_tax = $tax_subtotal->get_child_line_item( $code );
+                EEM_Line_Item::instance()->delete( array( array( 'LIN_code' => array( '!=', $code ), 'LIN_parent' => $tax_subtotal->ID() ) ) );
+            } else {
+                $new_tax = null;
+                $tax_subtotal->delete_children_line_items();
+            }
+            if( $new_tax ) {
+                $new_tax->set_total( $new_tax->total() + $amount );
+                $new_tax->set_percent( $taxable_total ? ( $new_tax->total() ) / $taxable_total * 100 : 0 );
+            } else {
+                //no existing tax item. Create it
+				$new_tax = EE_Line_Item::new_instance( array(
+					'TXN_ID'      => $total_line_item->TXN_ID(),
+					'LIN_name'    => $name ? $name : __( 'Tax', 'event_espresso' ),
+					'LIN_desc'    => $description ? $description : '',
+					'LIN_percent' => $taxable_total ? ( $amount / $taxable_total * 100 ) : 0,
+					'LIN_total'   => $amount,
+					'LIN_parent'  => $tax_subtotal->ID(),
+					'LIN_type'    => EEM_Line_Item::type_tax,
+					'LIN_code'    => $code
+				) );
+			}
+
+            $new_tax = apply_filters(
+				'FHEE__EEH_Line_Item__set_total_tax_to__new_tax_subtotal',
+				$new_tax,
+				$total_line_item
+            );
+            $new_tax->save();
+            $tax_subtotal->set_total( $new_tax->total() );
+            $tax_subtotal->save();
+            $total_line_item->recalculate_total_including_taxes();
+            return $new_tax;
+	}
+
+
+
+	/**
+	 * Makes all the line items which are children of $line_item taxable (or not).
+	 * Does NOT save the line items
+	 * @param EE_Line_Item $line_item
+	 * @param string $code_substring_for_whitelist if this string is part of the line item's code
+	 *  it will be whitelisted (ie, except from becoming taxable)
+	 * @param boolean $taxable
+	 */
+	public static function set_line_items_taxable( EE_Line_Item $line_item, $taxable = true, $code_substring_for_whitelist = null ) {
+		if( $code_substring_for_whitelist !== null ) {
+			$whitelisted = strpos( $line_item->code(), $code_substring_for_whitelist ) !== false ? true : false;
+		} else {
+			$whitelisted = false;
+		}
+		if( $line_item->is_line_item() && ! $whitelisted ) {
+			$line_item->set_is_taxable( $taxable );
+		}
+		foreach( $line_item->children() as $child_line_item ) {
+			EEH_Line_Item::set_line_items_taxable( $child_line_item, $taxable, $code_substring_for_whitelist );
+		}
 	}
 
 

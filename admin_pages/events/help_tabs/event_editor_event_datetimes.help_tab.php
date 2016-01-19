@@ -1,4 +1,4 @@
-<h3><?php _e('Event Datetimes', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Event Datetimes', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This is the event datetimes of the event. All events require a start and an end date in order to display properly on your pages. You can also view sold tickets, quickly create a new tickets, and duplicate an event datetime. Event Datetimes can also have a title or name associated with them.', 'event_espresso'); ?>
 </p>

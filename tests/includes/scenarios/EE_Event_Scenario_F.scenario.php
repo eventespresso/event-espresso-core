@@ -7,7 +7,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * - Three Datetimes
  *      - D1 - reg limit 5
  *      - D2 - reg limit 20
- *      - D3 - reg limit INF
+ *      - D3 - reg limit EE_INF
  * - Four Tickets
  *      - TA - qty 5 (D1, D2, D3)
  *      - TB - qty 15 (D2,D3)

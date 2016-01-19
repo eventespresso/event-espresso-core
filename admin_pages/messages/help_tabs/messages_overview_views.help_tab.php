@@ -1,4 +1,4 @@
-<h3><?php _e('Message Views', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Message Views', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Views allow you to restrict what you see in the Messages Overview table. The following views are available: In Use, All, Global, Events, and Trash. The number in parentheses next to each view represents the number of message templates that will be displayed with that view.', 'event_espresso'); ?>
 </p>

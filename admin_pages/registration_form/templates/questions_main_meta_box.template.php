@@ -105,7 +105,30 @@ $has_answers = $question->has_answers();
 
 				</td>
 			</tr>
-
+			<tr id="text_input_question_options">
+				<th>
+					<label>
+						<?php _e( 'Maximum Allowed Response Size', 'event_espresso' );?>
+					</label>
+				</th>
+				<td>
+					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max == EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>" min="1">
+					<p>
+						<span class="description">
+							<?php _e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
+						</span>
+					</p>
+					<?php if ( $QST_system ) { ?>
+					<p>
+						<span class="description" style="color:#D54E21;">
+							<?php printf(
+									__( 'System question! The maximum number of characters that can be used for this question is %1$s', 'event_espresso' ),
+									$max_max );?>
+						</span>
+					</p>
+					<?php } ?>
+				</td>
+			</tr>
 			<tr id="question_options">
 				<th>
 					<label>
@@ -148,7 +171,7 @@ $has_answers = $question->has_answers();
 							$question_options = $question->options();
 							if ( ! empty( $question_options )) {
 								foreach( $question_options as $option_id => $option ) {
-									$disabled =  $has_answers ? ' disabled="disabled"' : '';
+									$disabled =  $has_answers || $option->get('QSO_system') ? ' disabled="disabled"'  : '';
 							?>
 								<tr class="question-option ee-options-sortable">
 									<td class="option-value-cell">
@@ -162,7 +185,9 @@ $has_answers = $question->has_answers();
 										<input type="text" class="option-desc regular-text" name="question_options[<?php echo $count?>][QSO_desc]" value="<?php $option->f('QSO_desc')?>">
 									</td>
 									<td>
-										<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
+										<?php if ( ! $option->system() ) { ?>
+											<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
+										<?php } ?>
 										<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle ee-icon-size-18"></span>
 									</td>
 									<?php
@@ -220,7 +245,7 @@ $has_answers = $question->has_answers();
 				</th>
 				<td>
 					<?php
-					$system_required = array( 'fname', 'lname', 'email' );
+					$system_required = array( 'fname', 'email' );
 					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : '';
 					$required_on = $question->get('QST_admin_only');
 					$show_required_msg = $required_on ? '' : ' display:none;';

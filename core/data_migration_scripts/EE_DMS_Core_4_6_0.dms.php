@@ -609,10 +609,9 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
-			if ( ! $existing_payment_methods ) {
-				//make sure we hae payment method records for the following
-				//so admins can record payments for them from the admin page
-				$default_admin_only_payment_methods = array(
+			$default_admin_only_payment_methods = apply_filters( 
+					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods', 
+					array(
 					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
 					__("Cash", 'event_espresso')=>  __("Cash Delivered Physically", 'event_espresso'),
 					__("Check", 'event_espresso')=>  __("Paper Check", 'event_espresso'),
@@ -621,38 +620,41 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					__("Invoice", 'event_espresso')=>  __("Invoice received with monies included", 'event_espresso'),
 					__("Money Order", 'event_espresso')=>'',
 					__("Paypal", 'event_espresso')=>  __("Paypal eCheck, Invoice, etc", 'event_espresso'),
-				);
+					__('Other', 'event_espresso') => __('Other method of payment', 'event_espresso')
+				) );
+			//make sure we hae payment method records for the following
+			//so admins can record payments for them from the admin page
 
-				foreach($default_admin_only_payment_methods as $nicename => $description){
-					$slug = sanitize_key($nicename);
-				//check that such a payment method exists
-					$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s",$slug));
-					if( ! $exists){
-						$values = array(
-									'PMD_type'=>'Admin_Only',
-									'PMD_name'=>$nicename,
-									'PMD_admin_name'=>$nicename,
-									'PMD_admin_desc'=>$description,
-									'PMD_slug'=>$slug,
-									'PMD_wp_user'=>$user_id,
-									'PMD_scope'=>serialize(array('ADMIN')),
-								);
-						$success = $wpdb->insert(
-								$table_name,
-								$values,
-								array(
-									'%s',//PMD_type
-									'%s',//PMD_name
-									'%s',//PMD_admin_name
-									'%s',//PMD_admin_desc
-									'%s',//PMD_slug
-									'%d',//PMD_wp_user
-									'%s',//PMD_scope
-								)
-								);
-						if( ! $success ){
-							$this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration", "event_espresso"),$this->_json_encode($values)));
-						}
+
+			foreach($default_admin_only_payment_methods as $nicename => $description){
+				$slug = sanitize_key($nicename);
+			//check that such a payment method exists
+				$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s",$slug));
+				if( ! $exists){
+					$values = array(
+								'PMD_type'=>'Admin_Only',
+								'PMD_name'=>$nicename,
+								'PMD_admin_name'=>$nicename,
+								'PMD_admin_desc'=>$description,
+								'PMD_slug'=>$slug,
+								'PMD_wp_user'=>$user_id,
+								'PMD_scope'=>serialize(array('ADMIN')),
+							);
+					$success = $wpdb->insert(
+							$table_name,
+							$values,
+							array(
+								'%s',//PMD_type
+								'%s',//PMD_name
+								'%s',//PMD_admin_name
+								'%s',//PMD_admin_desc
+								'%s',//PMD_slug
+								'%d',//PMD_wp_user
+								'%s',//PMD_scope
+							)
+							);
+					if( ! $success ){
+						$this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration", "event_espresso"),$this->_json_encode($values)));
 					}
 				}
 			}

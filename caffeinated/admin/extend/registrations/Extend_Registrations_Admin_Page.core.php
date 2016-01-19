@@ -880,8 +880,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		//if DTT is included we do multiple datetimes.
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
-			$query_params['default_where_conditions'] = 'this_model_only';
 		}
+
+		//make sure we only have default where on the current regs
+		$query_params['default_where_conditions'] = 'this_model_only';
 
 		$status_ids_array = apply_filters( 'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
 
@@ -917,7 +919,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_params['limit'] = $limit;
 		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
 		if($count){
-			$registrations = EEM_Registration::instance()->count(array($query_params[0]));
+			$registrations = EEM_Registration::instance()->count(array($query_params[0], 'default_where_conditions' => 'this_model_only' ));
 		}else{
 			$registrations = EEM_Registration::instance()->get_all($query_params);
 

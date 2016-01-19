@@ -114,9 +114,9 @@ class EE_PMT_Bank extends EE_PMT_Base{
 							'payment_instructions'=>'',
 							),
 						$extra_meta_for_payment_method);
-		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'bank_payment_details_content.template.php',
-				$template_vars,
-				true);
+		return EEH_Template::locate_template(
+				'payment_methods' . DS . 'Bank'. DS . 'templates' . DS . 'bank_payment_details_content.template.php',
+				$template_vars);
 	}
 
 

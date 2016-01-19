@@ -1,4 +1,4 @@
-<h3><?php _e('Events Overview Filters', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Events Overview Filters', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Filters are a way to show events based on certain criteria.', 'event_espresso'); ?>
 </p>

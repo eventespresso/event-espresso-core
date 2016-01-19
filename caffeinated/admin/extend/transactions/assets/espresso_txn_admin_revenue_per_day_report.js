@@ -4,6 +4,10 @@ jQuery(document).ready(function($) {
 		if ( txnRevPerDay.revenue.length <= 0 ) {
 			$('#'+txnRevPerDay.id).html(txnRevPerDay.noTxnMsg);
 		} else {
+			if ( EE_ACCOUNTING_CFG ) {
+				$.jqplot.sprintf.thousandsSeparator = EE_ACCOUNTING_CFG.currency.thousand;
+				$.jqplot.sprintf.decimalMark = EE_ACCOUNTING_CFG.currency.decimal;
+			}
 
 			$.jqplot( txnRevPerDay.id, [txnRevPerDay.revenue], {
 				title: txnRevPerDay.title,
@@ -33,7 +37,7 @@ jQuery(document).ready(function($) {
 					yaxis: {
 						min: 0,
 						tickOptions: {
-							formatString:"$%'.2f"
+							formatString: eei18n.currency_format ? eei18n.currency_format : "$%'.2f"
 						}
 					}
 				},

@@ -240,26 +240,28 @@ final class EE_Admin {
 	 */
 	public function enable_hidden_ee_nav_menu_metaboxes() {
 		global $wp_meta_boxes, $pagenow;
-		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' )
+		if ( ! is_array($wp_meta_boxes) || $pagenow !== 'nav-menus.php' ) {
 			return;
+		}
+		$user = wp_get_current_user();
+		//has this been done yet?
+		if ( get_user_option( 'ee_nav_menu_initialized', $user->ID ) ) {
+			return;
+		}
 
-		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories' ) );
-		$hidden_meta_boxes = array();
+		$hidden_meta_boxes = get_user_option( 'metaboxhidden_nav-menus', $user->ID );
+		$initial_meta_boxes = apply_filters( 'FHEE__EE_Admin__enable_hidden_ee_nav_menu_boxes__initial_meta_boxes', array( 'nav-menu-theme-locations', 'add-page', 'add-custom-links', 'add-category', 'add-espresso_events', 'add-espresso_venues', 'add-espresso_event_categories', 'add-espresso_venue_categories', 'add-post-type-post', 'add-post-type-page' ) );
 
-		foreach ( array_keys($wp_meta_boxes['nav-menus']) as $context ) {
-			foreach ( array_keys($wp_meta_boxes['nav-menus'][$context]) as $priority ) {
-				foreach ( $wp_meta_boxes['nav-menus'][$context][$priority] as $box ) {
-					if ( in_array( $box['id'], $initial_meta_boxes ) ) {
-						unset( $box['id'] );
-					} else {
-						$hidden_meta_boxes[] = $box['id'];
-					}
+		if ( is_array( $hidden_meta_boxes ) ) {
+			foreach ( $hidden_meta_boxes as $key => $meta_box_id ) {
+				if ( in_array( $meta_box_id, $initial_meta_boxes ) ) {
+					unset( $hidden_meta_boxes[ $key ] );
 				}
 			}
 		}
 
-		$user = wp_get_current_user();
 		update_user_option( $user->ID, 'metaboxhidden_nav-menus', $hidden_meta_boxes, true );
+		update_user_option( $user->ID, 'ee_nav_menu_initialized', 1, true );
 	}
 
 
@@ -644,15 +646,21 @@ final class EE_Admin {
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), admin_url('admin.php') );
 		$items['events']['text'] = sprintf( _n( '%s Event', '%s Events', $events ), number_format_i18n( $events ) );
 		$items['events']['title'] = __('Click to view all Events', 'event_espresso');
-		$registrations = EEM_Registration::instance()->count();
+		$registrations = EEM_Registration::instance()->count(
+			array(
+				array(
+					'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete )
+				)
+			)
+		);
 		$items['registrations']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
 		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
-		foreach ( $items as $item ) {
-			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );
+		foreach ( $items as $type => $item_properties ) {
+			$elements[] = sprintf( '<a class="ee-dashboard-link-' . $type . '" href="%s" title="%s">%s</a>', $item_properties['url'], $item_properties['title'], $item_properties['text'] );
 		}
 		return $elements;
 	}
@@ -841,7 +849,7 @@ final class EE_Admin {
 	public function espresso_admin_footer() {
 		return sprintf(
 			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
-			'<a href="http://eventespresso.com/" title="',
+			'<a href="https://eventespresso.com/" title="',
 			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
 		);
 	}

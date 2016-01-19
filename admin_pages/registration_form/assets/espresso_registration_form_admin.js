@@ -59,6 +59,11 @@ function espresso_reg_forms_show_or_hide_question_options(){
 	}else{
 		jQuery('#question_options').hide();
 	}
+	if ( val === 'TEXT' || val === 'TEXTAREA' || val === 'HTML_TEXTAREA' ){
+		jQuery('#text_input_question_options').show();
+	}else{
+		jQuery('#text_input_question_options').hide();
+	}
 }
 
 
@@ -83,15 +88,16 @@ function espresso_reg_forms_add_option(){
 	jQuery('#question_options tr:last').after(newRow);
 	//add new count to dom.
 	jQuery('#question_options_count').val(count);
-	newRow.find('input[type="text"]').focus();
+	newRowName.focus();
 }
 
 function espresso_reg_forms_show_option_desc(){
-		jQuery('.option-desc-cell').show();
-		jQuery('.option-desc-header').show();
-		jQuery('.option-value-header').css('width', '45%');
-		jQuery('.option-value-cell').css('width','45%');
-
+	jQuery('.option-desc-cell').show();
+	jQuery('.option-desc-header').show();
+	jQuery('.option-value-header').css('width', '45%');
+	jQuery('.option-value-cell').css('width','45%');
+	/** focus on value field **/
+	jQuery('.option-value').focus();
 }
 
 

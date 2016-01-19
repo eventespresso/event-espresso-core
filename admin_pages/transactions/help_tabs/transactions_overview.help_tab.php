@@ -1,4 +1,4 @@
-<h2><?php _e('Transactions Overview', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Transactions Overview', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows all tickets which have been purchased with Event Espresso.', 'event_espresso'); ?>
 </p>

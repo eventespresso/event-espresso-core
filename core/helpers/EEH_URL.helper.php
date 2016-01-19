@@ -18,10 +18,11 @@ class EEH_URL{
 	 * @access public
 	 * @param array       $args
 	 * @param string $url
+	 * @param bool  $exclude_nonce  If true then the nonce will be excluded from the generated url.
 	 * @return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = '' ) {
-		if ( empty( $url )) {
+	public static function add_query_args_and_nonce( $args = array(), $url = '', $exclude_nonce = false ) {
+		if ( empty( $url ) ) {
 			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf(
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
@@ -29,15 +30,17 @@ class EEH_URL{
 				);
 			EE_Error::add_error( $user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		// check that an action exists
-		if ( isset( $args['action'] ) && ! empty( $args['action'] )) {
-			$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' )));
-		} else {
-			$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' )));
+		// check that an action exists and add nonce
+		if ( ! $exclude_nonce ) {
+			if ( isset( $args['action'] ) && ! empty( $args['action'] ) ) {
+				$args = array_merge( $args, array( $args['action'] . '_nonce' => wp_create_nonce( $args['action'] . '_nonce' ) ) );
+			} else {
+				$args = array_merge( $args, array( 'action' => 'default', 'default_nonce' => wp_create_nonce( 'default_nonce' ) ) );
+			}
 		}
 
 		//finally, let's always add a return address (if present) :)
-		$args = !empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
+		$args = ! empty( $_REQUEST['action'] ) ? array_merge( $args, array( 'return' => $_REQUEST['action'] ) ) : $args;
 
 		return add_query_arg( $args, $url );
 
@@ -178,6 +181,36 @@ class EEH_URL{
 		// plus a little extra for nginx
 //		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
 	}
+
+
+
+	/**
+	 * filter_input_server_url
+	 * uses filter_input() to sanitize one of the INPUT_SERVER URL values
+	 * but adds a backup in case filter_input() returns nothing, which can erringly happen on some servers
+	 *
+	 * @param string $server_variable
+	 * @return string
+	 */
+	public static function filter_input_server_url( $server_variable = 'REQUEST_URI' ){
+		$URL = '';
+		$server_variables = array(
+			'REQUEST_URI' => 1,
+			'HTTP_HOST' => 1,
+			'PHP_SELF' => 1,
+		);
+		$server_variable = strtoupper( $server_variable );
+		// whitelist INPUT_SERVER var
+		if ( isset( $server_variables[ $server_variable ] ) ) {
+			$URL = filter_input( INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE );
+			if ( empty( $URL ) ) {
+				$URL = esc_url( $_SERVER[ $server_variable ] );
+			}
+		}
+		return $URL;
+	}
+
+
 
 }
 // End of file EEH_URL.helper.php

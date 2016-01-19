@@ -54,6 +54,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+
+	/**
+	 * Will contain the count of trashed items for the view label.
+	 * @var int
+	 */
+	protected $_trashed_count;
+
+
+
 	/**
 	 * _screen
 	 * This is what will be referenced as the slug for the current screen
@@ -217,6 +226,17 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @type string
 	 */
 	protected $_primary_column = '';
+
+
+
+
+	/**
+	 * Used to indicate whether the table has a checkbox column or not.
+	 * @type bool
+	 */
+	protected $_has_checkbox_column = false;
+
+
 
 
 	/**
@@ -385,6 +405,33 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_column_headers = array( $columns, $hidden, $sortable, $primary );
 	}
 
+
+	/**
+	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 * @return string
+	 */
+	protected function get_primary_column_name() {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'get_primary_column_name' ) && $parent == 'WP_List_Table' ) {
+				return parent::get_primary_column_name();
+			}
+		}
+		return $this->_primary_column;
+	}
+
+
+	/**
+	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 * @return string
+	 */
+	protected function handle_row_actions( $item, $column_name, $primary ) {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'handle_row_actions' ) && $parent == 'WP_List_Table' ) {
+				return parent::handle_row_actions( $item, $column_name, $primary );
+			}
+		}
+		return '';
+	}
 
 
 

@@ -45,12 +45,11 @@ class EE_PUE {
 	 *	class constructor
 	 *
 	 *	@access public
-	 *	@return void
 	 */
 	public function __construct() {
 //		throw new EE_Error('error');
 
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 
 		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
 		if ( !defined('MONTH_IN_SECONDS' ) )
@@ -64,7 +63,7 @@ class EE_PUE {
 		$ueip_optin = EE_Registry::instance()->CFG->core->ee_ueip_optin;
 		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 
-		//has optin been selected for datacollection?
+		//has optin been selected for data collection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
 		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
@@ -153,7 +152,7 @@ class EE_PUE {
 			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
 			$api_key = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? EE_Registry::instance()->NET_CFG->core->site_license_key : '';
-			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+			$host_server_url = 'https://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 			//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
 			//For example:

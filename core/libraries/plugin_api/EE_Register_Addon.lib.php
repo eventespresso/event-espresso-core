@@ -182,7 +182,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		//setup $_settings array from incoming values.
 		$addon_settings = array(
 			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
-			'class_name' 			=> $class_name,
+			'class_name' 						=> $class_name,
+			// the addon slug for use in URLs, etc
+			'plugin_slug' 						=> isset( $setup_args['plugin_slug'] ) ? (string)$setup_args['plugin_slug'] : '',
+			// page slug to be used when generating the "Settings" link on the WP plugin page
+			'plugin_action_slug' 			=> isset( $setup_args[ 'plugin_action_slug' ] ) ? (string)$setup_args[ 'plugin_action_slug' ] : '',
 			// the "software" version for the addon
 			'version' 								=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
 			// the minimum version of EE Core that the addon will work with
@@ -220,11 +224,19 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'class_paths' 						=> isset( $setup_args['class_paths'] ) ? (array) $setup_args['class_paths'] : array(),
 			'model_extension_paths' 	=> isset( $setup_args['model_extension_paths'] ) ? (array) $setup_args['model_extension_paths'] : array(),
 			'class_extension_paths' 		=> isset( $setup_args['class_extension_paths'] ) ? (array) $setup_args['class_extension_paths'] : array(),
-			'custom_post_types' => isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
-			'custom_taxonomies' => isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
-			'payment_method_paths'		=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
-			'default_terms' => isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array()
+			'custom_post_types' 			=> isset( $setup_args['custom_post_types'] ) ? (array) $setup_args['custom_post_types'] : array(),
+			'custom_taxonomies' 		=> isset( $setup_args['custom_taxonomies'] ) ? (array) $setup_args['custom_taxonomies'] : array(),
+			'payment_method_paths'	=> isset( $setup_args[ 'payment_method_paths' ] ) ? (array) $setup_args[ 'payment_method_paths' ] : array(),
+			'default_terms' 					=> isset( $setup_args['default_terms'] ) ? (array) $setup_args['default_terms'] : array(),
+			// if not empty, inserts a new table row after this plugin's row on the WP Plugins page that can be used for adding upgrading/marketing info
+			'plugins_page_row' 			=> isset( $setup_args['plugins_page_row'] ) ? $setup_args['plugins_page_row'] : '',
 		);
+
+		// if plugin_action_slug is NOT set, but an admin page path IS set, then let's just use the plugin_slug since that will be used for linking to the admin page
+		$addon_settings[ 'plugin_action_slug' ] = empty( $addon_settings[ 'plugin_action_slug' ] ) && ! empty( $addon_settings[ 'admin_path' ] ) ? $addon_settings[ 'plugin_slug' ] : $addon_settings[ 'plugin_action_slug' ];
+		// full server path to main file (file loaded directly by WP)
+		$addon_settings['plugin_basename'] = plugin_basename( $addon_settings[ 'main_file_path' ] );
+
 		//check whether this addon version is compatible with EE core
 		if ( isset( EE_Register_Addon::$_incompatible_addons[ $addon_name ] ) &&
 				! self::_meets_min_core_version_requirement( EE_Register_Addon::$_incompatible_addons[ $addon_name ], $addon_settings[ 'version' ] ) ) {
@@ -349,7 +361,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				add_action( 'EE_Brewing_Regular___messages_caf', array( 'EE_Register_Addon', 'register_message_types' ) );
 		}
 
-
 		// if plugin update engine is being used for auto-updates (not needed if PUE is not being used)
 		if ( ! empty( $setup_args['pue_options'] )) {
 			self::$_settings[ $addon_name ]['pue_options'] = array(
@@ -375,6 +386,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
 		}
 	}
+
+
+
 	/**
 	 * Loads and instantiates the EE_Addon class and adds it onto the registry
 	 * @param string $addon_name
@@ -383,7 +397,11 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	private static function _load_and_init_addon_class($addon_name){
 		$addon = EE_Registry::instance()->load_addon( dirname( self::$_settings[ $addon_name ]['main_file_path'] ), self::$_settings[ $addon_name ]['class_name'] );
 		$addon->set_name( $addon_name );
+		$addon->set_plugin_slug( self::$_settings[ $addon_name ][ 'plugin_slug' ] );
+		$addon->set_plugin_basename( self::$_settings[ $addon_name ][ 'plugin_basename' ] );
 		$addon->set_main_plugin_file( self::$_settings[ $addon_name ]['main_file_path'] );
+		$addon->set_plugin_action_slug( self::$_settings[ $addon_name ][ 'plugin_action_slug' ] );
+		$addon->set_plugins_page_row( self::$_settings[ $addon_name ][ 'plugins_page_row' ] );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::_effective_version( self::$_settings[ $addon_name ]['min_core_version'] ) );
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
@@ -411,7 +429,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				// initiate the class and start the plugin update engine!
 				new PluginUpdateEngineChecker(
 				// host file URL
-					'http://eventespresso.com',
+					'https://eventespresso.com',
 					// plugin slug(s)
 					array(
 						'premium' => array( 'p' => $settings['pue_options']['pue_plugin_slug'] ),

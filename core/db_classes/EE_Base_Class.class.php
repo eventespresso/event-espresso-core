@@ -719,7 +719,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function get_one_from_cache($relationName){
-		$cached_array_or_object =  $this->_model_relations[$relationName];
+		$cached_array_or_object = isset( $this->_model_relations[$relationName] ) ? $this->_model_relations[$relationName] : null;
 		if(is_array($cached_array_or_object)){
 			return array_shift($cached_array_or_object);
 		}else{
@@ -738,7 +738,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class[] NOT necessarily indexed by primary keys
 	 */
 	public function get_all_from_cache($relationName){
-		$cached_array_or_object =  $this->_model_relations[$relationName];
+		$cached_array_or_object =  isset( $this->_model_relations[$relationName] ) ? $this->_model_relations[$relationName] : array();
 		if(is_array($cached_array_or_object)){
 			$objects = $cached_array_or_object;
 		}elseif($cached_array_or_object){
@@ -1260,19 +1260,28 @@ abstract class EE_Base_Class{
 
 
 	/**
-	 * Deletes this model object. That may mean just 'soft deleting' it though.
+	 * Deletes this model object.
+	 * This calls the `EE_Base_Class::_delete` method.  Child classes wishing to change default behaviour should override
+	 * `EE_Base_Class::_delete` NOT this class.
+	 *
 	 * @return boolean | int
 	 */
 	public function delete(){
 		/**
-		 * Called just before deleting a model object
+		 * Called just before the `EE_Base_Class::_delete` method call.
+		 * Note: `EE_Base_Class::_delete` might be overridden by child classes so any client code hooking into these actions
+		 * should be aware that `_delete` may not always result in a permanent delete.  For example, `EE_Soft_Delete_Base_Class::_delete`
+		 * soft deletes (trash) the object and does not permanently delete it.
 		 *
 		 * @param EE_Base_Class $model_object about to be 'deleted'
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
-		$result = $this->get_model()->delete_by_ID( $this->ID() );
+		$result = $this->_delete();
 		/**
-		 * Called just after deleting a model object
+		 * Called just after the `EE_Base_Class::_delete` method call.
+		 * Note: `EE_Base_Class::_delete` might be overridden by child classes so any client code hooking into these actions
+		 * should be aware that `_delete` may not always result in a permanent delete.  For example `EE_Soft_Base_Class::_delete`
+		 * soft deletes (trash) the object and does not permanently delete it.
 		 * @param EE_Base_Class $model_object that was just 'deleted'
 		 * @param boolean $result
 		 */
@@ -1281,20 +1290,65 @@ abstract class EE_Base_Class{
 	}
 
 
+	/**
+	 * Calls the specific delete method for the instantiated class.
+	 * This method is called by the public `EE_Base_Class::delete` method.  Any child classes desiring to override default
+	 * functionality for "delete" (which is to call `permanently_delete`) should override this method NOT `EE_Base_Class::delete`
+	 *
+	 * @return bool|int
+	 */
+	protected function _delete() {
+		$result = $this->delete_permanently();
+		return $result;
+	}
+
+
 
 	/**
 	 * Deletes this model object permanently from db (but keep in mind related models my block the delete and return an error)
-	 * @return bool
+	 * @return bool | int
 	 */
 	public function delete_permanently(){
+		/**
+		 * Called just before HARD deleting a model object
+		 *
+		 * @param EE_Base_Class $model_object about to be 'deleted'
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete_permanently__before', $this );
 		$model=$this->get_model();
-		if($model instanceof EEM_Soft_Delete_Base){
-			$result=$model->delete_permanently_by_ID($this->ID());
-		}else{
-			$result = $this->delete();
-		}
-		return $result ? true : false;
+		$result=$model->delete_permanently_by_ID($this->ID());
+		$this->refresh_cache_of_related_objects();
+		/**
+		 * Called just after HARD deleting a model object
+		 * @param EE_Base_Class $model_object that was just 'deleted'
+		 * @param boolean $result
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete_permanently__end', $this, $result );
+		return $result;
 	}
+
+        /**
+         * When this model object is deleted, it may still be cached on related model objects. This clears the cache of
+         * related model objects
+         */
+        public function refresh_cache_of_related_objects() {
+            foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ) {
+                if( ! empty( $this->_model_relations[ $relation_name ] ) ) {
+                    $related_objects = $this->_model_relations[ $relation_name ];
+                    if( $relation_obj instanceof EE_Belongs_To_Relation ) {
+                        //this relation only stores a single model object, not an array
+                        //but let's make it consistent
+                        $related_objects = array( $related_objects );
+                    }
+                    foreach( $related_objects as $related_object ) {
+                        //only refresh their cache if they're in memory
+                        if( $related_object instanceof EE_Base_Class ) {
+							$related_object->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                        }
+                    }
+                }
+            }
+        }
 
 
 
@@ -1644,6 +1698,9 @@ abstract class EE_Base_Class{
 			$otherObject = $this->get_model()->add_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $extra_join_model_fields_n_values );
 			//clear cache so future get_many_related and get_first_related() return new results.
 			$this->clear_cache( $relationName, $otherObject, TRUE );
+                        if( $otherObject instanceof EE_Base_Class ) {
+                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                        }
 		} else {
 			//this thing doesn't exist in the DB,  so just cache it
 			if( ! $otherObjectModelObjectOrID instanceof EE_Base_Class){
@@ -1657,8 +1714,18 @@ abstract class EE_Base_Class{
 			}
 			$this->cache( $relationName, $otherObjectModelObjectOrID, $cache_id );
 		}
+                if( $otherObject instanceof EE_Base_Class ) {
+                    //fix the reciprocal relation too
+                    if( $otherObject->ID() ) {
+                            //its saved so assumed relations exist in the DB, so we can just
+                            //clear the cache so future queries use the updated info in the DB
+                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), null, true );
+                    } else {
 
-
+                            //it's not saved, so it caches relations like this
+                            $otherObject->cache( $this->get_model()->get_this_model_name(), $this );
+                    }
+                }
 		return $otherObject;
 	}
 
@@ -1668,18 +1735,29 @@ abstract class EE_Base_Class{
 	 * Removes a relationship to the specified EE_Base_Class object, given the relationships' name. Eg, if the current model is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
 	 * If this model object doesn't exist in the DB, just removes the related thing from the cache
-	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
+	 *
+	 * @param mixed $otherObjectModelObjectOrID
+	 * 				EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
 	 * @param string $relationName
-	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
+	 * @param array  $where_query
+	 * 				You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.
+	 * 				However, keep in mind that the columns (keys) given must match a column on the JOIN table
+	 * 				and currently only the HABTM models accept these additional conditions.
+	 * 				Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	public function _remove_relation_to($otherObjectModelObjectOrID,$relationName, $where_query = array() ){
-		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-			$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
-			$this->clear_cache($relationName, $otherObject);
-		}else{//this doesn't exist in the DB, just remove it from the cache
-			$otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
+		if ( $this->ID() ) {
+			//if this exists in the DB, save the relation change to the DB too
+			$otherObject = $this->get_model()->remove_relationship_to( $this, $otherObjectModelObjectOrID, $relationName, $where_query );
+			$this->clear_cache( $relationName, $otherObject );
+		} else {
+			//this doesn't exist in the DB, just remove it from the cache
+			$otherObject = $this->clear_cache( $relationName, $otherObjectModelObjectOrID );
 		}
+                if( $otherObject instanceof EE_Base_Class ) {
+                    $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                }
 		return $otherObject;
 	}
 
@@ -1690,12 +1768,19 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function _remove_relations($relationName,$where_query_params = array()){
-		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
-			$otherObjects = $this->get_model()->remove_relations($this, $relationName, $where_query_params );
-			$this->clear_cache($relationName,null,true);
-		}else{//this doesn't exist in the DB, just remove it from the cache
-			$otherObjects = $this->clear_cache($relationName,null,true);
+		if ( $this->ID() ) {
+			//if this exists in the DB, save the relation change to the DB too
+			$otherObjects = $this->get_model()->remove_relations( $this, $relationName, $where_query_params );
+			$this->clear_cache( $relationName, null, true );
+		} else {
+			//this doesn't exist in the DB, just remove it from the cache
+			$otherObjects = $this->clear_cache( $relationName, null, true );
 		}
+                if( is_array( $otherObjects ) ) {
+                    foreach ( $otherObjects as $otherObject ) {
+                            $otherObject->clear_cache( $this->get_model()->get_this_model_name(), $this );
+                    }
+                }
 		return $otherObjects;
 	}
 

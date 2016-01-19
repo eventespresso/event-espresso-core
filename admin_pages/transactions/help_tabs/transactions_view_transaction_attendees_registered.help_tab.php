@@ -1,4 +1,4 @@
-<h3><?php _e('Attendees Registered in this Transaction', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Attendees Registered in this Transaction', 'event_espresso'); ?></strong></p>
 <p>
 <ul>
 <li>

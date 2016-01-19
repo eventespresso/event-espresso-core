@@ -45,8 +45,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _ajax_hooks() {
-		//todo: all hooks for ajax goes here.
+	protected function _ajax_hooks() {		
 	}
 
 
@@ -210,7 +209,4 @@ class Support_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($template_path, array(), true );
 		$this->display_admin_page_with_sidebar();
 	}
-
-
-
 } //end Support_Admin_Page class
