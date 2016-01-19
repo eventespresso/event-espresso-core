@@ -508,7 +508,7 @@ class EE_Message_Resource_Manager {
 		if ( $messenger instanceof EE_Messenger ) {
 			$this->_active_messengers[ $messenger->name ] = $messenger;
 			$message_types = $this->_activate_message_types( $messenger, $message_types );
-			$this->update_active_messengers_option( $this->_active_messengers );
+			$this->update_active_messengers_option( $this->_active_message_types );
 			// might need to generate new templates
 			if ( ! empty( $message_types ) ) {
 				$templates = EEH_MSG_Template::generate_new_templates( $messenger->name, $message_types, 0, true );
@@ -626,7 +626,7 @@ class EE_Message_Resource_Manager {
 		unset( $this->_active_messengers[ $messenger ] );
 		unset( $this->_active_message_types[ $messenger ] );
 		$this->_message_template_group_model->deactivate_message_template_groups_for( $messenger );
-		$this->update_active_messengers_option( $this->_active_messengers );
+		$this->update_active_messengers_option( $this->_active_message_types );
 	}
 
 
@@ -639,14 +639,13 @@ class EE_Message_Resource_Manager {
 	 * @return void
 	 */
 	protected function _deactivate_message_type( $message_type ) {
-		foreach ( $this->_active_messengers as $messenger => $settings ) {
+		foreach ( $this->_active_message_types as $messenger => $settings ) {
 			unset(
-				$this->_active_messengers[ $messenger ][ 'settings' ][ $messenger . '-message_types' ][ $message_type ]
+				$this->_active_message_types[ $messenger ][ 'settings' ][ $messenger . '-message_types' ][ $message_type ]
 			);
 		}
 		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type );
-		unset( $this->_active_message_types[ $message_type ] );
-		$this->update_active_messengers_option( $this->_active_messengers );
+		$this->update_active_messengers_option( $this->_active_message_types );
 	}
 
 
