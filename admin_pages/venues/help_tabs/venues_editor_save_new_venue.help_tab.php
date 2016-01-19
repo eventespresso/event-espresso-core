@@ -1,4 +1,4 @@
-<h3><?php _e('Save New Venue', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Save New Venue', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Quickly publish your venue to allow linking to an event or multiple events.', 'event_espresso'); ?><br />
 </p>

@@ -1,7 +1,17 @@
 <?php
-
-/*
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+/**
+ *
+ * Class EE_Default_Where_Conditions
+ * 
  * Strategy specifically for adding where conditions specific to CPT models.
+ *
+ * @package         Event Espresso
+ * @subpackage    core/db_models
+ * @author				Mike Nelson
+ * @since		 	   4.6.0
  */
 class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions{
 	/**

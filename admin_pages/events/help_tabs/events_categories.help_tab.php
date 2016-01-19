@@ -1,4 +1,4 @@
-<h2><?php _e('Event Categories', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Event Categories', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows all event categories that have been created with Event Espresso.', 'event_espresso'); ?>
 </p>

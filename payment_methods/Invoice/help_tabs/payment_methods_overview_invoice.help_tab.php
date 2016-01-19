@@ -1,8 +1,8 @@
-<h3><?php _e('Invoice', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Invoice', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Adjust the settings for the invoice payment gateway.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Invoice Display Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Invoice Display Settings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Payee Name', 'event_espresso'); ?></strong><br />
@@ -29,7 +29,7 @@
 <?php _e('Upload a logo for your invoice. This will appear in the top left area of the invoice.', 'event_espresso'); ?>
 </li>
 </ul>
-<h3><?php _e('Invoice Gateway Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Invoice Gateway Settings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Confirmation Text', 'event_espresso'); ?></strong><br />

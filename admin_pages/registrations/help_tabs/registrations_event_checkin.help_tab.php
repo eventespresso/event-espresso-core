@@ -1,4 +1,4 @@
-<h2><?php _e('Registrations Event Check-In', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Registrations Event Check-In', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to check in registrants for an event.', 'event_espresso'); ?>
 </p>

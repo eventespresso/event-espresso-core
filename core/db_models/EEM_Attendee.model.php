@@ -162,8 +162,6 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'WP_User' => new EE_Belongs_To_Relation(),
 			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletion of attendees even if they have messages in the queue for them.
 		);
-		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
-		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		$this->_caps_slug = 'contacts';
 		parent::__construct( $timezone );
 

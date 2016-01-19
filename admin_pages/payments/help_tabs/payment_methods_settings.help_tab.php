@@ -1,8 +1,8 @@
-<h2><?php _e('Payment Methods Overview', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Payment Methods Overview', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page provides an option to allow payment retries in Event Espresso.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Allow Payment-retry for Pending and Deferred Payments', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Allow Payment-retry for Pending and Deferred Payments', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Specify if registrants should be allowed to attempt additional payments if the original payment is delayed.'); ?>
 </p>

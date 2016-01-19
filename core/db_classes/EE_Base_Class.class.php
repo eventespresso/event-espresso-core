@@ -1260,20 +1260,28 @@ abstract class EE_Base_Class{
 
 
 	/**
-	 * Deletes this model object. That may mean just 'soft deleting' it though.
+	 * Deletes this model object.
+	 * This calls the `EE_Base_Class::_delete` method.  Child classes wishing to change default behaviour should override
+	 * `EE_Base_Class::_delete` NOT this class.
+	 *
 	 * @return boolean | int
 	 */
 	public function delete(){
 		/**
-		 * Called just before deleting a model object
+		 * Called just before the `EE_Base_Class::_delete` method call.
+		 * Note: `EE_Base_Class::_delete` might be overridden by child classes so any client code hooking into these actions
+		 * should be aware that `_delete` may not always result in a permanent delete.  For example, `EE_Soft_Delete_Base_Class::_delete`
+		 * soft deletes (trash) the object and does not permanently delete it.
 		 *
 		 * @param EE_Base_Class $model_object about to be 'deleted'
 		 */
 		do_action( 'AHEE__EE_Base_Class__delete__before', $this );
-		$result = $this->get_model()->delete_by_ID( $this->ID() );
-                $this->refresh_cache_of_related_objects();
+		$result = $this->_delete();
 		/**
-		 * Called just after deleting a model object
+		 * Called just after the `EE_Base_Class::_delete` method call.
+		 * Note: `EE_Base_Class::_delete` might be overridden by child classes so any client code hooking into these actions
+		 * should be aware that `_delete` may not always result in a permanent delete.  For example `EE_Soft_Base_Class::_delete`
+		 * soft deletes (trash) the object and does not permanently delete it.
 		 * @param EE_Base_Class $model_object that was just 'deleted'
 		 * @param boolean $result
 		 */
@@ -1282,20 +1290,41 @@ abstract class EE_Base_Class{
 	}
 
 
+	/**
+	 * Calls the specific delete method for the instantiated class.
+	 * This method is called by the public `EE_Base_Class::delete` method.  Any child classes desiring to override default
+	 * functionality for "delete" (which is to call `permanently_delete`) should override this method NOT `EE_Base_Class::delete`
+	 *
+	 * @return bool|int
+	 */
+	protected function _delete() {
+		$result = $this->delete_permanently();
+		return $result;
+	}
+
+
 
 	/**
 	 * Deletes this model object permanently from db (but keep in mind related models my block the delete and return an error)
-	 * @return bool
+	 * @return bool | int
 	 */
 	public function delete_permanently(){
+		/**
+		 * Called just before HARD deleting a model object
+		 *
+		 * @param EE_Base_Class $model_object about to be 'deleted'
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete_permanently__before', $this );
 		$model=$this->get_model();
-		if($model instanceof EEM_Soft_Delete_Base){
-			$result=$model->delete_permanently_by_ID($this->ID());
-                        $this->refresh_cache_of_related_objects();
-		}else{
-			$result = $this->delete();
-		}
-		return $result ? true : false;
+		$result=$model->delete_permanently_by_ID($this->ID());
+		$this->refresh_cache_of_related_objects();
+		/**
+		 * Called just after HARD deleting a model object
+		 * @param EE_Base_Class $model_object that was just 'deleted'
+		 * @param boolean $result
+		 */
+		do_action( 'AHEE__EE_Base_Class__delete_permanently__end', $this, $result );
+		return $result;
 	}
 
         /**
