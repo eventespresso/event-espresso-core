@@ -492,26 +492,26 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * Activates the specified messenger
+	 * Activates the specified messenger.
 	 *
 	 * @param string $messenger_name
-	 * @param array  $message_types An array of message type names to activate with this messenger.
+	 * @param array  $message_type_names An array of message type names to activate with this messenger.
 	 *                                          If included we do NOT setup the default message types
 	 *                                          (assuming they are already setup.)
 	 * @return array of generated templates
 	 */
-	public function activate_messenger( $messenger_name, $message_types = array() ) {
+	public function activate_messenger( $messenger_name, $message_type_names = array() ) {
 		$templates = array();
 		// grab the messenger to work with.
 		$messenger = $this->messenger_collection()->get_by_info( $messenger_name );
 		// it's inactive. Activate it.
 		if ( $messenger instanceof EE_Messenger ) {
 			$this->_active_messengers[ $messenger->name ] = $messenger;
-			$message_types = $this->_activate_message_types( $messenger, $message_types );
+			$message_type_names = $this->_activate_message_types( $messenger, $message_type_names );
 			$this->update_active_messengers_option( $this->_active_message_types );
 			// might need to generate new templates
-			if ( ! empty( $message_types ) ) {
-				$templates = EEH_MSG_Template::generate_new_templates( $messenger->name, $message_types, 0, true );
+			if ( ! empty( $message_type_names ) ) {
+				$templates = EEH_MSG_Template::generate_new_templates( $messenger->name, $message_type_names, 0, true );
 			}
 		}
 		return $templates;
