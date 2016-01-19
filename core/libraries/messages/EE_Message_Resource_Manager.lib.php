@@ -569,7 +569,7 @@ class EE_Message_Resource_Manager {
 				$settings[ $field ] = $values[ 'default' ];
 			}
 		}
-		$this->_active_message_types[ $messenger->name ][ 'settings' ][ $messenger->name . '-message_types' ][ $message_type ][ 'settings' ] = $settings;
+		$this->_active_message_types[ $messenger->name ][ 'settings' ][ $messenger->name . '-message_types' ][ $message_type_name ][ 'settings' ] = $settings;
 	}
 
 
