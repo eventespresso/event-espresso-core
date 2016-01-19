@@ -475,7 +475,7 @@ class EE_Message_Resource_Manager {
 
 	/**
 	 * Ensures that the specified message type for the given messenger is currently active, if not activates it.
-	 * This ALSO ensures that the given messenger is active as well!.
+	 * This ALSO ensures that the given messenger is active as well!
 	 *
 	 * @param string $message_type message type name
 	 * @param        $messenger_name
