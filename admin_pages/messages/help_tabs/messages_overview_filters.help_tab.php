@@ -1,4 +1,4 @@
-<h3><?php _e('Message Filters', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Message Filters', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Filters are a way to show message templates that fall into certain criteria.', 'event_espresso'); ?><br />
 </p>

@@ -177,6 +177,7 @@ class EED_Event_Single  extends EED_Module {
 		// not a custom template?
 		if (
 			EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php'
+			|| apply_filters( 'FHEE__EED_Event_Single__template_include__allow_custom_selected_template', FALSE )
 			&& ! post_password_required( $post )
 		) {
 			EEH_Template::load_espresso_theme_functions();

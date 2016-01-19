@@ -1,4 +1,4 @@
-<h3><?php _e('Event Check-In Filters', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Event Check-In Filters', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Filters are a way to show registrations that fall into certain criteria. Note: you must first select an Event to see all available options for filters. Only registrations with a status of Approved or Pending Payment are shown in this view.', 'event_espresso'); ?>
 </p>

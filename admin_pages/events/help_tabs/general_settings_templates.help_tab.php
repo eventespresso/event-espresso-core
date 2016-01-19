@@ -1,12 +1,16 @@
-<h2>
+<p>
+	<strong>
 <?php _e('Templates', 'event_espresso'); ?>
-</h2>
+	</strong>
+</p>
 <p>
 <?php _e('This page shows options for single event pages and event list pages.', 'event_espresso'); ?>
 </p>
-<h3>
+<p>
+	<strong>
 <?php _e('Single Event Pages', 'event_espresso'); ?>
-</h3>
+	</strong>
+</p>
 <ul>
 <li>
 <strong><?php _e('Display Status Banner', 'event_espresso'); ?></strong><br />
@@ -23,9 +27,9 @@
 <?php _e('This setting controls the order of the event elements on the single event page. For example, if you want the venue details to appear above the ticket selector on the single event pages, just set the "Venue Display Order" setting to "1", and set the "Tickets Display Order" setting to "2". The lower the number, the further down the page the venue details will appear.', 'event_espresso'); ?>
 </li>
 </ul>
-<h3>
+<p><strong>
 <?php _e('Event List Pages', 'event_espresso'); ?>
-</h3>
+</strong></p>
 <ul>
 <li>
 <strong><?php _e('Event Listings URL', 'event_espresso'); ?></strong><br />

@@ -1,4 +1,4 @@
-<h3><?php _e('Edit Price Type', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Edit Price Type', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to edit a price type for Event Espresso.', 'event_espresso'); ?>
 </p>

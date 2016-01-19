@@ -1341,6 +1341,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	}
 
 
+
+
+	/**
+	 * This grabs the payment method corresponding to the last payment made for the amount owing on the registration.
+	 * Note: if there are no payments on the registration there will be no payment method returned.
+	 *
+	 * @return EE_Payment_Method|null
+	 */
+	public function payment_method() {
+		return EEM_Payment_Method::instance()->get_last_used_for_registration( $this );
+	}
+
+
 }
 /* End of file EE_Registration.class.php */
 /* Location: includes/classes/EE_Registration.class.php */

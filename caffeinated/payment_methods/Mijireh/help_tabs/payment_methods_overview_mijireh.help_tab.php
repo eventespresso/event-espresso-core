@@ -1,4 +1,4 @@
-<h3><?php _e( 'Mijireh', 'event_espresso' ); ?></h3>
+<p><strong><?php _e( 'Mijireh', 'event_espresso' ); ?></strong></p>
 <p>
 	<?php _e( 'Adjust the settings for the Mijireh payment gateway.', 'event_espresso' ); ?>
 </p>
@@ -32,7 +32,7 @@
 		<?php _e( 'Change the image that is used for this payment gateway.', 'event_espresso' ); ?>
 	</li>
 </ul>
-<h3><?php _e( 'Mijireh Checkout Page Design', 'event_espresso' ); ?></h3>
+<p><strong><?php _e( 'Mijireh Checkout Page Design', 'event_espresso' ); ?></strong></p>
 <p>
 	<?php _e( "As you are probably aware, when users pay with Mijireh Payment Method, they are taken to a secure offsite page, hosted by Mijireh. This page can easily be made to have the look-and-feel of your website through a process called 'slurping', where Mijireh 'slurps' up your website's design and uses it on their checkout page.", 'event_espresso' ); ?>
 	<?php printf( __( "In order to do this, we automatically create a new WordPress page which is designed to be slurped by Mijireh. You can customize the page like any other, but the page must contain Mijireh's special '{{mijireh-checkout-form}}' shortcode. Once you have finished designing the page, publish it, and %s then click the special 'slurp now' button%s. Mijireh may take several minutes to slurp the page. Once Mijireh is finished slurping, you can delete the page, or mark it as a draft.", 'event_espresso' ), '<a href="http://ee-screenshots.s3.amazonaws.com/ee4/event-espresso-mijireh-slurp-page-example.jpg" target="_blank">', '</a>' ); ?>

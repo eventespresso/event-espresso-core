@@ -1,11 +1,11 @@
-<h3><?php _e('Authorize.net AIM', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Authorize.net AIM', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Adjust the settings for the Authorize.net AIM payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
 <?php printf( __( 'See %1$shere%2$s for list of currencies supported by Authorize.net AIM.', 'event_espresso' ), "<a href='http://www.authorize.net/international/'  target='_blank'>","</a>" ); ?>
 </p>
-<h3><?php _e('Authorize.net AIM Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Authorize.net AIM Settings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Authorize.net API Login ID', 'event_espresso'); ?></strong><br />

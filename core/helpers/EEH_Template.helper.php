@@ -263,7 +263,7 @@ class EEH_Template {
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
 				// path to the directory of the current theme: /wp-content/themes/(current WP theme)/
-				array_unshift( $full_template_paths, get_template_directory() . DS . $file_name );
+				array_unshift( $full_template_paths, get_stylesheet_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths, $file_name );
@@ -595,7 +595,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<h3>' . __('Status Legend', 'event_espresso') . '</h3>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
