@@ -331,7 +331,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 	/**
 	 *        _get_question_target_db_column
-	 *	@deprecated as of 4.8.30.rc.009. Instead consider using 
+	 *	@deprecated as of 4.8.32.rc.001. Instead consider using 
 	 * EE_Registration_Custom_Questions_Form located in admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
 	 * @access 	public
 	 * @param 	EE_Registration $registration (so existing answers for registration are included)
