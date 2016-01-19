@@ -419,8 +419,8 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * _set_active_messengers_and_message_types
-	 * generate list of active messengers and message types from collection
+	 * Generate list of active messengers and message types from collection.
+	 * This sets up the active messengers from what is present in the database.
 	 */
 	protected function _set_active_messengers_and_message_types() {
 		// list of activated messengers as set via the admin
