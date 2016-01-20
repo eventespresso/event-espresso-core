@@ -60,7 +60,6 @@ class EEH_MSG_Template {
 		$message_types = (array) $message_types;
 		$templates = array();
 		$success = TRUE;
-
 		if ( empty($messenger) ) {
 			throw new EE_Error( __('We need a messenger to generate templates!', 'event_espresso') );
 		}
@@ -71,9 +70,6 @@ class EEH_MSG_Template {
 		}
 
 		self::_set_autoloader();
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-
 		foreach ( $message_types as $message_type ) {
 			//if global then let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.
 			if ( $global && empty( $GRP_ID ) ) {
@@ -85,8 +81,7 @@ class EEH_MSG_Template {
 				$templates = TRUE;
 				continue; //get out we've already got generated templates for this.
 			}
-
-			$new_message_template_group = $messages_controller->create_new_templates($messenger, $message_type, $GRP_ID, $global);
+			$new_message_template_group = EEH_MSG_Template::create_new_templates($messenger, $message_type, $GRP_ID, $global);
 
 			if ( !$new_message_template_group ) {
 				$success = FALSE;
@@ -950,16 +945,16 @@ class EEH_MSG_Template {
 	 * @return array
 	 * @throws \EE_Error
 	 */
-	public function create_new_templates( $messenger_name, $message_type_name, $GRP_ID = 0, $global = false ) {
+	public static function create_new_templates( $messenger_name, $message_type_name, $GRP_ID = 0, $global = false ) {
 		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$messenger = $Message_Resource_Manager->valid_messenger( $messenger_name );
 		$message_type = $Message_Resource_Manager->valid_message_type( $message_type_name );
-		if ( ! $this->message_type_has_active_templates_for_messenger( $messenger, $message_type, $global ) ) {
+		if ( ! EEH_MSG_Template::message_type_has_active_templates_for_messenger( $messenger, $message_type, $global ) ) {
 			return array();
 		}
 		//whew made it this far!  Okay, let's go ahead and create the templates then
-		return $this->_create_new_templates( $messenger, $message_type, $GRP_ID, $global );
+		return EEH_MSG_Template::_create_new_templates( $messenger, $message_type, $GRP_ID, $global );
 	}
 
 
@@ -971,10 +966,10 @@ class EEH_MSG_Template {
 	 * @param                  $global
 	 * @return array|mixed
 	 */
-	protected function _create_new_templates( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID, $global ) {
+	protected static function _create_new_templates( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID, $global ) {
 		//if we're creating a custom template then we don't need to use the defaults class
 		if ( ! $global ) {
-			return $this->_create_custom_template_group( $messenger, $message_type, $GRP_ID );
+			return EEH_MSG_Template::_create_custom_template_group( $messenger, $message_type, $GRP_ID );
 		}
 		$Message_Template_Defaults = new EE_Message_Template_Defaults(
 			EE_Registry::instance()->load_lib( 'messages' ),
@@ -1009,7 +1004,7 @@ class EEH_MSG_Template {
 	 * 										)
 	 * @access private
 	 */
-	private function _create_custom_template_group( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID ) {
+	private static function _create_custom_template_group( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID ) {
 		//defaults
 		$success = array( 'GRP_ID' => null, 'MTP_context' => '' );
 		//get the template group to use as a template from the db.  If $GRP_ID is empty then we'll assume the base will be the global template matching the messenger and message type.
@@ -1095,7 +1090,7 @@ class EEH_MSG_Template {
 	 * @param bool             $global
 	 * @return bool
 	 */
-	public function message_type_has_active_templates_for_messenger(
+	public static function message_type_has_active_templates_for_messenger(
 		EE_Messenger $messenger,
 		EE_message_type $message_type,
 		$global = false
@@ -1142,13 +1137,13 @@ class EEH_MSG_Template {
 	 * @param  string $message_type_name name of EE_message_type
 	 * @return array
 	 */
-	public function get_fields( $messenger_name, $message_type_name ) {
+	public static function get_fields( $messenger_name, $message_type_name ) {
 		$template_fields = array();
 		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$messenger = $Message_Resource_Manager->valid_messenger( $messenger_name );
 		$message_type = $Message_Resource_Manager->valid_message_type( $message_type_name );
-		if ( ! $this->message_type_has_active_templates_for_messenger( $messenger, $message_type ) ) {
+		if ( ! EEH_MSG_Template::message_type_has_active_templates_for_messenger( $messenger, $message_type ) ) {
 			return array();
 		}
 		//okay now let's assemble an array with the messenger template fields added to the message_type contexts.
