@@ -93,24 +93,10 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		$messengers = $this->_admin_page->get_active_messengers();
-		$message_types = $this->_admin_page->get_installed_message_types();
-
 		//setup messengers for selects
-		$i = 1;
-		foreach ( $messengers as $messenger => $args ) {
-			$m_values[ $i ]['id'] = $messenger;
-			$m_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
-			$i++;
-		}
-
+		$m_values = $this->_admin_page->get_messengers_for_list_table();
 		//lets do the same for message types
-		$i = 1;
-		foreach ( $message_types as $message_type => $args ) {
-			$mt_values[ $i ]['id'] = $message_type;
-			$mt_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
-			$i++;
-		}
+		$mt_values = $this->_admin_page->get_message_types_for_list_table();
 
 		$msgr_default[0] = array(
 			'id' => 'none_selected',
@@ -139,7 +125,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		if ( count( $messengers ) >= 1  && ! empty( $m_values ) ) {
+		if ( count( $m_values ) >= 1  && ! empty( $m_values ) ) {
 			unset( $msgr_filters[0] );
 			$msgr_filters = array_values( $msgr_filters ); //reindex keys
 		}
