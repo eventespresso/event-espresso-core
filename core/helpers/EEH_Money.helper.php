@@ -168,11 +168,7 @@ class EEH_Money extends EEH_Base  {
 			$currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();
 		}
 
-		$decimal_places_placeholder = '';
-		while ( $currency_config->dec_plc ) {
-			$decimal_places_placeholder .= '0';
-			$currency_config->dec_plc--;
-		}
+		$decimal_places_placeholder = str_pad( '', $currency_config->dec_plc, '0' );
 
 		//first get the decimal place and number of places
 		$format = '#' . $currency_config->thsnds . '##0' . $currency_config->dec_mrk . $decimal_places_placeholder;
