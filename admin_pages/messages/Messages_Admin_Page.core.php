@@ -117,8 +117,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_load_message_resource_manager();
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = $this->_message_resource_manager->get_active_messengers_option();
-		$this->_active_message_types = $this->_message_resource_manager->list_of_active_message_types();
-
+		$this->_active_message_types = $this->_message_resource_manager->active_message_types();
 
 		//what about saving the objects in the active_messengers and active_message_types?
 		//$this->_load_active_messenger_objects();
@@ -142,51 +141,49 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 * get_messengers_for_list_table
 	 *
-	 *
-	 * @throws EE_Error
-	*/
-	//protected function _load_active_messenger_objects() {
-	//	foreach ( $this->_active_messengers as $messenger => $values ) {
-	//		$ref = ucwords( str_replace( '_' , ' ', $messenger) );
-	//		$ref = str_replace( ' ', '_', $ref );
-	//		$classname = 'EE_' . $ref . '_messenger';
-	//		require_once( EE_LIBRARIES . 'messages'. DS .'messenger' . DS . $classname . '.class.php' );
-	//		if ( ! class_exists( $classname ) ) {
-	//			throw new EE_Error(
-	//				sprintf( __( 'There is no messenger for the given classname (%s)', 'event_espresso' ), $classname )
-	//			);
-	//		}
-	//		$this->_active_messengers[$messenger]['obj'] = new $classname;
-	//	}
-	//}
+	 * @return array
+	 */
+	public function get_messengers_for_list_table() {
+		$m_values = array();
+		$messengers = $this->_message_resource_manager->active_messengers();
+		//setup messengers for selects
+		$i = 1;
+		foreach ( $messengers as $messenger_name => $messenger ) {
+			if ( $messenger instanceof EE_Messenger ) {
+				$m_values[ $i ][ 'id' ] = $messenger_name;
+				$m_values[ $i ][ 'text' ] = ucwords( $messenger->label[ 'singular' ] );
+				$i++;
+			}
+		}
+		return $m_values;
+	}
 
 
 
 
 	/**
-	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 * get_messengers_for_list_table
 	 *
-	 * @throws EE_Error
+	 * @return array
 	*/
-	//protected function _load_active_message_type_objects() {
-	//	if ( empty($this->_active_message_types) ) {return;}
-	//	foreach ( $this->_active_message_types as $message_type ) {
-	//		$ref = ucwords( str_replace( '_' , ' ', $message_type) );
-	//		$ref = str_replace( ' ', '_', $ref );
-	//		$classname = 'EE_' . $ref . '_message_type';
-	//		if ( ! class_exists( $classname ) ) {
-	//			throw new EE_Error(
-	//				sprintf(
-	//					__( 'There is no message type for the given classname (%s)', 'event_espresso' ),
-	//					$classname
-	//				)
-	//			);
-	//		}
-	//		$this->_active_message_types[$message_type]['obj'] = new $classname;
-	//	}
-	//}
+	public function get_message_types_for_list_table() {
+		$mt_values = array();
+		$message_types = $this->_message_resource_manager->active_message_types();
+		$i = 1;
+		foreach ( $message_types as $messenger_name => $message_type ) {
+			foreach ( $message_type as $message_type_name => $args ) {
+				$message_type = $this->_message_resource_manager->get_message_type( $message_type_name );
+				if ( $message_type instanceof EE_Message_Type ) {
+					$mt_values[ $i ][ 'id' ] = $message_type_name;
+					$mt_values[ $i ][ 'text' ] = ucwords( $message_type->label[ 'singular' ] );
+					$i++;
+				}
+			}
+		}
+		return $mt_values;
+	}
 
 
 
@@ -807,7 +804,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _message_legend_items() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
 		$action_css_classes = EEH_MSG_Template::get_message_action_icons();
 		$action_items = array();
 
@@ -1067,9 +1064,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//let's get EEH_MSG_Template so we can get template form fields
-		/** @type EEH_MSG_Template $MSG_Template */
-		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
-		$template_field_structure = $MSG_Template->get_fields( $message_template_group->messenger(), $message_template_group->message_type());
+		$template_field_structure = EEH_MSG_Template::get_fields( $message_template_group->messenger(), $message_template_group->message_type());
 
 		if ( !$template_field_structure ) {
 			$template_field_structure = false;
@@ -2229,10 +2224,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _generate_new_templates($messenger, $message_types, $GRP_ID = 0, $global = false) {
 
 		//if no $message_types are given then that's okay... this may be a messenger that just adds shortcodes, so we just don't generate any templates.
-		if ( empty( $message_types ) )
-			{return true;}
-
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		if ( empty( $message_types ) ) {
+			return true;
+		}
 
 		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $GRP_ID,  $global);
 
