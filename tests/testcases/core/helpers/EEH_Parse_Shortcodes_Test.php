@@ -168,13 +168,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 */
 	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '', $addressee = null ) {
 		//grab the correct template  @see EE_message_type::_get_templates()
+		/** @type EE_Message_Template_Group $mtpg */
 		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'MTP_is_global' => true
 			)));
-		$all_templates = $mtpg->context_templates();
-
+		$all_templates = $mtpg instanceof EE_Message_Template_Group ? $mtpg->context_templates() : array();
+		$templates = array();
 		foreach ( $all_templates as $t_context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
 				$templates[$template_field][$t_context] = $template_obj->get('MTP_content');
