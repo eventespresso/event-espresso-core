@@ -14,6 +14,17 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Message_List_Table extends EE_Admin_List_Table {
 
+
+
+	/**
+	 * @return Messages_Admin_Page
+	 */
+	public function get_admin_page() {
+		return $this->_admin_page;
+	}
+
+
+
 	protected function _setup_data() {
 		$this->_data = $this->_get_messages( $this->_per_page, $this->_view );
 		$this->_all_data_count = $this->_get_messages( $this->_per_page, $this->_view, true );
@@ -27,7 +38,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'singular' => __( 'Message', 'event_espresso' ),
 			'plural' => __( 'Messages', 'event_espresso' ),
 			'ajax' => true,
-			'screen' => $this->_admin_page->get_current_screen()->id
+			'screen' => $this->get_admin_page()->get_current_screen()->id
 		);
 
 		$this->_columns = array(
@@ -67,10 +78,9 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$contexts = $message_resource_manager->get_all_contexts();
 		//setup messengers for selects
-		//setup messengers for selects
-		$m_values = $this->_admin_page->get_messengers_for_list_table();
+		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types
-		$mt_values = $this->_admin_page->get_message_types_for_list_table();
+		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
 		//and the same for contexts
 		$i = 1;
 		$labels = $c_values = array();
