@@ -161,8 +161,6 @@ class EEH_Money extends EEH_Base  {
 	 * @return string
 	 */
 	public static function get_format_for_google_charts( $CNT_ISO = '' ) {
-		//default format
-		$format = 'currency';
 		//if CNT_ISO passed lets try to get currency settings for it.
 		$currency_config = $CNT_ISO !== '' ? new EE_Currency_Config( $CNT_ISO ) : null;
 		//default currency settings for site if not set
