@@ -37,10 +37,20 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * @return Messages_Admin_Page
+	 */
+	public function get_admin_page() {
+		return $this->_admin_page;
+	}
+
+
+
+
 
 	protected function _setup_data() {
-		$this->_data = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, FALSE, FALSE, FALSE );
-		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE, TRUE, FALSE );
+		$this->_data = $this->get_admin_page()->get_message_templates( $this->_per_page, $this->_view, FALSE, FALSE, FALSE );
+		$this->_all_data_count = $this->get_admin_page()->get_message_templates( $this->_per_page, $this->_view, TRUE, TRUE, FALSE );
 	}
 
 
@@ -52,7 +62,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 			'singular' => __('Message Template Group', 'event_espresso' ),
 			'plural' => __('Message Template', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id
+			'screen' => $this->get_admin_page()->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -100,36 +110,19 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
-
+	/**
+	 * @return array
+	 */
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		$messengers = $this->_admin_page->get_active_messengers();
-		$message_types = $this->_admin_page->get_installed_message_types();
-
-
 		//setup messengers for selects
-		$i=1;
+		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
+		//lets do the same for message types
+		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
+		//setup messengers for selects
 		$m_values[0]['id'] = 'all';
 		$m_values[0]['text'] = __('All Messengers', 'event_espresso' );
-		foreach ( $messengers as $messenger => $args ) {
-			$m_values[$i]['id'] = $messenger;
-			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
-			$i++;
-		}
-		foreach ( $messengers as $messenger => $args ) {
-			$m_values[$i]['id'] = $messenger;
-			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
-			$i++;
-		}
-
-		//lets do the same for message types
-		$i=1;
-		foreach ( $message_types as $message_type => $args ) {
-			$mt_values[$i]['id'] = $message_type;
-			$mt_values[$i]['text'] = ucwords($args['obj']->label['singular']);
-			$i++;
-		}
 
 		$msgr_default[0] = array(
 			'id' => 'none_selected',
@@ -156,7 +149,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 				'text' => __('No Message Types active', 'event_espresso')
 				);
 
-		if ( count( $messengers ) >= 1  && !empty( $m_values ) ) {
+		if ( count( $m_values ) >= 1  && !empty( $m_values ) ) {
 			unset( $msgr_filters[0] );
 			$msgr_filters = array_values( $msgr_filters ); //reindex keys
 		}
@@ -177,7 +170,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		foreach ( $this->_views as $view => $args )  {
-			$this->_views[$view]['count'] = $this->_admin_page->get_message_templates( $this->_per_page, $view, TRUE, TRUE, FALSE );
+			$this->_views[$view]['count'] = $this->get_admin_page()->get_message_templates( $this->_per_page, $view, TRUE, TRUE, FALSE );
 		}
 	}
 
