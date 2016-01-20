@@ -51,8 +51,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 	 * }
 	 */
     public static function register( $mt_name = NULL, $setup_args = array() ) {
-
-        //required fields MUST be present, so let's make sure they are.
+		//required fields MUST be present, so let's make sure they are.
         if (
 			! isset( $mt_name )
 			|| ! is_array( $setup_args )
@@ -82,7 +81,6 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 				'4.3.0'
 			);
         }
-
 		//setup $__ee_message_type_registry array from incoming values.
 		self::$_ee_message_type_registry[ $mt_name ] = array(
 			'mtfilename' => (string) $setup_args['mtfilename'],
@@ -137,13 +135,13 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 		//only set defaults if we're not in EE_Maintenance mode
     	EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		//for any message types with force activation, let's ensure they are activated
 		foreach ( self::$_ee_message_type_registry as $message_type_name => $settings ) {
 			if ( $settings['force_activation'] ) {
 				foreach ( $settings['messengers_to_activate_with'] as $messenger ) {
-					$messages_controller->ensure_message_type_is_active( $message_type_name, $messenger );
+					$message_resource_manager->ensure_message_type_is_active( $message_type_name, $messenger );
 				}
 			}
 		}

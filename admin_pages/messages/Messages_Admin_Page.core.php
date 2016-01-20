@@ -116,9 +116,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : null;
 		$this->_load_message_resource_manager();
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = $this->_message_resource_manager->get_active_messengers_option();
-		$this->_active_message_types = $this->_message_resource_manager->list_of_active_message_types();
-
+		$this->_active_messengers = $this->_message_resource_manager->active_messengers();
+		$this->_active_message_types = $this->_message_resource_manager->active_message_types();
 
 		//what about saving the objects in the active_messengers and active_message_types?
 		//$this->_load_active_messenger_objects();
@@ -142,51 +141,49 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 * get_messengers_for_list_table
 	 *
-	 *
-	 * @throws EE_Error
-	*/
-	//protected function _load_active_messenger_objects() {
-	//	foreach ( $this->_active_messengers as $messenger => $values ) {
-	//		$ref = ucwords( str_replace( '_' , ' ', $messenger) );
-	//		$ref = str_replace( ' ', '_', $ref );
-	//		$classname = 'EE_' . $ref . '_messenger';
-	//		require_once( EE_LIBRARIES . 'messages'. DS .'messenger' . DS . $classname . '.class.php' );
-	//		if ( ! class_exists( $classname ) ) {
-	//			throw new EE_Error(
-	//				sprintf( __( 'There is no messenger for the given classname (%s)', 'event_espresso' ), $classname )
-	//			);
-	//		}
-	//		$this->_active_messengers[$messenger]['obj'] = new $classname;
-	//	}
-	//}
+	 * @return array
+	 */
+	public function get_messengers_for_list_table() {
+		$m_values = array();
+		$messengers = $this->_message_resource_manager->active_messengers();
+		//setup messengers for selects
+		$i = 1;
+		foreach ( $messengers as $messenger_name => $messenger ) {
+			if ( $messenger instanceof EE_Messenger ) {
+				$m_values[ $i ][ 'id' ] = $messenger_name;
+				$m_values[ $i ][ 'text' ] = ucwords( $messenger->label[ 'singular' ] );
+				$i++;
+			}
+		}
+		return $m_values;
+	}
 
 
 
 
 	/**
-	 * loads messenger objects into the $_active_messengers property (so we can access the needed methods)
+	 * get_messengers_for_list_table
 	 *
-	 * @throws EE_Error
+	 * @return array
 	*/
-	//protected function _load_active_message_type_objects() {
-	//	if ( empty($this->_active_message_types) ) {return;}
-	//	foreach ( $this->_active_message_types as $message_type ) {
-	//		$ref = ucwords( str_replace( '_' , ' ', $message_type) );
-	//		$ref = str_replace( ' ', '_', $ref );
-	//		$classname = 'EE_' . $ref . '_message_type';
-	//		if ( ! class_exists( $classname ) ) {
-	//			throw new EE_Error(
-	//				sprintf(
-	//					__( 'There is no message type for the given classname (%s)', 'event_espresso' ),
-	//					$classname
-	//				)
-	//			);
-	//		}
-	//		$this->_active_message_types[$message_type]['obj'] = new $classname;
-	//	}
-	//}
+	public function get_message_types_for_list_table() {
+		$mt_values = array();
+		$message_types = $this->_message_resource_manager->active_message_types();
+		$i = 1;
+		foreach ( $message_types as $messenger_name => $message_type ) {
+			foreach ( $message_type as $message_type_name => $args ) {
+				$message_type = $this->_message_resource_manager->get_message_type( $message_type_name );
+				if ( $message_type instanceof EE_Message_Type ) {
+					$mt_values[ $i ][ 'id' ] = $message_type_name;
+					$mt_values[ $i ][ 'text' ] = ucwords( $message_type->label[ 'singular' ] );
+					$i++;
+				}
+			}
+		}
+		return $mt_values;
+	}
 
 
 
@@ -682,7 +679,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles_display_preview_message() {
 		$this->_set_message_template_group();
 		if ( isset( $this->_req_data['messenger'] ) ) {
-			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
+			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']];
 		}
 
 		$message_type_name = isset( $this->_req_data['message_type'] ) ? $this->_req_data['message_type'] : '';
@@ -807,7 +804,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _message_legend_items() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
+
 		$action_css_classes = EEH_MSG_Template::get_message_action_icons();
 		$action_items = array();
 
@@ -944,7 +941,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$installed = array();
 
 		foreach ( $installed_message_types as $message_type ) {
-			$installed[$message_type->name]['obj'] = $message_type;
+			$installed[ $message_type->name ] = $message_type;
 		}
 
 		return $installed;
@@ -1047,7 +1044,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//set active messenger for this view
-		$this->_active_messenger = $this->_active_messengers[$message_template_group->messenger()]['obj'];
+		$this->_active_messenger = $this->_active_messengers[ $message_template_group->messenger() ];
 		$this->_active_message_type_name = $message_template_group->message_type();
 
 
@@ -1067,9 +1064,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//let's get EEH_MSG_Template so we can get template form fields
-		/** @type EEH_MSG_Template $MSG_Template */
-		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
-		$template_field_structure = $MSG_Template->get_fields( $message_template_group->messenger(), $message_template_group->message_type());
+		$template_field_structure = EEH_MSG_Template::get_fields( $message_template_group->messenger(), $message_template_group->message_type());
 
 		if ( !$template_field_structure ) {
 			$template_field_structure = false;
@@ -1618,9 +1613,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
 
 		//let's provide a helpful title for context
-		$preview_title = sprintf( __('Viewing Preview for %s %s Message Template', 'event_espresso'), ucwords($this->_active_messengers[$this->_req_data['messenger']]['obj']->label['singular']), ucwords($this->_active_message_types[$this->_req_data['message_type']]['obj']->label['singular']) );
-
-
+		$preview_title = sprintf(
+			__( 'Viewing Preview for %s %s Message Template', 'event_espresso' ),
+			ucwords( $this->_active_messengers[ $this->_req_data[ 'messenger' ] ]->label[ 'singular' ] ),
+			ucwords( $this->_active_message_types[ $this->_req_data[ 'message_type' ] ]->label[ 'singular' ] )
+		);
 		//setup display of preview.
 		$this->_admin_page_title = $preview_title;
 		$this->_template_args['admin_page_content'] = $preview_button . '<br />' .stripslashes($preview);
@@ -2188,7 +2185,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_req_data['message_type'] = $message_type;
 		$this->_req_data['context'] = $context;
 		$this->_req_data['GRP_ID'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
-		$active_messenger = $this->_active_messengers[ $messenger ][ 'obj' ];
+		$active_messenger = $this->_active_messengers[ $messenger ];
 
 		//let's save any existing fields that might be required by the messenger
 		if (
@@ -2229,10 +2226,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _generate_new_templates($messenger, $message_types, $GRP_ID = 0, $global = false) {
 
 		//if no $message_types are given then that's okay... this may be a messenger that just adds shortcodes, so we just don't generate any templates.
-		if ( empty( $message_types ) )
-			{return true;}
-
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		if ( empty( $message_types ) ) {
+			return true;
+		}
 
 		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $GRP_ID,  $global);
 
@@ -2415,8 +2411,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _set_m_mt_settings() {
 		//first if this is already set then lets get out no need to regenerate data.
-		if ( !empty($this->_m_mt_settings) )
-			{return;}
+		if ( !empty($this->_m_mt_settings) ) {
+			return;
+		}
 
 		//$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 
@@ -2436,12 +2433,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'title' => __('Modify this Messenger', 'event_espresso'),
 				'slug' => $messenger->name,
 				'obj' => $messenger
-				);
+			);
 
 			$message_types_for_messenger = $messenger->get_valid_message_types();
 
 			//assemble the array for the ACTIVE and INACTIVE message types with the selected messenger //note that all message types will be in the inactive box if the messenger is NOT active.
-			$selected_settings = isset( $this->_active_messengers[$messenger->name]['settings'] ) ? $this->_active_messengers[$messenger->name]['settings'] : array();
+			$selected_settings = isset( $this->_active_messengers[$messenger->name]['settings'] )
+				? $this->_active_messengers[$messenger->name]['settings']
+				: array();
 			foreach ( $message_types as $message_type ) {
 				//first we need to verify that this message type is valid with this messenger. Cause if it isn't then it shouldn't show in either the inactive OR active metabox.
 				if ( ! in_array( $message_type->name, $message_types_for_messenger ) ) {
@@ -2910,7 +2909,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			} else {
 				//all is good let's do a success message
 				if ( $message_type ) {
-					EE_Error::add_success( sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) );
+					EE_Error::add_success( sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]->label['singular'] ) ) );
 
 					//if message type was invoice then let's make sure we activate the invoice payment method.
 					if ( $message_type == 'invoice' ) {
@@ -2921,7 +2920,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						}
 					}
 				} else {
-					EE_Error::add_success( sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]['obj']->label['singular'] ) ) );
+					EE_Error::add_success( sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]->label['singular'] ) ) );
 				}
 			}
 
@@ -2939,7 +2938,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 			EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => 0 ), array($update_array) );
 
-			$messenger_obj = $this->_active_messengers[$messenger]['obj'];
+			$messenger_obj = $this->_active_messengers[$messenger];
 
 			//if this is a message type deactivation then we're only unsetting the message type otherwise unset the messenger
 			if ( $message_type ) {
@@ -2988,8 +2987,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$message_types = $this->get_installed_message_types();
 
-		$message_type = $message_types[$this->_req_data['message_type']]['obj'];
-		$messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
+		$message_type = $message_types[ $this->_req_data['message_type'] ];
+		$messenger = $this->_active_messengers[ $this->_req_data['messenger'] ];
 
 		$content = $this->_message_type_settings_content ( $message_type, $messenger, true );
 		$this->_template_args['success'] = true;
