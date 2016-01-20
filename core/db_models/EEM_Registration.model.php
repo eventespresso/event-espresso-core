@@ -290,7 +290,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				array(
 					$where,
 					'group_by'=>'regDate',
-					'order_by'=>array('REG_date'=>'DESC')
+					'order_by'=>array('REG_date'=>'ASC')
 				),
 				OBJECT,
 				array(
