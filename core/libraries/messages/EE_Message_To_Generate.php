@@ -13,6 +13,11 @@ class EE_Message_To_Generate {
 
 
 	/**
+	 * @type EE_Message_Resource_Manager $_message_resource_manager
+	 */
+	public $_message_resource_manager = null;
+
+	/**
 	 * @type EE_Messenger
 	 */
 	public $messenger = null;
@@ -40,11 +45,6 @@ class EE_Message_To_Generate {
 	 * @type bool
 	 */
 	public $preview = false;
-
-	/**
-	 * @type EE_Messages
-	 */
-	protected $_EEMSG;
 
 	/**
 	 * @type EE_Message
@@ -82,29 +82,30 @@ class EE_Message_To_Generate {
 
 
 
-
 	/**
 	 * Constructor
 	 *
-	 * @param string              $messenger    Slug representing messenger
-	 * @param string              $message_type Slug representing message type.
-	 * @param mixed               $data         Data used for generating message.
-	 * @param EE_Messages         $ee_msg       The message_type and messenger repository.
-	 * @param string              $context      Optional context to restrict message generated for.
-	 * @param bool          	  $preview      Whether this is being used to generate a preview or not.
+	 * @param string                       $messenger    Slug representing messenger
+	 * @param string                       $message_type Slug representing message type.
+	 * @param mixed                        $data         Data used for generating message.
+	 * @param null 						   $deprecated   used to be EE_Messages class
+	 * @param string                       $context      Optional context to restrict message generated for.
+	 * @param bool                         $preview      Whether this is being used to generate a preview or not.
+	 * @param \EE_Message_Resource_Manager $message_resource_manager
 	 */
 	public function __construct(
 		$messenger,
 		$message_type,
 		$data,
-		EE_Messages $ee_msg,
+		$deprecated = null,
 		$context = '',
-		$preview = false
+		$preview = false,
+		EE_Message_Resource_Manager $message_resource_manager
 	) {
+		$this->_message_resource_manager = $message_resource_manager;
 		$this->data = is_array( $data ) ? $data : array( $data );
 		$this->context = $context;
 		$this->preview = $preview;
-		$this->_EEMSG = $ee_msg;
 		//this immediately validates whether the given messenger/messagetype are active or not
 		//and sets the valid flag.
 		$this->_set_valid( $messenger, $message_type );
@@ -113,33 +114,31 @@ class EE_Message_To_Generate {
 
 	/**
 	 * Validates messenger and message type and sets the related properties.
+	 *
+	 * NOTE: this sort of validation is no longer necessary if you have an  object available,
+	 * 		 as you can now simply call one of the following on your EE_Message object to validate it:
+	 *
+	 *  * EE_Message::valid_messenger();
+	 *  * EE_Message::valid_message_type()
+	 *  * EE_Message::is_valid(); // validates both messenger and message type
+	 *
 	 * @param string $messenger_slug
 	 * @param string $message_type_slug
 	 */
 	protected function _set_valid( $messenger_slug , $message_type_slug ) {
 		$this->_valid = true;
-		$validated_for_use = $this->_EEMSG->validate_for_use(
-			EE_Message_Factory::create(
-				array(
-					'MSG_messenger'    => $messenger_slug,
-					'MSG_message_type' => $message_type_slug
-				)
-			)
-		);
-
-		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_Messenger ) {
-			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $messenger_slug );
-			$this->_valid = false;
-		} else {
-			$this->messenger = $validated_for_use['messenger'];
+		try {
+			$this->messenger = $this->_message_resource_manager->valid_messenger( $messenger_slug );
 			$this->_send_now = $this->messenger->send_now();
-		}
-
-		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
+		} catch ( Exception $e ) {
+			$this->_error_msg[] = $e->getMessage();
 			$this->_valid = false;
-			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $message_type_slug );
-		} else {
-			$this->message_type = $validated_for_use['message_type'];
+		}
+		try {
+			$this->message_type = $this->_message_resource_manager->valid_message_type( $message_type_slug );
+		} catch ( Exception $e ) {
+			$this->_valid = false;
+			$this->_error_msg[] = $e->getMessage();
 		}
 	}
 
