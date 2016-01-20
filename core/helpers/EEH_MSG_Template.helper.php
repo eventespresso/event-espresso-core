@@ -165,6 +165,7 @@ class EEH_MSG_Template {
 	 * The purpose of this function is to return all installed message objects
 	 * (messengers and message type regardless of whether they are ACTIVE or not)
 	 *
+	 * @deprecated 4.9.0
 	 * @param string $type
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
@@ -308,10 +309,9 @@ class EEH_MSG_Template {
 	 * @return EE_Messenger
 	 */
 	public static function messenger_obj( $messenger ) {
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$installed_messengers = $messages_controller->get_installed_messengers();
-		return isset( $installed_messengers[ $messenger ] ) ? $installed_messengers[ $messenger ] : null;
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		return $Message_Resource_Manager->get_messenger( $messenger );
 	}
 
 
@@ -325,10 +325,9 @@ class EEH_MSG_Template {
 	 * @return EE_message_type
 	 */
 	public static function message_type_obj( $message_type ) {
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$installed_message_types = $messages_controller->get_installed_message_types();
-		return isset( $installed_message_types[ $message_type ] ) ? $installed_message_types[ $message_type ] : null;
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		return $Message_Resource_Manager->get_message_type( $message_type );
 	}
 
 
@@ -343,10 +342,9 @@ class EEH_MSG_Template {
 	 * @return boolean
 	 */
 	public static function is_mt_active( $message_type ) {
-		self::_set_autoloader();
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$active_mts = $messages_controller->get_active_message_types();
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$active_mts = $Message_Resource_Manager->list_of_active_message_types();
 		return in_array( $message_type, $active_mts );
 	}
 
@@ -361,11 +359,10 @@ class EEH_MSG_Template {
 	 * @return boolean
 	 */
 	public static function is_messenger_active( $messenger ) {
-		self::_set_autoloader();
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$active_messengers = $messages_controller->get_active_messengers();
-		return isset( $active_messengers[ $messenger ] );
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$active_messenger = $Message_Resource_Manager->get_active_messenger( $messenger );
+		return $active_messenger instanceof EE_Messenger ? true : false;
 	}
 
 
@@ -972,7 +969,7 @@ class EEH_MSG_Template {
 			return EEH_MSG_Template::_create_custom_template_group( $messenger, $message_type, $GRP_ID );
 		}
 		$Message_Template_Defaults = new EE_Message_Template_Defaults(
-			EE_Registry::instance()->load_lib( 'messages' ),
+			EE_Registry::instance()->load_lib( 'Message_Resource_Manager' ),
 			$messenger->name,
 			$message_type->name,
 			$GRP_ID
