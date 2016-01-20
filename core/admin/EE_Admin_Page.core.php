@@ -1641,9 +1641,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script( 'ee-moment', EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js', array('ee-moment-core'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
-		//excanvas
-		wp_register_script('excanvas', JQPLOT_URL . 'excanvas.min.js', array(), EVENT_ESPRESSO_VERSION, FALSE );
-
 		//google charts
 		wp_register_script( 'google-charts', 'https://www.gstatic.com/charts/loader.js', array(), EVENT_ESPRESSO_VERSION, false );
 
