@@ -116,7 +116,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : null;
 		$this->_load_message_resource_manager();
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = $this->_message_resource_manager->active_messengers();
+		$this->_active_messengers = $this->_message_resource_manager->get_active_messengers_option();
 		$this->_active_message_types = $this->_message_resource_manager->active_message_types();
 
 		//what about saving the objects in the active_messengers and active_message_types?
