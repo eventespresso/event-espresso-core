@@ -567,7 +567,6 @@ class EE_Message_Resource_Manager {
 		}
 		// setup any initial settings for the messenger
 		$this->_add_settings_for_messenger( $messenger );
-		//$this->_active_message_types[ $messenger->name ][ 'obj' ] = $messenger;
 		$this->update_has_activated_messengers_option( $has_activated );
 		return $message_type_names;
 	}
