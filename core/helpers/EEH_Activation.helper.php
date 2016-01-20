@@ -1277,6 +1277,7 @@ class EEH_Activation {
 	 */
 	public static function generate_default_message_templates() {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$new_templates_created = false;
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		//get all installed messenger objects
@@ -1286,11 +1287,13 @@ class EEH_Activation {
 			if ( $messenger instanceof EE_Messenger && $messenger->activate_on_install ) {
 				$default_message_types = $messenger->get_default_message_types();
 				if ( ! empty( $default_message_types ) ) {
-					EEH_MSG_Template::generate_new_templates( $messenger->name, $default_message_types );
+					$success = EEH_MSG_Template::generate_new_templates( $messenger->name, $default_message_types );
+					// if any new templates are created, then toggle $new_templates_created to true
+					$new_templates_created = $success ? true: $new_templates_created;
 				}
 			}
 		}
-		return true;
+		return $new_templates_created;
 	}
 
 
