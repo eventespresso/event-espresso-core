@@ -82,18 +82,20 @@ class EE_Message_Template_Defaults extends EE_Base {
 	/**
 	 * constructor
 	 *
+	 * @param null                        $deprecated
+	 * @param string                      $messenger_name    should be the name of a valid active messenger
+	 * @param string                      $message_type_name should be the name of a valid active message type
+	 * @param int                         $GRP_ID            Optional.  If included then we're just regenerating the template
+	 *                                                       fields for the given group not the message template group itself
 	 * @param EE_Message_Resource_Manager $message_resource_manager
-	 * @param string 	$messenger_name    	should be the name of a valid active messenger
-	 * @param string 	$message_type_name 	should be the name of a valid active message type
-	 * @param int 		$GRP_ID            	Optional.  If included then we're just regenerating the template
-	 *                                      fields for the given group not the message template group itself
 	 * @throws \EE_Error
 	 */
 	public function __construct(
-		EE_Message_Resource_Manager $message_resource_manager,
+		$deprecated = null,
 		$messenger_name,
 		$message_type_name,
-		$GRP_ID = 0
+		$GRP_ID = 0,
+		EE_Message_Resource_Manager $message_resource_manager
 	) {
 		$this->_message_resource_manager = $message_resource_manager;
 
