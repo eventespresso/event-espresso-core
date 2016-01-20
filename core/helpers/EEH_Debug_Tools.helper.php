@@ -413,14 +413,25 @@ class EEH_Debug_Tools{
 			$var_name = ! $var_name ? 'string' : $var_name;
 		} else if ( is_null( $var ) ) {
 			$var_name = ! $var_name ? 'null' : $var_name;
+		} else {
+			$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
 		}
-		$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
+		$margin = is_admin() ? 'margin-left:180px;' : '';
 		ob_start();
-		echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
-		echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
+		echo '<pre style="display:block;width:100%;height:'.$height.';border:2px solid light-blue;'.$margin.'">';
 		//$print_r ? print_r( $var ) : var_dump( $var );
-		var_dump( $var );
-		echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
+		if ( is_string( $var ) && strpos( $file, $var_name ) !== false ) {
+			echo '<h3 style="color:#999;line-height:.9em;margin: 1em 0 0;"><span style="color:#2EA2CC">' . $var_name
+				 . '</span>::<span style="color:#E76700">' . $var . '()</span></h3>';
+		} else if ( is_string( $var ) ) {
+			echo '<h4 style="color:#2EA2CC;margin:0;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span></h4>';
+		} else {
+			echo '<h4 style="color:#2EA2CC;"><b>' . $var_name . '</b></h4><span style="color:#E76700">';
+			var_dump( $var );
+			echo '</span><br />';
+		}
+		$file = str_replace( rtrim( EE_PLUGIN_DIR_PATH, '/' ), '', $file );
+		echo '<span style="color:#666;font-size:10px;font-weight:normal;">' . $file . '&nbsp;:&nbsp;' . $line . '</span></pre>';
 		$result = ob_get_clean();
 		if ( $die ) {
 			die( $result );
