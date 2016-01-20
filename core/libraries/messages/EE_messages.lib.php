@@ -746,9 +746,8 @@ class EE_Messages {
 	 * @throws \EE_Error
 	 */
 	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
-		/** @type EEH_MSG_Template $MSG_Template */
-		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return $MSG_Template->create_new_templates( $messenger, $message_type, $GRP_ID, $is_global );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::create_new_templates( $messenger, $message_type, $GRP_ID, $is_global );
 		//$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
 		//
 		//if ( is_wp_error($valid_mt) && $is_global ) {
@@ -870,9 +869,8 @@ class EE_Messages {
 	 * @return array
 	 */
 	public function get_fields( $messenger_name, $message_type_name ) {
-		/** @type EEH_MSG_Template $MSG_Template */
-		$MSG_Template = EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return $MSG_Template->get_fields( $messenger_name, $message_type_name );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::get_fields( $messenger_name, $message_type_name );
 		//$template_fields = array();
 		///** @type EE_Message_Resource_Manager $Message_Resource_Manager */
 		//$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
