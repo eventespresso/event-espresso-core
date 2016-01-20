@@ -109,6 +109,12 @@ class EEM_Transaction extends EEM_Base {
 	 */
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
 		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
+
+		$offset = get_option( 'gmt_offset' );
+		$query_interval = $offset < 0
+			? 'DATE_SUB(TXN_timestamp, INTERVAL ' . $offset*-1 . ' HOUR)'
+			: 'DATE_ADD(TXN_timestamp, INTERVAL ' . $offset . ' HOUR)';
+
 		$results = $this->_get_all_wpdb_results(
 			array(
 				array(
@@ -118,7 +124,7 @@ class EEM_Transaction extends EEM_Base {
 			),
 			OBJECT,
 			array(
-				'txnDate' => array( 'DATE(Transaction.TXN_timestamp)', '%s' ),
+				'txnDate' => array( 'DATE(' . $query_interval . ')', '%s' ),
 				'revenue' => array( 'SUM(Transaction.TXN_paid)', '%d' )
 			)
 		);
@@ -146,7 +152,7 @@ class EEM_Transaction extends EEM_Base {
 		$results = $this->_get_all_wpdb_results(
 			array(
 				$where,
-				'group_by' => 'Registration.Event.EVT_name',
+				'group_by' => array( 'Registration.Event.EVT_name' ),
 				'order_by' => 'Registration.Event.EVT_name',
 				'limit' => array( 0, 24 )
 			),

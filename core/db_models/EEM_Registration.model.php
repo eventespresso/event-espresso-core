@@ -279,22 +279,27 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
 
-		$sql_date = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
-		$where = array( 'REG_date' => array( '>=', $sql_date ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
+		$sql_date = EEM_Transaction::instance()->convert_datetime_for_query( 'TXN_timestamp', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
+		$where = array( 'Transaction.TXN_timestamp' => array( '>=', $sql_date ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
+		$offset = get_option( 'gmt_offset' );
+		$query_interval = $offset < 0
+			? 'DATE_SUB(Transaction.TXN_timestamp, INTERVAL ' . $offset*-1 . ' HOUR)'
+			: 'DATE_ADD(Transaction.TXN_timestamp, INTERVAL ' . $offset . ' HOUR)';
+
 		$results = $this->_get_all_wpdb_results(
 				array(
 					$where,
 					'group_by'=>'regDate',
-					'order_by'=>array('REG_date'=>'ASC')
+					'order_by'=>array('Transaction.TXN_timestamp'=>'ASC')
 				),
 				OBJECT,
 				array(
-					'regDate'=>array('DATE(Registration.REG_date)','%s'),
+					'regDate'=>array( 'DATE(' . $query_interval . ')','%s'),
 					'total'=>array('count(REG_ID)','%d')
 				));
 		return $results;
