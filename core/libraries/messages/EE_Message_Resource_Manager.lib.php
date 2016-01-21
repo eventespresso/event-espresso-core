@@ -234,7 +234,7 @@ class EE_Message_Resource_Manager {
 	 * @return \EE_Message_Type|null
 	 */
 	public function get_active_message_type_for_messenger( $messenger_name, $message_type_name ) {
-		return ! empty( $this->_active_message_types[ $messenger_name ][ $message_type_name ] )
+		return $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name )
 			? $this->get_message_type( $message_type_name )
 			: null;
 	}
@@ -263,15 +263,14 @@ class EE_Message_Resource_Manager {
 	 * @return EE_message_type[]    (or empty array if none present)
 	 */
 	public function get_active_message_types_for_messenger( $messenger_name ) {
-		if ( empty( $this->_active_message_types[ $messenger_name ] ) ) {
-			return array();
-		}
 		$message_types = array();
-		$active_message_types = $this->_active_message_types[ $messenger_name ];
+		if ( empty( $this->_active_message_types[ $messenger_name ] ) ) {
+			return $message_types;
+		}
 		$installed_message_types = $this->installed_message_types();
-		foreach ( $active_message_types as $message_type_name => $settings ) {
-			if ( ! empty( $installed_message_types[ $message_type_name ] ) ) {
-				$message_types[] = $installed_message_types[ $message_type_name ];
+		foreach ( $installed_message_types as $message_type_name => $message_type ) {
+			if ( $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
+				$message_types[ $message_type_name ] = $message_type;
 			}
 		}
 		return $message_types;
@@ -287,15 +286,15 @@ class EE_Message_Resource_Manager {
 	 * @return array message_type references (string)
 	 */
 	public function list_of_active_message_types() {
-		$message_types = array();
-		foreach ( $this->_active_message_types as $messenger => $message_type_data ) {
-			foreach ( $message_type_data as $message_type => $config ) {
-				if ( ! in_array( $message_type, $message_types ) ) {
-					$message_types[] = $message_type;
+		$active_message_type_names = array();
+		foreach ( $this->_active_message_types as $messenger => $messenger_settings ) {
+			foreach ( $messenger_settings[ $messenger . '-message_types' ] as $message_type_name => $message_type_config ) {
+				if ( ! in_array( $message_type_name, $active_message_type_names ) ) {
+					$active_message_type_names[] = $message_type_name;
 				}
 			}
 		}
-		return $message_types;
+		return $active_message_type_names;
 	}
 
 
@@ -307,16 +306,15 @@ class EE_Message_Resource_Manager {
 	 * @return \EE_message_type[]
 	 */
 	public function get_active_message_type_objects() {
-		$message_types = array();
+		$active_message_types = array();
 		$installed_message_types = $this->installed_message_types();
-		foreach ( $this->_active_message_types as $messenger => $message_type_data ) {
-			foreach ( $message_type_data as $message_type => $config ) {
-				if ( ! isset( $message_type, $message_types ) ) {
-					$message_types[ $message_type ] = $installed_message_types[ $message_type ];
-				}
+		$active_message_type_names = $this->list_of_active_message_types();
+		foreach ( $active_message_type_names as $active_message_type_name ) {
+			if ( isset( $installed_message_types[ $active_message_type_name ] ) ) {
+				$active_message_types[ $active_message_type_name ] = $installed_message_types[ $active_message_type_name ];
 			}
 		}
-		return $message_types;
+		return $active_message_types;
 	}
 
 
@@ -722,8 +720,8 @@ class EE_Message_Resource_Manager {
 		//get the $messengers the message type says it can be used with.
 		foreach ( $message_type->with_messengers() as $generating_messenger => $secondary_messengers ) {
 			if (
-				$messenger->name == $generating_messenger
-				&& isset( $this->_active_message_types[ $generating_messenger ][ $message_type->name ] )
+				$messenger->name === $generating_messenger
+				&& $this->is_message_type_active_for_messenger( $messenger->name, $message_type->name )
 			) {
 				return true;
 			}
