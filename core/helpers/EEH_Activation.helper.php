@@ -130,7 +130,8 @@ class EEH_Activation {
 	/**
 	 * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
 	 * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
-	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use (null)
+	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use
+	 * (null)
 	 *
 	 * @param string $which_to_include can be 'current' (ones that are currently in use),
 	 *                          'old' (only returns ones that should no longer be used),or 'all',
@@ -649,7 +650,8 @@ class EEH_Activation {
 	 * @static
 	 * @param string $table_name  (without "wp_", eg "esp_attendee"
 	 * @param string $column_name
-	 * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
+	 * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be
+	 *                            'VARCHAR(10)'
 	 * @return bool|int
 	 */
 	public static function add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
@@ -1302,7 +1304,9 @@ class EEH_Activation {
 
 
 	/**
-	 * This simply validates active messengers and message types to ensure they actually match installed messengers and message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db rows are set inactive.
+	 * This simply validates active messengers and message types to ensure they actually match installed messengers and
+	 * message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db
+	 * rows are set inactive.
 	 *
 	 * @since 4.3.1
 	 *
@@ -1383,7 +1387,8 @@ class EEH_Activation {
 
 
 	/**
-	 * Finds all our EE4 custom post types, and deletes them and their associated data (like post meta or term relations)/
+	 * Finds all our EE4 custom post types, and deletes them and their associated data (like post meta or term
+	 * relations)/
 	 * @global wpdb $wpdb
 	 */
 	public static function delete_all_espresso_cpt_data(){
