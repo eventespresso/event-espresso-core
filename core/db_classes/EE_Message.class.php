@@ -268,6 +268,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public function set_message_type_object( EE_Message_Type $message_type ) {
 		$this->_message_type = $message_type;
+		$this->set_priority( $message_type->get_priority() );
 	}
 
 
@@ -538,6 +539,17 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public function set_priority( $priority ) {
 		$this->set( 'MSG_priority', $priority );
+	}
+
+
+
+	/**
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function send_now() {
+		$send_now = $this->valid_messenger() ? $this->messenger_object()->send_now() : $this->priority();
+		return $send_now === EEM_Message::priority_high ? true : false;
 	}
 
 
