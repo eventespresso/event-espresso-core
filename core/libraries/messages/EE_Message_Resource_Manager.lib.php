@@ -746,20 +746,6 @@ class EE_Message_Resource_Manager {
 
 
 
-	/**
-	 * activate_default_messengers_and_message_types
-	 *
-	 * @return void
-	 */
-	public function activate_default_messengers_and_message_types() {
-		$installed_messengers = $this->installed_messengers();
-		foreach ( $installed_messengers as $messenger ) {
-			if ( $messenger->activate_on_install ) {
-				$this->activate_messenger( $messenger->name );
-			}
-		}
-	}
-
 
 
 	/**
