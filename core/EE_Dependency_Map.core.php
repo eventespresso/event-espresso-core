@@ -126,6 +126,9 @@ class EE_Dependency_Map {
 	 */
 	protected function _register_core_dependencies() {
 		self::$_dependency_map = array(
+			'EE_System' => array(
+				'EE_Registry',
+			),
 			'EE_Session' => array(
 				'EE_Encryption'
 			),
@@ -182,10 +185,12 @@ class EE_Dependency_Map {
 		self::$_class_loaders = array(
 			//load_core
 			'EE_Encryption'                        => 'load_core',
+			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
+			'EE_System'                            => 'load_core',
 			//load_lib
 			'EE_Message_Resource_Manager'          => 'load_lib',
 			'EE_Message_Type_Collection'           => 'load_lib',
