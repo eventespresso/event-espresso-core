@@ -202,8 +202,9 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		// attempt to process message
 		try {
-			$mtg = new EE_Message_To_Generate_From_Request( self::$_EEMSG, EE_Registry::instance()->REQ );
-			self::$_MSG_PROCESSOR->generate_and_send_now( $mtg );
+			/** @type EE_Message_To_Generate_From_Request $message_to_generate */
+			$message_to_generate = EE_Registry::instance()->load_lib( 'Message_To_Generate_From_Request' );
+			self::$_MSG_PROCESSOR->generate_and_send_now( $message_to_generate );
 		} catch ( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
 			// add specific message for developers if WP_DEBUG in on
@@ -352,7 +353,7 @@ class EED_Messages  extends EED_Module {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
 			self::$_EEMSG = EE_Registry::instance()->load_lib( 'messages' );
-			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor', self::$_EEMSG );
+			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 		}
 	}
 
@@ -759,7 +760,6 @@ class EED_Messages  extends EED_Module {
 			$messenger,
 			$type,
 			array(),
-			self::$_EEMSG,
 			$context,
 			true
 		);
@@ -790,15 +790,16 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function send_message_with_messenger_only( $messenger, $message_type, EE_Messages_Queue $queue ) {
 		self::_load_controller();
-		//set mtg
-		$mtg = new EE_Message_To_Generate_From_Queue(
-			$messenger,
-			$message_type,
-			self::$_EEMSG,
-			$queue
+		/** @type EE_Message_To_Generate_From_Queue $message_to_generate */
+		$message_to_generate = EE_Registry::instance()->load_lib(
+			'Message_To_Generate_From_Queue',
+			array(
+				$messenger,
+				$message_type,
+				$queue
+			)
 		);
-
-		return self::$_MSG_PROCESSOR->queue_for_sending( $mtg );
+		return self::$_MSG_PROCESSOR->queue_for_sending( $message_to_generate );
 	}
 
 
