@@ -544,6 +544,9 @@ class EE_Message_Resource_Manager {
 		if ( $messenger instanceof EE_Messenger ) {
 			//EEH_Debug_Tools::printr( $messenger->name, 'activate_messenger', __FILE__, __LINE__ );
 			$this->_active_messengers[ $messenger->name ] = $messenger;
+			// setup any initial settings for the messenger
+			$this->_add_settings_for_messenger( $messenger );
+			//activate incoming message types set to be activated with messenger.
 			$message_type_names = $this->_activate_message_types( $messenger, $message_type_names );
 			if ( $update_active_messengers_option ) {
 				$this->update_active_messengers_option( $this->_active_message_types );
@@ -583,8 +586,6 @@ class EE_Message_Resource_Manager {
 				$message_type_name
 			);
 		}
-		// setup any initial settings for the messenger
-		$this->_add_settings_for_messenger( $messenger );
 		$this->update_has_activated_messengers_option( $has_activated );
 		return $message_type_names;
 	}
