@@ -17,12 +17,22 @@ class EE_Messages_Queue {
 	 */
 	const action_sending = 'sending';
 
-
 	/**
 	 * @type    string  reference for generation action
 	 */
 	const action_generating = 'generation';
 
+
+
+	/**
+	 * @type EE_Message_Repository $_queue
+	 */
+	protected $_queue;
+
+	/**
+	 * @type EE_Message_Resource_Manager $_message_resource_manager
+	 */
+	protected $_message_resource_manager;
 
 	/**
 	 * Sets the limit of how many messages are generated per process.
@@ -30,19 +40,11 @@ class EE_Messages_Queue {
 	 */
 	protected $_batch_count;
 
-
 	/**
 	 * Sets the limit of how many messages can be sent per hour.
 	 * @type int
 	 */
 	protected $_rate_limit;
-
-
-	/**
-	 * @type EE_Message_Repository
-	 */
-	protected $_queue;
-
 
 	/**
 	 * This is an array of cached queue items being stored in this object.
@@ -52,7 +54,6 @@ class EE_Messages_Queue {
 	 */
 	protected $_cached_queue_items;
 
-
 	/**
 	 * Tracks the number of unsaved queue items.
 	 * @type int
@@ -61,28 +62,23 @@ class EE_Messages_Queue {
 
 
 
-
-
-	/**
-	 * @type  EE_Messages $_EEMSG
-	 */
-	protected $_EEMSG;
-
-
-
-
 	/**
 	 * Constructor.
 	 * Setup all the initial properties and load a EE_Message_Repository.
 	 *
-	 * @param  EE_Messages $msg dependency on EE_messages.
+	 * @param \EE_Message_Repository       $message_repository
+	 * @param \EE_Message_Resource_Manager $message_resource_manager
 	 */
-	public function __construct( EE_Messages $msg ) {
+	public function __construct(
+		EE_Message_Repository $message_repository,
+		EE_Message_Resource_Manager $message_resource_manager
+	) {
 		$this->_batch_count = apply_filters( 'FHEE__EE_Messages_Queue___batch_count', 50 );
 		$this->_rate_limit = $this->get_rate_limit();
-		$this->_EEMSG = $msg;
-		$this->_queue = new EE_Message_Repository();
+		$this->_queue = $message_repository;
+		$this->_message_resource_manager = $message_resource_manager;
 	}
+
 
 
 	/**
@@ -449,9 +445,12 @@ class EE_Messages_Queue {
 			}
 
 			$error_messages = array();
-			$sending_messenger = $sending_messenger_slug ? $this->_EEMSG->get_messenger_if_active( $sending_messenger_slug ) : '';
-			$messenger = $this->_EEMSG->get_messenger_if_active( $message->messenger() );
-			$message_type = $this->_EEMSG->get_active_message_type( $message->messenger(), $message->message_type() );
+			//todo: add sending_messenger property to EE_Message so that EE_Message_Resource_Manager is not required
+			$sending_messenger = $sending_messenger_slug
+				? $this->_message_resource_manager->get_active_messenger( $sending_messenger_slug )
+				: '';
+			$messenger = $message->messenger_object();
+			$message_type = $message->message_type_object();
 
 			//error checking
 			if ( ! $messenger instanceof EE_Messenger ) {
