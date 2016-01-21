@@ -62,10 +62,10 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 
 		$activated_response = EEH_Activation::generate_default_message_templates();
 
-		//verify we got a response (html should generate templates)
+		//verify we got a response (html should not have templates generated)
 		$this->assertFalse( $activated_response );
 
-		// double check we still don't html in the active messengers array
+		// double check we still don't have html in the active messengers array
 		$active_messengers = $message_resource_manager->get_active_messengers_option();
 		$this->assertFalse( isset( $active_messengers['html'] ) );
 	}
