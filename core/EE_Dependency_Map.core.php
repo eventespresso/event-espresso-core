@@ -157,7 +157,19 @@ class EE_Dependency_Map {
 			),
 			'EE_messages' => array(
 				'EE_Message_Resource_Manager',
-			)
+			),
+			'EE_Messages_Generator' => array(
+				'EE_Messages_Queue',
+				null,
+				'EE_Messages_Queue',
+				'EE_Messages_Data_Handler_Collection',
+				'EE_Message_Template_Group_Collection',
+				'EEH_Parse_Shortcodes',
+			),
+			'EE_Messages_Queue' => array(
+				'EE_Message_Repository',
+				'EE_Message_Resource_Manager',
+			),
 		);
 	}
 
@@ -169,19 +181,24 @@ class EE_Dependency_Map {
 	protected function _register_core_class_loaders() {
 		self::$_class_loaders = array(
 			//load_core
-			'EE_Encryption'                     => 'load_core',
-			'EE_Module_Request_Router'          => 'load_core',
-			'EE_Registry'                       => 'load_core',
-			'EE_Request_Handler'                => 'load_core',
-			'EE_Session'                        => 'load_core',
+			'EE_Encryption'                        => 'load_core',
+			'EE_Module_Request_Router'             => 'load_core',
+			'EE_Registry'                          => 'load_core',
+			'EE_Request_Handler'                   => 'load_core',
+			'EE_Session'                           => 'load_core',
 			//load_lib
-			'EE_Message_Resource_Manager'       => 'load_lib',
-			'EE_Message_Type_Collection'        => 'load_lib',
-			'EE_Message_Type_Collection_Loader' => 'load_lib',
-			'EE_Messenger_Collection'           => 'load_lib',
-			'EE_Messenger_Collection_Loader'    => 'load_lib',
+			'EE_Message_Resource_Manager'          => 'load_lib',
+			'EE_Message_Type_Collection'           => 'load_lib',
+			'EE_Message_Type_Collection_Loader'    => 'load_lib',
+			'EE_Messenger_Collection'              => 'load_lib',
+			'EE_Messenger_Collection_Loader'       => 'load_lib',
+			'EE_Messages_Queue'                    => 'load_lib',
+			'EE_Messages_Data_Handler_Collection'  => 'load_lib',
+			'EE_Message_Template_Group_Collection' => 'load_lib',
 			//load_model
-			'EEM_Message_Template_Group'        => 'load_model'
+			'EEM_Message_Template_Group'           => 'load_model',
+			//load_helper
+			'EEH_Parse_Shortcodes'                 => 'load_lib',
 		);
 	}
 
