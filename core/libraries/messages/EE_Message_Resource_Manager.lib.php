@@ -712,7 +712,7 @@ class EE_Message_Resource_Manager {
 	/**
 	 * deactivate_messenger
 	 *
-	 * @param  string $messenger_name name of messenger
+	 * @param  string|EE_Messenger $messenger_name name of messenger
 	 * @return void
 	 */
 	public function deactivate_messenger( $messenger_name ) {
@@ -722,7 +722,7 @@ class EE_Message_Resource_Manager {
 		unset( $this->_active_messengers[ $messenger_name ] );
 		unset( $this->_active_message_types[ $messenger_name ] );
 		$this->_message_template_group_model->deactivate_message_template_groups_for( $messenger_name );
-		$this->update_active_messengers_option( $this->_active_message_types );
+		$this->update_active_messengers_option();
 	}
 
 
@@ -741,7 +741,7 @@ class EE_Message_Resource_Manager {
 			);
 		}
 		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type_name );
-		$this->update_active_messengers_option( $this->_active_message_types );
+		$this->update_active_messengers_option();
 	}
 
 
