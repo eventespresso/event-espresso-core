@@ -242,6 +242,19 @@ class EE_Message_Resource_Manager {
 
 
 	/**
+	 * Returns whether the given message type is active for the given messenger.
+	 * @param $messenger_name
+	 * @param $message_type_name
+	 *
+	 * @return bool
+	 */
+	public function is_message_type_active_for_messenger( $messenger_name, $message_type_name ) {
+		return ! empty( $this->_active_message_types[ $messenger_name ]['settings'][$messenger_name . '-message_types'][ $message_type_name ] );
+	}
+
+
+
+	/**
 	 * This checks the _active_message_types property for any active message types
 	 * that are present for the given messenger and returns them.
 	 *
