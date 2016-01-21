@@ -83,6 +83,13 @@ class EE_Message_To_Generate {
 	 */
 	protected $_data_handler_class_name = '';
 
+	/**
+	 * one of the message status constants on EEM_Message
+	 *
+	 * @type string
+	 */
+	protected $_message_status = '';
+
 
 
 	/**
@@ -93,21 +100,24 @@ class EE_Message_To_Generate {
 	 * @param mixed  $data              Data used for generating message.
 	 * @param string $context           Optional context to restrict message generated for.
 	 * @param bool   $preview           Whether this is being used to generate a preview or not.
+	 * @param string $status
 	 */
 	public function __construct(
 		$messenger_name,
 		$message_type_name,
-		$data,
+		$data 	 = array(),
 		$context = '',
-		$preview = false
+		$preview = false,
+		$status  = EEM_Message::status_incomplete
 	) {
 		$this->_messenger_name 		= $messenger_name;
 		$this->_message_type_name 	= $message_type_name;
 		$this->_data 				= is_array( $data ) ? $data : array( $data );
 		$this->_context 			= $context;
 		$this->_preview 			= $preview;
+		$this->_status 				= $status;
 		// attempt to generate message immediately
-		$this->get_EE_Message();
+		$this->_generate_message();
 	}
 
 
@@ -158,6 +168,15 @@ class EE_Message_To_Generate {
 
 
 	/**
+	 * @param boolean $preview
+	 */
+	public function set_preview( $preview ) {
+		$this->_preview = filter_var( $preview, FILTER_VALIDATE_BOOLEAN );
+	}
+
+
+
+	/**
 	 * @return bool
 	 */
 	public function send_now() {
@@ -178,6 +197,40 @@ class EE_Message_To_Generate {
 
 
 	/**
+	 * generates an EE_Message using the supplied arguments and some defaults
+	 *
+	 * @param array $properties
+	 * @return string
+	 */
+	protected function _generate_message( $properties = array() ) {
+		$message = EE_Message_Factory::create(
+			array_merge(
+				array(
+					'MSG_messenger'    => $this->_messenger_name,
+					'MSG_message_type' => $this->_message_type_name,
+					'MSG_context'      => $this->_context,
+					'STS_ID'           => $this->_status,
+				),
+				$properties
+			)
+		);
+		// validate the message, and if it's good, set some properties
+		try {
+			$message->is_valid( true );
+			$this->_valid = true;
+			$this->_messenger = $message->messenger_object();
+			$this->_message_type = $message->message_type_object();
+			$this->_send_now = $message->send_now();
+		} catch ( Exception $e ) {
+			$this->_valid = false;
+			$this->_error_msg[] = $e->getMessage();
+		}
+		return $message;
+	}
+
+
+
+	/**
 	 *  Returns an instantiated EE_Message object from the internal data.
 	 *
 	 * @return EE_Message
@@ -188,26 +241,7 @@ class EE_Message_To_Generate {
 			return $this->_message;
 		}
 		// no? then let's create one
-		$message = EE_Message_Factory::create(
-			array(
-				'MSG_messenger'    => $this->_messenger_name,
-				'MSG_message_type' => $this->_message_type_name,
-				'MSG_context'      => $this->_context,
-				'STS_ID'           => EEM_Message::status_incomplete,
-			)
-		);
-		// validate the message, and if it's good, set some properties
-		try {
-			$message->is_valid( true );
-			$this->_valid 		 = true;
-			$this->_messenger 	 = $message->messenger_object();
-			$this->_message_type = $message->message_type_object();
-			$this->_send_now 	 = $message->send_now();
-			$this->_message 	 = $message;
-		} catch ( Exception $e ) {
-			$this->_valid 		= false;
-			$this->_error_msg[] = $e->getMessage();
-		}
+		$this->_message = $this->_generate_message();
 		return $this->_message;
 	}
 
