@@ -62,12 +62,12 @@ final class EE_Request_Handler {
 	 *    class constructor
 	 *
 	 * @access public
-	 * @param WP $wp
+	 * @param  EE_Request $request
 	 * @return \EE_Request_Handler
 	 */
-	public function __construct( $wp = null ) {
+	public function __construct( EE_Request $request ) {
 		// grab request vars
-		$this->_params = $_REQUEST;
+		$this->_params = $request->params();
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? true : false;
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
