@@ -20,43 +20,15 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	public $queue = array();
 
 	/**
-	 * @param string            $messenger  The messenger being used to send the message
-	 * @param string            $message_type  The message type being used to grab variations etc.
-	 * @param EE_Messages       $ee_msg
+	 * @param string            $messenger_name  The messenger being used to send the message
+	 * @param string            $message_type_name  The message type being used to grab variations etc.
 	 * @param EE_Messages_Queue $queue
 	 */
-	public function __construct( $messenger, $message_type, EE_Messages $ee_msg, EE_Messages_Queue $queue ) {
-		parent::__construct( $messenger, $message_type, array(), $ee_msg );
+	public function __construct( $messenger_name, $message_type_name, EE_Messages_Queue $queue ) {
 		$this->queue = $queue;
+		parent::__construct( $messenger_name, $message_type_name, array(), '', false, EEM_Message::status_idle );
+		$this->_message->set_content( $this->_get_content() );
 	}
-
-
-
-	/**
-	 *  Returns an instantiated EE_Message object from the internal data.
-	 */
-	public function get_EE_Message() {
-		if ( ! $this->valid() ) {
-			return null;
-		}
-		if ( $this->_EE_Message instanceof EE_Message ) {
-			return $this->_EE_Message;
-		}
-		$this->_EE_Message = $this->_EE_Message instanceof EE_Message
-			? $this->_EE_Message
-			: EE_Message_Factory::create(
-				array(
-					'MSG_messenger' => $this->messenger->name,
-					'MSG_message_type' => $this->message_type->name,
-					'MSG_context' => $this->context,
-					'MSG_content' => $this->_get_content(),
-					'STS_ID' => EEM_Message::status_idle,
-					'MSG_priority' => $this->_get_priority_for_message_type()
-				)
-			);
-		return $this->_EE_Message;
-	}
-
 
 
 
