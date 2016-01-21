@@ -69,6 +69,7 @@ class EE_Message_Factory {
 	 * @return mixed
 	 */
 	public static function create( $props_n_values = array() ) {
+		/** @type EE_Message_Factory $Message_Factory */
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
 		return $Message_Factory->_create( $props_n_values );
 	}
@@ -82,6 +83,7 @@ class EE_Message_Factory {
 	 * @throws \EE_Error
 	 */
 	public static function set_messenger_and_message_type( EE_Message $message ) {
+		/** @type EE_Message_Factory $Message_Factory */
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
 		return $Message_Factory->_set_messenger_and_message_type( $message );
 	}
@@ -95,6 +97,7 @@ class EE_Message_Factory {
 	 * @throws \EE_Error
 	 */
 	public static function set_messenger( EE_Message $message ) {
+		/** @type EE_Message_Factory $Message_Factory */
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
 		return $Message_Factory->_set_messenger( $message );
 	}
@@ -108,6 +111,7 @@ class EE_Message_Factory {
 	 * @throws \EE_Error
 	 */
 	public static function set_message_type( EE_Message $message ) {
+		/** @type EE_Message_Factory $Message_Factory */
 		$Message_Factory = EE_Registry::instance()->load_lib( 'Message_Factory' );
 		return $Message_Factory->_set_message_type( $message );
 	}
