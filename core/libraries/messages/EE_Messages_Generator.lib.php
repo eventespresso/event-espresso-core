@@ -16,17 +16,10 @@ class EE_Messages_Generator {
 	 */
 	protected $_data_handler_collection;
 
-
-
-
 	/**
 	 * @type  EE_Message_Template_Group_Collection
 	 */
 	protected $_template_collection;
-
-
-
-
 
 	/**
 	 * This will hold the data handler for the current EE_Message being generated.
@@ -34,36 +27,17 @@ class EE_Messages_Generator {
 	 */
 	protected $_current_data_handler;
 
-
-
-
-
-	/**
-	 * @type  EE_Messages
-	 */
-	protected $_EEMSG;
-
-
-
-
-
 	/**
 	 * This holds the EE_Messages_Queue that contains the messages to generate.
 	 * @type EE_Messages_Queue
 	 */
 	protected $_generation_queue;
 
-
-
-
 	/**
 	 * This holds the EE_Messages_Queue that will store the generated EE_Message objects.
 	 * @type EE_Messages_Queue
 	 */
 	protected $_ready_queue;
-
-
-
 
 	/**
 	 * This is a container for any error messages that get created through the generation
@@ -72,20 +46,11 @@ class EE_Messages_Generator {
 	 */
 	protected $_error_msg = array();
 
-
-
-
-
 	/**
 	 * Flag used to set when the current EE_Message in the generation queue has been verified.
 	 * @type bool
 	 */
 	protected $_verified = false;
-
-
-
-
-
 
 	/**
 	 * This will hold the current messenger object corresponding with the current EE_Message in the generation queue.
@@ -94,17 +59,11 @@ class EE_Messages_Generator {
 	 */
 	protected $_current_messenger;
 
-
-
-
 	/**
 	 * This will hold the current message type object corresponding with the current EE_Message in the generation queue.
 	 * @type EE_message_type
 	 */
 	protected $_current_message_type;
-
-
-
 
 	/**
 	 * @type EEH_Parse_Shortcodes
@@ -113,21 +72,27 @@ class EE_Messages_Generator {
 
 
 
-
-
 	/**
-	 * @param EE_Messages_Queue $queue
-	 * @param EE_Messages       $eemsg
+	 * @param EE_Messages_Queue                     $generation_queue
+	 * @param null                                  $deprecated
+	 * @param \EE_Messages_Queue                    $ready_queue
+	 * @param \EE_Messages_Data_Handler_Collection  $data_handler_collection
+	 * @param \EE_Message_Template_Group_Collection $template_collection
+	 * @param \EEH_Parse_Shortcodes                 $shortcode_parser
 	 */
-	public function __construct( EE_Messages_Queue $queue, EE_Messages $eemsg ) {
-		$this->_generation_queue = $queue;
-		$this->_ready_queue = new EE_Messages_Queue( $eemsg );
-		$this->_EEMSG = $eemsg;
-		$this->_data_handler_collection = new EE_Messages_Data_Handler_Collection();
-		$this->_template_collection = new EE_Message_Template_Group_Collection();
-
-		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
-		$this->_shortcode_parser = new EEH_Parse_Shortcodes();
+	public function __construct(
+		EE_Messages_Queue $generation_queue,
+		$deprecated = null,
+		EE_Messages_Queue $ready_queue,
+		EE_Messages_Data_Handler_Collection $data_handler_collection,
+		EE_Message_Template_Group_Collection $template_collection,
+		EEH_Parse_Shortcodes $shortcode_parser
+	) {
+		$this->_generation_queue = $generation_queue;
+		$this->_ready_queue = $ready_queue;
+		$this->_data_handler_collection = $data_handler_collection;
+		$this->_template_collection = $template_collection;
+		$this->_shortcode_parser = $shortcode_parser;
 
 		//load request handler
 		EE_Registry::instance()->load_core( 'Request_Handler' );
@@ -565,19 +530,17 @@ class EE_Messages_Generator {
 		if ( $this->_error_msg ) {
 			return false;
 		}
-
-		$validated_for_use = $this->_EEMSG->validate_for_use( $this->_generation_queue->get_queue()->current() );
-
-		if ( ! isset( $validated_for_use['messenger'] ) || ! $validated_for_use['messenger'] instanceof EE_Messenger ) {
-			$this->_error_msg[] = sprintf( __( 'The %s Messenger is not active.', 'event_espresso' ), $this->_generation_queue->get_queue()->current()->messenger() );
-		} else {
-			$this->_current_messenger = $validated_for_use['messenger'];
+		/** @type EE_Message $message */
+		$message = $this->_generation_queue->get_queue()->current();
+		try {
+			$this->_current_messenger = $message->valid_messenger( true ) ? $message->messenger_object() : null;
+		} catch ( Exception $e ) {
+			$this->_error_msg[] = $e->getMessage();
 		}
-
-		if ( ! isset( $validated_for_use['message_type'] ) || ! $validated_for_use['message_type'] instanceof EE_message_type ) {
-			$this->_error_msg[] = sprintf( __( 'The %s Message Type is not active.', 'event_espresso' ), $this->_generation_queue->get_queue()->current()->message_type() );
-		} else {
-			$this->_current_message_type = $validated_for_use['message_type'];
+		try {
+			$this->_current_message_type = $message->valid_message_type( true ) ? $message->message_type_object() : null;
+		} catch ( Exception $e ) {
+			$this->_error_msg[] = $e->getMessage();
 		}
 
 		/**
@@ -614,6 +577,7 @@ class EE_Messages_Generator {
 
 		$generation_data = $this->_generation_queue->get_queue()->get_generation_data();
 
+		/** @type EE_Messages_incoming_data $data_handler_class_name - well not really... just the class name actually */
 		$data_handler_class_name = $this->_generation_queue->get_queue()->get_data_handler()
 			? $this->_generation_queue->get_queue()->get_data_handler()
 			: 'EE_Messages_' .  $this->_current_message_type->get_data_handler( $generation_data ) . '_incoming_data';
@@ -686,6 +650,7 @@ class EE_Messages_Generator {
 	 * @return mixed Prepped data for persisting to the queue.  false is returned if unable to prep data.
 	 */
 	protected function _prepare_data_for_queue( EE_Message_To_Generate $mtg, $preview ) {
+		/** @type EE_Messages_incoming_data $data_handler - well not really... just the class name actually */
 		$data_handler = $mtg->get_data_handler_class_name( $preview );
 		if ( ! $mtg->valid() ) {
 			return false; //unable to get the data because the info in the EE_Message_To_Generate class is invalid.
