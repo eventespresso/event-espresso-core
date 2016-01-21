@@ -22,23 +22,13 @@ class EE_Message_To_Generate_Test extends EE_UnitTestCase {
 	 * @return EE_Message_To_Generate
 	 */
 	function test_construct() {
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$mtg = new EE_Message_To_Generate(
-			'email',
-			'registration',
-			array(),
-			$messages_controller,
-			'admin',
-			true
-		);
-
+		$mtg = new EE_Message_To_Generate( 'email', 'registration', array(), 'admin', true );
 		//verify public properties setup properly
-		$this->assertInstanceOf( 'EE_Registration_message_type', $mtg->message_type );
-		$this->assertInstanceOf( 'EE_Email_Messenger', $mtg->messenger );
-		$this->assertEquals( array(), $mtg->data );
-		$this->assertEquals( 'admin', $mtg->context );
-		$this->assertTrue( $mtg->preview );
+		$this->assertInstanceOf( 'EE_Registration_message_type', $mtg->message_type() );
+		$this->assertInstanceOf( 'EE_Email_Messenger', $mtg->messenger() );
+		$this->assertEquals( array(), $mtg->data() );
+		$this->assertEquals( 'admin', $mtg->context() );
+		$this->assertTrue( $mtg->preview() );
 		return $mtg;
 	}
 
