@@ -1381,10 +1381,11 @@ class EEH_Activation {
 			//however with the changes this may not be necessary.  This comment is left here just in case
 			//we discover that we _do_ need to update before passing off to create templates (after the refactor is done).
 			//@todo remove this comment when determined not necessary.
+			$message_resource_manager->activate_messenger( $messenger_to_generate->name, $default_message_type_names_for_messenger, false );
 
 			//create any templates needing created (or will reactivate templates already generated as necessary).
 			if ( ! empty( $default_message_type_names_for_messenger ) ) {
-				$templates_generated = EEH_MSG_Template::generate_new_templates( $messenger_to_generate, $default_message_type_names_for_messenger, '', true );
+				$templates_generated = EEH_MSG_Template::generate_new_templates( $messenger_to_generate->name, $default_message_type_names_for_messenger, '', true );
 			}
 		}
 		return $templates_generated;
