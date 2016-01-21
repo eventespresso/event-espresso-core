@@ -1414,10 +1414,8 @@ class EEH_Activation {
 			//and has never been activated
 			if (
 				! $installed_messenger->activate_on_install
-				|| isset(
-					$active_messengers[$installed_messenger->name],
-					$has_activated[$installed_messenger->name]
-				)
+				|| isset( $active_messengers[$installed_messenger->name] )
+				|| isset( $has_activated[$installed_messenger->name] )
 			) {
 				continue;
 			}
