@@ -1463,42 +1463,13 @@ class EEH_Activation {
 	 * @return void
 	 */
 	public static function validate_messages_system() {
-		/** @type EE_Message_Resource_Manager $message_resource_manager */
-		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		// ********************************************************
 		// as soon as EE_Message_Resource_Manager is instantiated,
 		// it runs _set_active_messengers_and_message_types()
 		// which effectively accomplishes the same thing
-		// as all of the following code... so I commented it out
+		// as the previous code in this method did.
+		// leaving method just for the following action.
 		// ********************************************************
-
-		//get active and installed  messengers/message types.
-		//$active_messengers = $message_resource_manager->get_active_messengers_option();
-		//$installed_messengers = $message_resource_manager->installed_messengers();
-		//$installed_mts = $message_resource_manager->installed_message_types();
-		//
-		////now let's loop through the active array and validate
-		//foreach( $active_messengers as $messenger => $active_details ) {
-		//	//first let's see if this messenger is installed.
-		//	if ( ! isset( $installed_messengers[$messenger] ) ) {
-		//		//not set so let's just remove from actives and make sure templates are inactive.
-		//		unset( $active_messengers[$messenger] );
-		//		EEH_MSG_Template::update_to_inactive( $messenger );
-		//		continue;
-		//	}
-		//
-		//	//messenger is active, so let's just make sure that any active message types not installed are deactivated.
-		//	$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
-		//	foreach ( $mts as $mt_name => $mt ) {
-		//		if ( ! isset( $installed_mts[$mt_name] )  ) {
-		//			unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
-		//			EEH_MSG_Template::update_to_inactive( $messenger, $mt_name );
-		//		}
-		//	}
-		//}
-		//
-		////all done! let's update the active_messengers.
-		//EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
 		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
