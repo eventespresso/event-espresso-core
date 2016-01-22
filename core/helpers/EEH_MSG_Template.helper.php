@@ -993,7 +993,8 @@ class EEH_MSG_Template {
 			$messenger->name,
 			$message_type->name,
 			$GRP_ID,
-			EE_Registry::instance()->load_lib( 'Message_Resource_Manager' )
+			$messenger,
+			$message_type
 		);
 		//generate templates
 		$success = $Message_Template_Defaults->create_new_templates();
@@ -1054,7 +1055,7 @@ class EEH_MSG_Template {
 			return $success;
 		}
 		//let's get all the related message_template objects for this group.
-		$mtts = $Message_Template_Group->message_templates();
+		$message_templates = $Message_Template_Group->message_templates();
 		//now we have what we need to setup the new template
 		$new_mtg = clone $Message_Template_Group;
 		$new_mtg->set( 'GRP_ID', 0 );
@@ -1083,16 +1084,16 @@ class EEH_MSG_Template {
 		$success[ 'GRP_ID' ] = $new_mtg->ID();
 		$success[ 'template_name' ] = $template_name;
 		//add new message templates and add relation to.
-		foreach ( $mtts as $mtt ) {
-			if ( ! $mtt instanceof EE_Message_Template ) {
+		foreach ( $message_templates as $message_template ) {
+			if ( ! $message_template instanceof EE_Message_Template ) {
 				continue;
 			}
-			$nmtt = clone $mtt;
-			$nmtt->set( 'MTP_ID', 0 );
-			$nmtt->set( 'GRP_ID', $new_mtg->ID() ); //relation
-			$nmtt->save();
+			$new_message_template = clone $message_template;
+			$new_message_template->set( 'MTP_ID', 0 );
+			$new_message_template->set( 'GRP_ID', $new_mtg->ID() ); //relation
+			$new_message_template->save();
 			if ( empty( $success[ 'MTP_context' ] ) ) {
-				$success[ 'MTP_context' ] = $nmtt->get( 'MTP_context' );
+				$success[ 'MTP_context' ] = $new_message_template->get( 'MTP_context' );
 			}
 		}
 		return $success;
