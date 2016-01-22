@@ -67,27 +67,22 @@ class EE_Message_Template_Defaults extends EE_Base {
 	protected $_contexts;
 
 	/**
-	 * @type EE_Message_Resource_Manager $_message_resource_manager
+	 *  @type EEM_Message_Template_Group
 	 */
-	protected $_message_resource_manager;
-
-	/**
-	 * This holds the Messages Model
-	 * @var object
-	 */
-	protected $_EEM_data;
+	protected $_message_template_group_model;
 
 
 
 	/**
 	 * constructor
 	 *
-	 * @param null                        $deprecated
-	 * @param string                      $messenger_name    should be the name of a valid active messenger
-	 * @param string                      $message_type_name should be the name of a valid active message type
-	 * @param int                         $GRP_ID            Optional.  If included then we're just regenerating the template
-	 *                                                       fields for the given group not the message template group itself
-	 * @param EE_Message_Resource_Manager $message_resource_manager
+	 * @param null            $deprecated
+	 * @param string          $messenger_name 		should be the name of a valid active messenger
+	 * @param string          $message_type_name 	should be the name of a valid active message type
+	 * @param int             $GRP_ID 				Optional.  If included then we're just regenerating the template
+	 *  											fields for the given group not the message template group itself
+	 * @param EE_Messenger    $messenger
+	 * @param EE_message_type $message_type
 	 * @throws \EE_Error
 	 */
 	public function __construct(
@@ -95,26 +90,73 @@ class EE_Message_Template_Defaults extends EE_Base {
 		$messenger_name,
 		$message_type_name,
 		$GRP_ID = 0,
-		EE_Message_Resource_Manager $message_resource_manager
+		EE_Messenger $messenger = null,
+		EE_message_type $message_type = null
 	) {
-		$this->_message_resource_manager = $message_resource_manager;
-
-		//set the model object
-		$this->_EEM_data = EEM_Message_Template_Group::instance();
-
-		$this->_GRP_ID = $GRP_ID;
-
 		$this->_m_name = $messenger_name;
 		$this->_mt_name = $message_type_name;
+		$this->_GRP_ID = $GRP_ID;
+		$this->_messenger = $messenger;
+		$this->_message_type = $message_type;
+		$this->_validate_messenger_and_message_type();
+		//set the model object
+		$this->_message_template_group_model = EEM_Message_Template_Group::instance();
+		$this->_fields = $this->_messenger->get_template_fields();
+		$this->_contexts = $this->_message_type->get_contexts();
+	}
 
-		//make sure required props have been set
-		if ( empty( $this->_m_name) || empty( $this->_mt_name ) ) {
-			$msg[] = __('Message Templates cannot be generated because the Messenger and Message Types haven\'t been defined for the generator.', 'event_espresso');
-			$msg[] = __('You need to set the "$m_name" and "$mt_name" properties', 'event_espresso');
-			throw new EE_Error( implode( '||', $msg ) );
+
+
+	/**
+	 * _validate_messenger_and_message_type
+	 *
+	 * @throws \EE_Error
+	 */
+	protected function _validate_messenger_and_message_type() {
+		if ( ! $this->_messenger instanceof EE_Messenger ) {
+			if ( empty( $this->_m_name ) ) {
+				$msg[] = __(
+					'Message Templates cannot be generated because a messenger was not supplied.',
+					'event_espresso'
+				);
+				$msg[] = sprintf(
+					__(
+						'Check the spelling of the "%1$s" messenger name passed to "%2$s" and make sure it matches an available messenger.%4$sThis is what was actually received:%4$s %3$s',
+						'event_espresso'
+					),
+					$this->_m_name,
+					'EEH_MSG_Template::create_new_templates()',
+					print_r( $this->_messenger, true ),
+					'<br />'
+				);
+				throw new EE_Error( implode( '||', $msg ) );
+			}
+			/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+			$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$this->_messenger = $Message_Resource_Manager->valid_messenger( $this->_m_name );
 		}
-
-		$this->_init();
+		if ( ! $this->_message_type instanceof EE_message_type ) {
+			if ( empty( $this->_mt_name ) ) {
+				$msg[] = __(
+					'Message Templates cannot be generated because a message type was not supplied.',
+					'event_espresso'
+				);
+				$msg[] = sprintf(
+					__(
+						'Check the spelling of the "%1$s" message type name passed to "%2$s" and make sure it matches an available message type.%4$sThis is what was actually received:%4$s %3$s',
+						'event_espresso'
+					),
+					$this->_mt_name,
+					'EEH_MSG_Template::create_new_templates()',
+					print_r( $this->_message_type, true ),
+					'<br />'
+				);
+				throw new EE_Error( implode( '||', $msg ) );
+			}
+			/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+			$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$this->_message_type = $Message_Resource_Manager->valid_message_type( $this->_mt_name );
+		}
 	}
 
 
@@ -136,7 +178,7 @@ class EE_Message_Template_Defaults extends EE_Base {
 			EE_Error::add_error(
 				sprintf(
 					__(
-						'The template pack represented by a class corresponding to "%1$s" does not exist.  Likely the autoloader for this class has the wrong path or the incoming reference is misspelled.  The default template pack  been used to generate the templates instead.',
+						'The template pack represented by a class corresponding to "%1$s" does not exist. Likely the autoloader for this class has the wrong path or the incoming reference is misspelled. The default template pack has been used to generate the templates instead.',
 						'event_espresso'
 					),
 					$class_name
@@ -155,76 +197,6 @@ class EE_Message_Template_Defaults extends EE_Base {
 	}
 
 
-
-	/**
-	 * initializes all required properties
-	 *
-	 * @final
-	 * @access private
-	 * @throws \EE_Error
-	 */
-	final private function _init() {
-		$active_messengers = $this->_message_resource_manager->active_messengers();
-		$active_message_types = $this->_message_resource_manager->installed_message_types();
-
-		//check if messenger is active
-		if ( !isset($active_messengers[$this->_m_name] ) ) {
-			$msg[] = __('Message Templates cannot be generated because the given messenger is not active', 'event_espresso');
-			$msg[] = sprintf(
-				__(
-					'The "$_m_name" property has "%1$s" as its value.  Check the spelling and make sure it matches an available messenger',
-					'event_espresso'
-				),
-				$this->_m_name
-			);
-			throw new EE_Error( implode( '||', $msg ) );
-		}
-
-		//check if message type is installed
-		if ( !isset($active_messengers[$this->_m_name] ) ) {
-			$msg[] = __(
-				'Message Templates cannot be generated because the given message type is not installed',
-				'event_espresso'
-			);
-			$msg[] = sprintf(
-				__(
-					'The "$_mt_name" property has "%1$s" as its value.  Check the spelling and make sure it matches an available message type',
-					'event_espresso'
-				),
-				$this->_mt_name
-			);
-			throw new EE_Error( implode( '||', $msg ) );
-		}
-
-		$this->_messenger = $active_messengers[$this->_m_name];
-		$this->_message_type = $active_message_types[$this->_mt_name];
-
-		//verify we have the messenger and message type objects
-		if ( ! $this->_messenger instanceof EE_Messenger ) {
-			throw new EE_Error(
-				sprintf(
-					__(
-						'The _messenger property must be an instance of EE_Messenger by this point.  It isn\'t. Something has gone wrong. Here is the value it holds: %1$s',
-						'event_espresso'
-					),
-					'<br />' . print_r( $this->_messenger, true )
-				)
-			);
-		}
-		if ( ! $this->_message_type instanceof EE_message_type ) {
-			throw new EE_Error(
-				sprintf(
-					__(
-						'The _message_type property must be an instance of EE_message_type by this point.  It isn\'t. Something has gone wrong. Here is the value it holds: %1$s',
-						'event_espresso'
-					),
-					'<br />' . print_r( $this->_message_type, true )
-				)
-			);
-		}
-		$this->_fields = $this->_messenger->get_template_fields();
-		$this->_contexts = $this->_message_type->get_contexts();
-	}
 
 
 
@@ -271,24 +243,21 @@ class EE_Message_Template_Defaults extends EE_Base {
 		$this->_set_templates( $template_pack );
 
 		//necessary properties are set, let's save the default templates
-
 		if ( empty( $this->_GRP_ID ) ) {
-
-			$main_template_data =  array(
-				'MTP_messenger' => $this->_messenger->name,
+			$main_template_data = array(
+				'MTP_messenger'    => $this->_messenger->name,
 				'MTP_message_type' => $this->_message_type->name,
-				'MTP_is_override' => 0,
-				'MTP_deleted' => 0,
-				'MTP_is_global' => 1,
-				'MTP_user_id' => EEH_Activation::get_default_creator_id(),
-				'MTP_is_active' => 1,
-				);
-
-
+				'MTP_is_override'  => 0,
+				'MTP_deleted'      => 0,
+				'MTP_is_global'    => 1,
+				'MTP_user_id'      => EEH_Activation::get_default_creator_id(),
+				'MTP_is_active'    => 1,
+			);
 			//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
-			$grp_id = $this->_EEM_data->insert( $main_template_data );
-
-			if ( empty( $grp_id ) ) return $grp_id;
+			$grp_id = $this->_message_template_group_model->insert( $main_template_data );
+			if ( empty( $grp_id ) ) {
+				return $grp_id;
+			}
 			$this->_GRP_ID = $grp_id;
 		}
 
@@ -324,12 +293,10 @@ class EE_Message_Template_Defaults extends EE_Base {
 			}
 		}
 
-		$success_array = array(
-			'GRP_ID' => $this->_GRP_ID,
-			'MTP_context' => key($this->_contexts)
+		return array(
+			'GRP_ID'      => $this->_GRP_ID,
+			'MTP_context' => key( $this->_contexts )
 		);
-
-		return $success_array;
 	}
 
 
