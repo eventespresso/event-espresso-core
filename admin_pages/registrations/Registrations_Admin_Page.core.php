@@ -1124,22 +1124,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _registration_details_metaboxes() {
-		//check if deprecated filters are in use, and if so let folks know
-		//their custom code should still work, but not once we remove
-		//the deprecated functions, filter and action
-		if( $this->_using_old_filters() ) {
-			$msg = __( 
-					'We detected you are using the filter FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns or AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save.'
-					. 'Both of these have been deprecated and should not be used anymore. You should instead use FHEE__EE_Form_Section_Proper___construct__options_array and check the forms type is EE_Registration_Custom_Questions_Form to customize the look and behaviour of the form.',
-					'event_espresso' );
-			EE_Error::doing_it_wrong( 
-				__CLASS__ . '::' . __FUNCTION__,			
-				$msg, 
-				'4.8.32.rc.000' 
-			);
-			//it seems the doing_it_wrong messages get output during some hidden html tags, so add an error to make sure this gets noticed
-			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
+		do_action( 'AHEE__Registrations_Admin_Page___registration_details_metabox__start', $this );
 		$this->_set_registration_object();
 		$attendee = $this->_registration instanceof EE_Registration ? $this->_registration->attendee() : null;
 		add_meta_box( 'edit-reg-status-mbox', __( 'Registration Status', 'event_espresso' ), array( $this, 'set_reg_status_buttons_metabox' ), $this->wp_page_slug, 'normal', 'high' );
@@ -1495,17 +1480,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	}
 
-
-
-	/**
-	 * Returns true if using filters and actions removed in 4.8.32.rc.000
-	 * @return boolean
-	 */
-	private  function _using_old_filters() {
-		return has_filter( 'FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns' ) 
-			|| has_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save' );
-	}
-
 	/**
 	 * generates HTML for the Registration Questions meta box.
 	 * If pre-4.8.32.rc.000 hooks are used, uses old methods (with its filters),
@@ -1515,39 +1489,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	*/
 	public function _reg_questions_meta_box() {
-		//if someone has an addon that uses the old filters, use the deprecated admin methods temporarily
-		if( $this->_using_old_filters() ) {
-			return $this->_reg_questions_meta_box_old();
-		} else {
-			return $this->_reg_questions_meta_box_new();
+		//allow someone to override this method entirely
+		if( apply_filters( 'FHEE__Registrations_Admin_Page___reg_questions_meta_box__do_default', true, $this, $this->_registration ) ) {
+			$form = $this->_get_reg_custom_questions_form( $this->_registration->ID() );
+			$this->_template_args[ 'att_questions' ] = count( $form->subforms() ) > 0 ? $form->get_html_and_js() : '';
+			$this->_template_args['reg_questions_form_action'] = 'edit_registration';
+			$this->_template_args['REG_ID'] = $this->_registration->ID();
+
+			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
+			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		}
-	}
-	
-	/**
-	 * @deprecated since 4.8.32.rc.001 _update_attendee_registration_form should be used instead
-	 * because its form has form validation and uses the new forms system which helps
-	 * it to be more dry. This is left in here temporarily only for backwards compatibility,
-	 * but will be removed soon in order (if you're using it tell event espresso 
-	 * and we can maintain it a little longer)
-	 */
-	protected function _reg_questions_meta_box_old() {
-		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
-
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
-
-		//EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		$this->_template_args['att_questions'] = EEH_Form_Fields::generate_question_groups_html( $question_groups );
-
-		$this->_template_args['reg_questions_form_action'] = 'edit_registration';
-		$this->_template_args['REG_ID'] = $this->_registration->ID();
-
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
-		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 	}
 	
 	/**
@@ -1558,6 +1509,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function form_before_question_group( $output ) {
+		EE_Error::doing_it_wrong( 
+			__CLASS__ . '::' . __FUNCTION__,			
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ), 
+			'4.8.32.rc.000' 
+		);
 		return '
 	<table class="form-table ee-width-100">
 		<tbody>
@@ -1575,6 +1533,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function form_after_question_group( $output ) {
+		EE_Error::doing_it_wrong( 
+			__CLASS__ . '::' . __FUNCTION__,			
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ), 
+			'4.8.32.rc.000' 
+		);
 		return  '
 			<tr class="hide-if-no-js">
 				<th> </th>
@@ -1601,6 +1566,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function form_form_field_label_wrap( $label ) {
+		EE_Error::doing_it_wrong( 
+			__CLASS__ . '::' . __FUNCTION__,			
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ), 
+			'4.8.32.rc.000' 
+		);
 		return '
 			<tr>
 				<th>
@@ -1619,132 +1591,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function form_form_field_input__wrap( $input ) {
+		EE_Error::doing_it_wrong( 
+			__CLASS__ . '::' . __FUNCTION__,			
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ), 
+			'4.8.32.rc.000' 
+		);
 		return '
 				<td class="reg-admin-attendee-questions-input-td disabled-input">
 					' . $input . '
 				</td>
 			</tr>';
-	}
-	
-	/**
-	 * displays a form for the registration's custom questions
-	 */
-	protected function _reg_questions_meta_box_new() {
-		$form = $this->_get_reg_custom_questions_form( $this->_registration->ID() );
-		$this->_template_args[ 'att_questions' ] = count( $form->subforms() ) > 0 ? $form->get_html_and_js() : '';
-		$this->_template_args['reg_questions_form_action'] = 'edit_registration';
-		$this->_template_args['REG_ID'] = $this->_registration->ID();
-
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
-		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-	}
-	/**
-	 * 		Updates the registration's custom question answers. If filters from before 4.8.32.rc.000
-	 * are in use, uses deprecated methods for backwards compatibility. But be warned
-	 * those filters are expected to be removed 
-	*		@access protected
-	*		@return void
-	*/
-	protected function _update_attendee_registration_form() {
-		//if someone has an addon that uses the old filters, use the deprecated admin methods temporarily
-		if( $this->_using_old_filters() ) {
-			$msg = __( 
-					'We detected you are using the filter FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns or AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save.'
-					. 'Both of these have been deprecated and should not be used anymore. You should instead use FHEE__EE_Form_Section_Proper___construct__options_array and check the forms type is EE_Registration_Custom_Questions_Form to customize the look and behaviour of the form.',
-					'event_espresso' );
-			EE_Error::doing_it_wrong( 
-				__CLASS__ . '::' . __FUNCTION__,			
-				$msg, 
-				'4.8.32.rc.000'
-			);
-			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
-			return $this->_update_attendee_registration_form_old();
-		} else {
-			return $this->_update_attendee_registration_form_new();
-		}
-	}
-	
-	/**
-	 * @deprecated since 4.8.32.rc.000 because it has issues on https://events.codebasehq.com/projects/event-espresso/tickets/9165
-	 * it is preferred to instead use _update_attendee_registration_form_new() which
-	 * also better handles form validation
-	 */
-	private function _update_attendee_registration_form_old() {
-		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
-		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
-		$qstns = apply_filters( 'FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns', $qstns );
-		$success = $this->_save_attendee_registration_form( $REG_ID, $qstns );
-		$what = __('Registration Form', 'event_espresso');
-		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
-	}
-	
-	/**
-	 * _save_attendee_registration_form
-	 * @deprecated since 4.8.32.rc.000
-	 * @access private
-	 * @param bool $REG_ID
-	 * @param bool $qstns
-	 * @return bool
-	 */
-	private function _save_attendee_registration_form( $REG_ID = FALSE, $qstns = FALSE ) {
-
-		if ( ! $REG_ID || ! $qstns ) {
-			EE_Error::add_error( __('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-		$success = TRUE;
-
-		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $REG_ID, $qstns );
-		// loop thru questions... FINALLY!!!
-
-		foreach ( $qstns as $QST_ID => $qstn ) {
-			//if $qstn isn't an array then it doesn't already have an answer, so let's create the answer
-			if ( !is_array($qstn) ) {
-				$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
-				continue;
-			}
-
-
-			foreach ( $qstn as $ANS_ID => $ANS_value ) {
-				//get answer
-				$query_params = array(
-					0 => array(
-						'ANS_ID' => $ANS_ID,
-						'REG_ID' => $REG_ID,
-						'QST_ID' => $QST_ID
-						)
-					);
-				$answer = EEM_Answer::instance()->get_one($query_params);
-				//this MAY be an array but NOT have an answer because its multi select.  If so then we need to create the answer
-				if ( ! $answer instanceof EE_Answer ) {
-					$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
-					continue 2;
-				}
-
-				$answer->set('ANS_value', $ANS_value);
-				$success = $answer->save();
-			}
-		}
-
-		return $success;
-	}
-	
-	/**
-	 * @deprecated since 4.8.32.rc.000
-	 * @param int $REG_ID
-	 * @param int $QST_ID
-	 * @param string|array $ans
-	 * @return int new answer ID
-	 */
-	private function _save_new_answer( $REG_ID, $QST_ID, $ans ) {
-		$set_values = array(
-			'QST_ID' => $QST_ID,
-			'REG_ID' => $REG_ID,
-			'ANS_value' => $ans
-			);
-		$success = EEM_Answer::instance()->insert($set_values);
-		return $success;
 	}
 	
 	/**
@@ -1754,7 +1612,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*		@access protected
 	*		@return void
 	*/
-	private function _update_attendee_registration_form_new() {
+	protected function _update_attendee_registration_form() {
+		do_action( 'AHEE__Registrations_Admin_Page___update_attendee_registration_form__start', $this );
 		if( $_SERVER['REQUEST_METHOD'] == 'POST'){
 			$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 			$success = $this->_save_reg_custom_questions_form( $REG_ID );

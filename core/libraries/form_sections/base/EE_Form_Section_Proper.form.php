@@ -185,6 +185,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	public function receive_form_submission($req_data = NULL, $validate = TRUE){
+		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
 		if( $req_data === NULL){
 			$req_data = $_REQUEST;
 		}
@@ -192,6 +193,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		if( $validate ){
 			$this->_validate();
 		}
+		do_action( 'AHEE__EE_Form_Section_Proper__receiv_form_submission__end', $req_data, $this, $validate );
 	}
 
 
