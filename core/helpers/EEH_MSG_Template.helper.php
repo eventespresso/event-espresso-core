@@ -989,7 +989,7 @@ class EEH_MSG_Template {
 		EE_Registry::instance()->skip_cache();
 		/** @type EE_Message_Template_Defaults $Message_Template_Defaults */
 		$Message_Template_Defaults = EE_Registry::instance()->load_lib(
-			'Message_Resource_Manager',
+			'EE_Message_Template_Defaults',
 			array(
 				$messenger->name,
 				$message_type->name,
