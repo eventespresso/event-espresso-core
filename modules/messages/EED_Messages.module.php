@@ -23,11 +23,15 @@ class EED_Messages  extends EED_Module {
 
 	/**
 	 * This holds the EE_Messages controller
-	 *
+	 * @deprecated
 	 * @var EE_Messages $_EEMSG
 	 */
 	protected  static $_EEMSG;
 
+	/**
+	 * @type EE_Message_Resource_Manager $_message_resource_manager
+	 */
+	protected  static $_message_resource_manager;
 
 	/**
 	 * This holds the EE_Messages_Processor business class.
@@ -35,7 +39,6 @@ class EED_Messages  extends EED_Module {
 	 * @type EE_Messages_Processor
 	 */
 	protected static $_MSG_PROCESSOR;
-
 
 	/**
 	 * holds all the paths for various messages components.
@@ -141,7 +144,7 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$token = EE_Registry::instance()->REQ->get( 'token' );
 		try {
-			$mtg = new EE_Message_Generated_From_Token( $token, 'html', self::$_EEMSG );
+			$mtg = new EE_Message_Generated_From_Token( $token, 'html', self::$_message_resource_manager );
 			self::$_MSG_PROCESSOR->generate_and_send_now( $mtg );
 		} catch( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
@@ -342,18 +345,18 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Takes care of loading the Messages system controller into the $_EEMSG property
+	 * Takes care of loading dependencies
 	 *
 	 * @since 4.5.0
-	 *
 	 * @return void
 	 */
 	protected static function _load_controller() {
-		if ( ! self::$_EEMSG instanceof EE_Messages ) {
+		if ( ! self::$_MSG_PROCESSOR instanceof EE_Messages_Processor ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
 			self::$_EEMSG = EE_Registry::instance()->load_lib( 'messages' );
 			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+			self::$_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		}
 	}
 
