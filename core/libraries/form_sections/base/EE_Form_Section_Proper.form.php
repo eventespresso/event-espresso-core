@@ -193,7 +193,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		if( $validate ){
 			$this->_validate();
 		}
-		do_action( 'AHEE__EE_Form_Section_Proper__receiv_form_submission__end', $req_data, $this, $validate );
+		do_action( 'AHEE__EE_Form_Section_Proper__receive_form_submission__end', $req_data, $this, $validate );
 	}
 
 
