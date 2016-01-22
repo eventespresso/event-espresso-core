@@ -31,11 +31,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	private $_reg_event;
 	private $_session;
 	private static $_reg_status;
-	
+
 	/**
 	 * Form for displaying the custom questions for this registration.
 	 * This gets used a few times throughout the request so its best to cache it
-	 * @var EE_Registration_Custom_Questions_Form 
+	 * @var EE_Registration_Custom_Questions_Form
 	 */
 	protected $_reg_custom_questions_form = null;
 
@@ -188,7 +188,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'noheader' => TRUE,
 					'capability' => 'ee_delete_registrations'
 					),
-			
+
 				'new_registration' => array(
 					'func' => 'new_registration',
 					'capability' => 'ee_edit_registrations'
@@ -1484,7 +1484,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * generates HTML for the Registration Questions meta box.
 	 * If pre-4.8.32.rc.000 hooks are used, uses old methods (with its filters),
 	 * otherwise uses new forms system
-	 *	
+	 *
 	 * @access public
 	 * @return void
 	*/
@@ -1500,21 +1500,24 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		}
 	}
-	
+
+
+
 	/**
-	 * 		form_before_question_group
-	 *		@deprecated as of 4.8.32.rc.000
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
+	 * form_before_question_group
+	 *
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $output
+	 * @return        string
 	 */
 	public function form_before_question_group( $output ) {
-		EE_Error::doing_it_wrong( 
-			__CLASS__ . '::' . __FUNCTION__,			
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
 			__( 'This method would have been protected but was used on a filter callback'
 				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
-				'event_espresso' ), 
-			'4.8.32.rc.000' 
+				'event_espresso' ),
+			'4.8.32.rc.000'
 		);
 		return '
 	<table class="form-table ee-width-100">
@@ -1524,21 +1527,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
-	 * 		form_after_question_group
-	 *		@deprecated as of 4.8.32.rc.000
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
+	 * form_after_question_group
+	 *
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $output
+	 * @return        string
 	 */
 	public function form_after_question_group( $output ) {
-		EE_Error::doing_it_wrong( 
-			__CLASS__ . '::' . __FUNCTION__,			
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
 			__( 'This method would have been protected but was used on a filter callback'
 				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
-				'event_espresso' ), 
-			'4.8.32.rc.000' 
+				'event_espresso' ),
+			'4.8.32.rc.000'
 		);
 		return  '
 			<tr class="hide-if-no-js">
@@ -1557,21 +1560,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
-	 * 		form_form_field_label_wrap
-	 *		@deprecated as of 4.8.32.rc.000
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
+	 * form_form_field_label_wrap
+	 *
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $label
+	 * @return        string
 	 */
 	public function form_form_field_label_wrap( $label ) {
-		EE_Error::doing_it_wrong( 
-			__CLASS__ . '::' . __FUNCTION__,			
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
 			__( 'This method would have been protected but was used on a filter callback'
 				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
-				'event_espresso' ), 
-			'4.8.32.rc.000' 
+				'event_espresso' ),
+			'4.8.32.rc.000'
 		);
 		return '
 			<tr>
@@ -1582,21 +1585,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
-	 * 		form_form_field_input__wrap
-	 *		@deprecated as of 4.8.32.rc.000
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
+	 * form_form_field_input__wrap
+	 *
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $input
+	 * @return        string
 	 */
 	public function form_form_field_input__wrap( $input ) {
-		EE_Error::doing_it_wrong( 
-			__CLASS__ . '::' . __FUNCTION__,			
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
 			__( 'This method would have been protected but was used on a filter callback'
 				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
-				'event_espresso' ), 
-			'4.8.32.rc.000' 
+				'event_espresso' ),
+			'4.8.32.rc.000'
 		);
 		return '
 				<td class="reg-admin-attendee-questions-input-td disabled-input">
@@ -1604,14 +1607,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				</td>
 			</tr>';
 	}
-	
+
 	/**
-	 * 		Updates the registration's custom questions according to the form info, if the form is submitted.
-	 *		If it's not a post, the "view_registrations" route will be called next on the SAME request
-	 *		to display the page
-	*		@access protected
-	*		@return void
-	*/
+	 * Updates the registration's custom questions according to the form info, if the form is submitted.
+	 * If it's not a post, the "view_registrations" route will be called next on the SAME request
+	 * to display the page
+	 *
+	 * @access protected
+	 * @return void
+	 */
 	protected function _update_attendee_registration_form() {
 		do_action( 'AHEE__Registrations_Admin_Page___update_attendee_registration_form__start', $this );
 		if( $_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -1624,9 +1628,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			}
 		}
 	}
-	
+
 	/**
-	 * Gets the form for saving registrations custom questions (if done 
+	 * Gets the form for saving registrations custom questions (if done
 	 * previously retrieves the cached form object, which may have validation errors in it)
 	 * @param int $REG_ID
 	 * @return EE_Registration_Custom_Questions_Form
@@ -1643,13 +1647,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	/**
-	 * Saves 
+	 * Saves
 	 * @access private
 	 * @param bool $REG_ID
 	 * @return bool
 	 */
 	private function _save_reg_custom_questions_form( $REG_ID = FALSE ) {
-		
+
 		if ( ! $REG_ID) {
 			EE_Error::add_error( __('An error occurred. No registration ID was received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -1659,14 +1663,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if( $form->is_valid() ) {
 			foreach( $form->subforms() as $question_group_id => $question_group_form ) {
 				foreach( $question_group_form->inputs() as $question_id => $input ) {
-					$where_conditions = array( 
-							'QST_ID' => $question_id, 
+					$where_conditions = array(
+							'QST_ID' => $question_id,
 							'REG_ID' => $REG_ID
 						);
-					$possibly_new_values = array( 
+					$possibly_new_values = array(
 							'ANS_value' => $input->normalized_value()
 						);
-					$answer = EEM_Answer::instance()->get_one( array( $where_conditions ) ); 
+					$answer = EEM_Answer::instance()->get_one( array( $where_conditions ) );
 					if( $answer instanceof EE_Answer ) {
 						$success = $answer->save( $possibly_new_values );
 					} else {
@@ -2320,7 +2324,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _registrations_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
@@ -2358,7 +2362,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _contact_list_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
