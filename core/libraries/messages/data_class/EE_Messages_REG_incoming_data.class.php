@@ -4,19 +4,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link			http://www.eventespresso.com
- * @ version		4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_Messages_REG_incoming_data
  *
  * This prepares dummy data for all messages previews run in the back end.  The Preview Data is going to use a given event id for the data.  If that event is NOT provided then we'll retrieve the first three published events from the users database as a sample (or whatever is available if there aren't three).
@@ -31,14 +18,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 
 class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
-
-
-	/**
-	 * hold objects that might be created
-	 *
-	 * @type EE_Registration $reg_obj
-	 */
-	public $reg_obj;
 
 
 
@@ -142,13 +121,18 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 		$this->init_access = $this->last_access = '';
 
 		$this->payment = $this->txn->get_first_related('Payment');
-		$this->payment = empty( $this->payment ) ? EE_Payment::new_instance( array(
-			'STS_ID' => EEM_Payment::status_id_pending,
-			'PAY_timestamp' => time(),
-			'PMD_ID' => $this->txn->payment_method_ID(),
-			'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
+		// if there is no payments associated with the transaction
+		// then we just create a default payment object for potential parsing.
+		$this->payment = empty( $this->payment )
+			? EE_Payment::new_instance(
+				array(
+					'STS_ID'               => EEM_Payment::status_id_pending,
+					'PAY_timestamp'        => time(),
+					'PMD_ID'               => $this->txn->payment_method_ID(),
+					'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
+				)
 			)
-		 ) : $this->payment; //if there is no payments associated with the transaction then we just create a default payment object for potential parsing.
+			: $this->payment;
 
 
 		//get reg_objs for txn
