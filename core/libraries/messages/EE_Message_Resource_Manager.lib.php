@@ -296,6 +296,9 @@ class EE_Message_Resource_Manager {
 	public function list_of_active_message_types() {
 		$active_message_type_names = array();
 		foreach ( $this->_active_message_types as $messenger => $messenger_settings ) {
+			if ( ! isset( $messenger_settings[ $messenger . '-message_types' ] ) ) {
+				continue;
+			}
 			foreach ( $messenger_settings[ $messenger . '-message_types' ] as $message_type_name => $message_type_config ) {
 				if ( ! in_array( $message_type_name, $active_message_type_names ) ) {
 					$active_message_type_names[] = $message_type_name;
