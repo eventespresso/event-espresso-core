@@ -23,14 +23,21 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection {
 	/**
 	 * Adds the Message Template Group object to the repository.
 	 *
-	 * @param $mtpg
-	 * @param int   $EVT_ID  Some templates are specific to EVT, so this is provided as a way of
+	 * @param $message_template_group
+	 * @param int $EVT_ID  Some templates are specific to EVT, so this is provided as a way of
 	 *                       indexing the template by key.
 	 * @return bool
 	 */
-	public function add( $mtpg, $EVT_ID = null ) {
-		$data['key'] = $this->get_key( $mtpg->messenger(), $mtpg->message_type(), $EVT_ID );
-		parent::add( $mtpg, $data );
+	public function add( $message_template_group, $EVT_ID = null ) {
+		if ( $message_template_group instanceof $this->interface ) {
+			$data[ 'key' ] = $this->get_key(
+				$message_template_group->messenger(),
+				$message_template_group->message_type(),
+				$EVT_ID
+			);
+			return parent::add( $message_template_group, $data );
+		}
+		return false;
 	}
 
 
