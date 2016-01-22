@@ -366,7 +366,23 @@ class EE_Messages_Processor {
 		if ( ! $message_to_generate->valid() ) {
 			return null;
 		}
-		$sending_messenger = $message_to_generate instanceof EEI_Has_Sending_Messenger ? $message_to_generate->sending_messenger()->name : '';
+		// is there supposed to be a sending messenger for this message?
+		if ( $message_to_generate instanceof EEI_Has_Sending_Messenger ) {
+			// make sure it's valid, but if it's not,
+			// then set the value of $sending_messenger to an EE_Error object
+			// so that downstream code can easily see that things went wrong.
+			$sending_messenger = $message_to_generate->sending_messenger() instanceof EE_Messenger
+				? $message_to_generate->sending_messenger()
+				: new EE_Error(
+					__(
+						'There was a specific sending messenger requested for the send action, but it was either invalid or not active at time of sending.',
+						'event_espresso'
+					)
+				);
+		} else {
+			$sending_messenger = null;
+		}
+
 		if ( $message_to_generate->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
 			$this->_queue->add( $message_to_generate->get_EE_Message() );
 			$this->_queue->execute( false, $sending_messenger );
