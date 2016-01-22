@@ -74,7 +74,6 @@ class EE_Messages_Generator {
 
 	/**
 	 * @param EE_Messages_Queue                     $generation_queue
-	 * @param null                                  $deprecated
 	 * @param \EE_Messages_Queue                    $ready_queue
 	 * @param \EE_Messages_Data_Handler_Collection  $data_handler_collection
 	 * @param \EE_Message_Template_Group_Collection $template_collection
@@ -82,7 +81,6 @@ class EE_Messages_Generator {
 	 */
 	public function __construct(
 		EE_Messages_Queue $generation_queue,
-		$deprecated = null,
 		EE_Messages_Queue $ready_queue,
 		EE_Messages_Data_Handler_Collection $data_handler_collection,
 		EE_Message_Template_Group_Collection $template_collection,
@@ -96,6 +94,15 @@ class EE_Messages_Generator {
 
 		//load request handler
 		EE_Registry::instance()->load_core( 'Request_Handler' );
+	}
+
+
+
+	/**
+	 * @return EE_Messages_Queue
+	 */
+	public function generation_queue() {
+		return $this->_generation_queue;
 	}
 
 
@@ -216,20 +223,20 @@ class EE_Messages_Generator {
 			return false;
 		}
 
-		$mtpg = $this->_get_message_template_group();
+		$message_template_group = $this->_get_message_template_group();
 
 		//in the unlikely event there is no EE_Message_Template_Group available, get out!
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+		if ( ! $message_template_group instanceof EE_Message_Template_Group ) {
 			$this->_error_msg[] = __( 'Unable to get the Message Templates for the Message being generated.  No message template group accessible.', 'event_espresso' );
 			return false;
 		}
 
 		//get formatted templates for using to parse and setup EE_Message objects.
-		$templates = $this->_get_templates( $mtpg );
+		$templates = $this->_get_templates( $message_template_group );
 
 
 		//setup new EE_Message objects (and add to _ready_queue)
-		return $this->_assemble_messages( $addressees, $templates, $mtpg );
+		return $this->_assemble_messages( $addressees, $templates, $message_template_group );
 	}
 
 
@@ -334,9 +341,9 @@ class EE_Messages_Generator {
 	 *                      )
 	 *                  )
 	 */
-	protected function _get_templates( EE_Message_Template_Group $mtpg ) {
+	protected function _get_templates( EE_Message_Template_Group $message_template_group ) {
 		$templates = array();
-		$context_templates = $mtpg->context_templates();
+		$context_templates = $message_template_group->context_templates();
 		foreach ( $context_templates as $context => $template_fields ) {
 			foreach ( $template_fields as $template_field => $template_obj ) {
 				if ( ! $template_obj instanceof EE_Message_Template ) {
@@ -358,13 +365,13 @@ class EE_Messages_Generator {
 	 *
 	 * @param array $addressees  Array of EE_Messages_Addressee objects indexed by message type context.
 	 * @param array $templates   formatted array of templates used for parsing data.
-	 * @param EE_Message_Template_Group $mtpg
+	 * @param EE_Message_Template_Group $message_template_group
 	 * @return bool   true if message generation went a-ok.  false if some sort of exception occurred.  Note: The method will
 	 *                attempt to generate ALL EE_Message objects and add to the _ready_queue.  Successfully generated messages
 	 *                get added to the queue with EEM_Message::status_idle, unsuccessfully generated messages will get added
 	 *                to the queue as EEM_Message::status_failed.  Very rarely should "false" be returned from this method.
 	 */
-	protected function _assemble_messages( $addressees, $templates, EE_Message_Template_Group $mtpg ) {
+	protected function _assemble_messages( $addressees, $templates, EE_Message_Template_Group $message_template_group ) {
 
 		//if templates are empty then get out because we can't generate anything.
 		if ( ! $templates ) {
@@ -376,9 +383,14 @@ class EE_Messages_Generator {
 		$generated_count = 0;
 		foreach ( $addressees as $context => $recipients ) {
 			foreach ( $recipients as $recipient ) {
-				$message = $this->_setup_message_object( $context, $recipient, $templates, $mtpg );
+				$message = $this->_setup_message_object( $context, $recipient, $templates, $message_template_group );
 				if ( $message instanceof EE_Message ) {
-					$this->_ready_queue->add( $message, array(), $this->_generation_queue->get_queue()->is_preview(), $this->_generation_queue->get_queue()->is_test_send() );
+					$this->_ready_queue->add(
+						$message,
+						array(),
+						$this->_generation_queue->get_queue()->is_preview(),
+						$this->_generation_queue->get_queue()->is_test_send()
+					);
 					$generated_count++;
 				}
 			}
@@ -396,26 +408,35 @@ class EE_Messages_Generator {
 	 * @param string $context   The context for the generated message.
 	 * @param EE_Messages_Addressee $recipient
 	 * @param array  $templates  formatted array of templates used for parsing data.
-	 * @param EE_Message_Template_Group $mtpg
+	 * @param EE_Message_Template_Group $message_template_group
 	 * @return EE_Message | bool  (false is used when no EE_Message is generated)
 	 */
-	protected function _setup_message_object( $context, EE_Messages_Addressee $recipient, $templates, EE_Message_Template_Group $mtpg ) {
+	protected function _setup_message_object(
+		$context,
+		EE_Messages_Addressee $recipient,
+		$templates,
+		EE_Message_Template_Group $message_template_group
+	) {
 		//stuff we already know
 		$transaction_id = $recipient->txn instanceof EE_Transaction ? $recipient->txn->ID() : 0;
-		$transaction_id = empty( $transaction_id ) && $this->_current_data_handler->txn instanceof EE_Transaction ? $this->_current_data_handler->txn->ID() : $transaction_id;
+		$transaction_id = empty( $transaction_id ) && $this->_current_data_handler->txn instanceof EE_Transaction
+			? $this->_current_data_handler->txn->ID()
+			: $transaction_id;
 		$message_fields = array(
-			'GRP_ID' => $mtpg->ID(),
-			'TXN_ID' => $transaction_id,
-			'MSG_messenger' => $this->_current_messenger->name,
+			'GRP_ID'           => $message_template_group->ID(),
+			'TXN_ID'           => $transaction_id,
+			'MSG_messenger'    => $this->_current_messenger->name,
 			'MSG_message_type' => $this->_current_message_type->name,
-			'MSG_context' => $context,
-			'MSG_priority' => $this->_generation_queue->get_queue()->current()->priority(),
+			'MSG_context'      => $context,
+			'MSG_priority'     => $this->_generation_queue->get_queue()->current()->priority(),
 		);
 
 		//recipient id and type should be on the EE_Messages_Addressee object but if this is empty, let's try to grab the
 		//info from the att_obj found in the EE_Messages_Addressee object.
 		if ( empty( $recipient->recipient_id ) || empty( $recipient->recipient_type ) ) {
-			$message_fields['MSG_recipient_ID'] = $recipient->att_obj instanceof EE_Attendee ? $recipient->att_obj->ID() : 0;
+			$message_fields['MSG_recipient_ID'] = $recipient->att_obj instanceof EE_Attendee
+				? $recipient->att_obj->ID()
+				: 0;
 			$message_fields['MSG_recipient_type'] = 'Attendee';
 		} else {
 			$message_fields['MSG_recipient_ID'] = $recipient->recipient_id;
@@ -436,7 +457,7 @@ class EE_Messages_Generator {
 			return false;
 		}
 		$error_msg = array();
-		foreach ( $templates as $field => $ctxt ) {
+		foreach ( $templates as $field => $field_context ) {
 			$error_msg = array();
 			//let's setup the valid shortcodes for the incoming context.
 			$valid_shortcodes = $mt_shortcodes[ $context ];
@@ -480,7 +501,7 @@ class EE_Messages_Generator {
 	 */
 	protected function _verify() {
 		//reset error message to an empty array.
-		$this->_error_message = array();
+		$this->_error_msg = array();
 		$valid = true;
 		$valid = $valid ? $this->_validate_messenger_and_message_type() : $valid;
 		$valid = $valid ? $this->_validate_and_setup_data() : $valid;
@@ -645,17 +666,17 @@ class EE_Messages_Generator {
 	 * So this method calls the static method on the associated data_handler for the given message_type
 	 * and that preps the data for later instantiation when generating.
 	 *
-	 * @param EE_Message_To_Generate $mtg
-	 * @param bool                   $preview       Indicate whether this is being used for a preview or not.
+	 * @param EE_Message_To_Generate $message_to_generate
+	 * @param bool                   $preview Indicate whether this is being used for a preview or not.
 	 * @return mixed Prepped data for persisting to the queue.  false is returned if unable to prep data.
 	 */
-	protected function _prepare_data_for_queue( EE_Message_To_Generate $mtg, $preview ) {
+	protected function _prepare_data_for_queue( EE_Message_To_Generate $message_to_generate, $preview ) {
 		/** @type EE_Messages_incoming_data $data_handler - well not really... just the class name actually */
-		$data_handler = $mtg->get_data_handler_class_name( $preview );
-		if ( ! $mtg->valid() ) {
+		$data_handler = $message_to_generate->get_data_handler_class_name( $preview );
+		if ( ! $message_to_generate->valid() ) {
 			return false; //unable to get the data because the info in the EE_Message_To_Generate class is invalid.
 		}
-		return $data_handler::convert_data_for_persistent_storage( $mtg->data );
+		return $data_handler::convert_data_for_persistent_storage( $message_to_generate->data() );
 	}
 
 
@@ -664,14 +685,15 @@ class EE_Messages_Generator {
 
 	/**
 	 * This sets up a EEM_Message::status_incomplete EE_Message object and adds it to the generation queue.
-	 * @param EE_Message_To_Generate    $mtg
-	 * @param bool                      $test_send  Whether this is just a test send or not.  Typically used for previews.
+	 *
+	 * @param EE_Message_To_Generate $message_to_generate
+	 * @param bool                   $test_send Whether this is just a test send or not.  Typically used for previews.
 	 */
-	public function create_and_add_message_to_queue( EE_Message_To_Generate $mtg, $test_send = false ) {
+	public function create_and_add_message_to_queue( EE_Message_To_Generate $message_to_generate, $test_send = false ) {
 		//prep data
-		$data = $this->_prepare_data_for_queue( $mtg, $mtg->preview );
+		$data = $this->_prepare_data_for_queue( $message_to_generate, $message_to_generate->preview() );
 
-		$message = $mtg->get_EE_Message();
+		$message = $message_to_generate->get_EE_Message();
 
 		//is there a GRP_ID in the request?
 		if ( $GRP_ID = EE_Registry::instance()->REQ->get( 'GRP_ID' ) ) {
@@ -683,10 +705,10 @@ class EE_Messages_Generator {
 			$message->set_error_message( __( 'Unable to prepare data for persistence to the database.', 'event_espresso' ) );
 		} else {
 			//make sure that the data handler is cached on the message as well
-			$data['data_handler_class_name'] = $mtg->get_data_handler_class_name();
+			$data['data_handler_class_name'] = $message_to_generate->get_data_handler_class_name();
 		}
 
-		$this->_generation_queue->add( $message, $data, $mtg->preview, $test_send );
+		$this->_generation_queue->add( $message, $data, $message_to_generate->preview(), $test_send );
 	}
 
 
