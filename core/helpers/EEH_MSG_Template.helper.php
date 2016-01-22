@@ -988,13 +988,12 @@ class EEH_MSG_Template {
 		}
 		EE_Registry::instance()->skip_cache();
 		/** @type EE_Message_Template_Defaults $Message_Template_Defaults */
-		$Message_Template_Defaults = EE_Registry::instance()->load_lib(
-			'EE_Message_Template_Defaults',
-			array(
-				$messenger->name,
-				$message_type->name,
-				$GRP_ID,
-			)
+		$Message_Template_Defaults = new EE_Message_Template_Defaults(
+			null,
+			$messenger->name,
+			$message_type->name,
+			$GRP_ID,
+			EE_Registry::instance()->load_lib( 'Message_Resource_Manager' )
 		);
 		//generate templates
 		$success = $Message_Template_Defaults->create_new_templates();
