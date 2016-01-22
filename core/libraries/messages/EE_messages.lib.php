@@ -491,7 +491,8 @@ class EE_Messages {
 	 * @return bool
 	 */
 	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $send = TRUE ) {
-		$processor = new EE_Messages_Processor( $this );
+		/** @type EE_Messages_Processor $processor */
+		$processor = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 		$error = FALSE;
 
 		//try to intelligently determine what method we'll call based on the incoming data.
@@ -500,7 +501,8 @@ class EE_Messages {
 			//in the legacy system, when generating and sending were different, that means all the
 			//vars are already in the request object.  So let's just use that.
 			try {
-				$mtg = new EE_Message_To_Generate_From_Request( $this, EE_Registry::instance()->REQ );
+				/** @type EE_Message_To_Generate_From_Request $mtg */
+				$mtg = EE_Registry::instance()->load_lib( 'Message_To_Generate_From_Request' );
 				$processor->generate_and_send_now( $mtg );
 			} catch ( EE_Error $e ) {
 				$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
@@ -634,7 +636,8 @@ class EE_Messages {
 	 */
 	public function send_message_with_messenger_only( $messenger, $message_type, $message ) {
 		//setup for sending to new method.
-		$queue = new EE_Messages_Queue( $this );
+		/** @type EE_Messages_Queue $queue */
+		$queue = EE_Registry::instance()->load_lib( 'Messages_Queue' );
 		//make sure we have a proper message object
 		if ( ! $message instanceof EE_Message && is_object( $message ) && isset( $message->content ) ) {
 			$msg = EE_Message_Factory::create(
