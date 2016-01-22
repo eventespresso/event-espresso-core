@@ -4,19 +4,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link			http://www.eventespresso.com
- * @ version		4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_Messages_Preview_incoming_data
  *
  * This prepares dummy data for all messages previews run in the back end.  The Preview Data is going to use a given event id for the data.  If that event is NOT provided then we'll retrieve the first three published events from the users database as a sample (or whatever is available if there aren't three).
@@ -35,7 +22,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	//some specific properties we need for this class
 	private $_events = array();
 	private $_attendees = array();
-	private $_running_total = 0;
+	private $_registrations = array();
 
 
 	/**
@@ -80,11 +67,10 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 
 
-
-
 	/**
 	 * This will just setup the _events property in the expected format.
-	 * @return void
+	 *
+	 * @throws \EE_Error
 	 */
 	private function _setup_attendees_events() {
 
@@ -92,7 +78,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$attendees = $this->_get_some_attendees();
 
 		//if empty $data we'll do a query to get some events from the server. otherwise we'll retrieve the event data for the given ids.
-		$events = empty($this->_data) ? $this->_get_some_events() : $this->_get_some_events($this->_data);
+		$events = $this->_get_some_events( $this->_data );
 
 		$answers_n_questions = $this->_get_some_q_and_as();
 
@@ -106,8 +92,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 
 		//we'll actually use the generated line_item identifiers for our loop
-		$dtts = array();
+		$dtts = $tkts = array();
 		foreach( $events as $id => $event ) {
+			if ( ! $event instanceof EE_Event ) {
+				continue;
+			}
 			$this->_events[$id]['ID'] = $id;
 			$this->_events[$id]['name'] = $event->get('EVT_name');
 			$datetime = $event->get_first_related('Datetime');
@@ -120,19 +109,23 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$dttcache = array();
 			$tkts = array();
 			foreach ( $tickets as $ticket ) {
-				$tkts[$ticket->ID()]['ticket'] = $ticket;
+				if ( ! $ticket instanceof EE_Ticket ) {
+					continue;
+				}
 				$reldatetime = $ticket->datetimes();
-				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
-				$tkts[$ticket->ID()]['att_objs'] = $attendees;
-				$tkts[$ticket->ID()]['count'] = count($attendees);
-				$tkts[$ticket->ID()]['EE_Event'] = $event;
+				$tkts[ $ticket->ID() ] = array();
+				$tkts[ $ticket->ID() ][ 'ticket' ] = $ticket;
+				$tkts[ $ticket->ID() ][ 'dtt_objs' ] = $reldatetime;
+				$tkts[ $ticket->ID() ][ 'att_objs' ] = $attendees;
+				$tkts[ $ticket->ID() ][ 'count' ] = count( $attendees );
+				$tkts[ $ticket->ID() ][ 'EE_Event' ] = $event;
 				foreach ( $reldatetime as $datetime ) {
-					if ( !isset( $dtts[$datetime->ID()] ) ) {
-						$this->_events[$id]['dtt_objs'][$datetime->ID()] = $datetime;
-						$dtts[$datetime->ID()]['datetime'] = $datetime;
-						$dtts[$datetime->ID()]['tkt_objs'][] = $ticket;
-						$dtts[$datetime->ID()]['evt_objs'][] = $event;
-						$dttcache[$datetime->ID()] = $datetime;
+					if ( $datetime instanceof EE_Datetime && ! isset( $dtts[ $datetime->ID() ] ) ) {
+						$this->_events[ $id ][ 'dtt_objs' ][ $datetime->ID() ] = $datetime;
+						$dtts[ $datetime->ID() ][ 'datetime' ] = $datetime;
+						$dtts[ $datetime->ID() ][ 'tkt_objs' ][] = $ticket;
+						$dtts[ $datetime->ID() ][ 'evt_objs' ][] = $event;
+						$dttcache[ $datetime->ID() ] = $datetime;
 					}
 				}
 			}
@@ -142,6 +135,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 			//let's also setup the dummy attendees property!
 			foreach ( $attendees as $att_key => $attendee ) {
+				if ( ! $attendee instanceof EE_Attendee ) {
+					continue;
+				}
 				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
 				$this->_attendees[$att_key]['evt_objs'][] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
@@ -235,6 +231,17 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
+			/** @var $fname string */
+			/** @var $lname string */
+			/** @var $address string */
+			/** @var $address2 string */
+			/** @var $city string */
+			/** @var $staid string */
+			/** @var $cntry string */
+			/** @var $zip string */
+			/** @var $email string */
+			/** @var $phone string */
+			/** @var $attid string */
 			$attendees[$attid] = EE_Attendee::new_instance(
 				array(
 					'ATT_fname' => $fname,
@@ -337,6 +344,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		EE_Registry::instance()->load_class( 'Question', array(), FALSE, TRUE, TRUE );
 		EE_Registry::instance()->load_class( 'Answer', array(), FALSE, TRUE, TRUE );
 
+		$qsts = array();
 		//first the questions
 		foreach ( $quests_array as $qst ) {
 			$qstobj = array_combine( $qst_columns, $qst );
@@ -369,14 +377,22 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	 * @return array    An array of event objects from the db.
 	 */
 	private function _get_some_events( $event_ids = array() ) {
-		global $wpdb;
 
 		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
-		$event_ids = isset( $_REQUEST['evt_id'] ) && !empty($_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
+		$event_ids = isset( $_REQUEST['evt_id'] ) && !empty( $_REQUEST['evt_id'] )
+			? array( $_REQUEST['evt_id'] )
+			: $event_ids;
 
-		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1' );
+		$limit = !empty( $event_ids )
+			? NULL
+			: apply_filters( 'FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1' );
 
-		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ), 'Datetime.Ticket.TKT_ID' => array('>', 1) ) : array('Datetime.Ticket.TKT_ID' => array('>', 1) );
+		$where = ! empty( $event_ids )
+			? array(
+				'EVT_ID' => array( 'IN', $event_ids ),
+				'Datetime.Ticket.TKT_ID' => array( '>', 1 )
+			)
+			: array( 'Datetime.Ticket.TKT_ID' => array( '>', 1 ) );
 
 		$events = EE_Registry::instance()->load_model('Event')->get_all(array($where, 'limit' => $limit ) );
 
@@ -427,11 +443,14 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$regid = 9999990;
 		foreach ( $this->_attendees as $key => $attendee ) {
 			//note we need to setup reg_objects for each event this attendee belongs to
-			$regatt = $attendee['att_obj']->ID();
+			$regatt = $attendee['att_obj'] instanceof EE_Attendee ? $attendee['att_obj']->ID() : null;
 			$regtxn = $this->txn->ID();
 			$regcnt = 1;
 			foreach ( $attendee['line_ref'] as $evtid ) {
 				foreach ( $this->_events[$evtid]['tkt_objs'] as $ticket ) {
+					if ( ! $ticket instanceof EE_Ticket ) {
+						continue;
+					}
 					$reg_array = array(
 						'EVT_ID' => $evtid,
 						'ATT_ID' => $regatt,
@@ -447,7 +466,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_group_size' => $this->_events[$evtid]['total_attendees'],
 						'REG_att_is_going' => TRUE,
 						'REG_ID' => $regid
-						);
+					);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
 					$this->_attendees[$key]['reg_objs'][$regid] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
@@ -518,6 +537,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//add additional details for each registration
 		foreach ( $this->reg_objs as $reg ) {
+			if ( ! $reg instanceof EE_Registration ) {
+				continue;
+			}
 			$this->_registrations[$reg->ID()]['tkt_obj'] = $this->tickets[$reg->get('TKT_ID')]['ticket'];
 			$this->_registrations[$reg->ID()]['evt_obj'] = $this->_events[$reg->get('EVT_ID')]['event'];
 			$this->_registrations[$reg->ID()]['reg_obj'] = $reg;
@@ -536,12 +558,22 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//setup primary attendee property
 		$this->primary_attendee_data = array(
-			'fname' => $this->_attendees[999999991]['att_obj']->fname(),
-			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
-			'email' => $this->_attendees[999999991]['att_obj']->email(),
+			'fname' => $this->_attendees[999999991]['att_obj'] instanceof EE_Attendee
+				? $this->_attendees[999999991]['att_obj']->fname()
+				: '',
+
+			'lname' => $this->_attendees[ 999999991 ][ 'att_obj' ] instanceof EE_Attendee
+				? $this->_attendees[999999991]['att_obj']->lname()
+				: '',
+
+			'email' => $this->_attendees[ 999999991 ][ 'att_obj' ] instanceof EE_Attendee
+				? $this->_attendees[999999991]['att_obj']->email()
+				: '',
+
 			'att_obj' => $this->_attendees[999999991]['att_obj'],
-			'reg_obj' => array_shift($attendees_to_shift[999999991]['reg_objs'])
-			);
+
+			'reg_obj' => array_shift( $attendees_to_shift[999999991]['reg_objs'] )
+		);
 
 		//reg_info property
 		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
