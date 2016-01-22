@@ -443,7 +443,9 @@ class EE_Message_Resource_Manager {
 	 * @return bool FALSE if not updated, TRUE if updated.
 	 */
 	public function update_has_activated_messengers_option( $has_activated_messengers = array() ) {
-		$has_activated_messengers = empty( $has_activated_messengers ) ? $this->_has_activated_messengers_and_message_types : $has_activated_messengers;
+		$has_activated_messengers = empty( $has_activated_messengers )
+			? $this->_has_activated_messengers_and_message_types
+			: $has_activated_messengers;
 		return update_option( 'ee_has_activated_messenger', $has_activated_messengers );
 	}
 
@@ -474,14 +476,6 @@ class EE_Message_Resource_Manager {
 			// check if supposedly active messenger is actually installed by looking in our collection
 			if ( $this->messenger_collection()->has_by_name( $active_messenger ) ) {
 				$this->activate_messenger( $active_messenger, array(), false );
-				// grab installed messenger object
-				//$this->_active_messengers[ $active_messenger ] = $this->messenger_collection()->get_by_info(
-				//	$active_messenger
-				//);
-				//
-				//$this->_active_message_types[ $active_messenger ] = ! empty( $data[ 'settings' ][ $active_messenger . '-message_types' ] )
-				//	? $data[ 'settings' ][ $active_messenger . '-message_types' ]
-				//	: array();
 			} else {
 				$not_installed[] = $active_messenger;
 				$this->deactivate_messenger( $active_messenger );
@@ -554,16 +548,16 @@ class EE_Message_Resource_Manager {
 	 * This is a wrapper for `ensure_message_type_is_active` that will handle ensuring multiple message types for a
 	 * messenger are active in one go.
 	 *
-	 * @param      $message_type_names  Array of message type names to ensure are active.
-	 * @param      $messenger_name      The name of the messenger that the message types are to be activated on.
-	 * @param bool $update_option       Whether to persist the activation to the database or not (default true).
+	 * @param array  $message_type_names  Array of message type names to ensure are active.
+	 * @param string $messenger_name      The name of the messenger that the message types are to be activated on.
+	 * @param bool   $update_option       Whether to persist the activation to the database or not (default true).
 	 * @return array
 	 */
 	public function ensure_message_types_are_active( $message_type_names, $messenger_name, $update_option = true ) {
 		$message_type_names = (array) $message_type_names;
 		foreach ( $message_type_names as $message_type_name ) {
-			//note, intentionally not updating option here because we're in a loop.  We'll follow the instructions of the
-			//incoming $update_option argument after the loop.
+			// note, intentionally not updating option here because we're in a loop.
+			// We'll follow the instructions of the incoming $update_option argument after the loop.
 			$this->ensure_message_type_is_active( $message_type_name, $messenger_name, false );
 		}
 		if ( $update_option ) {
@@ -620,8 +614,8 @@ class EE_Message_Resource_Manager {
 	/**
 	 * Activates given message types for the given EE_Messenger object.
 	 *
-	 * Note: (very important) This method does not persist the activation to the database.  See code implementing this method
-	 * in this class for examples of how to persist.
+	 * Note: (very important) This method does not persist the activation to the database.
+	 * See code implementing this method in this class for examples of how to persist.
 	 *
 	 * @param \EE_Messenger $messenger
 	 * @param  array        $message_type_names
@@ -775,7 +769,8 @@ class EE_Message_Resource_Manager {
 	/**
 	 * This returns all the contexts that are registered by all message types.
 	 *
-	 * If $slugs_only is true, then just an array indexed by unique context slugs with the latest label representation for that slug.
+	 * If $slugs_only is true,
+	 * then just an array indexed by unique context slugs with the latest label representation for that slug.
 	 * array(
 	 *      'context_slug' => 'localized label for context obtained from latest message type in the loop'.
 	 * );
@@ -790,15 +785,12 @@ class EE_Message_Resource_Manager {
 	 *      )
 	 * );
 	 *
-	 * Keep in mind that although different message types may share the same context slugs, it is possible that the context
-	 * is described differently by the message type.
-	 *
-	 * >>>>>>>>>>>> 1 usage in \EE_Message_List_Table::_get_table_filters()
-	 * >>>>>>>>>>>> 1 usage in \EE_Message::context_label()
-	 * >>>>>>>>>>>> 1 usage in \EE_messages_Test::test_get_all_contexts()
+	 * Keep in mind that although different message types may share the same context slugs,
+	 * it is possible that the context is described differently by the message type.
 	 *
 	 * @since 4.9.0
-	 * @param   bool $slugs_only Whether to return an array of just slugs and labels (true) or all contexts indexed by message type.
+	 * @param   bool $slugs_only Whether to return an array of just slugs and labels (true)
+	 *                           or all contexts indexed by message type.
 	 * @return array
 	 */
 	public function get_all_contexts( $slugs_only = true ) {
