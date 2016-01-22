@@ -351,9 +351,9 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return string
 	 */
 	public function context_label() {
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$contexts = $messages_controller->get_all_contexts();
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$contexts = $message_resource_manager->get_all_contexts();
 		return isset( $contexts[ $this->context() ] ) ? $contexts[ $this->context() ] : $this->context();
 	}
 
@@ -680,11 +680,15 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 		$grp = $this->get_first_related( 'Message_Template_Group' );
 		//if no group then let's try to get the first related group by internal messenger and message type (will use global grp).
 		if ( ! $grp instanceof EE_Message_Template_Group ) {
-			$grp = EEM_Message_Template_Group::instance()->get_one( array( array(
-				'MTP_messenger' => $this->messenger(),
-				'MTP_message_type' => $this->message_type(),
-				'MTP_is_global' => true
-			) ) );
+			$grp = EEM_Message_Template_Group::instance()->get_one(
+				array(
+					array(
+						'MTP_messenger'    => $this->messenger(),
+						'MTP_message_type' => $this->message_type(),
+						'MTP_is_global'    => true
+					)
+				)
+			);
 		}
 
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack() : null;
@@ -710,11 +714,15 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 		//if no group then let's try to get the first related group by internal messenger and message type (will use global grp).
 		if ( ! $grp instanceof EE_Message_Template_Group ) {
-			$grp = EEM_Message_Template_Group::instance()->get_one( array( array(
-				'MTP_messenger' => $this->messenger(),
-				'MTP_message_type' => $this->message_type(),
-				'MTP_is_global' => true
-			) ) );
+			$grp = EEM_Message_Template_Group::instance()->get_one(
+				array(
+					array(
+						'MTP_messenger'    => $this->messenger(),
+						'MTP_message_type' => $this->message_type(),
+						'MTP_is_global'    => true
+					)
+				)
+			);
 		}
 
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack_variation() : '';
