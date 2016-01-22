@@ -93,6 +93,20 @@ class EE_Message_Template_Defaults extends EE_Base {
 		EE_Messenger $messenger = null,
 		EE_message_type $message_type = null
 	) {
+		if ( $deprecated !== null ) {
+			EE_Error::doing_it_wrong(
+				__FUNCTION__,
+				sprintf(
+					__(
+						'The first parameter for the "%1$s" method is deprecated and no longer required. Please update any addons or custom code accordingly.',
+						'event_espresso'
+					),
+					__METHOD__ . '()'
+				),
+				'4.9.0'
+			);
+		}
+
 		$this->_m_name = $messenger_name;
 		$this->_mt_name = $message_type_name;
 		$this->_GRP_ID = $GRP_ID;
