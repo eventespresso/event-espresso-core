@@ -210,7 +210,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	/**
 	 * This retrieves an EE_Message object from the db matching the given token string.
 	 * @param string $token
-	 * @return EE_Message | null
+	 * @return EE_Message
 	 */
 	public function get_one_by_token( $token ) {
 		return $this->get_one( array( array(
