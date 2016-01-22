@@ -33,74 +33,74 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * user id for logged in user when data collected
+	 *
 	 * @var string $user_id
 	 */
 	public $user_id;
 
 	/**
 	 * IP Address of browser used
+	 *
 	 * @var string $ip_address
 	 */
 	public $ip_address;
 
 	/**
 	 * browser
+	 *
 	 * @var string $user_agent
 	 */
 	public $user_agent;
 
 	/**
 	 * Unix timestamp
+	 *
 	 * @var string $init_access
 	 */
 	public $init_access;
 
 	/**
 	 * Unix timestamp
+	 *
 	 * @var string $last_access
 	 */
 	public $last_access;
 
 	/**
 	 * The registrations details from the cart
+	 *
 	 * @var array $reg_info
 	 */
 	public $reg_info;
 
-
-
 	/**
 	 * Some data handlers can set what reg status all the registrations are filtered by.
 	 * The status should match a EEM_Registration status constant.
+	 *
 	 * @var string $filtered_reg_status
 	 */
 	public $filtered_reg_status;
 
-
-
 	/**
 	 * will hold an array of events assembled from $reg_info
+	 *
 	 * @var EE_Event[] $events
 	 */
 	public $events;
 
-
-
 	/**
 	 * holds an array of datetimes assembled from the incoming data.
+	 *
 	 * @var EE_Datetime[] $datetimes
 	 */
 	public $datetimes;
 
-
-
 	/**
 	 * holds an array of tickets assembled from the incoming data.
+	 *
 	 * @var EE_Ticket[] $tickets
 	 */
 	public $tickets;
-
-
 
 	/**
 	 * holds an array with a key of parent line item and values are an array of children of that line item.
@@ -111,57 +111,47 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public $line_items_with_children;
 
-
-
 	/**
 	 * will hold an array of attendees assembled from the $reg_info
+	 *
 	 * @var EE_Attendee[] $attendees
 	 */
 	public $attendees;
 
-
-
 	/**
 	 * will hold an array of cached registration objects and info assembled from reg_info
+	 *
 	 * @var array $registrations
 	 */
 	public $registrations;
 
-
-
 	/**
 	 * will hold an array of answers assembled from the $reg_info
+	 *
 	 * @var EE_Answer[] $answers
 	 */
 	public $answers;
 
-
-
-
 	/**
 	 * will hold an array of questions assembled from the $reg_info (indexed by Answer ID);
+	 *
 	 * @var EE_Question[] $questions
 	 */
 	public $questions;
 
-
-
-
-
 	/**
 	 * Will hold billing data assembled from $billing_info (if present)
+	 *
 	 * @var mixed (array|null) $billing
 	 */
 	public $billing;
 
-
-
 	/**
 	 * The total amount of tax for the transaction
+	 *
 	 * @var float $taxes
 	 */
 	public $taxes;
-
 
 	/**
 	 * Holds the line items related to taxes
@@ -175,11 +165,11 @@ abstract class EE_Messages_incoming_data {
 	/**
 	 * Hold the line items which aren't taxes and don't relate
 	 * to tickets. So: promotions and miscellaneous charges
+	 *
 	 * @since 4.5
 	 * @var EE_Line_Item[] $additional_line_items
 	 */
 	public $additional_line_items;
-
 
 	/**
 	 * Holds the grand total EE_Line_Item
@@ -188,32 +178,26 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public $grand_total_line_item;
 
-
-
 	/**
 	 * holds the grand total price object
+	 *
 	 * @var object $grand_total_price_object
 	 */
 	public $grand_total_price_object;
 
-
-
 	/**
 	 * total number of tickets
+	 *
 	 * @var int $total_ticket_count
 	 */
 	public $total_ticket_count;
 
-
-
-
 	/**
 	 * Will hold the final transaction object (EE_Transaction)
+	 *
 	 * @var EE_Transaction $txn
 	 */
 	public $txn;
-
-
 
 	/**
 	 * Holds the payments related to a transaction
@@ -224,8 +208,6 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public $payments;
 
-
-
 	/**
 	 * Holds the first related payment related for a transaction
 	 *
@@ -235,49 +217,47 @@ abstract class EE_Messages_incoming_data {
 	 */
 	public $payment;
 
-
-
-
 	/**
 	 * Will hold the label for the txn status
+	 *
 	 * @var string $txn_status
 	 */
 	public $txn_status;
 
-
-
-
 	/**
 	 * Will hold the final registration object (EE_Registration)
+	 *
 	 * @var EE_Registration[] $reg_objs
 	 */
 	public $reg_objs;
 
-
-
 	/**
 	 * Will hold an array of primary attendee data (if present)
+	 *
 	 * @var array $primary_attendee_data
 	 */
 	public $primary_attendee_data;
 
-
-
-
 	/**
 	 * This is just an internal object used for passing around the incoming data.
+	 *
 	 * @var object $_data
 	 */
 	protected $_data;
 
-
-
 	/**
 	 * This is just an internal object used for passing around the incoming data.
+	 *
 	 * @var object $incoming_data
 	 */
 	public $incoming_data;
 
+	/**
+	 * hold objects that might be created
+	 *
+	 * @type EE_Registration $reg_obj
+	 */
+	public $reg_obj;
 
 
 
@@ -289,7 +269,6 @@ abstract class EE_Messages_incoming_data {
 	public function __construct( $data ) {
 		$this->_data = $data;
 		$this->_setup_data();
-
 	}
 
 
@@ -352,9 +331,10 @@ abstract class EE_Messages_incoming_data {
 	 * @throws \EE_Error
 	 */
 	protected function _assemble_data() {
-		$regchk = array_values($this->reg_objs);
-		$regchk = array_shift($regchk);
-		$line_items = array();
+
+		//$regchk = array_values($this->reg_objs);
+		//$regchk = array_shift($regchk);
+
 		//verify that reg_objs is set
 		if ( !is_array( $this->reg_objs) && ! reset( $this->reg_objs ) instanceof EE_Registration )
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
@@ -478,7 +458,7 @@ abstract class EE_Messages_incoming_data {
 		//setup primary registration
 
 		//let's get just the primary_attendee_data!  First we get the primary registration object.
-		$primary_reg = $this->txn->primary_registration(TRUE);
+		$primary_reg = $this->txn->primary_registration();
 		// verify
 		if( $primary_reg instanceof EE_Registration ) {
 
