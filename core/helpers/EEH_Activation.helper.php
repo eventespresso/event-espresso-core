@@ -1269,46 +1269,48 @@ class EEH_Activation {
 
 
 
-
 	/**
 	 * generate_default_message_templates
 	 *
-	 *
 	 * @static
-	 *
 	 * @throws EE_Error
-	 *
-	 * @return bool true means new templates were created.  false means no templates were created.  This is NOT an error flag.
-	 *                    To check for errors you will want to use either EE_Error or a try catch for an EE_Error exception.
+	 * @return bool     true means new templates were created.
+	 *                  false means no templates were created.
+	 *                  This is NOT an error flag. To check for errors you will want
+	 *                  to use either EE_Error or a try catch for an EE_Error exception.
 	 */
 	public static function generate_default_message_templates() {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		/*
-		 * This first method is taking care of ensuring any default messengers that should be made active and have templates
-		 * generated are done.
+		 * This first method is taking care of ensuring any default messengers
+		 * that should be made active and have templates generated are done.
 		 */
-		$new_templates_created_for_messenger = self::_activate_and_generate_default_messengers_and_message_templates( $message_resource_manager );
-
+		$new_templates_created_for_messenger = self::_activate_and_generate_default_messengers_and_message_templates(
+			$message_resource_manager
+		);
 		/**
-		 * This method is verifying there are no NEW default message types for ACTIVE messengers that need activated (and
-		 * corresponding templates setup).
+		 * This method is verifying there are no NEW default message types
+		 * for ACTIVE messengers that need activated (and corresponding templates setup).
 		 */
-		$new_templates_created_for_message_type = self::_activate_new_message_types_for_active_messengers_and_generate_default_templates( $message_resource_manager );
-
+		$new_templates_created_for_message_type = self::_activate_new_message_types_for_active_messengers_and_generate_default_templates(
+			$message_resource_manager
+		);
 		//after all is done, let's persist these changes to the db.
 		$message_resource_manager->update_has_activated_messengers_option();
 		$message_resource_manager->update_active_messengers_option();
-
-
 		// will return true if either of these are true.  Otherwise will return false.
 		return $new_templates_created_for_message_type || $new_templates_created_for_messenger;
 	}
 
 
 
-
+	/**
+	 * @param \EE_Message_Resource_Manager $message_resource_manager
+	 * @return array|bool
+	 * @throws \EE_Error
+	 */
 	protected static function _activate_new_message_types_for_active_messengers_and_generate_default_templates(
 		EE_Message_Resource_Manager $message_resource_manager
 	) {
@@ -1316,49 +1318,61 @@ class EEH_Activation {
 		$active_messengers = $message_resource_manager->active_messengers();
 		$installed_message_types = $message_resource_manager->installed_message_types();
 		$templates_created = false;
-		foreach( $active_messengers as $active_messenger ) {
+		foreach ( $active_messengers as $active_messenger ) {
 			$default_message_type_names_for_messenger = $active_messenger->get_default_message_types();
 			$default_message_type_names_to_activate = array();
-
-			//looping through each default message type reported by the messenger and setup the actual message types to activate.
+			// looping through each default message type reported by the messenger
+			// and setup the actual message types to activate.
 			foreach ( $default_message_type_names_for_messenger as $default_message_type_name_for_messenger ) {
-				//if already active or has already been activated before we skip (otherwise we might reactivate something user's
-				//intentionally deactivated.)
-				//we also skip if the message type is not installed.
+				// if already active or has already been activated before we skip
+				// (otherwise we might reactivate something user's intentionally deactivated.)
+				// we also skip if the message type is not installed.
 				if (
 					(
-						isset( $has_activated[$active_messenger->name] )
-						&& in_array( $default_message_type_name_for_messenger, $has_activated[$active_messenger->name] )
+						isset( $has_activated[ $active_messenger->name ] )
+						&& in_array(
+							$default_message_type_name_for_messenger,
+							$has_activated[ $active_messenger->name ]
+						)
 					)
-					|| $message_resource_manager->is_message_type_active_for_messenger( $active_messenger->name, $default_message_type_name_for_messenger )
+					|| $message_resource_manager->is_message_type_active_for_messenger(
+						$active_messenger->name,
+						$default_message_type_name_for_messenger
+					)
 					|| ! isset( $installed_message_types[ $default_message_type_name_for_messenger ] )
-				){
+				) {
 					continue;
 				}
 				$default_message_type_names_to_activate[] = $default_message_type_name_for_messenger;
 			}
-
 			//let's activate!
-			$message_resource_manager->ensure_message_types_are_active( $default_message_type_names_to_activate, $active_messenger->name, false );
-
+			$message_resource_manager->ensure_message_types_are_active(
+				$default_message_type_names_to_activate,
+				$active_messenger->name,
+				false
+			);
 			//activate the templates for these message types
 			if ( ! empty( $default_message_type_names_to_activate ) ) {
-				$templates_created = EEH_MSG_Template::generate_new_templates( $active_messenger->name, $default_message_type_names_for_messenger, '', true );
+				$templates_created = EEH_MSG_Template::generate_new_templates(
+					$active_messenger->name,
+					$default_message_type_names_for_messenger,
+					'',
+					true
+				);
 			}
 		}
 		return $templates_created;
 	}
 
 
+
 	/**
 	 * This will activate and generate default messengers and default message types for those messengers.
 	 *
 	 * @param EE_message_Resource_Manager $message_resource_manager
-	 *
-	 * @return array|bool  True means there were default messengers and message type templates generated.  False means
-	 *                     that there were no templates generated (which could
-	 *                     simply mean there are no default message types for a messenger).
-	 *
+	 * @return array|bool  True means there were default messengers and message type templates generated.
+	 *                     False means that there were no templates generated
+	 *                     (which could simply mean there are no default message types for a messenger).
 	 * @throws EE_Error
 	 */
 	protected static function _activate_and_generate_default_messengers_and_message_templates(
@@ -1372,20 +1386,28 @@ class EEH_Activation {
 			$default_message_type_names_for_messenger = $messenger_to_generate->get_default_message_types();
 			//verify the default message types match an installed message type.
 			foreach ( $default_message_type_names_for_messenger as $key => $name ) {
-				if ( ! isset( $installed_message_types[$name] ) ) {
-					unset( $default_message_type_names_for_messenger[$key] );
+				if ( ! isset( $installed_message_types[ $name ] ) ) {
+					unset( $default_message_type_names_for_messenger[ $key ] );
 				}
 			}
-
-			//in previous iterations, the active_messengers option in the db needed updated before calling create templates.
-			//however with the changes this may not be necessary.  This comment is left here just in case
-			//we discover that we _do_ need to update before passing off to create templates (after the refactor is done).
-			//@todo remove this comment when determined not necessary.
-			$message_resource_manager->activate_messenger( $messenger_to_generate->name, $default_message_type_names_for_messenger, false );
-
+			// in previous iterations, the active_messengers option in the db
+			// needed updated before calling create templates. however with the changes this may not be necessary.
+			// This comment is left here just in case we discover that we _do_ need to update before
+			// passing off to create templates (after the refactor is done).
+			// @todo remove this comment when determined not necessary.
+			$message_resource_manager->activate_messenger(
+				$messenger_to_generate->name,
+				$default_message_type_names_for_messenger,
+				false
+			);
 			//create any templates needing created (or will reactivate templates already generated as necessary).
 			if ( ! empty( $default_message_type_names_for_messenger ) ) {
-				$templates_generated = EEH_MSG_Template::generate_new_templates( $messenger_to_generate->name, $default_message_type_names_for_messenger, '', true );
+				$templates_generated = EEH_MSG_Template::generate_new_templates(
+					$messenger_to_generate->name,
+					$default_message_type_names_for_messenger,
+					'',
+					true
+				);
 			}
 		}
 		return $templates_generated;
@@ -1403,23 +1425,25 @@ class EEH_Activation {
 	 * @param  EE_Message_Resource_Manager $message_resource_manager
 	 * @return EE_Messenger[]
 	 */
-	protected static function _get_default_messengers_to_generate_on_activation( EE_Message_Resource_Manager $message_resource_manager ) {
+	protected static function _get_default_messengers_to_generate_on_activation(
+		EE_Message_Resource_Manager $message_resource_manager
+	) {
 		$active_messengers = $message_resource_manager->active_messengers();
 		$installed_messengers = $message_resource_manager->installed_messengers();
 		$has_activated = $message_resource_manager->get_has_activated_messengers_option();
 		$messengers_to_generate = array();
-		foreach( $installed_messengers as $installed_messenger ) {
+		foreach ( $installed_messengers as $installed_messenger ) {
 			//if installed messenger is a messenger that should be activated on install
 			//and is not already active
 			//and has never been activated
 			if (
 				! $installed_messenger->activate_on_install
-				|| isset( $active_messengers[$installed_messenger->name] )
-				|| isset( $has_activated[$installed_messenger->name] )
+				|| isset( $active_messengers[ $installed_messenger->name ] )
+				|| isset( $has_activated[ $installed_messenger->name ] )
 			) {
 				continue;
 			}
-			$messengers_to_generate[$installed_messenger->name] = $installed_messenger;
+			$messengers_to_generate[ $installed_messenger->name ] = $installed_messenger;
 		}
 		return $messengers_to_generate;
 	}
