@@ -116,9 +116,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : null;
 		$this->_load_message_resource_manager();
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = $this->_message_resource_manager->get_active_messengers_option();
+		$this->_active_messengers = $this->_message_resource_manager->active_messengers();
 		$this->_active_message_types = $this->_message_resource_manager->active_message_types();
-
 		//what about saving the objects in the active_messengers and active_message_types?
 		//$this->_load_active_messenger_objects();
 		//$this->_load_active_message_type_objects();
@@ -1611,12 +1610,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			);
 		$go_back_url = parent::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
-
+		$message_types = $this->get_installed_message_types();
 		//let's provide a helpful title for context
 		$preview_title = sprintf(
 			__( 'Viewing Preview for %s %s Message Template', 'event_espresso' ),
 			ucwords( $this->_active_messengers[ $this->_req_data[ 'messenger' ] ]->label[ 'singular' ] ),
-			ucwords( $this->_active_message_types[ $this->_req_data[ 'message_type' ] ]->label[ 'singular' ] )
+			ucwords( $message_types[ $this->_req_data[ 'message_type' ] ]->label[ 'singular' ] )
 		);
 		//setup display of preview.
 		$this->_admin_page_title = $preview_title;
@@ -2435,11 +2434,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'obj' => $messenger
 			);
 
+
 			$message_types_for_messenger = $messenger->get_valid_message_types();
 
 			//assemble the array for the ACTIVE and INACTIVE message types with the selected messenger //note that all message types will be in the inactive box if the messenger is NOT active.
-			$selected_settings = isset( $this->_active_messengers[$messenger->name]['settings'] )
-				? $this->_active_messengers[$messenger->name]['settings']
+			$selected_settings = isset( $this->_active_message_types[$messenger->name]['settings'] )
+				? $this->_active_message_types[$messenger->name]['settings']
 				: array();
 			foreach ( $message_types as $message_type ) {
 				//first we need to verify that this message type is valid with this messenger. Cause if it isn't then it shouldn't show in either the inactive OR active metabox.
@@ -2846,10 +2846,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers
-			$this->_active_messengers[$messenger]['settings'] = !isset($this->_active_messengers[$messenger]['settings']) ? array() : $this->_active_messengers[$messenger]['settings'];
-			$this->_active_messengers[$messenger]['obj'] = $this->_m_mt_settings['messenger_tabs'][$messenger]['obj'];
+			$this->_active_message_types[$messenger]['settings'] = !isset($this->_active_message_types[$messenger]['settings']) ? array() : $this->_active_message_types[$messenger]['settings'];
 			/** @type EE_Messenger $active_messenger */
-			$active_messenger = $this->_active_messengers[ $messenger ][ 'obj' ];
+			$active_messenger = $this->_m_mt_settings[ 'messenger_tabs' ][ $messenger ][ 'obj' ];
 
 			//get has_active so we can sure its kept up to date.
 			$has_activated = get_option( 'ee_has_activated_messages' );
@@ -2876,7 +2875,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					//let's set the data for reloading this message type form in ajax
 					$this->_template_args['data']['mt_reload'][] = $type;
 				}
-				$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$type]['settings'] =  $settings;
+				$this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$type]['settings'] =  $settings;
 
 				if ( ! in_array( $type, $has_activated[$messenger] ) ) {
 					$has_activated[$messenger][] = $type;
@@ -2888,12 +2887,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			if ( !empty( $msgr_settings ) ) {
 				foreach ( $msgr_settings as $field => $value ) {
-					$this->_active_messengers[$messenger]['settings'][$field] = $value;
+					$this->_active_message_types[$messenger]['settings'][$field] = $value;
 				}
 			}
 
 			//update settings in database
-			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
 			update_option( 'ee_has_activated_messages', $has_activated );
 
 
@@ -2904,8 +2903,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//if generation failed then we need to remove the active messenger.
 			if ( !$templates ) {
-				unset($this->_active_messengers[$messenger]);
-				EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
+				unset($this->_active_message_types[$messenger]);
+				EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
 			} else {
 				//all is good let's do a success message
 				if ( $message_type ) {
@@ -2920,7 +2919,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						}
 					}
 				} else {
-					EE_Error::add_success( sprintf( __('%s messenger has been successfully activated', 'event_espresso'), ucwords( $this->_active_messengers[$messenger]->label['singular'] ) ) );
+					$installed_messengers = $this->_message_resource_manager->installed_messengers();
+					EE_Error::add_success(
+						sprintf(
+							__( '%s messenger has been successfully activated', 'event_espresso' ),
+							ucwords( $installed_messengers[ $messenger ]->label[ 'singular' ] )
+						)
+					);
 				}
 			}
 
@@ -2942,12 +2947,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//if this is a message type deactivation then we're only unsetting the message type otherwise unset the messenger
 			if ( $message_type ) {
-				unset( $this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$message_type] );
+				unset( $this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$message_type] );
 			} else {
-				unset( $this->_active_messengers[$messenger] );
+				unset( $this->_active_message_types[$messenger] );
 			}
 
-			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
+			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
 			EE_Error::overwrite_success();
 			if ( $message_type ) {
 				EE_Error::add_success( sprintf( __('%s message type has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) );
@@ -3022,10 +3027,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						unset( $settings['messenger'] );
 						break;
 					case 'message_types' :
-						if ( isset( $this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'] ) ) {
-							foreach ( $this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'] as $mt => $v ) {
-								if ( isset( $settings['message_types'][$mt] ) )
-									{$settings[$messenger . '-message_types'][$mt]['settings'] = isset( $this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ? $this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] : array();}
+						if (
+							isset( $this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'] )
+						) {
+							foreach ( $this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'] as $mt => $v ) {
+								if ( isset( $settings['message_types'][$mt] ) ) {
+									$settings[$messenger . '-message_types'][$mt]['settings']
+									= isset( $this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$mt] )
+									? $this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$mt]
+									: array();
+								}
 							}
 						} else {
 							foreach ( $value as $mt => $v ) {
@@ -3041,7 +3052,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						break;
 				}
 			}
-			$this->_active_messengers[$messenger]['settings'] = $settings;
+			$this->_active_message_types[$messenger]['settings'] = $settings;
 		}
 
 		else if ( $this->_req_data['type'] == 'message_type' ) {
@@ -3064,11 +3075,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				}
 			}
 
-			$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$message_type] = $settings;
+			$this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$message_type] = $settings;
 		}
 
 		//okay we should have the data all setup.  Now we just update!
-		$success = EEH_MSG_Template::update_active_messengers_in_db( $this->_active_messengers );
+		$success = EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
 
 		if ( $success ) {
 			EE_Error::add_success( __('Settings updated', 'event_espresso') );
