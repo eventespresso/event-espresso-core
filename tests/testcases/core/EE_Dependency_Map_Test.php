@@ -31,6 +31,9 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 	protected function _expected_core_dependencies() {
 		return array(
+			'EE_Request_Handler'                => array(
+				'EE_Request',
+			),
 			'EE_System'                         => array(
 				'EE_Registry',
 			),
@@ -63,20 +66,15 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 			'EE_Messages'                       => array(
 				'EE_Message_Resource_Manager',
 			),
-			'EE_messages'                       => array(
-				'EE_Message_Resource_Manager',
-			),
 			'EE_Messages_Generator'             => array(
 				'EE_Messages_Queue',
-				null,
 				'EE_Messages_Queue',
 				'EE_Messages_Data_Handler_Collection',
 				'EE_Message_Template_Group_Collection',
 				'EEH_Parse_Shortcodes',
 			),
 			'EE_Messages_Queue'                 => array(
-				'EE_Message_Repository',
-				'EE_Message_Resource_Manager',
+				'EE_Message_Repository'
 			),
 		);
 	}
@@ -91,6 +89,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
+			'EE_Request'                           => 'load_core',
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
 			'EE_System'                            => 'load_core',
