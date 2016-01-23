@@ -1,4 +1,4 @@
-<h2><?php _e('Question Groups', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Question Groups', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e("This page shows all Question Groups that have been created for Event Espresso. Question Groups allow you to create modular registration forms. Each registration form consists of one or more question groups, and these are allocated on a per event basis.", 'event_espresso'); ?>
 </p>

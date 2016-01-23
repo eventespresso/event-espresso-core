@@ -2314,11 +2314,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
 			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
 				array(
-					'page' => 'espresso_support',
-					'action' => 'batch_file_create',
+					'page' => 'espresso_batch',
+					'batch' => 'file',
 					'EVT_ID' => isset( $this->_req_data[ 'EVT_ID'] ) ? $this->_req_data[ 'EVT_ID' ] : NULL,
 					'job_handler' => urlencode( 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport' ),
-					'redirect_url' => urlencode( $this->_req_data[ 'return_url' ] ),
+					'return_url' => urlencode( $this->_req_data[ 'return_url' ] ),
 				)) );
 		} else {
 			EE_Registry::instance()->load_helper( 'File' );
@@ -2352,10 +2352,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
 			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
 				array(
-					'page' => 'espresso_support',
-					'action' => 'batch_file_create',
+					'page' => 'espresso_batch',
+					'batch' => 'file',
 					'job_handler' => urlencode( 'EventEspressoBatchRequest\JobHandlers\AttendeesReport' ),
-					'redirect_url' => urlencode( $this->_req_data[ 'return_url' ] ),
+					'return_url' => urlencode( $this->_req_data[ 'return_url' ] ),
 				)) );
 		} else {
 			EE_Registry::instance()->load_helper( 'File' );

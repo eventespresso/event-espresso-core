@@ -1,5 +1,5 @@
 <div id="event-and-ticket-form-content">
-	<h4 class="event-tickets-datetimes-title">Event Datetimes</h4>
+	<h3 class="event-tickets-datetimes-title">Event Datetimes</h3>
 
 	<div class="event-datetimes-container">
 		
@@ -11,7 +11,7 @@
 		
 	</div>
 	<div id="add-event-datetime" class="event-datetime-row add-dtt-row">
-		<h5 class="datetime-tickets-heading">Add New Datetime</h5><!-- <a href="#" class="help_img">Help Link</a> -->
+		<h4 class="datetime-tickets-heading">Add New Datetime</h4><!-- <a href="#" class="help_img">Help Link</a> -->
 		<table id="add-new-event-datetime-table" class="datetime-edit-table">
 			<tr>
 				<td class="event-datetime-column date-column">
@@ -35,7 +35,7 @@
 		</table>
 	</div>
 	<div class="event-tickets-container" style="display:none">
-		<h4 class="event-tickets-datetimes-title">Available Tickets</h4>
+		<h3 class="event-tickets-datetimes-title">Available Tickets</h3>
 		<table class="ticket-table">
 			<thead>
 				<tr valign="top">
@@ -70,7 +70,7 @@
 							<div class="total-price-container">Total Final Price: <span class="ticket-price-amount">$0.00</span></div>
 							<textarea name="edit_tickets[1][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"></textarea>
 							<div class="basic-ticket-container">
-								<h5 class="tickets-heading">Ticket Details</h5>
+								<h4 class="tickets-heading">Ticket Details</h4>
 								<table class="basic-ticket-info">
 									<thead>
 										<tr valign="bottom">
@@ -105,7 +105,7 @@
 								</table>
 							</div>
 							<div class="price-table-container">
-								<h5 class="tickets-heading">Base Ticket Price and Price Modifiers</h5>
+								<h4 class="tickets-heading">Base Ticket Price and Price Modifiers</h4>
 								<table class="price-table">
 									<thead>
 										<tr>
@@ -155,7 +155,7 @@
 								</table>
 							</div>
 							<div style="clear:both"></div>
-							<h5 class="tickets-heading">Event Datetimes</h5>
+							<h4 class="tickets-heading">Event Datetimes</h4>
 							<p>This ticket will be usable (allow entrance) for the following selected event datetimes (click to select):</p>
 							<ul class="datetime-tickets-list">
 								<li class="hidden"></li>
@@ -248,7 +248,7 @@
 						<div class="total-price-container">Total Final Price: <span class="ticket-price-amount">$0.00</span></div>
 						<textarea name="edit_tickets[TICKETNUM][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"></textarea>
 						<div class="basic-ticket-container">
-							<h5 class="tickets-heading">Ticket Details</h5>
+							<h4 class="tickets-heading">Ticket Details</h4>
 							<table class="basic-ticket-info">
 								<thead>
 									<tr valign="bottom">
@@ -283,7 +283,7 @@
 							</table>
 						</div>
 						<div class="price-table-container">
-							<h5 class="tickets-heading">Base Ticket Price and Price Modifiers</h5>
+							<h4 class="tickets-heading">Base Ticket Price and Price Modifiers</h4>
 							<table class="price-table">
 								<thead>
 									<tr>
@@ -307,7 +307,7 @@
 							</table>
 						</div>
 						<div style="clear:both"></div>
-						<h5 class="tickets-heading">Event Datetimes</h5>
+						<h4 class="tickets-heading">Event Datetimes</h4>
 						<p>This ticket will be usable (allow entrance) for the following selected event datetimes (click to select):</p>
 						<ul class="datetime-tickets-list">
 							<li class="hidden"></li>
@@ -390,7 +390,7 @@
 	<!-- available tickets for datetime html -->
 	<div id="edit-datetime-available-tickets-holder" class="hidden">
 		<section id="edit-event-datetime-tickets-DTTNUM" class="datetime-tickets-edit" style="display:none">
-			<h5 class="datetime-tickets-heading">Assigned Tickets</h5>
+			<h4 class="datetime-tickets-heading">Assigned Tickets</h4>
 
 			<ul class="datetime-tickets-list">
 				<li class="hidden"></li>

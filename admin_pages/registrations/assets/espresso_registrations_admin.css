@@ -133,8 +133,6 @@
 
 .reg-overview-actions-ul li + li { margin-left : 0; }
 
-#reg-admin-reg-details-reg-nmbr-hdr { padding : 0; margin : -.5em 0 1em; }
-
 #reg-admin-reg-details-reg-date-hdr,
 #reg-admin-reg-details-reg-status-hdr { padding : 0; margin : 0 0 .5em !important; }
 
