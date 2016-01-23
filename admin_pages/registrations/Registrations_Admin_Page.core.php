@@ -629,9 +629,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//for notification related bulk actions we need to make sure only active messengers have an option.
 		EED_Messages::set_autoloaders();
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		$active_mts = $messages_controller->get_active_message_types();
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$active_mts = $message_resource_manager->list_of_active_message_types();
 		//key= bulk_action_slug, value= message type.
 		$match_array = array(
 			'approve_registration' => 'registration',
