@@ -161,20 +161,15 @@ class EE_Dependency_Map {
 			'EE_Messages' => array(
 				'EE_Message_Resource_Manager',
 			),
-			'EE_messages' => array(
-				'EE_Message_Resource_Manager',
-			),
 			'EE_Messages_Generator' => array(
 				'EE_Messages_Queue',
-				null,
 				'EE_Messages_Queue',
 				'EE_Messages_Data_Handler_Collection',
 				'EE_Message_Template_Group_Collection',
 				'EEH_Parse_Shortcodes',
 			),
 			'EE_Messages_Queue' => array(
-				'EE_Message_Repository',
-				'EE_Message_Resource_Manager',
+				'EE_Message_Repository'
 			),
 		);
 	}
