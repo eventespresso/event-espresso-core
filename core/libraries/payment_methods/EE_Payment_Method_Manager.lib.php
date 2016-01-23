@@ -238,10 +238,10 @@ class EE_Payment_Method_Manager {
 		$payment_method->save();
 		$this->set_usable_currencies_on_payment_method( $payment_method );
 		if( $payment_method->type() == 'Invoice' ){
-			/** @type EE_Messages $messages_controller */
-			$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-			$messages_controller->ensure_message_type_is_active( 'invoice', 'html' );
-			$messages_controller->ensure_messenger_is_active( 'pdf' );
+			/** @type EE_Message_Resource_Manager $message_resource_manager */
+			$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$message_resource_manager->ensure_message_type_is_active( 'invoice', 'html' );
+			$message_resource_manager->ensure_messenger_is_active( 'pdf' );
 			EE_Error::add_attention(
 				sprintf(
 					__( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso' ),
