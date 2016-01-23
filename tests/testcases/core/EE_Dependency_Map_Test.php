@@ -31,38 +31,53 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 	protected function _expected_core_dependencies() {
 		return array(
-			'EE_Session' => array(
+			'EE_System'                         => array(
+				'EE_Registry',
+			),
+			'EE_Session'                        => array(
 				'EE_Encryption'
 			),
-			'EE_Cart' => array(
+			'EE_Cart'                           => array(
 				null,
 				'EE_Session',
 			),
-			'EE_Front_Controller' => array(
+			'EE_Front_Controller'               => array(
 				'EE_Registry',
 				'EE_Request_Handler',
 				'EE_Module_Request_Router',
 			),
-			'EE_Messenger_Collection_Loader' => array(
+			'EE_Messenger_Collection_Loader'    => array(
 				'EE_Messenger_Collection',
 			),
 			'EE_Message_Type_Collection_Loader' => array(
 				'EE_Message_Type_Collection',
 			),
-			'EE_Message_Resource_Manager' => array(
+			'EE_Message_Resource_Manager'       => array(
 				'EE_Messenger_Collection_Loader',
 				'EE_Message_Type_Collection_Loader',
 				'EEM_Message_Template_Group',
 			),
-			'EE_Message_Factory' => array(
+			'EE_Message_Factory'                => array(
 				'EE_Message_Resource_Manager',
 			),
-			'EE_Messages' => array(
+			'EE_Messages'                       => array(
 				'EE_Message_Resource_Manager',
 			),
-			'EE_messages' => array(
+			'EE_messages'                       => array(
 				'EE_Message_Resource_Manager',
-			)
+			),
+			'EE_Messages_Generator'             => array(
+				'EE_Messages_Queue',
+				null,
+				'EE_Messages_Queue',
+				'EE_Messages_Data_Handler_Collection',
+				'EE_Message_Template_Group_Collection',
+				'EEH_Parse_Shortcodes',
+			),
+			'EE_Messages_Queue'                 => array(
+				'EE_Message_Repository',
+				'EE_Message_Resource_Manager',
+			),
 		);
 	}
 
@@ -72,18 +87,26 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 	protected function _expected_core_class_loaders() {
 		return array(
 			//load_core
-			'EE_Encryption' => 'load_core',
-			'EE_Module_Request_Router' => 'load_core',
-			'EE_Registry' => 'load_core',
-			'EE_Request_Handler' => 'load_core',
-			'EE_Session' => 'load_core',
+			'EE_Encryption'                        => 'load_core',
+			'EE_Front_Controller'                  => 'load_core',
+			'EE_Module_Request_Router'             => 'load_core',
+			'EE_Registry'                          => 'load_core',
+			'EE_Request_Handler'                   => 'load_core',
+			'EE_Session'                           => 'load_core',
+			'EE_System'                            => 'load_core',
 			//load_lib
-			'EE_Message_Type_Collection' => 'load_lib',
-			'EE_Message_Resource_Manager' => 'load_lib',
-			'EE_Message_Type_Collection_Loader', 'load_lib',
-			'EE_Messenger_Collection' => 'load_lib',
-			'EE_Messenger_Collection_Loader' => 'load_lib',
-			'EEM_Message_Template_Group', 'load_lib'
+			'EE_Message_Resource_Manager'          => 'load_lib',
+			'EE_Message_Type_Collection'           => 'load_lib',
+			'EE_Message_Type_Collection_Loader'    => 'load_lib',
+			'EE_Messenger_Collection'              => 'load_lib',
+			'EE_Messenger_Collection_Loader'       => 'load_lib',
+			'EE_Messages_Queue'                    => 'load_lib',
+			'EE_Messages_Data_Handler_Collection'  => 'load_lib',
+			'EE_Message_Template_Group_Collection' => 'load_lib',
+			//load_model
+			'EEM_Message_Template_Group'           => 'load_model',
+			//load_helper
+			'EEH_Parse_Shortcodes'                 => 'load_lib',
 		);
 	}
 
