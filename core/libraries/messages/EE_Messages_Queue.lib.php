@@ -413,10 +413,11 @@ class EE_Messages_Queue {
 	 *
 	 * @param   bool $save                      Used to indicate whether to save the message queue after sending
 	 *                                          (default will save).
-	 * @param   EE_Messenger $sending_messenger ( optional ) When the sending messenger is different than
+	 * @param   mixed $sending_messenger 		(optional) When the sending messenger is different than
 	 *                                          what is on the EE_Message object in the queue.
 	 *                                          For instance, showing the browser view of an email message,
 	 *                                          or giving a pdf generated view of an html document.
+	 *                                     		This should be an instance of EE_Messenger
 	 * @param   bool|int $by_priority           When set, this indicates that only messages
 	 *                                          matching the given priority should be executed.
 	 *
@@ -424,7 +425,7 @@ class EE_Messages_Queue {
 	 *                    Also, if the messenger is an request type messenger (or a preview),
 	 * 					  its entirely possible that the messenger will exit before
 	 */
-	public function execute( $save = true, EE_Messenger $sending_messenger = null, $by_priority = false ) {
+	public function execute( $save = true, $sending_messenger = null, $by_priority = false ) {
 		$messages_sent = 0;
 		$this->_did_hook = array();
 		$this->_queue->rewind();
@@ -478,11 +479,11 @@ class EE_Messages_Queue {
 	/**
 	 * _process_message
 	 *
-	 * @param EE_Message    $message
-	 * @param \EE_Messenger $sending_messenger optional
+	 * @param EE_Message $message
+	 * @param mixed 	 $sending_messenger (optional)
 	 * @return bool
 	 */
-	protected function _process_message( EE_Message $message, EE_Messenger $sending_messenger = null ) {
+	protected function _process_message( EE_Message $message, $sending_messenger = null ) {
 		// these *should* have been validated in the execute() method above
 		$messenger = $message->messenger_object();
 		$message_type = $message->message_type_object();
