@@ -126,6 +126,9 @@ class EE_Dependency_Map {
 	 */
 	protected function _register_core_dependencies() {
 		self::$_dependency_map = array(
+			'EE_Request_Handler' => array(
+				'EE_Request',
+			),
 			'EE_System' => array(
 				'EE_Registry',
 			),
@@ -188,6 +191,7 @@ class EE_Dependency_Map {
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
+			'EE_Request'                   		   => 'load_core',
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
 			'EE_System'                            => 'load_core',
