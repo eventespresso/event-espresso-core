@@ -76,7 +76,7 @@ class EEH_Parse_Shortcodes {
 	/**
 	 * This kicks off the parsing of shortcodes in message templates
 	 *
-*@param  string                      $template         This is the incoming string to be parsed
+	 * @param  string $template This is the incoming string to be parsed
 	 * @param  EE_Messages_Addressee $data             This is the incoming data object
 	 * @param  array                 $valid_shortcodes An array of strings that correspond to EE_Shortcode libraries
 	 * @param EE_message_type        $message_type     The message type that called the parser
@@ -85,7 +85,8 @@ class EEH_Parse_Shortcodes {
 	 * @return string                   The parsed template string
 	 */
 	public function parse_message_template(
-		$template, EE_Messages_Addressee $data,
+		$template,
+		EE_Messages_Addressee $data,
 		$valid_shortcodes,
 		EE_message_type $message_type,
 		EE_Messenger $messenger,
@@ -251,8 +252,7 @@ class EEH_Parse_Shortcodes {
 			$ref = str_replace( ' ', '_', $ref );
 			$classname = 'EE_' . $ref . '_Shortcodes';
 			if ( class_exists( $classname ) ) {
-				$a = new ReflectionClass( $classname );
-				$this->_shortcode_objs[] = $a->newInstance();
+				$this->_shortcode_objs[] = new $classname;
 			}
 		}
 	}
