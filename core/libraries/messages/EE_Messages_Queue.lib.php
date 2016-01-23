@@ -30,11 +30,6 @@ class EE_Messages_Queue {
 	protected $_queue;
 
 	/**
-	 * @type EE_Message_Resource_Manager $_message_resource_manager
-	 */
-	protected $_message_resource_manager;
-
-	/**
 	 * Sets the limit of how many messages are generated per process.
 	 * @type int
 	 */
@@ -60,6 +55,14 @@ class EE_Messages_Queue {
 	 */
 	protected $_unsaved_count = 0;
 
+	/**
+	 * used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
+	 * hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
+	 *
+	 * @type array
+	 */
+	protected $_did_hook = array();
+
 
 
 	/**
@@ -67,16 +70,11 @@ class EE_Messages_Queue {
 	 * Setup all the initial properties and load a EE_Message_Repository.
 	 *
 	 * @param \EE_Message_Repository       $message_repository
-	 * @param \EE_Message_Resource_Manager $message_resource_manager
 	 */
-	public function __construct(
-		EE_Message_Repository $message_repository,
-		EE_Message_Resource_Manager $message_resource_manager
-	) {
+	public function __construct( EE_Message_Repository $message_repository ) {
 		$this->_batch_count = apply_filters( 'FHEE__EE_Messages_Queue___batch_count', 50 );
 		$this->_rate_limit = $this->get_rate_limit();
 		$this->_queue = $message_repository;
-		$this->_message_resource_manager = $message_resource_manager;
 	}
 
 
@@ -170,12 +168,9 @@ class EE_Messages_Queue {
 		//lock batch generation to prevent race conditions.
 		$this->lock_queue( EE_Messages_Queue::action_generating );
 
-		$where_conditions = array(
-			'STS_ID' => EEM_Message::status_incomplete
-		);
-
 		$query_args = array(
-			0 => $where_conditions,
+			// key 0 = where conditions
+			0 => array( 'STS_ID' => EEM_Message::status_incomplete ),
 			'order_by' => $this->_get_priority_orderby(),
 			'limit' => $this->_batch_count
 		);
@@ -219,12 +214,9 @@ class EE_Messages_Queue {
 
 		$batch = $this->_batch_count < $this->_rate_limit ? $this->_batch_count : $this->_rate_limit;
 
-		$where = array(
-			'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_to_send() )
-		);
-
 		$query_args = array(
-			0 => $where,
+			// key 0 = where conditions
+			0 => array( 'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_to_send() ) ),
 			'order_by' => $this->_get_priority_orderby(),
 			'limit' => $batch
 		);
@@ -403,9 +395,11 @@ class EE_Messages_Queue {
 	 */
 	public function initiate_request_by_priority( $task = 'generate', $priority = EEM_Message::priority_high ) {
 		//determine what status is matched with the priority as part of the trigger conditions.
-		$status = $task == 'generate' ? EEM_Message::status_incomplete : EEM_Message::instance()->stati_indicating_to_send();
-		//always make sure we save because either this will get executed immediately on a separate request or remains in the
-		//queue for the regularly scheduled queue batch.
+		$status = $task == 'generate'
+			? EEM_Message::status_incomplete
+			: EEM_Message::instance()->stati_indicating_to_send();
+		// always make sure we save because either this will get executed immediately on a separate request
+		// or remains in the queue for the regularly scheduled queue batch.
 		$this->save();
 		if ( $this->_queue->count_by_priority_and_status( $priority, $status ) ) {
 			EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( $task );
@@ -413,95 +407,109 @@ class EE_Messages_Queue {
 	}
 
 
+
 	/**
 	 *  Loops through the EE_Message objects in the _queue and calls the messenger send methods for each message.
 	 *
-	 * @param   bool     $save              Used to indicate whether to save the message queue after sending (default will save).
-	 * @param   string   $sending_messenger_slug When the sending messenger is different than what is on the EE_Message object in the queue
-	 *                                      (for instance showing the browser view of an email message, or giving a pdf generated
-	 *                                      view of an html document.
-	 * @param   bool|int $by_priority       When set, this indicates that only messages matching the given priority should be executed.
+	 * @param   bool $save                      Used to indicate whether to save the message queue after sending
+	 *                                          (default will save).
+	 * @param   EE_Messenger $sending_messenger ( optional ) When the sending messenger is different than
+	 *                                          what is on the EE_Message object in the queue.
+	 *                                          For instance, showing the browser view of an email message,
+	 *                                          or giving a pdf generated view of an html document.
+	 * @param   bool|int $by_priority           When set, this indicates that only messages
+	 *                                          matching the given priority should be executed.
 	 *
-	 * @return int Number of messages sent.  Note, 0 does not mean that no messages were processed.  Also, if the messenger
-	 *                  is an request type messenger (or a preview), its entirely possible that the messenger will exit before
+	 * @return int        Number of messages sent.  Note, 0 does not mean that no messages were processed.
+	 *                    Also, if the messenger is an request type messenger (or a preview),
+	 * 					  its entirely possible that the messenger will exit before
 	 */
-	public function execute( $save = true, $sending_messenger_slug = '', $by_priority = false ) {
+	public function execute( $save = true, EE_Messenger $sending_messenger = null, $by_priority = false ) {
 		$messages_sent = 0;
-		// used to record if a do_messenger_hooks has already been called for a message type.  This prevents multiple
-		// hooks getting fired if users have setup their action/filter hooks to prevent duplicate calls.
-		$did_hook = array();
+		$this->_did_hook = array();
 		$this->_queue->rewind();
 		while ( $this->_queue->valid() ) {
+			$error_messages = array();
 			/** @type EE_Message $message */
 			$message = $this->_queue->current();
 			//if the message in the queue has a sent status, then skip
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
 			}
-
 			//if $by_priority is set and does not match then continue;
 			if ( $by_priority && $by_priority != $message->priority() ) {
 				continue;
 			}
-
-			$error_messages = array();
-			//todo: add sending_messenger property to EE_Message so that EE_Message_Resource_Manager is not required
-			$sending_messenger = $sending_messenger_slug
-				? $this->_message_resource_manager->get_active_messenger( $sending_messenger_slug )
-				: '';
-			$messenger = $message->messenger_object();
-			$message_type = $message->message_type_object();
-
 			//error checking
-			if ( ! $messenger instanceof EE_Messenger ) {
-				$error_messages[] = sprintf( __( 'The %s messenger is not active at time of sending.', 'event_espresso' ), $message->messenger() );
+			if ( ! $message->valid_messenger() ) {
+				$error_messages[] = sprintf(
+					__( 'The %s messenger is not active at time of sending.', 'event_espresso' ),
+					$message->messenger()
+				);
 			}
-
-			if ( $sending_messenger_slug && ! $sending_messenger instanceof EE_Messenger ) {
-				$error_messages[] = sprintf( __( 'There was a specific sending messenger requested for the send action.  However, the %s messenger is not active at time of sending.', 'event_espresso' ), $sending_messenger_slug );
+			if ( ! $message->valid_message_type() ) {
+				$error_messages[] = sprintf(
+					__( 'The %s message type is not active at the time of sending.', 'event_espresso' ),
+					$message->message_type()
+				);
 			}
-
-			if ( ! $message_type instanceof EE_message_type ) {
-				$error_messages[] = sprintf( __( 'The %s message type is not active at the time of sending.', 'event_espresso' ), $message->message_type() );
+			// if there was supposed to be a sending messenger for this message, but it was invalid/inactive,
+			// then it will instead be an EE_Error object, so let's check for that
+			if ( $sending_messenger instanceof EE_Error ) {
+				$error_messages[] = $sending_messenger->getMessage();
 			}
-
-			//do actions for sending messenger if it differs from generating messenger and swap values.
-			if ( $sending_messenger_slug
-			     && $sending_messenger instanceof EE_Messenger
-			     && $messenger instanceof EE_Messenger ) {
-				if ( $sending_messenger_slug != $messenger->name) {
-					$messenger->do_secondary_messenger_hooks( $sending_messenger->name );
-					$messenger = $sending_messenger;
-				}
-			}
-
-			//send using messenger
-			if ( $messenger instanceof EE_Messenger && $message_type instanceof $message_type ) {
-
-				//set hook for message type (but only if not using another messenger to send).
-				if ( ! isset( $did_hook[$message_type->name] ) ) {
-					$message_type->do_messenger_hooks( $messenger );
-					$did_hook[$message_type->name] = 1;
-				}
-
-				//if preview then use preview method
-				$success = $this->_queue->is_preview() ? $this->_do_preview( $message, $messenger, $message_type, $this->_queue->is_test_send() ) : $this->_do_send( $message, $messenger, $message_type );
-
-				if ( $success ) {
-					$messages_sent++;
-				}
+			// if there are no errors, then let's process the message
+			if ( empty( $error_messages ) && $this->_process_message( $message, $sending_messenger ) ) {
+				$messages_sent++;
 			}
 			$this->_set_error_message( $message, $error_messages );
 			//add modified time
 			$message->set_modified( time() );
 			$this->_queue->next();
 		}
-
 		if ( $save ) {
 			$this->save();
 		}
 		return $messages_sent;
 	}
+
+
+
+	/**
+	 * _process_message
+	 *
+	 * @param EE_Message    $message
+	 * @param \EE_Messenger $sending_messenger optional
+	 * @return bool
+	 */
+	protected function _process_message( EE_Message $message, EE_Messenger $sending_messenger = null ) {
+		// these *should* have been validated in the execute() method above
+		$messenger = $message->messenger_object();
+		$message_type = $message->message_type_object();
+		//do actions for sending messenger if it differs from generating messenger and swap values.
+		if (
+			$sending_messenger instanceof EE_Messenger
+			&& $messenger instanceof EE_Messenger
+			&& $sending_messenger->name != $messenger->name
+		) {
+			$messenger->do_secondary_messenger_hooks( $sending_messenger->name );
+			$messenger = $sending_messenger;
+		}
+		// send using messenger, but double check objects
+		if ( $messenger instanceof EE_Messenger && $message_type instanceof EE_Message_Type ) {
+			//set hook for message type (but only if not using another messenger to send).
+			if ( ! isset( $this->_did_hook[ $message_type->name ] ) ) {
+				$message_type->do_messenger_hooks( $messenger );
+				$this->_did_hook[ $message_type->name ] = 1;
+			}
+			//if preview then use preview method
+			return $this->_queue->is_preview()
+				? $this->_do_preview( $message, $messenger, $message_type, $this->_queue->is_test_send() )
+				: $this->_do_send( $message, $messenger, $message_type );
+		}
+		return false;
+	}
+
 
 
 	/**
