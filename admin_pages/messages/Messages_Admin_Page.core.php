@@ -95,8 +95,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param bool $routing
 	 */
 	public function __construct( $routing = true ) {
-		//make sure MSG Template helper is loaded.
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		//make sure messages autoloader is running
 		EED_Messages::set_autoloaders();
 		parent::__construct( $routing );
