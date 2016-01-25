@@ -743,7 +743,7 @@ class EE_Registry {
 	 * @return bool
 	 */
 	protected function _array_is_numerically_and_sequentially_indexed( array $array ) {
-		return array_keys( $array ) === range( 0, count( $array ) - 1 );
+		return ! empty( $array ) ? array_keys( $array ) === range( 0, count( $array ) - 1 ) : true;
 	}
 
 
@@ -807,19 +807,24 @@ class EE_Registry {
 			$param_class = $param->getClass() ? $param->getClass()->name : null;
 			if (
 				// param is not even a class
-				$param_class === null ||
-				(
-					// something already exists in the incoming arguments for this param
-					isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
-					// AND it's the correct class
-					&& $arguments[ $argument_keys[ $index ] ] instanceof $param_class
-				)
-
+				empty( $param_class )
+				// and something already exists in the incoming arguments for this param
+				&& isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
 			) {
 				// so let's skip this argument and move on to the next
 				continue;
 			} else if (
-				isset( $this->_auto_resolve_dependencies[ $class_name ] )
+				// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+				! empty( $param_class )
+				&& isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
+				&& $arguments[ $argument_keys[ $index ] ] instanceof $param_class
+			) {
+				// skip this argument and move on to the next
+				continue;
+			} else if (
+				// parameter is type hinted as a class, and should be injected
+				! empty( $param_class )
+				&& isset( $this->_auto_resolve_dependencies[ $class_name ] )
 				&& in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] )
 			) {
 				// we might have a dependency... let's try and find it in our cache
@@ -839,10 +844,14 @@ class EE_Registry {
 				// did we successfully find the correct dependency ?
 				if ( $dependency instanceof $param_class ) {
 					// then let's inject it into the incoming array of arguments at the correct location
-					array_splice( $arguments, $index, 1, array( $dependency ) );
+					if ( isset( $argument_keys[ $index ] ) ) {
+						$arguments[ $argument_keys[ $index ] ] = $dependency;
+					} else {
+						$arguments[ $index ] = $dependency;
+					}
 				}
 			} else {
-				$arguments[ $index ] = null;
+				$arguments[ $index ] = $param->getDefaultValue();
 			}
 
 		}
