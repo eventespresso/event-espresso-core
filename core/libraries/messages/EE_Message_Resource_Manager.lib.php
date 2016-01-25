@@ -673,7 +673,10 @@ class EE_Message_Resource_Manager {
 			foreach ( $message_type_names as $message_type_name ) {
 				//EEH_Debug_Tools::printr( $message_type_name, '$message_type_name', __FILE__, __LINE__ );
 				//only register the message type as active IF it isn't already active!
-				if ( ! $this->is_message_type_active_for_messenger( $messenger->name, $message_type_name ) ) {
+				//and if its actually installed.
+				if (
+					! $this->is_message_type_active_for_messenger( $messenger->name, $message_type_name )
+				) {
 					$this->_add_settings_for_message_type( $messenger, $message_type_name );
 					$this->_set_messenger_has_activated_message_type(
 						$messenger,
