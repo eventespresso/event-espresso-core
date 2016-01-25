@@ -1454,22 +1454,33 @@ class EEH_Activation {
 
 
 	/**
-	 * This simply validates active messengers and message types to ensure they actually match installed messengers and
-	 * message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db
+	 * This simply validates active message types to ensure they actually match installed
+	 * message types.  If there's a mismatch then we deactivate the message type and ensure all related db
 	 * rows are set inactive.
+	 *
+	 * Note: Messengers are no longer validated here as of 4.9.0 because they get validated automatically whenever
+	 * EE_Messenger_Resource_Manager is constructed.  Message Types are a bit more resource heavy for validation so they
+	 * are still handled in here.
 	 *
 	 * @since 4.3.1
 	 *
 	 * @return void
 	 */
 	public static function validate_messages_system() {
-		// ********************************************************
-		// as soon as EE_Message_Resource_Manager is instantiated,
-		// it runs _set_active_messengers_and_message_types()
-		// which effectively accomplishes the same thing
-		// as the previous code in this method did.
-		// leaving method just for the following action.
-		// ********************************************************
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+
+		$list_of_active_message_type_names = $message_resource_manager->list_of_active_message_types();
+		$installed_message_types = $message_resource_manager->installed_message_types();
+
+		//loop through list of active message types and verify they are installed.
+		foreach( $list_of_active_message_type_names as $message_type_name ) {
+			if ( ! isset( $installed_message_types[$message_type_name] ) ) {
+				$message_resource_manager->deactivate_message_type( $message_type_name );
+			}
+		}
+
 		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
