@@ -863,6 +863,31 @@ class EE_Message_Resource_Manager {
 	}
 
 
+
+
+	/**
+	 * This checks the internal record of what message types are considered "active" and verifies that
+	 * there is an installed class definition for that message type.  If the active message type does not have a corresponding
+	 * accessible message type class then it will be deactivated from all messengers it is active on and any related
+	 * message templates will be inactivated as well.
+	 *
+	 * @return bool   true means all active message types are valid, false means at least one message type was deactivated.
+	 */
+	public function validate_active_message_types_are_installed() {
+		$list_of_active_message_type_names = $this->list_of_active_message_types();
+		$installed_message_types = $this->installed_message_types();
+		$all_message_types_valid = true;
+		//loop through list of active message types and verify they are installed.
+		foreach( $list_of_active_message_type_names as $message_type_name ) {
+			if ( ! isset( $installed_message_types[$message_type_name] ) ) {
+				$this->deactivate_message_type( $message_type_name );
+				$all_message_types_valid = false;
+			}
+		}
+		return $all_message_types_valid;
+	}
+
+
 }
 // End of file EE_Message_Resource_Manager.lib.php
 // Location: /EE_Message_Resource_Manager.lib.php

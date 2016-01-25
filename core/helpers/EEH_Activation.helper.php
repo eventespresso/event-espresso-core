@@ -1470,17 +1470,7 @@ class EEH_Activation {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-
-		$list_of_active_message_type_names = $message_resource_manager->list_of_active_message_types();
-		$installed_message_types = $message_resource_manager->installed_message_types();
-
-		//loop through list of active message types and verify they are installed.
-		foreach( $list_of_active_message_type_names as $message_type_name ) {
-			if ( ! isset( $installed_message_types[$message_type_name] ) ) {
-				$message_resource_manager->deactivate_message_type( $message_type_name );
-			}
-		}
-
+		$message_resource_manager->validate_active_message_types_are_installed();
 		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
