@@ -677,18 +677,27 @@ class EE_Registry {
 	 */
 	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = false ) {
 		$class_obj = null;
-		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) && empty( $arguments ) ? true : $resolve_dependencies;
+		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) && empty( $arguments )
+			? true
+			: $resolve_dependencies;
 		// don't give up! you gotta...
 		try {
 			// create reflection
 			$reflector = $this->get_ReflectionClass( $class_name );
 			// make sure arguments are an array
 			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
-			// and if arguments array is NOT numerically indexed, then we want it to stay as an array,
-			// so wrap it in an additional array so that it doesn't get split into multiple parameters
-			$arguments = isset( $arguments[ 0 ] ) ? $arguments : array( $arguments );
+			// and if arguments array is numerically and sequentially indexed, then we want it to remain as is,
+			// else wrap it in an additional array so that it doesn't get split into multiple parameters
+			$arguments = $this->_array_is_numerically_and_sequentially_indexed( $arguments )
+				? $arguments
+				: array( $arguments );
 			// attempt to inject dependencies ?
-			if ( $resolve_dependencies && ! $from_db && ! $load_only && ! $reflector->isSubclassOf( 'EE_Base_Class' ) ) {
+			if (
+				$resolve_dependencies
+				&& ! $from_db
+				&& ! $load_only
+				&& ! $reflector->isSubclassOf( 'EE_Base_Class' )
+			) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
 			// instantiate the class and add to the LIB array for tracking
@@ -724,6 +733,17 @@ class EE_Registry {
 			$e->get_error();
 		}
 		return $class_obj;
+	}
+
+
+
+	/**
+	 * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+	 * @param array $array
+	 * @return bool
+	 */
+	protected function _array_is_numerically_and_sequentially_indexed( array $array ) {
+		return array_keys( $array ) === range( 0, count( $array ) - 1 );
 	}
 
 
