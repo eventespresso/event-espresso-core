@@ -483,6 +483,55 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 	/**
+	 * test_array_is_numerically_and_sequentially_indexed
+	 *
+	 * @author    Brent Christensen
+	 */
+	public function test_array_is_numerically_and_sequentially_indexed() {
+		// empty arrays should return true
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed( array() )
+		);
+		// should also be fine
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( array() )
+			)
+		);
+		// beauty eh?
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( 'a', 'b', 'c' )
+			)
+		);
+		// numeric "string" keys will get typecast as integers
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( "0" => 'a', "1" => 'b', "2" => 'c' )
+			)
+		);
+		// arrays that are not zero-indexed should return false
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( 1 => 'a', 2 => 'b', 3 => 'c' )
+			)
+		);
+		// out of order
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( "1" => 'a', "0" => 'b', "2" => 'c' )
+			)
+		);
+		// oh come on now!!! Not even close !
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( "a" => 'a', "b" => 'b', "c" => 'c' )
+			)
+		);
+	}
+
+
+	/**
 	 * checks that type hinted classes in constructors are properly instantiated and passed
 	 * without negatively affecting other constructor parameters
 	 *
@@ -546,6 +595,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
 		$this->assertEquals( 2, $class->integer_property() );
 	}
+
 
 
 }
