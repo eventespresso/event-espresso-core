@@ -584,7 +584,7 @@ class EE_Message_Resource_Manager {
 	 * @param bool   $update_option       Whether to persist the activation to the database or not (default true).
 	 * @return array
 	 */
-	public function ensure_message_types_are_active( $message_type_names, $messenger_name, $update_option = true, $verify = false ) {
+	public function ensure_message_types_are_active( $message_type_names, $messenger_name, $update_option = true ) {
 		$message_type_names = (array) $message_type_names;
 		foreach ( $message_type_names as $message_type_name ) {
 			// note, intentionally not updating option here because we're in a loop.
