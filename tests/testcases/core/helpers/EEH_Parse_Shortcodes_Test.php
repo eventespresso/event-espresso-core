@@ -71,15 +71,15 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 
 
-
 	/**
 	 * This grabs an EE_Messages_Addressee object for the Preview data handler.
 	 *
-	 * @return EE_Messages_Addressee
+	 * @param string $context
+	 * @return \EE_Messages_Addressee
 	 */
 	protected function _get_addressee( $context = 'primary_attendee' ) {
+		$aee = array();
 		$data = new EE_Messages_Preview_incoming_data( array( 'event_ids' => array( $this->_event->ID() ) ) );
-
 		/**
 		 * @see EE_message_type::_set_defautl_addressee_data()
 		 */
@@ -101,7 +101,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 			'answers' => $data->answers,
 			'txn_status' => $data->txn_status,
 			'total_ticket_count' => $data->total_ticket_count
-			);
+		);
 
 		if ( is_array( $data->primary_attendee_data ) ) {
 			$addressee_data = array_merge( $addressee_data, $data->primary_attendee_data );
@@ -118,7 +118,6 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 				$aee = $addressee_data;
 				$aee['events'] = $data->events;
 				$aee['attendees'] = $data->attendees;
-				return new EE_Messages_Addressee( $aee );
 				break;
 			case 'attendee' :
 				//for the purpose of testing we're just going to do ONE attendee
@@ -133,16 +132,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 				}
 				$aee['reg_obj'] = array_shift( $attendee['reg_objs'] );
 				$aee['attendees'] = $data->attendees;
-				return new EE_Messages_Addressee( $aee );
 				break;
 			case 'admin' :
 				//for the purpose of testing we're only setting up for the event we have active for testing.
 				$aee['user_id'] = $this->_event->get( 'EVT_wp_user' );
 				$aee['events'] = $data->events;
 				$aee['attendees'] = $data->attendees;
-				return new EE_Messages_Addressee( $aee );
 		}
-
+		return new EE_Messages_Addressee( $aee );
 	}
 
 
