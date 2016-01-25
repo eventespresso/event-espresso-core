@@ -478,15 +478,14 @@ class EE_Message_Resource_Manager {
 		//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		// list of activated messengers as set via the admin
 		// note calling `get_active_messengers_options` also initializes the _active_message_types property.
-		$active_messengers = $this->get_active_messengers_option( true );
+		$this->get_active_messengers_option( true );
 		$this->ensure_messengers_are_active( array(), false, true );
-		$this->validate_active_message_types();
 		$this->update_active_messengers_option();
 		$this->update_has_activated_messengers_option();
 	}
 
 
-	
+
 
 
 
