@@ -116,6 +116,17 @@ class EE_Registry_Mock extends EE_Registry {
 		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
 	}
 
+
+
+	/**
+	 * @access public
+	 * @param array $array
+	 * @return bool
+	 */
+	public function array_is_numerically_and_sequentially_indexed( array $array ) {
+		return $this->_array_is_numerically_and_sequentially_indexed( $array );
+	}
+
 }
 
 
