@@ -66,7 +66,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$this->assertFalse( $activated_response );
 
 		// double check we still don't have html in the active messengers array
-		$active_messengers = $message_resource_manager->get_active_messengers_option();
+		$active_messengers = $message_resource_manager->get_active_messengers_option( true );
 		$this->assertFalse( isset( $active_messengers['html'] ) );
 	}
 
@@ -120,7 +120,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		}
 
 		//all went well so let's make sure the activated system does NOT have our invalid message type string.
-		$active_messengers = $message_resource_manager->get_active_messengers_option();
+		$active_messengers = $message_resource_manager->get_active_messengers_option( true );
 		foreach( $active_messengers as $messenger => $settings ) {
 			$this->assertFalse(
 				isset( $settings[ 'settings' ][ $messenger . '-message_types' ][ 'bogus_message_type' ] ),
