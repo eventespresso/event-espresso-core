@@ -1471,7 +1471,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @return string json object
 	 */
 	public function switch_template_pack() {
 		$GRP_ID = ! empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
@@ -2711,7 +2710,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * used by ajax on the messages settings page to activate|deactivate the messenger
-	 * @return void
 	 */
 	public function activate_messenger_toggle() {
 		$success = true;
@@ -2766,8 +2764,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * used by ajax from the messages settings page to activate|deactivate a message type
 	 *
-	 * @access public
-	 * @return void
 	 */
 	public function activate_mt_toggle() {
 		$success = true;
@@ -2980,12 +2976,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * handles updating a message type form on messenger activation IF the message type has settings fields. (via ajax)
-	 * @return string html data
 	 */
 	public function update_mt_form() {
 		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) ) {
 			EE_Error::add_error( __('Require message type or messenger to send an updated form'), __FILE__, __FUNCTION__, __LINE__ );
-			return $this->_return_json();
+			$this->_return_json();
 		}
 
 		$message_types = $this->get_installed_message_types();
@@ -2996,7 +2991,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$content = $this->_message_type_settings_content ( $message_type, $messenger, true );
 		$this->_template_args['success'] = true;
 		$this->_template_args['content'] = $content;
-		return $this->_return_json();
+		$this->_return_json();
 	}
 
 
@@ -3005,7 +3000,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * this handles saving the settings for a messenger or message type
 	 *
-	 * @return string json success or fail message
 	 */
 	public function save_settings() {
 		if ( !isset( $this->_req_data['type'] ) ) {
@@ -3086,7 +3080,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_template_args['success'] = $success;
-		return $this->_return_json();
+		$this->_return_json();
 	}
 
 
