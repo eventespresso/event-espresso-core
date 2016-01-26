@@ -213,7 +213,9 @@ class EE_Dependency_Map {
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
-			'EE_Request'                   		   => 'load_core',
+			'EE_Request'                   		   => function () {
+				return new EE_Request( $_REQUEST );
+			},
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
 			'EE_System'                            => 'load_core',
