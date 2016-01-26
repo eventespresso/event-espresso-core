@@ -62,7 +62,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 					'FHEE__EEG_Mijireh__set_redirection_info__partial_amount_line_item_name',
 					sprintf(
 						__("Payment of %s for %s", 'event_espresso'),
-						$payment->amount(),
+						$this->format_currency($payment->amount()),
 						$primary_registrant->event_name()
 					),
 					$payment,
