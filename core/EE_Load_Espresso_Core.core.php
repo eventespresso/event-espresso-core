@@ -67,7 +67,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 		espresso_load_required( 'EEI_Payment_Method_Interfaces', EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php' );
 		//// WP cron jobs
 		EE_Registry::instance()->load_core( 'Cron_Tasks' );
-		EE_Registry::instance()->load_core( 'EE_Request_Handler', array( $request ) );
+		EE_Registry::instance()->load_core( 'EE_Request_Handler' );
 		EE_Registry::instance()->load_core( 'EE_System' );
 
 		return $this->response;
@@ -84,7 +84,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	private function _load_dependency_map() {
 		if ( is_readable( EE_CORE . 'EE_Dependency_Map.core.php' ) ) {
 			require_once( EE_CORE . 'EE_Dependency_Map.core.php' );
-			EE_Dependency_Map::instance();
+			EE_Dependency_Map::instance( $this->request, $this->response );
 		} else {
 			EE_Error::add_error(
 				__( 'The EE_Dependency_Map core class could not be loaded.', 'event_espresso' ),
@@ -105,7 +105,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	private function _load_registry() {
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
-			EE_Registry::instance();
+			EE_Registry::instance( $this->request, $this->response );
 		} else {
 			EE_Error::add_error(
 				__( 'The EE_Registry core class could not be loaded.', 'event_espresso' ),
