@@ -117,6 +117,27 @@ class Base {
 		$rest_response->set_headers( $headers );
 		return $rest_response;
 	}
+	
+	/**
+	 * Finds which version of the API was requested given the route, and returns it.
+	 * eg in a request to "mysite.com/wp-json/ee/v4.8.29/events/123" this would return
+	 * "4.8.29"
+	 * @param string $route 
+	 * @return string
+	 */
+	public function get_requested_version( $route ) {
+		$matches = $this->parse_route(
+			$route,
+			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex,
+			array( 'version' )
+			);
+		if( isset( $matches[ 'version' ] ) ) {
+			return $matches[ 'version' ];
+		} else {
+			return \EED_Core_Rest_Api::latest_rest_api_version();
+		}
+		
+	}
 
 
 
