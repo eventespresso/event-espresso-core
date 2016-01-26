@@ -60,7 +60,7 @@ class EE_Message_Type_Collection_Loader {
 	 * globs the supplied filepath and adds any found
 	 *
 	 * @param  string $folder
-	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function load_message_types_from_folder( $folder = '' ) {
 		//make sure autoloaders are set (fail-safe)
@@ -80,6 +80,14 @@ class EE_Message_Type_Collection_Loader {
 			$file_path = basename( $file_path );
 			// now remove any file extensions
 			$message_type_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
+			if ( ! class_exists( $message_type_class_name ) ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'The "%1$s" message type class is either invalid or not installed', 'event_espresso' ),
+						$message_type_class_name
+					)
+				);
+			}
 			$message_type = new $message_type_class_name();
 			if ( $this->message_type_collection()->has_by_name( $message_type->name ) ) {
 				continue;
