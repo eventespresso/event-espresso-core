@@ -441,20 +441,10 @@ class EE_Messages_Queue {
 			if ( $by_priority && $by_priority != $message->priority() ) {
 				continue;
 			}
-
-			// if there was supposed to be a sending messenger for this message, but it was invalid/inactive,
-			// then it will instead be an EE_Error object, so let's check for that
-			if ( $sending_messenger instanceof EE_Error ) {
-				$error_messages[] = $sending_messenger->getMessage();
-			}
-
-			$sending_messenger = $sending_messenger instanceof EE_Messenger ? $sending_messenger : $message->messenger_object();
-
 			//error checking
-			if ( ! $sending_messenger instanceof EE_Messenger ) {
-				//note this message should only throw an error if the messenger on the EE_message object is being used and its not valid.
+			if ( ! $message->valid_messenger() ) {
 				$error_messages[] = sprintf(
-					__( 'The %s messenger being used for sending is not active at time of sending.', 'event_espresso' ),
+					__( 'The %s messenger is not active at time of sending.', 'event_espresso' ),
 					$message->messenger()
 				);
 			}
@@ -464,7 +454,11 @@ class EE_Messages_Queue {
 					$message->message_type()
 				);
 			}
-
+			// if there was supposed to be a sending messenger for this message, but it was invalid/inactive,
+			// then it will instead be an EE_Error object, so let's check for that
+			if ( $sending_messenger instanceof EE_Error ) {
+				$error_messages[] = $sending_messenger->getMessage();
+			}
 			// if there are no errors, then let's process the message
 			if ( empty( $error_messages ) && $this->_process_message( $message, $sending_messenger ) ) {
 				$messages_sent++;
