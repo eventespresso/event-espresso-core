@@ -108,7 +108,8 @@ class EED_Core_Rest_Api extends \EED_Module {
 			$routes = array_replace_recursive(
 				$instance->_register_config_routes(),
 				$instance->_register_meta_routes(),
-				$instance->_register_model_routes()
+				$instance->_register_model_routes(),
+				$instance->_register_rpc_routes()
 			);
 			update_option( self::saved_routes_option_names, $routes, true );
 		}
@@ -208,6 +209,40 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 
 		return $model_routes;
+	}
+	
+	/**
+	 * Adds all the RPC-style routes (remote procedure call-like routes, ie
+	 * routes that don't conform to the traditional REST CRUD-style).
+	 */
+	protected function _register_rpc_routes() {
+		$routes = array();
+		foreach( self::versions_served() as $version => $hidden_endpoint ) {
+			$ee_namespace = self::ee_api_namespace . $version;
+			//checkin endpoint
+			$routes[ $ee_namespace ][ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkin' ] = array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
+						'handle_checkin' ),
+					'methods' => WP_REST_Server::CREATABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+					'args' => array()
+				)
+			);
+			//checkout endpoint
+			$routes[ $ee_namespace ][ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkout' ] = array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
+						'handle_checkout' ),
+					'methods' => WP_REST_Server::CREATABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+					'args' => array()
+				)
+			);
+		}
+		return $routes;
 	}
 	
 	/**
@@ -334,7 +369,24 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function version_compatibilities() {
-		return apply_filters( 'FHEE__EED_Core_REST_API__version_compatibilities', array( '4.8.29' => '4.8.29' ) );
+		return apply_filters( 
+			'FHEE__EED_Core_REST_API__version_compatibilities', 
+			array( 
+				'4.8.29' => '4.8.29',
+				'4.8.32' => '4.8.29' 
+			) 
+		);
+	}
+	
+	/**
+	 * Gets the latest API version served. Eg if there 
+	 * are two versions served of the API, 4.8.29 and 4.8.32, and
+	 * we are on core version 4.8.34, it will return the string "4.8.32"
+	 * @return string
+	 */
+	public static function latest_rest_api_version() {
+		$versions_served = \EED_Core_Rest_Api::versions_served();
+		return end( array_keys( $versions_served ) );
 	}
 
 	/**
