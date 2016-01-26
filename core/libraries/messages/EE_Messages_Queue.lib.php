@@ -417,7 +417,9 @@ class EE_Messages_Queue {
 	 *                                          what is on the EE_Message object in the queue.
 	 *                                          For instance, showing the browser view of an email message,
 	 *                                          or giving a pdf generated view of an html document.
-	 *                                     		This should be an instance of EE_Messenger
+	 *                                     		This should be an instance of EE_Messenger but if you call this method
+	 *                                          intending it to be a sending messenger but a valid one could not be retrieved
+	 *                                          then send in an instance of EE_Error that contains the related error message.
 	 * @param   bool|int $by_priority           When set, this indicates that only messages
 	 *                                          matching the given priority should be executed.
 	 *
