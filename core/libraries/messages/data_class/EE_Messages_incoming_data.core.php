@@ -332,9 +332,6 @@ abstract class EE_Messages_incoming_data {
 	 */
 	protected function _assemble_data() {
 
-		//$regchk = array_values($this->reg_objs);
-		//$regchk = array_shift($regchk);
-
 		//verify that reg_objs is set
 		if ( !is_array( $this->reg_objs) && ! reset( $this->reg_objs ) instanceof EE_Registration )
 			throw new EE_Error( __('In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso') );
@@ -344,7 +341,7 @@ abstract class EE_Messages_incoming_data {
 		$answers = $questions = $attendees = $line_items = $registrations = array();
 		$total_ticket_count = 0;
 
-		if ( !empty( $this->reg_objs ) ) {
+		if ( ! empty( $this->reg_objs ) ) {
 			$event_attendee_count = array();
 			foreach ( $this->reg_objs as $reg ) {
 				//account for filtered registrations by status.
