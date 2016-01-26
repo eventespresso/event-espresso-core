@@ -23,7 +23,7 @@ class EED_Messages  extends EED_Module {
 
 	/**
 	 * This holds the EE_Messages controller
-	 * @deprecated
+	 * @deprecated 4.9.0
 	 * @var EE_Messages $_EEMSG
 	 */
 	protected  static $_EEMSG;
