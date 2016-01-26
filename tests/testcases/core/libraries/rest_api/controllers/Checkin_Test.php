@@ -29,6 +29,15 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$this->assertEquals( $checkins_before + 1, \EEM_Checkin::instance()->count() );
 		$data = $response->get_data();
 		$this->assertTrue( isset( $data[ 'CHK_ID' ] ) );
+		$checkin_obj = \EEM_Checkin::instance()->get_one_by_ID( $data[ 'CHK_ID' ] );
+		$this->assertEquals( $reg->ID(), $checkin_obj->get( 'REG_ID' ) );
+		$this->assertEquals( $dtt->ID(), $checkin_obj->get( 'DTT_ID' ) );
+		$this->assertEquals( true, $data[ 'CHK_in' ] );
+		$this->assertDateWithinOneMinute( 
+			mysql_to_rfc3339(date( 'c' ) ),
+			$data[ 'CHK_timestamp' ],
+			'Y-m-d\TH:m:i' 
+		);
 	}	
 }
 
