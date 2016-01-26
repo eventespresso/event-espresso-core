@@ -471,13 +471,15 @@ class EE_Messages_Processor {
 	 * objects from them, then returns the array of messages to generate objects.
 	 * Note, this sets up registrations for the registration family of message types.
 	 *
+	 * @param string $registration_ids_key  This is used to indicate what represents the registration ids in the request.
+	 *
 	 * @return EE_Message_To_Generate[]
 	 */
-	public function setup_messages_to_generate_from_registration_ids_in_request() {
+	public function setup_messages_to_generate_from_registration_ids_in_request( $registration_ids_key = '_REG_ID' ) {
 		EE_Registry::instance()->load_core( 'Request_Handler' );
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		$regs_to_send = array();
-		$regIDs = EE_Registry::instance()->REQ->get( '_REG_ID' );
+		$regIDs = EE_Registry::instance()->REQ->get( $registration_ids_key );
 		if ( empty( $regIDs ) ) {
 			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
