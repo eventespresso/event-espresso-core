@@ -128,7 +128,7 @@ class Base {
 	public function get_requested_version( $route ) {
 		$matches = $this->parse_route(
 			$route,
-			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex,
+			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
 			array( 'version' )
 			);
 		if( isset( $matches[ 'version' ] ) ) {

@@ -19,18 +19,18 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Checkin extends Base {
-	public static function check_in( $request ) {
+	public static function handle_checkin( $request ) {
 		$controller = new Checkin();
 		return $controller->_create_checkin_checkout_object( $request, true );
 	}
 	
-	public static function check_out( $request ) {
+	public static function handle_checkout( $request ) {
 		$controller = new Checkin();
 		return $controller->_create_checkin_checkout_object( $request, false );
 	}
 	
 	/**
-	 * 
+	 * Creates a row in the esp_checkin table given the reqest data.
 	 * @param \WP_REST_Request $request
 	 * @param type $in_or_out
 	 */
@@ -82,10 +82,15 @@ class Checkin extends Base {
 				)
 			);
 		}
-		$requested_version = $this->get_requested_version( $route );
+		$requested_version = $this->get_requested_version( $request->get_route() );
 		$get_request = new \WP_REST_Request( 
 			'GET', 
 			\EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/checkins/' . $checkin->ID() 
+		);
+		$get_request->set_url_params(
+			array(
+				'id' => $checkin->ID()
+			)
 		);
 		return Read::handle_request_get_one( $get_request );
 	}
