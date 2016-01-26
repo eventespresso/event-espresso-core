@@ -548,7 +548,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @throws \EE_Error
 	 */
 	public function send_now() {
-		$send_now = $this->valid_messenger() ? $this->messenger_object()->send_now() : $this->priority();
+		$send_now = $this->valid_messenger() && $this->messenger_object()->send_now() ? EEM_Message::priority_high : $this->priority();
 		return $send_now === EEM_Message::priority_high ? true : false;
 	}
 
