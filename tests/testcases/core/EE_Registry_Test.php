@@ -21,13 +21,19 @@ class EE_Registry_Test extends EE_UnitTestCase{
 			array( $this, 'unit_test_registry_class_abbreviations' )
 		);
 		add_filter(
-			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
-			array( $this, 'unit_test_auto_resolve_dependencies' )
-		);
-		add_filter(
 			'FHEE__EE_Registry__load_core__core_paths',
 			array( $this, 'unit_test_registry_core_paths' )
 		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Session_Mock',
+			array( 'EE_Encryption' => EE_Dependency_Map::load_from_cache )
+		);
+		EE_Dependency_Map::register_dependencies(
+			'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params',
+			array( 'EE_Session_Mock' => EE_Dependency_Map::load_from_cache )
+		);
+		EE_Dependency_Map::register_class_loader( 'EE_Session_Mock' );
+		EE_Dependency_Map::register_class_loader( 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' );
 		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.core.php';
 		parent::setUp();
 	}
@@ -37,16 +43,6 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	public function unit_test_registry_class_abbreviations( $class_abbreviations = array() ) {
 		$class_abbreviations[ 'EE_Session_Mock' ] = 'SSN';
 		return $class_abbreviations;
-	}
-
-
-
-	public function unit_test_auto_resolve_dependencies( $class_dependencies = array() ) {
-		$class_dependencies[ 'EE_Session_Mock' ] = array( 'EE_Encryption' );
-		$class_dependencies[ 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' ] = array(
-			null, 'EE_Session_Mock', null
-		);
-		return $class_dependencies;
 	}
 
 
