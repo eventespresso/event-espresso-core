@@ -205,6 +205,14 @@ class EE_Dependency_Map {
 	 * 		'Some_Class' => function () {
 	 * 			return new Some_Class();
 	 * 		},
+	 *
+	 * This is required for instantiating dependencies
+	 * where an interface has been type hinted in a class constructor. For example:
+	 *
+	 *        'Required_Interface' => function () {
+	 *            return new A_Class_That_Implements_Required_Interface();
+	 *        },
+	 *
 	 */
 	protected function _register_core_class_loaders() {
 		self::$_class_loaders = array(
