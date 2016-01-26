@@ -19,7 +19,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	/**
 	 * This messenger is used to send the generated message.
 	 *
-*@type EE_Messenger
+	 * @type EE_Messenger
 	 */
 	protected $_sending_messenger = '';
 
