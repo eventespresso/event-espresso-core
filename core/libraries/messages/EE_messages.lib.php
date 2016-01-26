@@ -637,6 +637,7 @@ class EE_Messages {
 	public function send_message_with_messenger_only( $messenger, $message_type, $message ) {
 		//setup for sending to new method.
 		/** @type EE_Messages_Queue $queue */
+		EE_Registry::instance()->skip_cache();
 		$queue = EE_Registry::instance()->load_lib( 'Messages_Queue' );
 		//make sure we have a proper message object
 		if ( ! $message instanceof EE_Message && is_object( $message ) && isset( $message->content ) ) {
