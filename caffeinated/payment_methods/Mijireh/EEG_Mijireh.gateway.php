@@ -105,6 +105,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			}
 			$order[ 'shipping_address' ] = $shipping_address;
 		}
+		$order = apply_filters( 'FHEE__EEG_Mijireh__set_redirection_info__order_arguments', $order, $payment, $primary_registrant );
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 		$args = array(
 			'headers' => array(
