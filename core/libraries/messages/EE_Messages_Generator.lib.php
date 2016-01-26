@@ -603,8 +603,6 @@ class EE_Messages_Generator {
 			? $this->_generation_queue->get_queue()->get_data_handler()
 			: 'EE_Messages_' .  $this->_current_message_type->get_data_handler( $generation_data ) . '_incoming_data';
 
-
-
 		//If this EE_Message is for a preview, then let's switch out to the preview data handler.
 		if ( $this->_generation_queue->get_queue()->is_preview() ) {
 			$data_handler_class_name  = 'EE_Messages_Preview_incoming_data';
@@ -613,8 +611,9 @@ class EE_Messages_Generator {
 		//First get the class name for the data handler (and also verifies it exists.
 		if ( ! class_exists( $data_handler_class_name ) ) {
 			$this->_error_msg[] = sprintf(
-				__('The included data handler class name does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso'),
-				$data_handler_class_name );
+				__( 'The included data handler class name does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.', 'event_espresso' ),
+				$data_handler_class_name
+			);
 			return false;
 		}
 
@@ -622,7 +621,7 @@ class EE_Messages_Generator {
 		$generation_data = $data_handler_class_name::convert_data_from_persistent_storage( $generation_data );
 
 		//note, this may set error messages as well.
-		$this->_set_data_handler( $generation_data, $data_handler_class_name  );
+		$this->_set_data_handler( $generation_data, $data_handler_class_name );
 
 		return empty( $this->_error_msg );
 	}
