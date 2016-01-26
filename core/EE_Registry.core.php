@@ -220,15 +220,6 @@ class EE_Registry {
 
 
 	/**
-	 * sets $skip_cache to true
-	 */
-	public function skip_cache() {
-		$this->_skip_cache = true;
-	}
-
-
-
-	/**
 	 *    init
 	 *
 	 * @access    public
@@ -296,10 +287,9 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: session
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @param bool $resolve_dependencies
 	 * @return mixed
 	 */
-	public function load_core( $class_name, $arguments = array(), $load_only = false, $resolve_dependencies = false ) {
+	public function load_core( $class_name, $arguments = array(), $load_only = false ) {
 		$core_paths = apply_filters(
 			'FHEE__EE_Registry__load_core__core_paths',
 			array(
@@ -312,7 +302,7 @@ class EE_Registry {
 			)
 		);
 		// retrieve instantiated class
-		return $this->_load( $core_paths, 'EE_', $class_name, 'core', $arguments, false, true, $load_only, $resolve_dependencies );
+		return $this->_load( $core_paths, 'EE_', $class_name, 'core', $arguments, false, true, $load_only );
 	}
 
 
@@ -334,7 +324,7 @@ class EE_Registry {
 			)
 		);
 		// retrieve instantiated class
-		return $this->_load( $service_paths, 'EE_', $class_name, 'class', $arguments, false, true, $load_only, true );
+		return $this->_load( $service_paths, 'EE_', $class_name, 'class', $arguments, false, true, $load_only );
 	}
 
 
@@ -511,7 +501,6 @@ class EE_Registry {
 	 * @param bool $from_db - some classes are instantiated from the db and thus call a different method to instantiate
 	 * @param bool $cache
 	 * @param bool $load_only
-	 * @param bool $resolve_dependencies
 	 * @return null|object
 	 * @internal param string $file_path - file path including file name
 	 */
@@ -523,8 +512,7 @@ class EE_Registry {
 		$arguments = array(),
 		$from_db = false,
 		$cache = true,
-		$load_only = false,
-		$resolve_dependencies = false
+		$load_only = false
 	) {
 		// strip php file extension
 		$class_name = str_replace( '.php', '', trim( $class_name ) );
@@ -547,7 +535,7 @@ class EE_Registry {
 		// load the file
 		$this->_require_file( $path, $class_name, $type, $file_paths );
 		// instantiate the requested object
-		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only, $resolve_dependencies );
+		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only );
 		// save it for later... kinda like gum  { : $
 		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
 		$this->_skip_cache = false;
@@ -690,7 +678,7 @@ class EE_Registry {
 	 * 	 	- model objects via their 'new_instance' method
 	 * 	 	- "singleton" classes" via their 'instance' method
 	 *  	- standard instantiable classes via their __constructor
-	 * Prior to instantiation, if the $resolve_dependencies flag is set to true,
+	 * Prior to instantiation, if the classname exists in the _auto_resolve_dependencies array,
 	 * then the constructor for the requested class will be examined to determine
 	 * if any dependencies exist, and if they can be injected.
 	 * If so, then those classes will be added to the array of arguments passed to the constructor
@@ -701,13 +689,11 @@ class EE_Registry {
 	 * @param string $type
 	 * @param bool $from_db
 	 * @param bool $load_only
-	 * @param bool $resolve_dependencies
 	 * @return null | object
 	 * @throws \EE_Error
 	 */
-	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false, $resolve_dependencies = true ) {
+	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false ) {
 		$class_obj = null;
-		$resolve_dependencies = isset( $this->_auto_resolve_dependencies[ $class_name ] ) /*&& empty( $arguments )*/ ? true : $resolve_dependencies;
 		// don't give up! you gotta...
 		try {
 			// create reflection
@@ -718,7 +704,12 @@ class EE_Registry {
 			// so wrap it in an additional array so that it doesn't get split into multiple parameters
 			$arguments = isset( $arguments[ 0 ] ) ? $arguments : array( $arguments );
 			// attempt to inject dependencies ?
-			if ( $resolve_dependencies && ! $from_db && ! $load_only && ! $reflector->isSubclassOf( 'EE_Base_Class' ) ) {
+			if (
+				! $from_db
+				&& ! $load_only
+				&& isset( $this->_auto_resolve_dependencies[ $class_name ] )
+				&& ! $reflector->isSubclassOf( 'EE_Base_Class' )
+			) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
 			// instantiate the class and add to the LIB array for tracking
@@ -830,9 +821,14 @@ class EE_Registry {
 				// so let's skip this argument and move on to the next
 				continue;
 			} else if (
-				isset( $this->_auto_resolve_dependencies[ $class_name ] )
-				&& in_array( $param_class, $this->_auto_resolve_dependencies[ $class_name ] )
+				isset(
+					$this->_auto_resolve_dependencies[ $class_name ],
+					$this->_auto_resolve_dependencies[ $class_name ][ $param_class ]
+				)
 			) {
+				$dependency_loading  = $this->_auto_resolve_dependencies[ $class_name ][ $param_class ];
+				// should dependency be loaded from cache ?
+				$this->_skip_cache = $dependency_loading === EE_Dependency_Map::load_from_cache ? true : false;
 				// we might have a dependency... let's MAYBE try and find it in our cache
 				$cached_class = ! $this->_skip_cache ? $this->_get_cached_class( $param_class ) : null;
 				$dependency = null;
@@ -843,8 +839,13 @@ class EE_Registry {
 					$loader = EE_Dependency_Map::class_loader( $param_class );
 					// grab current state for skip cache property
 					$skip_cache = $this->_skip_cache;
-					// or if not cached, then let's try and load it directly
-					$core_class = $this->$loader( $param_class );
+					// is loader a custom closure ?
+					if ( $loader instanceof Closure ) {
+						$core_class = $loader();
+					} else {
+						// if not, then let's try and load it via the registry
+						$core_class = $this->$loader( $param_class );
+					}
 					// reset skip cache so that it will work again for the next dependency
 					$this->_skip_cache = $skip_cache;
 					// as long as we aren't creating some recursive loading loop
