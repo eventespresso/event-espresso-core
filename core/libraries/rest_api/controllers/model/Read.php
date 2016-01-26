@@ -385,7 +385,7 @@ class Read extends Base {
 		if( $model instanceof \EEM_CPT_Base &&
 			$wp_rest_server instanceof \WP_REST_Server &&
 			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
-			$result[ '_links' ][ 'https://api.eventespresso.com/self_wp_post' ] = array(
+			$result[ '_links' ][ \EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post' ] = array(
 				array(
 					'href' => rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
 					'single' => true
@@ -410,7 +410,7 @@ class Read extends Base {
 		foreach( $relation_settings as $relation_name => $relation_obj ) {
 			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
 			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['_links']['https://api.eventespresso.com/' . $related_model_part] = array(
+				$result['_links'][ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
 					array(
 						'href' => $this->get_versioned_link_to(
 							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part

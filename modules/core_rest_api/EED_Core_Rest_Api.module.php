@@ -4,7 +4,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 
 /**
- * Class  EED_Core_REST_API
+ * Class  EED_Core_Rest_Api
  *
  * @package			Event Espresso
  * @subpackage		eea-rest-api
@@ -17,6 +17,11 @@ class EED_Core_Rest_Api extends \EED_Module {
 	const ee_api_namespace = 'ee/v';
 	const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 	const saved_routes_option_names = 'ee_core_routes';
+	/**
+	 * string used in _links response bodies to make them globally unique. 
+	 * @see http://v2.wp-api.org/extending/linking/
+	 */
+	const ee_api_link_namespace = 'https://api.eventespresso.com/';
 
 	/**
 	 * @return EED_Core_Rest_Api
@@ -52,9 +57,17 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 
 	public static function set_hooks_both() {
-		add_action( 'rest_api_init', array( 'EED_Core_REST_API', 'register_routes' ) );
-		add_filter( 'rest_route_data', array( 'EED_Core_REST_API', 'hide_old_endpoints' ), 10, 2 );
+		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'register_routes' ) );
+		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'set_rest_api_hooks' ) );
+		add_filter( 'rest_route_data', array( 'EED_Core_Rest_Api', 'hide_old_endpoints' ), 10, 2 );
 		add_filter( 'rest_index', array( 'EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index' ) );
+	}
+	
+	/**
+	 * sets up hooks which only need to be included as part of REST API requests;
+	 * other requests like to the frontend or admin etc don't need them
+	 */
+	public static function set_hooks_rest_api() {
 	}
 
 
@@ -390,7 +403,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	}
 
 	/**
-	 * Using EED_Core_REST_API::version_compatibilities(), determines what version of
+	 * Using EED_Core_Rest_Api::version_compatibilities(), determines what version of
 	 * EE the API can serve requests for. Eg, if we are on 4.15 of core, and
 	 * we can serve requests from 4.12 or later, this will return array( '4.12', '4.13', '4.14', '4.15' ).
 	 * We also indicate whether or not this version should be put in the index or not
@@ -443,5 +456,5 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 }
 
-// End of file EED_Core_REST_API.module.php
-// Location: /wp-content/plugins/eea-rest-api/EED_Core_REST_API.module.php
+// End of file EED_Core_Rest_Api.module.php
+// Location: /wp-content/plugins/eea-rest-api/EED_Core_Rest_Api.module.php
