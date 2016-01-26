@@ -81,14 +81,23 @@ class EE_Messenger_Collection_Loader {
 			$file_path = basename( $file_path );
 			// now remove any file extensions
 			$messenger_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
+
+
+			//first check to see if the class name represents an actual messenger class.
+			if ( strpos( 'messenger', strtolower( $messenger_class_name ) ) === false ) {
+				continue;
+			}
+
 			if ( ! class_exists( $messenger_class_name ) ) {
 				throw new EE_Error(
 					sprintf(
-						__( 'The "%1$s" messenger class is either invalid or not installed', 'event_espresso' ),
-						$messenger_class_name
+						__( 'The "%1$s" messenger class can\'t be loaded from %2$s.  Likely there is a typo in the class name or the file name.', 'event_espresso' ),
+						$messenger_class_name,
+						$file_path
 					)
 				);
 			}
+
 			$this->_load_messenger( new $messenger_class_name() );
 		}
 	}

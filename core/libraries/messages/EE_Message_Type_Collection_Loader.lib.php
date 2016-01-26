@@ -80,23 +80,40 @@ class EE_Message_Type_Collection_Loader {
 			$file_path = basename( $file_path );
 			// now remove any file extensions
 			$message_type_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
+
+			//if this class name doesn't represent a message type class, then we just skip.
+			if ( strpos( 'message_type', strtolower( $message_type_class_name ) ) === false ) {
+				continue;
+			}
+
 			if ( ! class_exists( $message_type_class_name ) ) {
 				throw new EE_Error(
 					sprintf(
-						__( 'The "%1$s" message type class is either invalid or not installed', 'event_espresso' ),
-						$message_type_class_name
+						__( 'The "%1$s" message type class can\'t be loaded from %2$s. Likely there is a typo in the class name or the file name.', 'event_espresso' ),
+						$message_type_class_name,
+						$file_path
 					)
 				);
 			}
-			$message_type = new $message_type_class_name();
-			if ( $this->message_type_collection()->has_by_name( $message_type->name ) ) {
-				continue;
-			}
-			$this->message_type_collection()->add(
-				$message_type,
-				$message_type->name
-			);
+
+			$this->_load_message_type( new $message_type_class_name );
 		}
+	}
+
+
+	/**
+	 * Loads the given message type into the message type collection if it doesn't already exist.
+	 * @param EE_Message_Type $message_type
+	 * @return bool
+	 */
+	protected function _load_message_type( EE_Message_Type $message_type ) {
+		if ( $this->message_type_collection()->has_by_name( $message_type->name ) ) {
+			return true;
+		}
+		return $this->message_type_collection()->add(
+			$message_type,
+			$message_type->name
+		);
 	}
 
 
