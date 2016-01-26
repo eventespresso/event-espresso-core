@@ -20,6 +20,18 @@ class EE_Dependency_Map {
 
 
 	/**
+	 * This instructs the loader to ALWAYS return a newly instantiated object for the requested class.
+	 */
+	const load_new_object = 1;
+
+	/**
+	 * This instructs the loader to return a previously instantiated and cached object for the requested class.
+	 * IF a previously instantiated object does not exist, a new one will be created and added to the cache.
+	 */
+	const load_from_cache = 2;
+
+
+	/**
 	 * @type EE_Dependency_Map $_instance
 	 */
 	protected static $_instance = null;
@@ -122,54 +134,57 @@ class EE_Dependency_Map {
 
 
 	/**
-	 * Registers the core dependencies
+	 * Registers the core dependencies and whether a previously instantiated object should be loaded from the cache,
+	 * if one exists, or whether a new object should be generated every time the requested class is loaded.
+	 * This is done by using the following class constants:
+	 *
+	 * 		EE_Dependency_Map::load_from_cache - loads previously instantiated object
+	 * 		EE_Dependency_Map::load_new_object - generates a new object every time
 	 */
 	protected function _register_core_dependencies() {
 		self::$_dependency_map = array(
 			'EE_Request_Handler' => array(
-				'EE_Request',
+				'EE_Request' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_System' => array(
-				'EE_Registry',
+				'EE_Registry' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Session' => array(
-				'EE_Encryption'
+				'EE_Encryption' => EE_Dependency_Map::load_from_cache
 			),
 			'EE_Cart' => array(
-				null,
-				'EE_Session',
+				'EE_Session' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Front_Controller' => array(
-				'EE_Registry',
-				'EE_Request_Handler',
-				'EE_Module_Request_Router',
+				'EE_Registry'              => EE_Dependency_Map::load_from_cache,
+				'EE_Request_Handler'       => EE_Dependency_Map::load_from_cache,
+				'EE_Module_Request_Router' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Messenger_Collection_Loader' => array(
-				'EE_Messenger_Collection',
+				'EE_Messenger_Collection' => EE_Dependency_Map::load_new_object,
 			),
 			'EE_Message_Type_Collection_Loader' => array(
-				'EE_Message_Type_Collection',
+				'EE_Message_Type_Collection' => EE_Dependency_Map::load_new_object,
 			),
 			'EE_Message_Resource_Manager' => array(
-				'EE_Messenger_Collection_Loader',
-				'EE_Message_Type_Collection_Loader',
-				'EEM_Message_Template_Group',
+				'EE_Messenger_Collection_Loader'    => EE_Dependency_Map::load_new_object,
+				'EE_Message_Type_Collection_Loader' => EE_Dependency_Map::load_new_object,
+				'EEM_Message_Template_Group'        => EE_Dependency_Map::load_new_object,
 			),
 			'EE_Message_Factory' => array(
-				'EE_Message_Resource_Manager',
+				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Messages' => array(
-				'EE_Message_Resource_Manager',
+				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Messages_Generator' => array(
-				'EE_Messages_Queue',
-				'EE_Messages_Queue',
-				'EE_Messages_Data_Handler_Collection',
-				'EE_Message_Template_Group_Collection',
-				'EEH_Parse_Shortcodes',
+				'EE_Messages_Queue'                    => EE_Dependency_Map::load_new_object,
+				'EE_Messages_Data_Handler_Collection'  => EE_Dependency_Map::load_new_object,
+				'EE_Message_Template_Group_Collection' => EE_Dependency_Map::load_new_object,
+				'EEH_Parse_Shortcodes'                 => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Messages_Queue' => array(
-				'EE_Message_Repository'
+				'EE_Message_Repository' => EE_Dependency_Map::load_new_object,
 			),
 		);
 	}
@@ -177,7 +192,19 @@ class EE_Dependency_Map {
 
 
 	/**
-	 * Registers the core class loaders.
+	 * Registers how core classes are loaded.
+	 *
+	 * This can either be done by simply providing the name of one of the EE_Registry loader methods such as:
+	 *
+	 * 		'EE_Request_Handler' => 'load_core'
+	 * 		'EE_Messages_Queue'  => 'load_lib'
+	 * 		'EEH_Debug_Tools'    => 'load_helper'
+	 *
+	 * or, if greater control is required, by providing a custom closure. For example:
+	 *
+	 * 		'Some_Class' => function () {
+	 * 			return new Some_Class();
+	 * 		},
 	 */
 	protected function _register_core_class_loaders() {
 		self::$_class_loaders = array(
@@ -202,7 +229,7 @@ class EE_Dependency_Map {
 			//load_model
 			'EEM_Message_Template_Group'           => 'load_model',
 			//load_helper
-			'EEH_Parse_Shortcodes'                 => 'load_lib',
+			'EEH_Parse_Shortcodes'                 => 'load_helper',
 		);
 	}
 
