@@ -29,16 +29,17 @@ class EE_Registry_Mock extends EE_Registry {
 
 	/**
 	 * @singleton method used to instantiate class object
-	 * @access public
-	 * @return EE_Registry_Mock instance
+	 * @access    public
+	 * @param \EE_Request  $request
+	 * @param \EE_Response $response
+	 * @return \EE_Registry_Mock instance
 	 */
-	public static function instance() {
+	public static function instance( EE_Request $request = null, EE_Response $response = null ) {
 		// check if class object is instantiated
 		if ( ! self::$_instance instanceof EE_Registry_Mock ) {
-			self::$_instance = new EE_Registry_Mock(
-				EE_Registry::instance()->load_core( 'Request' ),
-				EE_Registry::instance()->load_core( 'Response' )
-			);
+			$request = $request instanceof EE_Request ? $request : EE_Dependency_Map::request();
+			$response = $response instanceof EE_Response ? $response : EE_Dependency_Map::response();
+			self::$_instance = new EE_Registry_Mock( $request, $response );
 		}
 		return self::$_instance;
 	}
