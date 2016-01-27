@@ -82,7 +82,7 @@ class EE_Message_Type_Collection_Loader {
 			$message_type_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
 
 			//if this class name doesn't represent a message type class, then we just skip.
-			if ( strpos( 'message_type', strtolower( $message_type_class_name ) ) === false ) {
+			if ( strpos( strtolower( $message_type_class_name ), 'message_type' ) === false ) {
 				continue;
 			}
 

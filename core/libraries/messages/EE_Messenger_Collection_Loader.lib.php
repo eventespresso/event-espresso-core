@@ -82,9 +82,8 @@ class EE_Messenger_Collection_Loader {
 			// now remove any file extensions
 			$messenger_class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
 
-
 			//first check to see if the class name represents an actual messenger class.
-			if ( strpos( 'messenger', strtolower( $messenger_class_name ) ) === false ) {
+			if ( strpos( strtolower( $messenger_class_name ), 'messenger' ) === false ) {
 				continue;
 			}
 
