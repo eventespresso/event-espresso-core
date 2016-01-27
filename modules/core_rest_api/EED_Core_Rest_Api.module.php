@@ -57,8 +57,8 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 
 	public static function set_hooks_both() {
-		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'register_routes' ) );
-		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'set_rest_api_hooks' ) );
+		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'register_routes' ), 10 );
+		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'set_hooks_rest_api' ), 5 );
 		add_filter( 'rest_route_data', array( 'EED_Core_Rest_Api', 'hide_old_endpoints' ), 10, 2 );
 		add_filter( 'rest_index', array( 'EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index' ) );
 	}
@@ -68,9 +68,24 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * other requests like to the frontend or admin etc don't need them
 	 */
 	public static function set_hooks_rest_api() {
+		//set hooks which account for changes made to the API
+		EED_Core_Rest_Api::_set_hooks_for_changes();
 	}
-
-
+	
+	protected static function _set_hooks_for_changes() {
+		$folder_contents = EEH_File::get_contents_of_folders( array( EE_LIBRARIES . 'rest_api' . DS . 'changes' ), false );
+		foreach( $folder_contents as $classname_in_namespace => $filepath ) {
+			//ignore the base parent class
+			if( $classname_in_namespace === 'Changes_In_Base' ) {
+				continue;
+			}
+			$full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
+			$instance_of_class = new $full_classname;
+			$instance_of_class->set_hooks();
+		}
+	}
+	
+	
 	/**
 	 * Filters the WP routes to add our EE-related ones. This takes a bit of time
 	 * so we actually prefer to only do it when an EE plugin is activated or upgraded
@@ -118,11 +133,14 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function save_ee_routes() {
 		if( EE_Maintenance_Mode::instance()->models_can_query() ){
 			$instance = self::instance();
-			$routes = array_replace_recursive(
-				$instance->_register_config_routes(),
-				$instance->_register_meta_routes(),
-				$instance->_register_model_routes(),
-				$instance->_register_rpc_routes()
+			$routes = apply_filters( 
+				'EED_Core_Rest_Api__save_ee_routes__routes',
+				array_replace_recursive(
+					$instance->_register_config_routes(),
+					$instance->_register_meta_routes(),
+					$instance->_register_model_routes(),
+					$instance->_register_rpc_routes()
+				)
 			);
 			update_option( self::saved_routes_option_names, $routes, true );
 		}
@@ -232,8 +250,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		$routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
 			$ee_namespace = self::ee_api_namespace . $version;
+			$this_versions_routes = array();
 			//checkin endpoint
-			$routes[ $ee_namespace ][ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkin' ] = array(
+			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkin' ] = array(
 				array(
 					'callback' => array(
 						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
@@ -244,7 +263,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 				)
 			);
 			//checkout endpoint
-			$routes[ $ee_namespace ][ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkout' ] = array(
+			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkout' ] = array(
 				array(
 					'callback' => array(
 						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
@@ -253,6 +272,12 @@ class EED_Core_Rest_Api extends \EED_Module {
 					'hidden_endpoint' => $hidden_endpoint,
 					'args' => array()
 				)
+			);
+			$routes[ $ee_namespace ] = apply_filters( 
+				'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes', 
+				$this_versions_routes, 
+				$version,
+				$hidden_endpoint
 			);
 		}
 		return $routes;
@@ -386,7 +411,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 			'FHEE__EED_Core_REST_API__version_compatibilities', 
 			array( 
 				'4.8.29' => '4.8.29',
-				'4.8.32' => '4.8.29' 
+				'4.8.33' => '4.8.29' 
 			) 
 		);
 	}

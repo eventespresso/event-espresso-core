@@ -16,7 +16,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		$dtt->_add_relation_to($reg->get( 'TKT_ID'), 'Ticket' );
 		$req = new \WP_REST_Request( 
 			'GET', 
-			\EED_Core_Rest_Api::ee_api_namespace . '4.8.32/registrations/' . $reg->ID() . '/datetimes/' . $dtt->ID() . '/checkin'
+			\EED_Core_Rest_Api::ee_api_namespace . '4.8.33/registrations/' . $reg->ID() . '/datetimes/' . $dtt->ID() . '/checkin'
 		);
 		$req->set_url_params( 
 			array(
