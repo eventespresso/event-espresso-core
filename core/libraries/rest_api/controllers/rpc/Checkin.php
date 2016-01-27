@@ -31,11 +31,11 @@ class Checkin extends Base {
 	protected function _create_checkin_checkout_object( $request ) {
 		$reg_id = $request->get_param( 'REG_ID' );
 		$dtt_id = $request->get_param( 'DTT_ID' );
-		$verify = $request->get_param( 'verify' );
-		if( $verify == 'force' ) {
-			$verify = false;
+		$force = $request->get_param( 'force' );
+		if( $force == 'true' ) {
+			$force = false;
 		} else {
-			$verify = true;
+			$force = true;
 		}
 		$reg = \EEM_Registration::instance()->get_one_by_ID( $reg_id );
 		if( ! $reg instanceof \EE_Registration ) {
@@ -62,7 +62,7 @@ class Checkin extends Base {
 				)
 			);
 		}
-		$success = $reg->toggle_checkin_status( $dtt_id, $verify );
+		$success = $reg->toggle_checkin_status( $dtt_id, ! $force );
 		if( $success === false ) {
 			$notices_during_checkin = \EE_Error::get_notices( false );
 			

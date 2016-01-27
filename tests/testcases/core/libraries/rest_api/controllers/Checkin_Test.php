@@ -22,7 +22,11 @@ class Checkin_Test extends \EE_UnitTestCase {
 			array(
 				'REG_ID' => $reg->ID(),
 				'DTT_ID' => $dtt->ID(),
-				'verify' => 'force'
+			)
+		);
+		$req->set_body_params(
+			array(
+				'force' => false
 			)
 		);
 		$response = Checkin::handle_request_toggle_checkin( $req );

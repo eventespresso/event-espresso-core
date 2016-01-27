@@ -252,14 +252,20 @@ class EED_Core_Rest_Api extends \EED_Module {
 			$ee_namespace = self::ee_api_namespace . $version;
 			$this_versions_routes = array();
 			//checkin endpoint
-			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)/(?P<verify>\S+)' ] = array(
+			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)' ] = array(
 				array(
 					'callback' => array(
 						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
 						'handle_request_toggle_checkin' ),
 					'methods' => WP_REST_Server::CREATABLE,
 					'hidden_endpoint' => $hidden_endpoint,
-					'args' => array()
+					'args' => array(
+						'force' => array(
+							'required' => false,
+							'default' => false,
+							'description' => __( 'Whether to force toggle checkin, or to verify the registration status and allowed ticket uses', 'event_espresso' )
+						)
+					)
 				)
 			);
 			$routes[ $ee_namespace ] = apply_filters(
