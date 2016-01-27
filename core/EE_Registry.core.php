@@ -727,7 +727,7 @@ class EE_Registry {
 			if ( $reflector->getConstructor() === null || $reflector->isAbstract() || $load_only ) {
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
 				//$instantiation_mode = "no constructor";
-				return true;
+				$class_obj = true;
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 				//$instantiation_mode = "new_instance_from_db";
 				$class_obj = call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
@@ -889,16 +889,12 @@ class EE_Registry {
 			$loader = EE_Dependency_Map::class_loader( $param_class );
 			// is loader a custom closure ?
 			if ( $loader instanceof Closure ) {
-				$core_class = $loader();
+				$dependency = $loader();
 			} else {
 				// set the skip cache property for the recursive loading call
 				$this->_skip_cache = $skip_cache;
 				// if not, then let's try and load it via the registry
-				$core_class = $this->$loader( $param_class );
-			}
-			// as long as we aren't creating some recursive loading loop
-			if ( $core_class instanceof $param_class ) {
-				$dependency = $core_class;
+				$dependency = $this->$loader( $param_class );
 			}
 		}
 		// did we successfully find the correct dependency ?
