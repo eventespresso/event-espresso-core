@@ -26,7 +26,7 @@ class Checkin_Test extends \EE_UnitTestCase {
 		);
 		$req->set_body_params(
 			array(
-				'force' => false
+				'force' => "true"
 			)
 		);
 		$response = Checkin::handle_request_toggle_checkin( $req );
