@@ -29,119 +29,58 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 	}
 
 
-	protected function _expected_core_dependencies() {
-		return array(
-			'EE_Request_Handler'                => array(
-				'EE_Request',
-			),
-			'EE_System'                         => array(
-				'EE_Registry',
-			),
-			'EE_Session'                        => array(
-				'EE_Encryption'
-			),
-			'EE_Cart'                           => array(
-				null,
-				'EE_Session',
-			),
-			'EE_Front_Controller'               => array(
-				'EE_Registry',
-				'EE_Request_Handler',
-				'EE_Module_Request_Router',
-			),
-			'EE_Messenger_Collection_Loader'    => array(
-				'EE_Messenger_Collection',
-			),
-			'EE_Message_Type_Collection_Loader' => array(
-				'EE_Message_Type_Collection',
-			),
-			'EE_Message_Resource_Manager'       => array(
-				'EE_Messenger_Collection_Loader',
-				'EE_Message_Type_Collection_Loader',
-				'EEM_Message_Template_Group',
-			),
-			'EE_Message_Factory'                => array(
-				'EE_Message_Resource_Manager',
-			),
-			'EE_Messages'                       => array(
-				'EE_Message_Resource_Manager',
-			),
-			'EE_Messages_Generator'             => array(
-				'EE_Messages_Queue',
-				'EE_Messages_Queue',
-				'EE_Messages_Data_Handler_Collection',
-				'EE_Message_Template_Group_Collection',
-				'EEH_Parse_Shortcodes',
-			),
-			'EE_Messages_Queue'                 => array(
-				'EE_Message_Repository'
-			),
-		);
-	}
-
-
-
-
-	protected function _expected_core_class_loaders() {
-		return array(
-			//load_core
-			'EE_Encryption'                        => 'load_core',
-			'EE_Front_Controller'                  => 'load_core',
-			'EE_Module_Request_Router'             => 'load_core',
-			'EE_Registry'                          => 'load_core',
-			'EE_Request'                           => 'load_core',
-			'EE_Request_Handler'                   => 'load_core',
-			'EE_Session'                           => 'load_core',
-			'EE_System'                            => 'load_core',
-			//load_lib
-			'EE_Message_Resource_Manager'          => 'load_lib',
-			'EE_Message_Type_Collection'           => 'load_lib',
-			'EE_Message_Type_Collection_Loader'    => 'load_lib',
-			'EE_Messenger_Collection'              => 'load_lib',
-			'EE_Messenger_Collection_Loader'       => 'load_lib',
-			'EE_Messages_Queue'                    => 'load_lib',
-			'EE_Messages_Data_Handler_Collection'  => 'load_lib',
-			'EE_Message_Template_Group_Collection' => 'load_lib',
-			//load_model
-			'EEM_Message_Template_Group'           => 'load_model',
-			//load_helper
-			'EEH_Parse_Shortcodes'                 => 'load_lib',
-		);
-	}
-
 
 	public function test_core_dependencies() {
-		$expected_core_dependencies = $this->_expected_core_dependencies();
-		$actual_core_dependencies = EE_Dependency_Map::dependency_map();
+		$this->validate_core_dependency_map( EE_Dependency_Map::dependency_map() );
+	}
 
-		//test core_dependencies
-		$this->assertEquals( count( $expected_core_dependencies ), count($actual_core_dependencies ) );
-		$this->assertEquals( $expected_core_dependencies, $actual_core_dependencies );
+	public function validate_core_dependency_map( $dependencies_or_load, $classname = '' ) {
+		if ( is_array( $dependencies_or_load ) ) {
+			foreach ( $dependencies_or_load as $classname => $dependency ) {
+				$this->validate_core_dependency_map( $dependency, $classname );
+			}
+		} else {
+			// verify that a valid class constant has been set for the value
+			$this->assertEquals(
+				( EE_Dependency_Map::load_new_object || EE_Dependency_Map::load_from_cache ),
+				$dependencies_or_load,
+				sprintf( 'The %s class has an invalid value in the EE_Dependency_Map.', $classname )
+			);
+			// now verify that a loader exists for the class
+			$loader = EE_Dependency_Map::class_loader( $classname );
+			$this->assertNotEmpty(
+				$loader,
+				sprintf( 'A class loader should be set for "%s" but appears to be missing.', $classname )
+			);
+		}
 	}
 
 
 
 
 	public function test_core_class_loaders() {
-		$expected_class_loaders = $this->_expected_core_class_loaders();
-
-		//loop through and verify the class_loader_exists and its the expected type.
-		foreach ( $expected_class_loaders as $class => $loader ) {
-			$actual_class_loader = EE_Dependency_Map::class_loader( $class );
-			$this->assertNotEmpty(
-				$actual_class_loader,
-				sprintf( 'The %s class loader should be set but is not.', $class )
-			);
-			$this->assertEquals(
-				$loader,
-				$actual_class_loader,
-				sprintf(
-					'The %s class should have %s set as its loader, but %s is returned instead',
+		//loop through and verify the class loader can successfully load the class it is set for
+		foreach ( EE_Dependency_Map::class_loaders() as $class => $loader ) {
+			if ( $class === 'EE_Session' ) {
+				// session doesn't load during unit tests
+				continue;
+			}
+			$dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
+			// helpers are simply loaded and do not return an instance
+			if ( $loader === 'load_helper' ) {
+				$this->assertTrue( $dependency );
+			} else {
+				$this->assertInstanceOf(
 					$class,
-					$loader,
-					$actual_class_loader
-				)
-			);
+					$dependency,
+					sprintf(
+						'The "%1$s" class has "%2$s" set as its loader, but instead of an object, we received "%3$s" instead',
+						$class,
+						$loader instanceof Closure ? print_r( $loader, true ) : $loader,
+						print_r( $dependency, true )
+					)
+				);
+			}
 		}
 	}
 
@@ -174,4 +113,8 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		$registered = EE_Dependency_Map::register_dependencies( 'Dummy_Class', array() );
 		$this->assertFalse( $registered );
 	}
+
+
+
 }
+// Location: tests/testcases/core/EE_Dependency_Map_Test.php
