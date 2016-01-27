@@ -308,7 +308,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param array $route_data
 	 * @return array
 	 */
-	public function hide_old_endpoints( $route_data ) {
+	public static function hide_old_endpoints( $route_data ) {
 		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {

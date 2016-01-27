@@ -211,14 +211,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		require_once( EE_CORE . 'EE_Addon.core.php' );
 		$this->assertEquals( true, class_exists( 'EE_Addon' ) );
 		// now attempt instantiation
-		$class_object = EE_Registry_Mock::instance()->create_object(
-			'EE_Addon',
-			array(),
-			'core',
-			false,
-			false,
-			false
-		);
+		$class_object = EE_Registry_Mock::instance()->create_object( 'EE_Addon' );
 		// abstract classes only return true to denote that they have been loaded
 		$this->assertEquals( true, $class_object );
 	}
@@ -241,8 +234,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 			array(),
 			'core',
 			false,
-			true, // LOAD ONLY FLAG SET TO TRUE
-			false
+			true // LOAD ONLY FLAG SET TO TRUE
 		);
 		// using load only returns true to denote that class has been loaded
 		$this->assertEquals( true, $class_object );
@@ -265,9 +257,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 			'EE_Question',
 			array( array( 'QST_ID' => 1 ) ),
 			'class',
-			true, // FROM DB FLAG SET TO TRUE
-			false,
-			false
+			true // FROM DB FLAG SET TO TRUE
 		);
 		$this->assertEquals( true, $class_object instanceof EE_Question );
 		$this->assertEquals( 1, $class_object->ID() );
@@ -291,10 +281,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$class_object = EE_Registry_Mock::instance()->create_object(
 			'EE_Question',
 			array(),
-			'class',
-			false, // FROM DB FLAG SET BACK TO FALSE
-			false,
-			false
+			'class'
 		);
 		$this->assertEquals( true, $class_object instanceof EE_Question );
 		$this->assertEquals( 0, $class_object->ID() );
@@ -313,14 +300,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		require_once( EE_CORE . 'EE_Module_Request_Router.core.php' );
 		$this->assertEquals( true, class_exists( 'EE_Module_Request_Router' ) );
 		// now attempt instantiation
-		$class_object = EE_Registry_Mock::instance()->create_object(
-			'EE_Module_Request_Router',
-			array(),
-			'core',
-			false,
-			false,
-			false
-		);
+		$class_object = EE_Registry_Mock::instance()->create_object( 'EE_Module_Request_Router' );
 		$this->assertEquals( true, $class_object instanceof EE_Module_Request_Router );
 	}
 
@@ -337,14 +317,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		require_once( EE_CORE . 'EE_Capabilities.core.php' );
 		$this->assertEquals( true, class_exists( 'EE_Capabilities' ) );
 		// now attempt instantiation
-		$class_object = EE_Registry_Mock::instance()->create_object(
-			'EE_Capabilities',
-			array(),
-			'core',
-			false,
-			false,
-			false
-		);
+		$class_object = EE_Registry_Mock::instance()->create_object( 'EE_Capabilities' );
 		$this->assertEquals( true, $class_object instanceof EE_Capabilities );
 	}
 
@@ -363,14 +336,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// now attempt instantiation knowing that the EE_Front_Controller class
 		// injects the EE_Module_Request_Router class in the constructor
 		/** @type EE_Front_Controller $class_object */
-		$class_object = EE_Registry_Mock::instance()->create_object(
-			'EE_Front_Controller',
-			array(),
-			'core',
-			false,
-			false,
-			true // RESOLVE DEPENDENCIES FLAG SET TO TRUE
-		);
+		$class_object = EE_Registry_Mock::instance()->create_object( 'EE_Front_Controller' );
 		$this->assertInstanceOf( 'EE_Front_Controller', $class_object );
 		//echo "\n Request_Handler: \n";
 		//var_dump( $class_object->Request_Handler() );
@@ -479,6 +445,55 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 	/**
+	 * test_array_is_numerically_and_sequentially_indexed
+	 *
+	 * @author    Brent Christensen
+	 */
+	public function test_array_is_numerically_and_sequentially_indexed() {
+		// empty arrays should return true
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed( array() )
+		);
+		// should also be fine
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( array() )
+			)
+		);
+		// beauty eh?
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( 'a', 'b', 'c' )
+			)
+		);
+		// numeric "string" keys will get typecast as integers
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( "0" => 'a', "1" => 'b', "2" => 'c' )
+			)
+		);
+		// arrays that are not zero-indexed should return false
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( 1 => 'a', 2 => 'b', 3 => 'c' )
+			)
+		);
+		// out of order
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( "1" => 'a', "0" => 'b', "2" => 'c' )
+			)
+		);
+		// oh come on now!!! Not even close !
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->array_is_numerically_and_sequentially_indexed(
+				array( "a" => 'a', "b" => 'b', "c" => 'c' )
+			)
+		);
+	}
+
+
+	/**
 	 * checks that type hinted classes in constructors are properly instantiated and passed
 	 * without negatively affecting other constructor parameters
 	 *
@@ -542,6 +557,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
 		$this->assertEquals( 2, $class->integer_property() );
 	}
+
 
 
 }

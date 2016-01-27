@@ -986,7 +986,6 @@ class EEH_MSG_Template {
 		if ( ! $global ) {
 			return EEH_MSG_Template::_create_custom_template_group( $messenger, $message_type, $GRP_ID );
 		}
-		EE_Registry::instance()->skip_cache();
 		/** @type EE_Message_Template_Defaults $Message_Template_Defaults */
 		$Message_Template_Defaults = new EE_Message_Template_Defaults(
 			null,

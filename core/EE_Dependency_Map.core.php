@@ -46,12 +46,27 @@ class EE_Dependency_Map {
 	 */
 	protected static $_class_loaders = array();
 
+	/**
+	 * @type EE_Request $request
+	 */
+	protected static $_request;
+
+	/**
+	 * @type EE_Response $response
+	 */
+	protected static $_response;
+
 
 
 	/**
 	 * EE_Dependency_Map constructor.
+	 *
+	 * @param  \EE_Request  $request
+	 * @param  \EE_Response $response
 	 */
-	protected function __construct() {
+	protected function __construct( EE_Request $request, EE_Response $response ) {
+		EE_Dependency_Map::$_request = $request;
+		EE_Dependency_Map::$_response = $response;
 		$this->_register_core_dependencies();
 		$this->_register_core_class_loaders();
 		do_action( 'EE_Dependency_Map____construct' );
@@ -61,13 +76,15 @@ class EE_Dependency_Map {
 
 	/**
 	 * @singleton method used to instantiate class object
-	 * @access    public
+	 * @access public
+	 * @param  \EE_Request  $request
+	 * @param  \EE_Response $response
 	 * @return \EE_Dependency_Map instance
 	 */
-	public static function instance() {
+	public static function instance( EE_Request $request = null, EE_Response $response = null ) {
 		// check if class object is instantiated, and instantiated properly
 		if ( ! self::$_instance instanceof EE_Dependency_Map ) {
-			self::$_instance = new EE_Dependency_Map();
+			self::$_instance = new EE_Dependency_Map( $request, $response );
 		}
 		return self::$_instance;
 	}
@@ -205,6 +222,14 @@ class EE_Dependency_Map {
 	 * 		'Some_Class' => function () {
 	 * 			return new Some_Class();
 	 * 		},
+	 *
+	 * This is required for instantiating dependencies
+	 * where an interface has been type hinted in a class constructor. For example:
+	 *
+	 *        'Required_Interface' => function () {
+	 *            return new A_Class_That_Implements_Required_Interface();
+	 *        },
+	 *
 	 */
 	protected function _register_core_class_loaders() {
 		self::$_class_loaders = array(
@@ -213,7 +238,11 @@ class EE_Dependency_Map {
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
-			'EE_Request'                   		   => 'load_core',
+			'EE_Request'                   		   => function () {
+				return EE_Dependency_Map::$_request instanceof EE_Request
+					? EE_Dependency_Map::$_request
+					: new EE_Request( $_REQUEST );
+			},
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
 			'EE_System'                            => 'load_core',

@@ -265,7 +265,6 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 	function test_setup_messages_from_ids_and_send() {
 		//setup processor to work with
-		EE_Registry::instance()->skip_cache();
 		/** @type EE_Messages_Processor $proc */
 		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 
@@ -292,7 +291,6 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 		//next test incorrect messages
 		//fresh processor and queue.
-		EE_Registry::instance()->skip_cache();
 		/** @type EE_Messages_Processor $proc */
 		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 		$proc->setup_messages_from_ids_and_send( $messages_with_wrong_status );

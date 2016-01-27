@@ -172,12 +172,14 @@ class EE_Registry {
 	/**
 	 * @singleton method used to instantiate class object
 	 * @access public
-	 * @return EE_Registry instance
+	 * @param  \EE_Request  $request
+	 * @param  \EE_Response $response
+	 * @return \EE_Registry instance
 	 */
-	public static function instance() {
+	public static function instance( EE_Request $request = null, EE_Response $response = null ) {
 		// check if class object is instantiated
 		if ( ! self::$_instance instanceof EE_Registry ) {
-			self::$_instance = new self();
+			self::$_instance = new self( $request, $response );
 		}
 		return self::$_instance;
 	}
@@ -186,11 +188,14 @@ class EE_Registry {
 
 	/**
 	 *protected constructor to prevent direct creation
+	 *
 	 * @Constructor
 	 * @access protected
+	 * @param  \EE_Request  $request
+	 * @param  \EE_Response $response
 	 * @return \EE_Registry
 	 */
-	protected function __construct() {
+	protected function __construct( EE_Request $request, EE_Response $response ) {
 		$this->_class_abbreviations = apply_filters(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array(
@@ -214,6 +219,9 @@ class EE_Registry {
 		$this->shortcodes = new StdClass();
 		$this->widgets = new StdClass();
 		$this->load_core( 'Base', array(), true );
+		// add our request and response objects to the cache
+		$this->_set_cached_class( $request, 'EE_Request' );
+		$this->_set_cached_class( $response, 'EE_Response' );
 		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ) );
 	}
 
@@ -700,9 +708,11 @@ class EE_Registry {
 			$reflector = $this->get_ReflectionClass( $class_name );
 			// make sure arguments are an array
 			$arguments = is_array( $arguments ) ? $arguments : array( $arguments );
-			// and if arguments array is NOT numerically indexed, then we want it to stay as an array,
-			// so wrap it in an additional array so that it doesn't get split into multiple parameters
-			$arguments = isset( $arguments[ 0 ] ) ? $arguments : array( $arguments );
+			// and if arguments array is numerically and sequentially indexed, then we want it to remain as is,
+			// else wrap it in an additional array so that it doesn't get split into multiple parameters
+			$arguments = $this->_array_is_numerically_and_sequentially_indexed( $arguments )
+				? $arguments
+				: array( $arguments );
 			// attempt to inject dependencies ?
 			if (
 				! $from_db
@@ -746,6 +756,17 @@ class EE_Registry {
 			$e->get_error();
 		}
 		return $class_obj;
+	}
+
+
+
+	/**
+	 * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+	 * @param array $array
+	 * @return bool
+	 */
+	protected function _array_is_numerically_and_sequentially_indexed( array $array ) {
+		return ! empty( $array ) ? array_keys( $array ) === range( 0, count( $array ) - 1 ) : true;
 	}
 
 
@@ -809,59 +830,85 @@ class EE_Registry {
 			$param_class = $param->getClass() ? $param->getClass()->name : null;
 			if (
 				// param is not even a class
-				$param_class === null ||
-				(
-					// something already exists in the incoming arguments for this param
-					isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
-					// AND it's the correct class
-					&& $arguments[ $argument_keys[ $index ] ] instanceof $param_class
-				)
-
+				empty( $param_class )
+				// and something already exists in the incoming arguments for this param
+				&& isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
 			) {
 				// so let's skip this argument and move on to the next
 				continue;
 			} else if (
-				isset(
+				// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+				! empty( $param_class )
+				&& isset( $argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ] )
+				&& $arguments[ $argument_keys[ $index ] ] instanceof $param_class
+			) {
+				// skip this argument and move on to the next
+				continue;
+			} else if (
+				// parameter is type hinted as a class, and should be injected
+				! empty( $param_class )
+				&& isset(
 					$this->_auto_resolve_dependencies[ $class_name ],
 					$this->_auto_resolve_dependencies[ $class_name ][ $param_class ]
 				)
 			) {
-				$dependency_loading  = $this->_auto_resolve_dependencies[ $class_name ][ $param_class ];
-				// should dependency be loaded from cache ?
-				$this->_skip_cache = $dependency_loading === EE_Dependency_Map::load_from_cache ? true : false;
-				// we might have a dependency... let's MAYBE try and find it in our cache
-				$cached_class = ! $this->_skip_cache ? $this->_get_cached_class( $param_class ) : null;
-				$dependency = null;
-				// and grab it if it exists
-				if ( $cached_class instanceof $param_class ) {
-					$dependency = $cached_class;
-				} else if ( $param_class != $class_name ) {
-					$loader = EE_Dependency_Map::class_loader( $param_class );
-					// grab current state for skip cache property
-					$skip_cache = $this->_skip_cache;
-					// is loader a custom closure ?
-					if ( $loader instanceof Closure ) {
-						$core_class = $loader();
-					} else {
-						// if not, then let's try and load it via the registry
-						$core_class = $this->$loader( $param_class );
-					}
-					// reset skip cache so that it will work again for the next dependency
-					$this->_skip_cache = $skip_cache;
-					// as long as we aren't creating some recursive loading loop
-					if ( $core_class instanceof $param_class ) {
-						$dependency = $core_class;
-					}
-				}
-				// did we successfully find the correct dependency ?
-				if ( $dependency instanceof $param_class ) {
-					// then let's inject it into the incoming array of arguments at the correct location
-					array_splice( $arguments, $index, 1, array( $dependency ) );
-				}
+				$arguments = $this->_resolve_dependency( $class_name, $param_class, $arguments, $index );
 			} else {
-				$arguments[ $index ] = null;
+				$arguments[ $index ] = $param->getDefaultValue();
 			}
 
+		}
+		return $arguments;
+	}
+
+
+
+	/**
+	 * @access protected
+	 * @param string $class_name
+	 * @param string $param_class
+	 * @param array $arguments
+	 * @param mixed $index
+	 * @return array
+	 */
+	protected function _resolve_dependency( $class_name, $param_class , $arguments, $index ) {
+		$dependency = null;
+		// should dependency be loaded from cache ?
+		$skip_cache =
+			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] === EE_Dependency_Map::load_from_cache
+				? true
+				: false;
+		// we might have a dependency...
+		// let's MAYBE try and find it in our cache if that's what's been requested
+		$cached_class = ! $skip_cache ? $this->_get_cached_class( $param_class ) : null;
+		// and grab it if it exists
+		if ( $cached_class instanceof $param_class ) {
+			$dependency = $cached_class;
+		} else if ( $param_class != $class_name ) {
+			// obtain the loader method from the dependency map
+			$loader = EE_Dependency_Map::class_loader( $param_class );
+			// is loader a custom closure ?
+			if ( $loader instanceof Closure ) {
+				$core_class = $loader();
+			} else {
+				// set the skip cache property for the recursive loading call
+				$this->_skip_cache = $skip_cache;
+				// if not, then let's try and load it via the registry
+				$core_class = $this->$loader( $param_class );
+			}
+			// as long as we aren't creating some recursive loading loop
+			if ( $core_class instanceof $param_class ) {
+				$dependency = $core_class;
+			}
+		}
+		// did we successfully find the correct dependency ?
+		if ( $dependency instanceof $param_class ) {
+			// then let's inject it into the incoming array of arguments at the correct location
+			if ( isset( $argument_keys[ $index ] ) ) {
+				$arguments[ $argument_keys[ $index ] ] = $dependency;
+			} else {
+				$arguments[ $index ] = $dependency;
+			}
 		}
 		return $arguments;
 	}
