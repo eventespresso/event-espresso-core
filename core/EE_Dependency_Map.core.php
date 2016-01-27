@@ -227,6 +227,9 @@ class EE_Dependency_Map {
 				'EE_Message_Template_Group_Collection' => EE_Dependency_Map::load_new_object,
 				'EEH_Parse_Shortcodes'                 => EE_Dependency_Map::load_from_cache,
 			),
+			'EE_Messages_Processor' => array(
+				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
+			),
 			'EE_Messages_Queue' => array(
 				'EE_Message_Repository' => EE_Dependency_Map::load_new_object,
 			),
@@ -279,6 +282,7 @@ class EE_Dependency_Map {
 			'EE_Message_Type_Collection_Loader'    => 'load_lib',
 			'EE_Messenger_Collection'              => 'load_lib',
 			'EE_Messenger_Collection_Loader'       => 'load_lib',
+			'EE_Messages_Processor'       		   => 'load_lib',
 			'EE_Message_Repository'       		   => 'load_lib',
 			'EE_Messages_Queue'                    => 'load_lib',
 			'EE_Messages_Data_Handler_Collection'  => 'load_lib',
