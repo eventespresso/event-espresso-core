@@ -252,28 +252,17 @@ class EED_Core_Rest_Api extends \EED_Module {
 			$ee_namespace = self::ee_api_namespace . $version;
 			$this_versions_routes = array();
 			//checkin endpoint
-			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkin' ] = array(
+			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)/(?P<verify>\S+)' ] = array(
 				array(
 					'callback' => array(
 						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
-						'handle_checkin' ),
+						'handle_request_toggle_checkin' ),
 					'methods' => WP_REST_Server::CREATABLE,
 					'hidden_endpoint' => $hidden_endpoint,
 					'args' => array()
 				)
 			);
-			//checkout endpoint
-			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/datetimes/(?P<DTT_ID>\d+)/checkout' ] = array(
-				array(
-					'callback' => array(
-						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
-						'handle_checkout' ),
-					'methods' => WP_REST_Server::CREATABLE,
-					'hidden_endpoint' => $hidden_endpoint,
-					'args' => array()
-				)
-			);
-			$routes[ $ee_namespace ] = apply_filters( 
+			$routes[ $ee_namespace ] = apply_filters(
 				'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes', 
 				$this_versions_routes, 
 				$version,

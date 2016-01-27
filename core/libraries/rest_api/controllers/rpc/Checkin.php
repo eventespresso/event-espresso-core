@@ -19,28 +19,41 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Checkin extends Base {
-	public static function handle_checkin( $request ) {
+	public static function handle_request_toggle_checkin( $request ) {
 		$controller = new Checkin();
-		return $controller->_create_checkin_checkout_object( $request, true );
-	}
-	
-	public static function handle_checkout( $request ) {
-		$controller = new Checkin();
-		return $controller->_create_checkin_checkout_object( $request, false );
+		return $controller->_create_checkin_checkout_object( $request );
 	}
 	
 	/**
-	 * Creates a row in the esp_checkin table given the reqest data.
+	 * Toggles whether the user is checked in or not. 
 	 * @param \WP_REST_Request $request
-	 * @param type $in_or_out
 	 */
-	protected function _create_checkin_checkout_object( $request, $in_or_out ) {
+	protected function _create_checkin_checkout_object( $request ) {
 		$reg_id = $request->get_param( 'REG_ID' );
 		$dtt_id = $request->get_param( 'DTT_ID' );
+		$verify = $request->get_param( 'verify' );
+		if( $verify == 'force' ) {
+			$verify = false;
+		} else {
+			$verify = true;
+		}
+		$reg = \EEM_Registration::instance()->get_one_by_ID( $reg_id );
+		if( ! $reg instanceof \EE_Registration ) {
+			return $this->send_response( 
+				new \WP_Error( 
+					'rest_registration_toggle_checkin_invalid_id', 
+					sprintf( 
+						__( 'You cannot checkin registration with ID $1$s because it doesn\'t exist.', 'event_espresso' ),
+						$reg_id
+					),
+					array( 'status' => 422 )
+				)
+			);
+		}
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id ) ) {
 			return $this->send_response( 
 				new \WP_Error( 
-					'rest_registration_invalid_id', 
+					'rest_user_cannot_registration_toggle_checkin', 
 					sprintf( 
 						__( 'You are not allowed to checkin registration with ID $1$s.', 'event_espresso' ),
 						$reg_id
@@ -49,33 +62,39 @@ class Checkin extends Base {
 				)
 			);
 		}
-		if( ! \EEM_Datetime::instance()->exists_by_ID(  $dtt_id ) ) {
+		$success = $reg->toggle_checkin_status( $dtt_id, $verify );
+		if( $success === false ) {
+			$notices_during_checkin = \EE_Error::get_notices( false );
+			
+			if( isset( $notices_during_checkin[ 'errors' ] ) ) {
+				$error_message = strip_tags( $notices_during_checkin[ 'errors' ] );
+			} else {
+				$error_message = __( 'An error occurred.', 'event_espresso' );
+			}
 			return $this->send_response( 
 				new \WP_Error( 
-					'rest_datetime_invalid_id', 
-					sprintf( 
-						__( 'You cannot checkin registrations to datetime with ID $1$s because it does not exist.', 'event_espresso' ),
-						$dtt_id
-					),
-					array( 'status' => 422 )
+					'rest_toggle_checkin_error', 
+					$error_message
 				)
 			);
 		}
-		
-		$checkin = \EE_Checkin::new_instance(
+		$checkin = \EEM_Checkin::instance()->get_one(
+			array(
 				array(
 					'REG_ID' => $reg_id,
 					'DTT_ID' => $dtt_id,
-					'CHK_in' => $in_or_out,
-					'CHK_timestamp' => time()
-				));
-		$success = $checkin->save();
-		if( ! $success ) {
+				),
+				'order_by' => array(
+					'CHK_timestamp' => 'DESC'
+				)
+			)
+		);
+		if( ! $checkin instanceof \EE_Checkin ) {
 			return $this->send_response( 
 				new \WP_Error( 
-					'checkin_error', 
-					sprintf( 
-						__( 'There was an error checking the registration %1$s into datetime $2$s.', 'event_espresso' ),
+					'rest_toggle_checkin_error', 
+					sprintf(
+						__( 'Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.', 'event_espresso' ),
 						$reg_id,
 						$dtt_id
 					)
