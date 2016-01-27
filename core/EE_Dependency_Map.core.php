@@ -144,6 +144,15 @@ class EE_Dependency_Map {
 
 
 	/**
+	 * @return array
+	 */
+	public static function class_loaders() {
+		return self::$_class_loaders;
+	}
+
+
+
+	/**
 	 * @param string $class_name
 	 * @param string $loader
 	 * @return bool
@@ -270,6 +279,7 @@ class EE_Dependency_Map {
 			'EE_Message_Type_Collection_Loader'    => 'load_lib',
 			'EE_Messenger_Collection'              => 'load_lib',
 			'EE_Messenger_Collection_Loader'       => 'load_lib',
+			'EE_Message_Repository'       		   => 'load_lib',
 			'EE_Messages_Queue'                    => 'load_lib',
 			'EE_Messages_Data_Handler_Collection'  => 'load_lib',
 			'EE_Message_Template_Group_Collection' => 'load_lib',
