@@ -49,12 +49,12 @@ class EE_Dependency_Map {
 	/**
 	 * @type EE_Request $request
 	 */
-	protected static $_request;
+	protected $_request;
 
 	/**
 	 * @type EE_Response $response
 	 */
-	protected static $_response;
+	protected $_response;
 
 
 
@@ -65,8 +65,8 @@ class EE_Dependency_Map {
 	 * @param  \EE_Response $response
 	 */
 	protected function __construct( EE_Request $request, EE_Response $response ) {
-		EE_Dependency_Map::$_request = $request;
-		EE_Dependency_Map::$_response = $response;
+		$this->_request = $request;
+		$this->_response = $response;
 		$this->_register_core_dependencies();
 		$this->_register_core_class_loaders();
 		do_action( 'EE_Dependency_Map____construct' );
@@ -87,6 +87,24 @@ class EE_Dependency_Map {
 			self::$_instance = new EE_Dependency_Map( $request, $response );
 		}
 		return self::$_instance;
+	}
+
+
+
+	/**
+	 * @return EE_Request
+	 */
+	public static function request() {
+		return EE_Dependency_Map::instance()->_request;
+	}
+
+
+
+	/**
+	 * @return EE_Response
+	 */
+	public static function response() {
+		return EE_Dependency_Map::instance()->_response;
 	}
 
 
@@ -133,7 +151,7 @@ class EE_Dependency_Map {
 	 */
 	public static function register_class_loader( $class_name, $loader = 'load_core' ) {
 		// check that loader method starts with "load_" and exists in EE_Registry
-		if ( strpos( $loader, 'load_' ) !== 0 || ! method_exists( EE_Registry::instance(), $loader ) ) {
+		if ( strpos( $loader, 'load_' ) !== 0 || ! method_exists( 'EE_Registry', $loader ) ) {
 			throw new EE_Error(
 				sprintf(
 					__( '"%1$s" is not a valid loader method on EE_Registry.', 'event_espresso' ),
@@ -239,8 +257,8 @@ class EE_Dependency_Map {
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
 			'EE_Request'                   		   => function () {
-				return EE_Dependency_Map::$_request instanceof EE_Request
-					? EE_Dependency_Map::$_request
+				return EE_Dependency_Map::instance()->_request instanceof EE_Request
+					? EE_Dependency_Map::instance()->_request
 					: new EE_Request( $_REQUEST );
 			},
 			'EE_Request_Handler'                   => 'load_core',
