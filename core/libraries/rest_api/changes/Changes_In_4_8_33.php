@@ -17,6 +17,12 @@ class Changes_In_4_8_33 extends Changes_In_Base {
 			10,
 			2
 		);
+		add_filter( 
+			'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_headers_from_ee_notices__return',
+			array( $this, 'dont_add_headers_from_ee_notices' ),
+			10,
+			3
+		);
 	}
 	
 	/**
@@ -31,6 +37,20 @@ class Changes_In_4_8_33 extends Changes_In_Base {
 			unset( $routes_on_this_version[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)/(?P<verify>\S+)' ] );
 		}
 		return $routes_on_this_version;
+	}
+	
+	/**
+	 * We just added headers for notices in this version
+	 * @param array $headers_from_ee_notices
+	 * @param string $requested_version
+	 * @param array $notices
+	 * @return array
+	 */
+	public function dont_add_headers_from_ee_notices( $headers_from_ee_notices, $requested_version, $notices ) {
+		if( $this->applies_to_version(  $requested_version ) ) {
+			return array();
+		}
+		return $headers_from_ee_notices;
 	}
 }
 
