@@ -931,8 +931,6 @@ class EE_Registry {
 	 * @return void
 	 */
 	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false, $cache = true ) {
-		EE_Registry::instance()->load_class( 'Question', array(), false, true, true );
-		EE_Registry::instance()->load_class( 'Answer', array(), false, true, true );
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
