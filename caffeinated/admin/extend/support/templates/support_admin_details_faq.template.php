@@ -18,18 +18,10 @@
 		</dt>
 		<dd>
             <p>
-
-			<?php _e('You can change this by adding a code snippet to your theme\'s functions.php file or in a custom snippet plugin. The following code snippet example shows how to change the URL slug to be "workshops".', 'event_espresso'); ?>
-            <?php // this may end up becoming a link to a documentation page at ee.com instead of a code snippet
-?>
-<pre>add_filter( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', 'my_custom_event_slug', 10, 2 );
-function my_custom_event_slug( $slug, $post_type ) {
-	if ( $post_type == 'espresso_events' ) {
-		$custom_slug = array( 'slug' => 'workshops' );
-		return $custom_slug;
-	}
-	return $slug;
-}</pre>
+			<?php _e('You can change this by going to Event Espresso > Events > Templates > Event Slug.', 'event_espresso'); ?>
+			<br />
+			<?php _e('Quick Link:', 'event_espresso'); ?>
+			<a href="<?php echo site_url('/wp-admin/?page=espresso_events&action=template_settings'); ?>"><?php _e('Templates Manager', 'event_espresso'); ?></a>
             </p>
 
 		</dd>
