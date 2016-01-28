@@ -283,7 +283,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	}
 
 	/**
-	 * Gets info about reading query params that are accceptable
+	 * Gets info about reading query params that are acceptable
 	 * @param string $model_name eg 'Event' or 'Venue'
 	 * @return array describing the args acceptable when querying this model
 	 */
