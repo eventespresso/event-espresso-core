@@ -531,7 +531,7 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
-		if ( $this->_cache_on ) {
+		if ( $this->_cache_on && ! $load_only ) {
 			// return object if it's already cached
 			$cached_class = $this->_get_cached_class( $class_name, $class_prefix );
 			if ( $cached_class !== null ) {
@@ -931,6 +931,8 @@ class EE_Registry {
 	 * @return void
 	 */
 	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false, $cache = true ) {
+		EE_Registry::instance()->load_class( 'Question', array(), false, true, true );
+		EE_Registry::instance()->load_class( 'Answer', array(), false, true, true );
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
