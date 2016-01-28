@@ -751,7 +751,10 @@ class EE_Registry {
 					)
 				);
 			}
-		} catch ( EE_Error $e ) {
+		} catch ( Exception $e ) {
+			if ( ! $e instanceof EE_Error ) {
+				$e = new EE_Error( $e->getMessage() );
+			}
 			$e->get_error();
 		}
 		return $class_obj;
