@@ -903,7 +903,7 @@ class EE_Registry {
 				// set the cache on property for the recursive loading call
 				$this->_cache_on = $cache_on;
 				// if not, then let's try and load it via the registry
-				$dependency = $this->$loader( $param_class );
+				$dependency = $this->{$loader}( $param_class );
 			}
 		}
 		// did we successfully find the correct dependency ?
