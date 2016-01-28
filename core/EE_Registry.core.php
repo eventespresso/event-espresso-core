@@ -160,12 +160,12 @@ class EE_Registry {
 	public $_reflectors;
 
 	/**
-	 * boolean flag to indicate whether or not to load classes from the cache
+	 * boolean flag to indicate whether or not to load/save classes from/to the cache
 	 *
 	 * @access    protected
-	 * @type boolean $_skip_cache
+	 * @type boolean $_cache_on
 	 */
-	protected $_skip_cache = false;
+	protected $_cache_on = true;
 
 
 
@@ -531,7 +531,7 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
-		if ( ! $this->_skip_cache ) {
+		if ( $this->_cache_on ) {
 			// return object if it's already cached
 			$cached_class = $this->_get_cached_class( $class_name, $class_prefix );
 			if ( $cached_class !== null ) {
@@ -544,9 +544,11 @@ class EE_Registry {
 		$this->_require_file( $path, $class_name, $type, $file_paths );
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only );
-		// save it for later... kinda like gum  { : $
-		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
-		$this->_skip_cache = false;
+		if ( $this->_cache_on ) {
+			// save it for later... kinda like gum  { : $
+			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
+		}
+		$this->_cache_on = true;
 		return $class_obj;
 	}
 
@@ -642,7 +644,7 @@ class EE_Registry {
 		try {
 			//does the file exist and can it be read ?
 			if ( ! $path ) {
-				$this->_skip_cache = false;
+				$this->_cache_on = true;
 				// so sorry, can't find the file
 				throw new EE_Error (
 					sprintf(
@@ -657,7 +659,7 @@ class EE_Registry {
 			require_once( $path );
 			// if the class isn't already declared somewhere
 			if ( class_exists( $class_name, false ) === false ) {
-				$this->_skip_cache = false;
+				$this->_cache_on = true;
 				// so sorry, not a class
 				throw new EE_Error(
 					sprintf(
@@ -741,7 +743,7 @@ class EE_Registry {
 				//$instantiation_mode = "isInstantiable";
 				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else if ( ! $load_only ) {
-				$this->_skip_cache = false;
+				$this->_cache_on = true;
 				// heh ? something's not right !
 				//$instantiation_mode = 'none';
 				throw new EE_Error(
@@ -875,7 +877,7 @@ class EE_Registry {
 		$dependency = null;
 		// should dependency be loaded from cache ?
 		$skip_cache =
-			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] === EE_Dependency_Map::load_from_cache
+			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] !== EE_Dependency_Map::load_from_cache
 				? true
 				: false;
 		// we might have a dependency...
@@ -892,7 +894,7 @@ class EE_Registry {
 				$dependency = $loader();
 			} else {
 				// set the skip cache property for the recursive loading call
-				$this->_skip_cache = $skip_cache;
+				$this->_cache_on = $skip_cache;
 				// if not, then let's try and load it via the registry
 				$dependency = $this->$loader( $param_class );
 			}
@@ -1016,7 +1018,7 @@ class EE_Registry {
 		$instance = self::instance();
 		$instance->load_helper( 'Activation' );
 		EEH_Activation::reset();
-		$instance->_skip_cache = false;
+		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
 		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
 		$instance->LIB = new stdClass();
