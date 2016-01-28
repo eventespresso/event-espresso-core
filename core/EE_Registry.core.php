@@ -509,7 +509,9 @@ class EE_Registry {
 	 * @param bool $from_db - some classes are instantiated from the db and thus call a different method to instantiate
 	 * @param bool $cache
 	 * @param bool $load_only
-	 * @return null|object
+	 * @return null|object|bool  	null = failure to load or instantiate class object.
+	 *                              object = class loaded and instantiated successfully.
+	 *                              bool = fail or success when $load_only is true
 	 * @internal param string $file_path - file path including file name
 	 */
 	private function _load(
@@ -541,10 +543,15 @@ class EE_Registry {
 		// get full path to file
 		$path = $this->_resolve_path( $class_name, $type, $file_paths );
 		// load the file
-		$this->_require_file( $path, $class_name, $type, $file_paths );
+		$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
+		// if loading failed, or we are only loading a file but NOT instantiating an object
+		if ( ! $loaded || $load_only ) {
+			// return boolean if only loading, or null if an object was expected
+			return $load_only ? $loaded : null;
+		}
 		// instantiate the requested object
-		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only );
-		if ( $this->_cache_on && ! $load_only ) {
+		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db );
+		if ( $this->_cache_on ) {
 			// save it for later... kinda like gum  { : $
 			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
 		}
@@ -632,11 +639,11 @@ class EE_Registry {
 	 * but with some error handling
 	 *
 	 * @access protected
-	 * @param string $path
-	 * @param string $class_name
-	 * @param string $type
-	 * @param array $file_paths
-	 * @return void
+	 * @param  string $path
+	 * @param  string $class_name
+	 * @param  string $type
+	 * @param  array $file_paths
+	 * @return boolean
 	 * @throws \EE_Error
 	 */
 	protected function _require_file( $path, $class_name, $type = '', $file_paths = array() ) {
@@ -671,7 +678,9 @@ class EE_Registry {
 
 		} catch ( EE_Error $e ) {
 			$e->get_error();
+			return false;
 		}
+		return true;
 	}
 
 
@@ -696,11 +705,10 @@ class EE_Registry {
 	 * @param array $arguments
 	 * @param string $type
 	 * @param bool $from_db
-	 * @param bool $load_only
 	 * @return null | object
 	 * @throws \EE_Error
 	 */
-	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false, $load_only = false ) {
+	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false ) {
 		$class_obj = null;
 		// don't give up! you gotta...
 		try {
@@ -716,7 +724,6 @@ class EE_Registry {
 			// attempt to inject dependencies ?
 			if (
 				! $from_db
-				&& ! $load_only
 				&& isset( $this->_auto_resolve_dependencies[ $class_name ] )
 				&& ! $reflector->isSubclassOf( 'EE_Base_Class' )
 			) {
@@ -724,7 +731,7 @@ class EE_Registry {
 			}
 			// instantiate the class and add to the LIB array for tracking
 			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
-			if ( $reflector->getConstructor() === null || $reflector->isAbstract() || $load_only ) {
+			if ( $reflector->getConstructor() === null || $reflector->isAbstract() ) {
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
 				//$instantiation_mode = "no constructor";
 				$class_obj = true;
@@ -740,7 +747,7 @@ class EE_Registry {
 			} else if ( $reflector->isInstantiable() ) {
 				//$instantiation_mode = "isInstantiable";
 				$class_obj = $reflector->newInstanceArgs( $arguments );
-			} else if ( ! $load_only ) {
+			} else {
 				// heh ? something's not right !
 				//$instantiation_mode = 'none';
 				throw new EE_Error(
