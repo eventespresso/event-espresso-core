@@ -18,7 +18,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 	const saved_routes_option_names = 'ee_core_routes';
 	/**
-	 * string used in _links response bodies to make them globally unique. 
+	 * string used in _links response bodies to make them globally unique.
 	 * @see http://v2.wp-api.org/extending/linking/
 	 */
 	const ee_api_link_namespace = 'https://api.eventespresso.com/';
@@ -62,7 +62,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		add_filter( 'rest_route_data', array( 'EED_Core_Rest_Api', 'hide_old_endpoints' ), 10, 2 );
 		add_filter( 'rest_index', array( 'EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index' ) );
 	}
-	
+
 	/**
 	 * sets up hooks which only need to be included as part of REST API requests;
 	 * other requests like to the frontend or admin etc don't need them
@@ -71,7 +71,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		//set hooks which account for changes made to the API
 		EED_Core_Rest_Api::_set_hooks_for_changes();
 	}
-	
+
 	protected static function _set_hooks_for_changes() {
 		$folder_contents = EEH_File::get_contents_of_folders( array( EE_LIBRARIES . 'rest_api' . DS . 'changes' ), false );
 		foreach( $folder_contents as $classname_in_namespace => $filepath ) {
@@ -80,12 +80,16 @@ class EED_Core_Rest_Api extends \EED_Module {
 				continue;
 			}
 			$full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
-			$instance_of_class = new $full_classname;
-			$instance_of_class->set_hooks();
+			if ( class_exists( $full_classname )) {
+				$instance_of_class = new $full_classname;
+				if ( $instance_of_class instanceof EventEspresso\core\libraries\rest_api\changes\Changes_In_Base ) {
+					$instance_of_class->set_hooks();
+				}
+			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Filters the WP routes to add our EE-related ones. This takes a bit of time
 	 * so we actually prefer to only do it when an EE plugin is activated or upgraded
@@ -133,7 +137,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function save_ee_routes() {
 		if( EE_Maintenance_Mode::instance()->models_can_query() ){
 			$instance = self::instance();
-			$routes = apply_filters( 
+			$routes = apply_filters(
 				'EED_Core_Rest_Api__save_ee_routes__routes',
 				array_replace_recursive(
 					$instance->_register_config_routes(),
@@ -241,7 +245,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 		return $model_routes;
 	}
-	
+
 	/**
 	 * Adds all the RPC-style routes (remote procedure call-like routes, ie
 	 * routes that don't conform to the traditional REST CRUD-style).
@@ -269,15 +273,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 				)
 			);
 			$routes[ $ee_namespace ] = apply_filters(
-				'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes', 
-				$this_versions_routes, 
+				'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes',
+				$this_versions_routes,
 				$version,
 				$hidden_endpoint
 			);
 		}
 		return $routes;
 	}
-	
+
 	/**
 	 * Gets info about reading query params that are accceptable
 	 * @param string $model_name eg 'Event' or 'Venue'
@@ -402,17 +406,17 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function version_compatibilities() {
-		return apply_filters( 
-			'FHEE__EED_Core_REST_API__version_compatibilities', 
-			array( 
+		return apply_filters(
+			'FHEE__EED_Core_REST_API__version_compatibilities',
+			array(
 				'4.8.29' => '4.8.29',
-				'4.8.33' => '4.8.29' 
-			) 
+				'4.8.33' => '4.8.29'
+			)
 		);
 	}
-	
+
 	/**
-	 * Gets the latest API version served. Eg if there 
+	 * Gets the latest API version served. Eg if there
 	 * are two versions served of the API, 4.8.29 and 4.8.32, and
 	 * we are on core version 4.8.34, it will return the string "4.8.32"
 	 * @return string
