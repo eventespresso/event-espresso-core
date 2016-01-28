@@ -18,12 +18,17 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Meta extends Base {
 
 
+	/**
+	 * @param \WP_REST_Request $request
+	 * @return array|\WP_REST_Response
+	 * @throws \EE_Error
+	 */
 	public static function handle_request_models_meta( \WP_REST_Request $request ) {
 		$controller = new Meta();
-		$matches = $controller->parse_route( 
-			$request->get_route(), 
-			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . 'resources~', 
-			array( 'version' ) ); 
+		$matches = $controller->parse_route(
+			$request->get_route(),
+			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . 'resources~',
+			array( 'version' ) );
 		if( $matches instanceof \WP_REST_Response ) {
 			return $matches;
 		}
@@ -93,10 +98,10 @@ class Meta extends Base {
 
 	/**
 	 * Adds EE metadata to the index
-	 * @param WP_REST_Response $rest_response_obj
-	 * @return WP_REST_Response
+	 * @param \WP_REST_Response $rest_response_obj
+	 * @return \WP_REST_Response
 	 */
-	public static function filter_ee_metadata_into_index( $rest_response_obj ) {
+	public static function filter_ee_metadata_into_index( \WP_REST_Response $rest_response_obj ) {
 		$response_data = $rest_response_obj->get_data();
 		$addons = array();
 		foreach( \EE_Registry::instance()->addons as $addon){
