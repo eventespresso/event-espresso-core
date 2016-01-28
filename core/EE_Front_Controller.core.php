@@ -272,7 +272,7 @@ final class EE_Front_Controller {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
 					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
-						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
+						if ( ! isset( EE_Registry::instance()->shortcodes->{$shortcode_class} )) {
 							if ( $current_post != $page_for_posts && current_user_can( 'edit_post', $post_id )) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -293,9 +293,9 @@ final class EE_Front_Controller {
 								continue;
 							}
 							// and pass the request object to the run method
-							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
+							EE_Registry::instance()->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
-							EE_Registry::instance()->shortcodes->$shortcode_class->run( $WP );
+							EE_Registry::instance()->shortcodes->{$shortcode_class}->run( $WP );
 						}
 					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
 					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
@@ -337,7 +337,7 @@ final class EE_Front_Controller {
 						// grab module name
 						$module_name = $module->module_name();
 						// map the module to the module objects
-						EE_Registry::instance()->modules->$module_name = $module;
+						EE_Registry::instance()->modules->{$module_name} = $module;
 					}
 				}
 			}

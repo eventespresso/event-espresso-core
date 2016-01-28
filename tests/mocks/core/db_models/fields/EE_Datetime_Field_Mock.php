@@ -24,7 +24,7 @@ class EE_Datetime_Field_Mock extends EE_Datetime_Field {
 
 
 	public function get_property( $field ) {
-		return $this->$field;
+		return $this->{$field};
 	}
 
 

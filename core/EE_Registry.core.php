@@ -465,15 +465,19 @@ final class EE_Registry {
 			'EE_Capabilities' => 'CAP'
 		);
 
+		$class_abbreviation = isset( $class_abbreviations[ $class_name ] )
+			? $class_abbreviations[ $class_name ]
+			: '';
 		// check if class has already been loaded, and return it if it has been
-		if ( isset( $class_abbreviations[ $class_name ] ) && ! is_null( $this->$class_abbreviations[ $class_name ] )) {
-			return $this->$class_abbreviations[ $class_name ];
-		} else if ( isset ( $this->{$class_name} )) {
+		if ( $class_abbreviation !== '' && ! is_null( $this->{$class_abbreviation} )
+		) {
+			return $this->{$class_abbreviation};
+		} else if ( isset ( $this->{$class_name} ) ) {
 			return $this->{$class_name};
-		} else if ( isset ( $this->LIB->$class_name )) {
-			return $this->LIB->$class_name;
-		} else if ( $class_prefix == 'addon' && isset ( $this->addons->$class_name )) {
-			return $this->addons->$class_name;
+		} else if ( isset ( $this->LIB->{$class_name} ) ) {
+			return $this->LIB->{$class_name};
+		} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
+			return $this->addons->{$class_name};
 		}
 
 		// assume all paths lead nowhere
@@ -576,14 +580,14 @@ final class EE_Registry {
 
 		if ( isset( $class_obj )) {
 			// return newly instantiated class
-			if ( isset( $class_abbreviations[ $class_name ] )) {
-				$this->$class_abbreviations[ $class_name ] = $class_obj;
+			if ( $class_abbreviation !== '' ) {
+				$this->{$class_abbreviation} = $class_obj;
 			} else if ( EEH_Class_Tools::has_property( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
 			} else if ( $class_prefix == 'addon' && $cache  ) {
-				$this->addons->$class_name = $class_obj;
+				$this->addons->{$class_name} = $class_obj;
 			} else if ( !$from_db && $cache  ) {
-				$this->LIB->$class_name = $class_obj;
+				$this->LIB->{$class_name} = $class_obj;
 			}
 			return $class_obj;
 		}
@@ -706,11 +710,11 @@ final class EE_Registry {
 		$model_class_name = get_class( $model );
 		//get that model reset it and make sure we nuke the old reference to it
 		if ( $model instanceof $model_class_name && is_callable( array( $model_class_name, 'reset' ))) {
-			$this->LIB->$model_class_name = $model::reset();
+			$this->LIB->{$model_class_name} = $model::reset();
 		}else{
 			throw new EE_Error( sprintf( __( 'Model %s does not have a method "reset"', 'event_espresso' ), $model_name ) );
 		}
-		return $this->LIB->$model_class_name;
+		return $this->LIB->{$model_class_name};
 	}
 
 	/**
