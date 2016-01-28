@@ -244,13 +244,13 @@ final class EE_Config {
 			// load_core_config__start hook
 			$settings = apply_filters( 'FHEE__EE_Config___load_core_config__config_settings', $settings, $config, $this );
 			if ( is_object( $settings ) && property_exists( $this, $config ) ) {
-				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
+				$this->{$config} = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 				//call configs populate method to ensure any defaults are set for empty values.
 				if ( method_exists( $settings, 'populate' ) ) {
-					$this->$config->populate();
+					$this->{$config}->populate();
 				}
 				if ( method_exists( $settings, 'do_hooks' ) ) {
-					$this->$config->do_hooks();
+					$this->{$config}->do_hooks();
 				}
 			}
 		}
@@ -373,7 +373,7 @@ final class EE_Config {
 			if ( $addon_config_obj instanceof $config_class && ! $addon_config_obj instanceof __PHP_Incomplete_Class ) {
 				$this->update_config( 'addons', $addon_name, $addon_config_obj, FALSE );
 			}
-			$this->addons->$addon_name = NULL;
+			$this->addons->{$addon_name} = NULL;
 		}
 	}
 
@@ -997,7 +997,7 @@ final class EE_Config {
 		}
 		register_widget( $widget_class );
 		// add to array of registered widgets
-		EE_Registry::instance()->widgets->$widget_class = $widget_path . DS . $widget_class . $widget_ext;
+		EE_Registry::instance()->widgets->{$widget_class} = $widget_path . DS . $widget_class . $widget_ext;
 	}
 
 
@@ -1082,7 +1082,7 @@ final class EE_Config {
 		}
 		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->{$shortcode} = $shortcode_path . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
@@ -1172,8 +1172,8 @@ final class EE_Config {
 			return FALSE;
 		}
 		// add to array of registered modules
-		EE_Registry::instance()->modules->$module_class = $module_path . $module_class . $module_ext;
-		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
+		EE_Registry::instance()->modules->{$module_class} = $module_path . $module_class . $module_ext;
+		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->{$module_class} );
 		return TRUE;
 	}
 
@@ -1250,7 +1250,7 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
 		$module_class = 'EED_' . $module;
-		if ( ! isset( EE_Registry::instance()->modules->$module_class )) {
+		if ( ! isset( EE_Registry::instance()->modules->{$module_class} )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1445,10 +1445,10 @@ class EE_Config_Base{
 			throw new EE_Error( sprintf( __('%1$s::get_pretty() has been called with the property %2$s which does not exist on the %1$s config class.', 'event_espresso' ), get_class( $this ), $property ) );
 		}
 		//just handling escaping of strings for now.
-		if ( is_string( $this->$property ) ) {
-			return stripslashes( $this->$property );
+		if ( is_string( $this->{$property} ) ) {
+			return stripslashes( $this->{$property} );
 		}
-		return $this->$property;
+		return $this->{$property};
 	}
 
 
@@ -1461,8 +1461,8 @@ class EE_Config_Base{
 		//loop through the properties for this class and see if they are set.  If they are NOT, then grab the
 		//default from our $defaults object.
 		foreach ( get_object_vars( $defaults ) as $property => $value ) {
-			if ( is_null( $this->$property ) ) {
-				$this->$property = $value;
+			if ( is_null( $this->{$property} ) ) {
+				$this->{$property} = $value;
 			}
 		}
 
@@ -1475,8 +1475,8 @@ class EE_Config_Base{
 	 *		@ override magic methods
 	 *		@ return void
 	 */
-//	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->$a); }
-//	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->$a = $b ); }
+//	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
+//	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
 	/**
 	 *        __isset
 	 *
