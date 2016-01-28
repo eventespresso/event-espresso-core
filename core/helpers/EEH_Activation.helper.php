@@ -298,7 +298,7 @@ class EEH_Activation {
 				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
 					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
 				} else {
-					$settings->$key = $value;
+					$settings->{$key} = $value;
 				}
 			}
 			add_filter( 'FHEE__EE_Config___load_core_config__update_espresso_config', '__return_true' );
