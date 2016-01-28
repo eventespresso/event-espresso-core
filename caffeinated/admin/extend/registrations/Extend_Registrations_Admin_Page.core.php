@@ -441,7 +441,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	/**
 	 * This is called when javascript is being enqueued to setup the various data needed for the reports js.
-	 * Also $this->$_reports_template_data property is set for later usage by the _registration_reports method.
+	 * Also $this->{$_reports_template_data} property is set for later usage by the _registration_reports method.
 	 */
 	protected function _registration_reports_js_setup() {
 		$this->_reports_template_data['admin_reports'][] = $this->_registrations_per_day_report();
