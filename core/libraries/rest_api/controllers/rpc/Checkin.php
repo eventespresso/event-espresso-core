@@ -73,17 +73,11 @@ class Checkin extends Base {
 		}
 		$success = $reg->toggle_checkin_status( $dtt_id, ! $force );
 		if( $success === false ) {
-			$notices_during_checkin = \EE_Error::get_notices( false );
-
-			if( isset( $notices_during_checkin[ 'errors' ] ) ) {
-				$error_message = strip_tags( $notices_during_checkin[ 'errors' ] );
-			} else {
-				$error_message = __( 'An error occurred.', 'event_espresso' );
-			}
+			//rely on EE_Error::add_error messages to have been added to give more data about hwy it failed
 			return $this->send_response(
 				new \WP_Error(
-					'rest_toggle_checkin_error',
-					$error_message
+					'rest_toggle_checkin_failed',
+					__( 'Registration checkin failed. Please see additional error data.', 'event_espresso' )
 				)
 			);
 		}

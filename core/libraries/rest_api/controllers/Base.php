@@ -56,6 +56,21 @@ class Base {
 	protected function _set_debug_info( $key, $info ){
 		$this->_debug_info[ $key ] = $info;
 	}
+	
+	/**
+	 * Adds error notices from EE_Error onto the provided \WP_Error
+	 * @param \WP_Error $wp_error_response
+	 * @return \WP_Error
+	 */
+	protected function _add_ee_errors_to_response( \WP_Error $wp_error_response ) {
+		$notices_during_checkin = \EE_Error::get_raw_notices();
+		foreach( $notices_during_checkin[ 'errors' ] as $error_code => $error_message ) {
+			$wp_error_response->add( 
+				sanitize_key( $error_code ), 
+				strip_tags( $error_message ) );
+		}
+		return $wp_error_response;
+	}
 
 
 
@@ -74,34 +89,8 @@ class Base {
 			$response = new \WP_Error( $response->getCode(), $response->getMessage() );
 		}
 		if( $response instanceof \WP_Error ) {
-			//we want to send a "normal"-looking WP error response, but we also
-			//want to add headers. It doesn't seem WP API 1.2 supports this.
-			//I'd like to use WP_JSON_Server::error_to_response() but its protected
-			//so here's most of it copy-and-pasted :P
-			$error_data = $response->get_error_data();
-			if ( is_array( $error_data ) && isset( $error_data['status'] ) ) {
-				$status = $error_data['status'];
-			} else {
-				$status = 500;
-			}
-
-			$errors = array();
-			foreach ( (array) $response->errors as $code => $messages ) {
-				foreach ( (array) $messages as $message ) {
-					$errors[] = array(
-						'code'    => $code,
-						'message' => $message,
-						'data'    => $response->get_error_data( $code )
-					);
-				}
-			}
-			$data = isset( $errors[0] ) ? $errors[0] : array();
-			if ( count( $errors ) > 1 ) {
-				// Remove the primary error.
-				array_shift( $errors );
-				$data['additional_errors'] = $errors;
-			}
-			$rest_response = new \WP_REST_Response( $data, $status );
+			$response = $this->_add_ee_errors_to_response( $response );
+			$rest_response = $this->_create_rest_response_from_wp_error( $response );
 		}else{
 			$rest_response = new \WP_REST_Response( $response, 200 );
 		}
@@ -116,6 +105,40 @@ class Base {
 		}
 		$rest_response->set_headers( $headers );
 		return $rest_response;
+	}
+	
+	/**
+	 * Converts the \WP_Error into `WP_REST_Response.
+	 * Mostly this is just a copy-and-paste from \WP_REST_Server::error_to_response
+	 * (which is protected)
+	 * @param \WP_Error $wp_error
+	 * @return \WP_REST_Response
+	 */
+	protected function _create_rest_response_from_wp_error( \WP_Error $wp_error ) {
+		$error_data = $wp_error->get_error_data();
+		if ( is_array( $error_data ) && isset( $error_data['status'] ) ) {
+			$status = $error_data['status'];
+		} else {
+			$status = 500;
+		}
+
+		$errors = array();
+		foreach ( (array) $wp_error->errors as $code => $messages ) {
+			foreach ( (array) $messages as $message ) {
+				$errors[] = array(
+					'code'    => $code,
+					'message' => $message,
+					'data'    => $wp_error->get_error_data( $code )
+				);
+			}
+		}
+		$data = isset( $errors[0] ) ? $errors[0] : array();
+		if ( count( $errors ) > 1 ) {
+			// Remove the primary error.
+			array_shift( $errors );
+			$data['additional_errors'] = $errors;
+		}
+		return new \WP_REST_Response( $data, $status );
 	}
 	
 	/**

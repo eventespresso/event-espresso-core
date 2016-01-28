@@ -627,12 +627,13 @@ class EE_Error extends Exception {
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
-			// get error code, but only on error
+			// get error code
+			$error_code = EE_Error::generate_error_code( $file, $func, $line );
 			if ( WP_DEBUG && $type == 'errors' ) {
-				$msg .= '<br/><span class="tiny-text">' . EE_Error::generate_error_code( $file, $func, $line ) . '</span>';
+				$msg .= '<br/><span class="tiny-text">' . $error_code . '</span>';
 			}
 			// add notice
-			self::$_espresso_notices[ $type ][] = $msg;
+			self::$_espresso_notices[ $type ][ $error_code ] = $msg;
 			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 
@@ -715,6 +716,7 @@ class EE_Error extends Exception {
 
 	/**
 	* 	compile all error or success messages into one string
+	*	@see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
 	*
 	*	@access public
 	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
@@ -1095,6 +1097,18 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 			EE_Registry::instance()->load_helper('Debug_Tools');
 			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
 		}
+	}
+	
+	/**
+	 * Like get_notices, but returns an array of all the notices of the given type.
+	 * @return array {
+	 *	@type array $success all the success messages
+	 *	@type array $errors all the error messages
+	 *	@type array $attention all the attention messages
+	 * }
+	 */
+	public static function get_raw_notices() {
+		return self::$_espresso_notices;
 	}
 
 
