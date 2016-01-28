@@ -386,7 +386,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			// or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			if( is_wp_error(  $response ) ) {
 				$error_msg = sprintf( 
-					__( 'WP Error. Code: "%1$s", Message: "%2$s", Data: "%3$s",%3$s', 'event_espresso' ),
+					__( 'WP Error. Code: "%1$s", Message: "%2$s", Data: "%3$s"', 'event_espresso' ),
 					$response->get_error_code(),
 					$response->get_error_message(),
 					print_r( $response->get_error_data, true )
