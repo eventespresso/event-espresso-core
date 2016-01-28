@@ -529,9 +529,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			if ( ! empty( self::$_settings[$addon_name]['custom_post_types'] ) ) {
 				EE_Register_CPT::deregister( $addon_name );
 			}
-			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
-			remove_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( EE_Registry::instance()->addons->$class_name, 'initialize_db_if_no_migrations_required' ) );
-			unset(EE_Registry::instance()->addons->$class_name);
+			remove_action('deactivate_'.EE_Registry::instance()->addons->{$class_name}->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->{$class_name}, 'deactivation' ) );
+			remove_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( EE_Registry::instance()->addons->{$class_name}, 'initialize_db_if_no_migrations_required' ) );
+			unset(EE_Registry::instance()->addons->{$class_name});
 			unset( self::$_settings[ $addon_name ] );
 		}
 	}

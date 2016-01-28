@@ -168,7 +168,7 @@ class EE_Messages_Addressee extends EE_Base {
 
 		foreach ( $this->_data as $prop => $value ) {
 			if( property_exists( $this, $prop ) )
-				$this->$prop = $value;
+				$this->{$prop} = $value;
 		}
 
 		//if user_id present we'll use this to set the fname and lname and admin_email.

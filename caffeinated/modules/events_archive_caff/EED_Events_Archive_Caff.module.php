@@ -168,7 +168,7 @@ class EED_Events_Archive_Caff  extends EED_Events_Archive {
 						$template_part
 					)
 				) {
-					EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->$template_part = $priority;
+					EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->{$template_part} = $priority;
 				}
 				do_action( "AHEE__EED_Events_Archive__update_event_archive_order__$template_part", $priority );
 			}
