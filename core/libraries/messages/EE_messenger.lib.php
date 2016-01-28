@@ -694,16 +694,11 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$template_fields = $this->get_template_fields();
 
 		foreach ( $template_fields as $template => $value ) {
-<<<<<<< HEAD
 			if ( $template !== 'extra' ) {
 				$column_value = $message->get_field_or_extra_meta( 'MSG_' . $template );
 				$message_template_value = $column_value ? $column_value : null;
 				$this->_set_template_value( $template, $message_template_value );
 			}
-=======
-			if ( $template !== 'extra' )
-				$this->_set_template_value($template, $message->{$template});
->>>>>>> origin/master
 		}
 	}
 
