@@ -644,7 +644,6 @@ class EE_Registry {
 		try {
 			//does the file exist and can it be read ?
 			if ( ! $path ) {
-				$this->_cache_on = true;
 				// so sorry, can't find the file
 				throw new EE_Error (
 					sprintf(
@@ -659,7 +658,6 @@ class EE_Registry {
 			require_once( $path );
 			// if the class isn't already declared somewhere
 			if ( class_exists( $class_name, false ) === false ) {
-				$this->_cache_on = true;
 				// so sorry, not a class
 				throw new EE_Error(
 					sprintf(
@@ -743,7 +741,6 @@ class EE_Registry {
 				//$instantiation_mode = "isInstantiable";
 				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else if ( ! $load_only ) {
-				$this->_cache_on = true;
 				// heh ? something's not right !
 				//$instantiation_mode = 'none';
 				throw new EE_Error(
