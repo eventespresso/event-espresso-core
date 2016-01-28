@@ -873,13 +873,13 @@ class EE_Registry {
 	protected function _resolve_dependency( $class_name, $param_class , $arguments, $index ) {
 		$dependency = null;
 		// should dependency be loaded from cache ?
-		$skip_cache =
-			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] !== EE_Dependency_Map::load_from_cache
+		$cache_on =
+			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] !== EE_Dependency_Map::load_new_object
 				? true
 				: false;
 		// we might have a dependency...
 		// let's MAYBE try and find it in our cache if that's what's been requested
-		$cached_class = ! $skip_cache ? $this->_get_cached_class( $param_class ) : null;
+		$cached_class = ! $cache_on ? $this->_get_cached_class( $param_class ) : null;
 		// and grab it if it exists
 		if ( $cached_class instanceof $param_class ) {
 			$dependency = $cached_class;
@@ -890,8 +890,8 @@ class EE_Registry {
 			if ( $loader instanceof Closure ) {
 				$dependency = $loader();
 			} else {
-				// set the skip cache property for the recursive loading call
-				$this->_cache_on = $skip_cache;
+				// set the cache on property for the recursive loading call
+				$this->_cache_on = $cache_on;
 				// if not, then let's try and load it via the registry
 				$dependency = $this->$loader( $param_class );
 			}
