@@ -64,10 +64,12 @@ class Base {
 	 */
 	protected function _add_ee_errors_to_response( \WP_Error $wp_error_response ) {
 		$notices_during_checkin = \EE_Error::get_raw_notices();
-		foreach( $notices_during_checkin[ 'errors' ] as $error_code => $error_message ) {
-			$wp_error_response->add( 
-				sanitize_key( $error_code ), 
-				strip_tags( $error_message ) );
+		if( ! empty( $notices_during_checkin[ 'errors' ] ) ) {	
+			foreach( $notices_during_checkin[ 'errors' ] as $error_code => $error_message ) {
+				$wp_error_response->add( 
+					sanitize_key( $error_code ), 
+					strip_tags( $error_message ) );
+			}
 		}
 		return $wp_error_response;
 	}
