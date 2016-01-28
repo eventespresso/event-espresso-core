@@ -545,6 +545,8 @@ class EE_Registry {
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only );
 		if ( $this->_cache_on ) {
+			// if $load_only and $from_db are both set to true, then do not cache
+			$cache = ! ( $load_only && $from_db ) ? $cache : false;
 			// save it for later... kinda like gum  { : $
 			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
 		}
