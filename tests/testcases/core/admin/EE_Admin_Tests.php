@@ -53,7 +53,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertTrue( defined('EE_ADMIN_TEMPLATE') );
 		$this->assertTrue( defined('WP_ADMIN_PATH' ) );
 		$this->assertTrue( defined('WP_AJAX_URL') );
-		$this->assertTrue( defined('JQPLOT_URL') );
 	}
 
 
