@@ -850,15 +850,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
-	/**
-	 * @param $event_id
-	 * @return int
-	 */
-<<<<<<< HEAD
-	protected function _get_event_admin_id( $event_id ) {
-		$event = EEM_Event::instance()->get_one_by_ID( $event_id );
-		return $event instanceof EE_Event ? $event->wp_user() : 0;
-=======
 	protected function _setup_message_object($context, $addressee) {
 		$message = new stdClass();
 
@@ -889,10 +880,14 @@ abstract class EE_message_type extends EE_Messages_Base {
 	}
 
 
-	protected function _get_event_admin_id($event_id) {
-		$event = EEM_Event::instance()->get_one_by_ID($event_id);
-		return $event->wp_user();
->>>>>>> origin/master
+
+	/**
+	 * @param $event_id
+	 * @return int
+	 */
+	protected function _get_event_admin_id( $event_id ) {
+		$event = EEM_Event::instance()->get_one_by_ID( $event_id );
+		return $event instanceof EE_Event ? $event->wp_user() : 0;
 	}
 
 
