@@ -67,7 +67,7 @@ function my_custom_event_slug( $slug, $post_type ) {
 			</ol>
 			<p class="more-info">
 				<?php _e('More information can be found here:', 'event_espresso'); ?>
-				<a href="http://eventespresso.com/wiki/how-to-set-up-paypal-ipn/" target="_blank"><?php _e('How to set up the PayPal IPN', 'event_espresso'); ?></a></p>
+				<a href="https://eventespresso.com/wiki/how-to-set-up-paypal-ipn/" target="_blank"><?php _e('How to set up the PayPal IPN', 'event_espresso'); ?></a></p>
 		</dd>
 		<dt>
 			<strong><?php _e('Only Canada and United States are appearing in the country dropdown menus. How can I change this?', 'event_espresso'); ?></strong>
