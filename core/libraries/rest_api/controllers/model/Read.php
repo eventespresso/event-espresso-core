@@ -134,7 +134,7 @@ class Read extends Base {
 			//assume the related model name is plural and try to find the model's name
 			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
 			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
-				//so the word didn't singuralize well. Maybe that's just because it's a singular word?
+				//so the word didn't singularize well. Maybe that's just because it's a singular word?
 				$related_model_name_singular = \EEH_Inflector::humanize( $matches[ 'related_model' ] );
 			}
 			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
