@@ -28,6 +28,8 @@
  */
 class EE_Term extends EE_Base_Class {
 
+	public $post_type;
+
 	/**
 	 * Sets some dynamic defaults
 	 * @param array $fieldValues
