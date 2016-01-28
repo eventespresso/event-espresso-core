@@ -21,19 +21,22 @@ class Meta extends Base {
 	/**
 	 * @param \WP_REST_Request $request
 	 * @return array|\WP_REST_Response
-	 * @throws \EE_Error
 	 */
 	public static function handle_request_models_meta( \WP_REST_Request $request ) {
 		$controller = new Meta();
-		$matches = $controller->parse_route(
-			$request->get_route(),
-			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . 'resources~',
-			array( 'version' ) );
-		if( $matches instanceof \WP_REST_Response ) {
-			return $matches;
+		try{
+			$matches = $controller->parse_route(
+				$request->get_route(),
+				'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . 'resources~',
+				array( 'version' ) );
+			if( $matches instanceof \WP_REST_Response ) {
+				return $matches;
+			}
+			$controller->set_requested_version( $matches[ 'version' ] );
+			return $controller->send_response( $controller->_get_models_metadata_entity() );
+		} catch( \Exception $e ) {
+			$controller->send_response( $e );
 		}
-		$controller->set_requested_version( $matches[ 'version' ] );
-		return $controller->send_response( $controller->_get_models_metadata_entity() );
 	}
 
 	/*
