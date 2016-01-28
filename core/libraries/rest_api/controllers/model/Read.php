@@ -181,6 +181,7 @@ class Read extends Base {
 		}
 
 		$this->_set_debug_info( 'model query params', $query_params );
+		/** @type array $results */
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
 		foreach ( $results as $result ) {
@@ -200,6 +201,7 @@ class Read extends Base {
 	 * The same as Read::get_entities_from_model(), except if the relation
 	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
 	 * the join-model-object into the results
+	 *
 	 * @param string $id the ID of the thing we are fetching related stuff from
 	 * @param \EE_Model_Relation_Base $relation
 	 * @param \WP_REST_Request $request
@@ -251,6 +253,7 @@ class Read extends Base {
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
 		$this->_set_debug_info( 'model query params', $query_params );
+		/** @type array $results */
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
 		foreach( $results as $result ) {
@@ -301,7 +304,7 @@ class Read extends Base {
 	 *                          '{
 	 *                              "EVT_ID":12,
 	 * 								"EVT_name":"star wars party",
-	 * 								"EVT_desc":"so cool...",
+	 * 								"EVT_desc":"this is the party you are looking for...",
 	 * 								"datetimes":[{
 	 * 									"DTT_ID":123,...,
 	 * 									"tickets":[{
@@ -658,7 +661,15 @@ class Read extends Base {
 		}
 		return $model_ready_query_params;
 	}
-	public function prepare_rest_query_params_values_for_models( $model,  $query_params ) {
+
+
+
+	/**
+	 * @param $model
+	 * @param $query_params
+	 * @return array
+	 */
+	public function prepare_rest_query_params_values_for_models( $model, $query_params ) {
 		$model_ready_query_params = array();
 		foreach( $query_params as $key => $value ) {
 			if( is_array( $value ) ) {
