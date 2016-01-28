@@ -19,16 +19,25 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Checkin extends Base {
-	public static function handle_request_toggle_checkin( $request ) {
+
+	/**
+	 * @param \WP_REST_Request $request
+	 * @return \WP_Error|\WP_REST_Response
+	 */
+	public static function handle_request_toggle_checkin( \WP_REST_Request $request ) {
 		$controller = new Checkin();
 		return $controller->_create_checkin_checkout_object( $request );
 	}
-	
+
+
+
 	/**
-	 * Toggles whether the user is checked in or not. 
+	 * Toggles whether the user is checked in or not.
+	 *
 	 * @param \WP_REST_Request $request
+	 * @return \WP_Error|\WP_REST_Response
 	 */
-	protected function _create_checkin_checkout_object( $request ) {
+	protected function _create_checkin_checkout_object( \WP_REST_Request $request ) {
 		$reg_id = $request->get_param( 'REG_ID' );
 		$dtt_id = $request->get_param( 'DTT_ID' );
 		$force = $request->get_param( 'force' );
@@ -39,10 +48,10 @@ class Checkin extends Base {
 		}
 		$reg = \EEM_Registration::instance()->get_one_by_ID( $reg_id );
 		if( ! $reg instanceof \EE_Registration ) {
-			return $this->send_response( 
-				new \WP_Error( 
-					'rest_registration_toggle_checkin_invalid_id', 
-					sprintf( 
+			return $this->send_response(
+				new \WP_Error(
+					'rest_registration_toggle_checkin_invalid_id',
+					sprintf(
 						__( 'You cannot checkin registration with ID $1$s because it doesn\'t exist.', 'event_espresso' ),
 						$reg_id
 					),
@@ -51,10 +60,10 @@ class Checkin extends Base {
 			);
 		}
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id ) ) {
-			return $this->send_response( 
-				new \WP_Error( 
-					'rest_user_cannot_registration_toggle_checkin', 
-					sprintf( 
+			return $this->send_response(
+				new \WP_Error(
+					'rest_user_cannot_registration_toggle_checkin',
+					sprintf(
 						__( 'You are not allowed to checkin registration with ID $1$s.', 'event_espresso' ),
 						$reg_id
 					),
@@ -65,15 +74,15 @@ class Checkin extends Base {
 		$success = $reg->toggle_checkin_status( $dtt_id, ! $force );
 		if( $success === false ) {
 			$notices_during_checkin = \EE_Error::get_notices( false );
-			
+
 			if( isset( $notices_during_checkin[ 'errors' ] ) ) {
 				$error_message = strip_tags( $notices_during_checkin[ 'errors' ] );
 			} else {
 				$error_message = __( 'An error occurred.', 'event_espresso' );
 			}
-			return $this->send_response( 
-				new \WP_Error( 
-					'rest_toggle_checkin_error', 
+			return $this->send_response(
+				new \WP_Error(
+					'rest_toggle_checkin_error',
 					$error_message
 				)
 			);
@@ -90,9 +99,9 @@ class Checkin extends Base {
 			)
 		);
 		if( ! $checkin instanceof \EE_Checkin ) {
-			return $this->send_response( 
-				new \WP_Error( 
-					'rest_toggle_checkin_error', 
+			return $this->send_response(
+				new \WP_Error(
+					'rest_toggle_checkin_error',
 					sprintf(
 						__( 'Supposedly we created a new checkin object for registration %1$s at datetime %2$s, but we can\'t find it.', 'event_espresso' ),
 						$reg_id,
@@ -102,9 +111,9 @@ class Checkin extends Base {
 			);
 		}
 		$requested_version = $this->get_requested_version( $request->get_route() );
-		$get_request = new \WP_REST_Request( 
-			'GET', 
-			\EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/checkins/' . $checkin->ID() 
+		$get_request = new \WP_REST_Request(
+			'GET',
+			\EED_Core_Rest_Api::ee_api_namespace . $requested_version . '/checkins/' . $checkin->ID()
 		);
 		$get_request->set_url_params(
 			array(
