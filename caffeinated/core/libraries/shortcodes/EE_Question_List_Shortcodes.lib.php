@@ -62,7 +62,6 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 
 	protected function _get_question_list() {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		//for when [QUESTION_LIST] is used in the [attendee_list] field.
 		if ( $this->_data['data'] instanceof EE_Registration ) {

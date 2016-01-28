@@ -265,9 +265,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( $total_owing > 0 ) {
 			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
-
-			//we need to re run this string through the parser to catch any shortcodes that are in it.
-			$this->_set_shortcode_helper();
 			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			$owing_content = !empty( $attrs['none_owing']) ? $attrs['none_owing'] : '';
@@ -578,7 +575,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			$content = $opening_tag . sprintf( $custom_text, '<a href="[PAYMENT_URL]">', '</a>' ) . $closing_tag;
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
-			$this->_set_shortcode_helper();
 			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			return '';

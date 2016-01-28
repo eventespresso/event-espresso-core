@@ -33,7 +33,6 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
     protected function _parser( $shortcode ) {
         if ( $shortcode == '[NEWSLETTER_CONTENT]' ) {
             $this->_validate_list_requirements();
-            $this->_set_shortcode_helper();
             $valid_shortcodes = array('recipient_details', 'organization');
             $template = $this->_data['template']['newsletter_content'];
             $data = $this->_data;
