@@ -100,7 +100,6 @@ final class EE_Admin {
 		define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
 		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
 		define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ));
-		define( 'JQPLOT_URL', EE_GLOBAL_ASSETS_URL . 'scripts/jqplot/' );
 	}
 
 
@@ -849,7 +848,7 @@ final class EE_Admin {
 	public function espresso_admin_footer() {
 		return sprintf(
 			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
-			'<a href="http://eventespresso.com/" title="',
+			'<a href="https://eventespresso.com/" title="',
 			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
 		);
 	}

@@ -3,14 +3,14 @@
 * a template with options for reseting and/or deleting EE data
 */
 ?>
-<h1>
+<h3>
 	<?php _e( 'Reset/Delete Data for Event Espresso', 'event_espresso' );?>
-</h1>
+</h3>
 <br />
 
 <!-- reset DB url is here. Just need to make it look pretty and unhide it-->
 <div class="padding">
-	<h3 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php _e('Reset Event Espresso Capabilities', 'event_espresso');?></h3>
+	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php _e('Reset Event Espresso Capabilities', 'event_espresso');?></h4>
 	<p><?php _e('Use this to reset the capabilities on WP roles to the defaults as defined via EE_Capabilities.  Note this reset does not REMOVE any existing capabilities, it just ensures that all the defaults are ADDED to the roles.', 'event_espresso');?></p>
 	<div class="float-right"><?php echo $reset_capabilities_button; ?></div>
 	<div class="clear"></div>
@@ -19,7 +19,7 @@
 <br />
 
 <div class="padding">
-	<h3 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php _e('Reset Event Espresso Tables', 'event_espresso');?></h3>
+	<h4 class="espresso-header"><span class="dashicons dashicons-update ee-icon-size-22"></span><?php _e('Reset Event Espresso Tables', 'event_espresso');?></h4>
 	<p><?php _e('Use this to reset Event Espresso Data and return your site to how it was just after first activating Event Espresso.', 'event_espresso');?></p>
 	<div class="float-right"><a class="button button-primary" href="<?php echo $reset_db_url;?>"><?php _e('Reset Event Espresso Tables', 'event_espresso');?></a></div>
 	<div class="clear"></div>
@@ -28,7 +28,7 @@
 <br />
 
 <div class="padding">
-	<h3 class="espresso-header"><span class="dashicons dashicons-post-trash ee-icon-size-22"></span><?php _e('Permanently Delete ALL Event Espresso Tables and Data', 'event_espresso');?></h3>
+	<h4 class="espresso-header"><span class="dashicons dashicons-post-trash ee-icon-size-22"></span><?php _e('Permanently Delete ALL Event Espresso Tables and Data', 'event_espresso');?></h4>
 	<p><?php _e('If you know for certain that you will no longer be using Event Espresso and you wish to remove ALL traces of the plugin from your system, then perform the following steps.', 'event_espresso');?></p>
 	<p class="important-notice"><?php printf( __('Please note: %sThis is permanent and can NOT be undone.%s', 'event_espresso'), '<strong>', '</strong>' ); ?><br/></p>
 	<ol>

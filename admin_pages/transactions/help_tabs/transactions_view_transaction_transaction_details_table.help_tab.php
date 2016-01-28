@@ -1,4 +1,4 @@
-<h3><?php _e('Transaction Items', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Transaction Items', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This area of the table shows information about any events that were included in this transactions.', 'event_espresso'); ?>
 </p>
@@ -42,7 +42,7 @@
 </li>
 </ul>
 </p>
-<h3><?php _e('Transaction Session Details', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Transaction Session Details', 'event_espresso'); ?></strong></p>
 <p>
 <ul>
 <li>

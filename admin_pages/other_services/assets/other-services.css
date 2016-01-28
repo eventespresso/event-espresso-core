@@ -1,7 +1,7 @@
 /**
  * CSS for the Other Services admin pages
  */
- h1.service-settings-heading {
+ h3.service-settings-heading {
  	padding-left: 10px;
  	padding-top: 20px;
  	padding-bottom: 5px;
@@ -180,4 +180,8 @@
 .column-description img {
 	float: right;
 	margin: 10px 0 10px 10px;
+}
+
+.service-div-settings .column-name h4 {
+    font-size: 1.5em;
 }

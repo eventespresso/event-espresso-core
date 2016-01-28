@@ -286,15 +286,20 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
+		$offset = get_option( 'gmt_offset' );
+		$query_interval = $offset < 0
+			? 'DATE_SUB(REG_date, INTERVAL ' . $offset*-1 . ' HOUR)'
+			: 'DATE_ADD(REG_date, INTERVAL ' . $offset . ' HOUR)';
+
 		$results = $this->_get_all_wpdb_results(
 				array(
 					$where,
 					'group_by'=>'regDate',
-					'order_by'=>array('REG_date'=>'DESC')
+					'order_by'=>array('REG_date'=>'ASC')
 				),
 				OBJECT,
 				array(
-					'regDate'=>array('DATE(Registration.REG_date)','%s'),
+					'regDate'=>array( 'DATE(' . $query_interval . ')','%s'),
 					'total'=>array('count(REG_ID)','%d')
 				));
 		return $results;

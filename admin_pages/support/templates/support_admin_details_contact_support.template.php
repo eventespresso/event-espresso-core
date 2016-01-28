@@ -1,7 +1,7 @@
 <div class="padding">
-	<h4>
+	<h3>
 		<?php _e('Before Contacting Support', 'event_espresso'); ?>
-	</h4>
+	</h3>
 	<p>
 		<?php _e('Our primary goal at Event Espresso is to offer an affordable solution as compared to building your own system or using a 3rd party service to handle your event registrations.', 'event_espresso'); ?>
 	</p>
@@ -17,15 +17,15 @@
 		</strong><br />
 		<?php _e('When requesting support, please copy and paste the details displayed in the <a href="#espresso_important_information_settings">Important Information</a> section below. This will help us identify problems with your server, WordPress installation, and/or the Event Espresso plugin. Please also include a list (or screenshot) of all <a href="plugins.php?plugin_status=active">active plugins</a>.', 'event_espresso'); ?>
 	</p>
-	<h4>
+	<h3>
 		<?php _e('Premium Support Options', 'event_espresso'); ?>
-	</h4>
+	</h3>
 	<p>
 		<?php _e('We offer premium support to customers who desire or require a level of support beyond the complimentary support included with all Event Espresso products.', 'event_espresso'); ?>
 	</p>
-	<h5>
+	<h4>
 		<?php _e('Support Tokens', 'event_espresso'); ?>
-	</h5>
+	</h4>
 	<p>
 		<?php _e('A support token can be used towards receiving support for a single incident. Support is provided up to 30 minutes via phone call, instant message, or priority email support. Here are examples of how support tokens can be used: how-to questions, best practices questions, technical issues, advising on custom development.', 'event_espresso'); ?>
 	</p>

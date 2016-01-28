@@ -1,4 +1,4 @@
-<h2><?php _e('Add New Question Group', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Add New Question Group', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to add a new question group for Event Espresso.', 'event_espresso'); ?>
 </p>

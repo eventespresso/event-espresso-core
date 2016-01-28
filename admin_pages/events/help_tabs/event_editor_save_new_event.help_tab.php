@@ -1,4 +1,4 @@
-<h3><?php _e('Save New Event', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Save New Event', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Quickly publish your event to allow immediate registrations.', 'event_espresso'); ?><br />
 </p>
