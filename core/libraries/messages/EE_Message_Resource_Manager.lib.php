@@ -702,7 +702,6 @@ class EE_Message_Resource_Manager {
 	 * @return array
 	 */
 	protected function _activate_message_types( EE_Messenger $messenger, $message_type_names = array() ) {
-		//EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__ );
 		//If $message_type_names is empty, AND $this->_active_message_types is empty, then that means
 		//things have never been initialized (which should happen on EEH_Activation::generate_message_templates).
 		//So ONLY then do we need to actually grab defaults and cycle through them.  Otherwise we
@@ -719,7 +718,6 @@ class EE_Message_Resource_Manager {
 		if ( $message_type_names ) {
 			// cycle thru message types
 			foreach ( $message_type_names as $message_type_name ) {
-				//EEH_Debug_Tools::printr( $message_type_name, '$message_type_name', __FILE__, __LINE__ );
 				//only register the message type as active IF it isn't already active!
 				//and if its actually installed.
 				if (
