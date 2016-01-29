@@ -351,18 +351,27 @@ class EED_Core_Rest_Api extends \EED_Module {
 		$possibly_served_versions = EED_Core_Rest_Api::version_compatibilities();
 		$lowest_compatible_version = end( $possibly_served_versions);
 		reset( $possibly_served_versions );
+		$versions_served_historically = array_keys( $possibly_served_versions );
+		$latest_version = end( $versions_served_historically );
+		reset( $versions_served_historically );
 		//for each version of core we have ever served:
-		foreach( array_keys( $possibly_served_versions ) as $possibly_served_version ) {
-			//if it's not above the current core version, and it's compatible with the current version of core
-			if(
-				$possibly_served_version < EED_Core_Rest_Api::core_version()
-				&& $possibly_served_version >= $lowest_compatible_version
-			) {
-				$versions_served[ $possibly_served_version ] = true;
-			}else {
-				$versions_served[ $possibly_served_version ] = false;
+		array_walk( 
+			$versions_served_historically,
+			function( $key_versioned_endpoint ) use( &$versions_served, $lowest_compatible_version, $latest_version ) {
+				//if it's not above the current core version, and it's compatible with the current version of core
+				if( $key_versioned_endpoint == $latest_version ) {
+					//don't hide the latest version in the index
+					$versions_served[ $key_versioned_endpoint ] = false;
+				} else if(
+					$key_versioned_endpoint < EED_Core_Rest_Api::core_version()
+					&& $key_versioned_endpoint >= $lowest_compatible_version
+				) {
+				//include, but hide, previous versions which are still supported
+					$versions_served[ $key_versioned_endpoint ] = true;
+				}
+				//if a version is no longer supported, don't include it in index or list of versions served
 			}
-		}
+		);
 		return $versions_served;
 	}
 
