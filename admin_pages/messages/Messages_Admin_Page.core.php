@@ -33,11 +33,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 protected $_message_resource_manager;
 
 	/**
-	 * @type EE_Messenger[] $_active_messengers
-	 */
-	protected  $_active_messengers = array();
-
-	/**
 	 * @type EE_Message_Type[] $_active_message_types
 	 */
 	protected  $_active_message_types = array();
@@ -114,7 +109,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_active_messenger = isset( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : null;
 		$this->_load_message_resource_manager();
 		//we're also going to set the active messengers and active message types in here.
-		$this->_active_messengers = $this->_message_resource_manager->active_messengers();
 		$this->_active_message_types = $this->_message_resource_manager->active_message_types();
 		//what about saving the objects in the active_messengers and active_message_types?
 		//$this->_load_active_messenger_objects();
@@ -674,9 +668,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles_display_preview_message() {
+
 		$this->_set_message_template_group();
+
 		if ( isset( $this->_req_data['messenger'] ) ) {
-			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']];
+			$this->_active_messenger = $this->_message_resource_manager->get_active_messenger( $this->_req_data['messenger'] );
 		}
 
 		$message_type_name = isset( $this->_req_data['message_type'] ) ? $this->_req_data['message_type'] : '';
@@ -916,7 +912,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function get_active_messengers() {
-		return $this->_active_messengers;
+		return $this->_message_resource_manager->active_messengers();
 	}
 
 
@@ -1041,7 +1037,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//set active messenger for this view
-		$this->_active_messenger = $this->_active_messengers[ $message_template_group->messenger() ];
+		$this->_active_messenger = $this->_message_resource_manager->get_active_messenger( $message_template_group->messenger() );
 		$this->_active_message_type_name = $message_template_group->message_type();
 
 
@@ -1608,10 +1604,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$go_back_url = parent::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
 		$message_types = $this->get_installed_message_types();
+		$active_messenger = $this->_message_resource_manager->get_active_messenger( $this->_req_data['messenger'] );
+		$active_messenger_label = $active_messenger instanceof EE_Messenger
+			? ucwords( $active_messenger->label['singular'] )
+			: esc_html__( 'Unknown Messenger', 'event_espresso' );
 		//let's provide a helpful title for context
 		$preview_title = sprintf(
 			__( 'Viewing Preview for %s %s Message Template', 'event_espresso' ),
-			ucwords( $this->_active_messengers[ $this->_req_data[ 'messenger' ] ]->label[ 'singular' ] ),
+			$active_messenger_label,
 			ucwords( $message_types[ $this->_req_data[ 'message_type' ] ]->label[ 'singular' ] )
 		);
 		//setup display of preview.
@@ -2181,7 +2181,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_req_data['message_type'] = $message_type;
 		$this->_req_data['context'] = $context;
 		$this->_req_data['GRP_ID'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
-		$active_messenger = $this->_active_messengers[ $messenger ];
+		$active_messenger = $this->_message_resource_manager->get_active_messenger( $messenger );
 
 		//let's save any existing fields that might be required by the messenger
 		if (
@@ -2418,12 +2418,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		/** @type EE_Message_Type[] $message_types */
 		$message_types = $this->_message_resource_manager->installed_message_types();
 
+
 		//assemble the array for the _tab_text_links helper
 
 		foreach ( $messengers as $messenger ) {
 			$this->_m_mt_settings['messenger_tabs'][$messenger->name] = array(
 				'label' => ucwords($messenger->label['singular']),
-				'class' => isset( $this->_active_messengers[$messenger->name] ) ? 'messenger-active' : '',
+				'class' => $this->_message_resource_manager->is_messenger_active( $messenger->name ) ? 'messenger-active' : '',
 				'href' => $messenger->name,
 				'title' => __('Modify this Messenger', 'event_espresso'),
 				'slug' => $messenger->name,
@@ -2549,8 +2550,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		foreach ( $this->_m_mt_settings['messenger_tabs'] as $messenger => $tab_array ) {
 
-			$hide_on_message = isset( $this->_active_messengers[$messenger] ) ? '' : 'hidden';
-			$hide_off_message = isset( $this->_active_messengers[$messenger] ) ? 'hidden' : '';
+			$hide_on_message = $this->_message_resource_manager->is_messenger_active( $messenger ) ? '' : 'hidden';
+			$hide_off_message = $this->_message_resource_manager->is_messenger_active( $messenger ) ? 'hidden' : '';
 
 			//messenger meta boxes
 			$active = $selected_messenger == $messenger ? true : false;
@@ -2624,17 +2625,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This prepares the content of the messenger meta box admin settings
 	 *
-	 * @param  object $messenger The messenger we're setting up content for
+	 * @param  EE_Messenger $messenger The messenger we're setting up content for
 	 *
 	 * @return string            html formatted content
 	 */
-	protected function _get_messenger_box_content( $messenger ) {
+	protected function _get_messenger_box_content( EE_Messenger $messenger ) {
 
 		$fields = $messenger->get_admin_settings_fields();
 		$settings_template_args['template_form_fields'] = '';
 
 		//is $messenger active?
-		$settings_template_args['active'] = isset($this->_active_messengers[$messenger->name]) ? true : false;
+		$settings_template_args['active'] = $this->_message_resource_manager->is_messenger_active( $messenger->name );
 
 
 		if ( !empty( $fields ) ) {
@@ -2684,14 +2685,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$settings_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $settings_template_args['hidden_fields'], 'array' );
 
-		$active = isset( $this->_active_messengers[$messenger->name] ) ? true : false;
+		$active = $this->_message_resource_manager->is_messenger_active( $messenger->name );
 
 		$settings_template_args['messenger'] = $messenger->name;
 		$settings_template_args['description'] = $messenger->description;
 		$settings_template_args['show_hide_edit_form'] = $active ? '' : ' hidden';
 
 
-		$settings_template_args['show_hide_edit_form'] = isset( $this->_active_messengers[$messenger->name] ) ? $settings_template_args['show_hide_edit_form'] : ' hidden';
+		$settings_template_args['show_hide_edit_form'] = $this->_message_resource_manager->is_messenger_active( $messenger->name ) ? $settings_template_args['show_hide_edit_form'] : ' hidden';
 
 		$settings_template_args['show_hide_edit_form'] = empty( $settings_template_args['template_form_fields'] ) ? ' hidden' : $settings_template_args['show_hide_edit_form'];
 
@@ -3041,7 +3042,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$message_types = $this->get_installed_message_types();
 
 		$message_type = $message_types[ $this->_req_data['message_type'] ];
-		$messenger = $this->_active_messengers[ $this->_req_data['messenger'] ];
+		$messenger = $this->_message_resource_manager->get_active_messenger( $this->_req_data['messenger'] );
 
 		$content = $this->_message_type_settings_content ( $message_type, $messenger, true );
 		$this->_template_args['success'] = true;
