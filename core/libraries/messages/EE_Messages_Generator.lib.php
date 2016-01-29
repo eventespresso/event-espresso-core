@@ -91,9 +91,6 @@ class EE_Messages_Generator {
 		$this->_data_handler_collection = $data_handler_collection;
 		$this->_template_collection = $template_collection;
 		$this->_shortcode_parser = $shortcode_parser;
-
-		//load request handler
-		EE_Registry::instance()->load_core( 'Request_Handler' );
 	}
 
 
