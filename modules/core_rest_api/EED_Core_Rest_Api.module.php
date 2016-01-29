@@ -209,9 +209,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 		return $model_routes;
 	}
-	
+
 	/**
-	 * Gets info about reading query params that are accceptable
+	 * Gets info about reading query params that are acceptable
 	 * @param string $model_name eg 'Event' or 'Venue'
 	 * @return array describing the args acceptable when querying this model
 	 */
@@ -346,7 +346,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * are whether or not they should be hidden
 	 */
 	public static function versions_served() {
-		$version_compatibilities = EED_Core_Rest_Api::version_compatibilities();
 		$versions_served = array();
 		$possibly_served_versions = EED_Core_Rest_Api::version_compatibilities();
 		$lowest_compatible_version = end( $possibly_served_versions);
