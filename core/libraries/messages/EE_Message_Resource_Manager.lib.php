@@ -273,6 +273,38 @@ class EE_Message_Resource_Manager {
 	}
 
 
+	/**
+	 * This returns any settings that might be on a message type for a messenger
+	 * @param string $messenger_name  The slug of the messenger
+	 * @param string $message_type_name  The slug of the message type getting the settings for.
+	 *
+	 * @return array
+	 */
+	public function get_message_type_settings_for_messenger( $messenger_name, $message_type_name ) {
+		$settings = array();
+		if ( $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
+			$settings =  isset( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ]['settings'] )
+				? $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ]['settings']
+				: array();
+		}
+		return $settings;
+	}
+
+
+
+	/**
+	 * Returns whether the given messenger name has active message types on it.
+	 * Infers whether the messenger is active or not as well.
+	 * @param $messenger_name
+	 * @return bool
+	 */
+	public function messenger_has_active_message_types( $messenger_name ) {
+		return
+			! empty( $this->_active_message_types[ $messenger_name ] )
+			&& ! empty( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ] );
+	}
+
+
 
 	/**
 	 * This checks the _active_message_types property for any active message types
