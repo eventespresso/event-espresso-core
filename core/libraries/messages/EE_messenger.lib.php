@@ -518,7 +518,7 @@ abstract class EE_Messenger extends EE_Messages_Base {
 
 		//array of template objects for global and custom (non-trashed) (but remember just for this messenger!)
 		$global_templates = EEM_Message_Template_Group::instance()->get_all( array( array('MTP_messenger' => $this->name, 'MTP_is_global' => TRUE, 'MTP_is_active' => TRUE ) ) );
-		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event( $event_id, array( 'MTP_messenger' => $this->name, 'MTP_is_active' => TRUE ) );
+		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event( $event_id, array( 'MTP_messenger' => $this->name, 'MTP_is_active' => true ) );
 		$templates_for_event = !empty( $templates_for_event ) ? $templates_for_event : array();
 
 		//so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
