@@ -312,7 +312,7 @@ class EEH_Debug_Tools{
 			$error_message .= '</ul>';
 			EE_Error::add_error( $error_message, 'debug::doing_it_wrong', $function, '42' );
 			//now we set this on the transient so it shows up on the next request.
-			EE_Error::get_notices( is_admin(), true );
+			EE_Error::get_notices( false, true );
 		} else {
 			trigger_error( $error_message, $error_type );
 		}
