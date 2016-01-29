@@ -706,7 +706,7 @@ class EE_Message_Resource_Manager {
 		//only override _active_message_types when an explicit array of $message_type_names has been provided.
 		$message_type_names = empty( $message_type_names ) && ! isset( $this->_active_message_types[ $messenger->name ] )
 			? $messenger->get_default_message_types()
-			: $message_type_names;
+			: (array) $message_type_names;
 
 		//now we ALWAYS need to make sure that the messenger is active for the message types we're activating!
 		if ( ! isset( $this->_active_message_types[ $messenger->name ] ) ) {
