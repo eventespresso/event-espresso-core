@@ -195,13 +195,9 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @return  EE_Message_Template_Group[]
 	 */
 	public function get_all_custom_templates_by_event( $EVT_ID, $query_params = array() ) {
+		$where = array_merge( $query_params, array( 'Event.EVT_ID' => $EVT_ID ) );
 		return $this->get_all(
-		   array_merge(
-			   $query_params,
-			   array(
-				   array( 'Event.EVT_ID' => $EVT_ID )
-			   )
-		   )
+			array( $where )
 		);
 	}
 
