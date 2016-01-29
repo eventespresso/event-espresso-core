@@ -291,12 +291,11 @@ class EE_Dependency_Map {
 			'EEM_Message_Template_Group'           => 'load_model',
 			//load_helper
 			'EEH_Parse_Shortcodes'                 => function() {
-				$shortcode_parser = null;
 				EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 				if ( class_exists( 'EEH_Parse_Shortcodes' ) ) {
-					$shortcode_parser = new EEH_Parse_Shortcodes();
+					return new EEH_Parse_Shortcodes();
 				}
-				return $shortcode_parser;
+				return null;
 			},
 		);
 	}
