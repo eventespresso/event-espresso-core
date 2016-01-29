@@ -2,18 +2,6 @@
 	{exit('NO direct script access allowed');}
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		@link http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing * *
- * @link		http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
  *
  * EE_Message_Admin_Page class
  *
@@ -980,7 +968,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//we filter the tinyMCE settings to remove the validation since message templates by their nature will not have valid html in the templates.
 		add_filter( 'tiny_mce_before_init', array( $this, 'filter_tinymce_init'), 10, 2 );
 
-		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : false;
+		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] )
+			? absint( $this->_req_data['id'] )
+			: false;
 
 		$this->_set_shortcodes(); //this also sets the _message_template property.
 		$message_template_group = $this->_message_template_group;
@@ -988,7 +978,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$c_config = $message_template_group->contexts_config();
 
 		reset( $c_config );
-		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] ) ? strtolower($this->_req_data['context']) : key($c_config);
+		$context = isset( $this->_req_data['context']) && !empty($this->_req_data['context'] )
+			? strtolower($this->_req_data['context'])
+			: key($c_config);
 
 
 		if ( empty($GRP_ID) ) {
@@ -997,18 +989,26 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//$button_text = array( __( 'Save','event_espresso') );
 			//$button_actions = array('something_different');
 			//$referrer = false;
-			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => true ), EE_MSG_ADMIN_URL );
+			$edit_message_template_form_url = add_query_arg(
+				array( 'action' => $action, 'noheader' => true ),
+				EE_MSG_ADMIN_URL
+			);
 		} else {
 			$action = 'update_message_template';
 			//$button_both = true;
 			//$button_text = array();
 			//$button_actions = array();
 			//$referrer = $this->_admin_base_url;
-			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => true ), EE_MSG_ADMIN_URL );
+			$edit_message_template_form_url = add_query_arg(
+				array( 'action' => $action, 'noheader' => true ),
+				EE_MSG_ADMIN_URL
+			);
 		}
 
 		//set active messenger for this view
-		$this->_active_messenger = $this->_message_resource_manager->get_active_messenger( $message_template_group->messenger() );
+		$this->_active_messenger = $this->_message_resource_manager->get_active_messenger(
+			$message_template_group->messenger()
+		);
 		$this->_active_message_type_name = $message_template_group->message_type();
 
 
@@ -1018,9 +1018,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//we need to assemble the title from Various details
-		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
+		$context_label = sprintf(
+			__('(%s %s)', 'event_espresso'),
+			$c_config[$context]['label'],
+			ucwords($c_label['label'] )
+		);
 
-		$title = sprintf( __(' %s %s Template %s', 'event_espresso'), ucwords($message_template_group->messenger_obj()->label['singular']), ucwords($message_template_group->message_type_obj()->label['singular']), $context_label );
+		$title = sprintf(
+			__(' %s %s Template %s', 'event_espresso'),
+			ucwords($message_template_group->messenger_obj()->label['singular']),
+			ucwords($message_template_group->message_type_obj()->label['singular']),
+			$context_label
+		);
 
 		$this->_template_args['GRP_ID'] = $GRP_ID;
 		$this->_template_args['message_template'] = $message_template_group;
@@ -1028,7 +1037,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//let's get EEH_MSG_Template so we can get template form fields
-		$template_field_structure = EEH_MSG_Template::get_fields( $message_template_group->messenger(), $message_template_group->message_type());
+		$template_field_structure = EEH_MSG_Template::get_fields(
+			$message_template_group->messenger(),
+			$message_template_group->message_type()
+		);
 
 		if ( !$template_field_structure ) {
 			$template_field_structure = false;
@@ -1073,12 +1085,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							$template_form_fields[$field_id] = $extra_array;
 							$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $reference_field . '][content][' . $extra_field . ']';
 							$css_class = isset( $extra_array['css_class'] ) ? $extra_array['css_class'] : '';
+
 							$template_form_fields[$field_id]['css_class'] = ! empty( $v_fields )
 																			&& in_array($extra_field, $v_fields)
 																			&& ( is_array($validators[$extra_field] )
 																			&& isset( $validators[$extra_field]['msg'] ) )
 								? 'validate-error ' . $css_class
 								: $css_class;
+
 							$template_form_fields[$field_id]['value'] = !empty($message_templates) && isset($content[$extra_field])
 								? stripslashes( html_entity_decode( $content[$extra_field], ENT_QUOTES, "UTF-8") )
 								: '';
@@ -1091,11 +1105,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 							//shortcode selector
 							$field_name_to_use = $extra_field == 'main' ? 'content' : $extra_field;
-							$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector( $field_name_to_use, $field_id );
+							$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector(
+								$field_name_to_use,
+								$field_id
+							);
 
 							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' ) {
 								//we want to decode the entities
-								$template_form_fields[$field_id]['value'] = stripslashes( html_entity_decode( $template_form_fields[$field_id]['value'], ENT_QUOTES, "UTF-8") );
+								$template_form_fields[$field_id]['value'] = stripslashes(
+									html_entity_decode( $template_form_fields[$field_id]['value'], ENT_QUOTES, "UTF-8")
+								);
 
 							}/**/
 						}
@@ -1143,15 +1162,23 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						: '';
 
 					//do we have a validator error for this field?  if we do then we'll use that value instead
-					$template_form_fields[$field_id]['value'] = isset($validators[$template_field]) ? $validators[$template_field]['value'] : $template_form_fields[$field_id]['value'];
+					$template_form_fields[$field_id]['value'] = isset($validators[$template_field])
+						? $validators[$template_field]['value']
+						: $template_form_fields[$field_id]['value'];
 
 
 					$template_form_fields[$field_id]['db-col'] = 'MTP_content';
 					$css_class = isset($field_setup_array['css_class']) ? $field_setup_array['css_class'] : '';
-					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
+					$template_form_fields[$field_id]['css_class'] =  ! empty( $v_fields )
+																	 && in_array( $template_field, $v_fields )
+																	 && isset( $validators[$template_field]['msg'] )
+						? 'validate-error ' . $css_class
+						: $css_class;
 
 					//shortcode selector
-					$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector( $template_field, $field_id );
+					$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector(
+						$template_field, $field_id
+					);
 
 					//if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' ) {
 					//	//we want to decode the entities
@@ -1360,17 +1387,26 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		);
 
 		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'GRP_ID' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
+		$preview_url = parent::add_query_args_and_nonce(
+			array(
+				'message_type' => $message_template_group->message_type(),
+				'messenger'    => $message_template_group->messenger(),
+				'context'      => $context,
+				'GRP_ID'       => $GRP_ID,
+				'action'       => 'preview_message'
+			),
+			$this->_admin_base_url
+		);
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
 
 		//setup context switcher
 		$context_switcher_args = array(
-			'page' => 'espresso_messages',
-			'action' => 'edit_message_template',
-			'id' => $GRP_ID,
+			'page'    => 'espresso_messages',
+			'action'  => 'edit_message_template',
+			'id'      => $GRP_ID,
 			'context' => $context,
-			'extra' => $preview_button
+			'extra'   => $preview_button
 		);
 		$this->_set_context_switcher($message_template_group, $context_switcher_args);
 
@@ -1459,12 +1495,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$query_args = $this->_reset_to_default_template();
 
 			if ( empty( $query_args['id'] ) ) {
-				EE_Error::add_error( __('Something went wrong with switching the template pack. Please try again or contact EE support', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					__(
+						'Something went wrong with switching the template pack. Please try again or contact EE support',
+						'event_espresso'
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				$this->_template_args['error'] = true;
 			} else {
 				$template_label =$message_template_group->get_template_pack()->label;
 				$template_pack_labels = $message_template_group->messenger_obj()->get_supports_labels();
-				EE_Error::add_success( sprintf( __('This message template has been successfully switched to use the %s %s.  Please wait while the page reloads with your new template.', 'event_espresso'), $template_label, $template_pack_labels->template_pack ) );
+				EE_Error::add_success(
+					sprintf(
+						__(
+							'This message template has been successfully switched to use the %1$s %2$s.  Please wait while the page reloads with your new template.',
+							'event_espresso'
+						),
+						$template_label,
+						$template_pack_labels->template_pack
+					)
+				);
 				//generate the redirect url for js.
 				$url = self::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 				$this->_template_args['data']['redirect_url'] = $url;
@@ -1490,11 +1541,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$templates = array();
 		$GRP_ID = !empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
 		//we need to make sure we've got the info we need.
-		if ( !isset( $this->_req_data['msgr'] ) && !isset( $this->_req_data['mt'] ) && !isset( $this->_req_data['GRP_ID'] ) ) {
-			EE_Error::add_error( __('In order to reset the template to its default we require the messenger, message type, and message template GRP_ID to know what is being reset.  At least one of these is missing.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! isset( $this->_req_data['msgr'], $this->_req_data['mt'], $this->_req_data['GRP_ID'] ) ) {
+			EE_Error::add_error(
+				__(
+					'In order to reset the template to its default we require the messenger, message type, and message template GRP_ID to know what is being reset.  At least one of these is missing.',
+					'event_espresso'
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 
-		//all templates will be reset to whatever the defaults are for the global template matching the messenger and message type.
+		// all templates will be reset to whatever the defaults are
+		// for the global template matching the messenger and message type.
 		$success = !empty( $GRP_ID ) ? true : false;
 
 		if ( $success ) {
@@ -1508,15 +1566,28 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$success = $this->_delete_mtp_permanently( $GRP_ID, false );
 
 			if ( $success ) {
-				//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset it resets to whatever the related global template is.  HOWEVER, we DO keep the template pack and template variation set for the current custom template when resetting.
-				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, true );
+				// if successfully deleted, lets generate the new ones.
+				// Note. We set GLOBAL to true, because resets on ANY template
+				// will use the related global template defaults for regeneration.
+				// This means that if a custom template is reset it resets to whatever the related global template is.
+				// HOWEVER, we DO keep the template pack and template variation set
+				// for the current custom template when resetting.
+				$templates = $this->_generate_new_templates(
+					$this->_req_data['msgr'],
+					$this->_req_data['mt'],
+					$GRP_ID,
+					true
+				);
 			}
 
 		}
 
 		//any error messages?
 		if ( !$success ) {
-			EE_Error::add_error( __('Something went wrong with deleting existing templates. Unable to reset to default', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__( 'Something went wrong with deleting existing templates. Unable to reset to default', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 
 		//all good, let's add a success message!
@@ -1552,8 +1623,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function _preview_message( $send = false ) {
 		//first make sure we've got the necessary parameters
-		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['GRP_ID'] ) ) {
-			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if (
+			! isset(
+				$this->_req_data['message_type'],
+				$this->_req_data['messenger'],
+				$this->_req_data['messenger'],
+				$this->_req_data['GRP_ID']
+			)
+		) {
+			EE_Error::add_error(
+				__('Missing necessary parameters for displaying preview', 'event_espresso'),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 		}
 
 		EE_Registry::instance()->REQ->set( 'GRP_ID', $this->_req_data['GRP_ID'] );
@@ -1641,7 +1722,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $tp_collection as $tp ) {
 			//only include template packs that support this messenger and message type!
 			$supports = $tp->get_supports();
-			if ( ! isset( $supports[$this->_message_template_group->messenger()] ) || ! in_array( $this->_message_template_group->message_type(), $supports[$this->_message_template_group->messenger()] ) ) {
+			if (
+				! isset( $supports[ $this->_message_template_group->messenger() ] )
+				|| ! in_array(
+					$this->_message_template_group->message_type(),
+					$supports[ $this->_message_template_group->messenger() ]
+				)
+			) {
 				//not supported
 				continue;
 			}
@@ -1657,23 +1744,34 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$tp_select_values[] = array(
 				'text' => __('Default', 'event_espresso'),
 				'id' => 'default'
-				);
+			);
 		}
 
 		//setup variation select values for the currently selected template.
-		$variations = $this->_message_template_group->get_template_pack()->get_variations( $this->_message_template_group->messenger(), $this->_message_template_group->message_type() );
+		$variations = $this->_message_template_group->get_template_pack()->get_variations(
+			$this->_message_template_group->messenger(),
+			$this->_message_template_group->message_type()
+		);
 		$variations_select_values = array();
 		foreach ( $variations as $variation => $label ) {
 			$variations_select_values[] = array(
 				'text' => $label,
 				'id' => $variation
-				);
+			);
 		}
 
 		$template_pack_labels= $this->_message_template_group->messenger_obj()->get_supports_labels();
 
-		$template_args['template_packs_selector'] = EEH_Form_Fields::select_input( 'MTP_template_pack', $tp_select_values, $this->_message_template_group->get_template_pack_name() );
-		$template_args['variations_selector'] = EEH_Form_Fields::select_input( 'MTP_template_variation', $variations_select_values, $this->_message_template_group->get_template_pack_variation() );
+		$template_args['template_packs_selector'] = EEH_Form_Fields::select_input(
+			'MTP_template_pack',
+			$tp_select_values,
+			$this->_message_template_group->get_template_pack_name()
+		);
+		$template_args['variations_selector'] = EEH_Form_Fields::select_input(
+			'MTP_template_variation',
+			$variations_select_values,
+			$this->_message_template_group->get_template_pack_variation()
+		);
 		$template_args['template_pack_label'] = $template_pack_labels->template_pack;
 		$template_args['template_variation_label'] = $template_pack_labels->template_variation;
 		$template_args['template_pack_description'] = $template_pack_labels->template_pack_description;
@@ -1702,9 +1800,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'GRP_ID' => $this->_message_template_group->GRP_ID()
 			);
 
-		$button = $this->get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
-
-
+		$button = $this->get_action_link_or_button(
+			'reset_to_default',
+			'reset',
+			$extra_args,
+			'button-primary reset-default-button'
+		);
 		//test button
 		//first we need to see if there are any fields
 		$fields = $this->_message_template_group->messenger_obj()->get_test_settings_fields();
@@ -1737,7 +1838,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		$test_settings_fields = !empty( $template_form_fields) ? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' ) : '';
+		$test_settings_fields = !empty( $template_form_fields)
+			? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' )
+			: '';
 
 		$test_settings_html = '';
 		//print out $test_settings_fields
@@ -1903,7 +2006,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							foreach ( $context_templates as $context => $template_fields ) :
 								$checked = ($context == $args['context']) ? 'selected="selected"' : '';
 					?>
-					<option value="<?php echo $context; ?>" <?php echo $checked; ?>><?php echo $context_details[$context]['label']; ?></option>
+					<option value="<?php echo $context; ?>" <?php echo $checked; ?>>
+						<?php echo $context_details[$context]['label']; ?>
+					</option>
 					<?php endforeach; endif; ?>
 				</select>
 				<?php $button_text = sprintf( __('Switch %s', 'event_espresso'), ucwords($context_label['label']) ); ?>
@@ -1977,9 +2082,17 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$override = false;
 
 		//setup notices description
-		$messenger = !empty($this->_req_data['MTP_messenger']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_messenger'] ) ) : false;
-		$message_type = !empty($this->_req_data['MTP_message_type']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_message_type'] ) ) : false;
-		$context = !empty($this->_req_data['MTP_context']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_context'] ) ) : false;
+		$messenger = ! empty( $this->_req_data['MTP_messenger'] )
+			? ucwords( str_replace( '_', ' ', $this->_req_data['MTP_messenger'] ) )
+			: false;
+
+		$message_type = ! empty( $this->_req_data['MTP_message_type'] )
+			? ucwords( str_replace( '_', ' ', $this->_req_data['MTP_message_type'] ) )
+			: false;
+
+		$context = ! empty( $this->_req_data['MTP_context'] )
+			? ucwords( str_replace( '_', ' ', $this->_req_data['MTP_context'] ) )
+			: false;
 
 		$item_desc = $messenger ? $messenger . ' ' . $message_type . ' ' . $context . ' ' : '';
 		$item_desc .= 'Message Template';
@@ -2011,7 +2124,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//run update for each template field in displayed context
 			if ( !isset($this->_req_data['MTP_template_fields']) && empty($this->_req_data['MTP_template_fields'] ) ) {
-				EE_Error::add_error( __('There was a problem saving the template fields from the form because I didn\'t receive any actual template field data.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					__('There was a problem saving the template fields from the form because I didn\'t receive any actual template field data.', 'event_espresso'),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				$success = 0;
 
 			} else {
@@ -2027,8 +2143,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 					//setup notices
 					foreach ( $validates as $field => $error ) {
-						if ( isset($error['msg'] ) )
-							{EE_Error::add_error( $error['msg'], __FILE__, __FUNCTION__, __LINE__ );}
+						if ( isset($error['msg'] ) ) {
+							EE_Error::add_error( $error['msg'], __FILE__, __FUNCTION__, __LINE__ );
+						}
 					}
 
 				} else {
@@ -2036,18 +2153,25 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
 						$set_column_values = $this->_set_message_template_column_values($template_field);
 
-						$where_cols_n_values = array( 'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']);
+						$where_cols_n_values = array(
+							'MTP_ID' => $this->_req_data['MTP_template_fields'][$template_field]['MTP_ID']
+						);
 
 						$message_template_fields = array(
 							'GRP_ID' => $set_column_values['GRP_ID'],
 							'MTP_template_field' => $set_column_values['MTP_template_field'],
 							'MTP_context' => $set_column_values['MTP_context'],
 							'MTP_content' => $set_column_values['MTP_content']
-							);
+						);
 						if ( $updated = $MTP->update( $message_template_fields, array( $where_cols_n_values ) ) ) {
 							if ( $updated === false ) {
-								$msg = sprintf( __('%s field was NOT updated for some reason', 'event_espresso'), $template_field );
-								EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
+								EE_Error::add_error(
+									sprintf(
+										__( '%s field was NOT updated for some reason', 'event_espresso' ),
+										$template_field
+									),
+									__FILE__, __FUNCTION__, __LINE__
+								);
 							} else {
 								$success = 1;
 							}
@@ -2085,8 +2209,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						);
 					} else {
 						//k now we need to ensure the template_pack and template_variation fields are set.
-						$template_pack = ! empty( $this->_req_data['MTP_template_pack' ] ) ? $this->_req_data['MTP_template_pack'] : 'default';
-						$template_variation = ! empty( $this->_req_data['MTP_template_variation'] ) ? $this->_req_data['MTP_template_variation'] : 'default';
+						$template_pack = ! empty( $this->_req_data['MTP_template_pack' ] )
+							? $this->_req_data['MTP_template_pack']
+							: 'default';
+
+						$template_variation = ! empty( $this->_req_data['MTP_template_variation'] )
+							? $this->_req_data['MTP_template_variation']
+							: 'default';
+
 						$mtpg_obj = $MTPG->get_one_by_ID( $set_column_values['GRP_ID'] );
 						if ( $mtpg_obj instanceof EE_Message_Template_Group ) {
 							$mtpg_obj->set_template_pack_name( $template_pack );
@@ -2522,24 +2652,32 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//messenger meta boxes
 			$active = $selected_messenger == $messenger ? true : false;
-			$active_mt_tabs = isset(  $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] ) ?  $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] : '';
+			$active_mt_tabs = isset(  $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] )
+				?  $this->_m_mt_settings['message_type_tabs'][$messenger]['active']
+				: '';
 			$m_boxes[$messenger . '_a_box'] = sprintf( __('%s Settings', 'event_espresso'), $tab_array['label'] );
 			$m_template_args[$messenger . '_a_box'] = array(
-					'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
-					'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
-					'content' => $this->_get_messenger_box_content( $tab_array['obj'] ),
-					'hidden' => $active ? '' : ' hidden',
-					'hide_on_message' => $hide_on_message,
-					'messenger' => $messenger,
-					'active' => $active
-				);
+				'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
+				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
+					? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
+					: '',
+				'content' => $this->_get_messenger_box_content( $tab_array['obj'] ),
+				'hidden' => $active ? '' : ' hidden',
+				'hide_on_message' => $hide_on_message,
+				'messenger' => $messenger,
+				'active' => $active
+			);
 
 
-			//message type meta boxes (which is really just the inactive container for each messenger showing inactive message types for that messenger)
+			// message type meta boxes
+			// (which is really just the inactive container for each messenger
+			// showing inactive message types for that messenger)
 			$mt_boxes[$messenger . '_i_box'] = __('Inactive Message Types', 'event_espresso');
 			$mt_template_args[$messenger . '_i_box'] = array(
 				'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
-				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
+				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
+					? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
+					: '',
 				'hidden' => $active ? '' : ' hidden',
 				'hide_on_message' => $hide_on_message,
 				'hide_off_message' => $hide_off_message,
@@ -2553,15 +2691,39 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $m_boxes as $box => $label ) {
 			$callback_args = array( 'template_path' => $m_template_path, 'template_args' => $m_template_args[$box] );
 			$msgr = str_replace( '_a_box', '', $box );
-			add_meta_box( 'espresso_' . $msgr . '_settings', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'normal', 'high', $callback_args );
+			add_meta_box(
+				'espresso_' . $msgr . '_settings',
+				$label,
+				create_function(
+					'$post, $metabox',
+					'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
+				),
+				$this->_current_screen_id,
+				'normal',
+				'high',
+				$callback_args
+			);
 		}
 
 		//register message type metaboxes
 		$mt_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_messenger_meta_box.template.php';
 		foreach ( $mt_boxes as $box => $label ) {
-			$callback_args = array( 'template_path' => $mt_template_path, 'template_args' => $mt_template_args[$box] );
+			$callback_args = array(
+				'template_path' => $mt_template_path, 'template_args' => $mt_template_args[ $box ]
+			);
 			$mt = str_replace( '_i_box', '', $box );
-			add_meta_box( 'espresso_' . $mt . '_inactive_mts', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
+			add_meta_box(
+				'espresso_' . $mt . '_inactive_mts',
+				$label,
+				create_function(
+					'$post, $metabox',
+					'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
+				),
+				$this->_current_screen_id,
+				'side',
+				'high',
+				$callback_args
+			);
 		}
 
 	}
@@ -2618,14 +2780,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'type' => $fldprops['value_type'],
 					'required' => $fldprops['required'],
 					'validation' => $fldprops['validation'],
-					'value' => isset( $existing_settings[$field_id]) ? $existing_settings[$field_id] : $fldprops['default'],
+					'value' => isset( $existing_settings[$field_id])
+						? $existing_settings[$field_id]
+						: $fldprops['default'],
 					'css_class' => '',
 					'format' => $fldprops['format']
 					);
 			}
 
 
-			$settings_template_args['template_form_fields'] = !empty($template_form_field) ? $this->_generate_admin_form_fields( $template_form_field, 'string', 'ee_m_activate_form' ) : '';
+			$settings_template_args['template_form_fields'] = !empty($template_form_field)
+				? $this->_generate_admin_form_fields( $template_form_field, 'string', 'ee_m_activate_form' )
+				: '';
 		}
 
 		//we also need some hidden fields
@@ -2649,9 +2815,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					);
 			}
 		}
-
-		$settings_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $settings_template_args['hidden_fields'], 'array' );
-
+		$settings_template_args[ 'hidden_fields' ] = $this->_generate_admin_form_fields(
+			$settings_template_args[ 'hidden_fields' ],
+			'array'
+		);
 		$active = $this->_message_resource_manager->is_messenger_active( $messenger->name );
 
 		$settings_template_args['messenger'] = $messenger->name;
@@ -2659,9 +2826,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$settings_template_args['show_hide_edit_form'] = $active ? '' : ' hidden';
 
 
-		$settings_template_args['show_hide_edit_form'] = $this->_message_resource_manager->is_messenger_active( $messenger->name ) ? $settings_template_args['show_hide_edit_form'] : ' hidden';
+		$settings_template_args['show_hide_edit_form'] = $this->_message_resource_manager->is_messenger_active( $messenger->name )
+			? $settings_template_args['show_hide_edit_form']
+			: ' hidden';
 
-		$settings_template_args['show_hide_edit_form'] = empty( $settings_template_args['template_form_fields'] ) ? ' hidden' : $settings_template_args['show_hide_edit_form'];
+		$settings_template_args['show_hide_edit_form'] = empty( $settings_template_args['template_form_fields'] )
+			? ' hidden'
+			: $settings_template_args['show_hide_edit_form'];
 
 
 		$settings_template_args['on_off_action'] = $active ? 'messenger-off' : 'messenger-on';
@@ -2683,7 +2854,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_prep_default_response_for_messenger_or_message_type_toggle();
 		//let's check that we have required data
 		if ( !isset( $this->_req_data[ 'messenger' ] ) ) {
-			EE_Error::add_error( __('Messenger name needed to toggle activation. None given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__( 'Messenger name needed to toggle activation. None given', 'event_espresso' ),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
 			$success = false;
 		}
 
@@ -2696,7 +2872,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		if ( !isset( $this->_req_data[ 'status' ])) {
-			EE_Error::add_error( __('Messenger status needed to know whether activation or deactivation is happening. No status is given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__(
+					'Messenger status needed to know whether activation or deactivation is happening. No status is given',
+					'event_espresso'
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
 			$success = false;
 		}
 
@@ -2704,7 +2888,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$status = $this->_req_data['status'];
 
 		if ( $status != 'off' && $status != 'on' ) {
-			EE_Error::add_error( sprintf( __('The given status (%s) is not valid. Must be "off" or "on"', 'event_espresso'), $this->_req_data['status'] ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf(
+					__( 'The given status (%s) is not valid. Must be "off" or "on"', 'event_espresso' ),
+					$this->_req_data[ 'status' ]
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
 			$success = false;
 		}
 
@@ -2735,18 +2927,27 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_prep_default_response_for_messenger_or_message_type_toggle();
 
 		//let's make sure we have the necessary data
-		if ( !isset( $this->_req_data[ 'message_type' ] ) ) {
-			EE_Error::add_error( __('Message Type name needed to toggle activation. None given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! isset( $this->_req_data[ 'message_type' ] ) ) {
+			EE_Error::add_error(
+				__('Message Type name needed to toggle activation. None given', 'event_espresso'),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			$success = false;
 		}
 
 		if ( ! isset( $this->_req_data[ 'messenger' ] ) ) {
-			EE_Error::add_error( __('Messenger name needed to toggle activation. None given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__('Messenger name needed to toggle activation. None given', 'event_espresso'),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			$success = false;
 		}
 
-		if ( !isset( $this->_req_data[ 'status' ])) {
-			EE_Error::add_error( __('Messenger status needed to know whether activation or deactivation is happening. No status is given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! isset( $this->_req_data[ 'status' ])) {
+			EE_Error::add_error(
+				__('Messenger status needed to know whether activation or deactivation is happening. No status is given', 'event_espresso'),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			$success = false;
 		}
 
@@ -2755,7 +2956,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$status = $this->_req_data['status'];
 
 		if ( $status != 'activate' && $status != 'deactivate' ) {
-			EE_Error::add_error( sprintf( __('The given status (%s) is not valid. Must be "active" or "inactive"', 'event_espresso'), $this->_req_data['status'] ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf(
+					__('The given status (%s) is not valid. Must be "active" or "inactive"', 'event_espresso'),
+					$this->_req_data['status']
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			$success = false;
 		}
 
