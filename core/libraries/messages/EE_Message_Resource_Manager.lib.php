@@ -608,6 +608,7 @@ class EE_Message_Resource_Manager {
 	 *                                          If included we do NOT setup the default message types
 	 *                                          (assuming they are already setup.)
 	 * @param bool   $update_active_messengers_option
+	 *
 	 * @return array of generated templates
 	 * @throws \EE_Error
 	 */
@@ -632,9 +633,12 @@ class EE_Message_Resource_Manager {
 				$this->update_active_messengers_option();
 				$this->update_has_activated_messengers_option();
 			}
-			// might need to generate new templates
+			//generate new templates if necessary and ensure all related templates that are already in the database are
+			//marked active.  Note, this will also deactivate a message type for a messenger if the template
+			//cannot be successfully created during its attempt (only happens for global template attempts).
 			if ( ! empty( $message_type_names ) ) {
 				$templates = EEH_MSG_Template::generate_new_templates( $messenger->name, $message_type_names, 0, true );
+				EEH_MSG_Template::update_to_active( array( $messenger->name ), $message_type_names );
 			}
 		}
 		return $templates;
