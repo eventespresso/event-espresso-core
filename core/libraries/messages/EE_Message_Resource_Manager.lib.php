@@ -251,8 +251,9 @@ class EE_Message_Resource_Manager {
 
 	/**
 	 * Returns whether the given message type is active for the given messenger.
-	 * @param $messenger_name
-	 * @param $message_type_name
+	 *
+	 * @param string $messenger_name
+	 * @param string $message_type_name
 	 *
 	 * @return bool
 	 */
@@ -265,7 +266,7 @@ class EE_Message_Resource_Manager {
 	/**
 	 * Returns whether the given messenger is active.
 	 *
-	 * @param $messenger_name  the name of the messenger to check if active.
+	 * @param string $messenger_name  the name of the messenger to check if active.
 	 * @return bool
 	 */
 	public function is_messenger_active( $messenger_name ) {
@@ -275,9 +276,9 @@ class EE_Message_Resource_Manager {
 
 	/**
 	 * This returns any settings that might be on a message type for a messenger
+	 *
 	 * @param string $messenger_name  The slug of the messenger
 	 * @param string $message_type_name  The slug of the message type getting the settings for.
-	 *
 	 * @return array
 	 */
 	public function get_message_type_settings_for_messenger( $messenger_name, $message_type_name ) {
@@ -295,7 +296,8 @@ class EE_Message_Resource_Manager {
 	/**
 	 * Returns whether the given messenger name has active message types on it.
 	 * Infers whether the messenger is active or not as well.
-	 * @param $messenger_name
+	 *
+	 * @param string $messenger_name
 	 * @return bool
 	 */
 	public function messenger_has_active_message_types( $messenger_name ) {
