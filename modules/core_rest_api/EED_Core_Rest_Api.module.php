@@ -366,10 +366,12 @@ class EED_Core_Rest_Api extends \EED_Module {
 					$key_versioned_endpoint < EED_Core_Rest_Api::core_version()
 					&& $key_versioned_endpoint >= $lowest_compatible_version
 				) {
-				//include, but hide, previous versions which are still supported
+					//include, but hide, previous versions which are still supported
+					$versions_served[ $key_versioned_endpoint ] = true;
+				} elseif( apply_filters( 'FHEE__EED_Core_Rest_Api__versions_served__include_incompatible_versions', false ) ){
+					//if a version is no longer supported, don't include it in index or list of versions served
 					$versions_served[ $key_versioned_endpoint ] = true;
 				}
-				//if a version is no longer supported, don't include it in index or list of versions served
 			}
 		);
 		return $versions_served;
