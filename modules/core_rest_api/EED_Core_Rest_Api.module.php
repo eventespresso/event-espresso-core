@@ -348,9 +348,11 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function versions_served() {
 		$version_compatibilities = EED_Core_Rest_Api::version_compatibilities();
 		$versions_served = array();
-		$lowest_compatible_version = $version_compatibilities[ EED_Core_Rest_Api::core_version() ];
+		$possibly_served_versions = array_keys( EED_Core_Rest_Api::version_compatibilities() );
+		$lowest_compatible_version = end( $possibly_served_versions);
+		reset( $possibly_served_versions );
 		//for each version of core we have ever served:
-		foreach( array_keys( EED_Core_Rest_Api::version_compatibilities() ) as $possibly_served_version ) {
+		foreach( $possibly_served_versions as $possibly_served_version ) {
 			//if it's not above the current core version, and it's compatible with the current version of core
 			if(
 				$possibly_served_version < EED_Core_Rest_Api::core_version()
