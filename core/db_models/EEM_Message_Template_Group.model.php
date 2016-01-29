@@ -22,7 +22,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Message Template Groups', 'event_espresso');
 		$this->_tables = array(
 			'Message_Template_Group' => new EE_Primary_Table('esp_message_template_group', 'GRP_ID')
-			);
+		);
 		$this->_fields = array(
 			'Message_Template_Group' => array(
 				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
@@ -35,14 +35,14 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 				'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
 				'MTP_deleted'=>new EE_Trashed_Flag_Field('MTP_deleted', __('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
 				'MTP_is_active'=>new EE_Boolean_Field('MTP_is_active', __('Flag indicating whether template group is active', 'event_espresso'), false, true)
-				)
-			);
+			)
+		);
 		$this->_model_relations = array(
 			'Message_Template' => new EE_Has_Many_Relation(),
 			'Message' => new EE_Has_Many_Relation(),
 			'Event' => new EE_HABTM_Relation('Event_Message_Template'),
 			'WP_User' => new EE_Belongs_To_Relation()
-			);
+		);
 		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ){
 			$this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_Global( 'MTP_is_global');
 		}
@@ -266,7 +266,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'Event.EVT_ID' => $evt_id,
 			'MTP_is_global' => TRUE,
 			'MTP_is_active' => $active
-			);
+		);
 
 		$query_params = array( $_where, 'order_by' => array($orderby=>$order), 'limit' => $limit );
 
@@ -302,7 +302,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'MTP_is_global' => TRUE,
-			);
+		);
 
 		if ( $active != 'all' ) {
 			$_where['MTP_is_active'] = $active;
@@ -325,16 +325,16 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 */
 	public function get_custom_message_template_by_m_and_mt( $messenger, $message_type, $query_params = array() ) {
 		return $this->get_all(
-		   array_merge(
-			   $query_params,
-			   array(
-				   array(
-					   'MTP_is_global'    => false,
-					   'MTP_messenger'    => $messenger,
-					   'MTP_message_type' => $message_type
-				   )
-			   )
-		   )
+			array_merge(
+				$query_params,
+				array(
+					array(
+						'MTP_is_global'    => false,
+						'MTP_messenger'    => $messenger,
+						'MTP_message_type' => $message_type
+					)
+				)
+			)
 		);
 	}
 
@@ -409,25 +409,25 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	/**
 	 * Updates all message template groups matching the incoming arguments to inactive status.
 	 *
-	 * @param string $messenger       The messenger slug.
-	 *                                If empty then all templates matching the message type are marked inactive.
-	 *                                Otherwise only templates matching the messenger and message type.
-	 * @param string $message_type    The message type slug.
-	 *                                If empty then all templates matching the messenger are marked inactive.
-	 *                                Otherwise only templates matching the messenger and message type.
+	 * @param array $messenger_names 	The messenger slugs.
+	 *                          	If empty then all templates matching the message types are marked inactive.
+	 *                          	Otherwise only templates matching the messengers and message types.
+	 * @param array $message_type_names 	The message type slugs.
+	 *                              If empty then all templates matching the messengers are marked inactive.
+	 * 								Otherwise only templates matching the messengers and message types.
 	 *
 	 * @return int  count of updated records.
 	 */
-	public function deactivate_message_template_groups_for( $messenger = '', $message_type = '' ) {
+	public function deactivate_message_template_groups_for( $messenger_names = array(), $message_type_names = array() ) {
 		$query_args = array();
-		if ( empty( $messenger ) && empty( $message_type ) ) {
+		if ( empty( $messenger_names ) && empty( $message_type_names ) ) {
 			return 0;
 		}
-		if ( ! empty( $messenger ) ) {
-			$query_args[ 0 ][ 'MTP_messenger' ] = $messenger;
+		if ( ! empty( $messenger_names ) ) {
+			$query_args[ 0 ][ 'MTP_messenger' ] = array( 'IN', (array) $messenger_names );
 		}
-		if ( ! empty( $message_type ) ) {
-			$query_args[ 0 ][ 'MTP_message_type' ] = $message_type;
+		if ( ! empty( $message_type_names ) ) {
+			$query_args[ 0 ][ 'MTP_message_type' ] = array( 'IN', (array) $message_type_names );
 		}
 		return $this->update( array( 'MTP_is_active' => false ), $query_args );
 	}
