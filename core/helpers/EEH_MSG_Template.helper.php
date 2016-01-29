@@ -53,13 +53,17 @@ class EEH_MSG_Template {
 	 * @param int     $GRP_ID        If a non global template is being generated then it is expected we'll have a GRP_ID to use as the base for the new generated template.
 	 * @param bool    $global        true indicates generating templates on messenger activation. false requires GRP_ID for event specific template generation.
 	 * @throws \EE_Error
-	 * @return array|bool array of data required for the redirect to the correct edit page or FALSE if encountering problems.
+	 * @return array  @see EEH_MSG_Template::_create_new_templates for the return value of each element in the array for templates
+	 *                that are generated.  If this is an empty array then it means no templates were generated which usually
+	 *                means there was an error.  Anything in the array with an empty value for `MTP_context` means that it
+	 *                was not a new generated template but just reactivated (which only happens for global templates that
+	 *                already exist in the database.
 	 */
 	public static function generate_new_templates( $messenger, $message_types, $GRP_ID = 0, $global = false ) {
 		//make sure message_type is an array.
 		$message_types = (array) $message_types;
 		$templates = array();
-		$success = false;
+
 		if ( empty( $messenger ) ) {
 			throw new EE_Error( __('We need a messenger to generate templates!', 'event_espresso') );
 		}
@@ -68,39 +72,42 @@ class EEH_MSG_Template {
 		if ( empty( $message_types ) ) {
 			throw new EE_Error( __('We need at least one message type to generate templates!', 'event_espresso') );
 		}
+
 		EEH_MSG_Template::_set_autoloader();
 		foreach ( $message_types as $message_type ) {
 			//if global then let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.
 			if ( $global && empty( $GRP_ID ) ) {
-				$GRP_ID = EEM_Message_Template_Group::instance()->get_one( array(
+				$GRP_ID = EEM_Message_Template_Group::instance()->get_one(
 					array(
-						'MTP_messenger'    => $messenger,
-						'MTP_message_type' => $message_type,
-						'MTP_is_global'    => true
+						array(
+							'MTP_messenger'    => $messenger,
+							'MTP_message_type' => $message_type,
+							'MTP_is_global'    => true,
+						),
 					)
-				));
+				);
 				$GRP_ID = $GRP_ID instanceof EE_Message_Template_Group ? $GRP_ID->ID() : 0;
 			}
 			// if this is global template generation.
 			// First let's determine if we already HAVE global templates for this messenger and message_type combination.
 			//  If we do then NO generation!!
 			if ( $global && EEH_MSG_Template::already_generated( $messenger, $message_type, $GRP_ID ) ) {
-				$templates = true;
-				continue; //get out we've already got generated templates for this.
+				$templates[] = array(
+					'GRP_ID' => $GRP_ID,
+					'MTP_context' => '',
+				);
+				//we already have generated templates for this so let's go to the next message type.
+				continue;
 			}
-			$new_message_template_group = EEH_MSG_Template::create_new_templates($messenger, $message_type, $GRP_ID, $global);
+			$new_message_template_group = EEH_MSG_Template::create_new_templates( $messenger, $message_type, $GRP_ID, $global );
 
 			if ( ! $new_message_template_group ) {
 				continue;
 			}
-			if ( $templates === true ) {
-				$templates = array();
-			}
 			$templates[] = $new_message_template_group;
-			$success = true;
 		}
 
-		return ($success) ? $templates : $success;
+		return $templates;
 	}
 
 
@@ -109,10 +116,9 @@ class EEH_MSG_Template {
 	 * @param  string $messenger     messenger
 	 * @param  string $message_type message type
 	 * @param  int $GRP_ID        GRP ID ( if a custom template) (if not provided then we're just doing global template check)
-	 * @param  bool  $update_to_active if true then we also toggle the template to active.
 	 * @return bool                true = generated, false = hasn't been generated.
 	 */
-	public static function already_generated( $messenger, $message_type, $GRP_ID = 0, $update_to_active = TRUE ) {
+	public static function already_generated( $messenger, $message_type, $GRP_ID = 0 ) {
 		EEH_MSG_Template::_set_autoloader();
 		//what method we use depends on whether we have an GRP_ID or not
 		$count = empty( $GRP_ID )
@@ -127,11 +133,7 @@ class EEH_MSG_Template {
 			)
 			: EEM_Message_Template::instance()->count( array( array( 'GRP_ID' => $GRP_ID ) ) );
 
-		if ( $update_to_active ) {
-			EEH_MSG_Template::update_to_active( $messenger, $message_type );
-		}
-
-		return ( $count > 0 ) ? TRUE : FALSE;
+		return $count > 0;
 	}
 
 
