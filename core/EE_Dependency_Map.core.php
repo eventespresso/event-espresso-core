@@ -291,8 +291,7 @@ class EE_Dependency_Map {
 			'EEM_Message_Template_Group'           => 'load_model',
 			//load_helper
 			'EEH_Parse_Shortcodes'                 => function() {
-				EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
-				if ( class_exists( 'EEH_Parse_Shortcodes' ) ) {
+				if ( EE_Registry::instance()->load_helper( 'Parse_Shortcodes' ) ) {
 					return new EEH_Parse_Shortcodes();
 				}
 				return null;
