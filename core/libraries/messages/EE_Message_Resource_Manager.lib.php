@@ -661,13 +661,11 @@ class EE_Message_Resource_Manager {
 		$message_type_names = array(),
 		$update_active_messengers_option = true
 	) {
-		//EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__ );
 		$templates = array();
 		// grab the messenger to work with.
 		$messenger = $this->messenger_collection()->get_by_info( $messenger_name );
 		// it's inactive. Activate it.
 		if ( $messenger instanceof EE_Messenger ) {
-			//EEH_Debug_Tools::printr( $messenger->name, 'activate_messenger', __FILE__, __LINE__ );
 			$this->_active_messengers[ $messenger->name ] = $messenger;
 			//activate incoming message types set to be activated with messenger.
 			$message_type_names = $this->_activate_message_types( $messenger, $message_type_names );
