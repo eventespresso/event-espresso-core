@@ -167,6 +167,22 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	}
 
 
+	function test_reset_of_message_generator() {
+		//load processor
+		$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+
+		//grab generation queue.
+		$orig_generator_queue = $message_proc->get_queue();
+
+		//load generator via load lib (which simulates what happens when executing EE_Messages_Processor::_init_queue_and_generator
+		$generator = EE_Registry::instance()->load_lib( 'Messages_Generator' );
+		$new_generator_queue = $generator->generation_queue();
+
+		//these two queues should NOT be the same objects.
+		$this->assertNotEquals( spl_object_hash( $orig_generator_queue ), spl_object_hash( $new_generator_queue ) );
+	}
+
+
 	/**
 	 * This implicitly tests the following methods as well:
 	 * - queue_for_generation
