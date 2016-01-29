@@ -458,13 +458,13 @@ class EE_Message_Resource_Manager {
 	/**
 	 * Used to update the active messengers array stored in the wp options table.
 	 *
-	 * @param array $active_messengers Incoming data to save.  If empty, then the internal cached property
+	 * @param array $active_messenger_settings Incoming data to save.  If empty, then the internal cached property
 	 *                                 representing this data is used.
 	 * @return bool FALSE if not updated, TRUE if updated.
 	 */
-	public function update_active_messengers_option( $active_messengers = array() ) {
-		$active_messengers = empty( $active_messengers ) ? $this->_active_message_types : $active_messengers;
-		return update_option( 'ee_active_messengers', $active_messengers );
+	public function update_active_messengers_option( $active_messenger_settings = array() ) {
+		$active_messenger_settings = empty( $active_messenger_settings ) ? $this->_active_message_types : $active_messenger_settings;
+		return update_option( 'ee_active_messengers', $active_messenger_settings );
 	}
 
 
