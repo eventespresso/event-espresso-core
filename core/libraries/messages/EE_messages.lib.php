@@ -117,20 +117,24 @@ class EE_Messages {
 	 * @deprecated 4.9.0
 	 */
 	function __construct() {
-		// not yet
-		EE_Error::doing_it_wrong(
-			'EE_messages::__construct',
-			__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
-			'4.9.0'
-		);
-		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		// get list of active messengers and active message types
-		//$this->_set_active_messengers_and_message_types();
 	}
 
 
 
 	/**
+	 * @param string $method
+	 */
+	public function _class_is_deprecated( $method ) {
+		// EE_messages has been deprecated
+		EE_Error::doing_it_wrong(
+			'EE_messages::' . $method,
+			__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
+			'4.9.0'
+		);
+		// Please use EE_Message_Resource_Manager instead
+		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+	}
+		/**
 	 * get active messengers from db and instantiate them.
 	 */
 	//private function _set_active_messengers_and_message_types() {
@@ -179,6 +183,8 @@ class EE_Messages {
 	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
 	 */
 	public function ensure_messenger_is_active( $messenger_name ){
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->ensure_messenger_is_active( $messenger_name );
 		//note: active messengers indexed by their names
 		//$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
@@ -206,6 +212,8 @@ class EE_Messages {
 	 * @throws \EE_Error
 	 */
 	public function ensure_message_type_is_active( $message_type, $messenger ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->ensure_message_type_is_active( $message_type, $messenger );
 		//first validate that the incoming messenger allows this message type to be activated.
 		//$messengers = $this->get_installed_messengers();
@@ -243,6 +251,8 @@ class EE_Messages {
 	 * @return boolean an array of generated templates or false if nothing generated/activated.
 	 */
 	public function activate_messenger( $messenger_name, $mts_to_activate = array() ){
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->activate_messenger( $messenger_name, $mts_to_activate );
 		//$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		//$message_types = $this->get_installed_message_types();
@@ -406,6 +416,8 @@ class EE_Messages {
 	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
 	 */
 	public function is_generating_messenger_and_active( EE_Messenger $messenger, EE_message_type $message_type ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->is_generating_messenger_and_active( $messenger, $message_type );
 		//get the $messengers the message type says it can be used with.
 		//$used_with = $message_type->with_messengers();
@@ -434,6 +446,8 @@ class EE_Messages {
 	 * @return EE_Messenger | null
 	 */
 	public function get_messenger_if_active( $messenger ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->get_active_messenger( $messenger );
 		//return ! empty( $this->_active_messengers[$messenger] ) ? $this->_active_messengers[$messenger] : null;
 	}
@@ -463,6 +477,8 @@ class EE_Messages {
 	 *                )
 	 */
 	public function validate_for_use( EE_Message $message ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return array(
 			'messenger' 	=> $message->messenger_object(),
 			'message_type' 	=> $message->message_type_object(),
@@ -491,6 +507,8 @@ class EE_Messages {
 	 * @return bool
 	 */
 	public function send_message( $type, $vars, $sending_messenger = '', $generating_messenger='', $context='', $send = TRUE ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		/** @type EE_Messages_Processor $processor */
 		$processor = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 		$error = FALSE;
@@ -617,6 +635,8 @@ class EE_Messages {
 	 * @return string          The body of the message.
 	 */
 	public function preview_message( $type, $context, $messenger, $send = FALSE ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return EED_Messages::preview_message( $type, $context, $messenger, $send );
 	}
 
@@ -635,6 +655,8 @@ class EE_Messages {
 	 * @return bool          success or fail.
 	 */
 	public function send_message_with_messenger_only( $messenger, $message_type, $message ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		//setup for sending to new method.
 		/** @type EE_Messages_Queue $queue */
 		$queue = EE_Registry::instance()->load_lib( 'Messages_Queue' );
@@ -749,6 +771,8 @@ class EE_Messages {
 	 * @throws \EE_Error
 	 */
 	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		return EEH_MSG_Template::create_new_templates( $messenger, $message_type, $GRP_ID, $is_global );
 		//$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
@@ -872,6 +896,8 @@ class EE_Messages {
 	 * @return array
 	 */
 	public function get_fields( $messenger_name, $message_type_name ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		return EEH_MSG_Template::get_fields( $messenger_name, $message_type_name );
 		//$template_fields = array();
@@ -918,6 +944,8 @@ class EE_Messages {
 	 *                                    (messengers index, and message_type index);
 	 */
 	public function get_installed( $type = 'all', $skip_cache = false ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		if ( $skip_cache ) {
 			$this->_message_resource_manager->reset_active_messengers_and_message_types();
 		}
@@ -1006,6 +1034,8 @@ class EE_Messages {
 	 * @return \EE_Messenger[]
 	 */
 	public function get_active_messengers() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->active_messengers();
 		//return $this->_active_messengers;
 	}
@@ -1025,6 +1055,8 @@ class EE_Messages {
 	 * @return array array of message_type references (string)
 	 */
 	public function get_active_message_types() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->list_of_active_message_types();
 		//$message_types = array();
 		//foreach ( $this->_active_message_types as $messenger => $mtvalues ) {
@@ -1046,6 +1078,8 @@ class EE_Messages {
 	 * @return EE_message_type[]
 	 */
 	public function get_active_message_type_objects() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->get_active_message_type_objects();
 		//$message_types = array();
 		//$message_type_refs = $this->get_active_message_types();
@@ -1072,6 +1106,8 @@ class EE_Messages {
 	 * @return EE_message_type[]    (or empty array if none present)
 	 */
 	public function get_active_message_types_per_messenger( $messenger ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->get_active_message_types_for_messenger( $messenger );
 		//$messenger = (string) $messenger;
 		//if ( empty( $this->_active_message_types[$messenger] ) ) {
@@ -1102,6 +1138,8 @@ class EE_Messages {
 	 * @return EE_Message_Type|null
 	 */
 	public function get_active_message_type( $messenger, $message_type ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->get_active_message_type_for_messenger( $messenger, $message_type );
 		//$installed_message_types = $this->get_installed_message_types();
 		//if ( !empty( $this->_active_message_types[$messenger][$message_type] ) && !empty( $installed_message_types[$message_type] ) )  {
@@ -1128,6 +1166,8 @@ class EE_Messages {
 	 * @return array|\EE_message_type[]
 	 */
 	public function get_installed_message_types() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->installed_message_types();
 		//$this->_installed_message_types = empty( $this->_installed_message_types )
 		//	? $this->get_installed( 'message_types', true )
@@ -1148,6 +1188,8 @@ class EE_Messages {
 	 * @return array
 	 */
 	public function get_installed_messengers() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->installed_messengers();
 		//$this->_installed_messengers = empty( $this->_installed_messengers )
 		//	? $this->get_installed( 'messengers', true )
@@ -1187,6 +1229,8 @@ class EE_Messages {
 	 * @return array
 	 */
 	public function get_all_contexts( $slugs_only = true ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
 		return $this->_message_resource_manager->get_all_contexts( $slugs_only );
 		//$key = $slugs_only ? 'slugs' : 'all';
 		//if ( ! empty( $this->_contexts[$key] ) ) {
