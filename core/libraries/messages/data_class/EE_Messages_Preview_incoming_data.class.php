@@ -227,7 +227,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$attendees = array();
 		$var_array = array('fname','lname','email','address','address2','city','staid','cntry','zip','phone','deleted','attid');
 
-		EE_Registry::instance()->load_class( 'Attendee', array(), FALSE, TRUE, TRUE );
+		//EE_Registry::instance()->load_class( 'Attendee', array(), FALSE, false, TRUE );
 		foreach ( $dummy_attendees as $dummy ) {
 			$att = array_combine( $var_array, $dummy );
 			extract($att);
@@ -341,8 +341,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$qst_columns = array('QST_ID', 'QST_display_text', 'QST_system');
 		$ans_columns = array('ANS_ID', 'QST_ID', 'ANS_value');
 
-		EE_Registry::instance()->load_class( 'Question', array(), FALSE, TRUE, TRUE );
-		EE_Registry::instance()->load_class( 'Answer', array(), FALSE, TRUE, TRUE );
+		//EE_Registry::instance()->load_class( 'Question', array(), FALSE, TRUE, TRUE );
+		//EE_Registry::instance()->load_class( 'Answer', array(), FALSE, TRUE, TRUE );
 
 		$qsts = array();
 		//first the questions
