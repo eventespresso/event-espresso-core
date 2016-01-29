@@ -798,6 +798,24 @@ class EE_Message_Resource_Manager {
 
 
 	/**
+	 * Deactivates a message type for a specific messenger as opposed to all messengers.
+	 *
+	 * @param string $message_type_name  Name of message type being deactivated.
+	 * @param string $messenger_name     Name of messenger the message type is being deactivated for.
+	 */
+	public function deactivate_message_type_for_messenger( $message_type_name, $messenger_name ) {
+		if ( $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
+			unset( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message-types' ][ $message_type_name ] );
+		}
+		$this->_message_template_group_model->deactivate_message_template_groups_for( array( $messenger_name ), array( $message_type_name ) );
+		$this->update_active_messengers_option();
+	}
+
+
+
+
+
+	/**
 	 * Used to verify if a message can be sent for the given messenger and message type
 	 * and that it is a generating messenger (used for generating message templates).
 	 *
