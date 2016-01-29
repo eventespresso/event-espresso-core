@@ -3102,7 +3102,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _setup_response_message_for_activating_messenger_with_message_types(
 		EE_Messenger $messenger,
-		EE_Message_Type $message_type = null ) {
+		EE_Message_Type $message_type = null
+	) {
 		//activated
 		if ( $this->_template_args['data']['active_mts'] ) {
 			EE_Error::overwrite_success();
