@@ -867,7 +867,7 @@ class EE_Message_Resource_Manager {
 	 */
 	public function deactivate_message_type_for_messenger( $message_type_name, $messenger_name ) {
 		if ( $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
-			unset( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message-types' ][ $message_type_name ] );
+			unset( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ] );
 		}
 		$this->_message_template_group_model->deactivate_message_template_groups_for( array( $messenger_name ), array( $message_type_name ) );
 		$this->update_active_messengers_option();
