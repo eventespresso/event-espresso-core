@@ -2712,6 +2712,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function activate_messenger_toggle() {
 		$success = true;
+		$this->_prep_default_response_for_messenger_or_message_type_toggle();
 		//let's check that we have required data
 		if ( !isset( $this->_req_data[ 'messenger' ] ) ) {
 			EE_Error::add_error( __('Messenger name needed to toggle activation. None given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -2741,12 +2742,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		if ( $success ) {
 			//made it here?  Stop dawdling then!!
-			if ( $status == 'off' ) {
-				//off = deactivate.  get it?
-				$success = $this->_activate_messenger( $this->_req_data['messenger'], true );
-			} else {
-				$success = $this->_activate_messenger( $this->_req_data['messenger'] );
-			}
+			$success = $status == 'off'
+				? $this->_deactivate_messenger( $this->_req_data['messenger'] )
+				: $this->_activate_messenger( $this->_req_data['messenger'] );
 		}
 
 		$this->_template_args['success'] = $success;
@@ -2766,7 +2764,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function activate_mt_toggle() {
 		$success = true;
-
+		$this->_prep_default_response_for_messenger_or_message_type_toggle();
 
 		//let's make sure we have the necessary data
 		if ( !isset( $this->_req_data[ 'message_type' ] ) ) {
@@ -2774,15 +2772,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$success = false;
 		}
 
-
-		//do a nonce check here since we're not arriving via a normal route
-		$nonce = isset( $this->_req_data['mt_nonce'] ) ? sanitize_text_field( $this->_req_data['mt_nonce'] ) : '';
-		$nonce_ref = $this->_req_data['message_type'] . '_nonce';
-
-		$this->_verify_nonce( $nonce, $nonce_ref );
-
-
-		if ( !isset( $this->_req_data[ 'messenger' ] ) ) {
+		if ( ! isset( $this->_req_data[ 'messenger' ] ) ) {
 			EE_Error::add_error( __('Messenger name needed to toggle activation. None given', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$success = false;
 		}
@@ -2802,175 +2792,241 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 
+		//do a nonce check here since we're not arriving via a normal route
+		$nonce = isset( $this->_req_data['mt_nonce'] ) ? sanitize_text_field( $this->_req_data['mt_nonce'] ) : '';
+		$nonce_ref = $this->_req_data['message_type'] . '_nonce';
+
+		$this->_verify_nonce( $nonce, $nonce_ref );
+
 		if ( $success ) {
 			//made it here? um, what are you waiting for then?
-			$deactivate = $status == 'deactivate' ? true : false;
-			$success = $this->_activate_messenger( $this->_req_data['messenger'], $deactivate, $this->_req_data['message_type'] );
+			$success = $status == 'deactivate'
+				? $this->_deactivate_message_type_for_messenger( $this->_req_data['messenger'], $this->_req_data['message_type'] )
+				: $this->_activate_message_type_for_messenger( $this->_req_data['messenger'], $this->_req_data['message_type'] );
 		}
 
 		$this->_template_args['success'] = $success;
 		$this->_return_json();
+	}
+
+
+	/**
+	 * Takes care of processing activating a messenger and preparing the appropriate response.
+	 *
+	 * @param string $messenger_name The name of the messenger being activated
+	 * @return bool
+	 */
+	protected function _activate_messenger( $messenger_name ) {
+		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
+		$message_types_to_activate = $active_messenger->get_default_message_types();
+
+		//ensure is active
+		$this->_message_resource_manager->activate_messenger( $messenger_name, $message_types_to_activate );
+
+		//set response_data for reload
+		foreach( $message_types_to_activate as $message_type_name ) {
+			/** @var EE_Message_Type $message_type */
+			$message_type = $this->_message_resource_manager->get_message_type( $message_type_name );
+			if ( $this->_message_resource_manager->is_message_type_active_for_messenger( $messenger_name, $message_type_name )
+			     && $message_type instanceof EE_Message_Type
+			) {
+				$this->_template_args['data']['active_mts'][] = $message_type_name;
+				if ( $message_type->get_admin_settings_fields() ) {
+					$this->_template_args['data']['mt_reload'][] = $message_type_name;
+				}
+			}
+		}
+
+		//add success message for activating messenger
+		return $this->_setup_response_message_for_activating_messenger_with_message_types( $active_messenger );
 
 	}
 
+
+	/**
+	 * Takes care of processing deactivating a messenger and preparing the appropriate response.
+	 *
+	 * @param string $messenger_name The name of the messenger being activated
+	 * @return bool
+	 */
+	protected function _deactivate_messenger( $messenger_name ) {
+		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
+		$this->_message_resource_manager->deactivate_messenger( $messenger_name );
+		return $this->_setup_response_message_for_deactivating_messenger_with_message_types( $active_messenger );
+	}
+
+
+	/**
+	 * Takes care of processing activating a message type for a messenger and preparing the appropriate response.
+	 *
+	 * @param string $messenger_name  The name of the messenger the message type is being activated for.
+	 * @param string $message_type_name  The name of the message type being activated for the messenger
+	 * @return bool
+	 */
+	protected function _activate_message_type_for_messenger( $messenger_name, $message_type_name ) {
+		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
+		/** @var EE_Message_Type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
+		$message_type_to_activate = $this->_message_resource_manager->get_message_type( $message_type_name );
+
+		//ensure is active
+		$this->_message_resource_manager->activate_messenger( $messenger_name, $message_type_name );
+
+		//set response for load
+		if ( $this->_message_resource_manager->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
+			$this->_template_args['data']['active_mts'][] = $message_type_name;
+			if ( $message_type_to_activate->get_admin_settings_fields() ) {
+				$this->_template_args['data']['mt_reload'][] = $message_type_name;
+			}
+		}
+		return $this->_setup_response_message_for_activating_messenger_with_message_types( $active_messenger, $message_type_to_activate );
+	}
+
+
+
+	/**
+	 * Takes care of processing deactivating a message type for a messenger and preparing the appropriate response.
+	 *
+	 * @param string $messenger_name  The name of the messenger the message type is being deactivated for.
+	 * @param string $message_type_name  The name of the message type being deactivated for the messenger
+	 * @return bool
+	 */
+	protected function _deactivate_message_type_for_messenger( $messenger_name, $message_type_name ) {
+		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
+		/** @var EE_Message_Type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
+		$message_type_to_deactivate = $this->_message_resource_manager->get_message_type( $message_type_name );
+		$this->_message_resource_manager->deactivate_message_type_for_messenger( $message_type_name, $messenger_name );
+		return $this->_setup_response_message_for_deactivating_messenger_with_message_types( $active_messenger, $message_type_to_deactivate );
+	}
 
 
 
 
 
 	/**
-	 * This just updates the active_messengers usermeta field when a messenger or message type is
-	 * activated/deactivated.
-	 * NOTE: deactivating will remove the messenger (or message type) from the active_messengers wp_options field so
-	 * all saved settings WILL be lost for the messenger AND message_types associated with that messenger (or message
-	 * type).
-	 *
-	 * @param  string  $messenger What messenger we're toggling
-	 * @param  boolean $deactivate if true then we deactivate
-	 * @param  mixed   $message_type if present what message type we're toggling
-	 *
-	 * @return bool
+	 * This just initializes the defaults for activating messenger and message type responses.
 	 */
-	protected function _activate_messenger($messenger, $deactivate = false, $message_type = false) {
-
-		$this->_set_m_mt_settings();
-
-		if ( !$deactivate ) {
-
-
-			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers
-			$this->_active_message_types[$messenger]['settings'] = !isset($this->_active_message_types[$messenger]['settings']) ? array() : $this->_active_message_types[$messenger]['settings'];
-			/** @type EE_Messenger $active_messenger */
-			$active_messenger = $this->_m_mt_settings[ 'messenger_tabs' ][ $messenger ][ 'obj' ];
-
-			//get has_active so we can sure its kept up to date.
-			$has_activated = get_option( 'ee_has_activated_messages' );
-
-			if ( empty( $has_activated[$messenger] ) ) {
-				$has_activated[$messenger] = array();
-			}
-
-			//k we need to get what default message types are to be associated with the messenger that's been activated.
-			$default_types = $message_type
-				? (array) $message_type
-				: $active_messenger->get_default_message_types();
-
-			foreach ( $default_types as $type ) {
-				/** @type EE_Message_Type $active_message_type */
-				$active_message_type = $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'inactive' ][ $type ][ 'obj' ];
-				$settings_fields = $active_message_type->get_admin_settings_fields();
-				$settings = array();
-				if ( !empty( $settings_fields ) ) {
-					//we have fields for this message type so let's get the defaults for saving.
-					foreach ( $settings_fields as $field => $values ) {
-						$settings[$field] = $values['default'];
-					}
-					//let's set the data for reloading this message type form in ajax
-					$this->_template_args['data']['mt_reload'][] = $type;
-				}
-				$this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$type]['settings'] =  $settings;
-
-				if ( ! in_array( $type, $has_activated[$messenger] ) ) {
-					$has_activated[$messenger][] = $type;
-				}
-			}
-
-			//any default settings for the messenger?
-			$msgr_settings = $active_messenger->get_admin_settings_fields();
-
-			if ( !empty( $msgr_settings ) ) {
-				foreach ( $msgr_settings as $field => $value ) {
-					$this->_active_message_types[$messenger]['settings'][$field] = $value;
-				}
-			}
-
-			//update settings in database
-			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
-			update_option( 'ee_has_activated_messages', $has_activated );
-
-
-			//generate new templates (if necessary)
-			$templates = $this->_generate_new_templates( $messenger, $default_types, 0, true );
-
-			EE_Error::overwrite_success();
-
-			//if generation failed then we need to remove the active messenger.
-			if ( !$templates ) {
-				unset($this->_active_message_types[$messenger]);
-				EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
-			} else {
-				//all is good let's do a success message
-				if ( $message_type ) {
-					EE_Error::add_success( sprintf( __('%s message type has been successfully activated with the %s messenger', 'event_espresso'),ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'][$message_type]['obj']->label['singular']), ucwords( $this->_active_messengers[$messenger]->label['singular'] ) ) );
-
-					//if message type was invoice then let's make sure we activate the invoice payment method.
-					if ( $message_type == 'invoice' ) {
-						EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
-						$pm = EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
-						if ( $pm instanceof EE_Payment_Method ) {
-							EE_Error::add_attention( __('Activating the invoice message type also automatically activates the invoice payment method.  If you do not wish the invoice payment method to be active, or to change its settings, visit the payment method admin page.', 'event_espresso' ) );
-						}
-					}
-				} else {
-					$installed_messengers = $this->_message_resource_manager->installed_messengers();
-					EE_Error::add_success(
-						sprintf(
-							__( '%s messenger has been successfully activated', 'event_espresso' ),
-							ucwords( $installed_messengers[ $messenger ]->label[ 'singular' ] )
-						)
-					);
-				}
-			}
-
-			$this->_template_args['data']['active_mts'] = $default_types;
-
-		} else {
-			//we're deactivating
-
-			//okay let's update the message templates that match this messenger so that they are deactivated in the database as well.
-			$update_array = array(
-				'MTP_messenger' => $messenger);
-
-			if ( $message_type ) {
-				$update_array['MTP_message_type'] = $message_type;
-			}
-			EEM_Message_Template_Group::instance()->update( array( 'MTP_is_active' => 0 ), array($update_array) );
-
-			$messenger_obj = $this->_active_messengers[$messenger];
-
-			//if this is a message type deactivation then we're only unsetting the message type otherwise unset the messenger
-			if ( $message_type ) {
-				unset( $this->_active_message_types[$messenger]['settings'][$messenger . '-message_types'][$message_type] );
-			} else {
-				unset( $this->_active_message_types[$messenger] );
-			}
-
-			EEH_MSG_Template::update_active_messengers_in_db( $this->_active_message_types );
-			EE_Error::overwrite_success();
-			if ( $message_type ) {
-				EE_Error::add_success( sprintf( __('%s message type has been successfully deactivated', 'event_espresso'), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) );
-			} else {
-				EE_Error::add_success( sprintf( __('%s messenger has been successfully deactivated', 'event_espresso'), ucwords($messenger_obj->label['singular'] ) ) );
-			}
-
-			//if messenger was html or message type was invoice then let's make sure we deactivate invoice payment method.
-			if ( $messenger == 'html'  || $message_type == 'invoice') {
-				EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
-				$count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method( 'invoice' );
-				if ( $count_updated > 0 ) {
-					$msg = $message_type == 'invoice'
-						? __('Deactivating the invoice message type also automatically deactivates the invoice payment method. In order for invoices to be generated the invoice message type must be active. If you completed this action by mistake, simply reactivate the invoice message type and then visit the payment methods admin page to reactivate the invoice payment method.', 'event_espresso' )
-						: __('Deactivating the html messenger also automatically deactivates the invoice payment method.  In order for invoices to be generated the html messenger must be be active.  If you completed this action by mistake, simply reactivate the html messenger, then visit the payment methods admin page to reactivate the invoice payment method.', 'event_espresso' );
-					EE_Error::add_attention( $msg );
-				}
-			}
-
-		}
-
-		return true;
+	protected function _prep_default_response_for_messenger_or_message_type_toggle() {
+		$this->_template_args['data']['active_mts'] = array();
+		$this->_template_args['data']['mt_reload'] = array();
 	}
 
 
+
+	/**
+	 * Setup appropriate response for activating a messenger and/or message types
+	 *
+	 * @param EE_Messenger         $messenger
+	 * @param EE_Message_Type|null $message_type
+	 *
+	 * @return bool
+	 * @throws EE_Error
+	 */
+	protected function _setup_response_message_for_activating_messenger_with_message_types(
+		EE_Messenger $messenger,
+		EE_Message_Type $message_type = null ) {
+		//activated
+		if ( $this->_template_args['data']['active_mts'] ) {
+			EE_Error::overwrite_success();
+			//activated a message type with the messenger
+			if ( $message_type instanceof EE_Message_Type ) {
+				EE_Error::add_success(
+					sprintf(
+						__('%s message type has been successfully activated with the %s messenger', 'event_espresso'),
+						ucwords( $message_type->label['singular'] ),
+						ucwords( $messenger->label['singular'] )
+					)
+				);
+
+				//if message type was invoice then let's make sure we activate the invoice payment method.
+				if ( $message_type->name == 'invoice' ) {
+					EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+					$pm = EE_Payment_Method_Manager::instance()->activate_a_payment_method_of_type( 'Invoice' );
+					if ( $pm instanceof EE_Payment_Method ) {
+						EE_Error::add_attention( __('Activating the invoice message type also automatically activates the invoice payment method.  If you do not wish the invoice payment method to be active, or to change its settings, visit the payment method admin page.', 'event_espresso' ) );
+					}
+				}
+			//just toggles the entire messenger
+			} else {
+				EE_Error::add_success(
+					sprintf(
+						__( '%s messenger has been successfully activated', 'event_espresso' ),
+						ucwords( $messenger->label[ 'singular' ] )
+					)
+				);
+			}
+			return true;
+
+		//error condition. This will happen when our active_mts data is empty because it is validated for actual active
+		//message types after the activation process
+		} else {
+			EE_Error::add_error(
+				$message_type instanceof EE_Message_Type
+				? sprintf(
+					__('%s message type was not successfully activated with the %s messenger', 'event_espresso'),
+					ucwords( $message_type->label['singular'] ),
+					ucwords( $messenger->label['singular'] )
+					)
+				: sprintf(
+					__( '%s messenger was not successfully activated', 'event_espresso' ),
+					ucwords( $messenger->label[ 'singular' ] )
+				),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return false;
+		}
+	}
+
+
+	/**
+	 * This sets up the appropriate response for deactivating a messenger and/or message type.
+	 *
+	 * @param EE_Messenger         $messenger
+	 * @param EE_Message_Type|null $message_type
+	 *
+	 * @return bool
+	 */
+	protected function _setup_response_message_for_deactivating_messenger_with_message_types(
+		EE_Messenger $messenger,
+		EE_Message_Type $message_type = null ) {
+		EE_Error::overwrite_success();
+		if ( $message_type instanceof EE_Message_Type ) {
+			$message_type_name = $message_type->name;
+			EE_Error::add_success(
+				sprintf(
+					__('%s message type has been successfully deactivated for the %s messenger.', 'event_espresso'),
+					ucwords( $message_type->label['singular'] ),
+					ucwords ( $messenger->label['singular'] )
+				)
+			);
+		} else {
+			$message_type_name = '';
+			EE_Error::add_success(
+				sprintf(
+					__('%s messenger has been successfully deactivated.', 'event_espresso'),
+					ucwords( $messenger->label['singular'] )
+				)
+			);
+		}
+
+		//if messenger was html or message type was invoice then let's make sure we deactivate invoice payment method.
+		if ( $messenger->name == 'html'  || $message_type_name == 'invoice') {
+			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
+			$count_updated = EE_Payment_Method_Manager::instance()->deactivate_payment_method( 'invoice' );
+			if ( $count_updated > 0 ) {
+				$msg = $message_type_name == 'invoice'
+					? __('Deactivating the invoice message type also automatically deactivates the invoice payment method. In order for invoices to be generated the invoice message type must be active. If you completed this action by mistake, simply reactivate the invoice message type and then visit the payment methods admin page to reactivate the invoice payment method.', 'event_espresso' )
+					: __('Deactivating the html messenger also automatically deactivates the invoice payment method.  In order for invoices to be generated the html messenger must be be active.  If you completed this action by mistake, simply reactivate the html messenger, then visit the payment methods admin page to reactivate the invoice payment method.', 'event_espresso' );
+				EE_Error::add_attention( $msg );
+			}
+		}
+		return true;
+	}
 
 
 	/**
