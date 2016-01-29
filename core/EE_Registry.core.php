@@ -889,7 +889,7 @@ class EE_Registry {
 				: false;
 		// we might have a dependency...
 		// let's MAYBE try and find it in our cache if that's what's been requested
-		$cached_class = ! $cache_on ? $this->_get_cached_class( $param_class ) : null;
+		$cached_class = $cache_on ? $this->_get_cached_class( $param_class ) : null;
 		// and grab it if it exists
 		if ( $cached_class instanceof $param_class ) {
 			$dependency = $cached_class;
