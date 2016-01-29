@@ -140,20 +140,22 @@ class EEH_MSG_Template {
 
 
 	/**
-	 * Updates all message templates matching the incoming messenger and message type to active status.
+	 * Updates all message templates matching the incoming messengers and message types to active status.
 	 *
-	 * @param  string $messenger    	Messenger slug
-	 * @param  string $message_type  Message type slug
+	 * @param  array  $messenger_names     Messenger slug
+	 * @param  array  $message_type_names  Message type slug
 	 * @static
 	 * @return  int 						count of updated records.
 	 */
-	public static function update_to_active( $messenger, $message_type ) {
+	public static function update_to_active( $messenger_names, $message_type_names ) {
+		$messenger_names = is_array( $messenger_names ) ? $messenger_names : array( $messenger_names );
+		$message_type_names = is_array( $message_type_names ) ? $message_type_names : array( $message_type_names );
 		return EEM_Message_Template_Group::instance()->update(
 			array( 'MTP_is_active' => 1 ),
 			array(
 				array(
-					'MTP_messenger' 	=> $messenger,
-					'MTP_message_type'  => $message_type
+					'MTP_messenger' 	=> array( 'IN', $messenger_names ),
+					'MTP_message_type'  => array( 'IN', $message_type_names )
 				)
 			)
 		);
@@ -164,19 +166,19 @@ class EEH_MSG_Template {
 	/**
 	 * Updates all message template groups matching the incoming arguments to inactive status.
 	 *
-	 * @param string $messenger 	The messenger slug.
-	 *                          	If empty then all templates matching the message type are marked inactive.
-	 *                          	Otherwise only templates matching the messenger and message type.
-	 * @param string $message_type 	The message type slug.
-	 *                              If empty then all templates matching the messenger are marked inactive.
-	 * 								Otherwise only templates matching the messenger and message type.
+	 * @param array $messenger_names 	The messenger slugs.
+	 *                          	If empty then all templates matching the message types are marked inactive.
+	 *                          	Otherwise only templates matching the messengers and message types.
+	 * @param array $message_type_names 	The message type slugs.
+	 *                              If empty then all templates matching the messengers are marked inactive.
+	 * 								Otherwise only templates matching the messengers and message types.
 	 *
 	 * @return int  count of updated records.
 	 */
-	public static function update_to_inactive( $messenger = '', $message_type = '' ) {
+	public static function update_to_inactive( $messenger_names = array(), $message_type_names = array() ) {
 		return EEM_Message_Template_Group::instance()->deactivate_message_template_groups_for(
-			$messenger,
-			$message_type
+			$messenger_names,
+			$message_type_names
 		);
 	}
 
