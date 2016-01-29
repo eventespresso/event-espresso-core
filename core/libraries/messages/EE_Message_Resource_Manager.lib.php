@@ -257,7 +257,7 @@ class EE_Message_Resource_Manager {
 	 * @return bool
 	 */
 	public function is_message_type_active_for_messenger( $messenger_name, $message_type_name ) {
-		return ! empty( $this->_active_message_types[ $messenger_name ]['settings'][$messenger_name . '-message_types'][ $message_type_name ] );
+		return ! empty( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ] );
 	}
 
 
