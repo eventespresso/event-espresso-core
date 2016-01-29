@@ -36,7 +36,7 @@ class EE_Fieldset_Section_Layout extends EE_Div_Per_Section_Layout{
 		foreach( $options as $key => $value ) {
 			$key = '_' . $key;
 			if ( property_exists( $this, $key )) {
-				$this->$key = $value;
+				$this->{$key} = $value;
 			}
 		}
 	}
