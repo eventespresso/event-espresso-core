@@ -1001,6 +1001,16 @@ class EEH_MSG_Template {
 		);
 		//generate templates
 		$success = $Message_Template_Defaults->create_new_templates();
+
+		//if creating the template failed.  Then we should deactivate the related message_type for the messenger because
+		//its not active if it doesn't have a template.  Note this is only happening for GLOBAL template creation
+		//attempts.
+		if ( ! $success ) {
+			/** @var EE_Message_Resource_Manager $message_resource_manager */
+			$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$message_resource_manager->deactivate_message_type_for_messenger( $message_type->name, $messenger->name );
+		}
+
 		/**
 		 * $success is in an array in the following format
 		 * array(
