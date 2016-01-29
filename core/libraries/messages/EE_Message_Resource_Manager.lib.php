@@ -316,7 +316,7 @@ class EE_Message_Resource_Manager {
 	 */
 	public function get_active_message_types_for_messenger( $messenger_name ) {
 		$message_types = array();
-		if ( empty( $this->_active_message_types[ $messenger_name ] ) ) {
+		if ( ! $this->messenger_has_active_message_types( $messenger_name ) ) {
 			return $message_types;
 		}
 		$installed_message_types = $this->installed_message_types();
@@ -672,7 +672,7 @@ class EE_Message_Resource_Manager {
 			//activate incoming message types set to be activated with messenger.
 			$message_type_names = $this->_activate_message_types( $messenger, $message_type_names );
 			// setup any initial settings for the messenger if necessary.
-			$this->_add_settings_for_messenger( $messenger );
+			$this->add_settings_for_messenger( $messenger->name );
 			if ( $update_active_messengers_option ) {
 				$this->update_active_messengers_option();
 				$this->update_has_activated_messengers_option();
@@ -725,7 +725,7 @@ class EE_Message_Resource_Manager {
 				if (
 					! $this->is_message_type_active_for_messenger( $messenger->name, $message_type_name )
 				) {
-					$this->_add_settings_for_message_type( $messenger, $message_type_name );
+					$this->add_settings_for_message_type( $messenger->name, $message_type_name );
 					$this->_set_messenger_has_activated_message_type(
 						$messenger,
 						$message_type_name
@@ -739,24 +739,33 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * _get_settings_for_message_type
+	 * add_settings_for_message_type
 	 *
-	 * @access protected
-	 * @param \EE_Messenger $messenger
-	 * @param  string       $message_type_name
+	 * NOTE This does NOT automatically persist any settings to the db.  Client code should call $this->update_active_messengers_option
+	 * to persist.
+	 *
+	 * @param  string       $messenger_name   The name of the messenger adding the settings for
+	 * @param  string       $message_type_name The name of the message type adding the settings for
+	 * @param  array        $new_settings     Any new settings being set for the message type and messenger
 	 */
-	protected function _add_settings_for_message_type( EE_Messenger $messenger, $message_type_name ) {
-		$settings = array();
+	public function add_settings_for_message_type( $messenger_name, $message_type_name, $new_settings = array() ) {
 		// get installed message type from collection
 		$message_type = $this->message_type_collection()->get_by_info( $message_type_name );
+		$existing_settings = $this->get_message_type_settings_for_messenger( $messenger_name, $message_type_name );
 		//we need to setup any initial settings for message types
 		if ( $message_type instanceof EE_Message_Type ) {
-			$settings_fields = $message_type->get_admin_settings_fields();
-			foreach ( $settings_fields as $field => $values ) {
-				$settings[ $field ] = $values[ 'default' ];
+			$default_settings = $message_type->get_admin_settings_fields();
+			foreach ( $default_settings as $field => $values ) {
+				if ( isset( $new_settings[ $field ] ) ) {
+					$existing_settings[ $field ] = $new_settings[ $field ];
+					continue;
+				}
+				if ( ! isset( $existing_settings[ $field ] ) ) {
+					$existing_settings[ $field ] = $values['default'];
+				}
 			}
 		}
-		$this->_active_message_types[ $messenger->name ][ 'settings' ][ $messenger->name . '-message_types' ][ $message_type_name ][ 'settings' ] = $settings;
+		$this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ]['settings'] = $existing_settings;
 	}
 
 
@@ -783,18 +792,29 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * _add_settings_for_messenger
+	 * add_settings_for_messenger
 	 *
-	 * @access protected
-	 * @param \EE_Messenger $messenger
+	 * NOTE This does NOT automatically persist any settings to the db.  Client code should call $this->update_active_messengers_option
+	 * to persist.
+	 *
+	 * @param string        $messenger_name The name of the messenger the settings is being added for.
+	 * @param array         $new_settings   An array of settings to update the existing settings.
 	 */
-	protected function _add_settings_for_messenger( EE_Messenger $messenger ) {
-		$msgr_settings = $messenger->get_admin_settings_fields();
-		if ( ! empty( $msgr_settings ) ) {
-			foreach ( $msgr_settings as $field => $value ) {
-				//only set the default if it isn't already set.
-				if ( ! isset( $this->_active_message_types[ $messenger->name ]['settings'][ $field ] ) ) {
-					$this->_active_message_types[ $messenger->name ]['settings'][ $field ] = $value;
+	public function add_settings_for_messenger( $messenger_name, $new_settings = array() ) {
+		$messenger = $this->get_messenger( $messenger_name );
+		if ( $messenger instanceof EE_Messenger ) {
+			$msgr_settings = $messenger->get_admin_settings_fields();
+			if ( ! empty( $msgr_settings ) ) {
+				foreach ( $msgr_settings as $field => $value ) {
+					//is there a new setting for this?
+					if ( isset( $new_settings[ $field ] ) ) {
+						$this->_active_message_types[ $messenger->name ]['settings'][ $field ] = $new_settings[ $field ];
+						continue;
+					}
+					//only set the default if it isn't already set.
+					if ( ! isset( $this->_active_message_types[ $messenger->name ]['settings'][ $field ] ) ) {
+						$this->_active_message_types[ $messenger->name ]['settings'][ $field ] = $value;
+					}
 				}
 			}
 		}
