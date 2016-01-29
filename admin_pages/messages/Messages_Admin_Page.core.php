@@ -2226,8 +2226,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			return true;
 		}
 
-		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $GRP_ID,  $global);
-
+		return EEH_MSG_Template::generate_new_templates( $messenger, $message_types, $GRP_ID, $global );
 	}
 
 
