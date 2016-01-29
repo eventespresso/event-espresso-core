@@ -142,9 +142,9 @@ class EEH_MSG_Template {
 	/**
 	 * Updates all message templates matching the incoming messengers and message types to active status.
 	 *
+	 * @static
 	 * @param  array  $messenger_names     Messenger slug
 	 * @param  array  $message_type_names  Message type slug
-	 * @static
 	 * @return  int 						count of updated records.
 	 */
 	public static function update_to_active( $messenger_names, $message_type_names ) {
@@ -166,6 +166,7 @@ class EEH_MSG_Template {
 	/**
 	 * Updates all message template groups matching the incoming arguments to inactive status.
 	 *
+	 * @static
 	 * @param array $messenger_names 	The messenger slugs.
 	 *                          	If empty then all templates matching the message types are marked inactive.
 	 *                          	Otherwise only templates matching the messengers and message types.
@@ -188,6 +189,7 @@ class EEH_MSG_Template {
 	 * (messengers and message type regardless of whether they are ACTIVE or not)
 	 *
 	 * @deprecated 4.9.0
+	 * @static
 	 * @param string $type
 	 * @return array array consisting of installed messenger objects and installed message type objects.
 	 */
