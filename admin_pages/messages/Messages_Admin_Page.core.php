@@ -2928,25 +2928,38 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 			return true;
 
-		//error condition. This will happen when our active_mts data is empty because it is validated for actual active
-		//message types after the activation process
+		//possible error condition. This will happen when our active_mts data is empty because it is validated for actual active
+		//message types after the activation process.  However its possible some messengers don't HAVE any default_message_types
+		//in which case we just give a success message for the messenger being successfully activated.
 		} else {
-			EE_Error::add_error(
-				$message_type instanceof EE_Message_Type
-				? sprintf(
-					__('%s message type was not successfully activated with the %s messenger', 'event_espresso'),
-					ucwords( $message_type->label['singular'] ),
-					ucwords( $messenger->label['singular'] )
+			if ( ! $messenger->get_default_message_types() ) {
+				//messenger doesn't have any default message types so still a success.
+				EE_Error::add_success(
+					sprintf(
+						__('%s messenger was successfully activated.', 'event_espresso' ),
+						ucwords( $messenger->label['singular'] )
+						)
+				);
+				return true;
+			} else {
+				EE_Error::add_error(
+					$message_type instanceof EE_Message_Type
+						? sprintf(
+						__( '%s message type was not successfully activated with the %s messenger', 'event_espresso' ),
+						ucwords( $message_type->label['singular'] ),
+						ucwords( $messenger->label['singular'] )
 					)
-				: sprintf(
-					__( '%s messenger was not successfully activated', 'event_espresso' ),
-					ucwords( $messenger->label[ 'singular' ] )
-				),
-				__FILE__,
-				__FUNCTION__,
-				__LINE__
-			);
-			return false;
+						: sprintf(
+						__( '%s messenger was not successfully activated', 'event_espresso' ),
+						ucwords( $messenger->label['singular'] )
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+
+				return false;
+			}
 		}
 	}
 
