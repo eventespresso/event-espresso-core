@@ -218,13 +218,13 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 	function test_batch_queue_for_generation_and_persist() {
-		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_and_persist', EEM_Message::status_incomplete );
+		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_and_persist', null, false, 0 );
 	}
 
 
 
 	function test_batch_queue_for_generation_no_persist() {
-		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_no_persist', EEM_Message::status_incomplete, false );
+		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_no_persist', null, false, 0 );
 	}
 
 
@@ -310,9 +310,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->assertEquals( 5, $proc->get_queue()->count_STS_in_queue( EEM_Message::status_resend ) );
 
 		//next test incorrect messages
-		//fresh processor and queue.
-		/** @type EE_Messages_Processor $proc */
-		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+		//note calling this method SHOULD reset the internal queue.
 		$proc->setup_messages_from_ids_and_send( $messages_with_wrong_status );
 		$this->assertEquals( 0, $proc->get_queue()->count_STS_in_queue( EEM_Message::status_resend ) );
 	}
