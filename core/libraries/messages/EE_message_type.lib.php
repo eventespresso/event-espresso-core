@@ -415,6 +415,29 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
+	 * This is called externally to reset the value of the $_data property for the message type.
+	 *
+	 * Please note the value of the _data is highly volatile.  It was added as an interim measure ensuring EE_Message_To_Generate
+	 * objects have any changes to the _data property when `_set_data_handler` method is called (and for back compat reasons).
+	 * This particular method is used in EE_Messages_Generator::_reset_current_properties to ensure that the internal _data
+	 * on the message type is cleaned before subsequent EE_Message generation in the same request.
+	 *
+	 * @todo      This needs refactored along with the whole _set_data_handler() method in EE_message_types. Need to ensure
+	 *            that there is no manipulation of the _data property during run time so there's a clear expectation of what it
+	 *            is.  Likely we need to ensure that _data is not persisted IN the message type at all.
+	 *
+	 * @internal  Plugin authors, do not implement this method, it is subject to change.
+	 *
+	 * @since 4.9
+	 */
+	public function reset_data() {
+		$this->_data = null;
+	}
+
+
+
+
+	/**
 	 * This does some validation of incoming params gets the url trigger from the defined method in the specific child class and then filters the results.
 	 *
 	 * @param string          $context           The message type context
