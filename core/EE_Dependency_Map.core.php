@@ -135,7 +135,7 @@ class EE_Dependency_Map {
 
 	/**
 	 * @param string $class_name
-	 * @return array
+	 * @return string | Closure
 	 */
 	public static function class_loader( $class_name ) {
 		return isset( self::$_class_loaders[ $class_name ] ) ? self::$_class_loaders[ $class_name ] : '';
