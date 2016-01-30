@@ -153,14 +153,18 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 	function test_count_by_priority_and_status() {
 		$test_repo = new EE_Message_Repository();
 		//let's setup some message objects with a variety of priorities and statuses.
-		//high priority, idle
-		$messages_a = $this->factory->message->create_many( 3, array( 'MSG_priority' => EEM_Message::priority_high, 'STS_ID' => EEM_Message::status_idle ) );
-		//medium priority, sent
-		$messages_b = $this->factory->message->create_many( 2, array( 'MSG_priority' => EEM_Message::priority_medium, 'STS_ID' => EEM_Message::status_sent ) );
-		//medium priority, resend
-		$messages_c = $this->factory->message->create_many( 2, array( 'MSG_priority' => EEM_Message::priority_medium, 'STS_ID' => EEM_Message::status_resend ) );
+		//high priority, idle  (invoice is high priority hence it is used as a message type).
+		$messages_a = $this->factory->message->create_many( 3, array( 'STS_ID' => EEM_Message::status_idle, 'MSG_message_type' => 'invoice' ) );
+		//medium priority, sent (the default message type has a priority of medium)
+		$messages_b = $this->factory->message->create_many( 2, array( 'STS_ID' => EEM_Message::status_sent ) );
+		//medium priority, resend (the default message type has a priority of medium)
+		$messages_c = $this->factory->message->create_many( 2, array( 'STS_ID' => EEM_Message::status_resend ) );
 		//low priority, resend
-		$messages_d = $this->factory->message->create_many( 4, array( 'MSG_priority' => EEM_Message::priority_low, 'STS_ID' => EEM_Message::status_resend ) );
+		$messages_d = $this->factory->message->create_many( 4, array( 'STS_ID' => EEM_Message::status_resend ) );
+		//need to manually force this priority because there are no message types currently that set low priority
+		foreach ( $messages_d as $message ) {
+			$message->set_priority( EEM_Message::priority_low );
+		}
 
 		$all_messages = array_merge( $messages_a, $messages_b, $messages_c, $messages_d );
 
