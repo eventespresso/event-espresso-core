@@ -125,12 +125,14 @@ class EE_Message_Factory {
 	 * @throws \EE_Error
 	 */
 	protected function _create( $props_n_values = array() ) {
+		$new_instance = false;
 		if ( ! empty( $props_n_values['MSG_ID'] ) ) {
 			$message = EE_Message::new_instance_from_db( $props_n_values );
 		} else {
 			$message = EE_Message::new_instance( $props_n_values );
+			$new_instance = true;
 		}
-		return $this->_set_messenger_and_message_type( $message );
+		return $this->_set_messenger_and_message_type( $message, $new_instance );
 	}
 
 
@@ -138,12 +140,13 @@ class EE_Message_Factory {
 	/**
 	 * @access public
 	 * @param  \EE_Message $message
+	 * @param  bool        $new_instance Whether the message type was setup from the database (false) or not (true)
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_messenger_and_message_type( EE_Message $message ) {
+	protected function _set_messenger_and_message_type( EE_Message $message, $new_instance = false ) {
 		$message = $this->_set_messenger( $message );
-		$message = $this->_set_message_type( $message );
+		$message = $this->_set_message_type( $message, $new_instance );
 		return $message;
 	}
 
@@ -168,13 +171,14 @@ class EE_Message_Factory {
 	/**
 	 * @access protected
 	 * @param  \EE_Message $message
+	 * @param  bool        $new_instance Whether the message type was setup from the database (false) or not (true)
 	 * @return \EE_Message
 	 * @throws \EE_Error
 	 */
-	protected function _set_message_type( EE_Message $message ) {
+	protected function _set_message_type( EE_Message $message, $new_instance = false ) {
 		$message_type = $this->_message_resource_manager->get_message_type( $message->message_type() );
 		if ( $message_type instanceof EE_Message_Type ) {
-			$message->set_message_type_object( $message_type );
+			$message->set_message_type_object( $message_type, $new_instance );
 		}
 		return $message;
 	}
