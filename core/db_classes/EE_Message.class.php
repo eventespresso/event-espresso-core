@@ -265,10 +265,14 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * Sets message_type
 	 *
 	 * @param EE_Message_Type $message_type
+	 * @param bool            $set_priority   This indicates whether to set the priority to whatever the priority is on
+	 *                                        the message type or not.
 	 */
-	public function set_message_type_object( EE_Message_Type $message_type ) {
+	public function set_message_type_object( EE_Message_Type $message_type, $set_priority = false ) {
 		$this->_message_type = $message_type;
-		$this->set_priority( $message_type->get_priority() );
+		if ( $set_priority ) {
+			$this->set_priority( $this->_message_type->get_priority() );
+		}
 	}
 
 
