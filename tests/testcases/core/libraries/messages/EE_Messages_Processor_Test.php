@@ -193,7 +193,6 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	 * - queue_for_generation_loop
 	 */
 	function test_generate_and_return() {
-		$this->markTestSkipped();
 		$test_components = $this->_test_components();
 		/** @type EE_Messages_Processor $proc */
 		$proc = $test_components['proc'];
@@ -219,21 +218,18 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 	function test_batch_queue_for_generation_and_persist() {
-		$this->markTestSkipped();
 		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_and_persist', EEM_Message::status_incomplete );
 	}
 
 
 
 	function test_batch_queue_for_generation_no_persist() {
-		$this->markTestSkipped();
 		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_no_persist', EEM_Message::status_incomplete, false );
 	}
 
 
 
 	function test_generate_and_queue_for_sending() {
-		$this->markTestSkipped();
 		$this->_common_test_with_specific_expected_status( 'generate_and_queue_for_sending', EEM_Message::status_idle, false, 0 );
 		//now there should be Messages in the database all queued up for sending.  Let's check
 		$messages = EEM_Message::instance()->get_all( array( array(
@@ -248,7 +244,6 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 	function test_generate_for_preview() {
-		$this->markTestSkipped();
 		$test_components = $this->_test_components();
 		/** @type EE_Messages_Processor $proc */
 		$proc = $test_components['proc'];
@@ -289,7 +284,6 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 	function test_setup_messages_from_ids_and_send() {
-		$this->markTestSkipped();
 		//setup processor to work with
 		/** @type EE_Messages_Processor $proc */
 		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
