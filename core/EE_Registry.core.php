@@ -160,7 +160,7 @@ class EE_Registry {
 	public $_reflectors;
 
 	/**
-	 * boolean flag to indicate whether or not to load/save classes from/to the cache
+	 * boolean flag to indicate whether or not to load/save dependencies from/to the cache
 	 *
 	 * @access    protected
 	 * @var boolean $_cache_on
@@ -542,7 +542,10 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
-		if ( $this->_cache_on && $cache ) {
+		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
+		// $cache is controlled by individual calls to separate Registry loader methods like load_class()
+		// $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
+		if ( $this->_cache_on && $cache && ! $load_only ) {
 			// return object if it's already cached
 			$cached_class = $this->_get_cached_class_or_file_loaded( $class_name, $class_prefix, $load_only );
 			if ( $cached_class !== null ) {
@@ -564,9 +567,9 @@ class EE_Registry {
 		}
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db );
-		if ( $this->_cache_on ) {
+		if ( $this->_cache_on && $cache ) {
 			// save it for later... kinda like gum  { : $
-			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
+			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db );
 		}
 		$this->_cache_on = true;
 		return $class_obj;
@@ -950,33 +953,49 @@ class EE_Registry {
 	 *
 	 * attempts to cache the instantiated class locally
 	 * in one of the following places, in the following order:
-	 *        $this->{class_abbreviation} 			ie:    $this->CART
-	 *        $this->{$class_name}                    	ie:    $this->Some_Class
+	 *        $this->{class_abbreviation}   ie:    $this->CART
+	 *        $this->{$class_name}          ie:    $this->Some_Class
 	 *        $this->addon->{$$class_name} 	ie:    $this->addon->Some_Addon_Class
-	 *        $this->LIB->{$class_name} + 		ie:    $this->LIB->Some_Class +
-	 * 		+ only classes that are NOT model objects with the $cache flag set to true
-	 * 	 	will be cached under LIB (libraries)
+	 *        $this->LIB->{$class_name}     ie:    $this->LIB->Some_Class
 	 *
 	 * @access protected
 	 * @param object $class_obj
 	 * @param string $class_name
 	 * @param string $class_prefix
 	 * @param bool $from_db
-	 * @param bool $cache
 	 * @return void
 	 */
-	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false, $cache = true ) {
+	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false ) {
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
 			$this->{$class_abbreviation} = $class_obj;
 		} else if ( property_exists( $this, $class_name ) ) {
 			$this->{$class_name} = $class_obj;
-		} else if ( $class_prefix == 'addon' && $cache ) {
+		} else if ( $class_prefix == 'addon' ) {
 			$this->addons->{$class_name} = $class_obj;
-		} else if ( ! $from_db && $cache ) {
+		} else if ( ! $from_db ) {
 			$this->LIB->{$class_name} = $class_obj;
 		}
+	}
+
+
+
+	/**
+	 * call any loader that's been registered in the EE_Dependency_Map::$_class_loaders array
+	 *
+	 * @param string $classname
+	 * @param array  $arguments
+	 * @return object
+	 */
+	public static function factory( $classname, $arguments = array() ) {
+		$loader = EE_Dependency_Map::class_loader( $classname );
+		if ( $loader instanceof Closure ) {
+			return $loader( $arguments );
+		} else if ( method_exists( EE_Registry::instance(), $loader ) ) {
+			return EE_Registry::instance()->{$loader}( $classname, $arguments );
+		}
+		return null;
 	}
 
 
