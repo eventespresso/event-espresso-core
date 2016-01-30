@@ -35,7 +35,4 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase {
 
 
 
-
-
-
 } //end EE_Messages_Generator_Test class
