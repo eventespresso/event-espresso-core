@@ -196,6 +196,7 @@ class EE_Messages_Processor {
 	 * @return EE_Messages_Queue
 	 */
 	public function generate_and_return(  $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 		return $this->_generator->generate( false );
 	}
@@ -240,6 +241,7 @@ class EE_Messages_Processor {
 	 * @param EE_Message_To_Generate[] $messages_to_generate
 	 */
 	public function batch_queue_for_generation_and_persist( $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 		$this->_queue->save();
 	}
@@ -257,6 +259,7 @@ class EE_Messages_Processor {
 	 * @param EE_Message_To_Generate[]  $messages_to_generate
 	 */
 	public function batch_queue_for_generation_no_persist( $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 	}
 
@@ -293,6 +296,7 @@ class EE_Messages_Processor {
 	 * @return EE_Messages_Queue
 	 */
 	public function generate_and_queue_for_sending( $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 		return $this->_generator->generate( true );
 	}
@@ -344,6 +348,7 @@ class EE_Messages_Processor {
 		if ( ! $message_to_generate->valid() ) {
 			return false;
 		}
+		$this->_init_queue_and_generator();
 		$message = $message_to_generate->get_EE_Message();
 		$this->_queue->add( $message );
 		if ( $message->send_now() ) {
@@ -382,6 +387,7 @@ class EE_Messages_Processor {
 		}
 
 		if ( $message_to_generate->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
+			$this->_init_queue_and_generator();
 			$this->_queue->add( $message_to_generate->get_EE_Message() );
 			$this->_queue->execute( false, $sending_messenger );
 			return $this->_queue;
@@ -445,6 +451,7 @@ class EE_Messages_Processor {
 	 * @param array $message_ids
 	 */
 	public function setup_messages_from_ids_and_send( $message_ids ) {
+		$this->_init_queue_and_generator();
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
 				'MSG_ID' => array( 'IN', $message_ids ),
