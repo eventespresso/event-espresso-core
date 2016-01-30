@@ -433,7 +433,6 @@ class EE_Messages_Generator {
 			'MSG_messenger'    => $this->_current_messenger->name,
 			'MSG_message_type' => $this->_current_message_type->name,
 			'MSG_context'      => $context,
-			'MSG_priority'     => $this->_generation_queue->get_queue()->current()->priority(),
 		);
 
 		//recipient id and type should be on the EE_Messages_Addressee object but if this is empty, let's try to grab the
