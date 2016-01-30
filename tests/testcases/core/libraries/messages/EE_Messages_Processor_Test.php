@@ -167,7 +167,11 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	}
 
 
-	function test_reset_of_message_generator() {
+	/**
+	 * This simulates the behaviour of EE_Messages_Processor::init_queue_and_generator for resetting the Messages_Generator
+	 * on the processor.
+	 */
+	function test__init_queue_and_generator() {
 		//load processor
 		$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 
