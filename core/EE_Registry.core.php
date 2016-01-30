@@ -397,9 +397,10 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: session
 	 * @param mixed $arguments
 	 * @param bool $load_only
+	 * @param bool $cache  whether to cache the object or not.
 	 * @return mixed
 	 */
-	public function load_lib( $class_name, $arguments = array(), $load_only = false ) {
+	public function load_lib( $class_name, $arguments = array(), $load_only = false, $cache = true ) {
 		$paths = array(
 			EE_LIBRARIES,
 			EE_LIBRARIES . 'messages' . DS,
@@ -408,7 +409,7 @@ class EE_Registry {
 			EE_LIBRARIES . 'payment_methods' . DS,
 		);
 		// retrieve instantiated class
-		return $this->_load( $paths, 'EE_', $class_name, 'lib', $arguments, false, true, $load_only );
+		return $this->_load( $paths, 'EE_', $class_name, 'lib', $arguments, false, $cache, $load_only );
 	}
 
 
@@ -533,7 +534,7 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
-		if ( $this->_cache_on && ! $load_only ) {
+		if ( $this->_cache_on && $cache && ! $load_only ) {
 			// return object if it's already cached
 			$cached_class = $this->_get_cached_class( $class_name, $class_prefix );
 			if ( $cached_class !== null ) {
