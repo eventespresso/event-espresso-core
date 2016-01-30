@@ -42,9 +42,9 @@ class Checkin extends Base {
 		$dtt_id = $request->get_param( 'DTT_ID' );
 		$force = $request->get_param( 'force' );
 		if( $force == 'true' ) {
-			$force = false;
-		} else {
 			$force = true;
+		} else {
+			$force = false;
 		}
 		$reg = \EEM_Registration::instance()->get_one_by_ID( $reg_id );
 		if( ! $reg instanceof \EE_Registration ) {
@@ -62,7 +62,7 @@ class Checkin extends Base {
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_edit_checkin', 'rest_api_checkin_endpoint', $reg_id ) ) {
 			return $this->send_response(
 				new \WP_Error(
-					'rest_user_cannot_registration_toggle_checkin',
+					'rest_user_cannot_toggle_checkin',
 					sprintf(
 						__( 'You are not allowed to checkin registration with ID $1$s.', 'event_espresso' ),
 						$reg_id
