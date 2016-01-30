@@ -120,7 +120,7 @@ class EE_Messages_Generator {
 		//iterate through the messages in the queue, generate, and add to new queue.
 		$this->_generation_queue->get_queue()->rewind();
 		while ( $this->_generation_queue->get_queue()->valid() ) {
-			//resent "current" properties
+			//reset "current" properties
 			$this->_reset_current_properties();
 
 			/** @type EE_Message $msg */
@@ -170,6 +170,10 @@ class EE_Messages_Generator {
 		if ( $save ) {
 			$this->_ready_queue->save();
 		}
+
+		//final reset of properties
+		$this->_reset_current_properties();
+
 		return $this->_ready_queue;
 	}
 
@@ -180,6 +184,10 @@ class EE_Messages_Generator {
 	 */
 	protected function _reset_current_properties() {
 		$this->_verified = false;
+		//make sure any _data value in the current message type is reset
+		if ( $this->_current_message_type instanceof EE_Message_Type ) {
+			$this->_current_message_type->reset_data();
+		}
 		$this->_current_messenger = $this->_current_message_type = $this->_current_data_handler = null;
 	}
 
