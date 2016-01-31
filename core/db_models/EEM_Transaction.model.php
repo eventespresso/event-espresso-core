@@ -110,7 +110,14 @@ class EEM_Transaction extends EEM_Base {
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
 		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
 
-		$offset = get_option( 'gmt_offset' );
+		/** need to account for timezone offset on the selects */
+		$DateTimeZone = new DateTimeZone( $this->get_timezone() );
+
+		/**
+		 * Note get_option( 'gmt_offset') returns a value in hours, whereas DateTimeZone::getOffset returns values in seconds.
+		 * Hence we do the calc for DateTimeZone::getOffset.
+		 */
+		$offset = $DateTimeZone instanceof DateTimeZone ? ( $DateTimeZone->getOffset( new DateTime('now') ) ) / HOUR_IN_SECONDS : get_option( 'gmt_offset' );
 		$query_interval = $offset < 0
 			? 'DATE_SUB(TXN_timestamp, INTERVAL ' . $offset*-1 . ' HOUR)'
 			: 'DATE_ADD(TXN_timestamp, INTERVAL ' . $offset . ' HOUR)';
