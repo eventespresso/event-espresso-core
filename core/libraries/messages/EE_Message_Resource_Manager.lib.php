@@ -562,6 +562,8 @@ class EE_Message_Resource_Manager {
 	 *                                (stored in $_active_message_types property).
 	 * @param bool  $update_option    Whether to update the related active messengers option.
 	 * @param bool  $verify           Whether to verify the messengers are installed before activating. Note if this is set to true
+	 *                                and a messenger is indicated as active, but is NOT installed, then it will automatically be
+	 *                                deactivated.
 	 */
 	public function ensure_messengers_are_active( $messenger_names = array(), $update_option = true, $verify = false ) {
 		$messenger_names = empty( $messenger_names ) ? array_keys( $this->_active_message_types ) : $messenger_names;
