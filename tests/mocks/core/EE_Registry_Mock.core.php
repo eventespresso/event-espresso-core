@@ -96,12 +96,12 @@ class EE_Registry_Mock extends EE_Registry {
 	 * @return null | object
 	 * @throws \EE_Error
 	 */
-	public function create_object( $class_name, $arguments = array(), $type = 'core', $from_db = false, $load_only = false ) {
+	public function create_object( $class_name, $arguments = array(), $type = 'core', $from_db = false ) {
 		//echo "\n create_object";
 		//echo "\n $class_name";
 		//echo "\n resolve_dependencies: ";
 		//var_dump( $resolve_dependencies );
-		return $this->_create_object( $class_name, $arguments, $type, $from_db, $load_only );
+		return $this->_create_object( $class_name, $arguments, $type, $from_db );
 	}
 
 
