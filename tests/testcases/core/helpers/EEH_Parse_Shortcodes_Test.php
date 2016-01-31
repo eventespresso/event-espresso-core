@@ -313,6 +313,10 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 * @group 7623
 	 */
 	public function test_parsing_html_receipt() {
+		//see https://events.codebasehq.com/projects/event-espresso/tickets/9337, I think when running all tests, html
+		//messenger is getting stuck deactivated and thus the generated message template for this test will be missing some
+		//info.
+		EE_Registry::instance()->load_lib( 'Message_Resource_Manager' )->ensure_messenger_is_active( 'html' );
 		//currently with @group 7623 just testing if there are any error notices.
 		$parsed = $this->_get_parsed_content( 'html', 'receipt', 'content', 'purchaser' );
 
