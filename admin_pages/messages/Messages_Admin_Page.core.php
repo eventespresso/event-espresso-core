@@ -1087,8 +1087,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 							$template_form_fields[$field_id]['css_class'] = ! empty( $v_fields )
 																			&& in_array($extra_field, $v_fields)
-																			&& ( is_array($validators[$extra_field] )
-																			&& isset( $validators[$extra_field]['msg'] ) )
+																			&&
+																			(
+								                                                is_array($validators[$extra_field] )
+																				&& isset( $validators[$extra_field]['msg'] )
+							                                                )
 								? 'validate-error ' . $css_class
 								: $css_class;
 
