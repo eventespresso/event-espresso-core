@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @subpackage		messages
  * @author			Darren Ethier
  */
-class EE_Html_Messenger extends EE_Messenger  {
+class EE_Html_messenger extends EE_Messenger  {
 
 
 	/**

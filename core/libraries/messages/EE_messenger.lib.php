@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Messenger extends EE_Messages_Base {
+abstract class EE_messenger extends EE_Messages_Base {
 
 
 
