@@ -195,10 +195,11 @@ class EEH_MSG_Template {
 	 */
 	public static function get_installed_message_objects( $type = 'all' ) {
 		self::_set_autoloader();
-		//get all installed messengers and message_types
-		/** @type EE_Messages $messages_controller */
-		$messages_controller = EE_Registry::instance()->load_lib( 'messages' );
-		return $messages_controller->get_installed($type);
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		return array(
+			'messenger' => $message_resource_manager->installed_messengers(),
+			'message_type' => $message_resource_manager->installed_message_types()
+		);
 	}
 
 
