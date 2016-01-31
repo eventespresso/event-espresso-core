@@ -160,18 +160,14 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	}
 
 
-	/**
-	 * @group failing
-	 */
+
 	public function test_list_of_active_message_types() {
 		$active_message_type_list = $this->_message_resource_manager->list_of_active_message_types();
 		$this->assertArrayContains( 'invoice', $active_message_type_list );
 	}
 
 
-	/**
-	 * @group failing
-	 */
+
 	public function test_get_active_message_type_objects() {
 		$active_message_type_objects = $this->_message_resource_manager->get_active_message_type_objects();
 		$this->assertTrue( isset( $active_message_type_objects['invoice'] ) );
@@ -199,10 +195,7 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	}
 
 
-	/**
-	 * @group failing
-	 * @throws EE_Error
-	 */
+
 	public function test_valid_message_type_for_messenger() {
 		//test valid
 		$html_messenger = $this->_message_resource_manager->get_messenger( 'html' );
@@ -320,7 +313,6 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	 *
 	 *
 	 * @since 4.9.0
-	 * @group failing
 	 */
 	public function test_ensure_message_type_is_active() {
 		//get all active message types.
@@ -388,9 +380,7 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	}
 
 
-	/**
-	 * @group failing
-	 */
+
 	public function test_deactivate_message_type() {
 		$this->assertTrue( $this->_message_resource_manager->is_message_type_active_for_messenger( 'html', 'invoice' ) );
 		$this->_message_resource_manager->deactivate_message_type( 'invoice' );
@@ -398,9 +388,7 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	}
 
 
-	/**
-	 * @group failing
-	 */
+
 	public function test_deactivate_message_type_for_messenger() {
 		$this->assertTrue( $this->_message_resource_manager->is_message_type_active_for_messenger( 'html', 'invoice' ) );
 		$this->_message_resource_manager->deactivate_message_type_for_messenger( 'invoice', 'html' );
@@ -424,10 +412,6 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 
 
 
-	/**
-	 * @since 4.9.0
-	 * @group failing
-	 */
 	function test_get_all_contexts() {
 		$contexts = $this->_message_resource_manager->get_all_contexts();
 
