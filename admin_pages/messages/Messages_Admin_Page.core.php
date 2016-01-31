@@ -1060,7 +1060,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//let's loop through the template_field_structure and actually assemble the input fields!
 		if ( !empty($template_field_structure) ) {
-			//$id_prefix= 'ee-msg-edit-template-fields-';
 			foreach ( $template_field_structure[$context] as $template_field => $field_setup_array ) {
 				//if this is an 'extra' template field then we need to remove any existing fields that are keyed up in the extra array and reset them.
 				if ( $template_field == 'extra' ) {
@@ -1179,11 +1178,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$template_form_fields[$field_id]['append_content'] = $this->_get_shortcode_selector(
 						$template_field, $field_id
 					);
-
-					//if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' ) {
-					//	//we want to decode the entities
-					//	$template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
-					//}
 				}
 
 				//k took care of content field(s) now let's take care of others.
@@ -1355,8 +1349,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'type' => 'string',
 				'value' => wp_create_nonce( $action . '_nonce')
 				);
-
-			//$sidebar_array = array('ee-msg-is-global', 'ee-msg-is-override', 'ee-msg-deleted', 'ee-msg-is-active');
 
 			if ( isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
 				$sidebar_form_fields['ee-msg-template-switch'] = array(
