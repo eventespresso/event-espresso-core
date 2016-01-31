@@ -215,30 +215,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// abstract classes only return true to denote that they have been loaded
 		$this->assertEquals( true, $class_object );
 	}
-
-
-
-	/**
-	 * this tests that EE class files can be loaded but not instantiated
-	 *
-	 * @group                8284
-	 * @author                Brent Christensen
-	 */
-	public function test_create_object_load_only(){
-		// let's attempt to just load the EE_Cron_Tasks class file
-		require_once( EE_CORE . 'EE_Cron_Tasks.core.php' );
-		$this->assertEquals( true, class_exists( 'EE_Cron_Tasks' ) );
-		// now attempt instantiation
-		$class_object = EE_Registry_Mock::instance()->create_object(
-			'EE_Cron_Tasks',
-			array(),
-			'core',
-			false,
-			true // LOAD ONLY FLAG SET TO TRUE
-		);
-		// using load only returns true to denote that class has been loaded
-		$this->assertEquals( true, $class_object );
-	}
+	
 
 
 
