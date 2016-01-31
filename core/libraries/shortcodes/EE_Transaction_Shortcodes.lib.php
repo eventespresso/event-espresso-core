@@ -478,7 +478,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$reg = $this->_data->primary_reg_obj;
 		$message_type = isset( $this->_extra_data['message_type'] ) ? $this->_extra_data['message_type'] : '';
 		if ( ! $reg instanceof EE_Registration || empty( $message_type ) ) {
-			return'';
+			return '';
 		}
 
 		$switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type  ? true : false;
