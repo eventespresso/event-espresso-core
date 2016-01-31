@@ -1155,10 +1155,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$template_form_fields[$field_id] = $field_setup_array;
 					$template_form_fields[$field_id]['name'] = 'MTP_template_fields[' . $template_field . '][content]';
 					$message_template = isset( $message_templates[ $context ][ $template_field ] )
-						? isset( $message_templates[ $context ][ $template_field ] )
+						? $message_templates[ $context ][ $template_field ]
 						: null;
-					$template_form_fields[$field_id]['value'] = ! empty($message_templates)
-																&& is_array($message_templates[$context])
+					$template_form_fields[$field_id]['value'] = ! empty( $message_templates )
+																&& is_array( $message_templates[$context] )
 																&& $message_template instanceof EE_Message_Template
 						? $message_template->get('MTP_content')
 						: '';
