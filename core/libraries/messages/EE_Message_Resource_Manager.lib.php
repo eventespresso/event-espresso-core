@@ -599,25 +599,29 @@ class EE_Message_Resource_Manager {
 	 * @param string $message_type_name message type name.
 	 * @param        $messenger_name
 	 * @param bool   $update_option     Whether to update the option in the db or not.
-	 * @return array
+	 * @return bool  TRUE if it was PREVIOUSLY active, and FALSE if it was previously INACTIVE.
 	 * @throws \EE_Error
 	 */
 	public function ensure_message_type_is_active( $message_type_name, $messenger_name, $update_option = true ) {
 		// grab the messenger to work with.
 		$messenger = $this->valid_messenger( $messenger_name );
+		$was_active_previously = true;
 		if ( $this->valid_message_type_for_messenger( $messenger, $message_type_name ) ) {
 			//ensure messenger is active (that's an inherent coupling between active message types and the
 			//messenger they are being activated for.  Note option is not being updated here because that gets handled later
 			//in this method.
 			$this->ensure_messenger_is_active( $messenger_name, false );
-			//all is good so let's just get it active
-			$this->_activate_message_types( $messenger, array( $message_type_name ) );
+			if ( ! $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
+				//all is good so let's just get it active
+				$this->_activate_message_types( $messenger, array( $message_type_name ) );
+				$was_active_previously = false;
+			}
 			if ( $update_option ) {
 				$this->update_active_messengers_option();
 				$this->update_has_activated_messengers_option();
 			}
 		}
-		return $this->active_message_types();
+		return $was_active_previously;
 	}
 
 
@@ -630,7 +634,6 @@ class EE_Message_Resource_Manager {
 	 * @param array  $message_type_names  Array of message type names to ensure are active.
 	 * @param string $messenger_name      The name of the messenger that the message types are to be activated on.
 	 * @param bool   $update_option       Whether to persist the activation to the database or not (default true).
-	 * @return array
 	 */
 	public function ensure_message_types_are_active( $message_type_names, $messenger_name, $update_option = true ) {
 		$message_type_names = (array) $message_type_names;
@@ -643,7 +646,6 @@ class EE_Message_Resource_Manager {
 			$this->update_active_messengers_option();
 			$this->update_has_activated_messengers_option();
 		}
-		return $this->active_message_types();
 	}
 
 
