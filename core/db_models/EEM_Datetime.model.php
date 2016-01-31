@@ -401,9 +401,22 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$query_params[0] = $where_params;
 		$query_params['group_by'] = array('dtt_year', 'dtt_month');
 		$query_params['order_by'] = array( 'DTT_EVT_start' => 'DESC' );
+
+		/** need to account for timezone offset on the selects */
+		$DateTimeZone = new DateTimeZone( $this->get_timezone() );
+
+		/**
+		 * Note get_option( 'gmt_offset') returns a value in hours, whereas DateTimeZone::getOffset returns values in seconds.
+		 * Hence we do the calc for DateTimeZone::getOffset.
+		 */
+		$offset = $DateTimeZone instanceof DateTimeZone ? ( $DateTimeZone->getOffset( new DateTime('now') ) ) / HOUR_IN_SECONDS : get_option( 'gmt_offset' );
+		$query_interval = $offset < 0
+			? 'DATE_SUB(DTT_EVT_start, INTERVAL ' . $offset*-1 . ' HOUR)'
+			: 'DATE_ADD(DTT_EVT_start, INTERVAL ' . $offset . ' HOUR)';
+
 		$columns_to_select = array(
-			'dtt_year' => array('YEAR(DTT_EVT_start)', '%s'),
-			'dtt_month' => array('MONTHNAME(DTT_EVT_start)', '%s')
+			'dtt_year' => array('YEAR(' . $query_interval . ')', '%s'),
+			'dtt_month' => array('MONTHNAME(' . $query_interval . ')', '%s')
 			);
 		return $this->_get_all_wpdb_results( $query_params, OBJECT, $columns_to_select );
 	}
