@@ -994,14 +994,13 @@ class EEH_MSG_Template {
 			return EEH_MSG_Template::_create_custom_template_group( $messenger, $message_type, $GRP_ID );
 		}
 		/** @type EE_Message_Template_Defaults $Message_Template_Defaults */
-		$Message_Template_Defaults = new EE_Message_Template_Defaults(
-			null,
-			$messenger->name,
-			$message_type->name,
-			$GRP_ID,
-			$messenger,
-			$message_type
+		$Message_Template_Defaults = EE_Registry::instance()->load_lib(
+			'Messages_Template_Defaults',
+			array( $GRP_ID, $messenger, $message_type ),
+			false,
+			false
 		);
+
 		//generate templates
 		$success = $Message_Template_Defaults->create_new_templates();
 
