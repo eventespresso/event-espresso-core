@@ -178,8 +178,8 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		//grab generation queue.
 		$orig_generator_queue = $message_proc->get_queue();
 
-		//load generator via load lib (which simulates what happens when executing EE_Messages_Processor::_init_queue_and_generator
-		$generator = EE_Registry::instance()->load_lib( 'Messages_Generator', array(), false, false );
+		//load generator via EE_Registry::factory() (which simulates what happens when executing EE_Messages_Processor::_init_queue_and_generator
+		$generator = EE_Registry::factory( 'EE_Messages_Generator' );
 		$new_generator_queue = $generator->generation_queue();
 
 		//these two queues should NOT be the same objects.
@@ -354,3 +354,4 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 } //end EE_Messages_Processor_Test
+// Location: tests/testcases/core/libraries/messages/EE_Messages_Processor_Test.php
