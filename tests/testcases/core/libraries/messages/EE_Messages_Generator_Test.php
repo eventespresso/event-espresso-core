@@ -27,7 +27,7 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase {
 	 */
 	function test_construct() {
 		/** @type EE_Messages_Generator $generator */
-		$generator = EE_Registry::instance()->load_lib( 'Messages_Generator' );
+		$generator = EE_Registry::factory( 'EE_Messages_Generator' );
 		//assert $generator loaded okay
 		$this->assertInstanceOf( 'EE_Messages_Generator', $generator );
 		return $generator;
@@ -36,3 +36,4 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase {
 
 
 } //end EE_Messages_Generator_Test class
+// Location: tests/testcases/core/libraries/messages/EE_Messages_Generator_Test.php
