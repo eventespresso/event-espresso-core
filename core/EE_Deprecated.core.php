@@ -1,11 +1,29 @@
 <?php
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 /**
- * This file contains all deprecated actions, filters, and functions in EE.
- * @package      Event Espresso
- * @subpackage helpers
- * @since           4.5.0
+ * ************************************************************************
+ *       _____  ______          _____      __  __ ______
+ *      |  __ \|  ____|   /\   |  __ \    |  \/  |  ____|
+ *      | |__) | |__     /  \  | |  | |   | \  / | |__
+ *      |  _  /|  __|   / /\ \ | |  | |   | |\/| |  __|
+ *      | | \ \| |____ / ____ \| |__| |   | |  | | |____
+ *      |_|  \_\______/_/    \_\_____/    |_|  |_|______|
+ *
+ * ************************************************************************
+ *
+ * This file contains all deprecated actions, filters, functions, and classes in EE.
+ * DO NOT ADD NEW CODE TO THE TOP OF THIS FILE !!!
+ * PLEASE ADD ALL NEW CODE TO THE BOTTOM THIS FILE !!!
+ * IF YOU ADD CODE TO THIS FILE, WHY NOT TRY ADDING IT TO THE BOTTOM ?
+ * THE WHITE ZONE IS FOR LOADING AND UNLOADING ONLY,
+ * IF YOU HAVE TO LOAD OR UNLOAD, GO TO THE WHITE ZONE !!!
+ *
+ * @package     Event Espresso
+ * @subpackage  helpers
+ * @since       4.5.0
  */
-if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * ee_deprecated__registration_checkout__button_text
  *
@@ -485,3 +503,533 @@ class EE_Message_Template_Defaults extends EE_Base {
 		);
 	}
 }
+
+
+
+//end EE_Message_Template_Defaults class
+
+
+
+/**
+ * @deprecated     4.9.0
+ * @package        Event Espresso
+ * @subpackage     includes/core/messages
+ * @author         Darren Ethier, Brent Christensen
+ *
+ * ------------------------------------------------------------------------
+ */
+class EE_Messages {
+
+	/** @type EE_Messenger[] */
+	protected $_active_messengers = array();
+
+	/** @type array */
+	protected $_active_message_types = array();
+
+	/** @type EE_message_type[] */
+	protected $_installed_message_types = array();
+
+	/** @type EE_Messenger */
+	protected $_messenger;
+
+	/** @type EE_message_type */
+	protected $_message_type;
+
+	/** @type array */
+	protected $_contexts = array();
+
+	/** @type EE_Message_Resource_Manager $_message_resource_manager */
+	protected $_message_resource_manager;
+
+
+
+	/**
+	 * EE_Messages constructor.
+	 *
+	 * @deprecated 4.9.0
+	 */
+	function __construct() {
+	}
+
+
+
+	/**
+	 * @param string $method
+	 */
+	public function _class_is_deprecated( $method ) {
+		// EE_messages has been deprecated
+		EE_Error::doing_it_wrong(
+			'EE_messages::' . $method,
+			__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
+			'4.9.0'
+		);
+		// Please use EE_Message_Resource_Manager instead
+		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param string $messenger_name
+	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
+	 */
+	public function ensure_messenger_is_active( $messenger_name ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->ensure_messenger_is_active( $messenger_name );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param string $message_type message type name
+	 * @param        $messenger
+	 * @return bool true if it got activated (or was active) and false if not.
+	 * @throws \EE_Error
+	 */
+	public function ensure_message_type_is_active( $message_type, $messenger ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->ensure_message_type_is_active( $message_type, $messenger );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param string $messenger_name
+	 * @param array  $mts_to_activate             (optional) An array of message types to activate with this messenger.  If
+	 *                                            included we do NOT setup the default message types (assuming
+	 *                                            they are already setup.)
+	 * @return boolean an array of generated templates or false if nothing generated/activated.
+	 */
+	public function activate_messenger( $messenger_name, $mts_to_activate = array() ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->activate_messenger( $messenger_name, $mts_to_activate );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param EE_Messenger    $messenger    messenger used in trigger
+	 * @param EE_message_type $message_type message type used in trigger
+	 *
+	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
+	 */
+	public function is_generating_messenger_and_active( EE_Messenger $messenger, EE_message_type $message_type ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->is_generating_messenger_and_active( $messenger, $message_type );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param string $messenger
+	 * @return EE_Messenger | null
+	 */
+	public function get_messenger_if_active( $messenger ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->get_active_messenger( $messenger );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param EE_Message $message
+	 * @return array  An array with 'messenger' and 'message_type' as the index and the corresponding valid object if
+	 *                  available.
+	 *                  Eg. Valid Messenger and Message Type:
+	 *                  array(
+	 *                  'messenger' => new EE_Email_Messenger(),
+	 *                  'message_type' => new EE_Registration_Approved_message_type()
+	 *                  )
+	 *                  Valid Messenger and Invalid Message Type:
+	 *                  array(
+	 *                  'messenger' => new EE_Email_Messenger(),
+	 *                  'message_type' => null
+	 *                  )
+	 */
+	public function validate_for_use( EE_Message $message ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return array(
+			'messenger'    => $message->messenger_object(),
+			'message_type' => $message->message_type_object(),
+		);
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param  string $type                 What type of message are we sending (corresponds to message types)
+	 * @param  mixed  $vars                 Data being sent for parsing in the message
+	 * @param  string $sending_messenger    if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
+	 * @param string  $generating_messenger if included then this messenger is used for generating the message templates (but not for sending).
+	 * @param string  $context              If included then only a message type for a specific context will be generated.
+	 * @param bool    $send                 Default TRUE.  If false, then this will just return the generated EE_Messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
+	 * @return bool
+	 */
+	public function send_message(
+		$type,
+		$vars,
+		$sending_messenger = '',
+		$generating_messenger = '',
+		$context = '',
+		$send = true
+	) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		/** @type EE_Messages_Processor $processor */
+		$processor = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+		$error = false;
+		//try to intelligently determine what method we'll call based on the incoming data.
+		//if generating and sending are different then generate and send immediately.
+		if ( ! empty( $sending_messenger ) && $sending_messenger != $generating_messenger && $send ) {
+			//in the legacy system, when generating and sending were different, that means all the
+			//vars are already in the request object.  So let's just use that.
+			try {
+				/** @type EE_Message_To_Generate_From_Request $mtg */
+				$mtg = EE_Registry::instance()->load_lib( 'Message_To_Generate_From_Request' );
+				$processor->generate_and_send_now( $mtg );
+			} catch ( EE_Error $e ) {
+				$error_msg = __(
+					'Please note that a system message failed to send due to a technical issue.',
+					'event_espresso'
+				);
+				// add specific message for developers if WP_DEBUG in on
+				$error_msg .= '||' . $e->getMessage();
+				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				$error = true;
+			}
+		} else {
+			$processor->generate_for_all_active_messengers( $type, $vars, $send );
+			//let's find out if there were any errors and how many successfully were queued.
+			$count_errors = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_failed );
+			$count_queued = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
+			$count_retry = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_retry );
+			$count_errors = $count_errors + $count_retry;
+			if ( $count_errors > 0 ) {
+				$error = true;
+				if ( $count_errors > 1 && $count_retry > 1 && $count_queued > 1 ) {
+					$message = sprintf(
+						__(
+							'There were %d errors and %d messages successfully queued for generation and sending',
+							'event_espresso'
+						),
+						$count_errors,
+						$count_queued
+					);
+				} elseif ( $count_errors > 1 && $count_queued === 1 ) {
+					$message = sprintf(
+						__(
+							'There were %d errors and %d message successfully queued for generation.',
+							'event_espresso'
+						),
+						$count_errors,
+						$count_queued
+					);
+				} elseif ( $count_errors === 1 && $count_queued > 1 ) {
+					$message = sprintf(
+						__(
+							'There was %d error and %d messages successfully queued for generation.',
+							'event_espresso'
+						),
+						$count_errors,
+						$count_queued
+					);
+				} else {
+					$message = sprintf(
+						__(
+							'There was %d message that failed to be queued for generation.',
+							'event_espresso'
+						),
+						$count_errors
+					);
+				}
+				EE_Error::add_error( $message, __FILE__, __FUNCTION__, __LINE__ );
+			} else {
+				if ( $count_queued === 1 ) {
+					$message = sprintf(
+						__(
+							'%d message successfully queued for generation.',
+							'event_espresso'
+						),
+						$count_queued
+					);
+				} else {
+					$message = sprintf(
+						__(
+							'%d messages were successfully queued for generation.',
+							'event_espresso'
+						),
+						$count_queued
+					);
+				}
+				EE_Error::add_success( $message );
+			}
+		}
+		//if no error then return the generated message(s).
+		if ( ! $error && ! $send ) {
+			$generated_queue = $processor->generate_queue( false );
+			//get message and return.
+			$generated_queue->get_queue()->rewind();
+			$messages = array();
+			while ( $generated_queue->get_queue()->valid() ) {
+				$message = $generated_queue->get_queue()->current();
+				if ( $message instanceof EE_Message ) {
+					//set properties that might be expected by add-ons (backward compat)
+					$message->content = $message->content();
+					$message->template_pack = $message->get_template_pack();
+					$message->template_variation = $message->get_template_pack_variation();
+					$messages[] = $message;
+				}
+				$generated_queue->get_queue()->next();
+			}
+			return $messages;
+		}
+		return $error ? false
+			: true; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param  string $type      This should correspond with a valid message type
+	 * @param  string $context   This should correspond with a valid context for the message type
+	 * @param  string $messenger This should correspond with a valid messenger.
+	 * @param bool    $send      true we will do a test send using the messenger delivery, false we just do a regular preview
+	 * @return string          The body of the message.
+	 */
+	public function preview_message( $type, $context, $messenger, $send = false ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return EED_Messages::preview_message( $type, $context, $messenger, $send );
+	}
+
+
+
+	/**
+	 * @since      4.5.0
+	 * @deprecated 4.9.0   Moved to EED_Messages Module
+	 * @param string   $messenger    a string matching a valid active messenger in the system
+	 * @param string   $message_type Although it seems contrary to the name of the method, a message type name is still required to send along the message type to the messenger because this is used for determining what specific variations might be loaded for the generated message.
+	 * @param stdClass $message      a stdClass object in the format expected by the messenger.
+	 *
+	 * @return bool          success or fail.
+	 */
+	public function send_message_with_messenger_only( $messenger, $message_type, $message ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		//setup for sending to new method.
+		/** @type EE_Messages_Queue $queue */
+		$queue = EE_Registry::instance()->load_lib( 'Messages_Queue' );
+		//make sure we have a proper message object
+		if ( ! $message instanceof EE_Message && is_object( $message ) && isset( $message->content ) ) {
+			$msg = EE_Message_Factory::create(
+				array(
+					'MSG_messenger'    => $messenger,
+					'MSG_message_type' => $message_type,
+					'MSG_content'      => $message->content,
+					'MSG_subject'      => $message->subject
+				)
+			);
+		} else {
+			$msg = $message;
+		}
+		if ( ! $msg instanceof EE_Message ) {
+			return false;
+		}
+		//make sure any content in a content property (if not empty) is set on the MSG_content.
+		if ( ! empty( $msg->content ) ) {
+			$msg->set( 'MSG_content', $msg->content );
+		}
+		$queue->add( $msg );
+		return EED_Messages::send_message_with_messenger_only( $messenger, $message_type, $queue );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param         $messenger
+	 * @param  string $message_type message type that the templates are being created for
+	 * @param int     $GRP_ID
+	 * @param bool    $is_global
+	 * @return array|object if creation is successful then we return an array of info, otherwise an error_object is returned.
+	 * @throws \EE_Error
+	 */
+	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::create_new_templates( $messenger, $message_type, $GRP_ID, $is_global );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param  string $messenger_name    name of EE_Messenger
+	 * @param  string $message_type_name name of EE_message_type
+	 * @return array
+	 */
+	public function get_fields( $messenger_name, $message_type_name ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		return EEH_MSG_Template::get_fields( $messenger_name, $message_type_name );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @access     public
+	 * @param string $type                we can indicate just returning installed message types
+	 *                                    or messengers (or both) via this parameter.
+	 * @param bool   $skip_cache          if true then we skip the cache and retrieve via files.
+	 * @return array                    multidimensional array of messenger and message_type objects
+	 *                                    (messengers index, and message_type index);
+	 */
+	public function get_installed( $type = 'all', $skip_cache = false ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		if ( $skip_cache ) {
+			$this->_message_resource_manager->reset_active_messengers_and_message_types();
+		}
+		switch ( $type ) {
+			case 'messengers' :
+				return array(
+					'messenger' => $this->_message_resource_manager->installed_messengers(),
+				);
+				break;
+			case 'message_types' :
+				return array(
+					'message_type' => $this->_message_resource_manager->installed_message_types(),
+				);
+				break;
+			case 'all' :
+			default :
+				return array(
+					'messenger'    => $this->_message_resource_manager->installed_messengers(),
+					'message_type' => $this->_message_resource_manager->installed_message_types(),
+				);
+				break;
+		}
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @return \EE_Messenger[]
+	 */
+	public function get_active_messengers() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->active_messengers();
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @return array array of message_type references (string)
+	 */
+	public function get_active_message_types() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->list_of_active_message_types();
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @return EE_message_type[]
+	 */
+	public function get_active_message_type_objects() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->get_active_message_type_objects();
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @since      4.5.0
+	 * @param string $messenger The messenger being checked
+	 * @return EE_message_type[]    (or empty array if none present)
+	 */
+	public function get_active_message_types_per_messenger( $messenger ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->get_active_message_types_for_messenger( $messenger );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param string $messenger    The string should correspond to the messenger (message types are
+	 * @param string $message_type The string should correspond to a message type.
+	 * @return EE_Message_Type|null
+	 */
+	public function get_active_message_type( $messenger, $message_type ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->get_active_message_type_for_messenger( $messenger, $message_type );
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @return array|\EE_message_type[]
+	 */
+	public function get_installed_message_types() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->installed_message_types();
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @return array
+	 */
+	public function get_installed_messengers() {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->installed_messengers();
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.0
+	 * @param   bool $slugs_only Whether to return an array of just slugs and labels (true) or all contexts indexed by message type.
+	 * @return array
+	 */
+	public function get_all_contexts( $slugs_only = true ) {
+		// EE_messages has been deprecated
+		$this->_class_is_deprecated( __FUNCTION__ );
+		return $this->_message_resource_manager->get_all_contexts( $slugs_only );
+	}
+
+
+
+}
+//end EE_Messages class
