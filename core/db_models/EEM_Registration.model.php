@@ -287,7 +287,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		}
 
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );
-		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone() );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
 
 		$results = $this->_get_all_wpdb_results(
 				array(

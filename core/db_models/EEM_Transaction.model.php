@@ -111,7 +111,7 @@ class EEM_Transaction extends EEM_Base {
 		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
 
 		EE_Registry::instance()->load_helper( 'DTT_Helper' );
-		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone() );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'TXN_timestamp' );
 
 		$results = $this->_get_all_wpdb_results(
 			array(
