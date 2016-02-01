@@ -548,14 +548,17 @@ class EE_Registry {
 				return $cached_class;
 			}
 		}
-		// get full path to file
-		$path = $this->_resolve_path( $class_name, $type, $file_paths );
-		// if the class doesn't already exist, then load the file 
-		$loaded = ! $class_exists ? $this->_require_file( $path, $class_name, $type, $file_paths ) : true;
-		// if loading failed, or we are only loading a file but NOT instantiating an object
-		if ( ! $loaded || $load_only ) {
-			// return boolean if only loading, or null if an object was expected
-			return $load_only ? $loaded : null;
+		// if the class doesn't already exist.. then we need to try and find the file and load it
+		if ( ! $class_exists ) {
+			// get full path to file
+			$path = $this->_resolve_path( $class_name, $type, $file_paths );
+			// load the file
+			$loaded = $this->_require_file( $path, $class_name, $type, $file_paths ) : true;
+			// if loading failed, or we are only loading a file but NOT instantiating an object
+			if ( ! $loaded || $load_only ) {
+				// return boolean if only loading, or null if an object was expected
+				return $load_only ? $loaded : null;
+			}
 		}
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db );
