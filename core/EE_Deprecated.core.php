@@ -434,3 +434,54 @@ function ee_deprecated_get_taxonomies( $cts ) {
 	return apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', $cts );
 }
 add_filter( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', 'ee_deprecated_get_taxonomies', 10 );
+
+
+/**
+ * Deprecated class for instantiating default templates.  This was deprecated because of a substantial change in the constructor
+ * signature.
+ *
+ * @package    Event Espresso
+ * @subpackage messages
+ * @author     Darren Ethier
+ * @since      4.1
+ * @deprecated 4.9.0  Replaced by EE_Messages_Template_Defaults (note the plural s on Messages)
+ */
+class EE_Message_Template_Defaults extends EE_Base {
+
+	/**
+	 * EE_Message_Template_Defaults constructor.
+	 *
+	 * @param EE_Messages $messages
+	 * @param             $messenger_name
+	 * @param             $message_type_name
+	 * @param int         $GRP_ID
+	 * @return EE_Messages_Template_Defaults
+	 */
+	public function __construct(
+		EE_Messages $messages,
+		$messenger_name,
+		$message_type_name,
+		$GRP_ID = 0
+	) {
+		EE_Error::doing_it_wrong(
+			__FUNCTION__,
+			__(
+				'The class EE_Message_Template_Defaults has been deprecated and replaced by EE_Messages_Template_Defaults.',
+				'event_espresso'
+			),
+			'4.9.0'
+		);
+		/** @var EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$messenger = $message_resource_manager->get_messenger( $messenger_name );
+		$message_type = $message_resource_manager->get_message_type( $message_type_name );
+		return EE_Registry::instance()->load_lib(
+			'Messages_Template_Defaults',
+			array(
+				$GRP_ID,
+				$messenger,
+				$message_type,
+			)
+		);
+	}
+}
