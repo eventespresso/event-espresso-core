@@ -409,7 +409,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 		$columns_to_select = array(
 			'dtt_year' => array('YEAR(' . $query_interval . ')', '%s'),
-			'dtt_month' => array('MONTHNAME(' . $query_interval . ')', '%s')
+			'dtt_month' => array('MONTHNAME(' . $query_interval . ')', '%s'),
+			'dtt_month_num' => array('MONTH(' . $query_interval .')', '%s')
 			);
 		return $this->_get_all_wpdb_results( $query_params, OBJECT, $columns_to_select );
 	}
