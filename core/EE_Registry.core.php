@@ -168,6 +168,13 @@ class EE_Registry {
 	protected $_cache_on = true;
 
 
+	/**
+	 * This is used to cache when a file has been loaded for a class contained in that file.
+	 * @var array
+	 */
+	protected $_file_loaded_for_class = array();
+
+
 
 	/**
 	 * @singleton method used to instantiate class object
@@ -525,6 +532,7 @@ class EE_Registry {
 		$cache = true,
 		$load_only = false
 	) {
+		$loaded = true;
 		// strip php file extension
 		$class_name = str_replace( '.php', '', trim( $class_name ) );
 		// does the class have a prefix ?
@@ -534,17 +542,21 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
-		if ( $this->_cache_on && $cache && ! $load_only ) {
+		if ( $this->_cache_on && $cache ) {
 			// return object if it's already cached
-			$cached_class = $this->_get_cached_class( $class_name, $class_prefix );
+			$cached_class = $this->_get_cached_class_or_file_loaded( $class_name, $class_prefix, $load_only );
 			if ( $cached_class !== null ) {
 				return $cached_class;
 			}
 		}
-		// get full path to file
-		$path = $this->_resolve_path( $class_name, $type, $file_paths );
-		// load the file
-		$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
+		// get full path to file but only if needed.  It's entirely possible that $load_only is false, but
+		// the file was loaded in an earlier load_only call.
+		if ( ! isset( $this->_file_loaded_for_class[$class_name] ) ) {
+			$path = $this->_resolve_path( $class_name, $type, $file_paths );
+			// load the file
+			$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
+			$this->_file_loaded_for_class[ $class_name ] = true;
+		}
 		// if loading failed, or we are only loading a file but NOT instantiating an object
 		if ( ! $loaded || $load_only ) {
 			// return boolean if only loading, or null if an object was expected
@@ -575,24 +587,36 @@ class EE_Registry {
 	 * @access protected
 	 * @param string $class_name
 	 * @param string $class_prefix
+	 * @param bool   $load_only     If true then we check if the file has been loaded previously and return boolean for it.
 	 * @return null|object
 	 */
-	protected function _get_cached_class( $class_name, $class_prefix = '' ) {
+	protected function _get_cached_class_or_file_loaded( $class_name, $class_prefix = '', $load_only = false ) {
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
 		} else {
 			// have to specify something, but not anything that will conflict
 			$class_abbreviation = 'FANCY_BATMAN_PANTS';
 		}
-		// check if class has already been loaded, and return it if it has been
-		if ( isset( $this->{$class_abbreviation} ) && ! is_null( $this->{$class_abbreviation} ) ) {
-			return $this->{$class_abbreviation};
-		} else if ( isset ( $this->{$class_name} ) ) {
-			return $this->{$class_name};
-		} else if ( isset ( $this->LIB->{$class_name} ) ) {
-			return $this->LIB->{$class_name};
-		} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
-			return $this->addons->{$class_name};
+
+		//first we do a file loaded check if $load_only set to true.
+		if (
+			$load_only
+			&& isset( $this->_file_loaded_for_class[ $class_name ] )
+		) {
+			return true;
+		}
+
+		if ( ! $load_only ) {
+			// check if class has already been loaded, and return it if it has been
+			if ( isset( $this->{$class_abbreviation} ) && ! is_null( $this->{$class_abbreviation} ) ) {
+				return $this->{$class_abbreviation};
+			} else if ( isset ( $this->{$class_name} ) ) {
+				return $this->{$class_name};
+			} else if ( isset ( $this->LIB->{$class_name} ) ) {
+				return $this->LIB->{$class_name};
+			} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
+				return $this->addons->{$class_name};
+			}
 		}
 		return null;
 	}
@@ -890,7 +914,7 @@ class EE_Registry {
 				: false;
 		// we might have a dependency...
 		// let's MAYBE try and find it in our cache if that's what's been requested
-		$cached_class = $cache_on ? $this->_get_cached_class( $param_class ) : null;
+		$cached_class = $cache_on ? $this->_get_cached_class_or_file_loaded( $param_class ) : null;
 		// and grab it if it exists
 		if ( $cached_class instanceof $param_class ) {
 			$dependency = $cached_class;
