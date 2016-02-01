@@ -513,9 +513,8 @@ class EE_Registry {
 	 * @return null|object|bool  	null = failure to load or instantiate class object.
 	 *                              object = class loaded and instantiated successfully.
 	 *                              bool = fail or success when $load_only is true
-	 * @internal param string $file_path - file path including file name
 	 */
-	private function _load(
+	protected function _load(
 		$file_paths = array(),
 		$class_prefix = 'EE_',
 		$class_name = false,
@@ -533,6 +532,10 @@ class EE_Registry {
 			$class_prefix = strtoupper( trim( $class_prefix ) );
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
+		}
+		// if we're only loading the class and it already exists, then let's just return true immediately
+		if ( $load_only && class_exists( $class_name ) ) {
+			return true;
 		}
 		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
 		// $cache is controlled by individual calls to separate Registry loader methods like load_class()
