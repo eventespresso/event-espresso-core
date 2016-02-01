@@ -50,10 +50,11 @@ class EE_Registry_Mock extends EE_Registry {
 	 * @access public
 	 * @param string $class_name
 	 * @param string $class_prefix
+	 * @param bool   $load_only
 	 * @return null|object
 	 */
-	public function get_cached_class( $class_name, $class_prefix = '' ) {
-		return $this->_get_cached_class( $class_name, $class_prefix );
+	public function get_cached_class_or_file_loaded( $class_name, $class_prefix = '', $load_only = false ) {
+		return $this->_get_cached_class_or_file_loaded( $class_name, $class_prefix, $load_only );
 	}
 
 
