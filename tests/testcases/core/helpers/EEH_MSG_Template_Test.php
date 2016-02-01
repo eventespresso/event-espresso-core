@@ -19,6 +19,25 @@
 class EEH_MSG_Template_Test extends EE_UnitTestCase {
 
 
+	/**
+	 * @var EE_Message_Resource_Manager
+	 */
+	protected $_message_resource_manager;
+
+
+
+	public function setUp() {
+		parent::setUp();
+		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$this->assertInstanceOf( 'EE_Message_Resource_Manager', $this->_message_resource_manager );
+	}
+
+
+	public function tearDown() {
+		parent::tearDown();
+		$this->_message_resource_manager = null;
+	}
+
 
 	/**
 	 * test messenger that should be active
@@ -36,6 +55,51 @@ class EEH_MSG_Template_Test extends EE_UnitTestCase {
 			'EE_Messenger',
 			$Message_Resource_Manager->get_active_messenger( 'some_random_messenger' )
 		);
+	}
+
+
+
+	public function test_create_new_templates() {
+		//let's first delete known global templates for the purpose of the test
+		$MessageTemplateGroup = EEM_Message_Template_Group::instance()->get_one(
+			array(
+				array(
+					'MTP_messenger' => 'html',
+					'MTP_message_type' => 'invoice',
+					'MTP_is_global' => true
+				)
+			)
+		);
+
+		$this->assertInstanceOf( 'EE_Message_Template_Group', $MessageTemplateGroup );
+		$MessageTemplateGroup->delete_related_permanently( 'Message_Template' );
+		$MessageTemplateGroup->delete_permanently();
+
+		//try to retrieve again just to verify its been deleted.
+		$MessageTemplateGroup = EEM_Message_Template_Group::instance()->get_one(
+			array(
+				array(
+					'MTP_messenger' => 'html',
+					'MTP_message_type' => 'invoice',
+					'MTP_is_global' => true
+				)
+			)
+		);
+		$this->assertNull( $MessageTemplateGroup );
+
+		//okay now we can do our create templates test.
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$templates = EEH_MSG_Template::create_new_templates(
+			'html',
+			'invoice',
+			0,
+			true
+		);
+		$this->assertTrue( is_array( $templates ) );
+		$this->assertEquals( 2, count( $templates ) );
+		$this->assertTrue( isset( $templates['GRP_ID'] ) );
+		$this->assertTrue( isset( $templates['MTP_context'] ) );
+		$this->assertTrue( $templates['GRP_ID'] > 0 );
 	}
 
 
