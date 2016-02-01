@@ -286,10 +286,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
-		$offset = get_option( 'gmt_offset' );
-		$query_interval = $offset < 0
-			? 'DATE_SUB(REG_date, INTERVAL ' . $offset*-1 . ' HOUR)'
-			: 'DATE_ADD(REG_date, INTERVAL ' . $offset . ' HOUR)';
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone() );
 
 		$results = $this->_get_all_wpdb_results(
 				array(
