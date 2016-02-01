@@ -139,7 +139,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	*/
 	public function get_message_types_for_list_table() {
 		$mt_values = array();
-		$message_types = $this->_message_resource_manager->get_active_message_type_objects();
+		$message_types = $this->_message_resource_manager->installed_message_types();
 		$i = 1;
 		foreach ( $message_types as $message_type_name => $message_type ) {
 			if ( $message_type instanceof EE_Message_Type ) {
