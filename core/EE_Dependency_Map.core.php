@@ -287,6 +287,9 @@ class EE_Dependency_Map {
 			'EE_Messages_Queue'                    => 'load_lib',
 			'EE_Messages_Data_Handler_Collection'  => 'load_lib',
 			'EE_Message_Template_Group_Collection' => 'load_lib',
+			'EE_Messages_Generator' => function () {
+				return EE_Registry::instance()->load_lib( 'Messages_Generator', array(), false, false );
+			},
 			//load_model
 			'EEM_Message_Template_Group'           => 'load_model',
 			//load_helper
