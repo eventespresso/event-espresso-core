@@ -74,25 +74,25 @@ class EE_Messages_Template_Defaults extends EE_Base {
 	/**
 	 * EE_Messages_Template_Defaults constructor.
 	 *
-	 * @param int $GRP_ID                                             Optional.  If included then we're just regenerating
-	 *                                                                the template fields for the given group not the
-	 *                                                                message template group itself
 	 * @param EE_Messenger               $messenger
 	 * @param EE_Message_Type            $message_type
+	 * @param int                        $GRP_ID                      Optional.  If included then we're just regenerating
+	 *                                                                the template fields for the given group not the
+	 *                                                                message template group itself
 	 * @param EEM_Message_Template_Group $message_template_group_model
 	 * @param EEM_Message_Template       $message_template_model
 	 * @throws EE_Error
 	 */
 	public function __construct(
-		$GRP_ID = 0,
 		EE_Messenger $messenger,
 		EE_Message_Type $message_type,
+		$GRP_ID = 0,
 		EEM_Message_Template_Group $message_template_group_model,
 		EEM_Message_Template $message_template_model
 	) {
-		$this->_GRP_ID = $GRP_ID;
 		$this->_messenger = $messenger;
 		$this->_message_type = $message_type;
+		$this->_GRP_ID = $GRP_ID;
 		//set the model object
 		$this->_message_template_group_model = $message_template_group_model;
 		$this->_message_template_model = $message_template_model;
