@@ -58,7 +58,9 @@ class EEH_MSG_Template_Test extends EE_UnitTestCase {
 	}
 
 
-
+	/**
+	 * @since 4.9.0
+	 */
 	public function test_create_new_templates() {
 		//let's first delete known global templates for the purpose of the test
 		$MessageTemplateGroup = EEM_Message_Template_Group::instance()->get_one(
