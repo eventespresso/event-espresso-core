@@ -213,7 +213,7 @@ class EE_Dependency_Map {
 			'EE_Message_Resource_Manager' => array(
 				'EE_Messenger_Collection_Loader'    => EE_Dependency_Map::load_new_object,
 				'EE_Message_Type_Collection_Loader' => EE_Dependency_Map::load_new_object,
-				'EEM_Message_Template_Group'        => EE_Dependency_Map::load_new_object,
+				'EEM_Message_Template_Group'        => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Message_Factory' => array(
 				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
@@ -233,6 +233,10 @@ class EE_Dependency_Map {
 			'EE_Messages_Queue' => array(
 				'EE_Message_Repository' => EE_Dependency_Map::load_new_object,
 			),
+			'EE_Messages_Template_Defaults' => array(
+				'EEM_Message_Template_Group' => EE_Dependency_Map::load_from_cache,
+				'EEM_Message_Template' => EE_Dependency_Map::load_from_cache,
+			)
 		);
 	}
 
@@ -289,6 +293,7 @@ class EE_Dependency_Map {
 			'EE_Message_Template_Group_Collection' => 'load_lib',
 			//load_model
 			'EEM_Message_Template_Group'           => 'load_model',
+			'EEM_Message_Template'                 => 'load_model',
 			//load_helper
 			'EEH_Parse_Shortcodes'                 => function() {
 				if ( EE_Registry::instance()->load_helper( 'Parse_Shortcodes' ) ) {
