@@ -984,7 +984,10 @@ class EE_Registry {
 	/**
 	 * call any loader that's been registered in the EE_Dependency_Map::$_class_loaders array
 	 *
-	 * @param string $classname
+	 *
+	 * @param string $classname PLEASE NOTE: the class name needs to match what's registered
+	 *                          in the EE_Dependency_Map::$_class_loaders array,
+	 *                          including the class prefix, ie: "EE_", "EEM_", "EEH_", etc
 	 * @param array  $arguments
 	 * @return object
 	 */
