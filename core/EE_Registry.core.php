@@ -553,7 +553,7 @@ class EE_Registry {
 			// get full path to file
 			$path = $this->_resolve_path( $class_name, $type, $file_paths );
 			// load the file
-			$loaded = $this->_require_file( $path, $class_name, $type, $file_paths ) : true;
+			$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
 			// if loading failed, or we are only loading a file but NOT instantiating an object
 			if ( ! $loaded || $load_only ) {
 				// return boolean if only loading, or null if an object was expected
