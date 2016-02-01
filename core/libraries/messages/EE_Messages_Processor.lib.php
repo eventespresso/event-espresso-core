@@ -50,7 +50,7 @@ class EE_Messages_Processor {
 	 * - $_generator = holds the messages generator
 	 */
 	protected function _init_queue_and_generator() {
-		$this->_generator = EE_Registry::instance()->load_lib( 'Messages_Generator', array(), false, false );
+		$this->_generator = EE_Registry::factory( 'EE_Messages_Generator' );
 		$this->_queue = $this->_generator->generation_queue();
 	}
 
