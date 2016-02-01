@@ -163,7 +163,7 @@ class EE_Registry {
 	 * boolean flag to indicate whether or not to load/save classes from/to the cache
 	 *
 	 * @access    protected
-	 * @type boolean $_cache_on
+	 * @var boolean $_cache_on
 	 */
 	protected $_cache_on = true;
 
