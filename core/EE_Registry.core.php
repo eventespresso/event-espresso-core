@@ -533,8 +533,9 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
+		$class_exists = class_exists( $class_name );
 		// if we're only loading the class and it already exists, then let's just return true immediately
-		if ( $load_only && class_exists( $class_name ) ) {
+		if ( $load_only && $class_exists ) {
 			return true;
 		}
 		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
@@ -547,14 +548,17 @@ class EE_Registry {
 				return $cached_class;
 			}
 		}
-		// get full path to file
-		$path = $this->_resolve_path( $class_name, $type, $file_paths );
-		// load the file
-		$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
-		// if loading failed, or we are only loading a file but NOT instantiating an object
-		if ( ! $loaded || $load_only ) {
-			// return boolean if only loading, or null if an object was expected
-			return $load_only ? $loaded : null;
+		// if the class doesn't already exist.. then we need to try and find the file and load it
+		if ( ! $class_exists ) {
+			// get full path to file
+			$path = $this->_resolve_path( $class_name, $type, $file_paths );
+			// load the file
+			$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
+			// if loading failed, or we are only loading a file but NOT instantiating an object
+			if ( ! $loaded || $load_only ) {
+				// return boolean if only loading, or null if an object was expected
+				return $load_only ? $loaded : null;
+			}
 		}
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db );
