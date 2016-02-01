@@ -993,7 +993,7 @@ class EEH_MSG_Template {
 		if ( ! $global ) {
 			return EEH_MSG_Template::_create_custom_template_group( $messenger, $message_type, $GRP_ID );
 		}
-		/** @type EE_Message_Template_Defaults $Message_Template_Defaults */
+		/** @type EE_Messages_Template_Defaults $Message_Template_Defaults */
 		$Message_Template_Defaults = EE_Registry::instance()->load_lib(
 			'Messages_Template_Defaults',
 			array( $GRP_ID, $messenger, $message_type ),
