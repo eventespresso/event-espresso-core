@@ -404,17 +404,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$query_params['group_by'] = array('dtt_year', 'dtt_month');
 		$query_params['order_by'] = array( 'DTT_EVT_start' => 'DESC' );
 
-		/** need to account for timezone offset on the selects */
-		$DateTimeZone = new DateTimeZone( $this->get_timezone() );
-
-		/**
-		 * Note get_option( 'gmt_offset') returns a value in hours, whereas DateTimeZone::getOffset returns values in seconds.
-		 * Hence we do the calc for DateTimeZone::getOffset.
-		 */
-		$offset = $DateTimeZone instanceof DateTimeZone ? ( $DateTimeZone->getOffset( new DateTime('now') ) ) / HOUR_IN_SECONDS : get_option( 'gmt_offset' );
-		$query_interval = $offset < 0
-			? 'DATE_SUB(DTT_EVT_start, INTERVAL ' . $offset*-1 . ' HOUR)'
-			: 'DATE_ADD(DTT_EVT_start, INTERVAL ' . $offset . ' HOUR)';
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone() );
 
 		$columns_to_select = array(
 			'dtt_year' => array('YEAR(' . $query_interval . ')', '%s'),
