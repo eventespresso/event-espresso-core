@@ -533,8 +533,9 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
+		$class_exists = class_exists( $class_name );
 		// if we're only loading the class and it already exists, then let's just return true immediately
-		if ( $load_only && class_exists( $class_name ) ) {
+		if ( $load_only && $class_exists ) {
 			return true;
 		}
 		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
@@ -549,8 +550,8 @@ class EE_Registry {
 		}
 		// get full path to file
 		$path = $this->_resolve_path( $class_name, $type, $file_paths );
-		// load the file
-		$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
+		// if the class doesn't already exist, then load the file 
+		$loaded = ! $class_exists ? $this->_require_file( $path, $class_name, $type, $file_paths ) : true;
 		// if loading failed, or we are only loading a file but NOT instantiating an object
 		if ( ! $loaded || $load_only ) {
 			// return boolean if only loading, or null if an object was expected
