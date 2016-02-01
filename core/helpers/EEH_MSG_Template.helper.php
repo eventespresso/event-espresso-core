@@ -995,7 +995,7 @@ class EEH_MSG_Template {
 		}
 		/** @type EE_Messages_Template_Defaults $Message_Template_Defaults */
 		$Message_Template_Defaults = EE_Registry::factory(
-			'Messages_Template_Defaults',
+			'EE_Messages_Template_Defaults',
 			array( $messenger, $message_type, $GRP_ID )
 		);
 		//generate templates
