@@ -160,19 +160,12 @@ class EE_Registry {
 	public $_reflectors;
 
 	/**
-	 * boolean flag to indicate whether or not to load/save classes from/to the cache
+	 * boolean flag to indicate whether or not to load/save dependencies from/to the cache
 	 *
 	 * @access    protected
 	 * @var boolean $_cache_on
 	 */
 	protected $_cache_on = true;
-
-
-	/**
-	 * This is used to cache when a file has been loaded for a class contained in that file.
-	 * @var array
-	 */
-	protected $_file_loaded_for_class = array();
 
 
 
@@ -520,9 +513,8 @@ class EE_Registry {
 	 * @return null|object|bool  	null = failure to load or instantiate class object.
 	 *                              object = class loaded and instantiated successfully.
 	 *                              bool = fail or success when $load_only is true
-	 * @internal param string $file_path - file path including file name
 	 */
-	private function _load(
+	protected function _load(
 		$file_paths = array(),
 		$class_prefix = 'EE_',
 		$class_name = false,
@@ -532,7 +524,6 @@ class EE_Registry {
 		$cache = true,
 		$load_only = false
 	) {
-		$loaded = true;
 		// strip php file extension
 		$class_name = str_replace( '.php', '', trim( $class_name ) );
 		// does the class have a prefix ?
@@ -542,21 +533,24 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
-		if ( $this->_cache_on && $cache ) {
+		// if we're only loading the class and it already exists, then let's just return true immediately
+		if ( $load_only && class_exists( $class_name ) ) {
+			return true;
+		}
+		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
+		// $cache is controlled by individual calls to separate Registry loader methods like load_class()
+		// $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
+		if ( $this->_cache_on && $cache && ! $load_only ) {
 			// return object if it's already cached
-			$cached_class = $this->_get_cached_class_or_file_loaded( $class_name, $class_prefix, $load_only );
+			$cached_class = $this->_get_cached_class( $class_name, $class_prefix );
 			if ( $cached_class !== null ) {
 				return $cached_class;
 			}
 		}
-		// get full path to file but only if needed.  It's entirely possible that $load_only is false, but
-		// the file was loaded in an earlier load_only call.
-		if ( ! isset( $this->_file_loaded_for_class[$class_name] ) ) {
-			$path = $this->_resolve_path( $class_name, $type, $file_paths );
-			// load the file
-			$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
-			$this->_file_loaded_for_class[ $class_name ] = true;
-		}
+		// get full path to file
+		$path = $this->_resolve_path( $class_name, $type, $file_paths );
+		// load the file
+		$loaded = $this->_require_file( $path, $class_name, $type, $file_paths );
 		// if loading failed, or we are only loading a file but NOT instantiating an object
 		if ( ! $loaded || $load_only ) {
 			// return boolean if only loading, or null if an object was expected
@@ -564,9 +558,9 @@ class EE_Registry {
 		}
 		// instantiate the requested object
 		$class_obj = $this->_create_object( $class_name, $arguments, $type, $from_db );
-		if ( $this->_cache_on ) {
+		if ( $this->_cache_on && $cache ) {
 			// save it for later... kinda like gum  { : $
-			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
+			$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db );
 		}
 		$this->_cache_on = true;
 		return $class_obj;
@@ -587,36 +581,24 @@ class EE_Registry {
 	 * @access protected
 	 * @param string $class_name
 	 * @param string $class_prefix
-	 * @param bool   $load_only     If true then we check if the file has been loaded previously and return boolean for it.
 	 * @return null|object
 	 */
-	protected function _get_cached_class_or_file_loaded( $class_name, $class_prefix = '', $load_only = false ) {
+	protected function _get_cached_class( $class_name, $class_prefix = '' ) {
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
 		} else {
 			// have to specify something, but not anything that will conflict
 			$class_abbreviation = 'FANCY_BATMAN_PANTS';
 		}
-
-		//first we do a file loaded check if $load_only set to true.
-		if (
-			$load_only
-			&& isset( $this->_file_loaded_for_class[ $class_name ] )
-		) {
-			return true;
-		}
-
-		if ( ! $load_only ) {
-			// check if class has already been loaded, and return it if it has been
-			if ( isset( $this->{$class_abbreviation} ) && ! is_null( $this->{$class_abbreviation} ) ) {
-				return $this->{$class_abbreviation};
-			} else if ( isset ( $this->{$class_name} ) ) {
-				return $this->{$class_name};
-			} else if ( isset ( $this->LIB->{$class_name} ) ) {
-				return $this->LIB->{$class_name};
-			} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
-				return $this->addons->{$class_name};
-			}
+		// check if class has already been loaded, and return it if it has been
+		if ( isset( $this->{$class_abbreviation} ) && ! is_null( $this->{$class_abbreviation} ) ) {
+			return $this->{$class_abbreviation};
+		} else if ( isset ( $this->{$class_name} ) ) {
+			return $this->{$class_name};
+		} else if ( isset ( $this->LIB->{$class_name} ) ) {
+			return $this->LIB->{$class_name};
+		} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
+			return $this->addons->{$class_name};
 		}
 		return null;
 	}
@@ -914,7 +896,7 @@ class EE_Registry {
 				: false;
 		// we might have a dependency...
 		// let's MAYBE try and find it in our cache if that's what's been requested
-		$cached_class = $cache_on ? $this->_get_cached_class_or_file_loaded( $param_class ) : null;
+		$cached_class = $cache_on ? $this->_get_cached_class( $param_class ) : null;
 		// and grab it if it exists
 		if ( $cached_class instanceof $param_class ) {
 			$dependency = $cached_class;
@@ -950,33 +932,52 @@ class EE_Registry {
 	 *
 	 * attempts to cache the instantiated class locally
 	 * in one of the following places, in the following order:
-	 *        $this->{class_abbreviation} 			ie:    $this->CART
-	 *        $this->{$class_name}                    	ie:    $this->Some_Class
+	 *        $this->{class_abbreviation}   ie:    $this->CART
+	 *        $this->{$class_name}          ie:    $this->Some_Class
 	 *        $this->addon->{$$class_name} 	ie:    $this->addon->Some_Addon_Class
-	 *        $this->LIB->{$class_name} + 		ie:    $this->LIB->Some_Class +
-	 * 		+ only classes that are NOT model objects with the $cache flag set to true
-	 * 	 	will be cached under LIB (libraries)
+	 *        $this->LIB->{$class_name}     ie:    $this->LIB->Some_Class
 	 *
 	 * @access protected
 	 * @param object $class_obj
 	 * @param string $class_name
 	 * @param string $class_prefix
 	 * @param bool $from_db
-	 * @param bool $cache
 	 * @return void
 	 */
-	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false, $cache = true ) {
+	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false ) {
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
 			$this->{$class_abbreviation} = $class_obj;
 		} else if ( property_exists( $this, $class_name ) ) {
 			$this->{$class_name} = $class_obj;
-		} else if ( $class_prefix == 'addon' && $cache ) {
+		} else if ( $class_prefix == 'addon' ) {
 			$this->addons->{$class_name} = $class_obj;
-		} else if ( ! $from_db && $cache ) {
+		} else if ( ! $from_db ) {
 			$this->LIB->{$class_name} = $class_obj;
 		}
+	}
+
+
+
+	/**
+	 * call any loader that's been registered in the EE_Dependency_Map::$_class_loaders array
+	 *
+	 *
+	 * @param string $classname PLEASE NOTE: the class name needs to match what's registered
+	 *                          in the EE_Dependency_Map::$_class_loaders array,
+	 *                          including the class prefix, ie: "EE_", "EEM_", "EEH_", etc
+	 * @param array  $arguments
+	 * @return object
+	 */
+	public static function factory( $classname, $arguments = array() ) {
+		$loader = EE_Dependency_Map::class_loader( $classname );
+		if ( $loader instanceof Closure ) {
+			return $loader( $arguments );
+		} else if ( method_exists( EE_Registry::instance(), $loader ) ) {
+			return EE_Registry::instance()->{$loader}( $classname, $arguments );
+		}
+		return null;
 	}
 
 

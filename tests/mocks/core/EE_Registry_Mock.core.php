@@ -47,14 +47,43 @@ class EE_Registry_Mock extends EE_Registry {
 
 
 	/**
+	 *    loads and tracks classes
+	 *
+	 * @param array       $file_paths
+	 * @param string      $class_prefix - EE  or EEM or... ???
+	 * @param bool|string $class_name   - $class name
+	 * @param string      $type         - file type - core? class? helper? model?
+	 * @param mixed       $arguments    - an argument or array of arguments to pass to the class upon instantiation
+	 * @param bool        $from_db      - some classes are instantiated from the db and thus call a different method to instantiate
+	 * @param bool        $cache
+	 * @param bool        $load_only
+	 * @return null|object|bool    null = failure to load or instantiate class object.
+	 *                                  object = class loaded and instantiated successfully.
+	 *                                  bool = fail or success when $load_only is true
+	 */
+	public function load(
+		$file_paths = array(),
+		$class_prefix = 'EE_',
+		$class_name = false,
+		$type = 'class',
+		$arguments = array(),
+		$from_db = false,
+		$cache = true,
+		$load_only = false
+	) {
+		return $this->_load( $file_paths, $class_prefix, $class_name, $type, $arguments, $from_db, $cache, $load_only );
+	}
+
+
+
+/**
 	 * @access public
 	 * @param string $class_name
 	 * @param string $class_prefix
-	 * @param bool   $load_only
 	 * @return null|object
 	 */
-	public function get_cached_class_or_file_loaded( $class_name, $class_prefix = '', $load_only = false ) {
-		return $this->_get_cached_class_or_file_loaded( $class_name, $class_prefix, $load_only );
+	public function get_cached_class( $class_name, $class_prefix = '' ) {
+		return $this->_get_cached_class( $class_name, $class_prefix );
 	}
 
 
@@ -93,7 +122,6 @@ class EE_Registry_Mock extends EE_Registry {
 	 * @param array $arguments
 	 * @param string $type
 	 * @param bool $from_db
-	 * @param bool $load_only
 	 * @return null | object
 	 * @throws \EE_Error
 	 */
@@ -113,11 +141,10 @@ class EE_Registry_Mock extends EE_Registry {
 	 * @param  string $class_name
 	 * @param  string $class_prefix
 	 * @param  bool   $from_db
-	 * @param  bool   $cache
 	 * @return void
 	 */
-	public function set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false, $cache = true ) {
-		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db, $cache );
+	public function set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false ) {
+		$this->_set_cached_class( $class_obj, $class_name, $class_prefix, $from_db );
 	}
 
 

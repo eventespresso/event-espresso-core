@@ -60,9 +60,9 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @group                8284
 	 * @author                Brent Christensen
 	 */
-	public function test_get_cached_class_or_file_loaded_abbreviations() {
+	public function test_get_cached_class_abbreviations() {
 		// verify that EE_Capabilities has not already been loaded
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'EE_Capabilities' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
 		$this->assertEquals( null, $cached_class );
 		// create a stdClass object will use to mock the EE_Capabilities class
 		$orig_class = new stdClass();
@@ -70,7 +70,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// and manually cache it at EE_Registry_Mock::instance()->CAP
 		EE_Registry_Mock::instance()->CAP = $orig_class;
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'EE_Capabilities' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
 		$this->assertEquals( $orig_class->name, $cached_class->name );
 	}
 
@@ -82,7 +82,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @group                8284
 	 * @author                Brent Christensen
 	 */
-	public function test_get_cached_class_or_file_loaded_property() {
+	public function test_get_cached_class_property() {
 		// verify that "Some_Class" has not already been loaded
 		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'Some_Class' );
 		$this->assertEquals( null, $cached_class );
@@ -92,7 +92,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// and manually cache it at EE_Registry_Mock::instance()->Some_Class
 		EE_Registry_Mock::instance()->Some_Class = $orig_class;
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'Some_Class' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'Some_Class' );
 		$this->assertEquals( $orig_class->name, $cached_class->name );
 	}
 
@@ -104,9 +104,9 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @group                8284
 	 * @author                Brent Christensen
 	 */
-	public function test_get_cached_class_or_file_loaded_library() {
+	public function test_get_cached_class_library() {
 		// verify that "Library_Class" has not already been loaded
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'Library_Class' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'Library_Class' );
 		$this->assertEquals( null, $cached_class );
 		// create a stdClass object will use to mock the class
 		$orig_class = new stdClass();
@@ -114,7 +114,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// and manually cache it at EE_Registry_Mock::instance()->Some_Class
 		EE_Registry_Mock::instance()->LIB->Library_Class = $orig_class;
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'Library_Class' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'Library_Class' );
 		$this->assertEquals( $orig_class->name, $cached_class->name );
 	}
 
@@ -126,9 +126,9 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @group                8284
 	 * @author                Brent Christensen
 	 */
-	public function test_get_cached_class_or_file_loaded_addon() {
+	public function test_get_cached_class_addon() {
 		// verify that "Addon_Class" has not already been loaded
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'Addon_Class', 'addon' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'Addon_Class', 'addon' );
 		$this->assertEquals( null, $cached_class );
 		// create a stdClass object will use to mock the class
 		$orig_class = new stdClass();
@@ -136,7 +136,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// and manually cache it at EE_Registry_Mock::instance()->addons->Addon_Class
 		EE_Registry_Mock::instance()->addons->Addon_Class = $orig_class;
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'Addon_Class', 'addon' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'Addon_Class', 'addon' );
 		$this->assertEquals( $orig_class->name, $cached_class->name );
 	}
 
@@ -146,23 +146,25 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * true on the EE_Registry instance.
 	 * @author Darren Etheir
 	 */
-	public function test_get_cached_class_or_file_loaded_file_cache_property() {
-		//verify that we don't have an instance of file loaded for EE_Answer
-		$cached_file_loaded = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'EE_Answer', 'EE_', true );
-		$this->assertNull( $cached_file_loaded );
+	public function test__load_with_load_only_flag() {
+		// verify that we don't have an instance of file loaded for EE_Answer (and do NOT autoload)
+		$this->assertFalse( class_exists( 'EE_Answer', false ) );
+		// now do a object load request for EE_Answer
+		$class_loaded = EE_Registry_Mock::instance()->load_class( 'EE_Answer' );
+		$this->assertInstanceOf( 'EE_Answer', $class_loaded );
+		// now verify that with the $load_only flag set to true, that boolean true is returned
+		$file_loaded = EE_Registry_Mock::instance()->load(
+			array( EE_CLASSES ),
+			'EE_',
+			'EE_Answer',
+			'class',
+			array(),
+			false,
+			true,
+			true // LOAD ONLY FLAG SET TO TRUE
+		);
+		$this->assertTrue( $file_loaded );
 
-		//now do a object load request for EE_Answer (which should still result in a cached loaded file property)
-		EE_Registry_Mock::instance()->load_class( 'EE_Answer', array(), false, true, false );
-		//cache should be set for the _file_loaded_for_class property.
-		$cached_file_loaded = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'EE_Answer', 'EE_', true );
-		$this->assertTrue( $cached_file_loaded );
-
-		//now do the same checks using EE_Question except this time we'll do set the load_only flag to true when doing `load_class`
-		$cached_file_loaded = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'EE_Question', 'EE_', true );
-		$this->assertNull( $cached_file_loaded );
-		EE_Registry_Mock::instance()->load_class( 'EE_Question', array(), false, true, true );
-		$cached_file_loaded = EE_Registry_Mock::instance()->get_cached_class_or_file_loaded( 'EE_Question', 'EE_', true );
-		$this->assertTrue( $cached_file_loaded );
 	}
 
 
@@ -240,7 +242,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// abstract classes only return true to denote that they have been loaded
 		$this->assertEquals( true, $class_object );
 	}
-	
+
 
 
 
