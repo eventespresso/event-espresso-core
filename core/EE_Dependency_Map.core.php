@@ -294,7 +294,7 @@ class EE_Dependency_Map {
 			'EE_Messages_Generator' => function() {
 				return EE_Registry::instance()->load_lib( 'Messages_Generator', array(), false, false );
 			},
-			'EE_Messages_Template_Defaults' => function( $arguments ) {
+			'EE_Messages_Template_Defaults' => function( $arguments = array() ) {
 				return EE_Registry::instance()->load_lib( 'Messages_Template_Defaults', $arguments, false, false );
 			},
 			//load_model
