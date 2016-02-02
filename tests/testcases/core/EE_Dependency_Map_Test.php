@@ -59,10 +59,13 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
 	public function test_core_class_loaders() {
+		$skip = array(
+			'EE_Session' => 'session doesn\'t load during unit tests',
+			'EE_Messages_Template_Defaults' => 'Closure has required arguments'
+		);
 		//loop through and verify the class loader can successfully load the class it is set for
 		foreach ( EE_Dependency_Map::class_loaders() as $class => $loader ) {
-			if ( $class === 'EE_Session' ) {
-				// session doesn't load during unit tests
+			if ( isset( $skip[ $class ] ) ) {
 				continue;
 			}
 			$dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
@@ -82,6 +85,22 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 				);
 			}
 		}
+	}
+
+
+
+	public function test_core_class_loader_for_EE_Messages_Template_Defaults() {
+		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$loader = EE_Dependency_Map::class_loader('EE_Messages_Template_Defaults');
+		$this->assertInstanceOf( 'Closure', $loader );
+		$Messages_Template_Defaults = $loader(
+			array(
+				$Message_Resource_Manager->valid_messenger( 'html' ),
+				$Message_Resource_Manager->valid_message_type( 'invoice' )
+			)
+		);
+		$this->assertInstanceOf( 'EE_Messages_Template_Defaults', $Messages_Template_Defaults );
 	}
 
 
