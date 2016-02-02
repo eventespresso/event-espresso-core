@@ -80,7 +80,7 @@ class EEH_Parse_Shortcodes {
 	 * @param  EE_Messages_Addressee $data             This is the incoming data object
 	 * @param  array                 $valid_shortcodes An array of strings that correspond to EE_Shortcode libraries
 	 * @param EE_message_type        $message_type     The message type that called the parser
-	 * @param EE_Messenger           $messenger        The active messenger for this parsing session.
+	 * @param EE_messenger           $messenger        The active messenger for this parsing session.
 	 * @param EE_Message             $message
 	 * @return string                   The parsed template string
 	 */
@@ -89,7 +89,7 @@ class EEH_Parse_Shortcodes {
 		EE_Messages_Addressee $data,
 		$valid_shortcodes,
 		EE_message_type $message_type,
-		EE_Messenger $messenger,
+		EE_messenger $messenger,
 		EE_Message $message
 	) {
 		$extra_data = array(

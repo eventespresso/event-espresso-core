@@ -230,10 +230,10 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * @since  4.3.0
      * @param  array        $default_types 	array of message types activated with messenger (
      *                                      corresponds to the $name property of message type)
-     * @param  EE_Messenger $messenger      The EE_messenger the filter is called from.
+     * @param  EE_messenger $messenger      The EE_messenger the filter is called from.
      * @return array
      */
-    public static function register_messengers_to_activate_mt_with( $default_types, EE_Messenger $messenger ) {
+    public static function register_messengers_to_activate_mt_with( $default_types, EE_messenger $messenger ) {
         if ( empty( self::$_ee_message_type_registry ) ) {
             return $default_types;
 		}
@@ -261,10 +261,10 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * @since   4.3.0
      * @param  array        $valid_types 	array of message types valid with messenger (
      *                                      corresponds to the $name property of message type)
-     * @param  EE_Messenger $messenger      The EE_messenger the filter is called from.
+     * @param  EE_messenger $messenger      The EE_messenger the filter is called from.
      * @return  array
      */
-    public static function register_messengers_to_validate_mt_with( $valid_types, EE_Messenger $messenger ) {
+    public static function register_messengers_to_validate_mt_with( $valid_types, EE_messenger $messenger ) {
         if ( empty( self::$_ee_message_type_registry ) ) {
             return $valid_types;
 		}

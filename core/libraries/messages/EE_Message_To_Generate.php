@@ -12,7 +12,7 @@
 class EE_Message_To_Generate {
 
 	/**
-	 * @type string name of EE_Messenger
+	 * @type string name of EE_messenger
 	 */
 	protected $_messenger_name = null;
 
@@ -22,7 +22,7 @@ class EE_Message_To_Generate {
 	protected $_message_type_name = null;
 
 	/**
-	 * @type EE_Messenger
+	 * @type EE_messenger
 	 */
 	protected $_messenger = null;
 
@@ -71,7 +71,7 @@ class EE_Message_To_Generate {
 
 	/**
 	 * Can be accessed via the send_now() method, this is set in the validation
-	 * routine via the EE_Messenger::send_now() method.
+	 * routine via the EE_messenger::send_now() method.
 	 * @type bool
 	 */
 	protected $_send_now = false;
@@ -141,7 +141,7 @@ class EE_Message_To_Generate {
 
 
 	/**
-	 * @return EE_Messenger
+	 * @return EE_messenger
 	 */
 	public function messenger() {
 		return $this->_messenger;

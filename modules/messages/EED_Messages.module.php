@@ -309,7 +309,7 @@ class EED_Messages  extends EED_Module {
 			}
 			// add aliases
 			EEH_Autoloader::add_alias( 'EE_messages', 'EE_Messages' );
-			EEH_Autoloader::add_alias( 'EE_messenger', 'EE_Messenger' );
+			EEH_Autoloader::add_alias( 'EE_messenger', 'EE_messenger' );
 		}
 	}
 

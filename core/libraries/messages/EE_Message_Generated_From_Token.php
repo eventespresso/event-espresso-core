@@ -15,7 +15,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 	/**
 	 * Sending messenger
 	 *
-	 * @type EE_Messenger | string
+	 * @type EE_messenger | string
 	 */
 	protected $_sending_messenger = '';
 
@@ -55,20 +55,20 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 	/**
 	 * @param string                       $sending_messenger_slug
 	 * @param \EE_Message_Resource_Manager $message_resource_manager
-	 * @return \EE_Messenger | string
+	 * @return \EE_messenger | string
 	 */
 	protected function _set_sending_messenger(
 		$sending_messenger_slug,
 		EE_Message_Resource_Manager $message_resource_manager
 	) {
 		$sending_messenger = $message_resource_manager->get_active_messenger( $sending_messenger_slug );
-		return $sending_messenger instanceof EE_Messenger ? $sending_messenger : $sending_messenger_slug;
+		return $sending_messenger instanceof EE_messenger ? $sending_messenger : $sending_messenger_slug;
 	}
 
 
 
 	/**
-	 * @return EE_Messenger
+	 * @return EE_messenger
 	 */
 	public function sending_messenger() {
 		return $this->_sending_messenger;
@@ -99,7 +99,7 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 		}
 		$message->set_STS_ID( EEM_Message::status_idle );
 
-		if ( ! $this->_sending_messenger instanceof EE_Messenger ) {
+		if ( ! $this->_sending_messenger instanceof EE_messenger ) {
 			$message->set_STS_ID( EEM_Message::status_failed );
 			$message->set_error_message(
 				sprintf(

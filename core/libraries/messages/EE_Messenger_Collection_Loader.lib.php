@@ -125,10 +125,10 @@ class EE_Messenger_Collection_Loader {
 	/**
 	 * load_messenger
 	 *
-	 * @param \EE_Messenger $messenger
+	 * @param \EE_messenger $messenger
 	 * @return bool
 	 */
-	protected function _load_messenger( EE_Messenger $messenger ) {
+	protected function _load_messenger( EE_messenger $messenger ) {
 		if ( $this->messenger_collection()->has_by_name( $messenger->name ) ) {
 			return true;
 		}

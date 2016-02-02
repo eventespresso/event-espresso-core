@@ -174,7 +174,7 @@ class EE_Caf_Messages  {
 
 
 
-	public function new_default_templates( $contents, $actual_path, EE_Messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack  ) {
+	public function new_default_templates( $contents, $actual_path, EE_messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack  ) {
 
 		//we're only modifying templates for the default template pack
 		if ( ! $template_pack instanceof EE_Messages_Template_Pack_Default ) {

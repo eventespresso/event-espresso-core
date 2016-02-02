@@ -67,7 +67,7 @@ class EE_Message_Template_Group_Collection extends EE_Object_Collection {
 
 	/**
 	 * Generates a hash used to identify a given Message Template Group.
-	 * @param string $messenger  The EE_Messenger->name
+	 * @param string $messenger  The EE_messenger->name
 	 * @param string $message_type  The EE_message_type->name
 	 * @param int    $EVT_ID     Optional.  If the template is for a specific EVT then that should be included.
 	 *

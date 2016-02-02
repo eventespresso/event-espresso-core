@@ -374,7 +374,7 @@ class EE_Messages_Processor {
 			// make sure it's valid, but if it's not,
 			// then set the value of $sending_messenger to an EE_Error object
 			// so that downstream code can easily see that things went wrong.
-			$sending_messenger = $message_to_generate->sending_messenger() instanceof EE_Messenger
+			$sending_messenger = $message_to_generate->sending_messenger() instanceof EE_messenger
 				? $message_to_generate->sending_messenger()
 				: new EE_Error(
 					__(

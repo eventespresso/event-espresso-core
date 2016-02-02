@@ -417,7 +417,7 @@ class EE_Messages_Queue {
 	 *                                          what is on the EE_Message object in the queue.
 	 *                                          For instance, showing the browser view of an email message,
 	 *                                          or giving a pdf generated view of an html document.
-	 *                                     		This should be an instance of EE_Messenger but if you call this method
+	 *                                     		This should be an instance of EE_messenger but if you call this method
 	 *                                          intending it to be a sending messenger but a valid one could not be retrieved
 	 *                                          then send in an instance of EE_Error that contains the related error message.
 	 * @param   bool|int $by_priority           When set, this indicates that only messages
@@ -491,15 +491,15 @@ class EE_Messages_Queue {
 		$message_type = $message->message_type_object();
 		//do actions for sending messenger if it differs from generating messenger and swap values.
 		if (
-			$sending_messenger instanceof EE_Messenger
-			&& $messenger instanceof EE_Messenger
+			$sending_messenger instanceof EE_messenger
+			&& $messenger instanceof EE_messenger
 			&& $sending_messenger->name != $messenger->name
 		) {
 			$messenger->do_secondary_messenger_hooks( $sending_messenger->name );
 			$messenger = $sending_messenger;
 		}
 		// send using messenger, but double check objects
-		if ( $messenger instanceof EE_Messenger && $message_type instanceof EE_Message_Type ) {
+		if ( $messenger instanceof EE_messenger && $message_type instanceof EE_Message_Type ) {
 			//set hook for message type (but only if not using another messenger to send).
 			if ( ! isset( $this->_did_hook[ $message_type->name ] ) ) {
 				$message_type->do_messenger_hooks( $messenger );
@@ -542,12 +542,12 @@ class EE_Messages_Queue {
 	 * Executes the get_preview method on the provided messenger.
 	 *
 *@param EE_Message            $message
-	 * @param EE_Messenger    $messenger
+	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
 	 * @param $test_send
 	 * @return bool   true means all went well, false means, not so much.
 	 */
-	protected function _do_preview( EE_Message $message, EE_Messenger $messenger, EE_message_type $message_type, $test_send ) {
+	protected function _do_preview( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type, $test_send ) {
 		if ( $preview = $messenger->get_preview( $message, $message_type, $test_send ) ) {
 			if ( ! $test_send ) {
 				$message->set_content( $preview );
@@ -567,11 +567,11 @@ class EE_Messages_Queue {
 	 * Executes the send method on the provided messenger
 	 *
 *@param EE_Message            $message
-	 * @param EE_Messenger    $messenger
+	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
 	 * @return bool true means all went well, false means, not so much.
 	 */
-	protected function _do_send( EE_Message $message, EE_Messenger $messenger, EE_message_type $message_type ) {
+	protected function _do_send( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type ) {
 		if ( $messenger->send_message( $message, $message_type ) ) {
 			$message->set_STS_ID( EEM_Message::status_sent );
 			return true;

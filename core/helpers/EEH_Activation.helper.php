@@ -1323,7 +1323,7 @@ class EEH_Activation {
 	protected static function _activate_new_message_types_for_active_messengers_and_generate_default_templates(
 		EE_Message_Resource_Manager $message_resource_manager
 	) {
-		/** @type EE_Messenger[] $active_messengers */
+		/** @type EE_messenger[] $active_messengers */
 		$active_messengers = $message_resource_manager->active_messengers();
 		$installed_message_types = $message_resource_manager->installed_message_types();
 		$templates_created = false;
@@ -1387,7 +1387,7 @@ class EEH_Activation {
 	protected static function _activate_and_generate_default_messengers_and_message_templates(
 		EE_message_Resource_Manager $message_resource_manager
 	) {
-		/** @type EE_Messenger[] $messengers_to_generate */
+		/** @type EE_messenger[] $messengers_to_generate */
 		$messengers_to_generate = self::_get_default_messengers_to_generate_on_activation( $message_resource_manager );
 		$installed_message_types = $message_resource_manager->installed_message_types();
 		$templates_generated = false;
@@ -1432,7 +1432,7 @@ class EEH_Activation {
 	 *
 	 * @static
 	 * @param  EE_Message_Resource_Manager $message_resource_manager
-	 * @return EE_Messenger[]
+	 * @return EE_messenger[]
 	 */
 	protected static function _get_default_messengers_to_generate_on_activation(
 		EE_Message_Resource_Manager $message_resource_manager

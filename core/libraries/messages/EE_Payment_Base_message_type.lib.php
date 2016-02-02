@@ -68,7 +68,7 @@ abstract class EE_Payment_Base_message_type extends EE_message_type {
 
 
 
-	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
+	protected function _get_admin_content_events_edit_for_messenger( EE_messenger $messenger ) {
 		//this is just a test
 		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
 	}

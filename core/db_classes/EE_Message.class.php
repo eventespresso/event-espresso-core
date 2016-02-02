@@ -30,7 +30,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 	/**
-	 * @type EE_Messenger $_messenger
+	 * @type EE_messenger $_messenger
 	 */
 	protected $_messenger = null;
 
@@ -166,7 +166,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	/**
 	 * Returns corresponding messenger object for the set messenger on this message
 	 *
-	 * @return EE_Messenger | null
+	 * @return EE_messenger | null
 	 */
 	public function messenger_object() {
 		return $this->_messenger;
@@ -177,9 +177,9 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	/**
 	 * Sets messenger
 	 *
-	 * @param EE_Messenger $messenger
+	 * @param EE_messenger $messenger
 	 */
-	public function set_messenger_object( EE_Messenger $messenger ) {
+	public function set_messenger_object( EE_messenger $messenger ) {
 		$this->_messenger = $messenger;
 	}
 
@@ -193,7 +193,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @throws \EE_Error
 	 */
 	public function valid_messenger( $throw_exceptions = false ) {
-		if ( $this->_messenger instanceof EE_Messenger ) {
+		if ( $this->_messenger instanceof EE_messenger ) {
 			return true;
 		}
 		if ( $throw_exceptions ) {
@@ -214,7 +214,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 	/**
 	 * This returns the set localized label for the messenger on this message.
-	 * Note, if unable to retrieve the EE_Messenger object then will just return the messenger slug saved
+	 * Note, if unable to retrieve the EE_messenger object then will just return the messenger slug saved
 	 * with this message.
 	 *
 	 * @param   bool    $plural whether to return the plural label or not.
@@ -223,7 +223,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	public function messenger_label( $plural = false ) {
 		$label_type = $plural ? 'plural' : 'singular';
 		$messenger = $this->messenger_object();
-		return $messenger instanceof EE_Messenger ? $messenger->label[ $label_type ] : $this->messenger();
+		return $messenger instanceof EE_messenger ? $messenger->label[ $label_type ] : $this->messenger();
 	}
 
 

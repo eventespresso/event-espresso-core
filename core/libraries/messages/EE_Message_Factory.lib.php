@@ -160,7 +160,7 @@ class EE_Message_Factory {
 	 */
 	protected function _set_messenger( EE_Message $message ) {
 		$messenger = $this->_message_resource_manager->get_messenger( $message->messenger() );
-		if ( $messenger instanceof EE_Messenger ) {
+		if ( $messenger instanceof EE_messenger ) {
 			$message->set_messenger_object( $messenger );
 		}
 		return $message;

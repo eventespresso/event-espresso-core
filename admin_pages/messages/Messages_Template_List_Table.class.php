@@ -88,7 +88,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$message_type = $item->message_type_obj();
 		$messenger = $item->messenger_obj();
 
-		if ( ! $message_type instanceof EE_message_type || ! $messenger instanceof EE_Messenger ) {
+		if ( ! $message_type instanceof EE_message_type || ! $messenger instanceof EE_messenger ) {
 			echo '';
 			return;
 		}

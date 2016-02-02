@@ -26,7 +26,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected  $_active_message_type_name = '';
 
 	/**
-	 * @type EE_Messenger $_active_messenger
+	 * @type EE_messenger $_active_messenger
 	 */
 	protected  $_active_messenger;
 	protected  $_activate_state;
@@ -120,7 +120,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//setup messengers for selects
 		$i = 1;
 		foreach ( $messengers as $messenger_name => $messenger ) {
-			if ( $messenger instanceof EE_Messenger ) {
+			if ( $messenger instanceof EE_messenger ) {
 				$m_values[ $i ][ 'id' ] = $messenger_name;
 				$m_values[ $i ][ 'text' ] = ucwords( $messenger->label[ 'singular' ] );
 				$i++;
@@ -606,7 +606,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function wp_editor_css( $mce_css ) {
 		//if we're on the edit_message_template route
-		if ( $this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_Messenger  ) {
+		if ( $this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_messenger  ) {
 			$message_type_name = $this->_active_message_type_name;
 
 			//we're going to REPLACE the existing mce css
@@ -1652,7 +1652,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$preview_button = '<a href="' . $go_back_url . '" class="button-secondary messages-preview-go-back-button">' . __('Go Back to Edit', 'event_espresso') . '</a>';
 		$message_types = $this->get_installed_message_types();
 		$active_messenger = $this->_message_resource_manager->get_active_messenger( $this->_req_data['messenger'] );
-		$active_messenger_label = $active_messenger instanceof EE_Messenger
+		$active_messenger_label = $active_messenger instanceof EE_messenger
 			? ucwords( $active_messenger->label['singular'] )
 			: esc_html__( 'Unknown Messenger', 'event_espresso' );
 		//let's provide a helpful title for context
@@ -2282,7 +2282,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//let's save any existing fields that might be required by the messenger
 		if (
 			isset( $this->_req_data['test_settings_fld'] )
-			&& $active_messenger instanceof EE_Messenger
+			&& $active_messenger instanceof EE_messenger
 		) {
 			$active_messenger->set_existing_test_settings( $this->_req_data['test_settings_fld'] );
 		}
@@ -2509,7 +2509,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 
 		//get all installed messengers and message_types
-		/** @type EE_Messenger[] $messengers */
+		/** @type EE_messenger[] $messengers */
 		$messengers = $this->_message_resource_manager->installed_messengers();
 		/** @type EE_Message_Type[] $message_types */
 		$message_types = $this->_message_resource_manager->installed_message_types();
@@ -2749,11 +2749,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This prepares the content of the messenger meta box admin settings
 	 *
-	 * @param  EE_Messenger $messenger The messenger we're setting up content for
+	 * @param  EE_messenger $messenger The messenger we're setting up content for
 	 *
 	 * @return string            html formatted content
 	 */
-	protected function _get_messenger_box_content( EE_Messenger $messenger ) {
+	protected function _get_messenger_box_content( EE_messenger $messenger ) {
 
 		$fields = $messenger->get_admin_settings_fields();
 		$settings_template_args['template_form_fields'] = '';
@@ -2987,7 +2987,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return bool
 	 */
 	protected function _activate_messenger( $messenger_name ) {
-		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
 		$message_types_to_activate = $active_messenger->get_default_message_types();
 
@@ -3021,7 +3021,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return bool
 	 */
 	protected function _deactivate_messenger( $messenger_name ) {
-		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
 		$this->_message_resource_manager->deactivate_messenger( $messenger_name );
 		return $this->_setup_response_message_for_deactivating_messenger_with_message_types( $active_messenger );
@@ -3036,7 +3036,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return bool
 	 */
 	protected function _activate_message_type_for_messenger( $messenger_name, $message_type_name ) {
-		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
 		/** @var EE_Message_Type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
 		$message_type_to_activate = $this->_message_resource_manager->get_message_type( $message_type_name );
@@ -3064,7 +3064,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return bool
 	 */
 	protected function _deactivate_message_type_for_messenger( $messenger_name, $message_type_name ) {
-		/** @var EE_Messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
+		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
 		/** @var EE_Message_Type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
 		$message_type_to_deactivate = $this->_message_resource_manager->get_message_type( $message_type_name );
@@ -3089,14 +3089,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * Setup appropriate response for activating a messenger and/or message types
 	 *
-	 * @param EE_Messenger         $messenger
+	 * @param EE_messenger         $messenger
 	 * @param EE_Message_Type|null $message_type
 	 *
 	 * @return bool
 	 * @throws EE_Error
 	 */
 	protected function _setup_response_message_for_activating_messenger_with_message_types(
-		EE_Messenger $messenger,
+		EE_messenger $messenger,
 		EE_Message_Type $message_type = null
 	) {
 		//activated
@@ -3170,13 +3170,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This sets up the appropriate response for deactivating a messenger and/or message type.
 	 *
-	 * @param EE_Messenger         $messenger
+	 * @param EE_messenger         $messenger
 	 * @param EE_Message_Type|null $message_type
 	 *
 	 * @return bool
 	 */
 	protected function _setup_response_message_for_deactivating_messenger_with_message_types(
-		EE_Messenger $messenger,
+		EE_messenger $messenger,
 		EE_Message_Type $message_type = null ) {
 		EE_Error::overwrite_success();
 		if ( $message_type instanceof EE_Message_Type ) {

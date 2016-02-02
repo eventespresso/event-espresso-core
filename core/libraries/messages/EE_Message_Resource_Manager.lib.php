@@ -35,7 +35,7 @@ class EE_Message_Resource_Manager {
 	protected $_message_template_group_model;
 
 	/**
-	 * @type EE_Messenger[]
+	 * @type EE_messenger[]
 	 */
 	protected $_installed_messengers = array();
 
@@ -51,7 +51,7 @@ class EE_Message_Resource_Manager {
 	 *      'messenger_name' => EE_messenger
 	 * )
 	 *
-	 * @type EE_Messenger[]
+	 * @type EE_messenger[]
 	 */
 	protected $_active_messengers = array();
 
@@ -139,7 +139,7 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * @return EE_Messenger[]
+	 * @return EE_messenger[]
 	 */
 	public function active_messengers() {
 		return $this->_active_messengers;
@@ -149,7 +149,7 @@ class EE_Message_Resource_Manager {
 
 	/**
 	 * @param string $messenger_name
-	 * @return \EE_Messenger
+	 * @return \EE_messenger
 	 */
 	public function get_messenger( $messenger_name ) {
 		return $this->messenger_collection()->get_by_info( $messenger_name );
@@ -158,10 +158,10 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * This returns the corresponding EE_Messenger object for the given string if it is active.
+	 * This returns the corresponding EE_messenger object for the given string if it is active.
 	 *
 	 * @param string $messenger
-	 * @return EE_Messenger | null
+	 * @return EE_messenger | null
 	 */
 	public function get_active_messenger( $messenger ) {
 		return ! empty( $this->_active_messengers[ $messenger ] ) ? $this->_active_messengers[ $messenger ] : null;
@@ -170,7 +170,7 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * @return \EE_Messenger[]
+	 * @return \EE_messenger[]
 	 */
 	public function installed_messengers() {
 		if ( empty( $this->_installed_messengers ) ) {
@@ -188,12 +188,12 @@ class EE_Message_Resource_Manager {
 
 	/**
 	 * @param string $messenger_name
-	 * @return \EE_Messenger
+	 * @return \EE_messenger
 	 * @throws \EE_Error
 	 */
 	public function valid_messenger( $messenger_name ) {
 		$messenger = $this->get_messenger( $messenger_name );
-		if ( $messenger instanceof EE_Messenger ) {
+		if ( $messenger instanceof EE_messenger ) {
 			return $messenger;
 		}
 		throw new EE_Error(
@@ -414,18 +414,18 @@ class EE_Message_Resource_Manager {
 	/**
 	 * valid_message_type_for_messenger
 	 *
-	 * @param EE_Messenger $messenger
+	 * @param EE_messenger $messenger
 	 * @param string $message_type_name
 	 * @return boolean
 	 * @throws \EE_Error
 	 */
-	public function valid_message_type_for_messenger( EE_Messenger $messenger, $message_type_name ) {
+	public function valid_message_type_for_messenger( EE_messenger $messenger, $message_type_name ) {
 		$valid_message_types = $messenger->get_valid_message_types();
 		if ( ! in_array( $message_type_name, $valid_message_types ) ) {
 			throw new EE_Error(
 				sprintf(
 					__(
-						'The message type (%1$s) sent to %2$s is not valid for the %3$s messenger.  Double-check the spelling and verify that message type has been registered as a valid type with the messenger.',
+						'The message type (%1$s) sent to "%2$s" is not valid for the "%3$s" messenger.  Double-check the spelling and verify that message type has been registered as a valid type with the messenger.',
 						'event_espresso'
 					),
 					$message_type_name,
@@ -671,7 +671,7 @@ class EE_Message_Resource_Manager {
 		// grab the messenger to work with.
 		$messenger = $this->messenger_collection()->get_by_info( $messenger_name );
 		// it's inactive. Activate it.
-		if ( $messenger instanceof EE_Messenger ) {
+		if ( $messenger instanceof EE_messenger ) {
 			$this->_active_messengers[ $messenger->name ] = $messenger;
 			//activate incoming message types set to be activated with messenger.
 			$message_type_names = $this->_activate_message_types( $messenger, $message_type_names );
@@ -695,17 +695,17 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * Activates given message types for the given EE_Messenger object.
+	 * Activates given message types for the given EE_messenger object.
 	 *
 	 * Note: (very important) This method does not persist the activation to the database.
 	 * See code implementing this method in this class for examples of how to persist.
 	 *
-	 * @param \EE_Messenger $messenger
+	 * @param \EE_messenger $messenger
 	 * @param  array        $message_type_names
 	 *
 	 * @return array
 	 */
-	protected function _activate_message_types( EE_Messenger $messenger, $message_type_names = array() ) {
+	protected function _activate_message_types( EE_messenger $messenger, $message_type_names = array() ) {
 		//If $message_type_names is empty, AND $this->_active_message_types is empty, then that means
 		//things have never been initialized (which should happen on EEH_Activation::generate_message_templates).
 		//So ONLY then do we need to actually grab defaults and cycle through them.  Otherwise we
@@ -777,10 +777,10 @@ class EE_Message_Resource_Manager {
 	 * and message type.
 	 *
 	 * @access protected
-	 * @param \EE_Messenger $messenger
+	 * @param \EE_messenger $messenger
 	 * @param string        $message_type_name
 	 */
-	protected function _set_messenger_has_activated_message_type( EE_Messenger $messenger, $message_type_name ) {
+	protected function _set_messenger_has_activated_message_type( EE_messenger $messenger, $message_type_name ) {
 		// make sure this messenger has a record in the has_activated array
 		if ( ! isset( $this->_has_activated_messengers_and_message_types[ $messenger->name ] ) ) {
 			$this->_has_activated_messengers_and_message_types[ $messenger->name ] = array();
@@ -804,7 +804,7 @@ class EE_Message_Resource_Manager {
 	 */
 	public function add_settings_for_messenger( $messenger_name, $new_settings = array() ) {
 		$messenger = $this->get_messenger( $messenger_name );
-		if ( $messenger instanceof EE_Messenger ) {
+		if ( $messenger instanceof EE_messenger ) {
 			$msgr_settings = $messenger->get_admin_settings_fields();
 			if ( ! empty( $msgr_settings ) ) {
 				foreach ( $msgr_settings as $field => $value ) {
@@ -827,11 +827,11 @@ class EE_Message_Resource_Manager {
 	/**
 	 * deactivate_messenger
 	 *
-	 * @param  string|EE_Messenger $messenger_name name of messenger
+	 * @param  string|EE_messenger $messenger_name name of messenger
 	 * @return void
 	 */
 	public function deactivate_messenger( $messenger_name ) {
-		if ( $messenger_name instanceof EE_Messenger ) {
+		if ( $messenger_name instanceof EE_messenger ) {
 			$messenger_name = $messenger_name->name;
 		}
 		unset( $this->_active_messengers[ $messenger_name ] );
@@ -885,12 +885,12 @@ class EE_Message_Resource_Manager {
 	 * Used to verify if a message can be sent for the given messenger and message type
 	 * and that it is a generating messenger (used for generating message templates).
 	 *
-	 * @param EE_Messenger    $messenger    messenger used in trigger
+	 * @param EE_messenger    $messenger    messenger used in trigger
 	 * @param EE_message_type $message_type message type used in trigger
 	 *
 	 * @return bool true is a generating messenger and can be sent OR FALSE meaning cannot send.
 	 */
-	public function is_generating_messenger_and_active( EE_Messenger $messenger, EE_message_type $message_type ) {
+	public function is_generating_messenger_and_active( EE_messenger $messenger, EE_message_type $message_type ) {
 		//get the $messengers the message type says it can be used with.
 		foreach ( $message_type->with_messengers() as $generating_messenger => $secondary_messengers ) {
 			if (

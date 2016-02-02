@@ -85,10 +85,10 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 	/**
-	 * EE_Messenger used to generate the template being parsed.
+	 * EE_messenger used to generate the template being parsed.
 	 *
 	 * @since 4.5.0
-	 * @var EE_Messenger
+	 * @var EE_messenger
 	 */
 	protected $_messenger;
 
@@ -350,7 +350,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @return EE_Messenger
+	 * @return EE_messenger
 	 */
 	public function get_set_messenger() {
 		return $this->_messenger;

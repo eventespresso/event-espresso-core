@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Messenger class
+ * EE_messenger class
  *
  * Abstract class for setting up messengers.
  * Different messengers (i.e. email, sms) can be setup by extending this class and adding them to the /includes/core/messages/messengers' directory. View examples there.
@@ -839,4 +839,4 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 }
-// end EE_Messenger class
+// end EE_messenger class

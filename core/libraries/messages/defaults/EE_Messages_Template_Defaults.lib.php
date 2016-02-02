@@ -26,7 +26,7 @@ class EE_Messages_Template_Defaults extends EE_Base {
 	/**
 	 * holds the messenger object
 	 *
-	 * @var EE_Messenger
+	 * @var EE_messenger
 	 */
 	protected $_messenger;
 
@@ -74,7 +74,7 @@ class EE_Messages_Template_Defaults extends EE_Base {
 	/**
 	 * EE_Messages_Template_Defaults constructor.
 	 *
-	 * @param EE_Messenger               $messenger
+	 * @param EE_messenger               $messenger
 	 * @param EE_Message_Type            $message_type
 	 * @param int                        $GRP_ID                      Optional.  If included then we're just regenerating
 	 *                                                                the template fields for the given group not the
@@ -84,7 +84,7 @@ class EE_Messages_Template_Defaults extends EE_Base {
 	 * @throws EE_Error
 	 */
 	public function __construct(
-		EE_Messenger $messenger,
+		EE_messenger $messenger,
 		EE_Message_Type $message_type,
 		$GRP_ID = 0,
 		EEM_Message_Template_Group $message_template_group_model,

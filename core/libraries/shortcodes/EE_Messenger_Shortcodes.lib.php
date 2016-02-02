@@ -30,7 +30,7 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @var EE_Messenger[]
+	 * @var EE_messenger[]
 	 */
 	protected $_active_messengers = array();
 

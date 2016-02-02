@@ -19,7 +19,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	/**
 	 * This messenger is used to send the generated message.
 	 *
-	 * @type EE_Messenger
+	 * @type EE_messenger
 	 */
 	protected $_sending_messenger = '';
 
@@ -58,7 +58,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
 
 	/**
-	 * @return EE_Messenger
+	 * @return EE_messenger
 	 */
 	public function sending_messenger() {
 		return $this->_sending_messenger;
@@ -72,8 +72,8 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	 */
 	protected function _validate_request() {
 		if (
-			! $this->_sending_messenger instanceof EE_Messenger
-			|| ! $this->_messenger instanceof EE_Messenger
+			! $this->_sending_messenger instanceof EE_messenger
+			|| ! $this->_messenger instanceof EE_messenger
 			|| ! $this->_message_type instanceof EE_message_type
 			|| empty( $this->_context )
 			|| empty( $this->token )

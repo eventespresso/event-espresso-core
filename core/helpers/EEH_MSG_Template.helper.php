@@ -331,7 +331,7 @@ class EEH_MSG_Template {
 	 * @deprecated 4.9.0
 	 * @param string $messenger messenger slug for the messenger object we want to retrieve.
 	 * @throws \EE_Error
-	 * @return EE_Messenger
+	 * @return EE_messenger
 	 */
 	public static function messenger_obj( $messenger ) {
 		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
@@ -387,7 +387,7 @@ class EEH_MSG_Template {
 		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$active_messenger = $Message_Resource_Manager->get_active_messenger( $messenger );
-		return $active_messenger instanceof EE_Messenger ? true : false;
+		return $active_messenger instanceof EE_messenger ? true : false;
 	}
 
 
@@ -982,13 +982,13 @@ class EEH_MSG_Template {
 
 
 	/**
-	 * @param \EE_Messenger    $messenger
+	 * @param \EE_messenger    $messenger
 	 * @param \EE_message_type $message_type
 	 * @param                  $GRP_ID
 	 * @param                  $global
 	 * @return array|mixed
 	 */
-	protected static function _create_new_templates( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID, $global ) {
+	protected static function _create_new_templates( EE_messenger $messenger, EE_message_type $message_type, $GRP_ID, $global ) {
 		//if we're creating a custom template then we don't need to use the defaults class
 		if ( ! $global ) {
 			return EEH_MSG_Template::_create_custom_template_group( $messenger, $message_type, $GRP_ID );
@@ -1025,7 +1025,7 @@ class EEH_MSG_Template {
 	/**
 	 * This creates a custom template using the incoming GRP_ID
 	 *
-	 * @param \EE_Messenger    $messenger
+	 * @param \EE_messenger    $messenger
 	 * @param \EE_message_type $message_type
 	 * @param  int             $GRP_ID 		GRP_ID for the template_group being used as the base
 	 * @return  array $success 				This will be an array in the format:
@@ -1035,7 +1035,7 @@ class EEH_MSG_Template {
 	 * 										)
 	 * @access private
 	 */
-	private static function _create_custom_template_group( EE_Messenger $messenger, EE_message_type $message_type, $GRP_ID ) {
+	private static function _create_custom_template_group( EE_messenger $messenger, EE_message_type $message_type, $GRP_ID ) {
 		//defaults
 		$success = array( 'GRP_ID' => null, 'MTP_context' => '' );
 		//get the template group to use as a template from the db.  If $GRP_ID is empty then we'll assume the base will be the global template matching the messenger and message type.
@@ -1116,13 +1116,13 @@ class EEH_MSG_Template {
 	/**
 	 * message_type_has_active_templates_for_messenger
 	 *
-	 * @param \EE_Messenger    $messenger
+	 * @param \EE_messenger    $messenger
 	 * @param \EE_message_type $message_type
 	 * @param bool             $global
 	 * @return bool
 	 */
 	public static function message_type_has_active_templates_for_messenger(
-		EE_Messenger $messenger,
+		EE_messenger $messenger,
 		EE_message_type $message_type,
 		$global = false
 	) {
@@ -1164,7 +1164,7 @@ class EEH_MSG_Template {
 	 * get_fields
 	 * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
 	 *
-	 * @param  string $messenger_name    name of EE_Messenger
+	 * @param  string $messenger_name    name of EE_messenger
 	 * @param  string $message_type_name name of EE_message_type
 	 * @return array
 	 */

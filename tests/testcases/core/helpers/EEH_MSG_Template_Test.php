@@ -48,11 +48,11 @@ class EEH_MSG_Template_Test extends EE_UnitTestCase {
 		EEH_Activation::generate_default_message_templates();
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$this->assertInstanceOf(
-			'EE_Messenger',
+			'EE_messenger',
 			$Message_Resource_Manager->get_active_messenger( 'email' )
 		);
 		$this->assertNotInstanceOf(
-			'EE_Messenger',
+			'EE_messenger',
 			$Message_Resource_Manager->get_active_messenger( 'some_random_messenger' )
 		);
 	}

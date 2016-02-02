@@ -55,7 +55,7 @@ class EE_Messages_Generator {
 	/**
 	 * This will hold the current messenger object corresponding with the current EE_Message in the generation queue.
 	 *
-	 * @type EE_Messenger
+	 * @type EE_messenger
 	 */
 	protected $_current_messenger;
 
@@ -498,7 +498,7 @@ class EE_Messages_Generator {
 
 
 	/**
-	 * This verifies that the incoming array has a EE_Messenger object and a EE_message_type object and sets appropriate
+	 * This verifies that the incoming array has a EE_messenger object and a EE_message_type object and sets appropriate
 	 * error message if either is missing.
 	 *
 	 * @return bool         true means there were no errors, false means there were errors.

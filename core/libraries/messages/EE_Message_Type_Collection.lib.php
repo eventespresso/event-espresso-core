@@ -8,7 +8,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Message_Type_Collection
  *
- * Container object for EE_Messenger objects
+ * Container object for EE_messenger objects
  *
  * @package               Event Espresso
  * @subpackage            core

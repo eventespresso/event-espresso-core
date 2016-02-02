@@ -8,7 +8,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class EE_Messenger_Collection
  *
- * Container object for EE_Messenger objects
+ * Container object for EE_messenger objects
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -22,7 +22,7 @@ class EE_Messenger_Collection extends EE_Object_Collection {
 	 * EE_Messenger_Collection constructor.
 	 */
 	public function __construct() {
-		$this->interface = 'EE_Messenger';
+		$this->interface = 'EE_messenger';
 	}
 
 
@@ -131,7 +131,7 @@ class EE_Messenger_Collection extends EE_Object_Collection {
 	 * current object from the Collection
 	 *
 	 * @access public
-	 * @return EE_Messenger
+	 * @return EE_messenger
 	 */
 	public function current() {
 		return parent::current();
