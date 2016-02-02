@@ -285,15 +285,11 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 
 		//now let's FORCE reactivation.
 		$response = $this->_message_resource_manager->ensure_messenger_is_active( 'html' );
-		$this->assertFalse( $response ); //that means it was previously inactive which it should be.
+		$this->assertTrue( $response );
 
 		//verify html messenger IS actually active now.
 		$current_active_messengers = $this->_message_resource_manager->active_messengers();
 		$this->assertTrue( isset( $current_active_messengers['html'] ), 'The html messenger should have been forced to be active again but it is not.' );
-
-		//now verify that trying to ensure is active verifies it's already active
-		$response = $this->_message_resource_manager->ensure_messenger_is_active('html');
-		$this->assertTrue( $response );
 	}
 
 
@@ -329,14 +325,11 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 
 		//now let's force reactivation (for html messenger)
 		$response = $this->_message_resource_manager->ensure_message_type_is_active( 'invoice', 'html' );
-		$this->assertFalse( $response ); //that means it was previously inactive which is what we are validating.
+		$this->assertTrue( $response );
 
 		//very invoice message type IS actually active now.
 		$current_active_message_types = $this->_message_resource_manager->get_active_message_type_objects();
 		$this->assertTrue( isset( $current_active_message_types['invoice'] ) );
-
-		//now verify that trying to ensure it is inactive reports that its already active.
-		$this->assertTrue( $this->_message_resource_manager->ensure_message_type_is_active( 'invoice', 'html' ) );
 	}
 
 
