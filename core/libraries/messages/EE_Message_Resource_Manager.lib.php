@@ -416,7 +416,7 @@ class EE_Message_Resource_Manager {
 	 *
 	 * @param EE_Messenger $messenger
 	 * @param string $message_type_name
-	 * @return array
+	 * @return boolean
 	 * @throws \EE_Error
 	 */
 	public function valid_message_type_for_messenger( EE_Messenger $messenger, $message_type_name ) {
