@@ -218,7 +218,7 @@ class EE_Dependency_Map {
 			'EE_Message_Factory' => array(
 				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
 			),
-			'EE_Messages' => array(
+			'EE_messages' => array(
 				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
 			),
 			'EE_Messages_Generator' => array(

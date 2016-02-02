@@ -3370,7 +3370,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * Deletes EE_Messages for IDs in the request.
+	 * Deletes EE_messages for IDs in the request.
      *
      * @since 4.9.0
      */

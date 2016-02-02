@@ -1,7 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
 /**
- * This class is used for managing and interacting with the EE_Messages Queue.  An instance
+ * This class is used for managing and interacting with the EE_messages Queue.  An instance
  * of this object is used for interacting with a specific batch of EE_Message objects.
  *
  * @package    Event Espresso

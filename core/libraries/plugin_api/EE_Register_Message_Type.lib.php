@@ -27,7 +27,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 
 
 	/**
-	 * Method for registering new message types in the EE_Messages system.
+	 * Method for registering new message types in the EE_messages system.
 	 *
 	 * Note:  All message types must have the following files in order to work:
 	 *
@@ -205,7 +205,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *
      * @since    4.3.0
      *
-     * @param array $paths array of paths to be checked by EE_Messages autoloader.
+     * @param array $paths array of paths to be checked by EE_messages autoloader.
      * @return array
      */
     public static function register_msgs_autoload_paths( $paths  ) {

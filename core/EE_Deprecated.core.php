@@ -469,14 +469,14 @@ class EE_Message_Template_Defaults extends EE_Base {
 	/**
 	 * EE_Message_Template_Defaults constructor.
 	 *
-	 * @param EE_Messages $messages
+	 * @param EE_messages $messages
 	 * @param             $messenger_name
 	 * @param             $message_type_name
 	 * @param int         $GRP_ID
 	 * @return EE_Messages_Template_Defaults
 	 */
 	public function __construct(
-		EE_Messages $messages,
+		EE_messages $messages,
 		$messenger_name,
 		$message_type_name,
 		$GRP_ID = 0
@@ -518,7 +518,7 @@ class EE_Message_Template_Defaults extends EE_Base {
  *
  * ------------------------------------------------------------------------
  */
-class EE_Messages {
+class EE_messages {
 
 	/** @type EE_messenger[] */
 	protected $_active_messengers = array();
@@ -544,7 +544,7 @@ class EE_Messages {
 
 
 	/**
-	 * EE_Messages constructor.
+	 * EE_messages constructor.
 	 *
 	 * @deprecated 4.9.0
 	 */
@@ -675,7 +675,7 @@ class EE_Messages {
 	 * @param  string $sending_messenger    if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
 	 * @param string  $generating_messenger if included then this messenger is used for generating the message templates (but not for sending).
 	 * @param string  $context              If included then only a message type for a specific context will be generated.
-	 * @param bool    $send                 Default TRUE.  If false, then this will just return the generated EE_Messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
+	 * @param bool    $send                 Default TRUE.  If false, then this will just return the generated EE_messages objects which might be used by the trigger to setup a batch message (typically html messenger uses it).
 	 * @return bool
 	 */
 	public function send_message(
@@ -1032,4 +1032,4 @@ class EE_Messages {
 
 
 }
-//end EE_Messages class
+//end EE_messages class

@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 
 /**
- * This sets up the email messenger for the EE_Messages (notifications) subsystem in EE.
+ * This sets up the email messenger for the EE_messages (notifications) subsystem in EE.
  */
 class EE_Email_messenger extends EE_messenger  {
 

@@ -30,7 +30,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	/**
 	 * This returns an array of components used in testing.
 	 * An array with the following:
-	 * - EE_Messages object
+	 * - EE_messages object
 	 * - EE_Messages_Processor object (clean)
 	 * - EE_Message_To_Generate object.
 	 * @return array

@@ -22,9 +22,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 class EED_Messages  extends EED_Module {
 
 	/**
-	 * This holds the EE_Messages controller
+	 * This holds the EE_messages controller
 	 * @deprecated 4.9.0
-	 * @var EE_Messages $_EEMSG
+	 * @var EE_messages $_EEMSG
 	 */
 	protected  static $_EEMSG;
 
@@ -294,7 +294,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * This simply makes sure the autoloaders are registered for the EE_Messages system.
+	 * This simply makes sure the autoloaders are registered for the EE_messages system.
 	 *
 	 * @since 4.5.0
 	 *
@@ -308,7 +308,7 @@ class EED_Messages  extends EED_Module {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $path );
 			}
 			// add aliases
-			EEH_Autoloader::add_alias( 'EE_messages', 'EE_Messages' );
+			EEH_Autoloader::add_alias( 'EE_messages', 'EE_messages' );
 			EEH_Autoloader::add_alias( 'EE_messenger', 'EE_messenger' );
 		}
 	}

@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Messages_incoming_data
  *
- * This is the parent class for all incoming data to EE_Messages objects.  We create different data handlers for different incoming data depending on the message types set requirements.
+ * This is the parent class for all incoming data to EE_messages objects.  We create different data handlers for different incoming data depending on the message types set requirements.
  *
  * @package		Event Espresso
  * @subpackage	includes/core/messages/data_class/EE_Messages_incoming_data.core.php
