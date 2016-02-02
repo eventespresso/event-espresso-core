@@ -273,13 +273,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	public function filter_by_query_params() {
 		//expected possible query_vars, the key in this array matches an expected key in the request, the value, matches
 		//the corresponding EEM_Base child reference.
-		$expected_vars = array(
-			'_REG_ID' => 'Registration',
-			'ATT_ID' => 'Attendee',
-			'ID' => 'WP_User',
-			'TXN_ID' => 'Transaction',
-			'EVT_ID' => 'Event',
-		);
+		$expected_vars = $this->_expected_vars_for_query_inject();
 		$query_params[0] = array();
 		EE_Registry::instance()->load_class( 'Request_Handler' );
 		foreach ( $expected_vars as $request_key => $model_name ) {
@@ -303,6 +297,93 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 			}
 		}
 		return $query_params;
+	}
+
+
+
+
+
+	public function get_pretty_label_for_results() {
+		$expected_vars = $this->_expected_vars_for_query_inject();
+		$pretty_label = '';
+		$label_parts = array();
+		foreach ( $expected_vars as $request_key => $model_name ) {
+			$model = EE_Registry::instance()->load_model( $model_name );
+			if ( $model_field_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
+				switch ( $request_key ) {
+					case '_REG_ID' :
+						$label_parts[] = sprintf( esc_html__( 'Registration with the ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+					case 'ATT_ID' :
+						/** @var EE_Attendee $attendee */
+						$attendee = $model->get_one_by_ID( $model_field_value );
+						$label_parts[] = $attendee instanceof EE_Attendee
+							? sprintf( esc_html__( 'Attendee %s', 'event_espresso' ), $attendee->full_name() )
+							: sprintf( esc_html__( 'Attendee ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+					case 'ID' :
+						/** @var EE_WP_User $wpUser */
+						$wpUser = $model->get_one_by_ID( $model_field_value );
+						$label_parts[] = $wpUser instanceof EE_WP_User
+							? sprintf( esc_html__( 'WP User: %s', 'event_espresso' ), $wpUser->name() )
+							: sprintf( esc_html__( 'WP User ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+					case 'TXN_ID' :
+						$label_parts[] = sprintf( esc_html__( 'Transaction with the ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+					case 'EVT_ID' :
+						/** @var EE_Event $Event */
+						$Event = $model->get_one_by_ID( $model_field_value );
+						$label_parts[] = $Event instanceof EE_Event
+							? sprintf( esc_html__( 'for the Event: %s', 'event_espresso' ), $Event->name() )
+							: sprintf( esc_html__( 'for the Event with ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+				}
+			}
+		}
+
+		if ( $label_parts ) {
+
+			//prepend to the last element of $label_parts an "and".
+			if ( count( $label_parts ) > 1 ) {
+				$label_parts_index_to_prepend                 = count( $label_parts ) - 1;
+				$label_parts[ $label_parts_index_to_prepend ] = 'and' . $label_parts[ $label_parts_index_to_prepend ];
+			}
+
+			$pretty_label .= sprintf(
+				esc_html_x(
+					'Showing messages for %s',
+					'A label for the messages returned in a query that are filtered by items in the query. This could be Transaction, Event, Attendee, Registration, or WP_User.',
+					'event_espresso'
+				),
+				implode( ', ', $label_parts )
+			);
+		}
+		return $pretty_label;
+	}
+
+
+
+
+	/**
+	 * This returns the array of expected variables for the EEI_Query_Filter methods being implemented
+	 * The array is in the format:
+	 *
+	 * array(
+	 *  {$field_name} => {$model_name}
+	 * );
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	protected function _expected_vars_for_query_inject() {
+		return array(
+			'_REG_ID' => 'Registration',
+			'ATT_ID' => 'Attendee',
+			'ID' => 'WP_User',
+			'TXN_ID' => 'Transaction',
+			'EVT_ID' => 'Event',
+		);
 	}
 
 
