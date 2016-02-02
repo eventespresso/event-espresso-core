@@ -11,7 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 /**
  *
- * EE_Html_Messenger class
+ * EE_Html_messenger class
  *
  * @since 4.3.0
  *

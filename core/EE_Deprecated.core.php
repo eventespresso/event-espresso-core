@@ -282,8 +282,8 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
 /**
  * wrapper for the now deprecated *__get_inline_css_template__css_url and path filters.
  * Filters deprecated are:
- * 	- FHEE__EE_Email_Messenger__get_inline_css_template__css_url
- * 	- FHEE__EE_Email_Messenger__get_inline_css_template__css_path
+ * 	- FHEE__EE_Email_messenger__get_inline_css_template__css_url
+ * 	- FHEE__EE_Email_messenger__get_inline_css_template__css_path
  * 	- FHEE__EE_Html_messenger__get_inline_css_template__css_url
  * 	- FHEE__EE_Html_messenger__get_inline_css_template__css_path
  *
@@ -304,7 +304,7 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
 function ee_deprecated_get_inline_css_template_filters( $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url,  EE_Messages_Template_Pack $template_pack ) {
 
 	if ( $messenger == 'email' ) {
-		$filter_ref = $url ? 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url' : 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path';
+		$filter_ref = $url ? 'FHEE__EE_Email_messenger__get_inline_css_template__css_url' : 'FHEE__EE_Email_messenger__get_inline_css_template__css_path';
 	} elseif ( $messenger == 'html' ) {
 		$filter_ref = $url ? 'FHEE__EE_Html_messenger__get_inline_css_template__css_url' : 'FHEE__EE_Html_messenger__get_inline_css_template__css_path';
 	} else {
@@ -648,12 +648,12 @@ class EE_messages {
 	 *                  available.
 	 *                  Eg. Valid Messenger and Message Type:
 	 *                  array(
-	 *                  'messenger' => new EE_Email_Messenger(),
+	 *                  'messenger' => new EE_Email_messenger(),
 	 *                  'message_type' => new EE_Registration_Approved_message_type()
 	 *                  )
 	 *                  Valid Messenger and Invalid Message Type:
 	 *                  array(
-	 *                  'messenger' => new EE_Email_Messenger(),
+	 *                  'messenger' => new EE_Email_messenger(),
 	 *                  'message_type' => null
 	 *                  )
 	 */

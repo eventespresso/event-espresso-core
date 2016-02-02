@@ -78,7 +78,7 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 	public function test_valid_messenger() {
 		//test valid first.
 		$messenger = $this->_message_resource_manager->valid_messenger( 'email' );
-		$this->assertInstanceOf( 'EE_Email_Messenger', $messenger );
+		$this->assertInstanceOf( 'EE_Email_messenger', $messenger );
 
 		//test invalid
 		$this->setExpectedException( 'EE_Error' );

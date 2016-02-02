@@ -11,7 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 /**
  *
- * EE_Pdf_Messenger class
+ * EE_Pdf_messenger class
  *
  *
  * @since 4.5.0
@@ -45,7 +45,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 
 
 	/**
-	 * @return EE_Pdf_Messenger
+	 * @return EE_Pdf_messenger
 	 */
 	public function __construct() {
 		//set properties

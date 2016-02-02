@@ -528,4 +528,4 @@ class EE_Email_messenger extends EE_messenger  {
 
 }
 
-// end of file:	includes/core/messages/messengers/EE_Email_Messenger.class.php
+// end of file:	includes/core/messages/messengers/EE_Email_messenger.class.php
