@@ -359,10 +359,14 @@ class EE_Checkout {
 	public function skip_reg_step( $reg_step_slug = '' ) {
 		$step_to_skip = $this->find_reg_step( $reg_step_slug );
 		if ( $step_to_skip instanceof EE_SPCO_Reg_Step && $step_to_skip->is_current_step() ) {
-			// advance to the next step
-			$this->set_current_step( $this->next_step->slug() );
 			$step_to_skip->set_is_current_step( false );
 			$step_to_skip->set_completed();
+			// advance to the next step
+			$this->set_current_step( $this->next_step->slug() );
+			if ( $this->current_step->slug() == $this->next_step->slug() ) {
+				// advance to the next step
+				$this->set_next_step();
+			}
 			$this->set_reg_step_initiated( $this->current_step );
 		}
 	}
