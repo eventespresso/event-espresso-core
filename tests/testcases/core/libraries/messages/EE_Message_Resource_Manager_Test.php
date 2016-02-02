@@ -427,3 +427,4 @@ class EE_Message_Resource_Manager_Test extends EE_UnitTestCase {
 
 
 } //end EE_messages_Test class
+// Location: tests/testcases/core/libraries/messages/EE_Message_Resource_Manager_Test.php
