@@ -765,8 +765,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_search_btn_label = __('Message Activity', 'event_espresso');
 		$this->_template_args['per_column'] = 6;
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_message_legend_items() );
+		$this->_template_args['before_list_table'] = '<h3>' . EEM_Message::instance()->get_pretty_label_for_results() . '</h3>';
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
+
 
 
 
