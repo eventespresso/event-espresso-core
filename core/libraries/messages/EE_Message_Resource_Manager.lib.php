@@ -541,12 +541,21 @@ class EE_Message_Resource_Manager {
 	 *
 	 * @param string $messenger_name
 	 * @param bool   $update_option  Whether to update the option in the db or not.
-	 * @return boolean TRUE if it was PREVIOUSLY active, and FALSE if it was previously inactive
+	 * @return boolean true if either already active or successfully activated.
 	 */
 	public function ensure_messenger_is_active( $messenger_name, $update_option = true ) {
 		if ( ! isset( $this->_active_messengers[ $messenger_name ] ) ) {
-			$this->activate_messenger( $messenger_name, array(), $update_option );
-			return false;
+			try {
+				$this->activate_messenger( $messenger_name, array(), $update_option );
+			} catch( EE_Error $e ) {
+				EE_Error::add_error(
+					$e->getMessage(),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+				return false;
+			}
 		}
 		return true;
 	}
@@ -599,29 +608,37 @@ class EE_Message_Resource_Manager {
 	 * @param string $message_type_name message type name.
 	 * @param        $messenger_name
 	 * @param bool   $update_option     Whether to update the option in the db or not.
-	 * @return bool  TRUE if it was PREVIOUSLY active, and FALSE if it was previously INACTIVE.
+	 * @return bool  Returns true if already is active or if was activated successfully.
 	 * @throws \EE_Error
 	 */
 	public function ensure_message_type_is_active( $message_type_name, $messenger_name, $update_option = true ) {
 		// grab the messenger to work with.
 		$messenger = $this->valid_messenger( $messenger_name );
-		$was_active_previously = true;
 		if ( $this->valid_message_type_for_messenger( $messenger, $message_type_name ) ) {
 			//ensure messenger is active (that's an inherent coupling between active message types and the
 			//messenger they are being activated for.  Note option is not being updated here because that gets handled later
 			//in this method.
-			$this->ensure_messenger_is_active( $messenger_name, false );
-			if ( ! $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
-				//all is good so let's just get it active
-				$this->_activate_message_types( $messenger, array( $message_type_name ) );
-				$was_active_previously = false;
-			}
-			if ( $update_option ) {
-				$this->update_active_messengers_option();
-				$this->update_has_activated_messengers_option();
+			try {
+				$this->ensure_messenger_is_active( $messenger_name, false );
+				if ( ! $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
+					//all is good so let's just get it active
+					$this->_activate_message_types( $messenger, array( $message_type_name ) );
+				}
+				if ( $update_option ) {
+					$this->update_active_messengers_option();
+					$this->update_has_activated_messengers_option();
+				}
+			} catch( EE_Error $e ) {
+				EE_Error::add_error(
+					$e->getMessage(),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+				return false;
 			}
 		}
-		return $was_active_previously;
+		return true;
 	}
 
 
