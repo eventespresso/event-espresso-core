@@ -35,7 +35,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	protected $_messenger = null;
 
 	/**
-	 * @type EE_Message_Type $_message_type
+	 * @type EE_message_type $_message_type
 	 */
 	protected $_message_type = null;
 
@@ -264,11 +264,11 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	/**
 	 * Sets message_type
 	 *
-	 * @param EE_Message_Type $message_type
+	 * @param EE_message_type $message_type
 	 * @param bool            $set_priority   This indicates whether to set the priority to whatever the priority is on
 	 *                                        the message type or not.
 	 */
-	public function set_message_type_object( EE_Message_Type $message_type, $set_priority = false ) {
+	public function set_message_type_object( EE_message_type $message_type, $set_priority = false ) {
 		$this->_message_type = $message_type;
 		if ( $set_priority ) {
 			$this->set_priority( $this->_message_type->get_priority() );
@@ -285,7 +285,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @throws \EE_Error
 	 */
 	public function valid_message_type( $throw_exceptions = false ) {
-		if ( $this->_message_type instanceof EE_Message_Type ) {
+		if ( $this->_message_type instanceof EE_message_type ) {
 			return true;
 		}
 		if ( $throw_exceptions ) {

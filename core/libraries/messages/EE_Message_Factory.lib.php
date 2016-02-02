@@ -177,7 +177,7 @@ class EE_Message_Factory {
 	 */
 	protected function _set_message_type( EE_Message $message, $new_instance = false ) {
 		$message_type = $this->_message_resource_manager->get_message_type( $message->message_type() );
-		if ( $message_type instanceof EE_Message_Type ) {
+		if ( $message_type instanceof EE_message_type ) {
 			$message->set_message_type_object( $message_type, $new_instance );
 		}
 		return $message;

@@ -142,7 +142,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$message_types = $this->_message_resource_manager->installed_message_types();
 		$i = 1;
 		foreach ( $message_types as $message_type_name => $message_type ) {
-			if ( $message_type instanceof EE_Message_Type ) {
+			if ( $message_type instanceof EE_message_type ) {
 				$mt_values[ $i ][ 'id' ] = $message_type_name;
 				$mt_values[ $i ][ 'text' ] = ucwords( $message_type->label[ 'singular' ] );
 				$i++;
@@ -2511,7 +2511,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//get all installed messengers and message_types
 		/** @type EE_messenger[] $messengers */
 		$messengers = $this->_message_resource_manager->installed_messengers();
-		/** @type EE_Message_Type[] $message_types */
+		/** @type EE_message_type[] $message_types */
 		$message_types = $this->_message_resource_manager->installed_message_types();
 
 
@@ -2996,10 +2996,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//set response_data for reload
 		foreach( $message_types_to_activate as $message_type_name ) {
-			/** @var EE_Message_Type $message_type */
+			/** @var EE_message_type $message_type */
 			$message_type = $this->_message_resource_manager->get_message_type( $message_type_name );
 			if ( $this->_message_resource_manager->is_message_type_active_for_messenger( $messenger_name, $message_type_name )
-			     && $message_type instanceof EE_Message_Type
+			     && $message_type instanceof EE_message_type
 			) {
 				$this->_template_args['data']['active_mts'][] = $message_type_name;
 				if ( $message_type->get_admin_settings_fields() ) {
@@ -3038,7 +3038,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _activate_message_type_for_messenger( $messenger_name, $message_type_name ) {
 		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
-		/** @var EE_Message_Type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
+		/** @var EE_message_type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
 		$message_type_to_activate = $this->_message_resource_manager->get_message_type( $message_type_name );
 
 		//ensure is active
@@ -3066,7 +3066,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _deactivate_message_type_for_messenger( $messenger_name, $message_type_name ) {
 		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
-		/** @var EE_Message_Type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
+		/** @var EE_message_type $message_type_to_activate This will be present because it can't be toggled if it isn't*/
 		$message_type_to_deactivate = $this->_message_resource_manager->get_message_type( $message_type_name );
 		$this->_message_resource_manager->deactivate_message_type_for_messenger( $message_type_name, $messenger_name );
 		return $this->_setup_response_message_for_deactivating_messenger_with_message_types( $active_messenger, $message_type_to_deactivate );
@@ -3090,20 +3090,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * Setup appropriate response for activating a messenger and/or message types
 	 *
 	 * @param EE_messenger         $messenger
-	 * @param EE_Message_Type|null $message_type
+	 * @param EE_message_type|null $message_type
 	 *
 	 * @return bool
 	 * @throws EE_Error
 	 */
 	protected function _setup_response_message_for_activating_messenger_with_message_types(
 		EE_messenger $messenger,
-		EE_Message_Type $message_type = null
+		EE_message_type $message_type = null
 	) {
 		//activated
 		if ( $this->_template_args['data']['active_mts'] ) {
 			EE_Error::overwrite_success();
 			//activated a message type with the messenger
-			if ( $message_type instanceof EE_Message_Type ) {
+			if ( $message_type instanceof EE_message_type ) {
 				EE_Error::add_success(
 					sprintf(
 						__('%s message type has been successfully activated with the %s messenger', 'event_espresso'),
@@ -3146,7 +3146,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				return true;
 			} else {
 				EE_Error::add_error(
-					$message_type instanceof EE_Message_Type
+					$message_type instanceof EE_message_type
 						? sprintf(
 						__( '%s message type was not successfully activated with the %s messenger', 'event_espresso' ),
 						ucwords( $message_type->label['singular'] ),
@@ -3171,15 +3171,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * This sets up the appropriate response for deactivating a messenger and/or message type.
 	 *
 	 * @param EE_messenger         $messenger
-	 * @param EE_Message_Type|null $message_type
+	 * @param EE_message_type|null $message_type
 	 *
 	 * @return bool
 	 */
 	protected function _setup_response_message_for_deactivating_messenger_with_message_types(
 		EE_messenger $messenger,
-		EE_Message_Type $message_type = null ) {
+		EE_message_type $message_type = null ) {
 		EE_Error::overwrite_success();
-		if ( $message_type instanceof EE_Message_Type ) {
+		if ( $message_type instanceof EE_message_type ) {
 			$message_type_name = $message_type->name;
 			EE_Error::add_success(
 				sprintf(

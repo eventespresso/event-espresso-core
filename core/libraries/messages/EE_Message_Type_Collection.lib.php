@@ -22,7 +22,7 @@ class EE_Message_Type_Collection extends EE_Object_Collection {
 	 * EE_Message_Type_Collection constructor.
 	 */
 	public function __construct() {
-		$this->interface = 'EE_Message_Type';
+		$this->interface = 'EE_message_type';
 	}
 
 

@@ -103,10 +103,10 @@ class EE_Message_Type_Collection_Loader {
 
 	/**
 	 * Loads the given message type into the message type collection if it doesn't already exist.
-	 * @param EE_Message_Type $message_type
+	 * @param EE_message_type $message_type
 	 * @return bool
 	 */
-	protected function _load_message_type( EE_Message_Type $message_type ) {
+	protected function _load_message_type( EE_message_type $message_type ) {
 		if ( $this->message_type_collection()->has_by_name( $message_type->name ) ) {
 			return true;
 		}

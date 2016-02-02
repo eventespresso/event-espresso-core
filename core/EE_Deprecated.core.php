@@ -984,7 +984,7 @@ class EE_messages {
 	 * @deprecated 4.9.0
 	 * @param string $messenger    The string should correspond to the messenger (message types are
 	 * @param string $message_type The string should correspond to a message type.
-	 * @return EE_Message_Type|null
+	 * @return EE_message_type|null
 	 */
 	public function get_active_message_type( $messenger, $message_type ) {
 		// EE_messages has been deprecated

@@ -226,7 +226,7 @@ class EE_Message_Resource_Manager {
 
 	/**
 	 * @param string $message_type_name
-	 * @return \EE_Message_Type
+	 * @return \EE_message_type
 	 */
 	public function get_message_type( $message_type_name ) {
 		return $this->message_type_collection()->get_by_info( $message_type_name );
@@ -239,7 +239,7 @@ class EE_Message_Resource_Manager {
 	 *
 	 * @param string $messenger_name
 	 * @param string $message_type_name
-	 * @return \EE_Message_Type|null
+	 * @return \EE_message_type|null
 	 */
 	public function get_active_message_type_for_messenger( $messenger_name, $message_type_name ) {
 		return $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name )
@@ -377,7 +377,7 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * @return \EE_Message_Type[]
+	 * @return \EE_message_type[]
 	 */
 	public function installed_message_types() {
 		if ( empty( $this->_installed_message_types ) ) {
@@ -755,7 +755,7 @@ class EE_Message_Resource_Manager {
 		$message_type = $this->message_type_collection()->get_by_info( $message_type_name );
 		$existing_settings = $this->get_message_type_settings_for_messenger( $messenger_name, $message_type_name );
 		//we need to setup any initial settings for message types
-		if ( $message_type instanceof EE_Message_Type ) {
+		if ( $message_type instanceof EE_message_type ) {
 			$default_settings = $message_type->get_admin_settings_fields();
 			foreach ( $default_settings as $field => $values ) {
 				if ( isset( $new_settings[ $field ] ) ) {
@@ -847,7 +847,7 @@ class EE_Message_Resource_Manager {
 	 * @param  string $message_type_name name of message type being deactivated
 	 */
 	public function deactivate_message_type( $message_type_name ) {
-		if ( $message_type_name instanceof EE_Message_Type ) {
+		if ( $message_type_name instanceof EE_message_type ) {
 			$message_type_name = $message_type_name->name;
 		}
 		foreach ( $this->_active_message_types as $messenger => $settings ) {

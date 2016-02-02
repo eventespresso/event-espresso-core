@@ -185,7 +185,7 @@ class EE_Messages_Generator {
 	protected function _reset_current_properties() {
 		$this->_verified = false;
 		//make sure any _data value in the current message type is reset
-		if ( $this->_current_message_type instanceof EE_Message_Type ) {
+		if ( $this->_current_message_type instanceof EE_message_type ) {
 			$this->_current_message_type->reset_data();
 		}
 		$this->_current_messenger = $this->_current_message_type = $this->_current_data_handler = null;

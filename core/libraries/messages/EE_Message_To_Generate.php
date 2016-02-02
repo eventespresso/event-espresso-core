@@ -17,7 +17,7 @@ class EE_Message_To_Generate {
 	protected $_messenger_name = null;
 
 	/**
-	 * @type string name of EE_Message_Type
+	 * @type string name of EE_message_type
 	 */
 	protected $_message_type_name = null;
 
@@ -27,7 +27,7 @@ class EE_Message_To_Generate {
 	protected $_messenger = null;
 
 	/**
-	 * @type EE_Message_Type
+	 * @type EE_message_type
 	 */
 	protected $_message_type = null;
 
@@ -150,7 +150,7 @@ class EE_Message_To_Generate {
 
 
 	/**
-	 * @return EE_Message_Type
+	 * @return EE_message_type
 	 */
 	public function message_type() {
 		return $this->_message_type;

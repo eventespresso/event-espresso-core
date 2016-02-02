@@ -499,7 +499,7 @@ class EE_Messages_Queue {
 			$messenger = $sending_messenger;
 		}
 		// send using messenger, but double check objects
-		if ( $messenger instanceof EE_messenger && $message_type instanceof EE_Message_Type ) {
+		if ( $messenger instanceof EE_messenger && $message_type instanceof EE_message_type ) {
 			//set hook for message type (but only if not using another messenger to send).
 			if ( ! isset( $this->_did_hook[ $message_type->name ] ) ) {
 				$message_type->do_messenger_hooks( $messenger );
