@@ -283,6 +283,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
 						'Registration.REG_ID' => $request_value,
 						'Attendee.Registration.REG_ID' => $request_value,
+						'Transaction.Registration.REG_ID' => $request_value,
+						'WP_User.Event.Registration.REG_ID' => $request_value,
 					);
 					continue;
 				}
@@ -290,6 +292,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
 						'Registration.EVT_ID' => $request_value,
 						'Attendee.Registration.EVT_ID' => $request_value,
+						'Transaction.Registration.EVT_ID' => $request_value,
+						'WP_User.Event.EVT_ID' => $request_value,
 					);
 					continue;
 				}
