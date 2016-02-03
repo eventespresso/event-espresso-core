@@ -2115,13 +2115,34 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$this->_set_add_edit_form_tags( 'process_reg_step', $hidden_fields ); //we come back to the process_registration_step route.
-		$template_args[ 'no_backy_backy' ] = sprintf(
-			__(
-				'WARNING!!!%1$sPlease do not use the back button to return to this page for the purpose of%1$sadding another registration. This can result in lost and/or corrupted data.%1$sIf you wish to add another registration, then please click the%1$s"Add Another New Registration" button%1$son the Transaction details page after you are redirected.',
-				'event_espresso'
-			),
-			'\n'
-		);
+
+		if ( isset( $_COOKIE[ 'ee_registration_added' ] ) ) {
+			$warning_msg = sprintf(
+				__(
+					'WARNING!!!%1$sPlease do not use the back button to return to this page for the purpose of%1$sadding another registration. This can result in lost and/or corrupted data.%1$sIf you wish to add another registration, then please click the%1$s\"Add Another New Registration\" button%1$son the Transaction details page after you are redirected.',
+					'event_espresso'
+				),
+				'\n'
+			);
+			$template_args[ 'no_backy_backy' ] = '
+	<script >
+		// WHOAH !!! it appears that someone is using the back button from the Transaction admin page
+		// after just adding a new registration... we gotta try to put a stop to that !!!
+		function disableBack() {
+			alert( "' . $warning_msg . '" );
+			window.history.forward()
+		}
+		window.onload = disableBack();
+		window.onpageshow = function ( evt ) {
+			if ( evt.persisted ) {
+				disableBack();
+			}
+		}
+	</script >';
+
+		} else {
+			$template_args[ 'no_backy_backy' ] = '';
+		}
 		return EEH_Template::display_template(
 			REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php', $template_args, TRUE
 		);
