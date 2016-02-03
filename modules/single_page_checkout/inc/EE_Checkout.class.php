@@ -363,6 +363,7 @@ class EE_Checkout {
 			$step_to_skip->set_completed();
 			// advance to the next step
 			$this->set_current_step( $this->next_step->slug() );
+			// also reset the step param in the request in case any other code references that directly
 			EE_Registry::instance()->REQ->set( 'step', $this->current_step->slug() );
 			// since we are skipping a step and setting the current step to be what was previously the next step,
 			// we need to check that the next step is now correct, and not still set to the current step.
