@@ -682,7 +682,26 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$dl_invoice_lnk = '';
 		}
 
-			return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . $dl_invoice_lnk, $item, 'ul', 'reg-overview-actions-ul' );
+		//message list table link (filtered by REG_ID
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_registration_context_link' ) ) {
+			$filtered_messages_url  = add_query_arg(
+				array(
+					'_REG_ID' => $item->ID(),
+				),
+				EE_MSG_ADMIN_URL
+			);
+			$filtered_messages_link = '
+		<li>
+			<a title="' . esc_attr__( 'View Messages filtered by this Registration', 'event_espresso' ) . '" href="' . $filtered_messages_url . '" class="tiny-text">
+				<span class="dashicons dashicons-megaphone ee-icon-size-18"></span>
+			</a>
+		</li>
+		';
+		} else {
+			$filtered_messages_link = '';
+		}
+
+		return $this->_action_string( $view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . $dl_invoice_lnk . $filtered_messages_link, $item, 'ul', 'reg-overview-actions-ul' );
 	}
 
 }

@@ -774,6 +774,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$fc_items['blank'] = array( 'class' => 'blank', 'desc' => '' );
 		}
 
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_registration_context_link' ) ) {
+			$fc_items['view_filtered_messages'] = array(
+				'class' => 'dashicons dashicons-megaphone',
+				'desc' => __( 'View messages filtered by this registrant', 'event_espresso' )
+			);
+		}
+
 		$sc_items = array(
 			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,

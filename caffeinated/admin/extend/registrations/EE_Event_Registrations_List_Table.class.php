@@ -261,6 +261,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
+
+
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
 	}
 
