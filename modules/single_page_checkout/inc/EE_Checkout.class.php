@@ -364,8 +364,10 @@ class EE_Checkout {
 			// advance to the next step
 			$this->set_current_step( $this->next_step->slug() );
 			EE_Registry::instance()->REQ->set( 'step', $this->current_step->slug() );
+			// since we are skipping a step and setting the current step to be what was previously the next step,
+			// we need to check that the next step is now correct, and not still set to the current step.
 			if ( $this->current_step->slug() == $this->next_step->slug() ) {
-				// advance to the next step
+				// correctly setup the next step
 				$this->set_next_step();
 			}
 			$this->set_reg_step_initiated( $this->current_step );
