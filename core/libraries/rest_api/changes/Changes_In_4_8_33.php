@@ -28,7 +28,7 @@ class Changes_In_4_8_33 extends Changes_In_Base {
 	 */
 	public function remove_checkin_routes_earlier_than_4_8_33( $routes_on_this_version, $version ) {
 		if( $this->applies_to_version(  $version ) ) {
-			unset( $routes_on_this_version[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)/(?P<verify>\S+)' ] );
+			unset( $routes_on_this_version[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)' ] );
 		}
 		return $routes_on_this_version;
 	}
