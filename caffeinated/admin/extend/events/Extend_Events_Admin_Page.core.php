@@ -385,8 +385,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-
-	public function extra_list_table_actions( $actionlinks, $event ) {
+	/**
+	 * @param array $actionlinks
+	 * @param EE_Event $event
+	 * @return array
+	 */
+	public function extra_list_table_actions( $actionlinks, EE_Event $event ) {
+		if ( ! $event instanceof EE_Event ) {
+			EE_Error::add_error(
+				__( 'An invalid Event object was received.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return array();
+		}
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_reports', $event->ID() ) ) {
 			$reports_query_args = array(
 					'action' => 'reports',
@@ -1194,7 +1205,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 // The version check was added to make sure Walker_Category_Checklist class is available
 global $wp_version;
 if ( $wp_version >= 4.4 ){
-	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php'; 
+	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php';
 } else {
 	require_once ABSPATH . 'wp-admin/includes/template.php';
 }
