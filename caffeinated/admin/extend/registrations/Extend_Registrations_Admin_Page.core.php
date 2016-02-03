@@ -29,16 +29,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
+
+	/**
+	 * This is used to hold the reports template data which is setup early in the request.
+	 * @type array
+	 */
+	protected $_reports_template_data = array();
+
+
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
 		define( 'REG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/templates/');
 		define( 'REG_CAF_ASSETS', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/assets/');
 		define( 'REG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registrations/assets/');
 	}
-
-
-
-
 
 
 	protected function _extend_page_config() {
@@ -183,17 +187,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 	public function load_scripts_styles_reports() {
-		//styles
-		wp_enqueue_style('jquery-jqplot-css');
-
-		//scripts
-		global $is_IE;
-		if ( $is_IE ) {
-			wp_enqueue_script( 'excanvas' );
-		}
-
-		wp_register_script('espresso_reg_admin_regs_per_day', REG_CAF_ASSETS_URL  . 'espresso_reg_admin_regs_per_day_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script('espresso_reg_admin_regs_per_event', REG_CAF_ASSETS_URL . 'espresso_reg_admin_regs_per_event_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-reg-reports-js', REG_CAF_ASSETS_URL . 'ee-registration-admin-reports.js', array( 'google-charts' ), EVENT_ESPRESSO_VERSION, true );
+		wp_enqueue_script( 'ee-reg-reports-js' );
+		$this->_registration_reports_js_setup();
 	}
 
 
@@ -443,6 +439,16 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	}
 
 
+	/**
+	 * This is called when javascript is being enqueued to setup the various data needed for the reports js.
+	 * Also $this->{$_reports_template_data} property is set for later usage by the _registration_reports method.
+	 */
+	protected function _registration_reports_js_setup() {
+		$this->_reports_template_data['admin_reports'][] = $this->_registrations_per_day_report();
+		$this->_reports_template_data['admin_reports'][] = $this->_registrations_per_event_report();
+	}
+
+
 
 
 	/**
@@ -451,126 +457,101 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*		@return void
 	*/
 	protected function _registration_reports() {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$page_args = array();
-
-		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-//		$page_args['admin_reports'][] = 'chart1';
-
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
-
-//		EEH_Debug_Tools::printr( $page_args, '$page_args' );
-
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_reports_template_data, true );
 		// the final template wrapper
 		$this->display_admin_page_with_no_sidebar();
 
 	}
 
 
-
-
-
-
 	/**
-	 * 		generates Business Report showing total registratiopns per day
-	*		@access private
-	*		@return void
-	*/
+	 * Generates Business Report showing total registrations per day.
+	 * @param string $period The period (acceptable by PHP Datetime constructor) for which the report is generated.
+	 *
+	 * @return string
+	 */
 	private function _registrations_per_day_report( $period = '-1 month' ) {
-
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
-		$report_JS = 'espresso_reg_admin_regs_per_day';
-
-		wp_enqueue_script( $report_JS );
 
 		$REG = EEM_Registration::instance();
 
 		$results = $REG->get_registrations_per_day_report( $period );
 
-		//EEH_Debug_Tools::printr( $results, '$registrations_per_day' );
-		$regs = array();
-		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-		$xmax = 0;
-		$ymax = 0;
 		$results = (array) $results;
-		foreach ( $results as $result ) {
-			$regs[] = array( $result->regDate, (int)$result->total );
-			$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
-			$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
-			$ymax = $result->total > $ymax ? $result->total : $ymax;
-		}
+		$regs = array();
+		$subtitle = '';
 
-		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));
-		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-		// calculate # days between our min and max dates
-		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+		if( $results ) {
+			$regs[] = array( __( 'Date (only days with registrations are shown)', 'event_espresso' ), __('Total Registrations', 'event_espresso' ) );
+			foreach ( $results as $result ) {
+				$regs[] = array( $result->regDate, (int) $result->total );
+			}
+
+			//setup the date range.
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$beginning_date = new DateTime( "now " . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$ending_date = new DateTime( "now", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
+		}
 
 		$report_title = __( 'Total Registrations per Day', 'event_espresso' );
 
 		$report_params = array(
-				'title' 	=> $report_title,
-				'id' 		=> $report_ID,
-				'regs' 	=> $regs,
-				'xmin' 	=> $xmin,
-				'xmax' 	=> $xmax,
-				'ymax' 	=> ceil($ymax * 1.25),
-				'span' 	=> $span,
-				'width'	=> ceil(900 / $span),
-				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )
-			);
-		wp_localize_script( $report_JS, 'regPerDay', $report_params );
+			'title' 	=> $report_title,
+			'subtitle' => $subtitle,
+			'id' 		=> $report_ID,
+			'regs' 	=> $regs,
+			'noResults' => empty( $regs ),
+			'noRegsMsg' => sprintf( __('%sThere are currently no registration records in the last month for this report.%s', 'event_espresso'), '<h2>' . $report_title . '</h2><p>', '</p>' ),
+		);
+		wp_localize_script( 'ee-reg-reports-js', 'regPerDay', $report_params );
 
 		return $report_ID;
 	}
 
 
-
-
-
-
 	/**
-	 * 		generates Business Report showing total registratiopns per event
-	*		@access private
-	*		@return void
-	*/
-	private function _get_registrations_per_event_report( $period = '-1 month' ) {
+	 * Generates Business Report showing total registrations per event.
+	 * @param string $period The period (acceptable by PHP Datetime constructor) for which the report is generated.
+	 *
+	 * @return string
+	 */
+	private function _registrations_per_event_report( $period = '-1 month' ) {
 
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
-		$report_JS = 'espresso_reg_admin_regs_per_event';
 
-		wp_enqueue_script( $report_JS );
-
-		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 		$REG = EEM_Registration::instance();
 
 		$results = $REG->get_registrations_per_event_report( $period );
-		//EEH_Debug_Tools::printr( $results, '$registrations_per_event' );
-		$regs = array();
-		$ymax = 0;
 		$results = (array) $results;
-		foreach ( $results as $result ) {
-			$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int)$result->total );
-			$ymax = $result->total > $ymax ? $result->total : $ymax;
-		}
+		$regs = array();
+		$subtitle = '';
 
-		$span = $period == 'week' ? 9 : 33;
+		if ( $results ) {
+			$regs[] = array( __( 'Event', 'event_espresso' ), __('Total Registrations', 'event_espresso' ) );
+			foreach ( $results as $result ) {
+				$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int) $result->total );
+			}
+
+			//setup the date range.
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$beginning_date = new DateTime( "now " . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$ending_date = new DateTime( "now", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
+		}
 
 		$report_title = __( 'Total Registrations per Event', 'event_espresso' );
 
 		$report_params = array(
 			'title' 	=> $report_title,
+			'subtitle' => $subtitle,
 			'id' 		=> $report_ID,
 			'regs' 	=> $regs,
-			'ymax' 	=> ceil($ymax * 1.25),
-			'span' 	=> $span,
-			'width'	=> ceil(900 / $span),
-			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )
+			'noResults' => empty( $regs ),
+			'noRegsMsg' => sprintf( __('%sThere are currently no registration records in the last month for this report.%s', 'event_espresso'), '<h2>' . $report_title . '</h2><p>', '</p>' ),
 		);
-		wp_localize_script( $report_JS, 'regPerEvent', $report_params );
+		wp_localize_script( 'ee-reg-reports-js', 'regPerEvent', $report_params );
 
 		return $report_ID;
 	}

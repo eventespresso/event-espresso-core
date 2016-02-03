@@ -1,4 +1,4 @@
-<h2><?php _e('Registration Reports', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Registration Reports', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows unfiltered reports for all registrations that have been created with Event Espresso.', 'event_espresso'); ?>
 </p>

@@ -1,6 +1,6 @@
 <div class="wrap espresso-admin">
 
-	<h2><?php esc_attr_e( 'Event Espresso', 'event_espresso' ); ?>&nbsp;-&nbsp;<?php echo $admin_page_title; ?></h2>
+	<h1><?php esc_attr_e( 'Event Espresso', 'event_espresso' ); ?>&nbsp;-&nbsp;<?php echo $admin_page_title; ?></h1>
 
 	<div id="ajax-notices-container"></div>
 

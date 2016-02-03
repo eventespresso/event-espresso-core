@@ -1,4 +1,4 @@
-<h3><?php _e('Add New Default Price', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Add New Default Price', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to create a new default price for Event Espresso.', 'event_espresso'); ?>
 </p>

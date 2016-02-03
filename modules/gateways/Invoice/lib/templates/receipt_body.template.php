@@ -282,7 +282,7 @@ $tax_total_line_item;
 
 				<?php if($shameless_plug){?>
 				<div class='aln-cntr'><?php
-					printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
+					printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='https://eventespresso.com'>","</a>");
 				?></div>
 				<?php } ?>
 			</div>

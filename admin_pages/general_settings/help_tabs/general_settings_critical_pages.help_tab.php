@@ -1,8 +1,8 @@
-<h2><?php _e('Critical Pages', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Critical Pages', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows all critical pages that Event Espresso needs to work correctly.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Shortcodes', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Shortcodes', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Registration Checkout Page', 'event_espresso'); ?></strong><br />

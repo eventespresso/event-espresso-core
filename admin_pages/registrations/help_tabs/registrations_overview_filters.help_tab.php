@@ -1,4 +1,4 @@
-<h3><?php _e('Registration Filters', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Registration Filters', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Filters are a way to show registrations that fall into certain criteria.', 'event_espresso'); ?>
 </p>

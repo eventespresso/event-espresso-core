@@ -98,7 +98,7 @@ class EEH_Debug_Tools{
 		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
-//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
+			//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
 			$this->espresso_list_hooked_functions();
 			$this->show_times();
 		}
@@ -216,30 +216,30 @@ class EEH_Debug_Tools{
 				break;
 		}
 		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
-	 }
-	 /**
-	  * Measure the memory usage by PHP so far.
-	  * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
-	  * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
-	  * @return void
-	  */
-	 public function measure_memory( $label, $output_now = false ) {
-		 $memory_used = $this->convert( memory_get_peak_usage( true ) );
-		 $this->_memory_usage_points[ $label ] = $memory_used;
-		 if( $output_now ) {
-			 echo "\r\n<br>$label : $memory_used";
-		 }
-	 }
+	}
+	/**
+	 * Measure the memory usage by PHP so far.
+	 * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
+	 * @param boolean $output_now whether to echo now, or wait until EEH_Debug_Tools::show_times() is called
+	 * @return void
+	 */
+	public function measure_memory( $label, $output_now = false ) {
+		$memory_used = $this->convert( memory_get_peak_usage( true ) );
+		$this->_memory_usage_points[ $label ] = $memory_used;
+		if( $output_now ) {
+			echo "\r\n<br>$label : $memory_used";
+		}
+	}
 
-	 /**
-	  * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
-	  * @param int $size
-	  * @return string
-	  */
-	 public function convert( $size ) {
+	/**
+	 * Converts a measure of memory bytes into the most logical units (eg kb, mb, etc)
+	 * @param int $size
+	 * @return string
+	 */
+	public function convert( $size ) {
 		$unit=array('b','kb','mb','gb','tb','pb');
 		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
-	 }
+	}
 
 
 
@@ -250,12 +250,12 @@ class EEH_Debug_Tools{
 	 */
 	public function show_times($output_now=true){
 		$output = '<h2>Times:</h2>' . implode("<br>",$this->_times) . '<h2>Memory</h2>' . implode('<br>', $this->_memory_usage_points );
-		 if($output_now){
-			 echo $output;
-			 return '';
-		 }
+		if($output_now){
+			echo $output;
+			return '';
+		}
 		return $output;
-	 }
+	}
 
 
 
@@ -302,7 +302,20 @@ class EEH_Debug_Tools{
 	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
 		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
-		trigger_error( sprintf( __('%1$s was called <strong>incorrectly</strong>. %2$s %3$s','event_espresso' ), $function, $message, $version ), $error_type );
+		$error_message = sprintf( esc_html__('%1$s was called %2$sincorrectly%3$s. %4$s %5$s','event_espresso' ), $function, '<strong>', '</strong>', $message, $version );
+
+		//don't trigger error if doing ajax, instead we'll add a transient EE_Error notice that in theory should show on the next request.
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$error_message .= esc_html__( 'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ', 'event_espresso' );
+			$error_message .= '<ul><li>';
+			$error_message .= implode( '</li><li>', EE_Registry::instance()->REQ->params() );
+			$error_message .= '</ul>';
+			EE_Error::add_error( $error_message, 'debug::doing_it_wrong', $function, '42' );
+			//now we set this on the transient so it shows up on the next request.
+			EE_Error::get_notices( is_admin(), true );
+		} else {
+			trigger_error( $error_message, $error_type );
+		}
 	}
 
 
@@ -383,12 +396,52 @@ class EEH_Debug_Tools{
 	 * @param bool $var_name
 	 * @param string $file
 	 * @param int $line
-	 * @param string $height
+	 * @param int $header
 	 * @param bool $die
 	 */
-	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = false ) {
+	public static function printv( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+		$var_name = ! $var_name ? 'string' : $var_name;
+		$heading_tag = 'h';
+		$heading_tag .= is_int( $header ) ? $header : 5;
+		$var_name = ucwords( str_replace( '$', '', $var_name ) );
+		$is_method = method_exists( $var_name, $var );
+		$var_name = ucwords( str_replace( '_', ' ', $var_name ) );
+		ob_start();
+		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
+		echo $is_method
+			? '<span style="color:#999">::</span><span style="color:#E76700">' . $var . '()</span><br />'
+			: '<span style="color:#999"> : </span><span style="color:#E76700">' . $var . '</span><br />';
+		echo '<span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
+		echo '<br />line no: ' . $line . '</span>';
+		echo '</' . $heading_tag . '>';
+		$result = ob_get_clean();
+		if ( $die ) {
+			die( $result );
+		} else {
+			echo $result;
+		}
+	}
+
+
+	/**
+	 *    @ print_r an array
+	 *    @ access public
+	 *    @ return void
+	 *
+	 * @param mixed $var
+	 * @param bool $var_name
+	 * @param string $file
+	 * @param int $line
+	 * @param int $header
+	 * @param bool $die
+	 */
+	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+		$file = str_replace( rtrim( ABSPATH, '\\/' ), '', $file );
 		//$print_r = false;
-		if ( is_object( $var ) ) {
+		if ( is_string( $var ) ) {
+			EEH_Debug_Tools::printv( $var, $var_name, $file, $line, $header, $die );
+			return;
+		} else if ( is_object( $var ) ) {
 			$var_name = ! $var_name ? 'object' : $var_name;
 			//$print_r = true;
 		} else if ( is_array( $var ) ) {
@@ -396,18 +449,18 @@ class EEH_Debug_Tools{
 			//$print_r = true;
 		} else if ( is_numeric( $var ) ) {
 			$var_name = ! $var_name ? 'numeric' : $var_name;
-		} else if ( is_string( $var ) ) {
-			$var_name = ! $var_name ? 'string' : $var_name;
 		} else if ( is_null( $var ) ) {
 			$var_name = ! $var_name ? 'null' : $var_name;
 		}
+		$heading_tag = 'h';
+		$heading_tag .= is_int( $header ) ? $header : 5;
 		$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
 		ob_start();
-		echo '<pre style="display:block; width:100%; height:' . $height . '; border:2px solid light-blue;">';
-		echo '<h5 style="color:#2EA2CC;"><b>' . $var_name . '</b></h5><span style="color:#E76700">';
-		//$print_r ? print_r( $var ) : var_dump( $var );
+		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
+		echo '<span style="color:#999"> : </span><span style="color:#E76700">';
 		var_dump( $var );
-		echo '</span><br /><span style="font-size:10px;font-weight:normal;">' . $file . '<br />line no: ' . $line . '</span></pre>';
+		echo '</span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
+		echo '<br />line no: ' . $line . '</span></' . $heading_tag . '>';
 		$result = ob_get_clean();
 		if ( $die ) {
 			die( $result );

@@ -1,8 +1,8 @@
-<h3><?php _e('Check', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Check', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Adjust the settings for the check payment gateway. This gateway can also be used to accept payments via money orders.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Check Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Check Settings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Title', 'event_espresso'); ?></strong><br />

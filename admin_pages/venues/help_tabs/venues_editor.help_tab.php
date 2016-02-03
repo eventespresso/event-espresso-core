@@ -1,4 +1,4 @@
-<h3><?php _e('Venues Editor', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Venues Editor', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page allows you to create and edit venues with Event Espresso.', 'event_espresso'); ?>
 </p>

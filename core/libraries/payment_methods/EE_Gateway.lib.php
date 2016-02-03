@@ -168,7 +168,7 @@ abstract class EE_Gateway{
 	public function set_settings($settings_array){
 		foreach($settings_array as $name => $value){
 			$property_name = "_".$name;
-			$this->$property_name = $value;
+			$this->{$property_name} = $value;
 		}
 	}
 	/**

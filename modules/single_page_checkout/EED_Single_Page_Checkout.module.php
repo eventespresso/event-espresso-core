@@ -1220,7 +1220,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function display_registration_footer() {
 		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
 			EE_Registry::instance()->CFG->admin->affiliate_id = ! empty( EE_Registry::instance()->CFG->admin->affiliate_id ) ? EE_Registry::instance()->CFG->admin->affiliate_id : 'default';
-			$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
+			$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'https://eventespresso.com/' );
 			$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
 			echo apply_filters(
 				'FHEE__EE_Front_Controller__display_registration_footer',

@@ -55,7 +55,7 @@
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID ); ?>
 
 			<div class="basic-ticket-container">
-				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
+				<h4 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h4>
 				<div style="clear:both"></div>
 				<table class="basic-ticket-info">
 					<thead>
@@ -117,7 +117,7 @@
 				</div>
 			</div>
 			<div class="price-table-container">
-				<h5 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h5>
+				<h4 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h4>
 				<table class="price-table">
 					<thead class="price-table-info"<?php echo $show_price_modifier; ?>>
 						<tr>
@@ -161,7 +161,7 @@
 				</table>
 			</div>
 			<div style="clear:both"></div>
-			<h5 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h5>
+			<h4 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h4>
 			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above) indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
 			<ul class="datetime-tickets-list">
 				<?php echo $ticket_datetimes_list; ?>

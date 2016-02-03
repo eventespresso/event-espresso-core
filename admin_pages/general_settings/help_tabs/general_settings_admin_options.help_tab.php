@@ -1,8 +1,8 @@
-<h2><?php _e('Admin Options', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Admin Options', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e("This page shows various options for your organization.", 'event_espresso'); ?>
 </p>
-<h3><?php _e('Debug / Logging Options', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Debug / Logging Options', 'event_espresso'); ?></strong></p>
 <p class="ee-attention">
 <?php _e('Notice: Your log files may be publicly accessible. Logging should be turned off when its not needed.', 'event_espresso'); ?>
 </p>
@@ -33,7 +33,7 @@
 define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 </li>
 </ul>
-<h3><?php _e('Promote Event Espresso', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Promote Event Espresso', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Link to Event Espresso in your Registration Page?', 'event_espresso'); ?></strong><br />
@@ -44,7 +44,7 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 <?php _e(' You can also monetize this link by signing up to our <a href="http://eventespresso.com/affiliates/">affiliate program</a> and adding in your affiliate ID here.', 'event_espresso'); ?>
 </li>
 </ul>
-<h3><?php _e('Help Tour Global Activation', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Help Tour Global Activation', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Turn help tours off or on.', 'event_espresso'); ?>
 </p>

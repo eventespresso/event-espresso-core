@@ -1,4 +1,4 @@
-<h3><?php _e('Event Registration Options', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Event Registration Options', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Customize the registration for your event.', 'event_espresso'); ?>
 </p>

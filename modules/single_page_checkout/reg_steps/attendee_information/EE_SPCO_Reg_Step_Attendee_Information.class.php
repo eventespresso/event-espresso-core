@@ -465,138 +465,106 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return EE_Form_Input_Base
 	 */
 	private function _generate_question_input( EE_Registration $registration, EE_Question $question, $answer ){
-		//		d( $registration );
-		//		d( $question );
-		//		d( $answer );
-		// array of params to pass to parent constructor.
-		// possible values:
-		//		html_id;
-		//		html_class;
-		//		html_style;
-		//		name;
-		//		html_name;
-		//		html_label_id;
-		//		html_label_class;
-		//		html_label_style;
-		//		html_label_text;
-		//		html_label;
-		//		html_help_text;
-		//		html_help_class = 'description';
-		//		html_help_style;
-		//		raw_value;
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
-
-		$input_constructor_args = array(
-			'html_name' 			=> 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
-			'html_id' 					=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-			'html_class' 			=> 'ee-reg-qstn ee-reg-qstn-' . $identifier,
-			'required' 				=> $question->required() ? TRUE : FALSE,
-			'html_label_id'		=> 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-			'html_label_class'	=> 'ee-reg-qstn',
-			'html_label_text'		=> $question->display_text(),
-			'required_validation_error_message' => $question->required_text()
-		);
-		// has this question been answered ?
-		if ( $answer instanceof EE_Answer ) {
-			if ( $answer->ID() ) {
-				$input_constructor_args['html_name'] 		.= '[' . $answer->ID() . ']';
-				$input_constructor_args['html_id'] 				.= '-' . $answer->ID();
-				$input_constructor_args['html_label_id'] 	.= '-' . $answer->ID();
-			}
-			$input_constructor_args['default'] = $answer->value();
-		}
-		//add "-lbl" to the end of the label id
-		$input_constructor_args['html_label_id'] 	.= '-lbl';
-		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $question->system_ID() );
-		if( EEM_Question::instance()->question_type_is_in_category(  $question->type(), 'text' ) ) {
-			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy( 
-				null, 
-				min( 
-					$max_max_for_question, 
-					$question->max() 
-				) 
-			);
-		}
-		$input_constructor_args = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
-				$input_constructor_args,
-				$registration,
-				$question,
-				$answer
-				);
-
 		$this->_required_questions[ $identifier ] = $question->required() ? true : false;
-
-		switch ( $question->type() ) {
-			// Text
-			case EEM_Question::QST_type_text :
-				if( $identifier == 'email' ){
-					return new EE_Email_Input( $input_constructor_args );
-				}else{
-					return new EE_Text_Input( $input_constructor_args );
-				}
-				break;
-			// Textarea
-			case EEM_Question::QST_type_textarea :
-				return new EE_Text_Area_Input( $input_constructor_args );
-				break;
-			// Radio Buttons
-			case EEM_Question::QST_type_radio :
-				return new EE_Radio_Button_Input( $question->options(), $input_constructor_args );
-				break;
-			// Dropdown
-			case EEM_Question::QST_type_dropdown :
-				return new EE_Select_Input( $question->options(), $input_constructor_args );
-				break;
-			// State Dropdown
-			case EEM_Question::QST_type_state :
-				$state_options = array( '' => array( '' => ''));
-				$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
-				if ( ! empty( $states )) {
-					foreach( $states as $state ){
-						if ( $state instanceof EE_State ) {
-							$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
-						}
-					}
-				}
-				$state_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', $state_options, $this, $registration, $question, $answer );
-				return new EE_State_Select_Input( $state_options, $input_constructor_args );
-				break;
-			// Country Dropdown
-			case EEM_Question::QST_type_country :
-				$country_options = array( '' => '' );
-				// get possibly cached list of countries
-				$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
-				if ( ! empty( $countries )) {
-					foreach( $countries as $country ){
-						if ( $country instanceof EE_Country ) {
-							$country_options[ $country->ID() ] = $country->name();
-						}
-					}
-				}
-				$country_options = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', $country_options, $this, $registration, $question, $answer );
-				return new EE_Country_Select_Input( $country_options, $input_constructor_args );
-				break;
-			// Checkboxes
-			case EEM_Question::QST_type_checkbox :
-				return new EE_Checkbox_Multi_Input( $question->options(), $input_constructor_args );
-				break;
-			// Date
-			case EEM_Question::QST_type_date :
-				return new EE_Datepicker_Input( $input_constructor_args );
-				break;
-			case EEM_Question::QST_type_html_textarea :
-				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
-				$input =  new EE_Text_Area_Input( $input_constructor_args );
-				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
-				return $input;
-			// fallback
-			default :
-				$default_input = apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default', null, $question->type(), $question, $input_constructor_args );
-				if( ! $default_input ){
-					$default_input = new EE_Text_Input( $input_constructor_args );
-				}
-				return $default_input;
+		add_filter( 'FHEE__EE_Question__generate_form_input__country_options', array( $this, 'use_cached_countries_for_form_input' ), 10, 4 );
+		add_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ), 10, 4 );
+		$input_constructor_args = array(
+			'html_name'     => 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
+			'html_id'       => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
+			'html_class'    => 'ee-reg-qstn ee-reg-qstn-' . $identifier,
+			'html_label_id' => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
+			'html_label_class'	=> 'ee-reg-qstn',
+		);
+		$input_constructor_args['html_label_id'] 	.= '-lbl';
+		if ( $answer instanceof EE_Answer && $answer->ID() ) {
+			$input_constructor_args[ 'html_name' ] .= '[' . $answer->ID() . ']';
+			$input_constructor_args[ 'html_id' ] .= '-' . $answer->ID();
+			$input_constructor_args[ 'html_label_id' ] .= '-' . $answer->ID();
 		}
+		$form_input =  $question->generate_form_input(
+			$registration,
+			$answer,
+			$input_constructor_args
+		);
+		remove_filter( 'FHEE__EE_Question__generate_form_input__country_options', array( $this, 'use_cached_countries_for_form_input' ) );
+		remove_filter( 'FHEE__EE_Question__generate_form_input__state_options', array( $this, 'use_cached_states_for_form_input' ) );
+		return $form_input;
+	}
+
+
+
+	/**
+	 * Gets the list of countries for the form input
+	 *
+	 * @param array|null $countries_list
+	 * @param EE_Question $question
+	 * @param EE_Registration $registration
+	 * @return array 2d keys are country IDs, values are their names
+	 */
+	public function use_cached_countries_for_form_input( $countries_list, $question, $registration, $answer ) {
+		$country_options = array( '' => '' );
+		// get possibly cached list of countries
+		$countries = $this->checkout->action == 'process_reg_step' ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
+		if ( ! empty( $countries )) {
+			foreach( $countries as $country ){
+				if ( $country instanceof EE_Country ) {
+					$country_options[ $country->ID() ] = $country->name();
+				}
+			}
+		}
+		if( $question instanceof EE_Question 
+			&& $registration instanceof EE_Registration ) {
+			$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() ) ) );
+		} else {
+			$answer = EE_Answer::new_instance();
+		}
+		$country_options = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
+			$country_options,
+			$this,
+			$registration,
+			$question,
+			$answer
+		);
+		return $country_options;
+	}
+
+
+
+	/**
+	 * Gets the list of states for the form input
+	 *
+	 * @param array|null $states_list
+	 * @param EE_Question $question
+	 * @param EE_Registration $registration
+	 * @return array 2d keys are state IDs, values are their names
+	 */
+	public function use_cached_states_for_form_input( $states_list, $question, $registration, $answer ) {
+		$state_options = array( '' => array( '' => ''));
+		$states = $this->checkout->action == 'process_reg_step' ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_active_states();
+		if ( ! empty( $states )) {
+			foreach( $states as $state ){
+				if ( $state instanceof EE_State ) {
+					$state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
+				}
+			}
+		}
+		if( $question instanceof EE_Question 
+			&& $registration instanceof EE_Registration ) {
+			$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() ) ) );
+		} else {
+			$answer = EE_Answer::new_instance();
+		}
+		$state_options = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
+			$state_options,
+			$this,
+			$registration,
+			$question,
+			$answer
+		);
+		return $state_options;
 	}
 
 
