@@ -628,7 +628,7 @@ class EEH_MSG_Template {
 				),
 				'see_notifications_for' => array(
 					'label' => __( 'View Related Messages', 'event_espresso' ),
-					'css_class' => 'dashicons dashicons-images-alt',
+					'css_class' => 'dashicons dashicons-megaphone',
 				),
 				'generate_now' => array(
 					'label' => __( 'Generate the message now.', 'event_espresso' ),

@@ -395,19 +395,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
 			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  esc_attr__('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		}
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_event_context_link' ) ) {
-			$filtered_messages_url = add_query_arg(
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+			EE_Registry::instance()->load_helper( 'MSG_Template' );
+			$actionlinks[] = EEH_MSG_Template::get_message_action_link(
+				'see_notifications_for',
+				null,
 				array(
-					'filterby' => true,
-					'EVT_ID' => $event->ID(),
-				),
-				EE_MSG_ADMIN_URL
+					'_REG_ID' => $event->ID()
+				)
 			);
-			$actionlinks[] = '
-			<a title="' . esc_attr__( 'View Messages filtered by this Event', 'event_espresso' ) . '" href="' . $filtered_messages_url . '" class="tiny-text">
-				<span class="dashicons dashicons-megaphone ee-icon-size-18"></span>
-			</a>
-			';
 		}
 		return $actionlinks;
 	}
@@ -421,11 +417,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'desc' => __('Event Reports', 'event_espresso')
 				);
 		}
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_event_context_link' ) ) {
-			$items['filtered_messages'] = array(
-				'class' => 'dashicons dashicons-megaphone',
-				'desc' => __( 'View messages filtered by the Event', 'event_espresso' )
-			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
+			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
+				$items['view_related_messages'] = array(
+					'class' => $related_for_icon['css_class'],
+					'desc' => $related_for_icon['label'],
+				);
+			}
 		}
 		return $items;
 	}

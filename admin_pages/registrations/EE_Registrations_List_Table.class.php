@@ -683,21 +683,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		}
 
 		//message list table link (filtered by REG_ID
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_registration_context_link' ) ) {
-			$filtered_messages_url  = add_query_arg(
-				array(
-					'_REG_ID' => $item->ID(),
-					'filterby' => true
-				),
-				EE_MSG_ADMIN_URL
-			);
-			$filtered_messages_link = '
-		<li>
-			<a title="' . esc_attr__( 'View Messages filtered by this Registration', 'event_espresso' ) . '" href="' . $filtered_messages_url . '" class="tiny-text">
-				<span class="dashicons dashicons-megaphone ee-icon-size-18"></span>
-			</a>
-		</li>
-		';
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+			$filtered_messages_link = '<li>'
+			                          . EEH_MSG_Template::get_message_action_link(
+											'see_notifications_for',
+											null,
+											array(
+												'_REG_ID' => $item->ID()
+												)
+											)
+			                          . '</li>';
 		} else {
 			$filtered_messages_link = '';
 		}
