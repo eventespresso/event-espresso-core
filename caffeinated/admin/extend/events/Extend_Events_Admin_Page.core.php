@@ -201,7 +201,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Extend_Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE__Extend_Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
@@ -395,6 +395,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
 			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  esc_attr__('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		}
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_event_context_link' ) ) {
+			$filtered_messages_url = add_query_arg(
+				array(
+					'EVT_ID' => $event->ID(),
+				),
+				EE_MSG_ADMIN_URL
+			);
+			$actionlinks[] = '
+			<a title="' . esc_attr__( 'View Messages filtered by this Event', 'event_espresso' ) . '" href="' . $filtered_messages_url . '" class="tiny-text">
+				<span class="dashicons dashicons-megaphone ee-icon-size-18"></span>
+			</a>
+			';
+		}
 		return $actionlinks;
 	}
 
@@ -407,7 +420,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'desc' => __('Event Reports', 'event_espresso')
 				);
 		}
-		$items['empty'] = array('class'=>'empty', 'desc' => '');
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_event_context_link' ) ) {
+			$items['filtered_messages'] = array(
+				'class' => 'dashicons dashicons-megaphone',
+				'desc' => __( 'View messages filtered by the Event', 'event_espresso' )
+			);
+		}
 		return $items;
 	}
 

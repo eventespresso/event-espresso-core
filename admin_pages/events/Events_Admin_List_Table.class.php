@@ -308,7 +308,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_actions($item) {
-		//todo: remove when attendees is active
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 		$actionlinks = array();
