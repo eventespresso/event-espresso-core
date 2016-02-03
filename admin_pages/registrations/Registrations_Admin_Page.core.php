@@ -58,6 +58,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
+		// for ANY action other than the attendee information reg step...
+		if (
+			! isset( $this->_req_data['processing_registration'] )
+			|| absint( $this->_req_data[ 'processing_registration' ] ) !== 1
+		) {
+			// force cookie expiration by setting time to yesterday
+			setcookie( 'ee_registration_added', '', time() - ( 24 * HOUR_IN_SECONDS ), '/' );
+		}
 	}
 
 
@@ -2070,7 +2078,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$hidden_fields = array(
 			'processing_registration' => array(
 				'type' => 'hidden',
-				'value' => 1
+				'value' => 0
 			),
 			'event_id' => array(
 				'type' => 'hidden',
@@ -2081,14 +2089,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//if the cart is empty then we know we're at step one so we'll display ticket selector
 		$cart = EE_Registry::instance()->SSN->cart();
 		$step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';
+
 		switch ( $step ) {
 			case 'ticket' :
+				$hidden_fields['processing_registration']['value'] = 1;
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
 				$template_args['content'] = EED_Ticket_Selector::instance()->display_ticket_selector( $this->_reg_event );
 				$template_args['step_button_text'] = __('Add Tickets and Continue to Registrant Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = FALSE;
 				break;
 			case 'questions' :
+				$hidden_fields[ 'processing_registration' ][ 'value' ] = 2;
 				$template_args['title'] = __('Step Two: Add Registrant Details for this Registration', 'event_espresso');
 				//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first process_reg_step run.
 				$template_args['content'] = EED_Single_Page_Checkout::registration_checkout_for_admin();
@@ -2098,7 +2109,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$this->_set_add_edit_form_tags( 'process_reg_step', $hidden_fields ); //we come back to the process_registration_step route.
-
+		$template_args[ 'no_backy_backy' ] = sprintf(
+			__(
+				'WARNING!!!%1$sPlease do not use the back button to return to this page for the purpose of%1$sadding another registration. This can result in lost and/or corrupted data.%1$sIf you wish to add another registration, then please click the%1$s"Add Another New Registration" button%1$son the Transaction details page after you are redirected.',
+				'event_espresso'
+			),
+			'\n'
+		);
 		return EEH_Template::display_template(
 			REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php', $template_args, TRUE
 		);
@@ -2166,7 +2183,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					$this->new_registration(); //display next step
 				} else {
 					$query_args['action'] = 'new_registration';
-					$query_args['processing_registration'] = true;
+					$query_args['processing_registration'] = 1;
 					$query_args['event_id'] = $this->_reg_event->ID();
 					$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 				}
@@ -2188,7 +2205,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				if ( ! $transaction instanceof EE_Transaction ) {
 					$query_args = array(
 						'action' => 'new_registration',
-						'processing_registration' => true,
+						'processing_registration' => 2,
 						'event_id' => $this->_reg_event->ID()
 					);
 
