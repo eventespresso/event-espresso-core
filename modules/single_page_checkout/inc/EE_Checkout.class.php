@@ -363,6 +363,7 @@ class EE_Checkout {
 			$step_to_skip->set_completed();
 			// advance to the next step
 			$this->set_current_step( $this->next_step->slug() );
+			EE_Registry::instance()->REQ->set( 'step', $this->current_step->slug() );
 			if ( $this->current_step->slug() == $this->next_step->slug() ) {
 				// advance to the next step
 				$this->set_next_step();
