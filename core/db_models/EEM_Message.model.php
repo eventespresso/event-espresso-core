@@ -271,11 +271,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	 * @return array
 	 */
 	public function filter_by_query_params() {
-		//expected possible query_vars, the key in this array matches an expected key in the request, the value, matches
-		//the corresponding EEM_Base child reference.
+		// expected possible query_vars, the key in this array matches an expected key in the request,
+		// the value, matches the corresponding EEM_Base child reference.
 		$expected_vars = $this->_expected_vars_for_query_inject();
 		$query_params[0] = array();
-		EE_Registry::instance()->load_class( 'Request_Handler' );
 		foreach ( $expected_vars as $request_key => $model_name ) {
 			if ( $request_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
 				//special case
@@ -316,7 +315,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 			if ( $model_field_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
 				switch ( $request_key ) {
 					case '_REG_ID' :
-						$label_parts[] = sprintf( esc_html__( 'Registration with the ID: %s', 'event_espresso' ), $model_field_value );
+						$label_parts[] = sprintf(
+							esc_html__( 'Registration with the ID: %s', 'event_espresso' ),
+							$model_field_value
+						);
 						break;
 					case 'ATT_ID' :
 						/** @var EE_Attendee $attendee */
@@ -333,7 +335,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 							: sprintf( esc_html__( 'WP User ID: %s', 'event_espresso' ), $model_field_value );
 						break;
 					case 'TXN_ID' :
-						$label_parts[] = sprintf( esc_html__( 'Transaction with the ID: %s', 'event_espresso' ), $model_field_value );
+						$label_parts[] = sprintf(
+							esc_html__( 'Transaction with the ID: %s', 'event_espresso' ),
+							$model_field_value
+						);
 						break;
 					case 'EVT_ID' :
 						/** @var EE_Event $Event */
