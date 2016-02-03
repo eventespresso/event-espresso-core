@@ -157,7 +157,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 *
 	 * @return string    EE_Message status.
 	 */
-	public function column_msg_status( $message ) {
+	public function column_msg_status( EE_Message $message ) {
 		return '<span class="ee-status-strip ee-status-strip-td msg-status-' . $message->STS_ID() . '"></span>';
 	}
 
@@ -167,14 +167,17 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 *
 	 * @return string   checkbox
 	 */
-	public function column_cb( $message ) {
+	public function column_cb( EE_Message $message ) {
 		return sprintf( '<input type="checkbox" name="MSG_ID[%s]" value="1" />', $message->ID() );
 	}
 
 
 
-
-	public function column_msg_id( $message ) {
+	/**
+	 * @param EE_Message $message
+	 * @return string
+	 */
+	public function column_msg_id( EE_Message $message ) {
 		return $message->ID();
 	}
 
@@ -184,7 +187,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string    The recipient of the message
 	 */
-	public function column_to( $message ) {
+	public function column_to( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'URL' );
 		$actions = array();
 		if ( $recipient_object = $message->recipient_object() ) {
@@ -212,7 +215,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string   The sender of the message
 	 */
-	public function column_from( $message ) {
+	public function column_from( EE_Message $message ) {
 		return $message->from();
 	}
 
@@ -222,7 +225,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string  The messenger used to send the message.
 	 */
-	public function column_messenger( $message ) {
+	public function column_messenger( EE_Message $message ) {
 		return ucwords( $message->messenger_label() );
 	}
 
@@ -231,7 +234,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string  The message type used to generate the message.
 	 */
-	public function column_message_type( $message ) {
+	public function column_message_type( EE_Message $message ) {
 		return ucwords( $message->message_type_label() );
 	}
 
@@ -240,7 +243,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string  The context the message was generated for.
 	 */
-	public function column_context( $message ) {
+	public function column_context( EE_Message $message ) {
 		return $message->context_label();
 	}
 
@@ -249,7 +252,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string    The timestamp when this message was last modified.
 	 */
-	public function column_modified( $message ) {
+	public function column_modified( EE_Message $message ) {
 		return $message->modified();
 	}
 
@@ -258,7 +261,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string   Actions that can be done on the current message.
 	 */
-	public function column_action( $message ) {
+	public function column_action( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		$action_links = array(
 			'view' => EEH_MSG_Template::get_message_action_link( 'view', $message ),
@@ -302,14 +305,21 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return int | EE_Message[]
 	 */
 	protected function _get_messages( $perpage = 10, $view = 'all', $count = false, $all = false ) {
-		$current_page = isset( $this->_req_data['paged'] ) && ! empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $this->_req_data['perpage'] ) && ! empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $perpage;
+
+		$current_page = isset( $this->_req_data['paged'] ) && ! empty( $this->_req_data['paged'] )
+			? $this->_req_data['paged']
+			: 1;
+
+		$per_page = isset( $this->_req_data['perpage'] ) && ! empty( $this->_req_data['perpage'] )
+			? $this->_req_data['perpage']
+			: $perpage;
+
 		$offset = ( $current_page - 1 ) * $per_page;
 		$limit = $all || $count ? null : array( $offset, $per_page );
 		$query_params = array(
-			'order_by' => empty( $this->_req_data['orderby'] ) ? 'MSG_modified' : $this->_req_data['orderby'],
-			'order' => empty( $this->_req_data['order'] ) ? 'DESC' : $this->_req_data['order'],
-			'limit' => $limit,
+			'order_by' => empty( $this->_req_data[ 'orderby' ] ) ? 'MSG_modified' : $this->_req_data[ 'orderby' ],
+			'order'    => empty( $this->_req_data[ 'order' ] ) ? 'DESC' : $this->_req_data[ 'order' ],
+			'limit'    => $limit,
 		);
 
 		/**
@@ -369,7 +379,9 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		return $count ? EEM_Message::instance()->count( $query_params, null, true ) : EEM_Message::instance()->get_all( $query_params );
+		return $count
+			? EEM_Message::instance()->count( $query_params, null, true )
+			: EEM_Message::instance()->get_all( $query_params );
 
 	}
 } //end EE_Message_List_Table class
