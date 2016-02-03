@@ -11,6 +11,22 @@
 				<p class="description"><?php _e( 'Send a notification to registrants after processing?', 'event_espresso' );?></p><br/>
 				<label></label>
 			</div>
+			<?php if ( isset( $_COOKIE['ee_registration_added'])) : ?>
+			<script>
+				// WHOAH !!! it appears that someone is using the back button from the Transaction admin page
+				// after just adding a new registration... we gotta try to put a stop to that !!!
+				function disableBack() {
+					alert( '<?php echo $no_backy_backy; ?>' );
+					window.history.forward()
+				}
+				window.onload     = disableBack();
+				window.onpageshow = function ( evt ) {
+					if ( evt.persisted ) {
+						disableBack();
+					}
+				}
+			</script>
+		<?php endif; ?>
 		<?php endif; ?>
 		<input id="ee-new-registration-step-button" class="right button button-primary button-large" type="submit" value="<?php echo $step_button_text; ?>" />
 	</div>
