@@ -58,6 +58,18 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
+		// IF a registration was JUST added via the admin...
+		if (
+			isset(
+				$this->_req_data[ 'redirect_from' ],
+				$this->_req_data[ 'EVT_ID' ],
+				$this->_req_data[ 'event_name' ]
+			)
+		) {
+			// then set a cookie so that we can block any attempts to use
+			// the back button as a way to enter another registration.
+			setcookie( 'ee_registration_added', uniqid(), time() + ( 24 * HOUR_IN_SECONDS ), '/' );
+		}
 	}
 
 
@@ -658,7 +670,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$this->_admin_page_title .= '">';
 
 				$this->_admin_page_title .= sprintf(
-					__('Add Another Registration to Event: "%1$s" ?'),
+					__('Add Another New Registration to Event: "%1$s" ?'),
 					htmlentities( urldecode( $this->_req_data[ 'event_name' ] ), ENT_QUOTES, 'UTF-8' )
 				);
 				$this->_admin_page_title .= '</a>';
@@ -667,9 +679,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			// to try and enter another registration instead of following the correct routes
 			// but first, we'll clear the session
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
-			EE_Registry::instance()->SSN->set_session_data(
-				array( 'registration_added_for_event' => $this->_req_data[ 'EVT_ID' ] )
-			);
 		}
 		// grab messages at the last second
 		$this->_template_args['notices'] = EE_Error::get_notices();
