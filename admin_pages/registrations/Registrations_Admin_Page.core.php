@@ -117,22 +117,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
-					'add-registrant' => __('Add New Registration', 'event_espresso'),
-					'add-attendee' => __('Add Contact', 'event_espresso'),
-					'edit' => __('Edit Contact', 'event_espresso'),
-					'report'=>  __("Event Registrations CSV Report", "event_espresso"),
-					'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
-					'contact_list_report' => __( 'Contact List Report', 'event_espresso' ),
-					'contact_list_export'=>  __("Export Data", "event_espresso"),
-				),
+				'add-registrant' => __('Add New Registration', 'event_espresso'),
+				'add-attendee' => __('Add Contact', 'event_espresso'),
+				'edit' => __('Edit Contact', 'event_espresso'),
+				'report'=>  __("Event Registrations CSV Report", "event_espresso"),
+				'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
+				'contact_list_report' => __( 'Contact List Report', 'event_espresso' ),
+				'contact_list_export'=>  __("Export Data", "event_espresso"),
+			),
 			'publishbox' => array(
 				'add_new_attendee' => __("Add Contact Record", 'event_espresso'),
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
-				),
+			),
 			'hide_add_button_on_cpt_route' => array(
 				'edit_attendee' => true
-				)
-			);
+			)
+		);
 	}
 
 
@@ -394,7 +394,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 5
-					),
+				),
 			'help_tabs' => array(
 					'registrations_overview_help_tab' => array(
 						'title' => __('Registrations Overview', 'event_espresso'),
@@ -421,7 +421,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
 				'require_nonce' => FALSE
-				),
+			),
 
 			'view_registration' => array(
 				'nav' => array(
@@ -429,29 +429,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
-					),
+				),
                 'help_tabs' => array(
 					'registrations_details_help_tab' => array(
 						'title' => __('Registration Details', 'event_espresso'),
 						'filename' => 'registrations_details'
-						),
+					),
 					'registrations_details_table_help_tab' => array(
 						'title' => __('Registration Details Table', 'event_espresso'),
 						'filename' => 'registrations_details_table'
-						),
+					),
 					'registrations_details_form_answers_help_tab' => array(
 						'title' => __('Registration Form Answers', 'event_espresso'),
 						'filename' => 'registrations_details_form_answers'
-						),
+					),
 					'registrations_details_registrant_details_help_tab' => array(
 						'title' => __('Contact Details', 'event_espresso'),
 						'filename' => 'registrations_details_registrant_details'
-						)
-					),
+					)
+				),
 				'help_tour' => array( 'Registration_Details_Help_Tour' ),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_registration_details_metaboxes' ) ),
 				'require_nonce' => FALSE
-				),
+			),
 
 			'new_registration' => array(
 				'nav' => array(
@@ -459,23 +459,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => '#',
 					'order' => 15,
 					'persistent' => FALSE
-					),
+				),
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'labels' => array(
 					'publishbox' => __('Save Registration', 'event_espresso')
-					),
-				'require_nonce' => FALSE
 				),
+				'require_nonce' => FALSE
+			),
 
 			'add_new_attendee' => array(
 				'nav' => array(
 					'label' => __('Add Contact', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE
-					),
+				),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box', 'attendee_editor_metaboxes' ) ),
 				'require_nonce' => FALSE
-				),
+			),
 
 			'edit_attendee' => array(
 				'nav' => array(
@@ -483,16 +483,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
-					),
+				),
 				'metaboxes' => array('attendee_editor_metaboxes'),
 				'require_nonce' => FALSE
-				),
+			),
 
 			'contact_list' => array(
 				'nav' => array(
 					'label' => __('Contact List', 'event_espresso'),
 					'order' => 20
-					),
+				),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
                 'help_tabs' => array(
 					'registrations_contact_list_help_tab' => array(
@@ -515,13 +515,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
-				),
+			),
 
 			//override default cpt routes
 			'create_new' => '',
 			'edit' => ''
 
-			);
+		);
 	}
 
 
@@ -2012,13 +2012,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function new_registration() {
+		EE_System::do_not_cache();
 		if ( ! $this->_set_reg_event() ) {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 
 		// gotta start with a clean slate if we're not coming here via ajax
-		if ( ! defined('DOING_AJAX' ) && ( ! isset( $this->_req_data['processing_registration'] ) || isset( $this->_req_data['step_error'] ))) {
+		if (
+			! defined('DOING_AJAX' )
+			&& ( ! isset( $this->_req_data['processing_registration'] ) || isset( $this->_req_data['step_error'] ) )
+		) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 
@@ -2033,10 +2037,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['step_content'] = $this->_get_registration_step_content();
 
-		if ( defined('DOING_AJAX' ) )
+		if ( defined('DOING_AJAX' ) ) {
 			$this->_return_json();
-
-
+		}
 		// grab header
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -2056,7 +2059,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string html
 	 */
 	protected function _get_registration_step_content() {
-
+		EE_System::do_not_cache();
 		$template_args = array(
 			'title' => '',
 			'content' => '',
@@ -2135,7 +2138,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function process_reg_step() {
-
+		EE_System::do_not_cache();
 		$this->_set_reg_event();
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 
@@ -2207,8 +2210,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 				$this->_req_data = array();
 				$query_args = array(
-					'action' => 'redirect_to_txn',
-					'TXN_ID' => $transaction->ID(),
+					'action'        => 'redirect_to_txn',
+					'TXN_ID'        => $transaction->ID(),
+					'EVT_ID'        => $this->_reg_event->ID(),
+					'event_name'    => urlencode( $this->_reg_event->name() ),
+					'redirect_from' => 'new_registration'
 				);
 				$this->_redirect_after_action( false, '', '', $query_args, true );
 				break;
@@ -2226,12 +2232,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function redirect_to_txn() {
+		EE_System::do_not_cache();
 		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		$query_args = array(
 			'action' => 'view_transaction',
 			'TXN_ID' => isset( $this->_req_data['TXN_ID'] ) ? absint( $this->_req_data[ 'TXN_ID' ] )  : 0,
 			'page'   => 'espresso_transactions'
 		);
+		if ( isset( $this->_req_data[ 'EVT_ID' ], $this->_req_data[ 'redirect_from' ] ) ) {
+			$query_args['EVT_ID'] = $this->_req_data[ 'EVT_ID' ];
+			$query_args['event_name'] = urlencode( $this->_req_data[ 'event_name' ] );
+			$query_args['redirect_from'] = $this->_req_data[ 'redirect_from' ];
+		}
 		EE_Error::add_success(
 			__( 'Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso' )
 		);
