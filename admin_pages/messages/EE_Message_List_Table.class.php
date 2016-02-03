@@ -306,7 +306,6 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		$per_page = isset( $this->_req_data['perpage'] ) && ! empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $perpage;
 		$offset = ( $current_page - 1 ) * $per_page;
 		$limit = $all || $count ? null : array( $offset, $per_page );
-
 		$query_params = array(
 			'order_by' => empty( $this->_req_data['orderby'] ) ? 'MSG_modified' : $this->_req_data['orderby'],
 			'order' => empty( $this->_req_data['order'] ) ? 'DESC' : $this->_req_data['order'],
@@ -316,7 +315,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		/**
 		 * Any filters coming in from other routes?
 		 */
-		if ( ! $all && isset( $this->_req_data['filterby'] ) ) {
+		if ( isset( $this->_req_data['filterby'] ) ) {
 			$query_params = array_merge( $query_params, EEM_Message::instance()->filter_by_query_params() );
 		}
 
@@ -370,7 +369,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		return $count ? EEM_Message::instance()->count( $query_params ) : EEM_Message::instance()->get_all( $query_params );
+		return $count ? EEM_Message::instance()->count( $query_params, null, true ) : EEM_Message::instance()->get_all( $query_params );
 
 	}
 } //end EE_Message_List_Table class
