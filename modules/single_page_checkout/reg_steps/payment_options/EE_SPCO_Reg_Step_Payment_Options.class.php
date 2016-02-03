@@ -1501,16 +1501,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return TRUE;
 		}
 		// verify payment object
-		if ( $payment instanceof EE_Payment ) {
-			if (
-				$payment->status() != EEM_Payment::status_id_approved
-				&& $payment->status() != EEM_Payment::status_id_pending
-				&& $payment->status() != EEM_Payment::status_id_cancelled
-				&& $payment->gateway_response() != ''
-			) {
-				EE_Error::add_error( $payment->gateway_response(), __FILE__, __FUNCTION__, __LINE__ );
-			}
-		} else {
+		if ( ! $payment instanceof EE_Payment ) {
 			// not a payment
 			EE_Error::add_error(
 				sprintf(
