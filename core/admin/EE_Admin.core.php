@@ -412,13 +412,13 @@ final class EE_Admin {
 
 
 	/**
-	 * Setup nav menu walker item for usage in the event archive nav menu metabox.  It receives a menu_item array with the properites and converts it to the menu item object.
+	 * Setup nav menu walker item for usage in the event archive nav menu metabox.  It receives a menu_item array with the properties and converts it to the menu item object.
 	 *
 	 * @see wp_setup_nav_menu_item() in wp-includes/nav-menu.php
-	 * @param $menuitem
+	 * @param $menu_item_values
 	 * @return stdClass
 	 */
-	private function _setup_extra_nav_menu_pages_items( $menuitem ) {
+	private function _setup_extra_nav_menu_pages_items( $menu_item_values ) {
 		$menu_item = new stdClass();
 		$keys = array(
 			'ID' => 0,
@@ -436,10 +436,10 @@ final class EE_Admin {
 			'description' => '',
 			'classes' => array(),
 			'xfn' => ''
-			);
+		);
 
 		foreach ( $keys as $key => $value) {
-			$menu_item->$key = isset($menuitem[$key]) ? $menuitem[$key] : $value;
+			$menu_item->{$key} = isset( $menu_item_values[ $key]) ? $menu_item_values[ $key] : $value;
 		}
 		return $menu_item;
 	}

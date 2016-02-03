@@ -157,9 +157,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 					// ensure value is an array
 					$value = is_array( $value ) ? $value : array( $value );
 					// and merge with existing values
-					$this->$_key = array_merge( $this->$_key, $value );
+					$this->{$_key} = array_merge( $this->{$_key}, $value );
 				} else {
-					$this->$_key = $value;
+					$this->{$_key} = $value;
 				}
 			}
 		}
