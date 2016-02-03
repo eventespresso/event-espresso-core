@@ -58,10 +58,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
-		// for ANY action other than the attendee information reg step...
+		// when adding a new registration, and it's NOT the attendee information reg step
 		if (
-			! isset( $this->_req_data['processing_registration'] )
-			|| absint( $this->_req_data[ 'processing_registration' ] ) !== 1
+			(
+				isset( $this->_req_data['action'] )
+				&& $this->_req_data[ 'action' ] == 'new_registration'
+			)
+			&& (
+				! isset( $this->_req_data['processing_registration'] )
+				|| absint( $this->_req_data[ 'processing_registration' ] ) !== 1
+			)
 		) {
 			// force cookie expiration by setting time to yesterday
 			setcookie( 'ee_registration_added', '', time() - ( 24 * HOUR_IN_SECONDS ), '/' );
