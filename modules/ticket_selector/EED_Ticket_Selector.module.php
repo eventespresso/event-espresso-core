@@ -427,9 +427,10 @@ class EED_Ticket_Selector extends  EED_Module {
 					__('Register Now', 'event_espresso' ),
 					self::$_event
 				);
+				$external_url = self::$_event->external_url();
 				$html = '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"';
 				$html .= ' class="ticket-selector-submit-btn ';
-				$html .= empty( self::$_event->external_url() ) ? 'ticket-selector-submit-ajax"' : '"';
+				$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
 				$html .= ' type="submit" value="' . $btn_text . '" />';
 				$html .= apply_filters( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', self::$_event );
 				$html .= '<div class="clear"><br/></div></form>';
