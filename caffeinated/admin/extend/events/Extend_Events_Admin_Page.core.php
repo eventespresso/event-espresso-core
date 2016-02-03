@@ -398,6 +398,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'filtered_messages_for_event_context_link' ) ) {
 			$filtered_messages_url = add_query_arg(
 				array(
+					'filterby' => true,
 					'EVT_ID' => $event->ID(),
 				),
 				EE_MSG_ADMIN_URL

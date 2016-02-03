@@ -687,6 +687,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$filtered_messages_url  = add_query_arg(
 				array(
 					'_REG_ID' => $item->ID(),
+					'filterby' => true
 				),
 				EE_MSG_ADMIN_URL
 			);
