@@ -384,7 +384,19 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		} else {
 			// huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
 			// or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			$payment->set_gateway_response( sprintf( __( "IPN Validation failed! Paypal responded with '%s'", "event_espresso" ), $response[ 'body' ] ) );
+			if( is_wp_error(  $response ) ) {
+				$error_msg = sprintf( 
+					__( 'WP Error. Code: "%1$s", Message: "%2$s", Data: "%3$s"', 'event_espresso' ),
+					$response->get_error_code(),
+					$response->get_error_message(),
+					print_r( $response->get_error_data, true )
+				);
+			} elseif( is_array( $response ) && isset( $response[ 'body' ] ) ) {
+				$error_msg = $response[ 'body' ];
+			} else {
+				$error_msg = print_r( $response, true );
+			}
+			$payment->set_gateway_response( sprintf( __( "IPN Validation failed! Paypal responded with '%s'", "event_espresso" ), $error_msg ) );
 			$payment->set_details( array( 'REQUEST' => $update_info, 'VALIDATION_RESPONSE' => $response ) );
 			$payment->set_status( EEM_Payment::status_id_failed );
 			// log the results

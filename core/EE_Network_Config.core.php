@@ -96,9 +96,9 @@ final class EE_Network_Config {
 	private function _load_config() {
 		$config = $this->get_config();
 		foreach ( $config as $prop => $settings ) {
-			$prop_class = is_object( $settings ) ? get_class( $this->$prop ) : FALSE;
+			$prop_class = is_object( $settings ) ? get_class( $this->{$prop} ) : FALSE;
 			if ( ! empty( $settings ) && ( ! $prop_class || ( $settings instanceof $prop_class ))) {
-				$this->$prop = $settings;
+				$this->{$prop} = $settings;
 			}
 		}
 	}

@@ -48,7 +48,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 			// add underscore to $key to match property names
 			$_key = '_' . $key;
 			if ( property_exists( $this, $_key )) {
-					$this->$_key = $value;
+					$this->{$_key} = $value;
 			}
 		}
 		parent::__construct();

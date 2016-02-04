@@ -151,7 +151,7 @@ class EED_Event_Single_Caff  extends EED_Event_Single {
 			foreach ( $template_parts as $key => $template_part ) {
 				$template_part = "display_order_$template_part";
 				$priority = ( $key * 10 ) + 100;
-				EE_Registry::instance()->CFG->template_settings->EED_Event_Single->$template_part = $priority;
+				EE_Registry::instance()->CFG->template_settings->EED_Event_Single->{$template_part} = $priority;
 				do_action( "AHEE__EED_Event_Single__update_event_single_order__$template_part", $priority );
 			}
 			$config_saved = EE_Registry::instance()->CFG->update_espresso_config( false, false );

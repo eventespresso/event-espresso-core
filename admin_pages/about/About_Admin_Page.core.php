@@ -138,7 +138,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		$active_invoice_pm = EEM_Payment_Method::instance()->get_one_active( EEM_Payment_Method::scope_cart, array( array( 'PMD_type' => 'Invoice' ) ) );
 		$active_pms_count = EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart );
 		//done step two if a non-invoice paymetn method is active; or there is more than one PM active, or
-		//if only teh invoice is active but it's clearly been updated
+		//if only the invoice is active but it's clearly been updated
 		$done_step_two = $active_pms_count > 1  ||
 						 ( $active_pms_count === 1 && ! $active_invoice_pm )	||
 						 ( $active_invoice_pm instanceof EE_Payment_Method && (
