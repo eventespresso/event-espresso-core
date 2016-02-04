@@ -58,18 +58,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
-		// IF a registration was JUST added via the admin...
-		if (
-			isset(
-				$this->_req_data[ 'redirect_from' ],
-				$this->_req_data[ 'EVT_ID' ],
-				$this->_req_data[ 'event_name' ]
-			)
-		) {
-			// then set a cookie so that we can block any attempts to use
-			// the back button as a way to enter another registration.
-			setcookie( 'ee_registration_added', uniqid(), time() + ( 24 * HOUR_IN_SECONDS ), '/' );
-		}
 	}
 
 
@@ -246,6 +234,20 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _add_screen_options() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {
+		// IF a registration was JUST added via the admin...
+		if (
+		isset(
+			$this->_req_data[ 'redirect_from' ],
+			$this->_req_data[ 'EVT_ID' ],
+			$this->_req_data[ 'event_name' ]
+		)
+		) {
+			// then set a cookie so that we can block any attempts to use
+			// the back button as a way to enter another registration.
+			setcookie( 'ee_registration_added', $this->_req_data[ 'EVT_ID' ], time() + WEEK_IN_SECONDS, '/' );
+			// and update the global
+			$_COOKIE[ 'ee_registration_added' ] = $this->_req_data[ 'EVT_ID' ];
+		}
 		EE_Registry::$i18n_js_strings[ 'invalid_server_response' ] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings[ 'error_occurred' ] = __( 'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings[ 'txn_status_array' ] = self::$_txn_status;
@@ -675,9 +677,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				);
 				$this->_admin_page_title .= '</a>';
 			}
-			// and let's add a flag to the session so that people don't use the dang back button
-			// to try and enter another registration instead of following the correct routes
-			// but first, we'll clear the session
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		// grab messages at the last second
