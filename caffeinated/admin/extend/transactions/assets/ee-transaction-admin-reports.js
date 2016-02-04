@@ -1,50 +1,100 @@
+var EETxnCharts = {
+    maybeFormatData : function(data) {
+        if ( eei18n.currency_format.formatterObject ) {
+
+            var formatter = new google.visualization.NumberFormat(
+                eei18n.currency_format.formatterObject
+            );
+
+            formatter.format( data, 1 );
+        }
+    },
+
+    getData : function( optionsObject ) {
+        if (
+            typeof optionsObject.revenue === 'undefined'
+        ) {
+            return {}
+        }
+        return google.visualization.arrayToDataTable( optionsObject.revenue );
+    },
+
+    getView : function( data ) {
+        var view = new google.visualization.DataView( data );
+        view.setColumns([0, 1,
+            {
+                calc: "stringify",
+                sourceColumn: 1,
+                type: "string",
+                role: "annotation"
+            }
+        ]);
+        return view;
+    },
+
+    getOptions : function( optionsObject ) {
+        if (
+            typeof optionsObject.title === 'undefined'
+        ) {
+            return {}
+        }
+        return {
+            title: optionsObject.title + ' (' + optionsObject.subtitle.toLowerCase() + ')',
+            legend: { position: 'none' },
+            chart: {
+                title: optionsObject.title,
+                subtitle: optionsObject.subtitle,
+            }
+        }
+    },
+
+
+    getChart : function( optionsObject ) {
+        return new google.visualization.ColumnChart( document.getElementById( optionsObject.id ) );
+    },
+
+    doChart : function( optionsObject ) {
+        if (
+            typeof optionsObject === 'undefined'
+            || typeof optionsObject.id === 'undefined'
+            || optionsObject.noResults
+        ) {
+            document.getElementById(txnRevPerDay.id).innerHTML = txnRevPerDay.noRegsMsg;
+            return false;
+        }
+        return true;
+    },
+
+
+    drawChart : function( optionsObject ) {
+        var data = this.getData( optionsObject );
+        var chart = this.getChart( optionsObject );
+        this.maybeFormatData( data );
+        var options = this.getOptions( optionsObject );
+        var view = this.getView( data );
+        chart.draw( view, options );
+    },
+
+
+    txnPerDayReport : function() {
+        if ( typeof txnRevPerDay !== 'undefined' ) {
+            this.drawChart(txnRevPerDay);
+        }
+    },
+
+
+    txnPerEventReport : function() {
+        if ( typeof txnRevPerEvent !== 'undefined' ) {
+            this.drawChart(txnRevPerEvent);
+        }
+    },
+
+    drawVisualization : function() {
+        EETxnCharts.txnPerEventReport();
+        EETxnCharts.txnPerDayReport();
+    }
+};
+
 // transaction admin reports.
 google.charts.load('current', {'packages':['corechart', 'bar']});
-google.charts.setOnLoadCallback(drawVisualization);
-
-function drawVisualization() {
-    txnPerEventReport();
-    txnPerDayReport();
-}
-
-
-
-function txnPerEventReport() {
-    if ( txnRevPerEvent.noResults ) {
-        document.getElementById(txnRevPerEvent.id).innerHTML = txnRevPerEvent.noRegsMsg;
-    } else {
-        var data = google.visualization.arrayToDataTable( txnRevPerEvent.revenue );
-        var options = {
-            legend: { position: 'none' },
-            vAxis: {
-                format: eei18n.currency_format ? eei18n.currency_format : 'decimal'
-            },
-            chart: {
-                title: txnRevPerEvent.title,
-                subtitle: txnRevPerEvent.subtitle
-            }
-        };
-        var chart = new google.charts.Bar( document.getElementById( txnRevPerEvent.id ) );
-        chart.draw( data, google.charts.Bar.convertOptions( options ) );/**/
-    }
-}
-
-function txnPerDayReport() {
-    if ( txnRevPerDay.noResults ) {
-        document.getElementById(txnRevPerDay.id).innerHTML = txnRevPerDay.noRegsMsg;
-    } else {
-        var data = google.visualization.arrayToDataTable( txnRevPerDay.revenue );
-        var options = {
-            legend: { position: 'none' },
-            vAxis: {
-                format: eei18n.currency_format ? eei18n.currency_format : 'decimal'
-            },
-            chart: {
-                title: txnRevPerDay.title,
-                subtitle: txnRevPerDay.subtitle
-            },
-        }
-        var chart = new google.charts.Bar( document.getElementById( txnRevPerDay.id ) );
-        chart.draw( data, google.charts.Bar.convertOptions( options ) );
-    }
-}
+google.charts.setOnLoadCallback(EETxnCharts.drawVisualization);
