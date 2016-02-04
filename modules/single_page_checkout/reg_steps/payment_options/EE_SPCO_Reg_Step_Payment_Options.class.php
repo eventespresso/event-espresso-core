@@ -216,7 +216,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// anything other than Approved
 				&& $registration->status_ID() !== EEM_Registration::status_id_approved
 				// event hasn't sold out since initial visit
-				&& $registration->event()->is_sold_out()
+				&& $registration->event()->is_sold_out( true )
 			) {
 				// add event to list of events that are sold out
 				$sold_out_events[ $registration->event()->ID() ] = $registration->event();
@@ -366,7 +366,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 								'sold_out_events' 			=> $sold_out_events,
 								'sold_out_events_msg' 	=> apply_filters(
 									'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
-									__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso' )
+									sprintf(
+										__( 'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.%3$s%3$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.%2$s', 'event_espresso' ),
+										'<strong>',
+										'</strong>',
+										'<br />'
+									)
 								)
 							)
 						)
