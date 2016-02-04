@@ -1,4 +1,4 @@
-<h2><?php _e('Registration Details', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Registration Details', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows information for a specific registration.', 'event_espresso'); ?>
 </p>

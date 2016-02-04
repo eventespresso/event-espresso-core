@@ -29,6 +29,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
+
+	/**
+	 * This is used to hold the reports template data which is setup early in the request.
+	 * @type array
+	 */
+	protected $_reports_template_data = array();
+
 	/**
 	 * @Constructor
 	 * @access public
@@ -90,16 +97,24 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	 * @return void
 	 */
 	public function load_scripts_styles_reports() {
-		//styles
-		wp_enqueue_style('jquery-jqplot-css');
-		//scripts
-		global $is_IE;
-		if ( $is_IE ) {
-			wp_enqueue_script( 'excanvas' );
-		}
+		wp_register_script( 'ee-txn-reports-js', TXN_CAF_ASSETS_URL . 'ee-transaction-admin-reports.js', array( 'google-charts' ), EVENT_ESPRESSO_VERSION, true );
+		wp_enqueue_script( 'ee-txn-reports-js' );
+		$this->_transaction_reports_js_setup();
 		EE_Registry::instance()->load_helper('Money');
-		EE_Registry::$i18n_js_strings['currency_format'] = EEH_Money::get_format_for_jqplot();
-		wp_enqueue_script('jqplot-all');
+		EE_Registry::$i18n_js_strings['currency_format'] = EEH_Money::get_format_for_google_charts();
+	}
+
+
+
+
+
+	/**
+	 * This is called when javascript is being enqueued to setup the various data needed for the reports js.
+	 * Also $this->{$_reports_template_data} property is set for later usage by the _transaction_reports method.
+	 */
+	protected function _transaction_reports_js_setup() {
+		$this->_reports_template_data['admin_reports'][] = $this->_revenue_per_day_report();
+		$this->_reports_template_data['admin_reports'][] = $this->_revenue_per_event_report();
 	}
 
 
@@ -108,81 +123,63 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	 * _transaction_reports
 	 * 	generates Business Reports regarding Transactions
 	*
-	 * @access protected
-	*	@return void
+	* @return void
 	*/
 	protected function _transaction_reports() {
-
-		$page_args = array();
-
-		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-//		$page_args['admin_reports'][] = 'chart1';
-
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
-
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_reports_template_data, TRUE );
 
 		// the final template wrapper
 		$this->display_admin_page_with_no_sidebar();
-
 	}
 
 
 
 	/**
 	 * _revenue_per_day_report
-	 * generates Business Report showing Total Revenue per Day
+	 * generates Business Report showing Total Revenue per Day.
 	 *
-	 * @access private
-	 * @param string $period
-	 * @return int
+	 * @param string $period The period (acceptable by PHP Datetime constructor) for which the report is generated.
+	 * @return string
 	 */
 	private function _revenue_per_day_report( $period = '-1 month' ) {
 
 		$report_ID = 'txn-admin-revenue-per-day-report-dv';
-		$report_JS = 'espresso_txn_admin_revenue_per_day';
-
-		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
 		$TXN = EEM_Transaction::instance();
 
 		$results = $TXN->get_revenue_per_day_report( $period );
-		//EEH_Debug_Tools::printr( $results, '$registrations_per_day' );
-		$revenue = array();
-		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-		$xmax = 0;
-		$ymax = 0;
-
 		$results = (array) $results;
+		$revenue = array();
+		$subtitle = '';
 
-		foreach ( $results as $result ) {
-			$revenue[] = array( $result->txnDate, (float)$result->revenue );
-			$xmin = strtotime( $result->txnDate ) < strtotime( $xmin ) ? $result->txnDate : $xmin;
-			$xmax = strtotime( $result->txnDate ) > strtotime( $xmax ) ? $result->txnDate : $xmax;
-			$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
+		if ( $results ) {
+			$revenue[] = array( __( 'Date (only shows dates that have a revenue greater than 1)', 'event_espresso' ), __( 'Total Revenue', 'event_espresso' ) );
+			foreach ( $results as $result ) {
+				if ( $result->revenue > 1 ) {
+					$revenue[] = array( $result->txnDate, (float) $result->revenue );
+				}
+			}
+
+			//setup the date range.
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$beginning_date = new DateTime( 'now' . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$ending_date = new DateTime( 'now', new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
 		}
-
-		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));
-		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-		// calculate # days between our min and max dates
-		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
 
 		$report_title = __( 'Total Revenue per Day' );
 
 		$report_params = array(
 			'title' 		=> $report_title,
+			'subtitle' => $subtitle,
 			'id' 			=> $report_ID,
 			'revenue' => $revenue,
-			'xmin' 		=> $xmin,
-			'xmax' 		=> $xmax,
-			'ymax' 		=> ceil($ymax * 1.25),
-			'span' 		=> $span,
-			'width'		=> ceil(900 / $span),
-			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )
+			'noResults' => empty( $revenue ),
+			'noTxnMsg'	=> sprintf( __( '%sThere are currently no transaction records in the last month for this report.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
 		);
-		wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
+		wp_localize_script( 'ee-txn-reports-js', 'txnRevPerDay', $report_params );
 
 		return $report_ID;
 	}
@@ -191,45 +188,49 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 	/**
 	 * _revenue_per_event_report
-	 * generates Business Report showing total revenue per event
+	 * generates Business Report showing total revenue per event.
 	 *
-	 * @access private
-	 * @param string $period
+	 * @param string $period  The period (acceptable by PHP Datetime constructor) for which the report is generated.
 	 * @return int
 	 */
 	private function _revenue_per_event_report( $period = '-1 month' ) {
 
 		$report_ID = 'txn-admin-revenue-per-event-report-dv';
-		$report_JS = 'espresso_txn_admin_revenue_per_event';
-
-		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
 		$TXN = EEM_Transaction::instance();
-
 		$results = $TXN->get_revenue_per_event_report( $period );
-
-		//EEH_Debug_Tools::printr( $results, '$registrations_per_event' );
-		$revenue = array();
 		$results = (array) $results;
-		foreach ( $results as $result ) {
-			$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ));
-			$event_name = wp_trim_words( $event_name, 5, '...' );
-			$revenue[] = array( $event_name, (float)$result->revenue );
-		}
+		$revenue = array();
+		$subtitle = '';
 
-		$span = $period == 'week' ? 9 : 33;
+		if ( $results ) {
+			$revenue[] = array( __( 'Event (only events that have a revenue greater than 1 are shown)', 'event_espresso' ), __( 'Total Revenue', 'event_espresso' ) );
+			foreach ( $results as $result ) {
+				if ( $result->revenue > 1 ) {
+					$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ) );
+					$event_name = wp_trim_words( $event_name, 5, '...' );
+					$revenue[]  = array( $event_name, (float) $result->revenue );
+				}
+			}
+
+			//setup the date range.
+			EE_Registry::instance()->load_helper( 'DTT_Helper' );
+			$beginning_date = new DateTime( 'now' . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$ending_date = new DateTime( 'now', new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
+			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
+		}
 
 		$report_title = __( 'Total Revenue per Event' );
 
 		$report_params = array(
 			'title' 		=> $report_title,
+			'subtitle' => $subtitle,
 			'id' 			=> $report_ID,
-			'revenue'	=> $revenue,
-			'span' 		=> $span,
-			'width'		=> ceil(900 / $span),
-			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )
+			'revenue' => $revenue,
+			'noResults' => empty( $revenue ),
+			'noTxnMsg'	=> sprintf( __( '%sThere are currently no transaction records in the last month for this report.%s', 'event_espresso' ), '<h2>' . $report_title . '</h2><p>', '</p>' )
 		);
-		wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );
+		wp_localize_script( 'ee-txn-reports-js', 'txnRevPerEvent', $report_params );
 
 		return $report_ID;
 	}

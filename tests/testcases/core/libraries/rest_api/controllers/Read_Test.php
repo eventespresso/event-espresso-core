@@ -290,9 +290,9 @@ class Read_Test extends \EE_UnitTestCase{
 	 * @param string $role
 	 * @return \WP_User
 	 */
-	public function set_current_user_to_new( $role = 'administrator' ){
+	public function set_current_user_to_new(){
 		global $current_user;
-		$current_user = $this->get_wp_user_mock( $role );
+		$current_user = $this->wp_admin_with_ee_caps();
 		return $current_user;
 	}
 

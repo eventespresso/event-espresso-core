@@ -952,3 +952,9 @@ input.ee-register-button {
 	font-color: #dcc;
 	font-weight: normal;
 }
+
+/** Google Chart adjustments **/
+.admin-report-chart-dv {
+	background: #fff;
+	padding: 10px;
+}

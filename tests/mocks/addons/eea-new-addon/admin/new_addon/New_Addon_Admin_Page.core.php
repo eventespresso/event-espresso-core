@@ -81,7 +81,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 			),
 			'usage' => array(
 				'nav' => array(
-					'label' => __('New_Addon Usage', 'event_espresso'),
+					'label' => __('New Addon Usage', 'event_espresso'),
 					'order' => 30
 					),
 				'require_nonce' => FALSE
@@ -100,7 +100,7 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	}
 
 	public function admin_init() {
-		EE_Registry::$i18n_js_strings[ 'confirm_reset' ] = __( 'Are you sure you want to reset ALL your Event Espresso New_Addon Information? This cannot be undone.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'confirm_reset' ] = __( 'Are you sure you want to reset ALL your Event Espresso New Addon Information? This cannot be undone.', 'event_espresso' );
 	}
 
 	public function admin_notices() {}
@@ -157,14 +157,14 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 			foreach($this->_req_data['new_addon'] as $top_level_key => $top_level_value){
 				if(is_array($top_level_value)){
 					foreach($top_level_value as $second_level_key => $second_level_value){
-						if ( EEH_Class_Tools::has_property( $config, $top_level_key ) && EEH_Class_Tools::has_property( $config->$top_level_key, $second_level_key ) && $second_level_value != $config->$top_level_key->$second_level_key ) {
-							$config->$top_level_key->$second_level_key = $this->_sanitize_config_input( $top_level_key, $second_level_key, $second_level_value );
+						if ( EEH_Class_Tools::has_property( $config, $top_level_key ) && EEH_Class_Tools::has_property( $config->{$top_level_key}, $second_level_key ) && $second_level_value != $config->{$top_level_key}->{$second_level_key} ) {
+							$config->{$top_level_key}->{$second_level_key} = $this->_sanitize_config_input( $top_level_key, $second_level_key, $second_level_value );
 							$count++;
 						}
 					}
 				}else{
-					if ( EEH_Class_Tools::has_property($config, $top_level_key) && $top_level_value != $config->$top_level_key){
-						$config->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
+					if ( EEH_Class_Tools::has_property($config, $top_level_key) && $top_level_value != $config->{$top_level_key}){
+						$config->{$top_level_key} = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
 						$count++;
 					}
 				}

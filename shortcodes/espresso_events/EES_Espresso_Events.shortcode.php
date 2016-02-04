@@ -51,13 +51,13 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * @return    void
 	 */
 	public function run( WP $WP ) {
-		if ( ! did_action( 'pre_get_posts' )) {
+		if ( did_action( 'pre_get_posts' ) && did_action( 'send_headers' ) ) {
+			EED_Events_Archive::instance()->event_list();
+		} else {
 			// this will trigger the EED_Events_Archive module's event_list() method during the pre_get_posts hook point,
 			// this allows us to initialize things, enqueue assets, etc,
 			// as well, this saves an instantiation of the module in an array using 'espresso_events' as the key, so that we can retrieve it
-			add_action( 'pre_get_posts', array( EED_Events_Archive::instance(), 'event_list' ));
-		} else {
-			EED_Events_Archive::instance()->event_list();
+			add_action( 'pre_get_posts', array( EED_Events_Archive::instance(), 'event_list' ) );
 		}
 	}
 
@@ -171,7 +171,7 @@ class EE_Event_List_Query extends WP_Query {
 			// if the arg is a property of this class, then it's an EE shortcode arg
 			if ( property_exists( $this, $property )) {
 				// set the property value
-				$this->$property = $value;
+				$this->{$property} = $value;
 				// then remove it from the array of args that will later be passed to WP_Query()
 				unset( $args[ $key ] );
 			}

@@ -139,21 +139,31 @@ function EE_BatchRunner( continue_url, continue_data, continue_callback, cleanup
         var data = this.continue_data;
         data['job_id'] = this.job_id;
         var batch_runner = this;
-        this.do_ajax(this.continue_url, data, function (response, status, xhr) {
-            if (batch_runner.progress_bar instanceof EE_ProgressBar) {
-                batch_runner.progress_bar.update_progress_to(response.data.units_processed, response.data.job_size);
-            }
-            if (typeof( batch_runner.progress_area ) !== 'undefined') {
-                batch_runner.update_progress(response.data.update_text);
-            }
-            if (typeof( batch_runner.continue_callback ) !== 'undefined') {
-                batch_runner.continue_callback(response, status, xhr);
-            }
-            if (response.data.status === 'continue') {
-                batch_runner.continue_job();
-            }
-        });
+        this.do_ajax(this.continue_url, data, function(response, status, xhr) {
+			if (typeof( batch_runner.continue_callback ) !== 'undefined') {
+				batch_runner.continue_callback(response, status, xhr);
+			}
+			batch_runner.handle_continue_response( response );
+		});
     };
+	/**
+	 * Handles the data from the response. If the response is favourable, continues the job
+	 * @param array data
+	 * @returns void
+	 */
+	this.handle_continue_response = function( response ) {
+		var data = response.data;
+		if (this.progress_bar instanceof EE_ProgressBar) {
+			this.progress_bar.update_progress_to(data.units_processed, data.job_size);
+		}
+		if (typeof( this.progress_area ) !== 'undefined') {
+			this.update_progress(data.update_text);
+		}
+		
+		if (data.status === 'continue') {
+			this.continue_job();
+		}
+	};
 
 
 

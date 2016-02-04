@@ -53,7 +53,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertTrue( defined('EE_ADMIN_TEMPLATE') );
 		$this->assertTrue( defined('WP_ADMIN_PATH' ) );
 		$this->assertTrue( defined('WP_AJAX_URL') );
-		$this->assertTrue( defined('JQPLOT_URL') );
 	}
 
 
@@ -301,7 +300,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertContains('Event Registration and Ticketing Powered by', $actual);
 
 		//assert contains eventespresso.com link
-		$this->assertContains('http://eventespresso.com/', $actual);
+		$this->assertContains('https://eventespresso.com/', $actual);
 	}
 
 

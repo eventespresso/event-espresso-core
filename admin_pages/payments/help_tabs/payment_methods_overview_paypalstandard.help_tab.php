@@ -1,8 +1,8 @@
-<h3><?php _e('PayPal Standard', 'event_espresso'); ?></h3>
+<p><strong><?php _e('PayPal Standard', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Adjust the settings for the PayPal Standard payment gateway.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('PayPal Standard Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('PayPal Standard Settings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('PayPal Email', 'event_espresso'); ?></strong><br />

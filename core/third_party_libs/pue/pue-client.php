@@ -1436,7 +1436,7 @@ class PU_PluginInfo {
 
 		foreach(get_object_vars($apiResponse) as $key => $value){
 			$key = str_replace('plugin_', '', $key); //let's strip out the "plugin_" prefix we've added in plugin-updater-classes.
-			$info->$key = $value;
+			$info->{$key} = $value;
 		}
 
 		return $info;
@@ -1458,8 +1458,8 @@ class PU_PluginInfo {
 			'num_ratings', 'downloaded', 'homepage', 'last_updated',
 		);
 		foreach($sameFormat as $field){
-			if ( isset($this->$field) ) {
-				$info->$field = $this->$field;
+			if ( isset($this->{$field}) ) {
+				$info->{$field} = $this->{$field};
 			}
 		}
 
@@ -1536,7 +1536,7 @@ class PluginUpdateUtility {
 		$update = new PluginUpdateUtility();
 		$copyFields = array('id', 'slug', 'version', 'homepage', 'download_url', 'upgrade_notice', 'sections');
 		foreach($copyFields as $field){
-			$update->$field = $info->$field;
+			$update->{$field} = $info->{$field};
 		}
 		return $update;
 	}

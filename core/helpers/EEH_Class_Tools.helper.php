@@ -125,7 +125,7 @@ class EEH_Class_Tools {
 		if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 ) {
 			// just in case $class is an actual instantiated object
 			if ( is_object( $class )) {
-				return isset( $class->$property ) ? TRUE : FALSE;
+				return isset( $class->{$property} ) ? TRUE : FALSE;
 			} else {
 				// use reflection for < PHP 5.3 to get details using just the class name
 				$reflector = new ReflectionClass( $class );

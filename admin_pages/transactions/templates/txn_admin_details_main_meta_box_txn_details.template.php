@@ -1,8 +1,8 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
-	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+	<h3 class="admin-primary-mbox-h4 hdr-has-icon">
 		<span class="dashicons dashicons-cart"></span><?php _e( 'Transaction Items', 'event_espresso' );?>
-	</h4>
+	</h3>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<?php echo $line_item_table; ?>
@@ -20,7 +20,7 @@
 		</a>
 	<br class="clear"/>
 
-		<h4 class="admin-primary-mbox-h4"><?php _e( 'Transaction Session Details', 'event_espresso' );?></h4>
+		<h3 class="admin-primary-mbox-h4"><?php _e( 'Transaction Session Details', 'event_espresso' );?></h3>
 
 		<table id="admin-primary-mbox-txn-extra-session-info-tbl" class="form-table skinny-rows">
 			<tbody>
@@ -40,11 +40,11 @@
 	<br class="clear"/>
 
 
-	<?php if ( $attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) ) : ?>
+	<?php if ( $attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' || ! empty( $payments ) ) ) : ?>
 
-	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+	<h3 class="admin-primary-mbox-h4 hdr-has-icon">
 		<span class="ee-icon ee-icon-cash"></span><?php _e( 'Payment Details', 'event_espresso' );?>
-	</h4>
+	</h3>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl">
