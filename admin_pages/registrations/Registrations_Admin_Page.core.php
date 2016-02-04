@@ -58,20 +58,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
-		// when adding a new registration, and it's NOT the attendee information reg step
-		if (
-			(
-				isset( $this->_req_data['action'] )
-				&& $this->_req_data[ 'action' ] == 'new_registration'
-			)
-			&& (
-				! isset( $this->_req_data['processing_registration'] )
-				|| absint( $this->_req_data[ 'processing_registration' ] ) !== 1
-			)
-		) {
-			// force cookie expiration by setting time to yesterday
-			setcookie( 'ee_registration_added', '', time() - ( 24 * HOUR_IN_SECONDS ), '/' );
-		}
 	}
 
 
@@ -545,6 +531,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _add_screen_options() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {
+		// when adding a new registration, and it's NOT the attendee information reg step
+		if (
+			isset( $this->_req_data[ 'action' ] )
+			&& $this->_req_data[ 'action' ] == 'new_registration'
+			&& (
+				empty( $this->_req_data[ 'processing_registration' ] )
+				|| (
+					isset( $this->_req_data[ 'processing_registration' ] )
+					&& absint( $this->_req_data[ 'processing_registration' ] ) !== 1
+				)
+			)
+		) {
+			// force cookie expiration by setting time to last week
+			setcookie( 'ee_registration_added', 0, time() - WEEK_IN_SECONDS, '/' );
+			// and update the global
+			$_COOKIE[ 'ee_registration_added' ] = 0;
+		}
 		EE_Registry::$i18n_js_strings[ 'update_att_qstns' ] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
 	}
 	public function admin_notices() {}
@@ -2031,7 +2034,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
-
 		// gotta start with a clean slate if we're not coming here via ajax
 		if (
 			! defined('DOING_AJAX' )
@@ -2074,12 +2076,41 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _get_registration_step_content() {
 		EE_System::do_not_cache();
+		if ( isset( $_COOKIE[ 'ee_registration_added' ] ) && $_COOKIE[ 'ee_registration_added' ] ) {
+			$warning_msg = sprintf(
+				__(
+					'%2$sWARNING!!!%3$s%1$sPlease do not use the back button to return to this page for the purpose of adding another registration.%1$sThis can result in lost and/or corrupted data.%1$sIf you wish to add another registration, then please click the%1$s%7$s"Add Another New Registration to Event"%8$s button%1$son the Transaction details page, after you are redirected.%1$s%1$s%4$s redirecting in %5$s seconds %6$s',
+					'event_espresso'
+				),
+				'<br />',
+				'<h3 class="important-notice">',
+				'</h3>',
+				'<div class="float-right">',
+				'<span id="redirect_timer" class="important-notice">30</span>',
+				'</div>',
+				'<b>',
+				'</b>'
+			);
+			return '
+	<div id="ee-add-reg-back-button-dv"><p>' . $warning_msg . '</p></div>
+	<script >
+		// WHOAH !!! it appears that someone is using the back button from the Transaction admin page
+		// after just adding a new registration... we gotta try to put a stop to that !!!
+		var timer = 30;
+		setInterval( function () {
+			jQuery("#redirect_timer").html( parseInt( timer ) );
+	        if ( --timer < 0 ) {
+	            window.history.forward()
+	        }
+	    }, 800 );
+	</script >';
+		}
 		$template_args = array(
-			'title' => '',
-			'content' => '',
-			'step_button_text' => ''
+			'title'                    => '',
+			'content'                  => '',
+			'step_button_text'         => '',
+			'show_notification_toggle' => false
 		);
-
 		//to indicate we're processing a new registration
 		$hidden_fields = array(
 			'processing_registration' => array(
@@ -2116,33 +2147,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_set_add_edit_form_tags( 'process_reg_step', $hidden_fields ); //we come back to the process_registration_step route.
 
-		if ( isset( $_COOKIE[ 'ee_registration_added' ] ) ) {
-			$warning_msg = sprintf(
-				__(
-					'WARNING!!!%1$sPlease do not use the back button to return to this page for the purpose of%1$sadding another registration. This can result in lost and/or corrupted data.%1$sIf you wish to add another registration, then please click the%1$s\"Add Another New Registration\" button%1$son the Transaction details page after you are redirected.',
-					'event_espresso'
-				),
-				'\n'
-			);
-			$template_args[ 'no_backy_backy' ] = '
-	<script >
-		// WHOAH !!! it appears that someone is using the back button from the Transaction admin page
-		// after just adding a new registration... we gotta try to put a stop to that !!!
-		function disableBack() {
-			alert( "' . $warning_msg . '" );
-			window.history.forward()
-		}
-		window.onload = disableBack();
-		window.onpageshow = function ( evt ) {
-			if ( evt.persisted ) {
-				disableBack();
-			}
-		}
-	</script >';
-
-		} else {
-			$template_args[ 'no_backy_backy' ] = '';
-		}
 		return EEH_Template::display_template(
 			REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php', $template_args, TRUE
 		);
@@ -2222,9 +2226,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				}
 				//process registration
 				$transaction = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
-				//EEH_Debug_Tools::printr( EE_Registry::instance()->SSN->cart(), 'EE_Registry::instance()->SSN->cart()', __FILE__, __LINE__ );
-				if ( EE_Registry::instance()->SSN->cart() instanceof EE_Cart ) {
-					$grand_total = EE_Registry::instance()->SSN->cart()->get_cart_grand_total();
+				if ( $cart instanceof EE_Cart ) {
+					$grand_total = $cart->get_cart_grand_total();
 					if ( $grand_total instanceof EE_Line_Item ) {
 						$grand_total->save_this_and_descendants_to_txn();
 					}
