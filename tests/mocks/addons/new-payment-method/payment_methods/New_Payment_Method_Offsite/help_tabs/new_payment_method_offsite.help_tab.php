@@ -1,11 +1,11 @@
-<h3><?php _e('New Payment Method', 'event_espresso'); ?></h3>
+<p><strong><?php _e('New Payment Method', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Adjust the settings for the New Payment Method payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
 <?php printf( __( 'Please contact New Payment Method to find what currencies are supported', 'event_espresso' ) ); ?>
 </p>
-<h3><?php _e('New Payment Method Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('New Payment Method Settings', 'event_espresso'); ?></strong></p>
 <ul>
 	<li>
 <strong><?php _e('Debug Mode', 'event_espresso'); ?></strong><br />

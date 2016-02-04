@@ -109,7 +109,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	public function instantiate_from_array_of_properties($array_of_properties){
 		unset($array_of_properties['class']);
 		foreach($array_of_properties as $property_name => $property_value){
-			$this->$property_name = $property_value;
+			$this->{$property_name} = $property_value;
 		}
 	}
 

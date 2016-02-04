@@ -101,8 +101,8 @@ abstract class EE_Form_Section_Base {
 		// assign incoming values to properties
 		foreach( $options_array as $key => $value ) {
 			$key = '_' . $key;
-			if ( property_exists( $this, $key ) && empty( $this->$key )) {
-				$this->$key = $value;
+			if ( property_exists( $this, $key ) && empty( $this->{$key} )) {
+				$this->{$key} = $value;
 			}
 		}
 	}

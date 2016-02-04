@@ -578,9 +578,9 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		foreach ( $transaction->registrations( $this->_registration_query_params ) as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				if ( $additional_param ) {
-					$response = $registration_processor->$method_name( $registration, $additional_param ) ? TRUE : $response;
+					$response = $registration_processor->{$method_name}( $registration, $additional_param ) ? TRUE : $response;
 				} else {
-					$response = $registration_processor->$method_name( $registration ) ? TRUE : $response;
+					$response = $registration_processor->{$method_name}( $registration ) ? TRUE : $response;
 				}
 			}
 		}
