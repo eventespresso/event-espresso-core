@@ -153,6 +153,9 @@ class Base {
 		$headers = array();
 		$notices = \EE_Error::get_raw_notices();
 		foreach( $notices as $notice_type => $sub_notices ) {
+			if( ! is_array( $sub_notices ) ) {
+				continue;
+			}
 			foreach( $sub_notices as $notice_code => $sub_notice ) {
 				$headers[ 'X-EE4-Notices-' . \EEH_Inflector::humanize( $notice_type ) . '[' . $notice_code . ']' ] = strip_tags( $sub_notice );
 			}
