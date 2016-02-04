@@ -35,7 +35,7 @@ class Meta extends Base {
 			$controller->set_requested_version( $matches[ 'version' ] );
 			return $controller->send_response( $controller->_get_models_metadata_entity() );
 		} catch( \Exception $e ) {
-			$controller->send_response( $e );
+			return $controller->send_response( $e );
 		}
 	}
 

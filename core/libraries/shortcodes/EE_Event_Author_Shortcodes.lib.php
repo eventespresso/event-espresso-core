@@ -121,7 +121,6 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 		$author_id = $event->wp_user();
 		$user_data = get_userdata( (int) $author_id );
 		return $user_data;
-		break;
 	}
 
 

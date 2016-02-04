@@ -628,12 +628,16 @@ class EE_Error extends Exception {
 		// add notice if message exists
 		if ( ! empty( $msg )) {
 			// get error code
-			$error_code = EE_Error::generate_error_code( $file, $func, $line );
+			$notice_code = EE_Error::generate_error_code( $file, $func, $line );
 			if ( WP_DEBUG && $type == 'errors' ) {
-				$msg .= '<br/><span class="tiny-text">' . $error_code . '</span>';
+				$msg .= '<br/><span class="tiny-text">' . $notice_code . '</span>';
 			}
-			// add notice
-			self::$_espresso_notices[ $type ][ $error_code ] = $msg;
+			// add notice. Index by code if it's not blank
+			if( $notice_code ) {
+				self::$_espresso_notices[ $type ][ $notice_code ] = $msg;
+			} else {
+				self::$_espresso_notices[ $type ][] = $msg;
+			}
 			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
 		}
 

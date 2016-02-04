@@ -171,11 +171,24 @@ class EEH_Money extends EEH_Base  {
 		$decimal_places_placeholder = str_pad( '', $currency_config->dec_plc, '0' );
 
 		//first get the decimal place and number of places
-		$format = '#' . $currency_config->thsnds . '##0' . $currency_config->dec_mrk . $decimal_places_placeholder;
+		$format = '#,##0.' . $decimal_places_placeholder;
 
 		//currency symbol on right side.
 		$format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
-		return $format;
+		$formatterObject = array(
+			'decimalSymbol' => $currency_config->dec_mrk,
+			'groupingSymbol' => $currency_config->thsnds,
+			'fractionDigits' => $currency_config->dec_plc,
+		);
+		if ( $currency_config->sign_b4 ) {
+			$formatterObject['prefix'] = $currency_config->sign;
+		} else {
+			$formatterObject['suffix'] = $currency_config->sign;
+		}
+		return array(
+			'format' => $format,
+			'formatterObject' => $formatterObject,
+		);
 	}
 
 } //end class EEH_Money

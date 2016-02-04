@@ -195,7 +195,9 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( empty( $this->_CPT_terms )) {
 			$terms = EEM_Term::instance()->get_all_CPT_post_tags();
 			foreach ( $terms as $term ) {
-				$this->_CPT_terms[ $term->slug() ] = $term;
+				if ( $term instanceof EE_Term ) {
+					$this->_CPT_terms[ $term->slug() ] = $term;
+				}
 			}
 		}
 	}
@@ -350,7 +352,7 @@ class EE_CPT_Strategy extends EE_BASE {
 						return;
 					}
 					// load EE_Request_Handler (this was added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/9037
-					EE_Registry::instance()->load_core( 'Request_Handler' );						
+					EE_Registry::instance()->load_core( 'Request_Handler' );
 					// grab details for the CPT the current query is for
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type
@@ -369,7 +371,7 @@ class EE_CPT_Strategy extends EE_BASE {
 						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
 						EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
 					}
-					$this->_possibly_set_ee_request_var( $post_type );
+					$this->_possibly_set_ee_request_var();
 					// convert post_type to model name
 					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
 					// get CPT table data via CPT Model
@@ -459,11 +461,11 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( is_array( $posts )) {
 			foreach( $posts as $key => $post ) {
 				if ( isset( $this->_CPTs[ $post->post_type ] )) {
-					$post->$CPT_class = $this->CPT_model->instantiate_class_from_post_object( $post );
+					$post->{$CPT_class} = $this->CPT_model->instantiate_class_from_post_object( $post );
 				}
 			}
 		}
-		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 1 );
+		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1 );
 		return $posts;
 	}
 

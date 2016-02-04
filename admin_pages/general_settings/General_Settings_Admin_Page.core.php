@@ -305,9 +305,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		);
 		foreach ( $critical_pages as $critical_page_name => $critical_page_id ) {
 			// has the page changed ?
-			if ( EE_Registry::instance()->CFG->core->$critical_page_name != $critical_page_id ) {
+			if ( EE_Registry::instance()->CFG->core->{$critical_page_name} != $critical_page_id ) {
 				// grab post object for old page
-				$post = get_post( EE_Registry::instance()->CFG->core->$critical_page_name );
+				$post = get_post( EE_Registry::instance()->CFG->core->{$critical_page_name} );
 				// update post shortcodes for old page
 				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
 				// grab post object for new page
