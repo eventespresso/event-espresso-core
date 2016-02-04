@@ -67,6 +67,9 @@ var EETxnCharts = {
 
 
     drawChart : function( optionsObject ) {
+        if ( ! this.doChart( optionsObject ) ) {
+            return;
+        }
         var data = this.getData( optionsObject );
         var chart = this.getChart( optionsObject );
         this.maybeFormatData( data );
