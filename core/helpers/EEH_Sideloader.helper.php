@@ -67,7 +67,7 @@ class EEH_Sideloader extends EEH_Base {
 
 		foreach ( $props as $key => $val ) {
 			if ( EEH_Class_Tools::has_property( $this, $key ) ) {
-				$this->$key = $val;
+				$this->{$key} = $val;
 			}
 		}
 

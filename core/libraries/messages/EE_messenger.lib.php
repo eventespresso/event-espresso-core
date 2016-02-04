@@ -570,7 +570,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	protected function _set_template_value($item, $value) {
 		if ( array_key_exists($item, $this->_template_fields) ) {
 			$prop = '_' . $item;
-			$this->$prop= $value;
+			$this->{$prop}= $value;
 		}
 	}
 
@@ -664,7 +664,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 		foreach ( $template_fields as $template => $value ) {
 			if ( $template !== 'extra' )
-				$this->_set_template_value($template, $message->$template);
+				$this->_set_template_value($template, $message->{$template});
 		}
 	}
 

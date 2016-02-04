@@ -68,7 +68,7 @@ class EE_UnitTest_Factory_for_Specific_Builds {
 			}
 			foreach ( $model_objects as $index => $model_info ) {
 				$fields                         = isset( $model_info['fields'] ) ? $model_info['fields'] : array();
-				$built_objects[ $model_name ][$index] = $this->_factory->$model_property->create( $fields );
+				$built_objects[ $model_name ][$index] = $this->_factory->{$model_property}->create( $fields );
 			}
 		}
 

@@ -310,6 +310,11 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
+	if( typeof( ee_form_section_validation_init ) != 'undefined'
+			&& ee_form_section_validation_init.init == true
+			&& typeof( ee_form_section_vars ) != 'undefined' ) {
+		EEFV.initialize( ee_form_section_vars.form_data );
+	}
 
 });
 
