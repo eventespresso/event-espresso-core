@@ -131,7 +131,12 @@ class Read extends Base {
 				);
 			}
 			$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
+			//assume the related model name is plural and try to find the model's name
 			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
+				//so the word didn't singularize well. Maybe that's just because it's a singular word?
+				$related_model_name_singular = \EEH_Inflector::humanize( $matches[ 'related_model' ] );
+			}
 			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
 				return $controller->send_response(
 					new \WP_Error(

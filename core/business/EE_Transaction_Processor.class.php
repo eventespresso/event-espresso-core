@@ -414,7 +414,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * toggle_abandoned_transaction_status
 	 * upgrades a TXNs status from failed or abandoned to incomplete
-
+	 *
 	 * 	@access public
 	 * @param EE_Transaction $transaction
 	 * 	@return 	boolean
