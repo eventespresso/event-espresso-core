@@ -52,7 +52,7 @@ class Checkin extends Base {
 				new \WP_Error(
 					'rest_registration_toggle_checkin_invalid_id',
 					sprintf(
-						__( 'You cannot checkin registration with ID $1$s because it doesn\'t exist.', 'event_espresso' ),
+						__( 'You cannot checkin registration with ID %1$s because it doesn\'t exist.', 'event_espresso' ),
 						$reg_id
 					),
 					array( 'status' => 422 )
@@ -64,7 +64,7 @@ class Checkin extends Base {
 				new \WP_Error(
 					'rest_user_cannot_toggle_checkin',
 					sprintf(
-						__( 'You are not allowed to checkin registration with ID $1$s.', 'event_espresso' ),
+						__( 'You are not allowed to checkin registration with ID %1$s.', 'event_espresso' ),
 						$reg_id
 					),
 					array( 'status' => 403 )
