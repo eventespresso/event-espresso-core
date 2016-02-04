@@ -69,11 +69,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			10
 		);
 		// handle ticket quantities adjusted in cart
-		add_action(
-			'FHEE__EED_Multi_Event_Registration__adjust_line_item_quantity__line_item_quantity_updated',
-			array( 'EED_Ticket_Sales_Monitor', 'ticket_quantity_updated' ),
-			10, 2
-		);
+		//add_action(
+		//	'FHEE__EED_Multi_Event_Registration__adjust_line_item_quantity__line_item_quantity_updated',
+		//	array( 'EED_Ticket_Sales_Monitor', 'ticket_quantity_updated' ),
+		//	10, 2
+		//);
 		// handle tickets deleted from cart
 		add_action(
 			'FHEE__EED_Multi_Event_Registration__delete_ticket__ticket_removed_from_cart',
