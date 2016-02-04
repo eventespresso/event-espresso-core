@@ -11,7 +11,6 @@
 				<p class="description"><?php _e( 'Send a notification to registrants after processing?', 'event_espresso' );?></p><br/>
 				<label></label>
 			</div>
-			<?php echo $no_backy_backy; ?>
 		<?php endif; ?>
 		<input id="ee-new-registration-step-button" class="right button button-primary button-large" type="submit" value="<?php echo $step_button_text; ?>" />
 	</div>
