@@ -127,7 +127,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	protected function _get_row_class( $item ) {
 		$class = parent::_get_row_class( $item );
 		//add status class
-		$class .= ' ee-status-strip event-status-' . $item->get_active_status();
+		$class .= $item instanceof EE_Event ? ' ee-status-strip event-status-' . $item->get_active_status() : '';
 		if ( $this->_has_checkbox_column ) {
 			$class .= ' has-checkbox-column';
 		}
