@@ -54,6 +54,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 
+
 	/**
 	 * this tests that objects cached using the EE_Registry class abbreviations can be retrieved
 	 *
@@ -585,6 +586,42 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertEquals( $string_indexed_array, $class->array_property() );
 		$this->assertInstanceOf( 'EE_Session_Mock', $class->session_property() );
 		$this->assertEquals( 2, $class->integer_property() );
+	}
+
+
+	/**
+	 * This test verifies that if a dependency map entry has more than one type of class listed as dependencies and they
+	 * are both set as `load_new_object`, then they are actually two distinct objects when the parent object
+	 * is instantiated.
+	 *
+	 * For this test we'll use EE_Messages_Generator because it expects two distinct EE_Message_Queue objects sent into its
+	 * constructor via the dependency map.
+	 *
+	 * @group 9325
+	 * @author Darren Ethier
+	 */
+	public function test_multiple_duplicate_class_different_instance_on_construct_using_dependency_map() {
+		//first register our mock in the dependency map
+		$dependencies = array(
+			'EE_Messages_Queue'                    => EE_Dependency_Map::load_new_object,
+			'EE_Messages_Data_Handler_Collection'  => EE_Dependency_Map::load_new_object,
+			'EE_Message_Template_Group_Collection' => EE_Dependency_Map::load_new_object,
+			'EEH_Parse_Shortcodes'                 => EE_Dependency_Map::load_from_cache,
+		);
+		$registered = EE_Dependency_Map::register_dependencies( 'EE_Messages_Generator_Mock', $dependencies );
+		$this->assertTrue( $registered );
+
+		$mock_paths[] = EE_TESTS_DIR . 'mocks/core/libraries/messages';
+
+		//load the mock generator
+		/** @var EE_Messages_Generator_Mock $generator */
+		$generator = EE_Registry_Mock::instance()->load( $mock_paths, 'EE_', 'Messages_Generator_Mock', '' );
+
+		//verify both queues are distinct
+		$this->assertNotEquals(
+			spl_object_hash( $generator->generation_queue() ),
+			spl_object_hash( $generator->ready_queue() )
+		);
 	}
 
 
