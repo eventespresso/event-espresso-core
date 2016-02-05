@@ -76,7 +76,7 @@ class EE_Registry_Mock extends EE_Registry {
 
 
 
-/**
+	/**
 	 * @access public
 	 * @param string $class_name
 	 * @param string $class_prefix
