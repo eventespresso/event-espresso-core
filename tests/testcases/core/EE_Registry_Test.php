@@ -147,8 +147,6 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @author Darren Ethier
 	 */
 	public function test__load_with_load_only_flag() {
-		// verify that we don't have an instance of file loaded for EE_Answer (and do NOT autoload)
-		$this->assertFalse( class_exists( 'EE_Answer', false ) );
 		// now do a object load request for EE_Answer
 		$class_loaded = EE_Registry_Mock::instance()->load_class( 'EE_Answer' );
 		$this->assertInstanceOf( 'EE_Answer', $class_loaded );
