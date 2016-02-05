@@ -166,6 +166,33 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	}
 
 
+	/**
+	 * Same as previous test except we do a load only call first.  The second call should return the cached object
+	 * and NOT true.
+	 * @author Darren Ethier
+	 * @group 9326
+	 */
+	public function test__load_with_load_only_flag_set_true_on_first_load() {
+		//do load only
+		$loaded = EE_Registry_Mock::instance()->load_class(
+			'EE_Answer',
+			array(),
+			false,
+			true,
+			true //load only set to true.
+		);
+
+		//should return true
+		$this->assertTrue( $loaded );
+		//should be able to access the class now
+		$this->assertTrue( class_exists( 'EE_Answer', false ) );
+
+		//now try to grab an instance of EE_Answer
+		$class_instance = EE_Registry_Mock::instance()->load_class( 'EE_Answer' );
+		$this->assertInstanceOf( 'EE_Answer', $class_instance );
+	}
+
+
 
 
 	/**
