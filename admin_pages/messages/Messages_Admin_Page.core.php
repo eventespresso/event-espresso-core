@@ -2991,7 +2991,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _activate_messenger( $messenger_name ) {
 		/** @var EE_messenger $active_messenger  This will be present because it can't be toggled if it isn't*/
 		$active_messenger = $this->_message_resource_manager->get_messenger( $messenger_name );
-		$message_types_to_activate = $active_messenger->get_default_message_types();
+		$message_types_to_activate = $active_messenger instanceof EE_Messenger ? $active_messenger->get_default_message_types() : array();
 
 		//ensure is active
 		$this->_message_resource_manager->activate_messenger( $messenger_name, $message_types_to_activate );
@@ -3098,9 +3098,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @throws EE_Error
 	 */
 	protected function _setup_response_message_for_activating_messenger_with_message_types(
-		EE_messenger $messenger,
-		EE_message_type $message_type = null
+		$messenger,
+		EE_Message_Type $message_type = null
 	) {
+		//if $messenger isn't a valid messenger object then get out.
+		if ( ! $messenger instanceof EE_Messenger ) {
+			EE_Error::add_error(
+				__( 'The messenger being activated is not a valid messenger', 'event_espresso' ),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return false;
+		}
 		//activated
 		if ( $this->_template_args['data']['active_mts'] ) {
 			EE_Error::overwrite_success();
@@ -3178,9 +3188,21 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return bool
 	 */
 	protected function _setup_response_message_for_deactivating_messenger_with_message_types(
-		EE_messenger $messenger,
+		$messenger,
 		EE_message_type $message_type = null ) {
 		EE_Error::overwrite_success();
+
+		//if $messenger isn't a valid messenger object then get out.
+		if ( ! $messenger instanceof EE_Messenger ) {
+			EE_Error::add_error(
+				__( 'The messenger being activated is not a valid messenger', 'event_espresso' ),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return false;
+		}
+
 		if ( $message_type instanceof EE_message_type ) {
 			$message_type_name = $message_type->name;
 			EE_Error::add_success(
