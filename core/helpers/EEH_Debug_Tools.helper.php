@@ -396,12 +396,52 @@ class EEH_Debug_Tools{
 	 * @param bool $var_name
 	 * @param string $file
 	 * @param int $line
-	 * @param string $height
+	 * @param int $header
 	 * @param bool $die
 	 */
-	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $height = 'auto', $die = false ) {
+	public static function printv( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+		$var_name = ! $var_name ? 'string' : $var_name;
+		$heading_tag = 'h';
+		$heading_tag .= is_int( $header ) ? $header : 5;
+		$var_name = ucwords( str_replace( '$', '', $var_name ) );
+		$is_method = method_exists( $var_name, $var );
+		$var_name = ucwords( str_replace( '_', ' ', $var_name ) );
+		ob_start();
+		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
+		echo $is_method
+			? '<span style="color:#999">::</span><span style="color:#E76700">' . $var . '()</span><br />'
+			: '<span style="color:#999"> : </span><span style="color:#E76700">' . $var . '</span><br />';
+		echo '<span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
+		echo '<br />line no: ' . $line . '</span>';
+		echo '</' . $heading_tag . '>';
+		$result = ob_get_clean();
+		if ( $die ) {
+			die( $result );
+		} else {
+			echo $result;
+		}
+	}
+
+
+	/**
+	 *    @ print_r an array
+	 *    @ access public
+	 *    @ return void
+	 *
+	 * @param mixed $var
+	 * @param bool $var_name
+	 * @param string $file
+	 * @param int $line
+	 * @param int $header
+	 * @param bool $die
+	 */
+	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+		$file = str_replace( rtrim( ABSPATH, '\\/' ), '', $file );
 		//$print_r = false;
-		if ( is_object( $var ) ) {
+		if ( is_string( $var ) ) {
+			EEH_Debug_Tools::printv( $var, $var_name, $file, $line, $header, $die );
+			return;
+		} else if ( is_object( $var ) ) {
 			$var_name = ! $var_name ? 'object' : $var_name;
 			//$print_r = true;
 		} else if ( is_array( $var ) ) {
@@ -409,29 +449,19 @@ class EEH_Debug_Tools{
 			//$print_r = true;
 		} else if ( is_numeric( $var ) ) {
 			$var_name = ! $var_name ? 'numeric' : $var_name;
-		} else if ( is_string( $var ) ) {
-			$var_name = ! $var_name ? 'string' : $var_name;
 		} else if ( is_null( $var ) ) {
 			$var_name = ! $var_name ? 'null' : $var_name;
-		} else {
-			$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
 		}
-		$margin = is_admin() ? 'margin-left:180px;' : '';
+		$heading_tag = 'h';
+		$heading_tag .= is_int( $header ) ? $header : 5;
+		$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
+		$margin = is_admin() ? ' 180px' : '0';
 		ob_start();
-		echo '<pre style="display:block;width:100%;height:'.$height.';border:2px solid light-blue;'.$margin.'">';
-		//$print_r ? print_r( $var ) : var_dump( $var );
-		if ( is_string( $var ) && strpos( $file, $var_name ) !== false ) {
-			echo '<h3 style="color:#999;line-height:.9em;margin: 1em 0 0;"><span style="color:#2EA2CC">' . $var_name
-				 . '</span>::<span style="color:#E76700">' . $var . '()</span></h3>';
-		} else if ( is_string( $var ) ) {
-			echo '<h4 style="color:#2EA2CC;margin:0;">' . $var_name . ' : <span style="color:#E76700">' . $var . '</span></h4>';
-		} else {
-			echo '<h4 style="color:#2EA2CC;"><b>' . $var_name . '</b></h4><span style="color:#E76700">';
-			var_dump( $var );
-			echo '</span><br />';
-		}
-		$file = str_replace( rtrim( EE_PLUGIN_DIR_PATH, '/' ), '', $file );
-		echo '<span style="color:#666;font-size:10px;font-weight:normal;">' . $file . '&nbsp;:&nbsp;' . $line . '</span></pre>';
+		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0'.$margin.';"><b>' . $var_name . '</b>';
+		echo '<span style="color:#999"> : </span><span style="color:#E76700">';
+		var_dump( $var );
+		echo '</span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;margin-left:'.$margin.';">' . $file;
+		echo '<br />line no: ' . $line . '</span></' . $heading_tag . '>';
 		$result = ob_get_clean();
 		if ( $die ) {
 			die( $result );
