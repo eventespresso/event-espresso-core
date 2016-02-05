@@ -144,7 +144,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	/**
 	 * This tests that the _file_loaded_for_class property is retrieved/utilized properly when load_only flag is set to
 	 * true on the EE_Registry instance.
-	 * @author Darren Etheir
+	 * @author Darren Ethier
 	 */
 	public function test__load_with_load_only_flag() {
 		// verify that we don't have an instance of file loaded for EE_Answer (and do NOT autoload)
