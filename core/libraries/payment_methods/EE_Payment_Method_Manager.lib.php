@@ -286,6 +286,10 @@ class EE_Payment_Method_Manager {
 		if( ! $payment_method->button_url() ){
 			$payment_method->set_button_url( $pm_type_obj->default_button_url() );
 		}	
+		//verify the payment method has an ID before addin extra meta
+		if( ! $payment_method->ID() ) {
+			$payment_method->save();
+		}
 		//now add setup its default extra meta properties
 		$extra_metas = $pm_type_obj->settings_form()->extra_meta_inputs();
 		foreach( $extra_metas as $meta_name => $input ){
