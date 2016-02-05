@@ -1,7 +1,7 @@
 <div id="admin-primary-mbox-questions-dv" class="admin-primary-mbox-dv">
 	<p><?php _e('This displays the custom questions and answers for this registrant.  Please note that any answers to system questions have been saved with the contact record.  You can edit those answers via the "View/Edit this Contact" link in the Contact Details metabox in the sidebar.', 'event_espresso'); ?></p>
 	
-	<form name="reg-admin-attendee-questions-frm" id="reg-admin-attendee-questions-frm" action="<?php echo REG_ADMIN_URL; ?>">
+	<form name="reg-admin-attendee-questions-frm" id="reg-admin-attendee-questions-frm" action="<?php echo REG_ADMIN_URL; ?>" method="post">
 		<?php wp_nonce_field( $reg_questions_form_action . '_nonce', $reg_questions_form_action . '_nonce' ); ?>
 		<input  type="hidden" name="page" value="<?php echo REG_PG_SLUG; ?>"/>
 		<input  type="hidden" name="action" value="<?php echo $reg_questions_form_action; ?>"/>

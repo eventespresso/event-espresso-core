@@ -131,7 +131,12 @@ class Read extends Base {
 				);
 			}
 			$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
+			//assume the related model name is plural and try to find the model's name
 			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
+				//so the word didn't singularize well. Maybe that's just because it's a singular word?
+				$related_model_name_singular = \EEH_Inflector::humanize( $matches[ 'related_model' ] );
+			}
 			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
 				return $controller->send_response(
 					new \WP_Error(
@@ -181,6 +186,7 @@ class Read extends Base {
 		}
 
 		$this->_set_debug_info( 'model query params', $query_params );
+		/** @type array $results */
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
 		foreach ( $results as $result ) {
@@ -200,6 +206,7 @@ class Read extends Base {
 	 * The same as Read::get_entities_from_model(), except if the relation
 	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
 	 * the join-model-object into the results
+	 *
 	 * @param string $id the ID of the thing we are fetching related stuff from
 	 * @param \EE_Model_Relation_Base $relation
 	 * @param \WP_REST_Request $request
@@ -251,6 +258,7 @@ class Read extends Base {
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
 		$this->_set_debug_info( 'model query params', $query_params );
+		/** @type array $results */
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
 		foreach( $results as $result ) {
@@ -301,7 +309,7 @@ class Read extends Base {
 	 *                          '{
 	 *                              "EVT_ID":12,
 	 * 								"EVT_name":"star wars party",
-	 * 								"EVT_desc":"so cool...",
+	 * 								"EVT_desc":"this is the party you are looking for...",
 	 * 								"datetimes":[{
 	 * 									"DTT_ID":123,...,
 	 * 									"tickets":[{
@@ -385,7 +393,7 @@ class Read extends Base {
 		if( $model instanceof \EEM_CPT_Base &&
 			$wp_rest_server instanceof \WP_REST_Server &&
 			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
-			$result[ '_links' ][ 'https://api.eventespresso.com/self_wp_post' ] = array(
+			$result[ '_links' ][ \EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post' ] = array(
 				array(
 					'href' => rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
 					'single' => true
@@ -410,7 +418,7 @@ class Read extends Base {
 		foreach( $relation_settings as $relation_name => $relation_obj ) {
 			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
 			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['_links']['https://api.eventespresso.com/' . $related_model_part] = array(
+				$result['_links'][ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
 					array(
 						'href' => $this->get_versioned_link_to(
 							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part
@@ -658,7 +666,15 @@ class Read extends Base {
 		}
 		return $model_ready_query_params;
 	}
-	public function prepare_rest_query_params_values_for_models( $model,  $query_params ) {
+
+
+
+	/**
+	 * @param $model
+	 * @param $query_params
+	 * @return array
+	 */
+	public function prepare_rest_query_params_values_for_models( $model, $query_params ) {
 		$model_ready_query_params = array();
 		foreach( $query_params as $key => $value ) {
 			if( is_array( $value ) ) {
