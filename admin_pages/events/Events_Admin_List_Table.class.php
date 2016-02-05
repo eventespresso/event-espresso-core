@@ -124,7 +124,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	 *
 	 * @return string
 	 */
-	protected function _get_row_class( EE_Event $item ) {
+	protected function _get_row_class( $item ) {
 		$class = parent::_get_row_class( $item );
 		//add status class
 		$class .= ' ee-status-strip event-status-' . $item->get_active_status();
