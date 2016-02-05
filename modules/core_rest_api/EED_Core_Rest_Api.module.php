@@ -425,7 +425,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function latest_rest_api_version() {
 		$versions_served = \EED_Core_Rest_Api::versions_served();
 		return end( array_keys( $versions_served ) );
->>>>>>> origin/master
 	}
 
 	/**
