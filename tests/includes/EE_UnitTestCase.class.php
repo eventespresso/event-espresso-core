@@ -289,7 +289,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function defineAdminConstants() {
-		if ( !defined( 'EE_ADMIN_PAGES' ) )
+		if ( ! defined( 'EE_ADMIN_PAGES' ) )
 			define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
 	}
 
@@ -326,6 +326,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				break;
 			case 'transactions' :
 				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
+				break;
+			case 'messages' :
+				require_once EE_TESTS_DIR . 'mocks/admin/messages/Messages_Admin_Page_Mock.php';
 				break;
 
 		}
