@@ -10,24 +10,25 @@
  */
 class EE_Registry {
 
+
 	/**
-	 *    EE_Registry Object
-	 * @var EE_Registry $_instance
-	 * @access    private
+	 * @type EE_Load_Espresso_Core $espresso_loader
 	 */
-	private static $_instance = null;
+	protected static $_espresso_loader;
+
+	/**
+	 * @var EE_Dependency_Map $_dependency_map
+	 * @access    protected
+	 */
+	protected $_dependency_map = null;
+
+//$this->_dependency_map->_dependency_map()
 
 	/**
 	 * @var array $_class_abbreviations
 	 * @access    protected
 	 */
 	protected $_class_abbreviations = array();
-
-	/**
-	 * @var array $_auto_resolve_dependencies
-	 * @access    protected
-	 */
-	protected $_auto_resolve_dependencies = array();
 
 	/**
 	 *    EE_Cart Object
@@ -170,18 +171,32 @@ class EE_Registry {
 
 
 	/**
-	 * @singleton method used to instantiate class object
-	 * @access public
-	 * @param  \EE_Request  $request
-	 * @param  \EE_Response $response
-	 * @return \EE_Registry instance
+	 * kinda like a singleton, but the instance is a property of EE_Load_Espresso_Core
+	 * and ONLY gets created when the class is initially loaded by EE_Load_Espresso_Core
+	 *
+	 * @param \EE_Load_Espresso_Core $espresso_loader
+	 * @return \EE_Registry
+	 * @throws \EE_Error
 	 */
-	public static function instance( EE_Request $request = null, EE_Response $response = null ) {
-		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EE_Registry ) {
-			self::$_instance = new self( $request, $response );
+	public static function instance( EE_Load_Espresso_Core $espresso_loader = null ) {
+		// if loader is already set, then EE_Registry has already been instantiated
+		if ( self::$_espresso_loader instanceof EE_Load_Espresso_Core ) {
+			return self::$_espresso_loader->registry();
 		}
-		return self::$_instance;
+		// since EE_Load_Espresso_Core is the ONLY class that can inject itself into EE_Registry,
+		// if incoming $espresso_loader is valid, then instantiate EE_Registry
+		if ( $espresso_loader instanceof EE_Load_Espresso_Core ) {
+			return new EE_Registry( $espresso_loader );
+		}
+		throw new EE_Error(
+			sprintf(
+				__(
+					'EE_Registry requires an instance of EE_Load_Espresso_Core to instantiate. "%1$s" was received.',
+					'event_espresso'
+				),
+				print_r( $espresso_loader, true )
+			)
+		);
 	}
 
 
@@ -191,26 +206,32 @@ class EE_Registry {
 	 *
 	 * @Constructor
 	 * @access protected
-	 * @param  \EE_Request  $request
-	 * @param  \EE_Response $response
+	 * @param  \EE_Load_Espresso_Core $espresso_loader
 	 * @return \EE_Registry
 	 */
-	protected function __construct( EE_Request $request, EE_Response $response ) {
+	protected function __construct( EE_Load_Espresso_Core $espresso_loader ) {
+		self::$_espresso_loader = $espresso_loader;
+		add_action( 'EE_Load_Espresso_Core__handle_request__initialize_core_loading', array( $this, 'initialize' ) );
+	}
+
+
+
+	/**
+	 * initialize
+	 */
+	public function initialize() {
+		$this->_dependency_map = self::$_espresso_loader->dependency_map();
 		$this->_class_abbreviations = apply_filters(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array(
-				'EE_Config'          	=> 'CFG',
-				'EE_Session'         	=> 'SSN',
-				'EE_Capabilities'    	=> 'CAP',
-				'EE_Cart' 				=> 'CART',
-				'EE_Network_Config'  	=> 'NET_CFG',
-				'EE_Request_Handler' 	=> 'REQ',
+				'EE_Config'                   => 'CFG',
+				'EE_Session'                  => 'SSN',
+				'EE_Capabilities'             => 'CAP',
+				'EE_Cart'                     => 'CART',
+				'EE_Network_Config'           => 'NET_CFG',
+				'EE_Request_Handler'          => 'REQ',
 				'EE_Message_Resource_Manager' => 'MRM',
 			)
-		);
-		$this->_auto_resolve_dependencies = apply_filters(
-			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
-			EE_Dependency_Map::dependency_map()
 		);
 		// class library
 		$this->LIB = new StdClass();
@@ -220,8 +241,8 @@ class EE_Registry {
 		$this->widgets = new StdClass();
 		$this->load_core( 'Base', array(), true );
 		// add our request and response objects to the cache
-		$this->_set_cached_class( $request, 'EE_Request' );
-		$this->_set_cached_class( $response, 'EE_Response' );
+		$this->_set_cached_class( self::$_espresso_loader->request(), 'EE_Request' );
+		$this->_set_cached_class( self::$_espresso_loader->response(), 'EE_Response' );
 		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ) );
 	}
 
@@ -706,7 +727,7 @@ class EE_Registry {
 	 * 	 	- model objects via their 'new_instance' method
 	 * 	 	- "singleton" classes" via their 'instance' method
 	 *  	- standard instantiable classes via their __constructor
-	 * Prior to instantiation, if the classname exists in the _auto_resolve_dependencies array,
+	 * Prior to instantiation, if the classname exists in the dependency_map,
 	 * then the constructor for the requested class will be examined to determine
 	 * if any dependencies exist, and if they can be injected.
 	 * If so, then those classes will be added to the array of arguments passed to the constructor
@@ -733,11 +754,7 @@ class EE_Registry {
 				? $arguments
 				: array( $arguments );
 			// attempt to inject dependencies ?
-			if (
-				! $from_db
-				&& isset( $this->_auto_resolve_dependencies[ $class_name ] )
-				&& ! $reflector->isSubclassOf( 'EE_Base_Class' )
-			) {
+			if ( $this->_dependency_map->has( $class_name ) ) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
 			// instantiate the class and add to the LIB array for tracking
@@ -867,10 +884,7 @@ class EE_Registry {
 			} else if (
 				// parameter is type hinted as a class, and should be injected
 				! empty( $param_class )
-				&& isset(
-					$this->_auto_resolve_dependencies[ $class_name ],
-					$this->_auto_resolve_dependencies[ $class_name ][ $param_class ]
-				)
+				&& $this->_dependency_map->has_dependency_for_class( $class_name, $param_class )
 			) {
 				$arguments = $this->_resolve_dependency( $class_name, $param_class, $arguments, $index );
 			} else {
@@ -894,10 +908,11 @@ class EE_Registry {
 	protected function _resolve_dependency( $class_name, $param_class , $arguments, $index ) {
 		$dependency = null;
 		// should dependency be loaded from cache ?
-		$cache_on =
-			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] !== EE_Dependency_Map::load_new_object
-				? true
-				: false;
+		$cache_on = $this->_dependency_map->loading_strategy_for_class_dependency(
+			$class_name, $param_class
+		) !== EE_Dependency_Map::load_new_object
+			? true
+			: false;
 		// we might have a dependency...
 		// let's MAYBE try and find it in our cache if that's what's been requested
 		$cached_class = $cache_on ? $this->_get_cached_class( $param_class ) : null;
@@ -906,7 +921,7 @@ class EE_Registry {
 			$dependency = $cached_class;
 		} else if ( $param_class != $class_name ) {
 			// obtain the loader method from the dependency map
-			$loader = EE_Dependency_Map::class_loader( $param_class );
+			$loader = $this->_dependency_map->class_loader( $param_class );
 			// is loader a custom closure ?
 			if ( $loader instanceof Closure ) {
 				$dependency = $loader();
@@ -975,7 +990,7 @@ class EE_Registry {
 	 * @return object
 	 */
 	public static function factory( $classname, $arguments = array() ) {
-		$loader = EE_Dependency_Map::class_loader( $classname );
+		$loader = self::instance()->_dependency_map->class_loader( $classname );
 		if ( $loader instanceof Closure ) {
 			return $loader( $arguments );
 		} else if ( method_exists( EE_Registry::instance(), $loader ) ) {
