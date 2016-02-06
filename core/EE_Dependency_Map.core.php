@@ -20,134 +20,100 @@ class EE_Dependency_Map {
 
 
 	/**
-	 * This instructs the loader to ALWAYS return a newly instantiated object for the requested class.
+	 * This means that the requested class dependency is not present in the dependency map
+	 */
+	const not_registered = 0;
+
+
+	/**
+	 * This instructs class loaders to ALWAYS return a newly instantiated object for the requested class.
 	 */
 	const load_new_object = 1;
 
 	/**
-	 * This instructs the loader to return a previously instantiated and cached object for the requested class.
+	 * This instructs class loaders to return a previously instantiated and cached object for the requested class.
 	 * IF a previously instantiated object does not exist, a new one will be created and added to the cache.
 	 */
 	const load_from_cache = 2;
 
-
 	/**
-	 * @type EE_Dependency_Map $_instance
+	 * @type EE_Load_Espresso_Core $espresso_loader
 	 */
-	protected static $_instance = null;
+	protected static $_espresso_loader;
 
 	/**
 	 * @type array $_dependency_map
 	 */
-	protected static $_dependency_map = array();
+	protected $_dependency_map = array();
 
 	/**
 	 * @type array $_class_loaders
 	 */
-	protected static $_class_loaders = array();
-
-	/**
-	 * @type EE_Request $request
-	 */
-	protected $_request;
-
-	/**
-	 * @type EE_Response $response
-	 */
-	protected $_response;
+	protected $_class_loaders = array();
 
 
 
 	/**
 	 * EE_Dependency_Map constructor.
 	 *
-	 * @param  \EE_Request  $request
-	 * @param  \EE_Response $response
+	 * @param  \EE_Load_Espresso_Core $espresso_loader
 	 */
-	protected function __construct( EE_Request $request, EE_Response $response ) {
-		$this->_request = $request;
-		$this->_response = $response;
-		$this->_register_core_dependencies();
-		$this->_register_core_class_loaders();
+	protected function __construct( EE_Load_Espresso_Core $espresso_loader ) {
+		self::$_espresso_loader = $espresso_loader;
+		add_action( 'EE_Load_Espresso_Core__handle_request__initialize_core_loading', array( $this, 'initialize' ) );
 		do_action( 'EE_Dependency_Map____construct' );
 	}
 
 
 
 	/**
-	 * @singleton method used to instantiate class object
-	 * @access public
-	 * @param  \EE_Request  $request
-	 * @param  \EE_Response $response
-	 * @return \EE_Dependency_Map instance
 	 */
-	public static function instance( EE_Request $request = null, EE_Response $response = null ) {
-		// check if class object is instantiated, and instantiated properly
-		if ( ! self::$_instance instanceof EE_Dependency_Map ) {
-			self::$_instance = new EE_Dependency_Map( $request, $response );
+	public function initialize() {
+		$this->_register_core_dependencies();
+		$this->_register_core_class_loaders();
+	}
+
+
+
+	/**
+	 * kinda like a singleton, but the instance is a property of EE_Load_Espresso_Core
+	 * and ONLY gets created when the class is initially loaded by EE_Load_Espresso_Core
+	 *
+	 * @param \EE_Load_Espresso_Core $espresso_loader
+	 * @return \EE_Dependency_Map
+	 * @throws \EE_Error
+	 */
+	public static function instance( EE_Load_Espresso_Core $espresso_loader = null ) {
+		// if loader is already set, then EE_Dependency_Map has already been instantiated
+		if ( self::$_espresso_loader instanceof EE_Load_Espresso_Core ) {
+			return self::$_espresso_loader->dependency_map();
 		}
-		return self::$_instance;
-	}
-
-
-
-	/**
-	 * @return EE_Request
-	 */
-	public static function request() {
-		return EE_Dependency_Map::instance()->_request;
-	}
-
-
-
-	/**
-	 * @return EE_Response
-	 */
-	public static function response() {
-		return EE_Dependency_Map::instance()->_response;
-	}
-
-
-
-	/**
-	 * @return array
-	 */
-	public static function dependency_map() {
-		return self::$_dependency_map;
+		// since EE_Load_Espresso_Core is the ONLY class that can inject itself into EE_Dependency_Map,
+		// if incoming $espresso_loader is valid, then instantiate EE_Dependency_Map
+		if ( $espresso_loader instanceof EE_Load_Espresso_Core ) {
+			return new EE_Dependency_Map( $espresso_loader );
+		}
+		throw new EE_Error(
+			sprintf(
+				__( 'EE_Dependency_Map requires an instance of EE_Load_Espresso_Core to instantiate. "%1$s" was received.', 'event_espresso' ),
+				print_r( $espresso_loader, true )
+			)
+		);
 	}
 
 
 
 	/**
 	 * @param string $class
-	 * @param array $dependencies
+	 * @param array  $dependencies
 	 * @return boolean
 	 */
 	public static function register_dependencies( $class, $dependencies ) {
-		if ( ! isset( self::$_dependency_map[ $class ] ) ) {
-			self::$_dependency_map[ $class ] = (array)$dependencies;
+		if ( ! isset( self::$_espresso_loader->dependency_map()->_dependency_map[ $class ] ) ) {
+			self::$_espresso_loader->dependency_map()->_dependency_map[ $class ] = (array)$dependencies;
 			return true;
 		}
 		return false;
-	}
-
-
-
-	/**
-	 * @param string $class_name
-	 * @return string | Closure
-	 */
-	public static function class_loader( $class_name ) {
-		return isset( self::$_class_loaders[ $class_name ] ) ? self::$_class_loaders[ $class_name ] : '';
-	}
-
-
-
-	/**
-	 * @return array
-	 */
-	public static function class_loaders() {
-		return self::$_class_loaders;
 	}
 
 
@@ -168,11 +134,81 @@ class EE_Dependency_Map {
 				)
 			);
 		}
-		if ( ! isset( self::$_class_loaders[ $class_name ] ) ) {
-			self::$_class_loaders[ $class_name ] = $loader;
+		if ( ! isset( self::$_espresso_loader->dependency_map()->_class_loaders[ $class_name ] ) ) {
+			self::$_espresso_loader->dependency_map()->_class_loaders[ $class_name ] = $loader;
 			return true;
 		}
 		return false;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function dependency_map() {
+		return $this->_dependency_map;
+	}
+
+
+
+	/**
+	 * returns TRUE if dependency map contains a listing for the provided class name
+	 *
+	 * @param string $class_name
+	 * @return boolean
+	 */
+	public function has( $class_name = '' ) {
+		return isset( $this->_dependency_map[ $class_name ] ) ? true : false;
+	}
+
+
+
+	/**
+	 * returns TRUE if dependency map contains a listing for the provided class name AND dependency
+	 *
+	 * @param string $class_name
+	 * @param string $dependency
+	 * @return bool
+	 */
+	public function has_dependency_for_class( $class_name = '', $dependency = '' ) {
+		return isset( $this->_dependency_map[ $class_name ], $this->_dependency_map[ $class_name ][ $dependency ] )
+			? true
+			: false;
+	}
+
+
+
+	/**
+	 * returns loading strategy for whether a previously cached dependency should be loaded or a new instance returned
+	 *
+	 * @param string $class_name
+	 * @param string $dependency
+	 * @return int
+	 */
+	public function loading_strategy_for_class_dependency( $class_name = '', $dependency = '' ) {
+		return $this->has_dependency_for_class( $class_name, $dependency )
+			? $this->_dependency_map[ $class_name ][ $dependency ]
+			: EE_Dependency_Map::not_registered;
+	}
+
+
+
+	/**
+	 * @param string $class_name
+	 * @return string | Closure
+	 */
+	public function class_loader( $class_name ) {
+		return isset( $this->_class_loaders[ $class_name ] ) ? $this->_class_loaders[ $class_name ] : '';
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function class_loaders() {
+		return $this->_class_loaders;
 	}
 
 
@@ -186,7 +222,7 @@ class EE_Dependency_Map {
 	 * 		EE_Dependency_Map::load_new_object - generates a new object every time
 	 */
 	protected function _register_core_dependencies() {
-		self::$_dependency_map = array(
+		self::instance()->_dependency_map = array(
 			'EE_Request_Handler' => array(
 				'EE_Request' => EE_Dependency_Map::load_from_cache,
 			),
@@ -266,16 +302,14 @@ class EE_Dependency_Map {
 	 *
 	 */
 	protected function _register_core_class_loaders() {
-		self::$_class_loaders = array(
+		self::instance()->_class_loaders = array(
 			//load_core
 			'EE_Encryption'                        => 'load_core',
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
 			'EE_Request'                   		   => function () {
-				return EE_Dependency_Map::instance()->_request instanceof EE_Request
-					? EE_Dependency_Map::instance()->_request
-					: new EE_Request( $_REQUEST );
+				return self::$_espresso_loader->request();
 			},
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
@@ -316,8 +350,8 @@ class EE_Dependency_Map {
 	 * Primarily used by unit tests.
 	 */
 	public function reset() {
-		self::_register_core_class_loaders();
-		self::_register_core_dependencies();
+		$this->_register_core_class_loaders();
+		$this->_register_core_dependencies();
 	}
 
 
