@@ -216,7 +216,7 @@ class EE_Message_To_Generate {
 		);
 		// validate the message, and if it's good, set some properties
 		try {
-			$message->is_valid( true );
+			$message->is_valid_for_sending_or_generation( true );
 			$this->_valid = true;
 			$this->_messenger = $message->messenger_object();
 			$this->_message_type = $message->message_type_object();
