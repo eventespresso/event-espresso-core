@@ -305,7 +305,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 	/**
-	 * validates messenger and message_type
+	 * validates messenger and message_type (that they are valid EE_messenger and EE_message_type objects).
 	 *
 	 * @param bool $throw_exceptions
 	 * @return bool
@@ -316,6 +316,40 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 			return true;
 		}
 		return false;
+	}
+
+
+	/**
+	 * This validates whether the internal messenger and message type objects are valid for sending.
+	 *
+	 * Three checks are done:
+	 *
+	 * 1. There is a valid messenger object.
+	 * 2. There is a valid message type object.
+	 * 3. The message type object is active for the messenger.
+	 *
+	 * @throws EE_Error  But only if $throw_exceptions is set to true.
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 */
+	public function is_valid_for_sending_or_generation( $throw_exceptions = false ) {
+		$valid = false;
+		if ( $this->is_valid( $throw_exceptions ) ) {
+			/** @var EE_Message_Resource_Manager $message_resource_manager */
+			$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$valid = $message_resource_manager->is_message_type_active_for_messenger( $this->messenger(), $this->message_type() );
+			if ( ! $valid && $throw_exceptions ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'The %1$s message type is not a valid message type for the %2$s messenger so it will not be sent.', 'event_espresso' ),
+						$this->message_type(),
+						$this->messenger()
+					)
+				);
+			}
+		}
+		return $valid;
 	}
 
 
