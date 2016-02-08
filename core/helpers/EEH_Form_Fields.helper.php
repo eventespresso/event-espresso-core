@@ -1433,11 +1433,13 @@ class EEH_Form_Fields {
 				)
 			);
 
+
+
 		//translate month and date
 		global $wp_locale;
 
 		foreach ( $DTTS as $DTT ) {
-			$localized_date = $wp_locale->get_month( date('m', strtotime($DTT->dtt_month)) ) . ' ' . $DTT->dtt_year;
+			$localized_date = $wp_locale->get_month( $DTT->dtt_month_num ) . ' ' . $DTT->dtt_year;
 			$id = $DTT->dtt_month . ' ' . $DTT->dtt_year;
 			$options[] = array(
 				'text' => $localized_date,
