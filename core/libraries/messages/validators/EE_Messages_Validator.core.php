@@ -618,4 +618,39 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 	}
 
+
+
+
+	/**
+	 * Magic getter
+	 * Using this to provide back compat with add-ons referencing deprecated properties.
+	 * @param string $property  Property being requested
+	 * @throws Exception
+	 * @return mixed
+	 */
+	public function __get( $property ) {
+		$expected_properties_map = array(
+			/**
+			 * @deprecated 4.9.0
+			 */
+			'_MSGR' => '_messenger',
+			/**
+			 * @deprecated 4.9.0
+			 */
+			'_MSGTYP' => '_MSGTYP'
+		);
+
+		if ( isset( $expected_properties_map[ $property ] ) ) {
+			return $this->{$expected_properties_map[ $property ]};
+		}
+
+		throw new Exception(
+			sprintf(
+				__( 'The property %1$s being requested on %2$s does not exist', 'event_espresso' ),
+				$property,
+				get_class( $this )
+			)
+		);
+	}
+
 }
