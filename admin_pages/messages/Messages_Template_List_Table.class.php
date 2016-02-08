@@ -110,12 +110,12 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		$msgr_default[0] = array(
 			'id' => 'none_selected',
-			'text' => __( 'Show All', 'event_espresso' )
+			'text' => __( 'Show All Messengers', 'event_espresso' )
 			);
 
 		$mt_default[0] = array(
 			'id' => 'none_selected',
-			'text' => __( 'Show All', 'event_espresso' )
+			'text' => __( 'Show All Message Types', 'event_espresso' )
 			);
 
 		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
@@ -133,11 +133,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 				'id'   => 'no_message_type_options',
 				'text' => __( 'No Message Types active', 'event_espresso' )
 			);
-		}
-
-		if ( count( $m_values ) >= 1  && ! empty( $m_values ) ) {
-			unset( $msgr_filters[0] );
-			$msgr_filters = array_values( $msgr_filters ); //reindex keys
 		}
 
 		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_key( $this->_req_data['ee_messenger_filter_by'] ) : '' );
