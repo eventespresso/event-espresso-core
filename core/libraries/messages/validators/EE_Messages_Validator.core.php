@@ -637,7 +637,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 			/**
 			 * @deprecated 4.9.0
 			 */
-			'_MSGTYP' => '_MSGTYP'
+			'_MSGTYP' => '_message_type'
 		);
 
 		if ( isset( $expected_properties_map[ $property ] ) ) {
