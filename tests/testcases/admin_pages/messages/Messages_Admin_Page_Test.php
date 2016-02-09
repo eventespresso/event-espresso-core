@@ -46,7 +46,7 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 		$activated = $this->_MessagesAdminPage->activate_messenger( 'dummy_messenger' );
 		$this->assertFalse( $activated );
 
-		//verify that the new active_messegner_settings is the same as the original so no corruption.
+		//verify that the new active_messenger_settings is the same as the original so no corruption.
 		$updated_active_messenger_settings = $this->_MessageResourceManager->get_active_messengers_option( true );
 		$this->assertEquals( $original_active_messenger_settings, $updated_active_messenger_settings );
 		//lets just reset notices because we don't care about them for this test.  This prevents a fail from automatically firing.
