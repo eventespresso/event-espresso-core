@@ -74,7 +74,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			'merged_filters'=>$merged_filters,
 			'wp_current_filter'=>$wp_current_filter
 		);
-		$this->_orig_current_user = clone $current_user;
+		$this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
 		parent::setUp();
 		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
