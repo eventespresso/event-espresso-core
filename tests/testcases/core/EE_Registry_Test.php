@@ -35,6 +35,8 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		EE_Dependency_Map::register_class_loader( 'EE_Session_Mock' );
 		EE_Dependency_Map::register_class_loader( 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' );
 		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.core.php';
+		EE_Registry_Mock::instance( EE_Dependency_Map::instance() );
+		EE_Registry_Mock::instance()->initialize();
 		parent::setUp();
 	}
 
@@ -62,17 +64,19 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @author                Brent Christensen
 	 */
 	public function test_get_cached_class_abbreviations() {
-		// verify that EE_Capabilities has not already been loaded
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
+		// verify that EE_Network_Config has not already been loaded
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Network_Config' );
 		$this->assertEquals( null, $cached_class );
-		// create a stdClass object will use to mock the EE_Capabilities class
+		// create a stdClass object will use to mock the EE_Network_Config class
 		$orig_class = new stdClass();
-		$orig_class->name = 'EE_Capabilities';
-		// and manually cache it at EE_Registry_Mock::instance()->CAP
-		EE_Registry_Mock::instance()->CAP = $orig_class;
+		$orig_class->name = 'EE_Network_Config';
+		// and manually cache it at EE_Registry_Mock::instance()->NET_CFG
+		EE_Registry_Mock::instance()->NET_CFG = $orig_class;
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Network_Config' );
 		$this->assertEquals( $orig_class->name, $cached_class->name );
+		// remove what we added
+		EE_Registry_Mock::instance()->NET_CFG = null;
 	}
 
 
@@ -388,10 +392,10 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// create a stdClass object we'll use for a mock
 		$orig_class = new stdClass();
 		$orig_class->name = 'If_This_Is_An_Abbreviated_Class_Name_Then_Why_Is_It_So_Long';
-		// cache it at EE_Registry_Mock::instance()->CAP
-		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'EE_Capabilities' );
+		// cache it at EE_Registry_Mock::instance()->NET_CFG
+		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'EE_Network_Config' );
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->CAP;
+		$cached_class = EE_Registry_Mock::instance()->NET_CFG;
 		$this->assertEquals( $orig_class, $cached_class );
 	}
 
