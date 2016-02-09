@@ -3189,13 +3189,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _setup_response_message_for_deactivating_messenger_with_message_types(
 		$messenger,
-		EE_message_type $message_type = null ) {
+		EE_message_type $message_type = null
+	) {
 		EE_Error::overwrite_success();
 
 		//if $messenger isn't a valid messenger object then get out.
 		if ( ! $messenger instanceof EE_Messenger ) {
 			EE_Error::add_error(
-				__( 'The messenger being activated is not a valid messenger', 'event_espresso' ),
+				__( 'The messenger being deactivated is not a valid messenger', 'event_espresso' ),
 				__FILE__,
 				__FUNCTION__,
 				__LINE__
