@@ -157,7 +157,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 			wp_die( EE_Error::get_notices() );
 		}
 		require_once( EE_CORE . 'EE_Dependency_Map.core.php' );
-		return EE_Dependency_Map::instance( $this );
+		return EE_Dependency_Map::instance( $this->request, $this->response );
 	}
 
 
@@ -177,7 +177,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 			wp_die( EE_Error::get_notices() );
 		}
 		require_once( EE_CORE . 'EE_Registry.core.php' );
-		return EE_Registry::instance( $this );
+		return EE_Registry::instance( $this->dependency_map );
 	}
 
 
