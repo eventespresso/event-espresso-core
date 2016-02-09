@@ -10,19 +10,19 @@
  */
 class EE_Registry {
 
-
 	/**
-	 * @type EE_Load_Espresso_Core $espresso_loader
+	 *    EE_Registry Object
+	 *
+	 * @var EE_Registry $_instance
+	 * @access    private
 	 */
-	protected static $_espresso_loader;
+	private static $_instance = null;
 
 	/**
 	 * @var EE_Dependency_Map $_dependency_map
 	 * @access    protected
 	 */
 	protected $_dependency_map = null;
-
-//$this->_dependency_map->_dependency_map()
 
 	/**
 	 * @var array $_class_abbreviations
@@ -171,32 +171,17 @@ class EE_Registry {
 
 
 	/**
-	 * kinda like a singleton, but the instance is a property of EE_Load_Espresso_Core
-	 * and ONLY gets created when the class is initially loaded by EE_Load_Espresso_Core
-	 *
-	 * @param \EE_Load_Espresso_Core $espresso_loader
-	 * @return \EE_Registry
-	 * @throws \EE_Error
+	 * @singleton method used to instantiate class object
+	 * @access    public
+	 * @param  \EE_Dependency_Map $dependency_map
+	 * @return \EE_Registry instance
 	 */
-	public static function instance( EE_Load_Espresso_Core $espresso_loader = null ) {
-		// if loader is already set, then EE_Registry has already been instantiated
-		if ( self::$_espresso_loader instanceof EE_Load_Espresso_Core ) {
-			return self::$_espresso_loader->registry();
+	public static function instance( \EE_Dependency_Map $dependency_map = null ) {
+		// check if class object is instantiated
+		if ( ! self::$_instance instanceof EE_Registry ) {
+			self::$_instance = new EE_Registry( $dependency_map );
 		}
-		// since EE_Load_Espresso_Core is the ONLY class that can inject itself into EE_Registry,
-		// if incoming $espresso_loader is valid, then instantiate EE_Registry
-		if ( $espresso_loader instanceof EE_Load_Espresso_Core ) {
-			return new EE_Registry( $espresso_loader );
-		}
-		throw new EE_Error(
-			sprintf(
-				__(
-					'EE_Registry requires an instance of EE_Load_Espresso_Core to instantiate. "%1$s" was received.',
-					'event_espresso'
-				),
-				print_r( $espresso_loader, true )
-			)
-		);
+		return self::$_instance;
 	}
 
 
@@ -206,11 +191,11 @@ class EE_Registry {
 	 *
 	 * @Constructor
 	 * @access protected
-	 * @param  \EE_Load_Espresso_Core $espresso_loader
+	 * @param  \EE_Dependency_Map $dependency_map
 	 * @return \EE_Registry
 	 */
-	protected function __construct( EE_Load_Espresso_Core $espresso_loader ) {
-		self::$_espresso_loader = $espresso_loader;
+	protected function __construct( \EE_Dependency_Map $dependency_map ) {
+		$this->_dependency_map = $dependency_map;
 		add_action( 'EE_Load_Espresso_Core__handle_request__initialize_core_loading', array( $this, 'initialize' ) );
 	}
 
@@ -220,7 +205,6 @@ class EE_Registry {
 	 * initialize
 	 */
 	public function initialize() {
-		$this->_dependency_map = self::$_espresso_loader->dependency_map();
 		$this->_class_abbreviations = apply_filters(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array(
@@ -241,8 +225,16 @@ class EE_Registry {
 		$this->widgets = new StdClass();
 		$this->load_core( 'Base', array(), true );
 		// add our request and response objects to the cache
-		$this->_set_cached_class( self::$_espresso_loader->request(), 'EE_Request' );
-		$this->_set_cached_class( self::$_espresso_loader->response(), 'EE_Response' );
+		$request_loader = $this->_dependency_map->class_loader( 'EE_Request' );
+		$this->_set_cached_class(
+			$request_loader(),
+			'EE_Request'
+		);
+		$response_loader = $this->_dependency_map->class_loader( 'EE_Response' );
+		$this->_set_cached_class(
+			$response_loader(),
+			'EE_Response'
+		);
 		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ) );
 	}
 
