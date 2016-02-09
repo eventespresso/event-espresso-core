@@ -236,6 +236,10 @@ class EE_Dependency_Map {
 			'EE_Messages_Template_Defaults' => array(
 				'EEM_Message_Template_Group' => EE_Dependency_Map::load_from_cache,
 				'EEM_Message_Template' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_Message_To_Generate_From_Request' => array(
+				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
+				'EE_Request_Handler' => EE_Dependency_Map::load_from_cache
 			)
 		);
 	}
