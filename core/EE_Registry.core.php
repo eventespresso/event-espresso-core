@@ -12,22 +12,23 @@ class EE_Registry {
 
 	/**
 	 *    EE_Registry Object
+	 *
 	 * @var EE_Registry $_instance
 	 * @access    private
 	 */
 	private static $_instance = null;
 
 	/**
+	 * @var EE_Dependency_Map $_dependency_map
+	 * @access    protected
+	 */
+	protected $_dependency_map = null;
+
+	/**
 	 * @var array $_class_abbreviations
 	 * @access    protected
 	 */
 	protected $_class_abbreviations = array();
-
-	/**
-	 * @var array $_auto_resolve_dependencies
-	 * @access    protected
-	 */
-	protected $_auto_resolve_dependencies = array();
 
 	/**
 	 *    EE_Cart Object
@@ -171,15 +172,14 @@ class EE_Registry {
 
 	/**
 	 * @singleton method used to instantiate class object
-	 * @access public
-	 * @param  \EE_Request  $request
-	 * @param  \EE_Response $response
+	 * @access    public
+	 * @param  \EE_Dependency_Map $dependency_map
 	 * @return \EE_Registry instance
 	 */
-	public static function instance( EE_Request $request = null, EE_Response $response = null ) {
+	public static function instance( \EE_Dependency_Map $dependency_map = null ) {
 		// check if class object is instantiated
 		if ( ! self::$_instance instanceof EE_Registry ) {
-			self::$_instance = new self( $request, $response );
+			self::$_instance = new EE_Registry( $dependency_map );
 		}
 		return self::$_instance;
 	}
@@ -191,26 +191,31 @@ class EE_Registry {
 	 *
 	 * @Constructor
 	 * @access protected
-	 * @param  \EE_Request  $request
-	 * @param  \EE_Response $response
+	 * @param  \EE_Dependency_Map $dependency_map
 	 * @return \EE_Registry
 	 */
-	protected function __construct( EE_Request $request, EE_Response $response ) {
+	protected function __construct( \EE_Dependency_Map $dependency_map ) {
+		$this->_dependency_map = $dependency_map;
+		add_action( 'EE_Load_Espresso_Core__handle_request__initialize_core_loading', array( $this, 'initialize' ) );
+	}
+
+
+
+	/**
+	 * initialize
+	 */
+	public function initialize() {
 		$this->_class_abbreviations = apply_filters(
 			'FHEE__EE_Registry____construct___class_abbreviations',
 			array(
-				'EE_Config'          	=> 'CFG',
-				'EE_Session'         	=> 'SSN',
-				'EE_Capabilities'    	=> 'CAP',
-				'EE_Cart' 				=> 'CART',
-				'EE_Network_Config'  	=> 'NET_CFG',
-				'EE_Request_Handler' 	=> 'REQ',
+				'EE_Config'                   => 'CFG',
+				'EE_Session'                  => 'SSN',
+				'EE_Capabilities'             => 'CAP',
+				'EE_Cart'                     => 'CART',
+				'EE_Network_Config'           => 'NET_CFG',
+				'EE_Request_Handler'          => 'REQ',
 				'EE_Message_Resource_Manager' => 'MRM',
 			)
-		);
-		$this->_auto_resolve_dependencies = apply_filters(
-			'FHEE__EE_Registry____construct___auto_resolve_dependencies',
-			EE_Dependency_Map::dependency_map()
 		);
 		// class library
 		$this->LIB = new StdClass();
@@ -220,8 +225,16 @@ class EE_Registry {
 		$this->widgets = new StdClass();
 		$this->load_core( 'Base', array(), true );
 		// add our request and response objects to the cache
-		$this->_set_cached_class( $request, 'EE_Request' );
-		$this->_set_cached_class( $response, 'EE_Response' );
+		$request_loader = $this->_dependency_map->class_loader( 'EE_Request' );
+		$this->_set_cached_class(
+			$request_loader(),
+			'EE_Request'
+		);
+		$response_loader = $this->_dependency_map->class_loader( 'EE_Response' );
+		$this->_set_cached_class(
+			$response_loader(),
+			'EE_Response'
+		);
 		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ) );
 	}
 
@@ -360,7 +373,7 @@ class EE_Registry {
 	 * @param bool $from_db - some classes are instantiated from the db and thus call a different method to instantiate
 	 * @param bool $cache if you don't want the class to be stored in the internal cache (non-persistent) then set this to FALSE (ie. when instantiating model objects from client in a loop)
 	 * @param bool $load_only whether or not to just load the file and NOT instantiate, or load AND instantiate (default)
-	 * @return EE_Base_Class
+	 * @return EE_Base_Class | bool
 	 */
 	public function load_class( $class_name, $arguments = array(), $from_db = false, $cache = true, $load_only = false ) {
 		$paths = apply_filters( 'FHEE__EE_Registry__load_class__paths', array(
@@ -380,7 +393,7 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @return EEH_Base
+	 * @return EEH_Base | bool
 	 */
 	public function load_helper( $class_name, $arguments = array(), $load_only = true ) {
 		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array( EE_HELPERS ) );
@@ -420,7 +433,7 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @return EEM_Base
+	 * @return EEM_Base | bool
 	 */
 	public function load_model( $class_name, $arguments = array(), $load_only = false ) {
 		$paths = apply_filters( 'FHEE__EE_Registry__load_model__paths', array(
@@ -439,7 +452,7 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @return mixed
+	 * @return mixed | bool
 	 */
 	public function load_model_class( $class_name, $arguments = array(), $load_only = true ) {
 		$paths = array(
@@ -706,7 +719,7 @@ class EE_Registry {
 	 * 	 	- model objects via their 'new_instance' method
 	 * 	 	- "singleton" classes" via their 'instance' method
 	 *  	- standard instantiable classes via their __constructor
-	 * Prior to instantiation, if the classname exists in the _auto_resolve_dependencies array,
+	 * Prior to instantiation, if the classname exists in the dependency_map,
 	 * then the constructor for the requested class will be examined to determine
 	 * if any dependencies exist, and if they can be injected.
 	 * If so, then those classes will be added to the array of arguments passed to the constructor
@@ -733,11 +746,7 @@ class EE_Registry {
 				? $arguments
 				: array( $arguments );
 			// attempt to inject dependencies ?
-			if (
-				! $from_db
-				&& isset( $this->_auto_resolve_dependencies[ $class_name ] )
-				&& ! $reflector->isSubclassOf( 'EE_Base_Class' )
-			) {
+			if ( $this->_dependency_map->has( $class_name ) ) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
 			// instantiate the class and add to the LIB array for tracking
@@ -867,10 +876,7 @@ class EE_Registry {
 			} else if (
 				// parameter is type hinted as a class, and should be injected
 				! empty( $param_class )
-				&& isset(
-					$this->_auto_resolve_dependencies[ $class_name ],
-					$this->_auto_resolve_dependencies[ $class_name ][ $param_class ]
-				)
+				&& $this->_dependency_map->has_dependency_for_class( $class_name, $param_class )
 			) {
 				$arguments = $this->_resolve_dependency( $class_name, $param_class, $arguments, $index );
 			} else {
@@ -894,10 +900,11 @@ class EE_Registry {
 	protected function _resolve_dependency( $class_name, $param_class , $arguments, $index ) {
 		$dependency = null;
 		// should dependency be loaded from cache ?
-		$cache_on =
-			$this->_auto_resolve_dependencies[ $class_name ][ $param_class ] !== EE_Dependency_Map::load_new_object
-				? true
-				: false;
+		$cache_on = $this->_dependency_map->loading_strategy_for_class_dependency(
+			$class_name, $param_class
+		) !== EE_Dependency_Map::load_new_object
+			? true
+			: false;
 		// we might have a dependency...
 		// let's MAYBE try and find it in our cache if that's what's been requested
 		$cached_class = $cache_on ? $this->_get_cached_class( $param_class ) : null;
@@ -906,7 +913,7 @@ class EE_Registry {
 			$dependency = $cached_class;
 		} else if ( $param_class != $class_name ) {
 			// obtain the loader method from the dependency map
-			$loader = EE_Dependency_Map::class_loader( $param_class );
+			$loader = $this->_dependency_map->class_loader( $param_class );
 			// is loader a custom closure ?
 			if ( $loader instanceof Closure ) {
 				$dependency = $loader();
@@ -975,7 +982,7 @@ class EE_Registry {
 	 * @return object
 	 */
 	public static function factory( $classname, $arguments = array() ) {
-		$loader = EE_Dependency_Map::class_loader( $classname );
+		$loader = self::instance()->_dependency_map->class_loader( $classname );
 		if ( $loader instanceof Closure ) {
 			return $loader( $arguments );
 		} else if ( method_exists( EE_Registry::instance(), $loader ) ) {

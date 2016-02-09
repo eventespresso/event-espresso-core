@@ -31,7 +31,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
 	public function test_core_dependencies() {
-		$this->validate_core_dependency_map( EE_Dependency_Map::dependency_map() );
+		$this->validate_core_dependency_map( $this->_dependency_map->dependency_map() );
 	}
 
 	public function validate_core_dependency_map( $dependencies_or_load, $classname = '' ) {
@@ -47,7 +47,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 				sprintf( 'The %s class has an invalid value in the EE_Dependency_Map.', $classname )
 			);
 			// now verify that a loader exists for the class
-			$loader = EE_Dependency_Map::class_loader( $classname );
+			$loader = $this->_dependency_map->class_loader( $classname );
 			$this->assertNotEmpty(
 				$loader,
 				sprintf( 'A class loader should be set for "%s" but appears to be missing.', $classname )
@@ -64,7 +64,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 			'EE_Messages_Template_Defaults' => 'Closure has required arguments'
 		);
 		//loop through and verify the class loader can successfully load the class it is set for
-		foreach ( EE_Dependency_Map::class_loaders() as $class => $loader ) {
+		foreach ( $this->_dependency_map->class_loaders() as $class => $loader ) {
 			if ( isset( $skip[ $class ] ) ) {
 				continue;
 			}
@@ -77,7 +77,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 					$class,
 					$dependency,
 					sprintf(
-						'The "%1$s" class has "%2$s" set as its loader, but instead of an object, we received "%3$s" instead',
+						'The "%1$s" class has "%2$s" set as its loader, but instead of an object, we received "%3$s"',
 						$class,
 						$loader instanceof Closure ? print_r( $loader, true ) : $loader,
 						print_r( $dependency, true )
@@ -92,7 +92,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 	public function test_core_class_loader_for_EE_Messages_Template_Defaults() {
 		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		$loader = EE_Dependency_Map::class_loader('EE_Messages_Template_Defaults');
+		$loader = $this->_dependency_map->class_loader('EE_Messages_Template_Defaults');
 		$this->assertInstanceOf( 'Closure', $loader );
 		$Messages_Template_Defaults = $loader(
 			array(
@@ -105,8 +105,8 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
 
 	public function test_register_class_loader() {
-		EE_Dependency_Map::register_class_loader( 'Dummy_Class', 'load_lib' );
-		$actual_class_loader = EE_Dependency_Map::class_loader( 'Dummy_Class' );
+		$this->_dependency_map->register_class_loader( 'Dummy_Class', 'load_lib' );
+		$actual_class_loader = $this->_dependency_map->class_loader( 'Dummy_Class' );
 		$this->assertNotEmpty( $actual_class_loader );
 		$this->assertEquals( 'load_lib', $actual_class_loader );
 
@@ -115,21 +115,21 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 			'"dummy_loader" is not a valid loader method on EE_Registry.'
 		);
 
-		EE_Dependency_Map::register_class_loader( 'Dummy_Class', 'dummy_loader' );
+		$this->_dependency_map->register_class_loader( 'Dummy_Class', 'dummy_loader' );
 	}
 
 
 
 	public function test_register_dependency() {
 		//test a successful registration.
-		$registered = EE_Dependency_Map::register_dependencies( 'Dummy_Class', array( 'EE_Something', 'EE_Something_Else' ) );
+		$registered = $this->_dependency_map->register_dependencies( 'Dummy_Class', array( 'EE_Something', 'EE_Something_Else' ) );
 		$this->assertTrue( $registered );
-		$actual_dependency_map = EE_Dependency_Map::dependency_map();
+		$actual_dependency_map = $this->_dependency_map->dependency_map();
 		$this->assertTrue( isset( $actual_dependency_map['Dummy_Class'] ) );
 		$this->assertEquals( array( 'EE_Something', 'EE_Something_Else' ), $actual_dependency_map['Dummy_Class'] );
 
 		//test a unsuccessful registration (cannot override an existing dependency.
-		$registered = EE_Dependency_Map::register_dependencies( 'Dummy_Class', array() );
+		$registered = $this->_dependency_map->register_dependencies( 'Dummy_Class', array() );
 		$this->assertFalse( $registered );
 	}
 

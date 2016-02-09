@@ -35,6 +35,8 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		EE_Dependency_Map::register_class_loader( 'EE_Session_Mock' );
 		EE_Dependency_Map::register_class_loader( 'EE_Injector_Tester_With_Array_Session_Int_Constructor_Params' );
 		require_once EE_TESTS_DIR . 'mocks' . DS . 'core' . DS . 'EE_Registry_Mock.core.php';
+		EE_Registry_Mock::instance( EE_Dependency_Map::instance() );
+		EE_Registry_Mock::instance()->initialize();
 		parent::setUp();
 	}
 
@@ -62,17 +64,19 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @author                Brent Christensen
 	 */
 	public function test_get_cached_class_abbreviations() {
-		// verify that EE_Capabilities has not already been loaded
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
+		// verify that EE_Network_Config has not already been loaded
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Network_Config' );
 		$this->assertEquals( null, $cached_class );
-		// create a stdClass object will use to mock the EE_Capabilities class
+		// create a stdClass object will use to mock the EE_Network_Config class
 		$orig_class = new stdClass();
-		$orig_class->name = 'EE_Capabilities';
-		// and manually cache it at EE_Registry_Mock::instance()->CAP
-		EE_Registry_Mock::instance()->CAP = $orig_class;
+		$orig_class->name = 'EE_Network_Config';
+		// and manually cache it at EE_Registry_Mock::instance()->NET_CFG
+		EE_Registry_Mock::instance()->NET_CFG = $orig_class;
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Capabilities' );
+		$cached_class = EE_Registry_Mock::instance()->get_cached_class( 'EE_Network_Config' );
 		$this->assertEquals( $orig_class->name, $cached_class->name );
+		// remove what we added
+		EE_Registry_Mock::instance()->NET_CFG = null;
 	}
 
 
@@ -388,10 +392,10 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		// create a stdClass object we'll use for a mock
 		$orig_class = new stdClass();
 		$orig_class->name = 'If_This_Is_An_Abbreviated_Class_Name_Then_Why_Is_It_So_Long';
-		// cache it at EE_Registry_Mock::instance()->CAP
-		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'EE_Capabilities' );
+		// cache it at EE_Registry_Mock::instance()->NET_CFG
+		EE_Registry_Mock::instance()->set_cached_class( $orig_class, 'EE_Network_Config' );
 		// now attempt to retrieve it
-		$cached_class = EE_Registry_Mock::instance()->CAP;
+		$cached_class = EE_Registry_Mock::instance()->NET_CFG;
 		$this->assertEquals( $orig_class, $cached_class );
 	}
 
@@ -621,6 +625,71 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertNotEquals(
 			spl_object_hash( $generator->generation_queue() ),
 			spl_object_hash( $generator->ready_queue() )
+		);
+	}
+
+
+
+	/**
+	 * This test verifies that any new dependencies registered
+	 * on EE_Dependency_Map are immediately visible to EE_Registry.
+	 * It may seem wrong because it appears to be testing methods that actually exist on EE_Dependency_Map,
+	 * but they are all methods that are called via the \EE_Registry::$_dependency_map property.
+	 * So this test is just verifying that EE_Registry and EE_Dependency_Map are in sync.
+	 *
+	 * Uses EE_Registry_Mock::dependency_map_has(),
+	 * EE_Registry_Mock::has_dependency_for_class(),
+	 * and EE_Registry_Mock::loading_strategy_for_class_dependency(),
+	 * which all call methods via the EE_Dependency_Map property on EE_Registry
+	 *
+	 * @author Brent Christensen
+	 */
+	public function test_registry_can_see_newly_registered_dependencies() {
+		// first verify that dependency doesn't already exist
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->dependency_map_has( 'Some_New_Class_Name' )
+		);
+		// then register it
+		EE_Dependency_Map::register_dependencies(
+			'Some_New_Class_Name',
+			array( 'DependencyOne' => EE_Dependency_Map::load_new_object )
+		);
+		// and verify that it's now available
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->dependency_map_has( 'Some_New_Class_Name' )
+		);
+		// verify loading strategy
+		$this->assertEquals(
+			EE_Dependency_Map::load_new_object,
+			EE_Registry_Mock::instance()->loading_strategy_for_class_dependency( 'Some_New_Class_Name', 'DependencyOne' )
+		);
+	}
+
+
+
+	/**
+	 * This test verifies that any new class loaders registered
+	 * on EE_Dependency_Map are immediately visible to EE_Registry.
+	 * It may seem wrong because it appears to be testing methods that actually exist on EE_Dependency_Map,
+	 * but they are all methods that are called via the \EE_Registry::$_dependency_map property.
+	 * So this test is just verifying that EE_Registry and EE_Dependency_Map are in sync.
+	 *
+	 * Uses EE_Registry_Mock::loading_strategy_for_class_dependency()
+	 * which calls EE_Dependency_Map::loading_strategy_for_class_dependency() via the property on EE_Registry
+	 *
+	 * @author Brent Christensen
+	 */
+	public function test_registry_can_see_newly_registered_class_loaders() {
+		// first verify that class loader doesn't already exist
+		$this->assertEmpty(
+			EE_Registry_Mock::instance()->dependency_map_class_loader( 'DependencyOne' )
+		);
+		// then register it
+		EE_Dependency_Map::register_class_loader( 'DependencyOne', 'load_core' );
+		// and verify that it's now available
+		$this->assertEquals(
+			'load_core',
+			EE_Registry_Mock::instance()->dependency_map_class_loader( 'DependencyOne' )
 		);
 	}
 
