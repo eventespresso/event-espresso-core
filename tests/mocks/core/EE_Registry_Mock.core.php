@@ -155,6 +155,56 @@ class EE_Registry_Mock extends EE_Registry {
 		return $this->_array_is_numerically_and_sequentially_indexed( $array );
 	}
 
+
+
+	/**
+	 * @access public
+	 * @param string $class_name
+	 * @return bool
+	 */
+	public function dependency_map_has( $class_name = '' ) {
+		return $this->_dependency_map->has( $class_name );
+
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param string $class_name
+	 * @param string $dependency
+	 * @return bool
+	 */
+	public function has_dependency_for_class( $class_name = '', $dependency = '' ) {
+		return $this->_dependency_map->has_dependency_for_class( $class_name, $dependency );
+
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param string $class_name
+	 * @param string $dependency
+	 * @return bool
+	 */
+	public function loading_strategy_for_class_dependency( $class_name = '', $dependency = '' ) {
+		return $this->_dependency_map->loading_strategy_for_class_dependency( $class_name, $dependency );
+
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param string $class_name
+	 * @return bool
+	 */
+	public function dependency_map_class_loader( $class_name = '' ) {
+		return $this->_dependency_map->class_loader( $class_name );
+
+	}
+
 }
 
 
