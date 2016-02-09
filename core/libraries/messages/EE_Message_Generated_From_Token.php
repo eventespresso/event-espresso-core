@@ -108,6 +108,12 @@ class EE_Message_Generated_From_Token extends EE_Message_To_Generate implements 
 				)
 			);
 		}
+
+		//set properties
+		$this->_valid = true;
+		$this->_messenger = $message->messenger_object();
+		$this->_message_type = $message->message_type_object();
+		$this->_send_now = $message->send_now();
 		return $message;
 	}
 
