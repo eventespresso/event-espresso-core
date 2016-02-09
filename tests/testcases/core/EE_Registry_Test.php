@@ -630,6 +630,71 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 
+	/**
+	 * This test verifies that any new dependencies registered
+	 * on EE_Dependency_Map are immediately visible to EE_Registry.
+	 * It may seem wrong because it appears to be testing methods that actually exist on EE_Dependency_Map,
+	 * but they are all methods that are called via the \EE_Registry::$_dependency_map property.
+	 * So this test is just verifying that EE_Registry and EE_Dependency_Map are in sync.
+	 *
+	 * Uses EE_Registry_Mock::dependency_map_has(),
+	 * EE_Registry_Mock::has_dependency_for_class(),
+	 * and EE_Registry_Mock::loading_strategy_for_class_dependency(),
+	 * which all call methods via the EE_Dependency_Map property on EE_Registry
+	 *
+	 * @author Brent Christensen
+	 */
+	public function test_registry_can_see_newly_registered_dependencies() {
+		// first verify that dependency doesn't already exist
+		$this->assertFalse(
+			EE_Registry_Mock::instance()->dependency_map_has( 'Some_New_Class_Name' )
+		);
+		// then register it
+		EE_Dependency_Map::register_dependencies(
+			'Some_New_Class_Name',
+			array( 'DependencyOne' => EE_Dependency_Map::load_new_object )
+		);
+		// and verify that it's now available
+		$this->assertTrue(
+			EE_Registry_Mock::instance()->dependency_map_has( 'Some_New_Class_Name' )
+		);
+		// verify loading strategy
+		$this->assertEquals(
+			EE_Dependency_Map::load_new_object,
+			EE_Registry_Mock::instance()->loading_strategy_for_class_dependency( 'Some_New_Class_Name', 'DependencyOne' )
+		);
+	}
+
+
+
+	/**
+	 * This test verifies that any new class loaders registered
+	 * on EE_Dependency_Map are immediately visible to EE_Registry.
+	 * It may seem wrong because it appears to be testing methods that actually exist on EE_Dependency_Map,
+	 * but they are all methods that are called via the \EE_Registry::$_dependency_map property.
+	 * So this test is just verifying that EE_Registry and EE_Dependency_Map are in sync.
+	 *
+	 * Uses EE_Registry_Mock::loading_strategy_for_class_dependency()
+	 * which calls EE_Dependency_Map::loading_strategy_for_class_dependency() via the property on EE_Registry
+	 *
+	 * @author Brent Christensen
+	 */
+	public function test_registry_can_see_newly_registered_class_loaders() {
+		// first verify that class loader doesn't already exist
+		$this->assertEmpty(
+			EE_Registry_Mock::instance()->dependency_map_class_loader( 'DependencyOne' )
+		);
+		// then register it
+		EE_Dependency_Map::register_class_loader( 'DependencyOne', 'load_core' );
+		// and verify that it's now available
+		$this->assertEquals(
+			'load_core',
+			EE_Registry_Mock::instance()->dependency_map_class_loader( 'DependencyOne' )
+		);
+	}
+
+
+
 }
 // End of file EE_Registry_Test.php
 // Location: /tests/testcases/core/EE_Registry_Test.php
