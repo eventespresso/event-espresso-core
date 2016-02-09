@@ -381,7 +381,7 @@ class EE_Registry {
 	 * @param bool $from_db - some classes are instantiated from the db and thus call a different method to instantiate
 	 * @param bool $cache if you don't want the class to be stored in the internal cache (non-persistent) then set this to FALSE (ie. when instantiating model objects from client in a loop)
 	 * @param bool $load_only whether or not to just load the file and NOT instantiate, or load AND instantiate (default)
-	 * @return EE_Base_Class
+	 * @return EE_Base_Class | bool
 	 */
 	public function load_class( $class_name, $arguments = array(), $from_db = false, $cache = true, $load_only = false ) {
 		$paths = apply_filters( 'FHEE__EE_Registry__load_class__paths', array(
@@ -401,7 +401,7 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @return EEH_Base
+	 * @return EEH_Base | bool
 	 */
 	public function load_helper( $class_name, $arguments = array(), $load_only = true ) {
 		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array( EE_HELPERS ) );
@@ -441,7 +441,7 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @return EEM_Base
+	 * @return EEM_Base | bool
 	 */
 	public function load_model( $class_name, $arguments = array(), $load_only = false ) {
 		$paths = apply_filters( 'FHEE__EE_Registry__load_model__paths', array(
@@ -460,7 +460,7 @@ class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param mixed $arguments
 	 * @param bool $load_only
-	 * @return mixed
+	 * @return mixed | bool
 	 */
 	public function load_model_class( $class_name, $arguments = array(), $load_only = true ) {
 		$paths = array(
