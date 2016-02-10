@@ -1322,9 +1322,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//merge request vars so that the reloaded list table contains any existing filter query params
 		$route = array_merge( $this->_req_data, $route );
 
-		$this->_redirect_after_action( $success, '', '', $route, true );
-
-		}
+		$this->_redirect_after_action( false, '', '', $route, true );
+	}
 
 
 
