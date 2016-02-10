@@ -24,10 +24,11 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	 * @param string            $message_type_name  The message type being used to grab variations etc.
 	 * @param EE_Messages_Queue $queue
 	 */
-	public function __construct( $messenger_name, $message_type_name, EE_Messages_Queue $queue ) {
+	public function __construct( $messenger_name, $message_type_name, EE_Messages_Queue $queue, $custom_subject = '' ) {
 		$this->queue = $queue;
 		parent::__construct( $messenger_name, $message_type_name, array(), '', false, EEM_Message::status_idle );
 		$this->_message->set_content( $this->_get_content() );
+		$this->_message->set_subject( $this->_get_subject( $custom_subject ) );
 	}
 
 
@@ -45,6 +46,31 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 			$this->queue->get_queue()->next();
 		}
 		return $content;
+	}
+
+
+
+	protected function _get_subject( $custom_subject = '' ) {
+		if ( ! empty( $custom_subject ) ) {
+			return $custom_subject;
+		}
+		$this->queue->get_queue()->rewind();
+		$count_of_items = $this->queue->get_queue()->count();
+
+		//if $count of items in queue == 1, then let's just return the subject for that item.
+		if ( $count_of_items === 1 ) {
+			return $this->queue->get_queue()->current()->subject();
+		}
+
+		return sprintf(
+			_n(
+				'Showing Aggregate output for 1 result',
+				'Showing Aggregate output for %d items',
+				$count_of_items,
+				'event_espresso'
+			),
+			$count_of_items
+		);
 	}
 
 

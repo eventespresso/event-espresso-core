@@ -779,7 +779,8 @@ class EED_Messages  extends EED_Module {
 
 	/**
 	 * This is a method that allows for sending a message using a messenger matching the string given and the provided
-	 * EE_Message_Queue object.
+	 * EE_Message_Queue object.  The EE_Message_Queue object is used to create a single aggregate EE_Message via the content
+	 * found in the EE_Message objects in the queue.
 	 *
 	 * @since 4.9.0
 	 *
@@ -788,10 +789,12 @@ class EED_Messages  extends EED_Module {
 	 *                             still required to send along the message type to the messenger because this is used
 	 *                             for determining what specific variations might be loaded for the generated message.
 	 * @param EE_Messages_Queue     $queue
+	 * @param string                $custom_subject   Can be used to set what the custom subject string will be on the aggregate
+	 *                                                EE_Message object.
 	 *
 	 * @return bool          success or fail.
 	 */
-	public static function send_message_with_messenger_only( $messenger, $message_type, EE_Messages_Queue $queue ) {
+	public static function send_message_with_messenger_only( $messenger, $message_type, EE_Messages_Queue $queue, $custom_subject = '' ) {
 		self::_load_controller();
 		/** @type EE_Message_To_Generate_From_Queue $message_to_generate */
 		$message_to_generate = EE_Registry::instance()->load_lib(
@@ -799,7 +802,8 @@ class EED_Messages  extends EED_Module {
 			array(
 				$messenger,
 				$message_type,
-				$queue
+				$queue,
+				$custom_subject,
 			)
 		);
 		return self::$_MSG_PROCESSOR->queue_for_sending( $message_to_generate );
