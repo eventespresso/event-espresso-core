@@ -35,9 +35,9 @@ class EE_Ticket_Price extends EE_Base_Class {
 	 * @param string $timezone
 	 * @return EE_Ticket_Price|mixed
 	 */
-	public static function new_instance( $props_n_values = array(), $timezone = '' ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone );
-		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone );
+	public static function new_instance( $props_n_values = array(), $timezone = '', $date_formats = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
+		return $has_object ? $has_object : new self( $props_n_values, FALSE, $timezone, $date_formats );
 	}
 
 

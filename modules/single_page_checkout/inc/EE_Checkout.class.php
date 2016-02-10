@@ -359,10 +359,18 @@ class EE_Checkout {
 	public function skip_reg_step( $reg_step_slug = '' ) {
 		$step_to_skip = $this->find_reg_step( $reg_step_slug );
 		if ( $step_to_skip instanceof EE_SPCO_Reg_Step && $step_to_skip->is_current_step() ) {
-			// advance to the next step
-			$this->set_current_step( $this->next_step->slug() );
 			$step_to_skip->set_is_current_step( false );
 			$step_to_skip->set_completed();
+			// advance to the next step
+			$this->set_current_step( $this->next_step->slug() );
+			// also reset the step param in the request in case any other code references that directly
+			EE_Registry::instance()->REQ->set( 'step', $this->current_step->slug() );
+			// since we are skipping a step and setting the current step to be what was previously the next step,
+			// we need to check that the next step is now correct, and not still set to the current step.
+			if ( $this->current_step->slug() == $this->next_step->slug() ) {
+				// correctly setup the next step
+				$this->set_next_step();
+			}
 			$this->set_reg_step_initiated( $this->current_step );
 		}
 	}
