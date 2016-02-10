@@ -11,11 +11,6 @@ jQuery(document).ready(function($) {
 		theForm.submit();
 	});
 
-	var dates = $( '.datepicker' ).datepicker({
-		defaultDate: "-1m",
-		numberOfMonths: 2
-	});/**/
-
 	$('.confirm-delete').on( 'click', function() {
 		var what = $(this).attr('rel');
 		var answer = confirm( eei18n.confirm_delete );
@@ -275,10 +270,6 @@ jQuery(document).ready(function($) {
 		formData.noheader = true;
 		formData.ee_admin_ajax = true;
 		formData.txn_admin_payment.amount = accounting.unformat( formData.txn_admin_payment.amount );
-
-		//console.log( JSON.stringify( 'formData: ', null, 4 ) );
-		//console.log( formData );
-		//alert( 'formData = ' + formData );
 
 		$.ajax({
 					type: "POST",

@@ -105,6 +105,8 @@ class Base {
 				$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 			}
 		}
+		$headers = array_merge( $headers, $this->_get_headers_from_ee_notices() );
+		
 		$rest_response->set_headers( $headers );
 		return $rest_response;
 	}
@@ -141,6 +143,29 @@ class Base {
 			$data['additional_errors'] = $errors;
 		}
 		return new \WP_REST_Response( $data, $status );
+	}
+	
+	/**
+	 * Array of headers derived from EE sucess, attention, and error messages
+	 * @return array
+	 */
+	protected function _get_headers_from_ee_notices() {
+		$headers = array();
+		$notices = \EE_Error::get_raw_notices();
+		foreach( $notices as $notice_type => $sub_notices ) {
+			if( ! is_array( $sub_notices ) ) {
+				continue;
+			}
+			foreach( $sub_notices as $notice_code => $sub_notice ) {
+				$headers[ 'X-EE4-Notices-' . \EEH_Inflector::humanize( $notice_type ) . '[' . $notice_code . ']' ] = strip_tags( $sub_notice );
+			}
+		}
+		return apply_filters( 
+			'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_headers_from_ee_notices__return',
+			$headers,
+			$this->_requested_version,
+			$notices
+		);
 	}
 	
 	/**
