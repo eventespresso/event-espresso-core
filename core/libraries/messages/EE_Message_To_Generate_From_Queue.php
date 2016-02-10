@@ -23,6 +23,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	 * @param string            $messenger_name  The messenger being used to send the message
 	 * @param string            $message_type_name  The message type being used to grab variations etc.
 	 * @param EE_Messages_Queue $queue
+	 * @param string            $custom_subject  Used if a custom subject is desired for the generated aggregate EE_Message object
 	 */
 	public function __construct( $messenger_name, $message_type_name, EE_Messages_Queue $queue, $custom_subject = '' ) {
 		$this->queue = $queue;
@@ -49,7 +50,12 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	}
 
 
-
+	/**
+	 * Return a subject string to use for `MSG_Subject` in the aggregate EE_Message object.
+	 * @param string $custom_subject
+	 *
+	 * @return string
+	 */
 	protected function _get_subject( $custom_subject = '' ) {
 		if ( ! empty( $custom_subject ) ) {
 			return $custom_subject;
