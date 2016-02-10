@@ -33,6 +33,35 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf('EE_Attendee', $a);
 		return $a;
 	}
+
+
+
+
+	/**
+	 * @group 9273
+	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/9273
+	 */
+	function test_new_instance_with_existing_object_and_incoming_date_formats() {
+		//setup a EE_Payment object and save
+		$payment_object = EE_Payment::new_instance();
+		$payment_object->save();
+		$payment_object_id = $payment_object->ID();
+
+		//now let's setup a new payment object using that ID but with different formats than the defaults
+		//that way we can verify the timestamp gets set correctly.
+		$expected_date = '2016-24-01';
+		$payment_object_to_test = EE_Payment::new_instance(
+			array(
+				'PAY_ID' => $payment_object_id,
+				'PAY_timestamp' => '2016-24-01 3:45 pm',
+			),
+			'',
+			array( 'Y-d-m', 'g:i a' )
+		);
+		$this->assertEquals( $expected_date, $payment_object_to_test->get_date( 'PAY_timestamp' ) );
+	}
+
+
 	function test_set_and_get(){
 		$a = EE_Attendee::new_instance();
 		$a->set('ATT_fname','value1');

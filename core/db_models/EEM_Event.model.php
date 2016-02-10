@@ -331,7 +331,8 @@ class EEM_Event  extends EEM_CPT_Base{
 
 	/**
 	 *        _get_question_target_db_column
-	 *
+	 *	@deprecated as of 4.8.32.rc.001. Instead consider using 
+	 * EE_Registration_Custom_Questions_Form located in admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
 	 * @access 	public
 	 * @param 	EE_Registration $registration (so existing answers for registration are included)
 	 * @param 	int 	$EVT_ID 	so all question groups are included for event (not just answers from registration).
@@ -371,7 +372,8 @@ class EEM_Event  extends EEM_CPT_Base{
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'] = array();
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
-
+					//leave responses as-is, don't convert stuff into html entities please!
+					$questions[ $qg->ID() ][ 'QSG_questions'][ $qst->ID() ][ 'htmlentities' ] = false;
 					if ( $qst->type() == 'RADIO_BTN' || $qst->type() == 'CHECKBOX' || $qst->type() == 'DROPDOWN' ) {
 						$QSOs = $qst->options(TRUE,$answer->value());
 						if ( is_array( $QSOs ) ) {
