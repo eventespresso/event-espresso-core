@@ -58,6 +58,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
+	}
+
+
+
+	public function wp_loaded() {
+		// when adding a new registration...
+		if ( isset( $this->_req_data[ 'action' ] ) && $this->_req_data[ 'action' ] == 'new_registration' ) {
+			EE_System::do_not_cache();
+			if (
+				! isset( $this->_req_data[ 'processing_registration' ] )
+				|| absint( $this->_req_data[ 'processing_registration' ] ) !== 1
+			) {
+				// and it's NOT the attendee information reg step
+				// force cookie expiration by setting time to last week
+				setcookie( 'ee_registration_added', 0, time() - WEEK_IN_SECONDS, '/' );
+				// and update the global
+				$_COOKIE[ 'ee_registration_added' ] = 0;
+			}
+		}
 	}
 
 
@@ -531,23 +551,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _add_screen_options() {}
 	protected function _add_feature_pointers() {}
 	public function admin_init() {
-		// when adding a new registration, and it's NOT the attendee information reg step
-		if (
-			isset( $this->_req_data[ 'action' ] )
-			&& $this->_req_data[ 'action' ] == 'new_registration'
-			&& (
-				empty( $this->_req_data[ 'processing_registration' ] )
-				|| (
-					isset( $this->_req_data[ 'processing_registration' ] )
-					&& absint( $this->_req_data[ 'processing_registration' ] ) !== 1
-				)
-			)
-		) {
-			// force cookie expiration by setting time to last week
-			setcookie( 'ee_registration_added', 0, time() - WEEK_IN_SECONDS, '/' );
-			// and update the global
-			$_COOKIE[ 'ee_registration_added' ] = 0;
-		}
 		EE_Registry::$i18n_js_strings[ 'update_att_qstns' ] = __( 'click "Update Registration Questions" to save your changes', 'event_espresso' );
 	}
 	public function admin_notices() {}
@@ -2028,7 +2031,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function new_registration() {
-		EE_System::do_not_cache();
 		if ( ! $this->_set_reg_event() ) {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
@@ -2074,7 +2076,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string html
 	 */
 	protected function _get_registration_step_content() {
-		EE_System::do_not_cache();
 		if ( isset( $_COOKIE[ 'ee_registration_added' ] ) && $_COOKIE[ 'ee_registration_added' ] ) {
 			$warning_msg = sprintf(
 				__(
