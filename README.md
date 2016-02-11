@@ -24,7 +24,7 @@ Resources on Event Espresso 4 for a beginner to advanced users.
 [View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=view+ee4+documentation)
 
 ## Newsletter
-Be the first to know when we ship new features ... [signup here](https://eventespresso.com/newsletter/?utm_source=github&utm_medium=link&utm_campaign=ee4_github_plugin_description_homepage&utm_content=newsletter+signup).
+Be the first to know when we ship new features ... [signup here](https://eventespresso.com/newsletter/).
 
 ## Developers
 
