@@ -221,7 +221,9 @@ final class EE_Front_Controller {
 	 */
 	public function get_request( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__get_request__start' );
-		EE_Registry::instance()->load_core( 'Request_Handler', $WP );
+		/** @var EE_Request_Handler $Request_Handler */
+		$Request_Handler = EE_Registry::instance()->load_core( 'Request_Handler' );
+		$Request_Handler->parse_request( $WP );
 		do_action( 'AHEE__EE_Front_Controller__get_request__complete' );
 	}
 
