@@ -138,6 +138,12 @@ class EE_Bootstrap {
 	 */
 	public static function load_espresso_addons() {
 		do_action( 'AHEE__EE_Bootstrap__load_espresso_addons' );
+		//if the WP API basic auth plugin isn't already loaded, load it now. 
+		//We want it for mobile apps. Just include the entire plugin
+		if( ! defined( 'json_basic_auth_handler' ) 
+			&& ! defined( 'json_basic_auth_error' ) ) {
+			include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+		}
 	}
 
 
