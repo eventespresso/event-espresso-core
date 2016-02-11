@@ -180,6 +180,12 @@ final class EE_System {
 		//@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
 		EE_Registry::instance()->CAP->init_caps();
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
+		//if the WP API basic auth plugin isn't already loaded, load it now. 
+		//We want it for mobile apps. Just include the entire plugin
+		if( ! defined( 'json_basic_auth_handler' ) 
+			&& ! defined( 'json_basic_auth_error' ) ) {
+			include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+		}
 	}
 
 
