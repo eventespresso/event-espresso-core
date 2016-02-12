@@ -1029,9 +1029,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __( 'The payment form data could not be processed. Please try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-		echo json_encode( array_merge( $json_response_data, $notices ));
-		die();
+		$notices = EE_Error::get_notices( false, false, false );
+		$this->_template_args = array(
+			'data' => $json_response_data,
+			'error' => $notices['errors'],
+			'success' => $notices['success']
+		);
+		$this->_return_json();
 	}
 
 
@@ -1496,9 +1500,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
-		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-		echo json_encode( array_merge( $json_response_data, $notices ));
-		die();
+		$notices = EE_Error::get_notices( false, false, false);
+		$this->_template_args = array(
+			'data' => $json_response_data,
+			'success' => $notices['success'],
+			'error' => $notices['errors'],
+			'attention' => $notices['attention']
+		);
+		$this->_return_json();
 	}
 
 
