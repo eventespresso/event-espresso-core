@@ -1427,7 +1427,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$times = EE_Registry::instance()->load_model('Datetime' )->get_all_event_dates( $event_id );
 		EE_Registry::instance()->load_helper('DTT_Helper' );
 		/** @type EE_Datetime $first_datetime */
-		$first_datetime = array_shift( $times );
+		$first_datetime = reset( $times );
 		//do we get related tickets?
 		if ( $first_datetime instanceof EE_Datetime 
 			&& $first_datetime->ID() !== 0 ) {
