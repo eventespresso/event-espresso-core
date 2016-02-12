@@ -342,6 +342,8 @@ final class EE_System {
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			update_option( 'ee_flush_rewrite_rules', TRUE );
+			//delete the saved EE REST API routes now, because they might have changed with this code change
+			delete_option( EED_Core_Rest_Api::saved_routes_option_names );
 			EEH_Activation::system_initialization();
 			if( $verify_schema ) {
 				EEH_Activation::initialize_db_and_folders();
