@@ -61,6 +61,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'set_hooks_rest_api' ), 5 );
 		add_filter( 'rest_route_data', array( 'EED_Core_Rest_Api', 'hide_old_endpoints' ), 10, 2 );
 		add_filter( 'rest_index', array( 'EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index' ) );
+		EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
 	}
 
 	/**
@@ -110,6 +111,30 @@ class EED_Core_Rest_Api extends \EED_Module {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Checks if there was a version change or something that merits invalidating the cached
+	 * route data. If so, invalidates the cached route data so that it gets refreshed
+	 * next time the WP API is used
+	 */
+	public static function invalidate_cached_route_data_on_version_change() {
+		if( EE_System::instance()->detect_req_type() != EE_System::req_type_normal ) {
+			EED_Core_Rest_Api::invalidate_cached_route_data();
+		}
+		foreach(EE_Registry::instance()->addons as $addon){
+			if( $addon->detect_req_type() != EE_System::req_type_normal ) {
+				EED_Core_Rest_Api::invalidate_cached_route_data();
+			}
+		}
+	}
+	
+	/**
+	 * Removes the cached route data so it will get refreshed next time the WP API is used
+	 */
+	public static function invalidate_cached_route_data() {
+		//delete the saved EE REST API routes
+		delete_option( EED_Core_Rest_Api::saved_routes_option_names );
 	}
 
 	/**
