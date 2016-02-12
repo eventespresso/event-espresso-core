@@ -272,8 +272,15 @@ class EE_Transaction_Payments {
 				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
-			return true;
+			return false;
 		}
+		EE_Error::add_success(
+			__(
+				'The Payment was successfully deleted, and the Transaction has been updated accordingly.',
+				'event_espresso'
+			) 
+		);
+		return true;
 	}
 
 
