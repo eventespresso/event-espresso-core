@@ -1474,7 +1474,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				if ( $transaction_payments->delete_payment_and_update_transaction( $payment )) {
-					EE_Error::add_success( __( 'The Payment was successfully deleted.', 'event_espresso' ) );
 					$json_response_data['return_data'] = $this->_build_payment_json_response( $payment, $REG_IDs, $delete_txn_reg_status_change );
 					if ( $delete_txn_reg_status_change ) {
 						$this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
