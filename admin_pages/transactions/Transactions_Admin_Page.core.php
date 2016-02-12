@@ -1482,7 +1482,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						$_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
 						$this->_maybe_send_notifications();
 						$this->_process_registration_status_change( $payment->transaction(), $REG_IDs );
-						//$this->_maybe_send_notifications( $payment );
 					}
 				}
 			} else {
