@@ -436,19 +436,34 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * are whether or not they should be hidden
 	 */
 	public static function versions_served() {
-		$version_compatibilities = EED_Core_Rest_Api::version_compatibilities();
 		$versions_served = array();
-		$lowest_compatible_version = $version_compatibilities[ EED_Core_Rest_Api::core_version() ];
+		$possibly_served_versions = EED_Core_Rest_Api::version_compatibilities();
+		$lowest_compatible_version = end( $possibly_served_versions);
+		reset( $possibly_served_versions );
+		$versions_served_historically = array_keys( $possibly_served_versions );
+		$latest_version = end( $versions_served_historically );
+		reset( $versions_served_historically );
 		//for each version of core we have ever served:
-		foreach( array_keys( EED_Core_Rest_Api::version_compatibilities() ) as $possibly_served_version ) {
+		foreach ( $versions_served_historically as $key_versioned_endpoint ) {
 			//if it's not above the current core version, and it's compatible with the current version of core
-			if(
-				$possibly_served_version < EED_Core_Rest_Api::core_version()
-				&& $possibly_served_version >= $lowest_compatible_version
+			if( $key_versioned_endpoint == $latest_version ) {
+				//don't hide the latest version in the index
+				$versions_served[ $key_versioned_endpoint ] = false;
+			} else if(
+				$key_versioned_endpoint < EED_Core_Rest_Api::core_version()
+				&& $key_versioned_endpoint >= $lowest_compatible_version
 			) {
-				$versions_served[ $possibly_served_version ] = true;
-			}else {
-				$versions_served[ $possibly_served_version ] = false;
+				//include, but hide, previous versions which are still supported
+				$versions_served[ $key_versioned_endpoint ] = true;
+			} elseif(
+				apply_filters(
+					'FHEE__EED_Core_Rest_Api__versions_served__include_incompatible_versions',
+					false,
+					$possibly_served_versions
+				)
+			){
+				//if a version is no longer supported, don't include it in index or list of versions served
+				$versions_served[ $key_versioned_endpoint ] = true;
 			}
 		}
 		return $versions_served;

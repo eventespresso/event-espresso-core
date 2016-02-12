@@ -6,10 +6,10 @@
  * Used for finding all payment method types that can be defined.
  * Allows addons to easily add other payment methods
  *
- * @package 			Event Espresso
+ * @package     Event Espresso
  * @subpackage 	core
- * @author 				Michael Nelson
- * @since 				$VID:$
+ * @author      Michael Nelson
+ * @since       4.5
  *
  */
 class EE_Payment_Method_Manager {
@@ -289,8 +289,14 @@ class EE_Payment_Method_Manager {
 		}
 		//now add setup its default extra meta properties
 		$extra_metas = $pm_type_obj->settings_form()->extra_meta_inputs();
-		foreach( $extra_metas as $meta_name => $input ){
-			$payment_method->update_extra_meta($meta_name, $input->raw_value() );
+		if ( ! empty( $extra_metas ) ) {
+			//verify the payment method has an ID before adding extra meta
+			if ( ! $payment_method->ID() ) {
+				$payment_method->save();
+			}
+			foreach ( $extra_metas as $meta_name => $input ) {
+				$payment_method->update_extra_meta( $meta_name, $input->raw_value() );
+			}
 		}
 		return $payment_method;
 	}

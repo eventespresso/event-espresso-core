@@ -458,9 +458,10 @@ class EEH_Debug_Tools{
 		$margin = is_admin() ? ' 180px' : '0';
 		ob_start();
 		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0'.$margin.';"><b>' . $var_name . '</b>';
-		echo '<span style="color:#999"> : </span><span style="color:#E76700">';
+		echo '<span style="color:#999;"> : </span><span style="color:#E76700;">';
+		echo '<pre style="color:#999; padding:1em; background: #fff">';
 		var_dump( $var );
-		echo '</span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;margin-left:'.$margin.';">' . $file;
+		echo '</pre></span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;'.$margin.'">' . $file;
 		echo '<br />line no: ' . $line . '</span></' . $heading_tag . '>';
 		$result = ob_get_clean();
 		if ( $die ) {
