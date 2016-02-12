@@ -354,14 +354,9 @@ class Read extends Base {
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
 			}elseif( $field_obj instanceof \EE_Datetime_Field ){
-				if( $raw_field_value instanceof \DateTime ) {
-					$raw_field_value = $raw_field_value->format( 'c' );
-				}
-				$result[ $field_name ] = mysql_to_rfc3339( $raw_field_value );
+				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api( $field_obj, $raw_field_value );
 			}else{
-				$value_prepared = $field_obj->prepare_for_get( $field_value );
-
-				$result[ $field_name ] = $value_prepared === INF ? EE_INF_IN_DB : $value_prepared;
+				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api( $field_obj, $field_obj->prepare_for_get( $field_value ) );
 			}
 		}
 		if( $model instanceof \EEM_CPT_Base ) {

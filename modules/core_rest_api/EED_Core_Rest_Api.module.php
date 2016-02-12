@@ -165,7 +165,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		unset($models_to_register['Extra_Join']);
 		$model_routes = array( );
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-
+			$model_version_info = new EventEspresso\core\libraries\rest_api\Model_Version_Info( $version );
 			foreach ( $models_to_register as $model_name => $model_classname ) {
 				//yes we could just register one route for ALL models, but then they wouldn't show up in the index
 				$ee_namespace = self::ee_api_namespace . $version;
@@ -179,17 +179,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 							'methods' => WP_REST_Server::READABLE,
 							'hidden_endpoint' => $hidden_endpoint,
 							'args' => $this->_get_read_query_params( $model_name ),
-							'_links' => array(
-								'self' => rest_url( $ee_namespace . $singular_model_route ),
-							)
 						),
-//						array(
-//							'callback' => array(
-//								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-//								'handle_request_create_one' ),
-//							'methods' => WP_REST_Server::CREATABLE,
-//							'hidden_endpoint' => $hidden_endpoint
-//						)
+						array(
+							'callback' => array(
+								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+								'handle_request_insert' ),
+							'methods' => WP_REST_Server::CREATABLE,
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => $this->_get_write_params( $model_name, $model_version_info ),
+						),
 					);
 				$model_routes[ $ee_namespace ][ $singular_model_route ] = array(
 						array(
@@ -206,13 +204,14 @@ class EED_Core_Rest_Api extends \EED_Module {
 								),
 							)
 						),
-//						array(
-//							'callback' => array(
-//								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-//								'handle_request_edit_one' ),
-//							'methods' => WP_REST_Server::EDITABLE,
-//							'hidden_endpoint' => $hidden_endpoint
-//							),
+						array(
+							'callback' => array(
+								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+								'handle_request_update' ),
+							'methods' => WP_REST_Server::EDITABLE,
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => $this->_get_write_params( $model_name, $model_version_info ),
+						),
 				);
 				//@todo: also handle  DELETE for a single item
 				$model = EE_Registry::instance()->load_model( $model_classname );
@@ -221,24 +220,35 @@ class EED_Core_Rest_Api extends \EED_Module {
 						$relation_name,
 						$relation_obj
 					);
-					$model_routes[ $ee_namespace ][ $singular_model_route . '/' . $related_model_name_endpoint_part ] = array(
-							array(
-								'callback' => array(
-									'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-									'handle_request_get_related' ),
-								'methods' => WP_REST_Server::READABLE,
-								'hidden_endpoint' => $hidden_endpoint,
-								'args' => $this->_get_read_query_params( $relation_name ),
-							),
-//							array(
-//								'callback' => array(
-//									'EventEspresso\core\libraries\rest_api\controllers\model\Write',
-//									'handle_request_create_or_update_related' ),
-//								'methods' => WP_REST_Server::EDITABLE,
-//								'hidden_endpoint' => $hidden_endpoint
-//							)
+					$endpoints = array(
+						array(
+							'callback' => array(
+								'EventEspresso\core\libraries\rest_api\controllers\model\Read',
+								'handle_request_get_related' ),
+							'methods' => WP_REST_Server::READABLE,
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => $this->_get_read_query_params( $relation_name ),
+						)
+					);
+					//don't include "transient" relations. eg, events HABTM attendees through registrations.
+					//well, we don't want to try creating attendees and automatically creating registrations
+					//for them (eg with no status, transaction, ticket, etc). So those aren't writeable
+					if( 
+						! (
+							$relation_obj instanceof EE_HABTM_Relation
+							&& $model->has_relation( $relation_obj->get_join_model()->get_this_model_name() ) 
+						) 
+					) {
+						$endpoints[] = array(
+							'callback' => array(
+								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
+								'handle_request_update_related' ),
+							'methods' => WP_REST_Server::EDITABLE,
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => $this->_get_write_params( $relation_obj->get_other_model()->get_this_model_name(), $model_version_info ),
 						);
-					//@todo: handle delete related and possibly remove relation (not sure hwo to distinguish)
+					}
+					$model_routes[ $ee_namespace ][ $singular_model_route . '/' . $related_model_name_endpoint_part ] = $endpoints;
 				}
 			}
 		}
@@ -330,6 +340,59 @@ class EED_Core_Rest_Api extends \EED_Module {
 				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
 			),
 		);
+	}
+	
+	/**
+	 * Gets parameter information for a model regarding writing data
+	 * @param type $model_name
+	 * @param EventEspresso\core\libraries\rest_api\Model_Version_Info $model_version_info
+	 * @return array
+	 */
+	protected function _get_write_params( 
+			$model_name, 
+			EventEspresso\core\libraries\rest_api\Model_Version_Info $model_version_info
+		) {
+		$model = EE_Registry::instance()->load_model( $model_name );
+		$fields = $model_version_info->fields_on_model_in_this_version( $model );
+		$param_info = array();
+		foreach( $fields as $field_name => $field_obj ) {
+			if( $field_obj->is_auto_increment() ) {
+				//totally ignore auto increment IDs
+				continue;
+			}
+			$required = ! $field_obj->is_nullable() && $field_obj->get_default_value() === null;
+			$description = sprintf( 
+				__( '%1$s (field of type %2$s). See %3$s', 'event_espresso' ), 
+				$field_obj->get_nicename(), 
+				get_class( $field_obj ),
+				'http://developer.eventespresso.com/?p=639'
+			);
+			$param_info[ $field_name ] = array(
+				'required' => $required,
+				'default' => EED_Core_Rest_Api::prepare_field_value_for_rest_api( $field_obj, $field_obj->get_default_value() ),
+				'description' => $description
+			);
+		}
+		return $param_info;
+	}
+	
+	/**
+	 * Prepares a field's value for display in the API
+	 * @param \EE_Model_Field $field_obj
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	public static function prepare_field_value_for_rest_api( $field_obj, $value ) {
+		if( $value === EE_INF ) {
+			$value = EE_INF_IN_DB;
+		} elseif( $field_obj instanceof \EE_Datetime_Field &&
+			$value instanceof \DateTime ) {
+			$value = $value->format( 'c' );
+			$value = mysql_to_rfc3339( $value );
+		} else {
+			$value = $value;
+		}
+		return $value;
 	}
 
 	/**

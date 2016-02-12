@@ -61,13 +61,6 @@ class Meta extends Base {
 				}else{
 					$datatype = 'String';
 				}
-				$default_value = $field_obj->get_default_value();
-				if( $default_value === EE_INF ) {
-					$default_value = EE_INF_IN_DB;
-				} elseif( $field_obj instanceof \EE_Datetime_Field &&
-					$default_value instanceof \DateTime ) {
-					$default_value = $default_value->format( 'c' );
-				}
 				$field_json = array(
 					'name' => $field_name,
 					'nicename' => $field_obj->get_nicename(),
@@ -76,7 +69,7 @@ class Meta extends Base {
 					'type' => str_replace('EE_', '', get_class( $field_obj ) ),
 					'datatype' => $datatype,
 					'nullable' => $field_obj->is_nullable(),
-					'default' => $default_value,
+					'default' => \EED_Core_Rest_Api::prepare_field_value_for_rest_api($field_obj, $field_obj->get_default_value() ),
 					'table_alias' => $field_obj->get_table_alias(),
 					'table_column' => $field_obj->get_table_column(),
 				);
