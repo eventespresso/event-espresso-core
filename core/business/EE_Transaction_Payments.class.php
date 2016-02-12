@@ -265,6 +265,7 @@ class EE_Transaction_Payments {
 		//if this fails, that just means that the transaction didn't get its status changed and/or updated.
 		//however the payment was still deleted.
 		if ( ! $this->calculate_total_payments_and_update_status( $transaction ) ) {
+
 			EE_Error::add_attention(
 				__(
 					'It appears that the Payment was deleted but no change was recorded for the Transaction for an unknown reason. Please verify that all data for this Transaction looks correct..',
@@ -272,8 +273,9 @@ class EE_Transaction_Payments {
 				),
 				__FILE__, __FUNCTION__, __LINE__
 			);
-			return false;
+			return true;
 		}
+
 		EE_Error::add_success(
 			__(
 				'The Payment was successfully deleted, and the Transaction has been updated accordingly.',
