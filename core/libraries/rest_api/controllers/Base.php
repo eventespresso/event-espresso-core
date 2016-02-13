@@ -171,11 +171,16 @@ class Base {
 	/**
 	 * Finds which version of the API was requested given the route, and returns it.
 	 * eg in a request to "mysite.com/wp-json/ee/v4.8.29/events/123" this would return
-	 * "4.8.29"
+	 * "4.8.29".
+	 * We should know hte requested version in this model though, so if no route is
+	 * provided just use what we set earlier
 	 * @param string $route 
 	 * @return string
 	 */
-	public function get_requested_version( $route ) {
+	public function get_requested_version( $route = null ) {
+		if( $route === null ) {
+			return $this->_requested_version;
+		}
 		$matches = $this->parse_route(
 			$route,
 			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',
