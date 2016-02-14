@@ -92,8 +92,15 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data {
 	 * @return mixed
 	 */
 	static public function convert_data_from_persistent_storage( $data ) {
+		//$data['Registration'] could be either an ID (back compat) or a registration object (prepped using old system).
+		$registration = isset( $data['Registration'] ) && $data['Registration'] instanceof EE_Registration
+			? $data['Registration']
+			: null;
+		$registration = isset( $data['Registration'] ) && ! $registration instanceof EE_Registration
+			? EEM_Registration::instance()->get_one_by_ID( $data['Registration'] )
+			: $registration;
 		$prepped_data = array(
-			0 => isset( $data['Registration'] ) ? EEM_Registration::instance()->get_one_by_ID( $data['Registration'] ) : null,
+			0 => $registration,
 			1 => isset( $data['filter'] ) ? $data['filter'] : null
 		);
 		return $prepped_data;
