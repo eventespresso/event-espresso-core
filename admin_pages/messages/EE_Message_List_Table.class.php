@@ -327,6 +327,9 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		 */
 		if ( isset( $this->_req_data['filterby'] ) ) {
 			$query_params = array_merge( $query_params, EEM_Message::instance()->filter_by_query_params() );
+			if ( ! $count ) {
+				$query_params['group_by'] = 'MSG_ID';
+			}
 		}
 
 		//view conditionals
