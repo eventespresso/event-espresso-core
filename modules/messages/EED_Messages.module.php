@@ -567,6 +567,9 @@ class EED_Messages  extends EED_Module {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
+		EE_Error::add_success(
+			__( 'Messages have been successfully queued for generation and sending.', 'event_espresso' )
+		);
 		return true; //everything got queued.
 	}
 
