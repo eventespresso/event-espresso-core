@@ -28,6 +28,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	public function __construct( $messenger_name, $message_type_name, EE_Messages_Queue $queue, $custom_subject = '' ) {
 		$this->queue = $queue;
 		parent::__construct( $messenger_name, $message_type_name, array(), '', false, EEM_Message::status_idle );
+		$this->get_EE_Message();
 		$this->_message->set_content( $this->_get_content() );
 		$this->_message->set_subject( $this->_get_subject( $custom_subject ) );
 	}
