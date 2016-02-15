@@ -53,7 +53,9 @@ class EE_Registry {
 
 	/**
 	 *    StdClass object for storing library classes in
+	 *
 	 * @public LIB
+	 * @var StdClass $LIB
 	 */
 	public $LIB = null;
 
