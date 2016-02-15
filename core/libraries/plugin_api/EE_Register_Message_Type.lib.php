@@ -149,29 +149,23 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 
 
 
-    /**
-     * This deregisters a message type that was previously registered with a specific message_type_name.
-     *
-     * @since    4.3.0
-     *
-     * @param string  $message_type_name the name for the message type that was previously registered
-     * @return void
-     */
-    public static function deregister( $message_type_name = NULL ) {
-    	if ( ! empty( self::$_ee_message_type_registry[$message_type_name] ) ) {
+	/**
+	 * This deregisters a message type that was previously registered with a specific message_type_name.
+	 *
+	 * @since    4.3.0
+	 *
+	 * @param string  $message_type_name the name for the message type that was previously registered
+	 * @return void
+	 */
+	public static function deregister( $message_type_name = null ) {
+	    if ( ! empty( self::$_ee_message_type_registry[ $message_type_name ] ) ) {
 			//let's make sure that we remove any place this message type was made active
-			EE_Registry::instance()->load_helper( 'MSG_Template' );
-			$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-			foreach( $active_messengers as $messenger => $settings ) {
-				if ( !empty( $settings['settings'][$messenger . '-message_types'][$message_type_name] ) ) {
-					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$message_type_name] );
-				}
-			}
-			EEH_MSG_Template::update_to_inactive( '', $message_type_name );
-			EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
-    		unset( self::$_ee_message_type_registry[$message_type_name] );
-        }
-    }
+			/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+			$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$Message_Resource_Manager->deactivate_message_type( $message_type_name );
+			unset( self::$_ee_message_type_registry[ $message_type_name ] );
+		}
+	}
 
 
 
