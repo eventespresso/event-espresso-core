@@ -856,8 +856,8 @@ final class EE_System {
 		}
 		// add no cache headers
 		add_action( 'send_headers' , array( 'EE_System', 'nocache_headers' ), 10 );
-		// plus a little extra for nginx
-		add_filter( 'nocache_headers', array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		// plus a little extra for nginx and Google Chrome
+		add_filter( 'nocache_headers', array( 'EE_System', 'extra_nocache_headers' ), 10, 1 );
 		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
 		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
 	}
@@ -865,14 +865,17 @@ final class EE_System {
 
 
 	/**
-	 *    nocache_headers_nginx
+	 *    extra_nocache_headers
 	 *
 	 * @access    public
 	 * @param $headers
 	 * @return    array
 	 */
-	public static function nocache_headers_nginx ( $headers ) {
+	public static function extra_nocache_headers ( $headers ) {
+		// for NGINX
 		$headers['X-Accel-Expires'] = 0;
+		// plus extra for Google Chrome since it doesn't seem to respect "no-cache", but WILL respect "no-store"
+		$headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
 		return $headers;
 	}
 
@@ -959,8 +962,8 @@ final class EE_System {
 		if ( is_single() && ( get_post_type() == 'espresso_events' ) ) {
 
 			//Current post
-			global $post;		
-    	
+			global $post;
+
 	    	if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID ) ) {
 				//Events Edit Current Event
 				$admin_bar->add_menu(array(
