@@ -233,9 +233,15 @@ class EEH_MSG_Template {
 	) {
 		$messenger_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) );
 		$mt_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) );
-
+		/** @var EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		//convert slug to object
-		$messenger = self::messenger_obj( $messenger );
+		$messenger = $message_resource_manager->get_messenger( $messenger );
+
+		//if messenger isn't a EE_messenger resource then bail.
+		if ( ! $messenger instanceof EE_messenger ) {
+			return array();
+		}
 
 		//validate class for getting our list of shortcodes
 		$classname = 'EE_Messages_' . $messenger_name . '_' . $mt_name . '_Validator';
