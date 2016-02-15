@@ -187,7 +187,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	 */
 	protected function _set_existing_admin_settings( $messenger = '' ) {
 		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
-		$Message_Resource_Manager = EE_Registry::instance( 'Message_Resource_Manager' );
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$active_messengers = $Message_Resource_Manager->get_active_messengers_option();
 		$settings_to_use = $active_messengers;
 
