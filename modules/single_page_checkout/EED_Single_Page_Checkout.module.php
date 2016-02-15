@@ -309,7 +309,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EED_Single_Page_Checkout::instance()->checkout->current_step->completed() ) {
 			$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
 			if ( $final_reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
+				EED_Single_Page_Checkout::instance()->checkout->set_reg_step_initiated( $final_reg_step );
 				if ( $final_reg_step->process_reg_step() ) {
+					$final_reg_step->set_completed();
+					EED_Single_Page_Checkout::instance()->checkout->update_txn_reg_steps_array();
 					return EED_Single_Page_Checkout::instance()->checkout->transaction;
 				}
 			}

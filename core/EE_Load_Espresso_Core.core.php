@@ -65,6 +65,7 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 		espresso_load_required( 'EEI_Payment_Method_Interfaces', EE_LIBRARIES . 'payment_methods' . DS . 'EEI_Payment_Method_Interfaces.php' );
 		//// WP cron jobs
 		EE_Registry::instance()->load_core( 'Cron_Tasks' );
+		EE_Registry::instance()->load_core( 'Request_Handler' );
 		EE_Registry::instance()->load_core( 'EE_System' );
 
 		return $this->response;
