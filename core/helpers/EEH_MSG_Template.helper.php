@@ -404,15 +404,20 @@ class EEH_MSG_Template {
 	 * Used to return active messengers array stored in the wp options table.
 	 * If no value is present in the option then an empty array is returned.
 	 *
+	 * @deprecated 4.9
 	 * @since 4.3.1
 	 *
 	 * @return array
 	 */
 	public static function get_active_messengers_in_db() {
-		return apply_filters(
-			'FHEE__EEH_MSG_Template__get_active_messengers_in_db',
-			get_option( 'ee_active_messengers', array() )
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__( 'Please use EE_Message_Resource_Manager::get_active_messengers_option() instead.', 'event_espresso' ),
+			'4.9.0'
 		);
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		return $Message_Resource_Manager->get_active_messengers_option();
 	}
 
 
@@ -422,13 +427,21 @@ class EEH_MSG_Template {
 	 * Used to update the active messengers array stored in the wp options table.
 	 *
 	 * @since 4.3.1
+	 * @deprecated 4.9.0
 	 *
 	 * @param array $data_to_save Incoming data to save.
 	 *
 	 * @return bool FALSE if not updated, TRUE if updated.
 	 */
 	public static function update_active_messengers_in_db( $data_to_save ) {
-		return update_option( 'ee_active_messengers', $data_to_save );
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__( 'Please use EE_Message_Resource_Manager::update_active_messengers_option() instead.', 'event_espresso' ),
+			'4.9.0'
+		);
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		return $Message_Resource_Manager->update_active_messengers_option( $data_to_save );
 	}
 
 
