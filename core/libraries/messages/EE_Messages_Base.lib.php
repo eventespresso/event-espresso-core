@@ -186,17 +186,23 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @param string $messenger
 	 */
 	protected function _set_existing_admin_settings( $messenger = '' ) {
-		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-		$active_message_types = ! empty( $messenger )
-			? $active_messengers[$messenger]['settings'][$messenger . '-message_types']
-			: array();
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance( 'Message_Resource_Manager' );
+		$active_messengers = $Message_Resource_Manager->get_active_messengers_option();
+		$settings_to_use = $active_messengers;
 
-		$actives = $this->_messages_item_type == 'messenger'
-			? $active_messengers
-			: $active_message_types;
+		/**
+		 * This determines what will be used for the getting the settings.
+		 */
+		if (
+			! empty( $messenger )
+			&& $Message_Resource_Manager->is_message_type_active_for_messenger( $messenger, $this->name )
+		) {
+			$settings_to_use = $active_messengers[ $messenger ]['settings'][ $messenger . '-message_types' ];
+		}
 
-		$this->_existing_admin_settings = isset($actives[$this->name]['settings'] )
-			? $actives[$this->name]['settings']
+		$this->_existing_admin_settings = isset( $settings_to_use[ $this->name ]['settings'] )
+			? $settings_to_use[ $this->name ]['settings']
 			: null;
 	}
 
