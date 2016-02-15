@@ -601,8 +601,8 @@ class Read extends Base {
 		}
 		if( isset( $query_parameters[ 'limit' ] ) ) {
 			//limit should be either a string like '23' or '23,43', or an array with two items in it
-			if( is_string( $query_parameters[ 'limit' ] ) ) {
-				$limit_array = explode(',', $query_parameters['limit']);
+			if( ! is_array( $query_parameters[ 'limit' ] ) ) {
+				$limit_array = explode(',', (string)$query_parameters['limit']);
 			}else {
 				$limit_array = $query_parameters[ 'limit' ];
 			}
