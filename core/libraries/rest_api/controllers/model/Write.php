@@ -168,12 +168,55 @@ class Write extends Base {
 	 */
 	public function insert( \EEM_Base $model, \WP_REST_Request $request ) {
 		Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'edit' );
+		//we only know they can edit SOME of these model objects. Not sure if what they are about to add is ok...
+		//so we'll start a transaction, insert it, and then see if it looks ok. If not, we'll revert it.
+		$this->_start_transaction();
 		$new_id = $model->insert( array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() ) );
 		if( ! $new_id ) {
 			throw new \EE_Error(
 				'rest_insertion_failed', 
 				sprintf( __( 'Could not insert new %1$s', 'event_espresso'), $model->get_this_model_name() ) 
 			);
+		}
+		//ok so is that the sort of thing they are allowed to edit?
+		if( 
+			apply_filters( 
+				'FHEE__EventEspresso\core\libraries\rest_api\controllers\model\Write__insert__allowed',
+				$model->exists( 
+					$model->alter_query_params_to_restrict_by_ID( 
+						$new_id, 
+						array( 
+							'caps' => \EEM_Base::caps_edit 
+						) 
+					) 
+				),
+				$model,
+				$new_id, 
+				$request
+			)
+		) {
+			//yeah when we applied their restrictions they could find the item, so its good
+			$this->_commit_transaction();
+		} else {
+			//they aren't allowed to create that! rollback
+			$this->_rollback_transaction();
+			return new \WP_Error(
+					'rest_user_cannot_insert',
+					sprintf(
+						__( 'Sorry, you cannot insert this a new %1$s with properties %2$s. Missing permissions are: %3$s', 'event_espresso' ),
+						strtolower( $model->get_this_model_name() ),
+						apply_filters( 
+							'FHEE__EventEspresso\core\libraries\rest_api\controllers\model\Write__insert__caps_missing',
+							Capabilities::get_missing_permissions_string(
+							$model,
+							$this->validate_context( \EEM_Base::caps_edit ) ),
+							$model,
+							$new_id,
+							$request
+						)
+					),
+					array( 'status' => 403 )
+				);
 		}
 		$requested_version = $this->get_requested_version( $request->get_route() );
 		$get_request = new \WP_REST_Request(
