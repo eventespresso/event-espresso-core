@@ -466,6 +466,8 @@ class EE_Message_Resource_Manager {
 	 */
 	public function update_active_messengers_option( $active_messenger_settings = array() ) {
 		$active_messenger_settings = empty( $active_messenger_settings ) ? $this->_active_message_types : $active_messenger_settings;
+		//make sure _active_message_types is updated (this is the internal cache for the settings).
+		$this->_active_message_types = $active_messenger_settings;
 		return update_option( 'ee_active_messengers', $active_messenger_settings );
 	}
 
