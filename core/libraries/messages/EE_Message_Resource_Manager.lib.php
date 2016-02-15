@@ -20,6 +20,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EE_Message_Resource_Manager {
 
 	/**
+	 * @type boolean $_initialized
+	 */
+	protected $_initialized = false;
+
+	/**
 	 * @type EE_Messenger_Collection $_messenger_collection_loader
 	 */
 	protected $_messenger_collection_loader;
@@ -119,10 +124,22 @@ class EE_Message_Resource_Manager {
 		EEM_Message_Template_Group $Message_Template_Group_Model
 	) {
 		$this->_messenger_collection_loader = $Messenger_Collection_Loader;
-		$this->_messenger_collection_loader->load_messengers_from_folder();
 		$this->_message_type_collection_loader = $Message_Type_Collection_Loader;
-		$this->_message_type_collection_loader->load_message_types_from_folder();
 		$this->_message_template_group_model = $Message_Template_Group_Model;
+	}
+
+
+
+	/**
+	 * @return EE_Messenger_Collection
+	 */
+	protected function _initialize_collections() {
+		if ( $this->_initialized ) {
+			return;
+		}
+		$this->_initialized = true;
+		$this->_messenger_collection_loader->load_messengers_from_folder();
+		$this->_message_type_collection_loader->load_message_types_from_folder();
 		$this->_set_active_messengers_and_message_types();
 		$this->get_has_activated_messengers_option( true );
 	}
@@ -133,6 +150,7 @@ class EE_Message_Resource_Manager {
 	 * @return EE_Messenger_Collection
 	 */
 	public function messenger_collection() {
+		$this->_initialize_collections();
 		return $this->_messenger_collection_loader->messenger_collection();
 	}
 
@@ -210,6 +228,7 @@ class EE_Message_Resource_Manager {
 	 * @return EE_Message_Type_Collection
 	 */
 	public function message_type_collection() {
+		$this->_initialize_collections();
 		return $this->_message_type_collection_loader->message_type_collection();
 	}
 
