@@ -406,8 +406,9 @@ class EEH_Debug_Tools{
 		$var_name = ucwords( str_replace( '$', '', $var_name ) );
 		$is_method = method_exists( $var_name, $var );
 		$var_name = ucwords( str_replace( '_', ' ', $var_name ) );
+		$margin = is_admin() ? ' 180px' : '0';
 		ob_start();
-		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
+		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0' . $margin . ';"><b>' . $var_name . '</b>';
 		echo $is_method
 			? '<span style="color:#999">::</span><span style="color:#E76700">' . $var . '()</span><br />'
 			: '<span style="color:#999"> : </span><span style="color:#E76700">' . $var . '</span><br />';
