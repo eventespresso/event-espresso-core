@@ -112,7 +112,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if there was a version change or something that merits invalidating the cached
 	 * route data. If so, invalidates the cached route data so that it gets refreshed
@@ -122,13 +122,13 @@ class EED_Core_Rest_Api extends \EED_Module {
 		if( EE_System::instance()->detect_req_type() != EE_System::req_type_normal ) {
 			EED_Core_Rest_Api::invalidate_cached_route_data();
 		}
-		foreach(EE_Registry::instance()->addons as $addon){
-			if( $addon->detect_req_type() != EE_System::req_type_normal ) {
+		foreach( EE_Registry::instance()->addons as $addon ){
+			if( $addon instanceof EE_Addon && $addon->detect_req_type() != EE_System::req_type_normal ) {
 				EED_Core_Rest_Api::invalidate_cached_route_data();
 			}
 		}
 	}
-	
+
 	/**
 	 * Removes the cached route data so it will get refreshed next time the WP API is used
 	 */
