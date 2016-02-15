@@ -112,7 +112,6 @@ abstract class EE_Messages_Base extends EE_Base {
 
 	public function __construct() {
 		$this->_set_admin_settings_fields();
-		$this->_set_existing_admin_settings();
 		$this->_set_valid_shortcodes();
 		$this->_set_admin_pages();
 		//load helper
