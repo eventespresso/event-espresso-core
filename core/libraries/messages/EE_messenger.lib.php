@@ -769,8 +769,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_existing_test_settings() {
-		$settings = EEH_MSG_Template::get_active_messengers_in_db();
-		return isset( $settings[$this->name]['test_settings'] ) ? $settings[$this->name]['test_settings'] : array();
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$settings = $Message_Resource_Manager->get_active_messengers_option();
+		return isset( $settings[ $this->name ]['test_settings'] ) ? $settings[ $this->name ]['test_settings'] : array();
 	}
 
 
@@ -783,9 +785,11 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return bool success/fail
 	 */
 	public function set_existing_test_settings( $settings ) {
-		$existing = EEH_MSG_Template::get_active_messengers_in_db();
-		$existing[$this->name]['test_settings'] = $settings;
-		return EEH_MSG_Template::update_active_messengers_in_db( $existing );
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$existing = $Message_Resource_Manager->get_active_messengers_option();
+		$existing[ $this->name ]['test_settings'] = $settings;
+		return $Message_Resource_Manager->update_active_messengers_option( $existing );
 	}
 
 
