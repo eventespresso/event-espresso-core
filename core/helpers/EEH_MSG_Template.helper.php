@@ -245,22 +245,23 @@ class EEH_MSG_Template {
 
 		//validate class for getting our list of shortcodes
 		$classname = 'EE_Messages_' . $messenger_name . '_' . $mt_name . '_Validator';
-		if ( !class_exists( $classname ) ) {
-			$msg[] = __( 'The Validator class was unable to load', 'event_espresso');
+		if ( ! class_exists( $classname ) ) {
+			$msg[] = __( 'The Validator class was unable to load', 'event_espresso' );
 			$msg[] = sprintf(
-				__('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'),
+				__( 'The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso' ),
 				$classname
 			);
 			throw new EE_Error( implode( '||', $msg ) );
 		}
+
 		/** @type EE_Messages_Validator $_VLD */
 		$_VLD = new $classname( array(), $context );
 		$valid_shortcodes = $_VLD->get_validators();
 
 		//let's make sure we're only getting the shortcode part of the validators
 		$shortcodes = array();
-		foreach( $valid_shortcodes as $field => $validators ) {
-			$shortcodes[$field] = $validators['shortcodes'];
+		foreach ( $valid_shortcodes as $field => $validators ) {
+			$shortcodes[ $field ] = $validators['shortcodes'];
 		}
 		$valid_shortcodes = $shortcodes;
 
@@ -268,12 +269,12 @@ class EEH_MSG_Template {
 		if ( ! empty( $fields ) ) {
 			$specified_shortcodes = array();
 			foreach ( $fields as $field ) {
-				if ( isset( $valid_shortcodes[$field] ) )
-					$specified_shortcodes[$field] = $valid_shortcodes[$field];
+				if ( isset( $valid_shortcodes[ $field ] ) ) {
+					$specified_shortcodes[ $field ] = $valid_shortcodes[ $field ];
+				}
 			}
 			$valid_shortcodes = $specified_shortcodes;
 		}
-
 
 		//if not merged then let's replace the fields with the localized fields
 		if ( ! $merged ) {
@@ -282,45 +283,46 @@ class EEH_MSG_Template {
 			$localized = array();
 			foreach ( $valid_shortcodes as $field => $shortcodes ) {
 				//get localized field label
-				if ( isset( $field_settings[$field] ) ) {
+				if ( isset( $field_settings[ $field ] ) ) {
 					//possible that this is used as a main field.
-					if ( empty( $field_settings[$field] ) ) {
-						if ( isset( $field_settings['extra'][$field] ) ) {
-							$_field = $field_settings['extra'][$field]['main']['label'];
+					if ( empty( $field_settings[ $field ] ) ) {
+						if ( isset( $field_settings['extra'][ $field ] ) ) {
+							$_field = $field_settings['extra'][ $field ]['main']['label'];
 						} else {
 							$_field = $field;
 						}
 					} else {
-						$_field = $field_settings[$field]['label'];
+						$_field = $field_settings[ $field ]['label'];
 					}
 				} else if ( isset( $field_settings['extra'] ) ) {
 					//loop through extra "main fields" and see if any of their children have our field
 					foreach ( $field_settings['extra'] as $main_field => $fields ) {
-						if ( isset( $fields[$field] ) )
-							$_field = $fields[$field]['label'];
-						else
+						if ( isset( $fields[ $field ] ) ) {
+							$_field = $fields[ $field ]['label'];
+						} else {
 							$_field = $field;
+						}
 					}
 				} else {
 					$_field = $field;
 				}
-				if ( isset( $_field )) {
+				if ( isset( $_field ) ) {
 					$localized[ $_field ] = $shortcodes;
 				}
 			}
 			$valid_shortcodes = $localized;
 		}
 
-
 		//if $merged then let's merge all the shortcodes into one list NOT indexed by field.
 		if ( $merged ) {
 			$merged_codes = array();
 			foreach ( $valid_shortcodes as $field => $shortcode ) {
 				foreach ( $shortcode as $code => $label ) {
-					if ( isset( $merged_codes[$code] ) )
+					if ( isset( $merged_codes[ $code ] ) ) {
 						continue;
-					else
-						$merged_codes[$code] = $label;
+					} else {
+						$merged_codes[ $code ] = $label;
+					}
 				}
 			}
 			$valid_shortcodes = $merged_codes;
