@@ -2559,7 +2559,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _return_json( $sticky_notices = FALSE ) {
 
 		//make sure any EE_Error notices have been handled.
-		$this->_process_notices( array(), TRUE, $sticky_notices );
+		$this->_process_notices( array(), true, $sticky_notices );
 
 
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();

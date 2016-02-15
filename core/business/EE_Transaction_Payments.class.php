@@ -240,7 +240,7 @@ class EE_Transaction_Payments {
 		// verify payment
 		if ( ! $payment instanceof EE_Payment ) {
 			EE_Error::add_error( __( 'A valid Payment object was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return false;
 		}
 		if ( ! $this->delete_registration_payments_and_update_registrations( $payment ) ) {
 			return false;
@@ -249,8 +249,40 @@ class EE_Transaction_Payments {
 			EE_Error::add_error( __( 'The payment could not be deleted.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
+
 		$transaction = $payment->transaction();
-		return $this->calculate_total_payments_and_update_status( $transaction );
+
+		if (
+			$transaction->status_ID() === EEM_Transaction::abandoned_status_code
+			|| $transaction->status_ID() === EEM_Transaction::failed_status_code
+			|| $payment->amount() === 0
+		) {
+			EE_Error::add_success( __( 'The Payment was successfully deleted.', 'event_espresso' ) );
+			return true;
+		}
+
+
+		//if this fails, that just means that the transaction didn't get its status changed and/or updated.
+		//however the payment was still deleted.
+		if ( ! $this->calculate_total_payments_and_update_status( $transaction ) ) {
+
+			EE_Error::add_attention(
+				__(
+					'It appears that the Payment was deleted but no change was recorded for the Transaction for an unknown reason. Please verify that all data for this Transaction looks correct..',
+					'event_espresso'
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return true;
+		}
+
+		EE_Error::add_success(
+			__(
+				'The Payment was successfully deleted, and the Transaction has been updated accordingly.',
+				'event_espresso'
+			) 
+		);
+		return true;
 	}
 
 
