@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
+use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
 
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -83,10 +84,13 @@ class Base {
 	 * what exactly was the Models query that got run, what capabilities came into play, what fields were omitted from
 	 * the response, others?
 	 *
-	 * @param array|\WP_Error|\Exception $response
+	 * @param array|\WP_Error|\Exception|\Rest_Exception $response
 	 * @return \WP_REST_Response
 	 */
 	public function send_response( $response ) {
+		if( $response instanceof Rest_Exception ) {
+			$response = new \WP_Error( $response->get_string_code(), $response->getMessage(), $response->get_data() );
+		}
 		if( $response instanceof \Exception ) {
 			$response = new \WP_Error( $response->getCode(), $response->getMessage() );
 		}

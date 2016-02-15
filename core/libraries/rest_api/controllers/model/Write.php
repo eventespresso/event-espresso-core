@@ -167,6 +167,7 @@ class Write extends Base {
 	 * @throws \EE_Error
 	 */
 	public function insert( \EEM_Base $model, \WP_REST_Request $request ) {
+		Capabilities::verify_at_least_partial_access_to( $model, \EEM_Base::caps_edit, 'edit' );
 		$new_id = $model->insert( array_merge( (array)$request->get_body_params(), (array)$request->get_json_params() ) );
 		if( ! $new_id ) {
 			throw new \EE_Error(
@@ -185,6 +186,24 @@ class Write extends Base {
 			)
 		);
 		return Read::handle_request_get_one( $get_request );
+	}
+	
+	protected function _start_transaction() {
+		global $wpdb;
+		$wpdb->query( 'SET autocommit = 0;' );
+		$wpdb->query( 'START TRANSACTION;' );
+	}
+	
+	protected function _rollback_transaction() {
+		global $wpdb;
+		$wpdb->query( 'ROLLBACK' );		
+		$wpdb->query( 'SET autocommit = 1;' );
+	}
+	
+	protected function _commit_transaction() {
+		global $wpdb;
+		$wpdb->query( 'COMMIT;' );
+		$wpdb->query( 'SET autocommit = 1;' );
 	}
 }
 

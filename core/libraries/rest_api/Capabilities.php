@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
+use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -85,6 +86,32 @@ class Capabilities {
 		//theoretically we may want to filter out specific fields for specific models
 
 		return apply_filters( 'FHEE__Capabilities__filter_out_inaccessible_entity_fields', $entity, $model, $request_type );
+	}
+
+	/**
+	 * Verifies the current user has at least partial access to do this action on this model.
+	 * If not, throws an exception (so we can define the code that sets up this error object
+	 * once)
+	 * @param type $model
+	 * @param type $model_action_context
+	 * @param type $action_name
+	 * @return void
+	 * @throw Rest_Exception
+	 */
+	public static function verify_at_least_partial_access_to( $model, $model_action_context, $action_name = 'list'  ) {
+		if( ! Capabilities::current_user_has_partial_access_to( $model, $model_action_context ) ) {
+			$model_name_plural = \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() );
+			throw new Rest_Exception(
+				sprintf( 'rest_%s_cannot_' . strtolower( $action_name ), $model_name_plural ),
+				sprintf(
+					__( 'Sorry, you are not allowed to %1$s %2$s. Missing permissions: %2$s', 'event_espresso' ),
+					$action_name,
+					$model_name_plural,
+					Capabilities::get_missing_permissions_string( $model, $model_action_context )
+				),
+				array( 'status' => 403 )
+			);
+		}
 	}
 }
 

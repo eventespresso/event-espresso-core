@@ -170,20 +170,9 @@ class Read extends Base {
 	 * @param \WP_REST_Request $request
 	 * @return array
 	 */
-	public function get_entities_from_model( $model, $request) {
+	public function get_entities_from_model( $model, $request ) {
 		$query_params = $this->create_model_query_params( $model, $request->get_params() );
-		if( ! Capabilities::current_user_has_partial_access_to( $model, $query_params[ 'caps' ] ) ) {
-			$model_name_plural = \EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() );
-			return new \WP_Error(
-				sprintf( 'rest_%s_cannot_list', $model_name_plural ),
-				sprintf(
-					__( 'Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso' ),
-					$model_name_plural,
-					Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] )
-				),
-				array( 'status' => 403 )
-			);
-		}
+		Capabilities::verify_at_least_partial_access_to( $model, $query_params[ 'caps' ], 'list' );
 
 		$this->_set_debug_info( 'model query params', $query_params );
 		/** @type array $results */
