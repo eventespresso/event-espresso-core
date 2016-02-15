@@ -153,9 +153,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			);
 
-		// var_dump($this->_req_data);
-		// exit();
-
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		$this->_page_config['contact_list']['list_table'] = 'Extend_EE_Attendee_Contact_List_Table';
 		$this->_page_config['default']['list_table'] = 'Extend_EE_Registrations_List_Table';
@@ -165,7 +162,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	protected function _ajax_hooks() {
 		parent::_ajax_hooks();
-		add_action('wp_ajax_get_newsletter_form_content', array( $this, 'get_newsletter_form_content') );
+		add_action( 'wp_ajax_get_newsletter_form_content', array( $this, 'get_newsletter_form_content' ) );
 	}
 
 
@@ -177,7 +174,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		EE_Registry::instance()->load_helper('MSG_Template');
 		if ( EEH_MSG_Template::is_mt_active('newsletter') ) {
 			//enqueue newsletter js
-			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_style( 'ee-newsletter-trigger-css', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.css', array(), EVENT_ESPRESSO_VERSION );
 			//hook in buttons for newsletter message type trigger.
 			add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
