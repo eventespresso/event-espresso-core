@@ -117,7 +117,7 @@ class EE_Message_To_Generate {
 		$this->_preview 			= $preview;
 		$this->_status 				= $status;
 		// attempt to generate message immediately
-		$this->_generate_message();
+		$this->_message = $this->_generate_message();
 	}
 
 
