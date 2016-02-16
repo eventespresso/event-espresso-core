@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -270,6 +271,29 @@ class Read_Test extends \EE_UnitTestCase{
 		);
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 403, $response->get_status() );
+	}
+	
+	/**
+	 * @group 9406
+	 */
+	public function test_handle_request_get_all__set_headers(){
+		$datetimes_created = 65;
+		$event = $this->new_model_obj_with_dependencies( 'Event',  array( 'status' => \EEM_CPT_Base::post_status_publish ) );
+		for( $i=0;$i < $datetimes_created; $i++ ) {
+			$this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $event->ID() ) );
+		}
+   		$this->assertEquals( $datetimes_created, \EEM_Datetime::instance()->count( array( 'caps' => \EEM_Base::caps_read ) ) );
+		//request all datetimes
+		$response = Read::handle_request_get_all(
+			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.34/datetimes' )
+		);
+		$this->assertInstanceOf( 'WP_REST_Response', $response );
+		$headers = $response->get_headers();
+		
+		$this->assertArrayHasKey( Controller_Base::header_prefix_for_ee . 'Total', $headers );
+		$this->assertArrayHasKey( Controller_Base::header_prefix_for_ee . 'TotalPages', $headers );
+		$this->assertEquals( $datetimes_created, $headers[ Controller_Base::header_prefix_for_ee . 'Total' ] );
+		$this->assertEquals( ceil( $datetimes_created / 50 ),$headers[ Controller_Base::header_prefix_for_ee . 'TotalPages' ] );
 	}
 
 	/**
