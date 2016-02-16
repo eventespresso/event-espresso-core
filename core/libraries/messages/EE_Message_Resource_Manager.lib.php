@@ -150,7 +150,6 @@ class EE_Message_Resource_Manager {
 	 * @return EE_Messenger_Collection
 	 */
 	public function messenger_collection() {
-		$this->_initialize_collections();
 		return $this->_messenger_collection_loader->messenger_collection();
 	}
 
@@ -160,6 +159,7 @@ class EE_Message_Resource_Manager {
 	 * @return EE_messenger[]
 	 */
 	public function active_messengers() {
+		$this->_initialize_collections();
 		return $this->_active_messengers;
 	}
 
@@ -182,6 +182,7 @@ class EE_Message_Resource_Manager {
 	 * @return EE_messenger | null
 	 */
 	public function get_active_messenger( $messenger ) {
+		$this->_initialize_collections();
 		return ! empty( $this->_active_messengers[ $messenger ] ) ? $this->_active_messengers[ $messenger ] : null;
 	}
 
@@ -238,6 +239,7 @@ class EE_Message_Resource_Manager {
 	 * @return array
 	 */
 	public function active_message_types() {
+		$this->_initialize_collections();
 		return $this->_active_message_types;
 	}
 
@@ -277,6 +279,7 @@ class EE_Message_Resource_Manager {
 	 * @return bool
 	 */
 	public function is_message_type_active_for_messenger( $messenger_name, $message_type_name ) {
+		$this->_initialize_collections();
 		return ! empty( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ] );
 	}
 
@@ -289,6 +292,7 @@ class EE_Message_Resource_Manager {
 	 * @return bool
 	 */
 	public function is_messenger_active( $messenger_name ) {
+		$this->_initialize_collections();
 		return ! empty( $this->_active_message_types[ $messenger_name ] );
 	}
 
@@ -320,6 +324,7 @@ class EE_Message_Resource_Manager {
 	 * @return bool
 	 */
 	public function messenger_has_active_message_types( $messenger_name ) {
+		$this->_initialize_collections();
 		return
 			! empty( $this->_active_message_types[ $messenger_name ] )
 			&& ! empty( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ] );
@@ -360,6 +365,7 @@ class EE_Message_Resource_Manager {
 	 */
 	public function list_of_active_message_types() {
 		$active_message_type_names = array();
+		$this->_initialize_collections();
 		foreach ( $this->_active_message_types as $messenger => $messenger_settings ) {
 			if ( ! isset( $messenger_settings['settings'][ $messenger . '-message_types' ] ) ) {
 				continue;
