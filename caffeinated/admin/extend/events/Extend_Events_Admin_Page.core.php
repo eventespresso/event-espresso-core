@@ -401,7 +401,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'see_notifications_for',
 				null,
 				array(
-					'_REG_ID' => $event->ID()
+					'EVT_ID' => $event->ID()
 				)
 			);
 		}
