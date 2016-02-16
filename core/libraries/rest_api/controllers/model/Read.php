@@ -185,7 +185,7 @@ class Read extends Base {
 			);
 		}
 
-		$this->_set_debug_info( 'model query params', $query_params );
+		$this->_set_headers_from_query_params( $model, $query_params );
 		/** @type array $results */
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
@@ -222,10 +222,10 @@ class Read extends Base {
 			$query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		}
 		$restricted_query_params = $query_params;
-		$restricted_query_params[ 'caps' ] = $context;
+		$restricted_query_params[ 'caps' ] = $context;	
 		$this->_set_debug_info( 'main model query params', $restricted_query_params );
 		$this->_set_debug_info( 'missing caps', Capabilities::get_missing_permissions_string( $related_model, $context ) );
-
+		
 		if(
 			! (
 				Capabilities::current_user_has_partial_access_to( $related_model, $context )
@@ -257,7 +257,7 @@ class Read extends Base {
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
-		$this->_set_debug_info( 'model query params', $query_params );
+		$this->_set_headers_from_query_params( $relation->get_other_model(), $query_params );
 		/** @type array $results */
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
@@ -291,6 +291,39 @@ class Read extends Base {
 		}else{
 			return $nice_results;
 		}
+	}
+	
+	/**
+	 * Sets the headers that are based on the model and query params,
+	 * like the total records
+	 * @param \EEM_Base $model
+	 * @param array $query_params
+	 * @return void
+	 */
+	protected function _set_headers_from_query_params( $model, $query_params ) {
+		$this->_set_debug_info( 'model query params', $query_params );
+		$this->_set_debug_info( 'missing caps', Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] ) );
+		//normalie the limit to a 2-part array, where the 2nd item is the limit
+		//FYI there NEEDS to be a limit, otherwise folks could crash the server by returning way too much stuff
+		if( is_array( $query_params[ 'limit' ] )  ) {
+			$limit_parts = $query_params[ 'limit' ];
+		} else {
+			$limit_parts = explode(',', $query_params[ 'limit' ] );
+			if( count( $limit_parts ) == 1 ){
+				$limit_parts = array(0, $limit_parts[ 0 ] );
+			}
+		}
+		//remove the group by and having parts of the query, as those will 
+		//make the sql query return an array of values, instead of just a single value
+		unset( $query_params[ 'group_by' ] );
+		unset( $query_params[ 'having' ] );
+		unset( $query_params[ 'limit' ] );
+		$count = $model->count( $query_params, null, true );
+		
+		$pages = $count / $limit_parts[ 1 ];
+		$this->_set_response_header( 'Total', $count );
+		$this->_set_response_header( 'PageSize', $limit_parts[ 1 ] );
+		$this->_set_response_header( 'TotalPages', ceil( $pages ) );
 	}
 
 

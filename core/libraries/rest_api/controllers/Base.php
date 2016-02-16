@@ -17,6 +17,9 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Base {
+	
+	const header_prefix_for_ee = 'X-EE-';
+	
 	/**
 	 * Contains debug info we'll send back in the response headers
 	 * @var array
@@ -34,6 +37,12 @@ class Base {
 	 * @var string
 	 */
 	protected $_requested_version;
+	
+	/**
+	 * flat array of headers to send in the response
+	 * @var array
+	 */
+	protected $_response_headers = array();
 
 	public function __construct() {
 		$this->_debug_mode = defined( 'EE_REST_API_DEBUG_MODE' ) ? EE_REST_API_DEBUG_MODE : false;
@@ -55,6 +64,30 @@ class Base {
 	 */
 	protected function _set_debug_info( $key, $info ){
 		$this->_debug_info[ $key ] = $info;
+	}
+	
+	/**
+	 * Sets headers for the response
+	 * @param string $key, excluding the "X-EE-" part
+	 * @param array|string $value if an array, multiple headers will be added, one
+	 * for each key in the array 
+	 */
+	protected function _set_response_header( $header_key, $value ) {
+		if( is_array( $value ) ) {
+			foreach( $value as $value_key => $value_value ) {
+				$this->_set_response_header(  $header_key . '[' . $value_key . ']', $value_value );
+			}
+		} else {
+			$this->_response_headers[ Base::header_prefix_for_ee . $header_key  ] = $value;
+		}
+	}
+	
+	/**
+	 * Returns a flat array of headers to be added to the response
+	 * @return array
+	 */
+	protected function _get_response_headers() {
+		return $this->_response_headers;
 	}
 	
 	/**
@@ -105,7 +138,11 @@ class Base {
 				$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 			}
 		}
-		$headers = array_merge( $headers, $this->_get_headers_from_ee_notices() );
+		$headers = array_merge( 
+			$headers, 
+			$this->_get_response_headers(),
+			$this->_get_headers_from_ee_notices() 
+		);
 		
 		$rest_response->set_headers( $headers );
 		return $rest_response;
