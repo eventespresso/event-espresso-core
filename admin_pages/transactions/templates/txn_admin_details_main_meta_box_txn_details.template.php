@@ -67,12 +67,16 @@
 			<tbody>
 		<?php if ( $payments ) : ?>
 			<?php $payment_total = 0; ?>
-			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
+			<?php foreach ( $payments as $PAY_ID => $payment ) :
+				$existing_reg_payment_json = isset( $existing_reg_payments[ $PAY_ID ] )
+					? wp_json_encode( $existing_reg_payments[ $PAY_ID ] )
+					: '{}';
+				?>
 				<tr id="txn-admin-payment-tr-<?php echo $PAY_ID;?>">
 					<td>
 						<span id="payment-status-<?php echo $PAY_ID; ?>" class="ee-status-strip-td ee-status-strip pymt-status-<?php echo $payment->STS_ID(); ?>"></span>
 						<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
-						<div id="reg-payments-<?php echo $PAY_ID;?>" class="hidden"><?php echo json_encode( $existing_reg_payments[ $PAY_ID ] );?></div>
+						<div id="reg-payments-<?php echo $PAY_ID;?>" class="hidden"><?php echo $existing_reg_payment_json; ?></div>
 					</td>
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">

@@ -1139,9 +1139,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __( 'The payment form data could not be processed. Please try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-		echo json_encode( array_merge( $json_response_data, $notices ));
-		die();
+		$notices = EE_Error::get_notices( false, false, false );
+		$this->_template_args = array(
+			'data' => $json_response_data,
+			'error' => $notices['errors'],
+			'success' => $notices['success']
+		);
+		$this->_return_json();
 	}
 
 
@@ -1584,7 +1588,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				/** @type EE_Transaction_Payments $transaction_payments */
 				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				if ( $transaction_payments->delete_payment_and_update_transaction( $payment )) {
-					EE_Error::add_success( __( 'The Payment was successfully deleted.', 'event_espresso' ) );
 					$json_response_data['return_data'] = $this->_build_payment_json_response( $payment, $REG_IDs, $delete_txn_reg_status_change );
 					if ( $delete_txn_reg_status_change ) {
 						$this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
@@ -1593,7 +1596,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						$_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
 						$this->_maybe_send_notifications();
 						$this->_process_registration_status_change( $payment->transaction(), $REG_IDs );
-						//$this->_maybe_send_notifications( $payment );
 					}
 				}
 			} else {
@@ -1608,9 +1610,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
-		$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-		echo json_encode( array_merge( $json_response_data, $notices ));
-		die();
+		$notices = EE_Error::get_notices( false, false, false);
+		$this->_template_args = array(
+			'data' => $json_response_data,
+			'success' => $notices['success'],
+			'error' => $notices['errors'],
+			'attention' => $notices['attention']
+		);
+		$this->_return_json();
 	}
 
 
