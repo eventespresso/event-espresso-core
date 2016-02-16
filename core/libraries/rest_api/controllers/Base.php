@@ -87,7 +87,11 @@ class Base {
 	 * @return array
 	 */
 	protected function _get_response_headers() {
-		return $this->_response_headers;
+		return apply_filters( 'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
+			$this->_response_headers,
+			$this,
+			$this->_requested_version
+		);
 	}
 	
 	/**
@@ -212,7 +216,7 @@ class Base {
 	 * @param string $route 
 	 * @return string
 	 */
-	public function get_requested_version( $route ) {
+	public function get_requested_version( $route = null ) {
 		$matches = $this->parse_route(
 			$route,
 			'~' . \EED_Core_Rest_Api::ee_api_namespace_for_regex . '~',

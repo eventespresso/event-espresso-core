@@ -410,7 +410,8 @@ class EED_Core_Rest_Api extends \EED_Module {
 			'FHEE__EED_Core_REST_API__version_compatibilities',
 			array(
 				'4.8.29' => '4.8.29',
-				'4.8.33' => '4.8.29'
+				'4.8.33' => '4.8.29',
+				'4.8.34' => '4.8.29',
 			)
 		);
 	}
