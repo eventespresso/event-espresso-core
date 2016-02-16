@@ -584,8 +584,12 @@ class EE_Checkout {
 		if (
 			// first time visiting SPCO ?
 			! $this->revisit
-			// and displaying the reg step form for the first time ?
-			&& $this->action === 'display_spco_reg_step'
+			&& (
+				// and displaying the reg step form for the first time ?
+				$this->action === 'display_spco_reg_step'
+				// or initializing the final step
+				|| $reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration
+			)
 		) {
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
