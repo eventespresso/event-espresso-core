@@ -818,7 +818,6 @@ final class EE_System {
 	*/
 	public function initialize() {
 		do_action( 'AHEE__EE_System__initialize' );
-//		EE_Error::add_persistent_admin_notice( 'yahooo', 'all your base' );
 	}
 
 
