@@ -2642,46 +2642,48 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$selected_messenger = isset( $this->_req_data['selected_messenger'] ) ? $this->_req_data['selected_messenger'] : 'email';
 
-		foreach ( $this->_m_mt_settings['messenger_tabs'] as $messenger => $tab_array ) {
-
-			$hide_on_message = $this->_message_resource_manager->is_messenger_active( $messenger ) ? '' : 'hidden';
-			$hide_off_message = $this->_message_resource_manager->is_messenger_active( $messenger ) ? 'hidden' : '';
-
-			//messenger meta boxes
-			$active = $selected_messenger == $messenger ? true : false;
-			$active_mt_tabs = isset(  $this->_m_mt_settings['message_type_tabs'][$messenger]['active'] )
-				?  $this->_m_mt_settings['message_type_tabs'][$messenger]['active']
+		if ( isset( $this->_m_mt_settings[ 'messenger_tabs' ] ) ) {
+			foreach ( $this->_m_mt_settings[ 'messenger_tabs' ] as $messenger => $tab_array ) {
+				$hide_on_message = $this->_message_resource_manager->is_messenger_active( $messenger ) ? '' : 'hidden';
+				$hide_off_message = $this->_message_resource_manager->is_messenger_active( $messenger ) ? 'hidden' : '';
+				//messenger meta boxes
+				$active = $selected_messenger == $messenger ? true : false;
+				$active_mt_tabs = isset( $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'active' ] )
+				? $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'active' ]
 				: '';
-			$m_boxes[$messenger . '_a_box'] = sprintf( __('%s Settings', 'event_espresso'), $tab_array['label'] );
-			$m_template_args[$messenger . '_a_box'] = array(
-				'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
-				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
-					? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
-					: '',
-				'content' => $this->_get_messenger_box_content( $tab_array['obj'] ),
-				'hidden' => $active ? '' : ' hidden',
-				'hide_on_message' => $hide_on_message,
-				'messenger' => $messenger,
-				'active' => $active
-			);
-
-
-			// message type meta boxes
-			// (which is really just the inactive container for each messenger
-			// showing inactive message types for that messenger)
-			$mt_boxes[$messenger . '_i_box'] = __('Inactive Message Types', 'event_espresso');
-			$mt_template_args[$messenger . '_i_box'] = array(
-				'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
-				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
-					? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] )
-					: '',
-				'hidden' => $active ? '' : ' hidden',
-				'hide_on_message' => $hide_on_message,
-				'hide_off_message' => $hide_off_message,
-				'messenger' => $messenger,
-				'active' => $active
+				$m_boxes[ $messenger . '_a_box' ] = sprintf(
+				__( '%s Settings', 'event_espresso' ),
+				$tab_array[ 'label' ]
 				);
+				$m_template_args[ $messenger . '_a_box' ] = array(
+				'active_message_types'   => ! empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
+				'inactive_message_types' => isset( $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'inactive' ] )
+				? $this->_get_mt_tabs( $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'inactive' ] )
+				: '',
+				'content'                => $this->_get_messenger_box_content( $tab_array[ 'obj' ] ),
+				'hidden'                 => $active ? '' : ' hidden',
+				'hide_on_message'        => $hide_on_message,
+				'messenger'              => $messenger,
+				'active'                 => $active
+				);
+				// message type meta boxes
+				// (which is really just the inactive container for each messenger
+				// showing inactive message types for that messenger)
+				$mt_boxes[ $messenger . '_i_box' ] = __( 'Inactive Message Types', 'event_espresso' );
+				$mt_template_args[ $messenger . '_i_box' ] = array(
+				'active_message_types'   => ! empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
+				'inactive_message_types' => isset( $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'inactive' ] )
+				? $this->_get_mt_tabs( $this->_m_mt_settings[ 'message_type_tabs' ][ $messenger ][ 'inactive' ] )
+				: '',
+				'hidden'                 => $active ? '' : ' hidden',
+				'hide_on_message'        => $hide_on_message,
+				'hide_off_message'       => $hide_off_message,
+				'messenger'              => $messenger,
+				'active'                 => $active
+				);
+			}
 		}
+
 
 		//register messenger metaboxes
 		$m_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_messenger_mt_meta_box.template.php';
