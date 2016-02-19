@@ -101,8 +101,10 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		//first we remove all existing relations on the Event for message types.
 		$event->_remove_relations('Message_Template_Group');
 		//now let's just loop through the selected templates and add relations!
-		foreach( $data['event_message_templates_relation'] as $grp_ID ) {
-			$event->_add_relation_to( $grp_ID, 'Message_Template_Group' );
+		if ( isset( $data[ 'event_message_templates_relation' ] ) ) {
+			foreach ( $data[ 'event_message_templates_relation' ] as $grp_ID ) {
+				$event->_add_relation_to( $grp_ID, 'Message_Template_Group' );
+			}
 		}
 		//now save
 		return $event->save();
