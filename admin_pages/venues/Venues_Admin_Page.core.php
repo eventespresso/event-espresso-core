@@ -339,7 +339,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_editor_other'
 					)
 				),
-				'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
+				/*'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),*/
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
@@ -388,7 +388,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_edit_category'
 					)
 				),
-				'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),
+				/*'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),*/
 				'require_nonce' => FALSE
 				),
 			'category_list' => array(

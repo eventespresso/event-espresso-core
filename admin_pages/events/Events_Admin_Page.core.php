@@ -373,9 +373,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor_other'
 					)
 				),
-				'help_tour' => array(
+				/*'help_tour' => array(
 					'Event_Edit_Help_Tour'
-				),
+				),*/
 				'qtips' => array( 'EE_Event_Editor_Decaf_Tips' ),
 				'require_nonce' => FALSE
 			),
@@ -446,7 +446,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_edit_category'
 						)
 					),
-				'help_tour' => array('Event_Edit_Category_Help_Tour'),
+				/*'help_tour' => array('Event_Edit_Category_Help_Tour'),*/
 					'metaboxes' => array('_publish_post_box'),
 					'require_nonce' => FALSE
 					),
