@@ -150,6 +150,7 @@ class EE_Message_Resource_Manager {
 	 * @return EE_Messenger_Collection
 	 */
 	public function messenger_collection() {
+		$this->_initialize_collections();
 		return $this->_messenger_collection_loader->messenger_collection();
 	}
 
