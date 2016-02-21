@@ -414,7 +414,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * toggle_abandoned_transaction_status
 	 * upgrades a TXNs status from failed or abandoned to incomplete
-
+	 *
 	 * 	@access public
 	 * @param EE_Transaction $transaction
 	 * 	@return 	boolean
@@ -578,9 +578,9 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		foreach ( $transaction->registrations( $this->_registration_query_params ) as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				if ( $additional_param ) {
-					$response = $registration_processor->$method_name( $registration, $additional_param ) ? TRUE : $response;
+					$response = $registration_processor->{$method_name}( $registration, $additional_param ) ? TRUE : $response;
 				} else {
-					$response = $registration_processor->$method_name( $registration ) ? TRUE : $response;
+					$response = $registration_processor->{$method_name}( $registration ) ? TRUE : $response;
 				}
 			}
 		}

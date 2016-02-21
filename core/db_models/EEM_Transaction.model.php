@@ -108,20 +108,24 @@ class EEM_Transaction extends EEM_Base {
 	 * @return \stdClass[]
 	 */
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
+		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
 
-		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'TXN_timestamp' );
+
 		$results = $this->_get_all_wpdb_results(
 			array(
 				array(
-					'TXN_timestamp' => array('>=', $sql_date)),
+				'TXN_timestamp' => array( '>=', $sql_date ) ),
 				'group_by' => 'txnDate',
-				'order_by' => array('TXN_timestamp' => 'DESC' )
+				'order_by' => array( 'TXN_timestamp' => 'ASC' )
 			),
 			OBJECT,
 			array(
-				'txnDate' => array('DATE(Transaction.TXN_timestamp)','%s'),
-				'revenue' => array('SUM(Transaction.TXN_paid)', '%d')
-			));
+				'txnDate' => array( 'DATE(' . $query_interval . ')', '%s' ),
+				'revenue' => array( 'SUM(Transaction.TXN_paid)', '%d' )
+			)
+		);
 		return $results;
 	}
 
@@ -135,23 +139,28 @@ class EEM_Transaction extends EEM_Base {
 	 * @throws \EE_Error
 	 * @return mixed
 	 */
-	public function get_revenue_per_event_report( $period = 'month' ) {
-		/** @type WPDB $wpdb */
-		global $wpdb;
-		$date_mod = strtotime( '-1 ' . $period );
+	public function get_revenue_per_event_report( $period = '-1 month' ) {
+		$date_sql = EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
+		$where = array( 'Registration.REG_date' => array( '>=', $date_sql ) );
 
-		$SQL = 'SELECT post_title as event_name, SUM(TXN_paid) AS revenue';
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
-		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
-		$SQL .= ' LEFT JOIN ' . $wpdb->posts . ' evt ON evt.ID = reg.EVT_ID';
-		$SQL .= ' WHERE REG_count = 1';
-		$SQL .= ' AND REG_date >= %d';
-		$SQL .= ' GROUP BY event_name';
-		$SQL .= ' ORDER BY event_name';
-		$SQL .= ' LIMIT 0, 24';
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'revenue_per_event_report' ) ) {
+			$where ['Registration.Event.EVT_wp_user'] = get_current_user_id();
+		}
 
-		return $this->_do_wpdb_query( 'get_results', array(  $wpdb->prepare( $SQL, $date_mod ) ) );
-
+		$results = $this->_get_all_wpdb_results(
+			array(
+				$where,
+				'group_by' => array( 'Registration.Event.EVT_name' ),
+				'order_by' => 'Registration.Event.EVT_name',
+				'limit' => array( 0, 24 )
+			),
+			OBJECT,
+			array(
+				'event_name' => array( 'Registration___Event_CPT.post_title', '%s' ),
+				'revenue' => array( 'SUM(TXN_PAID)', '%d' )
+			)
+		);
+		return $results;
 	}
 
 

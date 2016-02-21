@@ -31,18 +31,36 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 
 class Events_Admin_List_Table extends EE_Admin_List_Table {
 
+
+	/**
+	 * @var EE_Datetime
+	 */
 	private $_dtt;
 
+
+	/**
+	 * Events_Admin_List_Table constructor.
+	 *
+	 * @param EE_Admin_Page $admin_page
+	 */
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
 		require_once( EE_HELPERS . 'EEH_DTT_Helper.helper.php' );
 	}
 
+
+	/**
+	 * Initial setup of data properties for the list table.
+	 */
 	protected function _setup_data() {
 		$this->_data = $this->_admin_page->get_events($this->_per_page, $this->_current_page);
  		$this->_all_data_count = $this->_admin_page->get_events(0,0, TRUE);
 	}
 
+
+	/**
+	 * Set up of additional properties for the list table.
+	 */
 	protected function _set_properties() {
 		$this->_wp_list_args = array(
 			'singular' => __('event', 'event_espresso'),
@@ -81,14 +99,17 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
+	/**
+	 * @return array
+	 */
 	protected function _get_table_filters() {
 		return array(); //no filters with decaf
 	}
 
 
-
-
-
+	/**
+	 * Setup of views properties.
+	 */
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->total_events();
 		$this->_views['draft']['count'] = $this->_admin_page->total_events_draft();
@@ -98,11 +119,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return string
+	 */
 	protected function _get_row_class( $item ) {
 		$class = parent::_get_row_class( $item );
 		//add status class
-		$class .= ' ee-status-strip event-status-' . $item->get_active_status();
+		$class .= $item instanceof EE_Event ? ' ee-status-strip event-status-' . $item->get_active_status() : '';
 		if ( $this->_has_checkbox_column ) {
 			$class .= ' has-checkbox-column';
 		}
@@ -110,14 +135,22 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return string
+	 */
 	public function column_status( EE_Event $item ) {
 		return '<span class="ee-status-strip ee-status-strip-td event-status-' . $item->get_active_status() . '"></span>';
 	}/**/
 
 
-
-	public function column_cb($item) {
+	/**
+	 * @param  EE_Event $item
+	 *
+	 * @return string
+	 */
+	public function column_cb( $item ) {
 		$this->_dtt = $item->primary_datetime(); //set this for use in other columns
 
 		//does event have any attached registrations?
@@ -128,17 +161,24 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
     }
 
 
-
-
-	public function column_id($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return mixed|string
+	 */
+	public function column_id( EE_Event $item ) {
 		$content = $item->ID();
 		$content .= '  <span class="show-on-mobile-view-only">' . $item->name() . '</span>';
 		return $content;
 	}
 
 
-
-	public function column_name($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return string
+	 */
+	public function column_name( EE_Event $item ) {
 		$edit_query_args = array(
 				'action' => 'edit',
 				'post' => $item->ID()
@@ -236,8 +276,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return string
+	 */
 	public function column_author( EE_Event $item ) {
 		//user author info
 		$event_author = get_userdata( $item->wp_user() );
@@ -252,17 +295,23 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-
-	public function column_venue($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return string
+	 */
+	public function column_venue( EE_Event $item ) {
 		$venue = $item->get_first_related( 'Venue' );
 		return !empty( $venue ) ? $venue->name() : '';
 	}
 
 
-
-
-	public function column_start_date_time($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @throws EE_Error
+	 */
+	public function column_start_date_time( EE_Event $item ) {
 		echo !empty( $this->_dtt ) ?  $this->_dtt->get_i18n_datetime('DTT_EVT_start') : __('No Date was saved for this Event', 'event_espresso');
 		//display in user's timezone?
 		echo !empty( $this->_dtt ) ? $this->_dtt->display_in_my_timezone('DTT_EVT_start', 'get_i18n_datetime', '', 'My Timezone: ' ) : '';
@@ -270,9 +319,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-
-	public function column_reg_begins($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @throws EE_Error
+	 */
+	public function column_reg_begins( EE_Event $item ) {
 		$reg_start = $item->get_ticket_with_earliest_start_time();
 		echo !empty( $reg_start ) ? $reg_start->get_i18n_datetime('TKT_start_date') : __('No Tickets have been setup for this Event', 'event_espresso');
 		//display in user's timezone?
@@ -280,16 +332,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-
-	/*public function column_status($item) {
-		$item->pretty_active_status();
-	}/**/
-
-
-
-
-	public function column_attendees($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return int|string
+	 */
+	public function column_attendees( EE_Event $item ) {
 		$attendees_query_args = array(
 				'action' => 'default',
 				'event_id' => $item->ID()
@@ -300,14 +348,22 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-
-	public function column_tkts_sold($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return float
+	 */
+	public function column_tkts_sold( EE_Event $item ) {
 		return EEM_Ticket::instance()->sum(array( array('Datetime.EVT_ID' => $item->ID() )), 'TKT_sold' );
 	}
 
 
-
-	public function column_actions($item) {
+	/**
+	 * @param EE_Event $item
+	 *
+	 * @return string
+	 */
+	public function column_actions( EE_Event $item ) {
 		//todo: remove when attendees is active
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
