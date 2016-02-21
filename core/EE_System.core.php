@@ -342,11 +342,12 @@ final class EE_System {
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			update_option( 'ee_flush_rewrite_rules', TRUE );
-			EEH_Activation::system_initialization();
+			
 			if( $verify_schema ) {
 				EEH_Activation::initialize_db_and_folders();
 			}
 			EEH_Activation::initialize_db_content();
+			EEH_Activation::system_initialization();
 			if( $initialize_addons_too ) {
 				$this->initialize_addons();
 			}
