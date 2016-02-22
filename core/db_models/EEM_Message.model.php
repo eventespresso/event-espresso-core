@@ -276,25 +276,28 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 		$expected_vars = $this->_expected_vars_for_query_inject();
 		$query_params[0] = array();
 		foreach ( $expected_vars as $request_key => $model_name ) {
-			if ( $request_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
+			$request_value = EE_Registry::instance()->REQ->get( $request_key );
+			if ( $request_value ) {
 				//special case
-				if ( $request_key === '_REG_ID' ) {
-					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
-						'Registration.REG_ID' => $request_value,
-						'Attendee.Registration.REG_ID' => $request_value,
-						'Transaction.Registration.REG_ID' => $request_value,
-						'WP_User.Event.Registration.REG_ID' => $request_value,
-					);
-					continue;
-				}
-				if ( $request_key === 'EVT_ID' ) {
-					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
-						'Registration.EVT_ID' => $request_value,
-						'Attendee.Registration.EVT_ID' => $request_value,
-						'Transaction.Registration.EVT_ID' => $request_value,
-						'WP_User.Event.EVT_ID' => $request_value,
-					);
-					continue;
+				switch ( $request_key ) {
+					case '_REG_ID' :
+						$query_params[ 0 ][ 'AND**filter_by' ][ 'OR**filter_by' ] = array(
+							//'Registration.REG_ID' => $request_value,
+							//'Attendee.Registration.REG_ID' => $request_value,
+							'Transaction.Registration.REG_ID' => $request_value,
+							//'WP_User.Event.Registration.REG_ID' => $request_value,
+						);
+						// break out of switch AND loop
+						break( 2 );
+					case 'EVT_ID' :
+						$query_params[ 0 ][ 'AND**filter_by' ][ 'OR**filter_by' ] = array(
+							//'Registration.EVT_ID' => $request_value,
+							//'Attendee.Registration.EVT_ID' => $request_value,
+							'Transaction.Registration.EVT_ID' => $request_value,
+							//'WP_User.Event.EVT_ID' => $request_value,
+						);
+						// break out of switch AND loop
+						break( 2 );
 				}
 				$query_params[0][ $model_name . '.' . $request_key ] = EE_Registry::instance()->REQ->get( $request_key );
 			}
