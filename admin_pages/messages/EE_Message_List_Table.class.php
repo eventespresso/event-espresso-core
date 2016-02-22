@@ -356,26 +356,29 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		}
 
 		//account for filters
-		if ( ! $all
-		     && isset( $this->_req_data['ee_messenger_filter_by'] )
-		     && $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
+		if (
+			! $all
+			&& isset( $this->_req_data['ee_messenger_filter_by'] )
+			&& $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
 		) {
 			$query_params[0]['AND*messenger_filter'] = array(
 				'MSG_messenger' => $this->_req_data['ee_messenger_filter_by'],
 			);
 		}
-		if ( ! $all
-		     && ! empty( $this->_req_data['ee_message_type_filter_by'] )
-			 && $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
+		if (
+			! $all
+			&& ! empty( $this->_req_data['ee_message_type_filter_by'] )
+			&& $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
 		) {
 			$query_params[0]['AND*message_type_filter'] = array(
 				'MSG_message_type' => $this->_req_data['ee_message_type_filter_by'],
 			);
 		}
 
-		if ( ! $all
-		     && ! empty( $this->_req_data['ee_context_filter_by'] )
-		     && $this->_req_data['ee_context_filter_by'] !== 'none_selected'
+		if (
+			! $all
+			&& ! empty( $this->_req_data['ee_context_filter_by'] )
+			&& $this->_req_data['ee_context_filter_by'] !== 'none_selected'
 		) {
 			$query_params[0]['AND*context_filter'] = array(
 				'MSG_context' => array( 'IN', explode( ',', $this->_req_data['ee_context_filter_by'] ) )
