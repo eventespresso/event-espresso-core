@@ -964,7 +964,14 @@ class EE_Error extends Exception {
 	public static function get_persistent_admin_notices( $return_url = '' ) {
 		$notices = '';
 		// check for persistent admin notices
-		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
+		//filter the list though so plugins can notify the admin in a different way if they want
+		$persistent_admin_notices = apply_filters( 
+			'FHEE__EE_Error__get_persistent_admin_notices',
+			get_option( 'ee_pers_admin_notices', FALSE ),
+			'ee_pers_admin_notices',
+			$return_url
+		);
+		if ( $persistent_admin_notices ) {
 			// load scripts
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_register_script( 'ee_error_js', EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, TRUE );
