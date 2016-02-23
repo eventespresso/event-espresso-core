@@ -81,7 +81,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 						'filename' => 'transactions_reports'
 					)
 				),
-				'help_tour' => array( 'Transaction_Reports_Help_Tour' ),
+				/*'help_tour' => array( 'Transaction_Reports_Help_Tour' ),*/
 				'require_nonce' => FALSE
 			)
 		);

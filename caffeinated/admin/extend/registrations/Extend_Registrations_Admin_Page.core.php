@@ -103,7 +103,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 						'filename' => 'registrations_reports'
 						)
 					),
-				'help_tour' => array( 'Registration_Reports_Help_Tour' ),
+				/*'help_tour' => array( 'Registration_Reports_Help_Tour' ),*/
 				'require_nonce' => FALSE
 				),
 			'event_registrations' => array(
