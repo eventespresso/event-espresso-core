@@ -17,9 +17,9 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Base {
-	
+
 	const header_prefix_for_ee = 'X-EE-';
-	
+
 	/**
 	 * Contains debug info we'll send back in the response headers
 	 * @var array
@@ -37,12 +37,14 @@ class Base {
 	 * @var string
 	 */
 	protected $_requested_version;
-	
+
 	/**
 	 * flat array of headers to send in the response
 	 * @var array
 	 */
 	protected $_response_headers = array();
+
+
 
 	public function __construct() {
 		$this->_debug_mode = defined( 'EE_REST_API_DEBUG_MODE' ) ? EE_REST_API_DEBUG_MODE : false;
@@ -65,12 +67,13 @@ class Base {
 	protected function _set_debug_info( $key, $info ){
 		$this->_debug_info[ $key ] = $info;
 	}
-	
+
 	/**
 	 * Sets headers for the response
-	 * @param string $key, excluding the "X-EE-" part
+	 *
+	 * @param string $header_key, excluding the "X-EE-" part
 	 * @param array|string $value if an array, multiple headers will be added, one
-	 * for each key in the array 
+	 * for each key in the array
 	 */
 	protected function _set_response_header( $header_key, $value ) {
 		if( is_array( $value ) ) {
@@ -81,7 +84,7 @@ class Base {
 			$this->_response_headers[ Base::header_prefix_for_ee . $header_key  ] = $value;
 		}
 	}
-	
+
 	/**
 	 * Returns a flat array of headers to be added to the response
 	 * @return array
@@ -93,7 +96,7 @@ class Base {
 			$this->_requested_version
 		);
 	}
-	
+
 	/**
 	 * Adds error notices from EE_Error onto the provided \WP_Error
 	 * @param \WP_Error $wp_error_response
@@ -101,10 +104,10 @@ class Base {
 	 */
 	protected function _add_ee_errors_to_response( \WP_Error $wp_error_response ) {
 		$notices_during_checkin = \EE_Error::get_raw_notices();
-		if( ! empty( $notices_during_checkin[ 'errors' ] ) ) {	
+		if( ! empty( $notices_during_checkin[ 'errors' ] ) ) {
 			foreach( $notices_during_checkin[ 'errors' ] as $error_code => $error_message ) {
-				$wp_error_response->add( 
-					sanitize_key( $error_code ), 
+				$wp_error_response->add(
+					sanitize_key( $error_code ),
 					strip_tags( $error_message ) );
 			}
 		}
@@ -142,16 +145,16 @@ class Base {
 				$headers[ 'X-EE4-Debug-' . ucwords( $debug_key ) ] = $debug_info;
 			}
 		}
-		$headers = array_merge( 
-			$headers, 
+		$headers = array_merge(
+			$headers,
 			$this->_get_response_headers(),
-			$this->_get_headers_from_ee_notices() 
+			$this->_get_headers_from_ee_notices()
 		);
-		
+
 		$rest_response->set_headers( $headers );
 		return $rest_response;
 	}
-	
+
 	/**
 	 * Converts the \WP_Error into `WP_REST_Response.
 	 * Mostly this is just a copy-and-paste from \WP_REST_Server::error_to_response
@@ -185,9 +188,9 @@ class Base {
 		}
 		return new \WP_REST_Response( $data, $status );
 	}
-	
+
 	/**
-	 * Array of headers derived from EE sucess, attention, and error messages
+	 * Array of headers derived from EE success, attention, and error messages
 	 * @return array
 	 */
 	protected function _get_headers_from_ee_notices() {
@@ -201,19 +204,19 @@ class Base {
 				$headers[ 'X-EE4-Notices-' . \EEH_Inflector::humanize( $notice_type ) . '[' . $notice_code . ']' ] = strip_tags( $sub_notice );
 			}
 		}
-		return apply_filters( 
+		return apply_filters(
 			'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_headers_from_ee_notices__return',
 			$headers,
 			$this->_requested_version,
 			$notices
 		);
 	}
-	
+
 	/**
 	 * Finds which version of the API was requested given the route, and returns it.
 	 * eg in a request to "mysite.com/wp-json/ee/v4.8.29/events/123" this would return
 	 * "4.8.29"
-	 * @param string $route 
+	 * @param string $route
 	 * @return string
 	 */
 	public function get_requested_version( $route = null ) {
@@ -227,7 +230,7 @@ class Base {
 		} else {
 			return \EED_Core_Rest_Api::latest_rest_api_version();
 		}
-		
+
 	}
 
 
