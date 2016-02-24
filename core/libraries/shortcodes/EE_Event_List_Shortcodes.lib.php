@@ -64,8 +64,6 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_event_list() {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
-
 
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_event_list_for_main();
@@ -85,6 +83,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_main() {
+
 		$valid_shortcodes = array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'attendee', 'recipient_list', 'recipient_details', 'primary_registration_list', 'primary_registration_details', 'event_author');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];

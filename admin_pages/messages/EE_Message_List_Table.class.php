@@ -14,6 +14,17 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Message_List_Table extends EE_Admin_List_Table {
 
+
+
+	/**
+	 * @return Messages_Admin_Page
+	 */
+	public function get_admin_page() {
+		return $this->_admin_page;
+	}
+
+
+
 	protected function _setup_data() {
 		$this->_data = $this->_get_messages( $this->_per_page, $this->_view );
 		$this->_all_data_count = $this->_get_messages( $this->_per_page, $this->_view, true );
@@ -27,7 +38,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'singular' => __( 'Message', 'event_espresso' ),
 			'plural' => __( 'Messages', 'event_espresso' ),
 			'ajax' => true,
-			'screen' => $this->_admin_page->get_current_screen()->id
+			'screen' => $this->get_admin_page()->get_current_screen()->id
 		);
 
 		$this->_columns = array(
@@ -63,28 +74,13 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		/** @type EE_messages $eemsg */
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
-		$messengers = $this->_admin_page->get_active_messengers();
-		$message_types = $this->_admin_page->get_installed_message_types();
-		$contexts = $eemsg->get_all_contexts();
-
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$contexts = $message_resource_manager->get_all_contexts();
 		//setup messengers for selects
-		$i = 1;
-		foreach ( $messengers as $messenger => $args ) {
-			$m_values[ $i ]['id'] = $messenger;
-			$m_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
-			$i++;
-		}
-
+		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types
-		$i = 1;
-		foreach ( $message_types as $message_type => $args ) {
-			$mt_values[ $i ]['id'] = $message_type;
-			$mt_values[ $i ]['text'] = ucwords( $args['obj']->label['singular'] );
-			$i++;
-		}
-
+		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
 		//and the same for contexts
 		$i = 1;
 		$labels = $c_values = array();
@@ -161,7 +157,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 *
 	 * @return string    EE_Message status.
 	 */
-	public function column_msg_status( $message ) {
+	public function column_msg_status( EE_Message $message ) {
 		return '<span class="ee-status-strip ee-status-strip-td msg-status-' . $message->STS_ID() . '"></span>';
 	}
 
@@ -177,8 +173,11 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 
 
-
-	public function column_msg_id( $message ) {
+	/**
+	 * @param EE_Message $message
+	 * @return string
+	 */
+	public function column_msg_id( EE_Message $message ) {
 		return $message->ID();
 	}
 
@@ -188,7 +187,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string    The recipient of the message
 	 */
-	public function column_to( $message ) {
+	public function column_to( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'URL' );
 		$actions = array();
 		if ( $recipient_object = $message->recipient_object() ) {
@@ -216,7 +215,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string   The sender of the message
 	 */
-	public function column_from( $message ) {
+	public function column_from( EE_Message $message ) {
 		return $message->from();
 	}
 
@@ -226,7 +225,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string  The messenger used to send the message.
 	 */
-	public function column_messenger( $message ) {
+	public function column_messenger( EE_Message $message ) {
 		return ucwords( $message->messenger_label() );
 	}
 
@@ -235,7 +234,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string  The message type used to generate the message.
 	 */
-	public function column_message_type( $message ) {
+	public function column_message_type( EE_Message $message ) {
 		return ucwords( $message->message_type_label() );
 	}
 
@@ -244,7 +243,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string  The context the message was generated for.
 	 */
-	public function column_context( $message ) {
+	public function column_context( EE_Message $message ) {
 		return $message->context_label();
 	}
 
@@ -253,7 +252,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string    The timestamp when this message was last modified.
 	 */
-	public function column_modified( $message ) {
+	public function column_modified( EE_Message $message ) {
 		return $message->modified();
 	}
 
@@ -262,7 +261,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @param EE_Message $message
 	 * @return string   Actions that can be done on the current message.
 	 */
-	public function column_action( $message ) {
+	public function column_action( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		$action_links = array(
 			'view' => EEH_MSG_Template::get_message_action_link( 'view', $message ),
@@ -306,22 +305,31 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @return int | EE_Message[]
 	 */
 	protected function _get_messages( $perpage = 10, $view = 'all', $count = false, $all = false ) {
-		$current_page = isset( $this->_req_data['paged'] ) && ! empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
-		$per_page = isset( $this->_req_data['perpage'] ) && ! empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $perpage;
+
+		$current_page = isset( $this->_req_data['paged'] ) && ! empty( $this->_req_data['paged'] )
+			? $this->_req_data['paged']
+			: 1;
+
+		$per_page = isset( $this->_req_data['perpage'] ) && ! empty( $this->_req_data['perpage'] )
+			? $this->_req_data['perpage']
+			: $perpage;
+
 		$offset = ( $current_page - 1 ) * $per_page;
 		$limit = $all || $count ? null : array( $offset, $per_page );
-
 		$query_params = array(
-			'order_by' => empty( $this->_req_data['orderby'] ) ? 'MSG_modified' : $this->_req_data['orderby'],
-			'order' => empty( $this->_req_data['order'] ) ? 'DESC' : $this->_req_data['order'],
-			'limit' => $limit,
+			'order_by' => empty( $this->_req_data[ 'orderby' ] ) ? 'MSG_modified' : $this->_req_data[ 'orderby' ],
+			'order'    => empty( $this->_req_data[ 'order' ] ) ? 'DESC' : $this->_req_data[ 'order' ],
+			'limit'    => $limit,
 		);
 
 		/**
 		 * Any filters coming in from other routes?
 		 */
-		if ( ! $all && isset( $this->_req_data['filterby'] ) ) {
+		if ( isset( $this->_req_data['filterby'] ) ) {
 			$query_params = array_merge( $query_params, EEM_Message::instance()->filter_by_query_params() );
+			if ( ! $count ) {
+				$query_params['group_by'] = 'MSG_ID';
+			}
 		}
 
 		//view conditionals
@@ -348,33 +356,38 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		}
 
 		//account for filters
-		if ( ! $all
-		     && isset( $this->_req_data['ee_messenger_filter_by'] )
-		     && $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
+		if (
+			! $all
+			&& isset( $this->_req_data['ee_messenger_filter_by'] )
+			&& $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
 		) {
 			$query_params[0]['AND*messenger_filter'] = array(
 				'MSG_messenger' => $this->_req_data['ee_messenger_filter_by'],
 			);
 		}
-		if ( ! $all
-		     && ! empty( $this->_req_data['ee_message_type_filter_by'] )
-			 && $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
+		if (
+			! $all
+			&& ! empty( $this->_req_data['ee_message_type_filter_by'] )
+			&& $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
 		) {
 			$query_params[0]['AND*message_type_filter'] = array(
 				'MSG_message_type' => $this->_req_data['ee_message_type_filter_by'],
 			);
 		}
 
-		if ( ! $all
-		     && ! empty( $this->_req_data['ee_context_filter_by'] )
-		     && $this->_req_data['ee_context_filter_by'] !== 'none_selected'
+		if (
+			! $all
+			&& ! empty( $this->_req_data['ee_context_filter_by'] )
+			&& $this->_req_data['ee_context_filter_by'] !== 'none_selected'
 		) {
 			$query_params[0]['AND*context_filter'] = array(
 				'MSG_context' => array( 'IN', explode( ',', $this->_req_data['ee_context_filter_by'] ) )
 			);
 		}
 
-		return $count ? EEM_Message::instance()->count( $query_params ) : EEM_Message::instance()->get_all( $query_params );
+		return $count
+			? EEM_Message::instance()->count( $query_params, null, true )
+			: EEM_Message::instance()->get_all( $query_params );
 
 	}
 } //end EE_Message_List_Table class

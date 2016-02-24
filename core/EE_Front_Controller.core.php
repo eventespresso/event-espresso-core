@@ -23,14 +23,6 @@
  */
 final class EE_Front_Controller {
 
-
-	/**
-	 * 	instance of the EE_System object
-	 *	@var 	$_instance
-	 * 	@access 	private
-	 */
-	private static $_instance = NULL;
-
 	/**
 	 * 	$_template_path
 	 *	@var 	string		$_template_path
@@ -45,39 +37,43 @@ final class EE_Front_Controller {
 	 */
 	private $_template = NULL;
 
+	/**
+	 * @type  EE_Registry $Registry
+	 * @access    protected
+	 */
+	protected $Registry;
 
 	/**
-	 * static copy of registry that modules can use until they get instantiated
-	 *	@var 	EE_Registry	$registry
-	 * 	@access 	public
+	 * @type  EE_Request_Handler $Request_Handler
+	 * @access    protected
 	 */
-	public static $registry;
-
+	protected $Request_Handler;
 
 	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 *	@return EE_Front_Controller
+	 *	@type  EE_Module_Request_Router $Module_Request_Router
+	 * 	@access    protected
 	 */
-	public static function instance() {
-		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_Front_Controller )) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
+	protected $Module_Request_Router;
 
 
 
 	/**
 	 *    class constructor
-	 *
 	 *    should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
-	 * @access    private
-	 * @return \EE_Front_Controller
+	 * @access    public
+	 * @param \EE_Registry $Registry
+	 * @param \EE_Request_Handler $Request_Handler
+	 * @param \EE_Module_Request_Router $Module_Request_Router
 	 */
-	private function __construct() {
+	public function __construct(
+		EE_Registry $Registry,
+		EE_Request_Handler $Request_Handler,
+		EE_Module_Request_Router $Module_Request_Router
+	) {
+		$this->Registry = $Registry;
+		$this->Request_Handler = $Request_Handler;
+		$this->Module_Request_Router = $Module_Request_Router;
 		// make sure template tags are loaded immediately so that themes don't break
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'load_espresso_template_tags' ), 10 );
 		// determine how to integrate WP_Query with the EE models
@@ -114,6 +110,22 @@ final class EE_Front_Controller {
 	}
 
 
+
+	/**
+	 * @return EE_Request_Handler
+	 */
+	public function Request_Handler() {
+		return $this->Request_Handler;
+	}
+
+
+
+	/**
+	 * @return EE_Module_Request_Router
+	 */
+	public function Module_Request_Router() {
+		return $this->Module_Request_Router;
+	}
 
 
 
@@ -168,7 +180,7 @@ final class EE_Front_Controller {
 	 */
 	public function employ_CPT_Strategy() {
 		if ( apply_filters( 'FHEE__EE_Front_Controller__employ_CPT_Strategy',true) ){
-			EE_Registry::instance()->load_core( 'CPT_Strategy' );
+			$this->Registry->load_core( 'CPT_Strategy' );
 		}
 	}
 
@@ -221,7 +233,7 @@ final class EE_Front_Controller {
 	 */
 	public function get_request( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__get_request__start' );
-		EE_Registry::instance()->load_core( 'Request_Handler', $WP );
+		$this->Request_Handler->parse_request( $WP );
 		do_action( 'AHEE__EE_Front_Controller__get_request__complete' );
 	}
 
@@ -236,8 +248,9 @@ final class EE_Front_Controller {
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
+		$this->Request_Handler->set_request_vars( $WP );
 		// grab post_name from request
-		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name', EE_Registry::instance()->REQ->get( 'post_name' ));
+		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name', $this->Request_Handler->get( 'post_name' ));
 		// if it's not set, then check if frontpage is blog
 		if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
 			// yup.. this is the posts page, prepare to load all shortcode modules
@@ -261,10 +274,9 @@ final class EE_Front_Controller {
 		// are we on a category page?
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
-		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-			// d( EE_Registry::instance()->CFG->core->post_shortcodes );
+		if ( isset( $this->Registry->CFG->core->post_shortcodes )) {
 			// cycle thru all posts with shortcodes set
-			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
+			foreach ( $this->Registry->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// filter shortcodes so
 				$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
 				// now cycle thru shortcodes
@@ -272,7 +284,7 @@ final class EE_Front_Controller {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
 					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
-						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
+						if ( ! isset( $this->Registry->shortcodes->{$shortcode_class} ) ) {
 							if ( $current_post != $page_for_posts && current_user_can( 'edit_post', $post_id )) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -282,7 +294,7 @@ final class EE_Front_Controller {
 							continue;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
+						if ( isset( $this->Registry->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
 							// let's pause to reflect on this...
 							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 							// ensure that class is actually a shortcode
@@ -293,14 +305,14 @@ final class EE_Front_Controller {
 								continue;
 							}
 							// and pass the request object to the run method
-							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
+							$this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
-							EE_Registry::instance()->shortcodes->$shortcode_class->run( $WP );
+							$this->Registry->shortcodes->{$shortcode_class}->run( $WP );
 						}
 					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
-					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
+					} else if ( $post_name != $page_for_posts && isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ] )) {
 						// and the shortcode is not being tracked for this page
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
+						if ( ! isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
 							// then remove the "fallback" shortcode processor
 							remove_shortcode( $shortcode_class );
 						}
@@ -323,25 +335,25 @@ final class EE_Front_Controller {
 	public function pre_get_posts( $WP_Query ) {
 		// only load Module_Request_Router if this is the main query
 		if ( $WP_Query->is_main_query() ) {
-			// load module request router
-			$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
+			//// load module request router
+			//$Module_Request_Router = $this->Registry->load_core( 'Module_Request_Router' );
 			// verify object
-			if ( $Module_Request_Router instanceof EE_Module_Request_Router ) {
+			if ( $this->Module_Request_Router instanceof EE_Module_Request_Router ) {
 				// cycle thru module routes
-				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
+				while ( $route = $this->Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
-					$module = $Module_Request_Router->resolve_route( $route[0], $route[1] );
+					$module = $this->Module_Request_Router->resolve_route( $route[0], $route[1] );
 					if( $module instanceof EED_Module ) {
 						// get registered view for route
-						$this->_template_path = $Module_Request_Router->get_view( $route );
+						$this->_template_path = $this->Module_Request_Router->get_view( $route );
 						// grab module name
 						$module_name = $module->module_name();
 						// map the module to the module objects
-						EE_Registry::instance()->modules->$module_name = $module;
+						$this->Registry->modules->{$module_name} = $module;
 					}
 				}
 			}
-			//d( EE_Registry::instance()->modules );
+			//d( $this->Registry->modules );
 		}
 	}
 
@@ -360,7 +372,7 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp() {
-		EE_Registry::instance()->load_helper( 'Template' );
+		$this->Registry->load_helper( 'Template' );
 	}
 
 
@@ -380,17 +392,17 @@ final class EE_Front_Controller {
 		// css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
 		if ( apply_filters( 'FHEE_load_css', TRUE ) ) {
 
-			EE_Registry::instance()->CFG->template_settings->enable_default_style = TRUE;
+			$this->Registry->CFG->template_settings->enable_default_style = TRUE;
 			//Load the ThemeRoller styles if enabled
-			if ( isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) && EE_Registry::instance()->CFG->template_settings->enable_default_style ) {
+			if ( isset( $this->Registry->CFG->template_settings->enable_default_style ) && $this->Registry->CFG->template_settings->enable_default_style ) {
 
 				//Load custom style sheet if available
-				if ( isset( EE_Registry::instance()->CFG->template_settings->custom_style_sheet )) {
-					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->template_settings->custom_style_sheet, EVENT_ESPRESSO_VERSION );
+				if ( isset( $this->Registry->CFG->template_settings->custom_style_sheet )) {
+					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . $this->Registry->CFG->template_settings->custom_style_sheet, EVENT_ESPRESSO_VERSION );
 					wp_enqueue_style('espresso_custom_css');
 				}
 
-				EE_Registry::instance()->load_helper( 'File' );
+				$this->Registry->load_helper( 'File' );
 				if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
@@ -432,7 +444,7 @@ final class EE_Front_Controller {
 
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			EE_Registry::instance()->load_helper('Qtip_Loader');
+			$this->Registry->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
 
@@ -447,20 +459,20 @@ final class EE_Front_Controller {
 
 			$currency_config = array(
 				'currency' => array(
-					'symbol' => EE_Registry::instance()->CFG->currency->sign,
+					'symbol' => $this->Registry->CFG->currency->sign,
 					'format' => array(
-						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
-						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
-						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
+						'pos' => $this->Registry->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
+						'neg' => $this->Registry->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
+						'zero' => $this->Registry->CFG->currency->sign_b4 ? '%s--' : '--%s'
 					),
-					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
-					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
-					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
+					'decimal' => $this->Registry->CFG->currency->dec_mrk,
+					'thousand' => $this->Registry->CFG->currency->thsnds,
+					'precision' => $this->Registry->CFG->currency->dec_plc
 				),
 				'number' => array(
 					'precision' => 0,
-					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
-					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
+					'thousand' => $this->Registry->CFG->currency->thsnds,
+					'decimal' => $this->Registry->CFG->currency->dec_mrk
 				)
 			);
 			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
@@ -542,11 +554,11 @@ final class EE_Front_Controller {
 			&& is_main_query()
 			&& ! is_feed()
 			&& in_the_loop()
-			&& EE_Registry::instance()->REQ->is_espresso_page()
+			&& $this->Request_Handler->is_espresso_page()
 		) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
-			EE_Registry::instance()->load_helper( 'Template' );
+			$this->Registry->load_helper( 'Template' );
 			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
 		do_action( 'AHEE__EE_Front_Controller__display_errors__end' );
@@ -565,7 +577,7 @@ final class EE_Front_Controller {
 	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
-		if ( EE_Registry::instance()->REQ->is_espresso_page() ) {
+		if ( $this->Request_Handler->is_espresso_page() ) {
 			$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
 			$template_path = EEH_Template::locate_template( $this->_template_path, array(), false );
 			$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;

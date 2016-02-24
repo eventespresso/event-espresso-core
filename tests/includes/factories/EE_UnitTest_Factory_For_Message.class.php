@@ -47,7 +47,7 @@ class EE_UnitTest_Factory_For_Message extends WP_UnitTest_Factory_For_Thing {
 		} else {
 			$save = true;
 		}
-		$message = EE_Message::new_instance( $args );
+		$message = EE_Message_Factory::create( $args );
 
 		$msgID = $save ? $message->save() : 1;
 

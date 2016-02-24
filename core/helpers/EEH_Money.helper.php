@@ -149,4 +149,46 @@ class EEH_Money extends EEH_Base  {
 		return $format;
 	}
 
+
+	/**
+	 * This returns a localized format string suitable for usage with the Google Charts API format param.
+	 *
+	 * @param string $CNT_ISO If this is provided, then will attempt to get the currency settings for the country.
+	 *                         Otherwise will use currency settings for current active country on site.
+	 *
+	 * Note: GoogleCharts uses ICU pattern set (@see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
+	 *
+	 * @return string
+	 */
+	public static function get_format_for_google_charts( $CNT_ISO = '' ) {
+		//if CNT_ISO passed lets try to get currency settings for it.
+		$currency_config = $CNT_ISO !== '' ? new EE_Currency_Config( $CNT_ISO ) : null;
+		//default currency settings for site if not set
+		if ( ! $currency_config instanceof EE_Currency_Config ) {
+			$currency_config = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();
+		}
+
+		$decimal_places_placeholder = str_pad( '', $currency_config->dec_plc, '0' );
+
+		//first get the decimal place and number of places
+		$format = '#,##0.' . $decimal_places_placeholder;
+
+		//currency symbol on right side.
+		$format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
+		$formatterObject = array(
+			'decimalSymbol' => $currency_config->dec_mrk,
+			'groupingSymbol' => $currency_config->thsnds,
+			'fractionDigits' => $currency_config->dec_plc,
+		);
+		if ( $currency_config->sign_b4 ) {
+			$formatterObject['prefix'] = $currency_config->sign;
+		} else {
+			$formatterObject['suffix'] = $currency_config->sign;
+		}
+		return array(
+			'format' => $format,
+			'formatterObject' => $formatterObject,
+		);
+	}
+
 } //end class EEH_Money

@@ -155,6 +155,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	private function _set_defaults() {
 		$this->name = $this->description = '';
 		$this->_shortcodes = array();
+		$this->_set_shortcode_helper();
 	}
 
 
@@ -164,16 +165,17 @@ abstract class EE_Shortcodes extends EE_Base {
 	 */
 	protected function _set_shortcode_helper() {
 		//shortcode helper
-		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
-		//get shortcode_replace instance- set when _get_messages is called in child...
-		$this->_shortcode_helper = new EEH_Parse_Shortcodes();
+		if ( ! $this->_shortcode_helper instanceof EEH_Parse_Shortcodes ) {
+			$loaded = EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
+			if ( $loaded ) {
+				$this->_shortcode_helper = new EEH_Parse_Shortcodes();
+			}
+		}
 	}
 
 
 
 	public function get_shortcode_helper() {
-		if ( ! $this->_shortcode_helper instanceof EEH_Parse_Shortcodes )
-			$this->_set_shortcode_helper();
 		return $this->_shortcode_helper;
 	}
 

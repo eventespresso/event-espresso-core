@@ -6,10 +6,10 @@
  * Used for finding all payment method types that can be defined.
  * Allows addons to easily add other payment methods
  *
- * @package 			Event Espresso
+ * @package     Event Espresso
  * @subpackage 	core
- * @author 				Michael Nelson
- * @since 				$VID:$
+ * @author      Michael Nelson
+ * @since       4.5
  *
  */
 class EE_Payment_Method_Manager {
@@ -238,9 +238,10 @@ class EE_Payment_Method_Manager {
 		$payment_method->save();
 		$this->set_usable_currencies_on_payment_method( $payment_method );
 		if( $payment_method->type() == 'Invoice' ){
-			$messages = EE_Registry::instance()->load_lib( 'messages' );
-			$messages->ensure_message_type_is_active( 'invoice', 'html' );
-			$messages->ensure_messenger_is_active( 'pdf' );
+			/** @type EE_Message_Resource_Manager $message_resource_manager */
+			$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$message_resource_manager->ensure_message_type_is_active( 'invoice', 'html' );
+			$message_resource_manager->ensure_messenger_is_active( 'pdf' );
 			EE_Error::add_attention(
 				sprintf(
 					__( 'Note, when the invoice payment method is activated, the invoice message type, html messenger, and pdf messenger are activated as well for the %1$smessages system%2$s.', 'event_espresso' ),
@@ -268,8 +269,8 @@ class EE_Payment_Method_Manager {
 				'PMD_slug' 		 => $pm_type_obj->system_name(),//automatically converted to slug
 				'PMD_wp_user' 	 => $current_user->ID,
 				'PMD_order' 	 => EEM_Payment_Method::instance()->count(
-						array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))
-					) * 10,
+					array( array( 'PMD_type' => array( '!=', 'Admin_Only' )))
+				) * 10,
 			)
 		);
 		return $payment_method;
@@ -285,11 +286,17 @@ class EE_Payment_Method_Manager {
 		$payment_method->set_description( $pm_type_obj->default_description() );
 		if( ! $payment_method->button_url() ){
 			$payment_method->set_button_url( $pm_type_obj->default_button_url() );
-		}	
+		}
 		//now add setup its default extra meta properties
 		$extra_metas = $pm_type_obj->settings_form()->extra_meta_inputs();
-		foreach( $extra_metas as $meta_name => $input ){
-			$payment_method->update_extra_meta($meta_name, $input->raw_value() );
+		if ( ! empty( $extra_metas ) ) {
+			//verify the payment method has an ID before adding extra meta
+			if ( ! $payment_method->ID() ) {
+				$payment_method->save();
+			}
+			foreach ( $extra_metas as $meta_name => $input ) {
+				$payment_method->update_extra_meta( $meta_name, $input->raw_value() );
+			}
 		}
 		return $payment_method;
 	}

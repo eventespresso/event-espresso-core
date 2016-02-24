@@ -20,39 +20,19 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	public $queue = array();
 
 	/**
-	 * @param string   $messenger  The messenger being used to send the message
-	 * @param string   $message_type  The message type being used to grab variations etc.
-	 * @param EE_messages $ee_msg
+	 * @param string            $messenger_name  The messenger being used to send the message
+	 * @param string            $message_type_name  The message type being used to grab variations etc.
 	 * @param EE_Messages_Queue $queue
+	 * @param string            $custom_subject  Used if a custom subject is desired for the generated aggregate EE_Message object
 	 */
-	public function __construct( $messenger, $message_type, EE_messages $ee_msg, EE_Messages_Queue $queue ) {
-		parent::__construct( $messenger, $message_type, array(), $ee_msg );
+	public function __construct( $messenger_name, $message_type_name, EE_Messages_Queue $queue, $custom_subject = '' ) {
 		$this->queue = $queue;
-	}
-
-
-
-	/**
-	 *  Returns an instantiated EE_Message object from the internal data.
-	 */
-	public function get_EE_Message() {
-		if ( ! $this->valid() ) {
-			return null;
+		parent::__construct( $messenger_name, $message_type_name, array(), '', false, EEM_Message::status_idle );
+		if ( $this->valid() ) {
+			$this->_message->set_content( $this->_get_content() );
+			$this->_message->set_subject( $this->_get_subject( $custom_subject ) );
 		}
-		if ( $this->_EE_Message instanceof EE_Message ) {
-			return $this->_EE_Message;
-		}
-		$this->_EE_Message = $this->_EE_Message instanceof EE_Message ? $this->_EE_Message : EE_Message::new_instance( array(
-			'MSG_messenger' => $this->messenger->name,
-			'MSG_message_type' => $this->message_type->name,
-			'MSG_context' => $this->context,
-			'MSG_content' => $this->_get_content(),
-			'STS_ID' => EEM_Message::status_idle,
-			'MSG_priority' => $this->_get_priority_for_message_type()
-		) );
-		return $this->_EE_Message;
 	}
-
 
 
 
@@ -69,6 +49,36 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 			$this->queue->get_queue()->next();
 		}
 		return $content;
+	}
+
+
+	/**
+	 * Return a subject string to use for `MSG_Subject` in the aggregate EE_Message object.
+	 * @param string $custom_subject
+	 *
+	 * @return string
+	 */
+	protected function _get_subject( $custom_subject = '' ) {
+		if ( ! empty( $custom_subject ) ) {
+			return $custom_subject;
+		}
+		$this->queue->get_queue()->rewind();
+		$count_of_items = $this->queue->get_queue()->count();
+
+		//if $count of items in queue == 1, then let's just return the subject for that item.
+		if ( $count_of_items === 1 ) {
+			return $this->queue->get_queue()->current()->subject();
+		}
+
+		return sprintf(
+			_n(
+				'Showing Aggregate output for 1 result',
+				'Showing Aggregate output for %d items',
+				$count_of_items,
+				'event_espresso'
+			),
+			$count_of_items
+		);
 	}
 
 

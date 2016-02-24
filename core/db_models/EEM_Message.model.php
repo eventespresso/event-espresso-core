@@ -115,8 +115,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 				'MSG_token' => new EE_Plain_Text_Field( 'MSG_token', __('Unique Token used to represent this row in publicly viewable contexts (eg. a url).', 'event_espresso' ), false, EEH_URL::generate_unique_token() ),
 				'GRP_ID'=>new EE_Foreign_Key_Int_Field( 'GRP_ID', __('Foreign key to the EEM_Message_Template_Group table.', 'event_espresso' ), true, 0, 'Message_Template_Group' ),
 				'TXN_ID' => new EE_Foreign_Key_Int_Field( 'TXN_ID', __( 'Foreign key to the related EE_Transaction.  This is required to give context for regenerating the specific message', 'event_espresso' ), true, 0, 'Transaction' ),
-				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resending of the message.', 'event_espresso' ), false ),
-				'MSG_message_type' => new EE_Plain_Text_Field( 'MSG_message_type', __( 'Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso' ), false ),
+				'MSG_messenger' => new EE_Plain_Text_Field('MSG_messenger', __( 'Corresponds to the EE_messenger::name used to send this message. This will also be used to attempt any resending of the message.', 'event_espresso' ), false, 'email' ),
+				'MSG_message_type' => new EE_Plain_Text_Field( 'MSG_message_type', __( 'Corresponds to the EE_message_type::name used to generate this message.', 'event_espresso' ), false, 'receipt' ),
 				'MSG_context' => new EE_Plain_Text_Field( 'MSG_context', __( 'Context', 'event_espresso' ), false ),
 				'MSG_recipient_ID' => new EE_Foreign_Key_Int_Field( 'MSG_recipient_ID', __( 'Recipient ID', 'event_espresso' ), true, null, array( 'Registration', 'Attendee', 'WP_User' ) ),
 				'MSG_recipient_type' => new EE_Any_Foreign_Model_Name_Field( 'MSG_recipient_type', __( 'Recipient Type', 'event_espresso' ), true, null, array( 'Registration', 'Attendee', 'WP_User' ) ),
@@ -139,6 +139,36 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 		);
 		parent::__construct( $timezone );
 	}
+
+
+
+	/**
+	 * @return \EE_Message
+	 */
+	public function create_default_object() {
+		/** @type EE_Message $message */
+		$message = parent::create_default_object();
+		if ( $message instanceof EE_Message ) {
+			return EE_Message_Factory::set_messenger_and_message_type( $message );
+		}
+		return null;
+	}
+
+
+
+	/**
+	 * @param mixed $cols_n_values
+	 * @return \EE_Message
+	 */
+	public function instantiate_class_from_array_or_object( $cols_n_values ) {
+		/** @type EE_Message $message */
+		$message = parent::instantiate_class_from_array_or_object( $cols_n_values );
+		if ( $message instanceof EE_Message ) {
+			return EE_Message_Factory::set_messenger_and_message_type( $message );
+		}
+		return null;
+	}
+
 
 
 	/**
@@ -180,7 +210,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	/**
 	 * This retrieves an EE_Message object from the db matching the given token string.
 	 * @param string $token
-	 * @return EE_Message | null
+	 * @return EE_Message
 	 */
 	public function get_one_by_token( $token ) {
 		return $this->get_one( array( array(
@@ -241,38 +271,131 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	 * @return array
 	 */
 	public function filter_by_query_params() {
-		//expected possible query_vars, the key in this array matches an expected key in the request, the value, matches
-		//the corresponding EEM_Base child reference.
-		$expected_vars = array(
+		// expected possible query_vars, the key in this array matches an expected key in the request,
+		// the value, matches the corresponding EEM_Base child reference.
+		$expected_vars = $this->_expected_vars_for_query_inject();
+		$query_params[0] = array();
+		foreach ( $expected_vars as $request_key => $model_name ) {
+			$request_value = EE_Registry::instance()->REQ->get( $request_key );
+			if ( $request_value ) {
+				//special case
+				switch ( $request_key ) {
+					case '_REG_ID' :
+						$query_params[ 0 ][ 'AND**filter_by' ][ 'OR**filter_by' ] = array(
+							//'Registration.REG_ID' => $request_value,
+							//'Attendee.Registration.REG_ID' => $request_value,
+							'Transaction.Registration.REG_ID' => $request_value,
+							//'WP_User.Event.Registration.REG_ID' => $request_value,
+						);
+						// break out of switch AND loop
+						break( 2 );
+					case 'EVT_ID' :
+						$query_params[ 0 ][ 'AND**filter_by' ][ 'OR**filter_by' ] = array(
+							//'Registration.EVT_ID' => $request_value,
+							//'Attendee.Registration.EVT_ID' => $request_value,
+							'Transaction.Registration.EVT_ID' => $request_value,
+							//'WP_User.Event.EVT_ID' => $request_value,
+						);
+						// break out of switch AND loop
+						break( 2 );
+				}
+				$query_params[0][ $model_name . '.' . $request_key ] = EE_Registry::instance()->REQ->get( $request_key );
+			}
+		}
+		return $query_params;
+	}
+
+
+
+
+
+	public function get_pretty_label_for_results() {
+		$expected_vars = $this->_expected_vars_for_query_inject();
+		$pretty_label = '';
+		$label_parts = array();
+		foreach ( $expected_vars as $request_key => $model_name ) {
+			$model = EE_Registry::instance()->load_model( $model_name );
+			if ( $model_field_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
+				switch ( $request_key ) {
+					case '_REG_ID' :
+						$label_parts[] = sprintf(
+							esc_html__( 'Registration with the ID: %s', 'event_espresso' ),
+							$model_field_value
+						);
+						break;
+					case 'ATT_ID' :
+						/** @var EE_Attendee $attendee */
+						$attendee = $model->get_one_by_ID( $model_field_value );
+						$label_parts[] = $attendee instanceof EE_Attendee
+							? sprintf( esc_html__( 'Attendee %s', 'event_espresso' ), $attendee->full_name() )
+							: sprintf( esc_html__( 'Attendee ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+					case 'ID' :
+						/** @var EE_WP_User $wpUser */
+						$wpUser = $model->get_one_by_ID( $model_field_value );
+						$label_parts[] = $wpUser instanceof EE_WP_User
+							? sprintf( esc_html__( 'WP User: %s', 'event_espresso' ), $wpUser->name() )
+							: sprintf( esc_html__( 'WP User ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+					case 'TXN_ID' :
+						$label_parts[] = sprintf(
+							esc_html__( 'Transaction with the ID: %s', 'event_espresso' ),
+							$model_field_value
+						);
+						break;
+					case 'EVT_ID' :
+						/** @var EE_Event $Event */
+						$Event = $model->get_one_by_ID( $model_field_value );
+						$label_parts[] = $Event instanceof EE_Event
+							? sprintf( esc_html__( 'for the Event: %s', 'event_espresso' ), $Event->name() )
+							: sprintf( esc_html__( 'for the Event with ID: %s', 'event_espresso' ), $model_field_value );
+						break;
+				}
+			}
+		}
+
+		if ( $label_parts ) {
+
+			//prepend to the last element of $label_parts an "and".
+			if ( count( $label_parts ) > 1 ) {
+				$label_parts_index_to_prepend                 = count( $label_parts ) - 1;
+				$label_parts[ $label_parts_index_to_prepend ] = 'and' . $label_parts[ $label_parts_index_to_prepend ];
+			}
+
+			$pretty_label .= sprintf(
+				esc_html_x(
+					'Showing messages for %s',
+					'A label for the messages returned in a query that are filtered by items in the query. This could be Transaction, Event, Attendee, Registration, or WP_User.',
+					'event_espresso'
+				),
+				implode( ', ', $label_parts )
+			);
+		}
+		return $pretty_label;
+	}
+
+
+
+
+	/**
+	 * This returns the array of expected variables for the EEI_Query_Filter methods being implemented
+	 * The array is in the format:
+	 *
+	 * array(
+	 *  {$field_name} => {$model_name}
+	 * );
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	protected function _expected_vars_for_query_inject() {
+		return array(
 			'_REG_ID' => 'Registration',
 			'ATT_ID' => 'Attendee',
 			'ID' => 'WP_User',
 			'TXN_ID' => 'Transaction',
 			'EVT_ID' => 'Event',
 		);
-		$query_params[0] = array();
-		EE_Registry::instance()->load_class( 'Request_Handler' );
-		foreach ( $expected_vars as $request_key => $model_name ) {
-			if ( $request_value = EE_Registry::instance()->REQ->get( $request_key ) ) {
-				//special case
-				if ( $request_key === '_REG_ID' ) {
-					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
-						'Registration.REG_ID' => $request_value,
-						'Attendee.Registration.REG_ID' => $request_value,
-					);
-					continue;
-				}
-				if ( $request_key === 'EVT_ID' ) {
-					$query_params[0]['AND**filter_by']['OR**filter_by'] = array(
-						'Registration.EVT_ID' => $request_value,
-						'Attendee.Registration.EVT_ID' => $request_value,
-					);
-					continue;
-				}
-				$query_params[0][ $model_name . '.' . $request_key ] = EE_Registry::instance()->REQ->get( $request_key );
-			}
-		}
-		return $query_params;
 	}
 
 

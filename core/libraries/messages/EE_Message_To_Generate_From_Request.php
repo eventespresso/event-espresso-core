@@ -18,6 +18,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 
 	/**
 	 * This messenger is used to send the generated message.
+	 *
 	 * @type EE_messenger
 	 */
 	protected $_sending_messenger = '';
@@ -33,18 +34,24 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	/**
 	 * Constructor
 	 * This instantiates the object using arguments from the given request and calling the parent constructor.
-	 * @param   EE_messages $ee_msg
-	 * @param   EE_Request_Handler $request
+	 *
+	 * @param   EE_Message_Resource_Manager $message_resource_manager
+	 * @param   EE_Request_Handler 			$request
 	 */
-	public function __construct( EE_messages $ee_msg, EE_Request_Handler $request ) {
-		parent::__construct( $request->get( 'gen_msgr' ), $request->get( 'message_type' ), array(), $ee_msg, $request->get( 'context' ) );
+	public function __construct( EE_Message_Resource_Manager $message_resource_manager, EE_Request_Handler $request ) {
+		parent::__construct(
+			$request->get( 'gen_msgr' ),
+			$request->get( 'message_type' ),
+			array(),
+			$request->get( 'context' )
+		);
 		if ( ! $this->valid() ) {
 			return;
 		}
-		$this->_sending_messenger = $this->_EEMSG->get_messenger_if_active( $request->get( 'snd_msgr' ) );
+		$this->_sending_messenger = $message_resource_manager->get_active_messenger( $request->get( 'snd_msgr' ) );
 		$this->token = $request->get( 'token' );
 		$this->_validate_request();
-		$this->data = $this->_get_data_from_request( $request->get( 'id' ) );
+		$this->_data = $this->_get_data_from_request( $request->get( 'id' ) );
 	}
 
 
@@ -64,11 +71,13 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	 * @throws EE_Error
 	 */
 	protected function _validate_request() {
-		if ( ! $this->_sending_messenger instanceof EE_messenger
-		     || ! $this->messenger instanceof EE_messenger
-		     || ! $this->message_type instanceof EE_message_type
-		     || empty( $this->context )
-			 || empty( $this->token ) ) {
+		if (
+			! $this->_sending_messenger instanceof EE_messenger
+			|| ! $this->_messenger instanceof EE_messenger
+			|| ! $this->_message_type instanceof EE_message_type
+			|| empty( $this->_context )
+			|| empty( $this->token )
+		) {
 			throw new EE_Error( __( 'The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso' ) );
 		}
 	}
@@ -104,7 +113,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
 	 */
 	protected function _get_data_to_use( $registration, $data_id ) {
 		//use incoming data from url to setup data for the message type requirements
-		return $this->message_type->get_data_for_context( $this->context, $registration, $data_id );
+		return $this->_message_type->get_data_for_context( $this->_context, $registration, $data_id );
 	}
 
 

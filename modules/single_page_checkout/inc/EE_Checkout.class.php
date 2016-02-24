@@ -359,10 +359,18 @@ class EE_Checkout {
 	public function skip_reg_step( $reg_step_slug = '' ) {
 		$step_to_skip = $this->find_reg_step( $reg_step_slug );
 		if ( $step_to_skip instanceof EE_SPCO_Reg_Step && $step_to_skip->is_current_step() ) {
-			// advance to the next step
-			$this->set_current_step( $this->next_step->slug() );
 			$step_to_skip->set_is_current_step( false );
 			$step_to_skip->set_completed();
+			// advance to the next step
+			$this->set_current_step( $this->next_step->slug() );
+			// also reset the step param in the request in case any other code references that directly
+			EE_Registry::instance()->REQ->set( 'step', $this->current_step->slug() );
+			// since we are skipping a step and setting the current step to be what was previously the next step,
+			// we need to check that the next step is now correct, and not still set to the current step.
+			if ( $this->current_step->slug() == $this->next_step->slug() ) {
+				// correctly setup the next step
+				$this->set_next_step();
+			}
 			$this->set_reg_step_initiated( $this->current_step );
 		}
 	}
@@ -576,8 +584,12 @@ class EE_Checkout {
 		if (
 			// first time visiting SPCO ?
 			! $this->revisit
-			// and displaying the reg step form for the first time ?
-			&& $this->action === 'display_spco_reg_step'
+			&& (
+				// and displaying the reg step form for the first time ?
+				$this->action === 'display_spco_reg_step'
+				// or initializing the final step
+				|| $reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration
+			)
 		) {
 			/** @type EE_Transaction_Processor $transaction_processor */
 			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
@@ -664,6 +676,26 @@ class EE_Checkout {
 		//		free TXN ( total = 0.00 )
 		// then payment required is TRUE
 		return ! ( $this->admin_request || $this->transaction->is_completed() || $this->transaction->is_overpaid() || $this->transaction->is_free() ) ? TRUE : FALSE;
+	}
+
+
+
+	/**
+	 * get_cart_for_transaction
+	 *
+	 * @access public
+	 * @param EE_Transaction $transaction
+	 * @return EE_Cart
+	 */
+	public function get_cart_for_transaction( $transaction ) {
+		$session = EE_Registry::instance()->load_core( 'Session' );
+		$cart = $transaction instanceof EE_Transaction ? EE_Cart::get_cart_from_txn( $transaction, $session ) : null;
+		// verify cart
+		if ( ! $cart instanceof EE_Cart ) {
+			$cart = EE_Registry::instance()->load_core( 'Cart' );
+		}
+
+		return $cart;
 	}
 
 
@@ -972,13 +1004,7 @@ class EE_Checkout {
 			$payment_method = $this->payment instanceof EE_Payment ? $this->payment->payment_method() : null;
 			$this->payment_method = $payment_method instanceof EE_Payment_Method ? $payment_method : $this->payment_method;
 			//now refresh the cart, based on the TXN
-			$this->cart = EE_Cart::get_cart_from_txn( $this->transaction );
-			// verify and update the cart because inaccurate totals are not so much fun
-			if ( $this->cart instanceof EE_Cart ) {
-				$this->cart->get_grand_total()->recalculate_total_including_taxes();
-			} else {
-				$this->cart = EE_Registry::instance()->load_core( 'Cart' );
-			}
+			$this->cart = $this->get_cart_for_transaction( $this->transaction );
 		} else {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to update the model entity mapper.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;

@@ -21,4 +21,20 @@ interface EEI_Query_Filter  {
 	 * @return array
 	 */
 	public function filter_by_query_params();
+
+
+
+
+
+	/**
+	 * This method should return a pretty label describing the results that are generated after injecting query
+	 * variables via the `filter_by_query_params` method.
+	 *
+	 * An example of the kind of label that would be returned is:
+	 *
+	 * "Showing all transactions for the Event: Happy Days Convention and the Registration with the ID: 42".
+	 *
+	 * @return string
+	 */
+	public function get_pretty_label_for_results();
 }

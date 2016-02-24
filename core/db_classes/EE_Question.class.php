@@ -38,7 +38,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	 * @return EE_Question
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -458,7 +458,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the question's maximum allowed response size
 	 * @return int|float
@@ -466,14 +466,139 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function max() {
 		return $this->get( 'QST_max' );
 	}
-	
+
 	/**
 	 * Sets the question's maximum allowed response size
 	 * @param int|float $new_max
-	 * @return int|float
+	 * @return void
 	 */
 	public function set_max( $new_max ) {
-		return $this->set( 'QST_max', $new_max );
+		$this->set( 'QST_max', $new_max );
+	}
+
+
+
+	/**
+	 * Creates a form input from this question which can be used in HTML forms
+	 * @param EE_Registration $registration
+	 * @param EE_Answer $answer
+	 * @param array $input_constructor_args
+	 * @return EE_Form_Input_Base
+	 */
+	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
+		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
+
+		$input_constructor_args = array_merge( 
+				array(
+					'required' => $this->required() ? true : false,
+					'html_label_text' => $this->display_text(),
+					'required_validation_error_message' => $this->required_text()
+				),
+				$input_constructor_args
+			);
+		if( ! $answer instanceof EE_Answer && $registration instanceof EE_Registration ) {
+			$answer = EEM_Answer::instance()->get_registration_question_answer_object( $registration, $this->ID() );
+		}
+		// has this question been answered ?
+		if ( $answer instanceof EE_Answer ) {
+			//answer gets htmlspecialchars called on it, undo that please
+			//beceause the form input's display strategy may call esc_attr too
+			//which also does html special characters
+			$values_with_html_special_chars = $answer->value();
+			if( is_array( $values_with_html_special_chars ) ) {
+				$default_value = array_map( 'htmlspecialchars_decode', $values_with_html_special_chars );
+			} else {
+				$default_value = htmlspecialchars_decode( $values_with_html_special_chars );
+			}
+			$input_constructor_args['default'] = $default_value;
+		}
+		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $this->system_ID() );
+		if( EEM_Question::instance()->question_type_is_in_category(  $this->type(), 'text' ) ) {
+			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy(
+				null,
+				min( $max_max_for_question, $this->max() )
+			);
+		}
+		$input_constructor_args = apply_filters(
+			'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__input_constructor_args',
+			$input_constructor_args,
+			$registration,
+			$this,
+			$answer
+		);
+
+		$result = null;
+		switch ( $this->type() ) {
+			// Text
+			case EEM_Question::QST_type_text :
+				if( $identifier == 'email' ){
+					$result = new EE_Email_Input( $input_constructor_args );
+				}else{
+					$result = new EE_Text_Input( $input_constructor_args );
+				}
+				break;
+			// Textarea
+			case EEM_Question::QST_type_textarea :
+				$result = new EE_Text_Area_Input( $input_constructor_args );
+				break;
+			// Radio Buttons
+			case EEM_Question::QST_type_radio :
+				$result = new EE_Radio_Button_Input( $this->options(), $input_constructor_args );
+				break;
+			// Dropdown
+			case EEM_Question::QST_type_dropdown :
+				$result = new EE_Select_Input( $this->options(), $input_constructor_args );
+				break;
+			// State Dropdown
+			case EEM_Question::QST_type_state :
+				$state_options = apply_filters(
+					'FHEE__EE_Question__generate_form_input__state_options',
+					null,
+					$this,
+					$registration,
+					$answer
+				);				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
+				break;
+			// Country Dropdown
+			case EEM_Question::QST_type_country :
+				$country_options = apply_filters(
+					'FHEE__EE_Question__generate_form_input__country_options',
+					null,
+					$this,
+					$registration,
+					$answer
+				);
+				$result = new EE_Country_Select_Input( $country_options, $input_constructor_args );
+				break;
+			// Checkboxes
+			case EEM_Question::QST_type_checkbox :
+				$result = new EE_Checkbox_Multi_Input( $this->options(), $input_constructor_args );
+				break;
+			// Date
+			case EEM_Question::QST_type_date :
+				$result = new EE_Datepicker_Input( $input_constructor_args );
+				break;
+			case EEM_Question::QST_type_html_textarea :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
+				$input =  new EE_Text_Area_Input( $input_constructor_args );
+				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
+				$result = $input;
+				break;
+			// fallback
+			default :
+				$default_input = apply_filters(
+					'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__default',
+					null,
+					$this->type(),
+					$this,
+					$input_constructor_args
+				);
+				if( ! $default_input ){
+					$default_input = new EE_Text_Input( $input_constructor_args );
+				}
+				$result = $default_input;
+		}
+		return apply_filters( 'FHEE__EE_Question__generate_form_input__return', $result, $registration, $this, $answer );
 	}
 
 

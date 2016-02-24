@@ -313,11 +313,14 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//baseline DateTime object for testing
 		$now = new DateTime( "now" );
 		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
-		$timezoneTest = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
+		$timezoneTest = new DateTime( "now", $DateTimeZone );
+
+		//just in case some other test has messed up the default date format string in WordPress unit tests.
+		$expected_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 
 		//test getting default formatted string and default formatted unix timestamp.
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );
-		$this->assertEquals( $now->format( 'F j, Y g:i a' ), $formatted_string );
+		$this->assertEquals( $now->format( $expected_format ), $formatted_string );
 		$timestamp_with_offset = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start', true );
 		$this->assertEquals( $now->format('U'), $timestamp_with_offset );
 

@@ -201,10 +201,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $reg_steps_loaded ) {
 			return;
 		}
-		// load EE_SPCO_Reg_Step base class
-//		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
 		// filter list of reg_steps
-		$reg_steps_to_load = apply_filters( 'AHEE__SPCO__load_reg_steps__reg_steps_to_load', EED_Single_Page_Checkout::get_reg_steps() );
+		$reg_steps_to_load = apply_filters(
+			'AHEE__SPCO__load_reg_steps__reg_steps_to_load',
+			EED_Single_Page_Checkout::get_reg_steps()
+		);
 		// sort by key (order)
 		ksort( $reg_steps_to_load );
 		// loop through folders
@@ -213,7 +214,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( isset( $reg_step['file_path'], $reg_step['class_name'], $reg_step['slug'] )) {
 				// copy over to the reg_steps_array
 				EED_Single_Page_Checkout::$_reg_steps_array[ $order ] = $reg_step;
-				// register custom key route for each reg step ( ie: step=>"slug" - this is the entire reason we load the reg steps array now )
+				// register custom key route for each reg step
+				// ie: step=>"slug" - this is the entire reason we load the reg steps array now
 				EE_Config::register_route( $reg_step['slug'], 'EED_Single_Page_Checkout', 'run', 'step' );
 				// add AJAX or other hooks
 				if ( isset( $reg_step['has_hooks'] ) && $reg_step['has_hooks'] ) {
@@ -307,7 +309,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EED_Single_Page_Checkout::instance()->checkout->current_step->completed() ) {
 			$final_reg_step = end( EED_Single_Page_Checkout::instance()->checkout->reg_steps );
 			if ( $final_reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
+				EED_Single_Page_Checkout::instance()->checkout->set_reg_step_initiated( $final_reg_step );
 				if ( $final_reg_step->process_reg_step() ) {
+					$final_reg_step->set_completed();
+					EED_Single_Page_Checkout::instance()->checkout->update_txn_reg_steps_array();
 					return EED_Single_Page_Checkout::instance()->checkout->transaction;
 				}
 			}
@@ -325,7 +330,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    void
 	 */
 	public function run( $WP_Query ) {
-		if ( $WP_Query instanceof WP_Query && $WP_Query->is_main_query() && apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )) {
+		if (
+			$WP_Query instanceof WP_Query
+			&& $WP_Query->is_main_query()
+			&& apply_filters( 'FHEE__EED_Single_Page_Checkout__run', true )
+		) {
 			$this->_initialize();
 		}
 	}
@@ -378,9 +387,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// was there already a valid transaction in the checkout from the session ?
 		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
 			// get transaction from db or session
-			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_cart_for_current_session_and_setup_new_transaction();
+			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin()
+				? $this->_get_transaction_and_cart_for_previous_visit()
+				: $this->_get_cart_for_current_session_and_setup_new_transaction();
 			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+				EE_Error::add_error(
+					__( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				// add some style and make it dance
 				$this->checkout->transaction = EE_Transaction::new_instance();
 				$this->add_styles_and_scripts();
@@ -481,7 +495,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->generate_reg_form = EE_Registry::instance()->REQ->get( 'generate_reg_form', TRUE ); 		// TRUE 	FALSE
 		// and whether or not to process a reg form submission for this request
 		$this->checkout->process_form_submission = EE_Registry::instance()->REQ->get( 'process_form_submission', FALSE ); 		// TRUE 	FALSE
-		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step' ? $this->checkout->process_form_submission : FALSE; 		// TRUE 	FALSE
+		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
+			? $this->checkout->process_form_submission
+			: FALSE; 		// TRUE 	FALSE
 		//$this->_display_request_vars();
 	}
 
@@ -550,12 +566,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( EE_Registry::instance()->CFG->registration->skip_reg_confirmation ) {
 				// just remove it from the reg steps array
 				$this->checkout->remove_reg_step( 'registration_confirmation', false );
-			} else if ( EE_Registry::instance()->CFG->registration->reg_confirmation_last && isset( 	$this->checkout->reg_steps['registration_confirmation'] )) {
+			} else if (
+				EE_Registry::instance()->CFG->registration->reg_confirmation_last
+				&& isset( $this->checkout->reg_steps['registration_confirmation'] )
+			) {
 				// set the order to something big like 100
 				$this->checkout->set_reg_step_order( 'registration_confirmation', 100 );
 			}
 			// filter the array for good luck
-			$this->checkout->reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps', $this->checkout->reg_steps );
+			$this->checkout->reg_steps = apply_filters(
+				'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps',
+				$this->checkout->reg_steps
+			);
 			// finally re-sort based on the reg step class order properties
 			$this->checkout->sort_reg_steps();
 		} else {
@@ -588,11 +610,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// we need a file_path, class_name, and slug to add a reg step
 		if ( isset( $reg_step['file_path'], $reg_step['class_name'], $reg_step['slug'] )) {
 			// if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
-			if ( $this->checkout->reg_url_link && $this->checkout->step !== $reg_step['slug'] && $reg_step['slug'] !== 'finalize_registration' ) {
+			if (
+				$this->checkout->reg_url_link
+				&& $this->checkout->step !== $reg_step['slug']
+				&& $reg_step['slug'] !== 'finalize_registration'
+			) {
 				return true;
 			}
 			// instantiate step class using file path and class name
-			$reg_step_obj = EE_Registry::instance()->load_file( $reg_step['file_path'], $reg_step['class_name'], 'class', $this->checkout, FALSE  );
+			$reg_step_obj = EE_Registry::instance()->load_file(
+				$reg_step['file_path'],
+				$reg_step['class_name'],
+				'class',
+				$this->checkout,
+				FALSE
+			);
 			// did we gets the goods ?
 			if ( $reg_step_obj instanceof EE_SPCO_Reg_Step ) {
 				// set reg step order based on config
@@ -600,7 +632,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// add instantiated reg step object to the master reg steps array
 				$this->checkout->add_reg_step( $reg_step_obj );
 			} else {
-				EE_Error::add_error( __( 'The current step could not be set.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					__( 'The current step could not be set.', 'event_espresso' ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				return false;
 			}
 		} else {
@@ -658,26 +693,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return EE_Cart
 	 */
 	private function _get_cart_for_transaction( $transaction ) {
-		$cart = $transaction instanceof EE_Transaction ? EE_Cart::get_cart_from_txn( $transaction ) : NULL;
-		// verify cart
-		if ( ! $cart instanceof EE_Cart ) {
-			$cart = EE_Registry::instance()->load_core( 'Cart' );
-		}
-		return $cart;
+		return $this->checkout->get_cart_for_transaction( $transaction );
 	}
 
 
 
 	/**
-	 * _get_cart_for_current_session_and_setup_new_transaction
-	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
+	 * get_cart_for_transaction
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * 	@return EE_Cart
+	 * @return EE_Cart
 	 */
 	public function get_cart_for_transaction( EE_Transaction $transaction ) {
-		return EE_Cart::get_cart_from_txn( $transaction );
+		return $this->checkout->get_cart_for_transaction( $transaction );
 	}
 
 

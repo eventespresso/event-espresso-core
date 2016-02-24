@@ -16,22 +16,30 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 */
 	public $template_pack;
 
-
-
 	/**
 	 * @deprecated 4.9.0 Added for backward compat with add-on's
 	 * @type null
 	 */
 	public $template_variation;
 
-
-
-
 	/**
 	 * @deprecated 4.9.0 Added for backward compat with add-on's
 	 * @type string
 	 */
 	public $content = '';
+
+
+	/**
+	 * @type EE_messenger $_messenger
+	 */
+	protected $_messenger = null;
+
+	/**
+	 * @type EE_message_type $_message_type
+	 */
+	protected $_message_type = null;
+
+
 
 	/**
 	 *
@@ -144,6 +152,16 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 
+	/**
+	 * Sets messenger
+	 *
+	 * @param string $messenger
+	 */
+	public function set_messenger( $messenger ) {
+		$this->set( 'MSG_messenger', $messenger );
+	}
+
+
 
 	/**
 	 * Returns corresponding messenger object for the set messenger on this message
@@ -151,8 +169,45 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return EE_messenger | null
 	 */
 	public function messenger_object() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return EEH_MSG_Template::messenger_obj( $this->messenger() );
+		return $this->_messenger;
+	}
+
+
+
+	/**
+	 * Sets messenger
+	 *
+	 * @param EE_messenger $messenger
+	 */
+	public function set_messenger_object( EE_messenger $messenger ) {
+		$this->_messenger = $messenger;
+	}
+
+
+
+	/**
+	 * validates messenger
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function valid_messenger( $throw_exceptions = false ) {
+		if ( $this->_messenger instanceof EE_messenger ) {
+			return true;
+		}
+		if ( $throw_exceptions ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.',
+						'event_espresso'
+					),
+					$this->messenger()
+				)
+			);
+		}
+		return false;
 	}
 
 
@@ -174,34 +229,12 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 
 	/**
-	 * Sets messenger
-	 *
-	 * @param string $messenger
-	 */
-	public function set_messenger( $messenger ) {
-		$this->set( 'MSG_messenger', $messenger );
-	}
-
-
-
-	/**
 	 * Gets message_type
 	 *
 	 * @return string
 	 */
 	public function message_type() {
 		return $this->get( 'MSG_message_type' );
-	}
-
-
-	/**
-	 * Returns the message type object for the set message type on this message
-	 *
-	 * @return EE_message_type | null
-	 */
-	public function message_type_object() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		return EEH_MSG_Template::message_type_obj( $this->message_type() );
 	}
 
 
@@ -215,6 +248,109 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 		$this->set( 'MSG_message_type', $message_type );
 	}
 
+
+
+	/**
+	 * Returns the message type object for the set message type on this message
+	 *
+	 * @return EE_message_type | null
+	 */
+	public function message_type_object() {
+		return $this->_message_type;
+	}
+
+
+
+	/**
+	 * Sets message_type
+	 *
+	 * @param EE_message_type $message_type
+	 * @param bool            $set_priority   This indicates whether to set the priority to whatever the priority is on
+	 *                                        the message type or not.
+	 */
+	public function set_message_type_object( EE_message_type $message_type, $set_priority = false ) {
+		$this->_message_type = $message_type;
+		if ( $set_priority ) {
+			$this->set_priority( $this->_message_type->get_priority() );
+		}
+	}
+
+
+
+	/**
+	 * validates message_type
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function valid_message_type( $throw_exceptions = false ) {
+		if ( $this->_message_type instanceof EE_message_type ) {
+			return true;
+		}
+		if ( $throw_exceptions ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'The %1$s message type set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.',
+						'event_espresso'
+					),
+					$this->message_type()
+				)
+			);
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * validates messenger and message_type (that they are valid EE_messenger and EE_message_type objects).
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function is_valid( $throw_exceptions = false ) {
+		if ( $this->valid_messenger( $throw_exceptions ) && $this->valid_message_type( $throw_exceptions ) ) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * This validates whether the internal messenger and message type objects are valid for sending.
+	 *
+	 * Three checks are done:
+	 *
+	 * 1. There is a valid messenger object.
+	 * 2. There is a valid message type object.
+	 * 3. The message type object is active for the messenger.
+	 *
+	 * @throws EE_Error  But only if $throw_exceptions is set to true.
+	 *
+	 * @param bool $throw_exceptions
+	 * @return bool
+	 */
+	public function is_valid_for_sending_or_generation( $throw_exceptions = false ) {
+		$valid = false;
+		if ( $this->is_valid( $throw_exceptions ) ) {
+			/** @var EE_Message_Resource_Manager $message_resource_manager */
+			$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+			$valid = $message_resource_manager->is_message_type_active_for_messenger( $this->messenger(), $this->message_type() );
+			if ( ! $valid && $throw_exceptions ) {
+				throw new EE_Error(
+					sprintf(
+						__( 'The %1$s message type is not a valid message type for the %2$s messenger so it will not be sent.', 'event_espresso' ),
+						$this->message_type(),
+						$this->messenger()
+					)
+				);
+			}
+		}
+		return $valid;
+	}
 
 
 
@@ -253,9 +389,9 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	 * @return string
 	 */
 	public function context_label() {
-		/** @type EE_messages $eemsg */
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
-		$contexts = $eemsg->get_all_contexts();
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$contexts = $message_resource_manager->get_all_contexts();
 		return isset( $contexts[ $this->context() ] ) ? $contexts[ $this->context() ] : $this->context();
 	}
 
@@ -437,10 +573,41 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 	/**
 	 * Sets priority
 	 *
+	 * Note.  Send Now Messengers always override any priority that may be set on a Message.  So
+	 * this method calls the send_now method to verify that.
+	 *
 	 * @param int $priority
 	 */
 	public function set_priority( $priority ) {
-		$this->set( 'MSG_priority', $priority );
+		$priority = $this->send_now() ? EEM_Message::priority_high : $priority;
+		parent::set( 'MSG_priority', $priority );
+	}
+
+
+	/**
+	 * Overrides parent::set method so we can capture any sets for priority.
+	 * @see parent::set() for phpdocs
+	 * @param string $field_name
+	 * @param mixed  $field_value
+	 * @param bool   $use_default
+	 * @throws EE_Error
+	 */
+	public function set( $field_name, $field_value, $use_default = false ) {
+		if ( $field_name === 'MSG_priority' ) {
+			$this->set_priority( $field_value );
+		}
+		parent::set( $field_name, $field_value, $use_default );
+	}
+
+
+
+	/**
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function send_now() {
+		$send_now = $this->valid_messenger() && $this->messenger_object()->send_now() ? EEM_Message::priority_high : $this->priority();
+		return $send_now === EEM_Message::priority_high ? true : false;
 	}
 
 
@@ -571,11 +738,15 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 		$grp = $this->get_first_related( 'Message_Template_Group' );
 		//if no group then let's try to get the first related group by internal messenger and message type (will use global grp).
 		if ( ! $grp instanceof EE_Message_Template_Group ) {
-			$grp = EEM_Message_Template_Group::instance()->get_one( array( array(
-				'MTP_messenger' => $this->messenger(),
-				'MTP_message_type' => $this->message_type(),
-				'MTP_is_global' => true
-			) ) );
+			$grp = EEM_Message_Template_Group::instance()->get_one(
+				array(
+					array(
+						'MTP_messenger'    => $this->messenger(),
+						'MTP_message_type' => $this->message_type(),
+						'MTP_is_global'    => true
+					)
+				)
+			);
 		}
 
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack() : null;
@@ -601,11 +772,15 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 
 		//if no group then let's try to get the first related group by internal messenger and message type (will use global grp).
 		if ( ! $grp instanceof EE_Message_Template_Group ) {
-			$grp = EEM_Message_Template_Group::instance()->get_one( array( array(
-				'MTP_messenger' => $this->messenger(),
-				'MTP_message_type' => $this->message_type(),
-				'MTP_is_global' => true
-			) ) );
+			$grp = EEM_Message_Template_Group::instance()->get_one(
+				array(
+					array(
+						'MTP_messenger'    => $this->messenger(),
+						'MTP_message_type' => $this->message_type(),
+						'MTP_is_global'    => true
+					)
+				)
+			);
 		}
 
 		return $grp instanceof EE_Message_Template_Group ? $grp->get_template_pack_variation() : '';

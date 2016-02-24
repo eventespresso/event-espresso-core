@@ -144,6 +144,7 @@ class EEH_Autoloader extends EEH_Base {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, true );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, true );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'messages' );
 	}
 
 
@@ -232,7 +233,7 @@ class EEH_Autoloader extends EEH_Base {
 					$class_to_filepath_map [ $class_name ] = $filepath;
 				}
 			} else if ( $recursive ) {
-				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive );
+				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $filepath, $recursive, $debug );
 			}
 		}
 		// we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
@@ -240,6 +241,20 @@ class EEH_Autoloader extends EEH_Base {
 	}
 
 
+
+	/**
+	 * add_alias
+	 * register additional autoloader based on variation of the classname for an existing autoloader
+	 *
+	 * @access    public
+	 * @param string $class_name - simple class name ie: EE_Session
+	 * @param string $alias - variation on class name ie: EE_session, session, etc
+	 */
+	public static function add_alias( $class_name, $alias ) {
+		if ( isset( self::$_autoloaders[ $class_name ] ) ) {
+			self::$_autoloaders[ $alias ] = self::$_autoloaders[ $class_name ];
+		}
+	}
 
 
 

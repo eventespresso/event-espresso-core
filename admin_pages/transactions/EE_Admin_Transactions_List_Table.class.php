@@ -333,29 +333,29 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</li>';
 
 
-	//only show invoice link if message type is active.
-	if ( $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'invoice' ) ) {
-		$dl_invoice_lnk = '
-		<li>
-			<a title="' . esc_attr__( 'View Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
-				<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
-			</a>
-		</li>';
-	} else {
-		$dl_invoice_lnk = '';
-	}
+		//only show invoice link if message type is active.
+		if ( $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'invoice' ) ) {
+			$dl_invoice_lnk = '
+			<li>
+				<a title="' . esc_attr__( 'View Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
+					<span class="dashicons dashicons-media-spreadsheet ee-icon-size-18"></span>
+				</a>
+			</li>';
+		} else {
+			$dl_invoice_lnk = '';
+		}
 
-	//only show receipt link if message type is active.
-	if ( $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'receipt' ) ) {
-		$dl_receipt_lnk = '
-		<li>
-			<a title="' . esc_attr__( 'View Transaction Receipt', 'event_espresso' ) . '" target="_blank" href="'.$dl_receipt_lnk_url.'" class="tiny-text">
-				<span class="dashicons dashicons-media-default ee-icon-size-18"></span>
-			</a>
-		</li>';
-	} else {
-		$dl_receipt_lnk = '';
-	}
+		//only show receipt link if message type is active.
+		if ( $attendee instanceof EE_Attendee && EEH_MSG_Template::is_mt_active( 'receipt' ) ) {
+			$dl_receipt_lnk = '
+			<li>
+				<a title="' . esc_attr__( 'View Transaction Receipt', 'event_espresso' ) . '" target="_blank" href="'.$dl_receipt_lnk_url.'" class="tiny-text">
+					<span class="dashicons dashicons-media-default ee-icon-size-18"></span>
+				</a>
+			</li>';
+		} else {
+			$dl_receipt_lnk = '';
+		}
 
       		//only show payment reminder link if the message type is active.
       		if ( EEH_MSG_Template::is_mt_active( 'payment_reminder' ) ) {

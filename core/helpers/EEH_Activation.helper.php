@@ -31,7 +31,7 @@ class EEH_Activation {
 	/**
 	 * option name that will indicate whether or not we still
 	 * need to create EE's folders in the uploads directory
-	 * (because if EE was installed without file system access, 
+	 * (because if EE was installed without file system access,
 	 * we need to request credentials before we can create them)
 	 */
 	const upload_directories_incomplete_option_name = 'ee_upload_directories_incomplete';
@@ -130,7 +130,8 @@ class EEH_Activation {
 	/**
 	 * Returns an array of cron tasks. Array values are the actions fired by the cron tasks (the "hooks"),
 	 * values are the frequency (the "recurrence"). See http://codex.wordpress.org/Function_Reference/wp_schedule_event
-	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use (null)
+	 * If the cron task should NO longer be used, it should have a value of EEH_Activation::cron_task_no_longer_in_use
+	 * (null)
 	 *
 	 * @param string $which_to_include can be 'current' (ones that are currently in use),
 	 *                          'old' (only returns ones that should no longer be used),or 'all',
@@ -298,7 +299,7 @@ class EEH_Activation {
 				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
 					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
 				} else {
-					$settings->$key = $value;
+					$settings->{$key} = $value;
 				}
 			}
 			add_filter( 'FHEE__EE_Config___load_core_config__update_espresso_config', '__return_true' );
@@ -364,11 +365,13 @@ class EEH_Activation {
 			),
 		);
 
+		$EE_Core_Config = EE_Registry::instance()->CFG->core;
+
 		foreach ( $critical_pages as $critical_page ) {
 			// is critical page ID set in config ?
-			if ( EE_Registry::instance()->CFG->core->$critical_page['id'] !== FALSE ) {
+			if ( $EE_Core_Config->{$critical_page[ 'id' ]} !== FALSE ) {
 				// attempt to find post by ID
-				$critical_page['post'] = get_post( EE_Registry::instance()->CFG->core->$critical_page['id'] );
+				$critical_page['post'] = get_post( $EE_Core_Config->{$critical_page[ 'id' ]} );
 			}
 			// no dice?
 			if ( $critical_page['post'] == NULL ) {
@@ -390,16 +393,24 @@ class EEH_Activation {
 				EEH_Activation::_track_critical_page_post_shortcodes( $critical_page );
 			}
 			// check that Post ID matches critical page ID in config
-			if ( isset( $critical_page['post']->ID ) && $critical_page['post']->ID != EE_Registry::instance()->CFG->core->$critical_page['id'] ) {
+			if (
+				isset( $critical_page['post']->ID )
+				&& $critical_page['post']->ID != $EE_Core_Config->{$critical_page[ 'id' ]}
+			) {
 				//update Config with post ID
-				EE_Registry::instance()->CFG->core->$critical_page['id'] = $critical_page['post']->ID;
+				$EE_Core_Config->{$critical_page[ 'id' ]} = $critical_page['post']->ID;
 				if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
 					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 
-			$critical_page_problem =  ! isset( $critical_page['post']->post_status ) || $critical_page['post']->post_status != 'publish' || strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE ? TRUE : $critical_page_problem;
+			$critical_page_problem =
+				! isset( $critical_page['post']->post_status )
+				|| $critical_page['post']->post_status != 'publish'
+				|| strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE
+					? TRUE
+					: $critical_page_problem;
 
 		}
 
@@ -410,11 +421,9 @@ class EEH_Activation {
 			);
 			EE_Error::add_persistent_admin_notice( 'critical_page_problem', $msg );
 		}
-
 		if ( EE_Error::has_notices() ) {
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 		}
-
 	}
 
 	/**
@@ -502,16 +511,17 @@ class EEH_Activation {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
+		$EE_Core_Config = EE_Registry::instance()->CFG->core;
 		// map shortcode to post
-		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
+		$EE_Core_Config->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// and make sure it's NOT added to the WP "Posts Page"
 		// name of the WP Posts Page
 		$posts_page = EE_Registry::instance()->CFG->get_page_for_posts();
-		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ] )) {
-			unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
+		if ( isset( $EE_Core_Config->post_shortcodes[ $posts_page ] )) {
+			unset( $EE_Core_Config->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
 		}
-		if ( $posts_page != 'posts' && isset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'] )) {
-			unset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'][ $critical_page['code'] ] );
+		if ( $posts_page != 'posts' && isset( $EE_Core_Config->post_shortcodes['posts'] )) {
+			unset( $EE_Core_Config->post_shortcodes['posts'][ $critical_page['code'] ] );
 		}
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
@@ -649,7 +659,8 @@ class EEH_Activation {
 	 * @static
 	 * @param string $table_name  (without "wp_", eg "esp_attendee"
 	 * @param string $column_name
-	 * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be 'VARCHAR(10)'
+	 * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be
+	 *                            'VARCHAR(10)'
 	 * @return bool|int
 	 */
 	public static function add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
@@ -1100,17 +1111,17 @@ class EEH_Activation {
 							$QSG_ID = reset( $id_col );
 						} else {
 							//ok so we didn't find it in the db either?? that's weird because we should have inserted it at the start of this method
-                                                        EE_Log::instance()->log( 
-                                                                __FILE__, 
-                                                                __FUNCTION__, 
-                                                                sprintf( 
-                                                                        __( 'Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'), 
-                                                                        $QST_ID ), 
+                                                        EE_Log::instance()->log(
+                                                                __FILE__,
+                                                                __FUNCTION__,
+                                                                sprintf(
+                                                                        __( 'Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'),
+                                                                        $QST_ID ),
                                                                 'error' );
                                                         continue;
 						}
 					}
-                                        
+
 					// add system questions to groups
 					$wpdb->insert(
 						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
@@ -1252,12 +1263,12 @@ class EEH_Activation {
 		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
 		return TRUE;
 	}
-	
+
 	/**
 	 * Whether the upload directories need to be fixed or not.
 	 * If EE is installed but filesystem access isn't initially available,
 	 * we need to get the user's filesystem credentials and THEN create them,
-	 * so there might be period of time when EE is installed but its 
+	 * so there might be period of time when EE is installed but its
 	 * upload directories aren't available. This indicates such a state
 	 * @return boolean
 	 */
@@ -1267,161 +1278,183 @@ class EEH_Activation {
 
 
 
-
 	/**
 	 * generate_default_message_templates
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return bool | array
+	 * @static
+	 * @throws EE_Error
+	 * @return bool     true means new templates were created.
+	 *                  false means no templates were created.
+	 *                  This is NOT an error flag. To check for errors you will want
+	 *                  to use either EE_Error or a try catch for an EE_Error exception.
 	 */
 	public static function generate_default_message_templates() {
-
-		$success = FALSE;
-		$installed_messengers = $default_messengers = array();
-
-		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		/*
+		 * This first method is taking care of ensuring any default messengers
+		 * that should be made active and have templates generated are done.
+		 */
+		$new_templates_created_for_messenger = self::_activate_and_generate_default_messengers_and_message_templates(
+			$message_resource_manager
+		);
+		/**
+		 * This method is verifying there are no NEW default message types
+		 * for ACTIVE messengers that need activated (and corresponding templates setup).
+		 */
+		$new_templates_created_for_message_type = self::_activate_new_message_types_for_active_messengers_and_generate_default_templates(
+			$message_resource_manager
+		);
+		//after all is done, let's persist these changes to the db.
+		$message_resource_manager->update_has_activated_messengers_option();
+		$message_resource_manager->update_active_messengers_option();
+		// will return true if either of these are true.  Otherwise will return false.
+		return $new_templates_created_for_message_type || $new_templates_created_for_messenger;
+	}
 
-		//get all installed messenger objects
-		$installed = EEH_MSG_Template::get_installed_message_objects();
 
-		//let's setup the $installed messengers in an array AND the messengers that are set to be activated on install.
-		foreach ( $installed['messengers'] as $msgr ) {
-			if ( $msgr instanceof EE_messenger ) {
-				$installed_messengers[$msgr->name] = $msgr;
-				if ( $msgr->activate_on_install ) {
-					$default_messengers[] = $msgr->name;
-				}
-			}
-		}
 
-		//let's determine if we've already got an active messengers option
-		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-
-		//things that have already been activated before
-		$has_activated = get_option( 'ee_has_activated_messenger' );
-
-		//do an initial loop to determine if we need to continue
-		$def_ms = array();
-		foreach ( $default_messengers as $msgr ) {
-			if ( isset($active_messengers[$msgr] ) || isset( $has_activated[$msgr] ) ) continue;
-			$def_ms[] = $msgr;
-		}
-
-		//setup the $installed_mts in an array
-		foreach ( $installed['message_types'] as $imt ) {
-			if ( $imt instanceof EE_message_type ) {
-				$installed_mts[$imt->name] = $imt;
-			}
-		}
-
-		//loop through default array for default messengers (if present)
-		if ( ! empty( $def_ms ) ) {
-			foreach ( $def_ms as $messenger ) {
-				//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
-				if ( ! isset( $installed_messengers[$messenger] )) {
+	/**
+	 * @param \EE_Message_Resource_Manager $message_resource_manager
+	 * @return array|bool
+	 * @throws \EE_Error
+	 */
+	protected static function _activate_new_message_types_for_active_messengers_and_generate_default_templates(
+		EE_Message_Resource_Manager $message_resource_manager
+	) {
+		/** @type EE_messenger[] $active_messengers */
+		$active_messengers = $message_resource_manager->active_messengers();
+		$installed_message_types = $message_resource_manager->installed_message_types();
+		$templates_created = false;
+		foreach ( $active_messengers as $active_messenger ) {
+			$default_message_type_names_for_messenger = $active_messenger->get_default_message_types();
+			$default_message_type_names_to_activate = array();
+			// looping through each default message type reported by the messenger
+			// and setup the actual message types to activate.
+			foreach ( $default_message_type_names_for_messenger as $default_message_type_name_for_messenger ) {
+				// if already active or has already been activated before we skip
+				// (otherwise we might reactivate something user's intentionally deactivated.)
+				// we also skip if the message type is not installed.
+				if (
+					(
+						isset( $has_activated[ $active_messenger->name ] )
+						&& in_array(
+							$default_message_type_name_for_messenger,
+							$has_activated[ $active_messenger->name ]
+						)
+					)
+					|| $message_resource_manager->is_message_type_active_for_messenger(
+						$active_messenger->name,
+						$default_message_type_name_for_messenger
+					)
+					|| ! isset( $installed_message_types[ $default_message_type_name_for_messenger ] )
+				) {
 					continue;
 				}
-				/** @var EE_messenger[] $installed_messengers  */
-				$default_mts = $installed_messengers[$messenger]->get_default_message_types();
-				$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
-				foreach ( $default_mts as $index => $mt ) {
-					//is there an installed_mt matching the default string?  If not then nothing to do here.
-					if ( ! isset( $installed_mts[$mt] ) ) {
-						unset( $default_mts[$index] );
-						continue;
-					}
+				$default_message_type_names_to_activate[] = $default_message_type_name_for_messenger;
+			}
+			//let's activate!
+			$message_resource_manager->ensure_message_types_are_active(
+				$default_message_type_names_to_activate,
+				$active_messenger->name,
+				false
+			);
+			//activate the templates for these message types
+			if ( ! empty( $default_message_type_names_to_activate ) ) {
+				$templates_created = EEH_MSG_Template::generate_new_templates(
+					$active_messenger->name,
+					$default_message_type_names_for_messenger,
+					'',
+					true
+				);
+			}
+		}
+		return $templates_created;
+	}
 
 
-					//we need to setup any initial settings for message types
-					/** @var EE_message_type[] $installed_mts */
-					$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-					$settings = array();
-					if ( is_array( $settings_fields ) ) {
-						foreach ( $settings_fields as $field => $values ) {
-							if ( isset( $values['default'] ) ) {
-								$settings[$field] = $values['default'];
-							}
-						}
-					}
 
-					$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
-					$has_activated[$messenger][] = $mt;
-				}
-
-				//setup any initial settings for the messenger
-				$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
-
-				if ( !empty( $msgr_settings ) ) {
-					foreach ( $msgr_settings as $field => $value ) {
-						$active_messengers[$messenger]['settings'][$field] = $value;
-					}
-				}
-
-				//now let's save the settings for this messenger! Must do now because the validator checks the db for active messengers to validate.
-				EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
-
-				//let's generate all the templates but only if the messenger has default_mts (otherwise its just activated).
-				if ( !empty( $default_mts ) ) {
-					$success = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+	/**
+	 * This will activate and generate default messengers and default message types for those messengers.
+	 *
+	 * @param EE_message_Resource_Manager $message_resource_manager
+	 * @return array|bool  True means there were default messengers and message type templates generated.
+	 *                     False means that there were no templates generated
+	 *                     (which could simply mean there are no default message types for a messenger).
+	 * @throws EE_Error
+	 */
+	protected static function _activate_and_generate_default_messengers_and_message_templates(
+		EE_message_Resource_Manager $message_resource_manager
+	) {
+		/** @type EE_messenger[] $messengers_to_generate */
+		$messengers_to_generate = self::_get_default_messengers_to_generate_on_activation( $message_resource_manager );
+		$installed_message_types = $message_resource_manager->installed_message_types();
+		$templates_generated = false;
+		foreach ( $messengers_to_generate as $messenger_to_generate ) {
+			$default_message_type_names_for_messenger = $messenger_to_generate->get_default_message_types();
+			//verify the default message types match an installed message type.
+			foreach ( $default_message_type_names_for_messenger as $key => $name ) {
+				if ( ! isset( $installed_message_types[ $name ] ) ) {
+					unset( $default_message_type_names_for_messenger[ $key ] );
 				}
 			}
-		} //end check for empty( $def_ms )
+			// in previous iterations, the active_messengers option in the db
+			// needed updated before calling create templates. however with the changes this may not be necessary.
+			// This comment is left here just in case we discover that we _do_ need to update before
+			// passing off to create templates (after the refactor is done).
+			// @todo remove this comment when determined not necessary.
+			$message_resource_manager->activate_messenger(
+				$messenger_to_generate->name,
+				$default_message_type_names_for_messenger,
+				false
+			);
+			//create any templates needing created (or will reactivate templates already generated as necessary).
+			if ( ! empty( $default_message_type_names_for_messenger ) ) {
+				$templates_generated = EEH_MSG_Template::generate_new_templates(
+					$messenger_to_generate->name,
+					$default_message_type_names_for_messenger,
+					'',
+					true
+				);
+			}
+		}
+		return $templates_generated;
+	}
 
-		//still need to see if there are any message types to activate for active messengers
-		foreach ( $active_messengers as $messenger => $settings ) {
-			$msg_obj = $settings['obj'];
-			if ( ! $msg_obj instanceof EE_messenger ) {
+
+
+	/**
+	 * This returns the default messengers to generate templates for on activation of EE.
+	 * It considers:
+	 * - whether a messenger is already active in the db.
+	 * - whether a messenger has been made active at any time in the past.
+	 *
+	 * @static
+	 * @param  EE_Message_Resource_Manager $message_resource_manager
+	 * @return EE_messenger[]
+	 */
+	protected static function _get_default_messengers_to_generate_on_activation(
+		EE_Message_Resource_Manager $message_resource_manager
+	) {
+		$active_messengers = $message_resource_manager->active_messengers();
+		$installed_messengers = $message_resource_manager->installed_messengers();
+		$has_activated = $message_resource_manager->get_has_activated_messengers_option();
+		$messengers_to_generate = array();
+		foreach ( $installed_messengers as $installed_messenger ) {
+			//if installed messenger is a messenger that should be activated on install
+			//and is not already active
+			//and has never been activated
+			if (
+				! $installed_messenger->activate_on_install
+				|| isset( $active_messengers[ $installed_messenger->name ] )
+				|| isset( $has_activated[ $installed_messenger->name ] )
+			) {
 				continue;
 			}
-
-			$all_default_mts = $msg_obj->get_default_message_types();
-			$new_default_mts = array();
-
-			//loop through each default mt reported by the messenger and make sure its set in its active db entry.
-			foreach( $all_default_mts as $index => $mt ) {
-				//already active? already has generated templates? || has already been activated before (we dont' want to reactivate things users intentionally deactivated).
-				if ( ( isset( $has_activated[$messenger] ) && in_array($mt, $has_activated[$messenger]) ) || isset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt] ) ||  EEH_MSG_Template::already_generated( $messenger, $mt, 0, FALSE ) ) {
-					continue;
-				}
-
-				//is there an installed_mt matching the default string?  If not then nothing to do here.
-				if ( ! isset( $installed_mts[$mt] ) ) {
-					unset( $all_default_mts[$mt] );
-					continue;
-				}
-
-				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
-				$settings = array();
-				if ( is_array( $settings_fields ) ) {
-					foreach ( $settings_fields as $field => $values ) {
-						if ( isset( $values['default'] ) ) {
-							$settings[$field] = $values['default'];
-						}
-					}
-				}
-
-				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
-				$new_default_mts[] = $mt;
-				$has_activated[$messenger][] = $mt;
-			}
-
-
-			if ( ! empty( $new_default_mts ) ) {
-				$success = EEH_MSG_Template::generate_new_templates( $messenger, $new_default_mts, '', TRUE );
-			}
-
+			$messengers_to_generate[ $installed_messenger->name ] = $installed_messenger;
 		}
-
-		//now let's save the settings for this messenger!
-		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
-
-		//update $has_activated record
-		update_option( 'ee_has_activated_messenger', $has_activated );
-
-		//that's it!
-		return $success;
+		return $messengers_to_generate;
 	}
 
 
@@ -1430,54 +1463,23 @@ class EEH_Activation {
 
 
 	/**
-	 * This simply validates active messengers and message types to ensure they actually match installed messengers and message types.  If there's a mismatch then we deactivate the messenger/message type and ensure all related db rows are set inactive.
+	 * This simply validates active message types to ensure they actually match installed
+	 * message types.  If there's a mismatch then we deactivate the message type and ensure all related db
+	 * rows are set inactive.
+	 *
+	 * Note: Messengers are no longer validated here as of 4.9.0 because they get validated automatically whenever
+	 * EE_Messenger_Resource_Manager is constructed.  Message Types are a bit more resource heavy for validation so they
+	 * are still handled in here.
 	 *
 	 * @since 4.3.1
 	 *
 	 * @return void
 	 */
 	public static function validate_messages_system() {
-		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
-
-		//get active and installed  messengers/message types.
-		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-		$installed = EEH_MSG_Template::get_installed_message_objects();
-		$installed_messengers = $installed_mts = array();
-		//set up the arrays so they can be handled easier.
-		foreach( $installed['messengers'] as $im ) {
-			if ( $im instanceof EE_messenger ) {
-				$installed_messengers[$im->name] = $im;
-			}
-		}
-		foreach( $installed['message_types'] as $imt ) {
-			if ( $imt instanceof EE_message_type ) {
-				$installed_mts[$imt->name] = $imt;
-			}
-		}
-
-		//now let's loop through the active array and validate
-		foreach( $active_messengers as $messenger => $active_details ) {
-			//first let's see if this messenger is installed.
-			if ( ! isset( $installed_messengers[$messenger] ) ) {
-				//not set so let's just remove from actives and make sure templates are inactive.
-				unset( $active_messengers[$messenger] );
-				EEH_MSG_Template::update_to_inactive( $messenger );
-				continue;
-			}
-
-			//messenger is active, so let's just make sure that any active message types not installed are deactivated.
-			$mts = ! empty( $active_details['settings'][$messenger . '-message_types'] ) ? $active_details['settings'][$messenger . '-message_types'] : array();
-			foreach ( $mts as $mt_name => $mt ) {
-				if ( ! isset( $installed_mts[$mt_name] )  ) {
-					unset( $active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt_name] );
-					EEH_MSG_Template::update_to_inactive( $messenger, $mt_name );
-				}
-			}
-		}
-
-		//all done! let's update the active_messengers.
-		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$message_resource_manager->validate_active_message_types_are_installed();
 		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
 		return;
 	}
@@ -1516,7 +1518,8 @@ class EEH_Activation {
 
 
 	/**
-	 * Finds all our EE4 custom post types, and deletes them and their associated data (like post meta or term relations)/
+	 * Finds all our EE4 custom post types, and deletes them and their associated data (like post meta or term
+	 * relations)/
 	 * @global wpdb $wpdb
 	 */
 	public static function delete_all_espresso_cpt_data(){

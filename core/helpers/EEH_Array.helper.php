@@ -31,12 +31,13 @@ class EEH_Array extends EEH_Base {
 	}
 
 	/**
-	 * Given that $arr is an array, determines if it's associative or numerically-indexed
-	 * @param array $arr
+	 * Given that $arr is an array, determines if it's associative or numerically AND sequentially indexed
+	 *
+	 * @param array $array
 	 * @return boolean
 	 */
-	public static function is_associative_array($arr){
-		return  array_keys($arr) !== range(0, count($arr) - 1);
+	public static function is_associative_array( array $array ) {
+		return array_keys( $array ) !== range( 0, count( $array ) - 1 );
 	}
 
 	/**

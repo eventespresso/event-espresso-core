@@ -56,7 +56,8 @@ class EED_Add_New_State  extends EED_Module {
 		add_action( 'AHEE__General_Settings_Admin_Page__delete_state__state_deleted', array( 'EED_Add_New_State', 'update_country_settings' ), 10, 3 );
 		add_filter( 'FHEE__EE_State_Select_Input____construct__state_options', array( 'EED_Add_New_State', 'state_options' ), 10, 1 );
 		add_filter( 'FHEE__EE_Country_Select_Input____construct__country_options', array( 'EED_Add_New_State', 'country_options' ), 10, 1 );
-		add_filter( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
+		//add_filter( 'FHEE__Single_Page_Checkout___check_form_submission__request_params', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
+		add_filter( 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data', array( 'EED_Add_New_State', 'filter_checkout_request_params' ), 10, 1 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options', array( 'EED_Add_New_State', 'inject_new_reg_state_into_options' ), 10, 5 );
 		add_filter( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options', array( 'EED_Add_New_State', 'inject_new_reg_country_into_options' ), 10, 5 );
 	}
@@ -399,7 +400,7 @@ class EED_Add_New_State  extends EED_Module {
 		$new_state = EE_State::new_instance( $props_n_values );
 		if ( $new_state instanceof EE_State ) {
 			// if not non-ajax admin
-			$new_state_key = $new_state->country_iso() . '-' . $new_state->abbrev();
+			$new_state_key = 'new-state-added-' . $new_state->country_iso() . '-' . $new_state->abbrev();
 			$new_state_notice = sprintf(
 					__( 'A new State named "%1$s (%2$s)" was dynamically added from an Event Espresso form for the Country of "%3$s".%5$sTo verify, edit, and/or delete this new State, please go to the %4$s and update the States / Provinces section.%5$sCheck "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
@@ -517,20 +518,34 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function state_options( $state_options = array() ) {
-		$new_states = EE_Registry::instance()->SSN->get_session_data(
-			'new_states'
-		);
-		if ( is_array( $new_states ) && ! empty( $new_states )) {
-			foreach ( $new_states as $new_state ) {
-				if (
-					$new_state instanceof EE_State
-					&& $new_state->country() instanceof EE_Country
-				) {
-					$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
-				}
+		$new_states = EED_Add_New_State::_get_new_states();
+		foreach ( $new_states as $new_state ) {
+			if (
+				$new_state instanceof EE_State
+				&& $new_state->country() instanceof EE_Country
+			) {
+				$state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
 			}
 		}
 		return $state_options;
+	}
+
+
+
+	/**
+	 *    _get_new_states
+	 *
+	 * @access        protected
+	 * @return        array
+	 */
+	protected static function _get_new_states() {
+		$new_states = array();
+		if ( EE_Registry::instance()->SSN instanceof EE_Session ) {
+			$new_states = EE_Registry::instance()->SSN->get_session_data(
+				'new_states'
+			);
+		}
+		return is_array( $new_states ) ? $new_states : array();
 	}
 
 
@@ -543,17 +558,13 @@ class EED_Add_New_State  extends EED_Module {
 	 * @return        boolean
 	 */
 	public static function country_options( $country_options = array() ) {
-		$new_states = EE_Registry::instance()->SSN->get_session_data(
-			'new_states'
-		);
-		if ( is_array( $new_states ) && ! empty( $new_states )) {
-			foreach ( $new_states as $new_state ) {
-				if (
-					$new_state instanceof EE_State
-					&& $new_state->country() instanceof EE_Country
-				) {
-					$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
-				}
+		$new_states = EED_Add_New_State::_get_new_states();
+		foreach ( $new_states as $new_state ) {
+			if (
+				$new_state instanceof EE_State
+				&& $new_state->country() instanceof EE_Country
+			) {
+				$country_options[ $new_state->country()->ID() ] = $new_state->country()->name();
 			}
 		}
 		return $country_options;

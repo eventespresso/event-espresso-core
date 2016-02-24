@@ -517,8 +517,16 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$template_row_path = EE_LIBRARIES . 'messages/messenger/admin_templates/event_switcher_row.template.php';
 
 		//array of template objects for global and custom (non-trashed) (but remember just for this messenger!)
-		$global_templates = EEM_Message_Template_Group::instance()->get_all( array( array('MTP_messenger' => $this->name, 'MTP_is_global' => TRUE, 'MTP_is_active' => TRUE ) ) );
-		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event( $event_id, array( 'MTP_messenger' => $this->name, 'MTP_is_active' => TRUE ) );
+		$global_templates = EEM_Message_Template_Group::instance()->get_all(
+			array( array( 'MTP_messenger' => $this->name, 'MTP_is_global' => true, 'MTP_is_active' => true ) )
+		);
+		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event(
+			$event_id,
+			array(
+				'MTP_messenger' => $this->name,
+				'MTP_is_active' => true
+			)
+		);
 		$templates_for_event = !empty( $templates_for_event ) ? $templates_for_event : array();
 
 		//so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
@@ -555,7 +563,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 				$st_args[ 'selector' ] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
 				//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
 				$st_args[ 'create_button' ] = $mtpg->get( 'MTP_is_override' ) ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __( 'Create New Custom', 'event_espresso' ) . '</a>';
-				$st_args[ 'create_button' ] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messsages_add_new_message_template' ) ? $st_args[ 'create_button' ] : '';
+				$st_args[ 'create_button' ] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messages_add_new_message_template' ) ? $st_args[ 'create_button' ] : '';
 				$st_args[ 'edit_button' ] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID ) ? '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __( 'Edit', 'event_espresso' ) . '</a>' : '';
 				$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, true );
 			}
@@ -599,7 +607,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	protected function _set_template_value($item, $value) {
 		if ( array_key_exists($item, $this->_template_fields) ) {
 			$prop = '_' . $item;
-			$this->$prop= $value;
+			$this->{$prop}= $value;
 		}
 	}
 
@@ -761,8 +769,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_existing_test_settings() {
-		$settings = EEH_MSG_Template::get_active_messengers_in_db();
-		return isset( $settings[$this->name]['test_settings'] ) ? $settings[$this->name]['test_settings'] : array();
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$settings = $Message_Resource_Manager->get_active_messengers_option();
+		return isset( $settings[ $this->name ]['test_settings'] ) ? $settings[ $this->name ]['test_settings'] : array();
 	}
 
 
@@ -775,9 +785,11 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return bool success/fail
 	 */
 	public function set_existing_test_settings( $settings ) {
-		$existing = EEH_MSG_Template::get_active_messengers_in_db();
-		$existing[$this->name]['test_settings'] = $settings;
-		return EEH_MSG_Template::update_active_messengers_in_db( $existing );
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$existing = $Message_Resource_Manager->get_active_messengers_option();
+		$existing[ $this->name ]['test_settings'] = $settings;
+		return $Message_Resource_Manager->update_active_messengers_option( $existing );
 	}
 
 
