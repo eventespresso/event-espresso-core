@@ -5,11 +5,11 @@ use EventEspresso\core\libraries\rest_api\controllers\Base;
  *
  * Class Calculations
  *
- * Class for defining which model fields can be calculated, and performing those calculations 
+ * Class for defining which model fields can be calculated, and performing those calculations
  * as requested
  *
  * @package         Event Espresso
- * @subpackage    
+ * @subpackage
  * @author				Mike Nelson
  * @since		 	   4.8.35.rc.001
  *
@@ -24,23 +24,27 @@ class Calculated_Model_Fields {
 	 * @var array
 	 */
 	protected $_mapping;
+
+
+
 	/**
+	 * @param bool $refresh
 	 * @return array top-level-keys are model names (eg "Event")
-	 * next-level are the calculed field names, and their values are
-	 * callbacks for calculating them. 
+	 * next-level are the calculated field names, and their values are
+	 * callbacks for calculating them.
 	 * These callbacks should accept as arguments:
 	 * the wpdb row results,
 	 * the WP_Request object,
 	 * the controller object
 	 */
-	public function mapping( $refresh = false ) { 
+	public function mapping( $refresh = false ) {
 		if( ! $this->_mapping || $refresh ) {
 			$this->_mapping = $this->_generate_new_mapping();
 		}
 		return $this->_mapping;
-		
+
 	}
-	
+
 	/**
 	 * Generates  anew mapping between model calculated fields and their callbacks
 	 * @return array
@@ -50,7 +54,7 @@ class Calculated_Model_Fields {
 		$event_calculations_class = $rest_api_calculations_namespace . 'Event';
 		$datetime_calculations_class = $rest_api_calculations_namespace . 'Datetime';
 		return apply_filters(
-			'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping', 
+			'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping',
 			array(
 				'Event' => array(
 					'optimum_sales_at_start' => array(
@@ -95,7 +99,7 @@ class Calculated_Model_Fields {
 			)
 		);
 	}
-	
+
 	/**
 	 * Gets the known calculated fields for model
 	 * @param \EEM_Base $model
@@ -109,17 +113,23 @@ class Calculated_Model_Fields {
 			return array();
 		}
 	}
-	
+
+
+
 	/**
 	 * Retrieves the value for this calculation
-	 * @param \EEM_Base type $model
-	 * @param string $field_name
-	 * @param array $wpdb_row
+	 *
+	 * @param \EEM_Base                                               type $model
+	 * @param string                                                  $field_name
+	 * @param array                                                   $wpdb_row
 	 * @param \WP_REST_Request
+	 * @param \EventEspresso\core\libraries\rest_api\controllers\Base $controller
+	 * @return mixed|null
+	 * @throws \EE_Error
 	 */
 	public function retrieve_calculated_field_value( \EEM_Base $model, $field_name, $wpdb_row, $rest_request, Base $controller ) {
 		$mapping = $this->mapping();
-		if( isset( $mapping[ $model->get_this_model_name() ] ) 
+		if( isset( $mapping[ $model->get_this_model_name() ] )
 			&& $mapping[ $model->get_this_model_name() ][ $field_name ] ) {
 			return call_user_func( $mapping[ $model->get_this_model_name() ][ $field_name ], $wpdb_row, $rest_request, $controller );
 		}
