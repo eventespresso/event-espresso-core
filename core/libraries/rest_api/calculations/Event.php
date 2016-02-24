@@ -117,7 +117,7 @@ class Event {
 		return \EEM_Registration::instance()->count(
 			array(
 				array(
-					'Checkin.CHK_in' => true,
+					'Checkin.CHK_in' => false,
 					'Checkin.Datetime.EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ]
 				)
 			)
