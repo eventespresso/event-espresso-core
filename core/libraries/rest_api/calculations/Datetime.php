@@ -8,7 +8,7 @@ use EventEspresso\core\libraries\rest_api\controllers\model\Base;
  * Calculations relating to datetimes
  *
  * @package         Event Espresso
- * @subpackage    
+ * @subpackage
  * @author				Mike Nelson
  * @since		 	   $VID:$
  *
@@ -21,9 +21,10 @@ class Datetime {
 	/**
 	 * Calculates the total spaces available on the datetime, taking into account
 	 * ticket limits too.
+	 *
 	 * @see EE_Datetime::spaces_remaining( true )
 	 * @param array $wpdb_row
-	 * @param WP_Request $request
+	 * @param \WP_REST_Request $request
 	 * @param Base $controller
 	 * @return int
 	 */
@@ -31,11 +32,12 @@ class Datetime {
 		$dtt_obj = \EEM_Datetime::instance()->get_one_by_ID( $wpdb_row[ 'Datetime.DTT_ID' ] );
 		return $dtt_obj->spaces_remaining( true );
 	}
-	
+
 	/**
 	 * Counts registrations who have checked into this datetime
+	 *
 	 * @param array $wpdb_row
-	 * @param WP_Request $request
+	 * @param \WP_REST_Request $request
 	 * @param Base $controller
 	 * @return int
 	 */
@@ -49,11 +51,12 @@ class Datetime {
 			)
 		);
 	}
-	
+
 	/**
 	 * Counts registrations who have checked out of this datetime
+	 *
 	 * @param array $wpdb_row
-	 * @param WP_Request $request
+	 * @param \WP_REST_Request $request
 	 * @param Base $controller
 	 * @return int
 	 */
