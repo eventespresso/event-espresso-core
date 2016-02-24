@@ -69,22 +69,14 @@ class Calculated_Model_Fields {
 						$event_calculations_class,
 						'spaces_remaining'
 					),
-//					'registrations_checked_in_count' => array(
-//						$event_calculations_class,
-//						'registrations_checked_in_count'
-//					),
-//					'total_checkins_count' => array(
-//						$event_calculations_class,
-//						'total_checkins_count'
-//					),
-//					'registrations_checked_out_count' => array(
-//						$event_calculations_class,
-//						'registrations_checked_out_count'
-//					),
-//					'total_checkouts_count' => array(
-//						$event_calculations_class,
-//						'total_checkouts_count'
-//					)
+					'registrations_checked_in_count' => array(
+						$event_calculations_class,
+						'registrations_checked_in_count'
+					),
+					'registrations_checked_out_count' => array(
+						$event_calculations_class,
+						'registrations_checked_out_count'
+					)
 				),
 				'Datetime' => array(
 					'spaces_remaining' => array(

@@ -79,23 +79,42 @@ class Event {
 	}
 	
 
-//	
-//	/**
-//	 * Counts all the registrations who have checked into one of this events' datetimes
-//	 * See EE_Event::total_available_spaces( false );
-//	 * @param array $wpdb_row
-//	 * @param WP_Request $request
-//	 * @param Base $controller
-//	 * @return int
-//	 */
-//	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
-//		return \EEM_Checkin::instance()->count(
-//			array(
-//				array(
-//					'CHK_in' => true,
-//					'Registration.EVT_ID' => $wpdb_row[ 'Event_CPT.EVT_ID' ]
-//				)
-//			)
-//		);
-//	}
+	
+	/**
+	 * Counts all the registrations who have checked into one of this events' datetimes
+	 * See EE_Event::total_available_spaces( false );
+	 * @param array $wpdb_row
+	 * @param WP_Request $request
+	 * @param Base $controller
+	 * @return int
+	 */
+	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
+		return \EEM_Registration::instance()->count(
+			array(
+				array(
+					'Checkin.CHK_in' => true,
+					'Checkin.Datetime.EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ]
+				)
+			)
+		);
+	}
+	
+	/**
+	 * Counts all the registrations who have checked out of one of this events' datetimes
+	 * See EE_Event::total_available_spaces( false );
+	 * @param array $wpdb_row
+	 * @param WP_Request $request
+	 * @param Base $controller
+	 * @return int
+	 */
+	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
+		return \EEM_Registration::instance()->count(
+			array(
+				array(
+					'Checkin.CHK_in' => true,
+					'Checkin.Datetime.EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ]
+				)
+			)
+		);
+	}
 }
