@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -24,9 +25,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 	const ee_api_link_namespace = 'https://api.eventespresso.com/';
 
 	/**
+	 *
+	 * @var Calculated_Model_Fields
+	 */
+	protected static $_field_calculator = null;
+	/**
 	 * @return EED_Core_Rest_Api
 	 */
 	public static function instance() {
+		self::$_field_calculator = new Calculated_Model_Fields();
 		return parent::get_instance( __CLASS__ );
 	}
 
@@ -178,7 +185,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 								'handle_request_get_all' ),
 							'methods' => WP_REST_Server::READABLE,
 							'hidden_endpoint' => $hidden_endpoint,
-							'args' => $this->_get_read_query_params( $model_name ),
+							'args' => $this->_get_read_query_params( $model_name, $version ),
 							'_links' => array(
 								'self' => rest_url( $ee_namespace . $singular_model_route ),
 							)
@@ -228,7 +235,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 									'handle_request_get_related' ),
 								'methods' => WP_REST_Server::READABLE,
 								'hidden_endpoint' => $hidden_endpoint,
-								'args' => $this->_get_read_query_params( $relation_name ),
+								'args' => $this->_get_read_query_params( $relation_name, $version ),
 							),
 //							array(
 //								'callback' => array(
@@ -287,7 +294,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param string $model_name eg 'Event' or 'Venue'
 	 * @return array describing the args acceptable when querying this model
 	 */
-	protected function _get_read_query_params( $model_name ) {
+	protected function _get_read_query_params( $model_name, $version ) {
 		$model = EE_Registry::instance()->load_model( $model_name );
 		$default_orderby = array();
 		foreach( $model->get_combined_primary_key_fields() as $key_field ) {
@@ -329,6 +336,11 @@ class EED_Core_Rest_Api extends \EED_Module {
 				'default' => '*',
 				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
 			),
+			'calculate' => array(
+				'required' => false,
+				'default' => '',
+				'enum' => self::$_field_calculator->retrieve_calculated_fields_for_model( $model )
+			)
 		);
 	}
 

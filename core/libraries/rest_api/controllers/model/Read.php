@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -20,11 +21,16 @@ class Read extends Base {
 
 
 
-
+	/**
+	 *
+	 * @var Calculated_Model_Fields
+	 */
+	protected $_fields_calculator;
 
 	public function __construct() {
 		parent::__construct();
 		\EE_Registry::instance()->load_helper( 'Inflector' );
+		$this->_fields_calculator = new Calculated_Model_Fields();
 	}
 
 	/**
@@ -193,8 +199,7 @@ class Read extends Base {
 			$nice_results[ ] = $this->create_entity_from_wpdb_result(
 					$model,
 					$result,
-					$request->get_param( 'include' ),
-					$query_params[ 'caps' ]
+					$request
 				);
 		}
 		return $nice_results;
@@ -265,8 +270,7 @@ class Read extends Base {
 			$nice_result = $this->create_entity_from_wpdb_result(
 				$relation->get_other_model(),
 				$result,
-				$request->get_param( 'include' ),
-				$query_params[ 'caps' ]
+				$request
 			);
 			if( $relation instanceof \EE_HABTM_Relation ) {
 				//put the unusual stuff (properties from the HABTM relation) first, and make sure
@@ -274,8 +278,7 @@ class Read extends Base {
 				$join_model_result = $this->create_entity_from_wpdb_result(
 					$relation->get_join_model(),
 					$result,
-					$request->get_param( 'include' ),
-					$query_params[ 'caps' ]
+					$request
 				);
 				$joined_result = array_merge( $nice_result, $join_model_result );
 				//but keep the meta stuff from the main model
@@ -332,33 +335,24 @@ class Read extends Base {
 	 * Changes database results into REST API entities
 	 * @param \EEM_Base $model
 	 * @param array $db_row like results from $wpdb->get_results()
-	 * @param string $include string indicating which fields to include in the response,
-	 *                        including fields on related entities.
-	 *                        Eg, when querying for events, an include string like:
-	 *                        "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price"
-	 *                        instructs us to only include the event's name and description,
-	 *                        each related datetime, and each related datetime's ticket's name and price.
-	 *                        Eg json would be:
-	 *                          '{
-	 *                              "EVT_ID":12,
-	 * 								"EVT_name":"star wars party",
-	 * 								"EVT_desc":"this is the party you are looking for...",
-	 * 								"datetimes":[{
-	 * 									"DTT_ID":123,...,
-	 * 									"tickets":[{
-	 * 										"TKT_ID":234,
-	 * 										"TKT_name":"student rate",
-	 * 										"TKT_price":32.0
-	 * 									},...]
-	 * 								}]
-	 * 							}',
-	 *                        ie, events with all their associated datetimes
-	 *                        (including ones that are trashed) embedded in the json object,
-	 *                        and each datetime also has each associated ticket embedded in its json object.
-	 * @param string $context one of the return values from EEM_Base::valid_cap_contexts()
+	 * @param \WP_REST_Request $rest_request
+	 * @param string $deprecated no longer used
 	 * @return array ready for being converted into json for sending to client
 	 */
-	public function create_entity_from_wpdb_result( $model, $db_row, $include, $context ) {
+	public function create_entity_from_wpdb_result( $model, $db_row, $rest_request, $deprecated = null ) {
+		if( $rest_request instanceof \WP_REST_Request ) {
+			$include = $rest_request->get_param( 'include' );
+			$context = $rest_request->get_param( 'caps' );
+		} else {
+			//ok so this was called in the old style, where the 3rd arg was
+			//$include, and the 4th arg was $context
+			$include = $rest_request;
+			$context = $deprecated;
+			//now setup the request just to avoid fatal errors, although we won't be able
+			//to truly make use of it because it's kinda devoid of info
+			$rest_request = new \WP_REST_Request();
+		}
+		
 		if( $include == null ) {
 			$include = '*';
 		}
@@ -469,7 +463,11 @@ class Read extends Base {
 						'include' => $this->extract_includes_for_this_model(
 								$include,
 								$relation_name
-							)
+							),
+						'calculate' => $this->extract_includes_for_this_model( 
+							$rest_request->get_param( 'calculate' ),
+							$relation_name 
+						)
 					)
 				);
 				$related_results = $this->get_entities_from_relation(
@@ -486,6 +484,7 @@ class Read extends Base {
 			$model,
 			$context
 		);
+		$result[ '_calculated_fields'] = $this->_add_calculations( $model, $db_row, $rest_request );
 		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
 			$result,
 			$model,
@@ -502,6 +501,23 @@ class Read extends Base {
 			$model,
 			$context
 		);
+	}
+	
+	/**
+	 * Adds the calculated fields to the response
+	 * @param \EEM_Base $model
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $rest_request
+	 */
+	protected function _add_calculations( $model, $wpdb_row, $rest_request ) {
+		$calculated_fields = $this->extract_includes_for_this_model( 
+			$rest_request->get_param( 'calculate' ) );
+		//note: setting calculate=* doesn't do anything
+		$calculed_fields_to_return = array();
+		foreach( $calculated_fields as $field_to_calculate ) {
+			$calculed_fields_to_return[ $field_to_calculate ] = $this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this );
+		}
+		return $calculed_fields_to_return;
 	}
 
 	/**
@@ -550,8 +566,7 @@ class Read extends Base {
 			return $this->create_entity_from_wpdb_result(
 				$model,
 				array_shift( $model_rows ),
-				$request->get_param( 'include' ),
-				$this->validate_context( $request->get_param( 'caps' ) ) );
+				$request );
 		} else {
 			//ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
 			$lowercase_model_name = strtolower( $model->get_this_model_name() );
