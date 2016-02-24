@@ -70,4 +70,23 @@ class Datetime {
 			)
 		);
 	}
+	
+	/**
+	 * Counts the number of pending-payment registrations for this event (regardless
+	 * of how many datetimes each registrations' ticket purchase is for)
+	 * @param array $wpdb_row
+	 * @param WP_Request $request
+	 * @param Base $controller
+	 * @return int
+	 */
+	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
+		return \EEM_Registration::instance()->count( 
+			array( 
+				array( 
+					'Ticket.Datetime.DTT_ID' => $wpdb_row[ 'Datetime.DTT_ID' ], 
+					'STS_ID' => \EEM_Registration::status_id_pending_payment ) ), 
+			'REG_ID', 
+			true 
+		);
+	}
 }

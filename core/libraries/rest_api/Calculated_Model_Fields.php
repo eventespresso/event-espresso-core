@@ -69,6 +69,10 @@ class Calculated_Model_Fields {
 						$event_calculations_class,
 						'spots_taken'
 					),
+					'spots_taken_pending_payment' => array(
+						$event_calculations_class,
+						'spots_taken_pending_payment',
+					),
 					'spaces_remaining' => array(
 						$event_calculations_class,
 						'spaces_remaining'
@@ -94,7 +98,11 @@ class Calculated_Model_Fields {
 					'registrations_checked_out_count' => array(
 						$datetime_calculations_class,
 						'registrations_checked_out_count'
-					)
+					),
+					'spots_taken_pending_payment' => array(
+						$datetime_calculations_class,
+						'spots_taken_pending_payment',
+					),
 				)
 			)
 		);
