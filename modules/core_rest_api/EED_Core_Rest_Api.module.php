@@ -23,6 +23,12 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @see http://v2.wp-api.org/extending/linking/
 	 */
 	const ee_api_link_namespace = 'https://api.eventespresso.com/';
+	
+	/**
+	 * We used to use -1 for infinity in the rest api, but that's ambiguous for
+	 * fields that COULD contain -1
+	 */
+	const ee_inf_in_rest = 'EE_INF';
 
 	/**
 	 *
@@ -344,6 +350,24 @@ class EED_Core_Rest_Api extends \EED_Module {
 		);
 	}
 
+	/** 
+	* Prepares a field's value for display in the API 
+	* @param \EE_Model_Field $field_obj 
+	* @param mixed $value 
+	* @return mixed 
+	*/ 
+   public static function prepare_field_value_for_rest_api( $field_obj, $value ) { 
+	   if( $value === EE_INF ) { 
+		   $value = self::ee_inf_in_rest; 
+	   } elseif( $field_obj instanceof \EE_Datetime_Field && 
+		   $value instanceof \DateTime ) { 
+		   $value = $value->format( 'c' ); 
+		   $value = mysql_to_rfc3339( $value ); 
+	   } else { 
+		   $value = $value; 
+	   } 
+	   return $value; 
+    } 
 	/**
 	 * Gets routes for the config
 	 * @return array @see _register_model_routes
@@ -503,9 +527,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public function run( $WP ) {
 
 	}
-
-
-
+	
+	
+	
 }
 
 // End of file EED_Core_Rest_Api.module.php

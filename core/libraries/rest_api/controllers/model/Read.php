@@ -381,14 +381,11 @@ class Read extends Base {
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
 			}elseif( $field_obj instanceof \EE_Datetime_Field ){
-				if( $raw_field_value instanceof \DateTime ) {
-					$raw_field_value = $raw_field_value->format( 'c' );
-				}
-				$result[ $field_name ] = mysql_to_rfc3339( $raw_field_value );
+				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api( $field_obj, $field_obj->prepare_for_get( $field_value ) ); 
 			}else{
 				$value_prepared = $field_obj->prepare_for_get( $field_value );
 
-				$result[ $field_name ] = $value_prepared === INF ? EE_INF_IN_DB : $value_prepared;
+				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api( $field_obj, $field_obj->prepare_for_get( $field_value ) ); 
 			}
 		}
 		if( $model instanceof \EEM_CPT_Base ) {
@@ -515,7 +512,10 @@ class Read extends Base {
 		//note: setting calculate=* doesn't do anything
 		$calculed_fields_to_return = array();
 		foreach( $calculated_fields as $field_to_calculate ) {
-			$calculed_fields_to_return[ $field_to_calculate ] = $this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this );
+			$calculed_fields_to_return[ $field_to_calculate ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api( 
+				null, 
+				$this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this ) 
+			);
 		}
 		return $calculed_fields_to_return;
 	}
