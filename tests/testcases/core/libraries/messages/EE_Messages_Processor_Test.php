@@ -36,23 +36,15 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	 * @return array
 	 */
 	protected function _test_components() {
-		//setup up new processor
-		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
-		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $ee_msg );
-
-		//set up a EE_Message_To_Generate object
-		$mtg = new EE_Message_To_Generate(
-			'email',
-			'registration',
-			array(),
-			$ee_msg,
-			'admin',
-			true
-		);
 		return array(
-			'ee_msg' => $ee_msg,
-			'proc' => $proc,
-			'mtg' => $mtg
+			'proc' => EE_Registry::instance()->load_lib( 'Messages_Processor' ),
+			'mtg'  => new EE_Message_To_Generate(
+				'email',
+				'registration',
+				array(),
+				'admin',
+				true
+			)
 		);
 	}
 
@@ -65,9 +57,10 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Processor
 	 */
 	function test_construct_and_get_queue() {
-		$eemsg = EE_Registry::instance()->load_lib( 'messages' );
+		$message_proc = null;
 		try {
-			$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $eemsg );
+			/** @type EE_Messages_Processor $message_proc */
+			$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 		} catch( Exception $e ) {
 			$this->fail( sprintf( 'Loading EE_Messages_Processor failed: %s', $e->getMessage() ) );
 		}
@@ -175,6 +168,26 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 	/**
+	 * This simulates the behaviour of EE_Messages_Processor::init_queue_and_generator for resetting the Messages_Generator
+	 * on the processor.
+	 */
+	function test__init_queue_and_generator() {
+		//load processor
+		$message_proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+
+		//grab generation queue.
+		$orig_generator_queue = $message_proc->get_queue();
+
+		//load generator via EE_Registry::factory() (which simulates what happens when executing EE_Messages_Processor::_init_queue_and_generator
+		$generator = EE_Registry::factory( 'EE_Messages_Generator' );
+		$new_generator_queue = $generator->generation_queue();
+
+		//these two queues should NOT be the same objects.
+		$this->assertNotEquals( spl_object_hash( $orig_generator_queue ), spl_object_hash( $new_generator_queue ) );
+	}
+
+
+	/**
 	 * This implicitly tests the following methods as well:
 	 * - queue_for_generation
 	 * - queue_for_generation_loop
@@ -205,13 +218,13 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 	function test_batch_queue_for_generation_and_persist() {
-		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_and_persist', EEM_Message::status_incomplete );
+		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_and_persist', null, false, 0 );
 	}
 
 
 
 	function test_batch_queue_for_generation_no_persist() {
-		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_no_persist', EEM_Message::status_incomplete, false );
+		$this->_common_test_with_specific_expected_status( 'batch_queue_for_generation_no_persist', null, false, 0 );
 	}
 
 
@@ -237,7 +250,8 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		/** @type EE_Message_To_Generate $mtg */
 		$mtg = $test_components['mtg'];
 
-		$this->assertTrue( $mtg->preview );
+		$this->assertTrue( $mtg->preview() );
+		$generated_queue = null;
 
 		try {
 			/** @type EE_Messages_Queue $generated_queue */
@@ -271,10 +285,8 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 	function test_setup_messages_from_ids_and_send() {
 		//setup processor to work with
-		/** @type EE_messages $ee_msg */
-		$ee_msg = EE_Registry::instance()->load_lib( 'messages' );
 		/** @type EE_Messages_Processor $proc */
-		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor', $ee_msg );
+		$proc = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 
 		//setup up messages we'll use for sending that have the right status
 		$messages_with_right_status = $this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_sent ) );
@@ -282,13 +294,13 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 		$messages_with_right_status = array_map(
 			function( $message ) {
-				return $message->ID();
+				return $message instanceof EE_Message ? $message->ID() : 0;
 			},
 			$messages_with_right_status
 		);
 		$messages_with_wrong_status = array_map(
 			function( $message ) {
-				return $message->ID();
+				return $message instanceof EE_Message ? $message->ID() : 0;
 			},
 			$messages_with_wrong_status
 		);
@@ -298,7 +310,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 		$this->assertEquals( 5, $proc->get_queue()->count_STS_in_queue( EEM_Message::status_resend ) );
 
 		//next test incorrect messages
-		$proc = new EE_Messages_Processor( $ee_msg ); //fresh processor and queue.
+		//note calling this method SHOULD reset the internal queue.
 		$proc->setup_messages_from_ids_and_send( $messages_with_wrong_status );
 		$this->assertEquals( 0, $proc->get_queue()->count_STS_in_queue( EEM_Message::status_resend ) );
 	}
@@ -342,3 +354,4 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 
 } //end EE_Messages_Processor_Test
+// Location: tests/testcases/core/libraries/messages/EE_Messages_Processor_Test.php

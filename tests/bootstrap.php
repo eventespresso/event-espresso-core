@@ -21,7 +21,10 @@ function _install_and_load_event_espresso() {
 tests_add_filter( 'muplugins_loaded', '_install_and_load_event_espresso' );
 
 require WP_TESTS_DIR . '/includes/bootstrap.php';
-
+require_once( EE_CORE . 'EE_Dependency_Map.core.php' );
+require_once( EE_CORE . 'request_stack' . DS . 'EE_Request.core.php' );
+require_once( EE_CORE . 'request_stack' . DS . 'EE_Response.core.php' );
+EE_Dependency_Map::instance( new EE_Request( $_REQUEST ), new EE_Response() );
 //Load the EE_specific testing tools
 require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
 

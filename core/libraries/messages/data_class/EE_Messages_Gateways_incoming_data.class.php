@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Messages_Gateways_incoming_data
  *
- * This is the child class for all incoming data to EE_Messages objects that originate in a gateway response.
+ * This is the child class for all incoming data to EE_messages objects that originate in a gateway response.
  *
  * @package		Event Espresso
  * @subpackage	includes/core/messages/data_class/EE_Messages_Gateways_incoming_data.core.php

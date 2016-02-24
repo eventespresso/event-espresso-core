@@ -65,8 +65,6 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_ticket_list() {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
-
 
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_ticket_list_for_main();

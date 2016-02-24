@@ -825,4 +825,33 @@ class EEH_DTT_Helper {
 
 
 
+
+	/**
+	 * This returns the appropriate query interval string that can be used in sql queries involving mysql Date Functions.
+	 *
+	 * @param string $timezone_string  A timezone string in a valid format to instantiate a DateTimeZone object.
+	 * @param string $field_for_interval  The Database field that is the interval is applied to in the query.
+	 * @return string
+	 */
+	public static function get_sql_query_interval_for_offset( $timezone_string, $field_for_interval ) {
+		try {
+			/** need to account for timezone offset on the selects */
+			$DateTimeZone = new DateTimeZone( $timezone_string );
+		} catch ( Exception $e ) {
+			$DateTimeZone = null;
+		}
+
+		/**
+		 * Note get_option( 'gmt_offset') returns a value in hours, whereas DateTimeZone::getOffset returns values in seconds.
+		 * Hence we do the calc for DateTimeZone::getOffset.
+		 */
+		$offset = $DateTimeZone instanceof DateTimeZone ? ( $DateTimeZone->getOffset( new DateTime('now') ) ) / HOUR_IN_SECONDS : get_option( 'gmt_offset' );
+		$query_interval = $offset < 0
+			? 'DATE_SUB(' . $field_for_interval . ', INTERVAL ' . $offset*-1 . ' HOUR)'
+			: 'DATE_ADD(' . $field_for_interval .', INTERVAL ' . $offset . ' HOUR)';
+		return $query_interval;
+	}
+
+
+
 }// end class EEH_DTT_Helper

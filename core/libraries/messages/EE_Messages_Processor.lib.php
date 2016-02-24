@@ -13,20 +13,14 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * This is set on instantiation.  Is an instance of the EE_messages object.
-	 * @type EE_messages
+	 * @type EE_Message_Resource_Manager $_message_resource_manager
 	 */
-	protected $_EEMSG;
-
+	protected $_message_resource_manager;
 
 	/**
 	 * @type EE_Messages_Queue
 	 */
 	protected $_queue;
-
-
-
-
 
 	/**
 	 * @type  EE_Messages_Generator
@@ -38,11 +32,12 @@ class EE_Messages_Processor {
 
 	/**
 	 * constructor
-	 * @param EE_messages $ee_messages
+	 *
+	 * @param EE_Message_Resource_Manager $message_resource_manager
 	 */
-	public function __construct( EE_messages $ee_messages ) {
-		$this->_init_queue_and_generator( $ee_messages );
-
+	public function __construct( EE_Message_Resource_Manager $message_resource_manager ) {
+		$this->_message_resource_manager = $message_resource_manager;
+		$this->_init_queue_and_generator();
 	}
 
 
@@ -51,16 +46,12 @@ class EE_Messages_Processor {
 	/**
 	 * This method sets (or resets) the various properties for use.
 	 *
-	 * - $_EEMSG = holds the EE_messages object
 	 * - $_queue = holds the messages queue
 	 * - $_generator = holds the messages generator
-	 *
-	 * @param EE_messages $ee_messages
 	 */
-	protected function _init_queue_and_generator( EE_messages $ee_messages ) {
-		$this->_EEMSG = $ee_messages;
-		$this->_queue = new EE_Messages_Queue( $ee_messages );
-		$this->_generator = new EE_Messages_Generator( $this->_queue, $ee_messages );
+	protected function _init_queue_and_generator() {
+		$this->_generator = EE_Registry::factory( 'EE_Messages_Generator' );
+		$this->_queue = $this->_generator->generation_queue();
 	}
 
 
@@ -99,6 +90,7 @@ class EE_Messages_Processor {
 	}
 
 
+
 	/**
 	 * This method preps a queue for generation.
 	 *
@@ -113,7 +105,7 @@ class EE_Messages_Processor {
 	protected function _build_queue_for_generation( $messages = array(), $clear_queue = false ) {
 
 		if ( $clear_queue ) {
-			$this->_init_queue_and_generator( $this->_EEMSG );
+			$this->_init_queue_and_generator();
 		}
 
 		if ( $messages ) {
@@ -154,7 +146,7 @@ class EE_Messages_Processor {
 		$this->_queue->lock_queue( EE_Messages_Queue::action_sending );
 
 		if ( $clear_queue ) {
-			$this->_init_queue_and_generator( $this->_EEMSG );
+			$this->_init_queue_and_generator();
 		}
 
 		$messages = is_array( $messages ) ? $messages : array( $messages );
@@ -204,6 +196,7 @@ class EE_Messages_Processor {
 	 * @return EE_Messages_Queue
 	 */
 	public function generate_and_return(  $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 		return $this->_generator->generate( false );
 	}
@@ -226,12 +219,12 @@ class EE_Messages_Processor {
 	/**
 	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_queue()->save() if desire
 	 * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
-	 * @param EE_Message_To_Generate $mtg
+	 * @param EE_Message_To_Generate $message_to_generate
 	 * @return  EE_Messages_Queue
 	 */
-	public function queue_for_generation( EE_Message_To_Generate $mtg ) {
-		if ( $mtg->valid() ) {
-			$this->_generator->create_and_add_message_to_queue( $mtg );
+	public function queue_for_generation( EE_Message_To_Generate $message_to_generate ) {
+		if ( $message_to_generate->valid() ) {
+			$this->_generator->create_and_add_message_to_queue( $message_to_generate );
 		}
 	}
 
@@ -248,6 +241,7 @@ class EE_Messages_Processor {
 	 * @param EE_Message_To_Generate[] $messages_to_generate
 	 */
 	public function batch_queue_for_generation_and_persist( $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 		$this->_queue->save();
 	}
@@ -265,6 +259,7 @@ class EE_Messages_Processor {
 	 * @param EE_Message_To_Generate[]  $messages_to_generate
 	 */
 	public function batch_queue_for_generation_no_persist( $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 	}
 
@@ -283,9 +278,9 @@ class EE_Messages_Processor {
 			$messages_to_generate = array( $messages_to_generate );
 		}
 
-		foreach ( $messages_to_generate as $mtg ) {
-			if ( $mtg instanceof EE_Message_To_Generate && $mtg->valid() ) {
-				$this->queue_for_generation( $mtg );
+		foreach ( $messages_to_generate as $message_to_generate ) {
+			if ( $message_to_generate instanceof EE_Message_To_Generate && $message_to_generate->valid() ) {
+				$this->queue_for_generation( $message_to_generate );
 			}
 		}
 	}
@@ -301,6 +296,7 @@ class EE_Messages_Processor {
 	 * @return EE_Messages_Queue
 	 */
 	public function generate_and_queue_for_sending( $messages_to_generate ) {
+		$this->_init_queue_and_generator();
 		$this->_queue_for_generation_loop( $messages_to_generate );
 		return $this->_generator->generate( true );
 	}
@@ -311,11 +307,12 @@ class EE_Messages_Processor {
 
 	/**
 	 * Generate for preview and execute right away.
-	 * @param   EE_Message_To_Generate $mtg
+	 *
+*@param   EE_Message_To_Generate $message_to_generate
 	 * @return  EE_Messages_Queue | bool   false if unable to generate otherwise the generated queue.
 	 */
-	public function generate_for_preview( EE_Message_To_Generate $mtg ) {
-		if ( ! $mtg->valid() ) {
+	public function generate_for_preview( EE_Message_To_Generate $message_to_generate ) {
+		if ( ! $message_to_generate->valid() ) {
 			EE_Error::add_error(
 				__( 'Unable to generate preview because of invalid data', 'event_espresso' ),
 				__FILE__,
@@ -324,9 +321,9 @@ class EE_Messages_Processor {
 			);
 			return false;
 		}
-		//just make sure preview is set on the $mtg (in case client forgot)
-		$mtg->preview = true;
-		$generated_queue = $this->generate_and_return( array( $mtg ) );
+		//just make sure preview is set on the $message_to_generate (in case client forgot)
+		$message_to_generate->set_preview( true );
+		$generated_queue = $this->generate_and_return( array( $message_to_generate ) );
 		if ( $generated_queue->execute( false ) ) {
 			//the first queue item should be the preview
 			$generated_queue->get_queue()->rewind();
@@ -344,15 +341,17 @@ class EE_Messages_Processor {
 	 * This queues for sending.
 	 * The messenger send now method is also verified to see if sending immediately is requested.
 	 * otherwise its just saved to the queue.
-	 * @param EE_Message_To_Generate $mtg
+	 * @param EE_Message_To_Generate $message_to_generate
 	 * @return bool true or false for success.
 	 */
-	public function queue_for_sending( EE_Message_To_Generate $mtg ) {
-		if ( ! $mtg->valid() ) {
+	public function queue_for_sending( EE_Message_To_Generate $message_to_generate ) {
+		if ( ! $message_to_generate->valid() ) {
 			return false;
 		}
-		$this->_queue->add( $mtg->get_EE_Message() );
-		if ( $mtg->send_now() ) {
+		$this->_init_queue_and_generator();
+		$message = $message_to_generate->get_EE_Message();
+		$this->_queue->add( $message );
+		if ( $message->send_now() ) {
 			$this->_queue->execute( false );
 		} else {
 			$this->_queue->save();
@@ -363,20 +362,37 @@ class EE_Messages_Processor {
 
 	/**
 	 * This generates and sends from the given EE_Message_To_Generate class immediately.
-	 * @param EE_Message_To_Generate $mtg
+	 * @param EE_Message_To_Generate $message_to_generate
 	 * @return EE_Messages_Queue | null
 	 */
-	public function generate_and_send_now( EE_Message_To_Generate $mtg ) {
-		if ( ! $mtg->valid() ) {
+	public function generate_and_send_now( EE_Message_To_Generate $message_to_generate ) {
+		if ( ! $message_to_generate->valid() ) {
 			return null;
 		}
-		$sending_messenger = $mtg instanceof EEI_Has_Sending_Messenger ? $mtg->sending_messenger()->name : '';
-		if ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
-			$this->_queue->add( $mtg->get_EE_Message() );
+		// is there supposed to be a sending messenger for this message?
+		if ( $message_to_generate instanceof EEI_Has_Sending_Messenger ) {
+			// make sure it's valid, but if it's not,
+			// then set the value of $sending_messenger to an EE_Error object
+			// so that downstream code can easily see that things went wrong.
+			$sending_messenger = $message_to_generate->sending_messenger() instanceof EE_messenger
+				? $message_to_generate->sending_messenger()
+				: new EE_Error(
+					__(
+						'There was a specific sending messenger requested for the send action, but it was either invalid or not active at time of sending.',
+						'event_espresso'
+					)
+				);
+		} else {
+			$sending_messenger = null;
+		}
+
+		if ( $message_to_generate->get_EE_Message()->STS_ID() === EEM_Message::status_idle ) {
+			$this->_init_queue_and_generator();
+			$this->_queue->add( $message_to_generate->get_EE_Message() );
 			$this->_queue->execute( false, $sending_messenger );
 			return $this->_queue;
-		} elseif ( $mtg->get_EE_Message()->STS_ID() === EEM_Message::status_incomplete ) {
-			$generated_queue = $this->generate_and_return( array( $mtg ) );
+		} elseif ( $message_to_generate->get_EE_Message()->STS_ID() === EEM_Message::status_incomplete ) {
+			$generated_queue = $this->generate_and_return( array( $message_to_generate ) );
 			$generated_queue->execute( false, $sending_messenger );
 			return $generated_queue;
 		}
@@ -417,15 +433,10 @@ class EE_Messages_Processor {
 	 */
 	public function setup_mtgs_for_all_active_messengers( $message_type, $data ) {
 		$messages_to_generate = array();
-		foreach ( $this->_EEMSG->get_active_messengers() as $messenger_slug => $messenger_object  ) {
-			$mtg = new EE_Message_To_Generate(
-				$messenger_slug,
-				$message_type,
-				$data,
-				$this->_EEMSG
-			);
-			if ( $mtg->valid() ) {
-				$messages_to_generate[] = $mtg;
+		foreach ( $this->_message_resource_manager->active_messengers() as $messenger_slug => $messenger_object  ) {
+			$message_to_generate = new EE_Message_To_Generate( $messenger_slug, $message_type, $data );
+			if ( $message_to_generate->valid() ) {
+				$messages_to_generate[] = $message_to_generate;
 			}
 		}
 		return $messages_to_generate;
@@ -440,6 +451,7 @@ class EE_Messages_Processor {
 	 * @param array $message_ids
 	 */
 	public function setup_messages_from_ids_and_send( $message_ids ) {
+		$this->_init_queue_and_generator();
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
 				'MSG_ID' => array( 'IN', $message_ids ),
@@ -464,14 +476,15 @@ class EE_Messages_Processor {
 	 * objects from them, then returns the array of messages to generate objects.
 	 * Note, this sets up registrations for the registration family of message types.
 	 *
-	 * @param string    $key    The key for the request var holding a/the registration IDs.
+	 * @param string $registration_ids_key  This is used to indicate what represents the registration ids in the request.
+	 *
 	 * @return EE_Message_To_Generate[]
 	 */
-	public function setup_messages_to_generate_from_registration_ids_in_request( $key = '_REG_ID' ) {
+	public function setup_messages_to_generate_from_registration_ids_in_request( $registration_ids_key = '_REG_ID' ) {
 		EE_Registry::instance()->load_core( 'Request_Handler' );
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		$regs_to_send = array();
-		$regIDs = EE_Registry::instance()->REQ->get( '_REG_ID' );
+		$regIDs = EE_Registry::instance()->REQ->get( $registration_ids_key );
 		if ( empty( $regIDs ) ) {
 			EE_Error::add_error( __('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			return false;

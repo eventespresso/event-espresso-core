@@ -1,7 +1,7 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 
 /**
- * This class is used for setting scheduled tasks related to the EE_Messages system.
+ * This class is used for setting scheduled tasks related to the EE_messages system.
  *
  * @package    Event Espresso
  * @subpackage messages

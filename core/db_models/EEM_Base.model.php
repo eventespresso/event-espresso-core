@@ -118,7 +118,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Default_Where_Conditions
 	 */
 	protected $_default_where_conditions_strategy;
-	
+
 	/**
 	 * Strategy for getting conditions on this model when 'default_where_conditions' equals 'minimum'.
 	 * This is particularly useful when you want something between 'none' and 'default'
@@ -935,16 +935,16 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->get_from_entity_map( $id ) ){
 			return $this->get_from_entity_map( $id );
 		}
-		return $this->get_one( 
-			$this->alter_query_params_to_restrict_by_ID( 
+		return $this->get_one(
+			$this->alter_query_params_to_restrict_by_ID(
 				$id,
 				array( 'default_where_conditions' => 'minimum' )
-			) 
+			)
 		);
 	}
-	
+
 	/**
-	 * Alters query parameters to only get items with this ID are returned. 
+	 * Alters query parameters to only get items with this ID are returned.
 	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string()
 	 * @param int $id
 	 * @param array $query_params
@@ -1528,21 +1528,21 @@ abstract class EEM_Base extends EE_Base{
 		return implode(",",$cols_n_values);
 
 	}
-	
+
 	/**
 	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
-	 * Performs a HARD delete, meaning the database row should always be removed, 
+	 * Performs a HARD delete, meaning the database row should always be removed,
 	 * not just have a flag field on it switched
 	 * Wrapper for EEM_Base::delete_permanently()
 	 * @param mixed $id
 	 * @return boolean whether the row got deleted or not
 	 */
 	public function delete_permanently_by_ID( $id ) {
-		return $this->delete_permanently( 
+		return $this->delete_permanently(
 			array(
 				array( $this->get_primary_key_field()->get_name() => $id ),
 				'limit' 	=> 1
-			) 
+			)
 		);
 	}
 
@@ -1555,21 +1555,21 @@ abstract class EEM_Base extends EE_Base{
 	 * @return boolean whether the row got deleted or not
 	 */
 	public function delete_by_ID( $id ){
-		return $this->delete( 
+		return $this->delete(
 			array(
 				array( $this->get_primary_key_field()->get_name() => $id ),
 				'limit' 	=> 1
-			) 
+			)
 		);
 	}
-	
+
 	/**
 	 * Identical to delete_permanently, but does a "soft" delete if possible,
 	 * meaning if the model has a field that indicates its been "trashed" or
 	 * "soft deleted", we will just set that instead of actually deleting the rows.
 	 * @param array $query_params
 	 * @param boolean $allow_blocking
-	 * @return @see EEM_Base::delete_permanently
+	 * @return int
 	 */
 	function delete($query_params,$allow_blocking = true){
 		return $this->delete_permanently($query_params, $allow_blocking);
@@ -2780,7 +2780,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
 		$allowed_used_default_where_conditions_values = array(
 				'all',
-				'this_model_only', 
+				'this_model_only',
 				'other_models_only',
 				'minimum',
 				'none'
@@ -3644,10 +3644,10 @@ abstract class EEM_Base extends EE_Base{
 	public function get_foreign_key_to($model_name){
 		if( ! isset( $this->_cache_foreign_key_to_fields[ $model_name ] ) ){
 			foreach($this->field_settings() as $field){
-//				if(is_subclass_of($field, 'EE_Foreign_Key_Field_Base')){
 				if( $field instanceof EE_Foreign_Key_Field_Base ){
 					if (in_array($model_name,$field->get_model_names_pointed_to() ) ) {
 						$this->_cache_foreign_key_to_fields[ $model_name ] = $field;
+						break;
 					}
 				}
 			}
@@ -4532,7 +4532,7 @@ abstract class EEM_Base extends EE_Base{
 			);
 		}
 	}
-	
+
 	/**
 	 * Clears all the models field caches. This is only useful when a sub-class
 	 * might have added a field or something and these caches might be invaldiated

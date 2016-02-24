@@ -71,15 +71,15 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 
 
 
-
 	/**
 	 * This grabs an EE_Messages_Addressee object for the Preview data handler.
 	 *
-	 * @return EE_Messages_Addressee
+	 * @param string $context
+	 * @return \EE_Messages_Addressee
 	 */
 	protected function _get_addressee( $context = 'primary_attendee' ) {
+		$aee = array();
 		$data = new EE_Messages_Preview_incoming_data( array( 'event_ids' => array( $this->_event->ID() ) ) );
-
 		/**
 		 * @see EE_message_type::_set_defautl_addressee_data()
 		 */
@@ -101,7 +101,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 			'answers' => $data->answers,
 			'txn_status' => $data->txn_status,
 			'total_ticket_count' => $data->total_ticket_count
-			);
+		);
 
 		if ( is_array( $data->primary_attendee_data ) ) {
 			$addressee_data = array_merge( $addressee_data, $data->primary_attendee_data );
@@ -118,7 +118,6 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 				$aee = $addressee_data;
 				$aee['events'] = $data->events;
 				$aee['attendees'] = $data->attendees;
-				return new EE_Messages_Addressee( $aee );
 				break;
 			case 'attendee' :
 				//for the purpose of testing we're just going to do ONE attendee
@@ -133,16 +132,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 				}
 				$aee['reg_obj'] = array_shift( $attendee['reg_objs'] );
 				$aee['attendees'] = $data->attendees;
-				return new EE_Messages_Addressee( $aee );
 				break;
 			case 'admin' :
 				//for the purpose of testing we're only setting up for the event we have active for testing.
 				$aee['user_id'] = $this->_event->get( 'EVT_wp_user' );
 				$aee['events'] = $data->events;
 				$aee['attendees'] = $data->attendees;
-				return new EE_Messages_Addressee( $aee );
 		}
-
+		return new EE_Messages_Addressee( $aee );
 	}
 
 
@@ -168,13 +165,14 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 */
 	protected function _get_parsed_content( $messenger, $message_type, $field, $context, $append = '', $addressee = null ) {
 		//grab the correct template  @see EE_message_type::_get_templates()
+		/** @type EE_Message_Template_Group $mtpg */
 		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( array(
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'MTP_is_global' => true
 			)));
-		$all_templates = $mtpg->context_templates();
-
+		$all_templates = $mtpg instanceof EE_Message_Template_Group ? $mtpg->context_templates() : array();
+		$templates = array();
 		foreach ( $all_templates as $t_context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
 				$templates[$template_field][$t_context] = $template_obj->get('MTP_content');
@@ -241,7 +239,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$data = $addressee instanceof EE_Messages_Addressee ? $addressee : $this->_get_addressee();
 
 		//parser needs EE_Message object
-		$message = EE_Message::new_instance(
+		$message = EE_Message_Factory::create(
 			array(
 				'MSG_messenger' => $messenger->name,
 				'MSG_message_type' => $message_type->name,
@@ -315,6 +313,10 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 	 * @group 7623
 	 */
 	public function test_parsing_html_receipt() {
+		//see https://events.codebasehq.com/projects/event-espresso/tickets/9337, I think when running all tests, html
+		//messenger is getting stuck deactivated and thus the generated message template for this test will be missing some
+		//info.
+		EE_Registry::instance()->load_lib( 'Message_Resource_Manager' )->ensure_messenger_is_active( 'html' );
 		//currently with @group 7623 just testing if there are any error notices.
 		$parsed = $this->_get_parsed_content( 'html', 'receipt', 'content', 'purchaser' );
 

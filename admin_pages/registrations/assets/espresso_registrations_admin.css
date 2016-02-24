@@ -511,3 +511,15 @@
 	font-size: 1.1em;
 	font-weight: 600;
 }
+
+#ee-add-reg-back-button-dv {
+	background: #fff;
+	color: #666;
+	font-size: 1.2em;
+	line-height:1.75em;
+	padding: 1.5em 1.5em 2em;
+	text-align: center;
+}
+#ee-add-reg-back-button-dv h3{
+	margin: .5em 0 0;
+}

@@ -15,9 +15,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * @access protected
-	 * @var EE_Line_Item_Display $line_item_display
+	 * @var EE_Line_Item_Display $Line_Item_Display
 	 */
-	protected $line_item_display = null;
+	protected $Line_Item_Display = null;
 
 
 
@@ -1501,16 +1501,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return TRUE;
 		}
 		// verify payment object
-		if ( $payment instanceof EE_Payment ) {
-			if (
-				$payment->status() != EEM_Payment::status_id_approved
-				&& $payment->status() != EEM_Payment::status_id_pending
-				&& $payment->status() != EEM_Payment::status_id_cancelled
-				&& $payment->gateway_response() != ''
-			) {
-				EE_Error::add_error( $payment->gateway_response(), __FILE__, __FUNCTION__, __LINE__ );
-			}
-		} else {
+		if ( ! $payment instanceof EE_Payment ) {
 			// not a payment
 			EE_Error::add_error(
 				sprintf(
@@ -1782,7 +1773,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$valid_TXN = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 			$primary_registrant = $valid_TXN instanceof EE_Transaction ? $valid_TXN->primary_registration() : null;
 			// let's start by retrieving the cart for this TXN
-			$cart = EE_Cart::get_cart_from_txn( $this->checkout->transaction );
+			$cart = $this->checkout->get_cart_for_transaction( $this->checkout->transaction );
 			if ( $cart instanceof EE_Cart ) {
 				// verify that the current cart has tickets
 				$tickets = $cart->get_tickets();

@@ -35,14 +35,18 @@ class EE_CPT_Event_Strategy {
 	/**
 	 *    class constructor
 	 *
-	 * @access 	public
-	 * @param 	array 	$arguments
-	 * @return 	\EE_CPT_Event_Strategy
+	 * @access    public
+	 * @param WP_Query $wp_query
+	 * @param array $CPT
 	 */
-	public function __construct( $arguments = array() ) {
-		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
-		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
-
+	public function __construct( $wp_query, $CPT = array() ) {
+		if ( $wp_query instanceof WP_Query ) {
+			$WP_Query = $wp_query;
+			$this->CPT = $CPT;
+		} else {
+			$WP_Query = isset( $wp_query[ 'WP_Query' ] ) ? $wp_query[ 'WP_Query' ] : null;
+			$this->CPT = isset( $wp_query[ 'CPT' ] ) ? $wp_query[ 'CPT' ] : null;
+		}
 		// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 		// here's the list of available filters in the WP_Query object
 		// 'posts_where'

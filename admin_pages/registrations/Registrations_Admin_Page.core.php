@@ -24,13 +24,27 @@
 class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
-	 *
 	 * @var EE_Registration
 	 */
 	private $_registration;
+
+	/**
+	 * @var EE_Event
+	 */
 	private $_reg_event;
+
+	/**
+	 * @var EE_Session
+	 */
 	private $_session;
 	private static $_reg_status;
+
+	/**
+	 * Form for displaying the custom questions for this registration.
+	 * This gets used a few times throughout the request so its best to cache it
+	 * @var EE_Registration_Custom_Questions_Form
+	 */
+	protected $_reg_custom_questions_form = null;
 
 
 
@@ -44,6 +58,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
+		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
+	}
+
+
+
+	public function wp_loaded() {
+		// when adding a new registration...
+		if ( isset( $this->_req_data[ 'action' ] ) && $this->_req_data[ 'action' ] == 'new_registration' ) {
+			EE_System::do_not_cache();
+			if (
+				! isset( $this->_req_data[ 'processing_registration' ] )
+				|| absint( $this->_req_data[ 'processing_registration' ] ) !== 1
+			) {
+				// and it's NOT the attendee information reg step
+				// force cookie expiration by setting time to last week
+				setcookie( 'ee_registration_added', 0, time() - WEEK_IN_SECONDS, '/' );
+				// and update the global
+				$_COOKIE[ 'ee_registration_added' ] = 0;
+			}
+		}
 	}
 
 
@@ -103,22 +137,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
 			'buttons' => array(
-					'add-registrant' => __('Add New Registration', 'event_espresso'),
-					'add-attendee' => __('Add Contact', 'event_espresso'),
-					'edit' => __('Edit Contact', 'event_espresso'),
-					'report'=>  __("Event Registrations CSV Report", "event_espresso"),
-					'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
-					'contact_list_report' => __( 'Contact List Report', 'event_espresso' ),
-					'contact_list_export'=>  __("Export Data", "event_espresso"),
-				),
+				'add-registrant' => __('Add New Registration', 'event_espresso'),
+				'add-attendee' => __('Add Contact', 'event_espresso'),
+				'edit' => __('Edit Contact', 'event_espresso'),
+				'report'=>  __("Event Registrations CSV Report", "event_espresso"),
+				'report_all' => __( 'All Registrations CSV Report', 'event_espresso' ),
+				'contact_list_report' => __( 'Contact List Report', 'event_espresso' ),
+				'contact_list_export'=>  __("Export Data", "event_espresso"),
+			),
 			'publishbox' => array(
 				'add_new_attendee' => __("Add Contact Record", 'event_espresso'),
 				'edit_attendee' => __("Update Contact Record", 'event_espresso')
-				),
+			),
 			'hide_add_button_on_cpt_route' => array(
 				'edit_attendee' => true
-				)
-			);
+			)
+		);
 	}
 
 
@@ -154,11 +188,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 
 				'edit_registration'	=> array(
-						'func' => '_registration_details',
-						'args' => array( 'edit' ),
+						'func' => '_update_attendee_registration_form',
 						'noheader' => TRUE,
+						'headers_sent_route'=>'view_registration',
 						'capability' => 'ee_edit_registration',
-						'obj_id' => $reg_id
+						'obj_id' => $reg_id,
+						'_REG_ID' => $reg_id,
 					),
 
 				'trash_registrations' => array(
@@ -181,23 +216,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'capability' => 'ee_delete_registrations'
 					),
 
-				'update_attendee_registration_form'	=> array(
-						'func' => '_update_attendee_registration_form',
-						'noheader' => TRUE,
-						'capability' => 'ee_edit_registration',
-						'obj_id' => $reg_id
-					),
-
 				'new_registration' => array(
 					'func' => 'new_registration',
 					'capability' => 'ee_edit_registrations'
 					),
 
 				'process_reg_step'	=> array(
-						'func' => 'process_reg_step',
-						'noheader' => TRUE,
-						'capability' => 'ee_edit_registrations'
-					),
+					'func' => 'process_reg_step',
+					'noheader' => TRUE,
+					'capability' => 'ee_edit_registrations'
+				),
+
+				'redirect_to_txn'	=> array(
+					'func' => 'redirect_to_txn',
+					'noheader' => TRUE,
+				),
 
 				'change_reg_status' => array(
 					'func' => '_change_reg_status',
@@ -381,7 +414,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'nav' => array(
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 5
-					),
+				),
 			'help_tabs' => array(
 					'registrations_overview_help_tab' => array(
 						'title' => __('Registrations Overview', 'event_espresso'),
@@ -408,7 +441,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'qtips' => array('Registration_List_Table_Tips'),
 				'list_table' => 'EE_Registrations_List_Table',
 				'require_nonce' => FALSE
-				),
+			),
 
 			'view_registration' => array(
 				'nav' => array(
@@ -416,29 +449,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
 					'persistent' => FALSE
-					),
+				),
                 'help_tabs' => array(
 					'registrations_details_help_tab' => array(
 						'title' => __('Registration Details', 'event_espresso'),
 						'filename' => 'registrations_details'
-						),
+					),
 					'registrations_details_table_help_tab' => array(
 						'title' => __('Registration Details Table', 'event_espresso'),
 						'filename' => 'registrations_details_table'
-						),
+					),
 					'registrations_details_form_answers_help_tab' => array(
 						'title' => __('Registration Form Answers', 'event_espresso'),
 						'filename' => 'registrations_details_form_answers'
-						),
+					),
 					'registrations_details_registrant_details_help_tab' => array(
 						'title' => __('Contact Details', 'event_espresso'),
 						'filename' => 'registrations_details_registrant_details'
-						)
-					),
+					)
+				),
 				'help_tour' => array( 'Registration_Details_Help_Tour' ),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_registration_details_metaboxes' ) ),
 				'require_nonce' => FALSE
-				),
+			),
 
 			'new_registration' => array(
 				'nav' => array(
@@ -446,23 +479,23 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => '#',
 					'order' => 15,
 					'persistent' => FALSE
-					),
+				),
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'labels' => array(
 					'publishbox' => __('Save Registration', 'event_espresso')
-					),
-				'require_nonce' => FALSE
 				),
+				'require_nonce' => FALSE
+			),
 
 			'add_new_attendee' => array(
 				'nav' => array(
 					'label' => __('Add Contact', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE
-					),
+				),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box', 'attendee_editor_metaboxes' ) ),
 				'require_nonce' => FALSE
-				),
+			),
 
 			'edit_attendee' => array(
 				'nav' => array(
@@ -470,16 +503,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 15,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['ATT_ID']) ? add_query_arg(array('ATT_ID' => $this->_req_data['ATT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
-					),
+				),
 				'metaboxes' => array('attendee_editor_metaboxes'),
 				'require_nonce' => FALSE
-				),
+			),
 
 			'contact_list' => array(
 				'nav' => array(
 					'label' => __('Contact List', 'event_espresso'),
 					'order' => 20
-					),
+				),
 				'list_table' => 'EE_Attendee_Contact_List_Table',
                 'help_tabs' => array(
 					'registrations_contact_list_help_tab' => array(
@@ -502,13 +535,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array( 'Contact_List_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
-				),
+			),
 
 			//override default cpt routes
 			'create_new' => '',
 			'edit' => ''
 
-			);
+		);
 	}
 
 
@@ -583,6 +616,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
 		//scripts
+		$this->_get_reg_custom_questions_form( $this->_registration->ID() );
+		$this->_reg_custom_questions_form->wp_enqueue_scripts( true );
 	}
 
 
@@ -629,8 +664,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//for notification related bulk actions we need to make sure only active messengers have an option.
 		EED_Messages::set_autoloaders();
-		$EEMSG = EE_Registry::instance()->load_lib('messages');
-		$active_mts = $EEMSG->get_active_message_types();
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$active_mts = $message_resource_manager->list_of_active_message_types();
 		//key= bulk_action_slug, value= message type.
 		$match_array = array(
 			'approve_registration' => 'registration',
@@ -771,6 +807,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				);
 		} else {
 			$fc_items['blank'] = array( 'class' => 'blank', 'desc' => '' );
+		}
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
+			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
+				$fc_items['view_related_messages'] = array(
+					'class' => $related_for_icon['css_class'],
+					'desc' => $related_for_icon['label'],
+				);
+			}
 		}
 
 		$sc_items = array(
@@ -1121,6 +1167,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _registration_details_metaboxes() {
+		do_action( 'AHEE__Registrations_Admin_Page___registration_details_metabox__start', $this );
 		$this->_set_registration_object();
 		$attendee = $this->_registration instanceof EE_Registration ? $this->_registration->attendee() : null;
 		add_meta_box( 'edit-reg-status-mbox', __( 'Registration Status', 'event_espresso' ), array( $this, 'set_reg_status_buttons_metabox' ), $this->wp_page_slug, 'normal', 'high' );
@@ -1289,9 +1336,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//merge request vars so that the reloaded list table contains any existing filter query params
 		$route = array_merge( $this->_req_data, $route );
 
-		$this->_redirect_after_action( $success, '', '', $route, true );
-
-		}
+		$this->_redirect_after_action( false, '', '', $route, true );
+	}
 
 
 
@@ -1476,50 +1522,45 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	}
 
-
-
-
-
-
 	/**
-	 * 		generates HTML for the Registration Questions meta box
-	*		@access public
-	*		@return void
+	 * generates HTML for the Registration Questions meta box.
+	 * If pre-4.8.32.rc.000 hooks are used, uses old methods (with its filters),
+	 * otherwise uses new forms system
+	 *
+	 * @access public
+	 * @return void
 	*/
 	public function _reg_questions_meta_box() {
+		//allow someone to override this method entirely
+		if( apply_filters( 'FHEE__Registrations_Admin_Page___reg_questions_meta_box__do_default', true, $this, $this->_registration ) ) {
+			$form = $this->_get_reg_custom_questions_form( $this->_registration->ID() );
+			$this->_template_args[ 'att_questions' ] = count( $form->subforms() ) > 0 ? $form->get_html_and_js() : '';
+			$this->_template_args['reg_questions_form_action'] = 'edit_registration';
+			$this->_template_args['REG_ID'] = $this->_registration->ID();
 
-		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
-
-		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
-
-		//EEH_Debug_Tools::printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		$this->_template_args['att_questions'] = EEH_Form_Fields::generate_question_groups_html( $question_groups );
-
-		$this->_template_args['reg_questions_form_action'] = 'update_attendee_registration_form';
-		$this->_template_args['REG_ID'] = $this->_registration->ID();
-
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
-		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-
+			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_reg_questions.template.php';
+			echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		}
 	}
 
 
 
-
-
 	/**
-	 * 		form_before_question_group
+	 * form_before_question_group
 	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $output
+	 * @return        string
 	 */
 	public function form_before_question_group( $output ) {
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ),
+			'4.8.32.rc.000'
+		);
 		return '
 	<table class="form-table ee-width-100">
 		<tbody>
@@ -1528,15 +1569,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
-	 * 		form_after_question_group
+	 * form_after_question_group
 	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$output
-	 * 		@return 		string
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $output
+	 * @return        string
 	 */
 	public function form_after_question_group( $output ) {
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ),
+			'4.8.32.rc.000'
+		);
 		return  '
 			<tr class="hide-if-no-js">
 				<th> </th>
@@ -1554,15 +1602,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
-	 * 		form_form_field_label_wrap
+	 * form_form_field_label_wrap
 	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $label
+	 * @return        string
 	 */
 	public function form_form_field_label_wrap( $label ) {
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ),
+			'4.8.32.rc.000'
+		);
 		return '
 			<tr>
 				<th>
@@ -1572,15 +1627,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
-	 * 		form_form_field_input__wrap
+	 * form_form_field_input__wrap
 	 *
-	 * 		@access 		public
-	 * 		@param 		string 		$label
-	 * 		@return 		string
+	 * @deprecated    as of 4.8.32.rc.000
+	 * @access        public
+	 * @param        string $input
+	 * @return        string
 	 */
 	public function form_form_field_input__wrap( $input ) {
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			__( 'This method would have been protected but was used on a filter callback'
+				. 'so needed to be public. Please discontinue usage as it will be removed soon.',
+				'event_espresso' ),
+			'4.8.32.rc.000'
+		);
 		return '
 				<td class="reg-admin-attendee-questions-input-td disabled-input">
 					' . $input . '
@@ -1588,92 +1650,84 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			</tr>';
 	}
 
-
-
+	/**
+	 * Updates the registration's custom questions according to the form info, if the form is submitted.
+	 * If it's not a post, the "view_registrations" route will be called next on the SAME request
+	 * to display the page
+	 *
+	 * @access protected
+	 * @return void
+	 */
+	protected function _update_attendee_registration_form() {
+		do_action( 'AHEE__Registrations_Admin_Page___update_attendee_registration_form__start', $this );
+		if( $_SERVER['REQUEST_METHOD'] == 'POST'){
+			$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
+			$success = $this->_save_reg_custom_questions_form( $REG_ID );
+			if( $success ) {
+				$what = __('Registration Form', 'event_espresso');
+				$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
+				$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
+			}
+		}
+	}
 
 	/**
-	 * 		generates HTML for the Registration main meta box
-	*		@access protected
-	*		@return void
-	*/
-	protected function _update_attendee_registration_form() {
-		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
-		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
-		$qstns = apply_filters( 'FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns', $qstns );
-		$success = $this->_save_attendee_registration_form( $REG_ID, $qstns );
-		$what = __('Registration Form', 'event_espresso');
-		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
-		$this->_redirect_after_action( $success, $what, __('updated', 'event_espresso'), $route );
-
+	 * Gets the form for saving registrations custom questions (if done
+	 * previously retrieves the cached form object, which may have validation errors in it)
+	 * @param int $REG_ID
+	 * @return EE_Registration_Custom_Questions_Form
+	 */
+	protected function _get_reg_custom_questions_form( $REG_ID ) {
+		if( ! $this->_reg_custom_questions_form ) {
+			require_once( REG_ADMIN . 'form_sections' . DS . 'EE_Registration_Custom_Questions_Form.form.php' );
+			$this->_reg_custom_questions_form = new EE_Registration_Custom_Questions_Form( EEM_Registration::instance()->get_one_by_ID( $REG_ID ) );
+			$this->_reg_custom_questions_form->_construct_finalize( null, null );
+		}
+		return $this->_reg_custom_questions_form;
 	}
 
 
 
 	/**
-	 *        _save_attendee_registration_form
+	 * Saves
 	 * @access private
 	 * @param bool $REG_ID
-	 * @param bool $qstns
 	 * @return bool
 	 */
-	private function _save_attendee_registration_form( $REG_ID = FALSE, $qstns = FALSE ) {
+	private function _save_reg_custom_questions_form( $REG_ID = FALSE ) {
 
-		if ( ! $REG_ID || ! $qstns ) {
-			EE_Error::add_error( __('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! $REG_ID) {
+			EE_Error::add_error( __('An error occurred. No registration ID was received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$success = TRUE;
-
-		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $REG_ID, $qstns );
-		// loop thru questions... FINALLY!!!
-
-		foreach ( $qstns as $QST_ID => $qstn ) {
-			//if $qstn isn't an array then it doesn't already have an answer, so let's create the answer
-			if ( !is_array($qstn) ) {
-				$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
-				continue;
-			}
-
-
-			foreach ( $qstn as $ANS_ID => $ANS_value ) {
-				//get answer
-				$query_params = array(
-					0 => array(
-						'ANS_ID' => $ANS_ID,
-						'REG_ID' => $REG_ID,
-						'QST_ID' => $QST_ID
-						)
-					);
-				$answer = EEM_Answer::instance()->get_one($query_params);
-				//this MAY be an array but NOT have an answer because its multi select.  If so then we need to create the answer
-				if ( ! $answer instanceof EE_Answer ) {
-					$success = $this->_save_new_answer( $REG_ID, $QST_ID, $qstn);
-					continue 2;
+		$form = $this->_get_reg_custom_questions_form( $REG_ID );
+		$form->receive_form_submission( $this->_req_data );
+		$success = false;
+		if( $form->is_valid() ) {
+			foreach( $form->subforms() as $question_group_id => $question_group_form ) {
+				foreach( $question_group_form->inputs() as $question_id => $input ) {
+					$where_conditions = array(
+							'QST_ID' => $question_id,
+							'REG_ID' => $REG_ID
+						);
+					$possibly_new_values = array(
+							'ANS_value' => $input->normalized_value()
+						);
+					$answer = EEM_Answer::instance()->get_one( array( $where_conditions ) );
+					if( $answer instanceof EE_Answer ) {
+						$success = $answer->save( $possibly_new_values );
+					} else {
+						//insert it then
+						$cols_n_vals = array_merge( $where_conditions, $possibly_new_values );
+						$answer = EE_Answer::new_instance( $cols_n_vals );
+						$success = $answer->save();
+					}
 				}
-
-				$answer->set('ANS_value', $ANS_value);
-				$success = $answer->save();
 			}
+		} else {
+			EE_Error::add_error( $form->get_validation_error_string(), __FILE__, __FUNCTION__, __LINE__ );
 		}
-
 		return $success;
 	}
-
-
-	//TODO: try changing this to use the model directly... not indirectly through creating a default object...
-	private function _save_new_answer( $REG_ID, $QST_ID, $ans ) {
-		$set_values = array(
-			'QST_ID' => $QST_ID,
-			'REG_ID' => $REG_ID,
-			'ANS_value' => $ans
-			);
-		$success = EEM_Answer::instance()->insert($set_values);
-		return $success;
-	}
-
-
-
-
 
 	/**
 	 * 		generates HTML for the Registration main meta box
@@ -1992,9 +2046,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			throw new EE_Error(__('Unable to continue with registering because there is no Event ID in the request', 'event_espresso') );
 		}
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
-
 		// gotta start with a clean slate if we're not coming here via ajax
-		if ( ! defined('DOING_AJAX' ) && ( ! isset( $this->_req_data['processing_registration'] ) || isset( $this->_req_data['step_error'] ))) {
+		if (
+			! defined('DOING_AJAX' )
+			&& ( ! isset( $this->_req_data['processing_registration'] ) || isset( $this->_req_data['step_error'] ) )
+		) {
 			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 
@@ -2009,10 +2065,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['step_content'] = $this->_get_registration_step_content();
 
-		if ( defined('DOING_AJAX' ) )
+		if ( defined('DOING_AJAX' ) ) {
 			$this->_return_json();
-
-
+		}
 		// grab header
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -2032,37 +2087,67 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string html
 	 */
 	protected function _get_registration_step_content() {
-
-		$template_path = REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php';
-		$template_args = array(
-			'title' => '',
-			'content' => '',
-			'step_button_text' => ''
+		if ( isset( $_COOKIE[ 'ee_registration_added' ] ) && $_COOKIE[ 'ee_registration_added' ] ) {
+			$warning_msg = sprintf(
+				__(
+					'%2$sWARNING!!!%3$s%1$sPlease do not use the back button to return to this page for the purpose of adding another registration.%1$sThis can result in lost and/or corrupted data.%1$sIf you wish to add another registration, then please click the%1$s%7$s"Add Another New Registration to Event"%8$s button%1$son the Transaction details page, after you are redirected.%1$s%1$s%4$s redirecting in %5$s seconds %6$s',
+					'event_espresso'
+				),
+				'<br />',
+				'<h3 class="important-notice">',
+				'</h3>',
+				'<div class="float-right">',
+				'<span id="redirect_timer" class="important-notice">30</span>',
+				'</div>',
+				'<b>',
+				'</b>'
 			);
-
+			return '
+	<div id="ee-add-reg-back-button-dv"><p>' . $warning_msg . '</p></div>
+	<script >
+		// WHOAH !!! it appears that someone is using the back button from the Transaction admin page
+		// after just adding a new registration... we gotta try to put a stop to that !!!
+		var timer = 30;
+		setInterval( function () {
+			jQuery("#redirect_timer").html( parseInt( timer ) );
+	        if ( --timer < 0 ) {
+	            window.history.forward()
+	        }
+	    }, 800 );
+	</script >';
+		}
+		$template_args = array(
+			'title'                    => '',
+			'content'                  => '',
+			'step_button_text'         => '',
+			'show_notification_toggle' => false
+		);
 		//to indicate we're processing a new registration
 		$hidden_fields = array(
 			'processing_registration' => array(
 				'type' => 'hidden',
-				'value' => 1
-				),
+				'value' => 0
+			),
 			'event_id' => array(
 				'type' => 'hidden',
 				'value' => $this->_reg_event->ID()
-				)
-			);
+			)
+		);
 
 		//if the cart is empty then we know we're at step one so we'll display ticket selector
-		$cart = EE_Registry::instance()->SSN->get_session_data('cart');
-		$step = empty( $cart ) ? 'ticket' : 'questions';
+		$cart = EE_Registry::instance()->SSN->cart();
+		$step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';
+
 		switch ( $step ) {
 			case 'ticket' :
+				$hidden_fields['processing_registration']['value'] = 1;
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
 				$template_args['content'] = EED_Ticket_Selector::instance()->display_ticket_selector( $this->_reg_event );
 				$template_args['step_button_text'] = __('Add Tickets and Continue to Registrant Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = FALSE;
 				break;
 			case 'questions' :
+				$hidden_fields[ 'processing_registration' ][ 'value' ] = 2;
 				$template_args['title'] = __('Step Two: Add Registrant Details for this Registration', 'event_espresso');
 				//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first process_reg_step run.
 				$template_args['content'] = EED_Single_Page_Checkout::registration_checkout_for_admin();
@@ -2073,7 +2158,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_set_add_edit_form_tags( 'process_reg_step', $hidden_fields ); //we come back to the process_registration_step route.
 
-		return EEH_Template::display_template( $template_path, $template_args, TRUE );
+		return EEH_Template::display_template(
+			REG_TEMPLATE_PATH . 'reg_admin_register_new_attendee_step_content.template.php', $template_args, TRUE
+		);
 	}
 
 
@@ -2110,21 +2197,22 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * 		@return 		string
 	 */
 	public function process_reg_step() {
-
+		EE_System::do_not_cache();
 		$this->_set_reg_event();
 		EE_Registry::instance()->REQ->set_espresso_page( TRUE );
 
 		//what step are we on?
-		$cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
-		$step = empty( $cart ) ? 'ticket' : 'questions';
+		$cart = EE_Registry::instance()->SSN->cart();
+		$step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';
 
 		//if doing ajax then we need to verify the nonce
-		if ( 'DOING_AJAX' ) {
+		if ( defined( 'DOING_AJAX' ) ) {
 			$nonce = isset( $this->_req_data[$this->_req_nonce] ) ? sanitize_text_field( $this->_req_data[$this->_req_nonce] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );
 		}
 
 		switch ( $step ) {
+
 			case 'ticket' :
 				//process ticket selection
 				$success = EED_Ticket_Selector::instance()->process_ticket_selections();
@@ -2137,21 +2225,28 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					$this->new_registration(); //display next step
 				} else {
 					$query_args['action'] = 'new_registration';
-					$query_args['processing_registration'] = true;
+					$query_args['processing_registration'] = 1;
 					$query_args['event_id'] = $this->_reg_event->ID();
 					$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 				}
 				break;
+
 			case 'questions' :
 				if( ! isset( $this->_req_data[ 'txn_reg_status_change' ], $this->_req_data[ 'txn_reg_status_change' ][ 'send_notifications' ] ) ) {
 					add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_false', 15 );
 				}
 				//process registration
 				$transaction = EED_Single_Page_Checkout::instance()->process_registration_from_admin();
+				if ( $cart instanceof EE_Cart ) {
+					$grand_total = $cart->get_cart_grand_total();
+					if ( $grand_total instanceof EE_Line_Item ) {
+						$grand_total->save_this_and_descendants_to_txn();
+					}
+				}
 				if ( ! $transaction instanceof EE_Transaction ) {
 					$query_args = array(
 						'action' => 'new_registration',
-						'processing_registration' => true,
+						'processing_registration' => 2,
 						'event_id' => $this->_reg_event->ID()
 					);
 
@@ -2170,23 +2265,48 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				if ( ! $transaction_payments->update_transaction_status_based_on_total_paid( $transaction )) {
 					$transaction->save();
 				}
+				EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+				$this->_req_data = array();
 				$query_args = array(
-					'action' => 'view_transaction',
-					'TXN_ID' => $transaction->ID(),
-					'page' => 'espresso_transactions'
+					'action'        => 'redirect_to_txn',
+					'TXN_ID'        => $transaction->ID(),
+					'EVT_ID'        => $this->_reg_event->ID(),
+					'event_name'    => urlencode( $this->_reg_event->name() ),
+					'redirect_from' => 'new_registration'
 				);
-				EE_Error::add_success( __('Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso') );
-				$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+				$this->_redirect_after_action( false, '', '', $query_args, true );
 				break;
-			}
+		}
 
-			//what are you looking here for?  Should be nothing to do at this point.
+		//what are you looking here for?  Should be nothing to do at this point.
 	}
 
 
 
-
-
+	/**
+	 * redirect_to_txn
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function redirect_to_txn() {
+		EE_System::do_not_cache();
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+		$query_args = array(
+			'action' => 'view_transaction',
+			'TXN_ID' => isset( $this->_req_data['TXN_ID'] ) ? absint( $this->_req_data[ 'TXN_ID' ] )  : 0,
+			'page'   => 'espresso_transactions'
+		);
+		if ( isset( $this->_req_data[ 'EVT_ID' ], $this->_req_data[ 'redirect_from' ] ) ) {
+			$query_args['EVT_ID'] = $this->_req_data[ 'EVT_ID' ];
+			$query_args['event_name'] = urlencode( $this->_req_data[ 'event_name' ] );
+			$query_args['redirect_from'] = $this->_req_data[ 'redirect_from' ];
+		}
+		EE_Error::add_success(
+			__( 'Registration Created.  Please review the transaction and add any payments as necessary', 'event_espresso' )
+		);
+		$this->_redirect_after_action( false, '', '', $query_args, true );
+	}
 
 
 
@@ -2312,7 +2432,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _registrations_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_batch',
 					'batch' => 'file',
@@ -2350,7 +2470,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function _contact_list_report(){
 		if( ! defined( 'EE_USE_OLD_CSV_REPORT_CLASS' ) ) {
-			wp_redirect( EE_Admin_Page::add_query_args_and_nonce( 
+			wp_redirect( EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_batch',
 					'batch' => 'file',

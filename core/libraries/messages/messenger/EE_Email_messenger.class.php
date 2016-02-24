@@ -38,11 +38,13 @@ class EE_Email_messenger extends EE_messenger  {
 	protected $_from;
 	protected $_subject;
 	protected $_content;
+
+
+
 	/**
 	 * constructor
 	 *
 	 * @access public
-	 * @return void
 	 */
 	public function __construct() {
 		//set name and description properties
@@ -356,10 +358,10 @@ class EE_Email_messenger extends EE_messenger  {
 		if ( ! $success ) {
 			EE_Error::add_error(
 				sprintf(
-					__( 'The email did not send successfully. The WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.
-				It is possible the "to" address (%s) or "from" address (%s) is invalid.', 'event_espresso'),
+					__( 'The email did not send successfully.%3$sThe WordPress wp_mail function is used for sending mails but does not give any useful information when an email fails to send.%3$sIt is possible the "to" address (%1$s) or "from" address (%2$s) is invalid.%3$s', 'event_espresso'),
 					$this->_to,
-					$this->_from
+					$this->_from,
+					'<br />'
 				),
 				__FILE__, __FUNCTION__, __LINE__
 			);

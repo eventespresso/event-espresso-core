@@ -23,11 +23,15 @@ class EED_Messages  extends EED_Module {
 
 	/**
 	 * This holds the EE_messages controller
-	 *
-	 * @var EE_messages
+	 * @deprecated 4.9.0
+	 * @var EE_messages $_EEMSG
 	 */
 	protected  static $_EEMSG;
 
+	/**
+	 * @type EE_Message_Resource_Manager $_message_resource_manager
+	 */
+	protected  static $_message_resource_manager;
 
 	/**
 	 * This holds the EE_Messages_Processor business class.
@@ -35,7 +39,6 @@ class EED_Messages  extends EED_Module {
 	 * @type EE_Messages_Processor
 	 */
 	protected static $_MSG_PROCESSOR;
-
 
 	/**
 	 * holds all the paths for various messages components.
@@ -141,7 +144,7 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		$token = EE_Registry::instance()->REQ->get( 'token' );
 		try {
-			$mtg = new EE_Message_Generated_From_Token( $token, 'html', self::$_EEMSG );
+			$mtg = new EE_Message_Generated_From_Token( $token, 'html', self::$_message_resource_manager );
 			self::$_MSG_PROCESSOR->generate_and_send_now( $mtg );
 		} catch( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
@@ -169,7 +172,7 @@ class EED_Messages  extends EED_Module {
 			$message = EEM_Message::instance()->get_one_by_token( $token );
 			if ( $message instanceof EE_Message ) {
 				header( 'HTTP/1.1 200 OK' );
-				$error_msg = $message->error_message();
+				$error_msg = nl2br( $message->error_message() );
 				?>
 				<!DOCTYPE html>
 				<html>
@@ -177,7 +180,21 @@ class EED_Messages  extends EED_Module {
 					<body>
 						<?php echo empty( $error_msg )
 						? esc_html__( 'Unfortunately, we were unable to capture the error message for this message.', 'event_espresso' )
-						: wp_kses( $error_msg, array( 'a', 'span', 'div', 'p', 'strong', 'em', 'br' ) ); ?>
+						: wp_kses(
+							$error_msg,
+							array(
+								'a' => array(
+									'href' => array(),
+									'title' => array()
+								),
+								'span' => array(),
+								'div' => array(),
+								'p' => array(),
+								'strong' => array(),
+								'em' => array(),
+								'br' => array()
+							)
+						); ?>
 					</body>
 				</html>
 				<?php
@@ -202,8 +219,9 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		// attempt to process message
 		try {
-			$mtg = new EE_Message_To_Generate_From_Request( self::$_EEMSG, EE_Registry::instance()->REQ );
-			self::$_MSG_PROCESSOR->generate_and_send_now( $mtg );
+			/** @type EE_Message_To_Generate_From_Request $message_to_generate */
+			$message_to_generate = EE_Registry::instance()->load_lib( 'Message_To_Generate_From_Request' );
+			self::$_MSG_PROCESSOR->generate_and_send_now( $message_to_generate );
 		} catch ( EE_Error $e ) {
 			$error_msg = __( 'Please note that a system message failed to send due to a technical issue.', 'event_espresso' );
 			// add specific message for developers if WP_DEBUG in on
@@ -290,7 +308,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * This simply makes sure the autoloaders are registered for the EE_Messages system.
+	 * This simply makes sure the autoloaders are registered for the EE_messages system.
 	 *
 	 * @since 4.5.0
 	 *
@@ -303,6 +321,9 @@ class EED_Messages  extends EED_Module {
 			foreach ( self::$_MSG_PATHS as $path ) {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $path );
 			}
+			// add aliases
+			EEH_Autoloader::add_alias( 'EE_messages', 'EE_messages' );
+			EEH_Autoloader::add_alias( 'EE_messenger', 'EE_messenger' );
 		}
 	}
 
@@ -319,7 +340,6 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _set_messages_paths() {
 		$dir_ref = array(
-			'messages',
 			'messages/message_type',
 			'messages/messenger',
 			'messages/defaults',
@@ -339,18 +359,18 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Takes care of loading the Messages system controller into the $_EEMSG property
+	 * Takes care of loading dependencies
 	 *
 	 * @since 4.5.0
-	 *
 	 * @return void
 	 */
 	protected static function _load_controller() {
-		if ( ! self::$_EEMSG instanceof EE_messages ) {
+		if ( ! self::$_MSG_PROCESSOR instanceof EE_Messages_Processor ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 			self::set_autoloaders();
 			self::$_EEMSG = EE_Registry::instance()->load_lib( 'messages' );
-			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor', self::$_EEMSG );
+			self::$_MSG_PROCESSOR = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+			self::$_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		}
 	}
 
@@ -436,7 +456,7 @@ class EED_Messages  extends EED_Module {
 
 		$mtgs = $mtgs + self::$_MSG_PROCESSOR->setup_mtgs_for_all_active_messengers( 'registration_summary', array( $registration->transaction(), null ) );
 
-		//batchqueue and initiate request
+		//batch queue and initiate request
 		self::$_MSG_PROCESSOR->batch_queue_for_generation_and_persist( $mtgs );
 		self::$_MSG_PROCESSOR->get_queue()->initiate_request_by_priority();
 	}
@@ -561,6 +581,9 @@ class EED_Messages  extends EED_Module {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
+		EE_Error::add_success(
+			__( 'Messages have been successfully queued for generation and sending.', 'event_espresso' )
+		);
 		return true; //everything got queued.
 	}
 
@@ -757,7 +780,6 @@ class EED_Messages  extends EED_Module {
 			$messenger,
 			$type,
 			array(),
-			self::$_EEMSG,
 			$context,
 			true
 		);
@@ -774,7 +796,8 @@ class EED_Messages  extends EED_Module {
 
 	/**
 	 * This is a method that allows for sending a message using a messenger matching the string given and the provided
-	 * EE_Message_Queue object.
+	 * EE_Message_Queue object.  The EE_Message_Queue object is used to create a single aggregate EE_Message via the content
+	 * found in the EE_Message objects in the queue.
 	 *
 	 * @since 4.9.0
 	 *
@@ -783,20 +806,24 @@ class EED_Messages  extends EED_Module {
 	 *                             still required to send along the message type to the messenger because this is used
 	 *                             for determining what specific variations might be loaded for the generated message.
 	 * @param EE_Messages_Queue     $queue
+	 * @param string                $custom_subject   Can be used to set what the custom subject string will be on the aggregate
+	 *                                                EE_Message object.
 	 *
 	 * @return bool          success or fail.
 	 */
-	public static function send_message_with_messenger_only( $messenger, $message_type, EE_Messages_Queue $queue ) {
+	public static function send_message_with_messenger_only( $messenger, $message_type, EE_Messages_Queue $queue, $custom_subject = '' ) {
 		self::_load_controller();
-		//set mtg
-		$mtg = new EE_Message_To_Generate_From_Queue(
-			$messenger,
-			$message_type,
-			self::$_EEMSG,
-			$queue
+		/** @type EE_Message_To_Generate_From_Queue $message_to_generate */
+		$message_to_generate = EE_Registry::instance()->load_lib(
+			'Message_To_Generate_From_Queue',
+			array(
+				$messenger,
+				$message_type,
+				$queue,
+				$custom_subject,
+			)
 		);
-
-		return self::$_MSG_PROCESSOR->queue_for_sending( $mtg );
+		return self::$_MSG_PROCESSOR->queue_for_sending( $message_to_generate );
 	}
 
 
