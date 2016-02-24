@@ -76,7 +76,9 @@ class Event {
 			array(
 				array(
 					'EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ],
-					'STS_ID' => \EEM_Registration::status_id_approved ) ),
+					'STS_ID' => \EEM_Registration::status_id_approved
+				)
+			),
 			'REG_ID',
 			true
 		);
@@ -85,8 +87,9 @@ class Event {
 	/**
 	 * Counts the number of pending-payment registrations for this event (regardless
 	 * of how many datetimes each registrations' ticket purchase is for)
+	 *
 	 * @param array $wpdb_row
-	 * @param WP_Request $request
+	 * @param \WP_REST_Request $request
 	 * @param Base $controller
 	 * @return int
 	 */
@@ -95,7 +98,9 @@ class Event {
 			array(
 				array(
 					'EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ],
-					'STS_ID' => \EEM_Registration::status_id_pending_payment ) ),
+					'STS_ID' => \EEM_Registration::status_id_pending_payment
+				)
+			),
 			'REG_ID',
 			true
 		);
