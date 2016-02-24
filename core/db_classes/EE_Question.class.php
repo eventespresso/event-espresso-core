@@ -488,7 +488,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
 		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
-		$input_constructor_args = array_merge( 
+		$input_constructor_args = array_merge(
 				array(
 					'required' => $this->required() ? true : false,
 					'html_label_text' => $this->display_text(),
@@ -531,7 +531,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		switch ( $this->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				if( $identifier == 'email' ){
+				if(
+					$identifier == 'email'
+					&& apply_filters( 'FHEE__EE_Question__generate_form_input__use_html5_email', '__return_false' )
+				){
 					$result = new EE_Email_Input( $input_constructor_args );
 				}else{
 					$result = new EE_Text_Input( $input_constructor_args );
