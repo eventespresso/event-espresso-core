@@ -79,17 +79,17 @@ class Calculated_Model_Fields {
 					)
 				),
 				'Datetime' => array(
-					'spaces_remaining' => array(
+					'spaces_remaining_considering_tickets' => array(
 						$datetime_calculations_class,
-						'spaces_remaining'
+						'spaces_remaining_considering_tickets'
 					),
-					'checkins_count' => array(
+					'registrations_checked_in_count' => array(
 						$datetime_calculations_class,
-						'checkins_count',
+						'registrations_checked_in_count',
 					),
-					'checkouts_count' => array(
+					'registrations_checked_out_count' => array(
 						$datetime_calculations_class,
-						'checkouts_count'
+						'registrations_checked_out_count'
 					)
 				)
 			)
