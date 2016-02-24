@@ -81,7 +81,7 @@ class Event {
 			true
 		);
 	}
-	
+
 	/**
 	 * Counts the number of pending-payment registrations for this event (regardless
 	 * of how many datetimes each registrations' ticket purchase is for)
@@ -91,13 +91,13 @@ class Event {
 	 * @return int
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
-		return \EEM_Registration::instance()->count( 
-			array( 
-				array( 
-					'EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ], 
-					'STS_ID' => \EEM_Registration::status_id_pending_payment ) ), 
-			'REG_ID', 
-			true 
+		return \EEM_Registration::instance()->count(
+			array(
+				array(
+					'EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ],
+					'STS_ID' => \EEM_Registration::status_id_pending_payment ) ),
+			'REG_ID',
+			true
 		);
 	}
 
