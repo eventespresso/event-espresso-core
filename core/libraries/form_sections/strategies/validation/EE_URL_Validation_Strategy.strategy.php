@@ -15,7 +15,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	public function __construct( $validation_error_message = NULL ) {
 		if( ! $validation_error_message ){
-			$validation_error_message = __("Please enter a valid URL", "event_espresso");
+			$validation_error_message = __("Please enter a valid URL. Eg https://eventespresso.com", "event_espresso");
 		}
 		parent::__construct( $validation_error_message );
 	}
