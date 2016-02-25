@@ -230,6 +230,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'redirect_to_txn'	=> array(
 					'func' => 'redirect_to_txn',
 					'noheader' => TRUE,
+					'capability' => 'ee_edit_registrations'
 				),
 
 				'change_reg_status' => array(
