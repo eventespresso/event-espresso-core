@@ -151,6 +151,7 @@ jQuery(document).ready(function($){
 			$.each( form_data, function( input_id, validation_rules ){
 				var form_input = $( input_id );
 				//EEFV.console_log( 'EEFV.apply_rules > input_id', input_id, false );
+				//EEFV.console_log( 'EEFV.apply_rules > validation_rules', validation_rules, false );
 				//alert( 'form_input ID = ' + form_input.attr('id') );
 				if ( typeof form_input !== 'undefined' && form_input.length ) {
 					form_input.rules( 'add', validation_rules );
