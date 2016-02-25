@@ -79,9 +79,17 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 				// domain part has two consecutive dots
 				return false;
 			} else if ( ! checkdnsrr( $domain, "MX" ) ) {
+				$this->_validation_error_message = __(
+					'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
+					'event_espresso'
+				);
 				// domain not found in MX records
 				return false;
 			} else if ( ! checkdnsrr( $domain, "A" ) ) {
+				$this->_validation_error_message = __(
+					'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
+					'event_espresso'
+				);
 				// domain not found in A records
 				return false;
 			}
