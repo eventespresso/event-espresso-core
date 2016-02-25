@@ -29,6 +29,11 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * fields that COULD contain -1
 	 */
 	const ee_inf_in_rest = 'EE_INF';
+	
+	/**
+	 * Gets the default number of entities to retrieve when querying for resources
+	 */
+	const default_read_size = 50;
 
 	/**
 	 *
@@ -314,7 +319,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 				),
 			'limit' => array(
 				'required' => false,
-				'default' => 50,
+				'default' => EED_Core_Rest_Api::get_default_query_limit(),
 				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#limit for documentation', 'event_espresso' )
 			),
 			'order_by' => array(
@@ -511,6 +516,17 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function core_version() {
 		return apply_filters( 'FHEE__EED_Core_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 3 ) ) );
+	}
+	
+	/**
+	 * Gets the default limit that should be used when querying for resources
+	 * @return int
+	 */
+	public static function get_default_query_limit() {
+		return apply_filters(
+			'FHEE__EED_Core_Rest_Api__get_default_query_limit',
+			EED_Core_Rest_Api::default_read_size
+		);
 	}
 
 

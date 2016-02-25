@@ -307,7 +307,9 @@ class Read extends Base {
 		$this->_set_debug_info( 'model query params', $query_params );
 		$this->_set_debug_info( 'missing caps', Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] ) );
 		//normally the limit to a 2-part array, where the 2nd item is the limit
-		//FYI there NEEDS to be a limit, otherwise folks could crash the server by returning way too much stuff
+		if( ! isset( $query_params[ 'limit' ] ) ) {
+			$query_params[ 'limit' ] = \EED_Core_Rest_Api::get_default_query_limit();
+		}
 		if( is_array( $query_params[ 'limit' ] )  ) {
 			$limit_parts = $query_params[ 'limit' ];
 		} else {
@@ -692,7 +694,7 @@ class Read extends Base {
 			}
 			$model_query_params[ 'limit' ] = implode( ',', $sanitized_limit );
 		}else{
-			$model_query_params[ 'limit' ] = 50;
+			$model_query_params[ 'limit' ] = \EED_Core_Rest_Api::get_default_query_limit();
 		}
 		if( isset( $query_parameters[ 'caps' ] ) ) {
 			$model_query_params[ 'caps' ] = $this->validate_context( $query_parameters[ 'caps' ] );
