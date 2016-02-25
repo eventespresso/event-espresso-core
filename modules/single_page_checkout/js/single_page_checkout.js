@@ -214,12 +214,11 @@ jQuery(document).ready( function($) {
 
 			});
 
-			jQuery.validator.addMethod(
-				"i18nEmail", function ( value, element ) {
-					// allow any non-whitespace characters as the host part
-					return this.optional( element ) || /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@(?:\S{1,63})$/.test( value );
-				}
-			);
+			// override internal email validator with one that supports unicode
+			jQuery.validator.methods.email = function ( value, element, param ) {
+				var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+				return this.optional( element ) || regex.test( value );
+			};
 
 		},
 
