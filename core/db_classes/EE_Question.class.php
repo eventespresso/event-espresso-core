@@ -601,12 +601,13 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			case EEM_Question::QST_type_year :
 				$result = new EE_Year_Input(
 						$input_constructor_args,
-						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__four_digit', true, $question ),
-						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__early_range', 100, $question ),
-						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__end_range', 100, $question )
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__four_digit', true, $this ),
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__early_range', 100, $this ),
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__end_range', 100, $this )
 						);
+				break;
 			case EEM_Question::QST_type_multi_select :
-				$result = new EE_Select_Multiple_Input( $question->options(), $input_constructor_args );
+				$result = new EE_Select_Multiple_Input( $this->options(), $input_constructor_args );
 				break;
 			// fallback
 			default :
