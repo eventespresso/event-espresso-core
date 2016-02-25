@@ -180,20 +180,20 @@ final class EE_System {
 		//@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
 		EE_Registry::instance()->CAP->init_caps();
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
-		//if the WP API basic auth plugin isn't already loaded, load it now. 
+		//if the WP API basic auth plugin isn't already loaded, load it now.
 		//We want it for mobile apps. Just include the entire plugin
 		//also, don't load the basic auth when a plugin is getting activated, because
 		//it could be the basic auth plugin, and it doesn't check if its methods are already defined
 		//and causes a fatal error
-		if( !function_exists( 'json_basic_auth_handler' ) 
+		if( !function_exists( 'json_basic_auth_handler' )
 			&& ! function_exists( 'json_basic_auth_error' )
-			&& ! ( 
+			&& ! (
 				isset( $_GET[ 'action'] )
 				&& in_array( $_GET[ 'action' ], array( 'activate', 'activate-selected' ) )
 			)
 			&& ! (
 				isset( $_GET['activate' ] )
-				&& $_GET['activate' ] === 'true' 
+				&& $_GET['activate' ] === 'true'
 			)
 		) {
 			include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
@@ -360,7 +360,7 @@ final class EE_System {
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			update_option( 'ee_flush_rewrite_rules', TRUE );
-			
+
 			if( $verify_schema ) {
 				EEH_Activation::initialize_db_and_folders();
 			}
@@ -1280,7 +1280,8 @@ final class EE_System {
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
 				// register jQuery Validate
-				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE );
+				//wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.13.1', TRUE );
+				wp_register_script( 'jquery-validate', 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js', array('jquery'), '1.14.0', TRUE );
 			}
 		}
 	}
