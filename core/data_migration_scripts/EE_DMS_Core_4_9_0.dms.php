@@ -271,7 +271,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				PRIMARY KEY  (EXJ_ID),
 				KEY first_model (EXJ_first_model_name,EXJ_first_model_id),
 				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name='esp_line_item';
 		$sql="LIN_ID INT(11) NOT NULL AUTO_INCREMENT,
