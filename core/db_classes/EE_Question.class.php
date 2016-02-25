@@ -502,7 +502,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {
 			//answer gets htmlspecialchars called on it, undo that please
-			//beceause the form input's display strategy may call esc_attr too
+			//because the form input's display strategy may call esc_attr too
 			//which also does html special characters
 			$values_with_html_special_chars = $answer->value();
 			if( is_array( $values_with_html_special_chars ) ) {
@@ -531,10 +531,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		switch ( $this->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				if(
-					$identifier == 'email'
-					&& apply_filters( 'FHEE__EE_Question__generate_form_input__use_html5_email', '__return_false' )
-				){
+				if( $identifier == 'email' ){
 					$result = new EE_Email_Input( $input_constructor_args );
 				}else{
 					$result = new EE_Text_Input( $input_constructor_args );
