@@ -29,11 +29,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * fields that COULD contain -1
 	 */
 	const ee_inf_in_rest = 'EE_INF';
-	
-	/**
-	 * Gets the default number of entities to retrieve when querying for resources
-	 */
-	const default_read_size = 50;
 
 	/**
 	 *
@@ -523,9 +518,11 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return int
 	 */
 	public static function get_default_query_limit() {
+		//we actually don't use a const because we want folks to always use
+		//this method, not the const directly
 		return apply_filters(
 			'FHEE__EED_Core_Rest_Api__get_default_query_limit',
-			EED_Core_Rest_Api::default_read_size
+			50
 		);
 	}
 
