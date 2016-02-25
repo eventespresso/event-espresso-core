@@ -14,7 +14,7 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
      * @param null $validation_error_message
      */
    public function __construct( $validation_error_message = NULL ) {
-		if( ! $validation_error_message ){
+	   if( ! $validation_error_message ){
 			$validation_error_message = __("Please enter a valid email address.", "event_espresso");
 		}
 		parent::__construct( $validation_error_message );
@@ -41,7 +41,7 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
      * @return array
      */
    function get_jquery_validation_rule_array(){
-		return array( 'i18nEmail'=>true, 'messages' => array( 'email' => $this->get_validation_error_message() ) );
+	   return array( 'email'=>true, 'messages' => array( 'email' => $this->get_validation_error_message() ) );
 	}
 
 
