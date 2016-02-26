@@ -342,25 +342,60 @@ class Read extends Base {
 	 * @return array ready for being converted into json for sending to client
 	 */
 	public function create_entity_from_wpdb_result( $model, $db_row, $rest_request, $deprecated = null ) {
-		if( $rest_request instanceof \WP_REST_Request ) {
-			$include = $rest_request->get_param( 'include' );
-			$context = $rest_request->get_param( 'caps' );
-		} else {
+		if( ! $rest_request instanceof \WP_REST_Request ) {
 			//ok so this was called in the old style, where the 3rd arg was
 			//$include, and the 4th arg was $context
-			$include = $rest_request;
-			$context = $deprecated;
 			//now setup the request just to avoid fatal errors, although we won't be able
 			//to truly make use of it because it's kinda devoid of info
 			$rest_request = new \WP_REST_Request();
+			$rest_request->set_param( 'include', $rest_request );
+			$rest_request->set_param( 'caps', $deprecated );
 		}
 
-		if( $include == null ) {
-			$include = '*';
+		if( $rest_request->get_param( 'include') == null ) {
+			$rest_request->set_param( 'include', '*' );
 		}
-		if( $context == null ) {
-			$context = \EEM_Base::caps_read;
+		if( $rest_request->get_param( 'caps' ) == null ) {
+			$rest_request->set_param( 'caps', \EEM_Base::caps_read );
 		}
+		$entity_array = $this->_create_bare_entity_from_wpdb_results( $model, $db_row );
+		$entity_array = $this->_add_extra_fields( $model, $db_row, $entity_array );
+		$entity_array['_links'] = $this->_get_entity_links( $model, $db_row, $entity_array );
+		$entity_array = $this->_include_requested_models( $model, $rest_request, $entity_array );
+		$entity_array[ '_calculated_fields'] = $this->_get_entity_calculations( $model, $db_row, $rest_request );
+		$entity_array = apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
+			$entity_array,
+			$model,
+			$rest_request->get_param( 'caps' )
+		);
+		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
+			$entity_array,
+			$model,
+			$rest_request->get_param( 'caps' ),
+			$this->get_model_version_info()
+		);
+		$this->_set_debug_info(
+			'inaccessible fields',
+			array_keys( array_diff_key( $entity_array, $result_without_inaccessible_fields ) )
+		);
+		return apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_return',
+			$result_without_inaccessible_fields,
+			$model,
+			$rest_request->get_param( 'caps' )
+		);
+	}
+	
+	/**
+	 * Creates a REST entity array (JSON object we're going to return in the response, but
+	 * for now still a PHP array, but soon enough we'll call json_encode on it, don't worry),
+	 * from $wpdb->get_row( $sql, ARRAY_A)
+	 * @param \EEM_Base $model
+	 * @param array $db_row
+	 * @return array entity mostly ready for converting to JSON and sending in the response
+	 */
+	protected function _create_bare_entity_from_wpdb_results( \EEM_Base $model, $db_row ) {
 		$result = $model->deduce_fields_n_values_from_cols_n_values( $db_row );
 		$result = array_intersect_key( $result, $this->get_model_version_info()->fields_on_model_in_this_version( $model ) );
 		foreach( $result as $field_name => $raw_field_value ) {
@@ -394,20 +429,43 @@ class Read extends Base {
 				);
 			}
 		}
+		return $result;
+	}
+	
+	/**
+	 * Adds a few extra fields to the entity response
+	 * @param \EEM_Base $model
+	 * @param array $db_row
+	 * @param array $entity_array
+	 * @return array modified entity
+	 */
+	protected function _add_extra_fields( \EEM_Base $model, $db_row, $entity_array ) {
 		if( $model instanceof \EEM_CPT_Base ) {
 			$attachment = wp_get_attachment_image_src(
 				get_post_thumbnail_id( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
 				'full'
 			);
-			$result[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
-			$result[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
+			$entity_array[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
+			$entity_array[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
-		//add links to related data
-		$result['_links'] = array(
+		return $entity_array;
+	}
+
+	/**
+	 * Gets links we want to add to the response
+	 * @global \WP_REST_Server $wp_rest_server
+	 * @param \EEM_CPT_Base $model
+	 * @param array $db_row
+	 * @param array $entity_array
+	 * @return array the _links item in the entity
+	 */
+	protected function _get_entity_links( $model, $db_row, $entity_array ) {
+		//add basic links
+		$links = array(
 			'self' => array(
 				array(
 					'href' => $this->get_versioned_link_to(
-						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ]
+						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ]
 					)
 				)
 			),
@@ -419,52 +477,61 @@ class Read extends Base {
 				)
 			),
 		);
+		
+		//add link to the wp core endpoint, if wp api is active
 		global $wp_rest_server;
 		if( $model instanceof \EEM_CPT_Base &&
 			$wp_rest_server instanceof \WP_REST_Server &&
 			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
-			$result[ '_links' ][ \EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post' ] = array(
+			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post' ] = array(
 				array(
 					'href' => rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
 					'single' => true
 				)
 			);
 		}
-
-		//filter fields if specified
-		$includes_for_this_model = $this->extract_includes_for_this_model( $include );
+		
+		//add links to related models
+		foreach( $this->get_model_version_info()->relation_settings( $model ) as $relation_name => $relation_obj ) {
+			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
+			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
+				array(
+					'href' => $this->get_versioned_link_to(
+						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ] . '/' . $related_model_part
+					),
+					'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
+				)
+			);
+		}
+		return $links;
+	}
+	
+	/**
+	 * Adds the included models indicated in the request to the entity provided
+	 * @param \EEM_Base $model
+	 * @param \WP_REST_Request $rest_request
+	 * @param array $entity_array
+	 * @return array the modified entity
+	 */
+	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array ) {
+		$includes_for_this_model = $this->extract_includes_for_this_model( $rest_request->get_param( 'include' ) );
 		if( ! empty( $includes_for_this_model ) ) {
 			if( $model->has_primary_key_field() ) {
 				//always include the primary key
 				$includes_for_this_model[] = $model->primary_key_name();
 			}
-			$result = array_intersect_key( $result, array_flip( $includes_for_this_model ) );
+			$entity_array = array_intersect_key( $entity_array, array_flip( $includes_for_this_model ) );
 		}
-		//add meta links and possibly include related models
-		$relation_settings = apply_filters(
-			'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
-			$model->relation_settings()
-		);
+		$relation_settings = $this->get_model_version_info()->relation_settings( $model );
 		foreach( $relation_settings as $relation_name => $relation_obj ) {
-			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
-			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['_links'][ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part] = array(
-					array(
-						'href' => $this->get_versioned_link_to(
-							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part
-						),
-						'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
-					)
-				);
-			}
-			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
+			$related_fields_to_include = $this->extract_includes_for_this_model( $rest_request->get_param( 'include' ), $relation_name );
 			if( $related_fields_to_include ) {
 				$pretend_related_request = new \WP_REST_Request();
 				$pretend_related_request->set_query_params(
 					array(
-						'caps' => $context,
+						'caps' => $rest_request->get_param( 'caps' ),
 						'include' => $this->extract_includes_for_this_model(
-								$include,
+								$rest_request->get_param( 'include' ),
 								$relation_name
 							),
 						'calculate' => $this->extract_includes_for_this_model(
@@ -474,49 +541,26 @@ class Read extends Base {
 					)
 				);
 				$related_results = $this->get_entities_from_relation(
-					$result[ $model->primary_key_name() ],
+					$entity_array[ $model->primary_key_name() ],
 					$relation_obj,
 					$pretend_related_request
 				);
-				$result[ $related_model_part ] = $related_results instanceof \WP_Error ? null : $related_results;
+				$entity_array[ $this->get_related_entity_name( $relation_name, $relation_obj ) ] = $related_results instanceof \WP_Error ? null : $related_results;
 			}
 		}
-		$result = apply_filters(
-			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
-			$result,
-			$model,
-			$context
-		);
-		$result[ '_calculated_fields'] = $this->_add_calculations( $model, $db_row, $rest_request );
-		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
-			$result,
-			$model,
-			$context,
-			$this->get_model_version_info()
-		);
-		$this->_set_debug_info(
-			'inaccessible fields',
-			array_keys( array_diff_key( $result, $result_without_inaccessible_fields ) )
-		);
-		return apply_filters(
-			'FHEE__Read__create_entity_from_wpdb_results__entity_return',
-			$result_without_inaccessible_fields,
-			$model,
-			$context
-		);
+		return $entity_array;
 	}
 
 
-
 	/**
-	 * Adds the calculated fields to the response
+	 * Gets the calculated fields for the response
 	 *
 	 * @param \EEM_Base        $model
 	 * @param array            $wpdb_row
 	 * @param \WP_REST_Request $rest_request
-	 * @return array
+	 * @return array the _calculations item in the entity
 	 */
-	protected function _add_calculations( $model, $wpdb_row, $rest_request ) {
+	protected function _get_entity_calculations( $model, $wpdb_row, $rest_request ) {
 		$calculated_fields = $this->extract_includes_for_this_model(
 			$rest_request->get_param( 'calculate' ) );
 		//note: setting calculate=* doesn't do anything
