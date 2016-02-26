@@ -214,12 +214,6 @@ jQuery(document).ready( function($) {
 
 			});
 
-			// override internal email validator with one that supports unicode
-			jQuery.validator.methods.email = function ( value, element, param ) {
-				var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-				return this.optional( element ) || regex.test( value );
-			};
-
 		},
 
 

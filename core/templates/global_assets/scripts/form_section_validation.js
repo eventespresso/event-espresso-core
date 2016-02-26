@@ -221,7 +221,14 @@ jQuery(document).ready(function($){
 					return this.optional(element) || re.test(value);
 				},
 				ee_form_section_vars.localized_error_messages.regex
-		);
+			);
+
+			// override internal email validator with one that supports unicode
+			$.validator.methods.email = function ( value, element ) {
+				var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+				return this.optional( element ) || regex.test( value );
+			};
+
 		},
 
 
