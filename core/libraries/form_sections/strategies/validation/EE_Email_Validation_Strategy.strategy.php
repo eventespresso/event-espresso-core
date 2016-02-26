@@ -46,13 +46,14 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 
 
 
-   /**
-    *    Validate an email address.
-    *    Provide email address (raw input)
-    *
-    * @param $email
-    * @return bool of whether the email is valid or not
-    */
+	/**
+	 * Validate an email address.
+	 * Provide email address (raw input)
+	 *
+	 * @param $email
+	 * @return bool of whether the email is valid or not
+	 * @throws \EE_Validation_Error
+	 */
 	private function _validate_email( $email ) {
 		if ( ! preg_match( '/^.+\@\S+\.\S+$/', $email ) ) {
 			// email not in correct {string}@{string}.{string} format
@@ -79,19 +80,21 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 				// domain part has two consecutive dots
 				return false;
 			} else if ( ! checkdnsrr( $domain, "MX" ) ) {
-				$this->_validation_error_message = __(
-					'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
-					'event_espresso'
-				);
 				// domain not found in MX records
-				return false;
-			} else if ( ! checkdnsrr( $domain, "A" ) ) {
-				$this->_validation_error_message = __(
-					'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
-					'event_espresso'
+				throw new EE_Validation_Error(
+					__(
+						'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
+						'event_espresso'
+					)
 				);
+			} else if ( ! checkdnsrr( $domain, "A" ) ) {
 				// domain not found in A records
-				return false;
+				throw new EE_Validation_Error(
+					__(
+						'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
+						'event_espresso'
+					)
+				);
 			}
 		}
 		// you have successfully run the gauntlet young Padawan
