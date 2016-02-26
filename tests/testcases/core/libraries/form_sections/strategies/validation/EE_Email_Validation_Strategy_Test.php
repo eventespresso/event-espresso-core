@@ -61,7 +61,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 
 
 	function test_validate__pass() {
-		$this->validate_email_address( 'brent@eventespresso.com' );
+		$this->validate_email_address( 'developers@eventespresso.com' );
 	}
 
 
@@ -69,18 +69,19 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 	function test_validate__fail(){
 		$bad_addys = array(
 			// double dots
-			'bre..nt@eventespresso.com',
-			'brent@event..espresso.com',
+			'develop..ers@eventespresso.com',
+			'developers@event..espresso.com',
 			// domain too short
-			'brent@e.com',
+			'developers@e.com',
 			// domain too short
-			'brent@eventespresso.c',
+			'developers@eventespresso.c',
 			// no local
 			'@eventespresso.com',
 			// no domain
-			'brent@',
+			'developers@',
 			// no MX records (bogus addresses)
-			'brünt@äöüÄÖÜß.museum',
+			'developers@eventespresso.museum',
+			'dävälöpärs@äöüÄÖÜß.com', // häs umläüts
 			'用户@例子.广告', // ( Chinese, Unicode )
 			'उपयोगकर्ता@उदाहरण.कॉम', // ( Hindi, Unicode )
 			'юзер@екзампл.ком', // ( Ukrainian, Unicode )
