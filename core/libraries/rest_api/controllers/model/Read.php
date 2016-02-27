@@ -802,7 +802,7 @@ class Read extends Base {
 		if( is_array( $include_string ) ) {
 			$include_string = implode( ',', $include_string );
 		}
-		if( $include_string === '*' ) {
+		if( $include_string === '*' || $include_string === '' ) {
 			return array();
 		}
 		$includes = explode( ',', $include_string );
