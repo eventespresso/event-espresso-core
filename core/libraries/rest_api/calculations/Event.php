@@ -118,14 +118,7 @@ class Event {
 	 * @return int
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
-		return \EEM_Registration::instance()->count(
-			array(
-				array(
-					'Checkin.CHK_in' => true,
-					'Checkin.Datetime.EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ]
-				)
-			)
-		);
+		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], true );
 	}
 
 	/**
@@ -138,13 +131,6 @@ class Event {
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
-		return \EEM_Registration::instance()->count(
-			array(
-				array(
-					'Checkin.CHK_in' => false,
-					'Checkin.Datetime.EVT_ID' => $wpdb_row[ 'Event_CPT.ID' ]
-				)
-			)
-		);
+		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], false );
 	}
 }

@@ -42,14 +42,7 @@ class Datetime {
 	 * @return int
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
-		return \EEM_Registration::instance()->count(
-			array(
-				array(
-					'Checkin.CHK_in' => true,
-					'Checkin.DTT_ID' => $wpdb_row[ 'Datetime.DTT_ID' ]
-				)
-			)
-		);
+		return \EEM_Registration::instance()->count_registrations_checked_into_datetime( $wpdb_row[ 'Datetime.DTT_ID' ], true );
 	}
 
 	/**
@@ -61,14 +54,7 @@ class Datetime {
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
-		return \EEM_Registration::instance()->count(
-			array(
-				array(
-					'Checkin.CHK_in' => false,
-					'Checkin.DTT_ID' => $wpdb_row[ 'Datetime.DTT_ID' ]
-				)
-			)
-		);
+		return \EEM_Registration::instance()->count_registrations_checked_into_datetime( $wpdb_row[ 'Datetime.DTT_ID' ], false );
 	}
 
 	/**
