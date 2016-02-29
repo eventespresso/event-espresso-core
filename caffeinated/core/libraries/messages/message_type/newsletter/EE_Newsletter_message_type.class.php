@@ -41,21 +41,17 @@ class EE_Newsletter_message_type extends EE_message_type {
 
 
 
-    protected function _set_data_handler() {
-        $this->_data_handler = 'Contacts';
-        $this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
-    }
+	protected function _set_data_handler() {
+		$this->_data_handler = 'Registrations';
+		$this->_single_message = $this->_data instanceof EE_Registration;
+	}
 
 
 
-    protected function _get_data_for_context( $context, EE_Registration $registration, $id ) {
-        //newsletter message type data handler is 'Contacts' and it expects an array of EE_Attendee objects.
-        $contact = $registration->attendee();
-        if ( $contact instanceof EE_Attendee ) {
-            return array( $contact );
-        }
-       return array();
-    }
+	protected function _get_data_for_context( $context, EE_Registration $registration, $id ) {
+		//newsletter message type data handler is 'Registrations' and it expects an array of EE_Registration objects.
+		return array( $registration );
+	}
 
 
 
