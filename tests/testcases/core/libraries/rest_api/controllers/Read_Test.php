@@ -113,6 +113,74 @@ class Read_Test extends \EE_UnitTestCase{
 		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(), $controller->extract_includes_for_this_model( '*' ) );
 	}
+	
+	/**
+	 * @group 9406
+	 */
+	public function test_handle_request_get_one__event_calculate_stuff() {
+		$this->set_current_user_to_new();
+		$limit_on_datetime = 100;
+		$limit_on_ticket = 50;
+		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		$dtt = $this->new_model_obj_with_dependencies( 
+			'Datetime', 
+			array( 
+				'DTT_reg_limit' => $limit_on_datetime, 
+				'EVT_ID' => $event->ID() 
+			) 
+		);
+		$tkt = $this->new_model_obj_with_dependencies( 
+			'Ticket', 
+			array( 
+				'TKT_qty' => $limit_on_ticket 
+			) 
+		);
+		$tkt->_add_relation_to( $dtt, 'Datetime' );
+		$reg1 = $this->new_model_obj_with_dependencies( 
+			'Registration', 
+			array( 
+				'EVT_ID' => $event->ID(),
+				'TKT_ID' => $tkt->ID(),
+				'STS_ID' => \EEM_Registration::status_id_approved 
+			) 
+		);
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req->set_url_params(
+				array(
+					'id' => $event->ID()
+				)
+			);
+		$req->set_query_params(
+				array(
+					'include' => 'Datetime',
+					'calculate' =>  'optimum_sales_at_start,spots_taken,Datetime.registrations_checked_in_count'
+				)
+			);
+		$response = Read::handle_request_get_one( $req );
+		$result = $response->get_data();
+		$this->assertTrue( isset( $result[ 'EVT_ID' ] ) );
+		//check that the requested calculated fields were added. 
+		//Seeing how these calculated fields just wrap other EE methods (which sould already be tested)
+		//the emphasis here is just on whether or not they get included properly, not exhaustively
+		//testing the calculations themselves
+		$this->assertTrue( isset( $result[ '_calculated_fields' ] ) );
+		$this->assertEquals(
+			array(
+				'optimum_sales_at_start' => min( array( $limit_on_datetime, $limit_on_ticket ) ),
+				'spots_taken' => 1
+			),
+			$result[ '_calculated_fields' ] 
+		);
+		$this->assertTrue( isset( $result[ 'datetimes' ] ) );
+		$this->assertTrue( isset( $result[ 'datetimes' ][ 0 ] ) );
+		$this->assertTrue( isset( $result[ 'datetimes' ][ 0 ][ '_calculated_fields' ] ) );
+		$this->assertEquals(
+			array( 
+				'registrations_checked_in_count' => 0
+			),
+			$result[ 'datetimes' ][ 0 ][ '_calculated_fields' ]
+		);
+	}
 	public function test_handle_request_get_one__event() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
