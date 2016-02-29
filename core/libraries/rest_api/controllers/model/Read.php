@@ -367,7 +367,9 @@ class Read extends Base {
 			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
 			$entity_array,
 			$model,
-			$rest_request->get_param( 'caps' )
+			$rest_request->get_param( 'caps' ),
+			$rest_request,
+			$this
 		);
 		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
 			$entity_array,
