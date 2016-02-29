@@ -326,9 +326,9 @@ class Read extends Base {
 		$count = $model->count( $query_params, null, true );
 
 		$pages = $count / $limit_parts[ 1 ];
-		$this->_set_response_header( 'Total', $count );
-		$this->_set_response_header( 'PageSize', $limit_parts[ 1 ] );
-		$this->_set_response_header( 'TotalPages', ceil( $pages ) );
+		$this->_set_response_header( 'Total', $count, false );
+		$this->_set_response_header( 'PageSize', $limit_parts[ 1 ], false );
+		$this->_set_response_header( 'TotalPages', ceil( $pages ), false );
 	}
 
 

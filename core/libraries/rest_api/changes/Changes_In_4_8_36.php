@@ -42,6 +42,15 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		return $query_params;
 	}
 	
+	/**
+	 * Removes the "_calculate_fields" part of entity responses before 4.8.36
+	 * @param array $entity_response_array
+	 * @param \EEM_Base $model
+	 * @param string $request_context
+	 * @param \WP_REST_Request $request
+	 * @param Read $controller
+	 * @return array
+	 */
 	public function remove_calculated_fields_from_response( 
 		$entity_response_array, 
 		\EEM_Base $model, 

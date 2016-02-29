@@ -19,6 +19,8 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Base {
 
 	const header_prefix_for_ee = 'X-EE-';
+	
+	const header_prefix_for_wp = 'X-WP-';
 
 	/**
 	 * Contains debug info we'll send back in the response headers
@@ -74,14 +76,17 @@ class Base {
 	 * @param string $header_key, excluding the "X-EE-" part
 	 * @param array|string $value if an array, multiple headers will be added, one
 	 * for each key in the array
+	 * @param boolean whether ot use the EE prefix on teh header, or fallback to 
+	 * the standard WP one
 	 */
-	protected function _set_response_header( $header_key, $value ) {
+	protected function _set_response_header( $header_key, $value, $use_ee_prefix = true ) {
 		if( is_array( $value ) ) {
 			foreach( $value as $value_key => $value_value ) {
 				$this->_set_response_header(  $header_key . '[' . $value_key . ']', $value_value );
 			}
 		} else {
-			$this->_response_headers[ Base::header_prefix_for_ee . $header_key  ] = $value;
+			$prefix = $use_ee_prefix ? Base::header_prefix_for_ee : Base::header_prefix_for_wp;
+			$this->_response_headers[ $prefix . $header_key  ] = $value;
 		}
 	}
 
