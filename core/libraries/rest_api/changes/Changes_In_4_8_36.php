@@ -32,6 +32,16 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 			10, 
 			3
 		);
+		//remove the old featured_image part of the response...
+		add_filter(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
+			array( $this, 'remove_old_featured_image_part_of_cpt_entities' ),
+			10,
+			5 
+		);
+		//assuming ticket 9425's change gets pushed with 9406, we don't need to 
+		//remove it from the calculated fields on older requests (because this will
+		//be the first version with calculated fields)
 	}
 	
 	/**
@@ -93,6 +103,33 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 					)));
 		}
 		return $headers;
+	}
+	
+	/**
+	 * Removes the "_calculate_fields" part of entity responses before 4.8.36
+	 * @param array $entity_response_array
+	 * @param \EEM_Base $model
+	 * @param string $request_context
+	 * @param \WP_REST_Request $request
+	 * @param Read $controller
+	 * @return array
+	 */
+	public function remove_old_featured_image_part_of_cpt_entities( 
+		$entity_response_array, 
+		\EEM_Base $model, 
+		$request_context, 
+		\WP_REST_Request $request, 
+		Read $controller ) {
+		if( $this->applies_to_version( $controller->get_model_version_info()->requested_version() )
+			&& $model instanceof \EEM_CPT_Base 
+		) {
+			$attachment = wp_get_attachment_image_src(
+				get_post_thumbnail_id( $entity_response_array[ $model->primary_key_name() ] ),
+				'full'
+			);
+			$entity_response_array[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
+		}
+		return $entity_response_array;
 	}
 	
 }

@@ -443,11 +443,6 @@ class Read extends Base {
 	 */
 	protected function _add_extra_fields( \EEM_Base $model, $db_row, $entity_array ) {
 		if( $model instanceof \EEM_CPT_Base ) {
-			$attachment = wp_get_attachment_image_src(
-				get_post_thumbnail_id( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
-				'full'
-			);
-			$entity_array[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
 			$entity_array[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
 		return $entity_array;

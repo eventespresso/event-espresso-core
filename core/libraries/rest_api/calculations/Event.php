@@ -154,6 +154,9 @@ class Event {
 	 */
 	public static function featured_image( $wpdb_row, $request, $controller ) {
 		$attachment_post = get_post( get_post_thumbnail_id( $wpdb_row[ 'Event_CPT.ID' ] ) );
+		if( ! $attachment_post instanceof \WP_Post ) {
+			return null;
+		}
 		$data = wp_get_attachment_metadata( $attachment_post->ID );
 		if ( empty( $data ) ) {
 			$data = array();
