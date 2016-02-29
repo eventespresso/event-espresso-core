@@ -30,8 +30,8 @@ class Calculated_Model_Fields {
 	/**
 	 * @param bool $refresh
 	 * @return array top-level-keys are model names (eg "Event")
-	 * next-level are the calculated field names, and their values are
-	 * callbacks for calculating them.
+	 * next-level are the calculated field names AND method names on classes 
+	 * which perform calculations, values are the fully qualified classnames which do the calculationss
 	 * These callbacks should accept as arguments:
 	 * the wpdb row results,
 	 * the WP_Request object,
@@ -57,52 +57,19 @@ class Calculated_Model_Fields {
 			'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping',
 			array(
 				'Event' => array(
-					'optimum_sales_at_start' => array(
-						$event_calculations_class,
-						'optimum_sales_at_start'
-					),
-					'optimum_sales_now' => array(
-						$event_calculations_class,
-						'optimum_sales_now'
-					),
-					'spots_taken' => array(
-						$event_calculations_class,
-						'spots_taken'
-					),
-					'spots_taken_pending_payment' => array(
-						$event_calculations_class,
-						'spots_taken_pending_payment',
-					),
-					'spaces_remaining' => array(
-						$event_calculations_class,
-						'spaces_remaining'
-					),
-					'registrations_checked_in_count' => array(
-						$event_calculations_class,
-						'registrations_checked_in_count'
-					),
-					'registrations_checked_out_count' => array(
-						$event_calculations_class,
-						'registrations_checked_out_count'
-					)
+					'optimum_sales_at_start' => $event_calculations_class,
+					'optimum_sales_now' => $event_calculations_class,
+					'spots_taken' => $event_calculations_class,
+					'spots_taken_pending_payment' => $event_calculations_class,
+					'spaces_remaining' => $event_calculations_class,
+					'registrations_checked_in_count' => $event_calculations_class,
+					'registrations_checked_out_count' => $event_calculations_class
 				),
 				'Datetime' => array(
-					'spaces_remaining_considering_tickets' => array(
-						$datetime_calculations_class,
-						'spaces_remaining_considering_tickets'
-					),
-					'registrations_checked_in_count' => array(
-						$datetime_calculations_class,
-						'registrations_checked_in_count',
-					),
-					'registrations_checked_out_count' => array(
-						$datetime_calculations_class,
-						'registrations_checked_out_count'
-					),
-					'spots_taken_pending_payment' => array(
-						$datetime_calculations_class,
-						'spots_taken_pending_payment',
-					),
+					'spaces_remaining_considering_tickets' => $datetime_calculations_class,
+					'registrations_checked_in_count' => $datetime_calculations_class,
+					'registrations_checked_out_count' => $datetime_calculations_class,
+					'spots_taken_pending_payment' => $datetime_calculations_class,
 				)
 			)
 		);
@@ -139,7 +106,8 @@ class Calculated_Model_Fields {
 		$mapping = $this->mapping();
 		if( isset( $mapping[ $model->get_this_model_name() ] )
 			&& $mapping[ $model->get_this_model_name() ][ $field_name ] ) {
-			return call_user_func( $mapping[ $model->get_this_model_name() ][ $field_name ], $wpdb_row, $rest_request, $controller );
+			$classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
+			return call_user_func( array( $classname, $field_name ), $wpdb_row, $rest_request, $controller );
 		}
 		if( defined( 'EE_REST_API_DEBUG_MODE' )
 			&& EE_REST_API_DEBUG_MODE ) {
