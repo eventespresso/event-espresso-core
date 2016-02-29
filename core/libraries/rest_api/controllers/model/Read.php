@@ -422,7 +422,7 @@ class Read extends Base {
 			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
 				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
 					$field_obj,
-					$field_obj->prepare_for_get( $field_value )
+					$field_value
 				);
 			} else {
 				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
