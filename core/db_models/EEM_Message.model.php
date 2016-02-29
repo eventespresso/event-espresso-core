@@ -282,20 +282,18 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 				switch ( $request_key ) {
 					case '_REG_ID' :
 						$query_params[0]['AND**filter_by']['OR**filter_by_REG_ID'] = array(
-							//'Registration.REG_ID' => $request_value,
-							//'Attendee.Registration.REG_ID' => $request_value,
 							'Transaction.Registration.REG_ID' => $request_value,
-							//'WP_User.Event.Registration.REG_ID' => $request_value,
 						);
+						break;
 					case 'EVT_ID' :
 						$query_params[0]['AND**filter_by']['OR**filter_by_EVT_ID'] = array(
-							//'Registration.EVT_ID' => $request_value,
-							//'Attendee.Registration.EVT_ID' => $request_value,
 							'Transaction.Registration.EVT_ID' => $request_value,
-							//'WP_User.Event.EVT_ID' => $request_value,
 						);
+						break;
+					default :
+						$query_params[0]['AND**filter_by'][ 'OR**filter_by_' . $request_key ][ $model_name . '.' . $request_key ] = $request_value;
+						break;
 				}
-				$query_params[0]['AND**filter_by'][ 'OR**filter_by_' . $request_key ][ $model_name . '.' . $request_key ] = $request_value;
 			}
 		}
 		return $query_params;
