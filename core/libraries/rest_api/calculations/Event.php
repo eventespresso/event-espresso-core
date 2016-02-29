@@ -144,4 +144,50 @@ class Event {
 		}
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], false );
 	}
+	
+	/**
+	 * 
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function featured_image( $wpdb_row, $request, $controller ) {
+		$attachment_post = get_post( get_post_thumbnail_id( $wpdb_row[ 'Event_CPT.ID' ] ) );
+		$data = wp_get_attachment_metadata( $attachment_post->ID );
+		if ( empty( $data ) ) {
+			$data = array();
+		} elseif ( ! empty( $data['sizes'] ) ) {
+
+			foreach ( $data['sizes'] as $size => &$size_data ) {
+
+				if ( isset( $size_data['mime-type'] ) ) {
+					$size_data['mime_type'] = $size_data['mime-type'];
+					unset( $size_data['mime-type'] );
+				}
+
+				// Use the same method image_downsize() does
+				$image_src = wp_get_attachment_image_src( $attachment_post->ID, $size );
+				if ( ! $image_src ) {
+					continue;
+				}
+
+				$size_data['source_url'] = $image_src[0];
+			}
+
+			$full_src = wp_get_attachment_image_src( $attachment_post->ID, 'full' );
+			if ( ! empty( $full_src ) ) {
+				$data['sizes']['full'] = array(
+					'file'          => wp_basename( $full_src[0] ),
+					'width'         => $full_src[1],
+					'height'        => $full_src[2],
+					'mime_type'     => $attachment_post->post_mime_type,
+					'source_url'    => $full_src[0],
+					);
+			}
+		} else {
+			$data['sizes'] = array();
+		}
+		return $data;
+	}
 }
