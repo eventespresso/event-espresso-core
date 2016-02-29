@@ -94,6 +94,9 @@ class Event {
 	 * @return int
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
+		if( ! current_user_can( 'ee_read_registrations' ) ) {
+			return null;
+		}
 		return \EEM_Registration::instance()->count(
 			array(
 				array(
@@ -115,9 +118,13 @@ class Event {
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Base $controller
-	 * @return int
+	 * @return int|null if permission denied
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
+		if( ! current_user_can( 'ee_read_registrations' ) 
+			|| ! current_user_can( 'ee_read_checkins' ) ) {
+			return null;
+		}
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], true );
 	}
 
@@ -131,6 +138,10 @@ class Event {
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
+		if( ! current_user_can( 'ee_read_registrations' ) 
+			|| ! current_user_can( 'ee_read_checkins' ) ) {
+			return null;
+		}
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], false );
 	}
 }
