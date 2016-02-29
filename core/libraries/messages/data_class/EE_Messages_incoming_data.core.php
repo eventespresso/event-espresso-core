@@ -403,15 +403,19 @@ abstract class EE_Messages_incoming_data {
 
 			if ( ! empty( $eventsetup ) ) {
 				foreach ( $eventsetup as $evt_id => $items ) {
-					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(
-						array(
+					if ( $this->txn instanceof EE_Transaction ) {
+						$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(
 							array(
-								'Ticket.Datetime.EVT_ID' => $evt_id,
-								'TXN_ID' => $this->txn->ID()
-							),
-							'default_where_conditions' => 'none',
-						)
-					);
+								array(
+									'Ticket.Datetime.EVT_ID' => $evt_id,
+									'TXN_ID'                 => $this->txn->ID()
+								),
+								'default_where_conditions' => 'none',
+							)
+						);
+					} else {
+						$ticket_line_items_for_event = array();
+					}
 					$events[ $evt_id ] = array(
 						'ID' => $evt_id,
 						'event' => $evtcache[ $evt_id ],
