@@ -419,10 +419,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			}
 
 			//great fields are updated!  now let's make sure we just have contact objects (EE_Attendee).
-			$id_type = !empty( $this->_req_data['batch_message']['id_type'] ) ? $this->_req_data['batch_message']['id_type'] : 'registration';
+			$id_type = ! empty( $this->_req_data['batch_message']['id_type'] ) ? $this->_req_data['batch_message']['id_type'] : 'registration';
 
 			//id_type will affect how we assemble the ids.
-			$ids = !empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
+			$ids = ! empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
 
 			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
 
