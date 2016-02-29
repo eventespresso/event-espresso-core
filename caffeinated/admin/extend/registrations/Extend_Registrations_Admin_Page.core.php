@@ -424,9 +424,36 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			//id_type will affect how we assemble the ids.
 			$ids = ! empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
 
-			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
+			$registrations_used_for_contact_data = array();
+			//using switch because eventually we'll have other contexts that will be used for generating messages.
+			switch ( $id_type ) {
+				case 'registration' :
+					$registrations_used_for_contact_data = EEM_Registration::instance()->get_all(
+						array(
+							array(
+								'REG_ID' => array( 'IN', $ids )
+							)
+						)
+					);
+					break;
+				case 'contact' :
+					$registrations_used_for_contact_data = EEM_Registration::instance()->get_all(
+						array(
+							array(
+								'ATT_ID' => array( 'IN', $ids )
+							),
+							'group_by' => 'ATT_ID',
+							'order_by' => array( 'REG_ID' => 'DESC' )
+						)
+					);
+					break;
+			}
 
-			//we do _action because ALL triggers are handled in EED_Messages.
+			do_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations', $registrations_used_for_contact_data, $MTPG->ID() );
+
+			//kept for backward compat, internally we no longer use this action.
+			//@deprecated 4.8.36.rc.002
+			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
 			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
 		}
 		$query_args = array(
