@@ -1,5 +1,6 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 
 /* 
  * The checkin and checkout endpoints were added in 4.8.36, 
@@ -25,7 +26,12 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 			5
 		);
 		//and also don't add the count headers 
-		
+		add_filter(
+			'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
+			array( $this, 'remove_headers_new_in_this_version' ),
+			10, 
+			3
+		);
 	}
 	
 	/**
@@ -61,6 +67,32 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 			unset( $entity_response_array[ '_calculated_fields' ] );
 		}
 		return $entity_response_array;
+	}
+	
+	/**
+	 * Removes the new headers just added in this version to any requests to older versions
+	 * of the API
+	 * @param array $headers
+	 * @param \Base $controller
+	 * @param string $version
+	 * @return array
+	 */
+	public function remove_headers_new_in_this_version(
+		$headers,
+		Base $controller,
+		$version 
+	) {
+		if( $this->applies_to_version( $version ) ) {
+			$headers = array_diff_key(
+				$headers,
+				array_flip(
+					array(
+						Base::header_prefix_for_wp . 'Total',
+						Base::header_prefix_for_wp . 'TotalPages',
+						Base::header_prefix_for_wp . 'PageSize'
+					)));
+		}
+		return $headers;
 	}
 	
 }
