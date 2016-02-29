@@ -46,6 +46,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data 
 
 		//there could be multiple transactions represented so we leave at null.
 		$this->txn = null;
+		$this->reg_objs = $this->data();
 		$this->_assemble_data();
 	}
 }
