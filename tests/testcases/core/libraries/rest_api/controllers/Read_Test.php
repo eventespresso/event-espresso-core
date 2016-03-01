@@ -16,48 +16,56 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Read_Test extends \EE_UnitTestCase{
-	public function test_extract_includes_for_this_model__basic(){
+	public function test_explode_and_get_items_prefixed_with__basic(){
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'EVT_ID',
 			'EVT_name'
-		), $controller->extract_includes_for_this_model( 'EVT_ID,EVT_name' ) );
+		), $controller->explode_and_get_items_prefixed_with( 'EVT_ID,EVT_name', '' ) );
 	}
-	public function test_extract_includes_for_this_model__extra_whitespace() {
+	public function test_explode_and_get_items_prefixed_with__extra_whitespace() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'EVT_ID',
 			'EVT_name',
 			'EVT_desc'
-		), $controller->extract_includes_for_this_model( 'EVT_ID , EVT_name , EVT_desc' ) );
+		), $controller->explode_and_get_items_prefixed_with( 'EVT_ID , EVT_name , EVT_desc', '' ) );
 	}
-	public function test_extract_includes_for_this_model__related_model() {
+	public function test_explode_and_get_items_prefixed_with__related_model() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(), $controller->extract_includes_for_this_model( 'Registration.*' ) );
+		$this->assertEquals( array(), $controller->explode_and_get_items_prefixed_with( 'Registration.*', '' ) );
 	}
-	public function test_extract_includes_for_this_model__related_model_all() {
+	public function test_explode_and_get_items_prefixed_with__related_model_all() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(
-			'*'
-		), $controller->extract_includes_for_this_model( 'Registration.*', 'Registration' ) );
+		$this->assertEquals( 
+			array(
+				'*'
+			), 
+			$controller->explode_and_get_items_prefixed_with( 'Registration.*', 'Registration' ) 
+		);
 	}
-	public function test_extract_includes_for_this_model__related_models_but_searching_for_this_one() {
+	public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_this_one() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(
-		), $controller->extract_includes_for_this_model( 'Registration.REG_ID, Registration.Attendee.ATT_ID' ) );
+		$this->assertEquals( 
+			array(), 
+			$controller->explode_and_get_items_prefixed_with( 'Registration.REG_ID, Registration.Attendee.ATT_ID', '' ) 
+		);
 	}
-	public function test_extract_includes_for_this_model__related_models_but_searching_for_other() {
+	public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_other() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(
-			'REG_ID',
-			'Attendee.ATT_ID'
-		), $controller->extract_includes_for_this_model( 'Registration.REG_ID, Registration.Attendee.ATT_ID', 'Registration' ) );
+		$this->assertEquals( 
+			array(
+				'REG_ID',
+				'Attendee.ATT_ID'
+			), 
+			$controller->explode_and_get_items_prefixed_with( 'Registration.REG_ID, Registration.Attendee.ATT_ID', 'Registration' ) 
+		);
 	}
 
 	public function test_handle_request_get_one__event_includes() {
@@ -79,7 +87,9 @@ class Read_Test extends \EE_UnitTestCase{
 			array (
 				'EVT_ID' => $event->ID(),
 				'EVT_name' => $event->name()
-				), $result );
+			), 
+			$result 
+		);
 	}
 	public function test_handle_request_get_one__event_include_non_model_field() {
 		$this->set_current_user_to_new();
@@ -108,10 +118,10 @@ class Read_Test extends \EE_UnitTestCase{
 			$result
 		);
 	}
-	public function test_extract_includes_for_this_model__null() {
+	public function test_explode_and_get_items_prefixed_with__null() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(), $controller->extract_includes_for_this_model( '*' ) );
+		$this->assertEquals( array('*'), $controller->explode_and_get_items_prefixed_with( '*', '' ) );
 	}
 	
 	/**
@@ -230,7 +240,8 @@ class Read_Test extends \EE_UnitTestCase{
 				'EVT_donations' => $event->get( 'EVT_donations' ) ,
 				'featured_image_url' => null,
 				'EVT_timezone_string' => '',
-				'link' => get_permalink( $event->ID() )
+				'link' => get_permalink( $event->ID() ),
+				'_calculated_fields' => array()
 			  ),
 				$result
 				);
@@ -358,10 +369,10 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$headers = $response->get_headers();
 		
-		$this->assertArrayHasKey( Controller_Base::header_prefix_for_ee . 'Total', $headers );
-		$this->assertArrayHasKey( Controller_Base::header_prefix_for_ee . 'TotalPages', $headers );
-		$this->assertEquals( $datetimes_created, $headers[ Controller_Base::header_prefix_for_ee . 'Total' ] );
-		$this->assertEquals( ceil( $datetimes_created / 50 ),$headers[ Controller_Base::header_prefix_for_ee . 'TotalPages' ] );
+		$this->assertArrayHasKey( Controller_Base::header_prefix_for_wp . 'Total', $headers );
+		$this->assertArrayHasKey( Controller_Base::header_prefix_for_wp . 'TotalPages', $headers );
+		$this->assertEquals( $datetimes_created, $headers[ Controller_Base::header_prefix_for_wp . 'Total' ] );
+		$this->assertEquals( ceil( $datetimes_created / 50 ),$headers[ Controller_Base::header_prefix_for_wp . 'TotalPages' ] );
 	}
 
 	/**

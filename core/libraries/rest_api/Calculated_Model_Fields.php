@@ -105,7 +105,7 @@ class Calculated_Model_Fields {
 	public function retrieve_calculated_field_value( \EEM_Base $model, $field_name, $wpdb_row, $rest_request, Base $controller ) {
 		$mapping = $this->mapping();
 		if( isset( $mapping[ $model->get_this_model_name() ] )
-			&& $mapping[ $model->get_this_model_name() ][ $field_name ] ) {
+			&& isset( $mapping[ $model->get_this_model_name() ][ $field_name ] ) ) {
 			$classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
 			return call_user_func( array( $classname, $field_name ), $wpdb_row, $rest_request, $controller );
 		}
