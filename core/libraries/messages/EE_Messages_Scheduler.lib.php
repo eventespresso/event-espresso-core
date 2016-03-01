@@ -12,10 +12,11 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 	/**
 	 * Number of seconds between batch sends/generates on the cron job.
-	 * Defaults to 10 minutes in seconds.
+	 * Defaults to 10 minutes in seconds.  If you want to change this interval, you can use the native WordPress
+	 * `cron_schedules` filter and modify the existing custom `ee_message_cron` schedule interval added.
 	 * @type int
 	 */
-	const message_cron_schedule = 30;
+	const message_cron_schedule = 600;
 
 	/**
 	 * Constructor
