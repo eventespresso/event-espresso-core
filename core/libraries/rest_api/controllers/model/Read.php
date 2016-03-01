@@ -388,7 +388,7 @@ class Read extends Base {
 			$rest_request->get_param( 'caps' )
 		);
 	}
-	
+
 	/**
 	 * Creates a REST entity array (JSON object we're going to return in the response, but
 	 * for now still a PHP array, but soon enough we'll call json_encode on it, don't worry),
@@ -433,7 +433,7 @@ class Read extends Base {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Adds a few extra fields to the entity response
 	 * @param \EEM_Base $model
@@ -455,8 +455,9 @@ class Read extends Base {
 
 	/**
 	 * Gets links we want to add to the response
-	 * @global \WP_REST_Server $wp_rest_server
-	 * @param \EEM_CPT_Base $model
+	 *
+*@global \WP_REST_Server $wp_rest_server
+	 * @param \EEM_Base $model
 	 * @param array $db_row
 	 * @param array $entity_array
 	 * @return array the _links item in the entity
@@ -479,7 +480,7 @@ class Read extends Base {
 				)
 			),
 		);
-		
+
 		//add link to the wp core endpoint, if wp api is active
 		global $wp_rest_server;
 		if( $model instanceof \EEM_CPT_Base &&
@@ -492,7 +493,7 @@ class Read extends Base {
 				)
 			);
 		}
-		
+
 		//add links to related models
 		foreach( $this->get_model_version_info()->relation_settings( $model ) as $relation_name => $relation_obj ) {
 			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
@@ -507,7 +508,7 @@ class Read extends Base {
 		}
 		return $links;
 	}
-	
+
 	/**
 	 * Adds the included models indicated in the request to the entity provided
 	 * @param \EEM_Base $model
