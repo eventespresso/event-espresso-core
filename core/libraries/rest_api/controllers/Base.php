@@ -133,7 +133,8 @@ class Base {
 	 */
 	public function send_response( $response ) {
 		if( $response instanceof \Exception ) {
-			$response = new \WP_Error( $response->getCode(), $response->getMessage() );
+			$code = $response->getCode() ? $response->getCode() : 'error_occurred';
+			$response = new \WP_Error( $code, $response->getMessage() );
 		}
 		if( $response instanceof \WP_Error ) {
 			$response = $this->_add_ee_errors_to_response( $response );
