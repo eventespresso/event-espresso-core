@@ -890,7 +890,7 @@ class EED_Messages  extends EED_Module {
 			);
 		} else {
 			//can count how many sent by using the messages in the queue
-			$sent_count = $sent_queue->count_STS_in_queue( array( EEM_Message::instance()->stati_indicating_sent() ) );
+			$sent_count = $sent_queue->count_STS_in_queue( EEM_Message::instance()->stati_indicating_sent() );
 			if ( $sent_count > 0 ) {
 				EE_Error::add_success(
 					sprintf(
