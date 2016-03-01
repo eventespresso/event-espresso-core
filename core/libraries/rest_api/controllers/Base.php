@@ -19,7 +19,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Base {
 
 	const header_prefix_for_ee = 'X-EE-';
-	
+
 	const header_prefix_for_wp = 'X-WP-';
 
 	/**
@@ -73,11 +73,11 @@ class Base {
 	/**
 	 * Sets headers for the response
 	 *
-	 * @param string $header_key, excluding the "X-EE-" part
-	 * @param array|string $value if an array, multiple headers will be added, one
-	 * for each key in the array
-	 * @param boolean whether ot use the EE prefix on teh header, or fallback to 
-	 * the standard WP one
+	 * @param string       $header_key    , excluding the "X-EE-" part
+	 * @param array|string $value         if an array, multiple headers will be added, one
+	 *                                    for each key in the array
+	 * @param boolean      $use_ee_prefix whether to use the EE prefix on the header, or fallback to
+	 *                                    the standard WP one
 	 */
 	protected function _set_response_header( $header_key, $value, $use_ee_prefix = true ) {
 		if( is_array( $value ) ) {
