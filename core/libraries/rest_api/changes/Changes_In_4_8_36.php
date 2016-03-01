@@ -2,8 +2,8 @@
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 
-/* 
- * The checkin and checkout endpoints were added in 4.8.36, 
+/*
+ * The checkin and checkout endpoints were added in 4.8.36,
  * where we just added a response headers
  */
 class Changes_In_4_8_36 extends Changes_In_Base {
@@ -12,24 +12,24 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	 */
 	public function set_hooks() {
 		//set a hook to remove the "calculate" query param
-		add_filter( 
+		add_filter(
 			'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
 			array( $this, 'remove_calculate_query_param' ),
 			10,
 			3
 		);
 		//don't add the _calculated_fields either
-		add_filter( 
+		add_filter(
 			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
 			array( $this, 'remove_calculated_fields_from_response' ),
 			10,
 			5
 		);
-		//and also don't add the count headers 
+		//and also don't add the count headers
 		add_filter(
 			'FHEE__EventEspresso\core\libraries\rest_api\controllers\Base___get_response_headers',
 			array( $this, 'remove_headers_new_in_this_version' ),
-			10, 
+			10,
 			3
 		);
 		//remove the old featured_image part of the response...
@@ -37,13 +37,13 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
 			array( $this, 'remove_old_featured_image_part_of_cpt_entities' ),
 			10,
-			5 
+			5
 		);
-		//assuming ticket 9425's change gets pushed with 9406, we don't need to 
+		//assuming ticket 9425's change gets pushed with 9406, we don't need to
 		//remove it from the calculated fields on older requests (because this will
 		//be the first version with calculated fields)
 	}
-	
+
 	/**
 	 * Dont show "calculate" as an query param option in the index
 	 * @param array $query_params
@@ -57,7 +57,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		}
 		return $query_params;
 	}
-	
+
 	/**
 	 * Removes the "_calculate_fields" part of entity responses before 4.8.36
 	 * @param array $entity_response_array
@@ -67,30 +67,31 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	 * @param Read $controller
 	 * @return array
 	 */
-	public function remove_calculated_fields_from_response( 
-		$entity_response_array, 
-		\EEM_Base $model, 
-		$request_context, 
-		\WP_REST_Request $request, 
-		Read $controller ) {
+	public function remove_calculated_fields_from_response(
+		$entity_response_array,
+		\EEM_Base $model,
+		$request_context,
+		\WP_REST_Request $request,
+		Read $controller
+	) {
 		if( $this->applies_to_version( $controller->get_model_version_info()->requested_version() ) ) {
 			unset( $entity_response_array[ '_calculated_fields' ] );
 		}
 		return $entity_response_array;
 	}
-	
+
 	/**
 	 * Removes the new headers just added in this version to any requests to older versions
 	 * of the API
 	 * @param array $headers
-	 * @param \Base $controller
+	 * @param Base $controller
 	 * @param string $version
 	 * @return array
 	 */
 	public function remove_headers_new_in_this_version(
 		$headers,
 		Base $controller,
-		$version 
+		$version
 	) {
 		if( $this->applies_to_version( $version ) ) {
 			$headers = array_diff_key(
@@ -104,7 +105,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		}
 		return $headers;
 	}
-	
+
 	/**
 	 * Removes the "_calculate_fields" part of entity responses before 4.8.36
 	 * @param array $entity_response_array
@@ -114,14 +115,15 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	 * @param Read $controller
 	 * @return array
 	 */
-	public function remove_old_featured_image_part_of_cpt_entities( 
-		$entity_response_array, 
-		\EEM_Base $model, 
-		$request_context, 
-		\WP_REST_Request $request, 
-		Read $controller ) {
+	public function remove_old_featured_image_part_of_cpt_entities(
+		$entity_response_array,
+		\EEM_Base $model,
+		$request_context,
+		\WP_REST_Request $request,
+		Read $controller
+	) {
 		if( $this->applies_to_version( $controller->get_model_version_info()->requested_version() )
-			&& $model instanceof \EEM_CPT_Base 
+			&& $model instanceof \EEM_CPT_Base
 		) {
 			$attachment = wp_get_attachment_image_src(
 				get_post_thumbnail_id( $entity_response_array[ $model->primary_key_name() ] ),
@@ -131,6 +133,6 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		}
 		return $entity_response_array;
 	}
-	
+
 }
 
