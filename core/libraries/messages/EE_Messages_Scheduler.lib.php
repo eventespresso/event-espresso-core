@@ -77,16 +77,20 @@ class EE_Messages_Scheduler extends EE_BASE {
 			array(
 				'ee' => 'msg_cron_trigger',
 				'type' => $task,
-				'_nonce' => $nonce
+				'_nonce' => $nonce,
 			),
 			site_url()
 		);
 		$request_args = array(
 				'timeout' => 300,
-				'blocking' => false,
-				'sslverify' => false
+				'blocking' => defined( 'DOING_CRON' ) && DOING_CRON ? true : false,
+				'sslverify' => false,
+				'http_request_redirection_count' => 10,
 		);
-		wp_remote_get( $request_url, $request_args );
+		$response = wp_remote_get( $request_url, $request_args );
+		if ( is_wp_error( $response ) ) {
+			trigger_error( $response->get_error_message() );
+		}
 	}
 
 
