@@ -121,7 +121,7 @@ class Event {
 	 * @return int|null if permission denied
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
-		if( ! current_user_can( 'ee_read_registrations' ) 
+		if( ! current_user_can( 'ee_read_registrations' )
 			|| ! current_user_can( 'ee_read_checkins' ) ) {
 			return null;
 		}
@@ -138,13 +138,13 @@ class Event {
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
-		if( ! current_user_can( 'ee_read_registrations' ) 
+		if( ! current_user_can( 'ee_read_registrations' )
 			|| ! current_user_can( 'ee_read_checkins' ) ) {
 			return null;
 		}
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], false );
 	}
-	
+
 	/**
 	 * Gets the thumbnail image
 	 * @param array $wpdb_row
@@ -155,7 +155,7 @@ class Event {
 	public static function image_thumbnail( $wpdb_row, $request, $controller ) {
 		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'thumbnail' );
 	}
-	
+
 	/**
 	 * Gets the medium image
 	 * @param array $wpdb_row
@@ -166,7 +166,7 @@ class Event {
 	public static function image_medium( $wpdb_row, $request, $controller ) {
 		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'medium' );
 	}
-	
+
 	/**
 	 * Gets the medium-large image
 	 * @param array $wpdb_row
@@ -177,7 +177,7 @@ class Event {
 	public static function image_medium_large( $wpdb_row, $request, $controller ) {
 		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'medium_large' );
 	}
-	
+
 	/**
 	 * Gets the large image
 	 * @param array $wpdb_row
@@ -188,7 +188,7 @@ class Event {
 	public static function image_large( $wpdb_row, $request, $controller ) {
 		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'large' );
 	}
-	
+
 	/**
 	 * Gets the post-thumbnail image
 	 * @param array $wpdb_row
@@ -199,9 +199,9 @@ class Event {
 	public static function image_post_thumbnail( $wpdb_row, $request, $controller ) {
 		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'post-thumbnail' );
 	}
-	
+
 	/**
-	 * Gets the fullsize image
+	 * Gets the full size image
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Base $controller
@@ -210,11 +210,11 @@ class Event {
 	public static function image_full( $wpdb_row, $request, $controller ) {
 		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'full' );
 	}
-	
+
 	/**
 	 * Gets image specs and formats them for the display in the API,
 	 * according to the image size requested
-	 * @param type $EVT_ID
+	 * @param int $EVT_ID
 	 * @param string $image_size one of these: thumbnail, medium, medium_large, large, post-thumbnail, full
 	 * @return array|false if no such image exists. If array it will have keys 'url', 'width', 'height' and 'original'
 	 */
