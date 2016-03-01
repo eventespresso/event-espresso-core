@@ -146,51 +146,89 @@ class Event {
 	}
 	
 	/**
-	 * 
+	 * Gets the thumbnail image
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
 	 * @param Base $controller
 	 * @return array
 	 */
-	public static function featured_image( $wpdb_row, $request, $controller ) {
-		$attachment_post = get_post( get_post_thumbnail_id( $wpdb_row[ 'Event_CPT.ID' ] ) );
-		if( ! $attachment_post instanceof \WP_Post ) {
-			return null;
+	public static function image_thumbnail( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'thumbnail' );
+	}
+	
+	/**
+	 * Gets the medium image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_medium( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'medium' );
+	}
+	
+	/**
+	 * Gets the medium-large image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_medium_large( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'medium_large' );
+	}
+	
+	/**
+	 * Gets the large image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_large( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'large' );
+	}
+	
+	/**
+	 * Gets the post-thumbnail image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_post_thumbnail( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'post-thumbnail' );
+	}
+	
+	/**
+	 * Gets the fullsize image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_full( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'full' );
+	}
+	
+	/**
+	 * Gets image specs and formats them for the display in the API,
+	 * according to the image size requested
+	 * @param type $EVT_ID
+	 * @param string $image_size one of these: thumbnail, medium, medium_large, large, post-thumbnail, full
+	 * @return array|false if no such image exists. If array it will have keys 'url', 'width', 'height' and 'original'
+	 */
+	protected static function _calculate_image_data( $EVT_ID, $image_size ) {
+		$attachment_id = get_post_thumbnail_id( $EVT_ID );
+		$data = wp_get_attachment_image_src( $attachment_id, $image_size );
+		if( ! $data ) {
+			return false;
 		}
-		$data = wp_get_attachment_metadata( $attachment_post->ID );
-		if ( empty( $data ) ) {
-			$data = array();
-		} elseif ( ! empty( $data['sizes'] ) ) {
-
-			foreach ( $data['sizes'] as $size => &$size_data ) {
-
-				if ( isset( $size_data['mime-type'] ) ) {
-					$size_data['mime_type'] = $size_data['mime-type'];
-					unset( $size_data['mime-type'] );
-				}
-
-				// Use the same method image_downsize() does
-				$image_src = wp_get_attachment_image_src( $attachment_post->ID, $size );
-				if ( ! $image_src ) {
-					continue;
-				}
-
-				$size_data['source_url'] = $image_src[0];
-			}
-
-			$full_src = wp_get_attachment_image_src( $attachment_post->ID, 'full' );
-			if ( ! empty( $full_src ) ) {
-				$data['sizes']['full'] = array(
-					'file'          => wp_basename( $full_src[0] ),
-					'width'         => $full_src[1],
-					'height'        => $full_src[2],
-					'mime_type'     => $attachment_post->post_mime_type,
-					'source_url'    => $full_src[0],
-					);
-			}
-		} else {
-			$data['sizes'] = array();
-		}
-		return $data;
+		return array(
+			'url' => $data[ 0 ],
+			'width' => $data[ 1 ],
+			'height' => $data[ 2 ],
+			'generated' => $data[ 3 ]
+		);
 	}
 }
