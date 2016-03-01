@@ -906,7 +906,7 @@ class EED_Messages  extends EED_Module {
 			} else {
 				EE_Error::overwrite_errors();
 				EE_Error::add_error(
-					__( 'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, or there was an error.
+					__( 'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, they were ALREADY sent on a different scheduled task, or there was an error.
 					If there was an error, you can look at the messages in the message activity list table for any error messages.', 'event_espresso' ),
 					__FILE__, __FUNCTION__, __LINE__
 				);
