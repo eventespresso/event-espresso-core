@@ -288,9 +288,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $routes;
 	}
-	
+
 	/**
-	 * Gets the query params that can be used when request one or many 
+	 * Gets the query params that can be used when request one or many
 	 * @param EEM_Base $model
 	 * @param string $version
 	 * @return array
@@ -315,17 +315,22 @@ class EED_Core_Rest_Api extends \EED_Module {
 		);
 	}
 
+
+
 	/**
 	 * Gets info about reading query params that are acceptable
+	 *
 	 * @param \EEM_Base $model eg 'Event' or 'Venue'
-	 * @return array describing the args acceptable when querying this model
+	 * @param  string   $version
+	 * @return array    describing the args acceptable when querying this model
+	 * @throws \EE_Error
 	 */
 	protected function _get_read_query_params( \EEM_Base $model, $version ) {
 		$default_orderby = array();
 		foreach( $model->get_combined_primary_key_fields() as $key_field ) {
 			$default_orderby[ $key_field->get_name() ] = 'ASC';
 		}
-		return array_merge( 
+		return array_merge(
 			$this->_get_response_selection_query_params( $model, $version ),
 			array(
 				'where' => array(
@@ -525,7 +530,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function core_version() {
 		return apply_filters( 'FHEE__EED_Core_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 3 ) ) );
 	}
-	
+
 	/**
 	 * Gets the default limit that should be used when querying for resources
 	 * @return int
