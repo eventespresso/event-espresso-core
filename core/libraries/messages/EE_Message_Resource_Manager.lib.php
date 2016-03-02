@@ -1020,6 +1020,22 @@ class EE_Message_Resource_Manager {
 	}
 
 
+
+
+	/**
+	 * This method checks the `ee_has_activated_messenger` option to see if the message type has ever been
+	 * activated for the given messenger.  This can be called by client code on plugin updates etc to determine whether
+	 * to attempt automatically reactivating message types that should be activated by default or not.
+	 *
+	 * @param $message_type_name
+	 * @param $messenger_name
+	 * @return bool
+	 */
+	public function has_message_type_been_activated_for_messenger( $message_type_name, $messenger_name ) {
+		$has_activated = $this->get_has_activated_messengers_option();
+		return isset( $has_activated[ $messenger_name ] )
+			&& in_array( $message_type_name, $has_activated[ $messenger_name ] );
+	}
 }
 // End of file EE_Message_Resource_Manager.lib.php
 // Location: /EE_Message_Resource_Manager.lib.php
