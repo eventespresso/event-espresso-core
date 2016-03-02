@@ -515,7 +515,7 @@ class Read extends Base {
 	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array ) {
 		$includes_for_this_model = $this->explode_and_get_items_prefixed_with( $rest_request->get_param( 'include' ), '' );
 		//if they passed in * or didn't specify any includes, return everything
-		if( ! in_array( '*', $includes_for_this_model ) 
+		if( ! in_array( '*', $includes_for_this_model )
 			&& ! empty( $includes_for_this_model ) ) {
 			if( $model->has_primary_key_field() ) {
 				//always include the primary key. ya just gotta know that at least
@@ -528,15 +528,15 @@ class Read extends Base {
 		}
 		$relation_settings = $this->get_model_version_info()->relation_settings( $model );
 		foreach( $relation_settings as $relation_name => $relation_obj ) {
-			$related_fields_to_include = $this->explode_and_get_items_prefixed_with( 
-				$rest_request->get_param( 'include' ), 
-				$relation_name 
+			$related_fields_to_include = $this->explode_and_get_items_prefixed_with(
+				$rest_request->get_param( 'include' ),
+				$relation_name
 			);
 			$related_fields_to_calculate = $this->explode_and_get_items_prefixed_with(
 				$rest_request->get_param( 'calculate' ),
 				$relation_name
 			);
-			//did they specify they wanted to include a related model, or 
+			//did they specify they wanted to include a related model, or
 			//specific fields from a related model?
 			//or did they specify to calculate a field from a related model?
 			if( $related_fields_to_include || $related_fields_to_calculate ) {
@@ -829,8 +829,8 @@ class Read extends Base {
 				}
 			} else if( strpos( $item, $prefix . '.' ) === 0 ) {
 				//this item has the prefix and a period, grab it
-				$contents_with_prefix[] = substr( 
-					$item, 
+				$contents_with_prefix[] = substr(
+					$item,
 					strpos( $item, $prefix . '.' ) + strlen( $prefix . '.' )
 					);
 			} else if( $item === $prefix ) {
@@ -845,7 +845,7 @@ class Read extends Base {
 	/**
 	 * @deprecated since 4.8.36.rc.001 You should instead use Read::explode_and_get_items_prefixed_with.
 	 * Deprecated because its return values were really quite confusing- sometimes it returned
-	 * an empty array (when the include string was blank or '*') or sometiems it returned
+	 * an empty array (when the include string was blank or '*') or sometimes it returned
 	 * array('*') (when you provided a model and a model of that kind was found).
 	 * Parses the $include_string so we fetch all the field names relating to THIS model
 	 * (ie have NO period in them), or for the provided model (ie start with the model
