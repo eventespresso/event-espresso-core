@@ -418,12 +418,14 @@ class Read extends Base {
 			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
 				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
 					$field_obj,
-					$field_value
+					$field_value,
+					$this->get_model_version_info()->requested_version()
 				);
 			} else {
 				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
 					$field_obj,
-					$field_obj->prepare_for_get( $field_value )
+					$field_obj->prepare_for_get( $field_value ),
+					$this->get_model_version_info()->requested_version()
 				);
 			}
 		}
@@ -578,7 +580,8 @@ class Read extends Base {
 		foreach( $calculated_fields as $field_to_calculate ) {
 			$calculated_fields_to_return[ $field_to_calculate ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
 				null,
-				$this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this )
+				$this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this ),
+				$this->get_model_version_info()->requested_version()
 			);
 		}
 		return $calculated_fields_to_return;

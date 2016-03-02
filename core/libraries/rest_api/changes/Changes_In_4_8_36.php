@@ -32,6 +32,13 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 			10, 
 			3
 		);
+		//before this, infinity was -1, now it's null
+		add_filter(
+			'FHEE__EED_Core_Rest_Api__prepare_field_for_rest_api',
+			array( $this, 'use_negative_one_for_infinity_before_this_version' ),
+			10,
+			4
+		);
 	}
 	
 	/**
@@ -93,6 +100,25 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 					)));
 		}
 		return $headers;
+	}
+	
+	/**
+	 * If the value was infinity, we now use null in our JSON responses, 
+	 * but before this version we used -1.
+	 * @param mixed $new_value
+	 * @param EE_Model_Field_Base $field_obj
+	 * @param mixed $original_value
+	 * @param string $requested_value
+	 * @return mixed
+	 */
+	public function use_negative_one_for_infinity_before_this_version( $new_value, $field_obj, $original_value, $requested_value ) {
+		if( $this->applies_to_version( $requested_value ) 
+			&& $original_value === EE_INF ) {
+			//return the old representation of infinity in the JSON
+			return -1;
+		}
+		return $new_value;
+		
 	}
 	
 }
