@@ -29,7 +29,11 @@ class Event {
 	 * @return int
 	 */
 	public static function optimum_sales_at_start( $wpdb_row, $request, $controller ){
-		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		if( is_array( $wpdb_row ) && isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		} else {
+			$event_obj = null;
+		}
 		if( $event_obj instanceof \EE_Event ) {
 			return $event_obj->total_available_spaces( true );
 		} else {
@@ -54,7 +58,11 @@ class Event {
 	 * @return int
 	 */
 	public static function optimum_sales_now( $wpdb_row, $request, $controller ){
-		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		if( is_array( $wpdb_row ) && isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		} else {
+			$event_obj = null;
+		}
 		if( $event_obj instanceof \EE_Event ) {
 			return $event_obj->total_available_spaces( false );
 		} else {
@@ -78,7 +86,11 @@ class Event {
 	 * @return int
 	 */
 	public static function spaces_remaining( $wpdb_row, $request, $controller ){
-		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		if( is_array( $wpdb_row ) && isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		} else {
+			$event_obj = null;
+		}
 		if( $event_obj instanceof \EE_Event ) {
 			return $event_obj->spaces_remaining_for_sale();
 		} else {
@@ -102,6 +114,14 @@ class Event {
 	 * @return int
 	 */
 	public static function spots_taken( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate spots_taken because the database row %1$s does not have an entry for "Event_CPT.ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		return \EEM_Registration::instance()->count(
 			array(
 				array(
@@ -124,6 +144,14 @@ class Event {
 	 * @return int
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Event_CPT.ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		if( ! current_user_can( 'ee_read_registrations' ) ) {
 			return null;
 		}
@@ -151,6 +179,14 @@ class Event {
 	 * @return int|null if permission denied
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Event_CPT.ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		if( ! current_user_can( 'ee_read_checkins' ) ) {
 			return null;
 		}
@@ -167,6 +203,14 @@ class Event {
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Event_CPT.ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		if( ! current_user_can( 'ee_read_checkins' ) ) {
 			return null;
 		}

@@ -29,8 +29,22 @@ class Datetime {
 	 * @return int
 	 */
 	public static function spaces_remaining_considering_tickets( $wpdb_row, $request, $controller ){
-		$dtt_obj = \EEM_Datetime::instance()->get_one_by_ID( $wpdb_row[ 'Datetime.DTT_ID' ] );
-		return $dtt_obj->spaces_remaining( true );
+		if( is_array( $wpdb_row ) && isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
+			$dtt_obj = \EEM_Datetime::instance()->get_one_by_ID( $wpdb_row[ 'Datetime.DTT_ID' ] );
+		} else {
+			$dtt_obj = null;
+		}
+		if( $dtt_obj instanceof \EE_Datetime ) {
+			return $dtt_obj->spaces_remaining( true );
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found', 'event_espresso' ),
+					$wpdb_row[ 'Datetime.DTT_ID' ], 
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 	}
 
 	/**
@@ -42,6 +56,14 @@ class Datetime {
 	 * @return int
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		if( ! current_user_can( 'ee_read_checkins' ) ) {
 			return null;
 		}
@@ -57,6 +79,14 @@ class Datetime {
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		if( ! current_user_can( 'ee_read_checkins' ) ) {
 			return null;
 		}
@@ -73,6 +103,14 @@ class Datetime {
 	 * @return int
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
+		if( ! is_array( $wpdb_row ) || ! isset( $wpdb_row[ 'Datetime.DTT_ID' ] ) ) {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Datetime.DTT_ID"', 'event_espresso' ),
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 		if( ! current_user_can( 'ee_read_registrations' ) ) {
 			return null;
 		}
