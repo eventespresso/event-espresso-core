@@ -134,8 +134,6 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 	public static function set_defaults() {
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		//make sure internal settings on $message_resource_manager are reset (so we have the correct active messenger/message type set)
-		$message_resource_manager->reset_active_messengers_and_message_types();
 
 		//for any message types with force activation, let's ensure they are activated
 		foreach ( self::$_ee_message_type_registry as $message_type_name => $settings ) {
