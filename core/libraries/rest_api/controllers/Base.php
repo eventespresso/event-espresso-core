@@ -1,6 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
-
+use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -132,6 +132,9 @@ class Base {
 	 * @return \WP_REST_Response
 	 */
 	public function send_response( $response ) {
+		if( $response instanceof Rest_Exception ) {
+			$response = new \WP_Error( $response->get_string_code(), $response->getMessage(), $response->get_data() );
+		}
 		if( $response instanceof \Exception ) {
 			$code = $response->getCode() ? $response->getCode() : 'error_occurred';
 			$response = new \WP_Error( $code, $response->getMessage() );
