@@ -94,7 +94,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 					MSG_context VARCHAR(50),
 					MSG_recipient_ID BIGINT(20) NULL,
 					MSG_recipient_type VARCHAR(45) NULL,
-					MSG_content TEXT NULL,
+					MSG_content LONGTEXT NULL,
 					MSG_to VARCHAR(255) NULL,
 					MSG_from VARCHAR(255) NULL,
 					MSG_subject VARCHAR(255) NULL,
