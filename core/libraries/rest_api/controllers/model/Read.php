@@ -2,6 +2,7 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -578,11 +579,20 @@ class Read extends Base {
 		//note: setting calculate=* doesn't do anything
 		$calculated_fields_to_return = array();
 		foreach( $calculated_fields as $field_to_calculate ) {
+			try{
 			$calculated_fields_to_return[ $field_to_calculate ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
 				null,
 				$this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this ),
 				$this->get_model_version_info()->requested_version()
 			);
+			} catch( Rest_Exception $e ) {
+				//if we don't have permission to read it, just leave it out. but let devs know about the problem
+				$this->_set_response_header( 
+					'Notices-Field-Calculation-Errors[' . $e->get_string_code() . '][' . $model->get_this_model_name() . '][' . $field_to_calculate . ']', 
+					$e->getMessage(), 
+					true 
+				);
+			}
 		}
 		return $calculated_fields_to_return;
 	}

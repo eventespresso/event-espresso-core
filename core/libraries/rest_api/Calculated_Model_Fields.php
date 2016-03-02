@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
+use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
 /**
  *
  * Class Calculations
@@ -109,11 +110,13 @@ class Calculated_Model_Fields {
 			$classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
 			return call_user_func( array( $classname, $field_name ), $wpdb_row, $rest_request, $controller );
 		}
-		if( defined( 'EE_REST_API_DEBUG_MODE' )
-			&& EE_REST_API_DEBUG_MODE ) {
-			throw new \EE_Error( sprintf( __( 'There is no calculated field %1$s', 'event_espresso' ), $field_name ) );
-		} else {
-			return null;
-		}
+		throw new Rest_Exception( 
+			'calculated_field_does_not_exist',
+			sprintf( 
+				__( 'There is no calculated field %1$s on resource %2$s', 'event_espresso' ), 
+				$field_name, 
+				$model->get_this_model_name() 
+			) 
+		);
 	}
 }
