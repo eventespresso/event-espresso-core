@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\calculations;
+use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 /**
  *
@@ -17,7 +18,7 @@ if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 
-class Event {
+class Event extends Calculations_Base {
 	/**
 	 * Calculates the total spaces on the event (not subtracting sales, but taking
 	 * sales into account; so this is the optimum sales that CAN still be achieved)
@@ -152,9 +153,7 @@ class Event {
 				)
 			);
 		}
-		if( ! current_user_can( 'ee_read_registrations' ) ) {
-			return null;
-		}
+		self::_verify_current_user_can( 'ee_read_registrations', 'spots_taken_pending_payment' );
 		return \EEM_Registration::instance()->count(
 			array(
 				array(
@@ -187,9 +186,7 @@ class Event {
 				)
 			);
 		}
-		if( ! current_user_can( 'ee_read_checkins' ) ) {
-			return null;
-		}
+		self::_verify_current_user_can( 'ee_read_checkins', 'registrations_checked_in_count' );
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], true );
 	}
 
@@ -211,9 +208,7 @@ class Event {
 				)
 			);
 		}
-		if( ! current_user_can( 'ee_read_checkins' ) ) {
-			return null;
-		}
+		self::_verify_current_user_can( 'ee_read_checkins', 'registrations_checked_out_count' );
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], false );
 	}
 }
