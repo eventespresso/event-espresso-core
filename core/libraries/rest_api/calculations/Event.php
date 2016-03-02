@@ -30,7 +30,17 @@ class Event {
 	 */
 	public static function optimum_sales_at_start( $wpdb_row, $request, $controller ){
 		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
-		return $event_obj->total_available_spaces( true );
+		if( $event_obj instanceof \EE_Event ) {
+			return $event_obj->total_available_spaces( true );
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found', 'event_espresso' ),
+					$wpdb_row[ 'Event_CPT.ID' ], 
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 	}
 
 	/**
@@ -44,8 +54,18 @@ class Event {
 	 * @return int
 	 */
 	public static function optimum_sales_now( $wpdb_row, $request, $controller ){
-		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.EVT_ID' ] );
-		return $event_obj->total_available_spaces( false );
+		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		if( $event_obj instanceof \EE_Event ) {
+			return $event_obj->total_available_spaces( false );
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found', 'event_espresso' ),
+					$wpdb_row[ 'Event_CPT.ID' ], 
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 	}
 
 	/**
@@ -58,8 +78,18 @@ class Event {
 	 * @return int
 	 */
 	public static function spaces_remaining( $wpdb_row, $request, $controller ){
-		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.EVT_ID' ] );
-		return $event_obj->spaces_remaining_for_sale();
+		$event_obj = \EEM_Event::instance()->get_one_by_ID( $wpdb_row[ 'Event_CPT.ID' ] );
+		if( $event_obj instanceof \EE_Event ) {
+			return $event_obj->spaces_remaining_for_sale();
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found', 'event_espresso' ),
+					$wpdb_row[ 'Event_CPT.ID' ], 
+					print_r( $wpdb_row, true )
+				)
+			);
+		}
 	}
 
 	/**
