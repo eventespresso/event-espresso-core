@@ -128,24 +128,27 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 
 
 
-    /**
-     * This just ensures that when an addon registers a message type that on initial activation/reactivation the defaults the addon sets are taken care of.
-     */
-    public static function set_defaults() {
-		//only set defaults if we're not in EE_Maintenance mode
-    	EE_Registry::instance()->load_helper('Activation');
-    	EEH_Activation::generate_default_message_templates();
+	/**
+	 * This just ensures that when an addon registers a message type that on initial activation/reactivation the defaults the addon sets are taken care of.
+	 */
+	public static function set_defaults() {
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		//make sure internal settings on $message_resource_manager are reset (so we have the correct active messenger/message type set)
+		$message_resource_manager->reset_active_messengers_and_message_types();
+
 		//for any message types with force activation, let's ensure they are activated
 		foreach ( self::$_ee_message_type_registry as $message_type_name => $settings ) {
 			if ( $settings['force_activation'] ) {
 				foreach ( $settings['messengers_to_activate_with'] as $messenger ) {
-					$message_resource_manager->ensure_message_type_is_active( $message_type_name, $messenger );
+					//DO not force activation if this message type has already been activated in the system
+					if ( ! $message_resource_manager->has_message_type_been_activated_for_messenger( $message_type_name, $messenger ) ) {
+						$message_resource_manager->ensure_message_type_is_active( $message_type_name, $messenger );
+					}
 				}
 			}
 		}
-    }
+	}
 
 
 
