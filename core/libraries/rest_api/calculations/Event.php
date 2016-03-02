@@ -224,11 +224,16 @@ class Event {
 		if( ! $data ) {
 			return false;
 		}
+		if( isset( $data[ 3] ) ) {
+			$generated = $data[ 3 ];
+		} else {
+			$generated = true;
+		}
 		return array(
 			'url' => $data[ 0 ],
 			'width' => $data[ 1 ],
 			'height' => $data[ 2 ],
-			'generated' => $data[ 3 ]
+			'generated' => $generated
 		);
 	}
 }
