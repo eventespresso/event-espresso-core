@@ -539,6 +539,8 @@ class EE_Message_Resource_Manager {
 	 * wrapper for _set_active_messengers_and_message_types()
 	 */
 	public function reset_active_messengers_and_message_types() {
+		$this->_initialized = false;
+		$this->_initialize_collections();
 		$this->_set_active_messengers_and_message_types();
 	}
 
