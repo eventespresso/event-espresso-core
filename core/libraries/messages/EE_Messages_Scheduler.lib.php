@@ -46,8 +46,8 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 */
 	public function custom_schedules( $schedules ) {
 		$schedules['ee_message_cron'] = array(
-				'interval' => self::message_cron_schedule,
-				'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
+			'interval' => self::message_cron_schedule,
+			'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
 		);
 		return $schedules;
 	}
@@ -82,10 +82,10 @@ class EE_Messages_Scheduler extends EE_BASE {
 			site_url()
 		);
 		$request_args = array(
-				'timeout' => 300,
-				'blocking' => defined( 'DOING_CRON' ) && DOING_CRON ? true : false,
-				'sslverify' => false,
-				'http_request_redirection_count' => 10,
+			'timeout' => 300,
+			'blocking' => ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? true : false,
+			'sslverify' => false,
+			'redirection' => 10,
 		);
 		$response = wp_remote_get( $request_url, $request_args );
 		if ( is_wp_error( $response ) ) {
