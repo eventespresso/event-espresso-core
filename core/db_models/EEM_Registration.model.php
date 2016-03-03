@@ -304,6 +304,67 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	}
 
 
+	/**
+	 * Get the number of registrations per day including the count of registrations for each Registration Status.
+	 *
+	 * @param string $period
+	 *
+	 * @return stdClass[] with properties Registration_REG_date and a column for each registration status as the non-localized
+	 * status code (i.e. 'APPROVED')
+	 */
+	public function get_registrations_per_day_and_per_status_report( $period = '-1 month' ) {
+		global $wpdb;
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
+
+		//prepare the query interval for displaying offset
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
+
+		//inner date query
+		$inner_date_query = "SELECT DISTINCT REG_date from $registration_table WHERE REG_date >= '$sql_date'";
+
+		//start main query
+		$select = "SELECT DATE($query_interval) as Registration_REG_date, ";
+		$join = '';
+		$join_parts = array();
+		$select_parts = array();
+		$event_join_parts = array();
+
+		//loop through to do parts for each status.
+		foreach ( EEM_Registration::reg_status_array() as $STS_ID => $STS_code ) {
+			$select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
+			$join_parts[] = "$registration_table AS $STS_code ON $STS_code.REG_date = dates.REG_date AND $STS_code.STS_ID = '$STS_ID'";
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
+				$event_join_parts[] = "( events.ID = $STS_code.EVT_ID AND events.post_author = " . get_current_user_id() . ")";
+			}
+		}
+
+		//setup the selects
+		$select .= implode(', ', $select_parts );
+		$select .= " FROM ($inner_date_query) AS dates LEFT JOIN ";
+
+		//setup the joins
+		$join .= implode( " LEFT JOIN ", $join_parts );
+
+		//maybe event restriction?
+		//anything special for restrictions?
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
+			$join .= " JOIN $wpdb->posts AS events ON ( " . implode( ' OR ', $event_join_parts ) . ")";
+		}
+
+		//now let's put it all together
+		$query = $select . $join . ' GROUP BY Registration_REG_date';
+
+		//and execute it
+		$results = $wpdb->get_results(
+			$query,
+			ARRAY_A
+		);
+		return $results;
+	}
+
+
 
 
 
