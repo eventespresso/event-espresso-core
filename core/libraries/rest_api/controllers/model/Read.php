@@ -2,7 +2,8 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
-use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -417,13 +418,13 @@ class Read extends Base {
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
 			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
-				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
+				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
 					$field_obj,
 					$field_value,
 					$this->get_model_version_info()->requested_version()
 				);
 			} else {
-				$result[ $field_name ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
+				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
 					$field_obj,
 					$field_obj->prepare_for_get( $field_value ),
 					$this->get_model_version_info()->requested_version()
@@ -580,7 +581,7 @@ class Read extends Base {
 		$calculated_fields_to_return = array();
 		foreach( $calculated_fields as $field_to_calculate ) {
 			try{
-			$calculated_fields_to_return[ $field_to_calculate ] = \EED_Core_Rest_Api::prepare_field_value_for_rest_api(
+			$calculated_fields_to_return[ $field_to_calculate ] = Model_Data_Translator::prepare_field_value_for_json(
 				null,
 				$this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this ),
 				$this->get_model_version_info()->requested_version()
@@ -694,7 +695,10 @@ class Read extends Base {
 
 
 	/**
-	 * Translates API filter get parameter into $query_params array used by EEM_Base::get_all()
+	 * Translates API filter get parameter into $query_params array used by EEM_Base::get_all().
+	 * Note: right now the query parameter keys for fields (and related fields)
+	 * can be left as-is, but it's quite possible this will change someday.
+	 * Also, this method's contents might be candidate for moving to Model_Data_Translator
 	 *
 	 * @param \EEM_Base $model
 	 * @param array     $query_parameters from $_GET parameter @see Read:handle_request_get_all
@@ -705,7 +709,11 @@ class Read extends Base {
 	public function create_model_query_params( $model, $query_parameters ) {
 		$model_query_params = array( );
 		if ( isset( $query_parameters[ 'where' ] ) ) {
-			$model_query_params[ 0 ] = $this->prepare_rest_query_params_key_for_models( $model, $query_parameters[ 'where' ] );
+			$model_query_params[ 0 ] = Model_Data_Translator::prepare_conditions_query_params_for_models( 
+				$query_parameters[ 'where' ], 
+				$model, 
+				$this->get_model_version_info()->requested_version() 
+			);
 		}
 		if ( isset( $query_parameters[ 'order_by' ] ) ) {
 			$order_by = $query_parameters[ 'order_by' ];
@@ -715,7 +723,7 @@ class Read extends Base {
 			$order_by = null;
 		}
 		if( $order_by !== null ){
-			$model_query_params[ 'order_by' ] = $this->prepare_rest_query_params_key_for_models( $model, $order_by );
+			$model_query_params[ 'order_by' ] =  $order_by;
 		}
 		if ( isset( $query_parameters[ 'group_by' ] ) ) {
 			$group_by = $query_parameters[ 'group_by' ];
@@ -725,14 +733,14 @@ class Read extends Base {
 			$group_by = null;
 		}
 		if( $group_by !== null ){
-			if( is_array( $group_by ) ) {
-				$group_by = $this->prepare_rest_query_params_values_for_models( $model, $group_by );
-			}
 			$model_query_params[ 'group_by' ] = $group_by;
 		}
 		if ( isset( $query_parameters[ 'having' ] ) ) {
-			//@todo: no good for permissions
-			$model_query_params[ 'having' ] = $this->prepare_rest_query_params_key_for_models( $model, $query_parameters[ 'having' ] );
+			$model_query_params[ 'having' ] = Model_Data_Translator::prepare_conditions_query_params_for_models( 
+				$query_parameters[ 'having' ], 
+				$model, 
+				$this->get_model_version_info()->requested_version() 
+			);
 		}
 		if ( isset( $query_parameters[ 'order' ] ) ) {
 			$model_query_params[ 'order' ] = $query_parameters[ 'order' ];
@@ -775,7 +783,7 @@ class Read extends Base {
 
 	/**
 	 * Changes the REST-style query params for use in the models
-	 *
+	 * @deprecated
 	 * @param \EEM_Base $model
 	 * @param array     $query_params sub-array from @see EEM_Base::get_all()
 	 * @return array
@@ -791,10 +799,11 @@ class Read extends Base {
 		}
 		return $model_ready_query_params;
 	}
-
+	
 
 
 	/**
+	 * @deprecated 
 	 * @param $model
 	 * @param $query_params
 	 * @return array

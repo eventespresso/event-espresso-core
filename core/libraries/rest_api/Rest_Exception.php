@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\rest_api\helpers;
+namespace EventEspresso\core\libraries\rest_api;
 /**
  *
  * Class Exception

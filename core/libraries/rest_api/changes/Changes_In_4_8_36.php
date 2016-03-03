@@ -34,7 +34,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		);
 		//before this, infinity was -1, now it's null
 		add_filter(
-			'FHEE__EED_Core_Rest_Api__prepare_field_for_rest_api',
+			'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
 			array( $this, 'use_negative_one_for_infinity_before_this_version' ),
 			10,
 			4

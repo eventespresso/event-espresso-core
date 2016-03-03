@@ -1,6 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
-use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }

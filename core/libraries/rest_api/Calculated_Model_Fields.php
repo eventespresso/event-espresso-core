@@ -1,10 +1,10 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api;
 use EventEspresso\core\libraries\rest_api\controllers\Base;
-use EventEspresso\core\libraries\rest_api\helpers\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
 /**
  *
- * Class Calculations
+ * Class Calculationshelpers
  *
  * Class for defining which model fields can be calculated, and performing those calculations
  * as requested

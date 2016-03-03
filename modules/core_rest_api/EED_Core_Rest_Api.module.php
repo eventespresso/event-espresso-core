@@ -25,12 +25,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 	const ee_api_link_namespace = 'https://api.eventespresso.com/';
 
 	/**
-	 * We used to use -1 for infinity in the rest api, but that's ambiguous for
-	 * fields that COULD contain -1
-	 */
-	const ee_inf_in_rest = null;
-
-	/**
 	 *
 	 * @var Calculated_Model_Fields
 	 */
@@ -367,29 +361,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 		);
 	}
 
-	/**
-	* Prepares a field's value for display in the API
-	* @param \EE_Model_Field_Base $field_obj
-	* @param mixed $original_value
-	* @return mixed
-	*/
-   public static function prepare_field_value_for_rest_api( $field_obj, $original_value, $requested_version ) {
-		if( $original_value === EE_INF ) {
-			$new_value = self::ee_inf_in_rest;
-		} elseif( $field_obj instanceof \EE_Datetime_Field &&
-			$original_value instanceof \DateTime ) {
-			$new_value = $original_value->format( 'c' );
-			$new_value = mysql_to_rfc3339( $new_value );
-		} else {
-			$new_value = $original_value;
-		}
-		return apply_filters( 'FHEE__EED_Core_Rest_Api__prepare_field_for_rest_api', 
-			$new_value,
-			$field_obj,
-			$original_value,
-			$requested_version
-		);
-    }
 	/**
 	 * Gets routes for the config
 	 * @return array @see _register_model_routes

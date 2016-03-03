@@ -424,15 +424,20 @@ class Read_Test extends \EE_UnitTestCase{
 
 	/**
 	 * @group 24
+	 * @group 9406
 	 */
-	public function test_create_model_query_params(){
+	public function test_create_model_query_params__4_8_36(){
 		$controller = new Read();
+		$controller->set_requested_version( '4.8.36' );
 		$this->assertEquals( array(
 					0 => array(
 						'EVT_desc*foobar' => array( 'LIKE', '%frogs%' ),
 						'OR*otherfunanimals' => array(
 							'EVT_name' => array( 'IN', array( 'chickens', 'cows' ) ),
-							'EVT_slug' => 'cowbunga'
+							'EVT_slug' => 'cowbunga',
+							'Datetime.DTT_reg_limit' => EE_INF,
+							'Datetime.DTT_reg_limit*1' => EE_INF,
+							'Datetime.DTT_EVT_start' => array( '<', '2016-01-01 00:00:00' ),
 						)
 					),
 					'order_by' => array(
@@ -454,8 +459,12 @@ class Read_Test extends \EE_UnitTestCase{
 						'EVT_desc*foobar' => array( 'LIKE', '%frogs%' ),
 						'OR*otherfunanimals' => array(
 							'EVT_name' => array( 'IN', array( 'chickens', 'cows' ) ),
-							'EVT_slug' => 'cowbunga'
-						)
+							'EVT_slug' => 'cowbunga',
+							'Datetime.DTT_reg_limit' => null,
+							'Datetime.DTT_reg_limit*1' => '',
+							'Datetime.DTT_EVT_start' => array( '<', '2016-01-01T00:00:00' ),
+						),
+						
 					),
 					'order_by' => array(
 						'EVT_desc' => 'ASC'

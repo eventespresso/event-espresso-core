@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\calculations;
 use EventEspresso\core\libraries\rest_api\calculations\Base as Calculations_Base;
-use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\controllers\model\Base as Controllers_Base;
 /**
  *
  * Class Datetime
@@ -26,7 +26,7 @@ class Datetime extends Calculations_Base {
 	 * @see EE_Datetime::spaces_remaining( true )
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
-	 * @param Base $controller
+	 * @param Controller_Base $controller
 	 * @return int
 	 */
 	public static function spaces_remaining_considering_tickets( $wpdb_row, $request, $controller ){
@@ -53,7 +53,7 @@ class Datetime extends Calculations_Base {
 	 *
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
-	 * @param Base $controller
+	 * @param Controller_Base $controller
 	 * @return int
 	 */
 	public static function registrations_checked_in_count( $wpdb_row, $request, $controller ){
@@ -74,7 +74,7 @@ class Datetime extends Calculations_Base {
 	 *
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
-	 * @param Base $controller
+	 * @param Controller_Base $controller
 	 * @return int
 	 */
 	public static function registrations_checked_out_count( $wpdb_row, $request, $controller ){
@@ -96,7 +96,7 @@ class Datetime extends Calculations_Base {
 	 *
 	 * @param array $wpdb_row
 	 * @param \WP_REST_Request $request
-	 * @param Base $controller
+	 * @param Controller_Base $controller
 	 * @return int
 	 */
 	public static function spots_taken_pending_payment( $wpdb_row, $request, $controller ){
