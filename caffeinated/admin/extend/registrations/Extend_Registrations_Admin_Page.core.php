@@ -505,9 +505,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			array_unshift( $regs, $column_titles );
 			//setup the date range.
 			EE_Registry::instance()->load_helper( 'DTT_Helper' );
-			$beginning_date = new DateTime( "now " . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
-			$ending_date = new DateTime( "now", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
-			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
+			$DateTimeZone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
+			$beginning_date = new DateTime( "now " . $period, $DateTimeZone );
+			$ending_date = new DateTime( "now", $DateTimeZone );
+			$subtitle = sprintf(
+				_x( 'For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso' ),
+				$beginning_date->format( 'Y-m-d' ),
+				$ending_date->format( 'Y-m-d' )
+			);
 		}
 
 		$report_title = __( 'Total Registrations per Day', 'event_espresso' );
@@ -518,7 +523,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'id' 		=> $report_ID,
 			'regs' 	=> $regs,
 			'noResults' => empty( $regs ),
-			'noRegsMsg' => sprintf( __('%sThere are currently no registration records in the last month for this report.%s', 'event_espresso'), '<h2>' . $report_title . '</h2><p>', '</p>' ),
+			'noRegsMsg' => sprintf(
+				__(
+					'%sThere are currently no registration records in the last month for this report.%s',
+					'event_espresso'
+				),
+				'<h2>' . $report_title . '</h2><p>',
+				'</p>'
+			),
 		);
 		wp_localize_script( 'ee-reg-reports-js', 'regPerDay', $report_params );
 
@@ -568,9 +580,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 			//setup the date range.
 			EE_Registry::instance()->load_helper( 'DTT_Helper' );
-			$beginning_date = new DateTime( "now " . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
-			$ending_date = new DateTime( "now", new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
-			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
+			$DateTimeZone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
+			$beginning_date = new DateTime( "now " . $period, $DateTimeZone );
+			$ending_date = new DateTime( "now", $DateTimeZone );
+			$subtitle = sprintf(
+				_x( 'For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso' ),
+				$beginning_date->format( 'Y-m-d' ),
+				$ending_date->format( 'Y-m-d' )
+			);
 		}
 
 		$report_title = __( 'Total Registrations per Event', 'event_espresso' );
@@ -581,7 +598,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'id' 		=> $report_ID,
 			'regs' 	=> $regs,
 			'noResults' => empty( $regs ),
-			'noRegsMsg' => sprintf( __('%sThere are currently no registration records in the last month for this report.%s', 'event_espresso'), '<h2>' . $report_title . '</h2><p>', '</p>' ),
+			'noRegsMsg' => sprintf(
+				__(
+					'%sThere are currently no registration records in the last month for this report.%s',
+					'event_espresso'
+				),
+				'<h2>' . $report_title . '</h2><p>',
+				'</p>'
+			),
 		);
 		wp_localize_script( 'ee-reg-reports-js', 'regPerEvent', $report_params );
 
