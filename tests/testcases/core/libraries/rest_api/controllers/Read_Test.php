@@ -437,7 +437,7 @@ class Read_Test extends \EE_UnitTestCase{
 							'EVT_slug' => 'cowbunga',
 							'Datetime.DTT_reg_limit' => EE_INF,
 							'Datetime.DTT_reg_limit*1' => EE_INF,
-							'Datetime.DTT_EVT_start' => array( '<', '2016-01-01 00:00:00' ),
+							'Datetime.DTT_EVT_start' => array( '<', strtotime('2016-01-01 00:00:00') ),
 						)
 					),
 					'order_by' => array(

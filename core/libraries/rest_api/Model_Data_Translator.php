@@ -66,7 +66,7 @@ class Model_Data_Translator {
 			&& in_array( $original_value, array( null, '' ), true ) ) {
 			$new_value = EE_INF;
 		} elseif( $field_obj instanceof \EE_Datetime_Field ) {
-			$new_value =  date( 'Y-m-d H:i:s', rest_parse_date( $original_value ) );
+			$new_value = rest_parse_date( $original_value );
 		} else {
 			$new_value = $original_value;
 		}
