@@ -570,6 +570,12 @@ class EED_Messages  extends EED_Module {
 			return self::resend_message();
 		}
 
+		//make sure any incoming request data is set on the REQ so that it gets picked up later.
+		$req_data = (array) $req_data;
+		foreach( $req_data as $request_key => $request_value ) {
+			EE_Registry::instance()->REQ->set( $request_key, $request_value );
+		}
+
 		if ( ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request() ) {
 			return false;
 		}
