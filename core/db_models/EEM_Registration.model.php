@@ -306,15 +306,17 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * Get the number of registrations per day including the count of registrations for each Registration Status.
+	 * Note: EEM_Registration::status_id_incomplete registrations are excluded from the results.
 	 *
 	 * @param string $period
 	 *
-	 * @return stdClass[] with properties Registration_REG_date and a column for each registration status as the non-localized
-	 * status code (i.e. 'APPROVED')
+	 * @return stdClass[] with properties Registration_REG_date and a column for each registration status as the STS_ID
+	 *                    (i.e. RAP)
 	 */
 	public function get_registrations_per_day_and_per_status_report( $period = '-1 month' ) {
 		global $wpdb;
 		$registration_table = $wpdb->prefix . 'esp_registration';
+		$event_table = $wpdb->posts;
 		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
 
 		//prepare the query interval for displaying offset
@@ -322,22 +324,29 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
 
 		//inner date query
-		$inner_date_query = "SELECT DISTINCT REG_date from $registration_table WHERE REG_date >= '$sql_date'";
+		$inner_date_query = "SELECT DISTINCT REG_date from $registration_table ";
+		$inner_where = " WHERE";
+		//exclude events not authored by user if permissions in effect
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
+			$inner_date_query .= "LEFT JOIN $event_table ON ID = EVT_ID";
+			$inner_where .= " post_author = " . get_current_user_id() . " AND";
+		}
+		$inner_where .= " REG_date >= '$sql_date'";
+		$inner_date_query .= $inner_where;
 
 		//start main query
 		$select = "SELECT DATE($query_interval) as Registration_REG_date, ";
 		$join = '';
 		$join_parts = array();
 		$select_parts = array();
-		$event_join_parts = array();
 
-		//loop through to do parts for each status.
+		//loop through registration stati to do parts for each status.
 		foreach ( EEM_Registration::reg_status_array() as $STS_ID => $STS_code ) {
+			if ( $STS_ID === EEM_Registration::status_id_incomplete ) {
+				continue;
+			}
 			$select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
 			$join_parts[] = "$registration_table AS $STS_code ON $STS_code.REG_date = dates.REG_date AND $STS_code.STS_ID = '$STS_ID'";
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
-				$event_join_parts[] = "( events.ID = $STS_code.EVT_ID AND events.post_author = " . get_current_user_id() . ")";
-			}
 		}
 
 		//setup the selects
@@ -346,12 +355,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 		//setup the joins
 		$join .= implode( " LEFT JOIN ", $join_parts );
-
-		//maybe event restriction?
-		//anything special for restrictions?
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
-			$join .= " JOIN $wpdb->posts AS events ON ( " . implode( ' OR ', $event_join_parts ) . ")";
-		}
 
 		//now let's put it all together
 		$query = $select . $join . ' GROUP BY Registration_REG_date';
@@ -363,6 +366,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		);
 		return $results;
 	}
+
 
 
 
