@@ -390,7 +390,7 @@ class Model_Version_Info {
 		}
 		return $extra_properties;
 	}
-	
+
 	/**
 	 * Gets all the related models for the specified model. It's good to use this
 	 * in case this model didn't exist for this version or something
@@ -409,7 +409,7 @@ class Model_Version_Info {
 			'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
 			$relations,
 			$model
-		);;
+		);
 	}
 
 }

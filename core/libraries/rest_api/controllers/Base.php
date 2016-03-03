@@ -1,6 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers;
-
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -19,7 +19,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class Base {
 
 	const header_prefix_for_ee = 'X-EE-';
-	
+
 	const header_prefix_for_wp = 'X-WP-';
 
 	/**
@@ -73,11 +73,11 @@ class Base {
 	/**
 	 * Sets headers for the response
 	 *
-	 * @param string $header_key, excluding the "X-EE-" part
-	 * @param array|string $value if an array, multiple headers will be added, one
-	 * for each key in the array
-	 * @param boolean whether ot use the EE prefix on teh header, or fallback to 
-	 * the standard WP one
+	 * @param string       $header_key    , excluding the "X-EE-" part
+	 * @param array|string $value         if an array, multiple headers will be added, one
+	 *                                    for each key in the array
+	 * @param boolean      $use_ee_prefix whether to use the EE prefix on the header, or fallback to
+	 *                                    the standard WP one
 	 */
 	protected function _set_response_header( $header_key, $value, $use_ee_prefix = true ) {
 		if( is_array( $value ) ) {
@@ -132,8 +132,12 @@ class Base {
 	 * @return \WP_REST_Response
 	 */
 	public function send_response( $response ) {
+		if( $response instanceof Rest_Exception ) {
+			$response = new \WP_Error( $response->get_string_code(), $response->getMessage(), $response->get_data() );
+		}
 		if( $response instanceof \Exception ) {
-			$response = new \WP_Error( $response->getCode(), $response->getMessage() );
+			$code = $response->getCode() ? $response->getCode() : 'error_occurred';
+			$response = new \WP_Error( $code, $response->getMessage() );
 		}
 		if( $response instanceof \WP_Error ) {
 			$response = $this->_add_ee_errors_to_response( $response );

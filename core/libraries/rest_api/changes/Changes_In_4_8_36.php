@@ -42,6 +42,13 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		//assuming ticket 9425's change gets pushed with 9406, we don't need to
 		//remove it from the calculated fields on older requests (because this will
 		//be the first version with calculated fields)
+		//before this, infinity was -1, now it's null
+		add_filter(
+			'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_field_for_rest_api',
+			array( $this, 'use_negative_one_for_infinity_before_this_version' ),
+			10,
+			4
+		);
 	}
 
 	/**
@@ -134,5 +141,25 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 		return $entity_response_array;
 	}
 
+	
+	/**
+	 * If the value was infinity, we now use null in our JSON responses, 
+	 * but before this version we used -1.
+	 * @param mixed $new_value
+	 * @param EE_Model_Field_Base $field_obj
+	 * @param mixed $original_value
+	 * @param string $requested_value
+	 * @return mixed
+	 */
+	public function use_negative_one_for_infinity_before_this_version( $new_value, $field_obj, $original_value, $requested_value ) {
+		if( $this->applies_to_version( $requested_value ) 
+			&& $original_value === EE_INF ) {
+			//return the old representation of infinity in the JSON
+			return -1;
+		}
+		return $new_value;
+		
+	}
+	
 }
 

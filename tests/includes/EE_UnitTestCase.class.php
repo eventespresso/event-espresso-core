@@ -539,10 +539,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$actual_date_obj = date_create_from_format( $full_format, $actual_date );
 		$date_parsing_error = '';
 		if( ! $expected_date_obj instanceof DateTime ) {
-			$date_parsing_error = sprintf(__( 'Expected date %1$s could not be parsed into format %2$s', 'event_espresso'), $expected_date, $full_format );
+			$date_parsing_error = sprintf(__( 'Expected date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $expected_date, true ), $full_format );
 		}
 		if( ! $actual_date_obj instanceof DateTime ) {
-			$date_parsing_error = sprintf(__( 'Actual date %1$s could not be parsed into format %2$s', 'event_espresso'), $actual_date, $full_format );
+			$date_parsing_error = sprintf(__( 'Actual date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $actual_date, true ), $full_format );
 		}
 		if( $date_parsing_error ) {
 			throw new EE_Error( $date_parsing_error );

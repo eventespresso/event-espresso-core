@@ -552,7 +552,6 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	}
         
         /**
-         * @group current
          * @group 4710
          */
         function test_set_line_items_taxable() {
