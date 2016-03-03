@@ -81,7 +81,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	 * Removes the new headers just added in this version to any requests to older versions
 	 * of the API
 	 * @param array $headers
-	 * @param \Base $controller
+	 * @param Base $controller
 	 * @param string $version
 	 * @return array
 	 */
