@@ -474,9 +474,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	private function _registrations_per_day_report( $period = '-1 month' ) {
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 
-		$REG = EEM_Registration::instance();
-
-		$results = $REG->get_registrations_per_day_and_per_status_report( $period );
+		$results = EEM_Registration::instance()->get_registrations_per_day_and_per_status_report( $period );
 		EE_Registry::instance()->load_helper( 'Template' );
 
 		$results = (array) $results;
@@ -538,18 +536,35 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
 
-		$REG = EEM_Registration::instance();
+		$results = EEM_Registration::instance()->get_registrations_per_event_and_per_status_report( $period );
+		EE_Registry::instance()->load_helper( 'Template' );
 
-		$results = $REG->get_registrations_per_event_report( $period );
 		$results = (array) $results;
 		$regs = array();
 		$subtitle = '';
 
 		if ( $results ) {
-			$regs[] = array( __( 'Event', 'event_espresso' ), __('Total Registrations', 'event_espresso' ) );
+			$column_titles = array();
+			$tracker = 0;
 			foreach ( $results as $result ) {
-				$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int) $result->total );
+				$report_column_values = array();
+				foreach( $result as $property_name => $property_value ) {
+					$property_value = $property_name == 'Registration_Event' ? wp_trim_words( $property_value, 4, '...' ) : (int) $property_value;
+					$report_column_values[] = $property_value;
+					if ( $tracker === 0 ) {
+						if ( $property_name == 'Registration_Event' ) {
+							$column_titles[] = __( 'Event', 'event_espresso' );
+						} else {
+							$column_titles[] = EEH_Template::pretty_status( $property_name, false, 'sentence' );
+						}
+					}
+				}
+				$tracker++;
+				$regs[] = $report_column_values;
 			}
+
+			//make sure the column_titles is pushed to the beginning of the array
+			array_unshift( $regs, $column_titles );
 
 			//setup the date range.
 			EE_Registry::instance()->load_helper( 'DTT_Helper' );
