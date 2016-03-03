@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
