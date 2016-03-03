@@ -191,7 +191,13 @@ class Read_Test extends \EE_UnitTestCase{
 			$result[ 'datetimes' ][ 0 ][ '_calculated_fields' ]
 		);
 	}
+	
+	/**
+	 * @group current
+	 */
 	public function test_handle_request_get_one__event() {
+		
+		\EED_Core_Rest_Api::set_hooks_for_changes();
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
@@ -241,7 +247,6 @@ class Read_Test extends \EE_UnitTestCase{
 				'featured_image_url' => null,
 				'EVT_timezone_string' => '',
 				'link' => get_permalink( $event->ID() ),
-				'_calculated_fields' => array()
 			  ),
 				$result
 				);
