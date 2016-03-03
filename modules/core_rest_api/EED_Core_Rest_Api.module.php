@@ -1,5 +1,6 @@
 <?php
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
