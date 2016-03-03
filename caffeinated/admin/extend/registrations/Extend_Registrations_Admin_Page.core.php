@@ -476,18 +476,35 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$REG = EEM_Registration::instance();
 
-		$results = $REG->get_registrations_per_day_report( $period );
+		$results = $REG->get_registrations_per_day_and_per_status_report( $period );
+		EE_Registry::instance()->load_helper( 'Template' );
 
 		$results = (array) $results;
 		$regs = array();
 		$subtitle = '';
 
 		if( $results ) {
-			$regs[] = array( __( 'Date (only days with registrations are shown)', 'event_espresso' ), __('Total Registrations', 'event_espresso' ) );
+			$column_titles = array();
+			$tracker = 0;
 			foreach ( $results as $result ) {
-				$regs[] = array( $result->regDate, (int) $result->total );
+				$report_column_values = array();
+				foreach( $result as $property_name => $property_value ) {
+					$property_value = $property_name == 'Registration_REG_date' ? $property_value : (int) $property_value;
+					$report_column_values[] = $property_value;
+					if ( $tracker === 0 ) {
+						if ( $property_name == 'Registration_REG_date' ) {
+							$column_titles[] = __( 'Date (only days with registrations are shown)', 'event_espresso' );
+						} else {
+							$column_titles[] = EEH_Template::pretty_status( $property_name, false, 'sentence' );
+						}
+					}
+				}
+				$tracker++;
+				$regs[] = $report_column_values;
 			}
 
+			//make sure the column_titles is pushed to the beginning of the array
+			array_unshift( $regs, $column_titles );
 			//setup the date range.
 			EE_Registry::instance()->load_helper( 'DTT_Helper' );
 			$beginning_date = new DateTime( "now " . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
