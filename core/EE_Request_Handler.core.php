@@ -67,6 +67,7 @@ final class EE_Request_Handler {
 	 */
 	public function __construct( $wp = null ) {
 		// grab request vars
+		// NOTE: WHEN MERGING TO 4.9 PLZ FAVOUR THE CHANGES IN 4.9 OVER THE FOLLOWING LINE
 		$this->_params = array_merge( $_GET, $_POST );
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? true : false;
