@@ -681,7 +681,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send_with_registrations trigger
 	 *
 	 * @since   4.3.0
 	 *
@@ -699,7 +699,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 * Callback for FHEE__EE_Registration__invoice_url__invoice_url or FHEE__EE_Registration__receipt_url__receipt_url
 	 *
 	 * @since   4.3.0
 	 *
