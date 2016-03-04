@@ -30,6 +30,10 @@ class EE_Newsletter_message_type extends EE_message_type {
 		$this->_master_templates = array(
 			'email' => 'registration',
 			);
+
+		//make sure we allow duplicates to be sent.
+		add_filter( 'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends', '__return_true' );
+
 		parent::__construct();
 	}
 
