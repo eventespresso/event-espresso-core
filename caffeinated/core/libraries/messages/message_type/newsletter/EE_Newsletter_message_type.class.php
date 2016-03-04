@@ -31,9 +31,6 @@ class EE_Newsletter_message_type extends EE_message_type {
 			'email' => 'registration',
 			);
 
-		//make sure we allow duplicates to be sent.
-		add_filter( 'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends', '__return_true' );
-
 		parent::__construct();
 	}
 
@@ -110,6 +107,57 @@ class EE_Newsletter_message_type extends EE_message_type {
 			$this->_valid_shortcodes[ $context ][] = 'newsletter';
 		}
 
+	}
+
+
+	/**
+	 * Override default _attendee_addressees in EE_message_type because we want to loop through the registrations
+	 * for EE_message_type.
+	 */
+	protected function _attendee_addressees() {
+		$addressee = array();
+
+		//looping through registrations
+		foreach ( $this->_data->registrations as $reg_id => $details ) {
+			//set $attendee array to blank on each loop
+			$aee = array();
+
+			//need to get the attendee from this registration.
+			$attendee = isset( $details['att_obj'] ) && $details['att_obj'] instanceof EE_Attendee
+				? $details['att_obj']
+				: null;
+
+			if ( ! $attendee instanceof EE_Attendee ) {
+				continue;
+			}
+
+			//set $aee from attendee object
+			$aee['att_obj'] = $attendee;
+			$aee['reg_objs'] = isset( $this->_data->attendees[ $attendee->ID() ]['reg_objs'] )
+				? $this->_data->attendees[ $attendee->ID() ]['reg_objs']
+				: array();
+			$aee['attendee_email'] = $attendee->email();
+			$aee['tkt_objs'] = isset( $this->_data->attendees[ $attendee->ID() ]['tkt_objs'] )
+				? $this->_data->attendees[ $attendee->ID() ]['tkt_objs']
+				: array();
+
+			if ( isset( $this->_data->attendees[ $attendee->ID() ]['evt_objs'] ) ) {
+				$aee['evt_objs'] = $this->_data->attendees[ $attendee->ID() ]['evt_objs'];
+				$aee['events'] = $this->_data->attendees[ $attendee->ID() ]['evt_objs'];
+			} else {
+				$aee['evt_objs'] = $aee['events'] = array();
+			}
+
+			$aee['reg_obj'] = isset( $details['reg_obj'] )
+				? $details['reg_obj']
+				: null;
+			$aee['attendees'] = $this->_data->attendees;
+
+			//merge in the primary attendee data
+			$aee = array_merge( $this->_default_addressee_data, $aee );
+			$addressee[] = new EE_Messages_Addressee( $aee );
+		}
+		return $addressee;
 	}
 
 
