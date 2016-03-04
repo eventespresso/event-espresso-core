@@ -520,6 +520,7 @@ class Read extends Base {
 	 */
 	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array ) {
 		$includes_for_this_model = $this->explode_and_get_items_prefixed_with( $rest_request->get_param( 'include' ), '' );
+		$includes_for_this_model = $this->_remove_model_names_from_array( $includes_for_this_model );
 		//if they passed in * or didn't specify any includes, return everything
 		if( ! in_array( '*', $includes_for_this_model )
 			&& ! empty( $includes_for_this_model ) ) {
@@ -565,8 +566,16 @@ class Read extends Base {
 		}
 		return $entity_array;
 	}
-
-
+	
+	/**
+	 * Returns a new array with all the names of models removed. Eg 
+	 * array( 'Event', 'Datetime.*', 'foobar' ) would become array( 'Datetime.*', 'foobar' )
+	 * @param array $arr
+	 * @return array
+	 */
+	private function _remove_model_names_from_array( $arr ) {
+		return array_diff( $arr, array_keys( \EE_Registry::instance()->non_abstract_db_models ) );
+	}
 	/**
 	 * Gets the calculated fields for the response
 	 *
