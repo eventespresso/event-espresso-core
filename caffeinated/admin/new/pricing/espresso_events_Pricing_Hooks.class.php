@@ -1105,7 +1105,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_required' => $default ? 0 : $ticket->required(),
 			'TKT_is_default_selector' => '',
 			'ticket_price_rows' => '',
-			'TKT_base_price' => $default || ! $base_price instanceof EE_Price ? '' : $base_price->get_pretty('PRC_amount', 'localized_float'),
+			'TKT_base_price' => $default || ! $base_price instanceof EE_Price ? '' : $base_price->amount(),
 			'TKT_base_price_ID' => $default || ! $base_price instanceof EE_Price ? 0 : $base_price->ID(),
 			'show_price_modifier' => count($prices) > 1 || ( $default && $count_price_mods > 0 ) ? '' : ' style="display:none;"',
 			'show_price_mod_button' => count($prices) > 1 || ( $default && $count_price_mods > 0 ) || ( !$default && $ticket->get('TKT_deleted') ) ? ' style="display:none;"' : '',
