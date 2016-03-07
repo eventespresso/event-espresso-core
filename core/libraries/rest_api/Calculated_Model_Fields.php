@@ -64,7 +64,13 @@ class Calculated_Model_Fields {
 					'spots_taken_pending_payment' => $event_calculations_class,
 					'spaces_remaining' => $event_calculations_class,
 					'registrations_checked_in_count' => $event_calculations_class,
-					'registrations_checked_out_count' => $event_calculations_class
+					'registrations_checked_out_count' => $event_calculations_class,
+					'image_thumbnail' => $event_calculations_class,
+					'image_medium' => $event_calculations_class,
+					'image_medium_large' => $event_calculations_class,
+					'image_large' => $event_calculations_class,
+					'image_post_thumbnail' => $event_calculations_class,
+					'image_full' => $event_calculations_class
 				),
 				'Datetime' => array(
 					'spaces_remaining_considering_tickets' => $datetime_calculations_class,

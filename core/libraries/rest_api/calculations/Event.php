@@ -233,4 +233,96 @@ class Event extends Calculations_Base {
 		self::_verify_current_user_can( 'ee_read_checkins', 'registrations_checked_out_count' );
 		return \EEM_Registration::instance()->count_registrations_checked_into_event( $wpdb_row[ 'Event_CPT.ID' ], false );
 	}
+
+	/**
+	 * Gets the thumbnail image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_thumbnail( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'thumbnail' );
+	}
+
+	/**
+	 * Gets the medium image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_medium( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'medium' );
+	}
+
+	/**
+	 * Gets the medium-large image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_medium_large( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'medium_large' );
+	}
+
+	/**
+	 * Gets the large image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_large( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'large' );
+	}
+
+	/**
+	 * Gets the post-thumbnail image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_post_thumbnail( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'post-thumbnail' );
+	}
+
+	/**
+	 * Gets the full size image
+	 * @param array $wpdb_row
+	 * @param \WP_REST_Request $request
+	 * @param Base $controller
+	 * @return array
+	 */
+	public static function image_full( $wpdb_row, $request, $controller ) {
+		return self::_calculate_image_data($wpdb_row[ 'Event_CPT.ID' ], 'full' );
+	}
+
+	/**
+	 * Gets image specs and formats them for the display in the API,
+	 * according to the image size requested
+	 * @param int $EVT_ID
+	 * @param string $image_size one of these: thumbnail, medium, medium_large, large, post-thumbnail, full
+	 * @return array|false if no such image exists. If array it will have keys 'url', 'width', 'height' and 'original'
+	 */
+	protected static function _calculate_image_data( $EVT_ID, $image_size ) {
+		$attachment_id = get_post_thumbnail_id( $EVT_ID );
+		$data = wp_get_attachment_image_src( $attachment_id, $image_size );
+		if( ! $data ) {
+			return false;
+		}
+		if( isset( $data[ 3] ) ) {
+			$generated = $data[ 3 ];
+		} else {
+			$generated = true;
+		}
+		return array(
+			'url' => $data[ 0 ],
+			'width' => $data[ 1 ],
+			'height' => $data[ 2 ],
+			'generated' => $generated
+		);
+	}
 }

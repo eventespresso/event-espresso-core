@@ -81,6 +81,18 @@ class EED_Core_Rest_Api extends \EED_Module {
 		EED_Core_Rest_Api::_set_hooks_for_changes();
 	}
 
+	/**
+	 * public wrapper of _set_hooks_for_changes.
+	 * Loads all the hooks which make requests to old versions of the API
+	 * appear the same as they always did
+	 */
+	public static function set_hooks_for_changes(){
+		self::_set_hooks_for_changes();
+	}
+	/**
+	 * Loads all the hooks which make requests to old versions of the API
+	 * appear the same as they always did
+	 */
 	protected static function _set_hooks_for_changes() {
 		$folder_contents = EEH_File::get_contents_of_folders( array( EE_LIBRARIES . 'rest_api' . DS . 'changes' ), false );
 		foreach( $folder_contents as $classname_in_namespace => $filepath ) {
