@@ -42,7 +42,13 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$tax_total = $total_line_item->get_total_tax();
 			foreach($total_line_item->get_items() as $line_item){
 				$items[] = array(
-					'name'=>$line_item->name(),
+					'name'=>apply_filters(
+						'FHEE__EEG_Mijireh__set_redirection_info__full_amount_line_item_name',
+						$line_item->name(),
+						$line_item,
+						$payment,
+						$primary_registrant
+					),
 					'price'=>$this->format_currency($line_item->unit_price()),
 					'sku'=>$line_item->code(),
 					'quantity'=>$line_item->quantity()
@@ -52,7 +58,16 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$tax_total = 0;
 			//partial payment, so just add 1 item
 			$items[] = array(
-				'name'=>  sprintf(__("Partial payment for registration %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'name'=> apply_filters(
+					'FHEE__EEG_Mijireh__set_redirection_info__partial_amount_line_item_name',
+					sprintf(
+						__("Payment of %s for %s", 'event_espresso'),
+						$payment->get_pretty( 'PAY_amount', 'no_currency_code' ),
+						$primary_registrant->event_name()
+					),
+					$payment,
+					$primary_registrant
+				),
 				'price'=> $this->format_currency($payment->amount()),
 				'sku'=>$primary_registrant->reg_code(),
 				'quantity'=>1
@@ -90,13 +105,14 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			}
 			$order[ 'shipping_address' ] = $shipping_address;
 		}
+		$order = apply_filters( 'FHEE__EEG_Mijireh__set_redirection_info__order_arguments', $order, $payment, $primary_registrant );
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
-				$args = array(
-		'headers' => array(
-			'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
-			'Accept'=>'application/json'
+		$args = array(
+			'headers' => array(
+				'Authorization' => 'Basic ' . base64_encode( $this->_access_key . ':' ),
+				'Accept'=>'application/json'
 			),
-		'body'=>  json_encode($order)
+			'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( $this->_mijireh_api_orders_url, $args );
                 $problems_string = false;

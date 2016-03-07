@@ -1,6 +1,11 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+
 use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+use EventEspresso\core\libraries\rest_api\Rest_Exception;
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -20,11 +25,16 @@ class Read extends Base {
 
 
 
-
+	/**
+	 *
+	 * @var Calculated_Model_Fields
+	 */
+	protected $_fields_calculator;
 
 	public function __construct() {
 		parent::__construct();
 		\EE_Registry::instance()->load_helper( 'Inflector' );
+		$this->_fields_calculator = new Calculated_Model_Fields();
 	}
 
 	/**
@@ -131,7 +141,12 @@ class Read extends Base {
 				);
 			}
 			$main_model = $controller->get_model_version_info()->load_model( $main_model_name_singular );
+			//assume the related model name is plural and try to find the model's name
 			$related_model_name_singular = \EEH_Inflector::singularize_and_upper( $matches[ 'related_model' ] );
+			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
+				//so the word didn't singularize well. Maybe that's just because it's a singular word?
+				$related_model_name_singular = \EEH_Inflector::humanize( $matches[ 'related_model' ] );
+			}
 			if ( ! $controller->get_model_version_info()->is_model_name_in_this_version( $related_model_name_singular ) ) {
 				return $controller->send_response(
 					new \WP_Error(
@@ -180,15 +195,15 @@ class Read extends Base {
 			);
 		}
 
-		$this->_set_debug_info( 'model query params', $query_params );
+		$this->_set_headers_from_query_params( $model, $query_params );
+		/** @type array $results */
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
 		foreach ( $results as $result ) {
 			$nice_results[ ] = $this->create_entity_from_wpdb_result(
 					$model,
 					$result,
-					$request->get_param( 'include' ),
-					$query_params[ 'caps' ]
+					$request
 				);
 		}
 		return $nice_results;
@@ -200,6 +215,7 @@ class Read extends Base {
 	 * The same as Read::get_entities_from_model(), except if the relation
 	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
 	 * the join-model-object into the results
+	 *
 	 * @param string $id the ID of the thing we are fetching related stuff from
 	 * @param \EE_Model_Relation_Base $relation
 	 * @param \WP_REST_Request $request
@@ -250,15 +266,15 @@ class Read extends Base {
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
-		$this->_set_debug_info( 'model query params', $query_params );
+		$this->_set_headers_from_query_params( $relation->get_other_model(), $query_params );
+		/** @type array $results */
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
 		foreach( $results as $result ) {
 			$nice_result = $this->create_entity_from_wpdb_result(
 				$relation->get_other_model(),
 				$result,
-				$request->get_param( 'include' ),
-				$query_params[ 'caps' ]
+				$request
 			);
 			if( $relation instanceof \EE_HABTM_Relation ) {
 				//put the unusual stuff (properties from the HABTM relation) first, and make sure
@@ -266,8 +282,7 @@ class Read extends Base {
 				$join_model_result = $this->create_entity_from_wpdb_result(
 					$relation->get_join_model(),
 					$result,
-					$request->get_param( 'include' ),
-					$query_params[ 'caps' ]
+					$request
 				);
 				$joined_result = array_merge( $nice_result, $join_model_result );
 				//but keep the meta stuff from the main model
@@ -285,45 +300,104 @@ class Read extends Base {
 		}
 	}
 
+	/**
+	 * Sets the headers that are based on the model and query params,
+	 * like the total records
+	 * @param \EEM_Base $model
+	 * @param array $query_params
+	 * @return void
+	 */
+	protected function _set_headers_from_query_params( $model, $query_params ) {
+		$this->_set_debug_info( 'model query params', $query_params );
+		$this->_set_debug_info( 'missing caps', Capabilities::get_missing_permissions_string( $model, $query_params[ 'caps' ] ) );
+		//normally the limit to a 2-part array, where the 2nd item is the limit
+		if( ! isset( $query_params[ 'limit' ] ) ) {
+			$query_params[ 'limit' ] = \EED_Core_Rest_Api::get_default_query_limit();
+		}
+		if( is_array( $query_params[ 'limit' ] )  ) {
+			$limit_parts = $query_params[ 'limit' ];
+		} else {
+			$limit_parts = explode(',', $query_params[ 'limit' ] );
+			if( count( $limit_parts ) == 1 ){
+				$limit_parts = array(0, $limit_parts[ 0 ] );
+			}
+		}
+		//remove the group by and having parts of the query, as those will
+		//make the sql query return an array of values, instead of just a single value
+		unset( $query_params[ 'group_by' ] );
+		unset( $query_params[ 'having' ] );
+		unset( $query_params[ 'limit' ] );
+		$count = $model->count( $query_params, null, true );
+
+		$pages = $count / $limit_parts[ 1 ];
+		$this->_set_response_header( 'Total', $count, false );
+		$this->_set_response_header( 'PageSize', $limit_parts[ 1 ], false );
+		$this->_set_response_header( 'TotalPages', ceil( $pages ), false );
+	}
+
 
 
 	/**
 	 * Changes database results into REST API entities
 	 * @param \EEM_Base $model
 	 * @param array $db_row like results from $wpdb->get_results()
-	 * @param string $include string indicating which fields to include in the response,
-	 *                        including fields on related entities.
-	 *                        Eg, when querying for events, an include string like:
-	 *                        "...&include=EVT_name,EVT_desc,Datetime, Datetime.Ticket.TKT_ID, Datetime.Ticket.TKT_name, Datetime.Ticket.TKT_price"
-	 *                        instructs us to only include the event's name and description,
-	 *                        each related datetime, and each related datetime's ticket's name and price.
-	 *                        Eg json would be:
-	 *                          '{
-	 *                              "EVT_ID":12,
-	 * 								"EVT_name":"star wars party",
-	 * 								"EVT_desc":"so cool...",
-	 * 								"datetimes":[{
-	 * 									"DTT_ID":123,...,
-	 * 									"tickets":[{
-	 * 										"TKT_ID":234,
-	 * 										"TKT_name":"student rate",
-	 * 										"TKT_price":32.0
-	 * 									},...]
-	 * 								}]
-	 * 							}',
-	 *                        ie, events with all their associated datetimes
-	 *                        (including ones that are trashed) embedded in the json object,
-	 *                        and each datetime also has each associated ticket embedded in its json object.
-	 * @param string $context one of the return values from EEM_Base::valid_cap_contexts()
+	 * @param \WP_REST_Request $rest_request
+	 * @param string $deprecated no longer used
 	 * @return array ready for being converted into json for sending to client
 	 */
-	public function create_entity_from_wpdb_result( $model, $db_row, $include, $context ) {
-		if( $include == null ) {
-			$include = '*';
+	public function create_entity_from_wpdb_result( $model, $db_row, $rest_request, $deprecated = null ) {
+		if( ! $rest_request instanceof \WP_REST_Request ) {
+			//ok so this was called in the old style, where the 3rd arg was
+			//$include, and the 4th arg was $context
+			//now setup the request just to avoid fatal errors, although we won't be able
+			//to truly make use of it because it's kinda devoid of info
+			$rest_request = new \WP_REST_Request();
+			$rest_request->set_param( 'include', $rest_request );
+			$rest_request->set_param( 'caps', $deprecated );
 		}
-		if( $context == null ) {
-			$context = \EEM_Base::caps_read;
+		if( $rest_request->get_param( 'caps' ) == null ) {
+			$rest_request->set_param( 'caps', \EEM_Base::caps_read );
 		}
+		$entity_array = $this->_create_bare_entity_from_wpdb_results( $model, $db_row );
+		$entity_array = $this->_add_extra_fields( $model, $db_row, $entity_array );
+		$entity_array[ '_links' ] = $this->_get_entity_links( $model, $db_row, $entity_array );
+		$entity_array[ '_calculated_fields'] = $this->_get_entity_calculations( $model, $db_row, $rest_request );
+		$entity_array = $this->_include_requested_models( $model, $rest_request, $entity_array );
+		$entity_array = apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
+			$entity_array,
+			$model,
+			$rest_request->get_param( 'caps' ),
+			$rest_request,
+			$this
+		);
+		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
+			$entity_array,
+			$model,
+			$rest_request->get_param( 'caps' ),
+			$this->get_model_version_info()
+		);
+		$this->_set_debug_info(
+			'inaccessible fields',
+			array_keys( array_diff_key( $entity_array, $result_without_inaccessible_fields ) )
+		);
+		return apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_results__entity_return',
+			$result_without_inaccessible_fields,
+			$model,
+			$rest_request->get_param( 'caps' )
+		);
+	}
+
+	/**
+	 * Creates a REST entity array (JSON object we're going to return in the response, but
+	 * for now still a PHP array, but soon enough we'll call json_encode on it, don't worry),
+	 * from $wpdb->get_row( $sql, ARRAY_A)
+	 * @param \EEM_Base $model
+	 * @param array $db_row
+	 * @return array entity mostly ready for converting to JSON and sending in the response
+	 */
+	protected function _create_bare_entity_from_wpdb_results( \EEM_Base $model, $db_row ) {
 		$result = $model->deduce_fields_n_values_from_cols_n_values( $db_row );
 		$result = array_intersect_key( $result, $this->get_model_version_info()->fields_on_model_in_this_version( $model ) );
 		foreach( $result as $field_name => $raw_field_value ) {
@@ -345,31 +419,53 @@ class Read extends Base {
 					'raw' => $field_obj->prepare_for_get( $field_value ),
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
-			}elseif( $field_obj instanceof \EE_Datetime_Field ){
-				if( $raw_field_value instanceof \DateTime ) {
-					$raw_field_value = $raw_field_value->format( 'c' );
-				}
-				$result[ $field_name ] = mysql_to_rfc3339( $raw_field_value );
-			}else{
-				$value_prepared = $field_obj->prepare_for_get( $field_value );
-
-				$result[ $field_name ] = $value_prepared === INF ? EE_INF_IN_DB : $value_prepared;
+			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
+				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
+					$field_obj,
+					$field_value,
+					$this->get_model_version_info()->requested_version()
+				);
+			} else {
+				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
+					$field_obj,
+					$field_obj->prepare_for_get( $field_value ),
+					$this->get_model_version_info()->requested_version()
+				);
 			}
 		}
+		return $result;
+	}
+
+	/**
+	 * Adds a few extra fields to the entity response
+	 * @param \EEM_Base $model
+	 * @param array $db_row
+	 * @param array $entity_array
+	 * @return array modified entity
+	 */
+	protected function _add_extra_fields( \EEM_Base $model, $db_row, $entity_array ) {
 		if( $model instanceof \EEM_CPT_Base ) {
-			$attachment = wp_get_attachment_image_src(
-				get_post_thumbnail_id( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
-				'full'
-			);
-			$result[ 'featured_image_url' ] = !empty( $attachment ) ? $attachment[ 0 ] : null;
-			$result[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
+			$entity_array[ 'link' ] = get_permalink( $db_row[ $model->get_primary_key_field()->get_qualified_column() ] );
 		}
-		//add links to related data
-		$result['_links'] = array(
+		return $entity_array;
+	}
+
+	/**
+	 * Gets links we want to add to the response
+	 *
+*@global \WP_REST_Server $wp_rest_server
+	 * @param \EEM_Base $model
+	 * @param array $db_row
+	 * @param array $entity_array
+	 * @return array the _links item in the entity
+	 */
+	protected function _get_entity_links( $model, $db_row, $entity_array ) {
+		//add basic links
+		$links = array(
 			'self' => array(
 				array(
 					'href' => $this->get_versioned_link_to(
-						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ]
+						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ]
 					)
 				)
 			),
@@ -381,11 +477,13 @@ class Read extends Base {
 				)
 			),
 		);
+
+		//add link to the wp core endpoint, if wp api is active
 		global $wp_rest_server;
 		if( $model instanceof \EEM_CPT_Base &&
 			$wp_rest_server instanceof \WP_REST_Server &&
 			$wp_rest_server->get_route_options( '/wp/v2/posts' ) ) {
-			$result[ '_links' ][ 'https://api.eventespresso.com/self_wp_post' ] = array(
+			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . 'self_wp_post' ] = array(
 				array(
 					'href' => rest_url( '/wp/v2/posts/' . $db_row[ $model->get_primary_key_field()->get_qualified_column() ] ),
 					'single' => true
@@ -393,74 +491,124 @@ class Read extends Base {
 			);
 		}
 
-		//filter fields if specified
-		$includes_for_this_model = $this->extract_includes_for_this_model( $include );
-		if( ! empty( $includes_for_this_model ) ) {
+		//add links to related models
+		foreach( $this->get_model_version_info()->relation_settings( $model ) as $relation_name => $relation_obj ) {
+			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
+			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
+				array(
+					'href' => $this->get_versioned_link_to(
+						\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $entity_array[ $model->primary_key_name() ] . '/' . $related_model_part
+					),
+					'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
+				)
+			);
+		}
+		return $links;
+	}
+
+	/**
+	 * Adds the included models indicated in the request to the entity provided
+	 * @param \EEM_Base $model
+	 * @param \WP_REST_Request $rest_request
+	 * @param array $entity_array
+	 * @return array the modified entity
+	 */
+	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array ) {
+		$includes_for_this_model = $this->explode_and_get_items_prefixed_with( $rest_request->get_param( 'include' ), '' );
+		$includes_for_this_model = $this->_remove_model_names_from_array( $includes_for_this_model );
+		//if they passed in * or didn't specify any includes, return everything
+		if( ! in_array( '*', $includes_for_this_model )
+			&& ! empty( $includes_for_this_model ) ) {
 			if( $model->has_primary_key_field() ) {
-				//always include the primary key
+				//always include the primary key. ya just gotta know that at least
 				$includes_for_this_model[] = $model->primary_key_name();
 			}
-			$result = array_intersect_key( $result, array_flip( $includes_for_this_model ) );
-		}
-		//add meta links and possibly include related models
-		$relation_settings = apply_filters(
-			'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
-			$model->relation_settings()
-		);
-		foreach( $relation_settings as $relation_name => $relation_obj ) {
-			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
-			if( empty( $includes_for_this_model ) || isset( $includes_for_this_model['meta'] ) ) {
-				$result['_links']['https://api.eventespresso.com/' . $related_model_part] = array(
-					array(
-						'href' => $this->get_versioned_link_to(
-							\EEH_Inflector::pluralize_and_lower( $model->get_this_model_name() ) . '/' . $result[ $model->primary_key_name() ] . '/' . $related_model_part
-						),
-						'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false
-					)
-				);
+			if( $this->explode_and_get_items_prefixed_with( $rest_request->get_param( 'calculate' ), '' ) ) {
+				$includes_for_this_model[] = '_calculated_fields';
 			}
-			$related_fields_to_include = $this->extract_includes_for_this_model( $include, $relation_name );
-			if( $related_fields_to_include ) {
+			$entity_array = array_intersect_key( $entity_array, array_flip( $includes_for_this_model ) );
+		}
+		$relation_settings = $this->get_model_version_info()->relation_settings( $model );
+		foreach( $relation_settings as $relation_name => $relation_obj ) {
+			$related_fields_to_include = $this->explode_and_get_items_prefixed_with(
+				$rest_request->get_param( 'include' ),
+				$relation_name
+			);
+			$related_fields_to_calculate = $this->explode_and_get_items_prefixed_with(
+				$rest_request->get_param( 'calculate' ),
+				$relation_name
+			);
+			//did they specify they wanted to include a related model, or
+			//specific fields from a related model?
+			//or did they specify to calculate a field from a related model?
+			if( $related_fields_to_include || $related_fields_to_calculate ) {
+				//if so, we should include at least some part of the related model
 				$pretend_related_request = new \WP_REST_Request();
 				$pretend_related_request->set_query_params(
 					array(
-						'caps' => $context,
-						'include' => $this->extract_includes_for_this_model(
-								$include,
-								$relation_name
-							)
+						'caps' => $rest_request->get_param( 'caps' ),
+						'include' => $related_fields_to_include,
+						'calculate' => $related_fields_to_calculate,
 					)
 				);
 				$related_results = $this->get_entities_from_relation(
-					$result[ $model->primary_key_name() ],
+					$entity_array[ $model->primary_key_name() ],
 					$relation_obj,
 					$pretend_related_request
 				);
-				$result[ $related_model_part ] = $related_results instanceof \WP_Error ? null : $related_results;
+				$entity_array[ $this->get_related_entity_name( $relation_name, $relation_obj ) ] = $related_results instanceof \WP_Error ? null : $related_results;
 			}
 		}
-		$result = apply_filters(
-			'FHEE__Read__create_entity_from_wpdb_results__entity_before_inaccessible_field_removal',
-			$result,
-			$model,
-			$context
+		return $entity_array;
+	}
+	
+	/**
+	 * Returns a new array with all the names of models removed. Eg 
+	 * array( 'Event', 'Datetime.*', 'foobar' ) would become array( 'Datetime.*', 'foobar' )
+	 * @param array $arr
+	 * @return array
+	 */
+	private function _remove_model_names_from_array( $arr ) {
+		return array_diff( $arr, array_keys( \EE_Registry::instance()->non_abstract_db_models ) );
+	}
+	/**
+	 * Gets the calculated fields for the response
+	 *
+	 * @param \EEM_Base        $model
+	 * @param array            $wpdb_row
+	 * @param \WP_REST_Request $rest_request
+	 * @return array the _calculations item in the entity
+	 */
+	protected function _get_entity_calculations( $model, $wpdb_row, $rest_request ) {
+		$calculated_fields = $this->explode_and_get_items_prefixed_with(
+			$rest_request->get_param( 'calculate' ),
+			''
 		);
-		$result_without_inaccessible_fields = Capabilities::filter_out_inaccessible_entity_fields(
-			$result,
-			$model,
-			$context,
-			$this->get_model_version_info()
-		);
-		$this->_set_debug_info(
-			'inaccessible fields',
-			array_keys( array_diff_key( $result, $result_without_inaccessible_fields ) )
-		);
-		return apply_filters(
-			'FHEE__Read__create_entity_from_wpdb_results__entity_return',
-			$result_without_inaccessible_fields,
-			$model,
-			$context
-		);
+		//note: setting calculate=* doesn't do anything
+		$calculated_fields_to_return = array();
+		foreach( $calculated_fields as $field_to_calculate ) {
+			try{
+				$calculated_fields_to_return[ $field_to_calculate ] = Model_Data_Translator::prepare_field_value_for_json(
+					null,
+					$this->_fields_calculator->retrieve_calculated_field_value(
+						$model,
+						$field_to_calculate,
+						$wpdb_row,
+						$rest_request,
+						$this
+					),
+					$this->get_model_version_info()->requested_version()
+				);
+			} catch( Rest_Exception $e ) {
+				//if we don't have permission to read it, just leave it out. but let devs know about the problem
+				$this->_set_response_header(
+					'Notices-Field-Calculation-Errors[' . $e->get_string_code() . '][' . $model->get_this_model_name() . '][' . $field_to_calculate . ']',
+					$e->getMessage(),
+					true
+				);
+			}
+		}
+		return $calculated_fields_to_return;
 	}
 
 	/**
@@ -469,7 +617,12 @@ class Read extends Base {
 	 * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
 	 */
 	public function get_versioned_link_to( $link_part_after_version_and_slash ) {
-		return rest_url( \EED_Core_Rest_Api::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
+		return rest_url(
+			\EED_Core_Rest_Api::ee_api_namespace
+			. $this->get_model_version_info()->requested_version()
+			. '/'
+			. $link_part_after_version_and_slash
+		);
 	}
 
 	/**
@@ -509,8 +662,7 @@ class Read extends Base {
 			return $this->create_entity_from_wpdb_result(
 				$model,
 				array_shift( $model_rows ),
-				$request->get_param( 'include' ),
-				$this->validate_context( $request->get_param( 'caps' ) ) );
+				$request );
 		} else {
 			//ok let's test to see if we WOULD have found it, had we not had restrictions from missing capabilities
 			$lowercase_model_name = strtolower( $model->get_this_model_name() );
@@ -561,7 +713,10 @@ class Read extends Base {
 
 
 	/**
-	 * Translates API filter get parameter into $query_params array used by EEM_Base::get_all()
+	 * Translates API filter get parameter into $query_params array used by EEM_Base::get_all().
+	 * Note: right now the query parameter keys for fields (and related fields)
+	 * can be left as-is, but it's quite possible this will change someday.
+	 * Also, this method's contents might be candidate for moving to Model_Data_Translator
 	 *
 	 * @param \EEM_Base $model
 	 * @param array     $query_parameters from $_GET parameter @see Read:handle_request_get_all
@@ -572,7 +727,11 @@ class Read extends Base {
 	public function create_model_query_params( $model, $query_parameters ) {
 		$model_query_params = array( );
 		if ( isset( $query_parameters[ 'where' ] ) ) {
-			$model_query_params[ 0 ] = $this->prepare_rest_query_params_key_for_models( $model, $query_parameters[ 'where' ] );
+			$model_query_params[ 0 ] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+				$query_parameters[ 'where' ],
+				$model,
+				$this->get_model_version_info()->requested_version()
+			);
 		}
 		if ( isset( $query_parameters[ 'order_by' ] ) ) {
 			$order_by = $query_parameters[ 'order_by' ];
@@ -582,7 +741,7 @@ class Read extends Base {
 			$order_by = null;
 		}
 		if( $order_by !== null ){
-			$model_query_params[ 'order_by' ] = $this->prepare_rest_query_params_key_for_models( $model, $order_by );
+			$model_query_params[ 'order_by' ] =  $order_by;
 		}
 		if ( isset( $query_parameters[ 'group_by' ] ) ) {
 			$group_by = $query_parameters[ 'group_by' ];
@@ -592,14 +751,14 @@ class Read extends Base {
 			$group_by = null;
 		}
 		if( $group_by !== null ){
-			if( is_array( $group_by ) ) {
-				$group_by = $this->prepare_rest_query_params_values_for_models( $model, $group_by );
-			}
 			$model_query_params[ 'group_by' ] = $group_by;
 		}
 		if ( isset( $query_parameters[ 'having' ] ) ) {
-			//@todo: no good for permissions
-			$model_query_params[ 'having' ] = $this->prepare_rest_query_params_key_for_models( $model, $query_parameters[ 'having' ] );
+			$model_query_params[ 'having' ] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+				$query_parameters[ 'having' ],
+				$model,
+				$this->get_model_version_info()->requested_version()
+			);
 		}
 		if ( isset( $query_parameters[ 'order' ] ) ) {
 			$model_query_params[ 'order' ] = $query_parameters[ 'order' ];
@@ -609,8 +768,8 @@ class Read extends Base {
 		}
 		if( isset( $query_parameters[ 'limit' ] ) ) {
 			//limit should be either a string like '23' or '23,43', or an array with two items in it
-			if( is_string( $query_parameters[ 'limit' ] ) ) {
-				$limit_array = explode(',', $query_parameters['limit']);
+			if( ! is_array( $query_parameters[ 'limit' ] ) ) {
+				$limit_array = explode(',', (string)$query_parameters['limit']);
 			}else {
 				$limit_array = $query_parameters[ 'limit' ];
 			}
@@ -628,7 +787,7 @@ class Read extends Base {
 			}
 			$model_query_params[ 'limit' ] = implode( ',', $sanitized_limit );
 		}else{
-			$model_query_params[ 'limit' ] = 50;
+			$model_query_params[ 'limit' ] = \EED_Core_Rest_Api::get_default_query_limit();
 		}
 		if( isset( $query_parameters[ 'caps' ] ) ) {
 			$model_query_params[ 'caps' ] = $this->validate_context( $query_parameters[ 'caps' ] );
@@ -642,7 +801,7 @@ class Read extends Base {
 
 	/**
 	 * Changes the REST-style query params for use in the models
-	 *
+	 * @deprecated
 	 * @param \EEM_Base $model
 	 * @param array     $query_params sub-array from @see EEM_Base::get_all()
 	 * @return array
@@ -658,7 +817,16 @@ class Read extends Base {
 		}
 		return $model_ready_query_params;
 	}
-	public function prepare_rest_query_params_values_for_models( $model,  $query_params ) {
+
+
+
+	/**
+	 * @deprecated
+	 * @param $model
+	 * @param $query_params
+	 * @return array
+	 */
+	public function prepare_rest_query_params_values_for_models( $model, $query_params ) {
 		$model_ready_query_params = array();
 		foreach( $query_params as $key => $value ) {
 			if( is_array( $value ) ) {
@@ -670,8 +838,55 @@ class Read extends Base {
 		return $model_ready_query_params;
 	}
 
+	/**
+	 * Explodes the string on commas, and only returns items with $prefix followed by a period.
+	 * If no prefix is specified, returns items with no period.
+	 * @param string|array $string_to_explode eg "jibba,jabba, blah, blaabla" or array('jibba', 'jabba' )
+	 * @param string $prefix "Event" or "foobar"
+	 * @return array $string_to_exploded exploded on COMMAS, and if a prefix was specified
+	 * we only return strings starting with that and a period; if no prefix was specified
+	 * we return all items containing NO periods
+	 */
+	public function explode_and_get_items_prefixed_with( $string_to_explode, $prefix ) {
+		if( is_string( $string_to_explode ) ) {
+			$exploded_contents = explode( ',', $string_to_explode );
+		} else if( is_array( $string_to_explode ) ) {
+			$exploded_contents = $string_to_explode;
+		} else {
+			$exploded_contents = array();
+		}
+		//if the string was empty, we want an empty array
+		$exploded_contents = array_filter( $exploded_contents );
+		$contents_with_prefix = array();
+		foreach( $exploded_contents as $item ) {
+			$item = trim( $item );
+			//if no prefix was provided, so we look for items with no "." in them
+			if( ! $prefix ) {
+				//does this item have a period?
+				if( strpos( $item, '.' ) === false ) {
+					//if not, then its what we're looking for
+					$contents_with_prefix[] = $item;
+				}
+			} else if( strpos( $item, $prefix . '.' ) === 0 ) {
+				//this item has the prefix and a period, grab it
+				$contents_with_prefix[] = substr(
+					$item,
+					strpos( $item, $prefix . '.' ) + strlen( $prefix . '.' )
+					);
+			} else if( $item === $prefix ) {
+				//this item is JUST the prefix
+				//so let's grab everything after, which is a blank string
+				$contents_with_prefix[] = '';
+			}
+		}
+		return $contents_with_prefix;
+	}
 
 	/**
+	 * @deprecated since 4.8.36.rc.001 You should instead use Read::explode_and_get_items_prefixed_with.
+	 * Deprecated because its return values were really quite confusing- sometimes it returned
+	 * an empty array (when the include string was blank or '*') or sometimes it returned
+	 * array('*') (when you provided a model and a model of that kind was found).
 	 * Parses the $include_string so we fetch all the field names relating to THIS model
 	 * (ie have NO period in them), or for the provided model (ie start with the model
 	 * name and then a period).
@@ -679,12 +894,13 @@ class Read extends Base {
 	 * @param string $model_name
 	 * @return array of fields for this model. If $model_name is provided, then
 	 * the fields for that model, with the model's name removed from each.
+	 * If $include_string was blank or '*' returns an empty array
 	 */
 	public function extract_includes_for_this_model( $include_string, $model_name = null ) {
 		if( is_array( $include_string ) ) {
 			$include_string = implode( ',', $include_string );
 		}
-		if( $include_string === '*' ) {
+		if( $include_string === '*' || $include_string === '' ) {
 			return array();
 		}
 		$includes = explode( ',', $include_string );

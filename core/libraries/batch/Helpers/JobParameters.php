@@ -162,19 +162,19 @@ class JobParameters {
 			! isset( $job_parameter_vars[ '_request_data' ] )
 		) {
 			throw new BatchRequestException(
-				sprintf( 
+				sprintf(
 					__('Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue. The wordpress option was %2$s', 'event_espresso'),
 					$job_id,
 					get_option( JobParameters::wp_option_prefix . $job_id )
 				)
 			);
 		}
-		$job_parameters = new JobParameters( 
-				$job_id, 
-				$job_parameter_vars[ '_classname' ], 
+		$job_parameters = new JobParameters(
+				$job_id,
+				$job_parameter_vars[ '_classname' ],
 				$job_parameter_vars[ '_request_data'] );
 		foreach( $job_parameter_vars as $key => $value ) {
-			$job_parameters->$key = $value;
+			$job_parameters->{$key} = $value;
 		}
 		return $job_parameters;
 	}

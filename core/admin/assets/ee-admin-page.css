@@ -1,4 +1,5 @@
-.add-new-h2 { margin-left : 15px; }
+.espresso-admin .add-new-h2,
+.espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
 .tablenav div { margin-right : 15px; }
 .tablenav select { margin : 0 1em 0 0 !important; }
@@ -951,4 +952,10 @@ input.ee-register-button {
 	font-size: .8em;
 	font-color: #dcc;
 	font-weight: normal;
+}
+
+/** Google Chart adjustments **/
+.admin-report-chart-dv {
+	background: #fff;
+	padding: 10px;
 }

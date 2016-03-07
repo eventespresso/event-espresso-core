@@ -1,10 +1,12 @@
 <?php
+use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 
 /**
- * Class  EED_Core_REST_API
+ * Class  EED_Core_Rest_Api
  *
  * @package			Event Espresso
  * @subpackage		eea-rest-api
@@ -17,11 +19,22 @@ class EED_Core_Rest_Api extends \EED_Module {
 	const ee_api_namespace = 'ee/v';
 	const ee_api_namespace_for_regex = 'ee\/v([^/]*)\/';
 	const saved_routes_option_names = 'ee_core_routes';
+	/**
+	 * string used in _links response bodies to make them globally unique.
+	 * @see http://v2.wp-api.org/extending/linking/
+	 */
+	const ee_api_link_namespace = 'https://api.eventespresso.com/';
 
+	/**
+	 *
+	 * @var Calculated_Model_Fields
+	 */
+	protected static $_field_calculator = null;
 	/**
 	 * @return EED_Core_Rest_Api
 	 */
 	public static function instance() {
+		self::$_field_calculator = new Calculated_Model_Fields();
 		return parent::get_instance( __CLASS__ );
 	}
 
@@ -52,9 +65,49 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 
 	public static function set_hooks_both() {
-		add_action( 'rest_api_init', array( 'EED_Core_REST_API', 'register_routes' ) );
-		add_filter( 'rest_route_data', array( 'EED_Core_REST_API', 'hide_old_endpoints' ), 10, 2 );
+		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'register_routes' ), 10 );
+		add_action( 'rest_api_init', array( 'EED_Core_Rest_Api', 'set_hooks_rest_api' ), 5 );
+		add_filter( 'rest_route_data', array( 'EED_Core_Rest_Api', 'hide_old_endpoints' ), 10, 2 );
 		add_filter( 'rest_index', array( 'EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filter_ee_metadata_into_index' ) );
+		EED_Core_Rest_Api::invalidate_cached_route_data_on_version_change();
+	}
+
+	/**
+	 * sets up hooks which only need to be included as part of REST API requests;
+	 * other requests like to the frontend or admin etc don't need them
+	 */
+	public static function set_hooks_rest_api() {
+		//set hooks which account for changes made to the API
+		EED_Core_Rest_Api::_set_hooks_for_changes();
+	}
+
+	/**
+	 * public wrapper of _set_hooks_for_changes.
+	 * Loads all the hooks which make requests to old versions of the API
+	 * appear the same as they always did
+	 */
+	public static function set_hooks_for_changes(){
+		self::_set_hooks_for_changes();
+	}
+	/**
+	 * Loads all the hooks which make requests to old versions of the API
+	 * appear the same as they always did
+	 */
+	protected static function _set_hooks_for_changes() {
+		$folder_contents = EEH_File::get_contents_of_folders( array( EE_LIBRARIES . 'rest_api' . DS . 'changes' ), false );
+		foreach( $folder_contents as $classname_in_namespace => $filepath ) {
+			//ignore the base parent class
+			if( $classname_in_namespace === 'Changes_In_Base' ) {
+				continue;
+			}
+			$full_classname = 'EventEspresso\core\libraries\rest_api\changes\\' . $classname_in_namespace;
+			if ( class_exists( $full_classname )) {
+				$instance_of_class = new $full_classname;
+				if ( $instance_of_class instanceof EventEspresso\core\libraries\rest_api\changes\Changes_In_Base ) {
+					$instance_of_class->set_hooks();
+				}
+			}
+		}
 	}
 
 
@@ -78,6 +131,30 @@ class EED_Core_Rest_Api extends \EED_Module {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Checks if there was a version change or something that merits invalidating the cached
+	 * route data. If so, invalidates the cached route data so that it gets refreshed
+	 * next time the WP API is used
+	 */
+	public static function invalidate_cached_route_data_on_version_change() {
+		if( EE_System::instance()->detect_req_type() != EE_System::req_type_normal ) {
+			EED_Core_Rest_Api::invalidate_cached_route_data();
+		}
+		foreach( EE_Registry::instance()->addons as $addon ){
+			if( $addon instanceof EE_Addon && $addon->detect_req_type() != EE_System::req_type_normal ) {
+				EED_Core_Rest_Api::invalidate_cached_route_data();
+			}
+		}
+	}
+
+	/**
+	 * Removes the cached route data so it will get refreshed next time the WP API is used
+	 */
+	public static function invalidate_cached_route_data() {
+		//delete the saved EE REST API routes
+		delete_option( EED_Core_Rest_Api::saved_routes_option_names );
 	}
 
 	/**
@@ -105,10 +182,14 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function save_ee_routes() {
 		if( EE_Maintenance_Mode::instance()->models_can_query() ){
 			$instance = self::instance();
-			$routes = array_replace_recursive(
-				$instance->_register_config_routes(),
-				$instance->_register_meta_routes(),
-				$instance->_register_model_routes()
+			$routes = apply_filters(
+				'EED_Core_Rest_Api__save_ee_routes__routes',
+				array_replace_recursive(
+					$instance->_register_config_routes(),
+					$instance->_register_meta_routes(),
+					$instance->_register_model_routes(),
+					$instance->_register_rpc_routes()
+				)
 			);
 			update_option( self::saved_routes_option_names, $routes, true );
 		}
@@ -131,6 +212,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
 
 			foreach ( $models_to_register as $model_name => $model_classname ) {
+				$model = \EE_Registry::instance()->load_model( $model_name );
 				//yes we could just register one route for ALL models, but then they wouldn't show up in the index
 				$ee_namespace = self::ee_api_namespace . $version;
 				$plural_model_route = EEH_Inflector::pluralize_and_lower( $model_name );
@@ -142,7 +224,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 								'handle_request_get_all' ),
 							'methods' => WP_REST_Server::READABLE,
 							'hidden_endpoint' => $hidden_endpoint,
-							'args' => $this->_get_read_query_params( $model_name ),
+							'args' => $this->_get_read_query_params( $model, $version ),
 							'_links' => array(
 								'self' => rest_url( $ee_namespace . $singular_model_route ),
 							)
@@ -162,13 +244,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 								'handle_request_get_one' ),
 							'methods' => WP_REST_Server::READABLE,
 							'hidden_endpoint' => $hidden_endpoint,
-							'args' => array(
-								'include' => array(
-									'required' => false,
-									'default' => '*',
-									'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
-								),
-							)
+							'args' => $this->_get_response_selection_query_params( $model, $version)
 						),
 //						array(
 //							'callback' => array(
@@ -179,7 +255,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 //							),
 				);
 				//@todo: also handle  DELETE for a single item
-				$model = EE_Registry::instance()->load_model( $model_classname );
 				foreach ( $model->relation_settings() as $relation_name => $relation_obj ) {
 					$related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
 						$relation_name,
@@ -192,7 +267,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 									'handle_request_get_related' ),
 								'methods' => WP_REST_Server::READABLE,
 								'hidden_endpoint' => $hidden_endpoint,
-								'args' => $this->_get_read_query_params( $relation_name ),
+								'args' => $this->_get_read_query_params( $relation_obj->get_other_model(), $version ),
 							),
 //							array(
 //								'callback' => array(
@@ -209,54 +284,118 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 		return $model_routes;
 	}
-	
+
 	/**
-	 * Gets info about reading query params that are accceptable
-	 * @param string $model_name eg 'Event' or 'Venue'
-	 * @return array describing the args acceptable when querying this model
+	 * Adds all the RPC-style routes (remote procedure call-like routes, ie
+	 * routes that don't conform to the traditional REST CRUD-style).
 	 */
-	protected function _get_read_query_params( $model_name ) {
-		$model = EE_Registry::instance()->load_model( $model_name );
+	protected function _register_rpc_routes() {
+		$routes = array();
+		foreach( self::versions_served() as $version => $hidden_endpoint ) {
+			$ee_namespace = self::ee_api_namespace . $version;
+			$this_versions_routes = array();
+			//checkin endpoint
+			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)' ] = array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\rpc\Checkin',
+						'handle_request_toggle_checkin' ),
+					'methods' => WP_REST_Server::CREATABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+					'args' => array(
+						'force' => array(
+							'required' => false,
+							'default' => false,
+							'description' => __( 'Whether to force toggle checkin, or to verify the registration status and allowed ticket uses', 'event_espresso' )
+						)
+					)
+				)
+			);
+			$routes[ $ee_namespace ] = apply_filters(
+				'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes',
+				$this_versions_routes,
+				$version,
+				$hidden_endpoint
+			);
+		}
+		return $routes;
+	}
+
+	/**
+	 * Gets the query params that can be used when request one or many
+	 * @param EEM_Base $model
+	 * @param string $version
+	 * @return array
+	 */
+	protected function _get_response_selection_query_params( \EEM_Base $model, $version ) {
+		return apply_filters(
+			'FHEE__EED_Core_Rest_Api___get_response_selection_query_params',
+			array(
+				'include' => array(
+					'required' => false,
+					'default' => '*',
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
+				),
+				'calculate' => array(
+					'required' => false,
+					'default' => '',
+					'enum' => self::$_field_calculator->retrieve_calculated_fields_for_model( $model )
+				)
+			),
+			$model,
+			$version
+		);
+	}
+
+
+
+	/**
+	 * Gets info about reading query params that are acceptable
+	 *
+	 * @param \EEM_Base $model eg 'Event' or 'Venue'
+	 * @param  string   $version
+	 * @return array    describing the args acceptable when querying this model
+	 * @throws \EE_Error
+	 */
+	protected function _get_read_query_params( \EEM_Base $model, $version ) {
 		$default_orderby = array();
 		foreach( $model->get_combined_primary_key_fields() as $key_field ) {
 			$default_orderby[ $key_field->get_name() ] = 'ASC';
 		}
-		return array(
-			'where' => array(
-				'required' => false,
-				'default' => array(),
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#where for documentation', 'event_espresso' ),
+		return array_merge(
+			$this->_get_response_selection_query_params( $model, $version ),
+			array(
+				'where' => array(
+					'required' => false,
+					'default' => array(),
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#where for documentation', 'event_espresso' ),
+					),
+				'limit' => array(
+					'required' => false,
+					'default' => EED_Core_Rest_Api::get_default_query_limit(),
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#limit for documentation', 'event_espresso' )
 				),
-			'limit' => array(
-				'required' => false,
-				'default' => 50,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#limit for documentation', 'event_espresso' )
-			),
-			'order_by' => array(
-				'required' => false,
-				'default' => $default_orderby,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#order_by for documentation', 'event_espresso' )
-			),
-			'group_by' => array(
-				'required' => false,
-				'default' => null,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#group_by for documentation', 'event_espresso' )
-			),
-			'having' => array(
-				'required' => false,
-				'default' => null,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#having for documentation', 'event_espresso' )
-			),
-			'caps' => array(
-				'required' => false,
-				'default' => EEM_Base::caps_read,
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#caps for documentation', 'event_espresso' )
-			),
-			'include' => array(
-				'required' => false,
-				'default' => '*',
-				'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
-			),
+				'order_by' => array(
+					'required' => false,
+					'default' => $default_orderby,
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#order_by for documentation', 'event_espresso' )
+				),
+				'group_by' => array(
+					'required' => false,
+					'default' => null,
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#group_by for documentation', 'event_espresso' )
+				),
+				'having' => array(
+					'required' => false,
+					'default' => null,
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#having for documentation', 'event_espresso' )
+				),
+				'caps' => array(
+					'required' => false,
+					'default' => EEM_Base::caps_read,
+					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#caps for documentation', 'event_espresso' )
+				),
+			)
 		);
 	}
 
@@ -308,7 +447,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param array $route_data
 	 * @return array
 	 */
-	public function hide_old_endpoints( $route_data ) {
+	public static function hide_old_endpoints( $route_data ) {
 		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
@@ -334,11 +473,30 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function version_compatibilities() {
-		return apply_filters( 'FHEE__EED_Core_REST_API__version_compatibilities', array( '4.8.29' => '4.8.29' ) );
+		return apply_filters(
+			'FHEE__EED_Core_REST_API__version_compatibilities',
+			array(
+				'4.8.29' => '4.8.29',
+				'4.8.33' => '4.8.29',
+				'4.8.34' => '4.8.29',
+				'4.8.36' => '4.8.29',
+			)
+		);
 	}
 
 	/**
-	 * Using EED_Core_REST_API::version_compatibilities(), determines what version of
+	 * Gets the latest API version served. Eg if there
+	 * are two versions served of the API, 4.8.29 and 4.8.32, and
+	 * we are on core version 4.8.34, it will return the string "4.8.32"
+	 * @return string
+	 */
+	public static function latest_rest_api_version() {
+		$versions_served = \EED_Core_Rest_Api::versions_served();
+		return end( array_keys( $versions_served ) );
+	}
+
+	/**
+	 * Using EED_Core_Rest_Api::version_compatibilities(), determines what version of
 	 * EE the API can serve requests for. Eg, if we are on 4.15 of core, and
 	 * we can serve requests from 4.12 or later, this will return array( '4.12', '4.13', '4.14', '4.15' ).
 	 * We also indicate whether or not this version should be put in the index or not
@@ -346,19 +504,34 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * are whether or not they should be hidden
 	 */
 	public static function versions_served() {
-		$version_compatibilities = EED_Core_Rest_Api::version_compatibilities();
 		$versions_served = array();
-		$lowest_compatible_version = $version_compatibilities[ EED_Core_Rest_Api::core_version() ];
+		$possibly_served_versions = EED_Core_Rest_Api::version_compatibilities();
+		$lowest_compatible_version = end( $possibly_served_versions);
+		reset( $possibly_served_versions );
+		$versions_served_historically = array_keys( $possibly_served_versions );
+		$latest_version = end( $versions_served_historically );
+		reset( $versions_served_historically );
 		//for each version of core we have ever served:
-		foreach( array_keys( EED_Core_Rest_Api::version_compatibilities() ) as $possibly_served_version ) {
+		foreach ( $versions_served_historically as $key_versioned_endpoint ) {
 			//if it's not above the current core version, and it's compatible with the current version of core
-			if(
-				$possibly_served_version < EED_Core_Rest_Api::core_version()
-				&& $possibly_served_version >= $lowest_compatible_version
+			if( $key_versioned_endpoint == $latest_version ) {
+				//don't hide the latest version in the index
+				$versions_served[ $key_versioned_endpoint ] = false;
+			} else if(
+				$key_versioned_endpoint < EED_Core_Rest_Api::core_version()
+				&& $key_versioned_endpoint >= $lowest_compatible_version
 			) {
-				$versions_served[ $possibly_served_version ] = true;
-			}else {
-				$versions_served[ $possibly_served_version ] = false;
+				//include, but hide, previous versions which are still supported
+				$versions_served[ $key_versioned_endpoint ] = true;
+			} elseif(
+				apply_filters(
+					'FHEE__EED_Core_Rest_Api__versions_served__include_incompatible_versions',
+					false,
+					$possibly_served_versions
+				)
+			){
+				//if a version is no longer supported, don't include it in index or list of versions served
+				$versions_served[ $key_versioned_endpoint ] = true;
 			}
 		}
 		return $versions_served;
@@ -372,6 +545,19 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function core_version() {
 		return apply_filters( 'FHEE__EED_Core_REST_API__core_version', implode('.', array_slice( explode( '.', espresso_version() ), 0, 3 ) ) );
+	}
+
+	/**
+	 * Gets the default limit that should be used when querying for resources
+	 * @return int
+	 */
+	public static function get_default_query_limit() {
+		//we actually don't use a const because we want folks to always use
+		//this method, not the const directly
+		return apply_filters(
+			'FHEE__EED_Core_Rest_Api__get_default_query_limit',
+			50
+		);
 	}
 
 
@@ -391,5 +577,5 @@ class EED_Core_Rest_Api extends \EED_Module {
 
 }
 
-// End of file EED_Core_REST_API.module.php
-// Location: /wp-content/plugins/eea-rest-api/EED_Core_REST_API.module.php
+// End of file EED_Core_Rest_Api.module.php
+// Location: /wp-content/plugins/eea-rest-api/EED_Core_Rest_Api.module.php

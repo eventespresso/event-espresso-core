@@ -1569,9 +1569,11 @@ abstract class EE_Base_Class{
 	 * @param  array  $props_n_values incoming array of properties and their values
 	 * @param  string $classname      the classname of the child class
 	 * @param null    $timezone
+	 * @param array   $date_formats   incoming date_formats in an array where the first value is the
+	 *                             	  date_format and the second value is the time format
 	 * @return mixed (EE_Base_Class|bool)
 	 */
-	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
+	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL, $date_formats = array() ) {
 		if( self::_get_model( $classname )->has_primary_key_field()){
 			$primary_id_ref = self::_get_primary_key_name( $classname );
 
@@ -1587,6 +1589,17 @@ abstract class EE_Base_Class{
 			$existing = null;
 		}
 		if ( $existing ) {
+
+			//set date formats if present before setting values
+			if ( ! empty( $date_formats ) && is_array( $date_formats ) ) {
+				$existing->set_date_format( $date_formats[0] );
+				$existing->set_time_format( $date_formats[1] );
+			} else {
+				//set default formats for date and time
+				$existing->set_date_format( get_option( 'date_format' ) );
+				$existing->set_time_format( get_option( 'time_format' ) );
+			}
+
 			foreach ( $props_n_values as $property => $field_value ) {
 				$existing->set( $property, $field_value );
 			}

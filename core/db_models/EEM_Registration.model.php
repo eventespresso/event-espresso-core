@@ -286,15 +286,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
+
 		$results = $this->_get_all_wpdb_results(
 				array(
 					$where,
 					'group_by'=>'regDate',
-					'order_by'=>array('REG_date'=>'DESC')
+					'order_by'=>array('REG_date'=>'ASC')
 				),
 				OBJECT,
 				array(
-					'regDate'=>array('DATE(Registration.REG_date)','%s'),
+					'regDate'=>array( 'DATE(' . $query_interval . ')','%s'),
 					'total'=>array('count(REG_ID)','%d')
 				));
 		return $results;
@@ -377,6 +380,42 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		global $wpdb;
 		return $wpdb->query(
 				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' . EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL' );
+	}
+
+	/**
+	 *  Count registrations checked into (or out of) a datetime
+	 *
+	 * @param int $DTT_ID datetime ID
+	 * @param boolean $checked_in whether to count registrations checked IN or OUT
+	 * @return int
+	 */
+	public function count_registrations_checked_into_datetime( $DTT_ID, $checked_in = true) {
+		return $this->count(
+			array(
+				array(
+					'Checkin.CHK_in' => $checked_in,
+					'Checkin.DTT_ID' => $DTT_ID
+				)
+			)
+		);
+	}
+
+	/**
+	 *  Count registrations checked into (or out of) an event.
+	 *
+	 * @param int $EVT_ID event ID
+	 * @param boolean $checked_in whether to count registrations checked IN or OUT
+	 * @return int
+	 */
+	public function count_registrations_checked_into_event( $EVT_ID, $checked_in = true ) {
+		return $this->count(
+			array(
+				array(
+					'Checkin.CHK_in' => $checked_in,
+					'Checkin.Datetime.EVT_ID' => $EVT_ID
+				)
+			)
+		);
 	}
 
 

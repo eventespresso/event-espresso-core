@@ -31,7 +31,7 @@ class EEH_Activation {
 	/**
 	 * option name that will indicate whether or not we still
 	 * need to create EE's folders in the uploads directory
-	 * (because if EE was installed without file system access, 
+	 * (because if EE was installed without file system access,
 	 * we need to request credentials before we can create them)
 	 */
 	const upload_directories_incomplete_option_name = 'ee_upload_directories_incomplete';
@@ -298,7 +298,7 @@ class EEH_Activation {
 				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
 					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
 				} else {
-					$settings->$key = $value;
+					$settings->{$key} = $value;
 				}
 			}
 			add_filter( 'FHEE__EE_Config___load_core_config__update_espresso_config', '__return_true' );
@@ -364,11 +364,13 @@ class EEH_Activation {
 			),
 		);
 
+		$EE_Core_Config = EE_Registry::instance()->CFG->core;
+
 		foreach ( $critical_pages as $critical_page ) {
 			// is critical page ID set in config ?
-			if ( EE_Registry::instance()->CFG->core->$critical_page['id'] !== FALSE ) {
+			if ( $EE_Core_Config->{$critical_page[ 'id' ]} !== FALSE ) {
 				// attempt to find post by ID
-				$critical_page['post'] = get_post( EE_Registry::instance()->CFG->core->$critical_page['id'] );
+				$critical_page['post'] = get_post( $EE_Core_Config->{$critical_page[ 'id' ]} );
 			}
 			// no dice?
 			if ( $critical_page['post'] == NULL ) {
@@ -390,16 +392,24 @@ class EEH_Activation {
 				EEH_Activation::_track_critical_page_post_shortcodes( $critical_page );
 			}
 			// check that Post ID matches critical page ID in config
-			if ( isset( $critical_page['post']->ID ) && $critical_page['post']->ID != EE_Registry::instance()->CFG->core->$critical_page['id'] ) {
+			if (
+				isset( $critical_page['post']->ID )
+				&& $critical_page['post']->ID != $EE_Core_Config->{$critical_page[ 'id' ]}
+			) {
 				//update Config with post ID
-				EE_Registry::instance()->CFG->core->$critical_page['id'] = $critical_page['post']->ID;
+				$EE_Core_Config->{$critical_page[ 'id' ]} = $critical_page['post']->ID;
 				if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
 					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 
-			$critical_page_problem =  ! isset( $critical_page['post']->post_status ) || $critical_page['post']->post_status != 'publish' || strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE ? TRUE : $critical_page_problem;
+			$critical_page_problem =
+				! isset( $critical_page['post']->post_status )
+				|| $critical_page['post']->post_status != 'publish'
+				|| strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE
+					? TRUE
+					: $critical_page_problem;
 
 		}
 
@@ -410,11 +420,9 @@ class EEH_Activation {
 			);
 			EE_Error::add_persistent_admin_notice( 'critical_page_problem', $msg );
 		}
-
 		if ( EE_Error::has_notices() ) {
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 		}
-
 	}
 
 	/**
@@ -502,16 +510,17 @@ class EEH_Activation {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
+		$EE_Core_Config = EE_Registry::instance()->CFG->core;
 		// map shortcode to post
-		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
+		$EE_Core_Config->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// and make sure it's NOT added to the WP "Posts Page"
 		// name of the WP Posts Page
 		$posts_page = EE_Registry::instance()->CFG->get_page_for_posts();
-		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ] )) {
-			unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
+		if ( isset( $EE_Core_Config->post_shortcodes[ $posts_page ] )) {
+			unset( $EE_Core_Config->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
 		}
-		if ( $posts_page != 'posts' && isset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'] )) {
-			unset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'][ $critical_page['code'] ] );
+		if ( $posts_page != 'posts' && isset( $EE_Core_Config->post_shortcodes['posts'] )) {
+			unset( $EE_Core_Config->post_shortcodes['posts'][ $critical_page['code'] ] );
 		}
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
@@ -1100,17 +1109,17 @@ class EEH_Activation {
 							$QSG_ID = reset( $id_col );
 						} else {
 							//ok so we didn't find it in the db either?? that's weird because we should have inserted it at the start of this method
-                                                        EE_Log::instance()->log( 
-                                                                __FILE__, 
-                                                                __FUNCTION__, 
-                                                                sprintf( 
-                                                                        __( 'Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'), 
-                                                                        $QST_ID ), 
+                                                        EE_Log::instance()->log(
+                                                                __FILE__,
+                                                                __FUNCTION__,
+                                                                sprintf(
+                                                                        __( 'Could not associate question %1$s to a question group because no system question group existed', 'event_espresso'),
+                                                                        $QST_ID ),
                                                                 'error' );
                                                         continue;
 						}
 					}
-                                        
+
 					// add system questions to groups
 					$wpdb->insert(
 						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
@@ -1247,12 +1256,12 @@ class EEH_Activation {
 		delete_option( EEH_Activation::upload_directories_incomplete_option_name );
 		return TRUE;
 	}
-	
+
 	/**
 	 * Whether the upload directories need to be fixed or not.
 	 * If EE is installed but filesystem access isn't initially available,
 	 * we need to get the user's filesystem credentials and THEN create them,
-	 * so there might be period of time when EE is installed but its 
+	 * so there might be period of time when EE is installed but its
 	 * upload directories aren't available. This indicates such a state
 	 * @return boolean
 	 */
