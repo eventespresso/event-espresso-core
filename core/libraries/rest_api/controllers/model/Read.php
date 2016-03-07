@@ -1,9 +1,11 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+
 use EventEspresso\core\libraries\rest_api\Capabilities;
 use EventEspresso\core\libraries\rest_api\Calculated_Model_Fields;
 use EventEspresso\core\libraries\rest_api\Rest_Exception;
 use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -513,6 +515,7 @@ class Read extends Base {
 	 */
 	protected function _include_requested_models( \EEM_Base $model, \WP_REST_Request $rest_request, $entity_array ) {
 		$includes_for_this_model = $this->explode_and_get_items_prefixed_with( $rest_request->get_param( 'include' ), '' );
+		$includes_for_this_model = $this->_remove_model_names_from_array( $includes_for_this_model );
 		//if they passed in * or didn't specify any includes, return everything
 		if( ! in_array( '*', $includes_for_this_model )
 			&& ! empty( $includes_for_this_model ) ) {
@@ -558,8 +561,16 @@ class Read extends Base {
 		}
 		return $entity_array;
 	}
-
-
+	
+	/**
+	 * Returns a new array with all the names of models removed. Eg 
+	 * array( 'Event', 'Datetime.*', 'foobar' ) would become array( 'Datetime.*', 'foobar' )
+	 * @param array $arr
+	 * @return array
+	 */
+	private function _remove_model_names_from_array( $arr ) {
+		return array_diff( $arr, array_keys( \EE_Registry::instance()->non_abstract_db_models ) );
+	}
 	/**
 	 * Gets the calculated fields for the response
 	 *
@@ -571,22 +582,29 @@ class Read extends Base {
 	protected function _get_entity_calculations( $model, $wpdb_row, $rest_request ) {
 		$calculated_fields = $this->explode_and_get_items_prefixed_with(
 			$rest_request->get_param( 'calculate' ),
-			'' );
+			''
+		);
 		//note: setting calculate=* doesn't do anything
 		$calculated_fields_to_return = array();
 		foreach( $calculated_fields as $field_to_calculate ) {
 			try{
-			$calculated_fields_to_return[ $field_to_calculate ] = Model_Data_Translator::prepare_field_value_for_json(
-				null,
-				$this->_fields_calculator->retrieve_calculated_field_value( $model, $field_to_calculate, $wpdb_row, $rest_request, $this ),
-				$this->get_model_version_info()->requested_version()
-			);
+				$calculated_fields_to_return[ $field_to_calculate ] = Model_Data_Translator::prepare_field_value_for_json(
+					null,
+					$this->_fields_calculator->retrieve_calculated_field_value(
+						$model,
+						$field_to_calculate,
+						$wpdb_row,
+						$rest_request,
+						$this
+					),
+					$this->get_model_version_info()->requested_version()
+				);
 			} catch( Rest_Exception $e ) {
 				//if we don't have permission to read it, just leave it out. but let devs know about the problem
-				$this->_set_response_header( 
-					'Notices-Field-Calculation-Errors[' . $e->get_string_code() . '][' . $model->get_this_model_name() . '][' . $field_to_calculate . ']', 
-					$e->getMessage(), 
-					true 
+				$this->_set_response_header(
+					'Notices-Field-Calculation-Errors[' . $e->get_string_code() . '][' . $model->get_this_model_name() . '][' . $field_to_calculate . ']',
+					$e->getMessage(),
+					true
 				);
 			}
 		}
@@ -599,7 +617,12 @@ class Read extends Base {
 	 * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
 	 */
 	public function get_versioned_link_to( $link_part_after_version_and_slash ) {
-		return rest_url( \EED_Core_Rest_Api::ee_api_namespace . $this->get_model_version_info()->requested_version() . '/' . $link_part_after_version_and_slash );
+		return rest_url(
+			\EED_Core_Rest_Api::ee_api_namespace
+			. $this->get_model_version_info()->requested_version()
+			. '/'
+			. $link_part_after_version_and_slash
+		);
 	}
 
 	/**
@@ -704,10 +727,10 @@ class Read extends Base {
 	public function create_model_query_params( $model, $query_parameters ) {
 		$model_query_params = array( );
 		if ( isset( $query_parameters[ 'where' ] ) ) {
-			$model_query_params[ 0 ] = Model_Data_Translator::prepare_conditions_query_params_for_models( 
-				$query_parameters[ 'where' ], 
-				$model, 
-				$this->get_model_version_info()->requested_version() 
+			$model_query_params[ 0 ] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+				$query_parameters[ 'where' ],
+				$model,
+				$this->get_model_version_info()->requested_version()
 			);
 		}
 		if ( isset( $query_parameters[ 'order_by' ] ) ) {
@@ -731,10 +754,10 @@ class Read extends Base {
 			$model_query_params[ 'group_by' ] = $group_by;
 		}
 		if ( isset( $query_parameters[ 'having' ] ) ) {
-			$model_query_params[ 'having' ] = Model_Data_Translator::prepare_conditions_query_params_for_models( 
-				$query_parameters[ 'having' ], 
-				$model, 
-				$this->get_model_version_info()->requested_version() 
+			$model_query_params[ 'having' ] = Model_Data_Translator::prepare_conditions_query_params_for_models(
+				$query_parameters[ 'having' ],
+				$model,
+				$this->get_model_version_info()->requested_version()
 			);
 		}
 		if ( isset( $query_parameters[ 'order' ] ) ) {
@@ -794,11 +817,11 @@ class Read extends Base {
 		}
 		return $model_ready_query_params;
 	}
-	
+
 
 
 	/**
-	 * @deprecated 
+	 * @deprecated
 	 * @param $model
 	 * @param $query_params
 	 * @return array

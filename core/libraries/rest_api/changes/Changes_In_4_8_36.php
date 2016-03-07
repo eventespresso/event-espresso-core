@@ -1,4 +1,5 @@
 <?php namespace EventEspresso\core\libraries\rest_api\changes;
+
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
 
@@ -143,23 +144,23 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 
 	
 	/**
-	 * If the value was infinity, we now use null in our JSON responses, 
+	 * If the value was infinity, we now use null in our JSON responses,
 	 * but before this version we used -1.
 	 * @param mixed $new_value
-	 * @param EE_Model_Field_Base $field_obj
+	 * @param \EE_Model_Field_Base $field_obj
 	 * @param mixed $original_value
 	 * @param string $requested_value
 	 * @return mixed
 	 */
 	public function use_negative_one_for_infinity_before_this_version( $new_value, $field_obj, $original_value, $requested_value ) {
-		if( $this->applies_to_version( $requested_value ) 
+		if( $this->applies_to_version( $requested_value )
 			&& $original_value === EE_INF ) {
 			//return the old representation of infinity in the JSON
 			return -1;
 		}
 		return $new_value;
-		
+
 	}
-	
+
 }
 

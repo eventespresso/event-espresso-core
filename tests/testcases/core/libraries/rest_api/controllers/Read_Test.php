@@ -91,6 +91,37 @@ class Read_Test extends \EE_UnitTestCase{
 			$result 
 		);
 	}
+	
+	public function test_handle_request_get_one__event_includes_two_related_models() {
+		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req->set_url_params(
+				array(
+					'id' => $event->ID()
+				)
+			);
+		$req->set_query_params(
+				array(
+					'include' =>  'Venue,Datetime'
+				)
+			);
+		$response = Read::handle_request_get_one( $req );
+		$result = $response->get_data();
+		//make sure we still included all the normal event fields
+		$this->assertArrayHasKey(
+			'EVT_name', 
+			$result
+		);
+		$this->assertArrayHasKey(
+			'datetimes',
+			$result
+		);
+		$this->assertArrayHasKey(
+			'venues',
+			$result
+		);
+	}
+	
 	public function test_handle_request_get_one__event_include_non_model_field() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
@@ -251,7 +282,7 @@ class Read_Test extends \EE_UnitTestCase{
 				$result
 				);
 	}
-
+	
 	public function test_handle_request_get_one__registration_include_attendee(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
@@ -273,8 +304,9 @@ class Read_Test extends \EE_UnitTestCase{
 		$entity = $response->get_data();
 		$this->assertArrayHasKey( 'attendee', $entity );
 	}
-
-	public function test_handle_request_get_one__registration_include_answers_and_questions(){
+	
+	
+	public function test_handle_request_get_one__registration_include_answers_and_questions_use_star(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
@@ -291,6 +323,32 @@ class Read_Test extends \EE_UnitTestCase{
 			);
 		$response = Read::handle_request_get_one( $req );
 		$entity = $response->get_data();
+		$this->assertArrayHasKey( 'REG_date', $entity );
+		$this->assertArrayHasKey( 'answers', $entity );
+		$answers = $entity['answers'];
+		foreach( $answers as $answer ) {
+			$this->assertArrayHasKey( 'question', $answer );
+		}
+	}
+	
+	public function test_handle_request_get_one__registration_include_answers_and_questions(){
+		$this->set_current_user_to_new();
+		$r = $this->new_model_obj_with_dependencies( 'Registration' );
+		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
+		$req->set_query_params(
+				array(
+					'include' => 'Answer.Question'
+				)
+			);
+		$req->set_url_params(
+				array(
+					'id' => $r->ID()
+				)
+			);
+		$response = Read::handle_request_get_one( $req );
+		$entity = $response->get_data();
+		$this->assertArrayHasKey( 'REG_date', $entity );
 		$this->assertArrayHasKey( 'answers', $entity );
 		$answers = $entity['answers'];
 		foreach( $answers as $answer ) {
