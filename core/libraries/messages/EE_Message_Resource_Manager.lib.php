@@ -644,17 +644,11 @@ class EE_Message_Resource_Manager {
 		$messenger = $this->valid_messenger( $messenger_name );
 		if ( $this->valid_message_type_for_messenger( $messenger, $message_type_name ) ) {
 			//ensure messenger is active (that's an inherent coupling between active message types and the
-			//messenger they are being activated for.  Note option is not being updated here because that gets handled later
-			//in this method.
+			//messenger they are being activated for.
 			try {
-				$this->ensure_messenger_is_active( $messenger_name, false );
 				if ( ! $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
 					//all is good so let's just get it active
-					$this->_activate_message_types( $messenger, array( $message_type_name ) );
-				}
-				if ( $update_option ) {
-					$this->update_active_messengers_option();
-					$this->update_has_activated_messengers_option();
+					$this->activate_messenger( $messenger_name, array( $message_type_name ), $update_option );
 				}
 			} catch( EE_Error $e ) {
 				EE_Error::add_error(
@@ -1024,6 +1018,22 @@ class EE_Message_Resource_Manager {
 	}
 
 
+
+
+	/**
+	 * This method checks the `ee_has_activated_messenger` option to see if the message type has ever been
+	 * activated for the given messenger.  This can be called by client code on plugin updates etc to determine whether
+	 * to attempt automatically reactivating message types that should be activated by default or not.
+	 *
+	 * @param $message_type_name
+	 * @param $messenger_name
+	 * @return bool
+	 */
+	public function has_message_type_been_activated_for_messenger( $message_type_name, $messenger_name ) {
+		$has_activated = $this->get_has_activated_messengers_option();
+		return isset( $has_activated[ $messenger_name ] )
+			&& in_array( $message_type_name, $has_activated[ $messenger_name ] );
+	}
 }
 // End of file EE_Message_Resource_Manager.lib.php
 // Location: /EE_Message_Resource_Manager.lib.php

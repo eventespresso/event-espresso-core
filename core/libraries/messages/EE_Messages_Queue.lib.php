@@ -529,6 +529,7 @@ class EE_Messages_Queue {
 	public function count_STS_in_queue( $status ) {
 		$count = 0;
 		$status = is_array( $status ) ? $status : array( $status );
+		$this->_queue->rewind();
 		foreach( $this->_queue as $message ) {
 			if ( in_array( $message->STS_ID(), $status ) ) {
 				$count++;

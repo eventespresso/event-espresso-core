@@ -12,10 +12,11 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 	/**
 	 * Number of seconds between batch sends/generates on the cron job.
-	 * Defaults to 10 minutes in seconds.
+	 * Defaults to 10 minutes in seconds.  If you want to change this interval, you can use the native WordPress
+	 * `cron_schedules` filter and modify the existing custom `ee_message_cron` schedule interval added.
 	 * @type int
 	 */
-	const message_cron_schedule = 30;
+	const message_cron_schedule = 600;
 
 	/**
 	 * Constructor
@@ -45,8 +46,8 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 */
 	public function custom_schedules( $schedules ) {
 		$schedules['ee_message_cron'] = array(
-				'interval' => self::message_cron_schedule,
-				'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
+			'interval' => self::message_cron_schedule,
+			'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
 		);
 		return $schedules;
 	}
@@ -76,16 +77,20 @@ class EE_Messages_Scheduler extends EE_BASE {
 			array(
 				'ee' => 'msg_cron_trigger',
 				'type' => $task,
-				'_nonce' => $nonce
+				'_nonce' => $nonce,
 			),
 			site_url()
 		);
 		$request_args = array(
-				'timeout' => 300,
-				'blocking' => false,
-				'sslverify' => false
+			'timeout' => 300,
+			'blocking' => ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? true : false,
+			'sslverify' => false,
+			'redirection' => 10,
 		);
-		wp_remote_get( $request_url, $request_args );
+		$response = wp_remote_get( $request_url, $request_args );
+		if ( is_wp_error( $response ) ) {
+			trigger_error( $response->get_error_message() );
+		}
 	}
 
 

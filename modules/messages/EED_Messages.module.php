@@ -570,6 +570,12 @@ class EED_Messages  extends EED_Module {
 			return self::resend_message();
 		}
 
+		//make sure any incoming request data is set on the REQ so that it gets picked up later.
+		$req_data = (array) $req_data;
+		foreach( $req_data as $request_key => $request_value ) {
+			EE_Registry::instance()->REQ->set( $request_key, $request_value );
+		}
+
 		if ( ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request() ) {
 			return false;
 		}
@@ -890,7 +896,7 @@ class EED_Messages  extends EED_Module {
 			);
 		} else {
 			//can count how many sent by using the messages in the queue
-			$sent_count = $sent_queue->count_STS_in_queue( array( EEM_Message::instance()->stati_indicating_sent() ) );
+			$sent_count = $sent_queue->count_STS_in_queue( EEM_Message::instance()->stati_indicating_sent() );
 			if ( $sent_count > 0 ) {
 				EE_Error::add_success(
 					sprintf(
@@ -906,7 +912,7 @@ class EED_Messages  extends EED_Module {
 			} else {
 				EE_Error::overwrite_errors();
 				EE_Error::add_error(
-					__( 'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, or there was an error.
+					__( 'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, they were ALREADY sent on a different scheduled task, or there was an error.
 					If there was an error, you can look at the messages in the message activity list table for any error messages.', 'event_espresso' ),
 					__FILE__, __FUNCTION__, __LINE__
 				);
