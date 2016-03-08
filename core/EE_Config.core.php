@@ -804,8 +804,6 @@ final class EE_Config {
 	public function update_post_shortcodes( $page_for_posts = '' ) {
 		// make sure page_for_posts is set
 		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
-		// critical page shortcodes that we do NOT want added to the Posts page (blog)
-		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
 		// allow others to mess stuff up :D
 		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
 		// verify that post_shortcodes is set
@@ -817,9 +815,8 @@ final class EE_Config {
 				// loop thru list of tracked shortcodes
 				foreach( $shortcodes as $shortcode => $post_id ) {
 					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
-					if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $page_for_posts ) {
-						// then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
-						unset( $this->core->post_shortcodes[ $post_name ][ $shortcode ] );
+					if ( $post_name == $page_for_posts ) {
+						continue;
 					}
 					// skip the posts page, because we want all shortcodes registered for it
 					if ( $post_name == $page_for_posts ) {
@@ -841,6 +838,12 @@ final class EE_Config {
 				// you got no shortcodes to keep track of !
 				unset( $this->core->post_shortcodes[ $post_name ] );
 			}
+		}
+		// critical page shortcodes that we do NOT want added to the Posts page (blog)
+		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
+		$critical_shortcodes = array_flip( $critical_shortcodes );
+		foreach ( $critical_shortcodes as $critical_shortcode ) {
+			unset( $this->core->post_shortcodes[ $page_for_posts ][ $critical_shortcode ] );
 		}
 		//only show errors
 		$this->update_espresso_config();
