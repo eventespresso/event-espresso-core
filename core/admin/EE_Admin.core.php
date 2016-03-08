@@ -757,7 +757,10 @@ final class EE_Admin {
 
 
 	/**
-	 * set_post_shortcodes_for_posts_page
+	 * set_post_shortcodes_for_posts_page (plz note: shortcodes is plural)
+	 *
+	 * called when updating the WordPress Posts Page,
+	 * and adds shortcode tracking for the Posts Page, for all shortcodes currently tracked on individual posts
 	 *
 	 * @access protected
 	 * @param  string $page_for_posts
@@ -777,7 +780,9 @@ final class EE_Admin {
 
 
 	/**
-	 * set_post_shortcode_for_posts_page
+	 * set_post_shortcode_for_posts_page (plz note: shortcode is singular)
+	 *
+	 * adds Posts Page shortcode tracking for the supplied shortcode for an individual post
 	 *
 	 * @access protected
 	 * @param  string $page_for_posts
