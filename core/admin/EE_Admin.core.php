@@ -730,27 +730,26 @@ final class EE_Admin {
 					$update_post_shortcodes = TRUE;
 				} else {
 					// shortcode is not present in post content, so check if we were tracking it previously
-					// stop tracking if not set for this specific post
+					// stop tracking if shortcode is not used in this specific post
 					if ( isset( EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] ) ) {
 						unset( EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] );
 						$update_post_shortcodes = true;
 					}
-					// and also stop tracking for this post on the blog if it is not set
-					if (
-						isset(
-							EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ],
-							EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ][ $post_ID ]
-						)
-					) {
-						unset( EE_Registry::CFG(
-						)->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ][ $post_ID ] );
-						$update_post_shortcodes = true;
-					}
-					// if there is no tracking whatsoever for this shortcode, then remove blog tracking altogether
-					if ( empty( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
-						unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] );
-						$update_post_shortcodes = true;
-					}
+					// make sure that something is set for the shortcode posts (even though we may remove this)
+					$shortcode_posts = isset(
+						EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ]
+					)
+						? EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ]
+						: array();
+					// and stop tracking for this shortcode on the blog page if it is not used
+					$update_post_shortcodes = EE_Admin::unset_posts_page_shortcode_for_post(
+						$post_ID,
+						$EES_Shortcode,
+						$shortcode_posts,
+						$page_for_posts
+					)
+						? true
+						: $update_post_shortcodes;
 				}
 			}
 			if ( $update_post_shortcodes ) {
@@ -822,23 +821,14 @@ final class EE_Admin {
 			if ( $post_name == $page_for_posts ) {
 				// loop thru shortcodes registered for the posts page
 				foreach ( $post_shortcodes as $shortcode_class => $shortcode_posts ) {
-					// make sure that an array of post IDs is being tracked for each  shortcode
-					if ( ! is_array( $shortcode_posts ) ) {
-						EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] = array(
-							$shortcode_posts => true
-						);
-						$update_post_shortcodes = true;
-					}
-					// now if the ID of the post being deleted is in the $shortcode_posts array
-					if ( is_array( $shortcode_posts ) && isset( $shortcode_posts[ $ID ] ) ) {
-						unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ][ $ID ] );
-						$update_post_shortcodes = true;
-					}
-					// if nothing is registered for that shortcode anymore, then delete the shortcode altogether
-					if ( empty( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] ) ) {
-						unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] );
-						$update_post_shortcodes = true;
-					}
+					$update_post_shortcodes = EE_Admin::unset_posts_page_shortcode_for_post(
+						$ID,
+						$shortcode_class,
+						$shortcode_posts,
+						$page_for_posts
+					)
+						? true
+						: $update_post_shortcodes;
 				}
 			} else {
 				// loop thru shortcodes registered for each page
@@ -854,6 +844,40 @@ final class EE_Admin {
 		if ( $update_post_shortcodes ) {
 			EE_Registry::CFG()->update_post_shortcodes( $page_for_posts );
 		}
+	}
+
+
+
+	/**
+	 * unset_post_shortcodes_on_delete
+	 *
+	 * @access protected
+	 * @param  int $ID
+	 * @param      $shortcode_class
+	 * @param      $shortcode_posts
+	 * @param      $page_for_posts
+	 * @return bool
+	 */
+	protected static function unset_posts_page_shortcode_for_post( $ID, $shortcode_class, $shortcode_posts, $page_for_posts ) {
+		$update_post_shortcodes = false;
+		// make sure that an array of post IDs is being tracked for each  shortcode
+		if ( ! is_array( $shortcode_posts ) ) {
+			EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] = array(
+				$shortcode_posts => true
+			);
+			$update_post_shortcodes = true;
+		}
+		// now if the ID of the post being deleted is in the $shortcode_posts array
+		if ( is_array( $shortcode_posts ) && isset( $shortcode_posts[ $ID ] ) ) {
+			unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ][ $ID ] );
+			$update_post_shortcodes = true;
+		}
+		// if nothing is registered for that shortcode anymore, then delete the shortcode altogether
+		if ( empty( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] ) ) {
+			unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] );
+			$update_post_shortcodes = true;
+		}
+		return $update_post_shortcodes;
 	}
 
 
