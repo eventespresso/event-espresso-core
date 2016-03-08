@@ -725,13 +725,7 @@ final class EE_Admin {
 					EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
 					if ( ! in_array( $EES_Shortcode, $critical_shortcodes ) ) {
-						// add shortcode to "Posts page" tracking
-						if ( isset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
-							EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] =
-								EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] + array( $post_ID => true );
-						} else {
-							EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = array( $post_ID => true );
-						}
+						EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
 					}
 					$update_post_shortcodes = TRUE;
 				// shortcode is not present in post content, so check if we were tracking it previously
@@ -770,9 +764,35 @@ final class EE_Admin {
 		EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ] = array();
 		// loop thru shortcodes
 		foreach ( EE_Registry::CFG()->core->post_shortcodes as $EES_Shortcode => $post_ID ) {
-			EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = array( $post_ID => true );
+			EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
 		}
 		EE_Registry::CFG()->update_post_shortcodes( $page_for_posts );
+	}
+
+
+
+	/**
+	 * set_post_shortcode_for_posts_page
+	 *
+	 * @access protected
+	 * @param  string $page_for_posts
+	 * @param         $EES_Shortcode
+	 * @param         $post_ID
+	 */
+	protected static function set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID ) {
+		// add shortcode to "Posts page" tracking
+		if ( isset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
+			// make sure tracking is in form of an array
+			if ( ! is_array( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
+				EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = array(
+					EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] => true
+				);
+			}
+			EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] =
+				EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] + array( $post_ID => true );
+		} else {
+			EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = array( $post_ID => true );
+		}
 	}
 
 
