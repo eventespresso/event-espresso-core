@@ -81,7 +81,6 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 	}
 	
 	/**
-	 * @group current
 	 */
 	public function test_set_redirection_info__with_paypal_taxes_and_shipping(){
 		//make sure paypal gateway is included
@@ -410,9 +409,8 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		$this->assertEquals( $updated_line_item_total, $t->total_line_item()->total() );
 	}
         
-        /**
+	/**
 	 * @group 4710
-         * @group current
 	 */
 	public function test_update_txn_based_on_payment__paypal_adds_taxes_and_shipping__twice(){
 		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Standard' ) );

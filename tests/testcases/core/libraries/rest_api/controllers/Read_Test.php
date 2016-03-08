@@ -1,5 +1,6 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -15,48 +16,56 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Read_Test extends \EE_UnitTestCase{
-	public function test_extract_includes_for_this_model__basic(){
+	public function test_explode_and_get_items_prefixed_with__basic(){
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'EVT_ID',
 			'EVT_name'
-		), $controller->extract_includes_for_this_model( 'EVT_ID,EVT_name' ) );
+		), $controller->explode_and_get_items_prefixed_with( 'EVT_ID,EVT_name', '' ) );
 	}
-	public function test_extract_includes_for_this_model__extra_whitespace() {
+	public function test_explode_and_get_items_prefixed_with__extra_whitespace() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
 		$this->assertEquals( array(
 			'EVT_ID',
 			'EVT_name',
 			'EVT_desc'
-		), $controller->extract_includes_for_this_model( 'EVT_ID , EVT_name , EVT_desc' ) );
+		), $controller->explode_and_get_items_prefixed_with( 'EVT_ID , EVT_name , EVT_desc', '' ) );
 	}
-	public function test_extract_includes_for_this_model__related_model() {
+	public function test_explode_and_get_items_prefixed_with__related_model() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(), $controller->extract_includes_for_this_model( 'Registration.*' ) );
+		$this->assertEquals( array(), $controller->explode_and_get_items_prefixed_with( 'Registration.*', '' ) );
 	}
-	public function test_extract_includes_for_this_model__related_model_all() {
+	public function test_explode_and_get_items_prefixed_with__related_model_all() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(
-			'*'
-		), $controller->extract_includes_for_this_model( 'Registration.*', 'Registration' ) );
+		$this->assertEquals( 
+			array(
+				'*'
+			), 
+			$controller->explode_and_get_items_prefixed_with( 'Registration.*', 'Registration' ) 
+		);
 	}
-	public function test_extract_includes_for_this_model__related_models_but_searching_for_this_one() {
+	public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_this_one() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(
-		), $controller->extract_includes_for_this_model( 'Registration.REG_ID, Registration.Attendee.ATT_ID' ) );
+		$this->assertEquals( 
+			array(), 
+			$controller->explode_and_get_items_prefixed_with( 'Registration.REG_ID, Registration.Attendee.ATT_ID', '' ) 
+		);
 	}
-	public function test_extract_includes_for_this_model__related_models_but_searching_for_other() {
+	public function test_explode_and_get_items_prefixed_with__related_models_but_searching_for_other() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(
-			'REG_ID',
-			'Attendee.ATT_ID'
-		), $controller->extract_includes_for_this_model( 'Registration.REG_ID, Registration.Attendee.ATT_ID', 'Registration' ) );
+		$this->assertEquals( 
+			array(
+				'REG_ID',
+				'Attendee.ATT_ID'
+			), 
+			$controller->explode_and_get_items_prefixed_with( 'Registration.REG_ID, Registration.Attendee.ATT_ID', 'Registration' ) 
+		);
 	}
 
 	public function test_handle_request_get_one__event_includes() {
@@ -78,8 +87,41 @@ class Read_Test extends \EE_UnitTestCase{
 			array (
 				'EVT_ID' => $event->ID(),
 				'EVT_name' => $event->name()
-				), $result );
+			), 
+			$result 
+		);
 	}
+	
+	public function test_handle_request_get_one__event_includes_two_related_models() {
+		$event = $this->new_model_obj_with_dependencies( 'Event', array( 'status' => 'publish' ) );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req->set_url_params(
+				array(
+					'id' => $event->ID()
+				)
+			);
+		$req->set_query_params(
+				array(
+					'include' =>  'Venue,Datetime'
+				)
+			);
+		$response = Read::handle_request_get_one( $req );
+		$result = $response->get_data();
+		//make sure we still included all the normal event fields
+		$this->assertArrayHasKey(
+			'EVT_name', 
+			$result
+		);
+		$this->assertArrayHasKey(
+			'datetimes',
+			$result
+		);
+		$this->assertArrayHasKey(
+			'venues',
+			$result
+		);
+	}
+	
 	public function test_handle_request_get_one__event_include_non_model_field() {
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
@@ -107,12 +149,86 @@ class Read_Test extends \EE_UnitTestCase{
 			$result
 		);
 	}
-	public function test_extract_includes_for_this_model__null() {
+	public function test_explode_and_get_items_prefixed_with__null() {
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
-		$this->assertEquals( array(), $controller->extract_includes_for_this_model( '*' ) );
+		$this->assertEquals( array('*'), $controller->explode_and_get_items_prefixed_with( '*', '' ) );
 	}
+	
+	/**
+	 * @group 9406
+	 */
+	public function test_handle_request_get_one__event_calculate_stuff() {
+		$this->set_current_user_to_new();
+		$limit_on_datetime = 100;
+		$limit_on_ticket = 50;
+		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		$dtt = $this->new_model_obj_with_dependencies( 
+			'Datetime', 
+			array( 
+				'DTT_reg_limit' => $limit_on_datetime, 
+				'EVT_ID' => $event->ID() 
+			) 
+		);
+		$tkt = $this->new_model_obj_with_dependencies( 
+			'Ticket', 
+			array( 
+				'TKT_qty' => $limit_on_ticket 
+			) 
+		);
+		$tkt->_add_relation_to( $dtt, 'Datetime' );
+		$reg1 = $this->new_model_obj_with_dependencies( 
+			'Registration', 
+			array( 
+				'EVT_ID' => $event->ID(),
+				'TKT_ID' => $tkt->ID(),
+				'STS_ID' => \EEM_Registration::status_id_approved 
+			) 
+		);
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/events/' . $event->ID() );
+		$req->set_url_params(
+				array(
+					'id' => $event->ID()
+				)
+			);
+		$req->set_query_params(
+				array(
+					'include' => 'Datetime',
+					'calculate' =>  'optimum_sales_at_start,spots_taken,Datetime.registrations_checked_in_count'
+				)
+			);
+		$response = Read::handle_request_get_one( $req );
+		$result = $response->get_data();
+		$this->assertTrue( isset( $result[ 'EVT_ID' ] ) );
+		//check that the requested calculated fields were added. 
+		//Seeing how these calculated fields just wrap other EE methods (which sould already be tested)
+		//the emphasis here is just on whether or not they get included properly, not exhaustively
+		//testing the calculations themselves
+		$this->assertTrue( isset( $result[ '_calculated_fields' ] ) );
+		$this->assertEquals(
+			array(
+				'optimum_sales_at_start' => min( array( $limit_on_datetime, $limit_on_ticket ) ),
+				'spots_taken' => 1
+			),
+			$result[ '_calculated_fields' ] 
+		);
+		$this->assertTrue( isset( $result[ 'datetimes' ] ) );
+		$this->assertTrue( isset( $result[ 'datetimes' ][ 0 ] ) );
+		$this->assertTrue( isset( $result[ 'datetimes' ][ 0 ][ '_calculated_fields' ] ) );
+		$this->assertEquals(
+			array( 
+				'registrations_checked_in_count' => 0
+			),
+			$result[ 'datetimes' ][ 0 ][ '_calculated_fields' ]
+		);
+	}
+	
+	/**
+	 * @group current
+	 */
 	public function test_handle_request_get_one__event() {
+		
+		\EED_Core_Rest_Api::set_hooks_for_changes();
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
@@ -161,12 +277,12 @@ class Read_Test extends \EE_UnitTestCase{
 				'EVT_donations' => $event->get( 'EVT_donations' ) ,
 				'featured_image_url' => null,
 				'EVT_timezone_string' => '',
-				'link' => get_permalink( $event->ID() )
+				'link' => get_permalink( $event->ID() ),
 			  ),
 				$result
 				);
 	}
-
+	
 	public function test_handle_request_get_one__registration_include_attendee(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
@@ -188,8 +304,9 @@ class Read_Test extends \EE_UnitTestCase{
 		$entity = $response->get_data();
 		$this->assertArrayHasKey( 'attendee', $entity );
 	}
-
-	public function test_handle_request_get_one__registration_include_answers_and_questions(){
+	
+	
+	public function test_handle_request_get_one__registration_include_answers_and_questions_use_star(){
 		$this->set_current_user_to_new();
 		$r = $this->new_model_obj_with_dependencies( 'Registration' );
 		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
@@ -206,6 +323,32 @@ class Read_Test extends \EE_UnitTestCase{
 			);
 		$response = Read::handle_request_get_one( $req );
 		$entity = $response->get_data();
+		$this->assertArrayHasKey( 'REG_date', $entity );
+		$this->assertArrayHasKey( 'answers', $entity );
+		$answers = $entity['answers'];
+		foreach( $answers as $answer ) {
+			$this->assertArrayHasKey( 'question', $answer );
+		}
+	}
+	
+	public function test_handle_request_get_one__registration_include_answers_and_questions(){
+		$this->set_current_user_to_new();
+		$r = $this->new_model_obj_with_dependencies( 'Registration' );
+		$this->new_model_obj_with_dependencies( 'Answer', array( 'REG_ID' => $r->ID() ) );
+		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/registrations/' . $r->ID() );
+		$req->set_query_params(
+				array(
+					'include' => 'Answer.Question'
+				)
+			);
+		$req->set_url_params(
+				array(
+					'id' => $r->ID()
+				)
+			);
+		$response = Read::handle_request_get_one( $req );
+		$entity = $response->get_data();
+		$this->assertArrayHasKey( 'REG_date', $entity );
 		$this->assertArrayHasKey( 'answers', $entity );
 		$answers = $entity['answers'];
 		foreach( $answers as $answer ) {
@@ -271,6 +414,29 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->assertInstanceOf( 'WP_REST_Response', $response );
 		$this->assertEquals( 403, $response->get_status() );
 	}
+	
+	/**
+	 * @group 9406
+	 */
+	public function test_handle_request_get_all__set_headers(){
+		$datetimes_created = 65;
+		$event = $this->new_model_obj_with_dependencies( 'Event',  array( 'status' => \EEM_CPT_Base::post_status_publish ) );
+		for( $i=0;$i < $datetimes_created; $i++ ) {
+			$this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID' => $event->ID() ) );
+		}
+   		$this->assertEquals( $datetimes_created, \EEM_Datetime::instance()->count( array( 'caps' => \EEM_Base::caps_read ) ) );
+		//request all datetimes
+		$response = Read::handle_request_get_all(
+			new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.34/datetimes' )
+		);
+		$this->assertInstanceOf( 'WP_REST_Response', $response );
+		$headers = $response->get_headers();
+		
+		$this->assertArrayHasKey( Controller_Base::header_prefix_for_wp . 'Total', $headers );
+		$this->assertArrayHasKey( Controller_Base::header_prefix_for_wp . 'TotalPages', $headers );
+		$this->assertEquals( $datetimes_created, $headers[ Controller_Base::header_prefix_for_wp . 'Total' ] );
+		$this->assertEquals( ceil( $datetimes_created / 50 ),$headers[ Controller_Base::header_prefix_for_wp . 'TotalPages' ] );
+	}
 
 	/**
 	* @param string $role
@@ -321,15 +487,20 @@ class Read_Test extends \EE_UnitTestCase{
 
 	/**
 	 * @group 24
+	 * @group 9406
 	 */
-	public function test_create_model_query_params(){
+	public function test_create_model_query_params__4_8_36(){
 		$controller = new Read();
+		$controller->set_requested_version( '4.8.36' );
 		$this->assertEquals( array(
 					0 => array(
 						'EVT_desc*foobar' => array( 'LIKE', '%frogs%' ),
 						'OR*otherfunanimals' => array(
 							'EVT_name' => array( 'IN', array( 'chickens', 'cows' ) ),
-							'EVT_slug' => 'cowbunga'
+							'EVT_slug' => 'cowbunga',
+							'Datetime.DTT_reg_limit' => EE_INF,
+							'Datetime.DTT_reg_limit*1' => EE_INF,
+							'Datetime.DTT_EVT_start' => array( '<', strtotime('2016-01-01 00:00:00') ),
 						)
 					),
 					'order_by' => array(
@@ -351,8 +522,12 @@ class Read_Test extends \EE_UnitTestCase{
 						'EVT_desc*foobar' => array( 'LIKE', '%frogs%' ),
 						'OR*otherfunanimals' => array(
 							'EVT_name' => array( 'IN', array( 'chickens', 'cows' ) ),
-							'EVT_slug' => 'cowbunga'
-						)
+							'EVT_slug' => 'cowbunga',
+							'Datetime.DTT_reg_limit' => null,
+							'Datetime.DTT_reg_limit*1' => '',
+							'Datetime.DTT_EVT_start' => array( '<', '2016-01-01T00:00:00' ),
+						),
+						
 					),
 					'order_by' => array(
 						'EVT_desc' => 'ASC'

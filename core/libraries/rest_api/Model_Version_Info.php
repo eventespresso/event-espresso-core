@@ -391,6 +391,27 @@ class Model_Version_Info {
 		return $extra_properties;
 	}
 
+	/**
+	 * Gets all the related models for the specified model. It's good to use this
+	 * in case this model didn't exist for this version or something
+	 * @param \EEM_Base $model
+	 * @return \EE_Model_Relation_Base[]
+	 */
+	public function relation_settings( \EEM_Base $model ) {
+		$relations = array();
+		foreach( $model->relation_settings() as $relation_name => $relation_obj ) {
+			if( $this->is_model_name_in_this_version(  $relation_name ) ) {
+				$relations[ $relation_name ] = $relation_obj;
+			}
+		}
+		//filter the results, but use the old filter name
+		return apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
+			$relations,
+			$model
+		);
+	}
+
 }
 
 // End of file Model_Version_Info.php
