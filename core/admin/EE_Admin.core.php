@@ -728,21 +728,29 @@ final class EE_Admin {
 						EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
 					}
 					$update_post_shortcodes = TRUE;
-				// shortcode is not present in post content, so check if we were tracking it previously
-				} else if (
-					isset(
-						EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ],
-						EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ][ $post_ID ]
-					)
-				) {
-					// and stop tracking for this post
-					unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ][ $post_ID ] );
-					$update_post_shortcodes = true;
-				}
-				// if there is no tracking whatsoever for this shortcode, then remove tracking altogether
-				if ( empty( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
-					unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] );
-					$update_post_shortcodes = true;
+				} else {
+					// shortcode is not present in post content, so check if we were tracking it previously
+					// stop tracking if not set for this specific post
+					if ( isset( EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] ) ) {
+						unset( EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] );
+						$update_post_shortcodes = true;
+					}
+					// and also stop tracking for this post on the blog if it is not set
+					if (
+						isset(
+							EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ],
+							EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ][ $post_ID ]
+						)
+					) {
+						unset( EE_Registry::CFG(
+						)->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ][ $post_ID ] );
+						$update_post_shortcodes = true;
+					}
+					// if there is no tracking whatsoever for this shortcode, then remove blog tracking altogether
+					if ( empty( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
+						unset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] );
+						$update_post_shortcodes = true;
+					}
 				}
 			}
 			if ( $update_post_shortcodes ) {
