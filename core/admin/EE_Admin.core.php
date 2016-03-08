@@ -180,7 +180,9 @@ final class EE_Admin {
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );
 			add_action( 'delete_post', array( 'EE_Admin', 'unset_post_shortcodes_on_delete' ), 100, 1 );
+			add_action( 'add_option_page_for_posts', array( $this, 'reset_page_for_posts_on_initial_set' ), 100, 2 );
 			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
+			add_action( 'delete_option', array( $this, 'reset_page_for_posts_on_delete' ), 100, 1 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
@@ -953,24 +955,60 @@ final class EE_Admin {
 
 
 	/**
+	 * reset_page_for_posts_on_initial_set
+	 *
+	 * if an admin is on the WP Reading Settings page and sets the option for "Posts page",
+	 * when it had previously been unset,
+	 * then we need to attribute any actively used shortcodes to the new blog page
+	 *
+	 * @access public
+	 * @param  string $option
+	 * @param  string $value
+	 * @return void
+	 */
+	public function reset_page_for_posts_on_initial_set( $option, $value ) {
+		$this->reset_page_for_posts_on_change( $option, '', $value );
+	}
+
+
+
+	/**
 	 *    reset_page_for_posts_on_change
 	 *
-	 * 	if an admin is on the WP Reading Settings page and changes the option for "Posts page", then we need to attribute any shortcodes for the previous blog page to the new blog page
+	 *    if an admin is on the WP Reading Settings page and changes the option for "Posts page",
+	 * then we need to attribute any actively used shortcodes for the previous blog page to the new blog page
 	 *
-	 * @access 	public
-	 * @param 	$option
-	 * @param 	$old_value
-	 * @param 	$value
-	 * @return 	void
+	 * @access public
+	 * @param  string $option
+	 * @param  string $old_value
+	 * @param  string $value
+	 * @return void
 	 */
-	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
+	public function reset_page_for_posts_on_change( $option, $old_value = '', $value = '' ) {
 		if ( $option == 'page_for_posts' ) {
 			global $wpdb;
-			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
-			$old_page_for_posts = $old_value ? $wpdb->get_var( $wpdb->prepare( $SQL, $old_value )) : 'posts';
+			$table = $wpdb->posts;
+			$SQL = "SELECT post_name from $table WHERE post_type='posts' OR post_type='page' AND post_status='publish' AND ID=%d";
 			$new_page_for_posts = $value ? $wpdb->get_var( $wpdb->prepare( $SQL, $value )) : 'posts';
-			EE_Registry::instance()->CFG->core->post_shortcodes[ $new_page_for_posts ] = EE_Registry::instance()->CFG->core->post_shortcodes[ $old_page_for_posts ];
-			EE_Registry::instance()->CFG->update_post_shortcodes( $new_page_for_posts );
+			EE_Admin::set_post_shortcodes_for_posts_page( $new_page_for_posts );
+		}
+	}
+
+
+
+	/**
+	 * reset_page_for_posts_on_delete
+	 *
+	 * if an admin deletes a page designated as the WP "Posts page",
+	 * then we need to attribute any actively used shortcodes for that blog page to a generic 'posts' page
+	 *
+	 * @access public
+	 * @param  string $option
+	 * @return void
+	 */
+	public function reset_page_for_posts_on_delete( $option ) {
+		if ( $option == 'page_for_posts' ) {
+			EE_Admin::set_post_shortcodes_for_posts_page( 'posts' );
 		}
 	}
 
