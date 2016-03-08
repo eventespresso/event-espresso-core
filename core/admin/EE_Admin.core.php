@@ -698,8 +698,6 @@ final class EE_Admin {
 				EE_Admin::set_post_shortcodes_for_posts_page( $page_for_posts );
 				return;
 			}
-			// critical page shortcodes that we do NOT want added to the Posts page (blog)
-			$critical_shortcodes = EE_Registry::CFG()->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::CFG()->core->post_shortcodes = isset( EE_Registry::CFG()->core->post_shortcodes )
 				? EE_Registry::CFG()->core->post_shortcodes
@@ -723,10 +721,8 @@ final class EE_Admin {
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post names and post IDs
 					EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
-					if ( ! in_array( $EES_Shortcode, $critical_shortcodes ) ) {
-						EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
-					}
+					// and add this shortcode to the tracking for the blog page
+					EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
 					$update_post_shortcodes = TRUE;
 				} else {
 					// shortcode is not present in post content, so check if we were tracking it previously
@@ -770,8 +766,10 @@ final class EE_Admin {
 	protected static function set_post_shortcodes_for_posts_page( $page_for_posts ) {
 		EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ] = array();
 		// loop thru shortcodes
-		foreach ( EE_Registry::CFG()->core->post_shortcodes as $EES_Shortcode => $post_ID ) {
-			EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
+		foreach ( EE_Registry::CFG()->core->post_shortcodes as $post_name => $post_shortcodes ) {
+			foreach ( $post_shortcodes as $EES_Shortcode => $post_ID ) {
+				EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
+			}
 		}
 		EE_Registry::CFG()->update_post_shortcodes( $page_for_posts );
 	}
@@ -787,6 +785,12 @@ final class EE_Admin {
 	 * @param         $post_ID
 	 */
 	protected static function set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID ) {
+		// critical page shortcodes that we do NOT want added to the Posts page (blog)
+		$critical_shortcodes = EE_Registry::CFG()->core->get_critical_pages_shortcodes_array();
+		// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
+		if ( in_array( $EES_Shortcode, $critical_shortcodes ) ) {
+			return;
+		}
 		// add shortcode to "Posts page" tracking
 		if ( isset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] ) ) {
 			// make sure tracking is in form of an array
