@@ -11,24 +11,44 @@
 class EE_Request {
 
 	/**
-	 * @access    private
-	 * 	@type 	array $_params $_REQUEST parameters
+	 * @access private
+	 * @var    array $_get $_GET parameters
+	 */
+	private $_get = array();
+
+	/**
+	 * @access private
+	 * @var    array $_post $_POST parameters
+	 */
+	private $_post = array();
+
+	/**
+	 * @access private
+	 * @var    array $_cookie $_COOKIE parameters
+	 */
+	private $_cookie = array();
+
+	/**
+	 * @access private
+	 * @var    array $_params $_REQUEST parameters
 	 */
 	private $_params = array();
 
 	/**
-	 * 	whether current request is via AJAX
-	 *	@type 	boolean
-	 * 	@access public
+	 * whether current request is via AJAX
+	 *
+	 * @var    boolean
+	 * @access public
 	 */
-	public $ajax = FALSE;
+	public $ajax = false;
 
 	/**
-	 * 	whether current request is via AJAX from the frontend of the site
-	 *	@type 	boolean
-	 * 	@access public
+	 * whether current request is via AJAX from the frontend of the site
+	 *
+	 * @var    boolean
+	 * @access public
 	 */
-	public $front_ajax = FALSE;
+	public $front_ajax = false;
 
 
 
@@ -36,14 +56,46 @@ class EE_Request {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @param array $request
+	 * @param array $get
+	 * @param array $post
+	 * @param array $cookie
 	 */
-	public function __construct( $request ) {
+	public function __construct( $get, $post, $cookie ) {
 		// grab request vars
-		$this->_params = $request;
+		$this->_get    = $get;
+		$this->_post   = $post;
+		$this->_cookie = $cookie;
+		$this->_params = array_merge( $get, $post );
 		// AJAX ???
-		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
-		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
+		$this->ajax       = defined( 'DOING_AJAX' ) ? true : false;
+		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function get_params() {
+		return $this->_get;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function post_params() {
+		return $this->_post;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function cookie_params() {
+		return $this->_cookie;
 	}
 
 
