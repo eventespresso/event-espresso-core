@@ -91,10 +91,10 @@ class EE_Taxes extends EE_BASE {
 				switch ( $price->type_obj()->base_type() ) {
 					case 1: // base price
 					case 3: // surcharges
-						$subtotal += $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
+						$subtotal += $price->is_percent() ? $subtotal * $price->get_raw( 'PRC_amount' ) / 100 : $price->get_raw( 'PRC_amount' );
 						break;
 					case 2: // discounts
-						$subtotal -= $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
+						$subtotal -= $price->is_percent() ? $subtotal * $price->get_raw( 'PRC_amount' ) / 100 : $price->get_raw( 'PRC_amount' );
 						break;
 				}
 			}

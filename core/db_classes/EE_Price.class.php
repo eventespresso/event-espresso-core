@@ -143,7 +143,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class {
 	 * @return        float
 	 */
 	public function amount() {
-		return $this->get( 'PRC_amount' );
+		return $this->get_raw( 'PRC_amount' );
 	}
 
 

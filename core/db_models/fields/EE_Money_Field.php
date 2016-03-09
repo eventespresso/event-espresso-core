@@ -48,12 +48,12 @@ class EE_Money_Field extends EE_Float_Field{
 		//now it's a float-style string or number
 		$float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
 		//round to the correctly number of decimal places for this  currency
-		$rounded_value = round($float_val,  EE_Registry::instance()->CFG->currency->dec_plc);
+		$rounded_value = round($float_val, 8);
 		return $rounded_value;
 	}
 
 	function prepare_for_get($value_of_field_on_model_object) {
 		$c = EE_Registry::instance()->CFG->currency;
-		return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
+		return round(parent::prepare_for_get($value_of_field_on_model_object), 8);
 	}
 }

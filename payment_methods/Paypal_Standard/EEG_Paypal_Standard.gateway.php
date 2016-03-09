@@ -16,7 +16,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowe
  *
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
-	
+
 	/**
 	 * Name for the wp option used to save the itemized payment
 	 */
@@ -131,7 +131,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 						sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ),
 						0, 127
 					);
-					$redirect_args[ 'amount_' . $item_num ] = $line_item->unit_price();
+					$redirect_args[ 'amount_' . $item_num ] = round($line_item->unit_price(), 2);
 					$redirect_args[ 'quantity_' . $item_num ] = $line_item->quantity();
 					//if we're not letting PayPal calculate shipping, tell them its 0
 					if ( ! $this->_paypal_shipping ) {
@@ -150,7 +150,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//add the difference it to the discounts
 			$itemized_sum_diff_from_txn_total = round(
 					$transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added,
-					2 
+					2
 				);
 			if( $itemized_sum_diff_from_txn_total < 0 ) {
 				//itemized sum is too big
@@ -167,7 +167,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 			//add our taxes to the order if we're NOT using PayPal's
 			if( ! $this->_paypal_taxes ){
-				$redirect_args['tax_cart'] = $total_line_item->get_total_tax();
+				$redirect_args['tax_cart'] = round($total_line_item->get_total_tax(), 2);
 			}
 		} else {
 			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, false );
@@ -385,7 +385,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			// huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
 			// or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			if( is_wp_error(  $response ) ) {
-				$error_msg = sprintf( 
+				$error_msg = sprintf(
 					__( 'WP Error. Code: "%1$s", Message: "%2$s", Data: "%3$s"', 'event_espresso' ),
 					$response->get_error_code(),
 					$response->get_error_message(),
