@@ -79,22 +79,25 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 			} else if ( preg_match( '/\\.\\./', $domain ) ) {
 				// domain part has two consecutive dots
 				return false;
-			} else if ( ! checkdnsrr( $domain, "MX" ) ) {
-				// domain not found in MX records
-				throw new EE_Validation_Error(
-					__(
-						'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
-						'event_espresso'
-					)
-				);
-			} else if ( ! checkdnsrr( $domain, "A" ) ) {
-				// domain not found in A records
-				throw new EE_Validation_Error(
-					__(
-						'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
-						'event_espresso'
-					)
-				);
+			}
+			if ( apply_filters( 'FHEE__EE_Email_Validation_Strategy___validate_email__perform_dns_checks', true ) ) {
+				if ( ! checkdnsrr( $domain, "MX" ) ) {
+					// domain not found in MX records
+					throw new EE_Validation_Error(
+						__(
+							'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
+							'event_espresso'
+						)
+					);
+				} else if ( ! checkdnsrr( $domain, "A" ) ) {
+					// domain not found in A records
+					throw new EE_Validation_Error(
+						__(
+							'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
+							'event_espresso'
+						)
+					);
+				}
 			}
 		}
 		// you have successfully run the gauntlet young Padawan
