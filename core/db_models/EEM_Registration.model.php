@@ -383,6 +383,42 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' . EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL' );
 	}
 
+	/**
+	 *  Count registrations checked into (or out of) a datetime
+	 *
+	 * @param int $DTT_ID datetime ID
+	 * @param boolean $checked_in whether to count registrations checked IN or OUT
+	 * @return int
+	 */
+	public function count_registrations_checked_into_datetime( $DTT_ID, $checked_in = true) {
+		return $this->count(
+			array(
+				array(
+					'Checkin.CHK_in' => $checked_in,
+					'Checkin.DTT_ID' => $DTT_ID
+				)
+			)
+		);
+	}
+
+	/**
+	 *  Count registrations checked into (or out of) an event.
+	 *
+	 * @param int $EVT_ID event ID
+	 * @param boolean $checked_in whether to count registrations checked IN or OUT
+	 * @return int
+	 */
+	public function count_registrations_checked_into_event( $EVT_ID, $checked_in = true ) {
+		return $this->count(
+			array(
+				array(
+					'Checkin.CHK_in' => $checked_in,
+					'Checkin.Datetime.EVT_ID' => $EVT_ID
+				)
+			)
+		);
+	}
+
 
 
 }

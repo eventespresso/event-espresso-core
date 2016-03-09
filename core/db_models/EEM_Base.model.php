@@ -664,7 +664,6 @@ abstract class EEM_Base extends EE_Base{
 	 *		becomes
 	 *		SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestamp = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
 	 *
-	 *
 	 *		GOTCHA:
 	 *		because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field.
 	 *		eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
@@ -681,8 +680,8 @@ abstract class EEM_Base extends EE_Base{
 	 *		This can be applied to condition operators too,
 	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
 	 *	@var mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
-	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
-	 *
+	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively. 
+	 *		Remember when you provide two numbers for the limit, the 1st number is the OFFSET, the 2nd is the LIMIT
 	 *	@var array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
 	 *		Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).
 	 *	@var mixed $order_by name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),

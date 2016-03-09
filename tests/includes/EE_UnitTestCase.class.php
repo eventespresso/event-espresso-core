@@ -538,9 +538,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function assertDateWithinOneMinute( $expected_date, $actual_date, $full_format, $custom_error_message = '' ) {
 		//take the incoming date strings convert to datetime objects and verify they are within one minute of each other
-		$expected_date = date_create_from_format( $full_format, $expected_date );
-		$actual_date = date_create_from_format( $full_format, $actual_date );
-		$difference = $actual_date->format('U') - $expected_date->format('U');
+		$expected_date_obj = date_create_from_format( $full_format, $expected_date );
+		$actual_date_obj = date_create_from_format( $full_format, $actual_date );
+		$date_parsing_error = '';
+		if( ! $expected_date_obj instanceof DateTime ) {
+			$date_parsing_error = sprintf(__( 'Expected date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $expected_date, true ), $full_format );
+		}
+		if( ! $actual_date_obj instanceof DateTime ) {
+			$date_parsing_error = sprintf(__( 'Actual date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $actual_date, true ), $full_format );
+		}
+		if( $date_parsing_error ) {
+			throw new EE_Error( $date_parsing_error );
+		}
+		$difference = $actual_date_obj->format('U') - $expected_date_obj->format('U');
 		$this->assertTrue( $difference < 60, $custom_error_message );
 	}
 
