@@ -420,6 +420,26 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 
+
+
+	/**
+	 * The purpose of this method is to retrieve an array of EE_Registration objects that represent the latest registration
+	 * for each ATT_ID given in the function argument.
+	 *
+	 * @param array $attendee_ids
+	 * @return EE_Registration[]
+	 */
+	public function get_latest_registration_for_each_of_given_contacts( $attendee_ids = array() ) {
+		//first do a native wp_query to get the latest REG_ID's matching these attendees.
+		global $wpdb;
+		$registration_table = $wpdb->prefix . EEM_Registration::instance()->table();
+		$attendee_table = $wpdb->prefix . EEM_Attendee::instance()->table();
+		$attendee_id = is_array( $attendee_ids ) ? array_map( 'absint', $attendee_ids ) : array( (int) $attendee_ids );
+
+	}
+
+
+
 }
 // End of file EEM_Registration.model.php
 // Location: /includes/models/EEM_Registration.model.php
