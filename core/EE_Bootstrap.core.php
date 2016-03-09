@@ -65,7 +65,7 @@ class EE_Bootstrap {
 			new EE_Load_Espresso_Core()
 		);
 		$this->_request_stack->handle_request(
-			new EE_Request( $_REQUEST ),
+			new EE_Request( $_GET, $_POST, $_COOKIE ),
 			new EE_Response()
 		);
 		$this->_request_stack->handle_response();
