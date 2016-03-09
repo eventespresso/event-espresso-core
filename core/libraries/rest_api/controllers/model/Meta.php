@@ -1,5 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -61,13 +64,11 @@ class Meta extends Base {
 				}else{
 					$datatype = 'String';
 				}
-				$default_value = $field_obj->get_default_value();
-				if( $default_value === EE_INF ) {
-					$default_value = EE_INF_IN_DB;
-				} elseif( $field_obj instanceof \EE_Datetime_Field &&
-					$default_value instanceof \DateTime ) {
-					$default_value = $default_value->format( 'c' );
-				}
+				$default_value = Model_Data_Translator::prepare_field_value_for_json(
+					$field_obj,
+					$field_obj->get_default_value(),
+					$this->get_model_version_info()->requested_version()
+				);
 				$field_json = array(
 					'name' => $field_name,
 					'nicename' => $field_obj->get_nicename(),
