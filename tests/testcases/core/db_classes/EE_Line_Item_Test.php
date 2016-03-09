@@ -217,6 +217,91 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 15, $line_item->total() );
 		$this->assertEquals( 7.5, $line_item->unit_price() );
 	}
+	
+	/**
+	 * @group 9291
+	 */
+	function test_recalculate_total_including_taxes__incorrect_total_with_specific_numbers() {
+		$total_li = EE_Line_Item::new_instance(
+			array(
+				'LIN_name' => 'total',
+				'LIN_type' => EEM_Line_Item::type_total,
+			)
+		);
+		$total_li->save();
+		
+		$pretax_subtotal = EE_Line_Item::new_instance(
+			array(
+				'LIN_name' => 'pretax',
+				'LIN_type' => EEM_Line_Item::type_sub_total,
+				'LIN_parent' => $total_li->ID(),
+				'LIN_order' => 1
+			)
+		);
+		$pretax_subtotal->save();
+		$event_subtotal = EE_Line_Item::new_instance(
+			array(
+				'LIN_name' => 'subtotal',
+				'LIN_type' => EEM_Line_Item::type_sub_total,
+				'LIN_parent' => $pretax_subtotal->ID(),
+				'LIN_order' => 1
+				
+			)
+		);
+		$event_subtotal->save();
+		$line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_name' => 'ticket',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_quantity' => 1,
+					'LIN_is_taxable' => true,
+					'LIN_parent' => $event_subtotal->ID(),
+					'LIN_order' => 1,
+				));
+		$line_item->save();
+		$flat_sub_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_name' => 'flat',
+					'LIN_type' => EEM_Line_Item::type_sub_line_item,
+					'LIN_unit_price' => 21.01,
+					'LIN_quantity' => 1,
+					'LIN_order' => 1,
+					'LIN_parent' => $line_item->ID(),
+				));
+		$flat_sub_line_item->save();
+		$percent_discount = EE_Line_Item::new_instance(
+				array(
+					'LIN_name' => 'flat',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'LIN_percent' => -50,
+					'LIN_quantity' => 1,
+					'LIN_order' => 10,
+					'LIN_is_taxable' => true,
+					'LIN_parent' => $event_subtotal->ID(),
+				));
+		$percent_discount->save();
+		$tax_subtotal = EE_Line_Item::new_instance( 
+			array(
+				'LIN_name' => 'tax-sub-total',
+				'LIN_type' => EEM_Line_Item::type_tax_sub_total,
+				'LIN_order' => 100,
+				'LIN_parent' => $total_li->save(),
+			)
+		);
+		$tax_subtotal->save();
+		$tax = EE_Line_Item::new_instance(
+			array(
+				'LIN_name' => 'tax',
+				'LIN_type' => EEM_Line_Item::type_tax,
+				'LIN_percent' => 19,
+				'LIN_parent' => $tax_subtotal->ID(),
+			)
+		);
+		$tax->save();
+		$total_li->recalculate_total_including_taxes();
+		//EEH_Line_Item::visualize( $total_li );
+		$this->assertEquals( 12.51, $total_li->total() );
+	}
 	/**
 	 * @group 8464
 	 * Verifies that if the line item is for a relation that isn't currently defined
