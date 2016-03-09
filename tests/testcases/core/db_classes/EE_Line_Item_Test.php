@@ -219,7 +219,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 	}
 	
 	/**
-	 * @group 9291
+	 * @group 9439
 	 */
 	function test_recalculate_total_including_taxes__incorrect_total_with_specific_numbers() {
 		$total_li = EE_Line_Item::new_instance(
@@ -234,6 +234,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 			array(
 				'LIN_name' => 'pretax',
 				'LIN_type' => EEM_Line_Item::type_sub_total,
+				'LIN_code' =>  'pre-tax-subtotal',
 				'LIN_parent' => $total_li->ID(),
 				'LIN_order' => 1
 			)
@@ -299,8 +300,9 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		);
 		$tax->save();
 		$total_li->recalculate_total_including_taxes();
-		//EEH_Line_Item::visualize( $total_li );
-		$this->assertEquals( 12.51, $total_li->total() );
+		EEH_Line_Item::visualize( $total_li );
+		$this->assertEquals( 12.50, $total_li->total() );
+		$this->assertEquals( $pretax_subtotal->total(), $total_li->get_items_total() );
 	}
 	/**
 	 * @group 8464
