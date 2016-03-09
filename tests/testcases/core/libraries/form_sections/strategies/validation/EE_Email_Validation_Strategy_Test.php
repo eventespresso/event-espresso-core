@@ -61,7 +61,23 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 
 
 	function test_validate__pass() {
-		$this->validate_email_address( 'developers@eventespresso.com' );
+		$good_addys = array(
+			'developers@eventespresso.com',
+			// no MX records, but we will turn DNS checks off to verify they pass all other validations
+			'developers@eventespresso.museum',
+			'dävälöpärs@äöüÄÖÜß.com', // häs umläüts
+			'用户@例子.广告', // ( Chinese, Unicode )
+			'उपयोगकर्ता@उदाहरण.कॉम', // ( Hindi, Unicode )
+			'юзер@екзампл.ком', // ( Ukrainian, Unicode )
+			'θσερ@εχαμπλε.ψομ', // ( Greek, Unicode )
+			'Dörte@Sörensen.example.com', // ( German, Unicode )
+		);
+		// turn off DNS checks
+		add_filter( 'FHEE__EE_Email_Validation_Strategy___validate_email__perform_dns_checks', '__return_false' );
+		foreach ( $good_addys as $good_addy ) {
+			$this->validate_email_address( $good_addy );
+		}
+		remove_filter( 'FHEE__EE_Email_Validation_Strategy___validate_email__perform_dns_checks', '__return_false' );
 	}
 
 
