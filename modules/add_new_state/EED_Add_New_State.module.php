@@ -142,9 +142,9 @@ class EED_Add_New_State  extends EED_Module {
 			// load helpers
 			EE_Registry::instance()->load_helper( 'HTML' );
 			// grab any set values from the request
-			$country_name = str_replace( 'state', 'new_state_country', $input->html_name() );
-			$state_name = str_replace( 'state', 'new_state_name', $input->html_name() );
-			$abbrv_name = str_replace( 'state', 'new_state_abbrv', $input->html_name() );
+			$country_name = str_replace( 'state', 'nsmf_new_state_country', $input->html_name() );
+			$state_name = str_replace( 'state', 'nsmf_new_state_name', $input->html_name() );
+			$abbrv_name = str_replace( 'state', 'nsmf_new_state_abbrv', $input->html_name() );
 			$new_state_submit_id = str_replace( 'state', 'new_state', $input->html_id() );
 			$country_options = array();
 			$countries = EEM_Country::instance()->get_all_countries();
@@ -164,8 +164,8 @@ class EED_Add_New_State  extends EED_Module {
 						// add hidden input to indicate that a new state is being added
 						'add_new_state' 	=> new EE_Hidden_Input(
 							array(
-								'html_name' 	=> str_replace( 'state', 'add_new_state', $input->html_name() ),
-								'html_id' 			=> str_replace( 'state', 'add_new_state', $input->html_id() ),
+								'html_name' 	=> str_replace( 'state', 'nsmf_add_new_state', $input->html_name() ),
+								'html_id' 			=> str_replace( 'state', 'nsmf_add_new_state', $input->html_id() ),
 								'default'			=> 0
 							)
 						),
@@ -180,7 +180,7 @@ class EED_Add_New_State  extends EED_Module {
 									'display-' . $input->html_id(),
 									'ee-form-add-new-state-lnk display-the-hidden smaller-text hide-if-no-js',
 									'',
-									'rel="' . $input->html_id() . '"'
+									'data-target="' . $input->html_id() . '"'
 								)
 							)
 						),
@@ -203,7 +203,7 @@ class EED_Add_New_State  extends EED_Module {
 							$country_options,
 							array(
 								'html_name' 			=> $country_name,
-								'html_id' 					=> str_replace( 'state', 'new_state_country', $input->html_id() ),
+								'html_id' 					=> str_replace( 'state', 'nsmf_new_state_country', $input->html_id() ),
 								'html_class' 			=> $input->html_class() . ' new-state-country',
 								'html_label_text'		=> __('New State/Province Country', 'event_espresso'),
 								'default'					=> EE_Registry::instance()->REQ->get( $country_name, '' ),
@@ -214,7 +214,7 @@ class EED_Add_New_State  extends EED_Module {
 						'new_state_name' => new EE_Text_Input(
 							array(
 								'html_name' 			=> $state_name,
-								'html_id' 					=> str_replace( 'state', 'new_state_name', $input->html_id() ),
+								'html_id' 					=> str_replace( 'state', 'nsmf_new_state_name', $input->html_id() ),
 								'html_class' 			=> $input->html_class() . ' new-state-state',
 								'html_label_text'		=> __('New State/Province Name', 'event_espresso'),
 								'default'					=> EE_Registry::instance()->REQ->get( $state_name, '' ),
@@ -226,7 +226,7 @@ class EED_Add_New_State  extends EED_Module {
 						'new_state_abbrv' => new EE_Text_Input(
 							array(
 								'html_name' 					=> $abbrv_name,
-								'html_id' 							=> str_replace( 'state', 'new_state_abbrv', $input->html_id() ),
+								'html_id' 							=> str_replace( 'state', 'nsmf_new_state_abbrv', $input->html_id() ),
 								'html_class' 					=> $input->html_class() . ' new-state-abbrv',
 								'html_label_text'				=> __('New State/Province Abbreviation', 'event_espresso'),
 								'html_other_attributes'	=> 'size="24"',
@@ -239,7 +239,15 @@ class EED_Add_New_State  extends EED_Module {
 							apply_filters(
 								'FHEE__EED_Add_New_State__display_add_new_state_micro_form__add_new_state_submit_button',
 								EEH_HTML::nbsp(3) .
-								EEH_HTML::link( '', __('ADD', 'event_espresso'), '', 'submit-' . $new_state_submit_id, 'ee-form-add-new-state-submit button button-secondary', '', 'rel="' . $new_state_submit_id . '"' )
+								EEH_HTML::link(
+									'',
+									__('ADD', 'event_espresso'),
+									'',
+									'submit-' . $new_state_submit_id,
+									'ee-form-add-new-state-submit button button-secondary',
+									'',
+									'data-target="' . $new_state_submit_id . '"'
+								)
 							)
 						),
 						// extra info
@@ -256,7 +264,7 @@ class EED_Add_New_State  extends EED_Module {
 								) .
 								EEH_HTML::divx() .
 								EEH_HTML::br() .
-								EEH_HTML::link( '', __('cancel new state/province', 'event_espresso'), '', 'hide-' . $input->html_id(), 'ee-form-cancel-new-state-lnk smaller-text', '', 'rel="' . $input->html_id() . '"' ) .
+								EEH_HTML::link( '', __('cancel new state/province', 'event_espresso'), '', 'hide-' . $input->html_id(), 'ee-form-cancel-new-state-lnk smaller-text', '', 'data-target="' . $input->html_id() . '"' ) .
 								EEH_HTML::divx() .
 								EEH_HTML::br()
 							)
@@ -282,13 +290,21 @@ class EED_Add_New_State  extends EED_Module {
 	 */
 	public static function add_new_state() {
 		$REQ = EE_Registry::instance()->load_core('Request_Handler');
-		if ( $REQ->is_set( 'add_new_state' ) && $REQ->get( 'add_new_state' ) == 1 ) {
+		if (
+			$REQ->is_set( 'nsmf_add_new_state' )
+			&& $REQ->get( 'nsmf_add_new_state' ) == 1
+		) {
 			EE_Registry::instance()->load_model('State');
 			// grab country ISO code, new state name, and new state abbreviation
-			$state_country = $REQ->is_set( 'new_state_country' ) ? sanitize_text_field( $REQ->get( 'new_state_country' )) : FALSE;
-			$state_name = $REQ->is_set( 'new_state_name' ) ? sanitize_text_field( $REQ->get( 'new_state_name' )) : FALSE;
-			$state_abbr = $REQ->is_set( 'new_state_abbrv' ) ? sanitize_text_field( $REQ->get( 'new_state_abbrv' )) : FALSE;
-
+			$state_country = $REQ->is_set( 'nsmf_new_state_country' )
+				? sanitize_text_field( $REQ->get( 'nsmf_new_state_country' ) )
+				: false;
+			$state_name = $REQ->is_set( 'nsmf_new_state_name' )
+				? sanitize_text_field( $REQ->get( 'nsmf_new_state_name' ) )
+				: false;
+			$state_abbr = $REQ->is_set( 'nsmf_new_state_abbrv' )
+				? sanitize_text_field( $REQ->get( 'nsmf_new_state_abbrv' ) )
+				: false;
 //echo '<h4>$state_country : ' . $state_country . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //echo '<h4>$state_name : ' . $state_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //echo '<h4>$state_abbr : ' . $state_abbr . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -303,17 +319,19 @@ class EED_Add_New_State  extends EED_Module {
 
 				if ( $new_state instanceof EE_State ) {
 					// clean house
-					EE_Registry::instance()->REQ->un_set( 'add_new_state' );
-					EE_Registry::instance()->REQ->un_set( 'new_state_country' );
-					EE_Registry::instance()->REQ->un_set( 'new_state_name' );
-					EE_Registry::instance()->REQ->un_set( 'new_state_abbrv' );
+					EE_Registry::instance()->REQ->un_set( 'nsmf_add_new_state' );
+					EE_Registry::instance()->REQ->un_set( 'nsmf_new_state_country' );
+					EE_Registry::instance()->REQ->un_set( 'nsmf_new_state_name' );
+					EE_Registry::instance()->REQ->un_set( 'nsmf_new_state_abbrv' );
 
 					// get any existing new states
 					$new_states = EE_Registry::instance()->SSN->get_session_data(
-						'new_states'
+						'nsmf_new_states'
 					);
 					$new_states[ $new_state->ID() ] = $new_state;
-					EE_Registry::instance()->SSN->set_session_data( array( 'new_states' => $new_states ));
+					EE_Registry::instance()->SSN->set_session_data(
+						array( 'nsmf_new_states' => $new_states )
+					);
 
 					if ( EE_Registry::instance()->REQ->ajax ) {
 						echo json_encode( array(
@@ -375,10 +393,10 @@ class EED_Add_New_State  extends EED_Module {
 	 */
 	public static function unset_new_state_request_params ( $request_params ) {
 		unset( $request_params[ 'new_state_micro_form' ] );
-		unset( $request_params[ 'add_new_state' ] );
-		unset( $request_params[ 'new_state_country' ] );
-		unset( $request_params[ 'new_state_name' ] );
-		unset( $request_params[ 'new_state_abbrv' ] );
+		unset( $request_params[ 'new_state_micro_add_new_state' ] );
+		unset( $request_params[ 'new_state_micro_new_state_country' ] );
+		unset( $request_params[ 'new_state_micro_new_state_name' ] );
+		unset( $request_params[ 'new_state_micro_new_state_abbrv' ] );
 		return $request_params;
 	}
 
@@ -542,7 +560,7 @@ class EED_Add_New_State  extends EED_Module {
 		$new_states = array();
 		if ( EE_Registry::instance()->SSN instanceof EE_Session ) {
 			$new_states = EE_Registry::instance()->SSN->get_session_data(
-				'new_states'
+				'nsmf_new_states'
 			);
 		}
 		return is_array( $new_states ) ? $new_states : array();
