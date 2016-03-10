@@ -7,12 +7,16 @@
  * @subpackage 	Tests
  */
 
-define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( __FILE__ ) ) ) . '/' );
-
-if ( ! defined( 'EE_TESTS_DIR' ) ) {
-	define( 'EE_TESTS_DIR', dirname( dirname( __FILE__ ) ) . '/' );
-	define( 'EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/' );
+/** check for env variable for special setups where phpunit is being run outside of the tests folder */
+if ( getenv( 'EE_TESTS_DIR' ) ) {
+	define( 'EE_TESTS_DIR', getenv( 'EE_TESTS_DIR' ) );
+	define( 'EE_PLUGIN_DIR', dirname( dirname( EE_TESTS_DIR ) ) . '/' );
+} else {
+	define( 'EE_PLUGIN_DIR', dirname( dirname( dirname( __FILE__ ) ) ) . '/' );
+	define( 'EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/' );
 }
+
+define( 'EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/' );
 
 /**
  * In the pre-develop.svn WP development environment, an environmental bash
