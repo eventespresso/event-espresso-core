@@ -20,4 +20,8 @@ before_script:
 script: cd tests; phpunit;
 notifications:
   slack:
-    secure: VnU5ZZoiWmdhlqvG0Q4Nsu54ON7YbbN9pKUgWFdwf70mjd6ojzyBSGwLeD0dSlj1b1y1rmXZSNoe4ZwyG9TB73Q0qBVnwpedOSRxM+jV1XnpvR+QQ37VhvMWz24U+mONIvUNp9UdKZBP4mwu0lr3r2G8+rJXI01d347OCK7wiXQ=
+    rooms:
+      secure: VnU5ZZoiWmdhlqvG0Q4Nsu54ON7YbbN9pKUgWFdwf70mjd6ojzyBSGwLeD0dSlj1b1y1rmXZSNoe4ZwyG9TB73Q0qBVnwpedOSRxM+jV1XnpvR+QQ37VhvMWz24U+mONIvUNp9UdKZBP4mwu0lr3r2G8+rJXI01d347OCK7wiXQ=
+    on_success: change
+    on_failure: always
+    on_start: always
