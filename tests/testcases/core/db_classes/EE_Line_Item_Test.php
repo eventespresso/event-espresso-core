@@ -221,7 +221,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 	/**
 	 * @group 9439
 	 */
-	function test_recalculate_total_including_taxes__incorrect_total_with_specific_numbers() {
+	function test_recalculate_total_including_taxes__incorrect_total_with_specific_numbers_and_promotion() {
 		$total_li = EE_Line_Item::new_instance(
 			array(
 				'LIN_name' => 'total',
