@@ -1,20 +1,26 @@
 language: php
-
 php:
-    - 5.3
-    - 5.4
-    - 5.5
-    - 5.6
-    - 7.0
-    - hhvm
-
+- 5.3
+- 5.4
+- 5.5
+- 5.6
+- 7.0
+- hhvm
 env:
-    - WP_VERSION=latest WP_MULTISITE=0
-    - WP_VERSION=latest WP_MULTISITE=1
-    - WP_VERSION=4.1 WP_MULTISITE=0
-    - WP_VERSION=4.1 WP_MULTISITE=1
-
+- WP_VERSION=latest WP_MULTISITE=0
+- WP_VERSION=latest WP_MULTISITE=1
+- WP_VERSION=4.1 WP_MULTISITE=0
+- WP_VERSION=4.1 WP_MULTISITE=1
+matrix:
+  allow_failures:
+  - php: hhvm
+  fast_finish: true
 before_script:
-    - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
-
+- bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
 script: cd tests; phpunit;
+notifications:
+  slack:
+    secure: A+kEtuCH+p4RCwJ8PBzmWZmP6M8N9Zi6DJf2WgyxnDSMAMvxjeReQ0WQ1uQ/3Jk5gbseguZzMn01xuztgisOSetkerooUiRwzMQWGukMORY5zV84eDDc78fcrFLYiYQFxIloz+ZTgEPQmULQuqnDGSTI1yL0HsTwSGsAHI/4MLs=
+    on_success: change
+    on_failure: always
+    on_start: always
