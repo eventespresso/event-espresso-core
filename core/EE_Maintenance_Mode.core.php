@@ -210,6 +210,23 @@ class EE_Maintenance_Mode {
 
 
 	/**
+	 * template_include
+	 *
+	 * replacement EE CPT template that displays message notifying site visitors
+	 * that EE has been temporarily placed into maintenance mode
+	 * does NOT get called on non-EE-CPT requests
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public static function template_include() {
+		// shut 'er down down for maintenance ? then don't use any of our templates for our endpoints
+		return get_template_directory() . '/index.php';
+	}
+
+
+
+	/**
 	 *    the_content
 	 *
 	 *    displays message notifying site visitors that EE has been temporarily placed into maintenance mode when post_type != EE CPT
