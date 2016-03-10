@@ -201,3 +201,40 @@
 .ee-status-legend-MRT {
     background-color: #E76700;
 }
+
+
+.ee-messages-shortcodes-chooser {
+    float:right;
+    margin-top: 0px;
+    font-size: 1.4em;
+    cursor: pointer;
+}
+
+h4 + .ee-messages-shortcodes-chooser {
+    padding-top: 10px;
+}
+
+.ee-shortcode-chooser-open {
+    position:absolute;
+    left: -250px;
+}
+
+.ee_shortcode_chooser_container {
+    background-color: white;
+    font-size: .7em;
+    text-align:left;
+    z-index: 4000;
+    height: 200px;
+    width: 250px;
+    overflow: scroll;
+    padding: 15px;
+    border: 1px grey solid;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"], #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
+    width: 94%;
+}
+
+#ee-msg-edit-frm #to-content {
+    width: 90%
+}
