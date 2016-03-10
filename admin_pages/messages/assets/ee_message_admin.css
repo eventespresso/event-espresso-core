@@ -1,14 +1,14 @@
 .ee-msg-switcher-container {
-	margin-top: 8px;
+    margin-top: 8px;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
-	margin-top: 12px;
+    margin-top: 12px;
 }
 
 #mtp_valid_shortcodes .ee-shortcode-table-scroll {
-	max-height: 400px;
-	overflow: auto;
+    max-height: 400px;
+    overflow: auto;
 }
 
 #ee-msg-context-switcher-frm {
@@ -27,37 +27,37 @@
 }
 
 .resetbutton {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .mtp-inactive {
-	color: #AC9D93;
+    color: #AC9D93;
 }
 
 /** editor styles **/
 #ee-msg-non-global-fields-MTP_description {
-	height: 150px;
+    height: 150px;
 }
 
 .non-global-mtp-fields {
-	background-color: #dfdfdf;
-	padding: 10px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+    background-color: #dfdfdf;
+    padding: 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
 .ee-msg-switcher-container {
-	margin-top: 8px;
+    margin-top: 8px;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
-	margin-top: 12px;
+    margin-top: 12px;
 }
 
 #mtp_valid_shortcodes .ee-shortcode-table-scroll {
-	max-height: 400px;
-	overflow: auto;
+    max-height: 400px;
+    overflow: auto;
 }
 
 #ee-msg-context-switcher-frm {
@@ -76,30 +76,30 @@
 }
 
 .resetbutton {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .mtp-inactive {
-	color: #AC9D93;
+    color: #AC9D93;
 }
 
 
 #ee-msg-non-global-fields-MTP_description {
-	height: 150px;
+    height: 150px;
 }
 
 .non-global-mtp-fields {
-	background-color: #dfdfdf;
-	padding: 10px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+    background-color: #dfdfdf;
+    padding: 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
 #ee-msg-edit-frm h4 {
-	font-size: 1.5em;
-	margin-top: 40px;
-	margin-bottom: 10px;
+    font-size: 1.5em;
+    margin-top: 40px;
+    margin-bottom: 10px;
 
 }
 
