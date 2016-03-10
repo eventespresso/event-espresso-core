@@ -42,9 +42,13 @@
 			// Include the post TYPE-specific template for the content.
 			espresso_get_template_part( 'content', 'espresso_events-shortcode' );
 		endwhile;
-		// Previous/next page navigation.
-		espresso_pagination();
-		// allow moar other stuff
+	 	if ( function_exists( 'espresso_pagination' ) ) {
+			// Previous/next page navigation.
+			//espresso_pagination();
+		} else {
+			paginate_links();
+		}
+	 	// allow moar other stuff
 		do_action( 'AHEE__archive_espresso_events_template__after_loop' );
 
 	else :
