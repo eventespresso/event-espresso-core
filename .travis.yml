@@ -21,7 +21,7 @@ script: cd tests; phpunit;
 notifications:
   slack:
     rooms:
-      secure: VnU5ZZoiWmdhlqvG0Q4Nsu54ON7YbbN9pKUgWFdwf70mjd6ojzyBSGwLeD0dSlj1b1y1rmXZSNoe4ZwyG9TB73Q0qBVnwpedOSRxM+jV1XnpvR+QQ37VhvMWz24U+mONIvUNp9UdKZBP4mwu0lr3r2G8+rJXI01d347OCK7wiXQ=
+      secure: e2xmbwOoagh/rZIqUnx15HcTv5hZGxykvg8Tj0ENGi/bLcXgrEYxs2hpW+nzGggmSl22Eh+6wLRo62L0dEIIo1n+yknqDdAbVG7lmnX7Tc45JNgxWtSmAPzC3wAp0e9w1hy8HILPjYLxl0G7eXUvo3mKVRCCyD/Cyz5dDicE8tQ=
     on_success: change
     on_failure: always
     on_start: always
