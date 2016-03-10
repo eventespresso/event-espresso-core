@@ -345,9 +345,10 @@ class EE_CPT_Strategy extends EE_BASE {
 				if ( isset( $this->_CPTs[ $post_type ] )) {
 					// is EE on or off ?
 					if ( EE_Maintenance_Mode::instance()->level() ) {
-						// EE_Maintenance_Mode only injects it's warning notice into the content
-						// if it sees an Event Espresso shortcode starting with "[ESPRESSO_",
-						// so we need to inject one to trick it into showing that notice
+						// reroute CPT template view to maintenance_mode.template.php
+						if( ! has_filter( 'template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
+							add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
+						}
 						if( has_filter( 'the_content',array( EE_Maintenance_Mode::instance(), 'the_content' ) ) ) {
 							add_filter( 'the_content', array( $this, 'inject_EE_shortcode_placeholder' ), 1 );
 						}
