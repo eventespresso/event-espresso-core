@@ -284,15 +284,17 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$tax_subtotal = EE_Line_Item::new_instance( 
 			array(
 				'LIN_name' => 'tax-sub-total',
+				'LIN_code' => 'taxes',
 				'LIN_type' => EEM_Line_Item::type_tax_sub_total,
 				'LIN_order' => 100,
-				'LIN_parent' => $total_li->save(),
+				'LIN_parent' => $total_li->ID(),
 			)
 		);
 		$tax_subtotal->save();
 		$tax = EE_Line_Item::new_instance(
 			array(
 				'LIN_name' => 'tax',
+				'LIN_code' => 'a_tax',
 				'LIN_type' => EEM_Line_Item::type_tax,
 				'LIN_percent' => 19,
 				'LIN_parent' => $tax_subtotal->ID(),
@@ -300,7 +302,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		);
 		$tax->save();
 		$total_li->recalculate_total_including_taxes();
-		EEH_Line_Item::visualize( $total_li );
+		$this->assertEquals( $line_item->total() + $percent_discount->total(), $event_subtotal->total() );
 		$this->assertEquals( 12.50, $total_li->total() );
 		$this->assertEquals( $pretax_subtotal->total(), $total_li->get_items_total() );
 	}
