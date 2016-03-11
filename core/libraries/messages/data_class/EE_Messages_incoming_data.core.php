@@ -324,7 +324,12 @@ abstract class EE_Messages_incoming_data {
 			! is_array( $this->reg_objs )
 			&& ! reset( $this->reg_objs ) instanceof EE_Registration
 		) {
-			throw new EE_Error( __( 'In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects', 'event_espresso' ) );
+			throw new EE_Error(
+				__(
+					'In order to assemble the data correctly, the "reg_objs" property must be an array of EE_Registration objects',
+					'event_espresso'
+				)
+			);
 		}
 
 		//get all attendee and events associated with the registrations in this transaction
@@ -359,12 +364,16 @@ abstract class EE_Messages_incoming_data {
 				$eventsetup[ $evt_id ]['reg_objs'][ $reg->ID() ] = $reg;
 				$eventsetup[ $evt_id ]['tkt_objs'][ $ticket->ID() ] = $ticket;
 				$eventsetup[ $evt_id ]['att_objs'][ $reg->attendee_ID() ] = $reg->attendee();
-				$event_attendee_count[ $evt_id ] = isset( $event_attendee_count[ $evt_id ] ) ? $event_attendee_count[ $evt_id ] + 1 : 0;
+				$event_attendee_count[ $evt_id ] = isset( $event_attendee_count[ $evt_id ] )
+					? $event_attendee_count[ $evt_id ] + 1
+					: 0;
 				$attendees[ $reg->attendee_ID() ]['line_ref'][] = $evt_id;
 				$attendees[ $reg->attendee_ID() ]['att_obj'] = $reg->attendee();
 				$attendees[ $reg->attendee_ID() ]['reg_objs'][ $reg->ID() ] = $reg;
 				//$attendees[ $reg->attendee_ID() ]['registration_id'] = $reg->ID();
-				$attendees[ $reg->attendee_ID() ]['attendee_email'] = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
+				$attendees[ $reg->attendee_ID() ]['attendee_email'] = $reg->attendee() instanceof EE_Attendee
+					? $reg->attendee()->email()
+					: '';
 				$attendees[ $reg->attendee_ID() ]['tkt_objs'][ $ticket->ID() ] = $ticket;
 				$attendees[ $reg->attendee_ID() ]['evt_objs'][ $evt_id ] = $event;
 
@@ -440,7 +449,9 @@ abstract class EE_Messages_incoming_data {
 				}
 			}
 
-			$this->grand_total_line_item = $this->txn instanceof EE_Transaction ? $this->txn->total_line_item() : null;
+			$this->grand_total_line_item = $this->txn instanceof EE_Transaction
+				? $this->txn->total_line_item()
+				: null;
 		}
 
 		//lets set the attendees and events properties
@@ -462,7 +473,7 @@ abstract class EE_Messages_incoming_data {
 			//setup primary registration if we have a single transaction object to work with
 
 			//let's get just the primary_attendee_data!  First we get the primary registration object.
-			$primary_reg = $this->txn->primary_registration( true );
+			$primary_reg = $this->txn->primary_registration();
 			// verify
 			if ( $primary_reg instanceof EE_Registration ) {
 
@@ -479,10 +490,26 @@ abstract class EE_Messages_incoming_data {
 					);
 
 				} else {
-					EE_Error::add_error( __( 'Incoming data does not have a valid Attendee object for the primary registrant.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					EE_Error::add_error(
+						__(
+							'Incoming data does not have a valid Attendee object for the primary registrant.',
+							'event_espresso'
+						),
+						__FILE__,
+						__FUNCTION__,
+						__LINE__
+					);
 				}
 			} else {
-				EE_Error::add_error( __( 'Incoming data does not have a valid Registration object for the primary registrant.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					__(
+						'Incoming data does not have a valid Registration object for the primary registrant.',
+						'event_espresso'
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
 			}
 		}
 	}
