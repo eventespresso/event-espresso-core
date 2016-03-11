@@ -20,6 +20,44 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class PostShortcodeTracking {
 
+	/**
+	 * set_hooks_admin
+	 *
+	 * @access    public
+	 */
+	public static function set_hooks_admin() {
+		add_action(
+			'save_post',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'parse_post_content_on_save' ),
+			100,
+			2
+		);
+		add_action(
+			'delete_post',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'unset_post_shortcodes_on_delete' ),
+			100,
+			1
+		);
+		add_action(
+			'add_option_page_for_posts',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'reset_page_for_posts_on_initial_set' ),
+			100,
+			2
+		);
+		add_action(
+			'update_option',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'reset_page_for_posts_on_change' ),
+			100,
+			3
+		);
+		add_action(
+			'delete_option',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'reset_page_for_posts_on_delete' ),
+			100,
+			1
+		);
+	}
+
 
 
 	/**
@@ -103,7 +141,7 @@ class PostShortcodeTracking {
 				}
 			}
 			if ( $update_post_shortcodes ) {
-				\EE_Registry::CFG()->update_post_shortcodes( $page_for_posts );
+				PostShortcodeTracking::update_post_shortcodes( $page_for_posts );
 			}
 		}
 	}
@@ -128,7 +166,7 @@ class PostShortcodeTracking {
 				PostShortcodeTracking::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
 			}
 		}
-		\EE_Registry::CFG()->update_post_shortcodes( $page_for_posts );
+		PostShortcodeTracking::update_post_shortcodes( $page_for_posts );
 	}
 
 
@@ -159,8 +197,7 @@ class PostShortcodeTracking {
 				);
 			}
 			\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] =
-				\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ]
-				+ array( $post_ID => true );
+				\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] + array( $post_ID => true );
 		} else {
 			\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = array( $post_ID => true );
 		}
@@ -207,7 +244,7 @@ class PostShortcodeTracking {
 			}
 		}
 		if ( $update_post_shortcodes ) {
-			\EE_Registry::CFG()->update_post_shortcodes( $page_for_posts );
+			PostShortcodeTracking::update_post_shortcodes( $page_for_posts );
 		}
 	}
 
@@ -249,6 +286,79 @@ class PostShortcodeTracking {
 			$update_post_shortcodes = true;
 		}
 		return $update_post_shortcodes;
+	}
+
+
+
+	/**
+	 *    update_post_shortcodes
+	 *
+	 * @access    public
+	 * @param $page_for_posts
+	 * @return    void
+	 */
+	public static function update_post_shortcodes( $page_for_posts = '' ) {
+		// make sure page_for_posts is set
+		$page_for_posts = ! empty( $page_for_posts )
+			? $page_for_posts
+			: \EE_Config::get_page_for_posts();
+		// allow others to mess stuff up :D
+		do_action(
+			'AHEE__\EventEspresso\core\admin\PostShortcodeTracking__update_post_shortcodes',
+			\EE_Config::instance()->core->post_shortcodes,
+			$page_for_posts
+		);
+		// keep old hookpoint for now, will deprecate later
+		do_action(
+			'AHEE__EE_Config__update_post_shortcodes',
+			\EE_Config::instance()->core->post_shortcodes,
+			$page_for_posts
+		);
+		// verify that post_shortcodes is set
+		\EE_Config::instance()->core->post_shortcodes = isset( \EE_Config::instance()->core->post_shortcodes )
+		                                                && is_array( \EE_Config::instance()->core->post_shortcodes )
+			? \EE_Config::instance()->core->post_shortcodes
+			: array();
+		// cycle thru post_shortcodes
+		foreach ( \EE_Config::instance()->core->post_shortcodes as $post_name => $shortcodes ) {
+			// are there any shortcodes to track ?
+			if ( ! empty( $shortcodes ) ) {
+				// loop thru list of tracked shortcodes
+				foreach ( $shortcodes as $shortcode => $post_id ) {
+					// if shortcode is for a critical page,
+					// BUT this is NOT the corresponding critical page for that shortcode
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
+					// skip the posts page, because we want all shortcodes registered for it
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
+					// make sure post still exists
+					$post = get_post( $post_id );
+					if ( $post ) {
+						// check that the post name matches what we have saved
+						if ( $post->post_name == $post_name ) {
+							// if so, then break before hitting the unset below
+							continue;
+						}
+					}
+					// we don't like missing posts around here >:(
+					unset( \EE_Config::instance()->core->post_shortcodes[ $post_name ] );
+				}
+			} else {
+				// you got no shortcodes to keep track of !
+				unset( \EE_Config::instance()->core->post_shortcodes[ $post_name ] );
+			}
+		}
+		// critical page shortcodes that we do NOT want added to the Posts page (blog)
+		$critical_shortcodes = \EE_Config::instance()->core->get_critical_pages_shortcodes_array();
+		$critical_shortcodes = array_flip( $critical_shortcodes );
+		foreach ( $critical_shortcodes as $critical_shortcode ) {
+			unset( \EE_Config::instance()->core->post_shortcodes[ $page_for_posts ][ $critical_shortcode ] );
+		}
+		//only show errors
+		\EE_Config::instance()->update_espresso_config();
 	}
 
 

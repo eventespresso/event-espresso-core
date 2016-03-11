@@ -793,64 +793,6 @@ final class EE_Config {
 
 
 
-
-	/**
-	 *    update_post_shortcodes
-	 *
-	 * @access    public
-	 * @param $page_for_posts
-	 * @return    void
-	 */
-	public function update_post_shortcodes( $page_for_posts = '' ) {
-		// make sure page_for_posts is set
-		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
-		// allow others to mess stuff up :D
-		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
-		// verify that post_shortcodes is set
-		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
-		// cycle thru post_shortcodes
-		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
-			// are there any shortcodes to track ?
-			if ( ! empty( $shortcodes )) {
-				// loop thru list of tracked shortcodes
-				foreach( $shortcodes as $shortcode => $post_id ) {
-					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
-					if ( $post_name == $page_for_posts ) {
-						continue;
-					}
-					// skip the posts page, because we want all shortcodes registered for it
-					if ( $post_name == $page_for_posts ) {
-						continue;
-					}
-					// make sure post still exists
-					$post = get_post( $post_id );
-					if ( $post ) {
-						// check that the post name matches what we have saved
-						if ( $post->post_name == $post_name ) {
-							// if so, then break before hitting the unset below
-							continue;
-						}
-					}
-					// we don't like missing posts around here >:(
-					unset( $this->core->post_shortcodes[ $post_name ] );
-				}
-			} else {
-				// you got no shortcodes to keep track of !
-				unset( $this->core->post_shortcodes[ $post_name ] );
-			}
-		}
-		// critical page shortcodes that we do NOT want added to the Posts page (blog)
-		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
-		$critical_shortcodes = array_flip( $critical_shortcodes );
-		foreach ( $critical_shortcodes as $critical_shortcode ) {
-			unset( $this->core->post_shortcodes[ $page_for_posts ][ $critical_shortcode ] );
-		}
-		//only show errors
-		$this->update_espresso_config();
-	}
-
-
-
 	/**
 	 * 	get_page_for_posts
 	 *
