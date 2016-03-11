@@ -37,6 +37,7 @@ class EEM_Attendee_Caps_Test extends EE_UnitTestCase{
 		$current_user->add_cap( 'ee_read_contacts' );
 		//temporary debug for travis builds
 		var_dump( user_can( $current_user->ID, 'ee_read_contacts' ) );
+		EEM_Attendee::instance()->show_next_x_db_queries();
 		//and now they should be able to see it
 		$this->assertEquals( 1, EEM_Attendee::instance()->count( array( 'caps' => EEM_Base::caps_read ) ) );
 	}
