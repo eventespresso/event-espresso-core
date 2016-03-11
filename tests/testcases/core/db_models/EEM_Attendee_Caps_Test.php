@@ -36,7 +36,9 @@ class EEM_Attendee_Caps_Test extends EE_UnitTestCase{
 
 		//ok now give them access to contacts
 		$current_user->add_cap( 'ee_read_contacts' );
-		wp_set_current_user( $current_user->ID );
+		//ensure user_level updated
+		$current_user->get_role_caps();
+		$current_user->update_user_level_from_caps();
 		//temporary debug for travis builds
 		var_dump( user_can( $current_user->ID, 'ee_read_contacts' ) );
 		var_dump( current_user_can( 'ee_read_contacts' ) );
