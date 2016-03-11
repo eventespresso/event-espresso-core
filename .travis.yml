@@ -12,6 +12,11 @@ env:
 - WP_VERSION=4.1 WP_MULTISITE=0
 - WP_VERSION=4.1 WP_MULTISITE=1
 matrix:
+  exclude:
+    - php: 7.0
+      env: WP_VERSION=4.1 WP_MULTISITE=0
+    - php: 7.0
+      env: WP_VERSION=4.1 WP_MULTISITE=1
   allow_failures:
   - php: hhvm
   fast_finish: true
