@@ -88,21 +88,17 @@ class EE_Taxes extends EE_BASE {
 		//let's loop through them (base price is always the first item)
 		foreach ( $prices as $price ) {
 			if ( $price instanceof EE_Price ) {
-				var_dump( $price->type_obj() );
-				if ( ! $price->type_obj() ) {
-					$price_types = EEM_Price_Type::instance()->get_all();
-					foreach( $price_types as $type ) {
-						echo $type->name();
+				$price_type = $price->type_obj();
+				if ( $price_type instanceof EE_Price_Type ) {
+					switch ( $price->type_obj()->base_type() ) {
+						case 1: // base price
+						case 3: // surcharges
+							$subtotal += $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
+							break;
+						case 2: // discounts
+							$subtotal -= $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
+							break;
 					}
-				}
-				switch ( $price->type_obj()->base_type() ) {
-					case 1: // base price
-					case 3: // surcharges
-						$subtotal += $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
-						break;
-					case 2: // discounts
-						$subtotal -= $price->is_percent() ? $subtotal * $price->get( 'PRC_amount' ) / 100 : $price->get( 'PRC_amount' );
-						break;
 				}
 			}
 		}
