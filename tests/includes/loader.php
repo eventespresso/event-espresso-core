@@ -33,7 +33,7 @@ if ( $_wp_test_version && $_wp_test_version == '4.1' ) {
 		$WP_User->get_role_caps();
 
 		return $WP_User->all_caps;
-	} );
+	}, 10, 4 );
 }
 
 // Bootstrap EE
