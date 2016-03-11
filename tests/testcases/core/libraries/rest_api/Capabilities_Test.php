@@ -52,9 +52,17 @@ class Capabilities_Test extends \EE_UnitTestCase{
 				new Model_Version_Info( '4.8.29' ) 
 			);
 		//the filtered entity shouldn't have had EVT_desc raw
-		$this->assertFalse( isset( $filtered_entity[ 'EVT_desc' ][ 'raw' ] ) );
+		$this->assertFalse(
+			isset( $filtered_entity['EVT_desc'] )
+			&& is_array( $filtered_entity['EVT_desc'] )
+			&& isset( $filtered_entity['EVT_desc']['raw'] )
+		);
 		//the filtered entity should have had EVT_desc rendered
-		$this->assertFalse( isset( $filtered_entity[ 'EVT_desc' ][ 'rendered' ] ) );
+		$this->assertFalse(
+			isset( $filtered_entity['EVT_desc'] )
+			&& is_array( $filtered_entity['EVT_desc'] )
+			&&isset( $filtered_entity['EVT_desc']['rendered'] )
+		);
 	}
 
 	/**

@@ -16,6 +16,16 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Read_Test extends \EE_UnitTestCase{
+
+	public function setUp() {
+		parent::setUp();
+		if ( ! class_exists( 'WP_Rest_Request' ) ) {
+			$this->markTestSkipped(
+				'Test being run on a version of WP that does not have the REST framework installed'
+			);
+		}
+	}
+
 	public function test_explode_and_get_items_prefixed_with__basic(){
 		$controller = new Read();
 		$controller->set_requested_version( '4.8.29' );
