@@ -1271,7 +1271,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				$event = $registration->event_obj();
-				if ( ! ( $event instanceof EE_Event && $event->is_sold_out( true ) ) ) {
+				if ( $event instanceof EE_Event && $event->is_sold_out( true ) ) {
 					EE_Error::add_error(
 						apply_filters(
 							'FHEE__EE_SPCO_Reg_Step_Payment_Options___last_second_ticket_verifications__sold_out_events_msg',
