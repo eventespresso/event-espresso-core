@@ -714,7 +714,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$this->assertEquals( get_class( $expected_object ), get_class( $actual_object ) );
 			foreach( $expected_object->model_field_array() as $field_name => $expected_value ){
 				$actual_value = $actual_object->get( $field_name );
-				if( $expected_value != $actual_value ){
+				if( $expected_value !== $actual_value ){
 					$this->fail(
 						sprintf(
 							__( 'EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso' ),
