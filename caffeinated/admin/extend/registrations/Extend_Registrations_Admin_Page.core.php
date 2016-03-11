@@ -381,48 +381,75 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$success = TRUE;
 		//first we need to make sure we have a GRP_ID so we know what template we're sending and updating!
 		if ( empty( $this->_req_data['newsletter_mtp_selected'] ) ) {
-			EE_Error::add_error( __('In order to send a message, a Message Template GRP_ID is needed. It was not provided so messages were not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__(
+					'In order to send a message, a Message Template GRP_ID is needed. It was not provided so messages were not sent.',
+					'event_espresso'
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			$success = FALSE;
 		}
 
 		if ( $success ) {
 			//update Message template in case there are any changes
-			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['newsletter_mtp_selected'] );
-			$MTPs = $MTPG instanceof EE_Message_Template_Group ? $MTPG->context_templates() : array();
-			if ( empty( $MTPs ) ) {
-				EE_Error::add_error( __('Unable to retrieve message template fields from the db. Messages not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-				$success = FALSE;
+			$Message_Template_Group = EEM_Message_Template_Group::instance()->get_one_by_ID(
+				$this->_req_data['newsletter_mtp_selected']
+			);
+			$Message_Templates = $Message_Template_Group instanceof EE_Message_Template_Group
+				? $Message_Template_Group->context_templates()
+				: array();
+			if ( empty( $Message_Templates ) ) {
+				EE_Error::add_error(
+					__(
+						'Unable to retrieve message template fields from the db. Messages not sent.',
+						'event_espresso'
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 			}
 
 			//let's just update the specific fields
-			foreach ( $MTPs['attendee'] as $MTP ) {
-				$field = $MTP->get('MTP_template_field');
-				$content = $MTP->get('MTP_content');
-				$new_content = $content;
-				switch( $field ) {
-					case 'from' :
-						$new_content = !empty( $this->_req_data['batch_message']['from'] ) ? $this->_req_data['batch_message']['from'] : $content;
-						break;
-					case 'subject' :
-						$new_content = !empty( $this->_req_data['batch_message']['subject'] ) ? $this->_req_data['batch_message']['subject'] : $content;
-						break;
-					case 'content' :
-						$new_content = $content;
-						$new_content['newsletter_content'] = !empty( $this->_req_data['batch_message']['content'] ) ? $this->_req_data['batch_message']['content'] : $content['newsletter_content'];
-						break;
-					default :
-						continue;
-						break;
+			foreach ( $Message_Templates['attendee'] as $Message_Template ) {
+				if ( $Message_Template instanceof EE_Message_Template ) {
+					$field = $Message_Template->get( 'MTP_template_field' );
+					$content = $Message_Template->get( 'MTP_content' );
+					$new_content = $content;
+					switch ( $field ) {
+						case 'from' :
+							$new_content = ! empty( $this->_req_data['batch_message']['from'] )
+								? $this->_req_data['batch_message']['from']
+								: $content;
+							break;
+						case 'subject' :
+							$new_content = ! empty( $this->_req_data['batch_message']['subject'] )
+								? $this->_req_data['batch_message']['subject']
+								: $content;
+							break;
+						case 'content' :
+							$new_content = $content;
+							$new_content['newsletter_content'] = ! empty( $this->_req_data['batch_message']['content'] )
+								? $this->_req_data['batch_message']['content']
+								: $content['newsletter_content'];
+							break;
+						default :
+							continue;
+							break;
+					}
+					$Message_Template->set( 'MTP_content', $new_content );
+					$Message_Template->save();
 				}
-				$MTP->set('MTP_content', $new_content);
-				$MTP->save();
 			}
 
 			//great fields are updated!  now let's make sure we just have contact objects (EE_Attendee).
-			$id_type = ! empty( $this->_req_data['batch_message']['id_type'] ) ? $this->_req_data['batch_message']['id_type'] : 'registration';
+			$id_type = ! empty( $this->_req_data['batch_message']['id_type'] )
+				? $this->_req_data['batch_message']['id_type']
+				: 'registration';
 
 			//id_type will affect how we assemble the ids.
-			$ids = ! empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
+			$ids = ! empty( $this->_req_data['batch_message']['ids'] )
+				? json_decode( stripslashes($this->_req_data['batch_message']['ids']) )
+				: array();
 
 			$registrations_used_for_contact_data = array();
 			//using switch because eventually we'll have other contexts that will be used for generating messages.
@@ -440,16 +467,26 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					$registrations_used_for_contact_data = EEM_Registration::instance()->get_latest_registration_for_each_of_given_contacts( $ids );
 					break;
 			}
-
-			do_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations', $registrations_used_for_contact_data, $MTPG->ID() );
-
+			do_action(
+				'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
+				$registrations_used_for_contact_data,
+				$Message_Template_Group->ID()
+			);
 			//kept for backward compat, internally we no longer use this action.
 			//@deprecated 4.8.36.rc.002
-			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
-			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
+			$contacts = $id_type == 'registration'
+				? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids )
+				: EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
+			do_action(
+				'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send',
+				$contacts,
+				$Message_Template_Group->ID()
+			);
 		}
 		$query_args = array(
-			'action' => !empty( $this->_req_data['redirect_back_to'] ) ? $this->_req_data['redirect_back_to'] : 'default'
+			'action' => !empty( $this->_req_data['redirect_back_to'] )
+				? $this->_req_data['redirect_back_to']
+				: 'default'
 			);
 		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 	}
