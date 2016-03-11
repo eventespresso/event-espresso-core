@@ -704,10 +704,8 @@ final class EE_Admin {
 			EE_Registry::CFG()->core->post_shortcodes = isset( EE_Registry::CFG()->core->post_shortcodes )
 				? EE_Registry::CFG()->core->post_shortcodes
 				: array();
-			// whether to proceed with update, if an entry already exists for this post, then we want to update
-			$update_post_shortcodes = isset( EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ] )
-				? true
-				: false;
+			// whether to proceed with update
+			$update_post_shortcodes = false;
 			// empty both arrays
 			EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ] = array();
 			// check that posts page is already being tracked
@@ -720,12 +718,12 @@ final class EE_Admin {
 				// convert to UPPERCASE to get actual shortcode
 				$EES_Shortcode = strtoupper( $EES_Shortcode );
 				// is the shortcode in the post_content ?
-				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
+				if ( strpos( $post->post_content, $EES_Shortcode ) !== false ) {
 					// map shortcode to post names and post IDs
 					EE_Registry::CFG()->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// and add this shortcode to the tracking for the blog page
 					EE_Admin::set_post_shortcode_for_posts_page( $page_for_posts, $EES_Shortcode, $post_ID );
-					$update_post_shortcodes = TRUE;
+					$update_post_shortcodes = true;
 				} else {
 					// shortcode is not present in post content, so check if we were tracking it previously
 					// stop tracking if shortcode is not used in this specific post
@@ -744,7 +742,8 @@ final class EE_Admin {
 						$post_ID,
 						$EES_Shortcode,
 						$shortcode_posts,
-						$page_for_posts
+						$page_for_posts,
+						$update_post_shortcodes
 					)
 						? true
 						: $update_post_shortcodes;
@@ -836,7 +835,8 @@ final class EE_Admin {
 						$ID,
 						$shortcode_class,
 						$shortcode_posts,
-						$page_for_posts
+						$page_for_posts,
+						$update_post_shortcodes
 					)
 						? true
 						: $update_post_shortcodes;
@@ -867,10 +867,16 @@ final class EE_Admin {
 	 * @param      $shortcode_class
 	 * @param      $shortcode_posts
 	 * @param      $page_for_posts
+	 * @param bool $update_post_shortcodes
 	 * @return bool
 	 */
-	protected static function unset_posts_page_shortcode_for_post( $ID, $shortcode_class, $shortcode_posts, $page_for_posts ) {
-		$update_post_shortcodes = false;
+	protected static function unset_posts_page_shortcode_for_post(
+		$ID,
+		$shortcode_class,
+		$shortcode_posts,
+		$page_for_posts,
+		$update_post_shortcodes = false
+	) {
 		// make sure that an array of post IDs is being tracked for each  shortcode
 		if ( ! is_array( $shortcode_posts ) ) {
 			EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] = array(
