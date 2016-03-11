@@ -349,6 +349,9 @@ class EE_CPT_Strategy extends EE_BASE {
 						if( ! has_filter( 'template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
 							add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
 						}
+						if( has_filter( 'the_content',array( EE_Maintenance_Mode::instance(), 'the_content' ) ) ) {
+							add_filter( 'the_content', array( $this, 'inject_EE_shortcode_placeholder' ), 1 );
+						}
 						return;
 					}
 					// load EE_Request_Handler (this was added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/9037
@@ -423,6 +426,21 @@ class EE_CPT_Strategy extends EE_BASE {
 		}
 		remove_filter( 'posts_fields', array( $this, 'posts_fields' ));
 		return $SQL;
+	}
+
+
+
+	/*
+	 * inject_EE_shortcode_placeholder
+	 * in order to display the M-Mode notice on our CPT routes,
+	 * we need to first inject what looks like one of our shortcodes,
+	 * so that it can be replaced with the actual M-Mode notice
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function inject_EE_shortcode_placeholder() {
+		return '[ESPRESSO_';
 	}
 
 

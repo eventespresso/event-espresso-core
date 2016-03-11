@@ -144,7 +144,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function __construct( $input_args = array() ){
 		$input_args = apply_filters( 'FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this );
 		// the following properties must be cast as arrays
-		$set_as_array = array();
+		$set_as_array = array(
+			'validation_strategies' => true
+		);
 		if( isset( $input_args[ 'validation_strategies' ] ) ) {
 			foreach( $input_args[ 'validation_strategies' ] as $validation_strategy ) {
 				if( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
@@ -161,7 +163,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 				// first check if this property needs to be set as an array
 				if ( in_array( $key, $set_as_array ) ) {
 					// ensure value is an array
-					$value = is_array( $value ) ? $value : array( $value );
+					$value = is_array( $value ) ? $value : array( get_class( $value ), $value );
 					// and merge with existing values
 					$this->{$_key} = array_merge( $this->{$_key}, $value );
 				} else {
@@ -172,10 +174,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		// ensure that "required" is set correctly
 		$this->set_required( $this->_required, isset( $input_args[ 'required_validation_error_message' ] ) ? $input_args[ 'required_validation_error_message' ] : NULL );
 
-		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
+		//$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
 
 		$this->_display_strategy->_construct_finalize($this);
-
 		if ( $this->_validation_strategies ){
 			foreach( $this->_validation_strategies as $validation_strategy ){
 				$validation_strategy->_construct_finalize($this);
@@ -327,7 +328,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected function _add_validation_strategy( EE_Validation_Strategy_Base $validation_strategy ){
 		$validation_strategy->_construct_finalize( $this );
 		$this->_validation_strategies[] = $validation_strategy;
-
 	}
 
 	/**
@@ -603,9 +603,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	function get_jquery_validation_rules(){
+
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
-			$jquery_validation_rules = array_replace_recursive( $jquery_validation_rules, $validation_strategy->get_jquery_validation_rule_array());
+			$jquery_validation_rules = array_replace_recursive(
+				$jquery_validation_rules,
+				$validation_strategy->get_jquery_validation_rule_array()
+			);
 		}
 
 		if(! empty($jquery_validation_rules)){
@@ -649,7 +653,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if ( $required ) {
 			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
-			unset( $this->_validation_strategies[ get_class( new EE_Required_Validation_Strategy() ) ] );
+			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
 		}
 		$this->_required = $required;
 	}
