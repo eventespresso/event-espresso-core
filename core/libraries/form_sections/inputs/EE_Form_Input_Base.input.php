@@ -147,23 +147,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$set_as_array = array(
 			'validation_strategies' => true
 		);
-		if( isset( $input_args[ 'validation_strategies' ] ) ) {
-			foreach( $input_args[ 'validation_strategies' ] as $validation_strategy ) {
-				if( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
-					$this->_validation_strategies[ get_class() ] = $validation_strategy;
-				}
-			}
-			unset( $input_args[ 'validation_strategies' ] );
-		}
 		// loop thru incoming options
 		foreach( $input_args as $key => $value ) {
 			// add underscore to $key to match property names
 			$_key = '_' . $key;
 			if ( property_exists( $this, $_key )) {
 				// first check if this property needs to be set as an array
-				if ( in_array( $key, $set_as_array ) ) {
+				if ( isset( $set_as_array[ $key ] ) ) {
 					// ensure value is an array
-					$value = is_array( $value ) ? $value : array( get_class( $value ), $value );
+					$value = is_array( $value ) ? $value : array( get_class() => $value );
 					// and merge with existing values
 					$this->{$_key} = array_merge( $this->{$_key}, $value );
 				} else {
