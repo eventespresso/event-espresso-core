@@ -38,7 +38,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	 * @return EE_Question
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -488,7 +488,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
 		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
-		$input_constructor_args = array_merge( 
+		$input_constructor_args = array_merge(
 				array(
 					'required' => $this->required() ? true : false,
 					'html_label_text' => $this->display_text(),
@@ -502,7 +502,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {
 			//answer gets htmlspecialchars called on it, undo that please
-			//beceause the form input's display strategy may call esc_attr too
+			//because the form input's display strategy may call esc_attr too
 			//which also does html special characters
 			$values_with_html_special_chars = $answer->value();
 			if( is_array( $values_with_html_special_chars ) ) {

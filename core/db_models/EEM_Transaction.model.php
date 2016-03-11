@@ -110,10 +110,8 @@ class EEM_Transaction extends EEM_Base {
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
 		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
 
-		$offset = get_option( 'gmt_offset' );
-		$query_interval = $offset < 0
-			? 'DATE_SUB(TXN_timestamp, INTERVAL ' . $offset*-1 . ' HOUR)'
-			: 'DATE_ADD(TXN_timestamp, INTERVAL ' . $offset . ' HOUR)';
+		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'TXN_timestamp' );
 
 		$results = $this->_get_all_wpdb_results(
 			array(
@@ -142,25 +140,45 @@ class EEM_Transaction extends EEM_Base {
 	 * @return mixed
 	 */
 	public function get_revenue_per_event_report( $period = '-1 month' ) {
-		$date_sql = EEM_Registration::instance()->convert_datetime_for_query( 'REG_date', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
-		$where = array( 'Registration.REG_date' => array( '>=', $date_sql ) );
-
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'revenue_per_event_report' ) ) {
-			$where ['Registration.Event.EVT_wp_user'] = get_current_user_id();
+		global $wpdb;
+		$transaction_table = $wpdb->prefix . 'esp_transaction';
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$event_table = $wpdb->posts;
+		$payment_table = $wpdb->prefix . 'esp_payment';
+		$sql_date = date( 'Y-m-d H:i:s', strtotime( $period ) );
+		$extra_event_on_join = '';
+		//exclude events not authored by user if permissions in effect
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
+			$extra_event_on_join = ' AND Event.post_author = ' . get_current_user_id();
 		}
 
-		$results = $this->_get_all_wpdb_results(
-			array(
-				$where,
-				'group_by' => array( 'Registration.Event.EVT_name' ),
-				'order_by' => 'Registration.Event.EVT_name',
-				'limit' => array( 0, 24 )
-			),
-			OBJECT,
-			array(
-				'event_name' => array( 'Registration___Event_CPT.post_title', '%s' ),
-				'revenue' => array( 'SUM(TXN_PAID)', '%d' )
-			)
+		$approved_payment_status = EEM_Payment::status_id_approved;
+
+		$query =
+		"SELECT
+			Transaction_Event.event_name AS event_name,
+			SUM(Transaction_Event.paid) AS revenue
+			FROM
+				(
+					SELECT
+						DISTINCT Payment.TXN_ID,
+						Event.post_title AS event_name,
+						Payment.PAY_amount AS paid
+					FROM $transaction_table AS Transaction
+						JOIN $registration_table AS Registration
+							ON Registration.TXN_ID = Transaction.TXN_ID
+						JOIN $payment_table AS Payment
+							ON Payment.TXN_ID = Registration.TXN_ID
+							AND Payment.PAY_timestamp > '$sql_date'
+							AND Payment.STS_ID = '$approved_payment_status'
+						JOIN $event_table AS Event ON Registration.EVT_ID = Event.ID
+							$extra_event_on_join
+				) AS Transaction_Event
+		GROUP BY event_name";
+
+		$results = $wpdb->get_results(
+			$query,
+			OBJECT
 		);
 		return $results;
 	}

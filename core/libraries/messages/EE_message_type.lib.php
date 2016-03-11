@@ -689,7 +689,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//make sure non admin context does not include the event_author shortcodes
 			if ( $context != 'admin' ) {
 				if( ($key = array_search('event_author', $this->_valid_shortcodes[$context] ) ) !== false) {
-				    unset($this->_valid_shortcodes[$context][$key]);
+					unset($this->_valid_shortcodes[$context][$key]);
 				}
 			}
 		}
@@ -697,11 +697,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//make sure admin context does not include the recipient_details shortcodes IF we have admin context hooked in message types might not have that context.
 		if ( !empty( $this->_valid_shortcodes['admin'] ) ) {
 			if( ($key = array_search('recipient_details', $this->_valid_shortcodes['admin'] ) ) !== false) {
-				    unset($this->_valid_shortcodes['admin'][$key]);
+					unset($this->_valid_shortcodes['admin'][$key]);
 				}
 			//make sure admin context does not include the recipient_details shortcodes
 			if( ($key = array_search('recipient_list', $this->_valid_shortcodes['admin'] ) ) !== false) {
-				    unset($this->_valid_shortcodes['admin'][$key]);
+					unset($this->_valid_shortcodes['admin'][$key]);
 				}
 		}
 	}
@@ -806,8 +806,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 				}
 			}
 
-			if ( in_array( $details['attendee_email'], $already_processed ) )
+			if (
+				in_array( $details['attendee_email'], $already_processed )
+				&& apply_filters( 'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends', true, $data, $this )
+			) {
 				continue;
+			}
 
 			$already_processed[] = $details['attendee_email'];
 

@@ -180,6 +180,24 @@ final class EE_System {
 		//@see https://events.codebasehq.com/projects/event-espresso/tickets/8674
 		EE_Registry::instance()->CAP->init_caps();
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
+		//if the WP API basic auth plugin isn't already loaded, load it now.
+		//We want it for mobile apps. Just include the entire plugin
+		//also, don't load the basic auth when a plugin is getting activated, because
+		//it could be the basic auth plugin, and it doesn't check if its methods are already defined
+		//and causes a fatal error
+		if( !function_exists( 'json_basic_auth_handler' )
+			&& ! function_exists( 'json_basic_auth_error' )
+			&& ! (
+				isset( $_GET[ 'action'] )
+				&& in_array( $_GET[ 'action' ], array( 'activate', 'activate-selected' ) )
+			)
+			&& ! (
+				isset( $_GET['activate' ] )
+				&& $_GET['activate' ] === 'true'
+			)
+		) {
+			include_once EE_THIRD_PARTY . 'wp-api-basic-auth' . DS . 'basic-auth.php';
+		}
 	}
 
 
@@ -342,11 +360,12 @@ final class EE_System {
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			update_option( 'ee_flush_rewrite_rules', TRUE );
-			EEH_Activation::system_initialization();
+
 			if( $verify_schema ) {
 				EEH_Activation::initialize_db_and_folders();
 			}
 			EEH_Activation::initialize_db_content();
+			EEH_Activation::system_initialization();
 			if( $initialize_addons_too ) {
 				$this->initialize_addons();
 			}
@@ -761,12 +780,15 @@ final class EE_System {
 	public function load_controllers() {
 		do_action( 'AHEE__EE_System__load_controllers__start' );
 		// let's get it started
-		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
+		if ( ! is_admin() && ! EE_Maintenance_Mode::instance()->level() ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
 			EE_Registry::instance()->load_core( 'Front_Controller' );
 		} else if ( ! EE_FRONT_AJAX ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
+		} else if ( EE_Maintenance_Mode::instance()->level() ) {
+			// still need to make sure template helper functions are loaded in M-Mode
+			EE_Registry::instance()->load_helper( 'Template' );
 		}
 		do_action( 'AHEE__EE_System__load_controllers__complete' );
 	}
@@ -856,8 +878,8 @@ final class EE_System {
 		}
 		// add no cache headers
 		add_action( 'send_headers' , array( 'EE_System', 'nocache_headers' ), 10 );
-		// plus a little extra for nginx
-		add_filter( 'nocache_headers', array( 'EE_System', 'nocache_headers_nginx' ), 10, 1 );
+		// plus a little extra for nginx and Google Chrome
+		add_filter( 'nocache_headers', array( 'EE_System', 'extra_nocache_headers' ), 10, 1 );
 		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
 		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
 	}
@@ -865,14 +887,17 @@ final class EE_System {
 
 
 	/**
-	 *    nocache_headers_nginx
+	 *    extra_nocache_headers
 	 *
 	 * @access    public
 	 * @param $headers
 	 * @return    array
 	 */
-	public static function nocache_headers_nginx ( $headers ) {
+	public static function extra_nocache_headers ( $headers ) {
+		// for NGINX
 		$headers['X-Accel-Expires'] = 0;
+		// plus extra for Google Chrome since it doesn't seem to respect "no-cache", but WILL respect "no-store"
+		$headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0';
 		return $headers;
 	}
 
@@ -959,8 +984,8 @@ final class EE_System {
 		if ( is_single() && ( get_post_type() == 'espresso_events' ) ) {
 
 			//Current post
-			global $post;		
-    	
+			global $post;
+
 	    	if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'ee_admin_bar_menu_espresso-toolbar-events-edit', $post->ID ) ) {
 				//Events Edit Current Event
 				$admin_bar->add_menu(array(
@@ -1258,7 +1283,7 @@ final class EE_System {
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
 				// register jQuery Validate
-				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE );
+				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.15.0', TRUE );
 			}
 		}
 	}

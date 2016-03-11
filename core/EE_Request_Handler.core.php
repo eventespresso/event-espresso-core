@@ -66,17 +66,30 @@ final class EE_Request_Handler {
 	 * @return \EE_Request_Handler
 	 */
 	public function __construct( $wp = null ) {
-		//if somebody forgot to provide us with WP, that's ok because its global
-		if ( ! $wp instanceof WP ){
-			global $wp;
-		}
 		// grab request vars
-		$this->_params = $_REQUEST;
+		// NOTE: WHEN MERGING TO 4.9 PLZ FAVOUR THE CHANGES IN 4.9 OVER THE FOLLOWING LINE
+		$this->_params = array_merge( $_GET, $_POST );
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? true : false;
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
-		$this->set_request_vars( $wp );
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
+	}
+
+
+
+	/**
+	 *    set_request_vars
+	 *
+	 * @access public
+	 * @param WP $wp
+	 * @return void
+	 */
+	public function parse_request( $wp = null ) {
+		//if somebody forgot to provide us with WP, that's ok because its global
+		if ( ! $wp instanceof WP ) {
+			global $wp;
+		}
+		$this->set_request_vars( $wp );
 	}
 
 
