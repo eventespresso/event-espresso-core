@@ -30,6 +30,7 @@ class EEM_Attendee_Caps_Test extends EE_UnitTestCase{
 
 		//ok now log the user in
 		$current_user = $user;
+		wp_set_current_user( $user->ID );
 		//and they still shouldn't be able to view the attendee
 		$this->assertEquals( 0, EEM_Attendee::instance()->count( array( 'caps' => EEM_Base::caps_read ) ) );
 
