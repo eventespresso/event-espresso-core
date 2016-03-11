@@ -68,6 +68,11 @@ final class EE_Admin {
 		// load EE_Request_Handler early
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
 		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
+		// post shortcode tracking
+		add_action(
+			'AHEE__EE_System__initialize_last',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'set_hooks_admin' )
+		);
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -173,26 +178,17 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function init() {
-
 		//only enable most of the EE_Admin IF we're not in full maintenance mode
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
-			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ), 10 );
 			//filter for get_edit_post_link used on comments for custom post types
 			add_filter( 'get_edit_post_link', array( $this, 'modify_edit_post_link' ), 10, 3 );
-			// post shortcode tracking
-			add_action( 'save_post', array( 'EventEspresso\core\admin\PostShortcodeTracking', 'parse_post_content_on_save' ), 100, 2 );
-			add_action( 'delete_post', array( 'EventEspresso\core\admin\PostShortcodeTracking', 'unset_post_shortcodes_on_delete' ), 100, 1 );
-			add_action( 'add_option_page_for_posts', array( 'EventEspresso\core\admin\PostShortcodeTracking', 'reset_page_for_posts_on_initial_set' ), 100, 2 );
-			add_action( 'update_option', array( 'EventEspresso\core\admin\PostShortcodeTracking', 'reset_page_for_posts_on_change' ), 100, 3 );
-			add_action( 'delete_option', array( 'EventEspresso\core\admin\PostShortcodeTracking', 'reset_page_for_posts_on_delete' ), 100, 1 );
 		}
-
 		// run the admin page factory but ONLY if we are doing an ee admin ajax request
 		if ( !defined('DOING_AJAX') || EE_ADMIN_AJAX ) {
 			try {
@@ -202,11 +198,10 @@ final class EE_Admin {
 				$e->get_error();
 			}
 		}
-
+		add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 		//make sure our CPTs and custom taxonomy metaboxes get shown for first time users
 		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
 		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
-
 		//exclude EE critical pages from all nav menus and wp_list_pages
 		add_filter('nav_menu_meta_box_object', array( $this, 'remove_pages_from_nav_menu'), 10 );
 	}
