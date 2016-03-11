@@ -100,7 +100,7 @@ class EE_Maintenance_Mode {
 		// if M-Mode level 2 is engaged, we still need basic assets loaded
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_assets_required_for_m_mode' ));
 		// shut 'er down down for maintenance ?
-		add_filter( 'the_content', array( $this, 'the_content' ), 999 );
+		add_filter( 'the_content', array( $this, 'the_content' ), 2 );
 		// add powered by EE msg
 		add_action( 'shutdown', array( $this, 'display_maintenance_mode_notice' ), 10 );
 	}
@@ -210,18 +210,18 @@ class EE_Maintenance_Mode {
 
 
 	/**
-	 *    template_include
+	 * template_include
 	 *
-	 *    replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenance mode
+	 * replacement EE CPT template that displays message notifying site visitors
+	 * that EE has been temporarily placed into maintenance mode
+	 * does NOT get called on non-EE-CPT requests
 	 *
 	 * @access    public
-	 * @param    string $template_path
 	 * @return    string
 	 */
-	public static function template_include( $template_path ) {
-		EE_Registry::instance()->load_helper( 'Template' );
-		$template_located = EEH_Template::locate_template( EE_TEMPLATES . 'maintenance_mode.template.php', FALSE, FALSE );
-		return $template_located ? $template_located : $template_path;
+	public static function template_include() {
+		// shut 'er down down for maintenance ? then don't use any of our templates for our endpoints
+		return get_template_directory() . '/index.php';
 	}
 
 
@@ -237,12 +237,12 @@ class EE_Maintenance_Mode {
 	 */
 	public function the_content( $the_content ) {
 		// check if M-mode is engaged and for EE shortcode
-		if ( $this->level() && strpos( $the_content, '[ESPRESSO_' )) {
+		if ( $this->level() && strpos( $the_content, '[ESPRESSO_' ) !== false ) {
 			// this can eventually be moved to a template, or edited via admin. But for now...
 			$the_content = sprintf(
 				__( '%sMaintenance Mode%sEvent Registration has been temporarily closed while system maintenance is being performed. We\'re sorry for any inconveniences this may have caused. Please try back again later.%s', 'event_espresso' ),
-				'<h2>',
-				'</h2><p>',
+				'<h3>',
+				'</h3><p>',
 				'</p>'
 			);
 		}
