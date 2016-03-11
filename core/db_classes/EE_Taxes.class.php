@@ -88,6 +88,13 @@ class EE_Taxes extends EE_BASE {
 		//let's loop through them (base price is always the first item)
 		foreach ( $prices as $price ) {
 			if ( $price instanceof EE_Price ) {
+				var_dump( $price->type_obj() );
+				if ( ! $price->type_obj() ) {
+					$price_types = EEM_Price_Type::instance()->get_all();
+					foreach( $price_types as $type ) {
+						echo $type->name();
+					}
+				}
 				switch ( $price->type_obj()->base_type() ) {
 					case 1: // base price
 					case 3: // surcharges
