@@ -548,7 +548,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * The purpose of this method is to retrieve an array of EE_Registration objects that represent the latest registration
+	 * The purpose of this method is to retrieve an array of
+	 * EE_Registration objects that represent the latest registration
 	 * for each ATT_ID given in the function argument.
 	 *
 	 * @param array $attendee_ids
@@ -559,11 +560,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		global $wpdb;
 		$registration_table = $wpdb->prefix . 'esp_registration';
 		$attendee_table = $wpdb->posts;
-		$attendee_ids = is_array( $attendee_ids ) ? array_map( 'absint', $attendee_ids ) : array( (int) $attendee_ids );
+		$attendee_ids = is_array( $attendee_ids )
+			? array_map( 'absint', $attendee_ids )
+			: array( (int) $attendee_ids );
 		$attendee_ids = implode( ',', $attendee_ids );
 
 
-		//first we do a query to get the registration ids (because a group by before order by causes the order by to be ignored.
+		//first we do a query to get the registration ids
+		// (because a group by before order by causes the order by to be ignored.)
 		$registration_id_query = "
 			SELECT registrations.registration_ids as registration_id
 			FROM (
