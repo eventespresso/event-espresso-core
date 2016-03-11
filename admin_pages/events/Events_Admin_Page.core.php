@@ -373,9 +373,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor_other'
 					)
 				),
-				'help_tour' => array(
+				/*'help_tour' => array(
 					'Event_Edit_Help_Tour'
-				),
+				),*/
 				'qtips' => array( 'EE_Event_Editor_Decaf_Tips' ),
 				'require_nonce' => FALSE
 			),
@@ -446,7 +446,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_edit_category'
 						)
 					),
-				'help_tour' => array('Event_Edit_Category_Help_Tour'),
+				/*'help_tour' => array('Event_Edit_Category_Help_Tour'),*/
 					'metaboxes' => array('_publish_post_box'),
 					'require_nonce' => FALSE
 					),
@@ -770,7 +770,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( !empty( $id ) ) {
 			$post = get_post( $id );
 			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . __('Shortcode', 'event_espresso') . '</a> ';
-			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=\'' . $post->ID . '\']"">';
+			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=' . $post->ID . ']">';
 		}
 		return $return;
 	}
@@ -1427,36 +1427,33 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$times = EE_Registry::instance()->load_model('Datetime' )->get_all_event_dates( $event_id );
 		EE_Registry::instance()->load_helper('DTT_Helper' );
 		/** @type EE_Datetime $first_datetime */
-		$first_datetime = array_slice( $times, 0, 1 );
+		$first_datetime = reset( $times );
 		//do we get related tickets?
-		if ( $first_datetime[ 0 ]->get( 'DTT_ID' ) !== 0 ) {
-			foreach ( $times as $time ) {
-				if ( $time instanceof EE_Datetime ) {
-					$existing_datetime_ids[] = $time->get('DTT_ID');
-					$template_args['time'] = $time;
-					$related_tickets = $time->tickets(
-						array(
-							array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ),
-							'default_where_conditions' => 'none'
-						)
-					);
+		if ( $first_datetime instanceof EE_Datetime 
+			&& $first_datetime->ID() !== 0 ) {
+			$existing_datetime_ids[] = $first_datetime->get('DTT_ID');
+			$template_args['time'] = $first_datetime;
+			$related_tickets = $first_datetime->tickets(
+				array(
+					array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ),
+					'default_where_conditions' => 'none'
+				)
+			);
 
-					if ( !empty($related_tickets) ) {
-						$template_args['total_ticket_rows'] = count($related_tickets);
-						$row = 0;
-						foreach ( $related_tickets as $ticket ) {
-							$existing_ticket_ids[] = $ticket->get('TKT_ID');
-							$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket, FALSE, $row );
+			if ( !empty($related_tickets) ) {
+				$template_args['total_ticket_rows'] = count($related_tickets);
+				$row = 0;
+				foreach ( $related_tickets as $ticket ) {
+					$existing_ticket_ids[] = $ticket->get('TKT_ID');
+					$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket, FALSE, $row );
 
-							$row++;
-						}
-					} else {
-						$template_args['total_ticket_rows'] = 1;
-						/** @type EE_Ticket $ticket */
-						$ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
-						$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket );
-					}
+					$row++;
 				}
+			} else {
+				$template_args['total_ticket_rows'] = 1;
+				/** @type EE_Ticket $ticket */
+				$ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
+				$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket );
 			}
 		} else {
 			$template_args['time'] = $times[0];

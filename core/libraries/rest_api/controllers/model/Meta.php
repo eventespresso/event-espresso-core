@@ -1,5 +1,8 @@
 <?php
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
+
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+
 if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -61,6 +64,11 @@ class Meta extends Base {
 				}else{
 					$datatype = 'String';
 				}
+				$default_value = Model_Data_Translator::prepare_field_value_for_json(
+					$field_obj,
+					$field_obj->get_default_value(),
+					$this->get_model_version_info()->requested_version()
+				);
 				$field_json = array(
 					'name' => $field_name,
 					'nicename' => $field_obj->get_nicename(),
@@ -69,7 +77,7 @@ class Meta extends Base {
 					'type' => str_replace('EE_', '', get_class( $field_obj ) ),
 					'datatype' => $datatype,
 					'nullable' => $field_obj->is_nullable(),
-					'default' => \EED_Core_Rest_Api::prepare_field_value_for_rest_api($field_obj, $field_obj->get_default_value() ),
+					'default' => $default_value,
 					'table_alias' => $field_obj->get_table_alias(),
 					'table_column' => $field_obj->get_table_column(),
 				);
