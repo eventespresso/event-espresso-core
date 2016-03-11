@@ -717,10 +717,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				if( $expected_value != $actual_value ){
 					$this->fail(
 						sprintf(
-							__( 'EE objects of class "%1$s" did not match. They were: %2$s and %3$s', 'event_espresso' ),
+							__( 'EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso' ),
 							get_class( $expected_object),
 							print_r( $expected_object->model_field_array(), true ),
-							print_r( $actual_object->model_field_array(), true )
+							print_r( $actual_object->model_field_array(), true ),
+							$field_name,
+							print_r( $expected_value, true ),
+							print_r( $actual_value, true )
 						)
 					);
 				}
