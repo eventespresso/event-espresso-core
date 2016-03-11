@@ -99,6 +99,18 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
 		$this->scenarios = new EE_Test_Scenario_Factory( $this );
 		EE_Registry::reset();
+
+		//IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
+		//updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
+		// 'user_has_cap' filter to do this
+		$_wp_test_version = getenv( 'WP_VERSION' );
+		if ( $_wp_test_version && $_wp_test_version == '4.1' ) {
+			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, $WP_User ) {
+				$WP_User->get_role_caps();
+
+				return $WP_User->all_caps;
+			}, 10, 4 );
+		}
 	}
 
 
