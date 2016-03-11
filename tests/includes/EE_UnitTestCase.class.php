@@ -108,7 +108,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, $WP_User ) {
 				$WP_User->get_role_caps();
 
-				return $WP_User->all_caps;
+				return $WP_User->allcaps;
 			}, 10, 4 );
 		}
 	}
