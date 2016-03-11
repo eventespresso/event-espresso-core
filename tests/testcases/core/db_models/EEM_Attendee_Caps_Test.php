@@ -30,11 +30,13 @@ class EEM_Attendee_Caps_Test extends EE_UnitTestCase{
 
 		//ok now log the user in
 		$current_user = $user;
-		//and they still hsouldn't be able to ivew the attendee
+		//and they still shouldn't be able to view the attendee
 		$this->assertEquals( 0, EEM_Attendee::instance()->count( array( 'caps' => EEM_Base::caps_read ) ) );
 
 		//ok now give them access to contacts
 		$current_user->add_cap( 'ee_read_contacts' );
+		//temporary debug for travis builds
+		var_dump( user_can( $current_user->ID, 'ee_read_contacts' ) );
 		//and now they should be able to see it
 		$this->assertEquals( 1, EEM_Attendee::instance()->count( array( 'caps' => EEM_Base::caps_read ) ) );
 	}
