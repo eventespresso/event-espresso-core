@@ -24,7 +24,7 @@ require WP_TESTS_DIR . '/includes/bootstrap.php';
 require_once( EE_CORE . 'EE_Dependency_Map.core.php' );
 require_once( EE_CORE . 'request_stack' . DS . 'EE_Request.core.php' );
 require_once( EE_CORE . 'request_stack' . DS . 'EE_Response.core.php' );
-EE_Dependency_Map::instance( new EE_Request( $_REQUEST ), new EE_Response() );
+EE_Dependency_Map::instance( new EE_Request( $_GET, $_POST, $_COOKIE ), new EE_Response() );
 //Load the EE_specific testing tools
 require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
 
