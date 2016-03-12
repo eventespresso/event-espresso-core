@@ -104,7 +104,7 @@ class EED_Messages  extends EED_Module {
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder' ), 10 );
 		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
-		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( 'EED_Messages', 'send_newsletter_message' ), 10, 2 );
+		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 		add_action( 'AHEE__EE_Admin_Page___process_admin_payment_notification', array( 'EED_Messages', 'process_admin_payment' ), 10, 1 );
 		//filters
@@ -681,15 +681,15 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send_with_registrations trigger
 	 *
 	 * @since   4.3.0
 	 *
-	 * @param  EE_Attendee[]  $contacts   an array of EE_Attendee objects
+	 * @param  EE_Registration[]  $registrations   an array of EE_Registration objects
 	 * @param  int      	      $grp_id     a specific message template group id.
 	 * @return void
 	 */
-	public static function send_newsletter_message( $contacts, $grp_id ) {
+	public static function send_newsletter_message( $registrations, $grp_id ) {
 		//make sure mtp is id and set it in the EE_Request Handler later messages setup.
 		EE_Registry::instance()->REQ->set( 'GRP_ID', (int) $grp_id );
 		self::_load_controller();
@@ -698,7 +698,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 * Callback for FHEE__EE_Registration__invoice_url__invoice_url or FHEE__EE_Registration__receipt_url__receipt_url
 	 *
 	 * @since   4.3.0
 	 *
