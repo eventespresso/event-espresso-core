@@ -308,17 +308,21 @@ class EE_Dependency_Map {
 	 *
 	 */
 	protected function _register_core_class_loaders() {
+		//for PHP5.3 compat, we need to register any properties called here in a variable because `$this` cannot
+		//be used in a closure.
+		$request = &$this->_request;
+		$response = &$this->_response;
 		$this->_class_loaders = array(
 			//load_core
 			'EE_Encryption'                        => 'load_core',
 			'EE_Front_Controller'                  => 'load_core',
 			'EE_Module_Request_Router'             => 'load_core',
 			'EE_Registry'                          => 'load_core',
-			'EE_Request' => function () {
-				return $this->_request;
+			'EE_Request' => function() use(&$request) {
+				return $request;
 			},
-			'EE_Response' => function () {
-				return $this->_response;
+			'EE_Response' => function() use(&$response) {
+				return $response;
 			},
 			'EE_Request_Handler'                   => 'load_core',
 			'EE_Session'                           => 'load_core',
