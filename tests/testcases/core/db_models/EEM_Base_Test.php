@@ -327,7 +327,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//test values when timezone and formats modified on EE_Datetime instantiation
 		$this->factory->datetime->create( array( 'formats' => array( 'Y-m-d', 'H:i:s' ), 'timezone' => 'America/Vancouver' ) );
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );
-		$this->assertEquals( $timezoneTest->format( 'Y-m-d H:i:s' ), $formatted_string );
+		$this->assertDateWithinOneMinute( $timezoneTest->format( 'Y-m-d H:i:s' ), $formatted_string, 'Y-m-d H:i:s' );
 		$unix_timestamp = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start', true );
 		$this->assertEquals( $timezoneTest->format('U'), $unix_timestamp );
 	}
