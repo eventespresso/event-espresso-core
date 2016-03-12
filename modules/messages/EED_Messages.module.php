@@ -104,7 +104,7 @@ class EED_Messages  extends EED_Module {
 		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( 'EED_Messages', 'payment' ), 10, 2 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( 'EED_Messages', 'payment_reminder' ), 10 );
 		add_action( 'AHEE__EE_Registration_Processor__trigger_registration_update_notifications', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
-		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations', array( 'EED_Messages', 'send_newsletter_message'), 10, 2 );
+		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations', array( 'EED_Messages', 'send_newsletter_message' ), 10, 2 );
 		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( 'EED_Messages', 'cancelled_registration' ), 10 );
 		add_action( 'AHEE__EE_Admin_Page___process_admin_payment_notification', array( 'EED_Messages', 'process_admin_payment' ), 10, 1 );
 		//filters
@@ -693,7 +693,7 @@ class EED_Messages  extends EED_Module {
 		//make sure mtp is id and set it in the EE_Request Handler later messages setup.
 		EE_Registry::instance()->REQ->set( 'GRP_ID', (int) $grp_id );
 		self::_load_controller();
-		self::$_MSG_PROCESSOR->generate_for_all_active_messengers( 'newsletter', $contacts );
+		self::$_MSG_PROCESSOR->generate_for_all_active_messengers( 'newsletter', $registrations );
 	}
 
 
