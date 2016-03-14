@@ -54,14 +54,16 @@ if (
 <?php
 do_action( 'AHEE_event_details_after_venue_details', $post );
 else :
-	$venue_password_protected = espresso_venue_password_protected();
-	if ( ! empty( $venue_password_protected ) ) {
-		echo '<div class="espresso-venue-dv  espresso-password-protected-venue-dv" >';
-		echo '<h3 class="event-venues-h3 ee-event-h3">';
-		echo __( 'Location', 'event_espresso' );
-		echo '</h3>';
-		echo $venue_password_protected;
-		echo '</div>';
-	}
+	$password_protected_venue_form = espresso_password_protected_venue_form();
+	if ( ! empty( $password_protected_venue_form ) ) :
+?>
+	<div class="espresso-venue-dv  espresso-password-protected-venue-dv" >
+		<h3 class="event-venues-h3 ee-event-h3">
+			<?php _e( 'Location', 'event_espresso' );?>
+		</h3>
+		<?php echo $password_protected_venue_form; ?>
+	</div>
+<?php
+	endif;
 endif;
 ?>
