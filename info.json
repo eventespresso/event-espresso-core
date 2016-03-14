@@ -14,12 +14,14 @@
 		"src/info.json",
 		"src/circle.yml",
 		"src/readme.txt",
-		"src/wp-assets/**"
+		"src/wp-assets/**",
+		"src/.travis.yml"
 	],
 	"decafFilesRemove" : [
 		"src/tests/**",
 		"src/info.json",
 		"src/circle.yml",
+		"src/.travis.yml",
 		"src/caffeinated",
 		"src/wp-assets/**",
 		"src/modules/gateways/Aim/**",
