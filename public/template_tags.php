@@ -922,18 +922,16 @@ if ( ! function_exists( 'espresso_is_venue_private' ) ) {
 
 
 
-if ( ! function_exists( 'espresso_venue_password_protected' ) ) {
+if ( ! function_exists( 'espresso_password_protected_venue_form' ) ) {
 	/**
-	 * Return whether a venue is private or not.
-	 * @see EEH_Venue_View::get_venue() for more info on expected return results.
+	 * Returns a password form if venue is password protected.
 	 *
 	 * @param int     $VNU_ID optional, the venue id to check.
-	 *
-	 * @return bool | null
+	 * @return string
 	 */
-	function espresso_venue_password_protected( $VNU_ID = 0 ) {
+	function espresso_password_protected_venue_form( $VNU_ID = 0 ) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
-		return EEH_Venue_View::venue_password_protected( $VNU_ID );
+		return EEH_Venue_View::password_protected_venue_form( $VNU_ID );
 	}
 }
 
