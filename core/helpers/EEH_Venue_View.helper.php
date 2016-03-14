@@ -188,6 +188,24 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
+	 * returns true or false if a venue is password protected or not
+	 * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
+	 * @return bool
+	 */
+	public static function is_venue_password_protected( $VNU_ID = false ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID, true, true, false );
+		if (
+			$venue instanceof EE_Venue
+			&& post_password_required( $venue->ID() )
+		) {
+			return true;
+		}
+		return false;
+	}
+
+
+
+	/**
 	 * If a venue is password protected, this will return the password form for gaining access
 	 * returns an empty string otherwise
 
