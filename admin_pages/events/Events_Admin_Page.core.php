@@ -770,7 +770,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( !empty( $id ) ) {
 			$post = get_post( $id );
 			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . __('Shortcode', 'event_espresso') . '</a> ';
-			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=\'' . $post->ID . '\']"">';
+			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=' . $post->ID . ']">';
 		}
 		return $return;
 	}

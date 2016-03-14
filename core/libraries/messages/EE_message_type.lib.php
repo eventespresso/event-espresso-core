@@ -808,7 +808,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 			if (
 				in_array( $details['attendee_email'], $already_processed )
-				&& apply_filters( 'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends', true, $data, $this )
+				&& apply_filters( 'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends', true, $this->_data, $this )
 			) {
 				continue;
 			}

@@ -31,6 +31,6 @@
 </p>
 <p><strong><?php _e('Espresso Ticket Selector', 'event_espresso'); ?></strong></p>
 <p>
-<?php _e('This shortcode allows you to display the ticket selector for a specific event: <br />[ESPRESSO_TICKET_SELECTOR event_id="###"]<br />', 'event_espresso'); ?>
-<?php _e('This shortcode can be used on any event page, WordPress page, or WordPress post. To use it, copy and paste the shortcode above and change "###" to the actual post ID (numeric value) for your event. For example, if your event had an ID of 123, then the update shortcode would be [ESPRESSO_TICKET_SELECTOR event_id="123"].', 'event_espresso'); ?>
+<?php _e('This shortcode allows you to display the ticket selector for a specific event: <br />[ESPRESSO_TICKET_SELECTOR event_id=###]<br />', 'event_espresso'); ?>
+<?php _e('This shortcode can be used on any event page, WordPress page, or WordPress post. To use it, copy and paste the shortcode above and change "###" to the actual post ID (numeric value) for your event. For example, if your event had an ID of 123, then the update shortcode would be [ESPRESSO_TICKET_SELECTOR event_id=123].', 'event_espresso'); ?>
 </p>

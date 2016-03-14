@@ -513,7 +513,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		if( $question instanceof EE_Question 
+		if( $question instanceof EE_Question
 			&& $registration instanceof EE_Registration ) {
 			$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() ) ) );
 		} else {
@@ -550,7 +550,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		if( $question instanceof EE_Question 
+		if( $question instanceof EE_Question
 			&& $registration instanceof EE_Registration ) {
 			$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $question->ID(), 'REG_ID' => $registration->ID() ) ) );
 		} else {
@@ -900,10 +900,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					break;
 			}
 		} else if ( $form_input === 'email' ) {
-			// clean the email address
-			$valid_email = sanitize_email( $input_value );
-			// check if it matches
-			if ( $input_value != $valid_email ) {
+			// check that an email was entered
+			if ( empty( $input_value ) ) {
 				// whoops!!!
 				EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				return FALSE;
