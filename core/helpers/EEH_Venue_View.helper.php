@@ -188,16 +188,14 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
-	 * Simply checks whether a venue for the given ID (or the internally derived venue is private).
-	 *
-	 * Note: This will return true if its private, null if the venue doesn't exist, and false, if the venue exists but is not
-	 * 	  private.  So it is important to do explicit boolean checks when using this conditional.
-	 *
+	 * If a venue is password protected, this will return the password form for gaining access
+	 * returns an empty string otherwise
+
 	 * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
 	 *
-	 * @return string|null
+	 * @return string
 	 */
-	public static function venue_password_protected( $VNU_ID = false ) {
+	public static function password_protected_venue_form( $VNU_ID = false ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID, true, true, false );
 		if (
 			$venue instanceof EE_Venue
@@ -205,7 +203,7 @@ class EEH_Venue_View extends EEH_Base {
 		) {
 			return get_the_password_form( $venue->ID() );
 		}
-		return null;
+		return '';
 	}
 
 
