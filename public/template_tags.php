@@ -922,6 +922,21 @@ if ( ! function_exists( 'espresso_is_venue_private' ) ) {
 
 
 
+if ( ! function_exists( 'espresso_venue_is_password_protected' ) ) {
+	/**
+	 * returns true or false if a venue is password protected or not
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 * @return string
+	 */
+	function espresso_venue_is_password_protected( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::is_venue_password_protected( $VNU_ID );
+	}
+}
+
+
+
 if ( ! function_exists( 'espresso_password_protected_venue_form' ) ) {
 	/**
 	 * Returns a password form if venue is password protected.
