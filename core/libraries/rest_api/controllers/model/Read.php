@@ -585,10 +585,10 @@ class Read extends Base {
 			''
 		);
 		//note: setting calculate=* doesn't do anything
-		$calculated_fields_to_return = array();
+		$calculated_fields_to_return = new \stdClass();
 		foreach( $calculated_fields as $field_to_calculate ) {
 			try{
-				$calculated_fields_to_return[ $field_to_calculate ] = Model_Data_Translator::prepare_field_value_for_json(
+				$calculated_fields_to_return->$field_to_calculate = Model_Data_Translator::prepare_field_value_for_json(
 					null,
 					$this->_fields_calculator->retrieve_calculated_field_value(
 						$model,

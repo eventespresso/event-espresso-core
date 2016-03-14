@@ -881,9 +881,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function register_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -899,9 +896,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function initialize_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to set hooks for the rest of the system
 		$this->_initialize_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -918,9 +912,6 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
 		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
@@ -2574,8 +2565,8 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
-			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		if ( ! empty( $this->php->max_input_vars ) && ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
+			return  sprintf( __('The maximum number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.', 'event_espresso'), '<br>', $input_count, $this->php->max_input_vars);
 		} else {
 			return '';
 		}

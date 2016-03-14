@@ -856,7 +856,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			}
 
 			//if $ticket_limit == infinity then let's drop out right away and just return that because any infinity amount trumps all other "available" amounts.
-			if ( $remaining == EE_INF ) {
+			if ( $remaining === EE_INF ) {
 				return EE_INF;
 			}
 
