@@ -87,6 +87,9 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return null;
+		}
 		// what shortcode was actually parsed ?
 		$shortcode_class = get_called_class();
 		// notify rest of system that fallback processor was triggered

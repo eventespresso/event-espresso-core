@@ -545,6 +545,71 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 
+
+
+	/**
+	 * The purpose of this method is to retrieve an array of
+	 * EE_Registration objects that represent the latest registration
+	 * for each ATT_ID given in the function argument.
+	 *
+	 * @param array $attendee_ids
+	 * @return EE_Registration[]
+	 */
+	public function get_latest_registration_for_each_of_given_contacts( $attendee_ids = array() ) {
+		//first do a native wp_query to get the latest REG_ID's matching these attendees.
+		global $wpdb;
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$attendee_table = $wpdb->posts;
+		$attendee_ids = is_array( $attendee_ids )
+			? array_map( 'absint', $attendee_ids )
+			: array( (int) $attendee_ids );
+		$attendee_ids = implode( ',', $attendee_ids );
+
+
+		//first we do a query to get the registration ids
+		// (because a group by before order by causes the order by to be ignored.)
+		$registration_id_query = "
+			SELECT registrations.registration_ids as registration_id
+			FROM (
+				SELECT
+					Attendee.ID as attendee_ids,
+					Registration.REG_ID as registration_ids
+				FROM $registration_table AS Registration
+				JOIN $attendee_table AS Attendee
+					ON Registration.ATT_ID = Attendee.ID
+					AND Attendee.ID IN ( $attendee_ids )
+				ORDER BY Registration.REG_ID DESC
+			  ) AS registrations
+			  GROUP BY registrations.attendee_ids
+		";
+
+		$registration_ids = $wpdb->get_results(
+			$registration_id_query,
+			ARRAY_A
+		);
+
+		if ( empty( $registration_ids ) ) {
+			return array();
+		}
+
+		$ids_for_model_query = array();
+		//let's flatten the ids so they can be used in the model query.
+		foreach ( $registration_ids as $registration_id ) {
+			if ( isset( $registration_id['registration_id'] ) ) {
+				$ids_for_model_query[] = $registration_id['registration_id'];
+			}
+		}
+
+		//construct query
+		$_where = array(
+			'REG_ID' => array( 'IN', $ids_for_model_query )
+		);
+
+		return $this->get_all( array( $_where ) );
+	}
+
+
+
 }
 // End of file EEM_Registration.model.php
 // Location: /includes/models/EEM_Registration.model.php
