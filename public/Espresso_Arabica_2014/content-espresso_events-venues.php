@@ -54,14 +54,13 @@ if (
 <?php
 do_action( 'AHEE_event_details_after_venue_details', $post );
 else :
-	$password_protected_venue_form = espresso_password_protected_venue_form();
-	if ( ! empty( $password_protected_venue_form ) ) :
+	if ( espresso_venue_is_password_protected() ) :
 ?>
 	<div class="espresso-venue-dv  espresso-password-protected-venue-dv" >
 		<h3 class="event-venues-h3 ee-event-h3">
 			<?php _e( 'Location', 'event_espresso' );?>
 		</h3>
-		<?php echo $password_protected_venue_form; ?>
+		<?php echo espresso_password_protected_venue_form(); ?>
 	</div>
 <?php
 	endif;
