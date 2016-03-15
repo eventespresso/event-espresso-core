@@ -514,7 +514,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		}
 		$max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question( $this->system_ID() );
 		if( EEM_Question::instance()->question_type_is_in_category(  $this->type(), 'text' ) ) {
-			$input_constructor_args[ 'validation_strategies' ][] = new EE_Max_Length_Validation_Strategy(
+			$input_constructor_args[ 'validation_strategies' ]['EE_Max_Length_Validation_Strategy'] = new EE_Max_Length_Validation_Strategy(
 				null,
 				min( $max_max_for_question, $this->max() )
 			);
@@ -579,7 +579,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				$result = new EE_Datepicker_Input( $input_constructor_args );
 				break;
 			case EEM_Question::QST_type_html_textarea :
-				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
+				$input_constructor_args[ 'validation_strategies' ]['EE_Simple_HTML_Validation_Strategy'] = new EE_Simple_HTML_Validation_Strategy();
 				$input =  new EE_Text_Area_Input( $input_constructor_args );
 				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
 				$result = $input;
