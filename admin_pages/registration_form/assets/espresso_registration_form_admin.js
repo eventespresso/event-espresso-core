@@ -46,7 +46,6 @@ function espresso_update_option_order() {
 	allOptions.each( function(i) {
 		jQuery('.QSO_order', this).val(i);
 	});
-	return;
 }
 
 
@@ -64,6 +63,10 @@ function espresso_reg_forms_show_or_hide_question_options(){
 	}else{
 		jQuery('#text_input_question_options').hide();
 	}
+	jQuery('.question_type_description' ).hide();
+	jQuery('#question_type_description-' + val ).show();
+	//alert( 'question_type_description ID = ' + '#question_type_description-' + val );
+
 }
 
 
