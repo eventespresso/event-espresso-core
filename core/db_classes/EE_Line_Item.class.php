@@ -883,7 +883,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		foreach ( $my_children as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
 				if ( $child_line_item->is_percent() ) {
-					$percent_total = $calculated_total_so_far * $child_line_item->percent() / 100;
+					
+					//round as we go so that the line items add up ok
+					$percent_total = round(
+						$calculated_total_so_far * $child_line_item->percent() / 100,
+						EE_Registry::instance()->CFG->currency->dec_plc
+					);
+					
 					$child_line_item->set_total( $percent_total );
 					//so far all percent line items should have a quantity of 1
 					//(ie, no double percent discounts. Although that might be requested someday)
@@ -1030,6 +1036,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return float
 	 */
 	public function get_items_total() {
+		//by default, let's make sure we're consistent with the existing line item
+		if( $this->is_total() ) {
+			$pretax_subtotal_li = EEH_Line_Item::get_pre_tax_subtotal( $this );
+			if( $pretax_subtotal_li instanceof EE_Line_Item ) {
+				return $pretax_subtotal_li->total();
+			}
+		}
 		$total = 0;
 		foreach ( $this->get_items() as $item ) {
 			if ( $item instanceof EE_Line_Item ) {
