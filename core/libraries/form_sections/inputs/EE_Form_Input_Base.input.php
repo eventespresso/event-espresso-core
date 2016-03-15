@@ -144,24 +144,20 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function __construct( $input_args = array() ){
 		$input_args = apply_filters( 'FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this );
 		// the following properties must be cast as arrays
-		$set_as_array = array(
-			'validation_strategies' => true
-		);
+		if ( isset( $input_args['validation_strategies'] ) ) {
+			foreach ( $input_args['validation_strategies'] as $validation_strategy ) {
+				if ( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
+					$this->_validation_strategies[ get_class( $validation_strategy ) ] = $validation_strategy;
+				}
+			}
+			unset( $input_args['validation_strategies'] );
+		}
 		// loop thru incoming options
 		foreach( $input_args as $key => $value ) {
 			// add underscore to $key to match property names
 			$_key = '_' . $key;
 			if ( property_exists( $this, $_key )) {
-				// first check if this property needs to be set as an array
-				if ( isset( $set_as_array[ $key ] )) {
-					$strategy_classname = is_object( $value ) ? get_class( $value ) : null;
-					// ensure value is an array
-					$value = is_array( $value ) ? $value : array( $strategy_classname => $value );
-					// and merge with existing values
-					$this->{$_key} = array_merge( $this->{$_key}, $value );
-				} else {
-					$this->{$_key} = $value;
-				}
+				$this->{$_key} = $value;
 			}
 		}
 		// ensure that "required" is set correctly
