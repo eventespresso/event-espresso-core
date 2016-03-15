@@ -202,8 +202,11 @@ class EEH_Activation {
 		 */
 		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
 			foreach( $crons as $timestamp => $hooks_to_fire_at_time ) {
-				if ( array_key_exists( $hook_name, $hooks_to_fire_at_time ) )  {
+				if ( is_array( $timestamp ) && isset( $timestamp[ $hook_name ] ) )  {
 					unset( $crons[ $timestamp ][ $hook_name ] );
+				}
+				if ( is_array( $timestamp ) && empty( $timestamp ) ) {
+					unset( $crons[ $timestamp ] );
 				}
 			}
 		}
