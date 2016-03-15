@@ -77,6 +77,8 @@ class Capabilities {
 		}
 		foreach( $model->field_settings() as $field_name => $field_obj ){
 			if( $model_version_info->field_has_rendered_format( $field_obj )
+			    && isset( $entity[ $field_name ] )
+				&& is_array( $entity[ $field_name ] )
 				&& isset( $entity[ $field_name ][ 'raw' ] )
 			) {
 				unset( $entity[ $field_name ][ 'raw' ] );

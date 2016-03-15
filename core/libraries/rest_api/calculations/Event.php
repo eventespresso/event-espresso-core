@@ -311,7 +311,7 @@ class Event extends Calculations_Base {
 		$attachment_id = get_post_thumbnail_id( $EVT_ID );
 		$data = wp_get_attachment_image_src( $attachment_id, $image_size );
 		if( ! $data ) {
-			return false;
+			return null;
 		}
 		if( isset( $data[ 3] ) ) {
 			$generated = $data[ 3 ];
