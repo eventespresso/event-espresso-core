@@ -418,6 +418,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$descriptions = '';
 		$question_type_descriptions = EEM_Question::instance()->question_descriptions();
 		foreach ( $question_type_descriptions as $type => $question_type_description ) {
+			if ( $type == 'HTML_TEXTAREA' ) {
+				$html = new EE_Simple_HTML_Validation_Strategy();
+				$question_type_description .= '<br/>( ' . __( 'allowed tags: ', 'event_espresso' );
+				$question_type_description .= $html->get_list_of_allowed_tags() . ' )';
+			}
 			$descriptions .= EEH_HTML::p(
 				$question_type_description,
 				'question_type_description-' . $type,
