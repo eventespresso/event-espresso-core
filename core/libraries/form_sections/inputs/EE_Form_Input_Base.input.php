@@ -312,6 +312,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 	}
+
+
+
 	/**
 	 * Adds this strategy to the field so it will be used in both JS validation and server-side validation
 	 * @param EE_Validation_Strategy_Base $validation_strategy
@@ -322,6 +325,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_validation_strategies[] = $validation_strategy;
 	}
 
+
+
 	/**
 	 * Adds a new validation strategy onto the form input
 	 * @param EE_Validation_Strategy_Base $validation_strategy
@@ -331,8 +336,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_add_validation_strategy( $validation_strategy );
 	}
 
+
+
 	/**
 	 * The classname of the validation strategy to remove
+	 *
 	 * @param string $validation_strategy_classname
 	 */
 	public function remove_validation_strategy( $validation_strategy_classname ) {
@@ -342,6 +350,29 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 	}
+
+
+
+	/**
+	 * returns true if input employs any of the validation strategy defined by the supplied array of classnames
+	 *
+	 * @param array $validation_strategy_classnames
+	 * @return bool
+	 */
+	public function has_validation_strategy( $validation_strategy_classnames ) {
+		$validation_strategy_classnames = is_array( $validation_strategy_classnames )
+			? $validation_strategy_classnames
+			: array( $validation_strategy_classnames );
+		foreach( $this->_validation_strategies as $key => $validation_strategy ){
+			if( in_array( $key, $validation_strategy_classnames ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
 	 * to the parent form's layout strategy
@@ -350,6 +381,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function get_html_and_js(){
 		return $this->_parent_section->get_html_for_input($this);
 	}
+
+
+
 	/**
 	 * Gets the HTML for the input itself (no label or errors) according to the
 	 * input's display strategy
