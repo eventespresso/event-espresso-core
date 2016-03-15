@@ -41,20 +41,6 @@ class EE_Simple_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 
 	/**
-	 * add_more_tags
-	 */
-	protected function get_list_of_allowed_tags() {
-		$list_of_allowed_tags = '';
-		$allowedtags = $this->_get_allowed_tags();
-		foreach ( $allowedtags as $tag => $allowedtag ) {
-			$list_of_allowed_tags .= $tag . ', ';
-		}
-		return rtrim( $list_of_allowed_tags, ', ' );
-	}
-
-
-
-	/**
 	 * @param $normalized_value
 	 * @throws \EE_Validation_Error
 	 */
