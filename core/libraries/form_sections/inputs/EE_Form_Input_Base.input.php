@@ -154,8 +154,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			if ( property_exists( $this, $_key )) {
 				// first check if this property needs to be set as an array
 				if ( isset( $set_as_array[ $key ] )) {
+					$strategy_classname = is_object( $value ) ? get_class( $value ) : null;
 					// ensure value is an array
-					$value = is_array( $value ) ? $value : array( get_class( $value ), $value );
+					$value = is_array( $value ) ? $value : array( $strategy_classname => $value );
 					// and merge with existing values
 					$this->{$_key} = array_merge( $this->{$_key}, $value );
 				} else {
@@ -337,7 +338,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	public function remove_validation_strategy( $validation_strategy_classname ) {
 		foreach( $this->_validation_strategies as $key => $validation_strategy ){
-			if( is_subclass_of( $validation_strategy, $validation_strategy_classname ) ){
+			if(
+				$validation_strategy instanceof $validation_strategy_classname
+				|| is_subclass_of( $validation_strategy, $validation_strategy_classname )
+			) {
 				unset( $this->_validation_strategies[ $key ] );
 			}
 		}
