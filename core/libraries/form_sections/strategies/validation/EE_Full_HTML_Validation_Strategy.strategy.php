@@ -30,6 +30,21 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 
 	/**
+	 * add_more_tags
+	 */
+	public function get_list_of_allowed_tags() {
+		$list_of_allowed_tags = '';
+		global $allowedposttags;
+		ksort( $allowedposttags );
+		foreach ( $allowedposttags as $tag => $allowed_tag ) {
+			$list_of_allowed_tags .= $tag . ', ';
+		}
+		return rtrim( $list_of_allowed_tags, ', ' );
+	}
+
+
+
+	/**
 	 * @param $normalized_value
 	 * @throws \EE_Validation_Error
 	 */
