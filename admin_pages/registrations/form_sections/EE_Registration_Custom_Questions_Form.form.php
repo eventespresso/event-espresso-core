@@ -56,14 +56,14 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 			throw new EE_Error( __( 'We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso') );
 		}
 		//we want to get all their question groups
-		$question_groups = EEM_Question_Group::instance()->get_all( 
-			array( 
+		$question_groups = EEM_Question_Group::instance()->get_all(
+			array(
 				array(
 					'Event_Question_Group.EVT_ID' => $reg->event_ID(),
 					'Event_Question_Group.EQG_primary' => $reg->count() == 1 ? TRUE : FALSE,
 					'Question.QST_system' =>  ''
 				),
-				'order_by' => array( 'QSG_order' => 'ASC' ) 
+				'order_by' => array( 'QSG_order' => 'ASC' )
 			)
 		);
 		//get each question groups questions
@@ -113,7 +113,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 				'html_class' => 'question-group-questions',
 			));
 	}
-	
+
 	/**
 	 * Overrides parent so if inputs were disabled, we leave those with their defaults
 	 * from the answers in the DB
@@ -144,7 +144,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 	 */
 	protected function _validate() {
 		foreach($this->get_validatable_subsections() as $subsection_name => $subsection){
-			if( $subsection->form_data_present_in( $req_data ) ) {
+			if( $subsection->form_data_present_in( $_POST ) ) {
 				if(method_exists($this,'_validate_'.$subsection_name)){
 					call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
 				}
