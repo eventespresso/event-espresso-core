@@ -71,13 +71,8 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	// constant used to indicate that the question type is a YEAR
 	const QST_type_year = 'YEAR';
 
-
 	// constant used to indicate that the question type is a multi-select
 	const QST_type_multi_select = 'MULTI_SELECT';
-
-
-
-
 
 	/**
 	 * Question types that are interchangeable, even after answers have been provided for them.
@@ -86,6 +81,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 * @var array
 	 */
 	protected $_question_type_categories = null;
+
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
 	 * @access private
@@ -93,9 +89,24 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 */
 	protected $_allowed_question_types;
 
+	/**
+	 * brief descriptions for all the question types
+	 * @access private
+	 * @var array of strings
+	 */
+	protected $_question_descriptions;
+
+
 	// private instance of the Attendee object
 	protected static $_instance = NULL;
 
+
+
+	/**
+	 * EEM_Question constructor.
+	 *
+	 * @param null $timezone
+	 */
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
@@ -112,12 +123,33 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_date =>__('Date Picker','event_espresso'),
 				EEM_Question::QST_type_html_textarea => __( 'HTML Textarea', 'event_espresso' ),
 				EEM_Question::QST_type_email => __( 'Email', 'event_espresso' ),
-				EEM_Question::QST_type_us_phone => __( 'USA-Format Phone', 'event_espresso' ),
-				EEM_Question::QST_type_int => __( 'Integer Number', 'event_espresso' ),
-				EEM_Question::QST_type_decimal => __( 'Decimal Number', 'event_espresso' ),
-				EEM_Question::QST_type_url => __( 'Valid URL', 'event_espresso' ),
+				EEM_Question::QST_type_us_phone => __( 'USA - Format Phone', 'event_espresso' ),
+				EEM_Question::QST_type_decimal => __( 'Number', 'event_espresso' ),
+				EEM_Question::QST_type_int => __( 'Whole Number', 'event_espresso' ),
+				EEM_Question::QST_type_url => __( 'URL', 'event_espresso' ),
 				EEM_Question::QST_type_year => __( 'Year', 'event_espresso' ),
 				EEM_Question::QST_type_multi_select => __( 'Multi Select', 'event_espresso' )
+			)
+		);
+		$this->_question_descriptions = apply_filters(
+			'FHEE__EEM_Question__construct__allowed_question_types',
+			array(
+				EEM_Question::QST_type_text          => __( 'A single line text input field', 'event_espresso' ),
+				EEM_Question::QST_type_textarea      => __( 'A multi line text input field', 'event_espresso' ),
+				EEM_Question::QST_type_checkbox      => __( 'Allows multiple preset options to be selected', 'event_espresso' ),
+				EEM_Question::QST_type_radio         => __( 'Allows a single preset option to be selected', 'event_espresso' ),
+				EEM_Question::QST_type_dropdown      => __( 'A dropdown that allows a single selection', 'event_espresso' ),
+				EEM_Question::QST_type_state         => __( 'A dropdown that lists states/provinces', 'event_espresso' ),
+				EEM_Question::QST_type_country       => __( 'A dropdown that lists countries', 'event_espresso' ),
+				EEM_Question::QST_type_date          => __( 'A popup calendar that allows date selections', 'event_espresso' ),
+				EEM_Question::QST_type_html_textarea => __( 'A multi line text input field that allows HTML', 'event_espresso' ),
+				EEM_Question::QST_type_email         => __( 'A text field that must contain a valid Email address', 'event_espresso' ),
+				EEM_Question::QST_type_us_phone      => __( 'A text field that must contain a valid US phone number', 'event_espresso' ),
+				EEM_Question::QST_type_decimal       => __( 'A text field that allows number values with decimals', 'event_espresso' ),
+				EEM_Question::QST_type_int           => __( 'A text field that only allows whole numbers (no decimals)', 'event_espresso' ),
+				EEM_Question::QST_type_url           => __( 'A text field that must contain a valid URL', 'event_espresso' ),
+				EEM_Question::QST_type_year          => __( 'A dropdown that lists the last 100 years', 'event_espresso' ),
+				EEM_Question::QST_type_multi_select  => __( 'A dropdown that allows multiple selections', 'event_espresso' )
 			)
 		);
 		$this->_question_type_categories = apply_filters(
@@ -338,6 +370,15 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		} else {
 			return EE_INF;
 		}
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function question_descriptions() {
+		return $this->_question_descriptions;
 	}
 
 
