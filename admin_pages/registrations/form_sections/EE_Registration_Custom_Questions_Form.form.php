@@ -144,7 +144,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 	 */
 	protected function _validate() {
 		foreach($this->get_validatable_subsections() as $subsection_name => $subsection){
-			if( $subsection->form_data_present_in( $_POST ) ) {
+			if( $subsection->form_data_present_in( array_merge( $_GET, $_POST ) ) ) {
 				if(method_exists($this,'_validate_'.$subsection_name)){
 					call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
 				}

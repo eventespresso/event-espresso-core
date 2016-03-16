@@ -191,7 +191,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function receive_form_submission($req_data = NULL, $validate = TRUE){
 		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
 		if( $req_data === NULL){
-			$req_data = $_POST;
+			$req_data = array_merge( $_GET, $_POST );
 		}
 		$this->_normalize($req_data);
 		if( $validate ){
