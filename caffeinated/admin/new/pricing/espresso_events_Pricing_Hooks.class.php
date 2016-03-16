@@ -827,9 +827,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 		$main_template_args['total_dtt_rows'] = count($times);
+
+		/** @see https://events.codebasehq.com/projects/event-espresso/tickets/9486 for why we are counting $dttrow and then setting that on the Datetime object */
+		$dttrow = 1;
 		foreach ( $times as $time ) {
 			$dttid = $time->get('DTT_ID');
-			$dttrow = $time->get('DTT_order');
+			$time->set( 'DTT_order', $dttrow );
 			$existing_datetime_ids[] = $dttid;
 
 			//tickets attached
@@ -876,6 +879,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				if ( !isset( $ticket_datetimes[$tktid] ) || ! in_array( $dttrow, $ticket_datetimes[$tktid] ) )
 					$ticket_datetimes[$tktid][] = $dttrow;
 			}
+			$dttrow++;
 		}
 
 		$main_template_args['total_ticket_rows'] = count( $existing_ticket_ids );
