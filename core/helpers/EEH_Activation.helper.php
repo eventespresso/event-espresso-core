@@ -201,15 +201,16 @@ class EEH_Activation {
 		 *      ...
 		 */
 		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
-			foreach( $crons as $timestamp => $hooks_to_fire_at_time ) {
-				if ( is_array( $timestamp ) && isset( $timestamp[ $hook_name ] ) )  {
+			foreach ( $crons as $timestamp => $hooks_to_fire_at_time ) {
+				if ( is_array( $hooks_to_fire_at_time ) && isset( $hooks_to_fire_at_time[ $hook_name ] ) ) {
 					unset( $crons[ $timestamp ][ $hook_name ] );
 				}
-				if ( is_array( $timestamp ) && empty( $timestamp ) ) {
+				if ( is_array( $hooks_to_fire_at_time ) && empty( $hooks_to_fire_at_time ) ) {
 					unset( $crons[ $timestamp ] );
 				}
 			}
 		}
+
 		_set_cron_array( $crons );
 	}
 
