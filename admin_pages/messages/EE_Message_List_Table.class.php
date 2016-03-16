@@ -283,6 +283,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 				$content = $action_links['view'] . $action_links['send_now'] . $action_links['error'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_failed :
+			case EEM_Message::status_debug_only :
 				$content = $action_links['error'] . $action_links['view_transaction'];
 				break;
 			case EEM_Message::status_idle :
@@ -352,6 +353,14 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 				'MSG_from' => array( 'LIKE', $search_string ),
 				'MSG_subject' => array( 'LIKE', $search_string ),
 				'MSG_content' => array( 'LIKE', $search_string ),
+			);
+		}
+
+		//account for debug only status.  We don't show Messages with the EEM_Message::status_debug_only to clients when
+		//`WP_DEBUG` is false.
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			$query_params[0]['AND*debug_only_conditional'] = array(
+				'STS_ID' => array( '!=', EEM_Message::status_debug_only )
 			);
 		}
 

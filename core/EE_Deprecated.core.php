@@ -851,7 +851,9 @@ class EE_messages {
 		} else {
 			$processor->generate_for_all_active_messengers( $type, $vars, $send );
 			//let's find out if there were any errors and how many successfully were queued.
-			$count_errors = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_failed );
+			$count_errors = $processor->get_queue()->count_STS_in_queue(
+				array( EEM_Message::status_failed, EEM_Message::status_debug_only )
+			);
 			$count_queued = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
 			$count_retry = $processor->get_queue()->count_STS_in_queue( EEM_Message::status_retry );
 			$count_errors = $count_errors + $count_retry;

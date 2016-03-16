@@ -142,7 +142,10 @@ class EE_Messages_Generator {
 
 			//if there are error messages then let's set the status and the error message.
 			if ( $this->_error_msg ) {
-				$msg->set_STS_ID( EEM_Message::status_failed );
+				//if the status is already debug only, then let's leave it at that.
+				if ( $msg->STS_ID() !== EEM_Message::status_debug_only ) {
+					$msg->set_STS_ID( EEM_Message::status_failed );
+				}
 				$msg->set_error_message(
 					__( 'Message failed to generate for the following reasons: ' )
 					. "\n"
@@ -222,9 +225,9 @@ class EE_Messages_Generator {
 
 		//if no addressees then get out because there is nothing to generation (possible bad data).
 		if ( ! $this->_valid_addressees( $addressees ) ) {
-			$this->_error_msg[] = __( 'Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
-			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to
-			  approved registrations.', 'event_espresso' );
+			$this->_generation_queue->get_queue()->current()->set_STS_ID( EEM_Message::status_debug_only );
+			$this->_error_msg[] = __( 'This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
+			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.', 'event_espresso' );
 			return false;
 		}
 
