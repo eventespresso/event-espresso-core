@@ -112,7 +112,7 @@ $has_answers = $question->has_answers();
 					</label>
 				</th>
 				<td>
-					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max == EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>" min="1">
+					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max === EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>" min="1">
 					<p>
 						<span class="description">
 							<?php _e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
