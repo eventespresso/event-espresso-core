@@ -183,9 +183,9 @@ class EEH_Activation {
 		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
 		$crons = _get_cron_array();
 		$crons = is_array( $crons ) ? $crons : array();
-		/* reminder that $crons looks like: top-level keys are timestamps,
-		 * and their values are arrays.
-		 * The 2nd level arrays have keys with each of the cron task hooknames to run at that time
+		/* reminder of what $crons look like:
+		 * Top-level keys are timestamps, and their values are arrays.
+		 * The 2nd level arrays have keys with each of the cron task hook names to run at that time
 		 * and their values are arrays.
 		 * The 3rd level level arrays are keys which are hashes of the cron task's arguments,
 		 *  and their values are the UN-hashed arguments
@@ -216,7 +216,6 @@ class EEH_Activation {
 				}
 			}
 		}
-
 		_set_cron_array( $crons );
 	}
 
