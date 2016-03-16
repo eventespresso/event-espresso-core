@@ -589,7 +589,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		// first let's add datetimes
 		if ( ! empty( $added_datetimes ) && is_array( $added_datetimes ) ) {
 			foreach ( $added_datetimes as $row_id ) {
-				$row_id = (int)$row_id;
+				$row_id = (int) $row_id;
 				if ( isset( $saved_datetimes[ $row_id ] ) && $saved_datetimes[ $row_id ] instanceof EE_Datetime ) {
 					$ticket->_add_relation_to( $saved_datetimes[ $row_id ], 'Datetime' );
 					// Is this an existing ticket (has an ID) and does it have any sold?
