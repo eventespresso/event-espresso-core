@@ -200,12 +200,18 @@ class EEH_Activation {
 		 *					...
 		 *      ...
 		 */
-		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
-			foreach ( $crons as $timestamp => $hooks_to_fire_at_time ) {
-				if ( is_array( $hooks_to_fire_at_time ) && isset( $hooks_to_fire_at_time[ $hook_name ] ) ) {
-					unset( $crons[ $timestamp ][ $hook_name ] );
+		$ee_cron_tasks_to_remove = EEH_Activation::get_cron_tasks( $cron_tasks_to_remove );
+		foreach ( $crons as $timestamp => $hooks_to_fire_at_time ) {
+			if ( is_array( $hooks_to_fire_at_time ) ) {
+				foreach ( $hooks_to_fire_at_time as $hook_name => $hook_actions ) {
+					if ( isset( $ee_cron_tasks_to_remove[ $hook_name ] )
+					     && is_array( $ee_cron_tasks_to_remove[ $hook_name ] )
+					) {
+						unset( $crons[ $timestamp ][ $hook_name ] );
+					}
 				}
-				if ( is_array( $hooks_to_fire_at_time ) && empty( $hooks_to_fire_at_time ) ) {
+				//also take care of any empty cron timestamps.
+				if ( empty( $hooks_to_fire_at_time ) ) {
 					unset( $crons[ $timestamp ] );
 				}
 			}
