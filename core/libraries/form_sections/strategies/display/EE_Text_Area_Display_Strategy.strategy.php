@@ -1,9 +1,12 @@
 <?php
 class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base{
+
+
+
 	/**
-	 *
-	 * @return string of html to display the field
-	 */
+	*
+	* @return string of html to display the field
+	*/
 	function display(){
 		$input = $this->_input;
 		$raw_value = maybe_serialize($input->raw_value());
@@ -22,16 +25,22 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base{
 		$html .= ' rows= "' . $rows . '" cols="' . $cols . '">';
 		$html .= $raw_value;
 		$html .= '</textarea>';
-		if (
-			$input->has_validation_strategy(
-				array( 'EE_Simple_HTML_Validation_Strategy', 'EE_Full_HTML_Validation_Strategy' )
-			)
-		) {
-			$validation = new EE_Simple_HTML_Validation_Strategy();
-			$html .= '<p class="ee-question-desc">';
-			$html .= '( ' . __( 'allowed tags: ', 'event_espresso' );
-			$html .= $validation->get_list_of_allowed_tags() . ' )</p>';
+		foreach ( $this->_input->get_validation_strategies() as $validation_strategy ) {
+			if (
+				$validation_strategy instanceof EE_Simple_HTML_Validation_Strategy
+				|| $validation_strategy instanceof EE_Full_HTML_Validation_Strategy
+			) {
+				$html .= sprintf(
+					__( '%1$s(allowed tags: %2$s)%3$s', 'event_espresso' ),
+					'<p class="ee-question-desc">',
+					$validation_strategy->get_list_of_allowed_tags(),
+					'</p>'
+				);
+			}
 		}
 		return $html;
 	}
+
+
+
 }
