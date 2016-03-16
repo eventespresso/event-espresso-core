@@ -1866,8 +1866,11 @@ abstract class EEM_Base extends EE_Base{
 		global $wpdb;
 		$wpdb->last_error = null;
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ), $arguments_to_provide );
-		// was there an error running the query?
-		if ( ( $result === false || ! empty( $wpdb->last_error ) ) ) {
+		// was there an error running the query? but we don't care on new activations
+		// (we're going to setup the DB anyway on new activations)
+		if ( ( $result === false || ! empty( $wpdb->last_error ) )
+			&& EE_System::instance()->detect_req_type() != EE_System::req_type_new_activation
+		) {
 			switch ( EEM_Base::$_db_verification_level ) {
 
 				case EEM_Base::db_verified_none :

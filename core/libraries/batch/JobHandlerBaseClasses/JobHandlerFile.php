@@ -82,8 +82,7 @@ abstract class JobHandlerFile extends JobHandler {
 			}
 			//those methods normally fail with an exception, but if not, let's do it
 			if( ! $success ) {
-				throw new \EE_Error( 'could_not_create_temp_file',
-				__( 'An unknown error occurred', 'event_espresso' ));
+				throw new \EE_Error( __( 'Could not create temporary file, an unknown error occurred', 'event_espresso' ) );
 			}
 		} catch( \EE_Error $e ) {
 			throw new BatchRequestException(

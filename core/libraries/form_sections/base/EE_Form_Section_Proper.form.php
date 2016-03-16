@@ -393,7 +393,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public static function wp_enqueue_scripts( $init_form_validation_automatically = false ){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker', 'jquery-validate-extra-methods' ), EVENT_ESPRESSO_VERSION, TRUE );
 		
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_validation_init', array( 'init' => $init_form_validation_automatically ) );
 	}

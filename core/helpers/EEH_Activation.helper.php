@@ -184,9 +184,9 @@ class EEH_Activation {
 		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
 		$crons = _get_cron_array();
 		$crons = is_array( $crons ) ? $crons : array();
-		/* reminder that $crons looks like: top-level keys are timestamps,
-		 * and their values are arrays.
-		 * The 2nd level arrays have keys with each of the cron task hooknames to run at that time
+		/* reminder of what $crons look like:
+		 * Top-level keys are timestamps, and their values are arrays.
+		 * The 2nd level arrays have keys with each of the cron task hook names to run at that time
 		 * and their values are arrays.
 		 * The 3rd level level arrays are keys which are hashes of the cron task's arguments,
 		 *  and their values are the UN-hashed arguments
@@ -201,10 +201,19 @@ class EEH_Activation {
 		 *					...
 		 *      ...
 		 */
-		foreach( EEH_Activation::get_cron_tasks( $cron_tasks_to_remove ) as $hook_name => $frequency ) {
-			foreach( $crons as $timestamp => $hooks_to_fire_at_time ) {
-				if ( array_key_exists( $hook_name, $hooks_to_fire_at_time ) )  {
-					unset( $crons[ $timestamp ][ $hook_name ] );
+		$ee_cron_tasks_to_remove = EEH_Activation::get_cron_tasks( $cron_tasks_to_remove );
+		foreach ( $crons as $timestamp => $hooks_to_fire_at_time ) {
+			if ( is_array( $hooks_to_fire_at_time ) ) {
+				foreach ( $hooks_to_fire_at_time as $hook_name => $hook_actions ) {
+					if ( isset( $ee_cron_tasks_to_remove[ $hook_name ] )
+					     && is_array( $ee_cron_tasks_to_remove[ $hook_name ] )
+					) {
+						unset( $crons[ $timestamp ][ $hook_name ] );
+					}
+				}
+				//also take care of any empty cron timestamps.
+				if ( empty( $hooks_to_fire_at_time ) ) {
+					unset( $crons[ $timestamp ] );
 				}
 			}
 		}

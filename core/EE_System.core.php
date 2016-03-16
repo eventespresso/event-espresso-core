@@ -1277,8 +1277,9 @@ final class EE_System {
 		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-				// register jQuery Validate
-				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.15.0', TRUE );
+				// register jQuery Validate and additional methods
+				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery' ), '1.15.0', TRUE );
+				wp_register_script( 'jquery-validate-extra-methods', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js', array( 'jquery', 'jquery-validate' ), '1.15.0', TRUE );
 			}
 		}
 	}
