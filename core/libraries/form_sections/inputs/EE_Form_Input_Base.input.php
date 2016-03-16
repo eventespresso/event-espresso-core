@@ -144,23 +144,20 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function __construct( $input_args = array() ){
 		$input_args = apply_filters( 'FHEE__EE_Form_Input_Base___construct__input_args', $input_args, $this );
 		// the following properties must be cast as arrays
-		$set_as_array = array(
-			'validation_strategies' => true
-		);
+		if ( isset( $input_args['validation_strategies'] ) ) {
+			foreach ( $input_args['validation_strategies'] as $validation_strategy ) {
+				if ( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
+					$this->_validation_strategies[ get_class( $validation_strategy ) ] = $validation_strategy;
+				}
+			}
+			unset( $input_args['validation_strategies'] );
+		}
 		// loop thru incoming options
 		foreach( $input_args as $key => $value ) {
 			// add underscore to $key to match property names
 			$_key = '_' . $key;
 			if ( property_exists( $this, $_key )) {
-				// first check if this property needs to be set as an array
-				if ( isset( $set_as_array[ $key ] ) ) {
-					// ensure value is an array
-					$value = is_array( $value ) ? $value : array( get_class() => $value );
-					// and merge with existing values
-					$this->{$_key} = array_merge( $this->{$_key}, $value );
-				} else {
-					$this->{$_key} = $value;
-				}
+				$this->{$_key} = $value;
 			}
 		}
 		// ensure that "required" is set correctly
@@ -345,7 +342,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	public function remove_validation_strategy( $validation_strategy_classname ) {
 		foreach( $this->_validation_strategies as $key => $validation_strategy ){
-			if( is_subclass_of( $validation_strategy, $validation_strategy_classname ) ){
+			if(
+				$validation_strategy instanceof $validation_strategy_classname
+				|| is_subclass_of( $validation_strategy, $validation_strategy_classname )
+			) {
 				unset( $this->_validation_strategies[ $key ] );
 			}
 		}
