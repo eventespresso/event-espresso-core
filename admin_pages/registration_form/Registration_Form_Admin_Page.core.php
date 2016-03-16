@@ -420,8 +420,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		foreach ( $question_type_descriptions as $type => $question_type_description ) {
 			if ( $type == 'HTML_TEXTAREA' ) {
 				$html = new EE_Simple_HTML_Validation_Strategy();
-				$question_type_description .= '<br/>( ' . __( 'allowed tags: ', 'event_espresso' );
-				$question_type_description .= $html->get_list_of_allowed_tags() . ' )';
+				$question_type_description .= sprintf(
+					__( '%1$s(allowed tags: %2$s)', 'event_espresso' ),
+					'<br/>',
+					$html->get_list_of_allowed_tags()
+				);
 			}
 			$descriptions .= EEH_HTML::p(
 				$question_type_description,
