@@ -266,7 +266,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 								'handle_request_get_related' ),
 							'methods' => WP_REST_Server::READABLE,
 							'hidden_endpoint' => $hidden_endpoint,
-							'args' => $this->_get_read_query_params( $relation_name, $version ),
+							'args' => $this->_get_read_query_params( $relation_obj->get_other_model(), $version ),
 						)
 					);
 					//don't include "transient" relations. eg, events HABTM attendees through registrations.
