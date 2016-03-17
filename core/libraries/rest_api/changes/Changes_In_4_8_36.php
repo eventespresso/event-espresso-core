@@ -2,6 +2,7 @@
 
 use EventEspresso\core\libraries\rest_api\controllers\model\Read;
 use EventEspresso\core\libraries\rest_api\controllers\model\Base;
+use EventEspresso\core\libraries\rest_api\controllers\Base as Controller_Base;
 
 /*
  * The checkin and checkout endpoints were added in 4.8.36,
@@ -98,7 +99,7 @@ class Changes_In_4_8_36 extends Changes_In_Base {
 	 */
 	public function remove_headers_new_in_this_version(
 		$headers,
-		Base $controller,
+		Controller_Base $controller,
 		$version
 	) {
 		if( $this->applies_to_version( $version ) ) {
