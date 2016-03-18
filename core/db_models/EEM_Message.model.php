@@ -52,7 +52,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 	/**
 	 * indicates an attempt was a made to send this message
-	 * at the scheduled time, but it failed at the time modified
+	 * at the scheduled time, but it failed at the time modified.  This differs from MDO status in that it will ALWAYs
+	 * appear to the end user.
 	 */
 	const status_failed = 'MFL';
 
@@ -77,6 +78,14 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	 * This status means that its possible to retry sending the message.
 	 */
 	const status_retry = 'MRT';
+
+
+
+	/**
+	 * This is for failed messages that are only displayed when `WP_DEBUG` is true.  Usually this is used for more informational
+	 * messages that may not indicate anything is broken.
+	 */
+	const status_debug_only = 'MDO';
 
 
 
@@ -241,7 +250,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 
 	public function stati_indicating_failed_sending() {
-		return apply_filters( 'FHEE__EEM_Message__stati_indicating_failed_sending', array( self::status_failed, self::status_retry ) );
+		return apply_filters( 'FHEE__EEM_Message__stati_indicating_failed_sending', array( self::status_failed, self::status_retry, self::status_debug_only ) );
 	}
 
 
@@ -261,6 +270,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 				EEM_Message::status_resend,
 				EEM_Message::status_retry,
 				EEM_Message::status_failed,
+				EEM_Message::status_debug_only,
 			)
 		);
 	}

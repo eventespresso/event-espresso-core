@@ -718,6 +718,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		foreach ( EEM_Message::instance()->all_statuses() as $status ) {
+			if ( $status === EEM_Message::status_debug_only && ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) ) {
+				continue;
+			}
 			$status_bulk_actions = $common_bulk_actions;
 			//unset bulk actions not applying to status
 			if ( ! empty( $status_bulk_actions ) ) {
@@ -728,6 +731,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						break;
 
 					case EEM_Message::status_failed :
+					case EEM_Message::status_debug_only :
 						$status_bulk_actions = array();
 						break;
 
@@ -741,6 +745,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						break;
 				}
 			}
+
 			$this->_views[ strtolower( $status ) ] = array(
 				'slug' => strtolower( $status ),
 				'label' => EEH_Template::pretty_status( $status, false, 'sentence' ),
@@ -792,29 +797,35 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$status_items = array(
 			'sent_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_sent,
-				'desc' => EEH_Template::pretty_status( EEM_Message::status_sent, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_sent, false, 'sentence' )
 				),
 			'idle_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_idle,
-				'desc' => EEH_Template::pretty_status( EEM_Message::status_idle, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_idle, false, 'sentence' )
 				),
 			'failed_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_failed,
-				'desc' => EEH_Template::pretty_status( EEM_Message::status_failed, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_failed, false, 'sentence' )
 			),
 			'resend_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_resend,
-				'desc' => EEH_Template::pretty_status( EEM_Message::status_resend, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_resend, false, 'sentence' )
 				),
 			'incomplete_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_incomplete,
-				'desc' => EEH_Template::pretty_status( EEM_Message::status_incomplete, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_incomplete, false, 'sentence' )
 				),
 			'retry_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_retry,
-				'desc' => EEH_Template::pretty_status( EEM_Message::status_retry, FALSE, 'sentence' )
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_retry, false, 'sentence' )
 				)
 		);
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			$status_items['debug_only_status'] = array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_debug_only,
+				'desc' => EEH_Template::pretty_status( EEM_Message::status_debug_only, false, 'sentence' )
+			);
+		}
 		return array_merge( $action_items, $status_items );
 	}
 

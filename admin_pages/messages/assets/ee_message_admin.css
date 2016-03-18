@@ -175,6 +175,13 @@
     background-color: #E44064;
 }
 
+.msg-status-MDO {
+    border-left-color: #D2D405;
+}
+.ee-status-legend-MDO {
+    background-color: #D2D405;
+}
+
 
 /** status resend (queued for resending) **/
 .msg-status-MRS {

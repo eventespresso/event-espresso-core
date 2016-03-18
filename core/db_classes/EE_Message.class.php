@@ -795,6 +795,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		switch ( $this->STS_ID() ) {
 			case EEM_Message::status_failed :
+			case EEM_Message::status_debug_only :
 				return EEH_MSG_Template::generate_error_display_trigger( $this );
 				break;
 

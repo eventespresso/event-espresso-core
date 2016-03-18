@@ -593,7 +593,7 @@ class EE_Messages_Queue {
 	 */
 	protected function _set_error_message( EE_Message $message, $error_messages ) {
 		$error_messages = (array) $error_messages;
-		if ( $message->STS_ID() === EEM_Message::status_failed || $message->STS_ID() === EEM_Message::status_retry ) {
+		if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_failed_sending() ) ) {
 			$notices = EE_Error::has_notices();
 			$error_messages[] = __( 'Messenger and Message Type were valid and active, but the messenger send method failed.', 'event_espresso' );
 			if ( $notices === 1 ) {
