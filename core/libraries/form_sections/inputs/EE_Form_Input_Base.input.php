@@ -826,6 +826,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return FALSE;
 		}
 	}
+	
+	/**
+	 * Checks if the input has the specified validation strategy already or not
+	 * @param string $validation_strategy_classname the full classname of the validation strategy
+	 * @return boolean
+	 */
+	public function has_validation_strategy( $validation_strategy_classname ) {
+		$validation_strategies = $this->get_validation_strategies();
+		return isset( $validation_strategies[ $validation_strategy_classname ] );
+	}
 
 
 
