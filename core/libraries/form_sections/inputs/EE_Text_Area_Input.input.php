@@ -57,8 +57,12 @@ class EE_Text_Area_Input extends EE_Form_Input_Base{
 		
 		//if the input hasn't specifically mentioned a more lenient validation strategy, 
 		//apply plaintext validation strategy
-		if( ! $this->has_validation_strategy( 'EE_Full_HTML_Validation_Strategy' ) 
-			&& ! $this->has_validation_strategy( 'EE_Simple_HTML_Validation_Strategy')
+		if( ! $this->has_validation_strategy( 
+				array(
+					'EE_Full_HTML_Validation_Strategy',
+					'EE_Simple_HTML_Validation_Strategy'
+				)
+			)
 		) {
 			//by default we use the plaintext validation. If you want something else,
 			//just remove it after the input is constructed :P using EE_Form_Input_Base::remove_validation_strategy()
