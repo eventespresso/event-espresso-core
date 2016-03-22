@@ -485,10 +485,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$email_validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
 			? EE_Registry::instance()->CFG->registration->email_validation_level
 			: 'wp_default';
-		$email_validation_level = $email_validation_level === 'i18n' || $email_validation_level === 'i18n_dns'
-			? true
-			: false;
-		EE_Form_Section_Proper::$_js_localization['email_validation'] = $email_validation_level;
+		EE_Form_Section_Proper::$_js_localization['email_validation_level'] = $email_validation_level;
 		wp_enqueue_script( 'ee_form_section_validation' );
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_vars', EE_Form_Section_Proper::$_js_localization );
 	}
