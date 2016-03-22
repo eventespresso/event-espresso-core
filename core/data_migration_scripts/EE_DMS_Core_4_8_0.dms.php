@@ -156,7 +156,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name = 'esp_currency_payment_method';
 		$sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
-				CUR_code  varchar(6) collate utf8_bin NOT NULL,
+				CUR_code varchar(6) collate utf8_bin NOT NULL,
 				PMD_ID int(11) NOT NULL,
 				PRIMARY KEY  (CPM_ID),
 				KEY PMD_ID (PMD_ID)";
@@ -398,7 +398,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 					QST_required_text varchar(100) NULL,
 					QST_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 					QST_admin_only tinyint(1) NOT NULL DEFAULT 0,
-					QST_max smallint NOT NULL DEFAULT -1,
+					QST_max smallint(5) NOT NULL DEFAULT -1,
 					QST_wp_user bigint(20) unsigned NULL,
 					QST_deleted tinyint(2) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID),
