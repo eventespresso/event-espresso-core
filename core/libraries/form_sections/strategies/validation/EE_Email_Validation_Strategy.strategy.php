@@ -58,10 +58,8 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 		$validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
 			? EE_Registry::instance()->CFG->registration->email_validation_level
 			: 'wp_default';
-		if ( $validation_level === 'wp_default' ) {
-			return is_email( $email );
-		} else if ( ! preg_match( '/^.+\@\S+\.\S+$/', $email ) ) {
-			// email not in correct {string}@{string}.{string} format
+		if ( ! preg_match( '/^.+\@\S+$/', $email ) ) { // \.\S+
+			// email not in correct {string}@{string} format
 			return false;
 		} else {
 			$atIndex = strrpos( $email, "@" );
@@ -84,6 +82,8 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 			} else if ( preg_match( '/\\.\\./', $domain ) ) {
 				// domain part has two consecutive dots
 				return false;
+			} else if ( $validation_level === 'wp_default' ) {
+				return is_email( $email );
 			} else if (
 				( $validation_level === 'i18n' || $validation_level === 'i18n_dns' )
 				// plz see http://stackoverflow.com/a/24817336 re: the following regex
