@@ -814,6 +814,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _reg_form_settings() {
 		$this->_template_args['values'] = $this->_yes_no_values;
+		add_action(
+			'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
+			array( $this, 'email_validation_settings_form' ),
+			2
+		);
 		$this->_template_args = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___reg_form_settings___template_args', $this->_template_args );
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -822,12 +827,129 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	}
 
 
-
-
 	protected function _update_reg_form_settings() {
-		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );
-		$success = $this->_update_espresso_configuration( __('Registration Form Options', 'event_espresso'), EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
+		EE_Registry::instance()->CFG->registration = $this->update_email_validation_settings_form(
+			EE_Registry::instance()->CFG->registration
+		);
+		EE_Registry::instance()->CFG->registration = apply_filters(
+			'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
+			EE_Registry::instance()->CFG->registration
+		);
+		$success = $this->_update_espresso_configuration(
+			__('Registration Form Options', 'event_espresso'),
+			EE_Registry::instance()->CFG,
+			__FILE__, __FUNCTION__, __LINE__
+		);
 		$this->_redirect_after_action( $success, __('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
+	}
+
+
+
+	/**
+	 * email_validation_settings_form
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	public function email_validation_settings_form() {
+		echo $this->_email_validation_settings_form()->get_html_and_js();
+	}
+
+
+
+	/**
+	 * _email_validation_settings_form
+	 *
+	 * @access protected
+	 * @return EE_Form_Section_Proper
+	 */
+	protected function _email_validation_settings_form() {
+		return new EE_Form_Section_Proper(
+			array(
+				'name'            => 'email_validation_settings',
+				'html_id'         => 'email_validation_settings',
+				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+				'subsections'     => array(
+					'email_validation_hdr'           => new EE_Form_Section_HTML(
+						EEH_HTML::h2( __( 'Email Validation Settings', 'event_espresso' ) )
+					),
+					'email_validation_level' => new EE_Select_Input(
+						array(
+							'basic'      => 'Basic',
+							'wp_default' => 'WordPress Default',
+							'i18n'       => 'International',
+							'i18n_dns'   => 'International + DNS Check',
+						),
+						array(
+							'html_label_text' => __( 'Email Validation Level', 'event_espresso' ),
+							'html_help_text'  => sprintf(
+								__(
+									'Validating that an email address is real is extremely difficult to do correctly and can be affected greatly by your server\'s configuration, as well as your own tolerances and needs. We provide different levels of validation so that you can control how strict your registration form responds to entered email addresses. If you are receiving too many bogus email addresses, then try a higher validation level, but if you find that valid email addresses are being blocked, then try a lower validation setting.%1$s options:%2$s"Basic" - only checks that email address follows the most basic structure guidelines ( ie: {text}@{text}.{text} )%3$s "WordPress Default" - uses built in WordPress email validation, but does not support unicode characters (ie: international characters from non-latin based languages)%3$s "International" - supports unicode characters but may not be supported by all server configurations.%3$s "International + DNS Check" - same as "International" but also perform MX and A record DNS checks to verify that the email address domain exists (ie: the portion of the address after the "@"). Can not verify that the local portion of the email address is valid (ie: the first portion of the address before the "@")%4$s',
+									'event_espresso'
+								),
+								'<br />',
+								'<ul><li>',
+								'<li></li>',
+								'</li></ul>'
+							),
+							'default' => isset( EE_Registry::instance()->CFG->registration->email_validation_level )
+								? EE_Registry::instance()->CFG->registration->email_validation_level
+								: 'wp_default',
+							'required'        => false
+						)
+					),
+				)
+			)
+		);
+	}
+
+
+	/**
+	 * update_email_validation_settings_form
+	 *
+	 * @access    public
+	 * @param \EE_Registration_Config $EE_Registration_Config
+	 * @return \EE_Registration_Config
+	 */
+	public function update_email_validation_settings_form( EE_Registration_Config $EE_Registration_Config ) {
+		try {
+			$email_validation_settings_form = $this->_email_validation_settings_form();
+			// if not displaying a form, then check for form submission
+			if ( $email_validation_settings_form->was_submitted() ) {
+				// capture form data
+				$email_validation_settings_form->receive_form_submission();
+				// validate form data
+				if ( $email_validation_settings_form->is_valid() ) {
+					// grab validated data from form
+					$valid_data = $email_validation_settings_form->valid_data();
+					if ( isset( $valid_data['email_validation_level'] ) ) {
+						$EE_Registration_Config->email_validation_level = $valid_data['email_validation_level'];
+					} else {
+						EE_Error::add_error(
+							__(
+								'Invalid or missing Email Validation settings. Please refresh the form and try again.',
+								'event_espresso'
+							),
+							__FILE__,
+							__FUNCTION__,
+							__LINE__
+						);
+					}
+				} else {
+					if ( $email_validation_settings_form->submission_error_message() !== '' ) {
+						EE_Error::add_error(
+							$email_validation_settings_form->submission_error_message(),
+							__FILE__,
+							__FUNCTION__,
+							__LINE__
+						);
+					}
+				}
+			}
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
+		return $EE_Registration_Config;
 	}
 
 }
