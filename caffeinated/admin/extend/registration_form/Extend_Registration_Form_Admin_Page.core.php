@@ -875,10 +875,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					),
 					'email_validation_level' => new EE_Select_Input(
 						array(
-							'basic'      => 'Basic',
-							'wp_default' => 'WordPress Default',
-							'i18n'       => 'International',
-							'i18n_dns'   => 'International + DNS Check',
+							'basic'      => __( 'Basic', 'event_espresso' ),
+							'wp_default' => __( 'WordPress Default', 'event_espresso' ),
+							'i18n'       => __( 'International', 'event_espresso' ),
+							'i18n_dns'   => __( 'International + DNS Check', 'event_espresso' ),
 						),
 						array(
 							'html_label_text' => __( 'Email Validation Level', 'event_espresso' ),
