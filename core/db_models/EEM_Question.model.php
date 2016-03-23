@@ -1,29 +1,19 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+	exit('No direct script access allowed');
+}
+require_once( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
+require_once( EE_CLASSES . 'EE_Question.class.php' );
+
+
+
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
  *
  * Question Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
  * @author				Michael Nelson
- *
- * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
-require_once( EE_CLASSES . 'EE_Question.class.php');
-
 class EEM_Question extends EEM_Soft_Delete_Base {
 
 	// constant used to indicate that the question type is COUNTRY
@@ -52,23 +42,38 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 
 	// constant used to indicate that the question type is a TEXTAREA that allows simple html
 	const QST_type_html_textarea = 'HTML_TEXTAREA';
+
 	/**
 	 * Question types that are interchangeable, even after answers have been provided for them.
 	 * Top-level keys are category slugs, next level is an array of question types. If question types
 	 * aren't in this array, it is assumed they AREN'T interchangeable with any other question types.
-	 * @var array
+	 *
+	 * @access protected
+	 * @var array $_question_type_categories
 	 */
-	protected $_question_type_categories = null;
+	protected $_question_type_categories = array();
+
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
-	 * @access private
-	 * @var array of strings
+	 *
+	 * @access protected
+	 * @var array $_allowed_question_types
 	 */
-	protected $_allowed_question_types;
+	protected $_allowed_question_types = array();
 
-	// private instance of the Attendee object
+	/**
+	 * private instance of the EEM_Question object
+	 *
+	 * @access protected
+	 * @var EEM_Question $_instance
+	 */
 	protected static $_instance = NULL;
 
+
+
+	/**
+	 * @param null $timezone
+	 */
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question','event_espresso');
 		$this->plural_item = __('Questions','event_espresso');
@@ -86,7 +91,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 				EEM_Question::QST_type_html_textarea => __( 'HTML Textarea', 'event_espresso' ),
 			)
 		);
-		$this->_question_type_categories = apply_filters(
+		$this->_question_type_categories = (array)apply_filters(
 				'FHEE__EEM_Question__construct__question_type_categories',
 				array(
 				'text' => array(
@@ -259,7 +264,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			'max_order' => array("MAX(QST_order)","%d")
 		);
 		$max = $this->_get_all_wpdb_results( array(), ARRAY_A, $columns_to_select );
-		return $max[0]['max_order'];
+		return isset( $max[0], $max[0]['max_order'] ) ? $max[0]['max_order'] : 0;
 	}
 
 	/**
