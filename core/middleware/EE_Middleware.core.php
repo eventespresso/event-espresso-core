@@ -62,10 +62,6 @@ abstract class EE_Middleware implements EEI_Request_Decorator {
 		$this->_response = $response;
 		if ( ! $this->_response->request_terminated() ) {
 			$this->_response = $this->_request_stack->handle_request( $this->_request, $this->_response );
-		} else {
-			if ( $this->_response->plugin_deactivated() ) {
-				espresso_deactivate_plugin( EE_PLUGIN_BASENAME );
-			}
 		}
 		return $this->_response;
 	}
