@@ -31,6 +31,12 @@ class EE_Response {
 	 */
 	protected $request_terminated = false;
 
+	/**
+	 * @access 	protected
+	 * @type 		bool
+	 */
+	protected $deactivate_plugin = false;
+
 
 
 	/**
@@ -123,6 +129,24 @@ class EE_Response {
 	 */
 	public function terminate_request( $request_terminated = true ) {
 		$this->request_terminated = filter_var( $request_terminated, FILTER_VALIDATE_BOOLEAN );
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function plugin_deactivated() {
+		return $this->deactivate_plugin;
+	}
+
+
+
+	/**
+	 * @param boolean $deactivate_plugin
+	 */
+	public function deactivate_plugin( $deactivate_plugin = true ) {
+		$this->deactivate_plugin = filter_var( $deactivate_plugin, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
