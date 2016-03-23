@@ -143,10 +143,10 @@ class EE_Response {
 
 
 	/**
-	 * @param boolean $deactivate_plugin
+	 * sets $deactivate_plugin to true
 	 */
-	public function deactivate_plugin( $deactivate_plugin = true ) {
-		$this->deactivate_plugin = filter_var( $deactivate_plugin, FILTER_VALIDATE_BOOLEAN );
+	public function deactivate_plugin() {
+		$this->deactivate_plugin = true;
 	}
 
 
