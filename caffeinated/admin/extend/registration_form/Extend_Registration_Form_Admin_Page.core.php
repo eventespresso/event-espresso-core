@@ -941,16 +941,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						),
 						array(
 							'html_label_text' => __( 'Email Validation Level', 'event_espresso' ),
-							'html_help_text'  => sprintf(
-								__(
-									'Validating an email address is extremely difficult to do correctly. Your server\'s configuration, as well as your own tolerances and needs, can affect the type of validation needed. We offer different types of validation so that you can control how strict your registration form responds to entered email addresses. If you are receiving too many bogus email addresses, then you can try the WordPress Default validation setting. If you find that the form validation is blocking a valid email address you can try the Basic setting, or if available, the International validation settings.%1$s%1$sOptions: %2$s"Basic" - only checks that an email address follows the most basic structure guidelines ( ie: text@text.text ). Will work with the widest range of email addresses but will also allow the most garbage through.%1$s%3$s "WordPress Default" - uses built in WordPress email validation, but does not support unicode characters (ie: international characters from non-latin based languages).%1$s%3$s "International" - supports unicode characters but may not be supported by all server configurations. Try this first if you need to international language support, but drop back down to "Basic" if your server configuration conflicts.%1$s%3$s "International + DNS Check" - same as "International" but also performs MX and A record DNS checks to verify that the email address domain exists (ie: the portion of the address after the "@"). Can not verify that the local portion of the email address is valid (ie: the first portion of the address before the "@").%4$s',
-									'event_espresso'
-								),
-								'<br />&nbsp;',
-								'<ul><li><p class="description">',
-								'</p></li><li><p class="description">',
-								'</p></li></ul>'
-							),
+							'html_help_text'  => __( 'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) and addition MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.', 'event_espresso'),
 							'default' => isset( EE_Registry::instance()->CFG->registration->email_validation_level )
 								? EE_Registry::instance()->CFG->registration->email_validation_level
 								: 'wp_default',
