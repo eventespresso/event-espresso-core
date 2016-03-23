@@ -14,6 +14,6 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base{
 			$rows = 4;
 			$cols = 20;
 		}
-		return "<textarea type='text' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}' rows={$rows} cols={$cols}>{$raw_value}</textarea>";
+		return "<textarea type='text' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}' {$input->other_html_attributes()} rows={$rows} cols={$cols}>{$raw_value}</textarea>";
 	}
 }

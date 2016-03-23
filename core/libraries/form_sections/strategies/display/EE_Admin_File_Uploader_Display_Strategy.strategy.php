@@ -49,7 +49,8 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 		$input = '<input type="text" size="34" ';
 		$input .= 'name="' . $this->_input->html_name() . '" ';
 		$input .= $this->_input->html_class() != '' ? 'class="large-text ee_media_url ' . $this->_input->html_class() . '" ' : 'class="large-text ee_media_url" ';
-		$input .= 'value="' . $this->_input->raw_value_in_form() . '">';
+		$input .= 'value="' . $this->_input->raw_value_in_form() . '" ';
+		$input .= $this->_input->other_html_attributes() . '>';
 		// image uploader
 		$uploader = EEH_HTML::link( '#', '<img src="' . admin_url( 'images/media-button-image.gif' ) . '" >', __( 'click to add an image', 'event_espresso' ), '', 'ee_media_upload' );
 		//only attempt to show the image if it at least exists

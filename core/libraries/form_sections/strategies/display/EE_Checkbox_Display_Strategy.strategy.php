@@ -53,6 +53,7 @@ class EE_Checkbox_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= ' style="' . $this->_input->html_style() . '"';
 			$html .= ' value="' . esc_attr( $value ) . '"';
 			$html .= ! empty( $input_raw_value ) && in_array( $value, $input_raw_value ) ? ' checked="checked"' : '';
+			$html .= ' ' . $this->_input->other_html_attributes();
 			$html .= '>&nbsp;';
 			$html .= $display_text;
 			$html .= EEH_HTML::nl( -1, 'checkbox' ) . '</label>';
