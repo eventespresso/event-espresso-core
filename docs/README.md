@@ -11,7 +11,7 @@ your suggestions.
 
 ## Structure for these docs
 
-Each folder represents a major system/topic for documentation.  The name of the folder is prefixed with a letter to help with sorting (sorted by default alphabetically when viewed via github).  All images in documentation should be be uploaded to the `/docs/images` folder and linked to relatively in the documentation.  As an example, something like:
+Each folder represents a major system/topic for documentation.  The name of the folder is prefixed with a letter to help with sorting (sorted by default alphabetically when viewed via github).  Thus any folders that are to be injected can easily be done alphabetically (i.e. `AA--New-Folder` would appear between `A--Best-Practices` and `B--Automated-Testing`)  All images in documentation should be be uploaded to the `/docs/images` folder and linked to relatively in the documentation.  As an example, something like:
 
 ```
 ![image alt text](../images/my_image.png)
