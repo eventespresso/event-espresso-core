@@ -1,0 +1,1 @@
+The files in this folder document the messages system in EE.
