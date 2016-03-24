@@ -1975,6 +1975,14 @@ class EE_Registration_Config extends EE_Config_Base {
 	public $default_STS_ID;
 
 	/**
+	 * level of validation to apply to email addresses
+	 *
+	 * @var string $email_validation_level
+	 * options: 'basic', 'wp_default', 'i18n', 'i18n_dns'
+	 */
+	public $email_validation_level;
+
+	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
 	 * @var boolean $show_pending_payment_options
 	 */
@@ -2073,6 +2081,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+		$this->email_validation_level = 'wp_default';
 		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
