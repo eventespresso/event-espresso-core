@@ -8,3 +8,18 @@ In this docs folder is all the developer documentation specific to EE core.  Loc
 
 If you have any questions  regarding any of the documentation, we invite you to open up issues in our [github repo](https://github.com/eventespresso/event-espresso-core/issues).  If you have suggestions for edits to the documentation, please submit a pull request with
 your suggestions.
+
+## Structure fo these docs
+
+Each folder represents a major system/topic for documentation.  The name of the folder is prefixed with a letter to help with sorting (sorted by default alphabetically when viewed via github).  All images in documentation should be be uploaded to the `/docs/images` folder and linked to relatively in the documentation.  As an example, something like:
+
+```
+![image alt text](../images/my_image.png)
+```
+
+Any internal linking to documentation should also be done relatively.  As an example, something like:
+
+```
+[Link text](A--Best-Practices/README.md)
+```
+Which results in [Link text](A--Best-Practices/README.md)
