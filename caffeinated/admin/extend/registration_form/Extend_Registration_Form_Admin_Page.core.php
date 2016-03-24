@@ -942,7 +942,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						array(
 							'html_label_text' => __( 'Email Validation Level', 'event_espresso' )
 							                     . EEH_Template::get_help_tab_link( 'email_validation_info' ),
-							'html_help_text'  => __( 'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) and addition MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.', 'event_espresso'),
+							'html_help_text'  => __( 'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.', 'event_espresso'),
 							'default' => isset( EE_Registry::instance()->CFG->registration->email_validation_level )
 								? EE_Registry::instance()->CFG->registration->email_validation_level
 								: 'wp_default',
