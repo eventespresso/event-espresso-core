@@ -231,6 +231,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				$reflection = new ReflectionClass($input_class);
 				$input = $reflection->newInstanceArgs($input_constructor_args);
 				$inputs[$field_name] = $input;
+				
 			}
 		}
 		return $inputs;

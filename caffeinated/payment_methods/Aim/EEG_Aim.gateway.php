@@ -68,7 +68,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		"ship_to_address", "ship_to_city", "ship_to_company", "ship_to_country",
 		"ship_to_first_name", "ship_to_last_name", "ship_to_state", "ship_to_zip",
 		"split_tender_id", "state", "tax", "tax_exempt", "test_request", "tran_key",
-		"trans_id", "type", "version", "zip"
+		"trans_id", "type", "version", "zip", "solution_id"
 	);
 	/**
 	 * Asks the gateway to do whatever it does to process the payment. Onsite gateways will
@@ -115,6 +115,9 @@ class EEG_Aim extends EE_Onsite_Gateway{
 
 
 			//start transaction
+			//if in debug mode, use authorize.net's sandbox id; otherwise use the Event Espresso partner id
+			$partner_id = $this->_debug_mode ? 'AAA100302' : 'AAA105363';
+			$this->setField( 'solution_id', $partner_id );
 			$this->setField('amount', $this->format_currency($payment->amount()));
 			$this->setField('description',substr(rtrim($order_description, ', '), 0, 255));
 			$this->setField('card_num', $billing_info['credit_card']);

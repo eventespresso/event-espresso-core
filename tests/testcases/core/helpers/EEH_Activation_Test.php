@@ -180,6 +180,37 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$this->assertArrayHasKey( self::expired_cron_task_name, $old_cron_tasks );
 		$this->assertArrayHasKey( self::current_cron_task_name, $old_cron_tasks );
 	}
+
+
+	/**
+	 * @see   https://events.codebasehq.com/projects/event-espresso/tickets/9501
+	 * @since 4.8.36
+	 */
+	function test_remove_cron_tasks_with_empty_timestamp_values() {
+		//first cache existing cron array
+		$old_cron_option = _get_cron_array();
+		//merge in a bunch of empty timestamps
+		$empty_timestamps = array(
+			time() + 30 => array(),
+			time() + 600 => array(),
+			time() - 400 => array()
+		);
+		_set_cron_array(
+			array_merge( $empty_timestamps, $old_cron_option )
+		);
+
+		//now let's run the EEH_Activation::remove_cron_tasks
+		EEH_Activation::remove_cron_tasks();
+
+		//and verify that there are no empty timestamps
+		$updated_cron_option = _get_cron_array();
+		$this->assertEquals( count( $old_cron_option ), count( $updated_cron_option ) );
+
+		//now restore
+		_set_cron_array( $old_cron_option );
+	}
+
+
 	/**
 	 * Makes it so this function can be independent on what the current cron tasks actually are
 	 * (because they'll likely change, whereas some of these functions just want to check that
