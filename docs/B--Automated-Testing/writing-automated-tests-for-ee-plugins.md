@@ -20,7 +20,7 @@ When you use `EE_UnitTestCase` class for your test cases, you have access to a n
 
 ## Sample Bootstrap File
 
-Below is an annotated version of the `bootstrap.php` we use for our Promotions add-on tests.  It's a great example of how to setup the bootstrap for EE add-ons.  The plugin in the example below can be found via our [github repo](https://github.com/eventespresso/event-espresso-core).  The code is from the file `espresso-promotions/tests/bootstrap.php`.  You should be able to copy and paste this code into your own `tests/bootstrap.php` file - just change the paths for your plugin loader file, and your optional `_UnitTestCase` class file.
+Below is an annotated version of the `bootstrap.php` we use for our Promotions add-on tests.  It's a great example of how to setup the bootstrap for EE add-ons.  The plugin in the example below can be found via our [github repo](https://github.com/eventespresso/event-espresso-core/tree/master/tests).  The code is from the file `espresso-promotions/tests/bootstrap.php`.  You should be able to copy and paste this code into your own `tests/bootstrap.php` file - just change the paths for your plugin loader file, and your optional `_UnitTestCase` class file.
 
 ```php
 <?php
