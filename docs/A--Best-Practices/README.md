@@ -12,4 +12,5 @@ We established coding standards because code isn’t only supposed to do things,
 
 - [PHPDoc Formatting](php-doc-formatting.md)
 - [PHP Standards for EE](php-standards.md)
+- [EE Actions and Filters](ee-actions-and-filters.md)
 
