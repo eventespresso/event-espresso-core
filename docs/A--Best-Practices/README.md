@@ -8,3 +8,7 @@ Coding standards help avoid common coding errors, improve the readability of cod
 
 We established coding standards because code isn’t only supposed to do things, but it’s also supposed to be beautiful.  We believe ugly code often leads to ugly behaviour.
 
+## Table of Contents
+
+- [PHPDoc Formatting](php-doc-formatting.md)
+
