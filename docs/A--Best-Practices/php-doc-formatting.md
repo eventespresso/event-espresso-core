@@ -44,7 +44,7 @@ We use [phpdoc](http://phpdoc.org) commenting extensively through our plugin cod
 
 **Types:**  Note that if a type referenced is an object, use the object name as the type.  If it's an array of objects, use the object name using the array literal chars ([]).
 
-```
+```php
 /**
  * @param EE_Object   $ee_obj  Description of single EE_Object.
  * @param EE_Object[] $ee_objs Description of an array of EE_Objects.
@@ -65,7 +65,7 @@ Markdown can be used, if needed, in a long description.
 
 1. Use a hyphen (-) to create an unordered list, with a blank line before and after.
 
-```
+```php
 /**
  * ...
  * Long description which includes a list:
@@ -80,7 +80,7 @@ Markdown can be used, if needed, in a long description.
 
 2. Code samples should be shown by indenting every line of the code by 4 spaces, with a blank line before and after.
 
-```
+```php
 /**
 * ...
 * Long description which includes a code sample:
@@ -105,7 +105,7 @@ Markdown can be used, if needed, in a long description.
 
 The PHPDoc file header block is used to give an overview of what is contained in the file.  Whenever possible, **all** EE files should have a header block, regardless of the files contents.  This has application when the code is automatically parsed for online documentation.
 
-```
+```php
 /**
 * Short Description (no period for file headers)
 *
@@ -129,7 +129,7 @@ Class headers are very similar to file headers in structure except of course the
 * **@author:** Who is the developer primarily responsible for the creation and maintenance of the class.
 * **@since x.x.x:** Should always be 3-digit (e.g. `@since 4.1.0` )
 
-```
+```php
 /**
  * Short Description.
  *
@@ -160,7 +160,7 @@ Functions and class methods should be formatted as follows.
 * **@param:** Note if the parameter is Optional before the description, and include a period at the end.
 * **@return:** Note the period after the description.
 
-```
+```php
 /**
  * Short description. (use period)
  *
@@ -185,7 +185,7 @@ Parameters that are argument arrays should be documented in the "originating" fu
 
 Array values should be documented using the [PHPDoc hash notation style](https://github.com/phpDocumentor/fig-standards/blob/master/proposed/phpdoc.md#7-describing-hashes) where each value begins with the `@type` tag and takes the form of:
 
-```
+```php
 /**
  * ...
  * @type type $key Description. Default <value>. Accepts <value>, <value>.
@@ -196,7 +196,7 @@ Array values should be documented using the [PHPDoc hash notation style](https:/
 
 Again, duplication should be avoided in documenting argument arrays by only adding it to the originating method/function and then back-reference via a @see tag.  For example:
 
-```
+```php
 /**
  * @see EE_Parent_Class::method_that_gets_overridden() for documentation
  */
@@ -205,7 +205,7 @@ public function method_that_gets_overridden() {}
 
 Here's an example of usage for the params that are arrays:
 
-```
+```php
 /**
  * Short description. (use period)
  *
@@ -231,7 +231,7 @@ Here's an example of usage for the params that are arrays:
 
 If the function is deprecated and should not be used any longer, the `@deprecated` tag, along with the version and description of what to use instead, should be added.
 
-```
+```php
 /**
  * Short description. (use period)
  *
@@ -256,7 +256,7 @@ Class properties should be formatted as follows:
 * **@access:** If the property is private, protected or public. Private properties are intended for internal use only.
 * **@var:** Formatted the same way as `@param` .
 
-```
+```php
 /**
  * Short description. (use period)
  *
@@ -270,7 +270,7 @@ Class properties should be formatted as follows:
 
 Files required or included should be documented with a short description PHPDoc block.  If the includes are happening dynamically then include the short doc block at the beginning of the dynamic includes code.
 
-```
+```php
 /**
  * Short description. (use period)
  */
@@ -288,7 +288,7 @@ Both action and filter hooks should be documented on the line immediately preced
 
 Note that `@return` is not used for hook documentation, because action hooks return nothing, and filter hooks always return their first parameter.
 
-```
+```php
 /**
  * Short description. (use period)
  *
@@ -315,7 +315,7 @@ Occasionally, hooks will be used multiple times in the same or separate core fil
 
 Something like this:
 
-```
+```php
 /** This action/filter is documented in path/to/filename.php */
 ```
 
@@ -325,13 +325,13 @@ Inline comments inside methods and functions should be formatted as follows:
 
 #### 7.1 Single line comments
 
-```
+```php
 // Allow plugins to filter an array.
 ```
 
 #### 7.2 Multi-line comments
 
-```
+```php
 /* 
  * This is a comment that is long enough to warrant being stretched over
  * the span of multiple lines. You'll notice this follows basically
@@ -349,7 +349,7 @@ Constants should be formatted as follows:
 * **@since x.x.x:** Should always be 3-digit (e.g. @since 4.1.0 ).
 * **@var:** Formatted the same way as @param.
 
-```
+```php
 /**
  * Short Description. (use period)
  *
