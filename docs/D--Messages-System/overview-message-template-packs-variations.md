@@ -35,5 +35,5 @@ The new template pack system has a hierarchical loading structure.  While the co
 
 Here's a diagram illustrating this:
 
-![Message Templates Heirarchy](images/message-templates-heirarchy.png)
+![Message Templates Heirarchy](../images/message-templates-heirarchy.png)
 
