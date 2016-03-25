@@ -12,19 +12,17 @@ do_action( 'AHEE__thank_you_page_overview_template__top', $transaction );
 	<?php if ( ! $revisit ) : ?>
 	<div class="ee-attention">
 		<div class="extra-padding-sides">
-			<?php
-				echo apply_filters(
-					'FHEE__thank_you_page_overview_template__order_conf_desc',
-					sprintf(
-						$order_conf_desc,
-						'<h3 class="">',
-						'</h3><p class="bigger-text">',
-						'<br />',
-						'</p>'
-					)
-				);
-			?>
-			<?php if ( ! empty( $TXN_receipt_url )) : ?>
+			<?php echo apply_filters(
+				'FHEE__thank_you_page_overview_template__order_conf_desc',
+				sprintf(
+					$order_conf_desc,
+					'<h3 class="">',
+					'</h3>',
+					'<br />'
+				)
+			);
+			if ( ! empty( $TXN_receipt_url )) : ?>
+			<br/>
 			<div class="jst-rght">
 				<a class="ee-button ee-roundish indented-text big-text" href="<?php echo $TXN_receipt_url;?>"><span class="ee-icon ee-icon-PDF-file-type"></span><?php echo apply_filters( 'FHEE__thank_you_page_overview_template__order_conf_button_text', __( 'View Full Order Confirmation Receipt', 'event_espresso' )); ?></a>
 			</div>
