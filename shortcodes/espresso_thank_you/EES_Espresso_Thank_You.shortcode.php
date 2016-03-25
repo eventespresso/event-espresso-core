@@ -389,9 +389,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 		if ( ! empty( $template_args['TXN_receipt_url'] )) {
-			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.', 'event_espresso' );
+			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.%4$s', 'event_espresso' );
 		} else {
-			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation.', 'event_espresso' );
+			$template_args['order_conf_desc'] = __( '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation.%4$s', 'event_espresso' );
 		}
 		$template_args['transaction'] = $this->_current_txn;
 		$template_args['revisit'] = EE_Registry::instance()->REQ->get( 'revisit', FALSE );
