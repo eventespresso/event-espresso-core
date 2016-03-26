@@ -6,6 +6,7 @@ The files in this folder document the messages system in EE.
 - [Introducing Message Template Packs and Variations - an Overview](overview-message-template-packs-variations.md)
 - [Registering a Messages Template Pack](registering-message-template-packs.md)
 - [Registering a Messages Template Variation](registering-message-template-variations.md)
+- [Generating Messengers vs Sending Messengers](generating-vs-sending-messengers.md)
 
 
 ## Resources
