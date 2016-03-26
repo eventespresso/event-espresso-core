@@ -723,7 +723,22 @@ class EEH_HTML {
 			'li' 	=> 1
 		);
 	}
-
+	/** 
+	 * Retrieves the list of tags considered "simple", that are probably safe for
+	 * use in inputs
+	 * @global array $allowedtags
+	 * @return array
+	 */
+	public static function get_simple_tags(){
+		global $allowedtags;
+		$tags_we_allow = $allowedtags;
+		$tags_we_allow['ol']=array();
+		$tags_we_allow['ul']=array();
+		$tags_we_allow['li']=array();
+		$tags_we_allow['br']=array();
+		$tags_we_allow['p']=array();
+		return apply_filters( 'FHEE__EEH_HTML__get_simple_tags', $tags_we_allow );
+	}
 
 
 }
