@@ -71,6 +71,8 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 		$tags_we_allow['ol']=array();
 		$tags_we_allow['ul']=array();
 		$tags_we_allow['li']=array();
+		$tags_we_allow['br']=array();
+		$tags_we_allow['p']=array();
 		return apply_filters( 'FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags', $tags_we_allow, $this );
 	}
 }
