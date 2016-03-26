@@ -61,7 +61,10 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 				array(
 					'Event_Question_Group.EVT_ID' => $reg->event_ID(),
 					'Event_Question_Group.EQG_primary' => $reg->count() == 1 ? TRUE : FALSE,
-					'Question.QST_system' =>  ''
+					'OR' => array(
+						'Question.QST_system' =>  '',
+						'Question.QST_system' => array( 'IS_NULL' ) 
+					)
 				),
 				'order_by' => array( 'QSG_order' => 'ASC' )
 			)
