@@ -2,4 +2,4 @@ Event Espresso *is* a plugin that helps you manage events, so it only makes sens
 
 ## Table of Contents
 
-- (Dates, Times, and Timezones in EE Models)[dates-times-timezones-in-models.md)
+- [Dates, Times, and Timezones in EE Models](dates-times-timezones-in-models.md)
