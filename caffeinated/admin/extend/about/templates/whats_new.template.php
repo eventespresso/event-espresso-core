@@ -86,7 +86,7 @@
 			<br>The new messages system resulted in a rewrite of much of the controllers and business logic of the messages system which of course introduced a number of new classes. One of the notable changes is the introduction of the EE_Message entity which replaces the old way of passing around a stdClass object to represent a generated message. You can read more about this and the other classes introduced in the new documentation</p>
 			 <p align="right"><a href="http://developer.eventespresso.com/changes-to-the-messages-system-coming-in-ee-4-9/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=messages_system_link&ap_id=EEspresso" target="_blank">Read More</a></p>
 	
-		<p><strong>Updated Regsitration and Transaction Reports</strong>
+		<p><strong>Updated Registration and Transaction Reports</strong>
 			<br>Switched to using Google Visualization API for our registrations and transaction visualization charts. This opens the door for some future reporting features and serves as a great example for add-on developers.</p>
 	
 	<h3>Major Add-on Updates</h3>
