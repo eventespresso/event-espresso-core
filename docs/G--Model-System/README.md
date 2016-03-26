@@ -10,4 +10,5 @@ In Event Espresso 4 (EE4), we have built a system which simplifies creating, ret
 ## Table of Contents
 
 - [Querying with EE Models](model-querying.md)
-- [Somethign about CPTs](ee-model-objects-and-custom-post-types.md)
+- [Using EE4 Model Objects](using-ee4-model-objects.md)
+- [EE Model Objects and Custom Post Types](ee-model-objects-and-custom-post-types.md)
