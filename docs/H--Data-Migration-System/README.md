@@ -3,3 +3,4 @@ The Data Migration system in EE handles setting up tables on initial install, up
 ## Table of Contents
 
 - [Data Migration Scripts Overview](data-migration-scripts.md)
+- [EE Maintenance Mode](ee-maintenance-mode.md)

@@ -4,7 +4,7 @@ Often when a new version of Event Espresso is released, there are changes that n
 
 This article discusses data migration scripts in EE core and explains how addons can add DMSs to migrate their own data.
 
-![Database Migration Manager Screen](database-migration-manager.png)
+![Database Migration Manager Screen](../images/database-migration-manager.png)
 
 ## Data Migration Scripts (DMSs) in EE Core
 
