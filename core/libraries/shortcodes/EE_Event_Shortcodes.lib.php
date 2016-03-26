@@ -51,7 +51,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes specific to event related data', 'event_espresso');
 		$this->_shortcodes = array(
 			'[EVENT_ID]' => __('Will be replaced by the event ID of an event', 'event_espresso'),
-			'[EVENT_IDENTIFIER]' => __('Will be replaced with the event identifier of an event', 'event_espresso'),
 			'[EVENT]' => __('The name of the event', 'event_espresso'),
 			'[EVENT_NAME]' => __("This also can be used for the name of the event", 'event_espresso'),
 			'[EVENT_PHONE]' => __('The phone number for the event (usually an info number)', 'event_espresso'),
@@ -99,10 +98,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_ID]' :
 				return $this->_event->ID();
-				break;
-
-			case '[EVENT_IDENTIFIER]' :
-				return isset($this->_data['line_ref']) ? $this->_data['line_ref']: '';
 				break;
 
 			case '[EVENT]' :

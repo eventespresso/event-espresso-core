@@ -1,0 +1,1 @@
+The documents in this folder are all related to the REST API in EE core.

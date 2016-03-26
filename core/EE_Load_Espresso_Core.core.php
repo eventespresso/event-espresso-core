@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 /**
  *
  * EE_Load_Espresso_Core
@@ -202,16 +205,20 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	/**
 	 * handle_response
 	 * called after the request stack has been fully processed
-	 * nothing happening here at this moment...
+	 * if any of the middleware apps has requested the plugin be deactivated, then we do that now
 	 *
 	 * @access    public
 	 * @param \EE_Request $request
 	 * @param \EE_Response $response
 	 */
 	public function handle_response( EE_Request $request, EE_Response $response ) {
+		//\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
 		//EEH_Debug_Tools::printr( $request, '$request', __FILE__, __LINE__ );
 		//EEH_Debug_Tools::printr( $response, '$response', __FILE__, __LINE__ );
 		//die();
+		if ( $response->plugin_deactivated() ) {
+			espresso_deactivate_plugin( EE_PLUGIN_BASENAME );
+		}
 	}
 
 

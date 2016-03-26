@@ -307,6 +307,10 @@ class EEM_Payment_Method extends EEM_Base {
 		foreach ( $payment_methods as $key => $payment_method ) {
 			if ( EE_Payment_Method_Manager::instance()->payment_method_type_exists( $payment_method->type() ) ) {
 				$usable_payment_methods[ $key ] = $payment_method;
+				//some payment methods enqueue their scripts in EE_PMT_*::__construct
+				//which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue
+				//its scripts). but for backwards-compat we should continue to do that
+				$payment_method->type_obj();
 			} else {				
 				$payment_method->deactivate();
 				$payment_method->save();

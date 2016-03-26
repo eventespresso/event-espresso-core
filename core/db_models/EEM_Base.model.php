@@ -173,7 +173,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Array-keys are one of EEM_Base::valid_cap_contexts(), and values are a child of
 	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
 	 * automatically set this to false (not just null).
-	 * @var EE_Restriction_Generator_Base
+	 * @var EE_Restriction_Generator_Base[]
 	 */
 	protected $_cap_restriction_generators = array();
 
@@ -680,7 +680,7 @@ abstract class EEM_Base extends EE_Base{
 	 *		This can be applied to condition operators too,
 	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
 	 *	@var mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
-	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively. 
+	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively.
 	 *		Remember when you provide two numbers for the limit, the 1st number is the OFFSET, the 2nd is the LIMIT
 	 *	@var array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
 	 *		Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).
