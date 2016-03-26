@@ -15,6 +15,7 @@ All the links to the table of contents for each folder in this documentation:
 [REST API](C--REST-API) | All documentation related to the EE REST API
 [Addon API](D--Addon-API) | All documentation pertaining to the system provided for extending Event Espresso via add-ons.
 [Messages System](E--Messages-System) | All documentation about the messages subsystem in Event Espresso
+[Datetime System](F--Datetime-System) | All documentation about how dates, times and timezones function in Event Espresso.
 [General](Z--General) | Documentation that more generally applies to all of Event Espresso vs specific subsystems.
 
 ## Where do I leave comments/questions?
