@@ -2,6 +2,8 @@ The documents in this folder are all related to the REST API in EE core.
 
 ## Table of Contents
 
+- [EE4 REST API: An Introduction](ee4-rest-api-introduction.md)
+
 ### GET Requests
 
 - [EE4 REST API: Reading Data Overview](ee4-rest-api-reading-data.md)
