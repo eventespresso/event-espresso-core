@@ -19,7 +19,8 @@ All the links to the table of contents for each folder in this documentation:
 [Model System](G--Model-System) | All documentation about using the Event Espresso model system for interacting with the database.
 [Data Migration Scripts System](H--Data-Migration-System) | All documentation about the data migration system in EE.
 [Filter and Action Hooks in EE](I--Filter-and-Action-Hooks-in-EE) | Documents specific filter and action hooks in EE.
-[EE4 Forms System](J--EE4-Forms-System) | Documents related to the ee4 forms system.
+[EE4 Forms System](J--EE4-Forms-System) | Documents related to the EE4 forms system.
+[EE4 Capability System](K--EE4-Capability-System) | Documents related to the EE4 Capability System and user management.
 [Tutorials](T--Tutorials) | All tutorials instructing how to use EE more effectively as a developer.
 [General](Z--General) | Documentation that more generally applies to all of Event Espresso vs specific subsystems.
 
