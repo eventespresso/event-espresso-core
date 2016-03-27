@@ -22,6 +22,7 @@ All the links to the table of contents for each folder in this documentation:
 [EE4 Forms System](J--EE4-Forms-System) | Documents related to the EE4 forms system.
 [EE4 Capability System](K--EE4-Capability-System) | Documents related to the EE4 Capability System and user management.
 [Payment Methods and Gateways](L--Payment-Methods-and-Gateways) | Documents related to using/developming payment methods and gateway classes in EE4.
+[Batch Jobs Library](M--Batch-Jobs-System) | Documents related to explaining the batch job processing, which facilitates doing tasks that take so long that they need to be spread across multiple HTTP requests (in order to avoid timeouts and running out of memory).
 [Tutorials](T--Tutorials) | All tutorials instructing how to use EE more effectively as a developer.
 [General](Z--General) | Documentation that more generally applies to all of Event Espresso vs specific subsystems.
 
