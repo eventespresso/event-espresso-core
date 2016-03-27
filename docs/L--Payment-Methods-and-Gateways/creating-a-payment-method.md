@@ -56,7 +56,7 @@ public function generate_new_settings_form() {
 
 This method also needs to be implemented to define the billing form for payment method that will appear to customers when they use this payment method. If you don't need a billing form for your payment method (eg, EE_PMT_Bank and EE_PMT_Paypal_Standard don't) then this method can just return NULL. But otherwise it should return an `EE_Billing_Info_Form` (a flexible form that just has a reference to the payment method it represents) or `EE_Billing_Attendee_Info_Form` (a child of `EE_Billing_Info_Form` but includes standard address fields like Firstname, Email, and Address, etc.). Here is the Paypal Pro billing form
 
-![Payment Form Example Frontend](payment-form-example-frontend.png)
+![Payment Form Example Frontend](../images/payment-form-example-frontend.png)
 
 And this is the method that generates most of that code:
 
