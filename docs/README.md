@@ -16,6 +16,14 @@ All the links to the table of contents for each folder in this documentation:
 [Addon API](D--Addon-API) | All documentation pertaining to the system provided for extending Event Espresso via add-ons.
 [Messages System](E--Messages-System) | All documentation about the messages subsystem in Event Espresso
 [Datetime System](F--Datetime-System) | All documentation about how dates, times and timezones function in Event Espresso.
+[Model System](G--Model-System) | All documentation about using the Event Espresso model system for interacting with the database.
+[Data Migration Scripts System](H--Data-Migration-System) | All documentation about the data migration system in EE.
+[Filter and Action Hooks in EE](I--Filter-and-Action-Hooks-in-EE) | Documents specific filter and action hooks in EE.
+[EE4 Forms System](J--EE4-Forms-System) | Documents related to the EE4 forms system.
+[EE4 Capability System](K--EE4-Capability-System) | Documents related to the EE4 Capability System and user management.
+[Payment Methods and Gateways](L--Payment-Methods-and-Gateways) | Documents related to using/developming payment methods and gateway classes in EE4.
+[Batch Jobs Library](M--Batch-Jobs-System) | Documents related to explaining the batch job processing, which facilitates doing tasks that take so long that they need to be spread across multiple HTTP requests (in order to avoid timeouts and running out of memory).
+[Tutorials](T--Tutorials) | All tutorials instructing how to use EE more effectively as a developer.
 [General](Z--General) | Documentation that more generally applies to all of Event Espresso vs specific subsystems.
 
 ## Where do I leave comments/questions?
