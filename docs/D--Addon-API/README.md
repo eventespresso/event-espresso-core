@@ -3,3 +3,4 @@ This folder contains information about the EE Addon API.  The Addon api consists
 ## Table of Contents
 
 - [Registering Addons](registering-addons.md)
+- [Model and Class Extensions](model-and-class-extensions.md)
