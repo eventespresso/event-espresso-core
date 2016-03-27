@@ -5,6 +5,9 @@ This folder contains information about the EE Addon API.  The Addon api consists
 ### General
 - [Registering Addons](registering-addons.md)
 
+### EE4 REST API
+- [Extending the EE4 REST API in add-ons](extending-ee4-rest-api.md)
+
 ### Models
 - [Model and Class Extensions](model-and-class-extensions.md)
 
