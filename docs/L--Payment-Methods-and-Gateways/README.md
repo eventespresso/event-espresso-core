@@ -4,3 +4,4 @@ This folder contains all documentation related to development and usage of payme
 
 - [Overview of Payment Methods and Gateways in EE](overview-payment-methods-and-gateways.md)
 - [Creating a Payment Method](creating-a-payment-method.md)
+- [Gateway Classes](gateway-classes.md)

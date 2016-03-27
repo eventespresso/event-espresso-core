@@ -95,3 +95,20 @@ public function generate_new_billing_form( EE_Transaction $transaction = NULL ) 
 This generates a `EE_Billing_Attendee_Info_Form` and adds some credit card-related inputs (specifically, we require a valid credit card number, a credit card type, valid expiration date, and a valid CVV). The line `$this->apply_billing_form_debug_settings()` just takes care of autofilling some of the fields while the payment method is in debug mode, just for convenience while testing.
 
 If you'd like to learn more about how to customize this form (eg, adding other inputs, changing client-side and server-side validation, or change its display) please [read our EE4 Form Documentation](../J--EE4-Forms-System/ee-forms-system-overview.md).
+
+## Admin Help Tabs
+
+All payment methods should have a help tab. To define a help tab, you'll just need to create a folder named "help_tabs" and put a template file in it, and override `EE_PMT_Base::help_tab_config()`. For example, Paypal Standard has a template file named "payment_methods_overview_paypalstandard" and the help_tabs_config method is:
+
+```php
+public function help_tabs_config(){
+    return array(
+        $this->get_help_tab_name() => array(
+            'title'=>  __("Paypal Standard Settings", 'event_espresso'),
+            'filename'=>'payment_methods_overview_paypalstandard'
+        )
+    );
+}
+```
+
+The help tab is a good place to describe any particulars of how to setup your payment method and any special considerations.
