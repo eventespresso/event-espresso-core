@@ -3,6 +3,7 @@ The documents in this folder are all related to the REST API in EE core.
 ## Table of Contents
 
 - [EE4 REST API: An Introduction](ee4-rest-api-introduction.md)
+- [EE4 REST API: Testing Tools](ee4-rest-api-testing-tools.md)
 
 ### GET Requests
 
