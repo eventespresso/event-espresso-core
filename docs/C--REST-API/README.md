@@ -4,6 +4,7 @@ The documents in this folder are all related to the REST API in EE core.
 
 - [EE4 REST API: An Introduction](ee4-rest-api-introduction.md)
 - [EE4 REST API: Testing Tools](ee4-rest-api-testing-tools.md)
+- [EE4 REST API: Calculated Fields Reference](ee4-rest-api-calculated-fields-reference.md)
 
 ### GET Requests
 
