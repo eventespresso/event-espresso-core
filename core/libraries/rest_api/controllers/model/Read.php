@@ -194,8 +194,9 @@ class Read extends Base {
 				array( 'status' => 403 )
 			);
 		}
-
-		$this->_set_headers_from_query_params( $model, $query_params );
+		if( ! $request->get_header( 'simulated_request' ) ) {
+			$this->_set_headers_from_query_params( $model, $query_params );
+		}
 		/** @type array $results */
 		$results = $model->get_all_wpdb_results( $query_params );
 		$nice_results = array( );
@@ -266,7 +267,9 @@ class Read extends Base {
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
-		$this->_set_headers_from_query_params( $relation->get_other_model(), $query_params );
+		if( ! $request->get_header( 'simulated_request' ) ) {
+			$this->_set_headers_from_query_params( $relation->get_other_model(), $query_params );
+		}
 		/** @type array $results */
 		$results = $relation->get_other_model()->get_all_wpdb_results( $query_params );
 		$nice_results = array();
@@ -302,7 +305,8 @@ class Read extends Base {
 
 	/**
 	 * Sets the headers that are based on the model and query params,
-	 * like the total records
+	 * like the total records. This should only be called on the original request
+	 * from the client, not on subsequent internal
 	 * @param \EEM_Base $model
 	 * @param array $query_params
 	 * @return void
@@ -551,6 +555,7 @@ class Read extends Base {
 						'calculate' => $related_fields_to_calculate,
 					)
 				);
+				$pretend_related_request->add_header( 'simulated_request', true );
 				$related_results = $this->get_entities_from_relation(
 					$entity_array[ $model->primary_key_name() ],
 					$relation_obj,
