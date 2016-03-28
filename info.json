@@ -17,7 +17,8 @@
     "src\/circle.yml",
     "src\/readme.txt",
     "src\/wp-assets\/**",
-    "src\/.travis.yml"
+    "src\/.travis.yml",
+    "src\/.ISSUE_TEMPLATE.md"
   ],
   "decafFilesRemove": [
     "src\/tests\/**",
@@ -29,7 +30,8 @@
     "src\/wp-assets\/**",
     "src\/modules\/gateways\/Aim\/**",
     "src\/modules\/gateways\/Mijireh\/**",
-    "src\/modules\/gateways\/Paypal_Pro\/**"
+    "src\/modules\/gateways\/Paypal_Pro\/**",
+    "src\/.ISSUE_TEMPLATE.md"
   ],
   "sites": {
     "master": {
