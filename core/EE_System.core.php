@@ -521,7 +521,6 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		return;
 		$notices = EE_Error::get_notices( FALSE );
 		//if current user is an admin and it's not an ajax request
 		if (
