@@ -194,7 +194,7 @@ class Read extends Base {
 				array( 'status' => 403 )
 			);
 		}
-		if( ! $request->get_header( 'simulated_request' ) ) {
+		if( ! $request->get_header( 'no_rest_headers' ) ) {
 			$this->_set_headers_from_query_params( $model, $query_params );
 		}
 		/** @type array $results */
@@ -267,7 +267,7 @@ class Read extends Base {
 		$query_params[0][ $relation->get_this_model()->get_this_model_name() . '.' . $relation->get_this_model()->primary_key_name() ] = $id;
 		$query_params[ 'default_where_conditions' ] = 'none';
 		$query_params[ 'caps' ] = $context;
-		if( ! $request->get_header( 'simulated_request' ) ) {
+		if( ! $request->get_header( 'no_rest_headers' ) ) {
 			$this->_set_headers_from_query_params( $relation->get_other_model(), $query_params );
 		}
 		/** @type array $results */
@@ -555,7 +555,7 @@ class Read extends Base {
 						'calculate' => $related_fields_to_calculate,
 					)
 				);
-				$pretend_related_request->add_header( 'simulated_request', true );
+				$pretend_related_request->add_header( 'no_rest_headers', true );
 				$related_results = $this->get_entities_from_relation(
 					$entity_array[ $model->primary_key_name() ],
 					$relation_obj,
