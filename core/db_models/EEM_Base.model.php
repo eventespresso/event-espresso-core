@@ -738,7 +738,7 @@ abstract class EEM_Base extends EE_Base{
 	 *			'order_by'=>array('ANS_value'=>'ASC')
 	 *		));
 	 */
-	function get_all($query_params = array()){
+	public function get_all($query_params = array()){
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL));
 	}
 
@@ -748,7 +748,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params @see EEM_Base::get_all()
 	 * @return array like EEM_Base::get_all
 	 */
-	function alter_query_params_to_only_include_mine( $query_params = array() ) {
+	public function alter_query_params_to_only_include_mine( $query_params = array() ) {
 		$wp_user_field_name = $this->wp_user_field_name();
 		if( $wp_user_field_name ){
 			$query_params[0][ $wp_user_field_name ] = get_current_user_id();
@@ -763,7 +763,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return string|boolean string on success, boolean false when there is no
 	 * foreign key to the WP_User table
 	 */
-	function wp_user_field_name() {
+	public function wp_user_field_name() {
 		try{
 			if( ! empty( $this->_model_chain_to_wp_user ) ) {
 				$models_to_follow_to_wp_users = explode( '.', $this->_model_chain_to_wp_user );
@@ -918,7 +918,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Convenient wrapper for getting the primary key field's name. Eg, on Registration, this would be 'REG_ID'
 	 * @return string
 	 */
-	function primary_key_name(){
+	public function primary_key_name(){
 		return $this->get_primary_key_field()->get_name();
 	}
 
@@ -930,7 +930,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param mixed $id int or string, depending on the type of the model's primary key
 	 * @return EE_Base_Class
 	 */
-	function get_one_by_ID($id){
+	public function get_one_by_ID($id){
 		if( $this->get_from_entity_map( $id ) ){
 			return $this->get_from_entity_map( $id );
 		}
@@ -969,7 +969,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params like EEM_Base's $query_params variable.
 	 * @return EE_Base_Class | NULL
 	 */
-	function get_one($query_params = array()){
+	public function get_one($query_params = array()){
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::get_one', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
@@ -985,28 +985,25 @@ abstract class EEM_Base extends EE_Base{
 
 
 
-
 	/**
 	 * Returns the next x number of items in sequence from the given value as
 	 * found in the database matching the given query conditions.
 	 *
 	 * @param mixed $current_field_value    Value used for the reference point.
-	 * @param null $field_to_order_by       What field is used for the
+	 * @param null  $field_to_order_by      What field is used for the
 	 *                                      reference point.
-	 * @param int $limit                    How many to return.
+	 * @param int   $limit                  How many to return.
 	 * @param array $query_params           Extra conditions on the query.
-	 * @param null $columns_to_select       If left null, then an array of
+	 * @param null  $columns_to_select      If left null, then an array of
 	 *                                      EE_Base_Class objects is returned,
 	 *                                      otherwise you can indicate just the
 	 *                                      columns you want returned.
-	 *
 	 * @return EE_Base_Class[]|array
+	 * @throws \EE_Error
 	 */
 	public function next_x( $current_field_value, $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
 		return $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, $limit, $query_params, $columns_to_select );
 	}
-
-
 
 
 
@@ -1015,21 +1012,20 @@ abstract class EEM_Base extends EE_Base{
 	 * as found in the database matching the given query conditions.
 	 *
 	 * @param mixed $current_field_value    Value used for the reference point.
-	 * @param null $field_to_order_by       What field is used for the
+	 * @param null  $field_to_order_by      What field is used for the
 	 *                                      reference point.
-	 * @param int $limit                    How many to return.
+	 * @param int   $limit                  How many to return.
 	 * @param array $query_params           Extra conditions on the query.
-	 * @param null $columns_to_select       If left null, then an array of
+	 * @param null  $columns_to_select      If left null, then an array of
 	 *                                      EE_Base_Class objects is returned,
 	 *                                      otherwise you can indicate just the
 	 *                                      columns you want returned.
-	 *
 	 * @return EE_Base_Class[]|array
+	 * @throws \EE_Error
 	 */
 	public function previous_x( $current_field_value, $field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null ) {
 		return $this->_get_consecutive( $current_field_value, '<', $field_to_order_by, $limit, $query_params, $columns_to_select );
 	}
-
 
 
 
@@ -1038,16 +1034,16 @@ abstract class EEM_Base extends EE_Base{
 	 * database matching the given query conditions.
 	 *
 	 * @param mixed $current_field_value    Value used for the reference point.
-	 * @param null $field_to_order_by       What field is used for the
+	 * @param null  $field_to_order_by      What field is used for the
 	 *                                      reference point.
 	 * @param array $query_params           Extra conditions on the query.
-	 * @param null $columns_to_select       If left null, then an EE_Base_Class
+	 * @param null  $columns_to_select      If left null, then an EE_Base_Class
 	 *                                      object is returned, otherwise you
 	 *                                      can indicate just the columns you
 	 *                                      want and a single array indexed by
 	 *                                      the columns will be returned.
-	 *
 	 * @return EE_Base_Class|null|array()
+	 * @throws \EE_Error
 	 */
 	public function next( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
 		$results = $this->_get_consecutive( $current_field_value, '>', $field_to_order_by, 1, $query_params, $columns_to_select );
@@ -1070,8 +1066,8 @@ abstract class EEM_Base extends EE_Base{
 	 *                                      can indicate just the columns you
 	 *                                      want and a single array indexed by
 	 *                                      the columns will be returned.
-	 *
-	 * @return EE_Base_Class|null|array()
+ * @return EE_Base_Class|null|array()
+	 * @throws EE_Error
 	 */
 	public function previous( $current_field_value, $field_to_order_by = null, $query_params = array(), $columns_to_select = null ) {
 		$results = $this->_get_consecutive( $current_field_value, '<', $field_to_order_by, 1, $query_params, $columns_to_select );
@@ -1087,17 +1083,12 @@ abstract class EEM_Base extends EE_Base{
 	 * value as found in the database matching the given query conditions.
 	 *
 	 * @param mixed $current_field_value    Value used for the reference point.
-	 * @param string $operand               What operand is used for the
-	 *                                      sequence.
-	 * @param null $field_to_order_by       What field is used for the
-	 *                                      reference point.
+	 * @param string $operand               What operand is used for the sequence.
+	 * @param string $field_to_order_by     What field is used for the reference point.
 	 * @param int $limit                    How many to return.
 	 * @param array $query_params           Extra conditions on the query.
-	 * @param null $columns_to_select       If left null, then an array of
-	 *                                      EE_Base_Class objects is returned,
-	 *                                      otherwise you can indicate just the
-	 *                                      columns you want returned.
-	 *
+	 * @param null $columns_to_select       If left null, then an array of EE_Base_Class objects is returned,
+	 *                                      otherwise you can indicate just the columns you want returned.
 	 * @return EE_Base_Class[]|array
 	 * @throws EE_Error
 	 */
@@ -1126,8 +1117,10 @@ abstract class EEM_Base extends EE_Base{
 		$query_params['limit'] = $limit;
 
 		//set direction
-		$incoming_orderby = isset( $query_params['order_by'] ) ? $query_params['order_by'] : array();
-		$query_params['order_by'] = $operand == '>' ? array( $field_to_order_by => 'ASC' ) + $incoming_orderby : array( $field_to_order_by => 'DESC') + $incoming_orderby;
+		$incoming_orderby = isset( $query_params['order_by'] ) ? (array)$query_params['order_by'] : array();
+		$query_params['order_by'] = $operand === '>'
+			? array( $field_to_order_by => 'ASC' ) + $incoming_orderby
+			: array( $field_to_order_by => 'DESC') + $incoming_orderby;
 
 		//if $columns_to_select is empty then that means we're returning EE_Base_Class objects
 		if ( empty( $columns_to_select ) ) {
@@ -1300,7 +1293,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
 	 * @return EE_Table_Base[]
 	 */
-	function get_tables(){
+	public function get_tables(){
 		return $this->_tables;
 	}
 
@@ -1334,7 +1327,7 @@ abstract class EEM_Base extends EE_Base{
 	 * be aware that model objects being used could get out-of-sync with the database
 	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
-	function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE){
+	public function update($fields_n_values, $query_params, $keep_model_objs_in_sync = TRUE){
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::update', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
@@ -1512,7 +1505,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $fields_n_values array keys are field names on this model, and values are what those fields should be updated to in the DB
 	 * @return string of SQL
 	 */
-	function _construct_update_sql($fields_n_values){
+	public function _construct_update_sql($fields_n_values){
 		/** @type WPDB $wpdb */
 		global $wpdb;
 		$cols_n_values = array();
@@ -1570,7 +1563,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param boolean $allow_blocking
 	 * @return @see EEM_Base::delete_permanently
 	 */
-	function delete($query_params,$allow_blocking = true){
+	public function delete($query_params,$allow_blocking = true){
 		return $this->delete_permanently($query_params, $allow_blocking);
 	}
 
@@ -1586,7 +1579,7 @@ abstract class EEM_Base extends EE_Base{
 	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return int how many rows got deleted
 	 */
-	function delete_permanently($query_params,$allow_blocking = true){
+	public function delete_permanently($query_params,$allow_blocking = true){
 		/**
 		 * Action called just before performing a real deletion query. You can use the
 		 * model and its $query_params to find exactly which items will be deleted
@@ -1764,7 +1757,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
-	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
+	public function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		if($field_to_count){
 			$field_obj = $this->field_settings_for($field_to_count);
@@ -1788,7 +1781,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $field_to_sum name of field (array key in $_fields array)
 	 * @return float
 	 */
-	function sum($query_params, $field_to_sum = NULL){
+	public function sum($query_params, $field_to_sum = NULL){
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 
 		if($field_to_sum){
@@ -1969,7 +1962,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Set to easily debug the next X queries ran from this model.
 	 * @param int $count
 	 */
-	function show_next_x_db_queries($count = 1){
+	public function show_next_x_db_queries($count = 1){
 		$this->_show_next_x_db_queries = $count;
 	}
 
@@ -1978,7 +1971,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * @param $sql_query
 	 */
-	function show_db_query_if_previously_requested($sql_query){
+	public function show_db_query_if_previously_requested($sql_query){
 		if($this->_show_next_x_db_queries > 0){
 			echo $sql_query;
 			$this->_show_next_x_db_queries--;
@@ -2054,7 +2047,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Base_Class[]
 	 */
-	function get_all_related($id_or_obj, $model_name, $query_params = null){
+	public function get_all_related($id_or_obj, $model_name, $query_params = null){
 		$model_obj = $this->ensure_is_obj($id_or_obj);
 		$relation_settings = $this->related_settings_for($model_name);
 		return $relation_settings->get_all_related($model_obj,$query_params);
@@ -2102,7 +2095,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
-	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
+	public function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use the query params on the related model's normal get_all query,
 		//except add a condition to say to match the current mod
@@ -2126,7 +2119,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $field_to_sum name of field to count by. By default, uses primary key
 	 * @return float
 	 */
-	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
+	public function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::sum_related', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
@@ -2167,7 +2160,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets the model's name as it's expected in queries. For example, if this is EEM_Event model, that would be Event
 	 * @return string
 	 */
-	function get_this_model_name(){
+	public function get_this_model_name(){
 		return str_replace("EEM_","",get_class($this));
 	}
 
@@ -2204,7 +2197,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int new primary key on main table that got inserted
 	 * @throws EE_Error
 	 */
-	function insert($field_n_values){
+	public function insert($field_n_values){
 		/**
 		 * Filters the fields and their values before inserting an item using the models
 		 * @param array $fields_n_values keys are the fields and values are their new values
@@ -2259,7 +2252,7 @@ abstract class EEM_Base extends EE_Base{
 	 * saved to the DB would break some uniqueness requirement, like a primary key
 	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
 	 * can be either an EE_Base_Class or an array of fields n values
-	 * @param EE_Base_Class|array|int|string $obj_or_fields_array
+	 * @param EE_Base_Class|array $obj_or_fields_array
 	 * @param boolean $include_primary_key whether to use the model object's primary key when looking for conflicts
 	 * (ie, if false, we ignore the model object's primary key when finding "conflicts".
 	 * If true, it's also considered). Only works for INT primary key- STRING primary keys cannot be ignored
@@ -2297,7 +2290,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params
 	 * @return boolean
 	 */
-	function exists($query_params){
+	public function exists($query_params){
 		$query_params['limit'] = 1;
 		return $this->count($query_params) > 0;
 	}
@@ -2307,7 +2300,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param int|string $id
 	 * @return boolean
 	 */
-	function exists_by_ID($id){
+	public function exists_by_ID($id){
 		return $this->exists(array('default_where_conditions'=>'none', array($this->primary_key_name() => $id)));
 	}
 
@@ -2486,7 +2479,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $table_alias, array key in EEM_Base::_tables
 	 * @return EE_Model_Field_Base[]
 	 */
-	function _get_fields_for_table($table_alias){
+	public function _get_fields_for_table($table_alias){
 		return $this->_fields[$table_alias];
 	}
 
@@ -2498,7 +2491,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params like EEM_Base::get_all's $query_parameters['where']
 	 * @return EE_Model_Query_Info_Carrier
 	 */
-	function _extract_related_models_from_query($query_params){
+	public function _extract_related_models_from_query($query_params){
 		$query_info_carrier = new EE_Model_Query_Info_Carrier();
 		if(array_key_exists(0,$query_params)){
 			$this->_extract_related_models_from_sub_params_array_keys($query_params[0], $query_info_carrier,0);
@@ -2605,7 +2598,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 * @return EE_Model_Query_Info_Carrier
 	 */
-	function _create_model_query_info_carrier($query_params){
+	public function _create_model_query_info_carrier($query_params){
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
@@ -3255,7 +3248,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Field_Base|string $field_obj if string, it should be the datatype to be used when querying, eg '%s'
 	 * @return string
 	 */
-	function _construct_between_value( $values, $field_obj ) {
+	public function _construct_between_value( $values, $field_obj ) {
 		$cleaned_values = array();
 		foreach ( $values as $value ) {
 			$cleaned_values[] = $this->_wpdb_prepare_using_field($value,$field_obj);
@@ -3276,7 +3269,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Field_Base|string $field_obj if string, it should be a wpdb data type like '%s', or '%d'
 	 * @return string of SQL to follow an 'IN' or 'NOT IN' operator
 	 */
-	function _construct_in_value($values,  $field_obj){
+	public function _construct_in_value($values,  $field_obj){
 		//check if the value is a CSV list
 		if(is_string($values)){
 			//in which case, turn it into an array
@@ -3362,7 +3355,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 * @return string
 	 */
-	function _get_qualified_column_for_field($field_name){
+	public function _get_qualified_column_for_field($field_name){
 		$all_fields = $this->field_settings();
 		$field = isset($all_fields[$field_name]) ? $all_fields[$field_name] : FALSE;
 		if($field){
@@ -3382,7 +3375,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param  mixed|string $limit The limit for this select
 	 * @return string 				The final select join element for the query.
 	 */
-	function _construct_limit_join_select( $table_alias, $limit ) {
+	public function _construct_limit_join_select( $table_alias, $limit ) {
 		$SQL = '';
 
 		foreach ( $this->_tables as $table_obj ) {
@@ -3402,7 +3395,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Eg "wp_post AS Event" or "wp_post AS Event INNER JOIN wp_postmeta Event_Meta ON Event.ID = Event_Meta.post_id"
 	 * @return string SQL
 	 */
-	function _construct_internal_join(){
+	public function _construct_internal_join(){
 		$SQL = $this->_get_main_table()->get_table_sql();
 		$SQL .= $this->_construct_internal_join_to_table_with_alias($this->_get_main_table()->get_table_alias());
 		return $SQL;
@@ -3423,7 +3416,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $alias_prefixed table alias to join to (this table should already be in the FROM SQL clause)
 	 * @return string
 	 */
-	function _construct_internal_join_to_table_with_alias($alias_prefixed){
+	public function _construct_internal_join_to_table_with_alias($alias_prefixed){
 		$SQL = '';
 		$alias_sans_prefix = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($alias_prefixed);
 		foreach($this->_tables as $table_obj){
@@ -3447,7 +3440,7 @@ abstract class EEM_Base extends EE_Base{
 	 * This should be a growing array of keys being table-columns (eg 'EVT_ID' and 'Event.EVT_ID'), and values being their data type (eg, '%s', '%d', etc)
 	 * @return array
 	 */
-	function _get_data_types(){
+	public function _get_data_types(){
 		$data_types = array();
 		foreach(array_values($this->field_settings()) as $field_obj){
 			//$data_types[$field_obj->get_table_column()] = $field_obj->get_wpdb_data_type();
@@ -3465,7 +3458,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 * @return EEM_Base
 	 */
-	function get_related_model_obj($model_name){
+	public function get_related_model_obj($model_name){
 
 		$model_classname = "EEM_".$model_name;
 		if(!class_exists($model_classname)){
@@ -3668,7 +3661,7 @@ abstract class EEM_Base extends EE_Base{
 	 * a table alias with a model chain prefix, like 'Venue__Event_Venue___Event_Meta'. Either one works
 	 * @return EE_Table_Base
 	 */
-	function get_table_for_alias($table_alias){
+	public function get_table_for_alias($table_alias){
 		$table_alias_sans_model_relation_chain_prefix = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($table_alias);
 		return $this->_tables[$table_alias_sans_model_relation_chain_prefix]->get_table_name();
 	}
@@ -4107,8 +4100,13 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param EE_Base_Class | int $base_class_obj_or_id  	either the EE_Base_Class that corresponds to this Model, or its ID
-	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
+	 *
+	 * @param EE_Base_Class|string|int $base_class_obj_or_id either:
+	 *                                                       the EE_Base_Class object that corresponds to this Model,
+	 *                                                       the object's class name
+	 *                                                       or object's ID
+	 * @param boolean $ensure_is_in_db                       if set, we will also verify this model object
+	 *                                                       exists in the database. If it does not, we add it
 	 * @throws EE_Error
 	 * @return EE_Base_Class
 	 */
@@ -4117,17 +4115,29 @@ abstract class EEM_Base extends EE_Base{
 		$primary_key_field = $this->get_primary_key_field();
 		if( $base_class_obj_or_id instanceof $className ){
 			$model_object = $base_class_obj_or_id;
-		}elseif( $primary_key_field instanceof EE_Primary_Key_Int_Field && (
-				is_int( $base_class_obj_or_id ) ||
-				is_string( $base_class_obj_or_id ) )){//assume it's an ID. either a proper integer or a string representing an integer (eg "101" instead of 101)
-			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
-		}elseif( $primary_key_field instanceof EE_Primary_Key_String_Field && is_string($base_class_obj_or_id) ){
-			//assume its a string representation of the object
-			$model_object = $this->get_one_by_ID($base_class_obj_or_id);
+		}elseif(
+			$primary_key_field instanceof EE_Primary_Key_Int_Field
+			&& (
+				is_int( $base_class_obj_or_id )
+				|| is_string( $base_class_obj_or_id )
+			)
+		){
+			//assume it's an ID. either a proper integer or a string representing an integer (eg "101" instead of 101)
+			$model_object = $this->get_one_by_ID( $base_class_obj_or_id );
+		} else if( $primary_key_field instanceof EE_Primary_Key_String_Field && is_string( $base_class_obj_or_id ) ){
+			// assume its a string representation of the object
+			$model_object = $this->get_one_by_ID( $base_class_obj_or_id );
 		}else{
-			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
+			throw new EE_Error(
+				sprintf(
+					__( "'%s' is neither an object of type %s, nor an ID! Its full value is '%s'", 'event_espresso' ),
+					$base_class_obj_or_id,
+					$this->_get_class_name(),
+					print_r($base_class_obj_or_id,true)
+				)
+			);
 		}
-		if( $model_object->ID() == NULL && $ensure_is_in_db){
+		if( $ensure_is_in_db && empty( $model_object->ID() ) ){
 			$model_object->save();
 		}
 		return $model_object;
@@ -4243,7 +4253,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $index_primary_key_string
 	 * @return null|array
 	 */
-	function parse_index_primary_key_string( $index_primary_key_string) {
+	public function parse_index_primary_key_string( $index_primary_key_string) {
 		$key_fields = $this->get_combined_primary_key_fields();
 		//check all of them are in the $id
 		$key_vals_in_combined_pk = array();
@@ -4262,7 +4272,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $key_vals
 	 * @return boolean
 	 */
-	function has_all_combined_primary_key_fields( $key_vals ) {
+	public function has_all_combined_primary_key_fields( $key_vals ) {
 		$keys_it_should_have = array_keys( $this->get_combined_primary_key_fields() );
 		foreach( $keys_it_should_have as $key ){
 			if( ! isset( $key_vals[ $key ] ) ){
@@ -4311,7 +4321,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param array $query_params
 	 * @return EE_Base_Class
 	 */
-	function get_one_copy($model_object_or_attributes_array,$query_params = array()){
+	public function get_one_copy($model_object_or_attributes_array,$query_params = array()){
 		if( ! is_array( $query_params ) ){
 			EE_Error::doing_it_wrong('EEM_Base::get_one_copy', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
 			$query_params = array();
