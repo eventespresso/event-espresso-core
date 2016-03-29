@@ -1009,6 +1009,10 @@ article .espresso_venues {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+a[href*="message_type=receipt"] {
+	margin-top: 1em;
+}
+
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
 /****         MOVE THIS FILE BEFORE EDITING         ****/
