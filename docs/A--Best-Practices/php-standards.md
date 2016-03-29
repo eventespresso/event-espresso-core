@@ -172,6 +172,6 @@ In general, try to restrict usage of PHP code in templates to only using: `if`, 
 </div>
 ```
 
- ## Database Queries
+## Database Queries
 
 In Event Espresso 4 we spent a significant amount of time planning and building a model system for all db interactions.  The intent is that only the `EEM_` model singletons are used to interact with the database.  If a query you want doesn't exist, then generally, it should be added to the appropriate model (or improvement to the model to support that query).
