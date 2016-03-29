@@ -31,6 +31,11 @@ class Read extends Base {
 	 */
 	protected $_fields_calculator;
 
+
+
+	/**
+	 * Read constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 		\EE_Registry::instance()->load_helper( 'Inflector' );
@@ -77,10 +82,10 @@ class Read extends Base {
 	/**
 	 * Gets a single entity related to the model indicated in the path and its id
 	 *
-	 * @param \WP_Rest_Request $request
+	 * @param \WP_REST_Request $request
 	 * @return \WP_REST_Response|\WP_Error
 	 */
-	public static function handle_request_get_one( \WP_Rest_Request $request ) {
+	public static function handle_request_get_one( \WP_REST_Request $request ) {
 		$controller = new Read();
 		try{
 			$matches = $controller->parse_route(
@@ -328,9 +333,7 @@ class Read extends Base {
 		}
 		//remove the group by and having parts of the query, as those will
 		//make the sql query return an array of values, instead of just a single value
-		unset( $query_params[ 'group_by' ] );
-		unset( $query_params[ 'having' ] );
-		unset( $query_params[ 'limit' ] );
+		unset( $query_params[ 'group_by' ], $query_params[ 'having' ], $query_params[ 'limit' ] );
 		$count = $model->count( $query_params, null, true );
 
 		$pages = $count / $limit_parts[ 1 ];
@@ -497,7 +500,7 @@ class Read extends Base {
 
 		//add links to related models
 		foreach( $this->get_model_version_info()->relation_settings( $model ) as $relation_name => $relation_obj ) {
-			$related_model_part = $this->get_related_entity_name( $relation_name, $relation_obj );
+			$related_model_part = Read::get_related_entity_name( $relation_name, $relation_obj );
 			$links[ \EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
 				array(
 					'href' => $this->get_versioned_link_to(
@@ -561,14 +564,16 @@ class Read extends Base {
 					$relation_obj,
 					$pretend_related_request
 				);
-				$entity_array[ $this->get_related_entity_name( $relation_name, $relation_obj ) ] = $related_results instanceof \WP_Error ? null : $related_results;
+				$entity_array[ Read::get_related_entity_name( $relation_name, $relation_obj ) ] = $related_results instanceof \WP_Error
+					? null
+					: $related_results;
 			}
 		}
 		return $entity_array;
 	}
-	
+
 	/**
-	 * Returns a new array with all the names of models removed. Eg 
+	 * Returns a new array with all the names of models removed. Eg
 	 * array( 'Event', 'Datetime.*', 'foobar' ) would become array( 'Datetime.*', 'foobar' )
 	 * @param array $arr
 	 * @return array
@@ -788,7 +793,7 @@ class Read extends Base {
 						)
 					);
 				}
-				$sanitized_limit[] = intval( $limit_part );
+				$sanitized_limit[] = (int)$limit_part;
 			}
 			$model_query_params[ 'limit' ] = implode( ',', $sanitized_limit );
 		}else{
