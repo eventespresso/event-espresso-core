@@ -40,7 +40,8 @@ This is the Core for Event Espresso 4. This README.md file is targeted for displ
 
 > Extra:  The code structure and phpdoc parsed documentation can be found at http://code.eventespresso.com
 >
-> Developer Targeted Documentation can be found at http://developer.eventespresso.com
+> Developer Targeted Documentation can be found at http://developer.eventespresso.com/docs
+> Developer News & Updates can be found at http://developer.eventespresso.com
 
 
 ## Event Espresso Releases
