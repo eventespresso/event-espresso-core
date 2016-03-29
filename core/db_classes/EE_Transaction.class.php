@@ -2,54 +2,39 @@
 	exit( 'No direct script access allowed' );
 }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package        Event Espresso
- * @ author        Event Espresso
- * @ copyright    (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license        {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link                {@link http://www.eventespresso.com}
- * @ since            4.0
- *
- */
-
-
-
-
-
-/**
  * EE_Transaction class
  *
- * @package 			Event Espresso
+ * @package     Event Espresso
  * @subpackage 	includes/classes/EE_Transaction.class.php
- * @author 				Brent Christensen
+ * @author      Brent Christensen
  */
 class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 	/**
-	 *
-	 * @param array $props_n_values  incoming values
-	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
-	 *                          		used.)
-	 * @param array $date_formats  incoming date_formats in an array where the first value is the
-	 *                             		    date_format and the second value is the time format
+	 * @param array  $props_n_values          incoming values
+	 * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
+	 *                                        used.)
+	 * @param array  $date_formats            incoming date_formats in an array where the first value is the
+	 *                                        date_format and the second value is the time format
 	 * @return EE_Transaction
+	 * @throws \EE_Error
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
-		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
+		return $has_object
+			? $has_object
+			: new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
 
 
 	/**
-	 * @param array $props_n_values  incoming values from the database
-	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
-	 *                          		the website will be used.
+	 * @param array  $props_n_values  incoming values from the database
+	 * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
+	 *                                the website will be used.
 	 * @return EE_Attendee
+	 * @throws \EE_Error
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
@@ -160,7 +145,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * Sets TXN_reg_steps array
 	 * @param array $txn_reg_steps
 	 */
-	function set_reg_steps( $txn_reg_steps ) {
+	public function set_reg_steps( array $txn_reg_steps ) {
 		$this->set( 'TXN_reg_steps', $txn_reg_steps );
 	}
 
@@ -170,9 +155,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * Gets TXN_reg_steps
 	 * @return array
 	 */
-	function reg_steps() {
+	public function reg_steps() {
 		$TXN_reg_steps = $this->get( 'TXN_reg_steps' );
-		return is_array( $TXN_reg_steps ) ? $TXN_reg_steps : array();
+		return is_array( $TXN_reg_steps ) ? (array)$TXN_reg_steps : array();
 	}
 
 
@@ -236,8 +221,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @access        public
 	 */
 	public function get_cart_session() {
-		$session_data = $this->get( 'TXN_session_data' );
-		return isset( $session_data[ 'cart' ] ) && $session_data[ 'cart' ] instanceof EE_Cart ? $session_data[ 'cart' ] : NULL;
+		$session_data = (array)$this->get( 'TXN_session_data' );
+		return isset( $session_data[ 'cart' ] ) && $session_data[ 'cart' ] instanceof EE_Cart
+			? $session_data[ 'cart' ]
+			: null;
 	}
 
 
@@ -249,7 +236,15 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	public function session_data() {
 		$session_data = $this->get( 'TXN_session_data' );
 		if ( empty( $session_data ) ) {
-			$session_data = array( 'id' => NULL, 'user_id' => NULL, 'ip_address' => NULL, 'user_agent' => NULL, 'init_access' => NULL, 'last_access' => NULL, 'pages_visited' => array() );
+			$session_data = array(
+				'id'            => null,
+				'user_id'       => null,
+				'ip_address'    => null,
+				'user_agent'    => null,
+				'init_access'   => null,
+				'last_access'   => null,
+				'pages_visited' => array()
+			);
 		}
 		return $session_data;
 	}
@@ -284,18 +279,18 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	/**
 	 *    datetime
-	 *
 	 *    Returns the transaction datetime as either:
-	 * 			- unix timestamp format ($format = false, $gmt = true)
-	 * 			- formatted date string including the UTC (timezone) offset ($format = true ($gmt
-	 * 			  has no affect with this option)), this also may include a timezone abbreviation if the
-	 * 			  set timezone in this class differs from what the timezone is on the blog.
-	 * 			- formatted date string including the UTC (timezone) offset (default).
+	 *            - unix timestamp format ($format = false, $gmt = true)
+	 *            - formatted date string including the UTC (timezone) offset ($format = true ($gmt
+	 *              has no affect with this option)), this also may include a timezone abbreviation if the
+	 *              set timezone in this class differs from what the timezone is on the blog.
+	 *            - formatted date string including the UTC (timezone) offset (default).
 	 *
-	 * @access 	public
-	 * @param 	boolean 	$format - whether to return a unix timestamp (default) or formatted date string
-	 * @param 	boolean 	$gmt - whether to return a unix timestamp with UTC offset applied (default) or no UTC offset applied
-	 * @return 	string | int
+	 * @access    public
+	 * @param    boolean $format - whether to return a unix timestamp (default) or formatted date string
+	 * @param    boolean $gmt    - whether to return a unix timestamp with UTC offset applied (default) or no UTC offset applied
+	 * @return    string | int
+	 * @throws \EE_Error
 	 */
 	public function datetime( $format = FALSE, $gmt = FALSE ) {
 		if ( $format ) {
@@ -358,8 +353,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	/**
 	 * echoes $this->pretty_status()
+	 *
 	 * @param bool $show_icons
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function e_pretty_status( $show_icons = FALSE ) {
 		echo $this->pretty_status( $show_icons );
@@ -369,8 +366,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	/**
 	 * returns a pretty version of the status, good for displaying to users
+	 *
 	 * @param bool $show_icons
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function pretty_status( $show_icons = FALSE ) {
 		$status = EEM_Status::instance()->localized_status( array( $this->status_ID() => __( 'unknown', 'event_espresso' ) ), FALSE, 'sentence' );
@@ -412,7 +411,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return boolean
 	 */
 	public function is_free() {
-		return (float)$this->get( 'TXN_total' ) == 0 ? TRUE : FALSE;
+		return (float)$this->get( 'TXN_total' ) === (float)0 ? TRUE : FALSE;
 	}
 
 
@@ -423,7 +422,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return boolean
 	 */
 	public function is_completed() {
-		return $this->status_ID() == EEM_Transaction::complete_status_code ? TRUE : FALSE;
+		return $this->status_ID() === EEM_Transaction::complete_status_code ? TRUE : FALSE;
 	}
 
 
@@ -434,7 +433,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return boolean
 	 */
 	public function is_incomplete() {
-		return $this->status_ID() == EEM_Transaction::incomplete_status_code ? TRUE : FALSE;
+		return $this->status_ID() === EEM_Transaction::incomplete_status_code ? TRUE : FALSE;
 	}
 
 
@@ -445,7 +444,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return boolean
 	 */
 	public function is_overpaid() {
-		return $this->status_ID() == EEM_Transaction::overpaid_status_code ? TRUE : FALSE;
+		return $this->status_ID() === EEM_Transaction::overpaid_status_code ? TRUE : FALSE;
 	}
 
 
@@ -457,7 +456,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return boolean
 	 */
 	public function is_abandoned() {
-		return $this->status_ID() == EEM_Transaction::abandoned_status_code ? TRUE : FALSE;
+		return $this->status_ID() === EEM_Transaction::abandoned_status_code ? TRUE : FALSE;
 	}
 
 
@@ -469,7 +468,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return boolean
 	 */
 	public function failed() {
-		return $this->status_ID() == EEM_Transaction::failed_status_code ? TRUE : FALSE;
+		return $this->status_ID() === EEM_Transaction::failed_status_code ? TRUE : FALSE;
 	}
 
 
@@ -532,8 +531,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
 	 * that apply to it
+	 *
 	 * @deprecated
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function update_based_on_payments(){
 		EE_Error::doing_it_wrong(
@@ -581,8 +582,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	/**
 	 * Wrapper for _add_relation_to
+	 *
 	 * @param EE_Registration $registration
 	 * @return EE_Base_Class the relation was added to
+	 * @throws \EE_Error
 	 */
 	public function add_registration( EE_Registration $registration ) {
 		return $this->_add_relation_to( $registration, 'Registration' );
@@ -614,8 +617,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	/**
 	 * Wrapper for _add_relation_to
+	 *
 	 * @param EE_Line_Item $line_item
 	 * @return EE_Base_Class the relation was added to
+	 * @throws \EE_Error
 	 */
 	public function add_line_item( EE_Line_Item $line_item ) {
 		return $this->_add_relation_to( $line_item, 'Line_Item' );
@@ -715,7 +720,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * Gets PMD_ID
 	 * @return int
 	 */
-	function payment_method_ID() {
+	public function payment_method_ID() {
 		return $this->get('PMD_ID');
 	}
 
@@ -726,7 +731,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @param int $PMD_ID
 	 * @return boolean
 	 */
-	function set_payment_method_ID($PMD_ID) {
+	public function set_payment_method_ID($PMD_ID) {
 		$this->set('PMD_ID', $PMD_ID);
 	}
 
@@ -738,7 +743,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * offline ones, dont' create payments)
 	 * @return EE_Payment_Method
 	 */
-	function payment_method(){
+	public function payment_method(){
 		$pm = $this->get_first_related('Payment_Method');
 		if( $pm instanceof EE_Payment_Method ){
 			return $pm;
