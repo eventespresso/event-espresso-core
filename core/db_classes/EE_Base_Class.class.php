@@ -534,11 +534,15 @@ abstract class EE_Base_Class{
 	 * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
 	 * This also SETS the cache if we return the actual property!
 	 *
-	 * @param  string $fieldname       the name of the property we're trying to retrieve
+	 * @param string  $fieldname       the name of the property we're trying to retrieve
 	 * @param bool    $pretty
-	 * @param string  $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
-	 *                                 It can also accept certain pre-defined "schema" strings to define how to output the property. see the field's prepare_for_pretty_echoing for what strings can be used
-	 * @return mixed                whatever the value for the property is we're retrieving
+	 * @param string  $extra_cache_ref This allows the user to specify an extra cache ref for the given property
+	 *                                 (in cases where the same property may be used for different outputs
+	 *                                 - i.e. datetime, money etc.)
+	 *                                 It can also accept certain pre-defined "schema" strings
+	 *                                 to define how to output the property.
+	 *                                 see the field's prepare_for_pretty_echoing for what strings can be used
+	 * @return mixed                   whatever the value for the property is we're retrieving
 	 * @throws \EE_Error
 	 */
 	protected function _get_cached_property( $fieldname, $pretty = FALSE, $extra_cache_ref = NULL ) {
@@ -567,11 +571,13 @@ abstract class EE_Base_Class{
 			if( ! isset($this->_fields[$fieldname])){
 				$this->_fields[$fieldname] = NULL;
 			}
-			$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->_fields[$fieldname], $extra_cache_ref) : $field_obj->prepare_for_get($this->_fields[$fieldname] );
+			$value = $pretty
+				? $field_obj->prepare_for_pretty_echoing($this->_fields[$fieldname], $extra_cache_ref)
+				: $field_obj->prepare_for_get($this->_fields[$fieldname] );
 			$this->_set_cached_property( $fieldname, $value, $cache_type );
 			return $value;
 		}
-		return FALSE;
+		return null;
 	}
 
 
@@ -611,7 +617,10 @@ abstract class EE_Base_Class{
 	 * @throws \EE_Error
 	 */
 	protected function ensure_related_thing_is_model_obj($object_or_id,$model_name){
-		$other_model_instance = self::_get_model_instance_with_name(self::_get_model_classname($model_name), $this->_timezone);
+		$other_model_instance = self::_get_model_instance_with_name(
+			self::_get_model_classname( $model_name ),
+			$this->_timezone
+		);
 		return $other_model_instance->ensure_is_obj( $object_or_id );
 	}
 
@@ -633,7 +642,13 @@ abstract class EE_Base_Class{
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		$index_in_cache = '';
 		if( ! $relationship_to_model){
-			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
+			throw new EE_Error(
+				sprintf(
+					__( "There is no relationship to %s on a %s. Cannot clear that cache", 'event_espresso' ),
+					$relationName,
+					get_class( $this )
+				)
+			);
 		}
 		if($clear_all){
 			$obj_removed = true;
@@ -917,7 +932,9 @@ abstract class EE_Base_Class{
 	 * verifies that the specified field is of the correct type
 	 *
 	 * @param string $field_name
-	 * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
+	 * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property
+	 *                                (in cases where the same property may be used for different outputs
+	 *                                - i.e. datetime, money etc.)
 	 * @return mixed
 	 * @throws \EE_Error
 	 */
@@ -928,6 +945,7 @@ abstract class EE_Base_Class{
 
 	/**
 	 * This method simply returns the RAW unprocessed value for the given property in this class
+	 *
 	 * @param  string $field_name A valid fieldname
 	 * @return mixed              Whatever the raw value stored on the property is.
 	 * @throws EE_Error if fieldSettings is misconfigured or the field doesn't exist.
