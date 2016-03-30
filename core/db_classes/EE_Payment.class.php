@@ -25,13 +25,13 @@
 class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 	/**
-	 *
-	 * @param array $props_n_values  incoming values
-	 * @param string $timezone  incoming timezone (if not set the timezone set for the website will be
-	 *                          		used.)
-	 * @param array $date_formats  incoming date_formats in an array where the first value is the
-	 *                             		    date_format and the second value is the time format
+	 * @param array  $props_n_values          incoming values
+	 * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
+	 *                                        used.)
+	 * @param array  $date_formats            incoming date_formats in an array where the first value is the
+	 *                                        date_format and the second value is the time format
 	 * @return EE_Payment
+	 * @throws \EE_Error
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
@@ -41,10 +41,11 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	 * @param array $props_n_values  incoming values from the database
-	 * @param string $timezone  incoming timezone as set by the model.  If not set the timezone for
-	 *                          		the website will be used.
+	 * @param array  $props_n_values  incoming values from the database
+	 * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
+	 *                                the website will be used.
 	 * @return EE_Payment
+	 * @throws \EE_Error
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
 		return new self( $props_n_values, TRUE, $timezone );
@@ -117,7 +118,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * @param float $amount
 	 */
 	public function set_amount( $amount = 0.00 ) {
-		$this->set( 'PAY_amount', $amount );
+		$this->set( 'PAY_amount', (float)$amount );
 	}
 
 
@@ -131,15 +132,26 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	public function set_gateway_response( $gateway_response = '' ) {
 		$this->set( 'PAY_gateway_response', $gateway_response );
 	}
+
+
+
 	/**
-	 * Returns the name of the paymetn method used on this payment (previously known merely as 'gateway')
-	 * but since 4.6.0, payment methods are models and the paymetn keeps a foreign key to the paymetn method
+	 * Returns the name of the payment method used on this payment (previously known merely as 'gateway')
+	 * but since 4.6.0, payment methods are models and the payment keeps a foreign key to the payment method
 	 * used on it
+	 *
 	 * @deprecated
 	 * @return string
 	 */
 	public function gateway(){
-		EE_Error::doing_it_wrong('EE_Payment::gateway', __( 'The method EE_Payment::gateway() has been deprecated. Consider instead using EE_Payment::payment_method()->name()', 'event_espresso' ), '4.6.0' );
+		EE_Error::doing_it_wrong(
+			'EE_Payment::gateway',
+			__(
+				'The method EE_Payment::gateway() has been deprecated. Consider instead using EE_Payment::payment_method()->name()',
+				'event_espresso'
+			),
+			'4.6.0'
+		);
 		if( $this->payment_method() ){
 			return $this->payment_method()->name();
 		}else{
@@ -203,10 +215,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	 *        Set Payment Details
+	 * Set Payment Details
 	 *
-	 * @access        public
-	 * @param        string $details
+	 * @access public
+	 * @param string|array $details
 	 */
 	public function set_details( $details = '' ) {
 		if ( is_array( $details ) ) {
@@ -221,7 +233,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * Sets redirect_url
 	 * @param string $redirect_url
 	 */
-	function set_redirect_url($redirect_url) {
+	public function set_redirect_url($redirect_url) {
 		$this->set('PAY_redirect_url', $redirect_url);
 	}
 
@@ -229,7 +241,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * Sets redirect_args
 	 * @param array $redirect_args
 	 */
-	function set_redirect_args($redirect_args) {
+	public function set_redirect_args($redirect_args) {
 		$this->set('PAY_redirect_args', $redirect_args);
 	}
 
@@ -263,16 +275,15 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	 *        get Payment Timestamp
+	 * get Payment Timestamp
 	 *
 	 * @access        public
 	 * @param string $dt_frmt
 	 * @param string $tm_frmt
-	 * @param null $date_or_time
 	 * @return string
 	 */
-	public function timestamp( $dt_frmt = '', $tm_frmt = '', $date_or_time = NULL ) {
-		return $this->get_datetime('PAY_timestamp', $dt_frmt, $tm_frmt, $date_or_time );
+	public function timestamp( $dt_frmt = '', $tm_frmt = '' ) {
+		return $this->get_datetime('PAY_timestamp', $dt_frmt, $tm_frmt );
 	}
 
 
@@ -293,7 +304,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * @return float
 	 */
 	public function amount() {
-		return $this->get( 'PAY_amount' );
+		return (float)$this->get( 'PAY_amount' );
 	}
 
 
@@ -352,7 +363,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	* 		@access		public
 	*/
 	public function payment_made_via_admin() {
-		return ($this->get('PAY_source') == EEM_Payment_Method::scope_admin);
+		return ($this->get('PAY_source') === EEM_Payment_Method::scope_admin);
 	}
 
 
@@ -370,7 +381,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * Gets redirect_url
 	 * @return string
 	 */
-	function redirect_url() {
+	public function redirect_url() {
 		return $this->get('PAY_redirect_url');
 	}
 
@@ -380,7 +391,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * Gets redirect_args
 	 * @return array
 	 */
-	function redirect_args() {
+	public function redirect_args() {
 		return $this->get('PAY_redirect_args');
 	}
 
@@ -388,8 +399,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 	/**
 	 * echoes $this->pretty_status()
+	 *
 	 * @param bool $show_icons
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function e_pretty_status( $show_icons = FALSE ) {
 		echo $this->pretty_status( $show_icons );
@@ -399,11 +412,17 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 	/**
 	 * returns a pretty version of the status, good for displaying to users
+	 *
 	 * @param bool $show_icons
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function pretty_status( $show_icons = FALSE ) {
-		$status = EEM_Status::instance()->localized_status( array( $this->STS_ID() => __( 'unknown', 'event_espresso' ) ), FALSE, 'sentence' );
+		$status = EEM_Status::instance()->localized_status(
+			array( $this->STS_ID() => __( 'unknown', 'event_espresso' ) ),
+			false,
+			'sentence'
+		);
 		$icon = '';
 		switch ( $this->STS_ID() ) {
 			case EEM_Payment::status_id_approved:
@@ -443,7 +462,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * @return boolean whether the status of this payment equals the status id
 	 */
 	protected function status_is( $STS_ID ) {
-		if ( $STS_ID == $this->STS_ID() ) {
+		if ( $STS_ID === $this->STS_ID() ) {
 			return TRUE;
 		} else {
 			return FALSE;
@@ -529,7 +548,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * offline ones, dont' create payments)
 	 * @return EE_Payment_Method
 	 */
-	function payment_method(){
+	public function payment_method(){
 		return $this->get_first_related('Payment_Method');
 	}
 
@@ -546,7 +565,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * @param string $inside_form_html
 	 * @return string html
 	 */
-	function redirect_form( $inside_form_html = NULL ) {
+	public function redirect_form( $inside_form_html = NULL ) {
 		$redirect_url = $this->redirect_url();
 		if ( ! empty( $redirect_url )) {
 			EE_Registry::instance()->load_helper('HTML');
@@ -562,14 +581,14 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 					'', '', 'text-align:center;'
 				);
 			}
-			$method = apply_filters( 
+			$method = apply_filters(
 				'FHEE__EE_Payment__redirect_form__method',
 				$this->redirect_args() ? 'POST' : 'GET',
 				$this
 			);
 			//if it's a GET request, we need to remove all the GET params in the querystring
 			//and put them into the form instead
-			if( $method == 'GET' ) {
+			if( $method === 'GET' ) {
 				$querystring = parse_url( $redirect_url, PHP_URL_QUERY );
 				$get_params = null;
 				parse_str( $querystring, $get_params );
@@ -594,10 +613,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	 * and returns the html as a string
 	 * @return string
 	 */
-	function redirect_args_as_inputs(){
+	public function redirect_args_as_inputs(){
 		return $this->_args_as_inputs( $this->redirect_args() );
 	}
-	
+
 	/**
 	 * Converts a 1d array of key-value pairs into html hidden inputs
 	 * and returns the string of html
@@ -649,16 +668,27 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}
 	}
 
+
+
 	/**
 	 * Returns TRUE is this payment was set to approved during this request (or
 	 * is approved and was created during this request). False otherwise.
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function just_approved(){
 		EE_Registry::instance()->load_helper( 'Array' );
-		$original_status =EEH_Array::is_set( $this->_props_n_values_provided_in_constructor, 'STS_ID', $this->get_model()->field_settings_for( 'STS_ID' )->get_default_value() );
+		$original_status = EEH_Array::is_set(
+			$this->_props_n_values_provided_in_constructor,
+			'STS_ID',
+			$this->get_model()->field_settings_for( 'STS_ID' )->get_default_value()
+		);
 		$current_status = $this->status();
-		if( $original_status !== EEM_Payment::status_id_approved && $current_status === EEM_Payment::status_id_approved ){
+		if(
+			$original_status !== EEM_Payment::status_id_approved
+			&& $current_status === EEM_Payment::status_id_approved
+		){
 			return TRUE;
 		}else{
 			return FALSE;
@@ -668,12 +698,15 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	/**
 	 * Overrides parents' get_pretty() function just for legacy reasons
 	 * (to allow ticket https://events.codebasehq.com/projects/event-espresso/tickets/7420)
+	 *
 	 * @param string $field_name
-	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
+	 * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property
+	 *                                (in cases where the same property may be used for different outputs
+	 *                                - i.e. datetime, money etc.)
 	 * @return mixed
 	 */
 	public function get_pretty($field_name, $extra_cache_ref = NULL){
-		if( $field_name == 'PAY_gateway' ){
+		if( $field_name === 'PAY_gateway' ){
 			return $this->gateway();
 		}
 		return  $this->_get_cached_property( $field_name, TRUE, $extra_cache_ref );
