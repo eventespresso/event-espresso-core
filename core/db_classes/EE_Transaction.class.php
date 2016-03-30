@@ -100,7 +100,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @param        float $total total value of transaction
 	 */
 	public function set_total( $total = 0.00 ) {
-		$this->set( 'TXN_total', $total );
+		$this->set( 'TXN_total', (float)$total );
 	}
 
 
@@ -112,7 +112,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @param        float $total_paid total amount paid to date (sum of all payments)
 	 */
 	public function set_paid( $total_paid = 0.00 ) {
-		$this->set( 'TXN_paid', $total_paid );
+		$this->set( 'TXN_paid', (float)$total_paid );
 	}
 
 
@@ -200,7 +200,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return float
 	 */
 	public function total() {
-		return $this->get( 'TXN_total' );
+		return (float)$this->get( 'TXN_total' );
 	}
 
 
@@ -211,7 +211,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @return float
 	 */
 	public function paid() {
-		return $this->get( 'TXN_paid' );
+		return (float)$this->get( 'TXN_paid' );
 	}
 
 
@@ -673,9 +673,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	public function tax_total() {
 		$tax_line_item = $this->tax_total_line_item();
 		if ( $tax_line_item ) {
-			return $tax_line_item->total();
+			return (float)$tax_line_item->total();
 		} else {
-			return 0;
+			return (float)0;
 		}
 	}
 
