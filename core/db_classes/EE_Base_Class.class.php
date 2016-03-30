@@ -903,7 +903,7 @@ abstract class EE_Base_Class{
 	 * verifies that the specified field is of the correct type
 	 * @param string        $field_name
 	 * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
-	 * @return boolean
+	 * @return mixed
 	 */
 	public function get($field_name, $extra_cache_ref = NULL ){
 		return $this->_get_cached_property( $field_name, FALSE, $extra_cache_ref );
