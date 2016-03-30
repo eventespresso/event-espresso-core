@@ -314,7 +314,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if ( $payment->status() === $status && (float)$payment->amount() === (float)$update_info[ 'mc_gross' ] ) {
 				// DUPLICATED IPN! dont bother updating transaction foo!;
-				$message_log = sprintf( __( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ), $payment->ID() );
+				$message_log = sprintf(
+					__( 'It appears we have received a duplicate IPN from PayPal for payment %d', 'event_espresso' ),
+					$payment->ID()
+				);
 			} else {
 				// new payment yippee !!!
 				$payment->set_status( $status );
@@ -322,12 +325,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_gateway_response( $gateway_response );
 				$payment->set_details( $update_info );
 				$payment->set_txn_id_chq_nmbr( $update_info[ 'txn_id' ] );
+				$message_log = __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' );
 			}
 			$this->log(
 				array(
-					'message'  => sprintf(
-						__( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' )
-					),
+					'message'  => $message_log,
 					'url'      => $this->_process_response_url(),
 					'payment'  => $payment->model_field_array(),
 					'IPN_data' => $update_info
