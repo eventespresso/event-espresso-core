@@ -674,18 +674,20 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			$payment_method_type_obj = $payment_method->type_obj();
 			if ( $payment_method_type_obj instanceof EE_PMT_Base ) {
 				$gateway = $payment_method_type_obj->get_gateway();
-				$gateway->log(
-					array(
-						'message'               => __( 'Post Payment Transaction Details', 'event_espresso' ),
-						'transaction'           => $transaction->model_field_array(),
-						'finalized'             => $finalized,
-						'IPN'                   => $IPN,
-						'deliver_notifications' => has_filter(
-							'FHEE__EED_Messages___maybe_registration__deliver_notifications'
+				if ( $gateway instanceof EE_Gateway ){
+					$gateway->log(
+						array(
+							'message'               => __( 'Post Payment Transaction Details', 'event_espresso' ),
+							'transaction'           => $transaction->model_field_array(),
+							'finalized'             => $finalized,
+							'IPN'                   => $IPN,
+							'deliver_notifications' => has_filter(
+								'FHEE__EED_Messages___maybe_registration__deliver_notifications'
+							),
 						),
-					),
-					$payment
-				);
+						$payment
+					);
+				}
 			}
 		}
 	}
