@@ -531,10 +531,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * get Registration URL Link
-	 * @access        public
+	 *
+	 * @access public
+	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function reg_url_link() {
-		return $this->get( 'REG_url_link' );
+		return (string)$this->get( 'REG_url_link' );
 	}
 
 
