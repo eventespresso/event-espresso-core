@@ -90,10 +90,6 @@ class EE_Alpha_Banner_Warning extends EE_Middleware {
 	 * @return void
 	 */
 	public function alpha_banner_warning_notice() {
-		global $pagenow;
-		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
-			return;
-		}
 		printf(
 			__( '%1$sThis version of Event Espresso is for testing and/or evaluation purposes only. It is %2$snot%3$s considered a stable release and should therefore %2$snot%3$s be activated on a live or production website.%4$s', 'event_espresso' ),
 			'<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>',
