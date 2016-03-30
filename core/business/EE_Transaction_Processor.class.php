@@ -578,7 +578,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$finalized = $this->final_reg_step_completed( $transaction );
 		// if the 'finalize_registration' step has been initiated (has a timestamp)
 		// but has not yet been fully completed (TRUE)
-		if ( is_numeric( $finalized ) && $finalized !== true ) {
+		if ( is_int( $finalized ) && $finalized !== false && $finalized !== true ) {
 			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
 			$finalized = true;
 		}
