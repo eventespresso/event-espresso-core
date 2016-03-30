@@ -80,11 +80,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 */
 	public function set_settings($settings_array){
 		parent::set_settings($settings_array);
-		if($this->_debug_mode){
-			$this->_gateway_url = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-		}else{
-			$this->_gateway_url = 'https://www.paypal.com/cgi-bin/webscr';
-		}
+		$this->_gateway_url = $this->_debug_mode
+			? 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+			: 'https://www.paypal.com/cgi-bin/webscr';
 	}
 
 
@@ -150,9 +148,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			//if the itemized sum is MORE than the transaction total,
 			//add the difference it to the discounts
 			$itemized_sum_diff_from_txn_total = round(
-					$transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added,
-					2
-				);
+				$transaction->total() - $itemized_sum - $taxes_li->total() - $shipping_previously_added,
+				2
+			);
 			if( $itemized_sum_diff_from_txn_total < 0 ) {
 				//itemized sum is too big
 				$total_discounts_to_cart_total += abs( $itemized_sum_diff_from_txn_total );
@@ -357,9 +355,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	/**
 	 * Validate the IPN notification
 	 *y gon
+	 *
 	 * @param array                  $update_info like $_REQUEST
 	 * @param EE_Payment|EEI_Payment $payment
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function validate_ipn( $update_info, $payment ) {
 		//allow us to skip validating IPNs with PayPal (useful for testing)
@@ -459,14 +459,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 
 
-
 	/**
 	 * Updates the transaction and line items based on the payment IPN data from PayPal,
 	 * like the taxes or shipping
+	 *
 	 * @param EEI_Payment $payment
+	 * @throws \EE_Error
 	 */
 	public function update_txn_based_on_payment( $payment ) {
 		$update_info = $payment->details();
+		/** @var EE_Transaction $transaction */
 		$transaction = $payment->transaction();
 		$payment_was_itemized = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true, false );
 		if( ! $transaction ){
@@ -512,14 +514,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			return;
 		}
 		$grand_total_needs_resaving = false;
+		/** @var EE_Line_Item $transaction_total_line_item */
+		$transaction_total_line_item = $transaction->total_line_item();
 
 		//might paypal have changed the taxes?
 		if( $this->_paypal_taxes && $payment_was_itemized ) {
             // note that we're doing this BEFORE adding shipping;
 			// we actually want PayPal's shipping to remain non-taxable
-            $this->_line_item->set_line_items_taxable( $transaction->total_line_item(), true, 'paypal_shipping' );
+            $this->_line_item->set_line_items_taxable( $transaction_total_line_item, true, 'paypal_shipping' );
             $this->_line_item->set_total_tax_to(
-                $transaction->total_line_item(),
+	            $transaction_total_line_item,
                 (float)$update_info['tax'],
                 __( 'Taxes', 'event_espresso' ),
                 __( 'Calculated by Paypal', 'event_espresso' ),
@@ -532,7 +536,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		//might paypal have added shipping?
 		if( $this->_paypal_shipping && $shipping_amount && $payment_was_itemized ){
 			$this->_line_item->add_unrelated_item(
-				$transaction->total_line_item(),
+				$transaction_total_line_item,
 				sprintf( __('Shipping for transaction %1$s', 'event_espresso'), $transaction->ID() ),
 				$shipping_amount,
 				__('Shipping charges calculated by Paypal', 'event_espresso'),
@@ -544,7 +548,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 
 		if( $grand_total_needs_resaving ){
-			$transaction->total_line_item()->save_this_and_descendants_to_txn( $transaction->ID() );
+			$transaction_total_line_item->save_this_and_descendants_to_txn( $transaction->ID() );
 			/** @var EE_Registration_Processor $registration_processor */
 			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			$registration_processor->update_registration_final_prices( $transaction );
