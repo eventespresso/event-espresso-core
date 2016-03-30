@@ -214,9 +214,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
-//                echo "redirect info";
-//                var_dump( $redirect_args );
-//                die;
+		// log the results
+		$this->log(
+			array(
+				'message'     => sprintf(
+					__( 'PayPal payment request initiated.', 'event_espresso' )
+				),
+				'transaction' => $transaction->model_field_array(),
+			),
+			$payment
+		);
 		return $payment;
 	}
 
@@ -232,8 +239,18 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @throws \EE_Error
 	 */
 	public function handle_payment_update( $update_info, $transaction ){
-		//verify there's payment data that's been sent
+		// verify there's payment data that's been sent
 		if ( empty( $update_info[ 'payment_status' ] ) || empty( $update_info[ 'txn_id' ] ) ) {
+			// log the results
+			$this->log(
+				array(
+					'message' => sprintf(
+						__( 'PayPal IPN response is missing critical payment data. This may indicate a PDT request and require your PayPal account settings to be corrected.', 'event_espresso' )
+					),
+					'update_info' => $update_info,
+				),
+				$transaction
+			);
 			// waaaait... is this a PDT request? (see https://developer.paypal.com/docs/classic/products/payment-data-transfer/)
 			// indicated by the "tx" argument? If so, we don't need it. We'll just use the IPN data when it comes
 			if ( isset( $update_info[ 'tx' ] ) ) {
@@ -305,14 +322,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_gateway_response( $gateway_response );
 				$payment->set_details( $update_info );
 				$payment->set_txn_id_chq_nmbr( $update_info[ 'txn_id' ] );
-				$message_log = sprintf( __( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' ) );
 			}
 			$this->log(
 				array(
-					'url'      		=> $this->_process_response_url(),
-					'message'  	=> $message_log,
-					'payment'  	=> $payment->model_field_array(),
-					'IPN_data' 	=> $update_info
+					'message'  => sprintf(
+						__( 'Updated payment either from IPN or as part of POST from PayPal', 'event_espresso' )
+					),
+					'url'      => $this->_process_response_url(),
+					'payment'  => $payment->model_field_array(),
+					'IPN_data' => $update_info
 				),
 				$payment
 			);
@@ -450,7 +468,13 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$transaction = $payment->transaction();
 		$payment_was_itemized = $payment->get_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true, false );
 		if( ! $transaction ){
-			$this->log( __( 'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldn\'t be executed properly', 'event_espresso' ), $payment );
+			$this->log(
+				__(
+					'Payment with ID %d has no related transaction, and so update_txn_based_on_payment couldn\'t be executed properly',
+					'event_espresso'
+				),
+				$payment
+			);
 			return;
 		}
 		if(
@@ -460,9 +484,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		) {
 			$this->log(
 				array(
-					'url' 				=> $this->_process_response_url(),
-					'message' 	=> __( 'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from PayPal', 'event_espresso' ),
-					'payment' 	=> $payment->model_field_array()
+					'message' => __(
+						'Could not update transaction based on payment because the payment details have not yet been put on the payment. This normally happens during the IPN or returning from PayPal',
+						'event_espresso'
+					),
+					'url' => $this->_process_response_url(),
+					'payment' => $payment->model_field_array()
 				),
 				$payment
 			);
@@ -471,8 +498,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( $payment->status() !== $this->_pay_model->approved_status() ) {
 			$this->log(
 				array(
-					'url' 				=> $this->_process_response_url(),
-					'message' 	=> __( 'We shouldn\'t update transactions taxes or shipping data from non-approved payments', 'event_espresso' ),
+					'message' => __(
+						'We shouldn\'t update transactions taxes or shipping data from non-approved payments',
+						'event_espresso'
+					),
+					'url' => $this->_process_response_url(),
 					'payment' 	=> $payment->model_field_array()
 				),
 				$payment
@@ -519,8 +549,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		$this->log(
 			array(
-				'url'                         => $this->_process_response_url(),
 				'message'                     => __( 'Updated transaction related to payment', 'event_espresso' ),
+				'url'                         => $this->_process_response_url(),
 				'transaction (updated)'       => $transaction->model_field_array(),
 				'payment (updated)'           => $payment->model_field_array(),
 				'use_paypal_shipping'         => $this->_paypal_shipping,
