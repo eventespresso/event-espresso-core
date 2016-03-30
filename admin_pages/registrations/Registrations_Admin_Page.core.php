@@ -903,18 +903,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
-
 		$EVT_ID = ! empty( $this->_req_data['event_id'] ) && $this->_req_data['event_id'] > 0 ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = ! empty( $this->_req_data['EVT_CAT'] ) && (int) $this->_req_data['EVT_CAT'] > 0? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
 		$reg_status = ! empty( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = ! empty( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
-		$today_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
-		$this_month_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
+		$today_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] === 'today' ? TRUE : FALSE;
+		$this_month_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] === 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
 		$end_date = FALSE;
 		$_where = array();
-		$trash = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ? TRUE : FALSE;
-		$incomplete = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'incomplete' ? TRUE : FALSE;
+		$trash = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] === 'trash' ? TRUE : FALSE;
+		$incomplete = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] === 'incomplete' ? TRUE : FALSE;
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -988,7 +987,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			));
 		}elseif($month_range){
 			$pieces = explode(' ', $this->_req_data['month_range'], 3);
-			$month_r = !empty($pieces[0]) ? date('m', strtotime($pieces[0])) : '';
+			$month_r = !empty($pieces[0]) ? date('m', strtotime( $month_range ) ) : '';
 			$year_r = !empty($pieces[1]) ? $pieces[1] : '';
 			$days_in_month = date('t', strtotime($year_r .  '-' . $month_r . '-' . '01') );
 			$_where['REG_date']= array('BETWEEN',
