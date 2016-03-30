@@ -891,12 +891,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	_final_verifications
-	 *
+	 *    _final_verifications
 	 * just makes sure that everything is set up correctly before proceeding
 	 *
-	 *  @access 	private
-	 *  @return 	bool
+	 * @access    private
+	 * @return    bool
+	 * @throws \EE_Error
 	 */
 	private function _final_verifications() {
 		// filter checkout
