@@ -1774,12 +1774,15 @@ abstract class EEM_Base extends EE_Base{
 		return (int)$this->_do_wpdb_query( 'get_var', array( $SQL) );
 	}
 
+
+
 	/**
 	 * Sums up the value of the $field_to_sum (defaults to the primary key, which isn't terribly useful)
 	 *
-	 * @param array $query_params like EEM_Base::get_all
+	 * @param array  $query_params like EEM_Base::get_all
 	 * @param string $field_to_sum name of field (array key in $_fields array)
 	 * @return float
+	 * @throws \EE_Error
 	 */
 	public function sum($query_params, $field_to_sum = NULL){
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -1794,7 +1797,8 @@ abstract class EEM_Base extends EE_Base{
 
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		$return_value = $this->_do_wpdb_query('get_var',array( $SQL ) );
-		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
+		$data_type = $field_obj->get_wpdb_data_type();
+		if( $data_type === '%d' || $data_type === '%s' ){
 			return (float)$return_value;
 		}else{//must be %f
 			return (float)$return_value;
