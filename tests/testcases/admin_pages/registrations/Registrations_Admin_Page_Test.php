@@ -102,7 +102,12 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		// echo "\n next: " . $next_month->format( 'M j, Y g:i a' );
 		//let's setup some registrations to test.
 		$registrations = $this->factory->registration->create_many( 4 );
-		EE_UnitTestCase::assertCount( 4, $registrations );
+		EE_UnitTestCase::assertCount(
+			4,
+			$registrations,
+			'there should be 4 registrations in total, not ' . count( $registrations )
+			. "\nHere are the registrations: " . $this->reg_debug( $registrations, true )
+		);
 		//create an event and add to the registrations
 		$event = $this->factory->event->create( array( 'EVT_wp_user' => 0 ) );
 		if ( $event instanceof EE_Event ) {
@@ -127,35 +132,58 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		//let's test queries for today
 		$_GET['status'] = 'today';
 		$registrations = $this->_admin_page->get_registrations();
-		// echo "\n status: " . $_GET['status'];
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
 		// $this->reg_debug( $registrations );
-		EE_UnitTestCase::assertCount( 2, $registrations );
+		EE_UnitTestCase::assertCount(
+			2,
+			$registrations,
+			'there should be 2 registrations for today, not ' . count( $registrations )
+			. "\nHere are the registrations: " . $this->reg_debug( $registrations, true )
+		);
 		//test queries for this month
 		$_GET['status'] = 'month';
 		$registrations = $this->_admin_page->get_registrations();
-		// echo "\n status: " . $_GET['status'];
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
 		// $this->reg_debug( $registrations );
-		EE_UnitTestCase::assertCount( 2, $registrations );
+		EE_UnitTestCase::assertCount(
+			2,
+			$registrations,
+			'there should be 2 registrations for this month, not ' . count( $registrations )
+			. "\nHere are the registrations: " . $this->reg_debug( $registrations, true )
+		);
 		// test queries for month range using last month
 		unset( $_GET['status'] );
 		$_GET['month_range'] = $prev_month->format('F Y');
 		$registrations = $this->_admin_page->get_registrations();
-		// echo "\n month_range: " . $_GET[ 'month_range' ];
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() MONTH_RANGE: " . $_GET[ 'month_range' ];
 		// $this->reg_debug( $registrations );
-		EE_UnitTestCase::assertCount( 1, $registrations );
+		EE_UnitTestCase::assertCount(
+			1,
+			$registrations,
+			'there should be 1 registration for ' . $_GET['month_range'] . ', not ' . count( $registrations )
+			. "\nHere are the registrations: " . $this->reg_debug( $registrations, true )
+		);
 	}
 
 
 
 	/**
-	 * @param $registrations
+	 * @param EE_Registration[] $registrations
+	 * @param bool $return
+	 * @return string
 	 */
-	public function reg_debug( $registrations ) {
-		echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
+	public function reg_debug( $registrations, $return = false ) {
+		$result = "\n\n " . __LINE__ . ") " . __METHOD__ . "()";
+		$result .= "\n registration count: " . count( $registrations );
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
-				echo "\n registration date: " . $registration->date();
+				$result .= "\n registration date: " . $registration->date();
 			}
+		}
+		if ( $return ) {
+			return $result;
+		} else {
+			echo $result;
 		}
 	}
 
