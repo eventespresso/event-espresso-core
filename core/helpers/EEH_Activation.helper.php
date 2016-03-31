@@ -143,15 +143,25 @@ class EEH_Activation {
 				'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use, //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
 			)
 		);
-		//leave as-is if $which_to_include = all
-		if( $which_to_include === 'old' ) {
-			$cron_tasks = array_filter( $cron_tasks, function ( $value ) {
-				return $value === EEH_Activation::cron_task_no_longer_in_use;
-			});
-		}elseif( $which_to_include === 'current' ) {
+		if ( $which_to_include === 'old' ) {
+			$cron_tasks = array_filter(
+				$cron_tasks,
+				function ( $value ) {
+					return $value === EEH_Activation::cron_task_no_longer_in_use;
+				}
+			);
+		} elseif ( $which_to_include === 'current' ) {
 			$cron_tasks = array_filter( $cron_tasks );
-		}elseif( WP_DEBUG ) {
-			throw new EE_Error( sprintf( __( 'Invalidate argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".', 'event_espresso' ), $which_to_include ) );
+		} elseif ( WP_DEBUG && $which_to_include !== 'all' ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'Invalid argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".',
+						'event_espresso'
+					),
+					$which_to_include
+				)
+			);
 		}
 		return $cron_tasks;
 	}
