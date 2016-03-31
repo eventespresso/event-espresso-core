@@ -4141,7 +4141,7 @@ abstract class EEM_Base extends EE_Base{
 				)
 			);
 		}
-		if( $ensure_is_in_db && empty( $model_object->ID() ) ){
+		if( $ensure_is_in_db && $model_object->ID() !== null ){
 			$model_object->save();
 		}
 		return $model_object;
