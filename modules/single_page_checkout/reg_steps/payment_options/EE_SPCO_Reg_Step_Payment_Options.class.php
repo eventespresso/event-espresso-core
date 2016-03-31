@@ -2210,6 +2210,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			);
 			return false;
 		}
+		// make sure transaction is not locked
+		$this->checkout->transaction->unlock();
 		wp_safe_redirect(
 			add_query_arg(
 				array(
