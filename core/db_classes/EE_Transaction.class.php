@@ -8,8 +8,13 @@
  * @subpackage 	includes/classes/EE_Transaction.class.php
  * @author      Brent Christensen
  */
-class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
+class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
+	/**
+	 * The length of time that a lock is applied before being considered expired.
+	 * It is not long because a transaction should only be locked for the duration of the request that locked it
+	 */
+	const LOCK_EXPIRATION = 2 * MINUTE_IN_SECONDS;
 
 	/**
 	 * @param array  $props_n_values          incoming values
@@ -22,9 +27,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
-		return $has_object
+		$transaction = $has_object
 			? $has_object
 			: new self( $props_n_values, false, $timezone, $date_formats );
+		$transaction->_remove_expired_lock();
+		return $transaction;
 	}
 
 
@@ -33,62 +40,77 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	 * @param array  $props_n_values  incoming values from the database
 	 * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
 	 *                                the website will be used.
-	 * @return EE_Attendee
+	 * @return EE_Transaction
 	 * @throws \EE_Error
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
-		return new self( $props_n_values, TRUE, $timezone );
+		$transaction = new self( $props_n_values, TRUE, $timezone );
+		$transaction->_remove_expired_lock();
+		return $transaction;
 	}
 
 
 
 	/**
-	 * 	lock
+	 * lock
+	 * sets a meta field indicating that this TXN is locked and should not be updated in the db
 	 *
-	 * 	sets a wp_option indicating that this TXN is locked
-	 * and should not be updated in the db
-	 *
-	 * @access 	public
-	 * @return 	void
+	 * @access public
+	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function lock() {
-		$locked_transactions = get_option( 'ee_locked_transactions', array() );
-		$locked_transactions[ $this->ID() ] = true;
-		update_option( 'ee_locked_transactions', $locked_transactions );
+		$this->add_extra_meta( 'TXN_locked', time() );
 	}
 
 
 
 	/**
-	 * 	unlock
+	 * unlock
+	 * removes transaction lock applied in EE_Transaction::lock()
 	 *
-	 * 	removes transaction lock applied in lock_transaction()
-	 *
-	 * @access 	public
-	 * @return 	void
+	 * @access    public
+	 * @return    void
+	 * @throws \EE_Error
 	 */
 	public function unlock() {
-		$locked_transactions = get_option( 'ee_locked_transactions', array() );
-		unset( $locked_transactions[ $this->ID() ] );
-		update_option( 'ee_locked_transactions', $locked_transactions );
+		$this->delete_extra_meta( 'TXN_locked' );
 	}
+
+
 
 	/**
 	 * is_locked
-	 *
 	 * Decides whether or not now is the right time to update the transaction.
-	 * This is useful because we don't always if it is safe to update the transaction
+	 * This is useful because we don't always know if it is safe to update the transaction
 	 * and its related data. why?
 	 * because it's possible that the transaction is being used in another
 	 * request and could overwrite anything we save.
 	 * So we want to only update the txn once we know that won't happen.
 	 *
-	 * @access 	public
-	 * @return boolean
+	 * @access public
+	 * @return int
+	 * @throws \EE_Error
 	 */
 	public function is_locked() {
-		$locked_transactions = get_option( 'ee_locked_transactions', array() );
-		return isset( $locked_transactions[ $this->ID() ] ) ? true : false;
+		return $this->get_extra_meta( 'TXN_locked', false, 0 );
+	}
+
+
+
+	/**
+	 * remove_expired_lock
+	 * If the lock on this transaction is expired, then we want to remove it so that the transaction can be updated
+	 *
+	 * @access public
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	protected function _remove_expired_lock() {
+		$locked = $this->is_locked();
+		if ( time() - EE_Transaction::LOCK_EXPIRATION > $locked ) {
+			$this->unlock();
+		}
 	}
 
 
