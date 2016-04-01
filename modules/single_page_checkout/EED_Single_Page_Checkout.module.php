@@ -380,72 +380,74 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( EED_Single_Page_Checkout::$_initialized ) {
 			return;
 		}
-		// setup the EE_Checkout object
-		$this->checkout = $this->_initialize_checkout();
-		// filter checkout
-		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
-		// get the $_GET
-		$this->_get_request_vars();
-		// filter continue_reg
-		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
-		// load the reg steps array
-		if ( ! $this->_load_and_instantiate_reg_steps() ) {
-			EED_Single_Page_Checkout::$_initialized = true;
-			return;
-		}
-		// set the current step
-		$this->checkout->set_current_step( $this->checkout->step );
-		// and the next step
-		$this->checkout->set_next_step();
-		// was there already a valid transaction in the checkout from the session ?
-		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-			// get transaction from db or session
-			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin()
-				? $this->_get_transaction_and_cart_for_previous_visit()
-				: $this->_get_cart_for_current_session_and_setup_new_transaction();
-			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-				EE_Error::add_error(
-					__( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ),
-					__FILE__, __FUNCTION__, __LINE__
-				);
-				// add some style and make it dance
-				$this->checkout->transaction = EE_Transaction::new_instance();
-				$this->add_styles_and_scripts();
+		try {
+			// setup the EE_Checkout object
+			$this->checkout = $this->_initialize_checkout();
+			// filter checkout
+			$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___initialize__checkout', $this->checkout );
+			// get the $_GET
+			$this->_get_request_vars();
+			// filter continue_reg
+			$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE, $this->checkout );
+			// load the reg steps array
+			if ( ! $this->_load_and_instantiate_reg_steps() ) {
 				EED_Single_Page_Checkout::$_initialized = true;
 				return;
 			}
-			// and the registrations for the transaction
-			$this->_get_registrations( $this->checkout->transaction );
+			// set the current step
+			$this->checkout->set_current_step( $this->checkout->step );
+			// and the next step
+			$this->checkout->set_next_step();
+			// was there already a valid transaction in the checkout from the session ?
+			if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+				// get transaction from db or session
+				$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin()
+					? $this->_get_transaction_and_cart_for_previous_visit()
+					: $this->_get_cart_for_current_session_and_setup_new_transaction();
+				if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+					EE_Error::add_error(
+						__( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					// add some style and make it dance
+					$this->checkout->transaction = EE_Transaction::new_instance();
+					$this->add_styles_and_scripts();
+					EED_Single_Page_Checkout::$_initialized = true;
+					return;
+				}
+				// and the registrations for the transaction
+				$this->_get_registrations( $this->checkout->transaction );
+			}
+			// verify that everything has been setup correctly
+			if ( ! $this->_final_verifications() ) {
+				EED_Single_Page_Checkout::$_initialized = true;
+				return;
+			}
+			// lock the transaction
+			$this->checkout->transaction->lock();
+			// make sure all of our cached objects are added to their respective model entity mappers
+			$this->checkout->refresh_all_entities();
+			// set amount owing
+			$this->checkout->amount_owing = $this->checkout->transaction->remaining();
+			// initialize each reg step, which gives them the chance to potentially alter the process
+			$this->_initialize_reg_steps();
+			// DEBUG LOG
+			//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
+			// get reg form
+			$this->_check_form_submission();
+			// checkout the action!!!
+			$this->_process_form_action();
+			// add some style and make it dance
+			$this->add_styles_and_scripts();
+			// kk... SPCO has successfully run
+			EED_Single_Page_Checkout::$_initialized = TRUE;
+			// set no cache headers and constants
+			EE_System::do_not_cache();
+			// add anchor
+			add_action( 'loop_start', array( $this, 'set_checkout_anchor' ), 1 );
+		} catch ( Exception $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		// verify that everything has been setup correctly
-		if ( ! $this->_final_verifications() ) {
-			EED_Single_Page_Checkout::$_initialized = true;
-			return;
-		}
-		// lock the transaction
-		$this->checkout->transaction->lock();
-		// make sure all of our cached objects are added to their respective model entity mappers
-		$this->checkout->refresh_all_entities();
-		// set amount owing
-		$this->checkout->amount_owing = $this->checkout->transaction->remaining();
-		// initialize each reg step, which gives them the chance to potentially alter the process
-		$this->_initialize_reg_steps();
-		// DEBUG LOG
-		//$this->checkout->log( __CLASS__, __FUNCTION__, __LINE__ );
-		// get reg form
-		$this->_check_form_submission();
-		// checkout the action!!!
-		$this->_process_form_action();
-		// add some style and make it dance
-		$this->add_styles_and_scripts();
-		// kk... SPCO has successfully run
-		EED_Single_Page_Checkout::$_initialized = TRUE;
-		// set no cache headers and constants
-		EE_System::do_not_cache();
-		// add anchor
-		add_action( 'loop_start', array( $this, 'set_checkout_anchor' ), 1 );
-		// remove transaction lock
-		add_action( 'shutdown', array( $this, 'unlock_transaction' ), 1 );
 	}
 
 
@@ -513,7 +515,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->process_form_submission = $this->checkout->action !== 'display_spco_reg_step'
 			? $this->checkout->process_form_submission
 			: FALSE; 		// TRUE 	FALSE
-		//$this->_display_request_vars();
+		// $this->_display_request_vars();
 	}
 
 
@@ -1190,10 +1192,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	display the Registration Single Page Checkout Form
+	 *    display the Registration Single Page Checkout Form
 	 *
-	 * @access 	private
-	 * @return 	void
+	 * @access    private
+	 * @return    void
+	 * @throws \EE_Error
 	 */
 	private function _display_spco_reg_form() {
 		// if registering via the admin, just display the reg form for the current step
@@ -1304,12 +1307,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
-	 * 	unlock_transaction
+	 *    unlock_transaction
 	 *
-	 * @access 	public
-	 * @return 	void
+	 * @access    public
+	 * @return    void
+	 * @throws \EE_Error
 	 */
 	public function unlock_transaction() {
 		$this->checkout->transaction->unlock();
@@ -1341,12 +1344,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * @access public
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function go_to_next_step() {
 		if ( EE_Registry::instance()->REQ->ajax ) {
 			// capture contents of output buffer we started earlier in the request, and insert into JSON response
 			$this->checkout->json_response->set_unexpected_errors( ob_get_clean() );
 		}
+		$this->unlock_transaction();
 		// just return for these conditions
 		if (
 			$this->checkout->admin_request
@@ -1392,7 +1397,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'FHEE__EE_Single_Page_Checkout__JSON_response',
 				$this->checkout->json_response
 			);
-			$this->unlock_transaction();
 			echo $json_response;
 			exit();
 		}
@@ -1411,7 +1415,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->checkout->redirect && ! empty( $this->checkout->redirect_url ) ) {
 			// store notices in a transient
 			EE_Error::get_notices( false, true, true );
-			$this->unlock_transaction();
 			// DEBUG LOG
 			//$this->checkout->log(
 			//	__CLASS__, __FUNCTION__, __LINE__,
