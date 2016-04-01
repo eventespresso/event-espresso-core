@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * Class EEH_Debug_Tools
  *
@@ -15,7 +15,7 @@ class EEH_Debug_Tools{
 	 *	@var 	$_instance
 	 * 	@access 	private
 	 */
-	private static $_instance = NULL;
+	private static $_instance;
 
 	/**
 	 * array containing the start time for the timers
@@ -65,9 +65,9 @@ class EEH_Debug_Tools{
 			// plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
 			require_once( EE_PLUGIN_DIR_PATH . 'tests' . DS . 'kint' . DS . 'Kint.class.php' );
 		}
-		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
+		// if ( ! defined('DOING_AJAX') || $_REQUEST['noheader'] !== 'true' || ! isset( $_REQUEST['noheader'], $_REQUEST['TB_iframe'] ) ) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
-		}
+		// }
 		$plugin = basename( EE_PLUGIN_DIR_PATH );
 		add_action( "activate_{$plugin}", array( 'EEH_Debug_Tools', 'ee_plugin_activation_errors' ));
 		add_action( 'activated_plugin', array( 'EEH_Debug_Tools', 'ee_plugin_activation_errors' ));
@@ -95,7 +95,14 @@ class EEH_Debug_Tools{
 	 * 	@return void
 	 */
 	public function espresso_session_footer_dump() {
-		if ( class_exists('Kint') && function_exists( 'wp_get_current_user' ) && current_user_can('update_core') && ( defined('WP_DEBUG') && WP_DEBUG ) &&  ! defined('DOING_AJAX') && class_exists( 'EE_Registry' )) {
+		if (
+			( defined( 'WP_DEBUG' ) && WP_DEBUG )
+			&& ! defined( 'DOING_AJAX' )
+			&& class_exists( 'Kint' )
+			&& function_exists( 'wp_get_current_user' )
+			&& current_user_can( 'update_core' )
+			&& class_exists( 'EE_Registry' )
+		) {
 			Kint::dump(  EE_Registry::instance()->SSN->id() );
 			Kint::dump( EE_Registry::instance()->SSN );
 			//			Kint::dump( EE_Registry::instance()->SSN->get_session_data('cart')->get_tickets() );
@@ -111,10 +118,10 @@ class EEH_Debug_Tools{
 	 *    to list all functions for a specific hook, add ee_list_hooks={hook-name} to URL
 	 *    http://wp.smashingmagazine.com/2009/08/18/10-useful-wordpress-hook-hacks/
 	 *
-	 * @param bool $tag
+	 * @param string $tag
 	 * @return void
 	 */
-	public function espresso_list_hooked_functions( $tag=FALSE ){
+	public function espresso_list_hooked_functions( $tag='' ){
 		global $wp_filter;
 		echo '<br/><br/><br/><h3>Hooked Functions</h3>';
 		if ( $tag ) {
@@ -129,8 +136,8 @@ class EEH_Debug_Tools{
 			$hook=$wp_filter;
 			ksort( $hook );
 		}
-		foreach( $hook as $tag => $priorities ) {
-			echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag</strong><br />";
+		foreach( $hook as $tag_name => $priorities ) {
+			echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag_name</strong><br />";
 			ksort( $priorities );
 			foreach( $priorities as $priority => $function ){
 				echo $priority;
@@ -139,7 +146,6 @@ class EEH_Debug_Tools{
 				}
 			}
 		}
-		return;
 	}
 
 
@@ -163,6 +169,15 @@ class EEH_Debug_Tools{
 			}
 		}
 		return $filters;
+	}
+
+
+
+	/**
+	 * reset_times
+	 */
+	public function reset_times(){
+		$this->_times = array();
 	}
 
 
@@ -238,7 +253,7 @@ class EEH_Debug_Tools{
 	 */
 	public function convert( $size ) {
 		$unit=array('b','kb','mb','gb','tb','pb');
-		return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[ absint( $i ) ];
+		return @round( $size / pow( 1024, $i = floor( log( $size, 1024 ) ) ), 2 ) . ' ' . $unit[ absint( $i ) ];
 	}
 
 
@@ -301,7 +316,7 @@ class EEH_Debug_Tools{
 	 */
 	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
-		$version = is_null( $version ) ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
+		$version = $version === null ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
 		$error_message = sprintf( esc_html__('%1$s was called %2$sincorrectly%3$s. %4$s %5$s','event_espresso' ), $function, '<strong>', '</strong>', $message, $version );
 
 		//don't trigger error if doing ajax, instead we'll add a transient EE_Error notice that in theory should show on the next request.
@@ -388,33 +403,27 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 *    @ print_r an array
-	 *    @ access public
-	 *    @ return void
-	 *
-	 * @param mixed $var
-	 * @param bool $var_name
+	 * @param mixed  $var
+	 * @param string $var_name
 	 * @param string $file
-	 * @param int $line
-	 * @param int $header
-	 * @param bool $die
+	 * @param int    $line
+	 * @param int    $header
+	 * @param bool   $die
 	 */
-	public static function printv( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+	public static function printv( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
 		$var_name = ! $var_name ? 'string' : $var_name;
 		$heading_tag = 'h';
 		$heading_tag .= is_int( $header ) ? $header : 5;
 		$var_name = ucwords( str_replace( '$', '', $var_name ) );
 		$is_method = method_exists( $var_name, $var );
 		$var_name = ucwords( str_replace( '_', ' ', $var_name ) );
-		ob_start();
-		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
-		echo $is_method
+		$result = '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
+		$result .= $is_method
 			? '<span style="color:#999">::</span><span style="color:#E76700">' . $var . '()</span><br />'
 			: '<span style="color:#999"> : </span><span style="color:#E76700">' . $var . '</span><br />';
-		echo '<span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
-		echo '<br />line no: ' . $line . '</span>';
-		echo '</' . $heading_tag . '>';
-		$result = ob_get_clean();
+		$result .= '<span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
+		$result .= '<br />line no: ' . $line . '</span>';
+		$result .= '</' . $heading_tag . '>';
 		if ( $die ) {
 			die( $result );
 		} else {
@@ -424,18 +433,15 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 *    @ print_r an array
-	 *    @ access public
-	 *    @ return void
-	 *
 	 * @param mixed $var
-	 * @param bool $var_name
+	 * @param string $var_name
 	 * @param string $file
 	 * @param int $line
 	 * @param int $header
 	 * @param bool $die
 	 */
-	public static function printr( $var, $var_name = false, $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+	public static function printr( $var, $var_name = '', $file = __FILE__, $line = __LINE__, $header = 5, $die = false ) {
+		// return;
 		$file = str_replace( rtrim( ABSPATH, '\\/' ), '', $file );
 		//$print_r = false;
 		if ( is_string( $var ) ) {
@@ -455,14 +461,12 @@ class EEH_Debug_Tools{
 		$heading_tag = 'h';
 		$heading_tag .= is_int( $header ) ? $header : 5;
 		$var_name = ucwords( str_replace( array( '$', '_' ), array( '', ' ' ), $var_name ) );
-		ob_start();
-		echo '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
-		echo '<span style="color:#999;"> : </span><span style="color:#E76700;">';
-		echo '<pre style="color:#999; padding:1em; background: #fff">';
-		var_dump( $var );
-		echo '</pre></span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
-		echo '<br />line no: ' . $line . '</span></' . $heading_tag . '>';
-		$result = ob_get_clean();
+		$result = '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0;"><b>' . $var_name . '</b>';
+		$result .= '<span style="color:#999;"> : </span><span style="color:#E76700;">';
+		$result .= '<pre style="color:#999; padding:1em; background: #fff">';
+		$result .= var_export( $var, true );
+		$result .= '</pre></span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;">' . $file;
+		$result .= '<br />line no: ' . $line . '</span></' . $heading_tag . '>';
 		if ( $die ) {
 			die( $result );
 		} else {
