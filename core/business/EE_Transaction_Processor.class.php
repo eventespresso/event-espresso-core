@@ -396,22 +396,25 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * 	toggle_failed_transaction_status
+	 *    toggle_failed_transaction_status
 	 * upgrades a TXNs status from failed to abandoned,
 	 * meaning that contact information has been captured for at least one registrant
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * 	@return 	boolean
+	 * @return    boolean
+	 * @throws \EE_Error
 	 */
 	public function toggle_failed_transaction_status( EE_Transaction $transaction ) {
+		$existing_txn_status = $transaction->status_ID();
 		// set incoming TXN_Status
-		$this->set_old_txn_status( $transaction->status_ID() );
+		$this->set_old_txn_status( $existing_txn_status );
 		// if TXN status is still set as "failed"...
-		if ( $transaction->status_ID() === EEM_Transaction::failed_status_code ) {
+		if ( $existing_txn_status === EEM_Transaction::failed_status_code ) {
 			// set incoming TXN_Status
 			$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
 			$transaction->set_status( EEM_Transaction::abandoned_status_code );
+			$transaction->save();
 			return TRUE;
 		}
 		return FALSE;
