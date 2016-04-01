@@ -605,7 +605,8 @@ abstract class EEM_Base extends EE_Base{
 		 foreach ( $stati as $status ) {
 			 $status_array[ $status->ID() ] = $status->get( 'STS_code' );
 		 }
-		 return $translated ? EEM_Status::instance()->localized_status( $status_array, false, 'sentence' )
+		 return $translated
+			 ? EEM_Status::instance()->localized_status( $status_array, false, 'sentence' )
 			 : $status_array;
 	 }
 
@@ -613,16 +614,13 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
-
 	 *
-*@param array $query_params {
-
-	 *	@var array $0 (where) array {
+	 * @param array $query_params {
+     *	@var array $0 (where) array {
 	 *		eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
 			* becomes
 	 *		SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
-
-	 *		To add WHERE conditions based on related models (and even models-related-to-related-models) prepend the model's name
+     *		To add WHERE conditions based on related models (and even models-related-to-related-models) prepend the model's name
 	 *		onto the field name. Eg, EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12)));
 	 *		becomes
 	 *		SQL >> "SELECT * FROM wp_posts AS Event_CPT
@@ -640,18 +638,18 @@ abstract class EEM_Base extends EE_Base{
 	 *		eg: array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23)))
 	 *		becomes
 	 *		SQL >> "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
-	 * 		Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), BETWEEN (followed by an array with exactly 2 date strings), IS NULL, and IS NOT NULL
-
-	 *		Values can be a string, int, or float. They can also be arrays IFF the operator is IN.
-	 *		Also, values can actually be field names. To indicate the value is a field, simply provide a third array item (true) to the operator-value array like so:
+	 *        Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array),
+	 *          NOT IN (dido), BETWEEN (followed by an array with exactly 2 date strings), IS NULL, and IS NOT NULL
+     *		Values can be a string, int, or float. They can also be arrays IFF the operator is IN.
+	 *        Also, values can actually be field names. To indicate the value is a field,
+	 *          simply provide a third array item (true) to the operator-value array like so:
 	 *		eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) )
 	 *		becomes
 	 *		SQL >> "...WHERE DTT_reg_limit > DTT_sold"
 	 *		Note: you can also use related model field names like you would any other field name.
 	 *		eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE)
 	 *		could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets)
-
-	 *		Also, by default all the where conditions are AND'd together.
+     *		Also, by default all the where conditions are AND'd together.
 	 *		To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together
 	 *		eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912))
 	 *		becomes
@@ -666,20 +664,17 @@ abstract class EEM_Base extends EE_Base{
 	 *		eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN')
 	 *		becomes
 	 *		SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND STS_ID='TIN'"
-
-	 *		They can be nested indefinitely.
+     *		They can be nested indefinitely.
 	 *		eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN'))))
 	 *		becomes
 	 *		SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestamp = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
-
-	 *		GOTCHA:
+     *		GOTCHA:
 	 *		because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field.
 	 *		eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
 	 *		as PHP enforces that the array keys must be unique, thus removing the first two array entries with key 'PAY_timestamp'.
 	 *		becomes
 	 *		SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestamp conditions).
-
-	 *		To overcome this, you can add a '*' character to the end of the field's name, followed by anything.
+     *		To overcome this, you can add a '*' character to the end of the field's name, followed by anything.
 	 *		These will be removed when generating the SQL string, but allow for the array keys to be unique.
 	 *		eg: you could rewrite the previous query as:
 	 *		array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*1st'=>array('<',$end_date),'PAY_timestamp*2nd'=>array('!=',$special_date))
@@ -700,31 +695,25 @@ abstract class EEM_Base extends EE_Base{
 	 *		descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
 	 *		Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
 	 *		or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
-
-	 *	@var mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
-
-	 *	@var array $having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
-
-	 *	@var array $force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
+     *	@var mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
+     *	@var array $having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
+     *	@var array $force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
 	 *		array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
 	 *		You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model
 	 *		(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *		to avoid future queries
-
-	 *	@var string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+     *	@var string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
 	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
 	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
 	 *	@var string $caps controls what capability requirements to apply to the query; ie, should we just NOT
-	 *		apply cany capabilities/permissions/restrictions and return everything? Or should we only show the
+	 *		apply any capabilities/permissions/restrictions and return everything? Or should we only show the
 	 *		current user items they should be able to view on the frontend, backend, edit, or delete?
 	 *		can be set to 'none' (default), 'read_frontend', 'read_backend', 'edit' or 'delete'
 	 * }
 	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again. Array keys are object IDs (if there is a primary key on the model. if not, numerically indexed)
 	 * Some full examples:
-
 	 * 		get 10 transactions which have Scottish attendees:
-
 	 * 		EEM_Transaction::instance()->get_all( array(
 	 *			array(
 	 *				'OR'=>array(
@@ -735,9 +724,7 @@ abstract class EEM_Base extends EE_Base{
 	 *			'limit'=>10,
 	 *			'group_by'=>'TXN_ID'
 	 * 		));
-
 	 * 		get all the answers to the question titled "shirt size" for event with id 12, ordered by their answer
-
 	 * 		EEM_Answer::instance()->get_all(array(
 	 *			array(
 	 *				'Question.QST_display_text'=>'shirt size',
@@ -840,12 +827,13 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws \EE_Error
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		$this->_custom_selections = array();
 		//remember the custom selections, if any
 		if ( is_array( $columns_to_select ) ) {
 			$this->_custom_selections = $columns_to_select;
 		} elseif ( is_string( $columns_to_select ) ) {
 			$this->_custom_selections = array( $this->_custom_selections );
+		} else {
+			$this->_custom_selections = array();
 		}
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
 		$select_expressions = $columns_to_select !== null
@@ -1734,8 +1722,9 @@ abstract class EEM_Base extends EE_Base{
 			foreach ( $objects_for_deletion as $delete_object ) {
 				//before we mark this object for deletion,
 				//make sure there's no related objects blocking its deletion (if we're checking)
-				if ( $allow_blocking
-				     && $this->delete_is_blocked_by_related_models(
+				if (
+					$allow_blocking
+				    && $this->delete_is_blocked_by_related_models(
 						$delete_object[ $primary_table->get_fully_qualified_pk_column() ]
 					)
 				) {
@@ -1750,20 +1739,17 @@ abstract class EEM_Base extends EE_Base{
 					foreach ( $other_tables as $ot ) {
 						//first check if we've got the foreign key column here.
 						if ( isset( $delete_object[ $ot->get_fully_qualified_fk_column() ] ) ) {
-							$deletes[ $ot->get_fully_qualified_pk_column(
-							) ][] = $delete_object[ $ot->get_fully_qualified_fk_column() ];
+							$deletes[ $ot->get_fully_qualified_pk_column() ][] = $delete_object[ $ot->get_fully_qualified_fk_column() ];
 						}
 						// wait! it's entirely possible that we'll have a the primary key
 						// for this table in here, if it's a foreign key for one of the other secondary tables
 						if ( isset( $delete_object[ $ot->get_fully_qualified_pk_column() ] ) ) {
-							$deletes[ $ot->get_fully_qualified_pk_column(
-							) ][] = $delete_object[ $ot->get_fully_qualified_pk_column() ];
+							$deletes[ $ot->get_fully_qualified_pk_column() ][] = $delete_object[ $ot->get_fully_qualified_pk_column() ];
 						}
 						// finally, it is possible that the fk for this table is found
 						// in the fully qualified pk column for the fk table, so let's see if that's there!
 						if ( isset( $delete_object[ $ot->get_fully_qualified_pk_on_fk_table() ] ) ) {
-							$deletes[ $ot->get_fully_qualified_pk_column(
-							) ][] = $delete_object[ $ot->get_fully_qualified_pk_column() ];
+							$deletes[ $ot->get_fully_qualified_pk_column() ][] = $delete_object[ $ot->get_fully_qualified_pk_column() ];
 						}
 					}
 				}
@@ -2936,7 +2922,6 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			$universal_query_params = array();
 		}
-
 		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
 			foreach($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name){
 				$related_model = $this->get_related_model_obj($model_name);
@@ -3036,9 +3021,9 @@ abstract class EEM_Base extends EE_Base{
 		$selects = $this->_get_columns_to_select_for_this_model();
 		foreach($model_query_info->get_model_names_included() as $model_relation_chain => $name_of_other_model_included){
 			$other_model_included = $this->get_related_model_obj($name_of_other_model_included);
-			$overrides = $other_model_included->_get_columns_to_select_for_this_model( $model_relation_chain );
-			foreach ( $overrides as $key => $value ) {
-				$selects[ $key ] = $value;
+			$other_model_selects = $other_model_included->_get_columns_to_select_for_this_model( $model_relation_chain );
+			foreach ( $other_model_selects as $key => $value ) {
+				$selects[] = $value;
 			}
 		}
 		return implode(", ",$selects);
@@ -3961,7 +3946,7 @@ abstract class EEM_Base extends EE_Base{
 					continue;
 				}
 			}
-			$classInstance=$this->instantiate_class_from_array_or_object($row);
+			$classInstance = $this->instantiate_class_from_array_or_object($row);
 			if( ! $classInstance ) {
 				throw new EE_Error(
 					sprintf(
