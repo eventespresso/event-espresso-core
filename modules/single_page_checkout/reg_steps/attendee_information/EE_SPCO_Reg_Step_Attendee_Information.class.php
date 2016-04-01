@@ -28,6 +28,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 */
 	private $_required_questions = array();
 
+	/**
+	 * @type array $_registration_answers
+	 */
+	private $_registration_answers = array();
+
 
 
 	/**
@@ -728,12 +733,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @throws \EE_Error
 	 */
 	public function process_reg_step() {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
-		//EEH_Debug_Tools::printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
+		// EEH_Debug_Tools::printr( $_REQUEST, '$_REQUEST', __FILE__, __LINE__ );
+		// EEH_Debug_Tools::printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error(
@@ -744,7 +748,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			);
 			return false;
 		}
-		//EEH_Debug_Tools::printr( $this->checkout->transaction, '$this->checkout->transaction', __FILE__, __LINE__ );
 		if ( ! $this->checkout->transaction instanceof EE_Transaction || ! $this->checkout->continue_reg ) {
 			EE_Error::add_error(
 				__( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ),
@@ -815,7 +818,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
 		return true;
-
 	}
 
 
@@ -872,7 +874,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					if ( ! $this->checkout->revisit ) {
 						$registration->save();
 					}
-
 					/**
 					 * This allows plugins to trigger a fail on processing of a
 					 * registration for any conditions they may have for it to pass.
@@ -895,6 +896,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					// Houston, we have a registration!
 					$att_nmbr++;
 					$this->_attendee_data[ $reg_url_link ] = array();
+					// grab any existing related answer objects
+					$this->_registration_answers = $registration->answers();
 					// unset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] );
 					if ( isset( $valid_data[ $reg_url_link ] ) ) {
 						// do we need to copy basic info from primary attendee ?
@@ -907,7 +910,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 							'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item',
 							$valid_data[ $reg_url_link ]
 						);
-						//EEH_Debug_Tools::printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]', __FILE__, __LINE__ );
+						// EEH_Debug_Tools::printr( $valid_data[ $reg_url_link ], '$valid_data[ $reg_url_link ]', __FILE__, __LINE__ );
 						if ( isset( $valid_data['primary_attendee'] )) {
 							$primary_registrant['line_item_id'] =  ! empty( $valid_data['primary_attendee'] )
 								? $valid_data['primary_attendee']
@@ -918,6 +921,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						foreach ( $valid_data[ $reg_url_link ] as $form_section => $form_inputs ) {
 							if ( ! in_array( $form_section, $non_input_form_sections )) {
 								foreach ( $form_inputs as $form_input => $input_value ) {
+									// \EEH_Debug_Tools::printr( $input_value, $form_input, __FILE__, __LINE__ );
 									// check for critical inputs
 									if (
 										! $this->_verify_critical_attendee_details_are_set_and_validate_email(
@@ -942,11 +946,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 										$input_value = $primary_registrant[ $form_input ];
 									}
 									// now attempt to save the input data
-									if ( ! $this->_save_registration_form_input(
-										$registration,
-										$form_input,
-										$input_value
-									)
+									if (
+										! $this->_save_registration_form_input(
+											$registration,
+											$form_input,
+											$input_value
+										)
 									) {
 										EE_Error::add_error(
 											sprintf(
@@ -1005,9 +1010,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 							$this->checkout->primary_attendee_obj = $attendee;
 						}
 					}
-					//EEH_Debug_Tools::printr( $attendee, '$attendee', __FILE__, __LINE__ );
+					// EEH_Debug_Tools::printr( $attendee, '$attendee', __FILE__, __LINE__ );
 					// add relation to registration, set attendee ID, and cache attendee
 					$this->_associate_attendee_with_registration( $registration, $attendee );
+					// \EEH_Debug_Tools::printr( $registration, '$registration', __FILE__, __LINE__ );
 					if ( ! $registration->attendee() instanceof EE_Attendee ) {
 						EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 						return false;
@@ -1024,7 +1030,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$registration->save();
 					// add relation between TXN and registration
 					$this->_associate_registration_with_transaction( $registration );
-
 				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
 
 			}  else {
@@ -1054,8 +1059,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$form_input = '',
 		$input_value = ''
 	) {
-		//echo '<h3 style="color:#999;line-height:.9em;"><span style="color:#2EA2CC">' . __CLASS__ . '</span>::<span style="color:#E76700">' . __FUNCTION__ . '()</span><br/><span style="font-size:9px;font-weight:normal;">' . __FILE__ . '</span>    <b style="font-size:10px;">  ' . __LINE__ . ' </b></h3>';
-		//EEH_Debug_Tools::printr( $form_input, '$form_input', __FILE__, __LINE__ );
+		// \EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
+		// \EEH_Debug_Tools::printr( $form_input, '$form_input', __FILE__, __LINE__ );
+		// \EEH_Debug_Tools::printr( $input_value, '$input_value', __FILE__, __LINE__ );
 		// allow for plugins to hook in and do their own processing of the form input.
 		// For plugins to bypass normal processing here, they just need to return a boolean value.
 		if ( apply_filters(
@@ -1068,14 +1074,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		) ) {
 			return true;
 		}
-
-		// grab related answer objects
-		$answers = $registration->answers();
 		// $answer_cache_id is the key used to find the EE_Answer we want
 		$answer_cache_id = $this->checkout->reg_url_link
 			? $form_input
 			: $form_input . '-' . $registration->reg_url_link();
-		$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer
+		$answer_is_obj = isset( $this->_registration_answers[ $answer_cache_id ] )
+		                 && $this->_registration_answers[ $answer_cache_id ] instanceof EE_Answer
 			? true
 			: false;
 		//rename form_inputs if they are EE_Attendee properties
@@ -1099,26 +1103,25 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$attendee_property = EEM_Attendee::instance()->has_field( $ATT_input ) ? true : false;
 				$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 		}
-		//EEH_Debug_Tools::printr( $input_value, '$input_value', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $answer_cache_id, '$answer_cache_id', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $attendee_property, '$attendee_property', __FILE__, __LINE__ );
-		//EEH_Debug_Tools::printr( $answer_is_obj, '$answer_is_obj', __FILE__, __LINE__ );
+		// EEH_Debug_Tools::printr( $answer_cache_id, '$answer_cache_id', __FILE__, __LINE__ );
+		// EEH_Debug_Tools::printr( $attendee_property, '$attendee_property', __FILE__, __LINE__ );
+		// EEH_Debug_Tools::printr( $answer_is_obj, '$answer_is_obj', __FILE__, __LINE__ );
 		// if this form input has a corresponding attendee property
 		if ( $attendee_property ) {
 			$this->_attendee_data[ $registration->reg_url_link() ][ $form_input ] = $input_value;
 			if ( $answer_is_obj ) {
 				// and delete the corresponding answer since we won't be storing this data in that object
-				$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
-				$answers[ $answer_cache_id ]->delete_permanently();
+				$registration->_remove_relation_to( $this->_registration_answers[ $answer_cache_id ], 'Answer' );
+				$this->_registration_answers[ $answer_cache_id ]->delete_permanently();
 			}
 			return true;
 		} elseif ( $answer_is_obj ) {
 			// save this data to the answer object
-			$answers[ $answer_cache_id ]->set_value( $input_value );
-			$result = $answers[ $answer_cache_id ]->save();
+			$this->_registration_answers[ $answer_cache_id ]->set_value( $input_value );
+			$result = $this->_registration_answers[ $answer_cache_id ]->save();
 			return $result !== false ? true : false;
 		} else {
-			foreach ( $answers as $answer ) {
+			foreach ( $this->_registration_answers as $answer ) {
 				if ( $answer instanceof EE_Answer && $answer->question_ID() === $answer_cache_id ) {
 					$answer->set_value( $input_value );
 					$result = $answer->save();
