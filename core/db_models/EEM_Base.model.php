@@ -827,14 +827,10 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws \EE_Error
 	 */
 	protected function  _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null){
-		//remember the custom selections, if any
-		if ( is_array( $columns_to_select ) ) {
-			$this->_custom_selections = $columns_to_select;
-		} elseif ( is_string( $columns_to_select ) ) {
-			$this->_custom_selections = array( $this->_custom_selections );
-		} else {
-			$this->_custom_selections = array();
-		}
+		// remember the custom selections, if any, and type cast as array
+		// (unless $columns_to_select is an object, then just set as an empty array)
+		// Note: (array) 'some string' === array( 'some string' )
+		$this->_custom_selections = ! is_object( $columns_to_select ) ? (array) $columns_to_select : array();
 		$model_query_info = $this->_create_model_query_info_carrier( $query_params );
 		$select_expressions = $columns_to_select !== null
 			? $this->_construct_select_from_input( $columns_to_select )
@@ -2730,115 +2726,184 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	public function _create_model_query_info_carrier($query_params){
-		if( ! is_array( $query_params ) ){
-			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf( __( '$query_params should be an array, you passed a variable of type %s', 'event_espresso' ), gettype( $query_params ) ), '4.6.0' );
+		if ( ! is_array( $query_params ) ) {
+			EE_Error::doing_it_wrong(
+				'EEM_Base::_create_model_query_info_carrier',
+				sprintf(
+					__(
+						'$query_params should be an array, you passed a variable of type %s',
+						'event_espresso'
+					),
+					gettype( $query_params )
+				),
+				'4.6.0'
+			);
 			$query_params = array();
 		}
 		$where_query_params = isset( $query_params[0] ) ? $query_params[0] : array();
 		//first check if we should alter the query to account for caps or not
 		//because the caps might require us to do extra joins
-		if( isset( $query_params[ 'caps' ] ) && $query_params[ 'caps' ] !== 'none' ) {
-			$query_params[0] = $where_query_params = array_replace_recursive( $where_query_params, $this->caps_where_conditions( $query_params[ 'caps' ] ) );
+		if ( isset( $query_params['caps'] ) && $query_params['caps'] !== 'none' ) {
+			$query_params[0] = $where_query_params = array_replace_recursive(
+				$where_query_params,
+				$this->caps_where_conditions(
+					$query_params['caps']
+				)
+			);
 		}
-		$query_object = $this->_extract_related_models_from_query($query_params);
-
+		$query_object = $this->_extract_related_models_from_query( $query_params );
 		//verify where_query_params has NO numeric indexes.... that's simply not how you use it!
-		foreach($where_query_params as $key => $value){
-			if(is_int($key)){
-				throw new EE_Error(sprintf(__("WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. All the query params provided were '%s' Please read documentation on EEM_Base::get_all.", "event_espresso"),$key, var_export( $value, true ), var_export( $query_params, true ), get_class($this)));
+		foreach ( $where_query_params as $key => $value ) {
+			if ( is_int( $key ) ) {
+				throw new EE_Error(
+					sprintf(
+						__(
+							"WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. All the query params provided were '%s' Please read documentation on EEM_Base::get_all.",
+							"event_espresso"
+						),
+						$key,
+						var_export( $value, true ),
+						var_export( $query_params, true ),
+						get_class( $this )
+					)
+				);
 			}
 		}
-		if( array_key_exists( 'default_where_conditions',$query_params) && ! empty( $query_params['default_where_conditions'] )){
+		if (
+			array_key_exists( 'default_where_conditions', $query_params )
+			&& ! empty( $query_params['default_where_conditions'] )
+		) {
 			$use_default_where_conditions = $query_params['default_where_conditions'];
-		}else{
+		} else {
 			$use_default_where_conditions = 'all';
 		}
-		$where_query_params = array_merge($this->_get_default_where_conditions_for_models_in_query($query_object,$use_default_where_conditions,$where_query_params), $where_query_params );
-		$query_object->set_where_sql( $this->_construct_where_clause($where_query_params));
-
-
-		//if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.  So we need to setup a subquery and use that for the main join.  Note for now this only works on the primary table for the model.  So for instance, you could set the limit array like this:
-		//array( 'on_join_limit' => array('Primary_Table_Alias', array(1,10) ) )
-		if ( array_key_exists('on_join_limit', $query_params ) && ! empty( $query_params['on_join_limit'] )) {
-			$query_object->set_main_model_join_sql( $this->_construct_limit_join_select( $query_params['on_join_limit'][0], $query_params['on_join_limit'][1] ) );
+		$where_query_params = array_merge(
+			$this->_get_default_where_conditions_for_models_in_query(
+				$query_object,
+				$use_default_where_conditions,
+				$where_query_params
+			),
+			$where_query_params
+		);
+		$query_object->set_where_sql( $this->_construct_where_clause( $where_query_params ) );
+		// if this is a "on_join_limit" then we are limiting on on a specific table in a multi_table join.
+		// So we need to setup a subquery and use that for the main join.
+		// Note for now this only works on the primary table for the model.
+		// So for instance, you could set the limit array like this:
+		// array( 'on_join_limit' => array('Primary_Table_Alias', array(1,10) ) )
+		if ( array_key_exists( 'on_join_limit', $query_params ) && ! empty( $query_params['on_join_limit'] ) ) {
+			$query_object->set_main_model_join_sql(
+				$this->_construct_limit_join_select(
+					$query_params['on_join_limit'][0],
+					$query_params['on_join_limit'][1]
+				)
+			);
 		}
-
-
 		//set limit
-		if(array_key_exists('limit',$query_params)){
-			if(is_array($query_params['limit'])){
-				if( ! isset( $query_params['limit'][0], $query_params['limit'][1] )){
-					$e = sprintf(__("Invalid DB query. You passed '%s' for the LIMIT, but only the following are valid: an integer, string representing an integer, a string like 'int,int', or an array like array(int,int)", "event_espresso"),  http_build_query($query_params['limit']));
-					throw new EE_Error($e."|".$e);
+		if ( array_key_exists( 'limit', $query_params ) ) {
+			if ( is_array( $query_params['limit'] ) ) {
+				if ( ! isset( $query_params['limit'][0], $query_params['limit'][1] ) ) {
+					$e = sprintf(
+						__(
+							"Invalid DB query. You passed '%s' for the LIMIT, but only the following are valid: an integer, string representing an integer, a string like 'int,int', or an array like array(int,int)",
+							"event_espresso"
+						),
+						http_build_query( $query_params['limit'] )
+					);
+					throw new EE_Error( $e . "|" . $e );
 				}
 				//they passed us an array for the limit. Assume it's like array(50,25), meaning offset by 50, and get 25
-				$query_object->set_limit_sql(" LIMIT ".$query_params['limit'][0].",".$query_params['limit'][1]);
-			}elseif( ! empty ( $query_params['limit'] )){
-				$query_object->set_limit_sql( " LIMIT ".$query_params['limit'] );
+				$query_object->set_limit_sql( " LIMIT " . $query_params['limit'][0] . "," . $query_params['limit'][1] );
+			} elseif ( ! empty ( $query_params['limit'] ) ) {
+				$query_object->set_limit_sql( " LIMIT " . $query_params['limit'] );
 			}
 		}
 		//set order by
-		if(array_key_exists('order_by',$query_params)){
-			if(is_array($query_params['order_by'])){
+		if ( array_key_exists( 'order_by', $query_params ) ) {
+			if ( is_array( $query_params['order_by'] ) ) {
 				//if they're using 'order_by' as an array, they can't use 'order' (because 'order_by' must
 				//specify whether to ascend or descend on each field. Eg 'order_by'=>array('EVT_ID'=>'ASC'). So
 				//including 'order' wouldn't make any sense if 'order_by' has already specified which way to order!
-				if(array_key_exists('order', $query_params)){
-					throw new EE_Error(sprintf(__("In querying %s, we are using query parameter 'order_by' as an array (keys:%s,values:%s), and so we can't use query parameter 'order' (value %s). You should just use the 'order_by' parameter ", "event_espresso"),
-							get_class($this),implode(", ",array_keys($query_params['order_by'])),implode(", ",$query_params['order_by']),$query_params['order']));
+				if ( array_key_exists( 'order', $query_params ) ) {
+					throw new EE_Error(
+						sprintf(
+							__(
+								"In querying %s, we are using query parameter 'order_by' as an array (keys:%s,values:%s), and so we can't use query parameter 'order' (value %s). You should just use the 'order_by' parameter ",
+								"event_espresso"
+							),
+							get_class( $this ),
+							implode( ", ", array_keys( $query_params['order_by'] ) ),
+							implode( ", ", $query_params['order_by'] ),
+							$query_params['order']
+						)
+					);
 				}
-				 $this->_extract_related_models_from_sub_params_array_keys($query_params['order_by'],$query_object,'order_by');
+				$this->_extract_related_models_from_sub_params_array_keys(
+					$query_params['order_by'],
+					$query_object,
+					'order_by'
+				);
 				//assume it's an array of fields to order by
 				$order_array = array();
-				foreach($query_params['order_by'] as $field_name_to_order_by => $order){
-					$order = $this->_extract_order($order);
-					$order_array[] = $this->_deduce_column_name_from_query_param($field_name_to_order_by).SP.$order;
+				foreach ( $query_params['order_by'] as $field_name_to_order_by => $order ) {
+					$order = $this->_extract_order( $order );
+					$order_array[] = $this->_deduce_column_name_from_query_param( $field_name_to_order_by ) . SP . $order;
 				}
-				$query_object->set_order_by_sql(" ORDER BY ".implode(",",$order_array));
-			}elseif( ! empty ( $query_params['order_by'] )){
-				$this->_extract_related_model_info_from_query_param($query_params['order_by'],$query_object,'order',$query_params['order_by']);
-				if(isset($query_params['order'])){
-					$order = $this->_extract_order($query_params['order']);
-				}else{
-					$order = 'DESC';
-				}
-				$query_object->set_order_by_sql(" ORDER BY ".$this->_deduce_column_name_from_query_param($query_params['order_by']).SP.$order);
+				$query_object->set_order_by_sql( " ORDER BY " . implode( ",", $order_array ) );
+			} elseif ( ! empty ( $query_params['order_by'] ) ) {
+				$this->_extract_related_model_info_from_query_param(
+					$query_params['order_by'],
+					$query_object,
+					'order',
+					$query_params['order_by']
+				);
+				$order = isset( $query_params['order'] )
+					? $this->_extract_order( $query_params['order'] )
+					: 'DESC';
+				$query_object->set_order_by_sql(
+					" ORDER BY " . $this->_deduce_column_name_from_query_param( $query_params['order_by'] ) . SP . $order
+				);
 			}
 		}
-
 		//if 'order_by' wasn't set, maybe they are just using 'order' on its own?
-		if( ! array_key_exists('order_by',$query_params) && array_key_exists('order',$query_params) && ! empty( $query_params['order'] )){
+		if ( ! array_key_exists( 'order_by', $query_params )
+		     && array_key_exists( 'order', $query_params )
+		     && ! empty( $query_params['order'] )
+		) {
 			$pk_field = $this->get_primary_key_field();
-			$order = $this->_extract_order($query_params['order']);
-			$query_object->set_order_by_sql(" ORDER BY ".$pk_field->get_qualified_column().SP.$order);
+			$order = $this->_extract_order( $query_params['order'] );
+			$query_object->set_order_by_sql( " ORDER BY " . $pk_field->get_qualified_column() . SP . $order );
 		}
-
 		//set group by
-		if(array_key_exists('group_by',$query_params)){
-			if(is_array($query_params['group_by'])){
+		if ( array_key_exists( 'group_by', $query_params ) ) {
+			if ( is_array( $query_params['group_by'] ) ) {
 				//it's an array, so assume we'll be grouping by a bunch of stuff
 				$group_by_array = array();
-				foreach($query_params['group_by'] as $field_name_to_group_by){
-					$group_by_array[] = $this->_deduce_column_name_from_query_param($field_name_to_group_by);
+				foreach ( $query_params['group_by'] as $field_name_to_group_by ) {
+					$group_by_array[] = $this->_deduce_column_name_from_query_param( $field_name_to_group_by );
 				}
-				$query_object->set_group_by_sql(" GROUP BY ".implode(", ",$group_by_array));
-			}elseif( ! empty ( $query_params['group_by'] )){
-				$query_object->set_group_by_sql(" GROUP BY ".$this->_deduce_column_name_from_query_param($query_params['group_by']));
+				$query_object->set_group_by_sql( " GROUP BY " . implode( ", ", $group_by_array ) );
+			} elseif ( ! empty ( $query_params['group_by'] ) ) {
+				$query_object->set_group_by_sql(
+					" GROUP BY " . $this->_deduce_column_name_from_query_param( $query_params['group_by'] )
+				);
 			}
 		}
 		//set having
-		if(array_key_exists('having',$query_params) && $query_params['having']){
-			$query_object->set_having_sql( $this->_construct_having_clause($query_params['having']));
+		if ( array_key_exists( 'having', $query_params ) && $query_params['having'] ) {
+			$query_object->set_having_sql( $this->_construct_having_clause( $query_params['having'] ) );
 		}
-
 		//now, just verify they didn't pass anything wack
-		foreach($query_params as $query_key => $query_value){
-			if( ! in_array($query_key,$this->_allowed_query_params,true)){
+		foreach ( $query_params as $query_key => $query_value ) {
+			if ( ! in_array( $query_key, $this->_allowed_query_params, true ) ) {
 				throw new EE_Error(
 					sprintf(
-						__("You passed %s as a query parameter to %s, which is illegal! The allowed query parameters are %s",'event_espresso'),
+						__(
+							"You passed %s as a query parameter to %s, which is illegal! The allowed query parameters are %s",
+							'event_espresso'
+						),
 						$query_key,
-						get_class($this),
+						get_class( $this ),
 //						print_r( $this->_allowed_query_params, TRUE )
 						implode( ',', $this->_allowed_query_params )
 					)
@@ -2846,8 +2911,8 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		$main_model_join_sql = $query_object->get_main_model_join_sql();
-		if ( empty( $main_model_join_sql ) ){
-			$query_object->set_main_model_join_sql($this->_construct_internal_join());
+		if ( empty( $main_model_join_sql ) ) {
+			$query_object->set_main_model_join_sql( $this->_construct_internal_join() );
 		}
 		return $query_object;
 	}
@@ -2915,12 +2980,11 @@ abstract class EEM_Base extends EE_Base{
 		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
 			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
 		}
-		if( in_array($use_default_where_conditions, array('all','this_model_only')) ){
+		$universal_query_params = array();
+		if( $use_default_where_conditions === 'all' || $use_default_where_conditions === 'this_model_only' ){
 			$universal_query_params = $this->_get_default_where_conditions();
-		}elseif( in_array( $use_default_where_conditions, array( 'minimum' ) ) ) {
+		} else if( $use_default_where_conditions === 'minimum' ) {
 			$universal_query_params = $this->_get_minimum_where_conditions();
-		}else{
-			$universal_query_params = array();
 		}
 		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
 			foreach($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name){
