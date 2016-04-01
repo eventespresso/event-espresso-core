@@ -781,7 +781,8 @@ abstract class EE_Base_Class{
 		//bugfix for https://events.codebasehq.com/projects/event-espresso/tickets/7143
 		//basically, if this model object was stored in the session, and these cached model objects
 		//already have IDs, let's make sure they're in their model's entity mapper
-		//otherwise we will have duplicates next time we call EE_Registry::instance()->load_model( $relationName )->get_one_by_ID( $result->ID() );
+		//otherwise we will have duplicates next time we call
+		// EE_Registry::instance()->load_model( $relationName )->get_one_by_ID( $result->ID() );
 		$model = EE_Registry::instance()->load_model( $relationName );
 		foreach( $objects as $model_object ){
 			if( $model instanceof EEM_Base && $model_object instanceof EE_Base_Class ){
@@ -790,7 +791,16 @@ abstract class EE_Base_Class{
 					$model->add_to_entity_map( $model_object );
 				}
 			}else{
-				throw new EE_Error( sprintf( __( 'Error retrieving related model objects. Either $1%s is not a model or $2%s is not a model object', 'event_espresso' ), $relationName, gettype( $model_object )));
+				throw new EE_Error(
+					sprintf(
+						__(
+							'Error retrieving related model objects. Either $1%s is not a model or $2%s is not a model object',
+							'event_espresso'
+						),
+						$relationName,
+						gettype( $model_object )
+					)
+				);
 			}
 		}
 		return $objects;
@@ -1936,7 +1946,8 @@ abstract class EE_Base_Class{
 	 *                             or might not be saved yet. Consider using EEM_Base::get_IDs() on these results if you want IDs
 	 */
 	public function get_many_related($relationName,$query_params = array()){
-		if($this->ID()){//this exists in the DB, so get the related things from either the cache or the DB
+		if($this->ID()){
+			//this exists in the DB, so get the related things from either the cache or the DB
 			//if there are query parameters, forget about caching the related model objects.
 			if( $query_params ){
 				$related_model_objects = $this->get_model()->get_all_related($this, $relationName, $query_params);
@@ -1954,7 +1965,8 @@ abstract class EE_Base_Class{
 					$related_model_objects = $cached_results;
 				}
 			}
-		}else{//this doesn't exist itn eh DB, so just get the related things from the cache
+		}else{
+			//this doesn't exist in the DB, so just get the related things from the cache
 			$related_model_objects = $this->get_all_from_cache($relationName);
 		}
 		return $related_model_objects;
@@ -2242,7 +2254,7 @@ abstract class EE_Base_Class{
 					array(
 						'EXM_key'  => $meta_key,
 						'OBJ_ID'   => $this->ID(),
-						'EXM_type' => self::_get_model_classname( get_class( $this ) )
+						'EXM_type' => $this->get_model()->get_this_model_name()
 					)
 				)
 			);
