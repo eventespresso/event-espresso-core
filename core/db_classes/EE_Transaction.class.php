@@ -53,7 +53,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * If a lock has already been set, then we will attempt to remove it in case it has expired.
 	 * If that also fails, then an exception is thrown.
 	 *
-*@access public
+	 * @access public
 	 * @return boolean
 	 * @throws \EE_Error
 	 */
@@ -100,12 +100,30 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * because it's possible that the transaction is being used in another
 	 * request and could overwrite anything we save.
 	 * So we want to only update the txn once we know that won't happen.
+	 * We also check that the lock isn't expired, and remove it if it is
 	 *
 	 * @access public
 	 * @return int
 	 * @throws \EE_Error
 	 */
 	public function is_locked() {
+		// _remove_expired_lock() returns 0 when lock is valid (ie: removed = false)
+		// and a positive number if the lock was removed (ie: number of locks deleted),
+		// so we use ! to return the opposite
+		return ! $this->_remove_expired_lock();
+	}
+
+
+
+	/**
+	 * get_lock
+	 * Gets the meta field indicating that this TXN is locked
+	 *
+	 * @access protected
+	 * @return int
+	 * @throws \EE_Error
+	 */
+	protected function get_lock() {
 		return (int)$this->get_extra_meta( 'lock', true, 0 );
 	}
 
@@ -114,13 +132,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * remove_expired_lock
 	 * If the lock on this transaction is expired, then we want to remove it so that the transaction can be updated
+
 	 *
-	 * @access public
+*@access public
 	 * @return int
 	 * @throws \EE_Error
 	 */
 	protected function _remove_expired_lock() {
-		$locked = $this->is_locked();
+		$locked = $this->get_lock();
 		if ( $locked && time() - EE_Transaction::LOCK_EXPIRATION > $locked ) {
 			return $this->unlock();
 		}
