@@ -11,10 +11,10 @@
 class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
-	 * The length of time that a lock is applied before being considered expired.
+	 * The length of time in seconds that a lock is applied before being considered expired.
 	 * It is not long because a transaction should only be locked for the duration of the request that locked it
 	 */
-	const LOCK_EXPIRATION = 2 * MINUTE_IN_SECONDS;
+	const LOCK_EXPIRATION = 2;
 
 	/**
 	 * @param array  $props_n_values          incoming values
@@ -27,11 +27,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
-		$transaction = $has_object
+		return $has_object
 			? $has_object
 			: new self( $props_n_values, false, $timezone, $date_formats );
-		$transaction->_remove_expired_lock();
-		return $transaction;
 	}
 
 
@@ -44,23 +42,38 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * @throws \EE_Error
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
-		$transaction = new self( $props_n_values, TRUE, $timezone );
-		$transaction->_remove_expired_lock();
-		return $transaction;
+		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
 
 	/**
 	 * lock
-	 * sets a meta field indicating that this TXN is locked and should not be updated in the db
+	 * Sets a meta field indicating that this TXN is locked and should not be updated in the db.
+	 * If a lock has already been set, then we will attempt to remove it in case it has expired.
+	 * If that also fails, then an exception is thrown.
 	 *
-	 * @access public
-	 * @return void
+*@access public
+	 * @return boolean
 	 * @throws \EE_Error
 	 */
 	public function lock() {
-		$this->add_extra_meta( 'TXN_locked', time() );
+		// attempt to set lock, but if that fails...
+		if ( ! $this->add_extra_meta( 'lock', time(), true )  ) {
+			// then attempt to remove the lock in case it is expired
+			if ( $this->_remove_expired_lock() ) {
+				// if removal was successful, then try setting lock again
+				$this->lock();
+			} else {
+				// but if the lock can not be removed, then throw an exception
+				throw new EE_Error(
+					sprintf(
+						__( 'Could not lock Transaction %1$d because it is already locked, meaning another part of the system is currently editing it. It should already be unlocked by the time you read this, so please refresh the page and try again.', 'event_espresso' ),
+						$this->ID()
+					)
+				);
+			}
+		}
 	}
 
 
@@ -69,12 +82,12 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * unlock
 	 * removes transaction lock applied in EE_Transaction::lock()
 	 *
-	 * @access    public
-	 * @return    void
+	 * @access public
+	 * @return int
 	 * @throws \EE_Error
 	 */
 	public function unlock() {
-		$this->delete_extra_meta( 'TXN_locked' );
+		return $this->delete_extra_meta( 'lock' );
 	}
 
 
@@ -93,7 +106,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * @throws \EE_Error
 	 */
 	public function is_locked() {
-		return $this->get_extra_meta( 'TXN_locked', false, 0 );
+		return (int)$this->get_extra_meta( 'lock', true, 0 );
 	}
 
 
@@ -103,14 +116,15 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * If the lock on this transaction is expired, then we want to remove it so that the transaction can be updated
 	 *
 	 * @access public
-	 * @return boolean
+	 * @return int
 	 * @throws \EE_Error
 	 */
 	protected function _remove_expired_lock() {
 		$locked = $this->is_locked();
-		if ( time() - EE_Transaction::LOCK_EXPIRATION > $locked ) {
-			$this->unlock();
+		if ( $locked && time() - EE_Transaction::LOCK_EXPIRATION > $locked ) {
+			return $this->unlock();
 		}
+		return 0;
 	}
 
 
@@ -120,6 +134,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access        public
 	 * @param        float $total total value of transaction
+	 * @throws \EE_Error
 	 */
 	public function set_total( $total = 0.00 ) {
 		$this->set( 'TXN_total', (float)$total );
@@ -132,6 +147,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access        public
 	 * @param        float $total_paid total amount paid to date (sum of all payments)
+	 * @throws \EE_Error
 	 */
 	public function set_paid( $total_paid = 0.00 ) {
 		$this->set( 'TXN_paid', (float)$total_paid );
@@ -144,6 +160,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access        public
 	 * @param        string $status whether the transaction is open, declined, accepted, or any number of custom values that can be set
+	 * @throws \EE_Error
 	 */
 	public function set_status( $status = '' ) {
 		$this->set( 'STS_ID', $status );
@@ -156,6 +173,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access        public
 	 * @param        string $hash_salt required for some payment gateways
+	 * @throws \EE_Error
 	 */
 	public function set_hash_salt( $hash_salt = '' ) {
 		$this->set( 'TXN_hash_salt', $hash_salt );
@@ -165,7 +183,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Sets TXN_reg_steps array
+	 *
 	 * @param array $txn_reg_steps
+	 * @throws \EE_Error
 	 */
 	public function set_reg_steps( array $txn_reg_steps ) {
 		$this->set( 'TXN_reg_steps', $txn_reg_steps );
@@ -175,7 +195,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets TXN_reg_steps
+	 *
 	 * @return array
+	 * @throws \EE_Error
 	 */
 	public function reg_steps() {
 		$TXN_reg_steps = $this->get( 'TXN_reg_steps' );
@@ -185,8 +207,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 
 	/**
-	 *
 	 * @return string of transaction's total cost, with currency symbol and decimal
+	 * @throws \EE_Error
 	 */
 	public function pretty_total() {
 		return $this->get_pretty( 'TXN_total' );
@@ -196,7 +218,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets the amount paid in a pretty string (formatted and with currency symbol)
+	 *
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function pretty_paid() {
 		return $this->get_pretty( 'TXN_paid' );
@@ -209,6 +233,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access public
 	 * @return float amount remaining
+	 * @throws \EE_Error
 	 */
 	public function remaining() {
 		return (float)( $this->total() - $this->paid() );
@@ -218,8 +243,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *        get Transaction Total
+	 *
 	 * @access        public
 	 * @return float
+	 * @throws \EE_Error
 	 */
 	public function total() {
 		return (float)$this->get( 'TXN_total' );
@@ -229,8 +256,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *        get Total Amount Paid to Date
+	 *
 	 * @access        public
 	 * @return float
+	 * @throws \EE_Error
 	 */
 	public function paid() {
 		return (float)$this->get( 'TXN_paid' );
@@ -240,7 +269,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *    get_cart_session
+	 *
 	 * @access        public
+	 * @throws \EE_Error
 	 */
 	public function get_cart_session() {
 		$session_data = (array)$this->get( 'TXN_session_data' );
@@ -253,7 +284,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *        get Transaction session data
+	 *
 	 * @access        public
+	 * @throws \EE_Error
 	 */
 	public function session_data() {
 		$session_data = $this->get( 'TXN_session_data' );
@@ -278,6 +311,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access        public
 	 * @param        EE_Session|array $session_data
+	 * @throws \EE_Error
 	 */
 	public function set_txn_session_data( $session_data ) {
 		if ( $session_data instanceof EE_Session ) {
@@ -291,7 +325,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *        get Transaction hash salt
+	 *
 	 * @access        public
+	 * @throws \EE_Error
 	 */
 	public function hash_salt_() {
 		return $this->get( 'TXN_hash_salt' );
@@ -328,12 +364,22 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *    Gets registrations on this transaction
+	 *
 	 * @param        array   $query_params array of query parameters
 	 * @param        boolean $get_cached   TRUE to retrieve cached registrations or FALSE to pull from the db
 	 * @return EE_Registration[]
+	 * @throws \EE_Error
 	 */
 	public function registrations( $query_params = array(), $get_cached = FALSE ) {
-		$query_params = ( empty( $query_params ) || ! is_array( $query_params ) ) ? array( 'order_by' => array( 'Event.EVT_name' => 'ASC', 'Attendee.ATT_lname' => 'ASC', 'Attendee.ATT_fname' => 'ASC' ) ) : $query_params;
+		$query_params = ( empty( $query_params ) || ! is_array( $query_params ) )
+			? array(
+				'order_by' => array(
+					'Event.EVT_name' => 'ASC',
+					'Attendee.ATT_lname' => 'ASC',
+					'Attendee.ATT_fname' => 'ASC'
+				)
+			)
+			: $query_params;
 		$query_params = $get_cached ? array() : $query_params;
 		return $this->get_many_related( 'Registration', $query_params );
 	}
@@ -343,7 +389,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Gets all the attendees for this transaction (handy for use with EE_Attendee's get_registrations_for_event function
 	 * for getting attendees and how many registrations they each have for an event)
+	 *
 	 * @return mixed EE_Attendee[] by default, int if $output is set to 'COUNT'
+	 * @throws \EE_Error
 	 */
 	public function attendees() {
 		return $this->get_many_related( 'Attendee', array( array( 'Registration.Transaction.TXN_ID' => $this->ID() ) ) );
@@ -353,8 +401,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets payments for this transaction. Unlike other such functions, order by 'DESC' by default
+	 *
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Payment[]
+	 * @throws \EE_Error
 	 */
 	public function payments( $query_params = array() ) {
 		return $this->get_many_related( 'Payment', $query_params );
@@ -364,7 +414,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * gets only approved payments for this transaction
+	 *
 	 * @return EE_Payment[]
+	 * @throws \EE_Error
 	 */
 	public function approved_payments() {
 		EE_Registry::instance()->load_model( 'Payment' );
@@ -420,7 +472,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *        get Transaction Status
+	 *
 	 * @access        public
+	 * @throws \EE_Error
 	 */
 	public function status_ID() {
 		return $this->get( 'STS_ID' );
@@ -430,7 +484,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Returns TRUE or FALSE for whether or not this transaction cost any money
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function is_free() {
 		return (float)$this->get( 'TXN_total' ) === (float)0 ? TRUE : FALSE;
@@ -441,7 +497,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Returns whether this transaction is complete
 	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function is_completed() {
 		return $this->status_ID() === EEM_Transaction::complete_status_code ? TRUE : FALSE;
@@ -452,7 +510,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Returns whether this transaction is incomplete
 	 * Useful in templates and other logic for deciding if we should ask for another payment...
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function is_incomplete() {
 		return $this->status_ID() === EEM_Transaction::incomplete_status_code ? TRUE : FALSE;
@@ -463,7 +523,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Returns whether this transaction is overpaid
 	 * Useful in templates and other logic for deciding if monies need to be refunded
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function is_overpaid() {
 		return $this->status_ID() === EEM_Transaction::overpaid_status_code ? TRUE : FALSE;
@@ -475,7 +537,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * Returns whether this transaction was abandoned
 	 * meaning that the transaction/registration process was somehow interrupted and never completed
 	 * but that contact information exists for at least one registrant
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function is_abandoned() {
 		return $this->status_ID() === EEM_Transaction::abandoned_status_code ? TRUE : FALSE;
@@ -487,7 +551,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * Returns whether this transaction failed
 	 * meaning that the transaction/registration process was somehow interrupted and never completed
 	 * and that NO contact information exists for any registrants
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function failed() {
 		return $this->status_ID() === EEM_Transaction::failed_status_code ? TRUE : FALSE;
@@ -497,9 +563,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * This returns the url for the invoice of this transaction
+	 *
 	 * @param string $type 'html' or 'pdf' (default is pdf)
 	 * @access public
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function invoice_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
@@ -513,7 +581,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets the primary registration only
+	 *
 	 * @return EE_Registration
+	 * @throws \EE_Error
 	 */
 	public function primary_registration() {
 		return $this->get_first_related( 'Registration', array( array( 'REG_count' => EEM_Registration::PRIMARY_REGISTRANT_COUNT ) ) );
@@ -523,8 +593,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets the URL for viewing the receipt
+	 *
 	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function receipt_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
@@ -542,6 +614,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 *
 	 * @access public
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function payment_overview_url() {
 		$primary_registration = $this->primary_registration();
@@ -573,6 +646,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function gateway_response_on_transaction() {
 		$payment = $this->get_first_related( 'Payment' );
@@ -583,7 +657,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Get the status object of this object
+	 *
 	 * @return EE_Status
+	 * @throws \EE_Error
 	 */
 	public function status_obj() {
 		return $this->get_first_related( 'Status' );
@@ -593,8 +669,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets all the extra meta info on this payment
+	 *
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Extra_Meta
+	 * @throws \EE_Error
 	 */
 	public function extra_meta( $query_params = array() ) {
 		return $this->get_many_related( 'Extra_Meta', $query_params );
@@ -618,8 +696,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Removes the given registration from being related (even before saving this transaction).
 	 * If an ID/index is provided and this transaction isn't saved yet, removes it from list of cached relations
+	 *
 	 * @param int $registration_or_id
 	 * @return EE_Base_Class that was removed from being related
+	 * @throws \EE_Error
 	 */
 	public function remove_registration_with_id( $registration_or_id ) {
 		return $this->_remove_relation_to( $registration_or_id, 'Registration' );
@@ -629,7 +709,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets all the line items which are for ACTUAL items
+	 *
 	 * @return EE_Line_Item[]
+	 * @throws \EE_Error
 	 */
 	public function items_purchased() {
 		return $this->line_items( array( array( 'LIN_type' => EEM_Line_Item::type_line_item ) ) );
@@ -652,8 +734,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets ALL the line items related to this transaction (unstructured)
+	 *
 	 * @param array $query_params
 	 * @return EE_Line_Item[]
+	 * @throws \EE_Error
 	 */
 	public function line_items( $query_params = array() ) {
 		return $this->get_many_related( 'Line_Item', $query_params );
@@ -663,7 +747,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets all the line items which are taxes on the total
+	 *
 	 * @return EE_Line_Item[]
+	 * @throws \EE_Error
 	 */
 	public function tax_items() {
 		return $this->line_items( array( array( 'LIN_type' => EEM_Line_Item::type_tax ) ) );
@@ -674,7 +760,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Gets the total line item (which is a parent of all other related line items,
 	 * meaning it takes them all into account on its total)
+	 *
 	 * @return EE_Line_Item
+	 * @throws \EE_Error
 	 */
 	public function total_line_item() {
 		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
@@ -690,7 +778,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * Returns the total amount of tax on this transaction
 	 * (assumes there's only one tax subtotal line item)
+	 *
 	 * @return float
+	 * @throws \EE_Error
 	 */
 	public function tax_total() {
 		$tax_line_item = $this->tax_total_line_item();
@@ -705,7 +795,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets the tax subtotal line item (assumes there's only one)
+	 *
 	 * @return EE_Line_Item
+	 * @throws \EE_Error
 	 */
 	public function tax_total_line_item() {
 		return EEH_Line_Item::get_taxes_subtotal( $this->total_line_item() );
@@ -715,7 +807,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
+	 *
 	 * @return EE_Form_Section_Proper
+	 * @throws \EE_Error
 	 */
 	public function billing_info(){
 		$payment_method = $this->payment_method();
@@ -740,7 +834,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Gets PMD_ID
+	 *
 	 * @return int
+	 * @throws \EE_Error
 	 */
 	public function payment_method_ID() {
 		return $this->get('PMD_ID');
@@ -750,8 +846,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 	/**
 	 * Sets PMD_ID
+	 *
 	 * @param int $PMD_ID
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function set_payment_method_ID($PMD_ID) {
 		$this->set('PMD_ID', $PMD_ID);
@@ -763,7 +861,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * Gets the last-used payment method on this transaction
 	 * (we COULD just use the last-made payment, but some payment methods, namely
 	 * offline ones, dont' create payments)
+	 *
 	 * @return EE_Payment_Method
+	 * @throws \EE_Error
 	 */
 	public function payment_method(){
 		$pm = $this->get_first_related('Payment_Method');
@@ -779,17 +879,25 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 		}
 	}
 
+
+
 	/**
 	 * Gets the last payment made
+	 *
 	 * @return EE_Payment
+	 * @throws \EE_Error
 	 */
 	public function last_payment() {
 		return $this->get_first_related( 'Payment', array( 'order_by' => array( 'PAY_ID' => 'desc' ) ) );
 	}
 
+
+
 	/**
 	 * Gets all the line items which are unrelated to tickets on this transaction
+	 *
 	 * @return EE_Line_Item[]
+	 * @throws \EE_Error
 	 */
 	public function non_ticket_line_items(){
 		return EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction( $this->ID() );
