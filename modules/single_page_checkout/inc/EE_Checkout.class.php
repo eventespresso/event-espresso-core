@@ -605,7 +605,7 @@ class EE_Checkout {
 						__FILE__, __FUNCTION__, __LINE__
 					);
 				}
-			};
+			}
 		}
 	}
 
@@ -705,7 +705,7 @@ class EE_Checkout {
 	 * @throws \EE_Error
 	 */
 	public function update_txn_reg_steps_array() {
-		$updated = FALSE;
+		$updated = false;
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		foreach ( $this->reg_steps as $reg_step ) {
@@ -743,14 +743,13 @@ class EE_Checkout {
 
 
 
-
 	/**
 	 *    track_transaction_and_registration_status_updates
+	 *    stores whether any updates were made to the TXN or it's related registrations
 	 *
-	 * 	stores whether any updates were made to the TXN or it's related registrations
-	 *
-	 * 	@access public
-	 * 	@return 	bool
+	 * @access public
+	 * @return    bool
+	 * @throws \EE_Error
 	 */
 	public function track_transaction_and_registration_status_updates() {
 		// verify the transaction
@@ -776,19 +775,18 @@ class EE_Checkout {
 
 
 
-
 	/**
-	 * 	visit_allows_processing_of_this_registration
+	 *    visit_allows_processing_of_this_registration
+	 *    determines if the current SPCO visit should allow the passed EE_Registration to be used in processing.
+	 *    one of the following conditions must be met:
+	 *        EITHER:    A) first time thru SPCO -> process ALL registrations ( NOT a revisit )
+	 *        OR :        B) primary registrant is editing info -> process ALL registrations ( primary_revisit )
+	 *        OR :        C) another registrant is editing info -> ONLY process their registration ( revisit AND their reg_url_link matches )
 	 *
-	 * 	determines if the current SPCO visit should allow the passed EE_Registration to be used in processing.
-	 * 	one of the following conditions must be met:
-	 * 		EITHER: 	A) first time thru SPCO -> process ALL registrations ( NOT a revisit )
-	 * 		OR : 		B) primary registrant is editing info -> process ALL registrations ( primary_revisit )
-	 * 		OR : 		C) another registrant is editing info -> ONLY process their registration ( revisit AND their reg_url_link matches )
-	 *
-	 * 	@access public
-	 * @param 	EE_Registration 	$registration
-	 * 	@return 	bool
+	 * @access public
+	 * @param    EE_Registration $registration
+	 * @return    bool
+	 * @throws \EE_Error
 	 */
 	public function visit_allows_processing_of_this_registration( EE_Registration $registration ) {
 		return ! $this->revisit
@@ -986,6 +984,7 @@ class EE_Checkout {
 	 *
 	 * @access public
 	 * @return bool
+	 * @throws \EE_Error
 	 */
 	protected function refresh_from_db() {
 		// verify the transaction
@@ -1022,6 +1021,7 @@ class EE_Checkout {
 	 *
 	 * @param   EE_Transaction $transaction
 	 * @return  EE_Attendee | null
+	 * @throws \EE_Error
 	 */
 	protected function _refresh_primary_attendee_obj_from_db( EE_Transaction $transaction ) {
 
@@ -1071,7 +1071,9 @@ class EE_Checkout {
 				$transaction_payments->calculate_total_payments_and_update_status( $this->transaction );
 			}
 			// grab the saved registrations from the transaction
-			foreach ( $this->transaction->registrations( $this->reg_cache_where_params ) as $reg_cache_ID => $registration ) {
+			foreach (
+				$this->transaction->registrations( $this->reg_cache_where_params ) as $reg_cache_ID => $registration
+			) {
 				$this->_refresh_registration( $reg_cache_ID, $registration );
 			}
 			// make sure our cached TXN is added to the model entity mapper
@@ -1106,9 +1108,10 @@ class EE_Checkout {
 	/**
 	 * _refresh_registration
 	 *
-	 * @param 	string | int 	$reg_cache_ID
-	 * @param 	EE_Registration 	$registration
+	 * @param    string | int    $reg_cache_ID
+	 * @param    EE_Registration $registration
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _refresh_registration( $reg_cache_ID, $registration ) {
 
@@ -1133,8 +1136,9 @@ class EE_Checkout {
 	/**
 	 * _save_registration_attendee
 	 *
-	 * @param 	EE_Registration 	$registration
+	 * @param    EE_Registration $registration
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _refresh_registration_attendee( $registration ) {
 
@@ -1155,8 +1159,9 @@ class EE_Checkout {
 	/**
 	 * _refresh_registration_answers
 	 *
-	 * @param 	EE_Registration 	$registration
+	 * @param    EE_Registration $registration
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _refresh_registration_answers( $registration ) {
 
@@ -1198,11 +1203,13 @@ class EE_Checkout {
 	 * @param string $class
 	 * @param string $func
 	 * @param string $line
-	 * @param array $info
-	 * @param bool $display_request
+	 * @param array  $info
+	 * @param bool   $display_request
+	 * @throws \EE_Error
 	 */
 	public function log( $class = '', $func = '', $line = '', $info = array(), $display_request = false ) {
-		if ( WP_DEBUG && false ) {
+		$disabled = true;
+		if ( WP_DEBUG && ! $disabled ) {
 			$debug_data = get_option( 'EE_DEBUG_SPCO_' . EE_Session::instance()->id(), array() );
 			$default_data = array(
 				$class 		=> $func . '() : ' . $line,
