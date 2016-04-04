@@ -395,19 +395,23 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 
 
 
+	/**
+	 * @throws \EE_Error
+	 * @throws \Exception
+	 */
 	public function test_process_payment__offsite__declined_then_approved() {
+		global $wp_actions;
+		EE_Registry::instance()->load_helper( 'Array' );
+		/** @type EE_Payment_Processor $payment_processor */
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		/** @type EE_Payment_Method $pm */
 		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Offsite' ) );
 		$transaction = $this->_new_typical_transaction();
-		global $wp_actions;
-		EE_Registry::instance()->load_helper( 'Array' );
 		$successful_payment_actions = EEH_Array::is_set(
 			$wp_actions,
 			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
 			0
 		);
-		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		$payment = $payment_processor->process_payment( $pm, $transaction, null, null, 'success', 'CART', true, true );
 		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
@@ -540,6 +544,9 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->STS_ID() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
 	}
-}
 
+
+
+}
 // End of file EE_Payment_Processor_Test.php
+// Location: tests/testcases/core/EE_Payment_Processor_Test.php
