@@ -4220,7 +4220,7 @@ abstract class EEM_Base extends EE_Base{
 	 * This is usually just an array with 1 element (the primary key), but in cases
 	 * where there is no primary key, it's a combination of fields as defined
 	 * on a primary index
-	 * @return EE_Model_Field_Base[]
+	 * @return EE_Model_Field_Base[] indexed by the field's name
 	 */
 	public function get_combined_primary_key_fields(){
 		foreach($this->indexes() as $index){
