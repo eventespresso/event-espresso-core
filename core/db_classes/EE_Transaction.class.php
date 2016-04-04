@@ -107,7 +107,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 */
 	public function is_locked() {
 		// if TXN is not locked, then return false immediately
-		if ( ! $this->get_lock() ) {
+		if ( ! $this->_get_lock() ) {
 			return false;
 		}
 		// if not, then let's try and remove the lock in case it's expired...
@@ -120,14 +120,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 
 	/**
-	 * get_lock
+	 * _get_lock
 	 * Gets the meta field indicating that this TXN is locked
 	 *
 	 * @access protected
 	 * @return int
 	 * @throws \EE_Error
 	 */
-	protected function get_lock() {
+	protected function _get_lock() {
 		return (int)$this->get_extra_meta( 'lock', true, 0 );
 	}
 
@@ -136,14 +136,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	/**
 	 * remove_expired_lock
 	 * If the lock on this transaction is expired, then we want to remove it so that the transaction can be updated
-
 	 *
-*@access public
+	 * @access public
 	 * @return int
 	 * @throws \EE_Error
 	 */
 	protected function _remove_expired_lock() {
-		$locked = $this->get_lock();
+		$locked = $this->_get_lock();
 		if ( $locked && time() - EE_Transaction::LOCK_EXPIRATION > $locked ) {
 			return $this->unlock();
 		}
