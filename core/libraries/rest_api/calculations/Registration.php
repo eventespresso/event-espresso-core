@@ -33,9 +33,10 @@ class Registration extends Calculations_Base {
 	public static function datetime_checkin_stati( $wpdb_row, $request, $controller ){
 		if( is_array( $wpdb_row ) && isset( $wpdb_row[ 'Registration.REG_ID' ] ) ) {
 			$reg = \EEM_Registration::instance()->get_one_by_ID( $wpdb_row[ 'Registration.REG_ID' ] );
+		} else {
+			$reg = null;
 		}
-		if( ! $reg
-			|| ! $reg instanceof \EE_Registration 
+		if( ! $reg instanceof \EE_Registration 
 		) {
 			throw new \EE_Error(
 				sprintf(
