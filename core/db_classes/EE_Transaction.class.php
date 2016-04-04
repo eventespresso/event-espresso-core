@@ -54,7 +54,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * If that also fails, then an exception is thrown.
 	 *
 	 * @access public
-	 * @return boolean
 	 * @throws \EE_Error
 	 */
 	public function lock() {
@@ -103,14 +102,19 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * We also check that the lock isn't expired, and remove it if it is
 	 *
 	 * @access public
-	 * @return int
+	 * @return boolean
 	 * @throws \EE_Error
 	 */
 	public function is_locked() {
+		// if TXN is not locked, then return false immediately
+		if ( ! $this->get_lock() ) {
+			return false;
+		}
+		// if not, then let's try and remove the lock in case it's expired...
 		// _remove_expired_lock() returns 0 when lock is valid (ie: removed = false)
 		// and a positive number if the lock was removed (ie: number of locks deleted),
-		// so we use ! to return the opposite
-		return ! $this->_remove_expired_lock();
+		// so we need to return the opposite
+		return ! $this->_remove_expired_lock() ? true : false;
 	}
 
 
