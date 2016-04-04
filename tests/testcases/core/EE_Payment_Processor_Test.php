@@ -1,8 +1,9 @@
 <?php
-
-if (!defined('EVENT_ESPRESSO_VERSION')) {
-	exit('No direct script access allowed');
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
 }
+
+
 
 /**
  * EE_Payment_Processor_Test
@@ -12,7 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @group       payment_methods
  * @author      Mike Nelson
  */
-class EE_Payment_Processor_Test extends EE_UnitTestCase{
+class EE_Payment_Processor_Test extends EE_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
@@ -21,16 +22,16 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 			'onsite',
 			array(
 				'payment_method_paths' => array(
-					EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Onsite'
-				)
+					EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Onsite',
+				),
 			)
 		);
 		EE_Register_Payment_Method::register(
 			'offsite',
 			array(
 				'payment_method_paths' => array(
-					EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Offsite'
-				)
+					EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Offsite',
+				),
 			)
 		);
 		EE_Payment_Method_Manager::instance()->reset();
@@ -56,6 +57,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	 * datetimes and tickets etc)
 	 *
 	 * @return EE_Transaction
+	 * @throws \EE_Error
 	 */
 	protected function _new_typical_transaction() {
 		/** @type EE_Transaction $transaction */
@@ -71,7 +73,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 			array(
 				'EVT_ID'        => $event->ID(),
 				'DTT_EVT_start' => current_time( 'timestamp' ) + 60 * 60,
-				'DTT_EVT_end'   => current_time( 'timestamp' ) + 5 * 60 * 60
+				'DTT_EVT_end'   => current_time( 'timestamp' ) + 5 * 60 * 60,
 			)
 		);
 		$dtt->_add_relation_to( $ticket, 'Ticket' );
@@ -103,6 +105,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	/**
 	 * @param float $TKT_price
 	 * @return \EE_Ticket
+	 * @throws \EE_Error
 	 */
 	public function get_ticket_mock( $TKT_price = 10.00 ) {
 		return $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price' => $TKT_price ) );
@@ -113,6 +116,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	/**
 	 * @param \WP_User $EVT_wp_user
 	 * @return \EE_Event
+	 * @throws \EE_Error
 	 */
 	public function get_event_mock( WP_User $EVT_wp_user = null ) {
 		return $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_wp_user' => $EVT_wp_user->ID ) );
@@ -141,7 +145,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 				'TKT_ID'          => $ticket->ID(),
 				'EVT_ID'          => $event->ID(),
 				'REG_final_price' => $REG_final_price,
-				'REG_count'       => EEM_Registration::PRIMARY_REGISTRANT_COUNT
+				'REG_count'       => EEM_Registration::PRIMARY_REGISTRANT_COUNT,
 			)
 		);
 	}
@@ -154,6 +158,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 	 * @global WPDB      $wpdb
 	 * @param EE_Payment $payment
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	protected function _get_payment_status_in_db( EE_Payment $payment ) {
 		global $wpdb;
@@ -164,69 +169,116 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
 
 	/**
-	 *
 	 * @group 7753
+	 * @throws \EE_Error
 	 */
-	public function test_process_payment__onsite__success(){
+	public function test_process_payment__onsite__success() {
 		//setup all the $_REQUEST globals etc because messages require them
-		$this->go_to('http://localhost/');
+		$this->go_to( 'http://localhost/' );
 		/** @type EE_Payment_Method $pm */
-		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
+		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
 		$billing_form = $pm->type_obj()->billing_form( $transaction );
-		$billing_form->receive_form_submission( array(
-			'status'=>  EEM_Payment::status_id_approved,
-			'credit_card' => '4111 1111 1111 1111',
-			'exp_month' => '12',
-			'exp_year' => '2032',
-			'cvv' => '123'
-		));
+		$billing_form->receive_form_submission(
+			array(
+				'status'      => EEM_Payment::status_id_approved,
+				'credit_card' => '4111 1111 1111 1111',
+				'exp_month'   => '12',
+				'exp_year'    => '2032',
+				'cvv'         => '123',
+			)
+		);
 		global $wp_actions;
 		EE_Registry::instance()->load_helper( 'Array' );
-		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 );
-		$payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', 0 );
-		add_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment', array( $this, 'assert_payment_message_trigger_for_success'), 10, 2 );
+		$successful_payment_actions = EEH_Array::is_set(
+			$wp_actions,
+			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+			0
+		);
+		$payment_actions = EEH_Array::is_set(
+			$wp_actions,
+			'AHEE__EE_Payment_Processor__update_txn_based_on_payment',
+			0
+		);
+		add_action(
+			'AHEE__EE_Payment_Processor__update_txn_based_on_payment',
+			array( $this, 'assert_payment_message_trigger_for_success' ),
+			10,
+			2
+		);
 		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-		$payment = $payment_processor->process_payment( $pm, $transaction, NULL, $billing_form, 'success', 'CART', TRUE, TRUE );
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment = $payment_processor->process_payment(
+			$pm,
+			$transaction,
+			null,
+			$billing_form,
+			'success',
+			'CART',
+			true,
+			true
+		);
 		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
 		EE_UnitTestCase::assertNotEquals( 0, $payment->ID() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
-		EE_UnitTestCase::assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' ] );
-		EE_UnitTestCase::assertEquals( $payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment' ] );
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions + 1,
+			$wp_actions['AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful']
+		);
+		EE_UnitTestCase::assertEquals(
+			$payment_actions + 1,
+			$wp_actions['AHEE__EE_Payment_Processor__update_txn_based_on_payment']
+		);
 	}
+
+
 
 	/**
 	 * Asserts that the payment's status is approved when the hook is called
+	 *
 	 * @param EE_Payment $transaction
 	 * @param EE_Payment $payment
 	 */
 	public function assert_payment_message_trigger_for_success( $transaction, $payment ) {
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->get('STS_ID') );
+		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->get( 'STS_ID' ) );
 	}
 
-	public function test_update_txn_based_on_payment(){
+
+
+	public function test_update_txn_based_on_payment() {
 		//create a txn, and an UNSAVED payment. then call this.
 		/** @type EE_Transaction $txn */
-		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10.00 ) );
+		$txn = $this->new_model_obj_with_dependencies(
+			'Transaction',
+			array(
+				'STS_ID'    => EEM_Transaction::incomplete_status_code,
+				'TXN_total' => 10.00,
+			)
+		);
 		$ticket = $this->get_ticket_mock();
 		$user = $this->get_wp_user_mock( 'administrator' );
 		$event = $this->get_event_mock( $user );
 		$registration = $this->get_registration_mock( $txn, $ticket, $event, 10.00 );
 		$txn->_add_relation_to( $registration, 'Registration' );
 		/** @type EE_Payment $payment */
-		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_approved, 'PAY_amount' => 10.00,  ), FALSE );
+		$payment = $this->new_model_obj_with_dependencies(
+			'Payment',
+			array(
+				'TXN_ID'     => $txn->ID(),
+				'STS_ID'     => EEM_Payment::status_id_approved,
+				'PAY_amount' => 10.00,
+			),
+			false
+		);
 		// simulate payment save performed in EE_PMT_Base::process_payment()
 		$payment->save();
 		//$this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'REG_count' => 1 ) );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
-
 		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-		$payment_processor->update_txn_based_on_payment($txn, $payment);
-
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment_processor->update_txn_based_on_payment( $txn, $payment );
 		//the payment should have been saved, and the txn appropriately updated
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		EE_UnitTestCase::assertEquals( $payment, $txn->last_payment() );
@@ -234,24 +286,44 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		EE_UnitTestCase::assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		EE_UnitTestCase::assertEquals( 10.00, $transaction_payments->recalculate_total_payments_for_transaction( $txn, EEM_Payment::status_id_approved ) );
+		EE_UnitTestCase::assertEquals(
+			10.00,
+			$transaction_payments->recalculate_total_payments_for_transaction(
+				$txn,
+				EEM_Payment::status_id_approved
+			)
+		);
 		EE_UnitTestCase::assertEquals( 10.00, $txn->paid() );
 		EE_UnitTestCase::assertEquals( EEM_Transaction::complete_status_code, $txn->status_ID() );
 	}
 
-	public function test_update_txn_based_on_payment__offline(){
+
+
+	public function test_update_txn_based_on_payment__offline() {
 		//create a txn, and an UNSAVED payment. then call this.
 		/** @type EE_Transaction $txn */
-		$txn = $this->new_model_obj_with_dependencies('Transaction', array( 'STS_ID' => EEM_Transaction::incomplete_status_code, 'TXN_total' => 10 ) );
+		$txn = $this->new_model_obj_with_dependencies(
+			'Transaction',
+			array(
+				'STS_ID'    => EEM_Transaction::incomplete_status_code,
+				'TXN_total' => 10,
+			)
+		);
 		/** @type EE_Payment $payment */
-		$payment = $this->new_model_obj_with_dependencies( 'Payment', array( 'TXN_ID' => $txn->ID(), 'STS_ID' => EEM_Payment::status_id_pending, 'PAY_amount' => 0,  ), FALSE );
+		$payment = $this->new_model_obj_with_dependencies(
+			'Payment',
+			array(
+				'TXN_ID'     => $txn->ID(),
+				'STS_ID'     => EEM_Payment::status_id_pending,
+				'PAY_amount' => 0,
+			),
+			false
+		);
 		//because this is from an OFFLINE gateway, the payment shouldn't be saved
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $payment->status() );
-
 		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-		$payment_processor->update_txn_based_on_payment($txn, $payment);
-
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment_processor->update_txn_based_on_payment( $txn, $payment );
 		//the payment should have NOT been saved, and the txn appropriately updated
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $payment->status() );
 		EE_UnitTestCase::assertEquals( 0, $payment->ID() );
@@ -260,122 +332,211 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		EE_UnitTestCase::assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		EE_UnitTestCase::assertEquals( 0, $transaction_payments->recalculate_total_payments_for_transaction( $txn, EEM_Payment::status_id_approved ) );
+		EE_UnitTestCase::assertEquals(
+			0,
+			$transaction_payments->recalculate_total_payments_for_transaction(
+				$txn,
+				EEM_Payment::status_id_approved
+			)
+		);
 		EE_UnitTestCase::assertEquals( 0, $txn->paid() );
 		EE_UnitTestCase::assertEquals( EEM_Transaction::incomplete_status_code, $txn->status_ID() );
 	}
 
-	public function test_process_payment__onsite__declined(){
+
+
+	public function test_process_payment__onsite__declined() {
 		/** @type EE_Payment_Method $pm */
-		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
+		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
 		$billing_form = $pm->type_obj()->billing_form( $transaction );
-		$billing_form->receive_form_submission( array(
-			'status'=>  EEM_Payment::status_id_declined,
-			'credit_card' => '4111 1111 1111 1111',
-			'exp_month' => '12',
-			'exp_year' => '2032',
-			'cvv' => '123'
-		));
+		$billing_form->receive_form_submission(
+			array(
+				'status'      => EEM_Payment::status_id_declined,
+				'credit_card' => '4111 1111 1111 1111',
+				'exp_month'   => '12',
+				'exp_year'    => '2032',
+				'cvv'         => '123',
+			)
+		);
 		global $wp_actions;
 		EE_Registry::instance()->load_helper( 'Array' );
-		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 );
+		$successful_payment_actions = EEH_Array::is_set(
+			$wp_actions,
+			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+			0
+		);
 		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-		$payment = $payment_processor->process_payment( $pm, $transaction, NULL, $billing_form, 'success', 'CART', TRUE, TRUE );
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment = $payment_processor->process_payment(
+			$pm,
+			$transaction,
+			null,
+			$billing_form,
+			'success',
+			'CART',
+			true,
+			true
+		);
 		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
 		EE_UnitTestCase::assertNotEquals( 0, $payment->ID() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_declined, $payment->status() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_declined, $this->_get_payment_status_in_db( $payment ) );
-		EE_UnitTestCase::assertEquals( $successful_payment_actions, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions,
+			EEH_Array::is_set(
+				$wp_actions,
+				'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+				0
+			)
+		);
 	}
 
-	public function test_process_payment__offsite__declined_then_approved(){
-		/** @type EE_Payment_Method $pm */
-		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Offsite' ) );
-		$transaction = $this->_new_typical_transaction();
 
+
+	public function test_process_payment__offsite__declined_then_approved() {
+		/** @type EE_Payment_Method $pm */
+		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Offsite' ) );
+		$transaction = $this->_new_typical_transaction();
 		global $wp_actions;
 		EE_Registry::instance()->load_helper( 'Array' );
-		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 );
+		$successful_payment_actions = EEH_Array::is_set(
+			$wp_actions,
+			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+			0
+		);
 		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-		$payment = $payment_processor->process_payment( $pm, $transaction, NULL, NULL, 'success', 'CART', TRUE, TRUE );
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment = $payment_processor->process_payment( $pm, $transaction, null, null, 'success', 'CART', true, true );
 		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
 		EE_UnitTestCase::assertNotEquals( 0, $payment->ID() );
 		//assert that the payment still has its default status
-		EE_UnitTestCase::assertEquals( EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(), $payment->status() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(), $this->_get_payment_status_in_db( $payment ) );
+		EE_UnitTestCase::assertEquals(
+			EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(),
+			$payment->status()
+		);
+		EE_UnitTestCase::assertEquals(
+			EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(),
+			$this->_get_payment_status_in_db( $payment )
+		);
 		//assert that the we haven't notified of successful payment JUST yet...
-		EE_UnitTestCase::assertEquals( $successful_payment_actions, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
-
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions,
+			EEH_Array::is_set(
+				$wp_actions,
+				'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+				0
+			)
+		);
 		//PENDING IPN
-		$payment = $payment_processor->process_ipn( array('status' => EEM_Payment::status_id_pending, 'gateway_txn_id' =>$payment->txn_id_chq_nmbr() ), $transaction, $pm );
+		$payment = $payment_processor->process_ipn(
+			array( 'status' => EEM_Payment::status_id_pending, 'gateway_txn_id' => $payment->txn_id_chq_nmbr() ),
+			$transaction,
+			$pm
+		);
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $payment->status() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $this->_get_payment_status_in_db( $payment ) );
 		//and the payment-approved action should have NOT been triggered
-		EE_UnitTestCase::assertEquals( $successful_payment_actions, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
-
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions,
+			EEH_Array::is_set(
+				$wp_actions,
+				'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+				0
+			)
+		);
 		//APPROVED IPN
-		$payment = $payment_processor->process_ipn( array('status' => EEM_Payment::status_id_approved, 'gateway_txn_id' =>$payment->txn_id_chq_nmbr() ), $transaction, $pm );
+		$payment = $payment_processor->process_ipn(
+			array( 'status' => EEM_Payment::status_id_approved, 'gateway_txn_id' => $payment->txn_id_chq_nmbr() ),
+			$transaction,
+			$pm
+		);
 		//payment should be what the gateway set it to be, which was approved
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
 		//and the payment-approved action should have been triggered
-		EE_UnitTestCase::assertEquals( $successful_payment_actions + 1, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
-
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions + 1,
+			EEH_Array::is_set(
+				$wp_actions,
+				'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+				0
+			)
+		);
 		//DUPLICATE SUCCESS IPN
 		//for this, we need to reset payment model so we fetch a NEW payment object, instead of reusing the old
 		//and because the payment method caches a payment method type which caches a gateway which caches the payment model,
 		//we also need to reset the payment method
 		EEM_Payment::reset();
 		$pm = EEM_Payment_Method::reset()->get_one_by_ID( $pm->ID() );
-		$payment = $payment_processor->process_ipn( array('status' => EEM_Payment::status_id_approved, 'gateway_txn_id' =>$payment->txn_id_chq_nmbr() ), $transaction, $pm );
+		$payment = $payment_processor->process_ipn(
+			array( 'status' => EEM_Payment::status_id_approved, 'gateway_txn_id' => $payment->txn_id_chq_nmbr() ),
+			$transaction,
+			$pm
+		);
 		//payment should be what the gateway set it to be, which was failed
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		//and the payment-approved action should have NOT been triggered this time because it's a duplicate
-		EE_UnitTestCase::assertEquals( $successful_payment_actions + 1, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions + 1,
+			EEH_Array::is_set(
+				$wp_actions,
+				'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
+				0
+			)
+		);
 	}
 
-	public function test_process_payment__offline(){
+
+
+	public function test_process_payment__offline() {
 		/** @type EE_Payment_Method $pm */
-		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Admin_Only' ) );
+		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Admin_Only' ) );
 		$transaction = $this->_new_typical_transaction();
 		global $wp_actions;
 		EE_Registry::instance()->load_helper( 'Array' );
-		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', 0 );
+		$successful_payment_actions = EEH_Array::is_set(
+			$wp_actions,
+			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made',
+			0
+		);
 		/** @type EE_Payment_Processor $payment_processor */
-		$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-		$payment = $payment_processor->process_payment( $pm, $transaction, NULL, NULL, 'success', 'CART', TRUE, TRUE );
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		$payment = $payment_processor->process_payment( $pm, $transaction, null, null, 'success', 'CART', true, true );
 		// offline payments are not saved... because no payment ever actually happened
 		EE_UnitTestCase::assertEquals( 0, $payment->ID() );
 		EE_UnitTestCase::assertEquals( EEM_Transaction::incomplete_status_code, $transaction->status_ID() );
-		EE_UnitTestCase::assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made' ] );
+		EE_UnitTestCase::assertEquals(
+			$successful_payment_actions + 1,
+			$wp_actions['AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made']
+		);
 	}
+
+
 
 	/**
 	 * @group 7201
+	 * @throws \EE_Error
+	 * @throws \Exception
 	 */
 	public function test_process_ipn() {
 		/** @type EE_Payment_Method $pm */
 		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Offsite' ) );
-		EE_UnitTestCase::assertTrue( $pm->type_obj() instanceof EE_PMT_Mock_Offsite );
-		EE_UnitTestCase::assertTrue( $pm->type_obj()->get_gateway() instanceof EEG_Mock_Offsite );
+		EE_UnitTestCase::assertInstanceOf( 'EE_PMT_Mock_Offsite', $pm->type_obj() );
+		EE_UnitTestCase::assertInstanceOf( 'EEG_Mock_Offsite', $pm->type_obj()->get_gateway() );
 		$txn = $this->new_typical_transaction();
-
 		//we don't want to bother sending messages. We're not wanting ot test that right now
 		remove_all_filters( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' );
-
-		$payment = EE_Payment_Processor::instance()->process_payment($pm, $txn);
+		$payment = EE_Payment_Processor::instance()->process_payment( $pm, $txn );
 		$fake_req_data = array(
 			'gateway_txn_id' => $payment->txn_id_chq_nmbr(),
-			'status' => EEM_Payment::status_id_approved
+			'status'         => EEM_Payment::status_id_approved,
 		);
 		EE_UnitTestCase::assertNotEmpty( $payment->ID() );
 		$payment = EE_Payment_Processor::instance()->process_ipn( $fake_req_data, $txn, $pm->slug() );
-		EE_UnitTestCase::assertTrue( $payment instanceof EE_Payment );
+		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->STS_ID() );
 		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
 	}
