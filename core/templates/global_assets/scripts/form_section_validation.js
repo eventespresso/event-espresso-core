@@ -322,15 +322,15 @@ jQuery(document).ready(function($){
 
 		/**
 		 * trims leading and trailing hyphens and whitespace
-		 * @param  {string} string
+		 * @param  {string} stringToTrim
 		 * @param  {string} regex
 		 */
-		string_trim : function( string, regex ) {
-			if ( typeof string !== 'string' || typeof regex !== 'string' ) {
+		string_trim : function( stringToTrim, regex ) {
+			if ( typeof stringToTrim !== 'string' || typeof regex !== 'string' ) {
 				return '';
 			}
 			var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
-			return string.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
+			return stringToTrim.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
 				new RegExp( '/[' + chr + ']*$/' ),
 				''
 			);
