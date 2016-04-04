@@ -107,6 +107,71 @@ class EE_Transaction_Test extends EE_UnitTestCase {
 
 
 
+	/**
+	 * @throws \EE_Error
+	 */
+	public function test_is_locked() {
+		/** @type EE_Transaction $transaction */
+		$transaction = $this->factory->transaction->create();
+		// initial state should be unlocked
+		$locked = $transaction->get_extra_meta( 'lock', true, 0 );
+		EE_UnitTestCase::assertEquals( 0, $locked );
+		// is_locked() should equal $locked
+		EE_UnitTestCase::assertEquals( $locked, $transaction->is_locked() );
+		// set a lock
+		$transaction->add_extra_meta( 'lock', time(), true );
+		// now is_locked() should NOT equal $locked
+		EE_UnitTestCase::assertNotEquals( $locked, $transaction->is_locked() );
+		// delete existing lock
+		$transaction->delete_extra_meta( 'lock' );
+		// now set another lock, but with an expired timestamp
+		$transaction->add_extra_meta( 'lock', time() - HOUR_IN_SECONDS , true );
+		// is_locked() should remove that lock and once again equal $locked
+		EE_UnitTestCase::assertEquals( $locked, $transaction->is_locked() );
+	}
+
+
+
+	public function test_lock() {
+		/** @type EE_Transaction $transaction */
+		$transaction = $this->factory->transaction->create();
+		// initial state should be unlocked
+		$locked = $transaction->get_extra_meta( 'lock', true, 0 );
+		EE_UnitTestCase::assertEquals( 0, $locked );
+		// now lock it
+		$transaction->lock();
+		$locked = $transaction->get_extra_meta( 'lock', true, 0 );
+		EE_UnitTestCase::assertNotEquals( 0, $locked );
+		// delete existing lock
+		$transaction->delete_extra_meta( 'lock' );
+		// now set another lock, but with an expired timestamp
+		$expired_timestamp = time() - HOUR_IN_SECONDS;
+		$transaction->add_extra_meta( 'lock', $expired_timestamp, true );
+		// this time, lock() should remove the expired lock, and set a new one with a current timestamp
+		$transaction->lock();
+		$locked = $transaction->get_extra_meta( 'lock', true, 0 );
+		EE_UnitTestCase::assertNotEquals( 0, $locked );
+		EE_UnitTestCase::assertGreaterThan( $expired_timestamp, $locked );
+	}
+
+
+
+	/**
+	 * @throws \EE_Error
+	 */
+	public function test_unlock() {
+		/** @type EE_Transaction $transaction */
+		$transaction = $this->factory->transaction->create();
+		// initial state should be unlocked
+		$locked = $transaction->get_extra_meta( 'lock', true, 0 );
+		EE_UnitTestCase::assertEquals( 0, $locked );
+		// set a lock
+		$transaction->add_extra_meta( 'lock', time(), true );
+		// unlock() should remove the above lock and return a value of 1
+		EE_UnitTestCase::assertEquals( 1, $transaction->unlock() );
+	}
+
+
 }
 // End of file EE_Transaction_Test.php
-// Location: wp-content/plugins/event-espresso-core/tests/testcases/core/db_classes/EE_Transaction_Test.php
+// Location:/tests/testcases/core/db_classes/EE_Transaction_Test.php
