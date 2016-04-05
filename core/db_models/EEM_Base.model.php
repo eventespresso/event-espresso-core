@@ -2987,6 +2987,7 @@ abstract class EEM_Base extends EE_Base{
 			$universal_query_params = $this->_get_minimum_where_conditions();
 		}
 		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
+			EE_Registry::instance()->load_helper('Array');
 			foreach($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name){
 				$related_model = $this->get_related_model_obj($model_name);
 				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
@@ -2996,9 +2997,10 @@ abstract class EEM_Base extends EE_Base{
 					$related_model,
 					$model_relation_path
 				);
-				foreach ( $overrides as $key => $value ) {
-					$universal_query_params[ $key ] = $value;
-				}
+				$universal_query_params = EEH_Array::merge_arrays_and_overwrite_keys(
+					$universal_query_params,
+					$overrides
+				);
 			}
 		}
 		return $universal_query_params;
