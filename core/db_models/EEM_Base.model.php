@@ -4386,32 +4386,41 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function ensure_is_obj( $base_class_obj_or_id, $ensure_is_in_db = FALSE ){
 		$className = $this->_get_class_name();
-		$primary_key_field = $this->get_primary_key_field();
-		if( $base_class_obj_or_id instanceof $className ){
+		if ( $base_class_obj_or_id instanceof $className ) {
 			$model_object = $base_class_obj_or_id;
-		}elseif(
-			$primary_key_field instanceof EE_Primary_Key_Int_Field
-			&& (
-				is_int( $base_class_obj_or_id )
-				|| is_string( $base_class_obj_or_id )
-			)
-		){
-			//assume it's an ID. either a proper integer or a string representing an integer (eg "101" instead of 101)
-			$model_object = $this->get_one_by_ID( $base_class_obj_or_id );
-		} else if( $primary_key_field instanceof EE_Primary_Key_String_Field && is_string( $base_class_obj_or_id ) ){
-			// assume its a string representation of the object
-			$model_object = $this->get_one_by_ID( $base_class_obj_or_id );
-		}else{
-			throw new EE_Error(
-				sprintf(
-					__( "'%s' is neither an object of type %s, nor an ID! Its full value is '%s'", 'event_espresso' ),
-					$base_class_obj_or_id,
-					$this->_get_class_name(),
-					print_r($base_class_obj_or_id,true)
+		} else {
+			$primary_key_field = $this->get_primary_key_field();
+			if (
+				$primary_key_field instanceof EE_Primary_Key_Int_Field
+				&& (
+					is_int( $base_class_obj_or_id )
+					|| is_string( $base_class_obj_or_id )
 				)
-			);
+			) {
+				// assume it's an ID.
+				// either a proper integer or a string representing an integer (eg "101" instead of 101)
+				$model_object = $this->get_one_by_ID( $base_class_obj_or_id );
+			} else if (
+				$primary_key_field instanceof EE_Primary_Key_String_Field
+			    && is_string( $base_class_obj_or_id )
+			) {
+				// assume its a string representation of the object
+				$model_object = $this->get_one_by_ID( $base_class_obj_or_id );
+			} else {
+				throw new EE_Error(
+					sprintf(
+						__(
+							"'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",
+							'event_espresso'
+						),
+						$base_class_obj_or_id,
+						$this->_get_class_name(),
+						print_r( $base_class_obj_or_id, true )
+					)
+				);
+			}
 		}
-		if( $ensure_is_in_db && $model_object->ID() !== null ){
+		if ( $ensure_is_in_db && $model_object->ID() !== null ) {
 			$model_object->save();
 		}
 		return $model_object;
