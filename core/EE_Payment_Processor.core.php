@@ -131,7 +131,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 	/**
 
-	 * @param EE_Base_Class|int $transaction
+	 * @param EE_Transaction|int $transaction
 	 * @param EE_Payment_Method $payment_method
 	 * @throws EE_Error
 	 * @return string
@@ -171,7 +171,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * If a payment is found for the IPN info, it is saved.
 	 *
 	 * @param                   $_req_data
-	 * @param EE_Base_Class|int $transaction          optional (or a transactions id)
+	 * @param EE_Transaction|int $transaction          optional (or a transactions id)
 	 * @param EE_Payment_Method $payment_method       (or a slug or id of one)
 	 * @param boolean           $update_txn           whether or not to call
 	 *                                                EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
@@ -318,7 +318,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * sent to an offsite payment provider, this should be called upon returning from that offsite payment
 	 * provider.
 	 *
-	 * @param EE_Base_Class|int $transaction
+	 * @param EE_Transaction|int $transaction
 	 * @param bool              $update_txn whether or not to call
 	 *                                      EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
 	 * @throws \EE_Error
@@ -382,7 +382,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 * in which case we only want that payment object for some temporary usage during this request,
 	 * but we don't want it to be saved).
 	 *
-	 * @param EE_Base_Class|int $transaction
+	 * @param EE_Transaction|int $transaction
 	 * @param EE_Payment     $payment
 	 * @param boolean        $update_txn
 	 *                        whether or not to call
