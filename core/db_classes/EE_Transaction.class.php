@@ -511,7 +511,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * @throws \EE_Error
 	 */
 	public function is_free() {
-		return (float)$this->get( 'TXN_total' ) === (float)0 ? TRUE : FALSE;
+		return EEH_Money::compare_floats( $this->get( 'TXN_total' ), 0, '==' );
 	}
 
 
