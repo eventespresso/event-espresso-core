@@ -95,8 +95,16 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param string      $cancel_url   URL to send the user to after a cancelled payment attempt
 	 *                                  on the payment provider's website
 	 * @return EEI_Payment
+	 * @throws \EE_Error
 	 */
-	public function set_redirection_info( $payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL ){
+	public function set_redirection_info(
+		$payment,
+		$billing_info = array(),
+		$return_url = null,
+		$notify_url = null,
+		$cancel_url = null
+	) {
+		EE_Registry::instance()->load_helper('Money');
 		$redirect_args = array();
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
@@ -106,7 +114,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		$total_discounts_to_cart_total = $transaction->paid();
 		//only itemize the order if we're paying for the rest of the order's amount
-		if( (float)$payment->amount() === (float)$transaction->total() ) {
+		if( EEH_Money::compare_floats( $payment->amount(), $transaction->total(), '==' ) ) {
 			$payment->update_extra_meta( EEG_Paypal_Standard::itemized_payment_option_name, true );
 			//this payment is for the remaining transaction amount,
 			//keep track of exactly how much the itemized order amount equals
