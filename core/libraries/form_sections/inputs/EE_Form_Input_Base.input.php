@@ -108,7 +108,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * Gets all the validation strategies used on this field
 	 * @var EE_Validation_Strategy_Base[]
 	 */
-	private $_validation_strategies;
+	private $_validation_strategies = array();
 
 	/**
 	 * The normalization strategy for this field
@@ -166,10 +166,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		//$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
 
 		$this->_display_strategy->_construct_finalize($this);
-		if ( $this->_validation_strategies ){
-			foreach( $this->_validation_strategies as $validation_strategy ){
-				$validation_strategy->_construct_finalize($this);
-			}
+		foreach( $this->_validation_strategies as $validation_strategy ){
+			$validation_strategy->_construct_finalize($this);
 		}
 
 		if( ! $this->_normalization_strategy){
@@ -302,13 +300,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return EE_Validation_Strategy_Base[]
 	 */
 	public function get_validation_strategies(){
-		if(is_array($this->_validation_strategies)){
-			return $this->_validation_strategies;
-		}else{
-			return array();
-		}
-
+		return $this->_validation_strategies;
 	}
+
+
+
 	/**
 	 * Adds this strategy to the field so it will be used in both JS validation and server-side validation
 	 * @param EE_Validation_Strategy_Base $validation_strategy
@@ -319,6 +315,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_validation_strategies[ get_class($validation_strategy) ] = $validation_strategy;
 	}
 
+
+
 	/**
 	 * Adds a new validation strategy onto the form input
 	 * @param EE_Validation_Strategy_Base $validation_strategy
@@ -328,8 +326,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_add_validation_strategy( $validation_strategy );
 	}
 
+
+
 	/**
 	 * The classname of the validation strategy to remove
+	 *
 	 * @param string $validation_strategy_classname
 	 */
 	public function remove_validation_strategy( $validation_strategy_classname ) {
@@ -342,6 +343,29 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 	}
+
+
+
+	/**
+	 * returns true if input employs any of the validation strategy defined by the supplied array of classnames
+	 *
+	 * @param array $validation_strategy_classnames
+	 * @return bool
+	 */
+	public function has_validation_strategy( $validation_strategy_classnames ) {
+		$validation_strategy_classnames = is_array( $validation_strategy_classnames )
+			? $validation_strategy_classnames
+			: array( $validation_strategy_classnames );
+		foreach( $this->_validation_strategies as $key => $validation_strategy ){
+			if( in_array( $key, $validation_strategy_classnames ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
 	 * to the parent form's layout strategy
@@ -350,6 +374,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	public function get_html_and_js(){
 		return $this->_parent_section->get_html_for_input($this);
 	}
+
+
+
 	/**
 	 * Gets the HTML for the input itself (no label or errors) according to the
 	 * input's display strategy
@@ -408,14 +435,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return boolean
 	 */
 	protected function _validate() {
-		if(is_array($this->_validation_strategies)){
-			foreach($this->_validation_strategies as $validation_strategy){
-				if ( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
-					try{
-						$validation_strategy->validate($this->normalized_value());
-					}catch(EE_Validation_Error $e){
-						$this->add_validation_error($e);
-					}
+		foreach($this->_validation_strategies as $validation_strategy){
+			if ( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
+				try{
+					$validation_strategy->validate($this->normalized_value());
+				}catch(EE_Validation_Error $e){
+					$this->add_validation_error($e);
 				}
 			}
 		}
@@ -826,7 +851,4 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return FALSE;
 		}
 	}
-
-
-
 }
