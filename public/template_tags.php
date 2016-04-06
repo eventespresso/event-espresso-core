@@ -732,7 +732,7 @@ if ( ! function_exists( 'espresso_organization_address' )) {
 	function espresso_organization_address( $type = 'inline' ) {
 		if ( EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ) {
 			//EE_Registry::instance()->load_helper( 'Formatter' );
-			$address = new EE_Generic_Address(
+			$address = new EventEspresso\core\entities\GenericAddress(
 				EE_Registry::instance()->CFG->organization->address_1,
 				EE_Registry::instance()->CFG->organization->address_2,
 				EE_Registry::instance()->CFG->organization->city,
@@ -994,10 +994,10 @@ if ( ! function_exists( 'espresso_venue_excerpt' )) {
 	function espresso_venue_excerpt( $VNU_ID = 0,  $echo = TRUE ) {
 		//EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
-			echo EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+			echo EEH_Venue_View::venue_excerpt( $VNU_ID );
 			return '';
 		}
-		return EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+		return EEH_Venue_View::venue_excerpt( $VNU_ID );
 	}
 }
 
