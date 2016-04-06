@@ -275,24 +275,25 @@ class EEH_Debug_Tools{
 	 * @return string
 	 */
 	public function format_time( $timer_name, $total_time ) {
+		$total_time = $total_time * 1000;
 		switch ( $total_time ) {
-			case $total_time < 0.00001 :
+			case $total_time < 0.01 :
 				$color = '#8A549A';
 				$bold = 'normal';
 				break;
-			case $total_time < 0.0001 :
+			case $total_time < 0.1 :
 				$color = '#00B1CA';
 				$bold = 'normal';
 				break;
-			case $total_time < 0.001 :
+			case $total_time < 1 :
 				$color = '#70CC50';
 				$bold = 'normal';
 				break;
-			case $total_time < 0.01 :
+			case $total_time < 10 :
 				$color = '#FCC600';
 				$bold = 'bold';
 				break;
-			case $total_time < 0.1 :
+			case $total_time < 100 :
 				$color = '#E76700';
 				$bold = 'bold';
 				break;
@@ -306,7 +307,7 @@ class EEH_Debug_Tools{
 			. '; font-weight:'
 			. $bold
 			. '; font-size:1.2em;">'
-			. str_pad( number_format( $total_time * 1000, 5 ), 9, '0', STR_PAD_LEFT )
+			. str_pad( number_format( $total_time, 5 ), 11, '0', STR_PAD_LEFT )
 			. '</span> '
 			. $timer_name
 			. '<br />';
