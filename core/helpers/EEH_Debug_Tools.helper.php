@@ -203,35 +203,10 @@ class EEH_Debug_Tools{
 		}else{
 			$start_time = array_pop( $this->_start_times );
 		}
-		$total_time = microtime( TRUE ) - $start_time;
-		switch ( $total_time ) {
-			case $total_time < 0.00001 :
-				$color = '#8A549A';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.0001 :
-				$color = '#00B1CA';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.001 :
-				$color = '#70CC50';
-				$bold = 'normal';
-				break;
-			case $total_time < 0.01 :
-				$color = '#FCC600';
-				$bold = 'bold';
-				break;
-			case $total_time < 0.1 :
-				$color = '#E76700';
-				$bold = 'bold';
-				break;
-			default :
-				$color = '#E44064';
-				$bold = 'bold';
-				break;
-		}
-		$this->_times[] = '<hr /><div style="display: inline-block; min-width: 10px; margin:0 1em; color:'.$color.'; font-weight:'.$bold.'; font-size:1.2em;">' . number_format( $total_time, 8 ) . '</div> ' . $timer_name;
+		$this->_times[ $timer_name ] =  number_format( microtime( true ) - $start_time, 8 );
 	}
+
+
 	/**
 	 * Measure the memory usage by PHP so far.
 	 * @param string $label The label to show for this time eg "Start of calling Some_Class::some_function"
@@ -264,12 +239,73 @@ class EEH_Debug_Tools{
 	 * @return string
 	 */
 	public function show_times($output_now=true){
-		$output = '<h2>Times:</h2>' . implode("<br>",$this->_times) . '<h2>Memory</h2>' . implode('<br>', $this->_memory_usage_points );
-		if($output_now){
+		$output = '';
+		if ( ! empty( $this->_times )) {
+			$total = 0;
+			$output .= '<h2 style="margin:1em .5em 0;">Times:</h2>';
+			$output .= '<span style="color:#9999CC; font-size:.8em; margin:0 1.5em 0;">( in milliseconds )</span><br />';
+			foreach( $this->_times as $timer_name => $total_time ) {
+				$output .= $this->format_time( $timer_name, $total_time );
+				$total += $total_time;
+			}
+			$output .= '<br />';
+			$output .= '<h4 style="margin:1em .5em 0;">TOTAL TIME</h4>';
+			$output .= $this->format_time( '', $total );
+			$output .= '<br />';
+		}
+		if ( ! empty( $this->_memory_usage_points )) {
+			$output .= '<h2 style="margin:1em .5em 0;">Memory</h2>' . implode( '<br />', $this->_memory_usage_points );
+		}
+		if( $output_now ){
 			echo $output;
 			return '';
 		}
 		return $output;
+	}
+
+
+
+	/**
+	 * @param string $timer_name
+	 * @param float $total_time
+	 * @return string
+	 */
+	public function format_time( $timer_name, $total_time ) {
+		switch ( $total_time ) {
+			case $total_time < 0.00001 :
+				$color = '#8A549A';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.0001 :
+				$color = '#00B1CA';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.001 :
+				$color = '#70CC50';
+				$bold = 'normal';
+				break;
+			case $total_time < 0.01 :
+				$color = '#FCC600';
+				$bold = 'bold';
+				break;
+			case $total_time < 0.1 :
+				$color = '#E76700';
+				$bold = 'bold';
+				break;
+			default :
+				$color = '#E44064';
+				$bold = 'bold';
+				break;
+		}
+		return '<span style="min-width: 10px; margin:0 1em; color:'
+			. $color
+			. '; font-weight:'
+			. $bold
+			. '; font-size:1.2em;">'
+			. str_pad( number_format( $total_time * 1000, 5 ), 9, '0', STR_PAD_LEFT )
+			. '</span> '
+			. $timer_name
+			. '<br />';
 	}
 
 
