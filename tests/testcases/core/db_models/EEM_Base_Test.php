@@ -824,6 +824,22 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$e2 = $this->new_model_obj_with_dependencies( 'Event', array() );
 		$this->assertEquals( array( $e1->ID(), $e2->ID() ), EEM_Event::instance()->get_IDs( array( $e1, $e2 ), true ) );
 	}
+	
+	/**
+	 * @group 9389
+	 */
+	function test_get_all__automatic_group_by() {
+		$this->assertEquals( 2, EEM_Question_Group::instance()->count() );
+		$qsgs = EEM_Question_Group::instance()->get_all( 
+			array(
+				'force_join' => array( 'Question' ),
+				'limit' => array( 2, 2 ),//grab 2 but offset by 2
+			)
+		);
+		//so there are only 2 question groups, and we offset by 2. 
+		//so we shouldn't see any right?
+		$this->assertEmpty( $qsgs );
+	}
         
  
 }

@@ -758,7 +758,7 @@ class Read extends Base {
 		} elseif ( isset( $query_parameters[ 'groupby' ] ) ) {
 			$group_by = $query_parameters[ 'groupby' ];
 		}else{
-			$group_by = null;
+			$group_by = array_keys( $model->get_combined_primary_key_fields() );
 		}
 		if( $group_by !== null ){
 			$model_query_params[ 'group_by' ] = $group_by;

@@ -694,6 +694,8 @@ abstract class EEM_Base extends EE_Base{
 	 *		or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
 	 *
 	 *	@var mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
+	 *		Note: if no $group_by is specified, and a limit is set, automatically groups by the model's primary key (or combined primary keys). This
+	 *		avoids some weirdness that results when using limits, tons of joins, and no group by, see https://events.codebasehq.com/projects/event-espresso/tickets/9389
 	 *
 	 *	@var array $having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 *
@@ -739,6 +741,10 @@ abstract class EEM_Base extends EE_Base{
 	 *		));
 	 */
 	function get_all($query_params = array()){
+		if( isset( $query_params[ 'limit' ] )
+			&& ! isset( $query_params[ 'group_by' ] ) ) {
+			$query_params[ 'group_by' ] = array_keys( $this->get_combined_primary_key_fields() );
+		}
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL));
 	}
 
@@ -4214,7 +4220,7 @@ abstract class EEM_Base extends EE_Base{
 	 * This is usually just an array with 1 element (the primary key), but in cases
 	 * where there is no primary key, it's a combination of fields as defined
 	 * on a primary index
-	 * @return EE_Model_Field_Base[]
+	 * @return EE_Model_Field_Base[] indexed by the field's name
 	 */
 	public function get_combined_primary_key_fields(){
 		foreach($this->indexes() as $index){
@@ -4222,8 +4228,9 @@ abstract class EEM_Base extends EE_Base{
 				return $index->fields();
 			}
 		}
-		return array($this->get_primary_key_field());
+		return array( $this->primary_key_name() => $this->get_primary_key_field());
 	}
+	
 
 	/**
 	 * Used to build a primary key string (when the model has no primary key),
