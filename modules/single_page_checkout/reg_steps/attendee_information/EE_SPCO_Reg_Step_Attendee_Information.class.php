@@ -118,7 +118,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			$this->checkout->cart->get_grand_total(),
 			array( 'set_tax_rate' => true )
 		);
-		EE_Registry::instance()->load_helper('Line_Item');
+		//EE_Registry::instance()->load_helper('Line_Item');
 		/** @var $subsections EE_Form_Section_Proper[] */
 		$subsections = array(
 			'default_hidden_inputs' => $this->reg_step_hidden_inputs()
@@ -205,7 +205,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @throws \EE_Error
 	 */
 	private function _registrations_reg_form( EE_Registration $registration ) {
-		EE_Registry::instance()->load_helper( 'Template' );
+		//EE_Registry::instance()->load_helper( 'Template' );
 		static $attendee_nmbr = 1;
 		// array of params to pass to parent constructor
 		$form_args = array(
@@ -393,7 +393,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$html = '';
 		// group_name
 		if ( $question_group->show_group_name() && $question_group->name() !== '' ) {
-			EE_Registry::instance()->load_helper('HTML');
+			//EE_Registry::instance()->load_helper('HTML');
 			if ( $this->checkout->admin_request ) {
 				$html .= EEH_HTML::br();
 				$html .= EEH_HTML::h3(

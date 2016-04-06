@@ -66,7 +66,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 */
 	public function layout_form() {
 		if ( $this->_layout_template_file ) {
-			EE_Registry::instance()->load_helper( 'Template' );
+			//EE_Registry::instance()->load_helper( 'Template' );
 			return EEH_Template::locate_template( $this->_layout_template_file, $this->template_args(), TRUE, TRUE );
 		} else {
 			return parent::layout_form();
@@ -81,7 +81,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 */
 	public function layout_form_begin() {
 		if($this->_layout_begin_template_file){
-			EE_Registry::instance()->load_helper('Template');
+			//EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template( $this->_layout_begin_template_file, $this->template_args(), TRUE, TRUE );
 		}else{
 			return parent::layout_form_begin();
@@ -98,7 +98,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 */
 	public function layout_input( $input ) {
 		if($this->_input_template_file){
-			EE_Registry::instance()->load_helper('Template');
+			//EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template( $this->_input_template_file, array( 'input' => $input ), TRUE, TRUE );
 		}
 		return parent::layout_input($input);
@@ -114,7 +114,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 */
 	public function layout_subsection( $form_section ) {
 		if($this->_subsection_template_file){
-			EE_Registry::instance()->load_helper('Template');
+			//EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template( $this->_subsection_template_file, $this->template_args(), TRUE, TRUE );
 		}
 		return parent::layout_subsection( $form_section );
@@ -128,7 +128,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 */
 	public function layout_form_end() {
 		if($this->_layout_end_template_file){
-			EE_Registry::instance()->load_helper('Template');
+			//EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template( $this->_layout_end_template_file, $this->template_args(), TRUE, TRUE);
 		}else{
 			return parent::layout_form_end();

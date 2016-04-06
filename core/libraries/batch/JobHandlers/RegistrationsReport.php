@@ -56,7 +56,7 @@ class RegistrationsReport extends JobHandlerFile {
 			0,
 			1,
 			$job_parameters->extra_datum( 'questions_data' ) );
-		\EE_Registry::instance()->load_helper( 'Export' );
+		//\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
@@ -122,7 +122,7 @@ class RegistrationsReport extends JobHandlerFile {
 			$job_parameters->units_processed(),
 			$batch_size,
 			$job_parameters->extra_datum( 'questions_data' ) );
-		\EE_Registry::instance()->load_helper( 'Export' );
+		//\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
@@ -151,7 +151,7 @@ class RegistrationsReport extends JobHandlerFile {
 	 *
 	 */
 	function get_csv_data_for( $event_id, $offset, $limit, $questions_for_these_regs_rows ) {
-		\EE_Registry::instance()->load_helper( 'Export' );
+		//\EE_Registry::instance()->load_helper( 'Export' );
 		$reg_fields_to_include = array(
 			'TXN_ID',
 			'ATT_ID',

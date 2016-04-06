@@ -331,10 +331,10 @@
 	 * @param resource $filehandle
 	 */
 	public function write_metadata_to_csv($filehandle){
-		EE_Registry::instance()->load_helper('DTT_Helper');
+		//EE_Registry::instance()->load_helper('DTT_Helper');
 		$data_row = array(EE_CSV::metadata_header);//do NOT translate because this exact string is used when importing
 		$this->fputcsv2($filehandle, $data_row);
-		EE_Registry::instance()->load_helper('DTT_Helper');
+		//EE_Registry::instance()->load_helper('DTT_Helper');
 		$meta_data = array( 0=> array(
 			'version'=>espresso_version(),
 			'timezone'=>  EEH_DTT_Helper::get_timezone(),
@@ -354,7 +354,7 @@
 	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
 	 */
 	public function write_data_array_to_csv($filehandle, $data){
-		EE_Registry::instance()->load_helper('Array');
+		//EE_Registry::instance()->load_helper('Array');
 
 
 		//determine if $data is actually a 2d array

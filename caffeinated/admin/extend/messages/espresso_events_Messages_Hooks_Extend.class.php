@@ -155,7 +155,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		}
 
 
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		//EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		//we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
 		$tabbed_content = EEH_Tabbed_Content::display($tabs);
 		if ( is_wp_error($tabbed_content) ) {

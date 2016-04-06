@@ -29,8 +29,8 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		 * Testing default messengers setup on activation (or introduction on migration)
 		 */
 		//first let's make sure all message templates got setup on new install as they should be.
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		EE_Registry::instance()->load_helper( 'Activation' );
+		//EE_Registry::instance()->load_helper( 'MSG_Template' );
+		//EE_Registry::instance()->load_helper( 'Activation' );
 		$installed_messengers = EEH_MSG_Template::get_installed_message_objects();
 		$should_be_installed = array();
 		foreach( $installed_messengers['messengers'] as $msgr ) {
@@ -78,8 +78,8 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * @group 7595
 	 */
 	public function test_filtered_default_message_types_on_activation() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		EE_Registry::instance()->load_helper( 'Activation' );
+		//EE_Registry::instance()->load_helper( 'MSG_Template' );
+		//EE_Registry::instance()->load_helper( 'Activation' );
 
 		//let's clear out all active messengers to get an accurate test of initial generation of message templates.
 		global $wpdb;

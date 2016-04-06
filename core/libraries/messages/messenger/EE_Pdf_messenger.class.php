@@ -301,7 +301,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 		$this->_template_args['message_type'] = $this->_incoming_message_type;
 
 		//require template helper
-		EE_Registry::instance()->load_helper( 'Template' );
+		//EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 

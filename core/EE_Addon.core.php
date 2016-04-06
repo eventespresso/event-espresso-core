@@ -310,7 +310,7 @@ abstract class EE_Addon extends EE_Configurable {
 			 * possible this addon added a payment method. But it's also possible
 			 * other data needs to be verified)
 			 */
-			EE_Registry::instance()->load_helper('Activation');
+			//EE_Registry::instance()->load_helper('Activation');
 			EEH_Activation::initialize_db_content();
 			update_option( 'ee_flush_rewrite_rules', TRUE );
 			//in case there are lots of addons being activated at once, let's force garbage collection

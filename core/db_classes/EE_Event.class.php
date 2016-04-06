@@ -1238,7 +1238,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return string
 	 */
 	public function get_admin_edit_link() {
-		EE_Registry::instance()->load_helper('URL');
+		//EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce( array(
 			'page' => 'espresso_events',
 			'action' => 'edit',
@@ -1256,7 +1256,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return string
 	 */
 	public function get_admin_settings_link() {
-		EE_Registry::instance()->load_helper('URL');
+		//EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce( array(
 			'page' => 'espresso_events',
 			'action' => 'default_event_settings'
@@ -1276,7 +1276,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 */
 	public function get_admin_overview_link() {
 
-		EE_Registry::instance()->load_helper('URL');
+		//EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce( array(
 			'page' => 'espresso_events',
 			'action' => 'default'

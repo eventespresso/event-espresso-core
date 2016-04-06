@@ -62,7 +62,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 
-		EE_Registry::instance()->load_helper( 'Template' );
+		//EE_Registry::instance()->load_helper( 'Template' );
 
 		$this->_ticket = $this->_data instanceof EE_Ticket ? $this->_data : null;
 

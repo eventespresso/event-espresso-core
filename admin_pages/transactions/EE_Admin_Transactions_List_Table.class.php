@@ -312,7 +312,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
     	$registration = $item->primary_registration();
     	$attendee = $registration->attendee();
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		//EE_Registry::instance()->load_helper( 'MSG_Template' );
 
         //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );

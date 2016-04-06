@@ -629,7 +629,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 	public function redirect_form( $inside_form_html = null ) {
 		$redirect_url = $this->redirect_url();
 		if ( ! empty( $redirect_url ) ) {
-			EE_Registry::instance()->load_helper( 'HTML' );
+			//EE_Registry::instance()->load_helper( 'HTML' );
 			// what ? no inner form content?
 			if ( $inside_form_html === null ) {
 				$inside_form_html = EEH_HTML::p(
@@ -701,7 +701,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 	protected function _args_as_inputs( $args ) {
 		$html = '';
 		if ( $args !== null && is_array( $args ) ) {
-			EE_Registry::instance()->load_helper( 'HTML' );
+			//EE_Registry::instance()->load_helper( 'HTML' );
 			foreach ( $args as $name => $value ) {
 				$html .= EEH_HTML::nl( 0 )
 				         . '<input type="hidden" name="'
@@ -757,7 +757,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 	 * @throws \EE_Error
 	 */
 	public function just_approved() {
-		EE_Registry::instance()->load_helper( 'Array' );
+		//EE_Registry::instance()->load_helper( 'Array' );
 		$original_status = EEH_Array::is_set(
 			$this->_props_n_values_provided_in_constructor,
 			'STS_ID',

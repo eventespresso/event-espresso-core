@@ -24,7 +24,7 @@ class EE_messages_Test extends EE_UnitTestCase {
 	 */
 	public function test_ensure_messenger_is_active() {
 		EE_Registry::instance()->load_lib('messages');
-		EE_Registry::instance()->load_helper('Activation');
+		//EE_Registry::instance()->load_helper('Activation');
 		$msg = new EE_messages();
 		$this->assertInstanceOf( 'EE_messages', $msg );
 

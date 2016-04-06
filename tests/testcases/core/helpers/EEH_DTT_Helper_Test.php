@@ -25,7 +25,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		EE_Registry::instance()->load_helper('DTT_Helper');
+		//EE_Registry::instance()->load_helper('DTT_Helper');
 	}
 
 

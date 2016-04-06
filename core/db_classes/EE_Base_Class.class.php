@@ -134,7 +134,7 @@ abstract class EE_Base_Class{
 			}
 		}
 		// EEH_Debug_Tools::printr( $model_fields, '$model_fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$this->_timezone = EEH_DTT_Helper::get_valid_timezone_string( $timezone );
 
 		if ( ! empty( $date_formats ) && is_array( $date_formats ) ) {
@@ -372,7 +372,7 @@ abstract class EE_Base_Class{
 	 * @throws \EE_Error
 	 */
 	public function set_timezone( $timezone = '' ) {
-		EE_Registry::instance()->load_helper('DTT_Helper');
+		//EE_Registry::instance()->load_helper('DTT_Helper');
 		$this->_timezone = EEH_DTT_Helper::get_valid_timezone_string( $timezone );
 		//make sure we clear all cached properties because they won't be relevant now
 		$this->_clear_cached_properties();
@@ -1204,7 +1204,7 @@ abstract class EE_Base_Class{
 	 *                           field name.
 	 */
 	public function get_i18n_datetime( $field_name, $format = NULL ) {
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$format = empty( $format ) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
 		return date_i18n(
 			$format,
@@ -1320,7 +1320,7 @@ abstract class EE_Base_Class{
 	 * @return string timestamp
 	 */
 	public function display_in_my_timezone( $field_name, $callback = 'get_datetime', $args = NULL, $prepend = '', $append = '' ) {
-		EE_Registry::instance()->load_helper('DTT_Helper');
+		//EE_Registry::instance()->load_helper('DTT_Helper');
 		$timezone = EEH_DTT_Helper::get_timezone();
 		if ( $timezone === $this->_timezone ) {
 			return '';

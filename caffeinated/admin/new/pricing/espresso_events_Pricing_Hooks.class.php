@@ -58,7 +58,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			return;
 		}
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 
 		//if we were going to add our own metaboxes we'd use the below.
 		$this->_metaboxes = array(
@@ -258,7 +258,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTM->get_raw('DTT_EVT_start') > $DTM->get_raw('DTT_EVT_end') ) {
 				$DTM->set('DTT_EVT_end', $DTM->get('DTT_EVT_start') );
-				EE_Registry::instance()->load_helper('DTT_Helper');
+				//EE_Registry::instance()->load_helper('DTT_Helper');
 				$DTM = EEH_DTT_Helper::date_time_add($DTM, 'DTT_EVT_end', 'days');
 				$DTM->save();
 			}
@@ -323,7 +323,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
 		//load money helper
-		EE_Registry::instance()->load_helper( 'Money' );
+		//EE_Registry::instance()->load_helper( 'Money' );
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
@@ -461,7 +461,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				EE_Registry::instance()->load_helper('DTT_Helper');
+				//EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 			}
 

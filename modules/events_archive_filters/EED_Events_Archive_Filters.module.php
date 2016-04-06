@@ -591,11 +591,11 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-			EE_Registry::instance()->load_helper( 'Maps' );
+			//EE_Registry::instance()->load_helper( 'Maps' );
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 		}
 		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
-		EE_Registry::instance()->load_helper( 'Event_View' );
+		//EE_Registry::instance()->load_helper( 'Event_View' );
 	}
 
 
@@ -682,7 +682,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
 			// first check uploads folder
-			EE_Registry::instance()->load_helper( 'File' );
+			//EE_Registry::instance()->load_helper( 'File' );
 			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css' )) {
 				wp_register_style( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
 			} else {

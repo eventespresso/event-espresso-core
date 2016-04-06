@@ -208,7 +208,7 @@ abstract class  EE_Messages_Template_Pack {
 		}
 
 		//load template helper
-		EE_Registry::instance()->load_helper( 'Template' );
+		//EE_Registry::instance()->load_helper( 'Template' );
 
 	}
 

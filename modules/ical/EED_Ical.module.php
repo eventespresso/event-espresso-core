@@ -140,7 +140,7 @@ class EED_Ical  extends EED_Module {
 				if ( is_array( $venue ) && ! empty( $venue )) {
 					$venue = array_shift( $venue );
 					if ( $venue instanceof EE_Venue ) {
-						 EE_Registry::instance()->load_helper( 'Venue_View' );
+						 //EE_Registry::instance()->load_helper( 'Venue_View' );
 						$location = espresso_venue_raw_address( 'inline', $venue->ID(), FALSE );
 					}
 				}

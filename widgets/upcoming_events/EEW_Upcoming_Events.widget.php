@@ -51,7 +51,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );
 		// Set up some default widget settings.
 		$defaults = array(
@@ -273,9 +273,9 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			$after_widget = '';
 			// but NOT an events archives page, cuz that would be like two event lists on the same page
 			$show_everywhere = isset( $instance['show_everywhere'] ) ? (bool) absint( $instance['show_everywhere'] ) : TRUE;
-			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {	
+			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {
 				// let's use some of the event helper functions'
-				EE_Registry::instance()->load_helper( 'Event_View' );
+				//EE_Registry::instance()->load_helper( 'Event_View' );
 				// make separate vars out of attributes
 
 

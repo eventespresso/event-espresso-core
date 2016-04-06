@@ -245,7 +245,7 @@ class EE_CPT_Event_Strategy {
 	public function the_posts( $posts, WP_Query $wp_query ) {
 		if ( $wp_query instanceof WP_Query && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			// automagically load the EEH_Event_View helper so that it's functions are available
-			EE_Registry::instance()->load_helper('Event_View');
+			//EE_Registry::instance()->load_helper('Event_View');
 		}
 		return $posts;
 	}

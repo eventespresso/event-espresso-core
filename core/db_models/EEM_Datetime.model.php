@@ -404,7 +404,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		$query_params['group_by'] = array('dtt_year', 'dtt_month');
 		$query_params['order_by'] = array( 'DTT_EVT_start' => 'DESC' );
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'DTT_EVT_start' );
 
 		$columns_to_select = array(

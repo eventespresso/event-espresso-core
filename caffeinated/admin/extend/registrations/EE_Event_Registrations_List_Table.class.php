@@ -107,7 +107,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = $where = array();
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
+		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select

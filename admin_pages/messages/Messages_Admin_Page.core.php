@@ -75,7 +75,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function __construct( $routing = TRUE ) {
 		//make sure MSG Template helper is loaded.
-		EE_Registry::instance()->load_helper('MSG_Template');
+		//EE_Registry::instance()->load_helper('MSG_Template');
 		//make sure messages autoloader is running
 		EED_Messages::set_autoloaders();
 		parent::__construct($routing);
@@ -1974,7 +1974,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( empty( $message_types ) )
 			return true;
 
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		//EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $GRP_ID,  $global);
 
@@ -2129,7 +2129,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _settings() {
 
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		//EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 
 		$this->_set_m_mt_settings();
 

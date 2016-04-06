@@ -72,8 +72,8 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 	public function process_shortcode( $attributes = array() ) {
 
 		//load helpers
-		EE_Registry::instance()->load_helper( 'Event_View' );
-		EE_Registry::instance()->load_helper( 'Template' );
+		//EE_Registry::instance()->load_helper( 'Event_View' );
+		//EE_Registry::instance()->load_helper( 'Template' );
 
 		// merge in any attributes passed via fallback shortcode processor
 		$attributes = array_merge( (array) $attributes, (array) $this->_attributes );

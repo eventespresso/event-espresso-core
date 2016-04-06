@@ -480,7 +480,7 @@ class EEH_Event_View extends EEH_Base {
 	public static function event_phone( $EVT_ID = 0 ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
+			//EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $event->phone() );
 		}
 		return NULL;

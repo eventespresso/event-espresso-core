@@ -232,7 +232,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @throws \EE_Error
 	 */
 	public function generate_reg_form() {
-		EE_Registry::instance()->load_helper( 'HTML' );
+		//EE_Registry::instance()->load_helper( 'HTML' );
 		// reset in case someone changes their mind
 		$this->_reset_selected_method_of_payment();
 		// set some defaults

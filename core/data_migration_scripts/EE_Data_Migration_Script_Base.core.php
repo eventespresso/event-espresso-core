@@ -447,7 +447,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	protected function _old_table_exists( $table_name ) {
-		EE_Registry::instance()->load_helper( 'Activation' );
+		//EE_Registry::instance()->load_helper( 'Activation' );
 		return EEH_Activation::table_exists( $table_name );
 	}
 
@@ -459,7 +459,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	protected function _delete_table_if_empty( $table_name ) {
-		EE_Registry::instance()->load_helper( 'Activation' );
+		//EE_Registry::instance()->load_helper( 'Activation' );
 		return EEH_Activation::delete_db_table_if_empty( $table_name );
 	}
 
@@ -547,7 +547,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param boolean $drop_pre_existing_tables
 	 */
 	private function _create_table_and_catch_errors( $table_name, $table_definition_sql, $engine_string = 'ENGINE=MyISAM', $drop_pre_existing_tables = FALSE ){
-		EE_Registry::instance()->load_helper('Activation');
+		//EE_Registry::instance()->load_helper('Activation');
 		try{
 			EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
 		}catch( EE_Error $e ) {

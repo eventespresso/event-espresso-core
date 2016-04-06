@@ -34,7 +34,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 			if (filter_var($normalized_value, FILTER_VALIDATE_URL) === false){
 				throw new EE_Validation_Error( $this->get_validation_error_message(), 'invalid_url');
 			}else{
-				EE_Registry::instance()->load_helper('URL');
+				//EE_Registry::instance()->load_helper('URL');
 				if( ! EEH_URL::remote_file_exists(
 						$normalized_value,
 						array(

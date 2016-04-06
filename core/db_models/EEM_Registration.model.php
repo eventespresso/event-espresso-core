@@ -183,7 +183,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//and the table hasn't actually been created, this could have an error
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		EE_Registry::instance()->load_helper( 'Activation' );
+		//EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
@@ -286,7 +286,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
 
 		$results = $this->_get_all_wpdb_results(
@@ -320,7 +320,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
 
 		//prepare the query interval for displaying offset
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
+		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
 
 		//inner date query

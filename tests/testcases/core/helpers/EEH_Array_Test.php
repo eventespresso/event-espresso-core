@@ -27,7 +27,7 @@ class EEH_Array_Test extends EE_UnitTestCase {
 	 * 	setUpBeforeClass
 	 */
 	static function setUpBeforeClass() {
-		EE_Registry::instance()->load_helper( 'Array' );
+		//EE_Registry::instance()->load_helper( 'Array' );
 	}
 
 

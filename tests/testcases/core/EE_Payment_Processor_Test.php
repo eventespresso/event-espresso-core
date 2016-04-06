@@ -189,7 +189,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			)
 		);
 		global $wp_actions;
-		EE_Registry::instance()->load_helper( 'Array' );
+		//EE_Registry::instance()->load_helper( 'Array' );
 		$successful_payment_actions = EEH_Array::is_set(
 			$wp_actions,
 			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
@@ -360,7 +360,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			)
 		);
 		global $wp_actions;
-		EE_Registry::instance()->load_helper( 'Array' );
+		//EE_Registry::instance()->load_helper( 'Array' );
 		$successful_payment_actions = EEH_Array::is_set(
 			$wp_actions,
 			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful',
@@ -401,7 +401,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 	 */
 	public function test_process_payment__offsite__declined_then_approved() {
 		global $wp_actions;
-		EE_Registry::instance()->load_helper( 'Array' );
+		//EE_Registry::instance()->load_helper( 'Array' );
 		/** @type EE_Payment_Processor $payment_processor */
 		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		/** @type EE_Payment_Method $pm */
@@ -500,7 +500,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Admin_Only' ) );
 		$transaction = $this->_new_typical_transaction();
 		global $wp_actions;
-		EE_Registry::instance()->load_helper( 'Array' );
+		//EE_Registry::instance()->load_helper( 'Array' );
 		$successful_payment_actions = EEH_Array::is_set(
 			$wp_actions,
 			'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made',

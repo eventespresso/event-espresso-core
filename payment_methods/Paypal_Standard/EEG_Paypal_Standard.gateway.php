@@ -104,7 +104,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$notify_url = null,
 		$cancel_url = null
 	) {
-		EE_Registry::instance()->load_helper('Money');
+		//EE_Registry::instance()->load_helper('Money');
 		$redirect_args = array();
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
@@ -454,7 +454,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return string
 	 */
 	protected function _process_response_url() {
-		EE_Registry::instance()->load_helper('URL');
+		//EE_Registry::instance()->load_helper('URL');
 		if ( isset( $_SERVER[ 'HTTP_HOST' ], $_SERVER[ 'REQUEST_URI' ] ) ) {
 			$url = is_ssl() ? 'https://' : 'http://';
 			$url .= EEH_URL::filter_input_server_url( 'HTTP_HOST' );

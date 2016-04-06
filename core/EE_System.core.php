@@ -243,7 +243,7 @@ final class EE_System {
 		$request_type =  $this->detect_req_type($espresso_db_update);
 		//EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
 		if( $request_type != EE_System::req_type_normal){
-			EE_Registry::instance()->load_helper('Activation');
+			//EE_Registry::instance()->load_helper('Activation');
 		}
 
 		switch($request_type){
@@ -788,7 +788,7 @@ final class EE_System {
 			EE_Registry::instance()->load_core( 'Admin' );
 		} else if ( EE_Maintenance_Mode::instance()->level() ) {
 			// still need to make sure template helper functions are loaded in M-Mode
-			EE_Registry::instance()->load_helper( 'Template' );
+			//EE_Registry::instance()->load_helper( 'Template' );
 		}
 		do_action( 'AHEE__EE_System__load_controllers__complete' );
 	}
@@ -930,7 +930,7 @@ final class EE_System {
 		}
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		EE_Registry::instance()->load_helper( 'URL' );
+		//EE_Registry::instance()->load_helper( 'URL' );
 		$menu_class = 'espresso_menu_item_class';
 		//we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
 		//because they're only defined in each of their respective constructors

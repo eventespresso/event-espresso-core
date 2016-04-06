@@ -155,7 +155,7 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load css
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
-		EE_Registry::instance()->load_helper( 'Venue_View' );
+		//EE_Registry::instance()->load_helper( 'Venue_View' );
 	}
 
 
@@ -397,7 +397,7 @@ class EED_Event_Single  extends EED_Module {
 	public function wp_enqueue_scripts() {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && apply_filters( 'FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE )) {
-			EE_Registry::instance()->load_helper( 'File' );
+			//EE_Registry::instance()->load_helper( 'File' );
 			// first check uploads folder
 			if ( is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
 				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
@@ -406,7 +406,7 @@ class EED_Event_Single  extends EED_Module {
 			}
 			wp_enqueue_script( $this->theme );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-				EE_Registry::instance()->load_helper( 'Maps' );
+				//EE_Registry::instance()->load_helper( 'Maps' );
 				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 			}
 		}
@@ -426,7 +426,7 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	bool
 	 */
 	public static function display_venue() {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
+		//EE_Registry::instance()->load_helper( 'Venue_View' );
 		/** @type EE_Event_Single_Config $config */
 		$config = EED_Event_Single::instance()->config();
 		$display_venue= isset( $config->display_venue ) ? $config->display_venue : TRUE;

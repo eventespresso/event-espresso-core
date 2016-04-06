@@ -58,7 +58,7 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 	 * @return bool
 	 */
 	public function can_migrate_from_version($version_array) {
-		EE_Registry::instance()->load_helper( 'Activation' );
+		//EE_Registry::instance()->load_helper( 'Activation' );
 		$version_string = $version_array['Core'];
 		if (
 			( $version_string <= '4.7.0' && $version_string >= '4.6.0' )

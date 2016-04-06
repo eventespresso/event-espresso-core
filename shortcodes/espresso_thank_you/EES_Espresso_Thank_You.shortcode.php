@@ -300,7 +300,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function init() {
 		$this->_get_reg_url_link();
 		if ( ! $this->get_txn() ) {
-			EE_Registry::instance()->load_helper( 'HTML' );
+			//EE_Registry::instance()->load_helper( 'HTML' );
 
 			echo EEH_HTML::div(
 				EEH_HTML::h4( __( 'We\'re sorry...', 'event_espresso' ), '', '' ) .
@@ -358,8 +358,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// link to SPCO attendee_information
 		$this->_SPCO_attendee_information_url = $this->_primary_registrant instanceof EE_Registration ? $this->_primary_registrant->edit_attendee_information_url() : FALSE;
 
-		EE_Registry::instance()->load_helper( 'Template' );
-		EE_Registry::instance()->load_helper( 'Template_Validator' );
+		//EE_Registry::instance()->load_helper( 'Template' );
+		//EE_Registry::instance()->load_helper( 'Template_Validator' );
 
 		do_action( 'AHEE__EES_Espresso_Thank_You__init_end', $this->_current_txn );
 		// set no cache headers and constants
