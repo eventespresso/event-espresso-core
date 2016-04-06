@@ -60,7 +60,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	  * @return \EE_Cart
 	  */
 	public static function instance( EE_Line_Item $grand_total = null ) {
-		//EE_Registry::instance()->load_helper('Line_Item');
 		// rest cart with new grand total ?
 		if ( ! empty( $grand_total ) ){
 			self::$_instance = new self( $grand_total );
@@ -287,7 +286,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return bool
 	 */
 	public function delete_cart() {
-		//EE_Registry::instance()->load_helper( 'Line_Item' );
 		$deleted = EEH_Line_Item::delete_all_child_items( $this->_grand_total );
 		if ( $deleted ) {
 			$deleted += $this->_grand_total->delete();

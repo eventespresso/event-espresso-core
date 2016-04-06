@@ -200,7 +200,6 @@ class EE_Transaction_Payments {
 			);
 			return FALSE;
 		}
-		//EE_Registry::instance()->load_helper( 'Money' );
 		// set incoming TXN_Status
 		$this->set_old_txn_status( $transaction->status_ID() );
 		// set transaction status based on comparison of TXN_paid vs TXN_total

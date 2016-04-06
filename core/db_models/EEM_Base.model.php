@@ -490,7 +490,6 @@ abstract class EEM_Base extends EE_Base{
 		//if the cap slug hasn't been set, and we haven't set it to false on purpose
 		//to indicate to NOT set it, set it to the logical default
 		if( $this->_caps_slug === null ) {
-			//EE_Registry::instance()->load_helper( 'Inflector' );
 			$this->_caps_slug = EEH_Inflector::pluralize_and_lower( $this->get_this_model_name() );
 		}
 		//initialize the standard cap restriction generators if none were specified by the child constructor
@@ -1179,7 +1178,6 @@ abstract class EEM_Base extends EE_Base{
 
 		//if timezone STILL empty then return the default timezone for the site.
 		if ( empty( $this->_timezone ) ) {
-			//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 			$this->set_timezone( EEH_DTT_Helper::get_timezone() );
 		}
 		return $this->_timezone;
@@ -1280,7 +1278,6 @@ abstract class EEM_Base extends EE_Base{
 		$this->get_formats_for( $field_name );
 
 		//load EEH_DTT_Helper
-		//EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$set_timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
 
 		$incomingDateTime = date_create_from_format( $incoming_format, $timestring, new DateTimeZone( $set_timezone ) );
@@ -2987,7 +2984,6 @@ abstract class EEM_Base extends EE_Base{
 			$universal_query_params = $this->_get_minimum_where_conditions();
 		}
 		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
-			//EE_Registry::instance()->load_helper('Array');
 			foreach($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name){
 				$related_model = $this->get_related_model_obj($model_name);
 				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
@@ -3301,7 +3297,6 @@ abstract class EEM_Base extends EE_Base{
 	protected function _get_field_on_model($field_name,$model_name){
 		$model_class = 'EEM_'.$model_name;
 		$model_filepath = $model_class.".model.php";
-		//EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable($model_filepath)){
 			require_once($model_filepath);
 			$model_instance=call_user_func($model_name."::instance");

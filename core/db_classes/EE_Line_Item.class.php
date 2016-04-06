@@ -1060,7 +1060,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return EE_Line_Item[]
 	 */
 	function tax_descendants() {
-		//EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_tax_descendants( $this );
 	}
 
@@ -1071,7 +1070,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return EE_Line_Item[]
 	 */
 	function get_items() {
-		//EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_line_item_descendants( $this );
 	}
 
@@ -1148,7 +1146,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 */
 	protected function _get_descendants_of_type( $type ) {
 		EE_Error::doing_it_wrong( 'EE_Line_Item::_get_descendants_of_type()', __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0' );
-		//EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_descendants_of_type( $this, $type );
 	}
 
@@ -1161,7 +1158,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 */
 	public function get_nearest_descendant_of_type( $type ) {
 		EE_Error::doing_it_wrong( 'EE_Line_Item::get_nearest_descendant_of_type()', __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0' );
-		//EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
 	}
 

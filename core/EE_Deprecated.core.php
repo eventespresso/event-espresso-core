@@ -129,7 +129,6 @@ function ee_deprecated_reg_questions_meta_box_old( $do_default_action, $admin_pa
 
 	$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $registration, $registration->get('EVT_ID') );
 
-	//EE_Registry::instance()->load_helper( 'Form_Fields' );
 	$template_args = array(
 		'att_questions' => EEH_Form_Fields::generate_question_groups_html( $question_groups ),
 		'reg_questions_form_action' => 'edit_registration',

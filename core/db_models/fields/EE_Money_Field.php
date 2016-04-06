@@ -21,7 +21,6 @@ class EE_Money_Field extends EE_Float_Field{
 		if($schema == 'localized_float'){
 			return $pretty_float;
 		}
-		//EE_Registry::instance()->load_helper( 'Template' );
 		if($schema == 'no_currency_code'){
 //			echo "schema no currency!";
 			$display_code = false;

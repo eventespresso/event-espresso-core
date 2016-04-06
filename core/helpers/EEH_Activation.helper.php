@@ -1254,7 +1254,6 @@ class EEH_Activation {
 	 * 	@return boolean success of verifying upload directories exist
 	 */
 	public static function create_upload_directories() {
-		//EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
 				EVENT_ESPRESSO_TEMPLATE_DIR,
@@ -1317,7 +1316,6 @@ class EEH_Activation {
 		$installed_messengers = $default_messengers = array();
 
 		//include our helper
-		//EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all installed messenger objects
 		$installed = EEH_MSG_Template::get_installed_message_objects();
@@ -1479,9 +1477,6 @@ class EEH_Activation {
 	 * @return void
 	 */
 	public static function validate_messages_system() {
-		//include our helper
-		//EE_Registry::instance()->load_helper( 'MSG_Template' );
-
 		//get active and installed  messengers/message types.
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		$installed = EEH_MSG_Template::get_installed_message_objects();
