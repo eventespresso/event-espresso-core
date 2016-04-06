@@ -21,13 +21,13 @@ class EEH_Debug_Tools{
 	 * array containing the start time for the timers
 	 */
 	private $_start_times;
+
 	/**
 	 * array containing all the timer'd times, which can be outputted via show_times()
 	 */
 	private $_times = array();
 
 	/**
-	 *
 	 * @var array
 	 */
 	protected $_memory_usage_points = array();
@@ -84,6 +84,9 @@ class EEH_Debug_Tools{
 	public static function show_db_name() {
 		if ( ! defined( 'DOING_AJAX' ) && ( defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS )) {
 			echo '<p style="font-size:10px;font-weight:normal;color:#E76700;margin: 1em 2em; text-align: right;">DB_NAME: '. DB_NAME .'</p>';
+		}
+		if ( EE_DEBUG ) {
+			EEH_Debug_Tools::instance()->show_times();
 		}
 	}
 
@@ -196,7 +199,8 @@ class EEH_Debug_Tools{
 	 * stop_timer
 	 * @param string $timer_name
 	 */
-	public function stop_timer($timer_name = 'default'){
+	public function stop_timer( $timer_name = '' ){
+		$timer_name = $timer_name !== '' ? $timer_name : get_called_class();
 		if( isset( $this->_start_times[ $timer_name ] ) ){
 			$start_time = $this->_start_times[ $timer_name ];
 			unset( $this->_start_times[ $timer_name ] );
