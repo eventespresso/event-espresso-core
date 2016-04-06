@@ -176,8 +176,6 @@ class EE_Event_List_Query extends WP_Query {
 				unset( $args[ $key ] );
 			}
 		}
-		// setup the events list query
-		//EE_Registry::instance()->load_helper( 'Event_Query' );
 		//add query filters
 		EEH_Event_Query::add_query_filters();
 		// set params that will get used by the filters

@@ -144,7 +144,6 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	}
 	public function setUp(){
 		parent::setUp();
-		//EE_Registry::instance()->load_helper('Activation');
 		//whitelist the table we're about to add
 		add_filter( 'FHEE__EEH_Activation__create_table__short_circuit', array($this, 'dont_short_circuit_mock_table' ), 25, 3 );
 		//add table from related DMS

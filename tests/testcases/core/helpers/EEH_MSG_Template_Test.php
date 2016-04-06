@@ -26,7 +26,6 @@ class EEH_MSG_Template_Test extends EE_UnitTestCase {
 	 */
 	public function test_is_messenger_active() {
 		//test messenger that should be active
-		//EE_Registry::instance()->load_helper('MSG_Template');
 		$this->assertTrue( EEH_MSG_Template::is_messenger_active( 'email' ) );
 
 		//test messenger that should NOT be active

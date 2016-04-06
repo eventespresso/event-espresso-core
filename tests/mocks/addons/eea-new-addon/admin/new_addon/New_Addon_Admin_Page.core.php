@@ -123,7 +123,6 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	 * @param $template
 	 */
 	protected function _settings_page( $template ) {
-		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$this->_template_args['new_addon_config'] = EE_Config::instance()->get_config( 'addons', 'EED_New_Addon', 'EE_New_Addon_Config' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$this->_template_args['yes_no_values'] = array(
@@ -146,7 +145,6 @@ class New_Addon_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_settings(){
-		//EE_Registry::instance()->load_helper( 'Class_Tools' );
 		if(isset($_POST['reset_new_addon']) && $_POST['reset_new_addon'] == '1'){
 			$config = new EE_New_Addon_Config();
 			$count = 1;

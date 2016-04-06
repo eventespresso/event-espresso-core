@@ -54,7 +54,6 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 	 * the total for both transactions was NOT the same as 1 transaction for 2 ticket purchases)
 	 */
 	function test_recalculate_pre_tax_total__rounding_issues() {
-		//EE_Registry::instance()->load_helper( 'Line_Item' );
 		$flat_base_price_type_id = EEM_Price_Type::instance()->get_var( array( array( 'PRT_name' => 'Base Price' ) ) );
 		$percent_surcharge_price_type_id = EEM_Price_Type::instance()->get_var( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
 		$base_price = $this->new_model_obj_with_dependencies( 

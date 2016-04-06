@@ -273,7 +273,6 @@ class EED_Messages  extends EED_Module {
 	public static function set_autoloaders() {
 		if ( empty( self::$_MSG_PATHS ) ) {
 			self::_set_messages_paths();
-			//EE_Registry::instance()->load_helper('Autoloader');
 			foreach ( self::$_MSG_PATHS as $path ) {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $path );
 			}
@@ -425,8 +424,6 @@ class EED_Messages  extends EED_Module {
 			return;
 		}
 
-
-		//EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all registrations so we make sure we send messages for the right status.
 		$all_registrations = $registration->transaction()->registrations();
@@ -710,7 +707,6 @@ class EED_Messages  extends EED_Module {
 	 * @return 	string
 	 */
 	public static function registration_message_trigger_url( $registration_message_trigger_url, EE_Registration $registration, $messenger = 'html', $message_type = 'invoice' ) {
-		//EE_Registry::instance()->load_helper('MSG_Template');
 		// whitelist $messenger
 		switch ( $messenger ) {
 			case 'pdf' :
@@ -783,7 +779,6 @@ class EED_Messages  extends EED_Module {
 	 * @param bool $display_request
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
-		//EE_Registry::instance()->load_helper('Debug_Tools');
 		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects

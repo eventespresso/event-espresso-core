@@ -300,8 +300,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function init() {
 		$this->_get_reg_url_link();
 		if ( ! $this->get_txn() ) {
-			//EE_Registry::instance()->load_helper( 'HTML' );
-
 			echo EEH_HTML::div(
 				EEH_HTML::h4( __( 'We\'re sorry...', 'event_espresso' ), '', '' ) .
 				sprintf(
@@ -358,9 +356,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// link to SPCO attendee_information
 		$this->_SPCO_attendee_information_url = $this->_primary_registrant instanceof EE_Registration ? $this->_primary_registrant->edit_attendee_information_url() : FALSE;
 
-		//EE_Registry::instance()->load_helper( 'Template' );
-		//EE_Registry::instance()->load_helper( 'Template_Validator' );
-
 		do_action( 'AHEE__EES_Espresso_Thank_You__init_end', $this->_current_txn );
 		// set no cache headers and constants
 		EE_System::do_not_cache();
@@ -384,7 +379,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			return EE_Error::get_notices();
 		}
-		//EE_Registry::instance()->load_helper( 'Debug_Tools' );
 		//EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $this->_current_txn ), true, 	'EE_Transaction: ' . $this->_current_txn->ID() );
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );

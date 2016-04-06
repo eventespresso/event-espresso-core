@@ -146,7 +146,6 @@ class Invoice {
 			$template_args['venues_for_events'] = $venues_for_events;
 			$template_args['tax_total_line_item'] = $tax_total_line_item;
 			$template_args['questions_to_skip'] = $questions_to_skip;
-			$EE->load_helper( 'Venue_View' );
 //			d($template_args);
 			$template_args['download_link'] = $this->registration->receipt_url('download');
 		}else{
@@ -154,13 +153,7 @@ class Invoice {
 			$template_args['download_link'] = $this->registration->invoice_url('download');
 		}
 
-
-
-		//require helpers
-		$EE->load_helper( 'Formatter' );
-
 		//Get the HTML as an object
-		//EE_Registry::instance()->load_helper('Template');
 		$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
 		$template_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php', $template_args, TRUE, TRUE );
 		if(isset($_GET['receipt'])){
