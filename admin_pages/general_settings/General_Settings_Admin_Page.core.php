@@ -265,7 +265,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		// Check to make sure all of the main pages are setup properly,
 		// if not create the default pages and display an admin notice
-		//EE_Registry::instance()->load_helper( 'Activation' );
 		EEH_Activation::verify_default_pages_exist();
 
 		$this->_transient_garbage_collection();
@@ -364,7 +363,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = isset( EE_Registry::instance()->CFG->core->ee_ueip_optin ) ? EE_Registry::instance()->CFG->core->get_pretty( 'ee_ueip_optin' ) : TRUE;
 
-		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$STA_ID = isset( EE_Registry::instance()->CFG->organization->STA_ID ) ? EE_Registry::instance()->CFG->organization->STA_ID : 4;
 		$this->_template_args['states'] = new EE_Question_Form_Input(
 				EE_Question::new_instance ( array(
@@ -504,7 +502,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
 		//load field generator helper
-		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$this->_template_args['values'] = $this->_yes_no_values;
 
@@ -555,7 +552,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		}
 
 		// for ajax
-		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
@@ -610,7 +606,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			return '';
 		}
 		// for ajax
-		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'state_form_field_label_wrap' ), 10, 2 );

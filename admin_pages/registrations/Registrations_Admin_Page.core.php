@@ -1736,7 +1736,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_template_args['attendees'] = array();
 		$this->_template_args['attendee_notice'] = '';
-		//EE_Registry::instance()->load_helper('Array');
 		if ( empty( $registrations)  || ( is_array($registrations) &&  ! EEH_Array::get_one_item_from_array($registrations) ) ) {
 			EE_Error::add_error( __('There are no records attached to this registration. Something may have gone wrong with the registration', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['attendee_notice'] = EE_Error::get_notices();
@@ -1805,7 +1804,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['email'] = $attendee->email();//$this->_registration->ATT_email;
 		$this->_template_args['phone'] = $attendee->phone();
 
-		//EE_Registry::instance()->load_helper( 'Formatter' );
 		$this->_template_args[ 'formatted_address' ] = EEH_Address::format( $attendee );
 
 
@@ -2429,7 +2427,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'return_url' => urlencode( $this->_req_data[ 'return_url' ] ),
 				)) );
 		} else {
-			//EE_Registry::instance()->load_helper( 'File' );
 			$new_request_args = array(
 				'export' => 'report',
 				'action' => 'registrations_report_for_event',
@@ -2448,7 +2445,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function _contact_list_export(){
-		//EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
@@ -2466,7 +2462,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'return_url' => urlencode( $this->_req_data[ 'return_url' ] ),
 				)) );
 		} else {
-			//EE_Registry::instance()->load_helper( 'File' );
 			if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 				require_once(EE_CLASSES . 'EE_Export.class.php');
 				$EE_Export = EE_Export::instance($this->_req_data);

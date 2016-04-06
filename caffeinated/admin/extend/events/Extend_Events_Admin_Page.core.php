@@ -633,7 +633,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
-		//EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
@@ -659,7 +658,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		//EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
@@ -1176,7 +1174,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 // The version check was added to make sure Walker_Category_Checklist class is available
 global $wp_version;
 if ( $wp_version >= 4.4 ){
-	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php'; 
+	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php';
 } else {
 	require_once ABSPATH . 'wp-admin/includes/template.php';
 }

@@ -72,7 +72,6 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		//ONLY do this check if models can query
 		//and avoid a bug where when we nuke EE4's data that this causes a fatal error
 		//because the tables are deleted just before this request runs. see https://events.codebasehq.com/projects/event-espresso/tickets/7539
-		//EE_Registry::instance()->load_helper('Activation');
 		if ( ! EE_Maintenance_Mode::instance()->models_can_query() || ! EEH_Activation::table_exists( EEM_Payment_Method::instance()->table() ) ) {
 			return;
 		}

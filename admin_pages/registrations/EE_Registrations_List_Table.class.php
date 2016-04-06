@@ -70,7 +70,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		parent::__construct($admin_page);
 		$this->_status = $this->_admin_page->get_registration_status_array();
 
-		//EE_Registry::instance()->load_helper( 'Template' );
 	}
 
 
@@ -209,7 +208,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$filters = array();
 
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		//EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$cur_date = isset( $this->_req_data['month_range'] ) ? $this->_req_data['month_range'] : '';
 		$cur_category = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
@@ -623,7 +621,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @return string
 	 */
 	function column_actions(EE_Registration $item) {
-		//EE_Registry::instance()->load_helper('MSG_Template');
 		$attendee = $item->attendee();
 		$ticket = $item->ticket();
 		$this->_set_related_details( $item );

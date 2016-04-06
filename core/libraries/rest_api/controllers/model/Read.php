@@ -38,7 +38,6 @@ class Read extends Base {
 	 */
 	public function __construct() {
 		parent::__construct();
-		//\EE_Registry::instance()->load_helper( 'Inflector' );
 		$this->_fields_calculator = new Calculated_Model_Fields();
 	}
 

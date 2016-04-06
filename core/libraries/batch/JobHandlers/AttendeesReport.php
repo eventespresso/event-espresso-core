@@ -40,7 +40,6 @@ class AttendeesReport extends JobHandlerFile {
 		$job_parameters->set_job_size( $this->count_units_to_process() );
 		//we should also set the header columns
 		$csv_data_for_row = $this->get_csv_data( 0, 1 );
-		//\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
@@ -55,7 +54,6 @@ class AttendeesReport extends JobHandlerFile {
 
 	public function continue_job(JobParameters $job_parameters, $batch_size = 50) {
 		$csv_data = $this->get_csv_data( $job_parameters->units_processed(), $batch_size );
-		//\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
