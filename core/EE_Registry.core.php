@@ -315,6 +315,7 @@ final class EE_Registry {
 	 * @return EEH_Base
 	 */
 	public function load_helper ( $class_name, $arguments = array(), $load_only = TRUE ) {
+		// todo: add doing_it_wrong() in a few versions after all addons have had calls to this method removed
 		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array(EE_HELPERS ) );
 		// retrieve instantiated class
 		return $this->_load( $helper_paths, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
