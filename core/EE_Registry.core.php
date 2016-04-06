@@ -447,7 +447,6 @@ final class EE_Registry {
 	 * @return bool | object
 	 */
 	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
-		EEH_Debug_Tools::instance()->start_timer( __METHOD__ . "( $class_name )" );
 		// strip php file extension
 		$class_name = str_replace( '.php', '', trim( $class_name ));
 		// does the class have a prefix ?
@@ -473,16 +472,12 @@ final class EE_Registry {
 		// check if class has already been loaded, and return it if it has been
 		if ( $class_abbreviation !== '' && ! is_null( $this->{$class_abbreviation} )
 		) {
-			EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 			return $this->{$class_abbreviation};
 		} else if ( isset ( $this->{$class_name} ) ) {
-			EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 			return $this->{$class_name};
 		} else if ( isset ( $this->LIB->{$class_name} ) ) {
-			EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 			return $this->LIB->{$class_name};
 		} else if ( $class_prefix == 'addon' && isset ( $this->addons->{$class_name} ) ) {
-			EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 			return $this->addons->{$class_name};
 		}
 
@@ -547,7 +542,6 @@ final class EE_Registry {
 			if ( $reflector->getConstructor() === NULL || $reflector->isAbstract() || $load_only ) {
 //				$instantiation_mode = 0;
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
-				EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 				return TRUE;
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 //				$instantiation_mode = 1;
@@ -596,10 +590,8 @@ final class EE_Registry {
 			} else if ( !$from_db && $cache  ) {
 				$this->LIB->{$class_name} = $class_obj;
 			}
-			EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 			return $class_obj;
 		}
-		EEH_Debug_Tools::instance()->stop_timer( __METHOD__ . "( $class_name )" );
 		return FALSE;
 
 	}
