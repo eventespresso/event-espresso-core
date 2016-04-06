@@ -117,7 +117,7 @@ class EEH_Autoloader extends EEH_Base {
 			}
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
 				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
-				if ( WP_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' ) ) {
+				if ( EE_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' ) ) {
 					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
 				}
 			}
@@ -147,7 +147,7 @@ class EEH_Autoloader extends EEH_Base {
 	 * 	@return void
 	 */
 	private function _register_custom_autoloaders() {
-		EEH_Autoloader::$debug = 'times';
+		EEH_Autoloader::$debug = '';
 		\EEH_Autoloader::register_helpers_autoloaders();
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE . 'interfaces' );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE );
@@ -155,7 +155,9 @@ class EEH_Autoloader extends EEH_Base {
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS, true );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_FORM_SECTIONS, true );
-		EEH_Debug_Tools::instance()->show_times();
+		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' ) {
+			EEH_Debug_Tools::instance()->show_times();
+		}
 	}
 
 
