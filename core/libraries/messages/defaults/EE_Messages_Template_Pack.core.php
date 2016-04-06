@@ -207,8 +207,6 @@ abstract class  EE_Messages_Template_Pack {
 			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
 		}
 
-		//load template helper
-		//EE_Registry::instance()->load_helper( 'Template' );
 
 	}
 

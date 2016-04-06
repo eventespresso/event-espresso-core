@@ -116,7 +116,6 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      */
     public static function set_defaults() {
     	//only set defaults if we're not in EE_Maintenance mode
-    	//EE_Registry::instance()->load_helper('Activation');
     	EEH_Activation::generate_default_message_templates();
 
             //for any message types with force activation, let's ensure they are activated
@@ -143,7 +142,6 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
     public static function deregister( $mt_name = NULL ) {
     	if ( !empty( self::$_ee_message_type_registry[$mt_name] ) ) {
                         //let's make sure that we remove any place this message type was made active
-                        //EE_Registry::instance()->load_helper( 'MSG_Template' );
                         $active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
                         foreach( $active_messengers as $messenger => $settings ) {
                             if ( !empty( $settings['settings'][$messenger . '-message_types'][$mt_name] ) ) {

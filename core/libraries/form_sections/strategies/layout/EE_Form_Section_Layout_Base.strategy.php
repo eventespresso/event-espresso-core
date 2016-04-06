@@ -22,7 +22,6 @@ abstract class EE_Form_Section_Layout_Base{
 	 * 	__construct
 	 */
 	function __construct(){
-		//EE_Registry::instance()->load_helper('HTML');
 	}
 
 

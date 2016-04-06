@@ -283,7 +283,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if ( $exit && ! $this->_preview ) return FALSE;
 
 		//todo: need to move require into registration hook but for now we'll require here.
-		//EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EEH_Parse_Shortcodes();
 
@@ -426,7 +425,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 			throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $this ) ) );
 		}
 
-		//EE_Registry::instance()->load_helper('MSG_Template');
 		return EEH_MSG_Template::generate_url_trigger( $sending_messenger, $this->_active_messenger->name, $context, $this->name, $registration, $this->_GRP_ID, $this->_get_id_for_msg_url( $context, $registration ) );
 	}
 

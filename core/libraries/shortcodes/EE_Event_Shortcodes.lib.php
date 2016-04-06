@@ -77,7 +77,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 
-		//EE_Registry::instance()->load_helper( 'Formatter' );
 
 		$this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
@@ -165,7 +164,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' :
-				//EE_Registry::instance()->load_helper( 'URL' );
 				return EEH_URL::add_query_args_and_nonce(
 					array(
 						'event_id' => $this->_event->ID(),

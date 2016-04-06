@@ -116,8 +116,6 @@ abstract class EE_Messages_Base extends EE_Base {
 		$this->_set_existing_admin_settings();
 		$this->_set_valid_shortcodes();
 		$this->_set_admin_pages();
-		//load helper
-		//EE_Registry::instance()->load_helper('MSG_Template');
 	}
 
 

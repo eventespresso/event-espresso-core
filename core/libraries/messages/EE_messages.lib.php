@@ -43,15 +43,11 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
-		//load helper
-		//EE_Registry::instance()->load_helper('MSG_Template');
 
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
 
-		//load debug tools
-		//EE_Registry::instance()->load_helper('Debug_Tools');
 	}
 
 	/**
@@ -215,7 +211,6 @@ class EE_messages {
 		//make sure $actives is an array
 		$actives = (array) $actives;
 
-		//EE_Registry::instance()->load_helper( 'File' );
 		foreach ( $actives as $active ) {
 			$msg_name = 'EE_' . ucwords( str_replace( ' ', '_', $active) ) . '_' . $kind;
 			$filename = $msg_name . '.class.php';
@@ -246,7 +241,6 @@ class EE_messages {
 	private function _unset_active( $active_name, $kind ) {
 		//pluralize
 		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
-		//EE_Registry::instance()->load_helper( 'MSG_Template' );
 		if ( $kind == 'messenger' ) {
 			unset( $active_messengers[$active_name] );
 			EEH_MSG_Template::update_to_inactive( $active_name );

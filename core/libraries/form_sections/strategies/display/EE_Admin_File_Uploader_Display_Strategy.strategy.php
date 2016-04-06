@@ -43,8 +43,6 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base{
 	 */
 
 	function display(){
-
-		//EE_Registry::instance()->load_helper( 'HTML' );
 		// the actual input
 		$input = '<input type="text" size="34" ';
 		$input .= 'name="' . $this->_input->html_name() . '" ';

@@ -147,7 +147,6 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 */
 	protected function _flatten_select_options( $arr ){
 		$flat_array = array();
-		//EE_Registry::instance()->load_helper('Array');
 		if ( EEH_Array::is_multi_dimensional_array( $arr )) {
 			foreach( $arr as $sub_array ){
 				foreach( $sub_array as $key => $value ) {

@@ -86,8 +86,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 
-		//EE_Registry::instance()->load_helper( 'Template' );
-
 		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
 		$transaction = $this->_data->txn instanceof EE_Transaction ? $this->_data->txn : null;
 		$transaction = ! $transaction instanceof EE_Transaction && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->txn: $transaction;

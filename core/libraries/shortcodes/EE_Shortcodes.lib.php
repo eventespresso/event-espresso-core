@@ -156,8 +156,6 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * loads an instance of the EE_Shortcode_Parser helper when requested
 	 */
 	protected function _set_shortcode_helper() {
-		//shortcode helper
-		//EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_helper = new EEH_Parse_Shortcodes();
 	}

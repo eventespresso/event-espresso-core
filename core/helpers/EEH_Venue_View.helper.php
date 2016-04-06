@@ -248,7 +248,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_address( $type = 'multiline', $VNU_ID = 0, $use_schema = true, $add_wrapper = true ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			//EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, $type, $use_schema, $add_wrapper );
 		}
 		return '';
@@ -266,7 +265,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_has_address( $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			//EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, 'inline', FALSE, FALSE );
 		}
 		return false;
@@ -285,7 +283,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_name( $link_to = 'details', $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			//EE_Registry::instance()->load_helper( 'Formatter' );
 			$venue_name = apply_filters(
 				'FHEE__EEH_Venue__venue_name__append_private_venue_name',
 				EEH_Venue_View::is_venue_private()
@@ -347,7 +344,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_website_link( $VNU_ID = 0, $text = '' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			//EE_Registry::instance()->load_helper( 'Formatter' );
 			$url = $venue->venue_url();
 			$text = ! empty( $text ) ? $text : $url;
 			return ! empty( $url ) ? EEH_Schema::url( $url, $text ) : '';
@@ -367,7 +363,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_phone( $VNU_ID = 0) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			//EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $venue->phone() );
 		}
 		return '';
@@ -395,9 +390,6 @@ class EEH_Venue_View extends EEH_Base {
 			$map_cfg = EE_Registry::instance()->CFG->map_settings;
 			// are maps enabled ?
 			if ( $map_cfg->use_google_maps && $venue->enable_for_gmap() ) {
-
-				//EE_Registry::instance()->load_helper( 'Maps' );
-				//EE_Registry::instance()->load_helper( 'Formatter' );
 
 				$details_page = is_single();
 				$options = array();
@@ -444,7 +436,6 @@ class EEH_Venue_View extends EEH_Base {
 	 * @return string
 	 */
 	public static function espresso_google_static_map( EE_Venue $venue, $atts = array() ){
-		//EE_Registry::instance()->load_helper('Maps');
 		$state = $venue->state_obj();
 		$country = $venue->country_obj();
 		$atts = shortcode_atts(

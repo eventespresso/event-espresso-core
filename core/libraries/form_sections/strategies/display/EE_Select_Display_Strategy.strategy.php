@@ -22,7 +22,6 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		if( ! $this->_input instanceof EE_Form_Input_With_Options_Base){
 			throw new EE_Error( sprintf( __( 'Cannot use Select Display Strategy with an input that doesn\'t have options', 'event_espresso' )));
 		}
-		//EE_Registry::instance()->load_helper('Array');
 
 		$html = EEH_HTML::nl( 0, 'select' );
 		$html .= '<select';

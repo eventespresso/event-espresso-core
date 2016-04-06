@@ -200,7 +200,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array @see get_ee_route_data
 	 */
 	protected function _register_model_routes() {
-		//EE_Registry::instance()->load_helper( 'Inflector' );
 		$models_to_register = apply_filters(
 			'FHEE__EED_Core_REST_API___register_model_routes',
 			EE_Registry::instance()->non_abstract_db_models
