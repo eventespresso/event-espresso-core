@@ -662,13 +662,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	/**
 	 * Sets whether or not this field is required, and adjusts the validation strategy
 	 *
-	 * @param boolean $required
+	 * @param boolean|string $required if string its the jquery dependency expression, see http://jqueryvalidation.org/required-method
 	 * @param null    $required_text
 	 */
 	function set_required($required = true, $required_text = NULL ){
-		$required = filter_var( $required, FILTER_VALIDATE_BOOLEAN );
+		//whether $required is a string or a boolean, we want to add a required validation strategy
 		if ( $required ) {
-			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
+			$validation_strategy = new EE_Required_Validation_Strategy( $required_text );
+			if( is_string( $required ) ) {
+				$validation_strategy->set_jquery_dependency_expression( $required );
+			}
+			$this->_add_validation_strategy( $validation_strategy );
 		} else {
 			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
 		}
