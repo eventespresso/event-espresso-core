@@ -60,7 +60,7 @@ class EED_Recaptcha  extends EED_Module {
 			EE_Registry::instance()->CFG->registration->use_captcha
 			&& ! (
 				EE_Registry::instance()->REQ->get( 'step', '' ) === 'payment_options'
-				&& (boolean)EE_Registry::instance()->REQ->get( 'revisit', false ) === true
+				&& (boolean) EE_Registry::instance()->REQ->get( 'revisit', false ) === true
 			)
 		) {
 			EED_Recaptcha::set_definitions();
@@ -104,7 +104,7 @@ class EED_Recaptcha  extends EED_Module {
 			EE_Registry::instance()->CFG->registration->use_captcha
 			&& ! (
 				EE_Registry::instance()->REQ->get( 'step', '' ) === 'payment_options'
-				&& (boolean)EE_Registry::instance()->REQ->get( 'revisit', false ) === true
+				&& (boolean) EE_Registry::instance()->REQ->get( 'revisit', false ) === true
 			)
 		) {
 			EED_Recaptcha::enqueue_styles_and_scripts();
