@@ -103,6 +103,26 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	protected function set_uses_separate_IPN_request( $uses_separate_IPN_request ) {
 		$this->_uses_separate_IPN_request = filter_var( $uses_separate_IPN_request, FILTER_VALIDATE_BOOLEAN );
 	}
+	
+	/**
+	 * Allows gateway to dynamically decide whether or not to handle a payment update
+	 * by overriding this method. By default, if this is a "true" ipn (meaning
+	 * it's a separate request from when the user returns from the offsite gateway)
+	 * and this gateway class is setup to handle IPNs in separate "true" ipns, then
+	 * this will return true. If however, this is a request when the user is returning
+	 * from an offsite gateway, and this gateway class is setup 
+	 * @param array $request_data
+	 * @param boolean $separate_IPN_request
+	 * @return boolean
+	 */
+	public function handle_IPN_in_this_request( $request_data, $separate_IPN_request ) {
+		if( $separate_IPN_request ) {
+			return $this->uses_separate_IPN_request();
+		} else {
+			//it's a request where the user returned from an offsite gateway
+			return ! $this->uses_separate_IPN_request();
+		}
+	}
 
 
 
