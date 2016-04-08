@@ -48,7 +48,7 @@ class EE_Cron_Tasks extends EE_BASE {
 				'wp_cron_disabled',
 				sprintf(
 					__(
-						'Event Espresso has detected that wp_cron is disabled. It\'s important that wp_cron is enabled because Event Espresso depends on wp_cron for critical scheduled tasks.%1$sSince it\'s possible that on your site there might be an alternative task scheduler set up, we suggest getting in touch with your website host or the developer who set up your site and let them know about this message.',
+						'Event Espresso has detected that wp_cron is disabled. It\'s important that wp_cron is enabled because Event Espresso depends on wp_cron for critical scheduled tasks.%1$sSince it\'s possible that your site may have an alternative task scheduler set up, we strongly suggest that you inform the website host, or developer that set up the site, about this issue.',
 						'event_espresso'
 					),
 					'<br />'
