@@ -95,11 +95,11 @@ class EEH_Autoloader extends EEH_Base {
 	 *
 	 * @access    public
 	 * @param array | string $class_paths - array of key => value pairings between class names and paths
-	 * @param bool           $read_check true if we need to check whether the file is readable or not.
-	 * @return void
+	 * @param bool           $read_check  true if we need to check whether the file is readable or not.
+	 * @param bool           $debug **deprecated**
 	 * @throws \EE_Error
 	 */
-	public static function register_autoloader( $class_paths, $read_check = true ) {
+	public static function register_autoloader( $class_paths, $read_check = true, $debug = false ) {
 		$class_paths = is_array( $class_paths ) ? $class_paths : array( $class_paths );
 		foreach ( $class_paths as $class => $path ) {
 			// don't give up! you gotta...
@@ -117,7 +117,7 @@ class EEH_Autoloader extends EEH_Base {
 			}
 			if ( ! isset( self::$_autoloaders[ $class ] )) {
 				self::$_autoloaders[ $class ] = str_replace( array( '/', '\\' ), DS, $path );
-				if ( EE_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' ) ) {
+				if ( EE_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' || $debug ) ) {
 					EEH_Debug_Tools::printr( self::$_autoloaders[ $class ], $class, __FILE__, __LINE__ );
 				}
 			}
@@ -234,11 +234,11 @@ class EEH_Autoloader extends EEH_Base {
 	 *
 	 * @param string $folder name, with or without trailing /, doesn't matter
 	 * @param bool   $recursive
-	 * @return void
+	 * @param bool   $debug  **deprecated**
 	 * @throws \EE_Error
 	 */
-	public static function register_autoloaders_for_each_file_in_folder( $folder, $recursive = false){
-		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' ) {
+	public static function register_autoloaders_for_each_file_in_folder( $folder, $recursive = false, $debug = false ){
+		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' || $debug ) {
 			EEH_Debug_Tools::instance()->start_timer( basename( $folder ) );
 		}
 		// make sure last char is a /
@@ -263,7 +263,7 @@ class EEH_Autoloader extends EEH_Base {
 			}
 		}
 		// we remove the necessity to do a is_readable() check via the $read_check flag because glob by nature will not return non_readable files/directories.
-		self::register_autoloader( $class_to_filepath_map, false );
+		self::register_autoloader( $class_to_filepath_map, false, $debug );
 		if ( EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' ) {
 			EEH_Debug_Tools::instance()->stop_timer( basename( $folder ) );
 		}
