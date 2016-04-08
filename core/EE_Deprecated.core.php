@@ -575,7 +575,7 @@ add_filter( 'FHEE__EE_Register_CPTs__get_taxonomies__taxonomies', 'ee_deprecated
 /**
  * Class EE_Address_Formatter
  *
- * @deprecated 4.5.0
+ * @deprecated 4.9.0
  */
 class EE_Address_Formatter extends \EventEspresso\core\services\address\formatters\AddressFormatter {}
 
@@ -586,24 +586,7 @@ class EE_Address_Formatter extends \EventEspresso\core\services\address\formatte
  *
  * @deprecated 4.9.0
  */
-class EE_MultiLine_Address_Formatter extends EE_Address_Formatter implements EEI_Address_Formatter {
-
-	/**
-	 * @deprecated 4.9.0
-	 * @param string $address
-	 * @param string $address2
-	 * @param string $city
-	 * @param string $state
-	 * @param string $zip
-	 * @param string $country
-	 * @param string $CNT_ISO
-	 * @return string
-	 */
-	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
-		$new_class = new \EventEspresso\core\services\address\formatters\MultiLineAddressFormatter();
-		return $new_class->format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO );
-	}
-}
+class EE_MultiLine_Address_Formatter extends \EventEspresso\core\services\address\formatters\NullAddressFormatter {}
 
 
 
@@ -612,24 +595,7 @@ class EE_MultiLine_Address_Formatter extends EE_Address_Formatter implements EEI
  *
  * @deprecated 4.9.0
  */
-class EE_Inline_Address_Formatter extends EE_Address_Formatter implements EEI_Address_Formatter {
-
-	/**
-	 * @deprecated 4.9.0
-	 * @param string $address
-	 * @param string $address2
-	 * @param string $city
-	 * @param string $state
-	 * @param string $zip
-	 * @param string $country
-	 * @param string $CNT_ISO
-	 * @return string
-	 */
-	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
-		$new_class = new \EventEspresso\core\services\address\formatters\InlineAddressFormatter();
-		return $new_class->format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO );
-	}
-}
+class EE_Inline_Address_Formatter extends \EventEspresso\core\services\address\formatters\InlineAddressFormatter {}
 
 
 
@@ -638,24 +604,7 @@ class EE_Inline_Address_Formatter extends EE_Address_Formatter implements EEI_Ad
  *
  * @deprecated 4.9.0
  */
-class EE_Null_Address_Formatter implements EEI_Address_Formatter {
-
-	/**
-	 * @deprecated 4.9.0
-	 * @param string $address
-	 * @param string $address2
-	 * @param string $city
-	 * @param string $state
-	 * @param string $zip
-	 * @param string $country
-	 * @param string $CNT_ISO
-	 * @return string
-	 */
-	public function format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO ) {
-		$new_class = new \EventEspresso\core\services\address\formatters\NullAddressFormatter();
-		return $new_class->format( $address, $address2, $city, $state, $zip, $country, $CNT_ISO );
-	}
-}
+class EE_Null_Address_Formatter extends \EventEspresso\core\services\address\formatters\NullAddressFormatter {}
 
 
 
@@ -664,153 +613,5 @@ class EE_Null_Address_Formatter implements EEI_Address_Formatter {
  *
  * @deprecated 4.9.0
  */
-class EE_Generic_Address implements EEI_Address {
-
-	private $new_class;
-
-	/**
-	 * @deprecated 4.9.0
-	 * @param string               $address
-	 * @param string               $address2
-	 * @param string               $city
-	 * @param \EE_State | string   $state
-	 * @param string               $zip
-	 * @param \EE_Country | string $country
-	 * @return EE_Generic_Address
-	 */
-	public function __construct( $address, $address2, $city, $state, $zip, $country ) {
-		$this->new_class = new \EventEspresso\core\entities\GenericAddress(
-			$address, $address2, $city, $state, $zip, $country
-		);
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function address() {
-		return $this->new_class->address();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function address2() {
-		return $this->new_class->address2();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function city() {
-		return $this->new_class->city();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function state_ID() {
-		return $this->new_class->state_ID();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function state_abbrev() {
-		return $this->new_class->state_abbrev();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function state_name() {
-		return $this->new_class->state_name();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return \EE_State
-	 */
-	public function state_obj() {
-		return $this->new_class->state_obj();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function state() {
-		return $this->new_class->state();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function country_ID() {
-		return $this->new_class->country_ID();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function country_name() {
-		return $this->new_class->country_name();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return \EE_Country
-	 */
-	public function country_obj() {
-		return $this->new_class->country_obj();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function country() {
-		return $this->new_class->country();
-	}
-
-
-
-	/**
-	 * @deprecated 4.9.0
-	 * @return string
-	 */
-	public function zip() {
-		return $this->new_class->zip();
-	}
+class EE_Generic_Address extends \EventEspresso\core\entities\GenericAddress {
 }
