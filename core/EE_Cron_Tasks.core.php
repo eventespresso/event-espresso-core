@@ -42,6 +42,19 @@ class EE_Cron_Tasks extends EE_BASE {
 	 */
 	private function __construct() {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
+		// verify that WP Cron is enabled
+		if ( defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON && is_admin() ) {
+			EE_Error::add_persistent_admin_notice(
+				'wp_cron_disabled',
+				sprintf(
+					__(
+						'Event Espresso has detected that wp_cron is disabled. It\'s important that wp_cron is enabled because Event Espresso depends on wp_cron for critical scheduled tasks.%1$sSince it\'s possible that on your site there might be an alternative task scheduler set up, we suggest getting in touch with your website host or the developer who set up your site and let them know about this message.',
+						'event_espresso'
+					),
+					'<br />'
+				)
+			);
+		}
 		// UPDATE TRANSACTION WITH PAYMENT
 		add_action(
 			'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
