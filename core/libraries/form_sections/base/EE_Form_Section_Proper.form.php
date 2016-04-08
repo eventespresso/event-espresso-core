@@ -430,12 +430,26 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
 				'form_section_id'=> $this->html_id( TRUE ),
 				'validation_rules'=> $this->get_jquery_validation_rules(),
+				'other_data' => $this->get_other_js_data(),
 				'errors'=> $this->subsection_validation_errors_by_html_name()
 			);
 			EE_Form_Section_Proper::$_scripts_localized = true;
 		}
 	}
 
+	/**
+	 * Gets an array of extra data that will be useful for client-side javascript.
+	 * This is primarily data added by inputs and forms in addition to any
+	 * scripts they might enqueue
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data( $form_other_js_data = array() ) {
+		foreach( $this->subsections() as $subsection ) {
+			$form_other_js_data = $subsection->get_other_js_data( $form_other_js_data );
+		}
+		return $form_other_js_data;
+	}
 
 
 	/**

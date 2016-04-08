@@ -1,6 +1,6 @@
 var EEFV;
 jQuery(document).ready(function($){
-
+	
 	/**
 	 * @function EE Form Validation (EEFV)
 	 * @description uses the variables localized in EE_Form_Section_Proper's _enqueue_and_localize_form_js() to generate the validation js
@@ -42,9 +42,12 @@ jQuery(document).ready(function($){
             // reset previous form validation rules
             EEFV.reset_validation_rules();
 			EEFV.initialize_datepicker_inputs();
+			EEFV.initialize_select_reveal_inputs( form_data );
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
 			EEFV.add_custom_validators();
+			//add a trigger so anyone can know when forms are getting re-initialized
+			jQuery(document).trigger( 'EEFV:initialize', form_data );
 		},
 
 
@@ -100,6 +103,57 @@ jQuery(document).ready(function($){
 			$.datepicker.setDefaults($.datepicker.regional[ eei18n.language ]);
 			//	will automagically produce something like:	$.datepicker.setDefaults($.datepicker.regional['fr_FR']);
 			 */
+		},
+		
+		/**
+		 * Find each select_reveal input in the form_data, and reveal the section corresponding
+		 * to its curently selected value, and setup a callback so that when the selection
+		 * changes, the section revealed also changes
+		 * @param object form_sections_to_validate property names are form section ids, values are objects:
+		 *	which should have a property name "other_data", whose values is an object which:
+		 *		has property names of each select_reveal input id, whose value is an object which:
+		 *			has property names of the select's option values, and property values are related sections to show/hide
+		 *			based on the select_reveal's value
+		 * @returns void
+		 */
+		initialize_select_reveal_inputs : function( form_sections_to_validate ) {
+			//for each form...
+			$.each( form_sections_to_validate, function( index, form_data ){
+				if ( typeof form_data.other_data !== 'undefined' 
+						&& typeof form_data.other_data.select_reveal_inputs !== 'undefined' ) {
+					//for each select_reveal input...
+					$.each( form_data.other_data.select_reveal_inputs , function( select_reveal_input_id, select_option_to_section_to_reveal_id ) {
+						//define a callback for revealing/hiding the sections related to this select_reveal input
+						var reveal_now = function( event ) {
+							var current_selection = $('#' + event.currentTarget.id ).val();
+							//show the selected section, hide others
+							for( var value in select_option_to_section_to_reveal_id ) {
+								var section_to_show_or_hide_selector = '#' +  select_option_to_section_to_reveal_id[ value ];
+								if( value === current_selection ) {
+									$( section_to_show_or_hide_selector ).show();
+								} else {
+									$( section_to_show_or_hide_selector ).hide();
+								}
+							}
+						};
+						//update what's shown or hidden when the select_reveal's value changes
+						$('#' + select_reveal_input_id ).change( 
+							{ select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id },
+							reveal_now );
+						//and start off with it showing the right value
+						reveal_now(
+							{
+								currentTarget: {
+									id: select_reveal_input_id
+								},
+								data: {
+									select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id
+								}
+							}
+						);
+					});	
+				}
+			});
 		},
 
 

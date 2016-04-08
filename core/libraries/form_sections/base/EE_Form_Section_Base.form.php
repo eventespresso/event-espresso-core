@@ -330,6 +330,22 @@ abstract class EE_Form_Section_Base {
 	public function form_close() {
 		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
+	
+	/**
+	 * Adds any extra data needed by js. Eventually we'll call wp_localize_script
+	 * with it, and it will be on each form seciton's 'other_data' property.
+	 * By default nothing is added, but child classes can extend this method to add something.
+	 * Eg, if you have an input that will cause a modal dialog to appear, 
+	 * here you could add an entry like 'modal_dialog_inputs' to this array
+	 * to map between the input's html ID and the modal dialogue's ID, so that
+	 * your JS code will know where to find the modal dialog when the input is pressed.
+	 * Eg $form_other_js_data['modal_dialog_inputs']['some-input-id']='modal-dialog-id';
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data( $form_other_js_data = array() ) {
+		return $form_other_js_data;
+	}
 
 
 
