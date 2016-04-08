@@ -85,6 +85,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 * that is sent in a separate request than the returning registrant.
 	 * if false, then we need to process the payment results manually
 	 * as soon as the registrant returns from the off-site gateway
+	 * @deprecated since version 4.8.39.rc.001 please use handle_IPN_in_this_request() instead
 	 *
 	 * @return bool
 	 */
@@ -117,10 +118,10 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 */
 	public function handle_IPN_in_this_request( $request_data, $separate_IPN_request ) {
 		if( $separate_IPN_request ) {
-			return $this->uses_separate_IPN_request();
+			return $this->_uses_separate_IPN_request;
 		} else {
 			//it's a request where the user returned from an offsite gateway
-			return ! $this->uses_separate_IPN_request();
+			return ! $this->_uses_separate_IPN_request;
 		}
 	}
 
