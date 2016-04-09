@@ -30,7 +30,7 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 	public function sibling_sections_controlled() {
 		$sibling_sections = array();
 		foreach( array_keys( $this->options() )  as $sibling_section_name ) {
-			$sibling_section = $this->parent_section()->get_subsection( $sibling_section_name );
+			$sibling_section = $this->find_section_from_path( $sibling_section_name );
 			if( $sibling_section instanceof EE_Form_Section_Base ) {
 				$sibling_sections[ $sibling_section_name ] = $sibling_section;
 			}

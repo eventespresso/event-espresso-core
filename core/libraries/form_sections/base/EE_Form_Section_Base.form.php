@@ -346,8 +346,43 @@ abstract class EE_Form_Section_Base {
 	public function get_other_js_data( $form_other_js_data = array() ) {
 		return $form_other_js_data;
 	}
-
-
-
+	
+	/**
+	 * This isn't just the name of an input, it's a path pointing to an input. The
+	 * path is similar to a folder path: slash (/) means to descend into a subsection,
+	 * dot-dot-slash (../) means to ascend into the parent section.
+	 * After a series of slashes and dot-dot-slashes, there should be the name of an input,
+	 * which will be returned.
+	 * Eg, if you want the related input to be conditional on a sibling input name 'foobar'
+	 * just use 'foobar'. If you want it to be conditional on an aunt/uncle input name
+	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input, 
+	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'. 
+	 * Etc
+	 * @param string $form_section_path
+	 * @return EE_Form_Section_Base
+	 */
+	public function find_section_from_path( $form_section_path ) {
+		$input_found = null;
+		$working_path = $form_section_path;
+		$parent_section_for_searching = $this->parent_section();
+		do {
+			if( strpos( $working_path, '../' ) === 0 ) {
+				$working_path = substr( $working_path, strlen( '../' ) );
+				$parent_section_for_searching = $parent_section_for_searching->parent_section();
+			} elseif( strpos( $working_path, '/' ) === 0 ) {
+				$working_path = substr( $working_path, strlen( '../' ) );
+				$next_slash_pos = strpos( $working_path, '/' );
+				if( $next_slash_pos !== false ) {
+					$child_section_name = substr( $working_path, 0, $next_slash_pos );
+				}
+				$parent_section_for_searching = $parent_section_for_searching->get_subsection( $child_section_name );
+			} else {
+				//this input better exist, or this'll throw an exception!
+				$input_found = $parent_section_for_searching->get_subsection( $working_path );
+				$working_path = '';
+			}
+		} while( $input_found === null && $working_path != '' );
+		return $input_found;
+	}
 }
 // End of file EE_Form_Section_Base.form.php

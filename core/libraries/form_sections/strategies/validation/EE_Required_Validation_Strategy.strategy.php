@@ -125,7 +125,20 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base{
 			);	
 		}
 		foreach( $conditions as $input_path => $op_and_value ) {
-			$input = $this->_get_input_from_input_path( $input_path );
+			$input = $this->_input->find_section_from_path( $input_path );
+			if( ! $input instanceof EE_Form_Input_Base ) {
+				EE_Error::throw_exception_if_debugging(
+					sprintf( 
+						__( 'Error encountered while setting requirement condition for input %1$s. The path %2$s does not correspond to a valid input'),
+						$this->_input->name(),
+						$input_path
+					),
+					__FILE__, 
+					__FUNCTION__, 
+					__LINE__ 
+				);
+				return false;
+			}
 			list( $op, $value ) = $this->_validate_op_and_value( $op_and_value );
 			//ok now the jquery dependency expression depends on the input's display strategy.
 			if( ! $input->get_display_strategy() instanceof EE_Select_Display_Strategy ) {
@@ -158,7 +171,20 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base{
 			return $conditions;
 		}
 		foreach( $conditions as $input_path => $op_and_value ) {
-			$input = $this->_get_input_from_input_path( $input_path );
+			$input = $this->_input->find_section_from_path( $input_path );
+			if( ! $input instanceof EE_Form_Input_Base ) {
+				EE_Error::throw_exception_if_debugging(
+					sprintf( 
+						__( 'Error encountered while setting requirement condition for input %1$s. The path %2$s does not correspond to a valid input'),
+						$this->_input->name(),
+						$input_path
+					),
+					__FILE__, 
+					__FUNCTION__, 
+					__LINE__ 
+				);
+				return false;
+			}
 			list( $op, $value ) = $this->_validate_op_and_value( $op_and_value );
 			switch( $op ) {
 				case '=':
@@ -206,42 +232,4 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base{
 			return array( $operator, $value );
 			
 	}
-	
-	/**
-	 * This isn't just the name of an input, it's a path pointing to an input. The
-	 * path is similar to a folder path: slash (/) means to descend into a subsection,
-	 * dot-dot-slash (../) means to ascend into the parent section.
-	 * After a series of slashes and dot-dot-slashes, there should be the name of an input,
-	 * which will be returned.
-	 * Eg, if you want the related input to be conditional on a sibling input name 'foobar'
-	 * just use 'foobar'. If you want it to be conditional on an aunt/uncle input name
-	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input, 
-	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'. 
-	 * Etc
-	 * @param type $input_path
-	 */
-	protected function _get_input_from_input_path( $input_path ) {
-		$input_found = null;
-		$working_path = $input_path;
-		$parent_section_for_searching = $this->_input->parent_section();
-		do {
-			if( strpos( $working_path, '../' ) === 0 ) {
-				$working_path = substr( $working_path, strlen( '../' ) );
-				$parent_section_for_searching = $parent_section_for_searching->parent_section();
-			} elseif( strpos( $working_path, '/' ) === 0 ) {
-				$working_path = substr( $working_path, strlen( '../' ) );
-				$next_slash_pos = strpos( $working_path, '/' );
-				if( $next_slash_pos !== false ) {
-					$child_section_name = substr( $working_path, 0, $next_slash_pos );
-				}
-				$parent_section_for_searching = $parent_section_for_searching->get_subsection( $child_section_name );
-			} else {
-				//this input better exist, or this'll throw an exception!
-				$input_found = $parent_section_for_searching->get_input( $working_path );
-				$working_path = '';
-			}
-		} while( $input_found === null && $working_path != '' );
-		return $input_found;
-	}
-
 }
