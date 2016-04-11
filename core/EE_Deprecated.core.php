@@ -1196,7 +1196,7 @@ class EE_MultiLine_Address_Formatter extends \EventEspresso\core\services\addres
 
 
 
-/*
+/**
  * Class EE_Inline_Address_Formatter
  *
  * @deprecated 4.9.0
@@ -1205,7 +1205,7 @@ class EE_Inline_Address_Formatter extends \EventEspresso\core\services\address\f
 
 
 
-/*
+/**
  * Class EE_Null_Address_Formatter
  *
  * @deprecated 4.9.0
