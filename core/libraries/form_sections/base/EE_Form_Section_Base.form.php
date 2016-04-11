@@ -356,10 +356,13 @@ abstract class EE_Form_Section_Base {
 				$working_path = substr( $working_path, strlen( '../' ) );
 				$parent_section_for_searching = $parent_section_for_searching->parent_section();
 			} elseif( strpos( $working_path, '/' ) === 0 ) {
-				$working_path = substr( $working_path, strlen( '../' ) );
+				$working_path = substr( $working_path, strlen( '/' ) );
 				$next_slash_pos = strpos( $working_path, '/' );
 				if( $next_slash_pos !== false ) {
 					$child_section_name = substr( $working_path, 0, $next_slash_pos );
+				} else {
+					//there are no more slashes, so we must have found the child section!
+					$child_section_name = $working_path;
 				}
 				$parent_section_for_searching = $parent_section_for_searching->get_subsection( $child_section_name );
 			} else {
