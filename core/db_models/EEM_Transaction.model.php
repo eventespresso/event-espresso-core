@@ -73,10 +73,10 @@ class EEM_Transaction extends EEM_Base {
 		$this->plural_item = __('Transactions','event_espresso');
 
 		$this->_tables = array(
-			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
+			'TransactionTable'=>new EE_Primary_Table('esp_transaction','TXN_ID')
 		);
 		$this->_fields = array(
-			'Transaction'=>array(
+			'TransactionTable'=>array(
 				'TXN_ID'=>new EE_Primary_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso')),
 				'TXN_timestamp'=>new EE_Datetime_Field('TXN_timestamp', __('date when transaction was created','event_espresso'), false, time(), $timezone ),
 				'TXN_total'=>new EE_Money_Field('TXN_total', __('Total value of Transaction','event_espresso'), false, 0),
