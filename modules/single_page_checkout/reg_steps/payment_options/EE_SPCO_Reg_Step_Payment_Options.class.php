@@ -19,6 +19,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	protected $line_item_display = null;
 
+	/**
+	 * @access protected
+	 * @var boolean $handle_IPN_in_this_request
+	 */
+	protected $handle_IPN_in_this_request = false;
+
 
 
 	/**
@@ -116,6 +122,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function set_line_item_display( $line_item_display ) {
 		$this->line_item_display = $line_item_display;
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function handle_IPN_in_this_request() {
+		return $this->handle_IPN_in_this_request;
+	}
+
+
+
+	/**
+	 * @param boolean $handle_IPN_in_this_request
+	 */
+	public function set_handle_IPN_in_this_request( $handle_IPN_in_this_request ) {
+		$this->handle_IPN_in_this_request = filter_var( $handle_IPN_in_this_request, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -1688,20 +1712,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/********************************************************************************************************/
 	/**********************************  PROCESS GATEWAY RESPONSE  **********************************/
 	/********************************************************************************************************/
-
-
-
 	/**
 	 * process_gateway_response
 	 * this is the return point for Off-Site Payment Methods
 	 * It will attempt to "handle the IPN" if it appears that this has not already occurred,
 	 * otherwise, it will load up the last payment made for the TXN.
 	 * If the payment retrieved looks good, it will then either:
-	 *  	complete the current step and allow advancement to the next reg step
-	 * 		or present the payment options again
+	 *    complete the current step and allow advancement to the next reg step
+	 *        or present the payment options again
 	 *
 	 * @access private
 	 * @return EE_Payment | FALSE
+	 * @throws \EE_Error
 	 */
 	public function process_gateway_response() {
 		$payment = null;
@@ -1742,7 +1764,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->payment = $payment;
 				// mark this reg step as completed, as long as gateway doesn't use a separate IPN request,
 				// because we will complete this step during the IPN processing then
-				if ( $gateway instanceof EE_Offsite_Gateway && ! $gateway->uses_separate_IPN_request() ) {
+				if ( $gateway instanceof EE_Offsite_Gateway && ! $this->handle_IPN_in_this_request() ) {
 					$this->set_completed();
 				}
 				return true;
@@ -1872,10 +1894,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		try {
 			$request_data = \EE_Registry::instance()->REQ->params();
 			// if gateway uses_separate_IPN_request, then we don't have to process the IPN manually
-			if (
-				$gateway instanceof EE_Offsite_Gateway
-				&& $gateway->handle_IPN_in_this_request( $request_data, false )
-			) {
+			$this->set_handle_IPN_in_this_request(
+				$gateway->handle_IPN_in_this_request( $request_data, false )
+			);
+			if ( $this->handle_IPN_in_this_request() ) {
 				// get payment details and process results
 				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
