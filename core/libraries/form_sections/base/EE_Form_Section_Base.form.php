@@ -1,22 +1,8 @@
 <?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
+if (!defined('EVENT_ESPRESSO_VERSION')){
 	exit('No direct script access allowed');
-
+}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
- *
  * EE_Form_Section_Base
  * For shared functionality between form sections that are for display-only, and
  * sections for receiving form input etc.
@@ -24,8 +10,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 abstract class EE_Form_Section_Base {
 
@@ -95,7 +79,7 @@ abstract class EE_Form_Section_Base {
 	 *	@type $name string the name for this form section, if you want to explicitly define it
 	 * }
 	 */
-	function __construct( $options_array = array() ) {
+	public function __construct( $options_array = array() ) {
 		// used by display strategies
 		EE_Registry::instance()->load_helper('HTML');
 		// assign incoming values to properties
@@ -112,6 +96,7 @@ abstract class EE_Form_Section_Base {
 	/**
 	 * @param $parent_form_section
 	 * @param $name
+	 * @throws \EE_Error
 	 */
 	protected function _construct_finalize( $parent_form_section, $name ){
 		$this->_construction_finalized = TRUE;
@@ -165,11 +150,12 @@ abstract class EE_Form_Section_Base {
 
 
 
-
 	/**
 	 * Sets the html_id to its default value, if none was specified in the constructor.
 	 * Calculation involves using the name and the parent's html id
 	 * return void
+	 *
+	 * @throws \EE_Error
 	 */
 	protected function _set_default_html_id_if_empty(){
 		if( ! $this->_html_id ){
@@ -280,7 +266,7 @@ abstract class EE_Form_Section_Base {
 	 * @throws EE_Error
 	 * @return string
 	 */
-	function name(){
+	public function name(){
 		if( ! $this->_construction_finalized ){
 			throw new EE_Error(sprintf( __( 'You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'', 'event_espresso' ), get_class($this) ) );
 		}
@@ -293,7 +279,7 @@ abstract class EE_Form_Section_Base {
 	 * Gets the parent section
 	 * @return EE_Form_Section_Proper
 	 */
-	function parent_section(){
+	public function parent_section(){
 		return $this->_parent_section;
 	}
 
@@ -330,12 +316,12 @@ abstract class EE_Form_Section_Base {
 	public function form_close() {
 		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
-	
+
 	/**
 	 * Adds any extra data needed by js. Eventually we'll call wp_localize_script
-	 * with it, and it will be on each form seciton's 'other_data' property.
+	 * with it, and it will be on each form section's 'other_data' property.
 	 * By default nothing is added, but child classes can extend this method to add something.
-	 * Eg, if you have an input that will cause a modal dialog to appear, 
+	 * Eg, if you have an input that will cause a modal dialog to appear,
 	 * here you could add an entry like 'modal_dialog_inputs' to this array
 	 * to map between the input's html ID and the modal dialogue's ID, so that
 	 * your JS code will know where to find the modal dialog when the input is pressed.
@@ -346,7 +332,7 @@ abstract class EE_Form_Section_Base {
 	public function get_other_js_data( $form_other_js_data = array() ) {
 		return $form_other_js_data;
 	}
-	
+
 	/**
 	 * This isn't just the name of an input, it's a path pointing to an input. The
 	 * path is similar to a folder path: slash (/) means to descend into a subsection,
@@ -355,8 +341,8 @@ abstract class EE_Form_Section_Base {
 	 * which will be returned.
 	 * Eg, if you want the related input to be conditional on a sibling input name 'foobar'
 	 * just use 'foobar'. If you want it to be conditional on an aunt/uncle input name
-	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input, 
-	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'. 
+	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input,
+	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'.
 	 * Etc
 	 * @param string $form_section_path
 	 * @return EE_Form_Section_Base
@@ -381,7 +367,7 @@ abstract class EE_Form_Section_Base {
 				$input_found = $parent_section_for_searching->get_subsection( $working_path );
 				$working_path = '';
 			}
-		} while( $input_found === null && $working_path != '' );
+		} while( $input_found === null && $working_path !== '' );
 		return $input_found;
 	}
 }
