@@ -47,6 +47,12 @@ class Iframe {
 	*/
 	protected $footer_js = array();
 
+	/*
+	* an array of JSON vars to be set in the HTML header.
+	* @var array $localized_vars
+	*/
+	protected $localized_vars = array();
+
 
 
 	/**
@@ -58,6 +64,9 @@ class Iframe {
 	 */
 	public function __construct( $title, $content ) {
 		global $wp_version;
+		if ( ! defined( 'EE_IFRAME_DIR_URL' ) ) {
+			define( 'EE_IFRAME_DIR_URL', plugin_dir_url( __FILE__ ) );
+		}
 		$this->setContent( $content );
 		$this->setTitle( $title );
 		$this->addStylesheets(
@@ -159,14 +168,21 @@ class Iframe {
 	 * @param array $vars
 	 * @throws \EE_Error
 	 */
-	public function addLocalizedVars( array $vars ) {
+	public function addLocalizedVars( array $vars, $var_name = 'eei18n' ) {
 		if ( empty( $vars ) ) {
 			throw new \EE_Error(
 				__( 'A non-empty array of vars, is required to add localized Javascript vars to an iframe.', 'event_espresso' )
 			);
 		}
 		foreach ( $vars as $handle => $var ) {
-			\EE_Registry::$i18n_js_strings[ $handle ] = $var;
+			if ( $var_name === 'eei18n' ) {
+				\EE_Registry::$i18n_js_strings[ $handle ] = $var;
+			} else {
+				if ( ! isset( $this->localized_vars[ $var_name ] ) ) {
+					$this->localized_vars[ $var_name ] = array();
+				}
+				$this->localized_vars[ $var_name ][ $handle ] = $var;
+			}
 		}
 	}
 
@@ -177,6 +193,7 @@ class Iframe {
 	 */
 	public function display() {
 		echo $this->getTemplate();
+		exit;
 	}
 
 
@@ -208,9 +225,9 @@ class Iframe {
 					'FHEE__\EventEspresso\core\libraries\iframe_display\Iframe__getTemplate__footer_js_urls',
 					$this->footer_js
 				),
-				'eei18n'    => (array) apply_filters(
+				'eei18n'    => apply_filters(
 					'FHEE__\EventEspresso\core\libraries\iframe_display\Iframe__getTemplate__eei18n_js_strings',
-					\EE_Registry::localize_i18n_js_strings()
+					\EE_Registry::localize_i18n_js_strings() . $this->localizeJsonVars()
 				),
 				'notices'   => \EEH_Template::display_template(
 					EE_TEMPLATES . 'espresso-ajax-notices.template.php',
@@ -220,6 +237,27 @@ class Iframe {
 			),
 			true
 		);
+	}
+
+
+
+	/**
+	 * localizeJsonVars
+	 *
+*@return string
+	 */
+	public function localizeJsonVars() {
+		$JSON = '';
+		$localized_vars = (array) $this->localized_vars;
+		foreach ( $localized_vars as $var_name => $vars ) {
+			foreach ( $vars as $key => $value ) {
+				if ( is_scalar( $value ) ) {
+					$localized_vars[ $key ] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
+				}
+			}
+			$JSON .= "/* <![CDATA[ */ var $var_name = " . wp_json_encode( $localized_vars ) . '; /* ]]> */';
+		}
+		return $JSON;
 	}
 
 
@@ -241,34 +279,7 @@ class Iframe {
 					if ( $post->post_type !== 'espresso_events' ) {
 						return $permalink_string;
 					}
-					$iframe_route_url = add_query_arg(
-						array( $route_name => 'iframe', 'event' => $id ),
-						site_url()
-					);
-					// add this route to our localized vars
-					$iframe_module_routes = isset( \EE_Registry::$i18n_js_strings['iframe_module_routes'] )
-						? \EE_Registry::$i18n_js_strings['iframe_module_routes']
-						: array();
-					$iframe_module_routes[ $route_name ] = $route_name;
-					\EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
-					$permalink_string .= \EEH_HTML::link(
-						'#',
-						__( 'Embed', 'event_espresso' ),
-						__(
-							'click here to generate code for embedding an iframe for this event into another site.',
-							'event_espresso'
-						),
-						"$route_name-iframe-embed-trigger-js",
-						'iframe-embed-trigger-js button button-small',
-						'',
-						' data-iframe_embed_button="#' . $route_name .'-iframe-js" tabindex="-1"'
-					);
-					$permalink_string .= \EEH_HTML::div( '', "$route_name-iframe-js", 'iframe-embed-wrapper-js', 'display:none;' );
-					$permalink_string .= \EEH_HTML::div(
-						'<iframe src="' . $iframe_route_url . '" width="100%" height="100%"></iframe>',
-						'', '', 'width:100%; height: 500px;'
-					);
-					$permalink_string .= \EEH_HTML::divx();
+					$permalink_string .= Iframe::embedButtonHtml( $route_name, array( 'event' => $id ) );
 				}
 				return $permalink_string;
 			},
@@ -276,7 +287,7 @@ class Iframe {
 		);
 		add_action(
 			'admin_enqueue_scripts',
-			array( '\EventEspresso\core\libraries\iframe_display\Iframe', 'load_iframe_embed_button_assets' ),
+			array( '\EventEspresso\core\libraries\iframe_display\Iframe', 'EventEditorEmbedButtonAssets' ),
 			10
 		);
 	}
@@ -284,27 +295,98 @@ class Iframe {
 
 
 	/**
+	 * Adds an iframe embed code button via a WP do_action() as determined by the first parameter
+	 *
+	 * @param string $route_name the named module route that generates the iframe
+	 * @param string $action name of the WP do_action() to hook into
+	 */
+	public static function addActionIframeEmbedButton( $route_name, $action ) {
+		// add button for iframe code to event editor.
+		add_action(
+			$action,
+			function () use ( $route_name ) {
+				echo Iframe::embedButtonHtml( $route_name );
+			},
+			10
+		);
+	}
+
+
+
+	/**
+	 * iframe_embed_html
+	 *
+	 * @param string $route_name the named module route that generates the iframe
+	 * @param array  $query_args
+	 * @return string
+	 */
+	public static function embedButtonHtml( $route_name, $query_args = array() ) {
+		$iframe_route_url = add_query_arg(
+			array_merge( array( $route_name => 'iframe' ), $query_args ),
+			site_url()
+		);
+		// add this route to our localized vars
+		$iframe_module_routes = isset( \EE_Registry::$i18n_js_strings['iframe_module_routes'] )
+			? \EE_Registry::$i18n_js_strings['iframe_module_routes']
+			: array();
+		$iframe_module_routes[ $route_name ] = $route_name;
+		\EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
+		$iframe_embed_html = \EEH_HTML::link(
+			'#',
+			__( 'Embed', 'event_espresso' ),
+			__(
+				'click here to generate code for embedding an iframe for this event into another site.',
+				'event_espresso'
+			),
+			"$route_name-iframe-embed-trigger-js",
+			'iframe-embed-trigger-js button button-small',
+			'',
+			' data-iframe_embed_button="#' . $route_name . '-iframe-js" tabindex="-1"'
+		);
+		$iframe_embed_html .= \EEH_HTML::div( '', "$route_name-iframe-js", 'iframe-embed-wrapper-js', 'display:none;' );
+		$iframe_embed_html .= \EEH_HTML::div(
+			'<iframe src="' . $iframe_route_url . '" width="100%" height="100%"></iframe>',
+			'', '', 'width:100%; height: 500px;'
+		);
+		$iframe_embed_html .= \EEH_HTML::divx();
+		return $iframe_embed_html;
+	}
+
+
+
+	/**
 	 * iframe button js on admin event editor page
 	 */
-	public static function load_iframe_embed_button_assets() {
+	public static function EventEditorEmbedButtonAssets() {
 		if (
 			\EE_Registry::instance()->REQ->get( 'page' ) === 'espresso_events'
 		    && \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
 		) {
-			wp_register_script(
-				'iframe_embed_button',
-				plugin_dir_url( __FILE__ ) . 'iframe-embed-button.js',
-				array( 'ee-dialog' ),
-				EVENT_ESPRESSO_VERSION,
-				true
-			);
-			wp_enqueue_script( 'iframe_embed_button' );
+			Iframe::embedButtonAssets();
 			\EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
 				'copy and paste the following into any other site\'s content to display this event:',
 				'event_espresso'
 			);
 		}
 	}
+
+
+
+	/**
+	 * enqueue iframe button js
+	 */
+	public static function embedButtonAssets() {
+		wp_register_script(
+			'iframe_embed_button',
+			plugin_dir_url( __FILE__ ) . 'iframe-embed-button.js',
+			array( 'ee-dialog' ),
+			EVENT_ESPRESSO_VERSION,
+			true
+		);
+		wp_enqueue_script( 'iframe_embed_button' );
+	}
+
+
 
 }
 // End of file Iframe.php
