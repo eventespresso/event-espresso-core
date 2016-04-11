@@ -120,8 +120,10 @@ jQuery(document).ready(function($){
 		initialize_select_reveal_inputs : function( form_sections_to_validate ) {
 			//for each form...
 			$.each( form_sections_to_validate, function( index, form_data ){
-				if ( typeof form_data.other_data !== 'undefined'
-						&& typeof form_data.other_data.select_reveal_inputs !== 'undefined' ) {
+				if (
+					typeof form_data.other_data !== 'undefined'
+					&& typeof form_data.other_data.select_reveal_inputs !== 'undefined'
+				) {
 					//for each select_reveal input...
 					$.each( form_data.other_data.select_reveal_inputs , function( select_reveal_input_id, select_option_to_section_to_reveal_id ) {
 						//define a callback for revealing/hiding the sections related to this select_reveal input
@@ -140,7 +142,8 @@ jQuery(document).ready(function($){
 						//update what's shown or hidden when the select_reveal's value changes
 						$('#' + select_reveal_input_id ).change(
 							{ select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id },
-							reveal_now );
+							reveal_now
+						);
 						//and start off with it showing the right value
 						reveal_now(
 							{
