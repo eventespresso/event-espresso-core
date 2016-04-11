@@ -14,22 +14,22 @@
 class EE_Select_Reveal_Input extends EE_Select_Input{
 
 	/**
-	 * @param array $answer_options. Array keys which match a sibling section's name
-	 * will show/unhide that sibling subsection. Otherwise, siblings whose names
-	 * match array keys of $answer_options are hidden
+	 * @param array $answer_options Array keys which match a sibling section's name
+	 *                              will show/unhide that sibling subsection. Otherwise, siblings whose names
+	 *                              match array keys of $answer_options are hidden
 	 * @param array $input_settings
 	 */
 	public function __construct( $answer_options, $input_settings = array() ){
 		parent::__construct( $answer_options, $input_settings );
 	}
-	
+
 	/**
 	 * Gets all the sibling sections controlled by this reveal select input
 	 * @return \EE_Form_Section_Base[] keys are their form section paths
 	 */
 	public function sibling_sections_controlled() {
 		$sibling_sections = array();
-		foreach( array_keys( $this->options() )  as $sibling_section_name ) {
+		foreach( $this->options() as $sibling_section_name => $sibling ) {
 			$sibling_section = $this->find_section_from_path( $sibling_section_name );
 			if( $sibling_section instanceof EE_Form_Section_Base ) {
 				$sibling_sections[ $sibling_section_name ] = $sibling_section;
@@ -37,7 +37,7 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 		}
 		return $sibling_sections;
 	}
-	
+
 	/**
 	 * Adds an entry of 'select_reveal_inputs' to the js data, which is an array
 	 * whose top-level keys are select reveal input html ids; values are arrays
