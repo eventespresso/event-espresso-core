@@ -247,8 +247,6 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 				'GRP_ID' => $mtpg->ID()
 			)
 		);
-
-		EE_Registry::instance()->load_helper('Parse_Shortcodes');
 		$parser = new EEH_Parse_Shortcodes();
 		return $parser->parse_message_template( $template, $data, $valid_shortcodes, $message_type, $messenger, $message );
 	}
@@ -277,7 +275,6 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase {
 		$this->assertContains( '999999', $parsed );
 
 		//testing [TOTAL_COST] and [AMOUNT_DUE]  (should be $125*3 + 20 shipping charge + taxes)
-		EE_Registry::instance()->load_helper( 'Template' );
 		$total_cost = EEH_Template::format_currency( '398.00' );
 		$this->assertContains( $total_cost, $parsed );
 		//but we should also have a count of TWO for this string

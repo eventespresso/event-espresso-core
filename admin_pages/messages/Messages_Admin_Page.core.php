@@ -2489,7 +2489,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _settings() {
 
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 
 		$this->_set_m_mt_settings();
 

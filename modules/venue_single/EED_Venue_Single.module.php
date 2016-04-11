@@ -160,7 +160,6 @@ class EED_Venue_Single  extends EED_Module {
 			wp_enqueue_style( $this->theme );
 //			wp_enqueue_script( 'single-espresso_venues' );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-				EE_Registry::instance()->load_helper( 'Maps' );
 				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 			}
 		}

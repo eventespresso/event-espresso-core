@@ -102,7 +102,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 	protected function _get_table_filters() {
 		$filters = array();
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		//setup messengers for selects
 		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types

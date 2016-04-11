@@ -6,7 +6,7 @@
  * Description here
  *
  * @package         Event Espresso
- * @subpackage    
+ * @subpackage
  * @author				Mike Nelson
  * @since		 	   4.8.26
  *
@@ -24,8 +24,8 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 
 class AttendeesReport extends JobHandlerFile {
-	
-	
+
+
 	public function create_job(JobParameters $job_parameters) {
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_read_contacts', 'generating_report' ) ) {
 			throw new BatchRequestException(
@@ -40,7 +40,6 @@ class AttendeesReport extends JobHandlerFile {
 		$job_parameters->set_job_size( $this->count_units_to_process() );
 		//we should also set the header columns
 		$csv_data_for_row = $this->get_csv_data( 0, 1 );
-		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
@@ -51,11 +50,10 @@ class AttendeesReport extends JobHandlerFile {
 			__( 'Contacts report started successfully...', 'event_espresso' )
 		);
 	}
-	
+
 
 	public function continue_job(JobParameters $job_parameters, $batch_size = 50) {
 		$csv_data = $this->get_csv_data( $job_parameters->units_processed(), $batch_size );
-		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
@@ -74,7 +72,7 @@ class AttendeesReport extends JobHandlerFile {
 				$extra_response_data );
 	}
 
-	
+
 	public function cleanup_job(JobParameters $job_parameters) {
 		$this->_file_helper->delete(
 			\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ),
@@ -83,13 +81,13 @@ class AttendeesReport extends JobHandlerFile {
 		);
 		return new JobStepResponse( $job_parameters, __( 'Cleaned up temporary file', 'event_espresso' ) );
 	}
-	
+
 	public function count_units_to_process() {
 		return \EEM_Attendee::instance()->count();
 	}
 	public function get_csv_data( $offset, $limit ) {
-		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results( 
-				array( 
+		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results(
+				array(
 					'limit' => array( $offset, $limit ),
 					'force_join' => array( 'State', 'Country' ) ) );
 		$csv_data = array();

@@ -398,6 +398,7 @@ class EE_Registry {
 	 * @return EEH_Base | bool
 	 */
 	public function load_helper( $class_name, $arguments = array(), $load_only = true ) {
+		// todo: add doing_it_wrong() in a few versions after all addons have had calls to this method removed
 		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array( EE_HELPERS ) );
 		// retrieve instantiated class
 		return $this->_load( $helper_paths, 'EEH_', $class_name, 'helper', $arguments, false, true, $load_only );
@@ -1062,7 +1063,6 @@ class EE_Registry {
 	 */
 	public static function reset( $hard = false, $reinstantiate = true ) {
 		$instance = self::instance();
-		$instance->load_helper( 'Activation' );
 		EEH_Activation::reset();
 		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );

@@ -1,25 +1,10 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Event Espresso
- * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		 4.0
- *
- * ------------------------------------------------------------------------
- *
  * class EE_Request_Handler
  *
- * @package         Event Espresso
+ * @package     Event Espresso
  * @subpackage  /core/
- * @author          Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author      Brent Christensen
  */
 final class EE_Request_Handler {
 
@@ -69,8 +54,8 @@ final class EE_Request_Handler {
 		// grab request vars
 		$this->_params = $request->params();
 		// AJAX ???
-		$this->ajax = defined( 'DOING_AJAX' ) ? true : false;
-		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? true : false;
+		$this->ajax = defined( 'DOING_AJAX' ) && DOING_AJAX ? true : false;
+		$this->front_ajax = defined( 'EE_FRONT_AJAX' ) && EE_FRONT_AJAX ? true : false;
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
 	}
 
@@ -133,10 +118,8 @@ final class EE_Request_Handler {
 		if ( ! $post_id && isset( $wp->query_vars['page_id'] )) {
 			$post_id = $wp->query_vars['page_id'];
 		}
-		if ( ! $post_id && isset( $wp->request )) {
-			if ( is_numeric( basename( $wp->request ))) {
-				$post_id = basename( $wp->request );
-			}
+		if ( ! $post_id && isset( $wp->request ) && is_numeric( basename( $wp->request ))) {
+			$post_id = basename( $wp->request );
 		}
 		return $post_id;
 	}
@@ -280,10 +263,10 @@ final class EE_Request_Handler {
 
 
 	/**
-	 *    is_espresso_page
+	 *  is_espresso_page
 	 *
 	 * @access    public
-	 * @param null $value
+	 * @param null|bool $value
 	 * @return    mixed
 	 */
 	public function set_espresso_page( $value = null ) {
@@ -326,7 +309,11 @@ final class EE_Request_Handler {
 	 */
 	public function set( $key, $value, $override_ee = false ) {
 		// don't allow "ee" to be overwritten unless explicitly instructed to do so
-		if ( $key != 'ee' || ( $key == 'ee' && empty( $this->_params['ee'] )) || ( $key == 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )) {
+		if (
+			$key !== 'ee' ||
+			( $key === 'ee' && empty( $this->_params['ee'] ))
+			|| ( $key === 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )
+		) {
 			$this->_params[ $key ] = $value;
 		}
 	}
@@ -429,7 +416,7 @@ final class EE_Request_Handler {
 	 * @param $item
 	 * @param $key
 	 */
-	function sanitize_text_field_for_array_walk( &$item, &$key ) {
+	public function sanitize_text_field_for_array_walk( &$item, &$key ) {
 		$item = strpos( $item, 'email' ) !== false ? sanitize_email( $item ) : sanitize_text_field( $item );
 	}
 
@@ -471,21 +458,21 @@ final class EE_Request_Handler {
 	/**
 	 * @return bool
 	 */
-	public function __clone() { return false; }
+	public function __clone() {}
 
 
 
 	/**
 	 * @return bool
 	 */
-	public function __wakeup() { return false; }
+	public function __wakeup() {}
 
 
 
 	/**
 	 *
 	 */
-	public function __destruct() { return false; }
+	public function __destruct() {}
 
 
 }

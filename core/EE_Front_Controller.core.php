@@ -372,7 +372,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp() {
-		$this->Registry->load_helper( 'Template' );
 	}
 
 
@@ -402,7 +401,6 @@ final class EE_Front_Controller {
 					wp_enqueue_style('espresso_custom_css');
 				}
 
-				$this->Registry->load_helper( 'File' );
 				if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
@@ -444,7 +442,6 @@ final class EE_Front_Controller {
 
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			$this->Registry->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
 
@@ -558,7 +555,6 @@ final class EE_Front_Controller {
 		) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
-			$this->Registry->load_helper( 'Template' );
 			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
 		do_action( 'AHEE__EE_Front_Controller__display_errors__end' );

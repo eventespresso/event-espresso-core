@@ -592,6 +592,7 @@ add_action( 'FHEE__Registrations_Admin_Page___reg_questions_meta_box__do_default
 
 
 
+
 /**
  * Deprecated class for instantiating default templates.  This was deprecated because of a substantial change in the constructor
  * signature.
@@ -645,6 +646,7 @@ class EE_Message_Template_Defaults extends EE_Base {
 
 
 //end EE_Message_Template_Defaults class
+
 
 
 
@@ -1173,3 +1175,50 @@ class EE_messages {
 
 }
 //end EE_messages class
+
+
+
+/**
+ * Class EE_Address_Formatter
+ *
+ * @deprecated 4.9.0
+ */
+class EE_Address_Formatter extends \EventEspresso\core\services\address\formatters\AddressFormatter {}
+
+
+
+/**
+ * Class EE_MultiLine_Address_Formatter
+ *
+ * @deprecated 4.9.0
+ */
+class EE_MultiLine_Address_Formatter extends \EventEspresso\core\services\address\formatters\NullAddressFormatter {}
+
+
+
+/*
+ * Class EE_Inline_Address_Formatter
+ *
+ * @deprecated 4.9.0
+ */
+class EE_Inline_Address_Formatter extends \EventEspresso\core\services\address\formatters\InlineAddressFormatter {}
+
+
+
+/*
+ * Class EE_Null_Address_Formatter
+ *
+ * @deprecated 4.9.0
+ */
+class EE_Null_Address_Formatter extends \EventEspresso\core\services\address\formatters\NullAddressFormatter {}
+
+
+
+/**
+ * Class EE_Generic_Address
+ *
+ * @deprecated 4.9.0
+ */
+class EE_Generic_Address extends \EventEspresso\core\entities\GenericAddress {}
+
+

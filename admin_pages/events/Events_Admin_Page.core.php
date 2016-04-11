@@ -100,9 +100,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _set_page_routes() {
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		//is there a evt_id in the request?
 		$evt_id = ! empty( $this->_req_data['EVT_ID'] ) && ! is_array( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : 0;
@@ -982,7 +980,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
 			//load DTT helper
-			EE_Registry::instance()->load_helper('DTT_Helper');
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
@@ -1117,7 +1114,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 				$TKT->save();
 			}
@@ -1287,7 +1283,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _generate_publish_box_extra_content() {
 
 		//load formatter helper
-  		EE_Registry::instance()->load_helper( 'Formatter' );
 
   		//args for getting related registrations
   		$approved_query_args = array( array( 'REG_deleted' => 0, 'STS_ID' => EEM_Registration::status_id_approved ) );
@@ -1425,7 +1420,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		 * 3. For each ticket get related prices
 		 */
 		$times = EE_Registry::instance()->load_model('Datetime' )->get_all_event_dates( $event_id );
-		EE_Registry::instance()->load_helper('DTT_Helper' );
 		/** @type EE_Datetime $first_datetime */
 		$first_datetime = reset( $times );
 		//do we get related tickets?
@@ -2166,9 +2160,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_details($view) {
 
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);

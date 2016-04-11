@@ -732,8 +732,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//add message type to template args
 		$this->_template_args['message_type'] = $this->_incoming_message_type;
 
-		//require template helper
-		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 

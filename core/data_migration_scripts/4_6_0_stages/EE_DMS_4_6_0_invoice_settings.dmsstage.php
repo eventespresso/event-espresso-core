@@ -56,7 +56,6 @@ class EE_DMS_4_6_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 	 */
 	protected function _migration_step( $num_items = 1 ){
 
-		EE_Registry::instance()->load_helper( 'Template' );
 		$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
 		$overridden_invoice_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php', NULL, FALSE, FALSE, TRUE );
 		$overridden_receipt_body= EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php', NULL, FALSE, FALSE, TRUE );

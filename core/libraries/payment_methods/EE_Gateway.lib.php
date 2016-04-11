@@ -1,34 +1,19 @@
 <?php
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.2
- *
- * ------------------------------------------------------------------------
- *
  * EE_Gateway
+ * Abstract base class for all gateways for processing payments.
+ * This has been designed in a way so that other WP Plugins
+ * can use this class for processing payments, and theoretically any of its children,
+ * provided they implement the interfaces it uses.
+ * The necessary interfaces to be implemented are contained in:
+ * core/libraries/payment_methods/EEI_Payment_Method_Interfaces.php and EEI_Interfaces.
+ * After constructing a gateway object, you need to set all the properties which reference many of the
+ * needed helpers and models (see all the methods starting with "set_",
+ * eg seg_line_item_helper which should be passed an object which implements EEHI_Line_Item_Helper; etc).
  *
- * Abstract base class for all gateways
- *
- * @package			Event Espresso
+ * @package            Event Espresso
  * @subpackage		core/libraries/payment_methods
  * @author			Mike Nelson
- *
- * ------------------------------------------------------------------------
- * Class for processing payments. This has been designed in a way so that other WP Plugins
- * can use this class for processing payments, and theoreitcally any of its children, provided they implement the
- * interfaces it uses.
- * The necessary interfaces to be implemented are contained in core/libaries/payment_methods/EEI_Payment_Method_Interfaces.php and
- * EEI_Interfaces. After constructing a gateway object, you need to set all the properties which reference many of the
- * needed helpers and models (see all the methods starting with "set_", eg seg_line_item_helper which should be passed an object
- * which implements EEHI_Line_Item_Helper; etc).
  */
 abstract class EE_Gateway{
 	/**
@@ -58,25 +43,25 @@ abstract class EE_Gateway{
 	 * Model for querying for existing payments
 	 * @var EEMI_Payment
 	 */
-	protected $_pay_model = NULL;
+	protected $_pay_model;
 
 	/**
 	 * Model used for adding to the payments log
 	 * @var EEMI_Payment_Log
 	 */
-	protected $_pay_log = NULL;
+	protected $_pay_log;
 
 	/**
 	 * Used for formatting some input to gateways
 	 * @var EEHI_Template
 	 */
-	protected $_template = NULL;
+	protected $_template;
 
 	/**
 	 * Concrete class that implements EEHI_Money, used by most gateways
 	 * @var EEHI_Money
 	 */
-	protected $_money = NULL;
+	protected $_money;
 
 	/**
 	 * Concrete class that implements EEHI_Line_Item, used for manipulating the line item tree
@@ -93,17 +78,17 @@ abstract class EE_Gateway{
 	/**
 	 * @var $_debug_mode boolean whether to send requests to teh sandbox site or not
 	 */
-	protected $_debug_mode = NULL;
+	protected $_debug_mode;
 	/**
 	 *
 	 * @var string $_name name to show for this payment method
 	 */
-	protected $_name = NULL;
+	protected $_name;
 	/**
 	 *
 	 * @var string name to show fir this payment method to admin-type users
 	 */
-	protected $_admin_name = NULL;
+	protected $_admin_name;
 
 	/**
 	 * @return EE_Gateway
@@ -122,8 +107,7 @@ abstract class EE_Gateway{
 	 */
 	public function __sleep(){
 		$properties = get_object_vars($this);
-		unset( $properties[ '_pay_model' ] );
-		unset( $properties[ '_pay_log' ] );
+		unset( $properties[ '_pay_model' ], $properties[ '_pay_log' ] );
 		return array_keys($properties);
 	}
 	/**
