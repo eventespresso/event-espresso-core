@@ -141,7 +141,7 @@ abstract class EEME_Base {
 				remove_filter($callback_name,array($this,self::dynamic_callback_method_prefix.$method_name_on_model),10);
 			}
 		}
-		$model_to_reset = $this->_model_name_extended;
+		$model_to_reset = 'EEM_' . $this->_model_name_extended;
 		if ( class_exists( $model_to_reset ) ) {
 			$model_to_reset::reset();
 		}

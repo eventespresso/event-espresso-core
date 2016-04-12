@@ -20,6 +20,7 @@ jQuery(document).ready(function($){
 	 *     localized_error_messages: object,
 	 *     errors: object
 	 * }}
+	 * @type {{ ee_form_section_validation_init : boolean }}
 	 */
 	EEFV = {
 
@@ -286,42 +287,53 @@ jQuery(document).ready(function($){
 			}
 
 			// Test for leading and trailing periods and whitespace
-			if ( str_trim( $domain, " \t\n\r\0\x0B." ) !== $domain ) {
+			if ( EEFV.string_trim( $domain, " \t\n\r\0\x0B." ) !== $domain ) {
 				return false;
 			}
 
 			// Split the domain into subs
-			var $subs = $domain.split( '.' );
+			var subs = $domain.split( '.' );
 
 			// Assume the domain will have at least two subs
-			if ( 2 > $subs.length ) {
+			if ( 2 > subs.length ) {
 				return false;
 			}
 			var i;
 			// Loop through each sub
-			for ( i in $subs ) {
-				var $sub = $subs[ i ];
-				// Test for leading and trailing hyphens and whitespace
-				if ( str_trim( $sub, " \t\n\r\0\x0B-" ) !== $sub ) {
-					return false;
-				}
-
-				// Test for invalid characters
-				if ( !/^[a-z0-9-]+$/i.test( $sub ) ) {
-					return false;
+			for ( i in subs ) {
+				if ( subs.hasOwnProperty( i ) ) {
+					// Test for leading and trailing hyphens and whitespace
+					if ( EEFV.string_trim( subs[ i ], " \t\n\r\0\x0B-" ) !== subs[ i ] ) {
+						return false;
+					}
+					// Test for invalid characters
+					if ( !/^[a-z0-9-]+$/i.test( subs[ i ] ) ) {
+						return false;
+					}
 				}
 			}
 
 			// Congratulations your email made it!
 			return true;
 
-			function str_trim( str, regex ) {
-				var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
-				return str.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
-					new RegExp( '/[' + chr + ']*$/' ),
-					''
-				);
+		},
+
+
+
+		/**
+		 * trims leading and trailing hyphens and whitespace
+		 * @param  {string} stringToTrim
+		 * @param  {string} regex
+		 */
+		string_trim : function( stringToTrim, regex ) {
+			if ( typeof stringToTrim !== 'string' || typeof regex !== 'string' ) {
+				return '';
 			}
+			var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
+			return stringToTrim.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
+				new RegExp( '/[' + chr + ']*$/' ),
+				''
+			);
 		},
 
 
@@ -385,10 +397,10 @@ jQuery(document).ready(function($){
 				if ( typeof obj === 'object' ) {
 					if ( typeof obj_name !== 'undefined' ) {
 						//console.log( obj_name );
-						EEFV.console_log( spacer + obj_name );
+						EEFV.console_log( spacer + obj_name, '', false );
 					} else {
 						//console.log( 'console_log_object : ' );
-						EEFV.console_log( spacer + 'console_log_object : ' );
+						EEFV.console_log( spacer + 'console_log_object : ', '', false );
 					}
 					spacer = spacer + '. ';
 					depth++;
@@ -411,9 +423,11 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
-	if( typeof( ee_form_section_validation_init ) != 'undefined'
-			&& ee_form_section_validation_init.init == true
-			&& typeof( ee_form_section_vars ) != 'undefined' ) {
+	if(
+		typeof( ee_form_section_validation_init ) != 'undefined'
+		&& ee_form_section_validation_init.init == true
+		&& typeof( ee_form_section_vars ) != 'undefined'
+	) {
 		EEFV.initialize( ee_form_section_vars.form_data );
 	}
 

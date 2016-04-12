@@ -116,9 +116,11 @@ class Model_Data_Translator {
 				//did they specify an operator?
 				if( is_array( $query_param_value ) ) {
 					$op = $query_param_value[ 0 ];
-					$value = $query_param_value[ 1 ];
-					$new_value = self::prepare_field_values_from_json( $field, $value, $requested_version );
-					$translated_value = array( $op, $new_value );
+					$translated_value = array( $op );
+					if( isset( $query_param_value[ 1 ] ) ) {
+						$value = $query_param_value[ 1 ];
+						$translated_value[1] = self::prepare_field_values_from_json( $field, $value, $requested_version );
+					}
 				} else {
 					$translated_value  = self::prepare_field_value_from_json( $field, $query_param_value, $requested_version );
 				}
