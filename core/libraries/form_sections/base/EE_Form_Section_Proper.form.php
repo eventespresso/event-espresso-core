@@ -100,6 +100,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
+		
+		if( isset( $options_array[ 'name' ] ) ) {
+			$this->_construct_finalize( null, $options_array[ 'name' ] );
+		}
 	}
 
 
@@ -973,6 +977,29 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 		}
 		return $validation_errors;
+	}
+	
+	public function find_section_from_path( $form_section_path ) {
+		//check if we can find the input from purely going straight up the tree
+		$input = parent::find_section_from_path( $form_section_path );
+		if( $input instanceof EE_Form_Section_Base ) {
+			return $input;
+		} 
+		
+		$next_slash_pos = strpos( $form_section_path, '/' );
+		if( $next_slash_pos !== false ) {
+			$child_section_name = substr( $form_section_path, 0, $next_slash_pos );
+			$subpath = substr( $form_section_path, $next_slash_pos + 1 );
+		} else {
+			$child_section_name = $form_section_path;
+			$subpath = '';
+		}
+		$child_section =  $this->get_subsection( $child_section_name );
+		if ( $child_section instanceof EE_Form_Section_Base ) {
+			return $child_section->find_section_from_path( $subpath );
+		} else {
+			return null;
+		}
 	}
 
 }

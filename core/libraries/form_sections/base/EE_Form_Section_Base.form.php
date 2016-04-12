@@ -344,34 +344,30 @@ abstract class EE_Form_Section_Base {
 	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input,
 	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'.
 	 * Etc
-	 * @param string $form_section_path
+	 * @param string|false $form_section_path we accept false also because substr( '../', '../' ) = false
 	 * @return EE_Form_Section_Base
 	 */
-	public function find_section_from_path( $form_section_path ) {
-		$input_found = null;
-		$working_path = $form_section_path;
-		$parent_section_for_searching = $this->parent_section();
-		do {
-			if( strpos( $working_path, '../' ) === 0 ) {
-				$working_path = substr( $working_path, strlen( '../' ) );
-				$parent_section_for_searching = $parent_section_for_searching->parent_section();
-			} elseif( strpos( $working_path, '/' ) === 0 ) {
-				$working_path = substr( $working_path, strlen( '/' ) );
-				$next_slash_pos = strpos( $working_path, '/' );
-				if( $next_slash_pos !== false ) {
-					$child_section_name = substr( $working_path, 0, $next_slash_pos );
-				} else {
-					//there are no more slashes, so we must have found the child section!
-					$child_section_name = $working_path;
-				}
-				$parent_section_for_searching = $parent_section_for_searching->get_subsection( $child_section_name );
-			} else {
-				//this input better exist, or this'll throw an exception!
-				$input_found = $parent_section_for_searching->get_subsection( $working_path );
-				$working_path = '';
+	public function find_section_from_path( $form_section_path ) {		
+		if( strpos( $form_section_path, '/' ) === 0 ) {
+			$form_section_path = substr( $form_section_path, strlen( '/' ) );
+		}
+		if( empty( $form_section_path ) ) {
+			return $this;
+		}
+		if( strpos( $form_section_path, '../' ) === 0 ) {
+			$parent = $this->parent_section();
+			
+			$form_section_path = substr( $form_section_path, strlen( '../' ) );
+			if( $parent instanceof EE_Form_Section_Base ) {
+				return $parent->find_section_from_path( $form_section_path );
+			} elseif( empty( $form_section_path ) ) {
+				return $this;
 			}
-		} while( $input_found === null && $working_path !== '' );
-		return $input_found;
+		}
+		//couldn't find it using simple parent following
+		return null;
 	}
+	
+	
 }
 // End of file EE_Form_Section_Base.form.php
