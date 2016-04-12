@@ -34,12 +34,22 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 * @return EE_PMT_Aim
 	 */
 	public function __construct($pm_instance = NULL) {
+		$this->_setup_properties();
+		parent::__construct($pm_instance);
+	}
+	
+	/**
+	 * Sets up payment method type properties for this gateway, which is normally
+	 * done in the constructor, but we want this to be easy for similar gateways to override
+	 * while still calling the parent constructor.
+	 * So children should override this method instead of __construct
+	 */
+	protected function _setup_properties() {
 		require_once($this->file_folder().'EEG_Aim.gateway.php');
 		$this->_gateway = new EEG_AIM();
 		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
 		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
 		$this->_requires_https = true;
-		parent::__construct($pm_instance);
 	}
 
 	/**
