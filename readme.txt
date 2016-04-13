@@ -185,15 +185,100 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
 
-= Month 2015 =
+= Month 2016 =
 
 **Bug Fixes:**
 **Enhancements:**
 
-= November 2015 =
+= February 2016 =
 
 **Bug Fixes:**
 
+* Fix payment details metabox not showing when transaction is TCM, there are payments, and the grand total is 0
+* Fix regression for duplicate payment error notices being displayed in SPCO
+* Fix EEM_Datetime::get_dtt_months_and_years
+* Fix end-of-the-month Month Dropdown selector double month bug
+* Fix an issue where changing the payment date for a transaction through the transaction details screen sets it to the current time and date
+* Fix report chart’s currency formats so its formats are consistent with what’s set in country settings
+* Fix an ampersand (&) in an answer choice causes radio, dropdown, and checkbox question types to not display correctly in reg admin
+* Fix Declaration of Events_Admin_List_Table::_get_row_class() should be compatible with EE_Admin_List_Table::_get_row_class($item)
+
+**Enhancements:**
+
+* EE4 REST API add headers for EE notices
+* EE4 REST API checkin/checkout endpoints
+* EE4 REST API cannot request registrations’ status
+* Update Help & Support content
+
+= January 2016 =
+
+**Bug Fixes:**
+
+* Fix handling of dynamic variables and properties for compatibility with PHP7
+* Fix Registrations per day report so it starts the 24 hour day at midnight local time instead of UTC 00:00
+* Revert changes from 9165 that got into 4.8.30.p
+* Fix REST API non-static method called statically
+* EE_Payment::redirect_form needs to take out GET parameters from querystring and put them into the form
+* PayPal Standard: if there is an error in validating the IPN, then ensure the response is not a WP_error
+* Fix EE_Base_Class::delete_permanently hooks not firing for non soft delete permanent deletes
+* Fix EE_Datetime_Test::test_ticket_types_available_for_purchase unit test: Failed asserting that 0 matches expected 1* Update DMS so esp_registration_payment table shows it was added in 4.7 DMS, not 4.8 DMS
+* Fix inconsistency with EE_Base_Class::delete_permanently and EE_Soft_Delete_Base::delete_permanently and no action hooks for this route
+* Change locate_template to use get_stylesheet_directory() so that it searches child themes
+* Make sure any initial default ticket (the main default) has any default prices showing with it
+* Fix incorrect trash item count on price admin page for trashed prices and price types
+* Fix event custom post type display (single and archive) when get_the_excerpt() is used within theme templates
+* Add custom callback to allow for non-scalar ticket editor inputs
+* Fix system question/group cap requirements
+* Update the REST API index to point to new documentation links
+* Fix ‘This Question is currently linked to one or more Question Option records.’ when attempting to perm delete option questions
+* Fix event duplicator feature so it allows sold out events to be duplicated
+* API: When getting the pretty value of a Post Content Field, it should call do_shortcode
+* Fix _has_billing_form so it’s not ignored
+* Changed the payment method settings form’s field “PMD Order” (non-i18n) to “Order” (i18n)
+
+**Enhancements:**
+
+* Put EE4 REST API into EE4 core
+* Update reports to use Google Charts
+* Check for `DOING_AJAX` before settting doing_it_wrong notices
+* Cleanup admin headings hierarchy to be in parity with WordPress changes
+* Add filter hook to allow changing what’s sent to Mijireh for the Invoice Description
+* Add filter hook to allow passing custom meta_data to Mijireh
+* a11y and index file improvements to skeleton payment method
+* Implement EE_Boolean_Field::prepare_for_pretty_echoing
+* Put EE Batch Job page into module instead of EE Admin Support Page
+* Add CSS class to spco-attendee-panel-dv div to allow customizing the style of a registration form based on the ticket’s ID
+* Add the payment method in the registrations overview
+* Add action hook to Transactions_Admin_Page::apply_payments_or_refunds
+* Add item ID to current_user_can() check in Registration_Form_Question_Groups_Admin_List_Table->column_cb()
+* Add .htaccess to force safari to download csvs as a file and not open in browser
+* Add filters to allow the_content filters to do work when the single-espresso_events.php template and archive-espresso_events.php templates are selected
+* Pass the template file name to the FHEE__EEH_Template__locate_template__full_template_paths filter
+* Pass arguments to a Payment Method help tab template
+
+= December 2015 =
+
+**Bug Fixes:**
+
+* Fix add_metaboxes action hook in the admin_wrapper so if follows WP core’s signature
+* Fix non-file-generating batch jobs page
+* Fix – Fatal error: Can’t inherit abstract function EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface::create_job() within PHP 5.3.8 and below
+* Avoid adding duplicate indexes
+* Fix negative payments when there are previous payments for multiple registrations
+* Fix usage of EEH_Template::locate_template() to allow custom templates
+* Fix conflict with Menu Manager’s Screen Options
+* Optimize EE_Event::get_active_status()
+* Modify url pointing to eventespresso.com for PUE api to https:// instead of http://
+* Added a new table (esp_extra_join), model (EEM_Extra_Join), and relation (EE_HABTM_Any_Relation) which can be used to add a has-and-belongs-to relationship between any EE models. This should be especially useful for relating things without needing to add an extra model, table, etc in the future.
+* Make sure to group the query by question ID when starting CSV report
+* Add Core support for activating multiple Payment Methods of same type
+* Fix usage of EEH_Template::locate_template() to allow custom templates
+* Fix conflict with Menu Manager’s Screen Options
+* Optimize EE_Event::get_active_status()
+* Modify url pointing to eventespresso.com for PUE api to https:// instead of http://
+* Added a new table (esp_extra_join), model (EEM_Extra_Join), and relation (EE_HABTM_Any_Relation) which can be used to add a has-and-belongs-to relationship between any EE models. This should be especially useful for relating things without needing to add an extra model, table, etc in the future.
+* Make sure to group the query by question ID when starting CSV report
+* Add Core support for activating multiple Payment Methods of same type
 * Fix bug with EE_Config::update_config
 * Process CSV reports in smaller chunks instead of all at once
 * Don’t add .htaccess files to folder where access is actually needed
@@ -201,6 +286,21 @@ Backup your WordPress before installing any updates. Please see our article on [
 * Fix warnings on activation of add-ons when using the filesystem directly
 * Fix translation strings within within Contact -> ‘Registrations for this contact’ metabox
 * Fix multiple translation strings using newlines (\n) and multiple tabs (\t) within core
+
+**Enhancements:**
+
+* Track previous Event Status when setting Event to Sold Out
+* Add Payment Due Date shortcode
+* Provide action after cleaning out junk transactions for plugins to do any additional cleanup that might be related to what transactions get deleted
+* Update PayPal gateways to use http/1.1
+* Add indexes to the database table schemas
+* All text-input type questions can now have a max length set on them. System questions have a max-max (eg the max an admin can set on the zipcode question is 12, the number of characters allowed in the mysql column).
+* Add Paypal tax settings
+
+= November 2015 =
+
+**Bug Fixes:**
+
 * Check for send_notifications flag and flip deliver_notifications filter switch if it is missing
 * Remove unused Walker_Radio_Checklist class — fixes possible conflict with WordPress 4.4
 * Add work around for servers that do not return PHP INF as expected to allow ticket editor to still function as expected
