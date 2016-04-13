@@ -777,18 +777,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
 	 * _events_overview_list_table
 	 * This contains the logic for showing the events_overview list
 	 *
 	 * @access protected
 	 * @return string html for generated table
+	 * @throws \EE_Error
 	 */
 	protected function _events_overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
-		$this->_display_legend($this->_event_legend_items());
+		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link(
+			get_post_type_archive_link('espresso_events'),
+			__("View Event Archive Page", "event_espresso"),
+			'button'
+		) . $this->_display_legend( $this->_event_legend_items() );
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -804,7 +807,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
+	/**
+	 * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.  Child classes are required to declare this method.  Typically you would use this to save any additional data.
+	 *
+	 * Keep in mind also that "save_post" runs on EVERY post update to the database.
+	 * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that you handle this accordingly.
+	 *
+	 * @access protected
+	 * @abstract
+	 * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
+	 * @param  object $post    The post object of the cpt that was saved.
+	 * @return void
+	 */
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
 		if ( $post instanceof WP_Post && $post->post_type !== 'espresso_events' ) {
@@ -1429,7 +1443,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		/** @type EE_Datetime $first_datetime */
 		$first_datetime = reset( $times );
 		//do we get related tickets?
-		if ( $first_datetime instanceof EE_Datetime 
+		if ( $first_datetime instanceof EE_Datetime
 			&& $first_datetime->ID() !== 0 ) {
 			$existing_datetime_ids[] = $first_datetime->get('DTT_ID');
 			$template_args['time'] = $first_datetime;
