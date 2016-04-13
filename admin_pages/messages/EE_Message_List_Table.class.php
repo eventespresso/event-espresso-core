@@ -190,13 +190,6 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	public function column_to( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'URL' );
 		$actions = array();
-		if ( $recipient_object = $message->recipient_object() ) {
-			$view_details_link = $recipient_object instanceof EEI_Admin_Links ? $recipient_object->get_admin_details_link() : '';
-			if ( ! empty( $view_details_link ) ) {
-				$actions['view'] = '<a href="' . $view_details_link . '">' . __( 'View Recipient Details', 'event_espresso' ) . '</a>';
-			}
-		}
-
 		$actions['delete'] = '<a href="'
 			. EEH_URL::add_query_args_and_nonce(
 				array(
