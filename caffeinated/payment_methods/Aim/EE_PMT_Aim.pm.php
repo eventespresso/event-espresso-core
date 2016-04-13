@@ -27,7 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_PMT_Aim extends EE_PMT_Base{
 
-
+	
 	/**
 	 *
 	 * @param EE_Payment_Method $pm_instance
