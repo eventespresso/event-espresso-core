@@ -16,26 +16,52 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CollectionDetails implements CollectionDetailsInterface {
+abstract class CollectionDetails implements CollectionDetailsInterface {
 
-	protected $collection_interface;
+	/**
+	 * @var string $collection_interface
+	 */
+	protected $collection_interface = '';
+
+	/**
+	 * @var string $path_to_collection
+	 */
+	protected $path_to_collection = '';
 
 
 
 	/**
 	 * @return mixed
 	 */
-	protected function getCollectionInterface() {
+	public function getCollectionInterface() {
 		return $this->collection_interface;
 	}
 
 
 
 	/**
-	 * @param mixed $collection_interface
+	 * @param string $collection_interface
 	 */
-	protected function setCollectionInterface( $collection_interface ) {
+	public function setCollectionInterface( $collection_interface ) {
 		$this->collection_interface = $collection_interface;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function getPathToCollection() {
+		return $this->path_to_collection;
+	}
+
+
+
+	/**
+	 * @param string $path_to_collection
+	 */
+	public function setPathToCollection( $path_to_collection ) {
+		$this->path_to_collection = $path_to_collection;
 	}
 
 
