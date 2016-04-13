@@ -1,6 +1,6 @@
-(function ( $ ) {
+jQuery( document ).ready( function ( $ ) {
 
-	/**
+		/**
 	*	add jQuery functions
 	*/
 	$.fn.extend({
@@ -26,7 +26,7 @@
 		 * Shortcut for adding a window overlay quickly if none exists in the dom
 		 *
 		 * @param {int} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeAddOverlay : function( opacity ) {
 			opacity = typeof opacity === 'undefined' || opacity > 1 ? 0.5 : opacity;
@@ -50,7 +50,7 @@
 
 		/**
 		 * Shortcut for removing a window overlay quickly if none exists in the dom (will destroy)
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeRemoveOverlay : function() {
 			$('#ee-overlay').remove();
@@ -60,7 +60,7 @@
 
 		/**
 		 * adds a scrollTo action for jQuery
-		 * @return {jQuery}
+		 * @return {object}
 		 */
 		eeScrollTo : function( speed ) {
 			var selector = this;
@@ -141,10 +141,6 @@
 
 	});
 
-}( jQuery ));
-
-
-jQuery(document).ready(function($) {
 
 	var existing_message = $('#message');
 	$('.show-if-js').css({ 'display' : 'inline-block' });
