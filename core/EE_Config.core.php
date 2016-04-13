@@ -826,9 +826,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function register_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -844,9 +841,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function initialize_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to set hooks for the rest of the system
 		$this->_initialize_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -863,9 +857,6 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
 		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
@@ -1929,6 +1920,14 @@ class EE_Registration_Config extends EE_Config_Base {
 	public $default_STS_ID;
 
 	/**
+	 * level of validation to apply to email addresses
+	 *
+	 * @var string $email_validation_level
+	 * options: 'basic', 'wp_default', 'i18n', 'i18n_dns'
+	 */
+	public $email_validation_level;
+
+	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
 	 * @var boolean $show_pending_payment_options
 	 */
@@ -2027,6 +2026,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+		$this->email_validation_level = 'wp_default';
 		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
@@ -2519,8 +2519,8 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
-			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		if ( ! empty( $this->php->max_input_vars ) && ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
+			return  sprintf( __('The maximum number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.', 'event_espresso'), '<br>', $input_count, $this->php->max_input_vars);
 		} else {
 			return '';
 		}

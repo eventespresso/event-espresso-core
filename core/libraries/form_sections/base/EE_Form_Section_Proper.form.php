@@ -172,22 +172,26 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * After the form section is initially created, call this to sanitize the data in the submission
 	 * which relates to this form section, validate it, and set it as properties on the form.
-	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
-	 * supply a different array. Consider using set_defaults() instead however. (If you rendered
-	 * the form in the page using echo $form_x->get_html_and_js() the inputs will have the correct name
-	 * in the request data for this function to find them and populate the form with them.
-	 * If you have a flat form (with only input subsections), you can supply a flat array where keys
-	 * are the form input names and values are their values)
+	 *
+	 * @param array $req_data   should usually be $_POST (the default).
+	 *                          However, you CAN supply a different array.
+	 *                          Consider using set_defaults() instead however.
+	 *                          (If you rendered the form in the page using echo $form_x->get_html_and_js()
+	 *                          the inputs will have the correct name in the request data for this function
+	 *                          to find them and populate the form with them.
+	 *                          If you have a flat form (with only input subsections),
+	 *                          you can supply a flat array where keys
+	 *                          are the form input names and values are their values)
 	 * @param boolean $validate whether or not to perform validation on this data. Default is,
-	 * of course, to validate that data, and set errors on the invalid values. But if the data
-	 * has already been validated (eg you validated the data then stored it in the DB) you may want
-	 * to skip this step.
+	 *                          of course, to validate that data, and set errors on the invalid values.
+	 *                          But if the data has already been validated
+	 *                          (eg you validated the data then stored it in the DB) you may want to skip this step.
 	 * @return void
 	 */
 	public function receive_form_submission($req_data = NULL, $validate = TRUE){
 		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
 		if( $req_data === NULL){
-			$req_data = $_REQUEST;
+			$req_data = array_merge( $_GET, $_POST );
 		}
 		$this->_normalize($req_data);
 		if( $validate ){
@@ -392,8 +396,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public static function wp_enqueue_scripts( $init_form_validation_automatically = false ){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
-		
+		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker', 'jquery-validate-extra-methods' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_validation_init', array( 'init' => $init_form_validation_automatically ) );
 	}
 
@@ -479,6 +482,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//allow inputs and stuff to hook in their JS and stuff here
 		do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
+		$email_validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
+			? EE_Registry::instance()->CFG->registration->email_validation_level
+			: 'wp_default';
+		EE_Form_Section_Proper::$_js_localization['email_validation_level'] = $email_validation_level;
 		wp_enqueue_script( 'ee_form_section_validation' );
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_vars', EE_Form_Section_Proper::$_js_localization );
 	}

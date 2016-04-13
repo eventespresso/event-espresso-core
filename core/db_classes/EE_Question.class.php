@@ -488,7 +488,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
 		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
-		$input_constructor_args = array_merge( 
+		$input_constructor_args = array_merge(
 				array(
 					'required' => $this->required() ? true : false,
 					'html_label_text' => $this->display_text(),
@@ -502,7 +502,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {
 			//answer gets htmlspecialchars called on it, undo that please
-			//beceause the form input's display strategy may call esc_attr too
+			//because the form input's display strategy may call esc_attr too
 			//which also does html special characters
 			$values_with_html_special_chars = $answer->value();
 			if( is_array( $values_with_html_special_chars ) ) {
@@ -581,7 +581,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			case EEM_Question::QST_type_html_textarea :
 				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
 				$input =  new EE_Text_Area_Input( $input_constructor_args );
-				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
 				$result = $input;
 				break;
 			// fallback
