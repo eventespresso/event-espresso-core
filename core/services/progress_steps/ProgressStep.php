@@ -16,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class ProgressStep implements ProgressStepInterface{
+abstract class ProgressStep implements ProgressStepInterface{
 
 	public function display() {
 	}
