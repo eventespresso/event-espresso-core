@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\services\progress_steps;
 
+use EventEspresso\core\services\collection_loaders\CollectionInterface;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -25,7 +27,7 @@ class ProgressStepManager {
 	/**
 	 * ProgressStepManager constructor.
 	 *
-	 * @param \CollectionInterface $collection
+	 * @param CollectionInterface $collection
 	 */
 	public function __construct( CollectionInterface $collection ) {
 		$this->collection = $collection;
