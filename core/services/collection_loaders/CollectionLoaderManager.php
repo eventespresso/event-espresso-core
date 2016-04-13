@@ -36,6 +36,16 @@ class CollectionLoaderManager {
 	}
 
 
+
+	/**
+	 * @return \EventEspresso\core\services\collection_loaders\CollectionInterface
+	 */
+	public function getCollection() {
+		return $this->collection;
+	}
+
+
+
 }
 // End of file CollectionLoaderManager.php
 // Location: /CollectionLoaderManager.php
