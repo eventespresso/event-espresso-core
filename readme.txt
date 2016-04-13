@@ -110,7 +110,7 @@ If your support issue is urgent, we also offer [priority event management suppor
 Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_description_tab) and [setup instructions](https://eventespresso.com/wiki/how-to-setup-event-espresso-and-publish-your-first-event/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_description_tab) on our website.
 
 = Developer Resources =
-* [Event Espresso 4 on Github](https://github.com/eventespresso/event-espresso-core)
+* [Event Espresso 4 on Github](http://evts.io/1qRJDrk)
 * [Developer Targeted Documentation](http://developer.eventespresso.com/)
 * Code structure and PHPDOC parsed documentation can be found at [http://code.eventespresso.com](http://code.eventespresso.com)
 
@@ -139,7 +139,7 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 
 Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_installation_tab) and [setup instructions](https://eventespresso.com/wiki/the-basic-settings/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_installation_tab) on our website.
 
-Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)
+Developers, [find us on Github](http://evts.io/1qRJDrk)
 
 == Frequently Asked Questions ==
 
@@ -173,8 +173,7 @@ If you want to organize your event fast without the hassle of managing a server,
 
 = Is Event Espresso 4 available on Github? =
 
-Yes, you can get access to the files on the [Event Espresso 4 Github](Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)
-) page.
+Yes, you can get access to the core files via the [Event Espresso 4 Github page](http://evts.io/1qRJDrk).
 
 == Changelog ==
 
@@ -184,7 +183,7 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Please Note:** Due to the fact that the Event Espresso 4 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 4. An up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
-**Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)**
+**Developers, [find us on Github](http://evts.io/1qRJDrk)**
 
 = May 4, 2015 =
 Security updates (may the fourth be with you), added a positive reviews meta box, and some minor text updates.
@@ -905,7 +904,7 @@ Backup your WordPress before installing any updates.
 
 == Other Notes ==
 
-**Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)**
+**Developers, [find us on Github](http://evts.io/1qRJDrk)**
 
 **Use Cases**
 
