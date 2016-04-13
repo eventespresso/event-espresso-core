@@ -15,8 +15,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CollectionDetailsInterface {
 
 	public function getCollectionInterface();
-
-	public function setCollectionInterface();
+	
+	/**
+	 * @param string $collection_interface
+	 */
+	public function setCollectionInterface( $collection_interface );
 
 }
 // End of file CollectionDetailsInterface.php
