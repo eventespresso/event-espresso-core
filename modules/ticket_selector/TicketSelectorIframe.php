@@ -26,7 +26,7 @@ class TicketSelectorIframe {
 	/**
 	 * display
 	 *
-*@access    public
+	 * @access    public
 	 * @return    void
 	 * @throws \EE_Error
 	 */
