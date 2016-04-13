@@ -21,13 +21,19 @@ class Iframe {
 	* HTML for notices and ajax gif
 	* @var string $title
 	*/
-	protected $title;
+	protected $title = '';
 
 	/*
 	* HTML for the content being displayed
 	* @var string $content
 	*/
-	protected $content;
+	protected $content = '';
+
+	/*
+	* whether or not to call wp_head() and wp_footer()
+	* @var boolean $enqueue_wp_assets
+	*/
+	protected $enqueue_wp_assets = false;
 
 	/*
 	* an array of CSS URLs
@@ -126,6 +132,15 @@ class Iframe {
 
 
 	/**
+	 * @param boolean $enqueue_wp_assets
+	 */
+	public function setEnqueueWpAssets( $enqueue_wp_assets ) {
+		$this->enqueue_wp_assets = filter_var( $enqueue_wp_assets, FILTER_VALIDATE_BOOLEAN );
+	}
+
+
+
+	/**
 	 * @param array $stylesheets
 	 * @throws \EE_Error
 	 */
@@ -165,7 +180,8 @@ class Iframe {
 
 
 	/**
-	 * @param array $vars
+	 * @param array  $vars
+	 * @param string $var_name
 	 * @throws \EE_Error
 	 */
 	public function addLocalizedVars( array $vars, $var_name = 'eei18n' ) {
@@ -213,6 +229,10 @@ class Iframe {
 					'FHEE__\EventEspresso\core\libraries\iframe_display\Iframe__getTemplate__content',
 					$this->content
 				),
+				'enqueue_wp_assets'   => apply_filters(
+					'FHEE__\EventEspresso\core\libraries\iframe_display\Iframe__getTemplate__enqueue_wp_assets',
+					$this->enqueue_wp_assets
+				),
 				'css'       => (array) apply_filters(
 					'FHEE__\EventEspresso\core\libraries\iframe_display\Iframe__getTemplate__css_urls',
 					$this->css
@@ -244,7 +264,7 @@ class Iframe {
 	/**
 	 * localizeJsonVars
 	 *
-*@return string
+	 * @return string
 	 */
 	public function localizeJsonVars() {
 		$JSON = '';
@@ -279,7 +299,12 @@ class Iframe {
 					if ( $post->post_type !== 'espresso_events' ) {
 						return $permalink_string;
 					}
-					$permalink_string .= Iframe::embedButtonHtml( $route_name, array( 'event' => $id ) );
+					$permalink_string .= Iframe::embedButtonHtml(
+						'Event',
+						$route_name,
+						array( 'event' => $id ),
+						'button-small'
+					);
 				}
 				return $permalink_string;
 			},
@@ -287,7 +312,37 @@ class Iframe {
 		);
 		add_action(
 			'admin_enqueue_scripts',
-			array( '\EventEspresso\core\libraries\iframe_display\Iframe', 'EventEditorEmbedButtonAssets' ),
+			array( '\EventEspresso\core\libraries\iframe_display\Iframe', 'EventsAdminEmbedButtonAssets' ),
+			10
+		);
+	}
+
+
+	/**
+	 * Adds an iframe embed code button to the Event editor.
+	 *
+	 * @param string $route_name the named module route that generates the iframe
+	 */
+	public static function addEventListIframeEmbedButton( $route_name ) {
+		// add button for iframe code to event editor.
+		add_action(
+			'AHEE__admin_list_wrapper_template__after_list_table',
+			function ( $page_slug ) use ( $route_name ) {
+				//make sure this is ONLY when editing and the event id has been set.
+				if ( $page_slug === 'espresso_events' ) {
+					echo \EEH_HTML::h3( __( 'iFrame Embed Code', 'event_espresso' ) );
+					echo \EEH_HTML::p( __( 'Click the following buttons to generate iframe HTML that will allow you to embed your event content within the content of other websites.', 'event_espresso' ) );
+					echo Iframe::embedButtonHtml(
+						'Events List',
+						$route_name
+					);
+				}
+			},
+			10, 1
+		);
+		add_action(
+			'admin_enqueue_scripts',
+			array( '\EventEspresso\core\libraries\iframe_display\Iframe', 'EventsAdminEmbedButtonAssets' ),
 			10
 		);
 	}
@@ -297,15 +352,16 @@ class Iframe {
 	/**
 	 * Adds an iframe embed code button via a WP do_action() as determined by the first parameter
 	 *
+	 * @param string $iframe_name
 	 * @param string $route_name the named module route that generates the iframe
-	 * @param string $action name of the WP do_action() to hook into
+	 * @param string $action     name of the WP do_action() to hook into
 	 */
-	public static function addActionIframeEmbedButton( $route_name, $action ) {
+	public static function addActionIframeEmbedButton( $iframe_name, $route_name, $action ) {
 		// add button for iframe code to event editor.
 		add_action(
 			$action,
-			function () use ( $route_name ) {
-				echo Iframe::embedButtonHtml( $route_name );
+			function () use ( $iframe_name, $route_name ) {
+				echo Iframe::embedButtonHtml( $iframe_name, $route_name );
 			},
 			10
 		);
@@ -316,15 +372,14 @@ class Iframe {
 	/**
 	 * iframe_embed_html
 	 *
+	 * @param string $iframe_name
 	 * @param string $route_name the named module route that generates the iframe
 	 * @param array  $query_args
+	 * @param string $button_class
 	 * @return string
 	 */
-	public static function embedButtonHtml( $route_name, $query_args = array() ) {
-		$iframe_route_url = add_query_arg(
-			array_merge( array( $route_name => 'iframe' ), $query_args ),
-			site_url()
-		);
+	public static function embedButtonHtml( $iframe_name, $route_name, $query_args = array(), $button_class = '' ) {
+		$query_args = ! empty( $query_args ) ? $query_args : array( $route_name => 'iframe' );
 		// add this route to our localized vars
 		$iframe_module_routes = isset( \EE_Registry::$i18n_js_strings['iframe_module_routes'] )
 			? \EE_Registry::$i18n_js_strings['iframe_module_routes']
@@ -333,19 +388,22 @@ class Iframe {
 		\EE_Registry::$i18n_js_strings['iframe_module_routes'] = $iframe_module_routes;
 		$iframe_embed_html = \EEH_HTML::link(
 			'#',
-			__( 'Embed', 'event_espresso' ),
-			__(
-				'click here to generate code for embedding an iframe for this event into another site.',
-				'event_espresso'
+			sprintf(__( 'Embed %1$s', 'event_espresso' ), $iframe_name ),
+			sprintf(
+				__(
+					'click here to generate code for embedding an %1$s iframe into another site.',
+					'event_espresso'
+				),
+				$iframe_name
 			),
 			"$route_name-iframe-embed-trigger-js",
-			'iframe-embed-trigger-js button button-small',
+			'iframe-embed-trigger-js button ' . $button_class,
 			'',
 			' data-iframe_embed_button="#' . $route_name . '-iframe-js" tabindex="-1"'
 		);
 		$iframe_embed_html .= \EEH_HTML::div( '', "$route_name-iframe-js", 'iframe-embed-wrapper-js', 'display:none;' );
 		$iframe_embed_html .= \EEH_HTML::div(
-			'<iframe src="' . $iframe_route_url . '" width="100%" height="100%"></iframe>',
+			'<iframe src="' . add_query_arg( $query_args, site_url() ) . '" width="100%" height="100%"></iframe>',
 			'', '', 'width:100%; height: 500px;'
 		);
 		$iframe_embed_html .= \EEH_HTML::divx();
@@ -355,13 +413,10 @@ class Iframe {
 
 
 	/**
-	 * iframe button js on admin event editor page
+	 * iframe button js on admin events list or event editor page
 	 */
-	public static function EventEditorEmbedButtonAssets() {
-		if (
-			\EE_Registry::instance()->REQ->get( 'page' ) === 'espresso_events'
-		    && \EE_Registry::instance()->REQ->get( 'action' ) === 'edit'
-		) {
+	public static function EventsAdminEmbedButtonAssets() {
+		if ( \EE_Registry::instance()->REQ->get( 'page' ) === 'espresso_events' ) {
 			Iframe::embedButtonAssets();
 			\EE_Registry::$i18n_js_strings['iframe_embed_title'] = __(
 				'copy and paste the following into any other site\'s content to display this event:',
@@ -376,6 +431,10 @@ class Iframe {
 	 * enqueue iframe button js
 	 */
 	public static function embedButtonAssets() {
+		\EE_Registry::$i18n_js_strings['iframe_embed_close_msg'] = __(
+			'click anywhere outside of this window to close it.',
+			'event_espresso'
+		);
 		wp_register_script(
 			'iframe_embed_button',
 			plugin_dir_url( __FILE__ ) . 'iframe-embed-button.js',
