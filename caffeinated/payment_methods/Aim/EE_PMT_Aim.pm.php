@@ -96,13 +96,13 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				$billing_form->exclude( $settings_form->get_input( 'excluded_billing_inputs' )->normalized_value() );
 		}
 		if( $settings_form->get_input( 'required_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
-			$required_inputs = array_merge( 
-					array(
-						'credit_card',
-						'exp_month',
-						'exp_year' ),
-					$settings_form->get_input( 'required_billing_inputs' )->normalized_value() );
-			foreach( $billing_form->inputs() as $input_name => $input ) {
+			$required_inputs = $settings_form->get_input( 'required_billing_inputs' )->normalized_value();
+			//only change the requirement of inputs which are allowed to be changed
+			$inputs_to_evaluate = array_intersect_key( 
+				$billing_form->inputs(), 
+				$this->billing_input_names()
+			);
+			foreach( $inputs_to_evaluate as $input_name => $input ) {
 				if( in_array( $input_name, $required_inputs ) ) {
 					$input->set_required( true );
 				} else {
