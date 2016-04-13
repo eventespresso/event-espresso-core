@@ -185,6 +185,132 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Developers, [find us on Github](http://evts.io/1qRJDrk)**
 
+= August 17, 2015 =
+
+**New Features:**
+
+* Add support for the Event Espresso 4 Promotions & Discount Codes add-on.
+* Datetime System Improvements
+* Localize Date Picker in Ticket and Datetime Editor
+* Add an event_meta shortcode to the message templates
+* Remove old fixes from config loading
+
+**Enhancements:**
+
+* Enhance the checkout, registration and transaction views to increase line item detail introduced with Promotions add-on
+* Remove Update Payment Options button for Not Approved Registrations
+* Added a Messages shortcode to print ticket amount including taxes or surcharges
+
+**Bugfixes:**
+
+* More General fix to avoid unserialized model object issues
+* EE_Error called incorrectly from EEH_Debug_Tools
+* “Add State” button always right after state question input
+* Fix form System validation errors
+* Fix PHP docs and type hinting in Request Handler and add get_current_page_permalink() method
+
+
+= August 11, 2015 =
+
+**Bugfixes:**
+
+* Fix stuck Payment Information section on Thank You Page after Registration Checkout
+* Wrap ‘tiny-text’ output in a WP_Debug check
+* Fix shortcodes not being removed from the saved `post_shortcodes` config when they are removed from a post
+* Fix RECIPIENT_ANSWER_* shortcode output in the Ticket List section
+* Fix editing/removing a payment immediately after applying it
+* Fix Transaction -> Payment Details not updating when a payment is removed
+* Fix the ‘Registrations to Apply payment to’ section not updating to show Paid registrations unless the page is refreshed
+* Fix [RECIPIENT_REG_CODE] output
+* Fix errant tag added by CssToInlineStyles library
+* Fix pagination calculation for EEH_Template::get_paging_html
+* Verify EE_Datetime object in EE_Ticket::date_range()
+* Fix de-registering an add-on failing to remove any registered cpts and/or taxonomies by that add-on
+* Fix incorrect method call for get_model() in get_field_or_extra_meta and set_field_or_extra_meta (EE_Base_Class)
+* Merge pull request to fix method EE_Attendee::get_most_recent_registration_for_event()
+
+**Enhancements:**
+
+* Set doing_it_wrong() error type
+* Add interfaces for Object Collections and Object Repositories
+* Create EE_Object_Collection class and refactor EE_Object_Repository to extend it
+* Reset Permalink after Duplicated Event Title is Edited
+* Merge Pull Request for fixing add new attendee route
+* Add new getters and setters for EE_Base_Class that extends data into extra meta dynamically
+* Add generate_unique_token() function to EEH_URL
+* Improve name of third parameter for EE_Base_Class::_add_relation_to()
+
+
+= July 13, 2015 =
+
+**Bugfixes:**
+
+* Remove failed transactions from paging
+* Fix some html tags getting stripped when saving event category descriptions
+* Fix Catchable fatal error: Argument 2 passed to EEH_Parse_Shortcodes::parse_line_item_list_template() must be an instance of EE_Line_Item, null given
+* Fix issue in Payment Methods validation that occurs when URLs to unverified SSL pages are still valid URLs
+* Update the Registrations Report query to include datetimes for trashed tickets
+
+**Enhancements:**
+
+* Update reCAPTCHA library
+* Remove EE critical pages as options from WP > Settings > Reading’s Front page displays settings
+
+
+= July 7, 2015 =
+
+**Bugfixes:**
+
+* Allow white space at beginning and end of event registration form text fields to prevent validation errors
+* Use simple HTML validation for vanilla textareas and full HTML validation for HTML textareas
+* Fix Multi Event Registration cart so it doesn’t allow adding more tickets allowed per event per order
+* Fix JavaScript error on Thank You page when clicking the resend message link
+
+
+= July 3, 2015 =
+
+**Bugfixes:**
+
+* Fix the stuck loading payment information spinner on the Thank You page that occurs after selecting the invoice payment
+* Fix transaction incomplete after PayPal IPN although registration and payment approved
+* Add unique user agent to PayPal IPN validation response to possibly avoid 500 error on PayPal’s server
+
+
+= July 1, 2015 =
+
+**Bugfixes:**
+
+* Fix ticket_selector.css so it loads on a post with the ESPRESSO_EVENTS shortcode on it
+* Ensure that Session Transient IDs are truncated prior to retrieving
+* Fix ee_config not updating when you change the Registration checkout page setting in the Critical Pages tab
+* Remove necessity of “ee_read_private_events” to see private events in the event list table
+* Fix total item count (and the pagination results) when filtering active status events on the event list table
+* Fix the usage of an incorrect timestamp for the “active status” queries
+* Fix conditional in use for [TOTAL_OWING] shortcode parsing in EE_Transaction_Shortcodes
+* Fix caf dependency in decaf context for question_list and question shortcodes
+
+**Enhancements:**
+
+* Change Payment Method textareas to use Full HTML validation strategy, and add “p” tag to Simple HTML validation strategy
+* Make sure Decaf shows maintenance notice
+
+= June 25, 2015 =
+
+**Bugfix:**
+
+Fix PayPal IPN response when the a refund is processed from the PayPal account
+
+= May 12, 2015 =
+
+* Fix misplaced ID field for help tour for questions admin page
+* Fix event editor’s usage of moment.js
+* Fix js calculations when manually applying/deleting a payment on a transaction when commas are used as decimal separators
+* Make ‘Amount:’ required on the apply payment model
+* Fix Registrations -> Reports including ‘Incomplete’ registrations
+* Skeleton payment method update
+* When getting billing input values, include subsections, and display them in the billing section
+* Fix forms strategies for when they aren’t arrays
+
 = May 4, 2015 =
 Security updates (may the fourth be with you), added a positive reviews meta box, and some minor text updates.
 
@@ -912,28 +1038,32 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 
 = Arts &amp; Culture =
 
-* City Tours
+* City Tours [http://boulderwalkingtours.com]
 * Club Performances
 * Concerts
-* Film Festivals
+* [Film Festivals](https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Museum Tickets
 * Music Festivals
 * Movie Theater Ticket Sales
+* [Paint & Wine](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Plays and Theatrical Performances
+* [Sewing & Quilting Retreats](https://eventespresso.com/use-cases/quilt-retreat-booking/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Social Events
 
 = Business =
 
 * Asset/Resource Booking/Scheduling
 * Car Wash Sales &amp; Reservations
+* [Conference Registration](https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [Haunted House Ticket Sales](https://eventespresso.com/2012/09/haunted-house-ticketing-system/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * House Cleaning Services
 * [Model Agency Booking/Scheduling](https://eventespresso.com/use-cases/modeling-talent-agency-scheduling/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Room Booking/Scheduling
-* Haunted House Ticket Sales
+* Workshop Registrations 
 
 = Classes =
 
-* Art Classes
+* [Art Classes](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Cooking Classes
 * Dance Classes
 * Continuing Education Classes
@@ -950,24 +1080,41 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 
 = Community Events</strong> <strong>Conferences =
 
+* [Backyard Barbecues](https://eventespresso.com/use-cases/backyard-bbq-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [BBQ Festivals](https://eventespresso.com/use-cases/bbq-festival-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [Car Shows](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* Geek/IT Conferences/Camps
 * Group Meetings
 * Political Conferences
 * Social Media Conferences
 * Tradeshow Booth Reservations/Sales
 * WordCamps
 * Youth Conferences/Camps
+
+= Conferences =
+
+* [Conference Registration](https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Geek/IT Conferences/Camps
+* Political Conferences
+* Social Media Conferences
+* Tradeshow Booth Reservations/Sales
+* Tradeshow Vendor Registration
+* WordCamps
+
 
 = Education =
 
+* Concealed Weapons Courses
 * Course Registrations
 * School Lunch Reservations
 * Parent Teacher Conferences
 * Parent Teacher Association Conferences and Meetings
+* Wildlife Education and Tours 
 
 = Fundraisers &amp; Non-Profit Organizations =
 
 * Boy Scout Troop Events
+* [Car Show Registration](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Donation Drives
 * Indusry Association Events
 * Religous Events
@@ -985,6 +1132,7 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 * Christmas Parties
 * Class Reunions
 * New-Year's Eve Parties
+* [Paint & Wine Parties](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Weddings
 
 = Recreation =
@@ -995,6 +1143,8 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 = Socials =
 
 * Dancing
+* [Painting & Vino](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [Sewing & Quilting Retreats](https://eventespresso.com/use-cases/quilt-retreat-booking/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Speed Dating
 
 = Sports =
@@ -1005,12 +1155,29 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 * Football and Soccer Training
 * Tennis Classes
 
+= Training =
+
+* ACLS & CPR Training
+* Firearms and Concealed Weapons Training
+* Medical & First Aid Training
+* Scrum Master Training
+* Technical/IT Training
+
+= Workshops =
+
+* Carpentry & Wood Working
+* Furniture Restoration
+* Marketing
+* Public Speaking
+* Real Estate Workshops
+* Visualization Workshops
+
 If you aren't quite sure if Event Espresso will work for you and it's not listed above, then [contact us](https://eventespresso.com/contact/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) and we'll do our best to evaluate your needs.
 
 
 = License =
 
-    Copyright 2014  Event Espresso  (email : info@eventespresso.com)
+    Copyright 2016  Event Espresso  (email : info@eventespresso.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as
