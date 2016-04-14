@@ -32,7 +32,7 @@ The "resources" in the Event Espresso REST API are built around the [EE4 models]
 
 Resources are the protoypes, and entities are the specific instances (just like models are the prototype, and model objects specific instances). Eg, "events" is a resource queryable on http://demoee.org/demo/wp-json/ee/v4.8.29/events which returns specific "event" entities.
 
-To see what entities exist, send a request to http://demoee.org/demo/wp-json/ee/v4.8.29/models, or just [click this link](click this link to see the resources from one of our servers) to see the resources from one of our servers.
+To see what entities exist, send a request to http://demoee.org/demo/wp-json/ee/v4.8.29/resources, or just [click this link](http://demoee.org/demo/wp-json/ee/v4.8.29/resources) to see the resources from one of our servers.
 
 Here is an excerpt:
 
