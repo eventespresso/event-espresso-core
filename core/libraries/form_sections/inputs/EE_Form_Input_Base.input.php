@@ -681,17 +681,18 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Sets whether or not this field is required, and adjusts the validation strategy
+	 * Sets whether or not this field is required, and adjusts the validation strategy.
+	 * If you want to use the EE_Conditionally_Required_Validation_Strategy,
+	 * please add it as a validation strategy using add_validation_strategy as normal
 	 *
-	 * @param boolean|array $required boolean, or an requirement conditions array.
-	 *                                See EE_Required_validation_Strategy::set_requirement_conditions()
+	 * @param boolean $required boolean
 	 * @param null    $required_text
 	 */
 	public function set_required($required = true, $required_text = NULL ){
+		$required = filter_var( $required, FILTER_VALIDATE_BOOLEAN  );
 		//whether $required is a string or a boolean, we want to add a required validation strategy
 		if ( $required ) {
-			$validation_strategy = new EE_Required_Validation_Strategy( $required_text, $required );
-			$this->_add_validation_strategy( $validation_strategy );
+			$this->_add_validation_strategy( new EE_Required_Validation_Strategy( $required_text ) );
 		} else {
 			unset( $this->_validation_strategies[ 'EE_Required_Validation_Strategy' ] );
 		}
