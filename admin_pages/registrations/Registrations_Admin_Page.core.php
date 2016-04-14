@@ -855,7 +855,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ee_edit_registrations',
 				'espresso_registrations_new_registration',
 				$EVT_ID
-			)
+				)
 			) {
 				$this->_admin_page_title .= $this->get_action_link_or_button(
 					'new_registration',
