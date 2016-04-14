@@ -840,7 +840,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	/***************************************        REGISTRATION OVERVIEW        **************************************
+	/***************************************        REGISTRATION OVERVIEW        **************************************/
 
 
 
