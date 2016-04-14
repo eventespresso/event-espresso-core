@@ -985,7 +985,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if($CAT_ID){
 			$_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
 		}
-		//if DTT is included we do multiple datetimes.
+		//if DTT is included we filter by that datetime.
 		if ( $DTT_ID ) {
 			$_where['Ticket.Datetime.DTT_ID'] = $DTT_ID;
 		}
