@@ -14,6 +14,7 @@
  * @var string $clone_icon
  * @var string $trash_icon
  * @var string $show_trash
+ * @var string $reg_list_url
  */
 ?>
 <tr valign="top" id="event-datetime-<?php echo $dtt_row; ?>" class="datetime-edit event-datetime-row edit-dtt-row ee-dtt-sortable">
