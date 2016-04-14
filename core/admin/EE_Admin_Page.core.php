@@ -2988,38 +2988,53 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @return string html for button
 	 */
-	public function get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE, $exclude_nonce = false ) {
+	public function get_action_link_or_button(
+		$action,
+		$type = 'add',
+		$extra_request = array(),
+		$class = 'button-primary',
+		$base_url = '',
+		$exclude_nonce = false
+	) {
 		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
-		if ( !isset($this->_page_routes[$action]) && !$base_url )
-			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
-
-		if ( !isset( $this->_labels['buttons'][$type] ) )
-			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
-
+		if ( empty( $base_url ) && ! isset( $this->_page_routes[ $action ] ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'There is no page route for given action for the button.  This action was given: %s',
+						'event_espresso'
+					),
+					$action
+				)
+			);
+		}
+		if ( ! isset( $this->_labels['buttons'][ $type ] ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.',
+						'event_espresso'
+					),
+					$type
+				)
+			);
+		}
 		//finally check user access for this button.
-		$has_access = $this->check_user_access( $action, TRUE );
+		$has_access = $this->check_user_access( $action, true );
 		if ( ! $has_access ) {
 			return '';
 		}
-
-		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
-
+		$_base_url = ! $base_url ? $this->_admin_base_url : $base_url;
 		$query_args = array(
-			'action' => $action  );
-
+			'action' => $action
+		);
 		//merge extra_request args but make sure our original action takes precedence and doesn't get overwritten.
-		if ( !empty($extra_request) )
+		if ( ! empty( $extra_request ) ) {
 			$query_args = array_merge( $extra_request, $query_args );
-
+		}
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url, false, $exclude_nonce );
-
-		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
-
-		return $button;
+		return ' ' . EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][ $type ], $class );
 	}
-
-
-
 
 
 
