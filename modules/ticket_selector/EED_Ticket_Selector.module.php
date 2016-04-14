@@ -533,13 +533,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
 
 				// ordering too many tickets !!!
-				$singular = 'You have attempted to purchase %s ticket.';
-				$plural = 'You have attempted to purchase %s tickets.';
-				$limit_error_1 = sprintf( _n( $singular, $plural, $valid['total_tickets'], 'event_espresso' ), $valid['total_tickets'], $valid['total_tickets'] );
+				$total_tickets_string = _n('You have attempted to purchase %s ticket.', 'You have attempted to purchase %s tickets.', $valid['total_tickets'], 'event_espresso');
+				$limit_error_1 = sprintf( $total_tickets_string, $valid['total_tickets'] );
 				// dev only message
-				$singular = 'The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
-				$plural = 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.';
-				$limit_error_2 = sprintf( _n( $singular, $plural, $valid['max_atndz'], 'event_espresso' ), $valid['max_atndz'], $valid['max_atndz'] );
+				$max_atndz_string = _n('The registration limit for this event is %s ticket per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.', 'The registration limit for this event is %s tickets per registration, therefore the total number of tickets you may purchase at a time can not exceed %s.', $valid['max_atndz'], 'event_espresso');
+				$limit_error_2 = sprintf( $max_atndz_string, $valid['max_atndz'], $valid['max_atndz'] );
 				EE_Error::add_error( $limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__ );
 			} else {
 

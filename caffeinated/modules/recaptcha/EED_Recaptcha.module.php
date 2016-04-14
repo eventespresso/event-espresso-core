@@ -56,15 +56,36 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		// use_captcha ?
-		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
+		if (
+			EE_Registry::instance()->CFG->registration->use_captcha
+			&& ! (
+				EE_Registry::instance()->REQ->get( 'step', '' ) === 'payment_options'
+				&& (boolean) EE_Registry::instance()->REQ->get( 'revisit', false ) === true
+			)
+		) {
 			EED_Recaptcha::set_definitions();
 			EED_Recaptcha::enqueue_styles_and_scripts();
 			add_action( 'wp', array( 'EED_Recaptcha', 'set_late_hooks' ), 1, 0 );
-			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 0 );
-			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
-			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
-			add_filter( 'FHEE__EE_SPCO_JSON_Response___toString__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
-			add_filter( 'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array', array( 'EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method' ), 10, 1 );
+			add_action(
+				'AHEE__before_spco_whats_next_buttons',
+				array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 0
+			);
+			add_filter(
+				'FHEE__EED_Single_Page_Checkout__init___continue_reg',
+				array( 'EED_Recaptcha', 'not_a_robot' ), 10
+			);
+			add_filter(
+				'FHEE__EE_SPCO_Reg_Step__set_completed___completed',
+				array( 'EED_Recaptcha', 'not_a_robot' ), 10
+			);
+			add_filter(
+				'FHEE__EE_SPCO_JSON_Response___toString__JSON_response',
+				array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1
+			);
+			add_filter(
+				'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array',
+				array( 'EED_Recaptcha', 'bypass_recaptcha_for_spco_load_payment_method' ), 10, 1
+			);
 		}
 	}
 
@@ -79,7 +100,13 @@ class EED_Recaptcha  extends EED_Module {
 	public static function set_hooks_admin() {
 		EED_Recaptcha::set_definitions();
 		// use_captcha ?
-		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
+		if (
+			EE_Registry::instance()->CFG->registration->use_captcha
+			&& ! (
+				EE_Registry::instance()->REQ->get( 'step', '' ) === 'payment_options'
+				&& (boolean) EE_Registry::instance()->REQ->get( 'revisit', false ) === true
+			)
+		) {
 			EED_Recaptcha::enqueue_styles_and_scripts();
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
 			add_filter( 'FHEE__EE_SPCO_Reg_Step__set_completed___completed', array( 'EED_Recaptcha', 'not_a_robot' ), 10 );
