@@ -2524,12 +2524,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//display message about search results?
 		$this->_template_args['before_list_table'] .= apply_filters(
-				'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
-				! empty( $this->_req_data['s']
-			)
+			'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+			! empty( $this->_req_data['s'] )
 				? '<p class="ee-search-results">' . sprintf(
-						__( 'Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso' ),
-						trim( $this->_req_data['s'], '%' )
+					__( 'Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso' ),
+					trim( $this->_req_data['s'], '%' )
 					) . '</p>'
 				: '',
 			$this->page_slug,
