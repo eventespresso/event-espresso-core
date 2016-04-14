@@ -42,7 +42,7 @@
 		<span data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $clone_icon; ?> clickable"></span>
 		<span data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $trash_icon; ?> clickable"<?php echo $show_trash; ?>></span>
 		<?php if ( $reg_list_url !== '' ) : ?>
-		<a href="<?php echo $reg_list_url; ?>" title="<?php _e( 'view registrations for this datetime', 'event_espresso' );?>" style="text-decoration: none;">
+		<a href="<?php echo $reg_list_url; ?>" title="<?php _e( 'View registrations for this datetime.', 'event_espresso' );?>" style="text-decoration: none;">
 			<span data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="dashicons dashicons-groups clickable"></span>
 		</a>
 		<?php endif; ?>
