@@ -840,21 +840,52 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	/***************************************		REGISTRATION OVERVIEW 		***************************************/
+	/***************************************        REGISTRATION OVERVIEW        **************************************
 
 
 
-
-
-
+	 /**
+	 * @throws \EE_Error
+	 */
 	protected function _registrations_overview_list_table() {
-		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$this->_template_args['admin_page_header'] = '';
+		$EVT_ID = ! empty( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : 0;
 		if ( $EVT_ID ) {
-			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registrations', 'espresso_registrations_new_registration', $EVT_ID ) ) {
-				$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
+			if ( EE_Registry::instance()->CAP->current_user_can(
+				'ee_edit_registrations',
+				'espresso_registrations_new_registration',
+				$EVT_ID
+			)
+			) {
+				$this->_admin_page_title .= $this->get_action_link_or_button(
+					'new_registration',
+					'add-registrant',
+					array( 'event_id' => $EVT_ID ),
+					'add-new-h2'
+				);
 			}
 			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
-			$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%s Viewing registrations for the event: %s%s', 'event_espresso'), '<h2>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array('action' => 'edit', 'post' => $event->ID() ), EVENTS_ADMIN_URL ) . '">' . $event->get('EVT_name') . '</a>', '</h2>' ) : '';
+			if ( $event instanceof EE_Event ) {
+				$this->_template_args['admin_page_header'] = sprintf(
+					__( '%s Viewing registrations for the event: %s%s', 'event_espresso' ),
+					'<h3 style="line-height:1.5em;">',
+					'<br /><a href="' . EE_Admin_Page::add_query_args_and_nonce(
+						array( 'action' => 'edit', 'post' => $event->ID() ),
+						EVENTS_ADMIN_URL
+					) . '">&nbsp;' . $event->get( 'EVT_name' ) . '&nbsp;</a>&nbsp;',
+					'</h3>'
+				);
+			}
+			$DTT_ID = ! empty( $this->_req_data['datetime_id'] ) ? absint( $this->_req_data['datetime_id'] ) : 0;
+			$datetime = EEM_Datetime::instance()->get_one_by_ID( $DTT_ID );
+			if ( $datetime instanceof EE_Datetime && $this->_template_args['admin_page_header'] !== '' ) {
+				$this->_template_args['admin_page_header'] = substr( $this->_template_args['admin_page_header'], 0, -5 );
+				$this->_template_args['admin_page_header'] .= ' &nbsp;<span class="drk-grey-text">';
+				$this->_template_args['admin_page_header'] .= '<span class="dashicons dashicons-calendar"></span>';
+				$this->_template_args['admin_page_header'] .= $datetime->name();
+				$this->_template_args['admin_page_header'] .= ' ( ' . $datetime->start_date() . ' )';
+				$this->_template_args['admin_page_header'] .= '</span></h3>';
+			}
 		}
 		$this->_template_args['after_list_table'] = $this->_display_legend( $this->_registration_legend_items() );
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -905,7 +936,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 		$EVT_ID = ! empty( $this->_req_data['event_id'] ) && $this->_req_data['event_id'] > 0 ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = ! empty( $this->_req_data['EVT_CAT'] ) && (int) $this->_req_data['EVT_CAT'] > 0? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
-		$DTT_ID = isset( $this->_req_data['datetime_id'] ) ? $this->_req_data['datetime_id'] : null;
+		$DTT_ID = isset( $this->_req_data['datetime_id'] ) ? absint( $this->_req_data['datetime_id'] ) : null;
 		$reg_status = ! empty( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = ! empty( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
