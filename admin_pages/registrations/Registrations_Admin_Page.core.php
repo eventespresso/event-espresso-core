@@ -903,9 +903,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return mixed (int|array)  int = count || array of registration objects
 	 */
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
-
 		$EVT_ID = ! empty( $this->_req_data['event_id'] ) && $this->_req_data['event_id'] > 0 ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = ! empty( $this->_req_data['EVT_CAT'] ) && (int) $this->_req_data['EVT_CAT'] > 0? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
+		$DTT_ID = isset( $this->_req_data['datetime_id'] ) ? $this->_req_data['datetime_id'] : null;
 		$reg_status = ! empty( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = ! empty( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
@@ -953,6 +953,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 		if($CAT_ID){
 			$_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
+		}
+		//if DTT is included we do multiple datetimes.
+		if ( $DTT_ID ) {
+			$_where['Ticket.Datetime.DTT_ID'] = $DTT_ID;
 		}
 		if ( $incomplete ) {
 			$_where['STS_ID'] = EEM_Registration::status_id_incomplete;
@@ -1022,7 +1026,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Ticket.TKT_description' => array( 'LIKE', $sstr ),
 				'Transaction.Payment.PAY_txn_id_chq_nmbr' => array( 'LIKE', $sstr )
-				);
+			);
 		}
 
 		//capability checks
@@ -1031,7 +1035,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_wp_user' => get_current_user_id()
 				);
 		}
-
 
 		if( $count ){
 			if ( $trash ) {
@@ -1048,7 +1051,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$query_params['limit'] = $limit;
 			}
 			$registrations =  $trash ? EEM_Registration::instance()->get_all_deleted($query_params) : EEM_Registration::instance()->get_all($query_params);
-
 
 			if ( $EVT_ID && isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration &&  $registrations[0]->event_obj()) {
 				$first_registration = $registrations[0];
