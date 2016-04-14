@@ -185,15 +185,76 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
 
-= Month 2016 =
+= April 2016 =
 
 **Bug Fixes:**
+
+* Add check for WP-cron and display warning if feature is disabled
+* Don’t add reCaptcha on the payment options step to avoid conflicts with Stripe and Braintree payment forms
+* EE4 REST API: Add registrations’ datetimes checkin statuses
+* Breakout str_trim() logic into new string_trim() function;
+* Add hasOwnProperty() check when looping over $subs; see https://github.com/eventespresso/event-espresso-core/issues/155
+* Fix h3 tags inside p tags on thank you page
+* see https://github.com/eventespresso/event-espresso-core/issues/149
+* Add a middleware app that blocks EE from fully loading if the user is on either the wp-login.php or register.php pages
+* Fix ticket selector datetime selections not saving when creating event if you duplicate the tickets/datetimes
+* Fix fatal error when EEME_Base::deregister is called
+* Automatically add `group_by` against primary key field to incoming params in get_all method
+* Fix bundled wp basic auth for multisite
+* Fix EE4 REST API X-WP-Total is wrong when including related items
+* Allow filtering of batch temp folder
+
+= March 2016 =
+
+**Bug Fixes:**
+
+* Add Email Validation settings
+* Use Default WordPress email validation
+* Avoid unnecessary ALTER TABLE database queries when checking database
+* Remove obsolete [EVENT_IDENTIFIER] shortcode
+* Fix issue where HTML tags were not permitted in some payment method settings fields
+* Fix scripts and styles not loading for Stripe and Braintree payment methods
+* Fix HTML Question type validation not passing
+* Cookie-proof the Request classes
+* Change form validation to allow German Umlauts in email address input
+* Fix conflicts with BBPress that affect posting to topics and Single Page Check-Out
+* Improve the cron removal so that if the cron timestamp array is empty it gets removed
+* Fix INF comparisons that will fail in PHP5.3
+* Fix issues in unit tests related to failed builds reported by Travis-CI
+* Fix Transaction Reports using incorrect value for ‘Total Revenue per Event’
+* Add new columns to reports to represent the number of registrations for a specific status
+* Repurpose newsletter message type so it uses correct data depending on context
+* Remove single quotes from shortcode examples in event editor
+* Remove quotes from Event category shortcode examples in event categories screen
+* Fix issue where EE tables could be set up more than once on plugin activation
+* Only deactivate the payment method if it’s confirmed that its payment method type object doesn’t exist
+* Fix missing client side credit card field validation
+* EE4 REST API: Fix fatal error in check-in endpoint
+* EE4 REST API: Normalize calculated field response things
+* EE4 REST API: Facilitate getting different sizes of images
+* EE4 REST API: add headers for totals, calculated fields, and use NULL for inf instead of -1
+* Basic Auth should issue error when bad username or password provided
+* Add support for HHVM returning nothing for max_input_vars
+* Fix potential fatal error when starting a CSV report
+
 **Enhancements:**
+
+*Add ‘Current input vars’ and ‘max_input_vars’ value to the popup shown on the event editor
 
 = February 2016 =
 
 **Bug Fixes:**
 
+* Fix SPCO not finalizing admin registrations
+* Fix Fatal error on wp-login.php when Maintenance mode is active
+* Fix deleting payments within abandoned transactions
+* Fix Registration Admin Page switching reg status resulting in malformed success message
+* Return to SPCO Payment methods when cancelling an offsite Payment
+* EE4 Decaf: Remove extra tickets in display if multiple datetimes exist
+* EE4 REST API add error-proofing to avoid PHP warnings
+* EE4 REST API remove assumption that EE core version is in compatibilities array
+* Save the payment method before adding extra meta to it (extra metas need this in order to have an ID)
+* Reduce the amount of stops in the help tours
 * Fix payment details metabox not showing when transaction is TCM, there are payments, and the grand total is 0
 * Fix regression for duplicate payment error notices being displayed in SPCO
 * Fix EEM_Datetime::get_dtt_months_and_years
@@ -205,6 +266,11 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Enhancements:**
 
+* Initialize critical pages after db tables and content
+* Add cap to admin registration redirect_to_txn route
+* Add filter to allow overriding persistent notices to better UX
+* Add basic auth functionality to EE core
+* Add filter to allow messages to send to multiple registrants when the same email address is used for all registrations in a group
 * EE4 REST API add headers for EE notices
 * EE4 REST API checkin/checkout endpoints
 * EE4 REST API cannot request registrations’ status
