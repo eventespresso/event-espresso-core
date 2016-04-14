@@ -1,4 +1,4 @@
-# Building an EE4 Addon that uses Angular.js and the EE4 JSON REST API
+# Building an EE4 Addon that uses Angular.js and the EE4 REST API
 
 The EE4 REST API (in EE4 core since version 4.8.29) can be used to fetch nearly any data you want from EE4 ([and if it can't get some data for you, please let us know](http://eventespresso.com/developers/event-espresso-4-rest-api-survey/)), so an application that uses that data does not need to be a EE4 Addon, or even a Wordpress plugin for that matter, and it certainly doesn't need to use Angular.js. This is just a tutorial about how to give an example of a real application that combines these technologies in a fairly straightforward way (it was inspired by [this article by wptheming](http://wptheming.com/2015/03/angular-json-api-example/).)
 
@@ -260,7 +260,7 @@ myapp.controller( 'mycontroller', ['$scope', '$http', function( $scope, $http ) 
 		method: 'GET',
 		url: $scope.api,
 		params: {
-			'filter[limit]' : 5,
+			'limit' : 5,
 			'include' : 'Datetime.*'
 		}
 	}).
@@ -276,7 +276,7 @@ myapp.controller( 'mycontroller', ['$scope', '$http', function( $scope, $http ) 
 }]);
 ```
 
-Once the page is loaded, this javascript queries the EE4 JSON REST API for 5 events and includes their related datetimes using the `$http` function, and if successful, puts the json data returned into `$scope.events`, which angular.js uses, along with the HTML from the template file, to magically show all the events and their related datetimes.
+Once the page is loaded, this javascript queries the EE4 REST API for 5 events and includes their related datetimes using the `$http` function, and if successful, puts the json data returned into `$scope.events`, which angular.js uses, along with the HTML from the template file, to magically show all the events and their related datetimes.
 
 ## Using the Shortcode
 
