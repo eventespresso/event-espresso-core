@@ -111,8 +111,8 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 
 = Developer Resources =
 * [Event Espresso 4 on Github](http://evts.io/EE4_WP_Readme)
-* [Developer Targeted Documentation](http://developer.eventespresso.com/)
-* Code structure and PHPDOC parsed documentation can be found at [http://code.eventespresso.com](http://code.eventespresso.com)
+* [Developer Targeted Documentation](http://evts.io/EE4_Dev_Docs)
+* [Code structure and PHPDOC parsed documentation](http://code.eventespresso.com)
 
 == Screenshots ==
 
@@ -239,7 +239,7 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Enhancements:**
 
-*Add ‘Current input vars’ and ‘max_input_vars’ value to the popup shown on the event editor
+Add ‘Current input vars’ and ‘max_input_vars’ value to the popup shown on the event editor
 
 = February 2016 =
 
@@ -392,7 +392,7 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Enhancements:**
 
-*On creating directories in wp-content/uploads, verify required credentials first, then try to initialize the WP Filesystem API. Then if EE cannot use the WP Filesystem API to create uploads directories, then plan to re-attempt to create them later
+* On creating directories in wp-content/uploads, verify required credentials first, then try to initialize the WP Filesystem API. Then if EE cannot use the WP Filesystem API to create uploads directories, then plan to re-attempt to create them later
 * Allow users to modify the gateway templates used within the thank you page
 * Add property and getter for PSR4 Autoloader to EE_Psr4AutoloaderInit
 * Add the site’s currency settings to the localized eei18n JSON variable
@@ -1339,7 +1339,7 @@ Event Espresso 4.1.1.reg
 * Messages system: if user first name or last name isn't filled out  for event author, we'll use the Organization name (instead of leaving it  to WordPress to add WordPress)
 * Add Event Espresso admin bar menu items to admin bar on frontend of site too.
 * Add better support for dark themes.
-* Messages System: Add new email shortcodes Â for email group: `[ESPRESSO_ADMIN_EMAIL]`, Â `[ESPRESSO_ADMIN_FORMATTED_EMAIL]`, Â `[CO_FORMATTED_EMAIL]`
+* Messages System: Add new email shortcodes for email group: `[ESPRESSO_ADMIN_EMAIL]`, `[ESPRESSO_ADMIN_FORMATTED_EMAIL]`, `[CO_FORMATTED_EMAIL]`
 
 = Feb 10, 2014 =
 
@@ -1358,11 +1358,11 @@ Backup your WordPress before installing any updates.
 
 **Use Cases**
 
-Event registration and ticketing for WordPress with Event Espresso is very flexible.  We can't list all the ways Event Espresso has been used, but here are some use-cases and examples. We'll add more details to these examples as we have time. Let us know if you need additional clarity.
+[Event Espresso](http:eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) is a very flexible, and robust event ticketing plugin for WordPress. Many [optional features](https://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) include an [integrated calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [ticket scanning](https://eventespresso.com/product/eea-barcode-scanner/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) & check-in/out capabilities, [single page checkout](https://eventespresso.com/features/intelligent-single-page-checkout/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [multiple event registration](https://eventespresso.com/product/eea-multi-event-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), and after event [marketing tools](https://eventespresso.com/product/eea-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_case).
 
 = Arts &amp; Culture =
 
-* City Tours [http://boulderwalkingtours.com]
+* City Tours
 * Club Performances
 * Concerts
 * [Film Festivals](https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
