@@ -485,7 +485,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//next verify if we need to load anything...
-		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : 0;
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
 		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
 
 		global $ee_menu_slugs;
