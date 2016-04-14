@@ -325,6 +325,15 @@ class EE_Payment_Method_Manager {
 	 * @return int count of rows updated.
 	 */
 	public function deactivate_payment_method( $payment_method_slug ) {
+		EE_Log::instance()->log( 
+				__FILE__, 
+				__FUNCTION__, 
+				sprintf( 
+					__( 'Payment method with slug %1$s is being deacivated by site admin', 'event_espresso' ),
+					$payment_method_slug
+				),
+				'payment_method_change'
+			);
 		$count_updated = EEM_Payment_Method::instance()->update(array('PMD_scope'=>array()),array(array('PMD_slug'=>$payment_method_slug)));
 		return $count_updated;
 	}
