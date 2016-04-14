@@ -15,12 +15,22 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 
 	/**
 	 * @param array $answer_options Array keys which match a sibling section's name
-	 *                              will show/unhide that sibling subsection. Otherwise, siblings whose names
-	 *                              match array keys of $answer_options are hidden
+	 *              will show/unhide that sibling subsection. Otherwise, siblings whose names
+	 *              match array keys of $answer_options are hidden.
+	 *              Note: internally each array key is considered a relative form input path
+	 *              (see EE_Form_Section_Base::find_section_from_path) but relative
+	 *              to THIS INPUT's PARENT section, not this input itself. ie, 
+	 *              a '../' is automatically added onto each each array key, to produce
+	 *              the relative form input path
+	 *	
 	 * @param array $input_settings
 	 */
 	public function __construct( $answer_options, $input_settings = array() ){
-		parent::__construct( $answer_options, $input_settings );
+		$answer_options_with_input_paths_from_this_input = array();
+		foreach( $answer_options as $key => $value ) {
+			$answer_options_with_input_paths_from_this_input[ '../' . $key ] = $value;
+		}
+		parent::__construct( $answer_options_with_input_paths_from_this_input, $input_settings );
 	}
 
 	/**
@@ -29,9 +39,10 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 	 */
 	public function sibling_sections_controlled() {
 		$sibling_sections = array();
-		foreach( $this->options() as $sibling_section_name => $sibling ) {
+		foreach( array_keys( $this->options() ) as $sibling_section_name ) {
 			$sibling_section = $this->find_section_from_path( $sibling_section_name );
-			if( $sibling_section instanceof EE_Form_Section_Base ) {
+			if( $sibling_section instanceof EE_Form_Section_Base
+				&& ! empty( $sibling_section_name ) ) {
 				$sibling_sections[ $sibling_section_name ] = $sibling_section;
 			}
 		}
