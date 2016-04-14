@@ -68,6 +68,11 @@ final class EE_Admin {
 		// load EE_Request_Handler early
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
 		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
+		// post shortcode tracking
+		add_action(
+			'AHEE__EE_System__initialize_last',
+			array( 'EventEspresso\core\admin\PostShortcodeTracking', 'set_hooks_admin' )
+		);
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -173,22 +178,17 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function init() {
-
 		//only enable most of the EE_Admin IF we're not in full maintenance mode
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
-			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );
-			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
-			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			add_action( 'network_admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			//at a glance dashboard widget
-			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
+			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items' ), 10 );
 			//filter for get_edit_post_link used on comments for custom post types
-			add_filter('get_edit_post_link', array( $this, 'modify_edit_post_link' ), 10, 3 );
+			add_filter( 'get_edit_post_link', array( $this, 'modify_edit_post_link' ), 10, 3 );
 		}
-
 		// run the admin page factory but ONLY if we are doing an ee admin ajax request
 		if ( !defined('DOING_AJAX') || EE_ADMIN_AJAX ) {
 			try {
@@ -198,11 +198,10 @@ final class EE_Admin {
 				$e->get_error();
 			}
 		}
-
+		add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 		//make sure our CPTs and custom taxonomy metaboxes get shown for first time users
 		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
 		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
-
 		//exclude EE critical pages from all nav menus and wp_list_pages
 		add_filter('nav_menu_meta_box_object', array( $this, 'remove_pages_from_nav_menu'), 10 );
 	}
@@ -665,82 +664,6 @@ final class EE_Admin {
 	}
 
 
-
-	/**
-	 *    parse_post_content_on_save
-	 *
-	 *    any time a post is saved, we need to check for any EE shortcodes that may be embedded in the content,
-	 *    and then track what posts those shortcodes are on, so that we can initialize shortcodes well before the_content() runs.
-	 *    this allows us to do things like enqueue scripts for shortcodes ONLY on the pages the shortcodes are actually used on
-	 *
-	 * @access    public
-	 * @param $post_ID
-	 * @param $post
-	 * @return    void
-	 */
-	public static function parse_post_content_on_save( $post_ID, $post ) {
-		// default post types
-		$post_types = array( 'post' => 0, 'page' => 1 );
-		// add CPTs
-		$CPTs = EE_Register_CPTs::get_CPTs();
-		$post_types = array_merge( $post_types, $CPTs );
-		// for default or CPT posts...
-		if ( isset( $post_types[ $post->post_type ] )) {
-			// post on frontpage ?
-			$page_for_posts = EE_Config::get_page_for_posts();
-			$maybe_remove_from_posts = array();
-			// critical page shortcodes that we do NOT want added to the Posts page (blog)
-			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
-			// array of shortcodes indexed by post name
-			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
-			// whether to proceed with update, if an entry already exists for this post, then we want to update
-			$update_post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] ) ? true : false;
-			// empty both arrays
-			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
-			// check that posts page is already being tracked
-			if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] ) ) {
-				// if not, then ensure that it is properly added
-				EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
-			}
-			// loop thru shortcodes
-			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
-				// convert to UPPERCASE to get actual shortcode
-				$EES_Shortcode = strtoupper( $EES_Shortcode );
-				// is the shortcode in the post_content ?
-				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
-					// map shortcode to post names and post IDs
-					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
-					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
-						// add shortcode to "Posts page" tracking
-						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
-					}
-					$update_post_shortcodes = TRUE;
-					unset( $maybe_remove_from_posts[ $EES_Shortcode ] );
-				} else {
-					$maybe_remove_from_posts[ $EES_Shortcode ] = $post_ID;
-				}
-			}
-			if ( $update_post_shortcodes ) {
-				// remove shortcodes from $maybe_remove_from_posts that are still being used
-				foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $shortcodes ) {
-					if ( $post_name == $page_for_posts ) {
-						continue;
-					}
-					// compute difference between active post_shortcodes array and $maybe_remove_from_posts array
-					$maybe_remove_from_posts = array_diff_key( $maybe_remove_from_posts, $shortcodes );
-				}
-				// now unset unused shortcodes from the $page_for_posts post_shortcodes
-				foreach ( $maybe_remove_from_posts as $shortcode => $post_ID ) {
-					unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode ] );
-				}
-				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
-			}
-		}
-	}
-
-
-
 	/**
 	 *    check_for_invalid_datetime_formats
 	 *
@@ -798,30 +721,6 @@ final class EE_Admin {
 			}
 		}
 		return $value;
-	}
-
-
-
-	/**
-	 *    reset_page_for_posts_on_change
-	 *
-	 * 	if an admin is on the WP Reading Settings page and changes the option for "Posts page", then we need to attribute any shortcodes for the previous blog page to the new blog page
-	 *
-	 * @access 	public
-	 * @param 	$option
-	 * @param 	$old_value
-	 * @param 	$value
-	 * @return 	void
-	 */
-	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
-		if ( $option == 'page_for_posts' ) {
-			global $wpdb;
-			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
-			$old_page_for_posts = $old_value ? $wpdb->get_var( $wpdb->prepare( $SQL, $old_value )) : 'posts';
-			$new_page_for_posts = $value ? $wpdb->get_var( $wpdb->prepare( $SQL, $value )) : 'posts';
-			EE_Registry::instance()->CFG->core->post_shortcodes[ $new_page_for_posts ] = EE_Registry::instance()->CFG->core->post_shortcodes[ $old_page_for_posts ];
-			EE_Registry::instance()->CFG->update_post_shortcodes( $new_page_for_posts );
-		}
 	}
 
 
