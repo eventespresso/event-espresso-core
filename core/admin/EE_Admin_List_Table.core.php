@@ -335,7 +335,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	/**
 	 * _get_hidden_fields
 	 * returns a html string of hidden fields so if any table filters are used the current view will be respected.
-	 * @return html string
+	 * @return string
 	 */
 	protected function _get_hidden_fields() {
 		$action = isset( $this->_req_data['route'] ) ? $this->_req_data['route'] : '';
@@ -698,11 +698,18 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+	/**
+	 * Extra controls to be displayed between bulk actions and pagination
+	 *
+	 * @access public
+	 * @param string $which
+	 * @throws \EE_Error
+	 */
 	public function extra_tablenav( $which ) {
-		if ( $which == 'top' ) {
+		if ( $which === 'top' ) {
 			$this->_filters();
 			echo $this->_get_hidden_fields();
-			echo '<br class="clear">';
+			// echo '<br class="clear">';
 		}else{
 			echo '<div class="list-table-bottom-buttons alignleft actions">';
 			foreach($this->_bottom_buttons as $type => $action){
