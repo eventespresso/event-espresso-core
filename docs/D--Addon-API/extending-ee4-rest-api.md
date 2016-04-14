@@ -24,4 +24,4 @@ If you want to add other endpoints as part of your add-on, feel free to register
 - [Event Espresso 4 REST API: Reading Data](../C--REST-API/ee4-rest-api-reading-data.md)
 - [Event Espresso 4 REST API: RPC-Style Endpoints](../C--REST-API/ee4-rest-api-rpc-style-endpoints.md)
 - [Event Espresso 4 REST API: Testing Tools](../C--REST-API/ee4-rest-api-testing-tools.md)
-If you are looking to instead create an application that utilizes EE4 REST data over HTTP, you probably want to instead read [EE4 REST API: reading data](../C--REST-API/ee4-rest-api-reading-data.md) or our example [EE4 JSON REST API Client tutorial](../T-Tutorials/building-an-ee4-addon-that-users-angular-js-and-the-ee4-json-rest-api.md).
+If you are looking to instead create an application that utilizes EE4 REST data over HTTP, you probably want to instead read [EE4 REST API: reading data](../C--REST-API/ee4-rest-api-reading-data.md) or our example [EE4 JSON REST API Client tutorial](../T--Tutorials/building-an-ee4-addon-that-uses-angular-js-and-the-ee4-json-rest-api.md).

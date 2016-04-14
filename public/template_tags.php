@@ -492,7 +492,7 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
-			$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
+			$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul ee-clearfix">' : '';
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
 					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID();
