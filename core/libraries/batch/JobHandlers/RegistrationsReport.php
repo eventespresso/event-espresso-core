@@ -191,6 +191,7 @@ class RegistrationsReport extends JobHandlerFile {
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
 				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
 				'limit' => array( $offset, $limit ),
+				'caps' => \EEM_Base::caps_read_admin
 			),
 			$event_id
 		);
@@ -392,7 +393,8 @@ class RegistrationsReport extends JobHandlerFile {
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' )
+				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
+				'caps' => \EEM_Base::caps_read_admin
 			),
 			$event_id
 		);
