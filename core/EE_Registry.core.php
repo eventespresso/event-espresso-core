@@ -1188,6 +1188,11 @@ class EE_Registry {
 
 
 
+	public static function CFG() {
+		return self::instance()->CFG;
+	}
+
+
 }
 // End of file EE_Registry.core.php
 // Location: ./core/EE_Registry.core.php

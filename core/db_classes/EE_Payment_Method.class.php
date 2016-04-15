@@ -505,4 +505,31 @@ class EE_Payment_Method extends EE_Base_Class{
 	}
 
 
+
+	/**
+	 * Overrides parent to add some logging for when payment methods get deactivated
+	 *
+	 * @param array $set_cols_n_values
+	 * @return int @see EE_Base_Class::save()
+	 * @throws \EE_Error
+	 */
+	public function save( $set_cols_n_values = array() ) {
+		$results =  parent::save( $set_cols_n_values );
+		if( $this->get_original( 'PMD_scope' ) !== $this->get( 'PMD_scope' ) ) {
+			EE_Log::instance()->log(
+				__FILE__,
+				__FUNCTION__,
+				sprintf(
+					__( 'Set new scope on payment method %1$s to %2$s from %3$s on URL %4$s', 'event_espresso' ),
+					$this->name(),
+					serialize( $this->get_original(  'PMD_scope' ) ),
+					serialize( $this->get( 'PMD_scope' ) ),
+					EE_Registry::instance()->REQ->get_current_page_permalink()
+				),
+				'payment_method_change'
+			);
+		}
+		return $results;
+	}
+
 }

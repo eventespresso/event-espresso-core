@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * Event Espresso
  *
@@ -28,14 +28,14 @@ final class EE_Front_Controller {
 	 *	@var 	string		$_template_path
 	 * 	@access 	public
 	 */
-	private $_template_path = NULL;
+	private $_template_path;
 
 	/**
 	 * 	$_template
 	 *	@var 	string		$_template
 	 * 	@access 	public
 	 */
-	private $_template = NULL;
+	private $_template;
 
 	/**
 	 * @type  EE_Registry $Registry
@@ -96,7 +96,7 @@ final class EE_Front_Controller {
 		// display errors
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
-		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
+		// add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
 		//exclude our private cpt comments
 		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
@@ -251,20 +251,27 @@ final class EE_Front_Controller {
 		$this->Request_Handler->set_request_vars( $WP );
 		// grab post_name from request
 		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name', $this->Request_Handler->get( 'post_name' ));
+		$show_on_front = get_option( 'show_on_front' );
 		// if it's not set, then check if frontpage is blog
-		if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
+		if ( empty( $current_post ) ) {
 			// yup.. this is the posts page, prepare to load all shortcode modules
 			$current_post = 'posts';
-		} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
-			// some other page is set as the homepage
-			$page_on_front = get_option( 'page_on_front' );
-			if ( $page_on_front ) {
-				// k now we need to find the post_name for this page
-				global $wpdb;
-				$SQL = "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d";
-				$page_on_front = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
-				// set the current post slug to what it actually is
-				$current_post = $page_on_front ? $page_on_front : $current_post;
+			// unless..
+			if ( $show_on_front === 'page' ) {
+				// some other page is set as the homepage
+				$page_on_front = get_option( 'page_on_front' );
+				if ( $page_on_front ) {
+					// k now we need to find the post_name for this page
+					global $wpdb;
+					$page_on_front = $wpdb->get_var(
+						$wpdb->prepare(
+							"SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d",
+							$page_on_front
+						)
+					);
+					// set the current post slug to what it actually is
+					$current_post = $page_on_front ? $page_on_front : $current_post;
+				}
 			}
 		}
 		// where are posts being displayed ?
@@ -275,6 +282,9 @@ final class EE_Front_Controller {
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
 		if ( isset( $this->Registry->CFG->core->post_shortcodes )) {
+			if ( ! isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ] ) ) {
+				$this->Registry->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+			}
 			// cycle thru all posts with shortcodes set
 			foreach ( $this->Registry->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// filter shortcodes so
@@ -282,45 +292,105 @@ final class EE_Front_Controller {
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
-					if ( $current_post == $post_name || $term_exists ) {
-						// verify shortcode is in list of registered shortcodes
-						if ( ! isset( $this->Registry->shortcodes->{$shortcode_class} ) ) {
-							if ( $current_post != $page_for_posts && current_user_can( 'edit_post', $post_id )) {
-								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-							}
-							add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ));
-							continue;
-						}
-						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-						if ( isset( $this->Registry->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
-							// let's pause to reflect on this...
-							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
-							// ensure that class is actually a shortcode
-							if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' ) && defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
-								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								continue;
-							}
-							// and pass the request object to the run method
-							$this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
-							// fire the shortcode class's run method, so that it can activate resources
-							$this->Registry->shortcodes->{$shortcode_class}->run( $WP );
-						}
-					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
-					} else if ( $post_name != $page_for_posts && isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-						// and the shortcode is not being tracked for this page
-						if ( ! isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
-							// then remove the "fallback" shortcode processor
-							remove_shortcode( $shortcode_class );
-						}
+					if ( $current_post === $post_name || $term_exists ) {
+						// maybe init the shortcode
+						$this->initialize_shortcode_if_active_on_page(
+							$shortcode_class,
+							$current_post,
+							$page_for_posts,
+							$post_id,
+							$term_exists,
+							$WP
+						);
+					// if this is NOT the "Posts page" and we have a valid entry
+					// for the "Posts page" in our tracked post_shortcodes array
+					// but the shortcode is not being tracked for this page
+					} else if (
+						$post_name !== $page_for_posts
+						&& isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ] )
+						&& ! isset( $this->Registry->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )
+					) {
+						// then remove the "fallback" shortcode processor
+						remove_shortcode( $shortcode_class );
 					}
 				}
 			}
 		}
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__end', $this );
+	}
+
+
+
+	/**
+	 * @param string $shortcode_class
+	 * @param string $current_post
+	 * @param string $page_for_posts
+	 * @param int    $post_id
+	 * @param bool   $term_exists
+	 * @param WP     $WP
+	 */
+	protected function initialize_shortcode_if_active_on_page(
+		$shortcode_class,
+		$current_post,
+		$page_for_posts,
+		$post_id,
+		$term_exists,
+		$WP
+	) {
+		// verify shortcode is in list of registered shortcodes
+		if ( ! isset( $this->Registry->shortcodes->{$shortcode_class} ) ) {
+			if ( $current_post !== $page_for_posts && current_user_can( 'edit_post', $post_id ) ) {
+				EE_Error::add_error(
+					sprintf(
+						__(
+							'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.',
+							'event_espresso'
+						),
+						$shortcode_class
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+			}
+			add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ) );
+			return;
+		}
+		// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
+		if (
+			$term_exists
+			|| $current_post === $page_for_posts
+			|| isset( $this->Registry->CFG->core->post_shortcodes[ $current_post ] )
+		) {
+			// let's pause to reflect on this...
+			$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
+			// ensure that class is actually a shortcode
+			if (
+				defined( 'WP_DEBUG' )
+				&& WP_DEBUG === true
+				&& ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )
+			) {
+				EE_Error::add_error(
+					sprintf(
+						__(
+							'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.',
+							'event_espresso'
+						),
+						$shortcode_class
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+				return;
+			}
+			// and pass the request object to the run method
+			$this->Registry->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
+			// fire the shortcode class's run method, so that it can activate resources
+			$this->Registry->shortcodes->{$shortcode_class}->run( $WP );
+		}
 	}
 
 
@@ -334,11 +404,10 @@ final class EE_Front_Controller {
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// only load Module_Request_Router if this is the main query
-		if ( $WP_Query->is_main_query() ) {
-			//// load module request router
-			//$Module_Request_Router = $this->Registry->load_core( 'Module_Request_Router' );
-			// verify object
-			if ( $this->Module_Request_Router instanceof EE_Module_Request_Router ) {
+		if (
+			$this->Module_Request_Router instanceof EE_Module_Request_Router
+			&& $WP_Query->is_main_query()
+		) {
 				// cycle thru module routes
 				while ( $route = $this->Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
@@ -352,8 +421,6 @@ final class EE_Front_Controller {
 						$this->Registry->modules->{$module_name} = $module;
 					}
 				}
-			}
-			//d( $this->Registry->modules );
 		}
 	}
 
@@ -423,15 +490,13 @@ final class EE_Front_Controller {
 
 			wp_enqueue_script( 'jquery' );
 			//let's make sure that all required scripts have been setup
-			if ( function_exists( 'wp_script_is' )) {
-				if ( ! wp_script_is( 'jquery' )) {
-					$msg = sprintf(
-						__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.', 'event_espresso' ),
-						'<em><br />',
-						'</em>'
-					);
-					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				}
+			if ( function_exists( 'wp_script_is' ) && ! wp_script_is( 'jquery' )) {
+				$msg = sprintf(
+					__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.', 'event_espresso' ),
+					'<em><br />',
+					'</em>'
+				);
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			// load core js
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
@@ -517,12 +582,12 @@ final class EE_Front_Controller {
 	 * @param   $the_content
 	 * @return    string
 	 */
-	public function the_content( $the_content ) {
-		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-		if ( apply_filters( 'FHEE_run_EE_the_content', FALSE ) ) {
-		}
-		return $the_content;
-	}
+	// public function the_content( $the_content ) {
+	// 	// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+	// 	if ( apply_filters( 'FHEE_run_EE_the_content', FALSE ) ) {
+	// 	}
+	// 	return $the_content;
+	// }
 
 
 
@@ -546,8 +611,8 @@ final class EE_Front_Controller {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
 		if (
-			apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE )
-			&& ! $shown_already
+			! $shown_already
+			&& apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE )
 			&& is_main_query()
 			&& ! is_feed()
 			&& in_the_loop()

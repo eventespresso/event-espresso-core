@@ -99,3 +99,10 @@ Fields that can be calculated on datetimes. Unless otherwise stated, these field
 `registrations_checked_out_count` |  The count of registrations who have checked into this datetime of the event and then checked out.
 `spots_taken_pending_payment` | The count of pending registrations for this datetime.
 
+## Registration
+
+FIelds that can be calculated on registrations.
+
+| Field Name | What is returned |
+| ---------- | ---------------  |
+`datetime_checkin_stati` | Checkin status of this registration at each of their available datetimes. This is an array, whose keys are datetime IDs, and whose values are either "NEVER" (meaning they have not checked into that datetime, ever), "IN" (meaning they most recently checked into the datetime), and "OUT" (meaning they checked in, but subsequently have checked out, and have not checked in again since). Eg `"datetime_checkin_stati":{"1":"OUT","2":"IN","3":"NEVER","4":"NEVER"}`
