@@ -1942,7 +1942,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+		if (
+			! $this->_cpt_model_obj instanceof EE_Event
+			|| $this->_cpt_model_obj->ID() !== $EVT_ID
+		) {
+			$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+		}
 
 		//need to delete related tickets and prices first.
 		$datetimes = $this->_cpt_model_obj->get_many_related('Datetime');
