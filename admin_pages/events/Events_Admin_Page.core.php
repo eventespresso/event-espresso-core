@@ -1943,7 +1943,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			return FALSE;
 		}
 		if (
-			! $this->_cpt_model_obj instanceof EE_Event
+			! $this->_cpt_model_obj instanceof EE_CPT_Base
 			|| $this->_cpt_model_obj->ID() !== $EVT_ID
 		) {
 			$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
