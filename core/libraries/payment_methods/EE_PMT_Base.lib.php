@@ -98,8 +98,6 @@ abstract class EE_PMT_Base{
 		if ( $pm_instance instanceof EE_Payment_Method ){
 			$this->set_instance($pm_instance);
 		}
-		$this->_set_file_folder();
-		$this->_set_file_url();
 		if($this->_gateway){
 			$this->_gateway->set_payment_model( EEM_Payment::instance() );
 			$this->_gateway->set_payment_log( EEM_Change_Log::instance() );
@@ -175,6 +173,9 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function file_folder(){
+		if( ! $this->_file_folder ) {
+			$this->_set_file_folder();
+		}
 		return $this->_file_folder;
 	}
 
@@ -184,6 +185,9 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function file_url(){
+		if( ! $this->_file_url ) {
+			$this->_set_file_url();
+		}
 		return $this->_file_url;
 	}
 

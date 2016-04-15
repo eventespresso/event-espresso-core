@@ -118,7 +118,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @var EE_Default_Where_Conditions
 	 */
 	protected $_default_where_conditions_strategy;
-	
+
 	/**
 	 * Strategy for getting conditions on this model when 'default_where_conditions' equals 'minimum'.
 	 * This is particularly useful when you want something between 'none' and 'default'
@@ -173,7 +173,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Array-keys are one of EEM_Base::valid_cap_contexts(), and values are a child of
 	 * EE_Restriction_Generator_Base. If you don't want any cap restrictions generated
 	 * automatically set this to false (not just null).
-	 * @var EE_Restriction_Generator_Base
+	 * @var EE_Restriction_Generator_Base[]
 	 */
 	protected $_cap_restriction_generators = array();
 
@@ -680,7 +680,7 @@ abstract class EEM_Base extends EE_Base{
 	 *		This can be applied to condition operators too,
 	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
 	 *	@var mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
-	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively. 
+	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively.
 	 *		Remember when you provide two numbers for the limit, the 1st number is the OFFSET, the 2nd is the LIMIT
 	 *	@var array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
 	 *		Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).
@@ -694,6 +694,8 @@ abstract class EEM_Base extends EE_Base{
 	 *		or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
 	 *
 	 *	@var mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
+	 *		Note: if no $group_by is specified, and a limit is set, automatically groups by the model's primary key (or combined primary keys). This
+	 *		avoids some weirdness that results when using limits, tons of joins, and no group by, see https://events.codebasehq.com/projects/event-espresso/tickets/9389
 	 *
 	 *	@var array $having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 *
@@ -739,6 +741,10 @@ abstract class EEM_Base extends EE_Base{
 	 *		));
 	 */
 	function get_all($query_params = array()){
+		if( isset( $query_params[ 'limit' ] )
+			&& ! isset( $query_params[ 'group_by' ] ) ) {
+			$query_params[ 'group_by' ] = array_keys( $this->get_combined_primary_key_fields() );
+		}
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL));
 	}
 
@@ -934,16 +940,16 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->get_from_entity_map( $id ) ){
 			return $this->get_from_entity_map( $id );
 		}
-		return $this->get_one( 
-			$this->alter_query_params_to_restrict_by_ID( 
+		return $this->get_one(
+			$this->alter_query_params_to_restrict_by_ID(
 				$id,
 				array( 'default_where_conditions' => 'minimum' )
-			) 
+			)
 		);
 	}
-	
+
 	/**
-	 * Alters query parameters to only get items with this ID are returned. 
+	 * Alters query parameters to only get items with this ID are returned.
 	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string()
 	 * @param int $id
 	 * @param array $query_params
@@ -1527,21 +1533,21 @@ abstract class EEM_Base extends EE_Base{
 		return implode(",",$cols_n_values);
 
 	}
-	
+
 	/**
 	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
-	 * Performs a HARD delete, meaning the database row should always be removed, 
+	 * Performs a HARD delete, meaning the database row should always be removed,
 	 * not just have a flag field on it switched
 	 * Wrapper for EEM_Base::delete_permanently()
 	 * @param mixed $id
 	 * @return boolean whether the row got deleted or not
 	 */
 	public function delete_permanently_by_ID( $id ) {
-		return $this->delete_permanently( 
+		return $this->delete_permanently(
 			array(
 				array( $this->get_primary_key_field()->get_name() => $id ),
 				'limit' 	=> 1
-			) 
+			)
 		);
 	}
 
@@ -1554,14 +1560,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @return boolean whether the row got deleted or not
 	 */
 	public function delete_by_ID( $id ){
-		return $this->delete( 
+		return $this->delete(
 			array(
 				array( $this->get_primary_key_field()->get_name() => $id ),
 				'limit' 	=> 1
-			) 
+			)
 		);
 	}
-	
+
 	/**
 	 * Identical to delete_permanently, but does a "soft" delete if possible,
 	 * meaning if the model has a field that indicates its been "trashed" or
@@ -2782,7 +2788,7 @@ abstract class EEM_Base extends EE_Base{
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
 		$allowed_used_default_where_conditions_values = array(
 				'all',
-				'this_model_only', 
+				'this_model_only',
 				'other_models_only',
 				'minimum',
 				'none'
@@ -4214,7 +4220,7 @@ abstract class EEM_Base extends EE_Base{
 	 * This is usually just an array with 1 element (the primary key), but in cases
 	 * where there is no primary key, it's a combination of fields as defined
 	 * on a primary index
-	 * @return EE_Model_Field_Base[]
+	 * @return EE_Model_Field_Base[] indexed by the field's name
 	 */
 	public function get_combined_primary_key_fields(){
 		foreach($this->indexes() as $index){
@@ -4222,8 +4228,9 @@ abstract class EEM_Base extends EE_Base{
 				return $index->fields();
 			}
 		}
-		return array($this->get_primary_key_field());
+		return array( $this->primary_key_name() => $this->get_primary_key_field());
 	}
+	
 
 	/**
 	 * Used to build a primary key string (when the model has no primary key),
@@ -4534,7 +4541,7 @@ abstract class EEM_Base extends EE_Base{
 			);
 		}
 	}
-	
+
 	/**
 	 * Clears all the models field caches. This is only useful when a sub-class
 	 * might have added a field or something and these caches might be invaldiated
