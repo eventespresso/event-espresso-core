@@ -721,14 +721,59 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
 
 			//$post_id
-			add_action('trashed_post', array( $this, 'trash_cpt_item' ), 10 );
+			add_action('trashed_post', array( $this, 'before_trash_cpt_item' ), 10 );
 			add_action('trashed_post', array( $this, 'dont_permanently_delete_ee_cpts'), 10 );
-			add_action('untrashed_post', array( $this, 'restore_cpt_item'), 10 );
+			add_action('untrashed_post', array( $this, 'before_restore_cpt_item'), 10 );
 			add_action('after_delete_post', array( $this, 'delete_cpt_item'), 10 );
 		}
 
 	}
 
+
+
+
+	/**
+	 * Callback for the WordPress trashed_post hook.
+	 * Execute some basic checks before calling the trash_cpt_item declared in the child class.
+	 *
+	 * @param int $post_id
+	 */
+	public function before_trash_cpt_item( $post_id ) {
+		//if our cpt object isn't existent then get out immediately.
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			return;
+		}
+		$this->trash_cpt_item( $post_id );
+	}
+
+
+	/**
+	 * Callback for the WordPress untrashed_post hook.
+	 * Execute some basic checks before calling the restore_cpt_method in the child class.
+	 *
+	 * @param $post_id
+	 */
+	public function before_restore_cpt_item( $post_id ) {
+		//if our cpt object isn't existent then get out immediately.
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			return;
+		}
+		$this->restore_cpt_item( $post_id );
+	}
+
+
+	/**
+	 * Callback for the WordPress after_delete_post hook.
+	 * Execute some basic checks before calling the delete_cpt_item method in the child class.
+	 * @param $post_id
+	 */
+	public function before_delete_cpt_item( $post_id ) {
+		//if our cpt object isn't existent then get out immediately.
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			return;
+		}
+		$this->delete_cpt_item( $post_id );
+	}
 
 
 	/**
@@ -807,6 +852,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function insert_update( $post_id, $post ) {
 
+		//if we don't have a valid cpt object for this callback then get out.
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			return;
+		}
+
 		//make sure that if this is a revision OR trash action that we don't do any updates!
 		if ( isset( $this->_req_data['action'] ) && ( $this->_req_data['action'] == 'restore' || $this->_req_data['action'] == 'trash' ) )
 			return;
@@ -849,8 +899,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	public function dont_permanently_delete_ee_cpts( $post_id ) {
+		//only do this if we're actually processing one of our CPTs
+		//if our cpt object isn't existent then get out immediately.
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			return;
+		}
+
 		delete_post_meta( $post_id, '_wp_trash_meta_status' );
-		delete_post_meta($post_id, '_wp_trash_meta_time');
+		delete_post_meta( $post_id, '_wp_trash_meta_time');
 
 		//our cpts may have comments so let's take care of that too
 		delete_post_meta($post_id, '_wp_trash_meta_comments_status');
