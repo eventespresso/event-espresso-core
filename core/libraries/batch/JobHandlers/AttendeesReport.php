@@ -83,13 +83,16 @@ class AttendeesReport extends JobHandlerFile {
 	}
 
 	public function count_units_to_process() {
-		return \EEM_Attendee::instance()->count();
+		return \EEM_Attendee::instance()->count( array( 'caps' => \EEM_Base::caps_read_admin ));
 	}
 	public function get_csv_data( $offset, $limit ) {
-		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results(
-				array(
-					'limit' => array( $offset, $limit ),
-					'force_join' => array( 'State', 'Country' ) ) );
+		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results( 
+			array( 
+				'limit' => array( $offset, $limit ),
+				'force_join' => array( 'State', 'Country' ),
+				'caps' => \EEM_Base::caps_read_admin
+			) 
+		);
 		$csv_data = array();
 		foreach( $attendee_rows as $attendee_row ){
 			$csv_row = array();
