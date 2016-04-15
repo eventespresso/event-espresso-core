@@ -718,7 +718,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		if ( $post_type && $post_type === $route_to_check ) {
 			//$post_id, $post
-			add_action('save_post', array( $this, 'insert_update'), 10, 2 );
+			add_action('save_post', array( $this, 'insert_update'), 10, 3 );
 
 			//$post_id
 			add_action('trashed_post', array( $this, 'before_trash_cpt_item' ), 10 );
@@ -740,7 +740,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function before_trash_cpt_item( $post_id ) {
 		//if our cpt object isn't existent then get out immediately.
-		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id ) {
 			return;
 		}
 		$this->trash_cpt_item( $post_id );
@@ -755,7 +755,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function before_restore_cpt_item( $post_id ) {
 		//if our cpt object isn't existent then get out immediately.
-		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id ) {
 			return;
 		}
 		$this->restore_cpt_item( $post_id );
@@ -769,7 +769,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function before_delete_cpt_item( $post_id ) {
 		//if our cpt object isn't existent then get out immediately.
-		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id ) {
 			return;
 		}
 		$this->delete_cpt_item( $post_id );
@@ -848,18 +848,31 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL insert/updates
 	 * @param  int    $post_id ID of post being updated
 	 * @param  WP_Post $post    Post object from WP
+	 * @param  bool   $update  Whether this is an update or a new save.
 	 * @return void
 	 */
-	public function insert_update( $post_id, $post ) {
+	public function insert_update( $post_id, $post, $update ) {
 
-		//if we don't have a valid cpt object for this callback then get out.
-		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+		//make sure that if this is a revision OR trash action that we don't do any updates!
+		if (
+			isset( $this->_req_data['action'] )
+			&& (
+				$this->_req_data['action'] == 'restore'
+				|| $this->_req_data['action'] == 'trash'
+			)
+		) {
 			return;
 		}
 
-		//make sure that if this is a revision OR trash action that we don't do any updates!
-		if ( isset( $this->_req_data['action'] ) && ( $this->_req_data['action'] == 'restore' || $this->_req_data['action'] == 'trash' ) )
+		//if our cpt object is not instantiated and its NOT the same post_id as what is triggering this callback, then exit.
+		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base
+		     || (
+			     $update
+			     && $this->_cpt_model_obj->ID() !== $post_id
+		     )
+		) {
 			return;
+		}
 
 		//check for autosave and update our req_data property accordingly.
 		/*if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE && isset( $this->_req_data['ee_autosave_data'] ) ) {
