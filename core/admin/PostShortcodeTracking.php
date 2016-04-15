@@ -74,7 +74,7 @@ class PostShortcodeTracking {
 	 */
 	public static function parse_post_content_on_save( $post_ID, $post ) {
 		// if the post is trashed, then let's remove our post shortcode tracking
-		if ( $post instanceof \WP_Post && $post->post_status == 'trash' ) {
+		if ( $post instanceof \WP_Post && $post->post_status === 'trash' ) {
 			PostShortcodeTracking::unset_post_shortcodes_on_delete( $post_ID );
 			return;
 		}
@@ -87,7 +87,7 @@ class PostShortcodeTracking {
 		if ( isset( $post_types[ $post->post_type ] ) ) {
 			// post on frontpage ?
 			$page_for_posts = \EE_Config::get_page_for_posts();
-			if ( $post->post_name == $page_for_posts ) {
+			if ( $post->post_name === $page_for_posts ) {
 				PostShortcodeTracking::set_post_shortcodes_for_posts_page( $page_for_posts );
 				return;
 			}
@@ -196,8 +196,7 @@ class PostShortcodeTracking {
 					\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] => true
 				);
 			}
-			\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] =
-				\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] + array( $post_ID => true );
+			\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] += array( $post_ID => true );
 		} else {
 			\EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = array( $post_ID => true );
 		}
@@ -212,14 +211,14 @@ class PostShortcodeTracking {
 	 * @param  int $ID
 	 * @return void
 	 */
-	protected static function unset_post_shortcodes_on_delete( $ID ) {
+	public static function unset_post_shortcodes_on_delete( $ID ) {
 		$update_post_shortcodes = false;
 		// post on frontpage ?
 		$page_for_posts = \EE_Config::get_page_for_posts();
 		// looking for any references to this post
 		foreach ( \EE_Registry::CFG()->core->post_shortcodes as $post_name => $post_shortcodes ) {
 			// is this the "Posts Page" (blog) ?
-			if ( $post_name == $page_for_posts ) {
+			if ( $post_name === $page_for_posts ) {
 				// loop thru shortcodes registered for the posts page
 				foreach ( $post_shortcodes as $shortcode_class => $shortcode_posts ) {
 					$update_post_shortcodes = PostShortcodeTracking::unset_posts_page_shortcode_for_post(
@@ -236,7 +235,7 @@ class PostShortcodeTracking {
 				// loop thru shortcodes registered for each page
 				foreach ( $post_shortcodes as $shortcode_class => $post_ID ) {
 					// if this is page is being deleted, then don't track any post shortcodes for it
-					if ( $post_ID == $ID ) {
+					if ( $post_ID === $ID ) {
 						unset( \EE_Registry::CFG()->core->post_shortcodes[ $post_name ] );
 						$update_post_shortcodes = true;
 					}
@@ -327,21 +326,19 @@ class PostShortcodeTracking {
 				foreach ( $shortcodes as $shortcode => $post_id ) {
 					// if shortcode is for a critical page,
 					// BUT this is NOT the corresponding critical page for that shortcode
-					if ( $post_name == $page_for_posts ) {
+					if ( $post_name === $page_for_posts ) {
 						continue;
 					}
 					// skip the posts page, because we want all shortcodes registered for it
-					if ( $post_name == $page_for_posts ) {
+					if ( $post_name === $page_for_posts ) {
 						continue;
 					}
 					// make sure post still exists
 					$post = get_post( $post_id );
-					if ( $post ) {
-						// check that the post name matches what we have saved
-						if ( $post->post_name == $post_name ) {
-							// if so, then break before hitting the unset below
-							continue;
-						}
+					// check that the post name matches what we have saved
+					if ( $post && $post->post_name === $post_name ) {
+						// if so, then break before hitting the unset below
+						continue;
 					}
 					// we don't like missing posts around here >:(
 					unset( \EE_Config::instance()->core->post_shortcodes[ $post_name ] );
@@ -394,7 +391,7 @@ class PostShortcodeTracking {
 	 * @return void
 	 */
 	public static function reset_page_for_posts_on_change( $option, $old_value = '', $value = '' ) {
-		if ( $option == 'page_for_posts' ) {
+		if ( $option === 'page_for_posts' ) {
 			global $wpdb;
 			$table = $wpdb->posts;
 			$SQL = "SELECT post_name from $table WHERE post_type='posts' OR post_type='page' AND post_status='publish' AND ID=%d";
@@ -416,7 +413,7 @@ class PostShortcodeTracking {
 	 * @return void
 	 */
 	public static function reset_page_for_posts_on_delete( $option ) {
-		if ( $option == 'page_for_posts' ) {
+		if ( $option === 'page_for_posts' ) {
 			PostShortcodeTracking::set_post_shortcodes_for_posts_page( 'posts' );
 		}
 	}
