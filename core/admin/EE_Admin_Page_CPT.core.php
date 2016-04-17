@@ -643,16 +643,36 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param int $id The id to retrieve the model object for. If empty we set a default object.
 	 * @return void
 	 */
-	protected function _set_model_object( $id = NULL ) {
-
-		if ( empty( $this->_cpt_model_names ) || ! isset( $this->_cpt_routes[ $this->_req_action ] ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id )) {
+	protected function _set_model_object( $id = NULL, $ignore_route_check = false ) {
+		$model = null;
+		if ( empty( $this->_cpt_model_names )
+		     || (
+			     ! $ignore_route_check
+			     && ! isset( $this->_cpt_routes[ $this->_req_action ] )
+		     )
+		     || (
+			     $this->_cpt_model_obj instanceof EE_CPT_Base
+			     && $this->_cpt_model_obj->ID() == $id )
+		) {
 			//get out cuz we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
 			return;
 		}
-		// load CPT object model
-		$model = EE_Registry::instance()->load_model( $this->_cpt_model_names[$this->_req_action] );
-		$this->_cpt_model_obj = ! empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
-		//d( $this->_cpt_model_obj );
+		
+		//if ignore_route_check is false, then get the model name via EE_Register_CPTs
+		if ( $ignore_route_check ) {
+			$model_names = EE_Register_CPTs::get_cpt_model_names();
+			$post_type = get_post_type( $id );
+			if ( isset( $model_names[ $post_type ] ) ) {
+				$model = EE_Registry::instance()->load_model( $model_names[ $post_type ] );
+			}
+		} else {
+			$model = EE_Registry::instance()->load_model( $this->_cpt_model_names[$this->_req_action] );
+		}
+
+		if ( $model instanceof EEM_Base ) {
+			$this->_cpt_model_obj = ! empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
+		}
+
 		do_action( 'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object' );
 	}
 
@@ -739,6 +759,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param int $post_id
 	 */
 	public function before_trash_cpt_item( $post_id ) {
+		$this->_set_model_object( $post_id, true );
 		//if our cpt object isn't existent then get out immediately.
 		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id ) {
 			return;
@@ -754,6 +775,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param $post_id
 	 */
 	public function before_restore_cpt_item( $post_id ) {
+		$this->_set_model_object( $post_id, true );
 		//if our cpt object isn't existent then get out immediately.
 		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id ) {
 			return;
@@ -768,6 +790,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param $post_id
 	 */
 	public function before_delete_cpt_item( $post_id ) {
+		$this->_set_model_object( $post_id, true );
 		//if our cpt object isn't existent then get out immediately.
 		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base || $this->_cpt_model_obj->ID() !== $post_id ) {
 			return;
@@ -864,11 +887,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			return;
 		}
 
+		$this->_set_model_object( $post_id, true );
+
 		//if our cpt object is not instantiated and its NOT the same post_id as what is triggering this callback, then exit.
-		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base
-		     || (
-			     $update
-			     && $this->_cpt_model_obj->ID() !== $post_id
+		if ( $update
+			&& (
+			     ! $this->_cpt_model_obj instanceof EE_CPT_Base
+			     || $this->_cpt_model_obj->ID() !== $post_id
 		     )
 		) {
 			return;
