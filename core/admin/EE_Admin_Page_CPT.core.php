@@ -658,7 +658,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			return;
 		}
 		
-		//if ignore_route_check is false, then get the model name via EE_Register_CPTs
+		//if ignore_route_check is true, then get the model name via EE_Register_CPTs
 		if ( $ignore_route_check ) {
 			$model_names = EE_Register_CPTs::get_cpt_model_names();
 			$post_type = get_post_type( $id );
