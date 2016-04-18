@@ -1224,7 +1224,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _ee_autosave_create_new() {
-		$this->_ee_autosave_edit();
+		// $this->_ee_autosave_edit();
 	}
 
 
@@ -1232,65 +1232,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _ee_autosave_edit() {
-
 		return; //TEMPORARILY EXITING CAUSE THIS IS A TODO
-
-		// $postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
-		//
-		//
-		// //if no postid then get out cause we need it for stuff in here
-		// if ( empty( $postid ) ) return;
-		//
-		//
-		// //handle datetime saves
-		// $items = array();
-		//
-		// $get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
-		// $event = $this->_event_model()->get_one( array($get_one_where) );
-		//
-		// //now let's get the attached datetimes from the most recent autosave
-		// $dtts = $event->get_many_related('Datetime');
-		//
-		// $dtt_ids = array();
-		// foreach( $dtts as $dtt ) {
-		// 	$dtt_ids[] = $dtt->ID();
-		// 	$order = $dtt->order();
-		// 	$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
-		// }
-		// $this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
-		//
-		// //handle DECAF venues
-		// //we need to make sure that the venue_id gets updated in the form so that future autosaves will properly connect that venue to the event.
-		// if ( $do_venue_autosaves = apply_filters( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
-		// 	$venue = $event->get_first_related('Venue');
-		// 	$this->_template_args['data']['items']['venue-id'] = $venue->ID();
-		// }
-		//
-		//
-		// //handle ticket updates.
-		// $tickets = $event->get_many_related('Ticket');
-		//
-		// $ticket_ids = array();
-		// $price_ids = array();
-		// foreach ( $tickets as $ticket ) {
-		// 	$ticket_ids[] = $ticket->ID();
-		// 	$ticket_order = $ticket->get('TKT_order');
-		// 	$this->_template_args['data']['items']['edit-ticket-id-' . $ticket_order] = $ticket->ID();
-		// 	$this->_template_args['data']['items']['edit-ticket-event-id-' . $order] = $event->ID();
-		//
-		// 	//now we have to make sure the prices are updated appropriately
-		// 	$prices = $ticket->get_many_related('Prices');
-		//
-		// 	foreach ( $prices as $price ) {
-		// 		$price_ids[] = $price->ID();
-		// 		$price_order = $price->get('PRC_order');
-		// 		$this->_template_args['data']['items']['quick-edit-ticket-price-id-ticketrow-' . $ticket_order . '-' . $price_order] = $price->ID();
-		// 		$this->_template_args['data']['items']['edit-ticket-price-id-ticketrow-' . $ticket_row . '-' . $price_row] = $price->ID();
-		// 		$this->_template_args['data']['items']['edit-ticket-price-is-default-ticketrow-' . $ticket_row . '-' . $price_row] = $price->get('PRC_is_default');
-		// 	}
-		// 	$this->_template_args['data']['items']['price-IDs-ticketrow-' . $ticket_row] = implode(',', $price_ids);
-		// }
-		// $this->_template_args['data']['items']['ticket-IDs'] = implode(',', $ticket_ids);
 	}
 
 
