@@ -642,20 +642,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @param bool $ignore_route_check
 	 */
 	protected function _set_model_object( $id = NULL, $ignore_route_check = false ) {
-		EE_Admin::debug_log(
-			__METHOD__,
-			array(
-				'id'                                              => $id,
-				'ignore_route_check'                              => $ignore_route_check,
-				'empty( this->_cpt_model_names )'                 => empty( $this->_cpt_model_names ),
-				'isset( this->_cpt_routes[ this->_req_action ] )' => isset( $this->_cpt_routes[ $this->_req_action ] ),
-				'this->_cpt_model_obj instanceof EE_CPT_Base'     => $this->_cpt_model_obj instanceof EE_CPT_Base,
-				'this->_cpt_model_obj->ID()'                      => $this->_cpt_model_obj instanceof EE_CPT_Base
-				? $this->_cpt_model_obj->ID()
-				: 0,
-			),
-			false // don't update yet
-		);
 		$model = null;
 		if (
 			empty( $this->_cpt_model_names )
@@ -667,11 +653,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			     && $this->_cpt_model_obj->ID() === $id
 			)
 		) {
-			EE_Admin::debug_log( __METHOD__, array( '**RETURN**' => true ) );
 			//get out cuz we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
 			return;
 		}
-		EE_Admin::debug_log( __METHOD__, array( '**RETURN**' => false ) );
 		//if ignore_route_check is true, then get the model name via EE_Register_CPTs
 		if ( $ignore_route_check ) {
 			$model_names = EE_Register_CPTs::get_cpt_model_names();
@@ -1240,15 +1224,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		$query_args = array_merge( array( 'message' => $message ), $query_args );
 		$this->_process_notices( $query_args, TRUE );
-		$redirect_url = self::add_query_args_and_nonce( $query_args, $admin_url );
-		EE_Admin::debug_log(
-			__METHOD__,
-			array(
-				'query_args'   => $query_args,
-				'redirect_url' => $redirect_url
-			)
-		);
-		return $redirect_url;
+		return self::add_query_args_and_nonce( $query_args, $admin_url );
 	}
 
 
@@ -1405,15 +1381,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		global $post, $title, $is_IE, $post_type, $post_type_object;
 		$post_id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 		$post = !empty( $post_id ) ? get_post( $post_id, OBJECT, 'edit' ) : NULL;
-		EE_Admin::debug_log(
-			__METHOD__,
-			array(
-				'_GET'      => $_GET,
-				'post_id'   => $post_id,
-				'post_name' => $post instanceof WP_Post ? $post->post_name : '',
-			),
-			false // don't update yet
-		);
 
 		if ( empty ( $post ) ) {
 			wp_die( __('You attempted to edit an item that doesn&#8217;t exist. Perhaps it was deleted?') );
@@ -1421,7 +1388,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		if ( ! empty( $_GET['get-post-lock'] ) ) {
 			wp_set_post_lock( $post_id );
-			EE_Admin::update_debug_log();
 			wp_redirect( get_edit_post_link( $post_id, 'url' ) );
 			exit();
 		}
@@ -1456,8 +1422,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//modify the default editor title field with default title.
 		add_filter('enter_title_here', array( $this, 'add_custom_editor_default_title' ), 10 );
-
-		EE_Admin::update_debug_log();
 
 		include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
 
