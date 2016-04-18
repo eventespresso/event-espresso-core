@@ -100,7 +100,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
-		
+
 		if( isset( $options_array[ 'name' ] ) ) {
 			$this->_construct_finalize( null, $options_array[ 'name' ] );
 		}
@@ -557,7 +557,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Gets the JS to put inside the jquery validation rules for subsection of this form section. See parent function for more...
 	 * @return array
 	 */
-	function get_jquery_validation_rules(){
+	public function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
 		foreach($this->get_validatable_subsections() as $subsection){
 			$jquery_validation_rules = array_merge( $jquery_validation_rules,  $subsection->get_jquery_validation_rules() );
@@ -978,14 +978,30 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		return $validation_errors;
 	}
-	
+
+
+
+	/**
+	 * This isn't just the name of an input, it's a path pointing to an input. The
+	 * path is similar to a folder path: slash (/) means to descend into a subsection,
+	 * dot-dot-slash (../) means to ascend into the parent section.
+	 * After a series of slashes and dot-dot-slashes, there should be the name of an input,
+	 * which will be returned.
+	 * Eg, if you want the related input to be conditional on a sibling input name 'foobar'
+	 * just use 'foobar'. If you want it to be conditional on an aunt/uncle input name
+	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input,
+	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'.
+	 * Etc
+	 * @param string|false $form_section_path we accept false also because substr( '../', '../' ) = false
+	 * @return EE_Form_Section_Base
+	 */
 	public function find_section_from_path( $form_section_path ) {
 		//check if we can find the input from purely going straight up the tree
 		$input = parent::find_section_from_path( $form_section_path );
 		if( $input instanceof EE_Form_Section_Base ) {
 			return $input;
-		} 
-		
+		}
+
 		$next_slash_pos = strpos( $form_section_path, '/' );
 		if( $next_slash_pos !== false ) {
 			$child_section_name = substr( $form_section_path, 0, $next_slash_pos );
