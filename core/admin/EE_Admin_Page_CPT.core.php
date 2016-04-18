@@ -72,7 +72,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * array(
 	 * 'route_defined_by_action_param' => 'Model_Name')
 	 *
-	 * @var boolean
+	 * @var array $_cpt_model_names
 	 */
 	protected $_cpt_model_names = array();
 
@@ -634,14 +634,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 
-
-
 	/**
 	 * Sets the _cpt_model_object property using what has been set for the _cpt_model_name and a given id.
 	 *
 	 * @access protected
-	 * @param int $id The id to retrieve the model object for. If empty we set a default object.
-	 * @return void
+	 * @param int  $id The id to retrieve the model object for. If empty we set a default object.
+	 * @param bool $ignore_route_check
 	 */
 	protected function _set_model_object( $id = NULL, $ignore_route_check = false ) {
 		$model = null;
@@ -652,12 +650,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		     )
 		     || (
 			     $this->_cpt_model_obj instanceof EE_CPT_Base
-			     && $this->_cpt_model_obj->ID() == $id )
+			     && $this->_cpt_model_obj->ID() === $id )
 		) {
 			//get out cuz we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
 			return;
 		}
-		
+
 		//if ignore_route_check is true, then get the model name via EE_Register_CPTs
 		if ( $ignore_route_check ) {
 			$model_names = EE_Register_CPTs::get_cpt_model_names();
