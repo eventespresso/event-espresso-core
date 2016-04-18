@@ -110,6 +110,7 @@ class EE_Admin_Page_Loader {
 	 * @return \EE_Admin_Page_Loader
 	 */
 	public function __construct() {
+		EE_Admin::debug_log( __METHOD__ );
 		//load menu_map classes
 		EE_Registry::instance()->load_file(EE_ADMIN, 'EE_Admin_Page_Menu_Map', 'core');
 		//define the default "groups" for the admin_pages
@@ -406,6 +407,7 @@ class EE_Admin_Page_Loader {
 			$error_msg[] = $error_msg[0] . "\r\n" . sprintf( __( 'There is no Init class in place for the %s admin page.', 'event_espresso') . '<br />' . __( 'Make sure you have <strong>%s</strong> defined. If this is a non-EE-core admin page then you also must have an autoloader in place for your class', 'event_espresso'), $page, $class_name );
 			throw new EE_Error( implode( '||', $error_msg ));
 		}
+		EE_Admin::debug_log( __METHOD__ . ': ' . $class_name );
 		$a = new ReflectionClass($class_name);
 		return  $a->newInstance();
 	}
