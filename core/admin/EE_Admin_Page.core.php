@@ -155,7 +155,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@access public
 	 */
 	public function __construct( $routing = TRUE ) {
-
+		EE_Admin::debug_log(
+			__METHOD__,
+			array(
+				'class_name' => get_class( $this ),
+				'spl_object_hash' => spl_object_hash( $this )
+			)
+		);
 		if ( strpos( $this->_get_dir(), 'caffeinated' ) !== false )
 			$this->_is_caf = TRUE;
 
@@ -187,7 +193,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//other_page_hooks have to be early too.
 		$this->_do_other_page_hooks();
 
-		//This just allows us to have extending clases do something specific before the parent constructor runs _page_setup.
+		//This just allows us to have extending classes do something specific before the parent constructor runs _page_setup.
 		if ( method_exists( $this, '_before_page_setup' ) )
 			$this->_before_page_setup();
 
