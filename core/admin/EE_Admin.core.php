@@ -30,20 +30,6 @@ final class EE_Admin {
 	private static $_instance;
 
 
-	/**
-	 * @access protected
-	 * @var boolean $debug_on
-	 */
-	protected static $debug_on = false;
-
-
-	/**
-	 * @access protected
-	 * @var array $debug_data
-	 */
-	protected static $debug_data;
-
-
 
 	/**
 	 *@ singleton method used to instantiate class object
@@ -56,7 +42,6 @@ final class EE_Admin {
 		// check if class object is instantiated
 		if (  ! self::$_instance instanceof EE_Admin ) {
 			self::$_instance = new self();
-			EE_Admin::$debug_on = false; // true false
 		}
 		return self::$_instance;
 	}
@@ -69,7 +54,6 @@ final class EE_Admin {
 	 * @throws \EE_Error
 	 */
 	protected function __construct() {
-		EE_Admin::debug_log( __METHOD__ );
 		// define global EE_Admin constants
 		$this->_define_all_constants();
 		// set autoloaders for our admin page classes based on included path information
@@ -189,7 +173,6 @@ final class EE_Admin {
 	* @return void
 	*/
 	public function init() {
-		EE_Admin::debug_log( __METHOD__ );
 		//only enable most of the EE_Admin IF we're not in full maintenance mode
 		if ( EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance ){
 			//ok so we want to enable the entire admin
@@ -784,40 +767,6 @@ final class EE_Admin {
 
 	}
 
-
-
-
-
-	/**
-	 * @param string $method
-	 * @param array  $debug_data
-	 * @param bool   $update
-	 */
-	public static function debug_log( $method = '', $debug_data = array(), $update = true ) {
-		if ( ! WP_DEBUG || ! EE_Admin::$debug_on ) {
-			EE_Admin::update_debug_log();
-			return;
-		}
-		if ( empty( EE_Admin::$debug_data ) ) {
-			EE_Admin::$debug_data = get_option( 'debug_edit_event_warning', array() );
-		}
-		EE_Admin::$debug_data[ microtime() . ' : ' . $method . '()' ] = $debug_data;
-		if ( $update ) {
-			EE_Admin::update_debug_log();
-		}
-	}
-
-
-
-	/**
-	 */
-	public static function update_debug_log() {
-		if ( ! WP_DEBUG || ! EE_Admin::$debug_on ) {
-			delete_option( 'debug_edit_event_warning' );
-			return;
-		}
-		update_option( 'debug_edit_event_warning', EE_Admin::$debug_data );
-	}
 
 }
 // End of file EE_Admin.core.php
