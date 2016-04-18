@@ -328,7 +328,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $page
 	 */
 	public function delayedAdminPageMocks( $page = '' ) {
-		require_once EE_ADMIN . 'EE_Admin.core.php';
+
 		switch ( $page ) {
 			case 'decaf_events' :
 				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
