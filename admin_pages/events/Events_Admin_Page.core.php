@@ -55,7 +55,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _init_page_props() {
-		EE_Admin::debug_log( __METHOD__ );
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
@@ -592,7 +591,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function verify_event_edit($event = NULL) {
-		EE_Admin::debug_log( __METHOD__ );
 		// no event?
 		if ( empty( $event )) {
 			// set event
@@ -655,13 +653,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] === 'editpost' ) {
 			return;
 		}
-		EE_Admin::debug_log(
-			__METHOD__,
-			array(
-				'_req_data[action]' => $this->_req_data['action'],
-				'_req_data[post]' => $this->_req_data['post'],
-			)
-		);
 		EE_Error::add_attention(
 			__('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso')
 		);
