@@ -17,7 +17,15 @@ class EE_CVV_Input extends EE_Text_Input{
 	 */
 	public function __construct($input_settings = array()) {
 		$this->set_sensitive_data_removal_strategy(new EE_CCV_Sensitive_Data_Removal());
-		$this->_add_validation_strategy( new EE_Int_Validation_Strategy(isset( $input_settings[ 'validation_error_message' ] ) ? $input_settings[ 'validation_error_message' ] : NULL ) );
+		$this->_add_validation_strategy( 
+			new EE_Text_Validation_Strategy(
+				isset( $input_settings[ 'validation_error_message' ] ) ? 
+				$input_settings[ 'validation_error_message' ] : 
+				__( 'Your card\'s CVV is a 3 or 4 digit number on the back of your card',
+					'event_espresso' ),
+				'~^\d{3,4}$~'
+			)
+		);
 		parent::__construct($input_settings);
 		if( 
 				! isset( $input_settings[ 'include_whats_this_link' ] ) ||
