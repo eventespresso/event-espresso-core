@@ -19,11 +19,11 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 	 *              match array keys of $answer_options are hidden.
 	 *              Note: internally each array key is considered a relative form input path
 	 *              (see EE_Form_Section_Base::find_section_from_path) but relative
-	 *              to THIS INPUT's PARENT section, not this input itself. ie, 
+	 *              to THIS INPUT's PARENT section, not this input itself. ie,
 	 *              a '../' is automatically added onto each each array key, to produce
 	 *              the relative form input path.
 	 *				Note however: array keys which are an EMPTY STRING are left as-is
-	 *	
+	 *
 	 * @param array $input_settings
 	 */
 	public function __construct( $answer_options, $input_settings = array() ){
@@ -36,14 +36,16 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 	 */
 	public function sibling_sections_controlled() {
 		$sibling_sections = array();
-		foreach( array_keys( $this->options() ) as $sibling_section_name ) {
+		foreach( $this->options() as $sibling_section_name => $sibling_section ) {
 			//if it's an empty string just leave it alone
 			if( empty( $sibling_section_name ) ) {
 				continue;
 			}
 			$sibling_section = $this->find_section_from_path( '../' . $sibling_section_name );
-			if( $sibling_section instanceof EE_Form_Section_Base
-				&& ! empty( $sibling_section_name ) ) {
+			if(
+				$sibling_section instanceof EE_Form_Section_Base
+				&& ! empty( $sibling_section_name ) 
+			) {
 				$sibling_sections[ $sibling_section_name ] = $sibling_section;
 			}
 		}
