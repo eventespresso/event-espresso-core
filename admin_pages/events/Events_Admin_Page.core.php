@@ -30,31 +30,32 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
-	 * _event
 	 * This will hold the event object for event_details screen.
 	 *
 	 * @access protected
-	 * @var object
+	 * @var EE_Event $_event
 	 */
 	protected $_event;
 
 
 	/**
 	 * This will hold the category object for category_details screen.
-	 * @var object
+	 *
+	 * @var stdClass $_category
 	 */
 	protected $_category;
 
 
 	/**
 	 * This will hold the event model instance
-	 * @var object
+	 *
+	 * @var EEM_Event $_event_model
 	 */
 	protected $_event_model;
 
 
 	protected function _init_page_props() {
-
+		EE_Admin::debug_log( __METHOD__ );
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
@@ -62,11 +63,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_cpt_model_names = array(
 			'create_new' => 'EEM_Event',
 			'edit' => 'EEM_Event'
-			);
+		);
 		$this->_cpt_edit_routes = array(
 			'espresso_events' => 'edit'
-			);
-
+		);
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
@@ -592,6 +592,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function verify_event_edit($event = NULL) {
+		EE_Admin::debug_log( __METHOD__ );
 		// no event?
 		if ( empty( $event )) {
 			// set event
@@ -601,14 +602,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( empty ( $event )) {
 			return;
 		}
+		$orig_status = $event->status();
 		// first check if event is active.
-		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed ) {
+		if (
+			$orig_status === EEM_Event::cancelled
+		    || $orig_status === EEM_Event::postponed
+		    || $event->is_expired()
+		    || $event->is_inactive()
+		) {
 			return;
 		}
-		$orig_status = $event->status();
 		//made it here so it IS active... next check that any of the tickets are sold.
 		if ( $event->is_sold_out( true ) ) {
-			if ( $event->status() !== $orig_status && $orig_status !== EEM_Event::sold_out  ) {
+			if ( $orig_status !== EEM_Event::sold_out && $event->status() !== $orig_status ) {
 				EE_Error::add_attention(
 					sprintf(
 						__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
@@ -631,7 +637,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			return;
 		}
 		//made it here so show warning
-		EE_Error::add_attention( $this->_edit_event_warning() );
+		$this->_edit_event_warning();
 	}
 
 
@@ -645,7 +651,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string
 	 */
 	protected function _edit_event_warning() {
-		return __('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso');
+		// we don't want to add warnings during these requests
+		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] === 'editpost' ) {
+			return;
+		}
+		EE_Admin::debug_log(
+			__METHOD__,
+			array(
+				'_req_data[action]' => $this->_req_data['action'],
+				'_req_data[post]' => $this->_req_data['post'],
+			)
+		);
+		EE_Error::add_attention(
+			__('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso')
+		);
 	}
 
 
@@ -1216,62 +1235,62 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		return; //TEMPORARILY EXITING CAUSE THIS IS A TODO
 
-		$postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
-
-
-		//if no postid then get out cause we need it for stuff in here
-		if ( empty( $postid ) ) return;
-
-
-		//handle datetime saves
-		$items = array();
-
-		$get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
-		$event = $this->_event_model()->get_one( array($get_one_where) );
-
-		//now let's get the attached datetimes from the most recent autosave
-		$dtts = $event->get_many_related('Datetime');
-
-		$dtt_ids = array();
-		foreach( $dtts as $dtt ) {
-			$dtt_ids[] = $dtt->ID();
-			$order = $dtt->order();
-			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
-		}
-		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
-
-		//handle DECAF venues
-		//we need to make sure that the venue_id gets updated in the form so that future autosaves will properly conntect that venue to the event.
-		if ( $do_venue_autosaves = apply_filters( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
-			$venue = $event->get_first_related('Venue');
-			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
-		}
-
-
-		//handle ticket updates.
-		$tickets = $event->get_many_related('Ticket');
-
-		$ticket_ids = array();
-		$price_ids = array();
-		foreach ( $tickets as $ticket ) {
-			$ticket_ids[] = $price->ID();
-			$ticket_order = $price->get('TKT_order');
-			$this->_template_args['data']['items']['edit-ticket-id-' . $ticket_order] = $ticket->ID();
-			$this->_template_args['data']['items']['edit-ticket-event-id-' . $order] = $event->ID();
-
-			//now we have to make sure the prices are updated appropriately
-			$prices = $ticket->get_many_related('Prices');
-
-			foreach ( $prices as $price ) {
-				$price_ids[] = $price->ID();
-				$price_order = $price->get('PRC_order');
-				$this->_template_args['data']['items']['quick-edit-ticket-price-id-ticketrow-' . $ticket_order . '-' . $price_order] = $price->ID();
-				$this->_template_args['data']['items']['edit-ticket-price-id-ticketrow-' . $ticket_row . '-' . $price_row] = $price->ID();
-				$this->_template_args['data']['items']['edit-ticket-price-is-default-ticketrow-' . $ticket_row . '-' . $price_row] = $price->get('PRC_is_default');
-			}
-			$this->_template_args['data']['items']['price-IDs-ticketrow-' . $ticket_row] = implode(',', $price_ids);
-		}
-		$this->_template_args['data']['items']['ticket-IDs'] = implode(',', $ticket_ids);
+		// $postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
+		//
+		//
+		// //if no postid then get out cause we need it for stuff in here
+		// if ( empty( $postid ) ) return;
+		//
+		//
+		// //handle datetime saves
+		// $items = array();
+		//
+		// $get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
+		// $event = $this->_event_model()->get_one( array($get_one_where) );
+		//
+		// //now let's get the attached datetimes from the most recent autosave
+		// $dtts = $event->get_many_related('Datetime');
+		//
+		// $dtt_ids = array();
+		// foreach( $dtts as $dtt ) {
+		// 	$dtt_ids[] = $dtt->ID();
+		// 	$order = $dtt->order();
+		// 	$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
+		// }
+		// $this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
+		//
+		// //handle DECAF venues
+		// //we need to make sure that the venue_id gets updated in the form so that future autosaves will properly connect that venue to the event.
+		// if ( $do_venue_autosaves = apply_filters( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
+		// 	$venue = $event->get_first_related('Venue');
+		// 	$this->_template_args['data']['items']['venue-id'] = $venue->ID();
+		// }
+		//
+		//
+		// //handle ticket updates.
+		// $tickets = $event->get_many_related('Ticket');
+		//
+		// $ticket_ids = array();
+		// $price_ids = array();
+		// foreach ( $tickets as $ticket ) {
+		// 	$ticket_ids[] = $ticket->ID();
+		// 	$ticket_order = $ticket->get('TKT_order');
+		// 	$this->_template_args['data']['items']['edit-ticket-id-' . $ticket_order] = $ticket->ID();
+		// 	$this->_template_args['data']['items']['edit-ticket-event-id-' . $order] = $event->ID();
+		//
+		// 	//now we have to make sure the prices are updated appropriately
+		// 	$prices = $ticket->get_many_related('Prices');
+		//
+		// 	foreach ( $prices as $price ) {
+		// 		$price_ids[] = $price->ID();
+		// 		$price_order = $price->get('PRC_order');
+		// 		$this->_template_args['data']['items']['quick-edit-ticket-price-id-ticketrow-' . $ticket_order . '-' . $price_order] = $price->ID();
+		// 		$this->_template_args['data']['items']['edit-ticket-price-id-ticketrow-' . $ticket_row . '-' . $price_row] = $price->ID();
+		// 		$this->_template_args['data']['items']['edit-ticket-price-is-default-ticketrow-' . $ticket_row . '-' . $price_row] = $price->get('PRC_is_default');
+		// 	}
+		// 	$this->_template_args['data']['items']['price-IDs-ticketrow-' . $ticket_row] = implode(',', $price_ids);
+		// }
+		// $this->_template_args['data']['items']['ticket-IDs'] = implode(',', $ticket_ids);
 	}
 
 
@@ -1429,7 +1448,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		/** @type EE_Datetime $first_datetime */
 		$first_datetime = reset( $times );
 		//do we get related tickets?
-		if ( $first_datetime instanceof EE_Datetime 
+		if ( $first_datetime instanceof EE_Datetime
 			&& $first_datetime->ID() !== 0 ) {
 			$existing_datetime_ids[] = $first_datetime->get('DTT_ID');
 			$template_args['time'] = $first_datetime;
