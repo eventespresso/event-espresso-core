@@ -658,13 +658,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		);
 		$model = null;
 		if (
-			empty( $this->_cpt_model_names ) // false
+			empty( $this->_cpt_model_names )
 		    || (
-			     ! $ignore_route_check  // true : ! false
-			     && ! isset( $this->_cpt_routes[ $this->_req_action ] ) // false : ! true
+			     ! $ignore_route_check
+			     && ! isset( $this->_cpt_routes[ $this->_req_action ] )
 		    ) || (
-			     $this->_cpt_model_obj instanceof EE_CPT_Base // false
-			     && $this->_cpt_model_obj->ID() === $id // false
+			     $this->_cpt_model_obj instanceof EE_CPT_Base
+			     && $this->_cpt_model_obj->ID() === $id
 			)
 		) {
 			EE_Admin::debug_log( __METHOD__, array( '**RETURN**' => true ) );
@@ -1426,13 +1426,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			exit();
 		}
 
-
+		// template vars
 		$editing = TRUE;
 		$post_ID = $post_id;
-		$post = $post;
 		$post_type = $this->_cpt_routes[$this->_req_action];
 		$post_type_object = $this->_cpt_object;
-		$is_IE = $is_IE;
 
 		if ( ! wp_check_post_lock( $post->ID ) ) {
 			$active_post_lock = wp_set_post_lock( $post->ID );
