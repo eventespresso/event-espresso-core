@@ -85,7 +85,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$contexts = $this->get_admin_page()->get_contexts_for_message_types_for_list_table();
 		//setup messengers for selects
-		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
+		// $m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types
 		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
 		//and the same for contexts
@@ -119,16 +119,16 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'text' => __( 'All Contexts', 'event_espresso ' )
 		);
 
-		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
+		// $msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
 		$mt_filters = ! empty( $mt_values ) ? array_merge( $mt_default, $mt_values ) : array();
 		$c_filters = ! empty( $c_values ) ? array_merge( $c_default, $c_values ): array();
 
-		if ( empty( $m_values ) ) {
-			$msgr_filters[0] = array(
-				'id'   => 'none_selected',
-				'text' => __( 'No Messengers active', 'event_espresso' )
-			);
-		}
+		// if ( empty( $m_values ) ) {
+		// 	$msgr_filters[0] = array(
+		// 		'id'   => 'none_selected',
+		// 		'text' => __( 'No Messengers active', 'event_espresso' )
+		// 	);
+		// }
 
 		if ( empty( $mt_values ) ) {
 			$mt_filters[0] = array(
@@ -144,7 +144,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_title( $this->_req_data['ee_messenger_filter_by'] ) : '' );
+		// $filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_title( $this->_req_data['ee_messenger_filter_by'] ) : '' );
 		$filters[] = EEH_Form_Fields::select_input( 'ee_message_type_filter_by', $mt_filters, isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title( $this->_req_data['ee_message_type_filter_by'] ) : '' );
 		$filters[] = EEH_Form_Fields::select_input( 'ee_context_filter_by', $c_filters, isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field( $this->_req_data['ee_context_filter_by'] ) : '' );
 		return $filters;
