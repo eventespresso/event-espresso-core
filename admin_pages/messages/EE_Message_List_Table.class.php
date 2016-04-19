@@ -71,12 +71,19 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * _get_table_filters
+	 * We use this to assemble and return any filters that are associated with this table that help further refine what get's shown in the table.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return string
+	 * @throws \EE_Error
+	 */
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		/** @type EE_Message_Resource_Manager $message_resource_manager */
-		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		$contexts = $message_resource_manager->get_all_contexts();
+		$contexts = $this->get_admin_page()->get_contexts_for_message_types_for_list_table();
 		//setup messengers for selects
 		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types
@@ -176,6 +183,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	/**
 	 * @param EE_Message $message
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function column_msg_id( EE_Message $message ) {
 		return $message->ID();
@@ -186,6 +194,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	/**
 	 * @param EE_Message $message
 	 * @return string    The recipient of the message
+	 * @throws \EE_Error
 	 */
 	public function column_to( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'URL' );
@@ -290,13 +299,16 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	}
 
 
+
 	/**
 	 * Retrieve the EE_Message objects for the list table.
-	 * @param int        $perpage  The number of items per page
-	 * @param string     $view      The view items are being retrieved for
-	 * @param bool       $count     Whether to just return a count or not.
-	 * @param bool       $all       Disregard any paging info (no limit on data returned).
+	 *
+	 * @param int    $perpage The number of items per page
+	 * @param string $view    The view items are being retrieved for
+	 * @param bool   $count   Whether to just return a count or not.
+	 * @param bool   $all     Disregard any paging info (no limit on data returned).
 	 * @return int | EE_Message[]
+	 * @throws \EE_Error
 	 */
 	protected function _get_messages( $perpage = 10, $view = 'all', $count = false, $all = false ) {
 
@@ -333,7 +345,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		if ( ! empty( $this->_req_data['status'] )  && ! $all && $this->_req_data['status'] !== 'all' ) {
+		if ( ! $all && ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] !== 'all' ) {
 			$query_params[0]['AND*view_conditional'] = array(
 				'STS_ID' => strtoupper( $this->_req_data['status'] ),
 			);
