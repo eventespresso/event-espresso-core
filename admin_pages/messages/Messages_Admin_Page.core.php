@@ -341,7 +341,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 				),
 				'list_table' => 'EE_Message_List_Table',
-				'qtips' => array( 'EE_Message_List_Table_Tips' ),
+				// 'qtips' => array( 'EE_Message_List_Table_Tips' ),
 				'require_nonce' => false
 			),
 			'global_mtps' => array(
