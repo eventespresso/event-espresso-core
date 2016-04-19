@@ -131,24 +131,49 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-
 	/**
-	 * get_messengers_for_list_table
+	 * get_message_types_for_list_table
 	 *
 	 * @return array
-	*/
+	 * @throws \EE_Error
+	 */
 	public function get_message_types_for_list_table() {
 		$mt_values = array();
-		$message_types = $this->_message_resource_manager->installed_message_types();
+		$active_messages = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_message_type' ) );
 		$i = 1;
-		foreach ( $message_types as $message_type_name => $message_type ) {
-			if ( $message_type instanceof EE_message_type ) {
-				$mt_values[ $i ][ 'id' ] = $message_type_name;
-				$mt_values[ $i ][ 'text' ] = ucwords( $message_type->label[ 'singular' ] );
+		foreach ( $active_messages as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$mt_values[ $i ]['id'] = $active_message->message_type();
+				$mt_values[ $i ]['text'] = ucwords( $active_message->message_type_label() );
 				$i++;
 			}
 		}
 		return $mt_values;
+	}
+
+
+
+	/**
+	 * get_contexts_for_message_types_for_list_table
+	 *
+	 * @return array
+	 * @throws \EE_Error
+	 */
+	public function get_contexts_for_message_types_for_list_table() {
+		$contexts = array();
+		$active_message_contexts = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_context' ) );
+		foreach ( $active_message_contexts as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$message_type = $active_message->message_type_object();
+				if ( $message_type instanceof EE_message_type ) {
+					$message_type_contexts = $message_type->get_contexts();
+					foreach ( $message_type_contexts as $context => $context_details ) {
+						$contexts[ $context ] = $context_details['label'];
+					}
+				}
+			}
+		}
+		return $contexts;
 	}
 
 
