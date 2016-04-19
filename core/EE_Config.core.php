@@ -809,7 +809,7 @@ final class EE_Config {
 	public static function log( $config_option_name = '' ) {
 		if ( ! empty( $config_option_name ) ) {
 			$config_log = get_option( EE_Config::LOG_NAME, array() );
-			$config_log[ microtime( true ) ] = $config_option_name;
+			$config_log[ (string) microtime(true) ] = $config_option_name;
 			update_option( EE_Config::LOG_NAME, $config_log );
 		}
 	}
