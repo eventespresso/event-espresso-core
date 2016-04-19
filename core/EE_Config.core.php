@@ -23,7 +23,11 @@
  */
 final class EE_Config {
 
-	const LOG_NAME = 'espresso_config_log';
+	const OPTION_NAME = 'ee_config';
+
+	const LOG_NAME = 'ee_config_log';
+
+	const ADDON_OPTION_NAMES = 'ee_config_option_names';
 
 
 	/**
@@ -98,10 +102,10 @@ final class EE_Config {
 	public $gateway = null;
 
 	/**
-	 *	@var 	array	$_config_option_names
+	 *	@var 	array $_addon_option_names
 	 * 	@access 	private
 	 */
-	private $_config_option_names = array();
+	private $_addon_option_names = array();
 
 	/**
 	 *	@var 	array	$_module_route_map
@@ -149,12 +153,12 @@ final class EE_Config {
 	 */
 	public static function reset( $hard_reset = FALSE, $reinstantiate = TRUE ){
 		if ( $hard_reset ) {
-			self::$_instance->_config_option_names = array();
+			self::$_instance->_addon_option_names = array();
 			self::$_instance->_initialize_config();
 			self::$_instance->update_espresso_config();
 		}
 		if( self::$_instance instanceof EE_Config ){
-			self::$_instance->shutdown();
+			self::$_instance->update_addon_option_names();
 		}
 		self::$_instance = NULL;
 		//we don't need to reset the static properties imo because those should
@@ -177,7 +181,6 @@ final class EE_Config {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
-		$this->_config_option_names = get_option( 'ee_config_option_names', array() );
 		// setup empty config classes
 		$this->_initialize_config();
 		// load existing EE site settings
@@ -191,7 +194,7 @@ final class EE_Config {
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// shutdown
-		add_action( 'shutdown', array( $this, 'shutdown' ), 10 );
+		add_action( 'shutdown', array( $this, 'update_addon_option_names' ), 10 );
 		// construct__end hook
 		do_action( 'AHEE__EE_Config__construct__end',$this );
 		// hardcoded hack
@@ -220,6 +223,7 @@ final class EE_Config {
 	 */
 	private function _initialize_config() {
 		//set defaults
+		$this->_addon_option_names = get_option( EE_Config::ADDON_OPTION_NAMES, array() );
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -321,7 +325,7 @@ final class EE_Config {
 	 */
 	public function get_espresso_config() {
 		// grab espresso configuration
-		return apply_filters( 'FHEE__EE_Config__get_espresso_config__CFG', get_option( 'ee_config', array() ));
+		return apply_filters( 'FHEE__EE_Config__get_espresso_config__CFG', get_option( EE_Config::OPTION_NAME, array() ));
 	}
 
 
@@ -336,7 +340,7 @@ final class EE_Config {
 	 */
 	public function double_check_config_comparison( $option = '', $old_value, $value ) {
 		// make sure we're checking the ee config
-		if ( $option == 'ee_config' ) {
+		if ( $option === EE_Config::OPTION_NAME ) {
 			// run a loose comparison of the old value against the new value for type and properties,
 			// but NOT exact instance like WP update_option does
 			if ( $value != $old_value ) {
@@ -368,7 +372,7 @@ final class EE_Config {
 	 * @return   bool
 	 */
 	protected function  _reset_espresso_addon_config() {
-		$this->_config_option_names = array();
+		$this->_addon_option_names = array();
 		foreach( $this->addons as $addon_name => $addon_config_obj ) {
 			$addon_config_obj = maybe_unserialize( $addon_config_obj );
 			$config_class = get_class( $addon_config_obj );
@@ -399,7 +403,8 @@ final class EE_Config {
 		// but BEFORE the actual update occurs
 		add_action( 'update_option', array( $this, 'double_check_config_comparison' ), 1, 3 );
 		// now update "ee_config"
-		$saved = update_option( 'ee_config', $this );
+		$saved = update_option( EE_Config::OPTION_NAME, $this );
+		EE_Config::log( EE_Config::OPTION_NAME );
 		// if not saved... check if the hook we just added still exists;
 		// if it does, it means one of two things:
 		// 		that update_option bailed at the ( $value === $old_value ) conditional,
@@ -657,14 +662,16 @@ final class EE_Config {
 		}
 		$config_option_name = $this->_generate_config_option_name( $section, $name );
 		// if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
-		if ( ! isset( $this->_config_option_names[ $config_option_name ] )) {
-			$this->_config_option_names[ $config_option_name ] = $config_class;
+		if ( ! isset( $this->_addon_option_names[ $config_option_name ] )) {
+			$this->_addon_option_names[ $config_option_name ] = $config_class;
+			$this->update_addon_option_names();
 		}
 		// verify the incoming config object but suppress errors
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ), false )) {
 			$config_obj = new $config_class();
 		}
 		if ( get_option( $config_option_name ) ) {
+			EE_Config::log( $config_option_name );
 			update_option( $config_option_name, $config_obj );
 			$this->{$section}->{$name} = $config_obj;
 			return $this->{$section}->{$name};
@@ -705,8 +712,8 @@ final class EE_Config {
 			return false;
 		}
 		$config_option_name = $this->_generate_config_option_name( $section, $name );
-		// check if config object has been added to db by seeing if config option name is in $this->_config_option_names array
-		if ( ! isset( $this->_config_option_names[ $config_option_name ] )) {
+		// check if config object has been added to db by seeing if config option name is in $this->_addon_option_names array
+		if ( ! isset( $this->_addon_option_names[ $config_option_name ] )) {
 			// save new config to db
 			return $this->set_config( $section, $name, $config_class, $config_obj );
 		} else {
@@ -718,6 +725,7 @@ final class EE_Config {
 				$this->{$section}->{$name} = $config_obj;
 				return true;
 			} else if ( update_option( $config_option_name, $config_obj )) {
+				EE_Config::log( $config_option_name );
 				// update wp-option for this config class
 				$this->{$section}->{$name} = $config_obj;
 				return true;
@@ -1363,8 +1371,8 @@ final class EE_Config {
 
 
 
-	public function shutdown() {
-		update_option( 'ee_config_option_names', $this->_config_option_names );
+	public function update_addon_option_names() {
+		update_option( EE_Config::ADDON_OPTION_NAMES, $this->_addon_option_names );
 	}
 
 
