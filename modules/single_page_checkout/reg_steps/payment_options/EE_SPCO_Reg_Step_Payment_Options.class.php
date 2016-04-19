@@ -21,6 +21,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	protected $line_item_display;
 
+	/**
+	 * @access protected
+	 * @var boolean $handle_IPN_in_this_request
+	 */
+	protected $handle_IPN_in_this_request = false;
+
 
 
 	/**
@@ -151,6 +157,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function set_line_item_display( $line_item_display ) {
 		$this->line_item_display = $line_item_display;
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function handle_IPN_in_this_request() {
+		return $this->handle_IPN_in_this_request;
+	}
+
+
+
+	/**
+	 * @param boolean $handle_IPN_in_this_request
+	 */
+	public function set_handle_IPN_in_this_request( $handle_IPN_in_this_request ) {
+		$this->handle_IPN_in_this_request = filter_var( $handle_IPN_in_this_request, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -2091,7 +2115,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				$this->checkout->payment = $payment;
 				// mark this reg step as completed, as long as gateway doesn't use a separate IPN request,
 				// because we will complete this step during the IPN processing then
-				if ( $gateway instanceof EE_Offsite_Gateway && ! $gateway->uses_separate_IPN_request() ) {
+				if ( $gateway instanceof EE_Offsite_Gateway && ! $this->handle_IPN_in_this_request() ) {
 					$this->set_completed();
 				}
 				return true;
@@ -2234,22 +2258,26 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _process_off_site_payment( EE_Offsite_Gateway $gateway ) {
 		try {
+			$request_data = \EE_Registry::instance()->REQ->params();
 			// if gateway uses_separate_IPN_request, then we don't have to process the IPN manually
-			if ( $gateway instanceof EE_Offsite_Gateway && $gateway->uses_separate_IPN_request() ) {
-				$payment = $this->checkout->transaction->last_payment();
-				//$payment_source = 'last_payment';
-			} else {
+			$this->set_handle_IPN_in_this_request(
+				$gateway->handle_IPN_in_this_request( $request_data, false )
+			);
+			if ( $this->handle_IPN_in_this_request() ) {
 				// get payment details and process results
 				/** @type EE_Payment_Processor $payment_processor */
 				$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 				$payment = $payment_processor->process_ipn(
-					$_REQUEST,
+					$request_data,
 					$this->checkout->transaction,
 					$this->checkout->payment_method,
 					true,
 					false
 				);
 				//$payment_source = 'process_ipn';
+			} else {
+				$payment = $this->checkout->transaction->last_payment();
+				//$payment_source = 'last_payment';
 			}
 		} catch ( Exception $e ) {
 			// let's just eat the exception and try to move on using any previously set payment info

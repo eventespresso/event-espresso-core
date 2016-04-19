@@ -75,17 +75,25 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 		}
 		if ( $this->_current_txn instanceof EE_Transaction ) {
 			$payment_method = null;
-			$payment_method_slug = EE_Registry::instance()->REQ->get( 'ee_payment_method', NULL );
+			$payment_method_slug = EE_Registry::instance()->REQ->get( 'ee_payment_method', null );
 			if( $payment_method_slug ) {
 				$payment_method = EEM_Payment_Method::instance()->get_one_by_slug( $payment_method_slug );
 			}
-			/** @type EE_Payment_Processor $payment_processor */
-			$payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-			$payment_processor->process_ipn(
-				EE_Registry::instance()->REQ->params(),
-				$this->_current_txn,
-				$payment_method
-			);
+
+			if ( $payment_method instanceof EE_Payment_Method && $payment_method->is_off_site() ) {
+				$gateway = $payment_method->type_obj()->get_gateway();
+				if (
+					$gateway instanceof EE_Offsite_Gateway
+				    && $gateway->handle_IPN_in_this_request(
+						\EE_Registry::instance()->REQ->params(),
+						true
+					)
+				) {
+					/** @type EE_Payment_Processor $payment_processor */
+					$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+					$payment_processor->process_ipn( $_REQUEST, $this->_current_txn, $payment_method );
+				}
+			}
 			//allow gateways to add a filter to stop rendering the page
 			if( apply_filters( 'FHEE__EES_Espresso_Txn_Page__run__exit', FALSE ) ){
 				exit;

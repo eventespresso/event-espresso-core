@@ -96,7 +96,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_current_page_view_url;
 
 	//sanitized request action (and nonce)
+	/**
+	 * @var string $_req_action
+	 */
 	protected $_req_action;
+
+	/**
+	 * @var string $_req_nonce
+	 */
 	protected $_req_nonce;
 
 	//search related
