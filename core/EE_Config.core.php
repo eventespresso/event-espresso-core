@@ -37,71 +37,71 @@ final class EE_Config {
 	 *	@var 	EE_Config $_instance
 	 * 	@access 	private
 	 */
-	private static $_instance = NULL;
+	private static $_instance;
 
 	/**
 	 * An StdClass whose property names are addon slugs,
 	 * and values are their config classes
 	 * @var StdClass
 	 */
-	public $addons = null;
+	public $addons;
 
 	/**
 	 *
 	 * @var EE_Admin_Config
 	 */
-	public $admin = null;
+	public $admin;
 
 	/**
 	 *
 	 * @var EE_Core_Config
 	 */
-	public $core = null;
+	public $core;
 
 	/**
 	 *
 	 * @var EE_Currency_Config
 	 */
-	public $currency = null;
+	public $currency;
 
 	/**
 	 *
 	 * @var EE_Organization_Config
 	 */
-	public $organization = null;
+	public $organization;
 
 	/**
 	 *
 	 * @var EE_Registration_Config
 	 */
-	public $registration = null;
+	public $registration;
 
 	/**
 	 *
 	 * @var EE_Template_Config
 	 */
-	public $template_settings = null;
+	public $template_settings;
 
 	/**
 	 * Holds EE environment values.
 	 *
 	 * @var EE_Environment_Config
 	 */
-	public $environment = null;
+	public $environment;
 
 	/**
 	 * settings pertaining to Google maps
 	 *
 	 * @var EE_Map_Config
 	 */
-	public $map_settings = null;
+	public $map_settings;
 
 	/**
 	*
 	* @deprecated
 	* @var EE_Gateway_Config
 	*/
-	public $gateway = null;
+	public $gateway;
 
 	/**
 	 *	@var 	array $_addon_option_names
@@ -345,7 +345,7 @@ final class EE_Config {
 		// make sure we're checking the ee config
 		if ( $option === EE_Config::OPTION_NAME ) {
 			// run a loose comparison of the old value against the new value for type and properties,
-			// but NOT exact instance like WP update_option does
+			// but NOT exact instance like WP update_option does (ie: NOT type safe comparison)
 			if ( $value != $old_value ) {
 				// if they are NOT the same, then remove the hook,
 				// which means the subsequent update results will be based solely on the update query results
@@ -723,7 +723,7 @@ final class EE_Config {
 			// first check if the record already exists
 			$existing_config = get_option( $config_option_name );
 			$config_obj = serialize( $config_obj );
-			// just return if db record is already up to date
+			// just return if db record is already up to date (NOT type safe comparison)
 			if ( $existing_config == $config_obj ) {
 				$this->{$section}->{$name} = $config_obj;
 				return true;
@@ -903,7 +903,13 @@ final class EE_Config {
 	public function widgets_init() {
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
-		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
+		if (
+			! EE_Maintenance_Mode::instance()->level()
+			|| (
+				is_admin()
+				&& EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance
+			)
+		) {
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
@@ -1023,7 +1029,9 @@ final class EE_Config {
 			// grab shortcode file name from directory name and break apart at dots
 			$shortcode_file = explode( '.', basename( $shortcode_path ));
 			// take first segment from file name pieces and remove class prefix if it exists
-			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0 ? substr( $shortcode_file[0], 4 ) : $shortcode_file[0];
+			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0
+				? substr( $shortcode_file[0], 4 )
+				: $shortcode_file[0];
 			// sanitize shortcode directory name
 			$shortcode = sanitize_key( $shortcode );
 			// now we need to rebuild the shortcode path
@@ -1086,7 +1094,10 @@ final class EE_Config {
 			// loop through folders
 			foreach ( $modules_to_register as $module_path ) {
 				/**TEMPORARILY EXCLUDE gateways from modules for time being**/
-				if ( $module_path != EE_MODULES . 'zzz-copy-this-module-template' && $module_path != EE_MODULES . 'gateways' ) {
+				if (
+					$module_path !== EE_MODULES . 'zzz-copy-this-module-template'
+					&& $module_path !== EE_MODULES . 'gateways'
+				) {
 					// add to list of installed modules
 					EE_Config::register_module( $module_path );
 				}
@@ -1261,7 +1272,7 @@ final class EE_Config {
 	 */
 	public static function get_route( $route = NULL, $key = 'ee' ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
-		$route = apply_filters( 'FHEE__EE_Config__get_route',$route );
+		$route = (string) apply_filters( 'FHEE__EE_Config__get_route',$route );
 		if ( isset( EE_Config::$_module_route_map[ $key ][ $route ] )) {
 			return EE_Config::$_module_route_map[ $key ][ $route ];
 		}
@@ -1441,7 +1452,7 @@ class EE_Config_Base{
 		//loop through the properties for this class and see if they are set.  If they are NOT, then grab the
 		//default from our $defaults object.
 		foreach ( get_object_vars( $defaults ) as $property => $value ) {
-			if ( is_null( $this->{$property} ) ) {
+			if ( $this->{$property} === null ) {
 				$this->{$property} = $value;
 			}
 		}
@@ -1475,15 +1486,15 @@ class EE_Config_Base{
 	/**
 	 * 		__clone
 	 */
-	public function __clone() { return FALSE; }
+	public function __clone() {}
 	/**
 	 * 		__wakeup
 	 */
-	public function __wakeup() { return FALSE; }
+	public function __wakeup() {}
 	/**
 	 * 		__destruct
 	 */
-	public function __destruct() { return FALSE; }
+	public function __destruct() {}
 }
 
 
@@ -1908,18 +1919,25 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @param null $CNT_ISO
+	 * @param string $CNT_ISO
 	 * @return \EE_Currency_Config
 	 */
-	public function __construct( $CNT_ISO = NULL ) {
+	public function __construct( $CNT_ISO = '' ) {
 
 		// get country code from organization settings or use default
-		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
+		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization )
+		           && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
+			? EE_Registry::instance()->CFG->organization->CNT_ISO
+			: '';
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
 		EE_Registry::instance()->load_helper( 'Activation' );
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
-		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() ) ) {
+		if (
+			! empty( $CNT_ISO )
+			&& EE_Maintenance_Mode::instance()->models_can_query()
+			&& EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() )
+		) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
 			if ( $country instanceof EE_Country ) {
