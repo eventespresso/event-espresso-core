@@ -153,6 +153,8 @@ if ( function_exists( 'espresso_version' ) ) {
 	//want to change its default value! or find when -1 means infinity
 	define( 'EE_INF_IN_DB', -1 );
 	define( 'EE_INF', INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX );
+	// in case we need to check for PHP 7
+	define( 'EE_PHP_7', version_compare( PHP_VERSION, 7, '>=' ) ? true : false );
 
 	/**
 	 *    espresso_plugin_activation
