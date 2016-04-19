@@ -108,21 +108,21 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-
 	/**
 	 * get_messengers_for_list_table
 	 *
 	 * @return array
+	 * @throws \EE_Error
 	 */
 	public function get_messengers_for_list_table() {
 		$m_values = array();
-		$messengers = $this->_message_resource_manager->active_messengers();
+		$active_messengers = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_messenger' ) );
 		//setup messengers for selects
 		$i = 1;
-		foreach ( $messengers as $messenger_name => $messenger ) {
-			if ( $messenger instanceof EE_messenger ) {
-				$m_values[ $i ][ 'id' ] = $messenger_name;
-				$m_values[ $i ][ 'text' ] = ucwords( $messenger->label[ 'singular' ] );
+		foreach ( $active_messengers as $active_messenger ) {
+			if ( $active_messenger instanceof EE_Message ) {
+				$m_values[ $i ]['id'] = $active_messenger->messenger();
+				$m_values[ $i ]['text'] = ucwords( $active_messenger->messenger_label() );
 				$i++;
 			}
 		}
