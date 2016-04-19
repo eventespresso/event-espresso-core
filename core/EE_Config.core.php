@@ -27,6 +27,8 @@ final class EE_Config {
 
 	const LOG_NAME = 'ee_config_log';
 
+	const LOG_LENGTH = 500;
+
 	const ADDON_OPTION_NAMES = 'ee_config_option_names';
 
 
@@ -222,6 +224,7 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _initialize_config() {
+		EE_Config::trim_log();
 		//set defaults
 		$this->_addon_option_names = get_option( EE_Config::ADDON_OPTION_NAMES, array() );
 		$this->addons = new stdClass();
@@ -804,6 +807,8 @@ final class EE_Config {
 
 
 	/**
+	 * log
+	 *
 	 * @param string $config_option_name
 	 */
 	public static function log( $config_option_name = '' ) {
@@ -813,6 +818,24 @@ final class EE_Config {
 			update_option( EE_Config::LOG_NAME, $config_log );
 		}
 	}
+
+
+
+	/**
+	 * trim_log
+	 * reduces the size of the config log to the length specified by EE_Config::LOG_LENGTH
+	 */
+	public static function trim_log() {
+		$config_log = get_option( EE_Config::LOG_NAME, array() );
+		$log_length = count( $config_log );
+		if ( $log_length > EE_Config::LOG_LENGTH ) {
+			ksort( $config_log );
+			$config_log = array_slice( $config_log, $log_length - EE_Config::LOG_LENGTH, null, true );
+			update_option( EE_Config::LOG_NAME, $config_log );
+		}
+	}
+
+
 
 	/**
 	 * 	get_page_for_posts
