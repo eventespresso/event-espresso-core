@@ -849,7 +849,7 @@ final class EE_Config {
 			$config_log = get_option( EE_Config::LOG_NAME, array() );
 			//copy incoming $_REQUEST and sanitize it so we can save it
 			$_request = $_REQUEST;
-			array_walk( $_request, 'sanitize_text_field' );
+			array_walk_recursive( $_request, 'sanitize_text_field' );
 			$config_log[ (string) microtime( true ) ] = array(
 				'config_name' => $config_option_name,
 				'request'     => $_request,
