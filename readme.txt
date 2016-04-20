@@ -2,8 +2,8 @@
 Contributors: eventespresso, sethshoultes
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: events, event, ticket, ticketing, tickets,  event ticketing, event booking, class booking, booking, class registration, conference registration, event management, event manager,event registration, events calendar, events planner, event ticketing, online registration, registration, sports, training, virtual events, wordcamp, wordpress events
-Requires at least: 3.9
-Tested up to: 4.2
+Requires at least: 4.1
+Tested up to: 4.5
 Stable tag: 4.7.4.decaf
 License: GPL2
 
@@ -11,7 +11,7 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 == Description ==
 
-Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier!
+Manage your events from your WordPress dashboard. Reduce your admin, [reduce your costs](https://eventespresso.com/2010/08/friends-dont-let-friends-host-events-eventbrite/), make your life easier!
 
 Event Espresso is a [WordPress event manager](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to sell tickets for events, workshops, events, trainings, conferences or concerts, register attendees for classes, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The decaf version of the plugin provides everything that you need to sell tickets, collect payments, and manage events all from within your WordPress dashboard.
 
@@ -110,9 +110,9 @@ If your support issue is urgent, we also offer [priority event management suppor
 Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_description_tab) and [setup instructions](https://eventespresso.com/wiki/how-to-setup-event-espresso-and-publish-your-first-event/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_description_tab) on our website.
 
 = Developer Resources =
-* [Event Espresso 4 on Github](https://github.com/eventespresso/event-espresso-core)
-* [Developer Targeted Documentation](http://developer.eventespresso.com/)
-* Code structure and PHPDOC parsed documentation can be found at [http://code.eventespresso.com](http://code.eventespresso.com)
+* [Event Espresso 4 on Github](http://evts.io/EE4_WP_Readme)
+* [Developer Targeted Documentation](http://evts.io/EE4_Dev_Docs)
+* [Code structure and PHPDOC parsed documentation](http://code.eventespresso.com)
 
 == Screenshots ==
 
@@ -139,7 +139,7 @@ Check out the advanced [installation](https://eventespresso.com/wiki/installing-
 
 Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_installation_tab) and [setup instructions](https://eventespresso.com/wiki/the-basic-settings/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_installation_tab) on our website.
 
-Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)
+Developers, [find us on Github](http://evts.io/EE4_WP_Readme)
 
 == Frequently Asked Questions ==
 
@@ -173,8 +173,7 @@ If you want to organize your event fast without the hassle of managing a server,
 
 = Is Event Espresso 4 available on Github? =
 
-Yes, you can get access to the files on the [Event Espresso 4 Github](Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)
-) page.
+Yes, you can get access to the core files via the [Event Espresso 4 Github page](http://evts.io/EE4_WP_Readme).
 
 == Changelog ==
 
@@ -184,7 +183,457 @@ Backup your WordPress before installing any updates. Please see our article on [
 
 **Please Note:** Due to the fact that the Event Espresso 4 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 4. An up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
 
-**Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)**
+**Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
+
+= April 2016 =
+
+**Bug Fixes:**
+
+* Add check for WP-cron and display warning if feature is disabled
+* Don’t add reCaptcha on the payment options step to avoid conflicts with Stripe and Braintree payment forms
+* EE4 REST API: Add registrations’ datetimes checkin statuses
+* Breakout str_trim() logic into new string_trim() function;
+* Add hasOwnProperty() check when looping over $subs; see https://github.com/eventespresso/event-espresso-core/issues/155
+* Fix h3 tags inside p tags on thank you page
+* see https://github.com/eventespresso/event-espresso-core/issues/149
+* Add a middleware app that blocks EE from fully loading if the user is on either the wp-login.php or register.php pages
+* Fix ticket selector datetime selections not saving when creating event if you duplicate the tickets/datetimes
+* Fix fatal error when EEME_Base::deregister is called
+* Automatically add `group_by` against primary key field to incoming params in get_all method
+* Fix bundled wp basic auth for multisite
+* Fix EE4 REST API X-WP-Total is wrong when including related items
+* Allow filtering of batch temp folder
+
+= March 2016 =
+
+**Bug Fixes:**
+
+* Add Email Validation settings
+* Use Default WordPress email validation
+* Avoid unnecessary ALTER TABLE database queries when checking database
+* Remove obsolete [EVENT_IDENTIFIER] shortcode
+* Fix issue where HTML tags were not permitted in some payment method settings fields
+* Fix scripts and styles not loading for Stripe and Braintree payment methods
+* Fix HTML Question type validation not passing
+* Cookie-proof the Request classes
+* Change form validation to allow German Umlauts in email address input
+* Fix conflicts with BBPress that affect posting to topics and Single Page Check-Out
+* Improve the cron removal so that if the cron timestamp array is empty it gets removed
+* Fix INF comparisons that will fail in PHP5.3
+* Fix issues in unit tests related to failed builds reported by Travis-CI
+* Fix Transaction Reports using incorrect value for ‘Total Revenue per Event’
+* Add new columns to reports to represent the number of registrations for a specific status
+* Repurpose newsletter message type so it uses correct data depending on context
+* Remove single quotes from shortcode examples in event editor
+* Remove quotes from Event category shortcode examples in event categories screen
+* Fix issue where EE tables could be set up more than once on plugin activation
+* Only deactivate the payment method if it’s confirmed that its payment method type object doesn’t exist
+* Fix missing client side credit card field validation
+* EE4 REST API: Fix fatal error in check-in endpoint
+* EE4 REST API: Normalize calculated field response things
+* EE4 REST API: Facilitate getting different sizes of images
+* EE4 REST API: add headers for totals, calculated fields, and use NULL for inf instead of -1
+* Basic Auth should issue error when bad username or password provided
+* Add support for HHVM returning nothing for max_input_vars
+* Fix potential fatal error when starting a CSV report
+
+**Enhancements:**
+
+Add ‘Current input vars’ and ‘max_input_vars’ value to the popup shown on the event editor
+
+= February 2016 =
+
+**Bug Fixes:**
+
+* Fix SPCO not finalizing admin registrations
+* Fix Fatal error on wp-login.php when Maintenance mode is active
+* Fix deleting payments within abandoned transactions
+* Fix Registration Admin Page switching reg status resulting in malformed success message
+* Return to SPCO Payment methods when cancelling an offsite Payment
+* EE4 Decaf: Remove extra tickets in display if multiple datetimes exist
+* EE4 REST API add error-proofing to avoid PHP warnings
+* EE4 REST API remove assumption that EE core version is in compatibilities array
+* Save the payment method before adding extra meta to it (extra metas need this in order to have an ID)
+* Reduce the amount of stops in the help tours
+* Fix payment details metabox not showing when transaction is TCM, there are payments, and the grand total is 0
+* Fix regression for duplicate payment error notices being displayed in SPCO
+* Fix EEM_Datetime::get_dtt_months_and_years
+* Fix end-of-the-month Month Dropdown selector double month bug
+* Fix an issue where changing the payment date for a transaction through the transaction details screen sets it to the current time and date
+* Fix report chart’s currency formats so its formats are consistent with what’s set in country settings
+* Fix an ampersand (&) in an answer choice causes radio, dropdown, and checkbox question types to not display correctly in reg admin
+* Fix Declaration of Events_Admin_List_Table::_get_row_class() should be compatible with EE_Admin_List_Table::_get_row_class($item)
+
+**Enhancements:**
+
+* Initialize critical pages after db tables and content
+* Add cap to admin registration redirect_to_txn route
+* Add filter to allow overriding persistent notices to better UX
+* Add basic auth functionality to EE core
+* Add filter to allow messages to send to multiple registrants when the same email address is used for all registrations in a group
+* EE4 REST API add headers for EE notices
+* EE4 REST API checkin/checkout endpoints
+* EE4 REST API cannot request registrations’ status
+* Update Help & Support content
+
+= January 2016 =
+
+**Bug Fixes:**
+
+* Fix handling of dynamic variables and properties for compatibility with PHP7
+* Fix Registrations per day report so it starts the 24 hour day at midnight local time instead of UTC 00:00
+* Revert changes from 9165 that got into 4.8.30.p
+* Fix REST API non-static method called statically
+* EE_Payment::redirect_form needs to take out GET parameters from querystring and put them into the form
+* PayPal Standard: if there is an error in validating the IPN, then ensure the response is not a WP_error
+* Fix EE_Base_Class::delete_permanently hooks not firing for non soft delete permanent deletes
+* Fix EE_Datetime_Test::test_ticket_types_available_for_purchase unit test: Failed asserting that 0 matches expected 1* Update DMS so esp_registration_payment table shows it was added in 4.7 DMS, not 4.8 DMS
+* Fix inconsistency with EE_Base_Class::delete_permanently and EE_Soft_Delete_Base::delete_permanently and no action hooks for this route
+* Change locate_template to use get_stylesheet_directory() so that it searches child themes
+* Make sure any initial default ticket (the main default) has any default prices showing with it
+* Fix incorrect trash item count on price admin page for trashed prices and price types
+* Fix event custom post type display (single and archive) when get_the_excerpt() is used within theme templates
+* Add custom callback to allow for non-scalar ticket editor inputs
+* Fix system question/group cap requirements
+* Update the REST API index to point to new documentation links
+* Fix ‘This Question is currently linked to one or more Question Option records.’ when attempting to perm delete option questions
+* Fix event duplicator feature so it allows sold out events to be duplicated
+* API: When getting the pretty value of a Post Content Field, it should call do_shortcode
+* Fix _has_billing_form so it’s not ignored
+* Changed the payment method settings form’s field “PMD Order” (non-i18n) to “Order” (i18n)
+
+**Enhancements:**
+
+* Put EE4 REST API into EE4 core
+* Update reports to use Google Charts
+* Check for `DOING_AJAX` before settting doing_it_wrong notices
+* Cleanup admin headings hierarchy to be in parity with WordPress changes
+* Add filter hook to allow changing what’s sent to Mijireh for the Invoice Description
+* Add filter hook to allow passing custom meta_data to Mijireh
+* a11y and index file improvements to skeleton payment method
+* Implement EE_Boolean_Field::prepare_for_pretty_echoing
+* Put EE Batch Job page into module instead of EE Admin Support Page
+* Add CSS class to spco-attendee-panel-dv div to allow customizing the style of a registration form based on the ticket’s ID
+* Add the payment method in the registrations overview
+* Add action hook to Transactions_Admin_Page::apply_payments_or_refunds
+* Add item ID to current_user_can() check in Registration_Form_Question_Groups_Admin_List_Table->column_cb()
+* Add .htaccess to force safari to download csvs as a file and not open in browser
+* Add filters to allow the_content filters to do work when the single-espresso_events.php template and archive-espresso_events.php templates are selected
+* Pass the template file name to the FHEE__EEH_Template__locate_template__full_template_paths filter
+* Pass arguments to a Payment Method help tab template
+
+= December 2015 =
+
+**Bug Fixes:**
+
+* Fix add_metaboxes action hook in the admin_wrapper so if follows WP core’s signature
+* Fix non-file-generating batch jobs page
+* Fix – Fatal error: Can’t inherit abstract function EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerInterface::create_job() within PHP 5.3.8 and below
+* Avoid adding duplicate indexes
+* Fix negative payments when there are previous payments for multiple registrations
+* Fix usage of EEH_Template::locate_template() to allow custom templates
+* Fix conflict with Menu Manager’s Screen Options
+* Optimize EE_Event::get_active_status()
+* Modify url pointing to eventespresso.com for PUE api to https:// instead of http://
+* Added a new table (esp_extra_join), model (EEM_Extra_Join), and relation (EE_HABTM_Any_Relation) which can be used to add a has-and-belongs-to relationship between any EE models. This should be especially useful for relating things without needing to add an extra model, table, etc in the future.
+* Make sure to group the query by question ID when starting CSV report
+* Add Core support for activating multiple Payment Methods of same type
+* Fix usage of EEH_Template::locate_template() to allow custom templates
+* Fix conflict with Menu Manager’s Screen Options
+* Optimize EE_Event::get_active_status()
+* Modify url pointing to eventespresso.com for PUE api to https:// instead of http://
+* Added a new table (esp_extra_join), model (EEM_Extra_Join), and relation (EE_HABTM_Any_Relation) which can be used to add a has-and-belongs-to relationship between any EE models. This should be especially useful for relating things without needing to add an extra model, table, etc in the future.
+* Make sure to group the query by question ID when starting CSV report
+* Add Core support for activating multiple Payment Methods of same type
+* Fix bug with EE_Config::update_config
+* Process CSV reports in smaller chunks instead of all at once
+* Don’t add .htaccess files to folder where access is actually needed
+* In EEH_File Automatically use WP_Filesystem_Direct to write to contents of the uploads folder
+* Fix warnings on activation of add-ons when using the filesystem directly
+* Fix translation strings within within Contact -> ‘Registrations for this contact’ metabox
+* Fix multiple translation strings using newlines (\n) and multiple tabs (\t) within core
+
+**Enhancements:**
+
+* Track previous Event Status when setting Event to Sold Out
+* Add Payment Due Date shortcode
+* Provide action after cleaning out junk transactions for plugins to do any additional cleanup that might be related to what transactions get deleted
+* Update PayPal gateways to use http/1.1
+* Add indexes to the database table schemas
+* All text-input type questions can now have a max length set on them. System questions have a max-max (eg the max an admin can set on the zipcode question is 12, the number of characters allowed in the mysql column).
+* Add Paypal tax settings
+
+= November 2015 =
+
+**Bug Fixes:**
+
+* Check for send_notifications flag and flip deliver_notifications filter switch if it is missing
+* Remove unused Walker_Radio_Checklist class — fixes possible conflict with WordPress 4.4
+* Add work around for servers that do not return PHP INF as expected to allow ticket editor to still function as expected
+* Allow EE content filters to be applied multiple times, but only once after “the loop” has started
+* Move the loading of the EE_Request_Handler so it’s inside a conditional that verifies this is an Event Espresso Custom post type route
+* Fix conflict with Jetpack’s WP.me shortlink module and event editor page
+* Fix single Event view so shortcodes from a Venue CPT get parsed instead of displayed as text
+* Add set_listener_for_datepicker_change() function and revalidate datepicker after change
+* Fix [ESPRESSO_EVENTS] shortcode so it only displays the content once per event
+* Fix available ticket sales count so events do not sell out prematurely
+* Fix activation so servers with PHP 5.2 do not fatal error on activation where the Psr4 Autoloader class is instantiated
+* Fix whitespace in a ticket QTY field and datetime reg limit field setting the value to 0 in ticket editor
+* Add failsafe for filter_input with $_SERVER variables
+* Fix wrong method call in EE_Payment_Processor::process_refund()
+* Fix breakage to the WP Customizer when a single event is included in the website’s navigation menu
+* Fix ticket archiving feature so the archived ticket gets copied
+* Fix event status updater so that when the last ticket’s sale end date occurs, the event status does not change to Sold Out
+* Add Check for Daylight Savings Time to EE_Transaction_Test::test_datetime() Unit Test
+* Fix thank you page ‘edit info’ link for non-primary attendees when no info is required for additional attendees
+* Fix Required parameter on Expiry Year for Authorizenet AIM
+* Fix Warning: Missing argument 2 for custom_more_link() when the WP theme uses a custom more text function
+* Make sure custom post types hooking into save_post only process event post types
+
+**Enhancements:**
+
+* On creating directories in wp-content/uploads, verify required credentials first, then try to initialize the WP Filesystem API. Then if EE cannot use the WP Filesystem API to create uploads directories, then plan to re-attempt to create them later
+* Allow users to modify the gateway templates used within the thank you page
+* Add property and getter for PSR4 Autoloader to EE_Psr4AutoloaderInit
+* Add the site’s currency settings to the localized eei18n JSON variable
+* Add a link to the Extensions & Services to the Admin Bar’s EE menu
+
+= October 2015 =
+
+**Bug Fixes:**
+
+* Fix ticket selector embed so it doesn’t throw an alert if there’s only one ticket selection available
+* Fix thank you page asset loading if site URL is not the same as blog URL
+* Move espresso_no_tkt_slctr_end_dv() out of template and into module
+* Make sure to run toFixed on running total before formatting the ticket price in the editor
+* Update accounting.js library to latest version
+* Fix event taxonomy list query’s order_by start_date
+* Automatically fix db when there are model errors
+* Continue to pass the question ID, and a system question ID to EEM_Answer::get_attendee_property_answer_value()
+* Calculate the maximum number of tickets available for the datetime without really factoring this ticket into the calculations first, then factor in the details for the specific ticket
+* Restore missing filters if Ticket Selector is hidden
+* Fix event list query’s order_by start_date
+* Fix logic for getting the actual saleable amount for a ticket with respects to datetime(s) reg limits
+* Remove unnecessary filter since messages are triggered directly
+* Add new _maybe_send_notifications() method and use for triggering both registration and payment messages
+* Enforce Ticket.TKT_qty never exceeding the minimum Datetime.REG_limit on attached Datetimes
+* Fix anomalies in Register Addon API
+* Fix AHEE__EE_Cron_Tasks__finalize_abandoned_transactions cron triggering Reg Approved messages when using Off-site payment methods
+* Fix unit test warnings due to not verifying value type before running foreach
+* Fix total price rounding errors when percent based price modifiers are attached to tickets
+* Allow unfiltered HTML in event description if the current user has the unfiltered HTML capability
+* Migrations from EE3: Fix some corner case bugs and correct the logic that found duplicate venues when migrating in order to avoid adding duplicates
+* Fix cron tasks not getting unscheduled
+* Only use model relations at index if it’s set, otherwise provide a good default value
+* Added html5 validation to the Payment/Refund Note field, server-side validation to double-check that, and made the columns bigger
+* Delete all config data when “Permanently Deleting All EE4 data”
+* Fix promotion table cleanup script so it does not include hardcoded wpdb prefix
+* Use wp_json_encode() instead of json_encode() when responding to AJAX requests in the WP admin
+* Backwards-and-forwards compatibility for WP Users and EE4 core
+* Remove check for consistent IP address through reg process
+* Fix registrations count on WP dashboard widget
+
+**Enhancements:**
+
+* Avoid potential theme conflict where ticket selector datetime info table layout breaks when themes set table-layout to fixed
+* Add Post_Meta model and associate it with CPT models for REST API
+* Add an option allowing the user to set when the registrant info is sent to MailChimp
+* Adjust default option to send on registration approved
+* Make the Last name field optional
+* No need to instantiate default config objects before loading values from db
+* Add some spacing above the message editor’s reset templates button to reduce accidental clicking
+* Change ticket selector table so that if no tickets require selection, no selector is displayed
+* New unit test coverage
+* Add other as a Method of Payment in the Add payment / Delete Payment modal window
+* Add checkbox for triggering Payment notifications, and add label to existing checkbox
+* Check if send payment notification checkbox is checked before triggering payment notifications
+* Add esp_question_option.QSO_system column and related field
+* Add hooks for modifying form inputs generated from questions for Single Page Checkout
+* Add hooks to allow adding other system questions
+* Add a hook for changing how attendee billing info form gets autofilled
+* Add syncing for User description (labelled biography on wp users edit screen) with EE Contact bio and vice versa.
+* Add option to disable updating user profile when registering for an event
+* Add ticket required capability when saving a new default ticket
+* Text changes to remove “Events” text strings in the My Events shortcode templates
+* Add Invoice link to front end ESPRESSO_MY_EVENTS output
+* Remove the receipt action from the My Events table if the receipt messenger is not active
+
+= September 2015 =
+
+**Bug Fixes:**
+
+* Fix event Check-in tab not showing registrations from archived tickets
+* Fix incorrect paging count vs actual results on registration list table
+* Add LIN_timestamp when migrating from 4.7
+* Fix Registrations CSV Report where it displays numeric value for State/province answer
+* Fix loading JavaScript on Thank You page
+* Fix incorrect paging count vs actual results on registration list table
+* Fix issue that results in adding a payment or applying a refund on the transactions overview screen does not update registration status
+* Add fixes to core related to Stripe add-on fixes
+* Fix transaction reports to allow currency localization
+* Fix issue where “Invalid argument supplied for foreach()” warnings appear with debugging enabled when creating custom messages
+* Record when line items are created, and don’t delete line items which are younger than a specified cutoff time (by default the same as transactions, a week).
+* Fix ‘pending’ payments – Transaction marked incomplete/pending until transaction is viewed
+* Fix ticket selector bot trap so it doesn’t trap humans
+* Fix no registration message sent when PayPal cron is ran to update the transaction status
+* Fix the event filters to show the number of events specific to that user
+* Fix issue in Registrations and Transactions list view where searching for a first and last name combination doesn’t return any results
+* Fix fatal error when updating a question group on sites where the database does not increment IDs as previously expected
+* Make results of `EE_Base_Class::get()` for serialized fields consistent
+* Fix issue where records are written to answer table with REG_ID=0 for system questions
+* Fix JavaScript error on Transactions list table admin page that’s related to help tours
+* Fix JavaScript that disables all messages preview links
+* Fix default Registration Status not being set in new events
+* Backward compat fix Prevents infinite loops due to bug in WordPress versions < 4.2
+* Fix editing payment amounts within a transaction not updating the values correctly for each individual registration
+* Fix admin error/success display so that multiple notices can be processed and shown during a single request
+* Fix focus on question answer option adds
+* Fix event status strip colors
+* Fix Event Datetime’s Event End time slider control
+* Fix the Add New State/Province module link and content hidden in billing forms
+* Add a quick fix for disappearing line items
+* Don’t populate question descriptions when migrating questions from EE3
+* Allow each admin page’s controller to override the pagenow_map (in addition to events and venues)
+* Fix reordering answered question values not saving
+* Fix failing datetime unit test in EEM_Datetime
+
+**Enhancements:**
+
+* Add the user selected Payment Method to the transactions list table
+* Add option to hide Expired Events from the attendee check-in view
+* Add Venues archive button link
+* Add action hooks for placement of content in the decaf event/datetime ticket editor
+* Add action hooks in the Additional Questions metabox in the Event Editor
+* Add action hooks for notifications metabox in event editor
+* Add the invoice action link to the registrations overview
+* Add PSR4 Autoloader
+* Add link to PHP Support Versions page in PHP version recommendation notice
+* Add filter to headers on EE_Email_messenger
+* Option for global header and global footer for Email messenger
+* Move attendee list table search field closer to the top of the mobile view
+* Added two new shortcodes to the event messages shortcodes library:
+* [EVENT_TOTAL_AVAILABLE_SPACES_*] & [EVENT_TOTAL_SPOTS_TAKEN]
+* Search by transaction id
+* Change admin styles to use red font for permanently delete links in questions and questions groups
+* Accessibility improvement: Add status text to list table columns for status
+* Add new Messages shortcode picker UI
+* Automatically remove relations to objects in the entity mapper when related objects are deleted
+* New feature: Allow admins to duplicate questions and their question options
+* Allow venue address display formats to be filtered
+* Add mobile styles to event check-ins and other EE admin list tables (WordPress 4.3+ only)
+* Wrap success message in a filter FHEE__EE_SPCO_Reg_Step_Payment_Options__registration_checkout__selected_payment_method__display_success filter hook
+* Use WP date format settings instead of hardcoded formats in Ticket Selector template
+* Remove the term “ticket” from all front end strings* Resize section titles on settings pages
+* Remove method type hinting for EE_Registration, and instead throw exception within try catch block which will produce a more user friendly error message
+
+= August 2015 =
+
+**New Features:**
+
+* Datetime System Improvements
+* Localize Date Picker in Ticket and Datetime Editor
+* Add an event_meta shortcode to the message templates
+* Remove old fixes from config loading
+
+**Bug Fixes:**
+
+* Remove placeholder text from the Ticket Selector’s bot trap input
+* Fix Maintenance Mode notice so it doesn’t fill entire window on front-end of site
+* Fix translation strings
+* Fix migration error strings
+* Make sure to do_action( ‘add_meta_boxes’) to admin_details_wrapper()
+* Fix missing default sales tax from Pricing screen
+* Fix migration error strings
+* More General fix to avoid unserialized model object issues
+* EE_Error called incorrectly from EEH_Debug_Tools
+* “Add State” button always right after state question input
+* Fix form System validation errors
+* Fix PHP docs and type hinting in Request Handler and add get_current_page_permalink() method
+* Fix Venue categories loading blank fields when creating new categories
+* Fix DMS to use correct parent ID for new line items
+* Fix stuck Payment Information section on Thank You Page after Registration Checkout
+* Wrap ‘tiny-text’ output in a WP_Debug check
+* Fix shortcodes not being removed from the saved `post_shortcodes` config when they are removed from a post
+* Fix RECIPIENT_ANSWER_* shortcode output in the Ticket List section
+* Fix editing/removing a payment immediately after applying it
+* Fix Transaction -> Payment Details not updating when a payment is removed
+* Fix the ‘Registrations to Apply payment to’ section not updating to show Paid registrations unless the page is refreshed
+* Fix [RECIPIENT_REG_CODE] output
+* Fix errant tag added by CssToInlineStyles library
+* Fix pagination calculation for EEH_Template::get_paging_html
+* Verify EE_Datetime object in EE_Ticket::date_range()
+* Fix de-registering an add-on failing to remove any registered cpts and/or taxonomies by that add-on
+* Fix incorrect method call for get_model() in get_field_or_extra_meta and set_field_or_extra_meta (EE_Base_Class)
+* Merge pull request to fix method EE_Attendee::get_most_recent_registration_for_event()
+
+**Enhancements:**
+
+*Add a bot trap for the Ticket Selector to reduce spam submissions before they hit the registration form
+*Add argument for ee-dialog helper javascript that allows one to indicate NOT to scroll to top when dialog is opened
+* Remove abstract declaration from EE_Line_Item_Filter_Base::process() so as not to conflict with EEI_Line_Item_Filter interface in PHP versions < 5.3.9
+* Make sure minimum PHP version required is checked on deactivation hook
+* Make sure to load the rest of EE_System (and register hooks) if minimum PHP version required is met
+* Enhance the checkout, registration and transaction views to increase line item detail introduced with Promotions add-on
+* Remove Update Payment Options button for Not Approved Registrations
+* Added a Messages shortcode to print ticket amount including taxes or surcharges
+* Set doing_it_wrong() error type
+* Add interfaces for Object Collections and Object Repositories
+* Create EE_Object_Collection class and refactor EE_Object_Repository to extend it
+* Reset Permalink after Duplicated Event Title is Edited
+* Merge Pull Request for fixing add new attendee route
+* Add new getters and setters for EE_Base_Class that extends data into extra meta dynamically
+* Add generate_unique_token() function to EEH_URL
+* Improve name of third parameter for EE_Base_Class::_add_relation_to()
+
+
+= July2015 =
+
+**Bugfixes:**
+
+* Remove failed transactions from paging
+* Fix some html tags getting stripped when saving event category descriptions
+* Fix Catchable fatal error: Argument 2 passed to EEH_Parse_Shortcodes::parse_line_item_list_template() must be an instance of EE_Line_Item, null given
+* Fix issue in Payment Methods validation that occurs when URLs to unverified SSL pages are still valid URLs
+* Update the Registrations Report query to include datetimes for trashed tickets
+* Allow white space at beginning and end of event registration form text fields to prevent validation errors
+* Use simple HTML validation for vanilla textareas and full HTML validation for HTML textareas
+* Fix Multi Event Registration cart so it doesn’t allow adding more tickets allowed per event per order
+* Fix JavaScript error on Thank You page when clicking the resend message link
+* Fix the stuck loading payment information spinner on the Thank You page that occurs after selecting the invoice payment
+* Fix transaction incomplete after PayPal IPN although registration and payment approved
+* Add unique user agent to PayPal IPN validation response to possibly avoid 500 error on PayPal’s server
+* Fix ticket_selector.css so it loads on a post with the ESPRESSO_EVENTS shortcode on it
+* Ensure that Session Transient IDs are truncated prior to retrieving
+* Fix ee_config not updating when you change the Registration checkout page setting in the Critical Pages tab
+* Remove necessity of “ee_read_private_events” to see private events in the event list table
+* Fix total item count (and the pagination results) when filtering active status events on the event list table
+* Fix the usage of an incorrect timestamp for the “active status” queries
+* Fix conditional in use for [TOTAL_OWING] shortcode parsing in EE_Transaction_Shortcodes
+* Fix caf dependency in decaf context for question_list and question shortcodes
+
+**Enhancements:**
+
+* Update reCAPTCHA library
+* Remove EE critical pages as options from WP > Settings > Reading’s Front page displays settings
+* Change Payment Method textareas to use Full HTML validation strategy, and add “p” tag to Simple HTML validation strategy
+* Make sure Decaf shows maintenance notice
+
+= June 2015 =
+
+**Bugfix:**
+
+Fix PayPal IPN response when the a refund is processed from the PayPal account
+
+= May 12, 2015 =
+
+* Fix misplaced ID field for help tour for questions admin page
+* Fix event editor’s usage of moment.js
+* Fix js calculations when manually applying/deleting a payment on a transaction when commas are used as decimal separators
+* Make ‘Amount:’ required on the apply payment model
+* Fix Registrations -> Reports including ‘Incomplete’ registrations
+* Skeleton payment method update
+* When getting billing input values, include subsections, and display them in the billing section
+* Fix forms strategies for when they aren’t arrays
 
 = May 4, 2015 =
 Security updates (may the fourth be with you), added a positive reviews meta box, and some minor text updates.
@@ -890,7 +1339,7 @@ Event Espresso 4.1.1.reg
 * Messages system: if user first name or last name isn't filled out  for event author, we'll use the Organization name (instead of leaving it  to WordPress to add WordPress)
 * Add Event Espresso admin bar menu items to admin bar on frontend of site too.
 * Add better support for dark themes.
-* Messages System: Add new email shortcodes Â for email group: `[ESPRESSO_ADMIN_EMAIL]`, Â `[ESPRESSO_ADMIN_FORMATTED_EMAIL]`, Â `[CO_FORMATTED_EMAIL]`
+* Messages System: Add new email shortcodes for email group: `[ESPRESSO_ADMIN_EMAIL]`, `[ESPRESSO_ADMIN_FORMATTED_EMAIL]`, `[CO_FORMATTED_EMAIL]`
 
 = Feb 10, 2014 =
 
@@ -905,36 +1354,40 @@ Backup your WordPress before installing any updates.
 
 == Other Notes ==
 
-**Developers, find us on Github: [https://github.com/eventespresso](https://github.com/eventespresso)**
+**Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
 
 **Use Cases**
 
-Event registration and ticketing for WordPress with Event Espresso is very flexible.  We can't list all the ways Event Espresso has been used, but here are some use-cases and examples. We'll add more details to these examples as we have time. Let us know if you need additional clarity.
+[Event Espresso](http:eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) is a very flexible, and robust event ticketing plugin for WordPress. Many [optional features](https://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) include an [integrated calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [ticket scanning](https://eventespresso.com/product/eea-barcode-scanner/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) & check-in/out capabilities, [single page checkout](https://eventespresso.com/features/intelligent-single-page-checkout/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [multiple event registration](https://eventespresso.com/product/eea-multi-event-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), and after event [marketing tools](https://eventespresso.com/product/eea-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_case).
 
 = Arts &amp; Culture =
 
 * City Tours
 * Club Performances
 * Concerts
-* Film Festivals
+* [Film Festivals](https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Museum Tickets
 * Music Festivals
 * Movie Theater Ticket Sales
+* [Paint & Wine](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Plays and Theatrical Performances
+* [Sewing & Quilting Retreats](https://eventespresso.com/use-cases/quilt-retreat-booking/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Social Events
 
 = Business =
 
 * Asset/Resource Booking/Scheduling
 * Car Wash Sales &amp; Reservations
+* [Conference Registration](https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [Haunted House Ticket Sales](https://eventespresso.com/2012/09/haunted-house-ticketing-system/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * House Cleaning Services
 * [Model Agency Booking/Scheduling](https://eventespresso.com/use-cases/modeling-talent-agency-scheduling/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Room Booking/Scheduling
-* Haunted House Ticket Sales
+* Workshop Registrations 
 
 = Classes =
 
-* Art Classes
+* [Art Classes](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Cooking Classes
 * Dance Classes
 * Continuing Education Classes
@@ -951,24 +1404,41 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 
 = Community Events</strong> <strong>Conferences =
 
+* [Backyard Barbecues](https://eventespresso.com/use-cases/backyard-bbq-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [BBQ Festivals](https://eventespresso.com/use-cases/bbq-festival-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [Car Shows](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* Geek/IT Conferences/Camps
 * Group Meetings
 * Political Conferences
 * Social Media Conferences
 * Tradeshow Booth Reservations/Sales
 * WordCamps
 * Youth Conferences/Camps
+
+= Conferences =
+
+* [Conference Registration](https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Geek/IT Conferences/Camps
+* Political Conferences
+* Social Media Conferences
+* Tradeshow Booth Reservations/Sales
+* Tradeshow Vendor Registration
+* WordCamps
+
 
 = Education =
 
+* Concealed Weapons Courses
 * Course Registrations
 * School Lunch Reservations
 * Parent Teacher Conferences
 * Parent Teacher Association Conferences and Meetings
+* Wildlife Education and Tours 
 
 = Fundraisers &amp; Non-Profit Organizations =
 
 * Boy Scout Troop Events
+* [Car Show Registration](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Donation Drives
 * Indusry Association Events
 * Religous Events
@@ -986,6 +1456,7 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 * Christmas Parties
 * Class Reunions
 * New-Year's Eve Parties
+* [Paint & Wine Parties](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Weddings
 
 = Recreation =
@@ -996,6 +1467,8 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 = Socials =
 
 * Dancing
+* [Painting & Vino](https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
+* [Sewing & Quilting Retreats](https://eventespresso.com/use-cases/quilt-retreat-booking/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * Speed Dating
 
 = Sports =
@@ -1006,12 +1479,29 @@ Event registration and ticketing for WordPress with Event Espresso is very flexi
 * Football and Soccer Training
 * Tennis Classes
 
+= Training =
+
+* ACLS & CPR Training
+* Firearms and Concealed Weapons Training
+* Medical & First Aid Training
+* Scrum Master Training
+* Technical/IT Training
+
+= Workshops =
+
+* Carpentry & Wood Working
+* Furniture Restoration
+* Marketing
+* Public Speaking
+* Real Estate Workshops
+* Visualization Workshops
+
 If you aren't quite sure if Event Espresso will work for you and it's not listed above, then [contact us](https://eventespresso.com/contact/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) and we'll do our best to evaluate your needs.
 
 
 = License =
 
-    Copyright 2014  Event Espresso  (email : info@eventespresso.com)
+    Copyright 2016  Event Espresso  (email : info@eventespresso.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as

@@ -15,14 +15,19 @@ jQuery(document).ready(function($){
 	 * @type {{
 	 *     form_data: object,
 	 *     form_section_id: string,
+	 *     email_validation_level: string,
 	 *     validation_rules: object,
+	 *     localized_error_messages: object,
 	 *     errors: object
 	 * }}
+	 * @type {{ ee_form_section_validation_init : boolean }}
 	 */
 	EEFV = {
 
 		// validation rules from the eei18n localized JSON array
 		validation_rules_array : ee_form_section_vars.form_data,
+		// what level of email validation is required ?
+		email_validation_level : ee_form_section_vars.email_validation_level,
 		//foreach ee form section, compile an array of what validation rules apply to which html form
 		validation_rules_per_html_form : {},
 		// current form to be validated
@@ -214,7 +219,6 @@ jQuery(document).ready(function($){
 				function(value, element, regexp) {
 					//remove the delimiter PHP needed
 //					var reMeta = /(^|[^\\])\/(\w+$){0,1}/;
-//
 //					regexp = new RegExp( regexp.replace(reMeta,'$1') );
 					// after replace it looks like: "hello\/slash\/"
 					var re = new RegExp(regexp);
@@ -223,14 +227,113 @@ jQuery(document).ready(function($){
 				ee_form_section_vars.localized_error_messages.regex
 			);
 
-			// override internal email validator with one that supports unicode
-			$.validator.methods.email = function ( value, element ) {
-				//var regex = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-				// plz see http://stackoverflow.com/a/24817336 re: the following regex
-				var regex = /^(?!\.)((?!.*\.{2})[a-zA-Z0-9\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u0300-\u036F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F\u0530-\u058F\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u0780-\u07BF\u07C0-\u07FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u0E00-\u0E7F\u0E80-\u0EFF\u0F00-\u0FFF\u1000-\u109F\u10A0-\u10FF\u1100-\u11FF\u1200-\u137F\u1380-\u139F\u13A0-\u13FF\u1400-\u167F\u1680-\u169F\u16A0-\u16FF\u1700-\u171F\u1720-\u173F\u1740-\u175F\u1760-\u177F\u1780-\u17FF\u1800-\u18AF\u1900-\u194F\u1950-\u197F\u1980-\u19DF\u19E0-\u19FF\u1A00-\u1A1F\u1B00-\u1B7F\u1D00-\u1D7F\u1D80-\u1DBF\u1DC0-\u1DFF\u1E00-\u1EFF\u1F00-\u1FFFu20D0-\u20FF\u2100-\u214F\u2C00-\u2C5F\u2C60-\u2C7F\u2C80-\u2CFF\u2D00-\u2D2F\u2D30-\u2D7F\u2D80-\u2DDF\u2F00-\u2FDF\u2FF0-\u2FFF\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA700-\uA71F\uA800-\uA82F\uA840-\uA87F\uAC00-\uD7AF\uF900-\uFAFF\.!#$%&'*+-/=?^_`{|}~\-\d]+)@(?!\.)([a-zA-Z0-9\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u0300-\u036F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F\u0530-\u058F\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u0780-\u07BF\u07C0-\u07FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u0E00-\u0E7F\u0E80-\u0EFF\u0F00-\u0FFF\u1000-\u109F\u10A0-\u10FF\u1100-\u11FF\u1200-\u137F\u1380-\u139F\u13A0-\u13FF\u1400-\u167F\u1680-\u169F\u16A0-\u16FF\u1700-\u171F\u1720-\u173F\u1740-\u175F\u1760-\u177F\u1780-\u17FF\u1800-\u18AF\u1900-\u194F\u1950-\u197F\u1980-\u19DF\u19E0-\u19FF\u1A00-\u1A1F\u1B00-\u1B7F\u1D00-\u1D7F\u1D80-\u1DBF\u1DC0-\u1DFF\u1E00-\u1EFF\u1F00-\u1FFF\u20D0-\u20FF\u2100-\u214F\u2C00-\u2C5F\u2C60-\u2C7F\u2C80-\u2CFF\u2D00-\u2D2F\u2D30-\u2D7F\u2D80-\u2DDF\u2F00-\u2FDF\u2FF0-\u2FFF\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA700-\uA71F\uA800-\uA82F\uA840-\uA87F\uAC00-\uD7AF\uF900-\uFAFF\-\.\d]+)((\.([a-zA-Z\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u0300-\u036F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F\u0530-\u058F\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u0780-\u07BF\u07C0-\u07FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u0E00-\u0E7F\u0E80-\u0EFF\u0F00-\u0FFF\u1000-\u109F\u10A0-\u10FF\u1100-\u11FF\u1200-\u137F\u1380-\u139F\u13A0-\u13FF\u1400-\u167F\u1680-\u169F\u16A0-\u16FF\u1700-\u171F\u1720-\u173F\u1740-\u175F\u1760-\u177F\u1780-\u17FF\u1800-\u18AF\u1900-\u194F\u1950-\u197F\u1980-\u19DF\u19E0-\u19FF\u1A00-\u1A1F\u1B00-\u1B7F\u1D00-\u1D7F\u1D80-\u1DBF\u1DC0-\u1DFF\u1E00-\u1EFF\u1F00-\u1FFF\u20D0-\u20FF\u2100-\u214F\u2C00-\u2C5F\u2C60-\u2C7F\u2C80-\u2CFF\u2D00-\u2D2F\u2D30-\u2D7F\u2D80-\u2DDF\u2F00-\u2FDF\u2FF0-\u2FFF\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA700-\uA71F\uA800-\uA82F\uA840-\uA87F\uAC00-\uD7AF\uF900-\uFAFF]){2,63})+)$/i;
-				return this.optional( element ) || regex.test( value );
-			};
+			if ( typeof EEFV.email_validation_level !== 'undefined' && EEFV.email_validation_level !== '' ) {
+				var regex = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+				// use international email validation regex ?
+				if ( EEFV.email_validation_level === 'wp_default' ) {
+					// override internal email validator
+					$.validator.methods.email = function ( value, element ) {
+						return this.optional( element ) || EEFV.is_email( value );
+					};
+					return;
+				} else if ( EEFV.email_validation_level === 'i18n' || EEFV.email_validation_level === 'i18n_dns' ) {
+					// plz see http://stackoverflow.com/a/24817336 re: the following regex that supports unicode
+					regex = /^(?!\.)((?!.*\.{2})[a-zA-Z0-9\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u0300-\u036F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F\u0530-\u058F\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u0780-\u07BF\u07C0-\u07FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u0E00-\u0E7F\u0E80-\u0EFF\u0F00-\u0FFF\u1000-\u109F\u10A0-\u10FF\u1100-\u11FF\u1200-\u137F\u1380-\u139F\u13A0-\u13FF\u1400-\u167F\u1680-\u169F\u16A0-\u16FF\u1700-\u171F\u1720-\u173F\u1740-\u175F\u1760-\u177F\u1780-\u17FF\u1800-\u18AF\u1900-\u194F\u1950-\u197F\u1980-\u19DF\u19E0-\u19FF\u1A00-\u1A1F\u1B00-\u1B7F\u1D00-\u1D7F\u1D80-\u1DBF\u1DC0-\u1DFF\u1E00-\u1EFF\u1F00-\u1FFFu20D0-\u20FF\u2100-\u214F\u2C00-\u2C5F\u2C60-\u2C7F\u2C80-\u2CFF\u2D00-\u2D2F\u2D30-\u2D7F\u2D80-\u2DDF\u2F00-\u2FDF\u2FF0-\u2FFF\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA700-\uA71F\uA800-\uA82F\uA840-\uA87F\uAC00-\uD7AF\uF900-\uFAFF\.!#$%&'*+-/=?^_`{|}~\-\d]+)@(?!\.)([a-zA-Z0-9\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u0300-\u036F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F\u0530-\u058F\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u0780-\u07BF\u07C0-\u07FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u0E00-\u0E7F\u0E80-\u0EFF\u0F00-\u0FFF\u1000-\u109F\u10A0-\u10FF\u1100-\u11FF\u1200-\u137F\u1380-\u139F\u13A0-\u13FF\u1400-\u167F\u1680-\u169F\u16A0-\u16FF\u1700-\u171F\u1720-\u173F\u1740-\u175F\u1760-\u177F\u1780-\u17FF\u1800-\u18AF\u1900-\u194F\u1950-\u197F\u1980-\u19DF\u19E0-\u19FF\u1A00-\u1A1F\u1B00-\u1B7F\u1D00-\u1D7F\u1D80-\u1DBF\u1DC0-\u1DFF\u1E00-\u1EFF\u1F00-\u1FFF\u20D0-\u20FF\u2100-\u214F\u2C00-\u2C5F\u2C60-\u2C7F\u2C80-\u2CFF\u2D00-\u2D2F\u2D30-\u2D7F\u2D80-\u2DDF\u2F00-\u2FDF\u2FF0-\u2FFF\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA700-\uA71F\uA800-\uA82F\uA840-\uA87F\uAC00-\uD7AF\uF900-\uFAFF\-\.\d]+)((\.([a-zA-Z\u0080-\u00FF\u0100-\u017F\u0180-\u024F\u0250-\u02AF\u0300-\u036F\u0370-\u03FF\u0400-\u04FF\u0500-\u052F\u0530-\u058F\u0590-\u05FF\u0600-\u06FF\u0700-\u074F\u0750-\u077F\u0780-\u07BF\u07C0-\u07FF\u0900-\u097F\u0980-\u09FF\u0A00-\u0A7F\u0A80-\u0AFF\u0B00-\u0B7F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0D00-\u0D7F\u0D80-\u0DFF\u0E00-\u0E7F\u0E80-\u0EFF\u0F00-\u0FFF\u1000-\u109F\u10A0-\u10FF\u1100-\u11FF\u1200-\u137F\u1380-\u139F\u13A0-\u13FF\u1400-\u167F\u1680-\u169F\u16A0-\u16FF\u1700-\u171F\u1720-\u173F\u1740-\u175F\u1760-\u177F\u1780-\u17FF\u1800-\u18AF\u1900-\u194F\u1950-\u197F\u1980-\u19DF\u19E0-\u19FF\u1A00-\u1A1F\u1B00-\u1B7F\u1D00-\u1D7F\u1D80-\u1DBF\u1DC0-\u1DFF\u1E00-\u1EFF\u1F00-\u1FFF\u20D0-\u20FF\u2100-\u214F\u2C00-\u2C5F\u2C60-\u2C7F\u2C80-\u2CFF\u2D00-\u2D2F\u2D30-\u2D7F\u2D80-\u2DDF\u2F00-\u2FDF\u2FF0-\u2FFF\u3040-\u309F\u30A0-\u30FF\u3100-\u312F\u3130-\u318F\u3190-\u319F\u31C0-\u31EF\u31F0-\u31FF\u3200-\u32FF\u3300-\u33FF\u3400-\u4DBF\u4DC0-\u4DFF\u4E00-\u9FFF\uA000-\uA48F\uA490-\uA4CF\uA700-\uA71F\uA800-\uA82F\uA840-\uA87F\uAC00-\uD7AF\uF900-\uFAFF]){2,63})+)$/i;
+				}
+				// override internal email validator
+				$.validator.methods.email = function ( value, element ) {
+					return this.optional( element ) || regex.test( value );
+				};
+			}
+		},
 
+
+
+		/**
+		 * is_email function from WordPress written in Javascript
+		 * by Louy Alakkad <me@l0uy.com>
+		 * https://gist.github.com/louy/5947841
+		 * Verifies that an email is valid.
+		 * Does not grok i18n domains. Not RFC compliant.
+		 *
+		 * @param {string} $email Email address to verify.
+		 * @return {boolean} Either false or the valid email address.
+		 */
+		is_email : function( $email ) {
+			// Test for the minimum length the email can be
+			if ( $email.length < 3 ) {
+				return false;
+			}
+
+			// Test for a single @ character after the first position
+			if ( $email.indexOf( '@' ) === -1 || $email.indexOf( '@' ) !== $email.lastIndexOf( '@' ) ) {
+				return false;
+			}
+
+			// Split out the local and domain parts
+			var parts = $email.split( '@', 2 );
+			var $local = parts[ 0 ], $domain = parts[ 1 ];
+
+			// LOCAL PART
+			// Test for invalid characters
+			if ( !/^[a-zA-Z0-9!#$%&\'*+\/=?^_`{|}~\.-]+$/.test( $local ) ) {
+				return false;
+			}
+
+			// DOMAIN PART
+			// Test for sequences of periods
+			if ( /\.{2,}/.test( $domain ) ) {
+				return false;
+			}
+
+			// Test for leading and trailing periods and whitespace
+			if ( EEFV.string_trim( $domain, " \t\n\r\0\x0B." ) !== $domain ) {
+				return false;
+			}
+
+			// Split the domain into subs
+			var subs = $domain.split( '.' );
+
+			// Assume the domain will have at least two subs
+			if ( 2 > subs.length ) {
+				return false;
+			}
+			var i;
+			// Loop through each sub
+			for ( i in subs ) {
+				if ( subs.hasOwnProperty( i ) ) {
+					// Test for leading and trailing hyphens and whitespace
+					if ( EEFV.string_trim( subs[ i ], " \t\n\r\0\x0B-" ) !== subs[ i ] ) {
+						return false;
+					}
+					// Test for invalid characters
+					if ( !/^[a-z0-9-]+$/i.test( subs[ i ] ) ) {
+						return false;
+					}
+				}
+			}
+
+			// Congratulations your email made it!
+			return true;
+
+		},
+
+
+
+		/**
+		 * trims leading and trailing hyphens and whitespace
+		 * @param  {string} stringToTrim
+		 * @param  {string} regex
+		 */
+		string_trim : function( stringToTrim, regex ) {
+			if ( typeof stringToTrim !== 'string' || typeof regex !== 'string' ) {
+				return '';
+			}
+			var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
+			return stringToTrim.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
+				new RegExp( '/[' + chr + ']*$/' ),
+				''
+			);
 		},
 
 
@@ -294,10 +397,10 @@ jQuery(document).ready(function($){
 				if ( typeof obj === 'object' ) {
 					if ( typeof obj_name !== 'undefined' ) {
 						//console.log( obj_name );
-						EEFV.console_log( spacer + obj_name );
+						EEFV.console_log( spacer + obj_name, '', false );
 					} else {
 						//console.log( 'console_log_object : ' );
-						EEFV.console_log( spacer + 'console_log_object : ' );
+						EEFV.console_log( spacer + 'console_log_object : ', '', false );
 					}
 					spacer = spacer + '. ';
 					depth++;
@@ -320,9 +423,11 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
-	if( typeof( ee_form_section_validation_init ) != 'undefined'
-			&& ee_form_section_validation_init.init == true
-			&& typeof( ee_form_section_vars ) != 'undefined' ) {
+	if(
+		typeof( ee_form_section_validation_init ) != 'undefined'
+		&& ee_form_section_validation_init.init == true
+		&& typeof( ee_form_section_vars ) != 'undefined'
+	) {
 		EEFV.initialize( ee_form_section_vars.form_data );
 	}
 
