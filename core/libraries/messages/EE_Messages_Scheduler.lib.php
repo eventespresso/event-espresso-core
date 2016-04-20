@@ -71,13 +71,14 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param string $task  The task the request is being generated for.
 	 */
 	public static function initiate_scheduled_non_blocking_request( $task ) {
-		//create nonce (this ensures that only valid requests are accepted)
-		$nonce = wp_create_nonce( 'EE_Messages_Scheduler_' . $task );
+		//transient is used for flood control on msg_cron_trigger requests
+		$transient_key = uniqid( $task );
+		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
 		$request_url = add_query_arg(
 			array(
 				'ee' => 'msg_cron_trigger',
 				'type' => $task,
-				'_nonce' => $nonce,
+				'key' => $transient_key,
 			),
 			site_url()
 		);

@@ -239,16 +239,19 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		//get required vars
 		$cron_type = EE_Registry::instance()->REQ->get( 'type' );
-		$nonce = EE_Registry::instance()->REQ->get( '_nonce' );
+		$transient_key = EE_Registry::instance()->REQ->get( 'key' );
 		header( 'HTTP/1.1 200 OK' );
 
-		//now let's verify nonce, if not valid exit immediately
-		if ( ! wp_verify_nonce( $nonce, 'EE_Messages_Scheduler_' . $cron_type ) ) {
+		//now let's verify transient, if not valid exit immediately
+		if ( ! get_transient( $transient_key ) ) {
 			/**
 			 * trigger error so this gets in the error logs.  This is important because it happens on a non-user request.
 			 */
-			trigger_error( esc_attr__( 'Invalid Nonce', 'event_espresso' ) );
+			trigger_error( esc_attr__( 'Invalid Request (Transient does not exist)', 'event_espresso' ) );
 		}
+
+		//if made it here, lets' delete the transient to keep the db clean
+		delete_transient( $transient_key );
 
 		$method = 'batch_' . $cron_type . '_from_queue';
 		if ( method_exists( self::$_MSG_PROCESSOR, $method ) ) {
