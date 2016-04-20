@@ -581,7 +581,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 			case EEM_Question::QST_type_html_textarea :
 				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
 				$input =  new EE_Text_Area_Input( $input_constructor_args );
-				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
 				$result = $input;
 				break;
 			// fallback

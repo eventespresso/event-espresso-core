@@ -69,12 +69,13 @@ class EE_Request_Stack {
 	 * after the request stack has been fully processed
 	 */
 	public function handle_response() {
-		$prev_middleware = null;
 		foreach ( $this->_middlewares as $middleware ) {
-			if ( ! $prev_middleware instanceof EEI_Request_Stack_Core_App && $middleware instanceof EEI_Request_Stack_Core_App ) {
+			if ( $middleware instanceof EEI_Request_Stack_Core_App ) {
 				$middleware->handle_response( $this->_request, $this->_response );
+				// exit loop since we should be done
+				// (also in case someone has accidentally labeled multiple apps as the EEI_Request_Stack_Core_App )
+				break;
 			}
-			$prev_middleware = $middleware;
 		}
 	}
 
