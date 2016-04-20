@@ -17,7 +17,7 @@ final class EE_Config {
 
 	const LOG_NAME           = 'ee_config_log';
 
-	const LOG_LENGTH         = 500;
+	const LOG_LENGTH         = 100;
 
 	const ADDON_OPTION_NAMES = 'ee_config_option_names';
 
@@ -188,7 +188,7 @@ final class EE_Config {
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// shutdown
-		add_action( 'shutdown', array( $this, 'update_addon_option_names' ), 10 );
+		add_action( 'shutdown', array( $this, 'shutdown' ), 10 );
 		// construct__end hook
 		do_action( 'AHEE__EE_Config__construct__end', $this );
 		// hardcoded hack
@@ -847,7 +847,13 @@ final class EE_Config {
 	public static function log( $config_option_name = '' ) {
 		if ( ! empty( $config_option_name ) ) {
 			$config_log = get_option( EE_Config::LOG_NAME, array() );
-			$config_log[ (string) microtime( true ) ] = $config_option_name;
+			//copy incoming $_REQUEST and sanitize it so we can save it
+			$_request = $_REQUEST;
+			array_walk( $_request, 'sanitize_text_field' );
+			$config_log[ (string) microtime( true ) ] = array(
+				'config_name' => $config_option_name,
+				'request'     => $_request,
+			);
 			update_option( EE_Config::LOG_NAME, $config_log );
 		}
 	}
@@ -1517,6 +1523,11 @@ final class EE_Config {
 		update_option( EE_Config::ADDON_OPTION_NAMES, $this->_addon_option_names );
 	}
 
+
+
+	public function shutdown() {
+		$this->update_addon_option_names();
+	}
 
 
 }
