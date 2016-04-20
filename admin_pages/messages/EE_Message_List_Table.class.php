@@ -1,7 +1,7 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION') )
+if (!defined('EVENT_ESPRESSO_VERSION') ){
 	exit('NO direct script access allowed');
-
+}
 /**
  * EE_Message_List_Table
  *
@@ -42,27 +42,28 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		);
 
 		$this->_columns = array(
-			'msg_status' => '',
 			'cb' => '<input type="checkbox" />',
-			'msg_id' => __( 'ID', 'event_espresso' ),
 			'to' => __( 'To', 'event_espresso' ),
 			'from' => __( 'From', 'event_espresso' ),
 			'messenger' => __( 'Messenger', 'event_espresso' ),
 			'message_type' => __( 'Message Type', 'event_espresso' ),
 			'context' => __( 'Context', 'event_espresso' ),
 			'modified' => __( 'Modified', 'event_espresso' ),
-			'action' => __( 'Actions', 'event_espresso' )
+			'action' => __( 'Actions', 'event_espresso' ),
+			'msg_id' => __( 'ID', 'event_espresso' ),
 		);
 
 		$this->_sortable_columns = array(
 			'modified' => array( 'MSG_modified' => true ),
-			'msg_id' => array( 'MSG_ID', false ),
 			'message_type' => array( 'MSG_message_type' => false ),
 			'messenger' => array( 'MSG_messenger' => false ),
 			'to' => array( 'MSG_to' => false ),
 			'from' => array( 'MSG_from' => false ),
-			'context' => array( 'MSG_context' => false )
+			'context' => array( 'MSG_context' => false ),
+			'msg_id' => array( 'MSG_ID', false ),
 		);
+
+		$this->_primary_column = 'to';
 
 		$this->_hidden_columns = array(
 			'msg_id'
@@ -71,6 +72,32 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * This simply sets up the row class for the table rows.
+	 * Allows for easier overriding of child methods for setting up sorting.
+	 * @param  object $item the current item
+	 * @return string
+	 */
+	protected function _get_row_class( $item ) {
+		$class = parent::_get_row_class( $item );
+		//add status class
+		$class .= ' ee-status-strip msg-status-' . $item->STS_ID();
+		if ( $this->_has_checkbox_column ) {
+			$class .= ' has-checkbox-column';
+		}
+		return $class;
+	}
+
+
+
+	/**
+	 * _get_table_filters
+	 * We use this to assemble and return any filters that are associated with this table that help further refine what get's shown in the table.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return string
+	 */
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
@@ -152,20 +179,11 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	/**
-	 * @param EE_Message $message
-	 *
-	 * @return string    EE_Message status.
-	 */
-	public function column_msg_status( EE_Message $message ) {
-		return '<span class="ee-status-strip ee-status-strip-td msg-status-' . $message->STS_ID() . '"></span>';
-	}
-
 
 	/**
 	 * @param EE_Message $message
-	 *
 	 * @return string   checkbox
+	 * @throws \EE_Error
 	 */
 	public function column_cb( $message ) {
 		return sprintf( '<input type="checkbox" name="MSG_ID[%s]" value="1" />', $message->ID() );
@@ -176,6 +194,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	/**
 	 * @param EE_Message $message
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function column_msg_id( EE_Message $message ) {
 		return $message->ID();
@@ -186,6 +205,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	/**
 	 * @param EE_Message $message
 	 * @return string    The recipient of the message
+	 * @throws \EE_Error
 	 */
 	public function column_to( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'URL' );
@@ -290,13 +310,16 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	}
 
 
+
 	/**
 	 * Retrieve the EE_Message objects for the list table.
-	 * @param int        $perpage  The number of items per page
-	 * @param string     $view      The view items are being retrieved for
-	 * @param bool       $count     Whether to just return a count or not.
-	 * @param bool       $all       Disregard any paging info (no limit on data returned).
+	 *
+	 * @param int    $perpage The number of items per page
+	 * @param string $view    The view items are being retrieved for
+	 * @param bool   $count   Whether to just return a count or not.
+	 * @param bool   $all     Disregard any paging info (no limit on data returned).
 	 * @return int | EE_Message[]
+	 * @throws \EE_Error
 	 */
 	protected function _get_messages( $perpage = 10, $view = 'all', $count = false, $all = false ) {
 
@@ -333,7 +356,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		if ( ! empty( $this->_req_data['status'] )  && ! $all && $this->_req_data['status'] !== 'all' ) {
+		if ( ! $all && ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] !== 'all' ) {
 			$query_params[0]['AND*view_conditional'] = array(
 				'STS_ID' => strtoupper( $this->_req_data['status'] ),
 			);
