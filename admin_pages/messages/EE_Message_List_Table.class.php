@@ -150,27 +150,33 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
+		if ( count ( $msgr_filters ) > 1 ) {
+			$filters[] = EEH_Form_Fields::select_input(
+				'ee_messenger_filter_by',
+				array_values( $msgr_filters ),
+				isset( $this->_req_data['ee_messenger_filter_by'] )
+					? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
+					: ''
+			);
+		}
+		if ( count( $mt_filters ) > 1 ) {
 		$filters[] = EEH_Form_Fields::select_input(
-			'ee_messenger_filter_by',
-			array_values( $msgr_filters ),
-			isset( $this->_req_data['ee_messenger_filter_by'] )
-				? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
-				: ''
-		);
-		$filters[] = EEH_Form_Fields::select_input(
-			'ee_message_type_filter_by',
-			array_values( $mt_filters ),
-			isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title(
-				$this->_req_data['ee_message_type_filter_by']
-			) : ''
-		);
-		$filters[] = EEH_Form_Fields::select_input(
-			'ee_context_filter_by',
-			array_values( $c_filters ),
-			isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field(
-				$this->_req_data['ee_context_filter_by']
-			) : ''
-		);
+				'ee_message_type_filter_by',
+				array_values( $mt_filters ),
+				isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title(
+					$this->_req_data['ee_message_type_filter_by']
+				) : ''
+			);
+		}
+		if ( count( $c_filters ) > 1 ) {
+			$filters[] = EEH_Form_Fields::select_input(
+				'ee_context_filter_by',
+				array_values( $c_filters ),
+				isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field(
+					$this->_req_data['ee_context_filter_by']
+				) : ''
+			);
+		}
 		return $filters;
 	}
 
