@@ -97,18 +97,17 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 * @abstract
 	 * @access protected
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		/** @type EE_Message_Resource_Manager $message_resource_manager */
-		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		$contexts = $message_resource_manager->get_all_contexts();
 		//setup messengers for selects
 		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types
 		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
 		//and the same for contexts
+		$contexts = $this->get_admin_page()->get_contexts_for_message_types_for_list_table();
 		$i = 1;
 		$labels = $c_values = array();
 		foreach ( $contexts as $context => $label ) {
@@ -139,34 +138,64 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'text' => __( 'All Contexts', 'event_espresso ' )
 		);
 
-		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
-		$mt_filters = ! empty( $mt_values ) ? array_merge( $mt_default, $mt_values ) : array();
-		$c_filters = ! empty( $c_values ) ? array_merge( $c_default, $c_values ): array();
+		$msgr_filters = count( $m_values ) > 1
+			? array_merge( $msgr_default, $m_values )
+			: $m_values;
+		$mt_filters = ! empty( $mt_values ) && count( $mt_values ) > 1
+			? array_merge( $mt_default, $mt_values )
+			: (array) $mt_values;
+		$c_filters = ! empty( $c_values ) && count( $c_values ) > 1
+			? array_merge( $c_default, $c_values )
+			: (array) $c_values;
 
-		if ( empty( $m_values ) ) {
+		if ( empty( $msgr_filters ) ) {
 			$msgr_filters[0] = array(
 				'id'   => 'none_selected',
 				'text' => __( 'No Messengers active', 'event_espresso' )
 			);
 		}
 
-		if ( empty( $mt_values ) ) {
+		if ( empty( $mt_filters ) ) {
 			$mt_filters[0] = array(
 				'id'   => 'none_selected',
 				'text' => __( 'No Message Types active', 'event_espresso' )
 			);
 		}
 
-		if ( empty( $c_values ) ) {
+		if ( empty( $c_filters ) ) {
 			$c_filters[0] = array(
 				'id'   => 'none_selected',
 				'text' => __( 'No Contexts (because no message types active)', 'event_espresso' )
 			);
 		}
 
-		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_title( $this->_req_data['ee_messenger_filter_by'] ) : '' );
-		$filters[] = EEH_Form_Fields::select_input( 'ee_message_type_filter_by', $mt_filters, isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title( $this->_req_data['ee_message_type_filter_by'] ) : '' );
-		$filters[] = EEH_Form_Fields::select_input( 'ee_context_filter_by', $c_filters, isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field( $this->_req_data['ee_context_filter_by'] ) : '' );
+		if ( count ( $msgr_filters ) > 1 ) {
+			$filters[] = EEH_Form_Fields::select_input(
+				'ee_messenger_filter_by',
+				array_values( $msgr_filters ),
+				isset( $this->_req_data['ee_messenger_filter_by'] )
+					? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
+					: ''
+			);
+		}
+		if ( count( $mt_filters ) > 1 ) {
+		$filters[] = EEH_Form_Fields::select_input(
+				'ee_message_type_filter_by',
+				array_values( $mt_filters ),
+				isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title(
+					$this->_req_data['ee_message_type_filter_by']
+				) : ''
+			);
+		}
+		if ( count( $c_filters ) > 1 ) {
+			$filters[] = EEH_Form_Fields::select_input(
+				'ee_context_filter_by',
+				array_values( $c_filters ),
+				isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field(
+					$this->_req_data['ee_context_filter_by']
+				) : ''
+			);
+		}
 		return $filters;
 	}
 
