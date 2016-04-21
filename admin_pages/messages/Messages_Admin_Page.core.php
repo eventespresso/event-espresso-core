@@ -38,6 +38,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected $_current_message_meta_box_object;
 	protected $_context_switcher;
 	protected $_shortcodes = array();
+
+	/**
+	 * @var EE_Message_Template_Group $_message_template_group
+	 */
 	protected $_message_template_group;
 	protected $_m_mt_settings = array();
 
@@ -1502,6 +1506,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 *
 	 * @access  public
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function extra_actions_meta_box() {
 		$template_form_fields = array();
@@ -1510,12 +1515,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'msgr' => $this->_message_template_group->messenger(),
 			'mt' => $this->_message_template_group->message_type(),
 			'GRP_ID' => $this->_message_template_group->GRP_ID()
-			);
-
-		$button = $this->get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
-
-
-		//test button
+		);
 		//first we need to see if there are any fields
 		$fields = $this->_message_template_group->messenger_obj()->get_test_settings_fields();
 
@@ -1527,37 +1527,59 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$default = isset( $config['default'] ) ? $config['default'] : '';
 				$default = isset( $config['value'] ) ? $config['value'] : $default;
 
-				//if type is hidden and the value is empty something may have gone wrong so let's correct with the defaults
-				$fix = $config['input'] == 'hidden' && isset($existing[$field]) && empty($existing[$field]) ? $default : '';
-				$existing[$field] = isset( $existing[$field] ) && empty( $fix ) ? $existing[$field] : $fix;
+				// if type is hidden and the value is empty
+				// something may have gone wrong so let's correct with the defaults
+				$fix = $config['input'] === 'hidden' && isset($existing[$field]) && empty($existing[$field])
+					? $default
+					: '';
+				$existing[$field] = isset( $existing[$field] ) && empty( $fix )
+					? $existing[$field]
+					: $fix;
 
 				$template_form_fields[$field_id] = array(
-					'name' => 'test_settings_fld[' . $field . ']',
-					'label' => $config['label'],
-					'input' => $config['input'],
-					'type' => $config['type'],
-					'required' => $config['required'],
+					'name'       => 'test_settings_fld[' . $field . ']',
+					'label'      => $config['label'],
+					'input'      => $config['input'],
+					'type'       => $config['type'],
+					'required'   => $config['required'],
 					'validation' => $config['validation'],
-					'value' => isset( $existing[$field] ) ? $existing[$field] : $default,
-					'css_class' => $config['css_class'],
-					'options' => isset( $config['options'] ) ? $config['options'] : array(),
-					'default' => $default,
-					'format' => $config['format']
-					);
+					'value'      => isset( $existing[ $field ] ) ? $existing[ $field ] : $default,
+					'css_class'  => $config['css_class'],
+					'options'    => isset( $config['options'] ) ? $config['options'] : array(),
+					'default'    => $default,
+					'format'     => $config['format']
+				);
 			}
 		}
 
-		$test_settings_fields = !empty( $template_form_fields) ? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' ) : '';
+		$test_settings_fields = !empty( $template_form_fields)
+			? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' )
+			: '';
 
 		$test_settings_html = '';
 		//print out $test_settings_fields
 		if ( !empty( $test_settings_fields ) ) {
 			echo $test_settings_fields;
-			$test_settings_html = '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" /><div style="clear:both"></div>';
+			$test_settings_html = '<input type="submit" class="button-primary mtp-test-button alignright" ';
+			$test_settings_html .= 'name="test_button" value="';
+			$test_settings_html .= __('Test Send', 'event_espresso');
+			$test_settings_html .= '" /><div style="clear:both"></div>';
 		}
 
 		//and button
-		echo $test_settings_html . '<p>' . __('Need to reset this message type and start over?', 'event_espresso') . '</p>' . '<div class="publishing-action alignright resetbutton">' . $button . '</div><div style="clear:both"></div>';
+		$test_settings_html .= '<p>' . __('Need to reset this message type and start over?', 'event_espresso') . '</p>';
+		$test_settings_html .= '<div class="publishing-action alignright resetbutton">';
+		$test_settings_html .= $this->get_action_link_or_button(
+			'reset_to_default',
+			'reset',
+			$extra_args,
+			'button-primary reset-default-button',
+			'',
+			false,
+			''
+		);
+		$test_settings_html .= '</div><div style="clear:both"></div>';
+		echo $test_settings_html;
 	}
 
 
