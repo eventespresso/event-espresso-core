@@ -63,7 +63,7 @@
 		</div>
 	</div> <!-- end #add-event-datetime -->
 	<div style="clear:both"></div>
-	
+
 	<div class="available-tickets-container">
 		<h3 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container" class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><span class="ee-icon ee-icon-tickets ee-icon-size-20"></span><?php _e('Available Tickets', 'event_espresso'); ?></span></h3>
 		<div class="event-tickets-container ee-create-ticket-button"<?php echo $show_tickets_container; ?>>
@@ -79,8 +79,11 @@
 						<td><span class="TKT_sell_until_label"><?php _e('Sell Until', 'event_espresso'); ?></span></td>
 						<td><span class="TKT_price_label"><?php _e('Price', 'event_espresso'); ?></span></td>
 						<td><span class="TKT_qty_label"><?php _e('Qty', 'event_espresso'); ?></span></td>
-						<!--<td><?php _e('Total', 'event_espresso'); ?></td>-->
+						<!--<td><?php //_e('Total', 'event_espresso'); ?></td>-->
 						<td><span class="TKT_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
+						<?php if ( WP_DEBUG ) { ?>
+						<td><span class="TKT_reserved_label"><?php _e('Rsrvd', 'event_espresso'); ?></span></td>
+						<?php } ?>
 						<td colspan="2"><span class="TKT_regs_label"><?php _e('Regs', 'event_espresso'); ?></span></td>
 					</tr>
 				</thead>
