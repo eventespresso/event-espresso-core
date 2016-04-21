@@ -134,7 +134,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						'default'=>$model_field->get_default_value(),
 					)
 				);
-				$remove_plaintext_validation_strategy = false;
 				switch(get_class($model_field)){
 					case 'EE_All_Caps_Text_Field':
 					case 'EE_Any_Foreign_Model_Name_Field':
@@ -148,7 +147,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						break;
 					case 'EE_Email_Field':
 						$input_class = 'EE_Email_Input';
-						$remove_plaintext_validation_strategy = true;
 						break;
 					case 'EE_Enum_Integer_Field':
 						throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -181,7 +179,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					case 'EE_Full_HTML_Field':
 						$input_class = 'EE_Text_Area_Input';
 						$input_constructor_args[ 0 ]['validation_strategies'] = array( new EE_Full_HTML_Validation_Strategy() );
-						$remove_plaintext_validation_strategy = true;
 						break;
 					case 'EE_Infinite_Integer':
 						throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -198,7 +195,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					case 'EE_Post_Content_Field':
 						$input_class = 'EE_Text_Area_Input';
 						$input_constructor_args[ 0 ][ 'validation_strategies' ] = array( new EE_Full_HTML_Validation_Strategy() );
-						$remove_plaintext_validation_strategy = true;
 						break;
 					case 'EE_Plain_Text_Field':
 						$input_class = 'EE_Text_Input';
@@ -216,7 +212,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					case 'EE_Simple_HTML_Field':
 						$input_class = 'EE_Text_Area_Input';
 						$input_constructor_args[ 0 ][ 'validation_strategies' ] = array( new EE_Simple_HTML_Validation_Strategy() );
-						$remove_plaintext_validation_strategy = true;
 						break;
 					case 'EE_Slug_Field':
 						$input_class = 'EE_Text_Input';
@@ -236,10 +231,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				$reflection = new ReflectionClass($input_class);
 				$input = $reflection->newInstanceArgs($input_constructor_args);
 				$inputs[$field_name] = $input;
-				//remove plaintext valiation strategies from inputs which allow them
-				if( $remove_plaintext_validation_strategy ) {
-					$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
-				}
+				
 			}
 		}
 		return $inputs;

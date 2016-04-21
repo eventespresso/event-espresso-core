@@ -482,6 +482,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//allow inputs and stuff to hook in their JS and stuff here
 		do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
+		$email_validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
+			? EE_Registry::instance()->CFG->registration->email_validation_level
+			: 'wp_default';
+		EE_Form_Section_Proper::$_js_localization['email_validation_level'] = $email_validation_level;
 		wp_enqueue_script( 'ee_form_section_validation' );
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_vars', EE_Form_Section_Proper::$_js_localization );
 	}

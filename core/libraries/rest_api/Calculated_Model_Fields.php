@@ -54,6 +54,7 @@ class Calculated_Model_Fields {
 		$rest_api_calculations_namespace = 'EventEspresso\core\libraries\rest_api\calculations\\';
 		$event_calculations_class = $rest_api_calculations_namespace . 'Event';
 		$datetime_calculations_class = $rest_api_calculations_namespace . 'Datetime';
+		$registration_class = $rest_api_calculations_namespace . 'Registration';
 		return apply_filters(
 			'FHEE__EventEspresso\core\libraries\rest_api\Calculated_Model_Fields__mapping',
 			array(
@@ -77,7 +78,10 @@ class Calculated_Model_Fields {
 					'registrations_checked_in_count' => $datetime_calculations_class,
 					'registrations_checked_out_count' => $datetime_calculations_class,
 					'spots_taken_pending_payment' => $datetime_calculations_class,
-				)
+				),
+				'Registration' => array(
+					'datetime_checkin_stati' => $registration_class
+				),
 			)
 		);
 	}

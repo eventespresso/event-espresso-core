@@ -33,31 +33,41 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _question
 	 * holds the specific question object for the question details screen
-	 * @var object
+	 *
+	 * @var EE_Question $_question
 	 */
 	protected $_question;
 
 	/**
 	 * _question_group
 	 * holds the specific question group object for the question group details screen
-	 * @var object
+	 *
+	 * @var EE_Question_Group $_question_group
 	 */
 	protected $_question_group;
 
 	/**
 	 *_question_model EEM_Question model instance (for queries)
-	 * @var EEM_Question
-	 */
+	 *
+	 * @var EEM_Question $_question_model;
+ */
 	protected $_question_model;
 
 	/**
 	 * _question_group_model EEM_Question_group instance (for queries)
-	 * @var EEM_Question_Group
+	 *
+	 * @var EEM_Question_Group $_question_group_model
 	 */
 	protected $_question_group_model;
 
 
 
+	/**
+	 * 		@Constructor
+	 *
+	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
+	 * 		@access public
+	 */
 	public function __construct( $routing = TRUE ) {
 		require_once( EE_MODELS . 'EEM_Question.model.php' );
 		require_once( EE_MODELS . 'EEM_Question_Group.model.php' );
@@ -95,7 +105,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-
+	/**
+	 *_set_page_routes
+	 */
 	protected function _set_page_routes() {
 		$qst_id = ! empty( $this->_req_data['QST_ID'] ) ? $this->_req_data['QST_ID'] : 0;
 		$this->_page_routes = array(
@@ -321,23 +333,23 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		}
 		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
-			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) )) {
+			if ( $fieldName === 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) )) {
 				$QSG_name = isset( $this->_req_data['QSG_name'] ) ? $this->_req_data['QSG_name'] : '' ;
-				$set_column_values[$fieldName] = sanitize_title($QSG_name ) . '-' . uniqid();
+				$set_column_values[$fieldName] = sanitize_title($QSG_name ) . '-' . uniqid( '', true );
 //				dd($set_column_values);
 			}
 			//if the admin label is blank, use a slug version of the question text
-			else if ( $fieldName == 'QST_admin_label' && ( isset( $this->_req_data['QST_admin_label'] ) && empty( $this->_req_data['QST_admin_label'] )  )) {
+			else if ( $fieldName === 'QST_admin_label' && ( isset( $this->_req_data['QST_admin_label'] ) && empty( $this->_req_data['QST_admin_label'] )  )) {
 				$QST_text = isset( $this->_req_data['QST_display_text'] ) ? $this->_req_data['QST_display_text'] : '' ;
 				$set_column_values[$fieldName] = sanitize_title(wp_trim_words($QST_text,10));
 			}
 
 
-			else if ( $fieldName == 'QST_admin_only' && ( !isset( $this->_req_data['QST_admin_only'] ) ) ) {
+			else if ( $fieldName === 'QST_admin_only' && ( !isset( $this->_req_data['QST_admin_only'] ) ) ) {
 				$set_column_values[$fieldName] = 0;
 			}
 
-			else if ( $fieldName == 'QST_max' ) {
+			else if ( $fieldName === 'QST_max' ) {
 				$qst_system = EEM_Question::instance()->get_var(
 					array(
 						array(
@@ -377,9 +389,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * @param string $action
+	 * _edit_question
 	 */
-	protected function _edit_question( $action= 'add' ) {
+	protected function _edit_question() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
 
@@ -481,7 +493,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected function _get_option_req_data_index($ID){
 		$req_data_for_question_options=$this->_req_data['question_options'];
 		foreach($req_data_for_question_options as $num=>$option_data){
-			if(array_key_exists('QSO_ID',$option_data) && intval($option_data['QSO_ID'])==$ID){
+			if( array_key_exists('QSO_ID',$option_data) && (int)$option_data['QSO_ID'] === $ID ){
 				return $num;
 			}
 		}
@@ -607,10 +619,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	 */
 	public function get_question_groups( $per_page, $current_page = 1, $count = FALSE ) {
 		/** @type EEM_Question_Group $questionGroupModel */
-		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params( $questionGroupModel, $per_page, $current_page );
-		$questionGroups=$questionGroupModel->get_all($query_params);//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
-		return $questionGroups;
+		$questionGroupModel = EEM_Question_Group::instance();
+		//note: this a subclass of EEM_Soft_Delete_Base, so this is actually only getting non-trashed items
+		return $questionGroupModel->get_all(
+			$this->get_query_params( $questionGroupModel, $per_page, $current_page )
+		);
 	}
 
 

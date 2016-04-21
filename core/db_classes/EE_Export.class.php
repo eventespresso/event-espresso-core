@@ -220,7 +220,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 	function report_attendees(){
-		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( array( 'force_join' => array( 'State', 'Country' ) ) );
+		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( 
+			array( 
+				'force_join' => array( 'State', 'Country' ), 
+				'caps' => EEM_Base::caps_read_admin 
+			) 
+		);
 		$csv_data = array();
 		foreach( $attendee_rows as $attendee_row ){
 			$csv_row = array();
@@ -340,7 +345,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' )
+				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
+				'caps' => EEM_Base::caps_read_admin
 			),
 			$event_id
 		);
