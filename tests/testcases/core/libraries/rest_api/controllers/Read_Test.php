@@ -222,7 +222,7 @@ class Read_Test extends \EE_UnitTestCase{
 		//the emphasis here is just on whether or not they get included properly, not exhaustively
 		//testing the calculations themselves
 		$this->assertTrue( isset( $result[ '_calculated_fields' ] ) );
-		
+
 		$this->assertEquals(
 			(object) array(
 				'optimum_sales_at_start' => min( array( $limit_on_datetime, $limit_on_ticket ) ),
@@ -234,7 +234,7 @@ class Read_Test extends \EE_UnitTestCase{
 		$this->assertTrue( isset( $result[ 'datetimes' ][ 0 ] ) );
 		$this->assertTrue( isset( $result[ 'datetimes' ][ 0 ][ '_calculated_fields' ] ) );
 		$this->assertEquals(
-			(object) array( 
+			(object) array(
 				'registrations_checked_in_count' => 0
 			),
 			$result[ 'datetimes' ][ 0 ][ '_calculated_fields' ]
@@ -558,13 +558,13 @@ class Read_Test extends \EE_UnitTestCase{
 					'caps' => \EEM_Base::caps_read_admin
 				) ) );
 	}
-	
+
 	/**
 	 * @group 9389
 	 */
 	public function test_handle_request_get_all__automatic_group_by() {
 		$request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/question_groups' );
-		$request->set_query_params( 
+		$request->set_query_params(
 			array(
 				'where' => array(
 					'Question.QST_ID' => array( 'IS_NOT_NULL' )
@@ -575,7 +575,6 @@ class Read_Test extends \EE_UnitTestCase{
 		$response = Read::handle_request_get_all( $request );
 		$this->assertEmpty( $response->get_data() );
 	}
-}
 
 
 
