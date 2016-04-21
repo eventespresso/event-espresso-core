@@ -55,7 +55,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//template variables (used by templates)
 	protected $_template_path;
 	protected $_column_template_path;
-	protected $_template_args;
+
+	/**
+	 * @var array $_template_args
+	 */
+	protected $_template_args = array();
 
 	//this will hold the list table object for a given view.
 	protected $_list_table_object;
@@ -92,7 +96,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_current_page_view_url;
 
 	//sanitized request action (and nonce)
+	/**
+	 * @var string $_req_action
+	 */
 	protected $_req_action;
+
+	/**
+	 * @var string $_req_nonce
+	 */
 	protected $_req_nonce;
 
 	//search related
@@ -142,7 +153,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
 	 * 		@access public
-	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
 
@@ -2556,7 +2566,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @return json object
 	 */
-	protected function _return_json( $sticky_notices = FALSE ) {
+	protected function _return_json( $sticky_notices = false ) {
 
 		//make sure any EE_Error notices have been handled.
 		$this->_process_notices( array(), true, $sticky_notices );
@@ -2565,8 +2575,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
 		unset($this->_template_args['data']);
 		$json = array(
-			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
-			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
+			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : false,
+			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : false,
+			'errors' => isset( $this->_template_args['errors'] ) ? $this->_template_args['errors'] : false,
+			'attention' => isset( $this->_template_args['attention'] ) ? $this->_template_args['attention'] : false,
 			'notices' => EE_Error::get_notices(),
 			'content' => isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '',
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
@@ -2818,16 +2830,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	 * 	_redirect_after_action
-	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
+	 *    _redirect_after_action
+	 *
+	 * @param int $success - whether success was for two or more records, or just one, or none
 	 *	@param string 	$what 		- what the action was performed on
 	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
-	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@param array 	$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
 	 *	@param BOOL     $override_overwrite by default all EE_Error::success messages are overwritten, this allows you to override this so that they show.
 	 *	@access protected
 	 *	@return void
 	 */
-	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
+	protected function _redirect_after_action( $success = 0, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -2956,6 +2969,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
+
+		//first let's set individual error properties if doing_ajax and the properties aren't already set.
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$notices = EE_Error::get_notices( false );
+			if ( empty( $this->_template_args['success'] ) ) {
+				$this->_template_args['success'] = isset( $notices['success'] ) ? $notices['success'] : false;
+			}
+
+			if ( empty( $this->_template_args['errors'] ) ) {
+				$this->_template_args['errors'] = isset( $notices['errors'] ) ? $notices['errors'] : false;
+			}
+
+			if ( empty( $this->_template_args['attention'] ) ) {
+				$this->_template_args['attention'] = isset( $notices['attention'] ) ? $notices['attention'] : false;
+			}
+		}
 
 		$this->_template_args['notices'] = EE_Error::get_notices();
 

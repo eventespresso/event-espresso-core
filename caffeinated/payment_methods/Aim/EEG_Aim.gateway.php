@@ -68,7 +68,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		"ship_to_address", "ship_to_city", "ship_to_company", "ship_to_country",
 		"ship_to_first_name", "ship_to_last_name", "ship_to_state", "ship_to_zip",
 		"split_tender_id", "state", "tax", "tax_exempt", "test_request", "tran_key",
-		"trans_id", "type", "version", "zip"
+		"trans_id", "type", "version", "zip", "solution_id"
 	);
 	/**
 	 * Asks the gateway to do whatever it does to process the payment. Onsite gateways will
@@ -119,11 +119,12 @@ class EEG_Aim extends EE_Onsite_Gateway{
 
 
 			//start transaction
+			//if in debug mode, use authorize.net's sandbox id; otherwise use the Event Espresso partner id
+			$partner_id = $this->_debug_mode ? 'AAA100302' : 'AAA105363';
+			$this->setField( 'solution_id', $partner_id );
 			$this->setField('amount', $this->format_currency($payment->amount()));
 			$this->setField('description',substr(rtrim($order_description, ', '), 0, 255));
-			$this->setField('card_num', $billing_info['credit_card']);
-			$this->setField('exp_date', $billing_info['exp_month'].$billing_info['exp_year']);
-			$this->setField('card_code', $billing_info['cvv']);
+			$this->_set_sensitive_billing_data( $billing_info );
 			$this->setField('first_name', $billing_info['first_name']);
 			$this->setField('last_name', $billing_info['last_name']);
 			$this->setField('email', $billing_info['email']);
@@ -172,6 +173,18 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			}
 		return $payment;
 	}
+	
+	/**
+	 * Sets billing data for the upcoming request to AIM that is considered sensitive;
+	 * also this method can be overriden by children classes to easily change
+	 * what billing data gets sent
+	 * @param array $billing_info
+	 */
+	protected function _set_sensitive_billing_data( $billing_info ) {
+		$this->setField('card_num', $billing_info['credit_card']);
+		$this->setField('exp_date', $billing_info['exp_month'].$billing_info['exp_year']);
+		$this->setField('card_code', $billing_info['cvv']);
+	}
 	/**
 	 * Add a line item.
 	 *
@@ -201,7 +214,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @param string $name
 	 * @param string $value
 	 */
-	private function setField($name, $value) {
+	protected function setField($name, $value) {
 		if (in_array($name, $this->_all_aim_fields)) {
 			$this->_x_post_fields[$name] = $value;
 		} else {
@@ -255,7 +268,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @param array $request_array
 	 * @param EEI_Payment $payment
 	 */
-	private function _log_clean_request($request_array,$payment){
+	protected function _log_clean_request($request_array,$payment){
 		$keys_to_filter_out = array( 'x_card_num', 'x_card_code', 'x_exp_date' );
 		foreach($request_array as $index => $keyvaltogether ) {
 			foreach( $keys_to_filter_out as $key ) {

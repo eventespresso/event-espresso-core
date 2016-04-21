@@ -793,61 +793,6 @@ final class EE_Config {
 
 
 
-
-	/**
-	 *    update_post_shortcodes
-	 *
-	 * @access    public
-	 * @param $page_for_posts
-	 * @return    void
-	 */
-	public function update_post_shortcodes( $page_for_posts = '' ) {
-		// make sure page_for_posts is set
-		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
-		// critical page shortcodes that we do NOT want added to the Posts page (blog)
-		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
-		// allow others to mess stuff up :D
-		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
-		// verify that post_shortcodes is set
-		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
-		// cycle thru post_shortcodes
-		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
-			// are there any shortcodes to track ?
-			if ( ! empty( $shortcodes )) {
-				// loop thru list of tracked shortcodes
-				foreach( $shortcodes as $shortcode => $post_id ) {
-					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
-					if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $page_for_posts ) {
-						// then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
-						unset( $this->core->post_shortcodes[ $post_name ][ $shortcode ] );
-					}
-					// skip the posts page, because we want all shortcodes registered for it
-					if ( $post_name == $page_for_posts ) {
-						continue;
-					}
-					// make sure post still exists
-					$post = get_post( $post_id );
-					if ( $post ) {
-						// check that the post name matches what we have saved
-						if ( $post->post_name == $post_name ) {
-							// if so, then break before hitting the unset below
-							continue;
-						}
-					}
-					// we don't like missing posts around here >:(
-					unset( $this->core->post_shortcodes[ $post_name ] );
-				}
-			} else {
-				// you got no shortcodes to keep track of !
-				unset( $this->core->post_shortcodes[ $post_name ] );
-			}
-		}
-		//only show errors
-		$this->update_espresso_config();
-	}
-
-
-
 	/**
 	 * 	get_page_for_posts
 	 *
@@ -1975,6 +1920,14 @@ class EE_Registration_Config extends EE_Config_Base {
 	public $default_STS_ID;
 
 	/**
+	 * level of validation to apply to email addresses
+	 *
+	 * @var string $email_validation_level
+	 * options: 'basic', 'wp_default', 'i18n', 'i18n_dns'
+	 */
+	public $email_validation_level;
+
+	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
 	 * @var boolean $show_pending_payment_options
 	 */
@@ -2073,6 +2026,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+		$this->email_validation_level = 'wp_default';
 		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
@@ -2570,8 +2524,8 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
-			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		if ( ! empty( $this->php->max_input_vars ) && ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
+			return  sprintf( __('The maximum number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.', 'event_espresso'), '<br>', $input_count, $this->php->max_input_vars);
 		} else {
 			return '';
 		}

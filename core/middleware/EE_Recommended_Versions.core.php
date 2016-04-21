@@ -33,6 +33,7 @@ class EE_Recommended_Versions extends EE_Middleware {
 			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
 			//$this->_response->add_output( "\n<br />" . 'minimum_wp_version_error' );
 			$this->_response->terminate_request();
+			$this->_response->deactivate_plugin();
 		}
 		// check required PHP version
 		if ( ! $this->_minimum_php_version_required() ) {
@@ -40,6 +41,7 @@ class EE_Recommended_Versions extends EE_Middleware {
 			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
 			//$this->_response->add_output( "\n<br />" . 'minimum_php_version_error' );
 			$this->_response->terminate_request();
+			$this->_response->deactivate_plugin();
 		}
 		// check recommended WP version
 		if ( ! $this->_minimum_wp_version_recommended() ) {
@@ -49,7 +51,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 		if ( ! $this->_minimum_php_version_recommended() ) {
 			$this->_display_minimum_recommended_php_version_notice();
 		}
-		$this->_test_for_php_version_7();
 		$this->_response = $this->process_request_stack( $this->_request, $this->_response );
 		//$this->_response->add_output( "\n\t OUT << " . __CLASS__ );
 		return $this->_response;
@@ -222,21 +223,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 				'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 			)
 		);
-	}
-
-
-
-	/**
-	 *    _test_for_php_version_7
-	 *
-	 * @access private
-	 */
-	private function _test_for_php_version_7() {
-		if ( $this->_check_php_version( '7' ) ) {
-			define( 'EE_PHP_7', true );
-		} else {
-			define( 'EE_PHP_7', false );
-		}
 	}
 
 
