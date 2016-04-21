@@ -2566,7 +2566,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @return json object
 	 */
-	protected function _return_json( $sticky_notices = FALSE ) {
+	protected function _return_json( $sticky_notices = false ) {
 
 		//make sure any EE_Error notices have been handled.
 		$this->_process_notices( array(), true, $sticky_notices );
@@ -2575,8 +2575,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
 		unset($this->_template_args['data']);
 		$json = array(
-			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
-			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
+			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : false,
+			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : false,
+			'errors' => isset( $this->_template_args['errors'] ) ? $this->_template_args['errors'] : false,
+			'attention' => isset( $this->_template_args['attention'] ) ? $this->_template_args['attention'] : false,
 			'notices' => EE_Error::get_notices(),
 			'content' => isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '',
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
@@ -2967,6 +2969,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
+
+		//first let's set individual error properties if doing_ajax and the properties aren't already set.
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$notices = EE_Error::get_notices( false );
+			if ( empty( $this->_template_args['success'] ) ) {
+				$this->_template_args['success'] = isset( $notices['success'] ) ? $notices['success'] : false;
+			}
+
+			if ( empty( $this->_template_args['errors'] ) ) {
+				$this->_template_args['errors'] = isset( $notices['errors'] ) ? $notices['errors'] : false;
+			}
+
+			if ( empty( $this->_template_args['attention'] ) ) {
+				$this->_template_args['attention'] = isset( $notices['attention'] ) ? $notices['attention'] : false;
+			}
+		}
 
 		$this->_template_args['notices'] = EE_Error::get_notices();
 
