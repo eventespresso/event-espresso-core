@@ -136,22 +136,14 @@
 }
 
 #Custom_Messages_Template_List_Table-table-frm .column-events {
-    width: 10%;
-    text-align: center;
-}
-
-
-.widefat td.column-msg_status,
-.widefat th.column-msg_status {
-    width: 10px;
-    padding: 0;
-    margin: 0;
-    height: 100%;
+	width: 10%;
+	text-align: center;
 }
 
 
 /** status sent **/
-.msg-status-MSN {
+.msg-status-MSN,
+.msg-status-MSN .check-column {
     border-left-color: #70CC50;
 }
 .ee-status-legend-MSN {
@@ -159,7 +151,8 @@
 }
 
 /** status idle (queued for sending) **/
-.msg-status-MID {
+.msg-status-MID,
+.msg-status-MID .check-column {
     border-left-color: #00B1CA;
 }
 .ee-status-legend-MID {
@@ -168,14 +161,16 @@
 
 
 /** status failed **/
-.msg-status-MFL {
+.msg-status-MFL,
+.msg-status-MFL .check-column {
     border-left-color: #E44064;
 }
 .ee-status-legend-MFL {
     background-color: #E44064;
 }
 
-.msg-status-MDO {
+.msg-status-MDO,
+.msg-status-MDO .check-column {
     border-left-color: #D2D405;
 }
 .ee-status-legend-MDO {
@@ -184,7 +179,8 @@
 
 
 /** status resend (queued for resending) **/
-.msg-status-MRS {
+.msg-status-MRS,
+.msg-status-MRS .check-column {
     border-left-color: #FCB93C;
 }
 .ee-status-legend-MRS {
@@ -193,7 +189,8 @@
 
 
 /** status incomplete (queued for generation) **/
-.msg-status-MIC {
+.msg-status-MIC,
+.msg-status-MIC .check-column {
     border-left-color: #A39D9C;
 }
 .ee-status-legend-MIC {
@@ -202,7 +199,8 @@
 
 
 /** status retry (failed sending but can be retried) **/
-.msg-status-MRT {
+.msg-status-MRT,
+.msg-status-MRT .check-column {
     border-left-color: #E76700;
 }
 .ee-status-legend-MRT {

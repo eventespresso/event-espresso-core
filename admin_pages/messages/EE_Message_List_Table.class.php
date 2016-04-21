@@ -1,7 +1,7 @@
 <?php
-if (!defined('EVENT_ESPRESSO_VERSION') )
+if (!defined('EVENT_ESPRESSO_VERSION') ){
 	exit('NO direct script access allowed');
-
+}
 /**
  * EE_Message_List_Table
  *
@@ -42,27 +42,28 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		);
 
 		$this->_columns = array(
-			'msg_status' => '',
 			'cb' => '<input type="checkbox" />',
-			'msg_id' => __( 'ID', 'event_espresso' ),
 			'to' => __( 'To', 'event_espresso' ),
 			'from' => __( 'From', 'event_espresso' ),
 			'messenger' => __( 'Messenger', 'event_espresso' ),
 			'message_type' => __( 'Message Type', 'event_espresso' ),
 			'context' => __( 'Context', 'event_espresso' ),
 			'modified' => __( 'Modified', 'event_espresso' ),
-			'action' => __( 'Actions', 'event_espresso' )
+			'action' => __( 'Actions', 'event_espresso' ),
+			'msg_id' => __( 'ID', 'event_espresso' ),
 		);
 
 		$this->_sortable_columns = array(
 			'modified' => array( 'MSG_modified' => true ),
-			'msg_id' => array( 'MSG_ID', false ),
 			'message_type' => array( 'MSG_message_type' => false ),
 			'messenger' => array( 'MSG_messenger' => false ),
 			'to' => array( 'MSG_to' => false ),
 			'from' => array( 'MSG_from' => false ),
-			'context' => array( 'MSG_context' => false )
+			'context' => array( 'MSG_context' => false ),
+			'msg_id' => array( 'MSG_ID', false ),
 		);
+
+		$this->_primary_column = 'to';
 
 		$this->_hidden_columns = array(
 			'msg_id'
@@ -71,17 +72,42 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 
 
+	/**
+	 * This simply sets up the row class for the table rows.
+	 * Allows for easier overriding of child methods for setting up sorting.
+	 * @param  object $item the current item
+	 * @return string
+	 */
+	protected function _get_row_class( $item ) {
+		$class = parent::_get_row_class( $item );
+		//add status class
+		$class .= ' ee-status-strip msg-status-' . $item->STS_ID();
+		if ( $this->_has_checkbox_column ) {
+			$class .= ' has-checkbox-column';
+		}
+		return $class;
+	}
+
+
+
+	/**
+	 * _get_table_filters
+	 * We use this to assemble and return any filters that are associated with this table that help further refine what get's shown in the table.
+	 *
+	 * @abstract
+	 * @access protected
+	 * @return string
+	 * @throws \EE_Error
+	 */
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		/** @type EE_Message_Resource_Manager $message_resource_manager */
-		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		$contexts = $message_resource_manager->get_all_contexts();
 		//setup messengers for selects
 		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
 		//lets do the same for message types
 		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
 		//and the same for contexts
+		$contexts = $this->get_admin_page()->get_contexts_for_message_types_for_list_table();
 		$i = 1;
 		$labels = $c_values = array();
 		foreach ( $contexts as $context => $label ) {
@@ -112,34 +138,64 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			'text' => __( 'All Contexts', 'event_espresso ' )
 		);
 
-		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
-		$mt_filters = ! empty( $mt_values ) ? array_merge( $mt_default, $mt_values ) : array();
-		$c_filters = ! empty( $c_values ) ? array_merge( $c_default, $c_values ): array();
+		$msgr_filters = count( $m_values ) > 1
+			? array_merge( $msgr_default, $m_values )
+			: $m_values;
+		$mt_filters = ! empty( $mt_values ) && count( $mt_values ) > 1
+			? array_merge( $mt_default, $mt_values )
+			: (array) $mt_values;
+		$c_filters = ! empty( $c_values ) && count( $c_values ) > 1
+			? array_merge( $c_default, $c_values )
+			: (array) $c_values;
 
-		if ( empty( $m_values ) ) {
+		if ( empty( $msgr_filters ) ) {
 			$msgr_filters[0] = array(
 				'id'   => 'none_selected',
 				'text' => __( 'No Messengers active', 'event_espresso' )
 			);
 		}
 
-		if ( empty( $mt_values ) ) {
+		if ( empty( $mt_filters ) ) {
 			$mt_filters[0] = array(
 				'id'   => 'none_selected',
 				'text' => __( 'No Message Types active', 'event_espresso' )
 			);
 		}
 
-		if ( empty( $c_values ) ) {
+		if ( empty( $c_filters ) ) {
 			$c_filters[0] = array(
 				'id'   => 'none_selected',
 				'text' => __( 'No Contexts (because no message types active)', 'event_espresso' )
 			);
 		}
 
-		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_title( $this->_req_data['ee_messenger_filter_by'] ) : '' );
-		$filters[] = EEH_Form_Fields::select_input( 'ee_message_type_filter_by', $mt_filters, isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title( $this->_req_data['ee_message_type_filter_by'] ) : '' );
-		$filters[] = EEH_Form_Fields::select_input( 'ee_context_filter_by', $c_filters, isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field( $this->_req_data['ee_context_filter_by'] ) : '' );
+		if ( count ( $msgr_filters ) > 1 ) {
+			$filters[] = EEH_Form_Fields::select_input(
+				'ee_messenger_filter_by',
+				array_values( $msgr_filters ),
+				isset( $this->_req_data['ee_messenger_filter_by'] )
+					? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
+					: ''
+			);
+		}
+		if ( count( $mt_filters ) > 1 ) {
+		$filters[] = EEH_Form_Fields::select_input(
+				'ee_message_type_filter_by',
+				array_values( $mt_filters ),
+				isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title(
+					$this->_req_data['ee_message_type_filter_by']
+				) : ''
+			);
+		}
+		if ( count( $c_filters ) > 1 ) {
+			$filters[] = EEH_Form_Fields::select_input(
+				'ee_context_filter_by',
+				array_values( $c_filters ),
+				isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field(
+					$this->_req_data['ee_context_filter_by']
+				) : ''
+			);
+		}
 		return $filters;
 	}
 
@@ -152,20 +208,11 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	/**
-	 * @param EE_Message $message
-	 *
-	 * @return string    EE_Message status.
-	 */
-	public function column_msg_status( EE_Message $message ) {
-		return '<span class="ee-status-strip ee-status-strip-td msg-status-' . $message->STS_ID() . '"></span>';
-	}
-
 
 	/**
 	 * @param EE_Message $message
-	 *
 	 * @return string   checkbox
+	 * @throws \EE_Error
 	 */
 	public function column_cb( $message ) {
 		return sprintf( '<input type="checkbox" name="MSG_ID[%s]" value="1" />', $message->ID() );
@@ -176,6 +223,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	/**
 	 * @param EE_Message $message
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function column_msg_id( EE_Message $message ) {
 		return $message->ID();
@@ -186,6 +234,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	/**
 	 * @param EE_Message $message
 	 * @return string    The recipient of the message
+	 * @throws \EE_Error
 	 */
 	public function column_to( EE_Message $message ) {
 		EE_Registry::instance()->load_helper( 'URL' );
@@ -290,13 +339,16 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	}
 
 
+
 	/**
 	 * Retrieve the EE_Message objects for the list table.
-	 * @param int        $perpage  The number of items per page
-	 * @param string     $view      The view items are being retrieved for
-	 * @param bool       $count     Whether to just return a count or not.
-	 * @param bool       $all       Disregard any paging info (no limit on data returned).
+	 *
+	 * @param int    $perpage The number of items per page
+	 * @param string $view    The view items are being retrieved for
+	 * @param bool   $count   Whether to just return a count or not.
+	 * @param bool   $all     Disregard any paging info (no limit on data returned).
 	 * @return int | EE_Message[]
+	 * @throws \EE_Error
 	 */
 	protected function _get_messages( $perpage = 10, $view = 'all', $count = false, $all = false ) {
 
@@ -333,7 +385,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			);
 		}
 
-		if ( ! empty( $this->_req_data['status'] )  && ! $all && $this->_req_data['status'] !== 'all' ) {
+		if ( ! $all && ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] !== 'all' ) {
 			$query_params[0]['AND*view_conditional'] = array(
 				'STS_ID' => strtoupper( $this->_req_data['status'] ),
 			);
