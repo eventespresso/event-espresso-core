@@ -287,6 +287,7 @@ jQuery(document).ready(function($) {
 						} else {
 							if( typeof(response.error) == 'undefined' ||  response.error == false || response.error == null || response.error == '' ) {
 								response.error = eei18n.invalid_server_response;
+								response.errors = response.error;
 							}
 							//hide the modal dialogue and show the error
 							overlay.trigger('click');
@@ -297,6 +298,7 @@ jQuery(document).ready(function($) {
 					error: function(response) {
 						if ( typeof(response.error) === 'undefined' ) {
 							response.error = eei18n.error_occurred;
+							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response );
 					}
@@ -353,12 +355,14 @@ jQuery(document).ready(function($) {
 						} else {
 							response = {};
 							response.error = eei18n.invalid_server_response;
+							response.errors = response.error;
 							show_admin_page_ajax_msg( response );
 						}
 					},
 					error: function(response) {
 						if ( typeof(response.error) === 'undefined' ) {
 							response.error = eei18n.error_occurred;
+							response.errors = response.error;
 						}
 						show_admin_page_ajax_msg( response );
 					}
