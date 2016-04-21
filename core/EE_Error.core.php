@@ -548,6 +548,23 @@ class EE_Error extends Exception {
 		self::_add_notice ( 'errors', $msg, $file, $func, $line );
 		self::$_error_count++;
 	}
+	
+	/**
+	 * If WP_DEBUG is active, throws an exception. If WP_DEBUG is off, just
+	 * adds an error
+	 * @param string $msg
+	 * @param string $file
+	 * @param string $func
+	 * @param string $line
+	 * @throws EE_Error
+	 */
+	public static function throw_exception_if_debugging( $msg = null, $file = null, $func = null, $line = null ) {
+		if( WP_DEBUG ) {
+			throw new EE_Error( $msg );
+		} else  {
+			EE_Error::add_error( $msg, $file, $func, $line );
+		}
+	}
 
 
 

@@ -544,7 +544,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->ID();
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
 
-		$this->_template_args['txn_datetime']['value'] = $this->_transaction->get_datetime('TXN_timestamp', 'l F j, Y', 'g:i:s a' );
+		$this->_template_args['txn_datetime']['value'] = $this->_transaction->get_i18n_datetime('TXN_timestamp');
 		$this->_template_args['txn_datetime']['label'] = __( 'Date', 'event_espresso' );
 
 		$this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->get('STS_ID') ];
