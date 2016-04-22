@@ -250,8 +250,12 @@ final class EE_Front_Controller {
 			if ( $page_on_front ) {
 				// k now we need to find the post_name for this page
 				global $wpdb;
-				$SQL = "SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d";
-				$page_on_front = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
+				$page_on_front = $wpdb->get_var(
+					$wpdb->prepare(
+						"SELECT post_name from $wpdb->posts WHERE post_type='page' AND post_status='publish' AND ID=%d",
+						$page_on_front
+					)
+				);
 				// set the current post slug to what it actually is
 				$current_post = $page_on_front ? $page_on_front : $current_post;
 			}
@@ -263,54 +267,116 @@ final class EE_Front_Controller {
 		// are we on a category page?
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
-		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-			// d( EE_Registry::instance()->CFG->core->post_shortcodes );
+		if ( isset( EE_Registry::CFG()->core->post_shortcodes )) {
+			if ( ! isset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ] ) ) {
+				EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ] = array();
+			}
 			// cycle thru all posts with shortcodes set
-			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
+			foreach ( EE_Registry::CFG()->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// filter shortcodes so
 				$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
 					if ( $current_post == $post_name || $term_exists ) {
-						// verify shortcode is in list of registered shortcodes
-						if ( ! isset( EE_Registry::instance()->shortcodes->{$shortcode_class} )) {
-							if ( $current_post != $page_for_posts && current_user_can( 'edit_post', $post_id )) {
-								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-							}
-							add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ));
-							continue;
-						}
-						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == $page_for_posts ) {
-							// let's pause to reflect on this...
-							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
-							// ensure that class is actually a shortcode
-							if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' ) && defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
-								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-								continue;
-							}
-							// and pass the request object to the run method
-							EE_Registry::instance()->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
-							// fire the shortcode class's run method, so that it can activate resources
-							EE_Registry::instance()->shortcodes->{$shortcode_class}->run( $WP );
-						}
-					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
-					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-						// and the shortcode is not being tracked for this page
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
-							// then remove the "fallback" shortcode processor
-							remove_shortcode( $shortcode_class );
-						}
+						// maybe init the shortcode
+						$this->initialize_shortcode_if_active_on_page(
+							$shortcode_class,
+							$current_post,
+							$page_for_posts,
+							$post_id,
+							$term_exists,
+							$WP
+						);
+					// if this is NOT the "Posts page" and we have a valid entry
+					// for the "Posts page" in our tracked post_shortcodes array
+					// but the shortcode is not being tracked for this page
+					} else if (
+						$post_name != $page_for_posts
+						&& isset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ] )
+						&& ! isset( EE_Registry::CFG()->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )
+					) {
+						// then remove the "fallback" shortcode processor
+						remove_shortcode( $shortcode_class );
 					}
 				}
 			}
 		}
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__end', $this );
+	}
+
+
+
+	/**
+	 * @param string $shortcode_class
+	 * @param string $current_post
+	 * @param string $page_for_posts
+	 * @param int    $post_id
+	 * @param bool   $term_exists
+	 * @param WP     $WP
+	 */
+	protected function initialize_shortcode_if_active_on_page(
+		$shortcode_class,
+		$current_post,
+		$page_for_posts,
+		$post_id,
+		$term_exists,
+		$WP
+	) {
+		// verify shortcode is in list of registered shortcodes
+		if ( ! isset( EE_Registry::instance()->shortcodes->{$shortcode_class} ) ) {
+			if ( $current_post != $page_for_posts && current_user_can( 'edit_post', $post_id ) ) {
+				EE_Error::add_error(
+					sprintf(
+						__(
+							'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.',
+							'event_espresso'
+						),
+						$shortcode_class
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+			}
+			add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ) );
+			return;
+		}
+		// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
+		if (
+			isset( EE_Registry::CFG()->core->post_shortcodes[ $current_post ] )
+			|| $term_exists
+			|| $current_post == $page_for_posts
+		) {
+			// let's pause to reflect on this...
+			$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
+			// ensure that class is actually a shortcode
+			if (
+				! $sc_reflector->isSubclassOf( 'EES_Shortcode' )
+				&& defined( 'WP_DEBUG' )
+				&& WP_DEBUG === true
+			) {
+				EE_Error::add_error(
+					sprintf(
+						__(
+							'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.',
+							'event_espresso'
+						),
+						$shortcode_class
+					),
+					__FILE__,
+					__FUNCTION__,
+					__LINE__
+				);
+				add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+				return;
+			}
+			// and pass the request object to the run method
+			EE_Registry::instance()->shortcodes->{$shortcode_class} = $sc_reflector->newInstance();
+			// fire the shortcode class's run method, so that it can activate resources
+			EE_Registry::instance()->shortcodes->{$shortcode_class}->run( $WP );
+		}
 	}
 
 

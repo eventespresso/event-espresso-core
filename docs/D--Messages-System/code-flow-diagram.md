@@ -1,1 +1,0 @@
-This is just a placeholder.  The diagram will show up when EE 4.9 is released.

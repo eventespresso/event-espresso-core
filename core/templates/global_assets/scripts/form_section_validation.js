@@ -20,6 +20,7 @@ jQuery(document).ready(function($){
 	 *     localized_error_messages: object,
 	 *     errors: object
 	 * }}
+	 * @type {{ ee_form_section_validation_init : boolean }}
 	 */
 	EEFV = {
 
@@ -36,21 +37,25 @@ jQuery(document).ready(function($){
 
 		/**
 		 *	@function initialize
+		 *  @param {object} form_data
 		 */
 		initialize : function( form_data ) {
             // reset previous form validation rules
             EEFV.reset_validation_rules();
 			EEFV.initialize_datepicker_inputs();
+			EEFV.initialize_select_reveal_inputs( form_data );
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
 			EEFV.add_custom_validators();
+			//add a trigger so anyone can know when forms are getting re-initialized
+			jQuery(document).trigger( 'EEFV:initialize', form_data );
 		},
 
 
 
         /**
          *	@function reset_validation_rules
-         */
+		 */
         reset_validation_rules : function() {
 			EEFV.remove_previous_validation_rules();
 			EEFV.validation_rules_per_html_form = {};
@@ -101,9 +106,64 @@ jQuery(document).ready(function($){
 			 */
 		},
 
+		/**
+		 * Find each select_reveal input in the form_data, and reveal the section corresponding
+		 * to its currently selected value, and setup a callback so that when the selection
+		 * changes, the section revealed also changes
+		 * @param {object} form_sections_to_validate property names are form section ids, values are objects:
+		 *	which should have a property name "other_data", whose values is an object which:
+		 *		has property names of each select_reveal input id, whose value is an object which:
+		 *			has property names of the select's option values, and property values are related sections to show/hide
+		 *			based on the select_reveal's value
+		 * @returns void
+		 */
+		initialize_select_reveal_inputs : function( form_sections_to_validate ) {
+			//for each form...
+			$.each( form_sections_to_validate, function( index, form_data ){
+				if (
+					typeof form_data.other_data !== 'undefined'
+					&& typeof form_data.other_data.select_reveal_inputs !== 'undefined'
+				) {
+					//for each select_reveal input...
+					$.each( form_data.other_data.select_reveal_inputs , function( select_reveal_input_id, select_option_to_section_to_reveal_id ) {
+						//define a callback for revealing/hiding the sections related to this select_reveal input
+						var reveal_now = function( event ) {
+							var current_selection = $('#' + event.currentTarget.id ).val();
+							//show the selected section, hide others
+							for( var value in select_option_to_section_to_reveal_id ) {
+								var section_to_show_or_hide_selector = '#' +  select_option_to_section_to_reveal_id[ value ];
+								if( value === current_selection ) {
+									$( section_to_show_or_hide_selector ).show();
+								} else {
+									$( section_to_show_or_hide_selector ).hide();
+								}
+							}
+						};
+						//update what's shown or hidden when the select_reveal's value changes
+						$('#' + select_reveal_input_id ).change(
+							{ select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id },
+							reveal_now
+						);
+						//and start off with it showing the right value
+						reveal_now(
+							{
+								currentTarget: {
+									id: select_reveal_input_id
+								},
+								data: {
+									select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id
+								}
+							}
+						);
+					});
+				}
+			});
+		},
+
 
 		/**
 		 *	@function setup_validation_rules
+		 *	@param {object} form_sections_to_validate
 		 */
 		setup_validation_rules : function( form_sections_to_validate ) {
 			//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate', form_sections_to_validate, true );
@@ -147,6 +207,8 @@ jQuery(document).ready(function($){
 
 		/**
 		 *	@function apply_rules
+		 *  @param {string} form_id
+		 *  @param {object} form_data
 		 */
 		add_rules : function( form_id, form_data ) {
 			//EEFV.console_log( 'EEFV.apply_rules', '', true );
@@ -171,7 +233,11 @@ jQuery(document).ready(function($){
 		remove_previous_validation_rules : function() {
 			// remove any previously applied validation rules for each html form
 			$.each( EEFV.validation_rules_per_html_form, function( form_section_id, form_data ){
-				if ( typeof form_section_id !== 'undefined' && typeof $( form_section_id ).attr('id') !== 'undefined' && typeof form_data !== 'undefined' ) {
+				if (
+					typeof form_section_id !== 'undefined'
+					&& typeof $( form_section_id ).attr('id') !== 'undefined'
+					&& typeof form_data !== 'undefined'
+				) {
 					EEFV.remove_rules( form_data );
 				}
 			});
@@ -181,6 +247,7 @@ jQuery(document).ready(function($){
 
 		/**
 		 *	@function apply_rules
+		 *  @param {object} form_data
 		 */
 		remove_rules : function( form_data ) {
 			//EEFV.console_log( 'EEFV.remove_rules', '', true );
@@ -255,6 +322,7 @@ jQuery(document).ready(function($){
 		 * Verifies that an email is valid.
 		 * Does not grok i18n domains. Not RFC compliant.
 		 *
+		 * @function is_email
 		 * @param {string} $email Email address to verify.
 		 * @return {boolean} Either false or the valid email address.
 		 */
@@ -286,42 +354,54 @@ jQuery(document).ready(function($){
 			}
 
 			// Test for leading and trailing periods and whitespace
-			if ( str_trim( $domain, " \t\n\r\0\x0B." ) !== $domain ) {
+			if ( EEFV.string_trim( $domain, " \t\n\r\0\x0B." ) !== $domain ) {
 				return false;
 			}
 
 			// Split the domain into subs
-			var $subs = $domain.split( '.' );
+			var subs = $domain.split( '.' );
 
 			// Assume the domain will have at least two subs
-			if ( 2 > $subs.length ) {
+			if ( 2 > subs.length ) {
 				return false;
 			}
 			var i;
 			// Loop through each sub
-			for ( i in $subs ) {
-				var $sub = $subs[ i ];
-				// Test for leading and trailing hyphens and whitespace
-				if ( str_trim( $sub, " \t\n\r\0\x0B-" ) !== $sub ) {
-					return false;
-				}
-
-				// Test for invalid characters
-				if ( !/^[a-z0-9-]+$/i.test( $sub ) ) {
-					return false;
+			for ( i in subs ) {
+				if ( subs.hasOwnProperty( i ) ) {
+					// Test for leading and trailing hyphens and whitespace
+					if ( EEFV.string_trim( subs[ i ], " \t\n\r\0\x0B-" ) !== subs[ i ] ) {
+						return false;
+					}
+					// Test for invalid characters
+					if ( !/^[a-z0-9-]+$/i.test( subs[ i ] ) ) {
+						return false;
+					}
 				}
 			}
 
 			// Congratulations your email made it!
 			return true;
 
-			function str_trim( str, regex ) {
-				var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
-				return str.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
-					new RegExp( '/[' + chr + ']*$/' ),
-					''
-				);
+		},
+
+
+
+		/**
+		 * trims leading and trailing hyphens and whitespace
+		 * @function string_trim
+		 * @param  {string} stringToTrim
+		 * @param  {string} regex
+		 */
+		string_trim : function( stringToTrim, regex ) {
+			if ( typeof stringToTrim !== 'string' || typeof regex !== 'string' ) {
+				return '';
 			}
+			var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
+			return stringToTrim.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
+				new RegExp( '/[' + chr + ']*$/' ),
+				''
+			);
 		},
 
 
@@ -329,6 +409,8 @@ jQuery(document).ready(function($){
 		/**
 		 * for generating a random string to make an ID for an html form
 		 * if it doesn't have one already
+		 * @function generate_random_string
+		 * @param {number} n
 		 */
 		generate_random_string : function( n ) {
 			if( ! n ) {
@@ -385,10 +467,10 @@ jQuery(document).ready(function($){
 				if ( typeof obj === 'object' ) {
 					if ( typeof obj_name !== 'undefined' ) {
 						//console.log( obj_name );
-						EEFV.console_log( spacer + obj_name );
+						EEFV.console_log( spacer + obj_name, '', false );
 					} else {
 						//console.log( 'console_log_object : ' );
-						EEFV.console_log( spacer + 'console_log_object : ' );
+						EEFV.console_log( spacer + 'console_log_object : ', '', false );
 					}
 					spacer = spacer + '. ';
 					depth++;
@@ -411,9 +493,11 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
-	if( typeof( ee_form_section_validation_init ) != 'undefined'
-			&& ee_form_section_validation_init.init == true
-			&& typeof( ee_form_section_vars ) != 'undefined' ) {
+	if(
+		typeof( ee_form_section_validation_init ) != 'undefined'
+		&& ee_form_section_validation_init.init == true
+		&& typeof( ee_form_section_vars ) != 'undefined'
+	) {
 		EEFV.initialize( ee_form_section_vars.form_data );
 	}
 

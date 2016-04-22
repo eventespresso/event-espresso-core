@@ -552,6 +552,23 @@ class Read_Test extends \EE_UnitTestCase{
 					'caps' => \EEM_Base::caps_read_admin
 				) ) );
 	}
+	
+	/**
+	 * @group 9389
+	 */
+	public function test_handle_request_get_all__automatic_group_by() {
+		$request = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.36/question_groups' );
+		$request->set_query_params( 
+			array(
+				'where' => array(
+					'Question.QST_ID' => array( 'IS_NOT_NULL' )
+				),
+				'limit' => '2,2'
+			)
+		);
+		$response = Read::handle_request_get_all( $request );
+		$this->assertEmpty( $response->get_data() );
+	}
 }
 
 // End of file Read_Test.php
