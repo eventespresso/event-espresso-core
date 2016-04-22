@@ -66,11 +66,6 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 	 * @return array
 	 */
 	function _get_allowed_tags(){
-		global $allowedtags;
-		$tags_we_allow = $allowedtags;
-		$tags_we_allow['ol']=array();
-		$tags_we_allow['ul']=array();
-		$tags_we_allow['li']=array();
-		return apply_filters( 'FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags', $tags_we_allow, $this );
+		return apply_filters( 'FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags', EEH_HTML::get_simple_tags(), $this );
 	}
 }

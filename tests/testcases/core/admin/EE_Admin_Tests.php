@@ -129,12 +129,11 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->setMaintenanceMode(2);
 		$admin->init();
 		$this->assertFalse( has_action('wp_ajax_dismiss_ee_nag_notice', array( $admin, 'dismiss_ee_nag_notice_callback' ) ) );
-		$this->assertFalse( has_action('save_post', array( 'EE_Admin', 'parse_post_content_on_save' ) ) );
-		$this->assertFalse( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ) );
 		$this->assertFalse( has_action('admin_notices', array( $admin, 'get_persistent_admin_notices' ) ) );
 		$this->assertFalse( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ) );
 		$this->assertFalse( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ) );
 		//should happen with both conditions
+		$this->assertEquals( has_filter( 'content_save_pre', array( $admin, 'its_eSpresso' ) ), 10 );
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
 		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
@@ -148,7 +147,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$this->assertFalse( has_filter('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $admin, 'hide_admin_pages_except_maintenance_mode' ) ) );
 		$this->assertEquals( has_action('wp_ajax_dismiss_ee_nag_notice', array( $admin, 'dismiss_ee_nag_notice_callback' ) ), 10 );
-		$this->assertEquals( has_action('save_post', array( 'EE_Admin', 'parse_post_content_on_save' ) ), 100 );
 		$this->assertEquals( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ), 10 );
 		$this->assertEquals( has_action('admin_notices', array( $admin, 'get_persistent_admin_notices' ) ), 9 );
 		$this->assertEquals( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ), 10 );
