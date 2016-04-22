@@ -3,6 +3,33 @@
  * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields. Wish PHP had multiple-inheritance for this...)
  */
 class EE_Money_Field extends EE_Float_Field{
+	protected $_whole_pennies_only;
+	/**
+	 * 
+	 * @param string $table_column
+	 * @param string $nicename
+	 * @param boolean $nullable
+	 * @param mixed $default_value
+	 * @param boolean $whole_pennies_only if TRUE (default) then the internal representation of this 
+	 *	amount will be rounded to a whole penny. If FALSE, then it can be arbitrarily precise
+	 */
+	public function __construct( $table_column, $nicename, $nullable,
+		$default_value = null, $whole_pennies_only = true ) {
+		$this->_whole_pennies_only = $whole_pennies_only;
+		parent::__construct( $table_column,
+			$nicename,
+			$nullable,
+			$default_value );
+	}
+	
+	/**
+	 * Returns whether or not this money field allows partial penny amounts
+	 * @return boolean
+	 */
+	public function allow_partial_pennies() {
+		return $this->_whole_pennies_only;
+	}
+	
 	function get_wpdb_data_type(){
 		return '%f';
 	}
@@ -40,15 +67,14 @@ class EE_Money_Field extends EE_Float_Field{
 	 * @return float
 	 */
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		//remove any currencies etc.
-//		if(is_string($value_inputted_for_field_on_model_object)){
-//			$value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "", $value_inputted_for_field_on_model_object);
-//		}
 		//now it's a float-style string or number
 		$float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
 		//round to the correctly number of decimal places for this  currency
-		$rounded_value = round($float_val,  EE_Registry::instance()->CFG->currency->dec_plc);
-		return $rounded_value;
+		if( ! $this->allow_partial_pennies() ) {
+			return  EEH_Money::round_for_currency($float_val,  EE_Registry::instance()->CFG->currency->code );
+		} else {
+			return $float_val;
+		}
 	}
 
 	function prepare_for_get($value_of_field_on_model_object) {
