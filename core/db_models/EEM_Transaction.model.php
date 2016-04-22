@@ -123,7 +123,7 @@ class EEM_Transaction extends EEM_Base {
 			OBJECT,
 			array(
 				'txnDate' => array( 'DATE(' . $query_interval . ')', '%s' ),
-				'revenue' => array( 'SUM(Transaction.TXN_paid)', '%d' )
+				'revenue' => array( 'SUM(TransactionTable.TXN_paid)', '%d' )
 			)
 		);
 		return $results;
@@ -164,9 +164,9 @@ class EEM_Transaction extends EEM_Base {
 						DISTINCT Payment.TXN_ID,
 						Event.post_title AS event_name,
 						Payment.PAY_amount AS paid
-					FROM $transaction_table AS Transaction
+					FROM $transaction_table AS TransactionTable
 						JOIN $registration_table AS Registration
-							ON Registration.TXN_ID = Transaction.TXN_ID
+							ON Registration.TXN_ID = TransactionTable.TXN_ID
 						JOIN $payment_table AS Payment
 							ON Payment.TXN_ID = Registration.TXN_ID
 							AND Payment.PAY_timestamp > '$sql_date'
