@@ -53,10 +53,10 @@ class EED_Venues_Archive  extends EED_Module {
 
 
 	/**
-	 * 	run - initial module setup
+	 * run - initial module setup
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param \WP $WP
 	 */
 	public function run( $WP ) {
 		// check what template is loaded
@@ -67,24 +67,23 @@ class EED_Venues_Archive  extends EED_Module {
 
 
 	/**
-	 * 	template_include
+	 * template_include
 	 *
-	 *  	@access 	public
-	 *  	@return 	void
+	 * @access public
+	 * @param  string $template
+	 * @return string
 	 */
 	public function template_include( $template ) {
 		// not a custom template?
 		if ( EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true )->get_selected_template() != 'archive-espresso_venues.php' ) {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 1 );
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( $this, 'venue_details' ), 100 );
-			add_filter( 'the_excerpt', array( $this, 'venue_location' ), 110 );
 			// or the_content
 			add_filter( 'the_content', array( $this, 'venue_details' ), 100 );
-			add_filter( 'the_content', array( $this, 'venue_location' ), 110 );
-			// don't diplay entry meta because the existing theme will take car of that
+			// don't display entry meta because the existing theme will take care of that
 			add_filter( 'FHEE__content_espresso_venues_details_template__display_entry_meta', '__return_false' );
 		}
 		return $template;
@@ -93,51 +92,60 @@ class EED_Venues_Archive  extends EED_Module {
 
 
 	/**
-	 * 	the_title
+	 * the_title
 	 *
-	 *  	@access 	public
-	 * 	@param		string 	$title
-	 *  	@return 		void
+	 * @access public
+	 * @param  string $title
+	 * @return string
 	 */
-	public function the_title( $title = '', $id = '' ) {
+	public function the_title( $title = '' ) {
 		return $title;
-//		global $post;
-//		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title;
 	}
 
 
 	/**
 	 * 	venue_details
 	 *
-	 *  	@access 	public
-	 * 	@param		string 	$content
-	 *  	@return 		void
+	 * @access public
+	 * @param  string $content
+	 * @return string
 	 */
 	public function venue_details( $content ) {
 		global $post;
-		// since the 'content-espresso_venues-details.php' template might be used directly from within a theme,
-		// it uses the_content() for displaying the $post->post_content
-		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
-		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-		remove_filter( 'the_excerpt', array( $this, 'venue_details' ), 100 );
-		remove_filter( 'the_content', array( $this, 'venue_details' ), 100 );
-		// now load our template
-		$template = EEH_Template::locate_template( 'content-espresso_venues-details.php' );
-		//now add our filter back in, plus some others
-		add_filter( 'the_excerpt', array( $this, 'venue_details' ), 100 );
-		add_filter( 'the_content', array( $this, 'venue_details' ), 100 );
-		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+		if (
+			$post->post_type == 'espresso_venues'
+			&& ! post_password_required()
+		) {
+			// since the 'content-espresso_venues-details.php' template might be used directly from within a theme,
+			// it uses the_content() for displaying the $post->post_content
+			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
+			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+			remove_filter( 'the_excerpt', array( $this, 'venue_details' ), 100 );
+			remove_filter( 'the_content', array( $this, 'venue_details' ), 100 );
+			// add filters we want
+			add_filter( 'the_content', array( $this, 'venue_location' ), 110 );
+			add_filter( 'the_excerpt', array( $this, 'venue_location' ), 110 );
+			// now load our template
+			$template = EEH_Template::locate_template( 'content-espresso_venues-details.php' );
+			//now add our filter back in, plus some others
+			add_filter( 'the_excerpt', array( $this, 'venue_details' ), 100 );
+			add_filter( 'the_content', array( $this, 'venue_details' ), 100 );
+			// remove other filters we added so they won't get applied to the next post
+			remove_filter( 'the_content', array( $this, 'venue_location' ), 110 );
+			remove_filter( 'the_excerpt', array( $this, 'venue_location' ), 110 );
+			// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+		}
 		return ! empty( $template ) ? $template : $content;
 	}
 
 
 
 	/**
-	 * 	venue_location
+	 * venue_location
 	 *
-	 *  	@access 	public
-	 * 	@param		string 	$content
-	 *  	@return 		void
+	 * @access public
+	 * @param  string $content
+	 * @return string
 	 */
 	public function venue_location( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_venues-location.php' );
@@ -161,14 +169,7 @@ class EED_Venues_Archive  extends EED_Module {
 			} else if ( is_readable( EE_TEMPLATES . $this->theme . DS . 'style.css' )) {
 				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
 			}
-//			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.js' )) {
-//				wp_register_script( 'archive-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.js', array('espresso_core'), '1.0', TRUE  );
-//			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.js' )) {
-//				wp_register_script( 'archive-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.js', array('espresso_core'), '1.0', TRUE );
-//			}
 			wp_enqueue_style( $this->theme );
-//			wp_enqueue_script( 'archive-espresso_venues' );
-
 		}
 	}
 
