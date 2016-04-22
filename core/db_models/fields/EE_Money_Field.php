@@ -26,7 +26,7 @@ class EE_Money_Field extends EE_Float_Field{
 	 * Returns whether or not this money field allows partial penny amounts
 	 * @return boolean
 	 */
-	public function allow_partial_pennies() {
+	public function whole_pennies_only() {
 		return $this->_whole_pennies_only;
 	}
 	
@@ -70,15 +70,25 @@ class EE_Money_Field extends EE_Float_Field{
 		//now it's a float-style string or number
 		$float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
 		//round to the correctly number of decimal places for this  currency
-		if( ! $this->allow_partial_pennies() ) {
-			return  EEH_Money::round_for_currency($float_val,  EE_Registry::instance()->CFG->currency->code );
-		} else {
-			return $float_val;
-		}
+		return $this->_round_if_no_partial_pennies( $float_val );
+			
 	}
 
 	function prepare_for_get($value_of_field_on_model_object) {
-		$c = EE_Registry::instance()->CFG->currency;
-		return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
+		return $this->_round_if_no_partial_pennies( parent::prepare_for_get($value_of_field_on_model_object) );
+	}
+	
+	/**
+	 * If partial pennies allowed, leaves the amount as-is; if not, rounds it according
+	 * to the site's currency
+	 * @param type $amount
+	 * @return float
+	 */
+	protected function _round_if_no_partial_pennies( $amount ) {
+		if( $this->whole_pennies_only() ) {
+			return  EEH_Money::round_for_currency($amount,  EE_Registry::instance()->CFG->currency->code );
+		} else {
+			return $amount;
+		}
 	}
 }

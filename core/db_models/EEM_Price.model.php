@@ -34,7 +34,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'Price'=> array(
 				'PRC_ID'=>new EE_Primary_Key_Int_Field('PRC_ID', 'Price ID'),
 				'PRT_ID'=>new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false,  NULL, 'Price_Type'),
-				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
+				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0, false ),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
 				'PRC_desc'=>new EE_Post_Content_Field('PRC_desc', 'Price Description', false, ''),
 				'PRC_is_default'=>new EE_Boolean_Field('PRC_is_default', 'Flag indicating whether price is a default price', false, false),
