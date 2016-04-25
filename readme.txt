@@ -1350,7 +1350,7 @@ Event Espresso 4.1.0.reg
 
 == Upgrade Notice ==
 
-Backup your WordPress before installing any updates.
+Backup your WordPress website before installing any updates.
 
 == Other Notes ==
 
@@ -1360,7 +1360,7 @@ Backup your WordPress before installing any updates.
 
 [Event Espresso](http:eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) is a very flexible, and robust event ticketing plugin for WordPress. Many [optional features](https://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) include an [integrated calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [ticket scanning](https://eventespresso.com/product/eea-barcode-scanner/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) & check-in/out capabilities, [single page checkout](https://eventespresso.com/features/intelligent-single-page-checkout/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [multiple event registration](https://eventespresso.com/product/eea-multi-event-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), and after event [marketing tools](https://eventespresso.com/product/eea-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_case).
 
-= Arts &amp; Culture =
+= Arts & Culture =
 
 * City Tours
 * Club Performances
@@ -1377,7 +1377,7 @@ Backup your WordPress before installing any updates.
 = Business =
 
 * Asset/Resource Booking/Scheduling
-* Car Wash Sales &amp; Reservations
+* Car Wash Sales & Reservations
 * [Conference Registration](https://eventespresso.com/use-cases/conference-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * [Haunted House Ticket Sales](https://eventespresso.com/2012/09/haunted-house-ticketing-system/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * House Cleaning Services
@@ -1402,7 +1402,7 @@ Backup your WordPress before installing any updates.
 * Drivers Education
 * Technical/IT Training
 
-= Community Events</strong> <strong>Conferences =
+= Community Events Conferences =
 
 * [Backyard Barbecues](https://eventespresso.com/use-cases/backyard-bbq-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
 * [BBQ Festivals](https://eventespresso.com/use-cases/bbq-festival-ticketing/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
@@ -1435,7 +1435,7 @@ Backup your WordPress before installing any updates.
 * Parent Teacher Association Conferences and Meetings
 * Wildlife Education and Tours 
 
-= Fundraisers &amp; Non-Profit Organizations =
+= Fundraisers & Non-Profit Organizations =
 
 * Boy Scout Troop Events
 * [Car Show Registration](https://eventespresso.com/use-cases/car-show-registration-ticket-sales/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases)
