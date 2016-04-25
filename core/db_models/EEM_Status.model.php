@@ -36,10 +36,10 @@ class EEM_Status extends EEM_Base {
 		$this->singular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
-			'Status'=> new EE_Primary_Table('esp_status', 'STS_ID')
+			'StatusTable'=> new EE_Primary_Table('esp_status', 'STS_ID')
 		);
 		$this->_fields = array(
-			'Status'=>array(
+			'StatusTable'=>array(
 				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso')),
 				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
 				'STS_type'=>new EE_Enum_Text_Field(
