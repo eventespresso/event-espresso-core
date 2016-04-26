@@ -265,7 +265,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				LIN_name varchar(245) NOT NULL DEFAULT '',
 				LIN_desc text DEFAULT NULL,
 				LIN_unit_price decimal(10,6) DEFAULT NULL,
-				LIN_percent decimal(10,3) DEFAULT NULL,
+				LIN_percent decimal(10,6) DEFAULT NULL,
 				LIN_is_taxable tinyint(1) DEFAULT 0,
 				LIN_order int(10) DEFAULT 0,
 				LIN_parent int(10) DEFAULT 0,
