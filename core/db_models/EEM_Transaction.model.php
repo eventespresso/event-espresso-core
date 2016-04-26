@@ -72,10 +72,10 @@ class EEM_Transaction extends EEM_Base {
 		$this->plural_item = __('Transactions','event_espresso');
 
 		$this->_tables = array(
-			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
+			'TransactionTable'=>new EE_Primary_Table('esp_transaction','TXN_ID')
 		);
 		$this->_fields = array(
-			'Transaction'=>array(
+			'TransactionTable'=>array(
 				'TXN_ID'=>new EE_Primary_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso')),
 				'TXN_timestamp'=>new EE_Datetime_Field('TXN_timestamp', __('date when transaction was created','event_espresso'), false, time(), $timezone ),
 				'TXN_total'=>new EE_Money_Field('TXN_total', __('Total value of Transaction','event_espresso'), false, 0),
@@ -122,7 +122,7 @@ class EEM_Transaction extends EEM_Base {
 			OBJECT,
 			array(
 				'txnDate' => array( 'DATE(' . $query_interval . ')', '%s' ),
-				'revenue' => array( 'SUM(Transaction.TXN_paid)', '%d' )
+				'revenue' => array( 'SUM(TransactionTable.TXN_paid)', '%d' )
 			)
 		);
 	}
@@ -161,9 +161,9 @@ class EEM_Transaction extends EEM_Base {
 						DISTINCT Payment.TXN_ID,
 						Event.post_title AS event_name,
 						Payment.PAY_amount AS paid
-					FROM $transaction_table AS Transaction
+					FROM $transaction_table AS TransactionTable
 						JOIN $registration_table AS Registration
-							ON Registration.TXN_ID = Transaction.TXN_ID
+							ON Registration.TXN_ID = TransactionTable.TXN_ID
 						JOIN $payment_table AS Payment
 							ON Payment.TXN_ID = Registration.TXN_ID
 							AND Payment.PAY_timestamp > '$sql_date'

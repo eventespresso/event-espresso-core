@@ -570,9 +570,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$answer->set( 'ANS_value', $answer_value );
 			}
 			$answer->cache( 'Question', $question );
-			$answer_cache_id =$question->system_ID() !== null
+			//remember system ID had a bug where sometimes it could be null
+			$answer_cache_id =$question->is_system_question()
 				? $question->system_ID() . '-' . $registration->reg_url_link()
-				: $question->ID() . '-' . $registration->reg_url_link();
+				: $question->ID() . '-' . $registration->reg_url_link();			
 			$registration->cache( 'Answer', $answer, $answer_cache_id );
 		}
 		return $this->_generate_question_input( $registration, $question, $answer );
