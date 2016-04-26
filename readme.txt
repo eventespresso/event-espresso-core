@@ -1,4 +1,4 @@
-=== Event Espresso 4 Decaf - Event Ticketing and Registration System ===
+=== Event Espresso 4 Decaf - Event Registration Event Ticketing ===
 Contributors: eventespresso, sethshoultes
 Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
 Tags: events, event, ticket, ticketing, tickets,  event ticketing, event booking, class booking, booking, class registration, conference registration, event management, event manager,event registration, events calendar, events planner, event ticketing, online registration, registration, sports, training, virtual events, wordcamp, wordpress events
