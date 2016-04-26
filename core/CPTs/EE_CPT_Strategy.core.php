@@ -358,8 +358,6 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
-	 * posts_fields
-	 *
 	 * @deprecated
 	 * @since  4.8.41
 	 * @access public

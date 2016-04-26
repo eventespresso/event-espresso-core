@@ -236,22 +236,22 @@ class RegistrationsReport extends JobHandlerFile {
 				//get pretty status
 				$stati = \EEM_Status::instance()->localized_status( array(
 					$reg_row[ 'Registration.STS_ID' ] => __( 'unknown', 'event_espresso' ),
-					$reg_row[ 'Transaction.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
+					$reg_row[ 'TransactionTable.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
 						FALSE,
 						'sentence' );
 				$reg_csv_array[__("Registration Status", 'event_espresso')] = $stati[ $reg_row[ 'Registration.STS_ID' ] ];
 				//get pretty transaction status
-				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'Transaction.STS_ID' ] ];
-				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
-				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'TransactionTable.STS_ID' ] ];
+				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'TransactionTable.TXN_total' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'TransactionTable.TXN_paid' ], 'localized_float' ) : '0.00';
 				$payment_methods = array();
 				$gateway_txn_ids_etc = array();
 				$payment_times = array();
-				if( $is_primary_reg && $reg_row[ 'Transaction.TXN_ID' ] ){
+				if( $is_primary_reg && $reg_row[ 'TransactionTable.TXN_ID' ] ){
 					$payments_info = \EEM_Payment::instance()->get_all_wpdb_results(
 							array(
 								array(
-									'TXN_ID' => $reg_row[ 'Transaction.TXN_ID' ],
+									'TXN_ID' => $reg_row[ 'TransactionTable.TXN_ID' ],
 									'STS_ID' => \EEM_Payment::status_id_approved
 								),
 								'force_join' => array( 'Payment_Method' ),
