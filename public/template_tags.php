@@ -557,6 +557,7 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @param string $single_date_format
 	 * @param string $single_time_format
 	 * @param bool   $EVT_ID
+	 * @param bool   $echo
 	 * @return string
 	 */
 	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE, $echo = TRUE ) {
@@ -921,6 +922,36 @@ if ( ! function_exists( 'espresso_is_venue_private' ) ) {
 
 
 
+if ( ! function_exists( 'espresso_venue_is_password_protected' ) ) {
+	/**
+	 * returns true or false if a venue is password protected or not
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 * @return string
+	 */
+	function espresso_venue_is_password_protected( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::is_venue_password_protected( $VNU_ID );
+	}
+}
+
+
+
+if ( ! function_exists( 'espresso_password_protected_venue_form' ) ) {
+	/**
+	 * Returns a password form if venue is password protected.
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 * @return string
+	 */
+	function espresso_password_protected_venue_form( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::password_protected_venue_form( $VNU_ID );
+	}
+}
+
+
+
 
 if ( ! function_exists( 'espresso_venue_name' )) {
 	/**
@@ -994,10 +1025,10 @@ if ( ! function_exists( 'espresso_venue_excerpt' )) {
 	function espresso_venue_excerpt( $VNU_ID = 0,  $echo = TRUE ) {
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
-			echo EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+			echo EEH_Venue_View::venue_excerpt( $VNU_ID );
 			return '';
 		}
-		return EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+		return EEH_Venue_View::venue_excerpt( $VNU_ID );
 	}
 }
 

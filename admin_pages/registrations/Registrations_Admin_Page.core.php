@@ -1117,7 +1117,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['reg_nmbr']['value'] = $this->_registration->ID();
 			$this->_template_args['reg_nmbr']['label'] = __( 'Registration Number', 'event_espresso' );
 
-			$this->_template_args['reg_datetime']['value'] =  $this->_registration->pretty_date('l F j, Y','g:i:s a') ;
+			$this->_template_args['reg_datetime']['value'] =  $this->_registration->get_i18n_datetime( 'REG_date' );
 			$this->_template_args['reg_datetime']['label'] = __( 'Date', 'event_espresso' );
 
 			$this->_template_args['grand_total'] = $transaction->total();
