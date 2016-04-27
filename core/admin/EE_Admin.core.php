@@ -778,12 +778,12 @@ final class EE_Admin {
 	 */
 	public static function parse_post_content_on_save( $post_ID, $post ) {
 		EE_Error::doing_it_wrong(
-		__METHOD__,
-		__(
-		'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-		'event_espresso'
-		),
-		'4.8.41'
+			__METHOD__,
+			__(
+				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+				'event_espresso'
+			),
+			'4.8.41'
 		);
 		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
 	}
@@ -800,12 +800,12 @@ final class EE_Admin {
 	 */
 	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
 		EE_Error::doing_it_wrong(
-		__METHOD__,
-		__(
-		'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
-		'event_espresso'
-		),
-		'4.8.41'
+			__METHOD__,
+			__(
+				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+				'event_espresso'
+			),
+			'4.8.41'
 		);
 		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
 	}
