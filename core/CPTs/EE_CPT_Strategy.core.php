@@ -372,7 +372,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function posts_fields( $SQL ) {
 		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 1 );
-		return $this->query_modifier->postsFields( $SQL );
+		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
+			return $this->query_modifier->postsFields( $SQL );
+		}
+		return $SQL;
 	}
 
 
@@ -386,7 +389,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function posts_join( $SQL ) {
 		remove_filter( 'posts_join', array( $this, 'posts_join' ), 1 );
-		return $this->query_modifier->postsJoin( $SQL );
+		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
+			return $this->query_modifier->postsJoin( $SQL );
+		}
+		return $SQL;
 	}
 
 
@@ -400,7 +406,9 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function the_posts( $posts ) {
 		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1 );
-		$this->query_modifier->thePosts( $posts );
+		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
+			$this->query_modifier->thePosts( $posts );
+		}
 		return $posts;
 	}
 
@@ -415,7 +423,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return string
 	 */
 	public function get_edit_post_link( $url, $ID ) {
-		return $this->query_modifier->getEditPostLink( $url, $ID );
+		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
+			return $this->query_modifier->getEditPostLink( $url, $ID );
+		}
+		return '';
 	}
 
 
@@ -427,7 +438,9 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @param null $WP_Query
 	 */
 	protected function _do_template_filters( $WP_Query = null ) {
-		$this->query_modifier->addTemplateFilters();
+		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
+			$this->query_modifier->addTemplateFilters();
+		}
 	}
 
 
@@ -440,7 +453,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return string the path to the full template file.
 	 */
 	public function single_cpt_template( $current_template ) {
-		return $this->query_modifier->singleCptTemplate( $current_template );
+		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
+			return $this->query_modifier->singleCptTemplate( $current_template );
+		}
+		return $current_template;
 	}
 
 
