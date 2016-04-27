@@ -834,7 +834,11 @@ final class EE_Config {
 	 */
 	public function get_config_option( $config_option_name = '' ) {
 		// retrieve the wp-option for this config class.
-		return maybe_unserialize( get_option( $config_option_name ) );
+		$config_option = maybe_unserialize( get_option( $config_option_name, array() ) );
+		if ( empty( $config_option ) ) {
+			EE_Config::log( $config_option_name . '-NOT-FOUND' );
+		}
+		return $config_option;
 	}
 
 
