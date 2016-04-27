@@ -65,7 +65,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	/**
 	 *@ singleton method used to instantiate class object
 	 *@ access public
-	 *@ return EE_Registry instance
+	 *@ return EE_CPT_Strategy instance
 	 */
 	public static function instance() {
 		// check if class object is instantiated
@@ -326,10 +326,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	protected function _generate_CptQueryModifier( WP_Query $WP_Query, $post_type ) {
 		$this->query_modifier = new EventEspresso\Core\CPTs\CptQueryModifier(
-			EE_Registry::instance()->REQ,
-			$WP_Query,
 			$post_type,
-			$this->_CPTs[ $post_type ]
+			$this->_CPTs[ $post_type ],
+			$WP_Query,
+			EE_Registry::instance()->REQ
 		);
 		$this->_CPT_taxonomies = $this->query_modifier->taxonomies();
 	}

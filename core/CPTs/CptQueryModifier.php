@@ -67,19 +67,18 @@ class CptQueryModifier {
 
 
 	/**
-	 * CptQueryModifier constructor.
-
+	 * CptQueryModifier constructor
 	 *
-*@param \WP_Query   $WP_Query
-	 * @param \EE_Request_Handler $request
-	 * @param string      $post_type
+	 * @param string $post_type
 	 * @param array       $cpt_details
+	 * @param \WP_Query           $WP_Query
+	 * @param \EE_Request_Handler $request
 	 */
 	public function __construct(
-		\EE_Request_Handler $request,
-		\WP_Query $WP_Query,
 		$post_type,
-		array $cpt_details
+		array $cpt_details,
+		\WP_Query $WP_Query,
+		\EE_Request_Handler $request
 	) {
 		$this->setRequest( $request );
 		$this->setWpQuery( $WP_Query );
