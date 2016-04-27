@@ -95,9 +95,6 @@ class Model_Version_Info {
 				//first version where the REST API is in EE core, so no need
 				//to specify how its different from the previous
 			),
-			'4.9.0' => array(
-				'Message' => Model_Version_Info::model_added,
-			)
 		);
 
 		//setup data for "extra" fields added onto resources which don't actually exist on models
