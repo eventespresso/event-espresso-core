@@ -257,8 +257,9 @@ class CptQueryModifier {
 				// add details to our taxonomies if they exist
 				$details = isset( $all_taxonomies[ $taxonomy ] )
 					? $all_taxonomies[ $taxonomy ]
-					: null;
+					: array();
 			}
+			// ALWAYS unset() variables that were passed by reference
 			unset( $details );
 			$this->setTaxonomies( $taxonomies );
 		}
@@ -360,10 +361,23 @@ class CptQueryModifier {
 	 *
 	 * @access protected
 	 * @param string $model_name
+	 * @throws \EE_Error
 	 */
 	protected function setupModelsAndTables( $model_name ) {
 		// get CPT table data via CPT Model
-		$this->setModel( \EE_Registry::instance()->load_model( $model_name ) );
+		$model = \EE_Registry::instance()->load_model( $model_name );
+		if ( ! $model instanceof \EEM_Base ) {
+			throw new \EE_Error (
+				sprintf(
+					__(
+						'The "%1$s" model could not be loaded.',
+						'event_espresso'
+					),
+					$model_name
+				)
+			);
+		}
+		$this->setModel( $model );
 		$this->setModelTables( $this->model->get_tables() );
 		// is there a Meta Table for this CPT?
 		if (
@@ -411,7 +425,7 @@ class CptQueryModifier {
 	 */
 	public function postsFields( $SQL ) {
 		// does this CPT have a meta table ?
-		if ( ! empty( $this->meta_table ) ) {
+		if ( $this->meta_table instanceof \EE_Secondary_Table ) {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->meta_table->get_table_name() . '.* ';
 		}
@@ -430,7 +444,7 @@ class CptQueryModifier {
 	 */
 	public function postsJoin( $SQL ) {
 		// does this CPT have a meta table ?
-		if ( ! empty( $this->meta_table ) ) {
+		if ( $this->meta_table instanceof \EE_Secondary_Table ) {
 			global $wpdb;
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN '
@@ -459,7 +473,7 @@ class CptQueryModifier {
 	public function thePosts( $posts ) {
 		$CPT_class = $this->cpt_details['class_name'];
 		// loop thru posts
-		if ( is_array( $posts ) ) {
+		if ( is_array( $posts ) && $this->model instanceof \EEM_CPT_Base ) {
 			foreach ( $posts as $key => $post ) {
 				if ( $post->post_type === $this->post_type ) {
 					$post->{$CPT_class} = $this->model->instantiate_class_from_post_object( $post );
@@ -480,15 +494,15 @@ class CptQueryModifier {
 	public function getEditPostLink( $url, $ID ) {
 		// need to make sure we only edit links if our cpt
 		global $post;
-		if ( $post->post_type !== $this->post_type ) {
+		if ( ! $post instanceof \WP_Post && $post->post_type !== $this->post_type ) {
 			return $url;
 		}
 		//k made it here so all is good.
-		$scheme = is_ssl() ? 'https' : 'http';
-		$url = get_admin_url( \EE_Config::instance()->core->current_blog_id, 'admin.php', $scheme );
-		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
 		return wp_nonce_url(
-			add_query_arg( array( 'page' => $this->post_type, 'post' => $ID, 'action' => 'edit' ), $url ),
+			add_query_arg(
+				array( 'page' => $this->post_type, 'post' => $ID, 'action' => 'edit' ),
+				admin_url( 'admin.php' )
+			),
 			'edit',
 			'edit_nonce'
 		);
@@ -525,10 +539,10 @@ class CptQueryModifier {
 		//does this called object HAVE a page template set that is something other than the default.
 		$template = get_post_meta( $object->ID, '_wp_page_template', true );
 		//exit early if default or not set or invalid path (accounts for theme changes)
-		if ( $template === 'default' || empty( $template )
-		     || ! is_readable(
-				get_stylesheet_directory() . '/' . $template
-			)
+		if (
+			$template === 'default'
+			|| empty( $template )
+			|| ! is_readable( get_stylesheet_directory() . '/' . $template )
 		) {
 			return $current_template;
 		}
