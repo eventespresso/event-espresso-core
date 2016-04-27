@@ -30,6 +30,21 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 
 	/**
+	 * get_list_of_allowed_tags
+	 *
+	 * generates and returns a string that lists the top-level HTML tags that are allowable for this input
+	 *
+	 * @return string
+	 */
+	public function get_list_of_allowed_tags() {
+		global $allowedposttags;
+		ksort( $allowedposttags );
+		return implode( ', ', array_keys( $allowedposttags ) );
+	}
+
+
+
+	/**
 	 * @param $normalized_value
 	 * @throws \EE_Validation_Error
 	 */

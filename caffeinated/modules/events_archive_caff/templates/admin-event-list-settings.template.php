@@ -1,7 +1,5 @@
 <?php
 add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
-EE_Registry::instance()->load_helper( 'Event_View' );
-EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 $values = EEH_Form_Fields::prep_answer_options( array(
 	array( 'id' => 1, 'text' => __('Yes', 'event_espresso')),

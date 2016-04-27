@@ -684,11 +684,16 @@ label.error { display : block; color : #FE2A00 !important; }
 	border: none;
 }
 
+.espresso-admin .wp-list-table td {
+	overflow: hidden !important;
+	position: relative;
+}
 .wp-list-table .ee-status-strip-td {
-	min-height: 125px;
 	display: block !important;
 	height: 100% !important;
+	min-height: 125px;
 	overflow: auto !important;
+	position: absolute;
 	width: 5px;
 }
 

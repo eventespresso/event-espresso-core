@@ -298,7 +298,6 @@ final class EE_Admin {
 				'action' => 'edit_attendee',
 				'post' => $id
 			);
-			EE_Registry::instance()->load_helper('URL');
 			return EEH_URL::add_query_args_and_nonce( $query_args, admin_url('admin.php?page=espresso_registrations') );
 		}
 		return $link;
@@ -549,7 +548,6 @@ final class EE_Admin {
 		}
 		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
 		//accounting.js library
@@ -666,7 +664,6 @@ final class EE_Admin {
 	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		// check for date_format or time_format
 		switch ( $option ) {
 			case 'date_format' :
@@ -767,6 +764,48 @@ final class EE_Admin {
 
 	}
 
+
+
+	/**
+	 * @deprecated 4.8.41
+	 * @access     public
+	 * @param  int      $post_ID
+	 * @param  \WP_Post $post
+	 * @return void
+	 */
+	public static function parse_post_content_on_save( $post_ID, $post ) {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__(
+				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+				'event_espresso'
+			),
+			'4.8.41'
+		);
+		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
+	}
+
+
+
+	/**
+	 * @deprecated 4.8.41
+	 * @access     public
+	 * @param  $option
+	 * @param  $old_value
+	 * @param  $value
+	 * @return void
+	 */
+	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__(
+				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+				'event_espresso'
+			),
+			'4.8.41'
+		);
+		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
+	}
 
 }
 // End of file EE_Admin.core.php

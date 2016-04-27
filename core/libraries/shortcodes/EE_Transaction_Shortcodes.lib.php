@@ -86,8 +86,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 
-		EE_Registry::instance()->load_helper( 'Template' );
-
 		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
 		$transaction = $this->_data->txn instanceof EE_Transaction ? $this->_data->txn : null;
 		$transaction = ! $transaction instanceof EE_Transaction && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->txn: $transaction;
@@ -265,10 +263,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( $total_owing > 0 ) {
 			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
-
-			//we need to re run this string through the parser to catch any shortcodes that are in it.
-			$this->_set_shortcode_helper();
-			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			$owing_content = !empty( $attrs['none_owing']) ? $attrs['none_owing'] : '';
 		}
@@ -481,7 +476,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$reg = $this->_data->primary_reg_obj;
 		$message_type = isset( $this->_extra_data['message_type'] ) ? $this->_extra_data['message_type'] : '';
 		if ( ! $reg instanceof EE_Registration || empty( $message_type ) ) {
-			return'';
+			return '';
 		}
 
 		$switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type  ? true : false;
@@ -495,11 +490,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( ! empty( $switch_to_url ) ) {
 
-		return  '
-<form method="post" action="' . $switch_to_url . '" >
-	<input class="print_button" type="submit" value="' . $switch_to_label . '" />
-</form>
-		';
+			return  '
+	<form method="post" action="' . $switch_to_url . '" >
+		<input class="print_button" type="submit" value="' . $switch_to_label . '" />
+	</form>
+			';
 		}
 		return '';
 	}
@@ -578,8 +573,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			$content = $opening_tag . sprintf( $custom_text, '<a href="[PAYMENT_URL]">', '</a>' ) . $closing_tag;
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
-			$this->_set_shortcode_helper();
-			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			return '';
 		}

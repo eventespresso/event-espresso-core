@@ -14,6 +14,7 @@
  * @since 		4.3.0
  * @package 		Event Espresso
  * @subpackage 	tests
+ * @group admin
  */
 class EE_Admin_Tests extends EE_UnitTestCase {
 
@@ -232,7 +233,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->factory->registration->create_many(3);
 
 		//expected events dashboard items
-		EE_Registry::instance()->load_helper('URL');
 		$xpct_events_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_events'), admin_url('admin.php') );
 		$xpct_events_text = sprintf( _n( '%s Event', '%s Events', 10 ), number_format_i18n( 10 ) );
 		$xpct_events_title = __('Click to view all Events', 'event_espresso');
@@ -317,7 +317,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//dummy link for testing
 		$orig_link = 'http://testdummylink.com';
-		EE_Registry::instance()->load_helper('URL');
 		$expected_link = EEH_URL::add_query_args_and_nonce( array( 'action' => 'edit_attendee', 'post' => $id ), admin_url('admin.php?page=espresso_registrations' ) );
 
 		//first test that if the id given doesn't match our post type that the original link is returned.

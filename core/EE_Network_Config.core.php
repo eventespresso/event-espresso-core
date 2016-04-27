@@ -37,7 +37,7 @@ final class EE_Network_Config {
 
 
 	/**
-	 * addons can add their specific network_confg objects to this property
+	 * addons can add their specific network_config objects to this property
 	 * @var EE_Config_Base[]
 	 */
 	public $addons;
@@ -71,7 +71,6 @@ final class EE_Network_Config {
 	 * 	class constructor
 	 *
 	 *  @access 	private
-	 *  @return 	void
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Network_Config__construct__begin',$this );
@@ -122,10 +121,12 @@ final class EE_Network_Config {
 
 
 	/**
-	 * 	update_config'
+	 *    update_config'
 	 *
-	 *  @access 	public
-	 *  @return 	boolean success
+	 * @access    public
+	 * @param bool $add_success
+	 * @param bool $add_error
+	 * @return bool success
 	 */
 	public function update_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );

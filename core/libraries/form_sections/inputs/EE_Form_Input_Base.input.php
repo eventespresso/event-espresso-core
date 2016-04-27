@@ -329,7 +329,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	protected function _add_validation_strategy( EE_Validation_Strategy_Base $validation_strategy ){
 		$validation_strategy->_construct_finalize( $this );
-		$this->_validation_strategies[ get_class($validation_strategy) ] = $validation_strategy;
+		$this->_validation_strategies[] = $validation_strategy;
 	}
 
 

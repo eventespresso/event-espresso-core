@@ -69,7 +69,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *
 	 */
 	public function __construct( $options_array = array() ){
-		EE_Registry::instance()->load_helper('Formatter');
 		$options_array = apply_filters( 'FHEE__EE_Form_Section_Proper___construct__options_array', $options_array, $this );
 		//call parent first, as it may be setting the name
 		parent::__construct($options_array);
@@ -197,6 +196,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		if( $req_data === NULL){
 			$req_data = array_merge( $_GET, $_POST );
 		}
+		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data', $req_data, $this );
 		$this->_normalize($req_data);
 		if( $validate ){
 			$this->_validate();
@@ -797,7 +797,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 		}
 
-		EE_Registry::instance()->load_helper( 'Array' );
 		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_target, $add_before );
 
 		/*$subsections_before = array();

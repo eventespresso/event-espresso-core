@@ -735,6 +735,23 @@ class EE_Error extends Exception {
 
 
 
+
+	/**
+	 * This simply returns non formatted error notices as they were sent into the EE_Error object.
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	public static function get_vanilla_notices() {
+		return array(
+			'success' => isset( self::$_espresso_notices['success'] ) ? self::$_espresso_notices['success'] : array(),
+			'attention' => isset( self::$_espresso_notices['attention'] )  ? self::$_espresso_notices['attention'] : array(),
+			'errors' => isset( self::$_espresso_notices['errors'] ) ? self::$_espresso_notices['errors'] : array(),
+		);
+	}
+
+
+
 	/**
 	* 	compile all error or success messages into one string
 	*	@see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
@@ -1086,7 +1103,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= $ex['string'] . PHP_EOL;
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
-		EE_Registry::instance()->load_helper( 'File' );
 		try {
 			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
 			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' ); 
@@ -1122,7 +1138,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	 */
 	public static function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
-			EE_Registry::instance()->load_helper('Debug_Tools');
 			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
 		}
 	}

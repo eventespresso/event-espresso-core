@@ -81,7 +81,6 @@ abstract class EE_Form_Section_Base {
 	 */
 	public function __construct( $options_array = array() ) {
 		// used by display strategies
-		EE_Registry::instance()->load_helper('HTML');
 		// assign incoming values to properties
 		foreach( $options_array as $key => $value ) {
 			$key = '_' . $key;

@@ -75,7 +75,7 @@ class EED_Venue_Single  extends EED_Module {
 	 */
 	public function template_include( $template ) {
 		// not a custom template?
-		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_venues.php' ) {
+		if ( EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true )->get_selected_template() != 'single-espresso_venues.php' ) {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 1 );
@@ -161,7 +161,6 @@ class EED_Venue_Single  extends EED_Module {
 			}
 			wp_enqueue_style( $this->theme );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-				EE_Registry::instance()->load_helper( 'Maps' );
 				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 			}
 		}
