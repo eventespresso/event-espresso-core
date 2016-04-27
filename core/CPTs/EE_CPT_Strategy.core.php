@@ -219,7 +219,7 @@ class EE_CPT_Strategy extends EE_BASE {
 						$term->post_type = array_merge ( (array)$WP_Query->query_vars['post_type'], $term->post_type );
 				}
 				// just set post_type to our CPT
-				$WP_Query->set( 'post_type', $term->post_type );
+				$WP_Query->set( 'post_type', array_unique( $term->post_type ) );
 			}
 		}
 	}
@@ -275,6 +275,12 @@ class EE_CPT_Strategy extends EE_BASE {
 								case 'espresso_venues' :
 									$WP_Query->is_espresso_venue_taxonomy = true;
 									break;
+								default :
+									do_action(
+										'AHEE__EE_CPT_Strategy___set_CPT_taxonomies_on_WP_Query__for_' . $post_type . '_post_type',
+										$WP_Query,
+										$this
+									);
 							}
 						}
 					}
