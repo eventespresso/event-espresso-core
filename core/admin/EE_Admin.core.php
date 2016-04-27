@@ -768,6 +768,48 @@ final class EE_Admin {
 	}
 
 
+
+	/**
+	 * @deprecated 4.8.41
+	 * @access     public
+	 * @param  int      $post_ID
+	 * @param  \WP_Post $post
+	 * @return void
+	 */
+	public static function parse_post_content_on_save( $post_ID, $post ) {
+		EE_Error::doing_it_wrong(
+		__METHOD__,
+		__(
+		'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+		'event_espresso'
+		),
+		'4.8.41'
+		);
+		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
+	}
+
+
+
+	/**
+	 * @deprecated 4.8.41
+	 * @access     public
+	 * @param  $option
+	 * @param  $old_value
+	 * @param  $value
+	 * @return void
+	 */
+	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
+		EE_Error::doing_it_wrong(
+		__METHOD__,
+		__(
+		'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+		'event_espresso'
+		),
+		'4.8.41'
+		);
+		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
+	}
+
 }
 // End of file EE_Admin.core.php
 // Location: /core/admin/EE_Admin.core.php
