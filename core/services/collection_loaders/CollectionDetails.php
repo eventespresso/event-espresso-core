@@ -3,6 +3,7 @@ namespace EventEspresso\core\services\collection_loaders;
 
 use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
+use EventEspresso\Core\Exceptions\InvalidIdentifierException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -36,6 +37,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 abstract class CollectionDetails implements CollectionDetailsInterface {
 
+	const ID_CLASS_NAME = 1;
+
+	const ID_OBJECT_HASH = 2;
+
 	/**
 	 * The interface used for controlling what gets added to the collection
 	 *
@@ -51,6 +56,17 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * @var string $collection_name
 	 */
 	protected $collection_name = '';
+
+	/**
+	 * what the collection uses for the object identifier.
+	 * corresponds to one of the class constants above.
+	 * CollectionDetails::ID_CLASS_NAME will use get_class( object ) for the identifier
+	 * CollectionDetails::ID_OBJECT_HASH will use spl_object_hash( object ) for the identifier
+	 * defaults to using class names
+	 *
+	 * @var string $file_mask
+	 */
+	protected $identifier_type = 1;
 
 	/**
 	 * the pattern applied to paths when searching for class files to add to the collection
@@ -83,8 +99,10 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * @param array  $collection_FQCNs
 	 * @param array  $collection_paths
 	 * @param string $file_mask
+	 * @param int    $identifier_type
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 */
 	public function __construct(
@@ -92,12 +110,15 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 		$collection_interface,
 		$collection_FQCNs = array(),
 		$collection_paths = array(),
-		$file_mask = ''
+		$file_mask = '',
+		$identifier_type = 1
 	) {
 		$this->setCollectionInterface( $collection_interface );
 		$this->setCollectionFQCNs( $collection_FQCNs );
 		$this->setCollectionPaths( $collection_paths );
 		$this->setFileMasks( $file_mask );
+		$this->setIdentifierType( $identifier_type );
+
 	}
 
 
@@ -112,10 +133,11 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access protected
 	 * @param string $collection_interface
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 */
-	public function setCollectionInterface( $collection_interface ) {
+	protected function setCollectionInterface( $collection_interface ) {
 		if ( ! ( interface_exists( $collection_interface ) || class_exists( $collection_interface ) ) ) {
 			throw new InvalidInterfaceException( $collection_interface );
 		}
@@ -134,14 +156,47 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access protected
 	 * @param string $collection_name
 	 */
-	public function setCollectionName( $collection_name ) {
+	protected function setCollectionName( $collection_name ) {
 		$this->collection_name = str_replace(
 			'-',
 			'_',
 			sanitize_title_with_dashes( $collection_name, '', 'save' )
 		);
+	}
+
+
+
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function identifierType() {
+		return $this->identifier_type;
+	}
+
+
+
+	/**
+	 * @access protected
+	 * @param string $identifier_type
+	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
+	 */
+	protected function setIdentifierType( $identifier_type ) {
+		if (
+			! (
+				$identifier_type === CollectionDetails::ID_CLASS_NAME
+				|| $identifier_type === CollectionDetails::ID_OBJECT_HASH
+			)
+		) {
+			throw new InvalidIdentifierException(
+				'1 ( CollectionDetails::ID_CLASS_NAME ) or 2 ( CollectionDetails::ID_OBJECT_HASH )',
+				$identifier_type
+			);
+		}
+		$this->identifier_type = $identifier_type;
 	}
 
 
