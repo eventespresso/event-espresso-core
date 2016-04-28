@@ -35,10 +35,14 @@ class CollectionLoader {
 	 * @param CollectionDetailsInterface $collection_details
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 */
-	public function __construct( CollectionInterface $collection, CollectionDetailsInterface $collection_details ) {
-		$this->collection = $collection;
+	public function __construct( CollectionDetailsInterface $collection_details, CollectionInterface $collection = null ) {
 		$this->collection_details = $collection_details;
+		if ( ! $collection instanceof CollectionInterface ) {
+			$collection = new Collection( $this->collection_details->getCollectionInterface() );
+		}
+		$this->collection = $collection;
 		$this->loadAllFromFilepaths();
 		$this->loadAllFromFQCNs();
 	}
