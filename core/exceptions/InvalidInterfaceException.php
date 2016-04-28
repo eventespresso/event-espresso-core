@@ -10,12 +10,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class InvalidInterfaceException
  * thrown when an invalid or missing interface name is used
-
-*
-*@package       Event Espresso
+ *
+ * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
 class InvalidInterfaceException extends \EE_Error {
 
