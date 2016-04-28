@@ -37,9 +37,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 abstract class CollectionDetails implements CollectionDetailsInterface {
 
-	const ID_CLASS_NAME = 1;
+	const ID_OBJECT_HASH = 1;
 
-	const ID_OBJECT_HASH = 2;
+	const ID_CLASS_NAME = 2;
 
 	/**
 	 * The interface used for controlling what gets added to the collection
@@ -60,13 +60,13 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * what the collection uses for the object identifier.
 	 * corresponds to one of the class constants above.
-	 * CollectionDetails::ID_CLASS_NAME will use get_class( object ) for the identifier
 	 * CollectionDetails::ID_OBJECT_HASH will use spl_object_hash( object ) for the identifier
-	 * defaults to using class names
+	 * CollectionDetails::ID_CLASS_NAME will use get_class( object ) for the identifier
+	 * defaults to using spl_object_hash() so that multiple objects of the same class can be added
 	 *
 	 * @var string $file_mask
 	 */
-	protected $identifier_type = 1;
+	protected $identifier_type = CollectionDetails::ID_OBJECT_HASH;
 
 	/**
 	 * the pattern applied to paths when searching for class files to add to the collection
@@ -214,9 +214,7 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * @param string $file_mask
 	 */
 	public function setFileMasks( $file_mask ) {
-		if ( ! empty( $file_mask ) ) {
-			$this->file_mask = $file_mask;
-		}
+		$this->file_mask = ! empty( $file_mask ) ? $file_mask : '*.php';
 	}
 
 
