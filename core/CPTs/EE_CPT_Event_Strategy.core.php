@@ -35,14 +35,18 @@ class EE_CPT_Event_Strategy {
 	/**
 	 *    class constructor
 	 *
-	 * @access 	public
-	 * @param 	array 	$arguments
-	 * @return 	\EE_CPT_Event_Strategy
+	 * @access    public
+	 * @param WP_Query $wp_query
+	 * @param array $CPT
 	 */
-	public function __construct( $arguments = array() ) {
-		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
-		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
-
+	public function __construct( $wp_query, $CPT = array() ) {
+		if ( $wp_query instanceof WP_Query ) {
+			$WP_Query = $wp_query;
+			$this->CPT = $CPT;
+		} else {
+			$WP_Query = isset( $wp_query[ 'WP_Query' ] ) ? $wp_query[ 'WP_Query' ] : null;
+			$this->CPT = isset( $wp_query[ 'CPT' ] ) ? $wp_query[ 'CPT' ] : null;
+		}
 		// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 		// here's the list of available filters in the WP_Query object
 		// 'posts_where'
@@ -74,7 +78,7 @@ class EE_CPT_Event_Strategy {
 		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 1, 2 );
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
 		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
-		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
+		// add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
 	}
@@ -90,7 +94,7 @@ class EE_CPT_Event_Strategy {
 		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 1 );
 		remove_filter( 'posts_join', array( $this, 'posts_join' ), 1 );
 		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10 );
-		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
+		// remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
 		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1 );
 		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1 );
 	}
@@ -243,10 +247,6 @@ class EE_CPT_Event_Strategy {
 	 * @return    array
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
-		if ( $wp_query instanceof WP_Query && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
-			// automagically load the EEH_Event_View helper so that it's functions are available
-			EE_Registry::instance()->load_helper('Event_View');
-		}
 		return $posts;
 	}
 

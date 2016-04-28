@@ -101,7 +101,7 @@ $has_answers = $question->has_answers();
 							</span></p>
 					<?php } ?>
 
-
+					<?php echo $question_type_descriptions; ?>
 
 				</td>
 			</tr>

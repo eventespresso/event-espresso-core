@@ -618,7 +618,6 @@ class EE_Admin_Page_Loader {
 //		$dir_ref = array(
 //			EE_ADMIN => array('core', 'class')
 //		);
-//		EE_Registry::instance()->load_helper( 'Autoloader' );
 //		EEH_Autoloader::try_autoload($dir_ref, $className );
 //	}
 
@@ -640,7 +639,6 @@ class EE_Admin_Page_Loader {
 //			$dir_ref[ EE_CORE_CAF_ADMIN . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 //		}
 //
-//		EE_Registry::instance()->load_helper( 'Autoloader' );
 //		EEH_Autoloader::try_autoload($dir_ref, $className );
 //	}
 

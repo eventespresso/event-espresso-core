@@ -168,8 +168,6 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function the_event_feed( $content ) {
 		if ( is_feed() && is_readable( RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php' )) {
-			EE_Registry::instance()->load_helper( 'Event_View' );
-			EE_Registry::instance()->load_helper( 'Venue_View' );
  			global $post;
 			$template_args = array(
 				'EVT_ID' => $post->ID,
@@ -209,8 +207,6 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function the_venue_feed( $content ) {
 		if ( is_feed() && is_readable( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php' )) {
-			EE_Registry::instance()->load_helper( 'Event_View' );
-			EE_Registry::instance()->load_helper( 'Venue_View' );
  			global $post;
 			$template_args = array(
 				'VNU_ID' => $post->ID,

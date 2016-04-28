@@ -52,6 +52,7 @@ class EEM_WP_User extends EEM_Base {
 			'Question_Group' => new EE_Has_Many_Relation(),
 			'Ticket' => new EE_Has_Many_Relation(),
 			'Venue' => new EE_Has_Many_Relation(),
+			'Message' => new EE_Has_Many_Relation()
 		);
 		$this->_wp_core_model = true;
 		$this->_caps_slug = 'users';

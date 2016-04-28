@@ -39,7 +39,7 @@ class Model_Version_Info {
 	 *
 	 * @var array
 	 */
-	protected $_model_changes = null;
+	protected $_model_changes = array();
 
 	/**
 	 *
@@ -94,7 +94,7 @@ class Model_Version_Info {
 			'4.8.29' => array(
 				//first version where the REST API is in EE core, so no need
 				//to specify how its different from the previous
-			)
+			),
 		);
 
 		//setup data for "extra" fields added onto resources which don't actually exist on models

@@ -203,7 +203,6 @@ class EES_Rest_Api_Client  extends EES_Shortcode {
 			array(),
 			(array)$attributes
 		);
-		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::locate_template( EE_REST_API_CLIENT_PATH . '/templates/shortcode_body.template.php', array(), true, true);
 	}
 

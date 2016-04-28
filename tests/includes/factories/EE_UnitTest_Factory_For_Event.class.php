@@ -16,6 +16,7 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 			'EVT_name'       => new WP_UnitTest_Generator_Sequence( 'Event %s' ),
 			'EVT_desc'       => new WP_UnitTest_Generator_Sequence( 'Event content %s' ),
 			'EVT_short_desc' => new WP_UnitTest_Generator_Sequence( 'Event excerpt %s' ),
+			'EVT_wp_user' => 1
 		);
 	}
 

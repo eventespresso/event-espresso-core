@@ -247,7 +247,6 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @param EE_Payment_Method[] $payment_methods. If NULL is provided defaults to all payment methods active in the cart
 	 */
 	function verify_button_urls( $payment_methods = NULL ) {
-		EE_Registry::instance()->load_helper( 'URL' );
 		$payment_methods = is_array( $payment_methods ) ? $payment_methods : $this->get_all_active(EEM_Payment_Method::scope_cart);
 		foreach ( $payment_methods as $payment_method ) {
 			try {

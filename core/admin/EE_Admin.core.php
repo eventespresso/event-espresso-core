@@ -298,7 +298,6 @@ final class EE_Admin {
 				'action' => 'edit_attendee',
 				'post' => $id
 			);
-			EE_Registry::instance()->load_helper('URL');
 			return EEH_URL::add_query_args_and_nonce( $query_args, admin_url('admin.php?page=espresso_registrations') );
 		}
 		return $link;
@@ -549,7 +548,6 @@ final class EE_Admin {
 		}
 		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
-			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
 		//accounting.js library
@@ -666,7 +664,6 @@ final class EE_Admin {
 	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		// check for date_format or time_format
 		switch ( $option ) {
 			case 'date_format' :
