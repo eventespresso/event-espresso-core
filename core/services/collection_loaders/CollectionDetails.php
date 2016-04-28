@@ -2,6 +2,7 @@
 namespace EventEspresso\core\services\collection_loaders;
 
 use EventEspresso\Core\Exceptions\InvalidClassException;
+use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
 use EventEspresso\Core\Exceptions\InvalidIdentifierException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
@@ -35,10 +36,18 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-abstract class CollectionDetails implements CollectionDetailsInterface {
+class CollectionDetails implements CollectionDetailsInterface {
 
+	/**
+	 * if $identifier_type is set to this,
+	 * then the collection will use each object's spl_object_hash() as it's identifier
+	 */
 	const ID_OBJECT_HASH = 1;
 
+	/**
+	 * if $identifier_type is set to this,
+	 * then the collection will use each object's class name as it's identifier
+	 */
 	const ID_CLASS_NAME = 2;
 
 	/**
@@ -64,12 +73,14 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * CollectionDetails::ID_CLASS_NAME will use get_class( object ) for the identifier
 	 * defaults to using spl_object_hash() so that multiple objects of the same class can be added
 	 *
-	 * @var string $file_mask
+	 * @var string $identifier_type
 	 */
 	protected $identifier_type = CollectionDetails::ID_OBJECT_HASH;
 
 	/**
 	 * the pattern applied to paths when searching for class files to add to the collection
+	 * ie: "My_Awesome_*.class.php"
+	 * defaults to "*.php"
 	 *
 	 * @var string $file_mask
 	 */
@@ -77,6 +88,11 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 	/**
 	 * an array of Fully Qualified Class Names
+	 *  for example:
+	 *  $FQCNs = array(
+	 *      '/Fully/Qualified/ClassNameA'
+	 *      '/Fully/Qualified/Other/ClassNameB'
+	 *  );
 	 *
 	 * @var array $collection_FQCNs
 	 */
@@ -84,6 +100,11 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 	/**
 	 * an array of full server paths to folders containing files to be loaded into collection
+	 *  for example:
+	 *  $paths = array(
+	 *      '/full/server/path/to/ClassNameA.ext.php' // for class ClassNameA
+	 *      '/full/server/path/to/other/ClassNameB.php' // for class ClassNameB
+	 *  );
 	 *
 	 * @var array $collection_paths
 	 */
@@ -104,6 +125,7 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	public function __construct(
 		$collection_name,
@@ -113,6 +135,7 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 		$file_mask = '',
 		$identifier_type = 1
 	) {
+		$this->setCollectionName( $collection_name );
 		$this->setCollectionInterface( $collection_interface );
 		$this->setCollectionFQCNs( $collection_FQCNs );
 		$this->setCollectionPaths( $collection_paths );
@@ -162,8 +185,12 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 *
 	 * @access protected
 	 * @param string $collection_name
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	protected function setCollectionName( $collection_name ) {
+		if ( ! is_string( $collection_name ) ) {
+			throw new InvalidDataTypeException( '$collection_name', $collection_name, 'string' );
+		}
 		$this->collection_name = str_replace(
 			'-',
 			'_',
@@ -196,8 +223,8 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 			)
 		) {
 			throw new InvalidIdentifierException(
-				'1 ( CollectionDetails::ID_CLASS_NAME ) or 2 ( CollectionDetails::ID_OBJECT_HASH )',
-				$identifier_type
+				$identifier_type,
+				'1 ( CollectionDetails::ID_CLASS_NAME ) or 2 ( CollectionDetails::ID_OBJECT_HASH )'
 			);
 		}
 		$this->identifier_type = $identifier_type;
@@ -215,10 +242,17 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access protected
 	 * @param string $file_mask
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
-	public function setFileMasks( $file_mask ) {
+	protected function setFileMasks( $file_mask ) {
 		$this->file_mask = ! empty( $file_mask ) ? $file_mask : '*.php';
+		// we know our default is a string, so if it's not a string now,
+		// then that means the incoming parameter was something else
+		if ( ! is_string( $this->file_mask ) ) {
+			throw new InvalidDataTypeException( '$file_mask', $this->file_mask, 'string' );
+		}
 	}
 
 
