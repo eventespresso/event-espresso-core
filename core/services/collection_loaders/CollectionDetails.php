@@ -147,6 +147,8 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * the collection name will be used for creating dynamic filters
+	 *
 	 * @return string
 	 */
 	public function collectionName() {
@@ -156,6 +158,8 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * sanitizes collection name and converts spaces and dashes to underscores
+	 *
 	 * @access protected
 	 * @param string $collection_name
 	 */
@@ -229,12 +233,12 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
-	 * @param string $collection_FQCNs
+	 * @param string|array $collection_FQCNs
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
 	public function setCollectionFQCNs( $collection_FQCNs ) {
 		foreach ( (array) $collection_FQCNs as $collection_FQCN ) {
-			if ( ! empty( $collection_FQCN ) && ! in_array( $collection_FQCN, $this->collection_FQCNs ) ) {
+			if ( ! empty( $collection_FQCN ) ) {
 				if ( ! class_exists( $collection_FQCN ) ) {
 					throw new InvalidClassException( $collection_FQCN );
 				}
@@ -255,12 +259,12 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
-	 * @param string $collection_paths
+	 * @param string|array $collection_paths
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 */
 	public function setCollectionPaths( $collection_paths ) {
 		foreach ( (array) $collection_paths as $collection_path ) {
-			if ( ! empty( $collection_path ) && ! in_array( $collection_path, $this->collection_paths ) ) {
+			if ( ! empty( $collection_path ) ) {
 				if ( ! is_readable( $collection_path ) ) {
 					throw new InvalidFilePathException( $collection_path );
 				}
