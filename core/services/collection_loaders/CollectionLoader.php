@@ -96,7 +96,7 @@ class CollectionLoader {
 			if ( ! is_readable( $filepath ) ) {
 				throw new InvalidFilePathException( $filepath );
 			}
-			require( $filepath );
+			require_once( $filepath );
 			$this->loadClassFromFilepath( $filepath );
 		}
 	}
