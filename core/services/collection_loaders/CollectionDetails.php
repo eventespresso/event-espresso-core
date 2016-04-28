@@ -13,13 +13,14 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class CollectionDetails
+ *
  * Abstract parent class for defining classes for loading into a collection.
  * The supplied interface will be used for type hinting the objects being loaded.
  * Classes can either be located by supplying an array of FQCNs (Fully Qualified Class Names),
  * or an array of full server filepaths to a set of files,
  * where the classnames match the filenames minus all extensions
  *  for example:
- *  $FCQNs = array(
+ *  $FQCNs = array(
  *      '/Fully/Qualified/ClassNameA'
  *      '/Fully/Qualified/Other/ClassNameB'
  *  );
@@ -36,16 +37,38 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 abstract class CollectionDetails implements CollectionDetailsInterface {
 
 	/**
+	 * The interface used for controlling what gets added to the collection
+	 *
 	 * @var string $collection_interface
 	 */
 	protected $collection_interface = '';
 
 	/**
-	 * @var array $collection_FCQNs
+	 * a unique name used to identify the collection in filter names
+	 * supplied value is run through sanitize_title_with_dashes(),
+	 * but then also converts dashes to underscores
+	 *
+	 * @var string $collection_name
 	 */
-	protected $collection_FCQNs = array();
+	protected $collection_name = '';
 
 	/**
+	 * the pattern applied to paths when searching for class files to add to the collection
+	 *
+	 * @var string $file_mask
+	 */
+	protected $file_mask = '';
+
+	/**
+	 * an array of Fully Qualified Class Names
+	 *
+	 * @var array $collection_FQCNs
+	 */
+	protected $collection_FQCNs = array();
+
+	/**
+	 * an array of full server paths to folders containing files to be loaded into collection
+	 *
 	 * @var array $collection_paths
 	 */
 	protected $collection_paths = array();
@@ -55,16 +78,22 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * CollectionDetails constructor.
 	 *
+	 * @param        $collection_name
 	 * @param string $collection_interface
-	 * @param array  $collection_FCQNs
+	 * @param array  $collection_FQCNs
 	 * @param array  $collection_paths
-	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 */
-	public function __construct( $collection_interface, $collection_FCQNs = array(), $collection_paths = array() ) {
+	public function __construct(
+		$collection_name,
+		$collection_interface,
+		$collection_FQCNs = array(),
+		$collection_paths = array()
+	) {
 		$this->setCollectionInterface( $collection_interface );
-		$this->setCollectionFCQNs( $collection_FCQNs );
+		$this->setCollectionFQCNs( $collection_FQCNs );
 		$this->setCollectionPaths( $collection_paths );
 	}
 
@@ -95,23 +124,65 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * @return string
 	 */
-	public function getCollectionFCQNs() {
-		return $this->collection_FCQNs;
+	public function collectionName() {
+		return $this->collection_name;
 	}
 
 
 
 	/**
-	 * @param string $collection_FCQNs
+	 * @param string $collection_name
+	 */
+	public function setCollectionName( $collection_name ) {
+		$this->collection_name = str_replace(
+			'-',
+			'_',
+			sanitize_title_with_dashes( $collection_name, '', 'save' )
+		);
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function getFileMask() {
+		return $this->file_mask;
+	}
+
+
+
+	/**
+	 * @param string $file_mask
+	 */
+	public function setFileMasks( $file_mask ) {
+		if ( ! empty( $file_mask ) ) {
+			$this->file_mask = $file_mask;
+		}
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function getCollectionFQCNs() {
+		return $this->collection_FQCNs;
+	}
+
+
+
+	/**
+	 * @param string $collection_FQCNs
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
-	public function setCollectionFCQNs( $collection_FCQNs ) {
-		foreach ( (array) $collection_FCQNs as $collection_FCQN ) {
-			if ( ! empty( $collection_FCQN ) && ! in_array( $collection_FCQN, $this->collection_FCQNs ) ) {
-				if ( ! class_exists( $collection_FCQN ) ) {
-					throw new InvalidClassException( $collection_FCQN );
+	public function setCollectionFQCNs( $collection_FQCNs ) {
+		foreach ( (array) $collection_FQCNs as $collection_FQCN ) {
+			if ( ! empty( $collection_FQCN ) && ! in_array( $collection_FQCN, $this->collection_FQCNs ) ) {
+				if ( ! class_exists( $collection_FQCN ) ) {
+					throw new InvalidClassException( $collection_FQCN );
 				}
-				$this->collection_FCQNs[] = $collection_FCQN;
+				$this->collection_FQCNs[] = $collection_FQCN;
 			}
 		}
 	}
