@@ -174,7 +174,7 @@ final class EE_Admin {
 	*/
 	public function init() {
 		//only enable most of the EE_Admin IF we're not in full maintenance mode
-		if ( EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance ){
+		if ( EE_Maintenance_Mode::instance()->models_can_query() ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
