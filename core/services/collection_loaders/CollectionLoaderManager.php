@@ -34,11 +34,13 @@ class CollectionLoaderManager {
 	 * @param CollectionInterface        $collection
 	 * @param CollectionDetailsInterface $collection_details
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 */
 	public function __construct( CollectionInterface $collection, CollectionDetailsInterface $collection_details ) {
 		$this->collection = $collection;
 		$this->collection_details = $collection_details;
 		$this->loadAllFromFilepaths();
+		$this->loadAllFromFQCNs();
 	}
 
 
@@ -56,11 +58,12 @@ class CollectionLoaderManager {
 	/**
 	 * @access protected
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 */
 	protected function loadAllFromFilepaths() {
 		$filepaths = $this->collection_details->getCollectionPaths();
 		foreach ( $filepaths as $filepath ) {
-			$this->loadClassFromFilepath( $filepath );
+			$this->loadAllFromFilepath( $filepath );
 		}
 	}
 
@@ -89,6 +92,7 @@ class CollectionLoaderManager {
 			if ( ! is_readable( $filepath ) ) {
 				throw new InvalidFilePathException( $filepath );
 			}
+			require( $filepath );
 			$this->loadClassFromFilepath( $filepath );
 		}
 	}
