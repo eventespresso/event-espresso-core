@@ -17,10 +17,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	 /**
 	  * InvalidIdentifierException constructor.
 	  *
+	  * @param string $actual the identifier that was supplied
 	  * @param string $expected example of an acceptable identifier
-	  * @param string $actual   the identifier that was supplied
 	  */
-	 public function __construct( $expected, $actual ) {
+	 public function __construct( $actual, $expected ) {
 		 parent::__construct(
 			 sprintf(
 				 __(
