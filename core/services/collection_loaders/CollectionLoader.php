@@ -86,7 +86,7 @@ class CollectionLoader {
 		$folder .= $folder[ strlen( $folder ) - 1 ] !== DS ? DS : '';
 		// get all the files in that folder that end in the supplied file mask
 		$filepaths = (array) apply_filters(
-			"FHEE__CollectionLoaderManager__loadAllFromFilepath__{$this->collection_details->collectionName()}",
+			"FHEE__CollectionLoader__loadAllFromFilepath__{$this->collection_details->collectionName()}_filepaths",
 			glob( $folder . $this->collection_details->getFileMask() )
 		);
 		if ( empty( $filepaths ) ) {
@@ -119,24 +119,31 @@ class CollectionLoader {
 		if ( ! class_exists( $class_name ) ) {
 			throw new InvalidClassException( $class_name );
 		}
-		$this->addClassToCollection( new $class_name(), $file_name );
+		$this->addEntityToCollection( new $class_name(), $file_name );
 	}
 
 
 
 	/**
-	 * addClassToCollection
+	 * addEntityToCollection
 	 *
 	 * @access protected
-	 * @param  $class
+	 * @param  $entity
 	 * @param  mixed $identifier
 	 * @return bool
 	 */
-	protected function addClassToCollection( $class, $identifier ) {
+	protected function addEntityToCollection( $entity, $identifier ) {
+		if ( $this->collection_details->identifierType() === CollectionDetails::ID_OBJECT_HASH ) {
+			$identifier = spl_object_hash( $entity );
+		}
+		$identifier = apply_filters(
+			"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_identifier",
+			$identifier
+		);
 		if ( $this->collection->has( $identifier ) ) {
 			return true;
 		}
-		return $this->collection->add( $class, $identifier );
+		return $this->collection->add( $entity, $identifier );
 	}
 
 
@@ -149,6 +156,10 @@ class CollectionLoader {
 	 */
 	protected function loadAllFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
+		$FQCNs = (array) apply_filters(
+			"FHEE__CollectionLoader__loadAllFromFQCNs__{$this->collection_details->collectionName()}_FQCNs",
+			$FQCNs
+		);
 		foreach ( $FQCNs as $FQCN ) {
 			$this->loadClassFromFQCN( $FQCN );
 		}
@@ -168,7 +179,7 @@ class CollectionLoader {
 		if ( ! class_exists( $FQCN ) ) {
 			throw new InvalidClassException( $FQCN );
 		}
-		$this->addClassToCollection( new $FQCN(), $FQCN );
+		$this->addEntityToCollection( new $FQCN(), $FQCN );
 	}
 
 
