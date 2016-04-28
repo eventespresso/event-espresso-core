@@ -70,7 +70,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  */
 	 public function add( $object, $identifier = null ) {
 		 if ( ! $object instanceof $this->collection_interface ) {
-			 throw new InvalidEntityException( $this->collection_interface, get_class( $object ) );
+			 throw new InvalidEntityException( get_class( $object ), $this->collection_interface );
 		 }
 		 $this->attach( $object );
 		 $this->setIdentifier( $object, $identifier );
