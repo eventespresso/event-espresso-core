@@ -11,7 +11,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 /**
- * Class CollectionLoaderManager
+ * Class CollectionLoader
  *
  * given an empty collection and the details on where to find files,
  * will populate the collection
@@ -20,7 +20,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CollectionLoaderManager {
+class CollectionLoader {
 
 	protected $collection_details;
 
@@ -29,7 +29,7 @@ class CollectionLoaderManager {
 
 
 	/**
-	 * CollectionLoaderManager constructor.
+	 * CollectionLoader constructor.
 	 *
 	 * @param CollectionInterface        $collection
 	 * @param CollectionDetailsInterface $collection_details
@@ -109,13 +109,13 @@ class CollectionLoaderManager {
 	 */
 	protected function loadClassFromFilepath( $file_path ) {
 		// extract filename from path
-		$file_path = basename( $file_path );
+		$file_name = basename( $file_path );
 		// now remove any file extensions
-		$class_name = substr( $file_path, 0, strpos( $file_path, '.' ) );
+		$class_name = substr( $file_name, 0, strpos( $file_name, '.' ) );
 		if ( ! class_exists( $class_name ) ) {
 			throw new InvalidClassException( $class_name );
 		}
-		$this->addClassToCollection( new $class_name() );
+		$this->addClassToCollection( new $class_name(), $file_name );
 	}
 
 
@@ -124,14 +124,15 @@ class CollectionLoaderManager {
 	 * addClassToCollection
 	 *
 	 * @access protected
-	 * @param $class
+	 * @param  $class
+	 * @param  mixed $identifier
 	 * @return bool
 	 */
-	protected function addClassToCollection( $class ) {
-		if ( $this->collection->has( $class ) ) {
+	protected function addClassToCollection( $class, $identifier ) {
+		if ( $this->collection->has( $identifier ) ) {
 			return true;
 		}
-		return $this->collection->add( $class );
+		return $this->collection->add( $class, $identifier );
 	}
 
 
@@ -163,11 +164,11 @@ class CollectionLoaderManager {
 		if ( ! class_exists( $FQCN ) ) {
 			throw new InvalidClassException( $FQCN );
 		}
-		$this->addClassToCollection( new $FQCN() );
+		$this->addClassToCollection( new $FQCN(), $FQCN );
 	}
 
 
 
 }
-// End of file CollectionLoaderManager.php
-// Location: /CollectionLoaderManager.php
+// End of file CollectionLoader.php
+// Location: core/services/collection_loaders/CollectionLoader.php
