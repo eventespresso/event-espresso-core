@@ -82,6 +82,7 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * @param string $collection_interface
 	 * @param array  $collection_FQCNs
 	 * @param array  $collection_paths
+	 * @param string $file_mask
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
@@ -90,11 +91,13 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 		$collection_name,
 		$collection_interface,
 		$collection_FQCNs = array(),
-		$collection_paths = array()
+		$collection_paths = array(),
+		$file_mask = ''
 	) {
 		$this->setCollectionInterface( $collection_interface );
 		$this->setCollectionFQCNs( $collection_FQCNs );
 		$this->setCollectionPaths( $collection_paths );
+		$this->setFileMasks( $file_mask );
 	}
 
 
@@ -113,7 +116,7 @@ abstract class CollectionDetails implements CollectionDetailsInterface {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 */
 	public function setCollectionInterface( $collection_interface ) {
-		if ( ! interface_exists( $collection_interface ) ) {
+		if ( ! ( interface_exists( $collection_interface ) || class_exists( $collection_interface ) ) ) {
 			throw new InvalidInterfaceException( $collection_interface );
 		}
 		$this->collection_interface = $collection_interface;
