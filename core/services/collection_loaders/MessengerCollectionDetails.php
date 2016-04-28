@@ -6,11 +6,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 /**
  * Class MessengerCollectionDetails
-
  * Example class to illustrate how EventEspresso\core\services\collection_loaders\CollectionLoader works
-
+ * when loading objects based on their filepath
  *
-*@package       Event Espresso
+ * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
@@ -22,6 +21,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	  * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	  * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	  * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
 	  */
 	 public function __construct() {
 		 parent::__construct(
@@ -29,7 +29,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 			 'EE_messenger',
 			 array(),
 			 array( EE_LIBRARIES . 'messages' . DS . 'messenger' ),
-			 '*.class.php'
+			 '*.class.php',
+			 CollectionDetails::ID_CLASS_NAME
 		 );
 	 }
 
