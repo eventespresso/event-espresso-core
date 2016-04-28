@@ -2,6 +2,7 @@
 namespace EventEspresso\core\services\collection_loaders;
 
 use EventEspresso\Core\Exceptions\InvalidClassException;
+use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -22,6 +23,12 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class CollectionLoader {
 
+	const ENTITY_NOT_ADDED = 0;
+
+	const ENTITY_ADDED = 1;
+
+	const ENTITY_EXISTS = 2;
+
 	protected $collection_details;
 
 	protected $collection;
@@ -36,6 +43,7 @@ class CollectionLoader {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	public function __construct( CollectionDetailsInterface $collection_details, CollectionInterface $collection = null ) {
 		$this->collection_details = $collection_details;
@@ -63,6 +71,7 @@ class CollectionLoader {
 	 * @access protected
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	protected function loadAllFromFilepaths() {
 		$filepaths = $this->collection_details->getCollectionPaths();
@@ -81,6 +90,7 @@ class CollectionLoader {
 	 * @param  string $folder
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	protected function loadAllFromFilepath( $folder = '' ) {
 		$folder .= $folder[ strlen( $folder ) - 1 ] !== DS ? DS : '';
@@ -93,10 +103,6 @@ class CollectionLoader {
 			return;
 		}
 		foreach ( $filepaths as $filepath ) {
-			if ( ! is_readable( $filepath ) ) {
-				throw new InvalidFilePathException( $filepath );
-			}
-			require_once( $filepath );
 			$this->loadClassFromFilepath( $filepath );
 		}
 	}
@@ -106,20 +112,29 @@ class CollectionLoader {
 	/**
 	 * loadClassFromFilepath
 	 *
-	 * @access protected
-	 * @param  string $file_path
-	 * @return array
+	 * @access public
+	 * @param  string $filepath
+	 * @return int
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
-	protected function loadClassFromFilepath( $file_path ) {
+	public function loadClassFromFilepath( $filepath ) {
+		if ( ! is_string( $filepath ) ) {
+			throw new InvalidDataTypeException( '$filepath', $filepath, 'string' );
+		}
+		if ( ! is_readable( $filepath ) ) {
+			throw new InvalidFilePathException( $filepath );
+		}
+		require_once( $filepath );
 		// extract filename from path
-		$file_name = basename( $file_path );
+		$file_name = basename( $filepath );
 		// now remove any file extensions
 		$class_name = substr( $file_name, 0, strpos( $file_name, '.' ) );
 		if ( ! class_exists( $class_name ) ) {
 			throw new InvalidClassException( $class_name );
 		}
-		$this->addEntityToCollection( new $class_name(), $file_name );
+		return $this->addEntityToCollection( new $class_name(), $file_name );
 	}
 
 
@@ -127,12 +142,16 @@ class CollectionLoader {
 	/**
 	 * addEntityToCollection
 	 *
-	 * @access protected
+	 * @access public
 	 * @param  $entity
 	 * @param  mixed $identifier
-	 * @return bool
+	 * @return int
 	 */
-	protected function addEntityToCollection( $entity, $identifier ) {
+	public function addEntityToCollection( $entity, $identifier ) {
+		do_action(
+			"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_entity",
+			$entity
+		);
 		if ( $this->collection_details->identifierType() === CollectionDetails::ID_OBJECT_HASH ) {
 			$identifier = spl_object_hash( $entity );
 		}
@@ -141,9 +160,21 @@ class CollectionLoader {
 			$identifier
 		);
 		if ( $this->collection->has( $identifier ) ) {
-			return true;
+			return CollectionLoader::ENTITY_EXISTS;
 		}
-		return $this->collection->add( $entity, $identifier );
+		if( $this->collection->add( $entity, $identifier ) ) {
+			do_action(
+				"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_entity_added",
+				$this
+			);
+			return CollectionLoader::ENTITY_ADDED;
+		} else {
+			do_action(
+				"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_entity_not_added",
+				$this
+			);
+			return CollectionLoader::ENTITY_NOT_ADDED;
+		}
 	}
 
 
@@ -153,6 +184,7 @@ class CollectionLoader {
 	 *
 	 * @access protected
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	protected function loadAllFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
@@ -170,16 +202,20 @@ class CollectionLoader {
 	/**
 	 * loadClassFromFQCN
 	 *
-	 * @access protected
+	 * @access public
 	 * @param  string $FQCN Fully Qualified Class Name
-	 * @return array
+	 * @return int
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
-	protected function loadClassFromFQCN( $FQCN ) {
+	public function loadClassFromFQCN( $FQCN ) {
+		if ( ! is_string( $FQCN ) ) {
+			throw new InvalidDataTypeException( '$FQCN', $FQCN, 'string' );
+		}
 		if ( ! class_exists( $FQCN ) ) {
 			throw new InvalidClassException( $FQCN );
 		}
-		$this->addEntityToCollection( new $FQCN(), $FQCN );
+		return $this->addEntityToCollection( new $FQCN(), $FQCN );
 	}
 
 
