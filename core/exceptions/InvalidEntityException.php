@@ -6,11 +6,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 /**
  * Class InvalidEntityException
- * Description
+ * thrown when an entity is not of the expected instance
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
  class InvalidEntityException extends \EE_Error {
 
