@@ -373,6 +373,16 @@ label.error { display : block; color : #FE2A00 !important; }
 	margin-left : 2em; margin-right : 2em;
 }
 
+.espresso-admin .button .dashicons::before {
+	position: relative;
+	font-size: 20px;
+	top:0;
+	vertical-align: middle;
+}
+
+.espresso-admin .button .dashicons-email-alt::before {
+	top:1px;
+}
 
 .help-tab-content img {
 	border : 2px solid #E7E7E7;
