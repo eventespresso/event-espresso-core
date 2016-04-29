@@ -188,13 +188,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 
 				'edit_registration'	=> array(
-						'func' => '_update_attendee_registration_form',
-						'noheader' => TRUE,
-						'headers_sent_route'=>'view_registration',
-						'capability' => 'ee_edit_registration',
-						'obj_id' => $reg_id,
-						'_REG_ID' => $reg_id,
-					),
+					'func' => '_update_attendee_registration_form',
+					'noheader' => TRUE,
+					'headers_sent_route'=>'view_registration',
+					'capability' => 'ee_edit_registration',
+					'obj_id' => $reg_id,
+					'_REG_ID' => $reg_id,
+				),
 
 				'trash_registrations' => array(
 					'func' => '_trash_or_restore_registrations',
@@ -399,7 +399,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func'=> '_contact_list_report',
 					'noheader' => TRUE,
 					'capability' => 'ee_read_contacts',
-				)
+				),
 		);
 
 	}
@@ -448,7 +448,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'nav' => array(
 					'label' => __('REG Details', 'event_espresso'),
 					'order' => 15,
-					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'url' => isset($this->_req_data['_REG_ID'])
+						? add_query_arg(
+							array('_REG_ID' => $this->_req_data['_REG_ID'] ),
+							$this->_current_page_view_url
+						)
+						: $this->_admin_base_url,
 					'persistent' => FALSE
 				),
                 'help_tabs' => array(
@@ -1466,11 +1471,41 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$attendee = $this->_registration->attendee();
 
+		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can(
+			'ee_read_transaction',
+			'espresso_transactions_view_transaction'
+		)
+			? EEH_Template::get_button_or_link(
+				EE_Admin_Page::add_query_args_and_nonce(
+					array( 'action' => 'view_transaction', 'TXN_ID' => $transaction->ID() ),
+					TXN_ADMIN_URL
+				),
+				__( ' View Transaction' ),
+				'button secondary-button right',
+				'dashicons dashicons-cart'
+			)
+			: '';
 
-		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
-		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
-
-
+		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee
+		                                                      && EE_Registry::instance()->CAP->current_user_can(
+			'ee_send_message',
+			'espresso_registrations_resend_registration'
+		)
+			? EEH_Template::get_button_or_link(
+				EE_Admin_Page::add_query_args_and_nonce(
+					array(
+						'action'      => 'resend_registration',
+						'_REG_ID'     => $this->_registration->ID(),
+						'redirect_to' => 'view_registration'
+					),
+					REG_ADMIN_URL
+				),
+				__( ' Resend Registration' ),
+				'button secondary-button right',
+				'dashicons dashicons-email-alt'
+			)
+			: '';
+		
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
 		$payment = ! $payment instanceof EE_Payment ? EE_Payment::new_instance() : $payment;
@@ -2485,7 +2520,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/***************************************		ATTENDEE DETAILS 		***************************************/
 
 
@@ -2497,7 +2531,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$action = !empty( $this->_req_data['return'] ) ? $this->_req_data['return'] : 'default';
 		//verify we have necessary info
 		if ( empty($this->_req_data['_REG_ID'] )  ) {
-			EE_Error::add_error( __('Unable to create the contact for the registration because the required paramaters are not present (_REG_ID )', 'event_espresso'),  __FILE__, __LINE__, __FUNCTION__ );
+			EE_Error::add_error( __('Unable to create the contact for the registration because the required parameters are not present (_REG_ID )', 'event_espresso'),  __FILE__, __LINE__, __FUNCTION__ );
 			$query_args = array( 'action' => $action );
 			$this->_redirect_after_action('', '', '', $query_args, TRUE);
 		}
