@@ -21,15 +21,19 @@ class InvalidInterfaceException extends BaseException {
 	/**
 	 * InvalidInterfaceException constructor.
 	 *
-	 * @param string $interface_name
+	 * @param string     $interface_name
+	 * @param string     $message
+	 * @param int        $code
+	 * @param \Exception $previous
 	 */
-	public function __construct( $interface_name ) {
-		parent::__construct(
-			sprintf(
+	public function __construct( $interface_name, $message = '', $code = 0, \Exception $previous = null ) {
+		if ( empty( $message ) ) {
+			$message = sprintf(
 				__( 'The "%1$s" Interface is either missing or invalid.', 'event_espresso' ),
 				$interface_name
-			)
-		);
+			);
+		}
+		parent::__construct( $message, $code, $previous );
 	}
 
 }
