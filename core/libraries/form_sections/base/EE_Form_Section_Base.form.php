@@ -181,8 +181,11 @@ abstract class EE_Form_Section_Base {
 
 	/**
 	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.
-	 * @deprecated since 4.9.0. Use enqueue_js during "wp_enqueue_scripts", and get_html instead.
-	 * Enqueueing JS after "wp_enqueue_scripts" action may not work
+	 * Note however, it's recommended that you instead call enqueue_js on the "wp_enqueue_scripts" action, 
+	 * and call get_html when you want to output the html. Calling get_html_and_js after
+	 * "wp_enqueue_scripts" has already fired seems to work for now, but is contrary
+	 * to the instructions on https://developer.wordpress.org/reference/functions/wp_enqueue_script/
+	 * and so might stop working anytime.
 	 * @return string
 	 */
 	public function get_html_and_js(){
