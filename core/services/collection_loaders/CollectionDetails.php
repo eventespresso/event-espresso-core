@@ -19,8 +19,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Abstract parent class for defining classes for loading into a collection.
  * The supplied interface will be used for type hinting the objects being loaded.
  * Classes can either be located by supplying an array of FQCNs (Fully Qualified Class Names),
- * or an array of full server filepaths to a set of files,
- * where the classnames match the filenames minus all extensions
+ * AND/OR
+ * an array of full server filepaths to a folder containing a set of files,
+ * where the classnames match the filenames minus all extensions.
  *  for example:
  *  $FQCNs = array(
  *      '/Fully/Qualified/ClassNameA'
@@ -30,6 +31,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *      '/full/server/path/to/ClassNameA.ext.php' // for class ClassNameA
  *      '/full/server/path/to/other/ClassNameB.php' // for class ClassNameB
  *  );
+ * You do NOT have to provide both! They operate exclusively.
+ * So you can provide an array of class names (FQCNs),
+ * OR an array of folder filepaths,
+ * OR you can provide both, if you happen to have classes of the same type in two locations,
+ * and want to add both locations, and it turns out to be easier to use one loading method (FQCNs)
+ * for the one location, and the other method for the other location.
+ * You can of course use the same loading method for both locations if that worked best.
  *
  * @package       Event Espresso
  * @subpackage    core
@@ -42,13 +50,13 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * if $identifier_type is set to this,
 	 * then the collection will use each object's spl_object_hash() as it's identifier
 	 */
-	const ID_OBJECT_HASH = 1;
+	const ID_OBJECT_HASH = 'identifier-uses-spl-object-hash';
 
 	/**
 	 * if $identifier_type is set to this,
 	 * then the collection will use each object's class name as it's identifier
 	 */
-	const ID_CLASS_NAME = 2;
+	const ID_CLASS_NAME = 'identifier-uses-object-class-name';
 
 	/**
 	 * The interface used for controlling what gets added to the collection
@@ -120,7 +128,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * @param array  $collection_FQCNs
 	 * @param array  $collection_paths
 	 * @param string $file_mask
-	 * @param int    $identifier_type
+	 * @param string $identifier_type
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
@@ -133,7 +141,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$collection_FQCNs = array(),
 		$collection_paths = array(),
 		$file_mask = '',
-		$identifier_type = 1
+		$identifier_type = CollectionDetails::ID_OBJECT_HASH
 	) {
 		$this->setCollectionName( $collection_name );
 		$this->setCollectionInterface( $collection_interface );
@@ -224,7 +232,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		) {
 			throw new InvalidIdentifierException(
 				$identifier_type,
-				'1 ( CollectionDetails::ID_CLASS_NAME ) or 2 ( CollectionDetails::ID_OBJECT_HASH )'
+				'CollectionDetails::ID_CLASS_NAME or CollectionDetails::ID_OBJECT_HASH'
 			);
 		}
 		$this->identifier_type = $identifier_type;
@@ -242,6 +250,9 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * sets the file mask which is then used to filter what files get loaded
+	 * when searching for classes to add to the collection. Defaults to '*.php'
+	 *
 	 * @access protected
 	 * @param string $file_mask
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
