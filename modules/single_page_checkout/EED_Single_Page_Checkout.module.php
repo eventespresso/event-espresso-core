@@ -425,6 +425,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			// verify that everything has been setup correctly
 			if ( ! $this->_final_verifications() ) {
+				EED_Single_Page_Checkout::$_initialized = true;
 				return;
 			}
 			// lock the transaction
@@ -899,7 +900,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	private function _final_verifications() {
-		EED_Single_Page_Checkout::$_initialized = true;
 		// filter checkout
 		$this->checkout = apply_filters( 'FHEE__EED_Single_Page_Checkout___final_verifications__checkout', $this->checkout );
 		//verify that current step is still set correctly
