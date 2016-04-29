@@ -883,4 +883,27 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return FALSE;
 		}
 	}
+	
+	/**
+	 * Overrides parent to add js data from validation and display strategies
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data( $form_other_js_data = array() ) {
+		$form_other_js_data = $this->get_other_js_data_from_strategies( $form_other_js_data );
+		return $form_other_js_data;
+	}
+	
+	/**
+	 * Gets other JS data for localization from this input's strategies, like
+	 * the validation strategies and the display strategy
+	 * @param array $form_other_js_data
+	 */
+	public function get_other_js_data_from_strategies( $form_other_js_data = array() ) {
+		$form_other_js_data = $this->get_display_strategy()->get_other_js_data( $form_other_js_data );
+		foreach( $this->get_validation_strategies() as $validation_strategy ) {
+			$form_other_js_data = $validation_strategy->get_other_js_data( $form_other_js_data );
+		}
+		return $form_other_js_data;
+	}
 }
