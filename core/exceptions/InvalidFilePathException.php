@@ -15,7 +15,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidFilePathException extends \EE_Error {
+class InvalidFilePathException extends BaseException {
 
 	/**
 	 * InvalidClassException constructor.
