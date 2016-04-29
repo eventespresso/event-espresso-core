@@ -23,14 +23,34 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class CollectionLoader {
 
-	const ENTITY_NOT_ADDED = 0;
+	/**
+	 * possible return value when adding entities to a collection.
+	 * denotes that the entity was NOT ADDED to the collection
+	 */
+	const ENTITY_NOT_ADDED = 'entity-not-added-to-collection';
 
-	const ENTITY_ADDED = 1;
+	/**
+	 * possible return value when adding entities to a collection.
+	 * denotes that the entity was SUCCESSFULLY ADDED to the collection
+	 */
+	const ENTITY_ADDED = 'entity-added-to-collection';
 
-	const ENTITY_EXISTS = 2;
+	/**
+	 * possible return value when adding entities to a collection.
+	 * denotes that the entity was ALREADY ADDED to the collection,
+	 * and therefore could not be added again.
+	 */
+	const ENTITY_EXISTS = 'entity-already-in-collection';
 
+
+	/**
+	 * @var CollectionDetailsInterface $collection_details
+	 */
 	protected $collection_details;
 
+	/**
+	 * @var CollectionInterface $collection
+	 */
 	protected $collection;
 
 
@@ -93,11 +113,13 @@ class CollectionLoader {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	protected function loadAllFromFilepath( $folder = '' ) {
-		$folder .= $folder[ strlen( $folder ) - 1 ] !== DS ? DS : '';
+		$folder = \EEH_File::end_with_directory_separator( $folder );
 		// get all the files in that folder that end in the supplied file mask
 		$filepaths = (array) apply_filters(
-			"FHEE__CollectionLoader__loadAllFromFilepath__{$this->collection_details->collectionName()}_filepaths",
-			glob( $folder . $this->collection_details->getFileMask() )
+			"FHEE__CollectionLoader__loadAllFromFilepath__filepaths",
+			glob( $folder . $this->collection_details->getFileMask() ),
+			$this->collection_details->collectionName(),
+			$this->collection_details
 		);
 		if ( empty( $filepaths ) ) {
 			return;
@@ -114,7 +136,7 @@ class CollectionLoader {
 	 *
 	 * @access public
 	 * @param  string $filepath
-	 * @return int
+	 * @return string
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
@@ -130,7 +152,7 @@ class CollectionLoader {
 		// extract filename from path
 		$file_name = basename( $filepath );
 		// now remove any file extensions
-		$class_name = substr( $file_name, 0, strpos( $file_name, '.' ) );
+		$class_name = \EEH_File::get_classname_from_filepath_with_standard_filename( $file_name );
 		if ( ! class_exists( $class_name ) ) {
 			throw new InvalidClassException( $class_name );
 		}
@@ -145,33 +167,47 @@ class CollectionLoader {
 	 * @access public
 	 * @param  $entity
 	 * @param  mixed $identifier
-	 * @return int
+	 * @return string
 	 */
 	public function addEntityToCollection( $entity, $identifier ) {
 		do_action(
-			"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_entity",
-			$entity
+			"FHEE__CollectionLoader__addEntityToCollection__entity",
+			$entity,
+			$this->collection_details->collectionName(),
+			$this->collection_details
 		);
 		if ( $this->collection_details->identifierType() === CollectionDetails::ID_OBJECT_HASH ) {
 			$identifier = spl_object_hash( $entity );
 		}
 		$identifier = apply_filters(
-			"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_identifier",
-			$identifier
+			"FHEE__CollectionLoader__addEntityToCollection__identifier",
+			$identifier,
+			$this->collection_details->collectionName(),
+			$this->collection_details
 		);
 		if ( $this->collection->has( $identifier ) ) {
+			do_action(
+				"FHEE__CollectionLoader__addEntityToCollection__entity_already_added",
+				$this,
+				$this->collection_details->collectionName(),
+				$this->collection_details
+			);
 			return CollectionLoader::ENTITY_EXISTS;
 		}
 		if( $this->collection->add( $entity, $identifier ) ) {
 			do_action(
-				"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_entity_added",
-				$this
+				"FHEE__CollectionLoader__addEntityToCollection__entity_added",
+				$this,
+				$this->collection_details->collectionName(),
+				$this->collection_details
 			);
 			return CollectionLoader::ENTITY_ADDED;
 		} else {
 			do_action(
-				"FHEE__CollectionLoader__addEntityToCollection__{$this->collection_details->collectionName()}_entity_not_added",
-				$this
+				"FHEE__CollectionLoader__addEntityToCollection__entity_not_added",
+				$this,
+				$this->collection_details->collectionName(),
+				$this->collection_details
 			);
 			return CollectionLoader::ENTITY_NOT_ADDED;
 		}
@@ -189,8 +225,10 @@ class CollectionLoader {
 	protected function loadAllFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
 		$FQCNs = (array) apply_filters(
-			"FHEE__CollectionLoader__loadAllFromFQCNs__{$this->collection_details->collectionName()}_FQCNs",
-			$FQCNs
+			"FHEE__CollectionLoader__loadAllFromFQCNs__FQCNs",
+			$FQCNs,
+			$this->collection_details->collectionName(),
+			$this->collection_details
 		);
 		foreach ( $FQCNs as $FQCN ) {
 			$this->loadClassFromFQCN( $FQCN );
@@ -204,7 +242,7 @@ class CollectionLoader {
 	 *
 	 * @access public
 	 * @param  string $FQCN Fully Qualified Class Name
-	 * @return int
+	 * @return string
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
