@@ -1971,7 +1971,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			//this simply loops through the callbacks provided and checks if there is a corresponding callback registered by the child - if there is then we go ahead and process the metabox loader.
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
-				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
+				if ( is_array( $metabox_callback ) && isset( $metabox_callback[0], $metabox_callback[1] ) ) {
+					$result = call_user_func( array( $metabox_callback[0], $metabox_callback[1] ) );
+				} else {
+					$result = call_user_func( array( $this, &$metabox_callback ) );
+				}
+				if ( $result === FALSE ) {
 					// user error msg
 				$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
 				// developer error msg
@@ -3301,6 +3306,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $this->_is_caf;
 	}
 
+
+
+	/**
+	 * @return mixed
+	 */
+	public function default_espresso_metaboxes() {
+		return $this->_default_espresso_metaboxes;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function admin_base_url() {
+		return $this->_admin_base_url;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function wp_page_slug() {
+		return $this->_wp_page_slug;
+	}
 
 
 
