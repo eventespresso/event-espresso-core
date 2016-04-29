@@ -14,12 +14,41 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 interface CollectionDetailsInterface {
 
-	public function getCollectionInterface();
-	
 	/**
-	 * @param string $collection_interface
+	 * @access public
+	 * @return string
 	 */
-	public function setCollectionInterface( $collection_interface );
+	public function getCollectionInterface();
+
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function collectionName();
+
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function identifierType();
+
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function getFileMask();
+
+	/**
+	 * @access public
+	 * @return array
+	 */
+	public function getCollectionFQCNs();
+
+	/**
+	 * @access public
+	 * @return array
+	 */
+	public function getCollectionPaths();
 
 }
 // End of file CollectionDetailsInterface.php
