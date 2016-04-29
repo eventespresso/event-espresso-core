@@ -384,11 +384,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Gets the HTML, JS, and CSS necessary to display this field according
-	 * to the parent form's layout strategy
+	 * Gets the HTML
 	 * @return string
 	 */
-	public function get_html_and_js(){
+	public function get_html(){
 		return $this->_parent_section->get_html_for_input($this);
 	}
 

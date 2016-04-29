@@ -68,7 +68,7 @@ abstract class EE_Form_Section_Base {
 	 * @var boolean
 	 */
 	protected $_construction_finalized;
-
+	
 
 
 
@@ -181,9 +181,19 @@ abstract class EE_Form_Section_Base {
 
 	/**
 	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.
+	 * @deprecated since 4.9.0. Use enqueue_js during "wp_enqueue_scripts", and get_html instead.
+	 * Enqueueing JS after "wp_enqueue_scripts" action may not work
 	 * @return string
 	 */
-	abstract public function get_html_and_js();
+	public function get_html_and_js(){
+		return $this->get_html();
+	}
+	
+	/**
+	 * Gets the HTML for displaying this form section
+	 * @return string
+	 */
+	public abstract function get_html();
 
 
 
@@ -315,6 +325,16 @@ abstract class EE_Form_Section_Base {
 	public function form_close() {
 		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
+	
+	/**
+	 * enqueues JS (and CSS) for the form (ie immediately call wp_enqueue_script and
+	 * wp_enqueue_style; the scripts could have optionally been registered earlier)
+	 * Default does nothing, but child classes can override
+	 * @return string
+	 */
+	public function enqueue_js(){
+		//defaults to enqueue NO js or css
+	}
 
 	/**
 	 * Adds any extra data needed by js. Eventually we'll call wp_localize_script
@@ -368,5 +388,5 @@ abstract class EE_Form_Section_Base {
 	}
 	
 	
-}
+	}
 // End of file EE_Form_Section_Base.form.php
