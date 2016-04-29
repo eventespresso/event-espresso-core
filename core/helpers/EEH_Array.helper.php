@@ -84,7 +84,7 @@ class EEH_Array extends EEH_Base {
 	/**
 	 * Exactly like `maybe_unserialize`, but also accounts for a WP bug: http://core.trac.wordpress.org/ticket/26118
 	 * @param mixed $value usually a string, but could be an array or object
-	 * @return mixed the UNserialized data
+	 * @return mixed the UN-serialized data
 	 */
 	public static function maybe_unserialize( $value ) {
 		$data = maybe_unserialize($value);
@@ -137,4 +137,26 @@ class EEH_Array extends EEH_Base {
 			return $target_array;
 		}
 	}
+
+
+
+	/**
+	 * array_merge() is slow and should never be used while looping over data
+	 * if you don't need to preserve keys from all arrays, then using a foreach loop is much faster
+	 * so really this acts more like array_replace( $array1, $array2 )
+	 * or a union with the arrays flipped ( $array2 + $array1 )
+	 * this saves a few lines of code and improves readability
+	 *
+	 * @param array $array1
+	 * @param array $array2
+	 * @return array
+	 */
+	public static function merge_arrays_and_overwrite_keys( array $array1, array $array2 ) {
+		foreach ( $array2 as $key => $value ) {
+			$array1[ $key ] = $value;
+		}
+		return $array1;
+	}
+
+
 } //end EEH_Template class

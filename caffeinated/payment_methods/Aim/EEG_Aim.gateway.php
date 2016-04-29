@@ -28,6 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EEG_Aim extends EE_Onsite_Gateway{
 	protected $_login_id;
 	protected $_transaction_key;
+	protected $_server;
 	protected $_currencies_supported = array(
 		'AUD',
 		'USD',
@@ -70,6 +71,36 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		"split_tender_id", "state", "tax", "tax_exempt", "test_request", "tran_key",
 		"trans_id", "type", "version", "zip", "solution_id"
 	);
+	
+	/**
+	 * Gets the URL where the request should go. This is filterable
+	 * @return string
+	 */
+	protected function _get_server_url() {
+		return apply_filters(
+			'FHEE__EEG_Aim___get_server_url',
+			$this->_debug_mode ? self::SANDBOX_URL : self::LIVE_URL,
+			$this
+		);
+	}
+	
+	/**
+	 * TEMPORARY CALLBACK! Do not use
+	 * Callback which filters the server url. This is added so site admins can test
+	 * integration with the June 30th 2016 Authorize.net switch to Akamai servers
+	 * (see http://www.authorize.net/support/akamaifaqs/#firewall?utm_campaign=April%202016%20Technical%20Updates%20for%20Merchants.html&utm_medium=email&utm_source=Eloqua&elqTrackId=46103bdc375c411a979c2f658fc99074&elq=7026706360154fee9b6d588b27d8eb6a&elqaid=506&elqat=1&elqCampaignId=343)
+	 * Once that happens, this will be obsolete and WILL BE REMOVED.
+	 * @param string $url
+	 * @param EEG_Aim $gateway_object
+	 * @return string
+	 */
+	public function possibly_use_akamai_server( $url, EEG_Aim $gateway_object ) {
+		if( $gateway_object->_server === 'akamai' && ! $gateway_object->_debug_mode ) {
+			return 'https://secure2.authorize.net/gateway/transact.dll';
+		} else {
+			return $url;
+		}
+	}
 	/**
 	 * Asks the gateway to do whatever it does to process the payment. Onsite gateways will
 	 * usually send a request directly to the payment provider and update the payment's status based on that;
@@ -87,7 +118,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 */
 
 	public function do_direct_payment($payment, $billing_info = null) {
-
+			add_filter( 'FHEE__EEG_Aim___get_server_url', array( $this, 'possibly_use_akamai_server' ), 10, 2 );
 			// Enable test mode if needed
 			//4007000000027  <-- test successful visa
 			//4222222222222  <-- test failure card number
@@ -120,9 +151,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$this->setField( 'solution_id', $partner_id );
 			$this->setField('amount', $this->format_currency($payment->amount()));
 			$this->setField('description',substr(rtrim($order_description, ', '), 0, 255));
-			$this->setField('card_num', $billing_info['credit_card']);
-			$this->setField('exp_date', $billing_info['exp_month'].$billing_info['exp_year']);
-			$this->setField('card_code', $billing_info['cvv']);
+			$this->_set_sensitive_billing_data( $billing_info );
 			$this->setField('first_name', $billing_info['first_name']);
 			$this->setField('last_name', $billing_info['last_name']);
 			$this->setField('email', $billing_info['email']);
@@ -171,6 +200,18 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			}
 		return $payment;
 	}
+	
+	/**
+	 * Sets billing data for the upcoming request to AIM that is considered sensitive;
+	 * also this method can be overriden by children classes to easily change
+	 * what billing data gets sent
+	 * @param array $billing_info
+	 */
+	protected function _set_sensitive_billing_data( $billing_info ) {
+		$this->setField('card_num', $billing_info['credit_card']);
+		$this->setField('exp_date', $billing_info['exp_month'].$billing_info['exp_year']);
+		$this->setField('card_code', $billing_info['cvv']);
+	}
 	/**
 	 * Add a line item.
 	 *
@@ -200,7 +241,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @param string $name
 	 * @param string $value
 	 */
-	private function setField($name, $value) {
+	protected function setField($name, $value) {
 		if (in_array($name, $this->_all_aim_fields)) {
 			$this->_x_post_fields[$name] = $value;
 		} else {
@@ -225,7 +266,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$x_keys[] =  "x_line_item=" . urlencode($value);
 		}
 		$this->_log_clean_request($x_keys, $payment);
-		$post_url = ($this->_debug_mode ? self::SANDBOX_URL : self::LIVE_URL);
+		$post_url = $this->_get_server_url();
 		$curl_request = curl_init($post_url);
 		curl_setopt($curl_request, CURLOPT_POSTFIELDS, implode("&",$x_keys));
 		curl_setopt($curl_request, CURLOPT_HEADER, 0);
@@ -254,7 +295,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @param array $request_array
 	 * @param EEI_Payment $payment
 	 */
-	private function _log_clean_request($request_array,$payment){
+	protected function _log_clean_request($request_array,$payment){
 		$keys_to_filter_out = array( 'x_card_num', 'x_card_code', 'x_exp_date' );
 		foreach($request_array as $index => $keyvaltogether ) {
 			foreach( $keys_to_filter_out as $key ) {

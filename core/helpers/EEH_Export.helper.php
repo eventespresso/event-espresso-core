@@ -53,7 +53,6 @@ class EEH_Export {
 	 * @throws EE_Error
 	 */
 	public static function write_data_array_to_csv( $filepath, $data, $write_column_headers = true ){
-		EE_Registry::instance()->load_helper('Array');
 
 		$new_file_contents = '';
 		//determine if $data is actually a 2d array

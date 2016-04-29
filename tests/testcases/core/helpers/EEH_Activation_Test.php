@@ -29,7 +29,6 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		 * Testing default messengers setup on activation (or introduction on migration)
 		 */
 		//first let's make sure all message templates got setup on new install as they should be.
-		EE_Registry::instance()->load_helper( 'Activation' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		// messengers that have been activated and verified installed
@@ -84,7 +83,6 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * @group 7595
 	 */
 	public function test_filtered_default_message_types_on_activation() {
-		EE_Registry::instance()->load_helper( 'Activation' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		//let's clear out all active messengers to get an accurate test of initial generation of message templates.

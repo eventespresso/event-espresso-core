@@ -85,6 +85,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 * that is sent in a separate request than the returning registrant.
 	 * if false, then we need to process the payment results manually
 	 * as soon as the registrant returns from the off-site gateway
+	 * @deprecated since version 4.8.39.rc.001 please use handle_IPN_in_this_request() instead
 	 *
 	 * @return bool
 	 */
@@ -102,6 +103,31 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 */
 	protected function set_uses_separate_IPN_request( $uses_separate_IPN_request ) {
 		$this->_uses_separate_IPN_request = filter_var( $uses_separate_IPN_request, FILTER_VALIDATE_BOOLEAN );
+	}
+
+	/**
+	 * Allows gateway to dynamically decide whether or not to handle a payment update
+	 * by overriding this method. By default, if this is a "true" IPN (meaning
+	 * it's a separate request from when the user returns from the offsite gateway)
+	 * and this gateway class is setup to handle IPNs in separate "true" IPNs, then
+	 * this will return true, otherwise it will return false.
+	 * If however, this is a request when the user is returning
+	 * from an offsite gateway, and this gateway class is setup to process the payment
+	 * data when the user returns, then this will return true.
+	 *
+	 * @param array $request_data
+	 * @param boolean $separate_IPN_request
+	 * @return boolean
+	 */
+	public function handle_IPN_in_this_request( $request_data, $separate_IPN_request ) {
+		if( $separate_IPN_request ) {
+			// payment data being sent in a request separate from the user
+			// it is this other request that will update the TXN and payment info
+			return $this->_uses_separate_IPN_request;
+		} else {
+			// it's a request where the user returned from an offsite gateway WITH the payment data
+			return ! $this->_uses_separate_IPN_request;
+		}
 	}
 
 

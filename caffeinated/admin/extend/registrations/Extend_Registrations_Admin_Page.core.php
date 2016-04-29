@@ -171,7 +171,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		parent::load_scripts_styles();
 
 		//if newsletter message type is active then let's add filter and load js for it.
-		EE_Registry::instance()->load_helper('MSG_Template');
 		if ( EEH_MSG_Template::is_mt_active('newsletter') ) {
 			//enqueue newsletter js
 			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, TRUE );
@@ -345,7 +344,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		}
 
 		//need to get a list of shortcodes that are available for the newsletter message type.
-		EE_Registry::instance()->load_helper('MSG_Template');
 		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', FALSE );
 		foreach ( $shortcodes as $field => $shortcode_array ) {
 			$codes[$field] = implode(', ', array_keys($shortcode_array ) );
@@ -528,7 +526,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 
 		$results = EEM_Registration::instance()->get_registrations_per_day_and_per_status_report( $period );
-		EE_Registry::instance()->load_helper( 'Template' );
 
 		$results = (array) $results;
 		$regs = array();
@@ -557,7 +554,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			//make sure the column_titles is pushed to the beginning of the array
 			array_unshift( $regs, $column_titles );
 			//setup the date range.
-			EE_Registry::instance()->load_helper( 'DTT_Helper' );
 			$DateTimeZone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
 			$beginning_date = new DateTime( "now " . $period, $DateTimeZone );
 			$ending_date = new DateTime( "now", $DateTimeZone );
@@ -602,7 +598,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
 
 		$results = EEM_Registration::instance()->get_registrations_per_event_and_per_status_report( $period );
-		EE_Registry::instance()->load_helper( 'Template' );
 
 		$results = (array) $results;
 		$regs = array();
@@ -632,7 +627,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			array_unshift( $regs, $column_titles );
 
 			//setup the date range.
-			EE_Registry::instance()->load_helper( 'DTT_Helper' );
 			$DateTimeZone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
 			$beginning_date = new DateTime( "now " . $period, $DateTimeZone );
 			$ending_date = new DateTime( "now", $DateTimeZone );

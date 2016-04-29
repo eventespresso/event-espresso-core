@@ -174,7 +174,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 */
 	public function messenger_obj() {
 		$messenger = $this->messenger();
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		try {
 			$messenger = EEH_MSG_Template::messenger_obj( $messenger );
 		} catch( EE_Error $e ) {
@@ -212,7 +211,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 */
 	public function message_type_obj() {
 		$message_type = $this->message_type();
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		try {
 			$message_type = EEH_MSG_Template::message_type_obj( $message_type );
 		} catch(EE_Error $e) {
@@ -301,7 +299,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	public function get_shortcodes( $context, $fields = array(), $merged = FALSE ) {
 		$messenger = $this->messenger();
 		$message_type = $this->message_type();
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		return EEH_MSG_Template::get_shortcodes( $message_type, $messenger, $fields, $context, $merged );
 	}
 

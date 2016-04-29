@@ -1,25 +1,10 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * EEH_Activation Helper
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage	/helpers/
- * @author				Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author		Brent Christensen
  */
 class EEH_Activation {
 
@@ -35,7 +20,13 @@ class EEH_Activation {
 	 * we need to request credentials before we can create them)
 	 */
 	const upload_directories_incomplete_option_name = 'ee_upload_directories_incomplete';
-	private static $_default_creator_id = null;
+
+	/**
+	 * WP_User->ID
+	 *
+	 * @var int
+	 */
+	private static $_default_creator_id;
 
 	/**
 	 * indicates whether or not we've already verified core's default data during this request,
@@ -83,7 +74,9 @@ class EEH_Activation {
 	/**
 	 * Sets the database schema and creates folders. This should
 	 * be called on plugin activation and reactivation
+	 *
 	 * @return boolean success, whether the database and folders are setup properly
+	 * @throws \EE_Error
 	 */
 	public static function initialize_db_and_folders(){
 		$good_filesystem = EEH_Activation::create_upload_directories();
@@ -98,6 +91,8 @@ class EEH_Activation {
 	 * with default and initial data. This should be called
 	 * upon activation of a new plugin, reactivation, and at the end
 	 * of running migration scripts
+	 *
+	 * @throws \EE_Error
 	 */
 	public static function initialize_db_content(){
 		//let's avoid doing all this logic repeatedly, especially when addons are requesting it
@@ -117,6 +112,8 @@ class EEH_Activation {
 		//in case we've
 		EEH_Activation::remove_cron_tasks();
 		EEH_Activation::create_cron_tasks();
+		// remove all TXN locks since that is being done via extra meta now
+		delete_option( 'ee_locked_transactions' );
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
@@ -147,24 +144,35 @@ class EEH_Activation {
 				'AHEE__EE_Cron_Tasks__update_transaction_with_payment' => EEH_Activation::cron_task_no_longer_in_use, //there may have been a bug which prevented from these cron tasks from getting unscheduled, so we might want to remove these for a few updates
 			)
 		);
-		if( $which_to_include === 'all' ) {
-			//leave as-is
-		}elseif( $which_to_include === 'old' ) {
-			$cron_tasks = array_filter( $cron_tasks, function ( $value ) {
-				return $value === EEH_Activation::cron_task_no_longer_in_use;
-			});
-		}elseif( $which_to_include === 'current' ) {
+		if ( $which_to_include === 'old' ) {
+			$cron_tasks = array_filter(
+				$cron_tasks,
+				function ( $value ) {
+					return $value === EEH_Activation::cron_task_no_longer_in_use;
+				}
+			);
+		} elseif ( $which_to_include === 'current' ) {
 			$cron_tasks = array_filter( $cron_tasks );
-		}elseif( WP_DEBUG ) {
-			throw new EE_Error( sprintf( __( 'Invalidate argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".', 'event_espresso' ), $which_to_include ) );
-		}else{
-			//leave as-is
+		} elseif ( WP_DEBUG && $which_to_include !== 'all' ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'Invalid argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".',
+						'event_espresso'
+					),
+					$which_to_include
+				)
+			);
 		}
 		return $cron_tasks;
 	}
 
+
+
 	/**
 	 * Ensure cron tasks are setup (the removal of crons should be done by remove_crons())
+	 *
+	 * @throws \EE_Error
 	 */
 	public static function create_cron_tasks() {
 
@@ -176,9 +184,13 @@ class EEH_Activation {
 
 	}
 
+
+
 	/**
 	 * Remove the currently-existing and now-removed cron tasks.
+	 *
 	 * @param boolean $remove_all whether to only remove the old ones, or remove absolutely ALL the EE ones
+	 * @throws \EE_Error
 	 */
 	public static function remove_cron_tasks( $remove_all = true ) {
 		$cron_tasks_to_remove = $remove_all ? 'all' : 'old';
@@ -272,16 +284,20 @@ class EEH_Activation {
 			// grab plugin folder name from path
 			$plugin = basename( $plugin_path );
 			// drill down to Espresso plugins
-			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
-				// then to calendar related plugins
-				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
-					// this is what we are looking for
-					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
-					// does it exist in this folder ?
-					if ( is_readable( $calendar_config )) {
-						// YEAH! let's load it
-						require_once( $calendar_config );
-					}
+			// then to calendar related plugins
+			if (
+				strpos( $plugin, 'espresso' ) !== FALSE
+				|| strpos( $plugin, 'Espresso' ) !== FALSE
+				|| strpos( $plugin, 'ee4' ) !== FALSE
+				|| strpos( $plugin, 'EE4' ) !== FALSE
+				|| strpos( $plugin, 'calendar' ) !== false
+			) {
+				// this is what we are looking for
+				$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+				// does it exist in this folder ?
+				if ( is_readable( $calendar_config )) {
+					// YEAH! let's load it
+					require_once( $calendar_config );
 				}
 			}
 		}
@@ -292,9 +308,9 @@ class EEH_Activation {
 	 *    _migrate_old_config_data
 	 *
 	 * @access    public
-	 * @param array      $settings
-	 * @param string     $config
-	 * @param \EE_Config $EE_Config
+	 * @param array|stdClass $settings
+	 * @param string         $config
+	 * @param \EE_Config     $EE_Config
 	 * @return \stdClass
 	 */
 	public static function migrate_old_config_data( $settings = array(), $config = '', EE_Config $EE_Config ) {
@@ -305,7 +321,7 @@ class EEH_Activation {
 			$config_array = $settings;
 			$settings = new stdClass();
 			foreach ( $config_array as $key => $value ){
-				if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+				if ( $key === 'calendar' && class_exists( 'EE_Calendar_Config' )) {
 					$EE_Config->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
 				} else {
 					$settings->{$key} = $value;
@@ -383,14 +399,14 @@ class EEH_Activation {
 				$critical_page['post'] = get_post( $EE_Core_Config->{$critical_page[ 'id' ]} );
 			}
 			// no dice?
-			if ( $critical_page['post'] == NULL ) {
+			if ( $critical_page['post'] === null ) {
 				// attempt to find post by title
 				$critical_page['post'] = self::get_page_by_ee_shortcode( $critical_page['code'] );
 				// still nothing?
-				if ( $critical_page['post'] == NULL ) {
+				if ( $critical_page['post'] === null ) {
 					$critical_page = EEH_Activation::create_critical_page( $critical_page );
 					// REALLY? Still nothing ??!?!?
-					if ( $critical_page['post'] == NULL ) {
+					if ( $critical_page['post'] === null ) {
 						$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 						EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 						break;
@@ -404,7 +420,7 @@ class EEH_Activation {
 			// check that Post ID matches critical page ID in config
 			if (
 				isset( $critical_page['post']->ID )
-				&& $critical_page['post']->ID != $EE_Core_Config->{$critical_page[ 'id' ]}
+				&& $critical_page['post']->ID !== $EE_Core_Config->{$critical_page[ 'id' ]}
 			) {
 				//update Config with post ID
 				$EE_Core_Config->{$critical_page[ 'id' ]} = $critical_page['post']->ID;
@@ -416,7 +432,7 @@ class EEH_Activation {
 
 			$critical_page_problem =
 				! isset( $critical_page['post']->post_status )
-				|| $critical_page['post']->post_status != 'publish'
+				|| $critical_page['post']->post_status !== 'publish'
 				|| strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE
 					? TRUE
 					: $critical_page_problem;
@@ -525,11 +541,11 @@ class EEH_Activation {
 		$EE_Core_Config->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// and make sure it's NOT added to the WP "Posts Page"
 		// name of the WP Posts Page
-		$posts_page = EE_Registry::instance()->CFG->get_page_for_posts();
+		$posts_page = EE_Config::get_page_for_posts();
 		if ( isset( $EE_Core_Config->post_shortcodes[ $posts_page ] )) {
 			unset( $EE_Core_Config->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
 		}
-		if ( $posts_page != 'posts' && isset( $EE_Core_Config->post_shortcodes['posts'] )) {
+		if ( $posts_page !== 'posts' && isset( $EE_Core_Config->post_shortcodes['posts'] )) {
 			unset( $EE_Core_Config->post_shortcodes['posts'][ $critical_page['code'] ] );
 		}
 		// update post_shortcode CFG
@@ -572,8 +588,8 @@ class EEH_Activation {
 		$query = $wpdb->prepare( "SELECT user_id FROM $wpdb->usermeta WHERE meta_key = '$capabilities_key' AND meta_value LIKE %s ORDER BY user_id ASC LIMIT 0,1", '%' . $role_to_check . '%' );
 		$user_id = $wpdb->get_var( $query );
 		 $user_id = apply_filters( 'FHEE__EEH_Activation_Helper__get_default_creator_id__user_id', $user_id );
-		 if ( $user_id && intval( $user_id ) ) {
-		 	self::$_default_creator_id =  intval( $user_id );
+		 if ( $user_id && (int)$user_id ) {
+		 	self::$_default_creator_id = (int)$user_id;
 		 	return self::$_default_creator_id;
 		 } else {
 		 	return NULL;
@@ -707,7 +723,7 @@ class EEH_Activation {
 			if ($columns !== FALSE) {
 				$field_array = array();
 				foreach($columns as $column ){
-					$field_array[] = $column->Field;;
+					$field_array[] = $column->Field;
 				}
 				return $field_array;
 			}
@@ -790,8 +806,8 @@ class EEH_Activation {
 		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
 		if (
-			$wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name
-			&& $wpdb->get_var( $index_exists_query ) == $table_name //using get_var with the $index_exists_query returns the table's name
+			$wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name
+			&& $wpdb->get_var( $index_exists_query ) === $table_name //using get_var with the $index_exists_query returns the table's name
 		) {
 			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $index_name" );
 		}
@@ -1134,8 +1150,11 @@ class EEH_Activation {
 					// add system questions to groups
 					$wpdb->insert(
 						EEH_Activation::ensure_table_name_has_prefix( 'esp_question_group_question' ),
-						array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ),
-						array( '%d', '%d','%d' )
+						array( 'QSG_ID'    => $QSG_ID,
+						       'QST_ID'    => $QST_ID,
+						       'QGQ_order' => ( $QSG_ID === 1 ) ? $order_for_group_1++ : $order_for_group_2++
+						),
+						array( '%d', '%d', '%d' )
 					);
 				}
 			}
@@ -1143,9 +1162,13 @@ class EEH_Activation {
 
 	}
 
+
+
 	/**
 	 * Makes sure the default payment method (Invoice) is active.
 	 * This used to be done automatically as part of constructing the old gateways config
+	 *
+	 * @throws \EE_Error
 	 */
 	public static function insert_default_payment_methods(){
 		if( ! EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart ) ){
@@ -1238,7 +1261,6 @@ class EEH_Activation {
 	 * 	@return boolean success of verifying upload directories exist
 	 */
 	public static function create_upload_directories() {
-		EE_Registry::instance()->load_helper( 'File' );
 		// Create the required folders
 		$folders = array(
 				EVENT_ESPRESSO_TEMPLATE_DIR,
@@ -1298,7 +1320,6 @@ class EEH_Activation {
 	 *                  to use either EE_Error or a try catch for an EE_Error exception.
 	 */
 	public static function generate_default_message_templates() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		/*
@@ -1485,12 +1506,10 @@ class EEH_Activation {
 	 * @return void
 	 */
 	public static function validate_messages_system() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		$message_resource_manager->validate_active_message_types_are_installed();
 		do_action( 'AHEE__EEH_Activation__validate_messages_system' );
-		return;
 	}
 
 
@@ -1527,9 +1546,11 @@ class EEH_Activation {
 
 
 	/**
-	 * Finds all our EE4 custom post types, and deletes them and their associated data (like post meta or term
-	 * relations)/
+	 * Finds all our EE4 custom post types, and deletes them and their associated data
+	 * (like post meta or term relations)
+	 *
 	 * @global wpdb $wpdb
+	 * @throws \EE_Error
 	 */
 	public static function delete_all_espresso_cpt_data(){
 		global $wpdb;
@@ -1663,7 +1684,7 @@ class EEH_Activation {
 		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
 			$db_update_sans_ee4 = array();
 			foreach($espresso_db_update as $version => $times_activated){
-				if( $version[0] =='3'){//if its NON EE4
+				if( (string)$version[0] === '3'){//if its NON EE4
 					$db_update_sans_ee4[$version] = $times_activated;
 				}
 			}
@@ -1687,7 +1708,7 @@ class EEH_Activation {
 			);
 
 		}
-		if ( $errors != '' ) {
+		if ( ! empty( $errors ) ) {
 			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}

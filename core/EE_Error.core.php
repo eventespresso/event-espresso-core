@@ -548,6 +548,23 @@ class EE_Error extends Exception {
 		self::_add_notice ( 'errors', $msg, $file, $func, $line );
 		self::$_error_count++;
 	}
+	
+	/**
+	 * If WP_DEBUG is active, throws an exception. If WP_DEBUG is off, just
+	 * adds an error
+	 * @param string $msg
+	 * @param string $file
+	 * @param string $func
+	 * @param string $line
+	 * @throws EE_Error
+	 */
+	public static function throw_exception_if_debugging( $msg = null, $file = null, $func = null, $line = null ) {
+		if( WP_DEBUG ) {
+			throw new EE_Error( $msg );
+		} else  {
+			EE_Error::add_error( $msg, $file, $func, $line );
+		}
+	}
 
 
 
@@ -1086,7 +1103,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= $ex['string'] . PHP_EOL;
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
-		EE_Registry::instance()->load_helper( 'File' );
 		try {
 			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
 			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' ); 
@@ -1122,7 +1138,6 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	 */
 	public static function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
-			EE_Registry::instance()->load_helper('Debug_Tools');
 			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
 		}
 	}

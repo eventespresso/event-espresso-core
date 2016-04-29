@@ -27,19 +27,29 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_PMT_Aim extends EE_PMT_Base{
 
-
+	
 	/**
 	 *
 	 * @param EE_Payment_Method $pm_instance
 	 * @return EE_PMT_Aim
 	 */
 	public function __construct($pm_instance = NULL) {
+		$this->_setup_properties();
+		parent::__construct($pm_instance);
+	}
+	
+	/**
+	 * Sets up payment method type properties for this gateway, which is normally
+	 * done in the constructor, but we want this to be easy for similar gateways to override
+	 * while still calling the parent constructor.
+	 * So children should override this method instead of __construct
+	 */
+	protected function _setup_properties() {
 		require_once($this->file_folder().'EEG_Aim.gateway.php');
 		$this->_gateway = new EEG_AIM();
 		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
 		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
 		$this->_requires_https = true;
-		parent::__construct($pm_instance);
 	}
 
 	/**
@@ -86,13 +96,13 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				$billing_form->exclude( $settings_form->get_input( 'excluded_billing_inputs' )->normalized_value() );
 		}
 		if( $settings_form->get_input( 'required_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
-			$required_inputs = array_merge( 
-					array(
-						'credit_card',
-						'exp_month',
-						'exp_year' ),
-					$settings_form->get_input( 'required_billing_inputs' )->normalized_value() );
-			foreach( $billing_form->inputs() as $input_name => $input ) {
+			$required_inputs = $settings_form->get_input( 'required_billing_inputs' )->normalized_value();
+			//only change the requirement of inputs which are allowed to be changed
+			$inputs_to_evaluate = array_intersect_key( 
+				$billing_form->inputs(), 
+				$this->billing_input_names()
+			);
+			foreach( $inputs_to_evaluate as $input_name => $input ) {
 				if( in_array( $input_name, $required_inputs ) ) {
 					$input->set_required( true );
 				} else {
@@ -170,15 +180,31 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						)
 					)),
 					'required_billing_inputs' => new EE_Checkbox_Multi_Input( 
-							$billing_input_names,
+						$billing_input_names,
+						array(
+							'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
+							'default' => array_diff(
+										array_keys( $billing_input_names ),
+										array( 'address2', 'phone', 'company', 'fax' )
+							),
+							'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
+						)
+					),
+					'server' => new EE_Select_Input(
+						apply_filters(
+							'FHEE__EE_PMT_Aim__generate_new_settings_form__server_select_input__options',
 							array(
-								'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
-								'default' => array_diff(
-											array_keys( $billing_input_names ),
-											array( 'address2', 'phone', 'company', 'fax' )
-								),
-								'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
-							)),
+								'authorize.net' => __( 'Authorize.net (default)', 'event_espresso' ),
+								'akamai' => __( 'Authorize.net/Akamai', 'event_espresso' )
+							),
+							$this
+						),
+						array(
+							'html_label_text' => __( 'Server', 'event_espresso' ),
+							'html_help_text' => __( 'The Gateway Server where payment requests will be sent', 'event_espresso' )
+						)
+					)
+						
 				)
 			)
 		);

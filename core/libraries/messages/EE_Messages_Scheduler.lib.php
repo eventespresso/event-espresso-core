@@ -12,11 +12,11 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 	/**
 	 * Number of seconds between batch sends/generates on the cron job.
-	 * Defaults to 10 minutes in seconds.  If you want to change this interval, you can use the native WordPress
+	 * Defaults to 5 minutes in seconds.  If you want to change this interval, you can use the native WordPress
 	 * `cron_schedules` filter and modify the existing custom `ee_message_cron` schedule interval added.
 	 * @type int
 	 */
-	const message_cron_schedule = 600;
+	const message_cron_schedule = 300;
 
 	/**
 	 * Constructor
@@ -47,7 +47,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	public function custom_schedules( $schedules ) {
 		$schedules['ee_message_cron'] = array(
 			'interval' => self::message_cron_schedule,
-			'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
+			'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)', 'event_espresso' )
 		);
 		return $schedules;
 	}
@@ -71,13 +71,14 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param string $task  The task the request is being generated for.
 	 */
 	public static function initiate_scheduled_non_blocking_request( $task ) {
-		//create nonce (this ensures that only valid requests are accepted)
-		$nonce = wp_create_nonce( 'EE_Messages_Scheduler_' . $task );
+		//transient is used for flood control on msg_cron_trigger requests
+		$transient_key = 'ee_trans_' . uniqid( $task );
+		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
 		$request_url = add_query_arg(
 			array(
 				'ee' => 'msg_cron_trigger',
 				'type' => $task,
-				'_nonce' => $nonce,
+				'key' => $transient_key,
 			),
 			site_url()
 		);

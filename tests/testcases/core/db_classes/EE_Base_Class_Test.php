@@ -19,7 +19,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Base_Class_Test extends EE_UnitTestCase{
 	static function setUpBeforeClass() {
-//		EE_Registry::instance()->load_helper('Activation');
 //		EEH_Activation::create_table('esp_mock',
 //				"MCK_ID int(11) NOT NULL,
 //				PRIMARY KEY  (MCK_ID)");

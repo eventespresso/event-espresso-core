@@ -482,7 +482,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 
 		//setup line items!
-		EE_Registry::instance()->load_helper('Line_Item');
 		$line_item_total = EEH_Line_Item::create_total_line_item( $this->txn );
 
 		//add tickets

@@ -239,16 +239,19 @@ class EED_Messages  extends EED_Module {
 		self::_load_controller();
 		//get required vars
 		$cron_type = EE_Registry::instance()->REQ->get( 'type' );
-		$nonce = EE_Registry::instance()->REQ->get( '_nonce' );
+		$transient_key = EE_Registry::instance()->REQ->get( 'key' );
 		header( 'HTTP/1.1 200 OK' );
 
-		//now let's verify nonce, if not valid exit immediately
-		if ( ! wp_verify_nonce( $nonce, 'EE_Messages_Scheduler_' . $cron_type ) ) {
+		//now let's verify transient, if not valid exit immediately
+		if ( ! get_transient( $transient_key ) ) {
 			/**
 			 * trigger error so this gets in the error logs.  This is important because it happens on a non-user request.
 			 */
-			trigger_error( esc_attr__( 'Invalid Nonce', 'event_espresso' ) );
+			trigger_error( esc_attr__( 'Invalid Request (Transient does not exist)', 'event_espresso' ) );
 		}
+
+		//if made it here, lets' delete the transient to keep the db clean
+		delete_transient( $transient_key );
 
 		$method = 'batch_' . $cron_type . '_from_queue';
 		if ( method_exists( self::$_MSG_PROCESSOR, $method ) ) {
@@ -317,7 +320,6 @@ class EED_Messages  extends EED_Module {
 	public static function set_autoloaders() {
 		if ( empty( self::$_MSG_PATHS ) ) {
 			self::_set_messages_paths();
-			EE_Registry::instance()->load_helper( 'Autoloader' );
 			foreach ( self::$_MSG_PATHS as $path ) {
 				EEH_Autoloader::register_autoloaders_for_each_file_in_folder( $path );
 			}
@@ -431,7 +433,6 @@ class EED_Messages  extends EED_Module {
 			return;
 		}
 
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		//get all registrations so we make sure we send messages for the right status.
 		$all_registrations = $registration->transaction()->registrations();
@@ -709,7 +710,6 @@ class EED_Messages  extends EED_Module {
 	 * @return 	string
 	 */
 	public static function registration_message_trigger_url( $registration_message_trigger_url, EE_Registration $registration, $messenger = 'html', $message_type = 'invoice' ) {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 		// whitelist $messenger
 		switch ( $messenger ) {
 			case 'pdf' :
@@ -977,7 +977,6 @@ class EED_Messages  extends EED_Module {
 	 * @param bool $display_request
 	 */
 	protected static function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
-		EE_Registry::instance()->load_helper( 'Debug_Tools' );
 		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects

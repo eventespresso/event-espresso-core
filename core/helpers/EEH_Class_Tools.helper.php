@@ -145,7 +145,7 @@ class EEH_Class_Tools {
 // if PHP version < 5.3
 if ( ! function_exists( 'get_called_class' )) {
 	/**
-	 * @return bool|string
+	 * @return string
 	 */
 	function get_called_class() {
 		return EEH_Class_Tools::get_called_class();
