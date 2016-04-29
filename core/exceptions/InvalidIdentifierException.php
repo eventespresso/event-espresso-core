@@ -12,7 +12,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
- class InvalidIdentifierException extends \EE_Error {
+ class InvalidIdentifierException extends BaseException {
 
 	 /**
 	  * InvalidIdentifierException constructor.
