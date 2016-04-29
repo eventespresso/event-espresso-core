@@ -16,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidInterfaceException extends \EE_Error {
+class InvalidInterfaceException extends BaseException {
 
 	/**
 	 * InvalidInterfaceException constructor.
