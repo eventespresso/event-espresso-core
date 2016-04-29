@@ -248,8 +248,7 @@ if ( ! function_exists( 'espresso_deactivate_plugin' ) ) {
 		if ( ! function_exists( 'deactivate_plugins' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		}
-		unset( $_GET[ 'activate' ] );
-		unset( $_REQUEST[ 'activate' ] );
+		unset( $_GET[ 'activate' ], $_REQUEST[ 'activate' ] );
 		deactivate_plugins( $plugin_basename );
 	}
 }
