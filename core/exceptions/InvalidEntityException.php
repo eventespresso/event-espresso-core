@@ -17,17 +17,24 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	 /**
 	  * InvalidInterfaceException constructor.
 	  *
-	  * @param string $actual classname of what we got
-	  * @param string $expected classname of the entity we wanted
+	  * @param string     $actual   classname of what we got
+	  * @param string     $expected classname of the entity we wanted
+	  * @param string     $message
+	  * @param int        $code
+	  * @param \Exception $previous
 	  */
-	 public function __construct( $actual, $expected ) {
-		 parent::__construct(
-			 sprintf(
-				 __( 'The supplied entity is an instance of "%1$s", but an instance of "%2$s" was expected.', 'event_espresso' ),
+	 public function __construct( $actual, $expected, $message = '', $code = 0, \Exception $previous = null ) {
+		 if ( empty( $message ) ) {
+			 $message = sprintf(
+				 __(
+					 'The supplied entity is an instance of "%1$s", but an instance of "%2$s" was expected.',
+					 'event_espresso'
+				 ),
 				 $actual,
 				 $expected
-			 )
-		 );
+			 );
+		 }
+		 parent::__construct( $message, $code, $previous );
 	 }
 
  }
