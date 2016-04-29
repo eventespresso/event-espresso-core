@@ -330,7 +330,7 @@ abstract class EE_Form_Section_Base {
 	 * enqueues JS (and CSS) for the form (ie immediately call wp_enqueue_script and
 	 * wp_enqueue_style; the scripts could have optionally been registered earlier)
 	 * Default does nothing, but child classes can override
-	 * @return string
+	 * @return void
 	 */
 	public function enqueue_js(){
 		//defaults to enqueue NO js or css

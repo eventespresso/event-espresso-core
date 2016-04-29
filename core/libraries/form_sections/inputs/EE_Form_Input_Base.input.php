@@ -906,4 +906,24 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 		return $form_other_js_data;
 	}
+	
+	/**
+	 * Override parent because we want to give our strategies an opprtunity to enqueue some js and css
+	 * @return void
+	 */
+	public function enqueue_js(){
+		//ask our display strategy and validation strategies if they have js to enqueue
+		$this->enqueue_js_from_strategies();
+	}
+	
+	/**
+	 * Tells strategies when its ok to enqueue their js and css
+	 * @return void
+	 */
+	public function enqueue_js_from_strategies() {
+		$this->get_display_strategy()->enqueue_js();
+		foreach( $this->get_validation_strategies() as $validation_strategy ) {
+			$validation_strategy->enqueue_js();
+		}
+	}
 }
