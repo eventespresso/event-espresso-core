@@ -96,8 +96,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 
-		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
-		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		//ok so we are definetely going to want the forms JS,
+		//so enqueue it or remember to enqueue it during wp_enqueue_scripts
+		if( did_action( 'wp_enqueue_scripts' ) 
+			|| did_action( 'admin_enqueue_scripts' ) ) {
+			//ok so they've constructed this object after when they should have.
+			//just enqueue the generic form scripts and initialize the form immediately in the JS
+			$this->wp_enqueue_scripts( true );
+		} else {
+			add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+			add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		}
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
 
 		if( isset( $options_array[ 'name' ] ) ) {
