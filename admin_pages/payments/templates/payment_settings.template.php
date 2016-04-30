@@ -30,7 +30,11 @@ $form = new EE_Form_Section_Proper(
 					'bar' => 'bar'
 				),
 				array(
-					'display_strategy' => new EE_Select2_Display_Strategy()
+					'display_strategy' => new EE_Select2_Display_Strategy(
+						array(
+							'placeholder' => 'thingy',
+							'allowClear' => true
+						))
 				))
 		)
 	));
