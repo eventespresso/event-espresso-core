@@ -507,7 +507,9 @@ class EEH_Debug_Tools{
 		$result = '<' . $heading_tag . ' style="color:#2EA2CC; margin:25px 0 0'.$margin.';"><b>' . $var_name . '</b>';
 		$result .= '<span style="color:#999;"> : </span><span style="color:#E76700;">';
 		$result .= '<pre style="color:#999; padding:1em; background: #fff">';
-		$result .= var_export( $var, true );
+		ob_start();
+		var_dump( $var );
+		$result .= ob_get_clean();
 		$result .= '</pre></span><br /><span style="font-size:9px;font-weight:normal;color:#666;line-height: 12px;'.$margin.'">' . $file;
 		$result .= '<br />line no: ' . $line . '</span></' . $heading_tag . '>';
 		if ( $die ) {
