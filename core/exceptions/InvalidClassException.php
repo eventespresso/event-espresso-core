@@ -15,7 +15,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidClassException extends \EE_Error {
+class InvalidClassException extends BaseException {
 
 	/**
 	 * InvalidClassException constructor.
