@@ -1,23 +1,19 @@
 <?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
 /**
  *
- * Events_Admin_Page_Decaf_Mock
+ * Events_Admin_Page__Mock
  * Used for testing Events Admin Page tests.
  *
  * @package			Event Espresso
  * @subpackage		mocks
  * @author			Darren
- * @since  4.6
+ * @since  4.9
  *
  */
 require_once EE_ADMIN . 'EE_Admin_Page.core.php';
 require_once EE_ADMIN . 'EE_Admin_Page_CPT.core.php';
 require_once EE_ADMIN_PAGES . 'events/Events_Admin_Page.core.php';
-class Events_Admin_Page_Decaf_Mock extends Events_Admin_Page {
+class Events_Admin_Page_Mock extends Events_Admin_Page {
 
 
 	public function __construct( $routing = TRUE ) {
@@ -39,4 +35,17 @@ class Events_Admin_Page_Decaf_Mock extends Events_Admin_Page {
 		return $this->_default_tickets_update( $evtobj, $data );
 	}
 
-} //end class Events_Admin_Page_Decaf_Mock
+
+
+
+	/**
+	 * Mock for the _delete_event method that will handle setting up things for testing event deletes via the admin page.
+	 * @param $EVT_ID_to_delete
+	 */
+	public function delete_event( $EVT_ID_to_delete ) {
+		//set request data for event
+		$this->_req_data['EVT_ID'] = $EVT_ID_to_delete;
+		$this->_delete_event( false );
+	}
+
+} //end class Events_Admin_Page_Mock
