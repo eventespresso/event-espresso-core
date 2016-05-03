@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\collection_loaders;
 use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
+use EventEspresso\core\services\locators\LocatorInterface;
 use EventEspresso\core\services\locators\FileLocator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -66,7 +67,7 @@ class CollectionLoader {
 	 *
 	 * @param CollectionDetailsInterface $collection_details
 	 * @param CollectionInterface        $collection
-	 * @param FileLocator                $file_locator
+	 * @param LocatorInterface                $file_locator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
@@ -75,7 +76,7 @@ class CollectionLoader {
 	public function __construct(
 		CollectionDetailsInterface $collection_details,
 		CollectionInterface $collection = null,
-		FileLocator $file_locator = null
+		LocatorInterface $file_locator = null
 	) {
 		$this->collection_details = $collection_details;
 		if ( ! $collection instanceof CollectionInterface ) {
@@ -109,11 +110,9 @@ class CollectionLoader {
 		if ( ! $this->file_locator instanceof FileLocator ) {
 			$this->file_locator = new FileLocator();
 		}
+		$this->file_locator->setFileMask( $this->collection_details->getFileMask() );
 		// find all of the files that match the file mask in the specified folder
-		$this->file_locator->FindByPath(
-			$this->collection_details->getCollectionPaths(),
-			$this->collection_details->getFileMask()
-		);
+		$this->file_locator->locate( $this->collection_details->getCollectionPaths() );
 		// filter the results
 		$filepaths = (array) apply_filters(
 			"FHEE__CollectionLoader__loadAllFromFilepath__filepaths",
