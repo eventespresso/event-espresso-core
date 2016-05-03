@@ -19,7 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author  Brent Christensen
  * @since   4.9.0
  */
-abstract class Locator implements Countable {
+abstract class Locator implements LocatorInterface, Countable {
 
 	/**
 	 * @var array $flags
