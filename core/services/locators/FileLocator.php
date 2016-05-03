@@ -23,6 +23,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class FileLocator extends Locator {
 
 	/**
+	 * @var string $file_mask
+	 */
+	protected $file_mask = '*.php';
+
+	/**
 	 * @var array $filepaths
 	 */
 	protected $filepaths = array();
@@ -38,6 +43,19 @@ class FileLocator extends Locator {
 	 */
 	public function __construct( $flags = array() ) {
 		parent::__construct( $flags );
+	}
+
+
+
+	/**
+	 * @param string $file_mask
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 */
+	public function setFileMask( $file_mask ) {
+		if ( ! is_string( $file_mask ) ) {
+			throw new InvalidDataTypeException( '$file_mask', $file_mask, 'string' );
+		}
+		$this->file_mask = $file_mask;
 	}
 
 
@@ -69,16 +87,15 @@ class FileLocator extends Locator {
 	 *
 	 * @access public
 	 * @param array|string $directory_paths
-	 * @param string       $file_mask
 	 * @return \FilesystemIterator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
-	public function FindByPath( $directory_paths, $file_mask = '' ) {
+	public function locate( $directory_paths ) {
 		if ( ! ( is_string( $directory_paths ) || is_array( $directory_paths ) ) ) {
 			throw new InvalidDataTypeException( '$directory_paths', $directory_paths, 'string or array' );
 		}
 		foreach ( (array) $directory_paths as $directory_path ) {
-			foreach ( $this->findFilesByPath( $directory_path, $file_mask ) as $key => $file ) {
+			foreach ( $this->findFilesByPath( $directory_path ) as $key => $file ) {
 				$this->filepaths[ $key ] = \EEH_File::standardise_directory_separators( $file );
 			}
 		}
@@ -92,12 +109,11 @@ class FileLocator extends Locator {
 	 *
 	 * @access protected
 	 * @param string $directory_path
-	 * @param string $file_mask
 	 * @return \FilesystemIterator
 	 */
-	protected function findFilesByPath( $directory_path = '', $file_mask = '' ) {
+	protected function findFilesByPath( $directory_path = '' ) {
 		$iterator = new GlobIterator (
-			\EEH_File::end_with_directory_separator( $directory_path ) . $file_mask
+			\EEH_File::end_with_directory_separator( $directory_path ) . $this->file_mask
 		);
 		foreach ( $this->flags as $flag ) {
 			$iterator->setFlags( $flag );
