@@ -35,19 +35,6 @@ class FileLocator extends Locator {
 
 
 	/**
-	 * FileLocator constructor.
-	 *
-	 * @access public
-	 * @param array $flags controls how files are found and/or file data is returned
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 */
-	public function __construct( $flags = array() ) {
-		parent::__construct( $flags );
-	}
-
-
-
-	/**
 	 * @param string $file_mask
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
