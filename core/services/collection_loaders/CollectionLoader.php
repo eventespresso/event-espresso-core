@@ -4,7 +4,7 @@ namespace EventEspresso\core\services\collection_loaders;
 use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
-use EventEspresso\core\services\file\FileLocator;
+use EventEspresso\core\services\locators\FileLocator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
