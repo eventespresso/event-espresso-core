@@ -19,9 +19,9 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 
 
 	/**
-	 * This holds the Events_Admin_Page_Decaf_Mock class
+	 * This holds the Events_Admin_Page_Mock class
 	 *
-	 * @var Events_Admin_Page_Decaf_Mock
+	 * @var Events_Admin_Page_Mock
 	 */
 	protected $_admin_page;
 
@@ -49,7 +49,7 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 	 * @since 4.6
 	 */
 	protected function _load_requirements( $timezone = 'America/Vancouver' ) {
-		$this->_admin_page = new Events_Admin_Page_Decaf_Mock();
+		$this->_admin_page = new Events_Admin_Page_Mock();
 		$this->_event = $this->factory->event->create();
 		$this->_event->set_timezone( $timezone );
 		$this->_event->save();
@@ -88,7 +88,7 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 		 * 2. However, this means that DTT_EVT_start (because its static) will always be earlier than what the value for TKT_start_date is.
 		 * 3. So later the code changes TKT_end_date to be the SAME as TKT_start_date and then sets it forward by a day.  So that's what our expected value will be.
 		 */
-		$this->_default_dates['TKT_end'] =  clone $this->_default_dates['TKT_start'];
+		$this->_default_dates['TKT_end'] = clone $this->_default_dates['TKT_start'];
 		$this->_default_dates['TKT_end'] = $this->_default_dates['TKT_end']->add( new DateInterval( 'P1D' ) );
 		$this->_testing_updates( "Tests with unset tkt start and end date\n", $replacement );
 
