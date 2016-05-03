@@ -1,12 +1,11 @@
 <?php
 namespace EventEspresso\core\services\collection_loaders;
 
-use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
 use EventEspresso\Core\Exceptions\InvalidIdentifierException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\file\FileLocator;
+use EventEspresso\core\services\locators\FqcnLocator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -120,7 +119,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	protected $collection_paths = array();
 
 	/**
-	 * @var FileLocator $file_locator
+	 * @var FqcnLocator $file_locator
 	 */
 	protected $file_locator;
 
@@ -136,7 +135,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * @param array       $collection_paths
 	 * @param string      $file_mask
 	 * @param string      $identifier_type
-	 * @param FileLocator $file_locator
+	 * @param FqcnLocator $file_locator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
@@ -150,7 +149,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$collection_paths = array(),
 		$file_mask = '',
 		$identifier_type = CollectionDetails::ID_OBJECT_HASH,
-		FileLocator $file_locator = null
+		FqcnLocator $file_locator = null
 	) {
 		$this->setCollectionName( $collection_name );
 		$this->setCollectionInterface( $collection_interface );
@@ -320,8 +319,8 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
 	protected function getFQCNsFromPartialNamespace( $partial_FQCN ) {
-		if ( ! $this->file_locator instanceof FileLocator ) {
-			$this->file_locator = new FileLocator();
+		if ( ! $this->file_locator instanceof FqcnLocator ) {
+			$this->file_locator = new FqcnLocator();
 		}
 		$this->file_locator->FindByNamespace( $partial_FQCN );
 		return $this->file_locator->getFQCNs();
