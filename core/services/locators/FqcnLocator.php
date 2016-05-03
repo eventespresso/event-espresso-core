@@ -95,7 +95,7 @@ class FqcnLocator extends Locator {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
-	public function FindByNamespace( $namespaces ) {
+	public function locate( $namespaces ) {
 		if ( ! ( is_string( $namespaces ) || is_array( $namespaces ) ) ) {
 			throw new InvalidDataTypeException( '$namespaces', $namespaces, 'string or array' );
 		}
