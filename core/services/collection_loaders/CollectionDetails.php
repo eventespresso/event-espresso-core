@@ -6,6 +6,7 @@ use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
 use EventEspresso\Core\Exceptions\InvalidIdentifierException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\file\FileLocator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -118,22 +119,29 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 */
 	protected $collection_paths = array();
 
+	/**
+	 * @var FileLocator $file_locator
+	 */
+	protected $file_locator;
+
 
 
 	/**
 	 * CollectionDetails constructor.
 	 *
-	 * @param        $collection_name
-	 * @param string $collection_interface
-	 * @param array  $collection_FQCNs
-	 * @param array  $collection_paths
-	 * @param string $file_mask
-	 * @param string $identifier_type
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @access public
+	 * @param string      $collection_name
+	 * @param string      $collection_interface
+	 * @param array       $collection_FQCNs
+	 * @param array       $collection_paths
+	 * @param string      $file_mask
+	 * @param string      $identifier_type
+	 * @param FileLocator $file_locator
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
 	public function __construct(
 		$collection_name,
@@ -141,7 +149,8 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$collection_FQCNs = array(),
 		$collection_paths = array(),
 		$file_mask = '',
-		$identifier_type = CollectionDetails::ID_OBJECT_HASH
+		$identifier_type = CollectionDetails::ID_OBJECT_HASH,
+		FileLocator $file_locator = null
 	) {
 		$this->setCollectionName( $collection_name );
 		$this->setCollectionInterface( $collection_interface );
@@ -149,12 +158,13 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$this->setCollectionPaths( $collection_paths );
 		$this->setFileMasks( $file_mask );
 		$this->setIdentifierType( $identifier_type );
-
+		$this->file_locator = $file_locator;
 	}
 
 
 
 	/**
+	 * @access public
 	 * @return mixed
 	 */
 	public function getCollectionInterface() {
@@ -180,6 +190,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * the collection name will be used for creating dynamic filters
 	 *
+	 * @access public
 	 * @return string
 	 */
 	public function collectionName() {
@@ -241,6 +252,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access public
 	 * @return array
 	 */
 	public function getFileMask() {
@@ -269,6 +281,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access public
 	 * @return string
 	 */
 	public function getCollectionFQCNs() {
@@ -278,16 +291,21 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access public
 	 * @param string|array $collection_FQCNs
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	public function setCollectionFQCNs( $collection_FQCNs ) {
 		foreach ( (array) $collection_FQCNs as $collection_FQCN ) {
 			if ( ! empty( $collection_FQCN ) ) {
-				if ( ! class_exists( $collection_FQCN ) ) {
-					throw new InvalidClassException( $collection_FQCN );
+				if ( class_exists( $collection_FQCN ) ) {
+					$this->collection_FQCNs[] = $collection_FQCN;
+				} else {
+					foreach ( $this->getFQCNsFromPartialNamespace( $collection_FQCN ) as $FQCN ) {
+						$this->collection_FQCNs[] = $FQCN;
+					}
 				}
-				$this->collection_FQCNs[] = $collection_FQCN;
 			}
 		}
 	}
@@ -295,6 +313,24 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access protected
+	 * @param  string $partial_FQCN
+	 * @return array
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 */
+	protected function getFQCNsFromPartialNamespace( $partial_FQCN ) {
+		if ( ! $this->file_locator instanceof FileLocator ) {
+			$this->file_locator = new FileLocator();
+		}
+		$this->file_locator->FindByNamespace( $partial_FQCN );
+		return $this->file_locator->getFQCNs();
+	}
+
+
+
+	/**
+	 * @access public
 	 * @return string
 	 */
 	public function getCollectionPaths() {
@@ -304,6 +340,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 
 	/**
+	 * @access public
 	 * @param string|array $collection_paths
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 */
