@@ -6,6 +6,7 @@ use EventEspresso\Core\Exceptions\InvalidFilePathException;
 use EventEspresso\Core\Exceptions\InvalidIdentifierException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\locators\FqcnLocator;
+use EventEspresso\core\services\locators\LocatorInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -119,7 +120,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	protected $collection_paths = array();
 
 	/**
-	 * @var FqcnLocator $file_locator
+	 * @var LocatorInterface $file_locator
 	 */
 	protected $file_locator;
 
@@ -127,15 +128,16 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 	/**
 	 * CollectionDetails constructor.
+
 	 *
-	 * @access public
+*@access public
 	 * @param string      $collection_name
 	 * @param string      $collection_interface
 	 * @param array       $collection_FQCNs
 	 * @param array       $collection_paths
 	 * @param string      $file_mask
 	 * @param string      $identifier_type
-	 * @param FqcnLocator $file_locator
+	 * @param LocatorInterface $file_locator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
@@ -149,7 +151,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$collection_paths = array(),
 		$file_mask = '',
 		$identifier_type = CollectionDetails::ID_OBJECT_HASH,
-		FqcnLocator $file_locator = null
+		LocatorInterface $file_locator = null
 	) {
 		$this->setCollectionName( $collection_name );
 		$this->setCollectionInterface( $collection_interface );
@@ -322,7 +324,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		if ( ! $this->file_locator instanceof FqcnLocator ) {
 			$this->file_locator = new FqcnLocator();
 		}
-		$this->file_locator->FindByNamespace( $partial_FQCN );
+		$this->file_locator->locate( $partial_FQCN );
 		return $this->file_locator->getFQCNs();
 	}
 
