@@ -476,15 +476,17 @@ class EEH_Template {
 
 	/**
 	 * This helper just returns a button or link for the given parameters
+	 *
 	 * @param  string $url   the url for the link
 	 * @param  string $label What is the label you want displayed for the button
 	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param string  $icon
-	 * @return string 	the html output for the button
+	 * @param string  $title
+	 * @return string the html output for the button
 	 */
-	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
+	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '', $title = '' ) {
 		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
-		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
 		return $button;
 	}
 
