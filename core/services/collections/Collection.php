@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\collection_loaders;
+namespace EventEspresso\core\services\collections;
 
 use EventEspresso\Core\Exceptions\InvalidEntityException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;

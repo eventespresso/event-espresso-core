@@ -1895,7 +1895,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 		}
 
-		if ( ! $this->_cpt_model instanceof EE_Event ) {
+		if ( ! $this->_cpt_model_obj instanceof EE_Event ) {
 			return false;
 		}
 

@@ -1,9 +1,11 @@
 <?php
-namespace EventEspresso\core\services\collection_loaders;
+namespace EventEspresso\core\services\collections;
 
 use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFilePathException;
+use EventEspresso\core\services\locators\LocatorInterface;
+use EventEspresso\core\services\locators\FileLocator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -14,8 +16,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class CollectionLoader
  *
- * given an empty collection and the details on where to find files,
- * will populate the collection
+ * given the details on where to find files, will populate a collection
+ * plz see: \EventEspresso\core\services\collections\CollectionDetails
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -53,33 +55,44 @@ class CollectionLoader {
 	 */
 	protected $collection;
 
+	/**
+	 * @var FileLocator $file_locator
+	 */
+	protected $file_locator;
+
 
 
 	/**
 	 * CollectionLoader constructor.
 	 *
-	 * @param CollectionInterface        $collection
 	 * @param CollectionDetailsInterface $collection_details
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @param CollectionInterface        $collection
+	 * @param LocatorInterface                $file_locator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 */
-	public function __construct( CollectionDetailsInterface $collection_details, CollectionInterface $collection = null ) {
+	public function __construct(
+		CollectionDetailsInterface $collection_details,
+		CollectionInterface $collection = null,
+		LocatorInterface $file_locator = null
+	) {
 		$this->collection_details = $collection_details;
 		if ( ! $collection instanceof CollectionInterface ) {
 			$collection = new Collection( $this->collection_details->getCollectionInterface() );
 		}
 		$this->collection = $collection;
+		$this->file_locator = $file_locator;
 		$this->loadAllFromFilepaths();
-		$this->loadAllFromFQCNs();
+		$this->loadFromFQCNs();
 	}
 
 
 
 	/**
 	 * @access public
-	 * @return \EventEspresso\core\services\collection_loaders\CollectionInterface
+	 * @return \EventEspresso\core\services\collections\CollectionInterface
 	 */
 	public function getCollection() {
 		return $this->collection;
@@ -94,30 +107,16 @@ class CollectionLoader {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
 	protected function loadAllFromFilepaths() {
-		$filepaths = $this->collection_details->getCollectionPaths();
-		foreach ( $filepaths as $filepath ) {
-			$this->loadAllFromFilepath( $filepath );
+		if ( ! $this->file_locator instanceof FileLocator ) {
+			$this->file_locator = new FileLocator();
 		}
-	}
-
-
-
-	/**
-	 * loadAllFromFilepath
-	 * globs the supplied filepath and adds any files found
-	 *
-	 * @access protected
-	 * @param  string $folder
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 */
-	protected function loadAllFromFilepath( $folder = '' ) {
-		$folder = \EEH_File::end_with_directory_separator( $folder );
-		// get all the files in that folder that end in the supplied file mask
+		$this->file_locator->setFileMask( $this->collection_details->getFileMask() );
+		// find all of the files that match the file mask in the specified folder
+		$this->file_locator->locate( $this->collection_details->getCollectionPaths() );
+		// filter the results
 		$filepaths = (array) apply_filters(
 			"FHEE__CollectionLoader__loadAllFromFilepath__filepaths",
-			glob( $folder . $this->collection_details->getFileMask() ),
+			$this->file_locator->getFilePaths(),
 			$this->collection_details->collectionName(),
 			$this->collection_details
 		);
@@ -134,14 +133,14 @@ class CollectionLoader {
 	/**
 	 * loadClassFromFilepath
 	 *
-	 * @access public
+	 * @access protected
 	 * @param  string $filepath
 	 * @return string
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
-	public function loadClassFromFilepath( $filepath ) {
+	protected function loadClassFromFilepath( $filepath ) {
 		if ( ! is_string( $filepath ) ) {
 			throw new InvalidDataTypeException( '$filepath', $filepath, 'string' );
 		}
@@ -164,12 +163,12 @@ class CollectionLoader {
 	/**
 	 * addEntityToCollection
 	 *
-	 * @access public
+	 * @access protected
 	 * @param  $entity
 	 * @param  mixed $identifier
 	 * @return string
 	 */
-	public function addEntityToCollection( $entity, $identifier ) {
+	protected function addEntityToCollection( $entity, $identifier ) {
 		do_action(
 			"FHEE__CollectionLoader__addEntityToCollection__entity",
 			$entity,
@@ -216,13 +215,13 @@ class CollectionLoader {
 
 
 	/**
-	 * loadAllFromFQCNs
+	 * loadFromFQCNs
 	 *
 	 * @access protected
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 */
-	protected function loadAllFromFQCNs() {
+	protected function loadFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
 		$FQCNs = (array) apply_filters(
 			"FHEE__CollectionLoader__loadAllFromFQCNs__FQCNs",
@@ -240,13 +239,13 @@ class CollectionLoader {
 	/**
 	 * loadClassFromFQCN
 	 *
-	 * @access public
+	 * @access protected
 	 * @param  string $FQCN Fully Qualified Class Name
 	 * @return string
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
-	public function loadClassFromFQCN( $FQCN ) {
+	protected function loadClassFromFQCN( $FQCN ) {
 		if ( ! is_string( $FQCN ) ) {
 			throw new InvalidDataTypeException( '$FQCN', $FQCN, 'string' );
 		}
@@ -258,6 +257,7 @@ class CollectionLoader {
 
 
 
+
 }
 // End of file CollectionLoader.php
-// Location: core/services/collection_loaders/CollectionLoader.php
+// Location: core/services/collections/CollectionLoader.php

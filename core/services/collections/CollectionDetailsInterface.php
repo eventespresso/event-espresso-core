@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\collection_loaders;
+namespace EventEspresso\core\services\collections;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -10,7 +10,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Interface CollectionDetailsInterface
  *
- * @package EventEspresso\core\services\collection_loaders
+ * @package EventEspresso\core\services\collections
  */
 interface CollectionDetailsInterface {
 
