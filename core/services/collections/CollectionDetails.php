@@ -60,6 +60,12 @@ class CollectionDetails implements CollectionDetailsInterface {
 	const ID_CLASS_NAME = 'identifier-uses-object-class-name';
 
 	/**
+	 * if $identifier_type is set to this,
+	 * then the collection will use the return value from a specified callback method on each object
+	 */
+	const ID_CALLBACK_METHOD = 'identifier-uses-callback-method';
+
+	/**
 	 * The interface used for controlling what gets added to the collection
 	 *
 	 * @var string $collection_interface
@@ -80,6 +86,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * corresponds to one of the class constants above.
 	 * CollectionDetails::ID_OBJECT_HASH will use spl_object_hash( object ) for the identifier
 	 * CollectionDetails::ID_CLASS_NAME will use get_class( object ) for the identifier
+	 * CollectionDetails::ID_CALLBACK_METHOD will use a callback for the identifier
 	 * defaults to using spl_object_hash() so that multiple objects of the same class can be added
 	 *
 	 * @var string $identifier_type
@@ -94,6 +101,15 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * @var string $file_mask
 	 */
 	protected $file_mask = '';
+
+	/**
+	 * if the $identifier_type above is set to CollectionDetails::ID_CALLBACK_METHOD,
+	 * then this specifies the method to use on each entity.
+	 * If the callback method does not exist, then an exception will be thrown
+	 *
+	 * @var string $identifier_callback
+	 */
+	protected $identifier_callback = '';
 
 	/**
 	 * an array of Fully Qualified Class Names
@@ -128,15 +144,15 @@ class CollectionDetails implements CollectionDetailsInterface {
 
 	/**
 	 * CollectionDetails constructor.
-
 	 *
-*@access public
-	 * @param string      $collection_name
-	 * @param string      $collection_interface
-	 * @param array       $collection_FQCNs
-	 * @param array       $collection_paths
-	 * @param string      $file_mask
-	 * @param string      $identifier_type
+	 * @access public
+	 * @param string           $collection_name
+	 * @param string           $collection_interface
+	 * @param array            $collection_FQCNs
+	 * @param array            $collection_paths
+	 * @param string           $file_mask
+	 * @param string           $identifier_type
+	 * @param string           $identifier_callback
 	 * @param LocatorInterface $file_locator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
@@ -151,6 +167,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$collection_paths = array(),
 		$file_mask = '',
 		$identifier_type = CollectionDetails::ID_OBJECT_HASH,
+		$identifier_callback = '',
 		LocatorInterface $file_locator = null
 	) {
 		$this->setCollectionName( $collection_name );
@@ -159,6 +176,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 		$this->setCollectionPaths( $collection_paths );
 		$this->setFileMasks( $file_mask );
 		$this->setIdentifierType( $identifier_type );
+		$this->setIdentifierCallback( $identifier_callback );
 		$this->file_locator = $file_locator;
 	}
 
@@ -240,14 +258,39 @@ class CollectionDetails implements CollectionDetailsInterface {
 			! (
 				$identifier_type === CollectionDetails::ID_CLASS_NAME
 				|| $identifier_type === CollectionDetails::ID_OBJECT_HASH
+				|| $identifier_type === CollectionDetails::ID_CALLBACK_METHOD
 			)
 		) {
 			throw new InvalidIdentifierException(
 				$identifier_type,
-				'CollectionDetails::ID_CLASS_NAME or CollectionDetails::ID_OBJECT_HASH'
+				'CollectionDetails::ID_CLASS_NAME or CollectionDetails::ID_OBJECT_HASH or CollectionDetails::ID_CALLBACK_METHOD'
 			);
 		}
 		$this->identifier_type = $identifier_type;
+	}
+
+
+
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function identifierCallback() {
+		return $this->identifier_callback;
+	}
+
+
+
+	/**
+	 * @access protected
+	 * @param string $identifier_callback
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 */
+	protected function setIdentifierCallback( $identifier_callback = 'identifier' ) {
+		if ( ! is_string( $identifier_callback ) ) {
+			throw new InvalidDataTypeException( '$identifier_callback', $identifier_callback, 'string' );
+		}
+		$this->identifier_callback = $identifier_callback;
 	}
 
 
