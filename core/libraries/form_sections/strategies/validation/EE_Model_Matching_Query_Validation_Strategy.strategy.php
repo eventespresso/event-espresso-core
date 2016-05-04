@@ -53,17 +53,6 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
 			throw new EE_Validation_Error( $this->get_validation_error_message(), 'no_matching_model_object' );
 		}
 	}
-
-	/**
-	 * @return array
-	 */
-	function get_jquery_validation_rule_array(){
-		if( $this->_max_length !== EE_INF ) {
-			return array( 'maxlength'=> $this->_max_length, 'messages' => array( 'maxlength' => $this->get_validation_error_message() ) );
-		} else {
-			return array();
-		}
-	}
 	
 	/**
 	 * Gets the model used for querying

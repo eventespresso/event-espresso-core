@@ -24,18 +24,12 @@ $form = new EE_Form_Section_Proper(
 	array(
 		'name' => 'test',
 		'subsections' => array(
-			'test' => new EE_Select_Input( 
+			'test' => new EE_Select_Ajax_Model_Rest_Input(
 				array(
-					'foo' => 'foo',
-					'bar' => 'bar'
-				),
-				array(
-					'display_strategy' => new EE_Select2_Display_Strategy(
-						array(
-							'placeholder' => 'thingy',
-							'allowClear' => true
-						))
-				))
+					'model_name' => 'Event',
+				)
+			)
 		)
-	));
-//echo $form->get_html_and_js();
+	)
+);
+echo $form->get_html_and_js();
