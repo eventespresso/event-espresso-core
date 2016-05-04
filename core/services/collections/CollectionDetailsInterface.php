@@ -36,6 +36,12 @@ interface CollectionDetailsInterface {
 	 * @access public
 	 * @return string
 	 */
+	public function identifierCallback();
+
+	/**
+	 * @access public
+	 * @return string
+	 */
 	public function getFileMask();
 
 	/**
