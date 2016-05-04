@@ -264,28 +264,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$registrations_for_free_events = array();
 		$registrations_requiring_pre_approval = array();
 		$sold_out_events = array();
-		$insufficient_spaces_available = array();
 		$reg_count = 0;
 		// loop thru registrations to gather info
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
-		$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::verify_spaces_remaining_for_sale(
-			$registrations,
-			$this->checkout->revisit
-		);
-		foreach ( $registrations as $REG_ID => $registration ) {
-			// has this registration lost it's space ?
-			if ( isset( $ejected_registrations[ $REG_ID ] ) ) {
-				$insufficient_spaces_available[ $registration->event()->ID() ] = $registration->event();
-				continue;
-			}
+		foreach ( $registrations as $registration ) {
 			/** @var $registration EE_Registration */
 			$reg_count++;
 			// if returning registrant is Approved then do NOT do this
 			if (
-				! (
-					$this->checkout->revisit
-					&& $registration->status_ID() === EEM_Registration::status_id_approved
-				)
+			! (
+				$this->checkout->revisit
+				&& $registration->status_ID() === EEM_Registration::status_id_approved
+			)
 			) {
 				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( true ) ) {
 					// add event to list of events that are sold out
@@ -295,12 +285,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 						$registration->event(),
 						$this
 					);
-					continue;
 				}
 				// event requires admin approval
 				if ( $registration->status_ID() === EEM_Registration::status_id_not_approved ) {
 					// add event to list of events with pre-approval reg status
-					$registrations_requiring_pre_approval[ $REG_ID ] = $registration;
+					$registrations_requiring_pre_approval[ $registration->ID() ] = $registration;
 					do_action(
 						'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_pre_approval',
 						$registration->event(),
@@ -310,7 +299,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 			// are they allowed to pay now and is there monies owing?
 			if ( $registration->owes_monies_and_can_pay() ) {
-				$registrations_requiring_payment[ $REG_ID ] = $registration;
+				$registrations_requiring_payment[ $registration->ID() ] = $registration;
 				do_action(
 					'AHEE__EE_SPCO_Reg_Step_Payment_Options__generate_reg_form__event_requires_payment',
 					$registration->event(),
@@ -329,9 +318,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $sold_out_events ) ) {
 			$subsections['sold_out_events'] = $this->_sold_out_events( $sold_out_events );
 		}
-		if ( ! empty( $insufficient_spaces_available ) ) {
-			$subsections['insufficient_space'] = $this->_insufficient_spaces_available( $insufficient_spaces_available );
-		}
 		if ( ! empty( $registrations_requiring_pre_approval ) ) {
 			$subsections['registrations_requiring_pre_approval'] = $this->_registrations_requiring_pre_approval(
 				$registrations_requiring_pre_approval
@@ -343,16 +329,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! empty( $registrations_requiring_payment ) ) {
 			// autoload Line_Item_Display classes
 			EEH_Autoloader::register_line_item_filter_autoloaders();
+			$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
+				apply_filters(
+					'FHEE__SPCO__EE_Line_Item_Filter_Collection',
+					new EE_Line_Item_Filter_Collection()
+				),
+				$this->checkout->cart->get_grand_total()
+			);
+			/** @var EE_Line_Item $filtered_line_item_tree */
+			$filtered_line_item_tree = $line_item_filter_processor->process();
 			if ( $this->checkout->amount_owing > 0 ) {
-				$line_item_filter_processor = new EE_Line_Item_Filter_Processor(
-					apply_filters(
-						'FHEE__SPCO__EE_Line_Item_Filter_Collection',
-						new EE_Line_Item_Filter_Collection()
-					),
-					$this->checkout->cart->get_grand_total()
-				);
-				/** @var EE_Line_Item $filtered_line_item_tree */
-				$filtered_line_item_tree = $line_item_filter_processor->process();
 				EEH_Autoloader::register_line_item_display_autoloaders();
 				$this->set_line_item_display( new EE_Line_Item_Display( 'spco' ) );
 				$subsections['payment_options'] = $this->_display_payment_options(
@@ -391,77 +377,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *
 	 * @param \EE_Line_Item_Filter_Collection $line_item_filter_collection
 	 * @return \EE_Line_Item_Filter_Collection
-	 * @throws \EE_Error
 	 */
 	public static function add_spco_line_item_filters( EE_Line_Item_Filter_Collection $line_item_filter_collection ) {
 		$line_item_filter_collection->add(
 			new EE_Billable_Line_Item_Filter(
-				EE_SPCO_Reg_Step_Payment_Options::remove_ejected_registrations(
-					EE_Registry::instance()->SSN->checkout()->transaction->registrations(
-						EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
-					)
+				EE_Registry::instance()->SSN->checkout()->transaction->registrations(
+					EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
 				)
 			)
 		);
 		$line_item_filter_collection->add( new EE_Non_Zero_Line_Item_Filter() );
 		return $line_item_filter_collection;
-	}
-
-
-
-	/**
-	 * remove_ejected_registrations
-	 *
-	 * @param \EE_Registration[] $registrations
-	 * @return \EE_Registration[]
-	 * @throws \EE_Error
-	 */
-	public static function remove_ejected_registrations( array $registrations ) {
-		$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::verify_spaces_remaining_for_sale(
-			$registrations,
-			EE_Registry::instance()->SSN->checkout()->revisit
-		);
-		foreach ( $registrations as $REG_ID => $registration ) {
-			// has this registration lost it's space ?
-			if ( isset( $ejected_registrations[ $REG_ID ] ) ) {
-				unset( $registrations[ $REG_ID ] );
-				continue;
-			}
-		}
-		return $registrations;
-	}
-
-
-
-	/**
-	 * verify_spaces_remaining_for_sale
-	 *
-	 * @param \EE_Registration[] $registrations
-	 * @param bool               $revisit
-	 * @return array
-	 * @throws \EE_Error
-	 */
-	public static function verify_spaces_remaining_for_sale( array $registrations, $revisit = false ) {
-		$event_reg_count = array();
-		$ejected_registrations = array();
-		foreach ( $registrations as $REG_ID => $registration ) {
-			if ( $registration->status_ID() === EEM_Registration::status_id_approved ) {
-				continue;
-			}
-			if ( ! isset( $event_reg_count[ $registration->event_ID() ] ) ) {
-				$event_reg_count[ $registration->event_ID() ] = 0;
-			}
-			$event_reg_count[ $registration->event_ID() ]++;
-			$spaces_remaining_for_sale = $registration->event()->spaces_remaining_for_sale();
-			if (
-				$revisit
-				&& $spaces_remaining_for_sale > 0
-				&& $event_reg_count[ $registration->event_ID() ] > $spaces_remaining_for_sale
-			) {
-				$ejected_registrations[ $REG_ID ] = $registration->event();
-			}
-		}
-		return $ejected_registrations;
 	}
 
 
@@ -494,7 +420,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$sold_out_events = '';
 		foreach ( $sold_out_events_array as $sold_out_event ) {
 			$sold_out_events .= EEH_HTML::li(
-				EEH_HTML::span( '  ' .$sold_out_event->name(), '', 'dashicons dashicons-marker ee-icon-size-16 pink-text' )
+				EEH_HTML::span( $sold_out_event->name(), '', 'dashicons dashicons-marker ee-icon-size-16 pink-text' )
 			);
 		}
 		return new EE_Form_Section_Proper(
@@ -519,57 +445,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 									'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__sold_out_events_msg',
 									__(
 										'It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
-										'event_espresso'
-									)
-								)
-							)
-						)
-					)
-				)
-			)
-		);
-	}
-
-
-
-	/**
-	 * _insufficient_spaces_available
-	 *
-	 * @param \EE_Event[] $insufficient_spaces_events_array
-	 * @return \EE_Form_Section_Proper
-	 * @throws \EE_Error
-	 */
-	private function _insufficient_spaces_available( $insufficient_spaces_events_array = array() ) {
-		// set some defaults
-		$this->checkout->selected_method_of_payment = 'events_sold_out';
-		$insufficient_space_events = '';
-		foreach ( $insufficient_spaces_events_array as $event ) {
-			if ( $event instanceof EE_Event ) {
-				$insufficient_space_events .= EEH_HTML::li(
-					EEH_HTML::span( ' ' . $event->name(), '', 'dashicons dashicons-marker ee-icon-size-16 pink-text' )
-				);
-			}
-		}
-		return new EE_Form_Section_Proper(
-			array(
-				'subsections'     => array(
-					'default_hidden_inputs' => $this->reg_step_hidden_inputs(),
-					'extra_hidden_inputs'   => $this->_extra_hidden_inputs()
-				),
-				'layout_strategy' => new EE_Template_Layout(
-					array(
-						'layout_template_file' => SPCO_REG_STEPS_PATH
-						                          . $this->_slug
-						                          . DS
-						                          . 'sold_out_events.template.php',
-						'template_args'        => apply_filters(
-							'FHEE__EE_SPCO_Reg_Step_Payment_Options___insufficient_spaces_available__template_args',
-							array(
-								'sold_out_events'     => $insufficient_space_events,
-								'sold_out_events_msg' => apply_filters(
-									'FHEE__EE_SPCO_Reg_Step_Payment_Options___insufficient_spaces_available__insufficient_space_msg',
-									__(
-										'It appears that the event you were about to make a payment for has sold additional tickets since you first registered, and there are no longer enough spaces left to accommodate your selections. You may continue to pay and secure the available space(s) remaining, or simply cancel if you no longer wish to purchase. If you have already made a partial payment towards this event, please contact the event administrator for a refund.',
 										'event_espresso'
 									)
 								)
@@ -1341,7 +1216,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * uses info from alternate GET or POST data (such as AJAX) to create a new attendee
 	 *
 	 * @return \EE_Attendee
-	 * @throws \EE_Error
 	 */
 	protected function _create_attendee_from_request_data() {
 		// get State ID
@@ -1475,16 +1349,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			default:
-				$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::verify_spaces_remaining_for_sale(
-					EE_Registry::instance()->SSN->checkout()->transaction->registrations(
-						EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
-					),
-					EE_Registry::instance()->SSN->checkout()->revisit
-				);
-				if ( ! empty( $ejected_registrations ) ) {
-					$this->_redirect_because_event_sold_out();
-					return false;
-				}
 				$payment_successful = $this->_process_payment();
 				if ( $payment_successful ) {
 					$this->checkout->continue_reg = true;
@@ -1495,24 +1359,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				return $payment_successful;
 
 		}
-	}
-
-
-
-	/**
-	 * _redirect_because_event_sold_out
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _redirect_because_event_sold_out() {
-		$this->checkout->continue_reg = false;
-		// set redirect URL
-		$this->checkout->redirect_url = add_query_arg(
-			array( 'e_reg_url_link' => $this->checkout->reg_url_link ),
-			$this->checkout->current_step->reg_step_url()
-		);
-		$this->checkout->json_response->set_redirect_url( $this->checkout->redirect_url );
 	}
 
 
@@ -1851,10 +1697,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @throws \EE_Error
 	 */
 	private function _get_payment_method_for_selected_method_of_payment() {
-		if ( $this->checkout->selected_method_of_payment === 'events_sold_out' ) {
-			$this->_redirect_because_event_sold_out();
-			return null;
-		}
 		// get EE_Payment_Method object
 		if ( isset( $this->checkout->available_payment_methods[ $this->checkout->selected_method_of_payment ] ) ) {
 			$payment_method = $this->checkout->available_payment_methods[ $this->checkout->selected_method_of_payment ];
