@@ -88,7 +88,7 @@ interface CollectionInterface {
 	 *
 	 * @access public
 	 * @param mixed $identifier
-	 * @return void
+	 * @return boolean
 	 */
 	public function setCurrent( $identifier ) ;
 
@@ -98,7 +98,7 @@ interface CollectionInterface {
 	 *
 	 * @access public
 	 * @param $object
-	 * @return void
+	 * @return boolean
 	 */
 	public function setCurrentUsingObject( $object );
 
