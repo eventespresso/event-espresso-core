@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\collection_loaders;
+namespace EventEspresso\core\services\collections;
 
 use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
@@ -92,7 +92,7 @@ class CollectionLoader {
 
 	/**
 	 * @access public
-	 * @return \EventEspresso\core\services\collection_loaders\CollectionInterface
+	 * @return \EventEspresso\core\services\collections\CollectionInterface
 	 */
 	public function getCollection() {
 		return $this->collection;
