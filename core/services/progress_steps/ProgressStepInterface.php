@@ -14,9 +14,30 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 interface ProgressStepInterface {
 
-	public function display();
+	/**
+	 * @return boolean
+	 */
+	public function isCurrent();
 
-	public function update();
+	/**
+	 * @param boolean $is_current
+	 */
+	public function setIsCurrent( $is_current = true );
+
+	/**
+	 * @return int|string
+	 */
+	public function id();
+
+	/**
+	 * @return string
+	 */
+	public function htmlClass();
+
+	/**
+	 * @return string
+	 */
+	public function text();
 
 }
 // End of file ProgressStepInterface.php
