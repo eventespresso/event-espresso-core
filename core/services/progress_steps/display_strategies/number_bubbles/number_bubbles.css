@@ -1,0 +1,63 @@
+.ee-progress-step-main-container .number-bubbles-container {
+	display: inline-block;
+	position: relative;
+	margin: auto;
+}
+
+.number-bubbles-container .progress-step-number {
+	cursor: pointer;
+	display: inline-block;
+	padding: 20px 30px;
+	position: relative;
+	text-align: center;
+}
+
+.number-bubbles-container .progress-step-line {
+	background: #ddd;
+	border: 1px solid #ddd;
+	height: 1px;
+	position: absolute;
+	top: 45px;
+	left: -1%;
+	width: 102%;
+	z-index: 1;
+}
+
+.number-bubbles-container .progress-step-bubble {
+	background-color: #ddd;
+	border-radius: 50px;
+	-webkit-border-radius: 50px;
+	-moz-border-radius: 50px;
+	-ms-border-radius: 50px;
+	-o-border-radius: 50px;
+	color: #999;
+	height: 50px;
+	margin: auto;
+	position: relative;
+	text-align: center;
+	width: 50px;
+	z-index: 2;
+}
+
+.number-bubbles-container .progress-step-active .progress-step-bubble {
+	color: #fff;
+	background-color: #999;
+}
+
+.number-bubbles-container .progress-step-bubble p {
+	font-size: 32px;
+	font-weight: bold;
+	line-height: 46px;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+.number-bubbles-container .progress-step-text {
+	display: block;
+	margin: 1em 0;
+	font-size: 1.3em;
+}
+
+
+/* Location: core/services/progress_steps/display_strategies/number_bubbles/number_bubbles.css */
