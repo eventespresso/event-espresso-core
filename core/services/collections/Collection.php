@@ -189,16 +189,17 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  *
 	  * @access public
 	  * @param mixed $identifier
-	  * @return void
+	  * @return boolean
 	  */
 	 public function setCurrent( $identifier ) {
 		 $this->rewind();
 		 while ( $this->valid() ) {
 			 if ( $identifier === $this->getInfo() ) {
-				 break;
+				 return true;
 			 }
 			 $this->next();
 		 }
+		 return false;
 	 }
 
 
@@ -209,16 +210,17 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  *
 	  * @access public
 	  * @param $object
-	  * @return void
+	  * @return boolean
 	  */
 	 public function setCurrentUsingObject( $object ) {
 		 $this->rewind();
 		 while ( $this->valid() ) {
 			 if ( $this->current() === $object ) {
-				 break;
+				 return true;
 			 }
 			 $this->next();
 		 }
+		 return false;
 	 }
 
 
