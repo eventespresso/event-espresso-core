@@ -10,7 +10,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Interface CollectionDetailsInterface
  *
- * @package EventEspresso\core\services\collection_loaders
+ * @package EventEspresso\core\services\collections
  */
 interface CollectionDetailsInterface {
 

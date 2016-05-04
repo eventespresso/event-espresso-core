@@ -17,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Class CollectionLoader
  *
  * given the details on where to find files, will populate a collection
- * plz see: \EventEspresso\core\services\collection_loaders\CollectionDetails
+ * plz see: \EventEspresso\core\services\collections\CollectionDetails
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -260,4 +260,4 @@ class CollectionLoader {
 
 }
 // End of file CollectionLoader.php
-// Location: core/services/collection_loaders/CollectionLoader.php
+// Location: core/services/collections/CollectionLoader.php
