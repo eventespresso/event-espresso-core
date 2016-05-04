@@ -1,7 +1,8 @@
 <?php
 namespace EventEspresso\core\services\progress_steps;
 
-use EventEspresso\core\services\collection_loaders\CollectionInterface;
+use EventEspresso\core\services\collections\Collection;
+
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -12,20 +13,21 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class ProgressStepCollection
  * Description
-
  *
-*@package       Event Espresso
+ * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
-class ProgressStepCollection extends \EE_Object_Collection implements CollectionInterface{
+class ProgressStepCollection extends Collection {
 
 	/**
 	 * ProgressStepCollection constructor.
+	 *
+	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 */
 	public function __construct() {
-		$this->interface = 'ProgressStepInterface';
+		parent::__construct( '\EventEspresso\core\services\progress_steps\ProgressStepInterface' );
 	}
 
 }
