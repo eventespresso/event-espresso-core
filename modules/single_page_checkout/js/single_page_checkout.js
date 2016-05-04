@@ -903,8 +903,8 @@ jQuery(document).ready( function($) {
 
 				success: function( response ){
 					//SPCO.console_log_object( 'display_payment_method : response', response );
-					if ( typeof response !== 'undefined' && typeof response !== null ) {
-						if ( typeof response.return_data === 'undefined' ) {
+					if ( typeof response !== 'undefined' && typeof response === 'object' ) {
+						if ( typeof response.return_data === 'undefined' || typeof response.return_data !== 'object' ) {
 							response.return_data = {};
 						}
 						response.return_data.payment_method = payment_method;
