@@ -6,7 +6,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Collection Interface
  * 
- * PLZ USE \EventEspresso\core\services\collection_loaders\CollectionInterface
+ * PLZ USE \EventEspresso\core\services\collections\CollectionInterface
  *
  * @deprecated since 4.9
  * @package    Event Espresso
