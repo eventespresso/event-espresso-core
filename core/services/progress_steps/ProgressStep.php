@@ -24,7 +24,13 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * @var boolean $is_current
 	 */
-	protected $is_current;
+	protected $is_current = false;
+
+
+	/**
+	 * @var boolean $completed
+	 */
+	protected $completed = false;
 
 
 	/**
@@ -35,12 +41,12 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * @var int|string $id
 	 */
-	protected $id;
+	protected $id = '';
 
 	/**
 	 * @var string $text
 	 */
-	protected $text;
+	protected $text = '';
 
 
 
@@ -74,6 +80,24 @@ class ProgressStep implements ProgressStepInterface{
 	 */
 	public function setIsCurrent( $is_current = true ) {
 		$this->is_current = filter_var( $is_current, FILTER_VALIDATE_BOOLEAN );
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function completed() {
+		return $this->completed;
+	}
+
+
+
+	/**
+	 * @param boolean $completed
+	 */
+	public function setCompleted( $completed = true ) {
+		$this->completed = filter_var( $completed, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
