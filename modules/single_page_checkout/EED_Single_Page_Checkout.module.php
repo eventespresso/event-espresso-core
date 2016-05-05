@@ -11,11 +11,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	$_initialized - has the SPCO controller already been initialized ?
-	 * 	@access private
-	 *	@var bool $_initialized
+	 * $_initialized - has the SPCO controller already been initialized ?
+	 * @access private
+	 * @var bool $_initialized
 	 */
-	private static $_initialized = FALSE;
+	private static $_initialized = false;
+
+
+	/**
+	 * $_checkout_verified - is the EE_Checkout verified as correct for this request ?
+	 *
+	 * @access private
+	 * @var bool $_valid_checkout
+	 */
+	private static $_checkout_verified = true;
 
 	/**
 	 * 	$_reg_steps_array - holds initial array of reg steps
@@ -405,10 +414,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					? $this->_get_transaction_and_cart_for_previous_visit()
 					: $this->_get_cart_for_current_session_and_setup_new_transaction();
 				if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-					EE_Error::add_error(
-						__( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ),
-						__FILE__, __FUNCTION__, __LINE__
-					);
 					// add some style and make it dance
 					$this->checkout->transaction = EE_Transaction::new_instance();
 					$this->add_styles_and_scripts();
@@ -919,6 +924,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 			if ( ! $valid_registrant instanceof EE_Registration ) {
+				// hmmm... maybe we have the wrong session because the user is opening multiple tabs ?
+				if ( EED_Single_Page_Checkout::$_checkout_verified ) {
+					// clear the session, mark the checkout as unverified, and try again
+					EE_Registry::instance()->SSN->clear_session();
+					EED_Single_Page_Checkout::$_initialized = false;
+					EED_Single_Page_Checkout::$_checkout_verified = false;
+					$this->_initialize();
+					EE_Error::reset_notices();
+					return false;
+				}
 				EE_Error::add_error( __( 'We\'re sorry but there appears to be an error with the "reg_url_link" or the transaction itself. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
