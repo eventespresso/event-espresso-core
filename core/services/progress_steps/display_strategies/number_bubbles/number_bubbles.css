@@ -15,22 +15,23 @@
 .number-bubbles-container .progress-step-line {
 	background: #ddd;
 	border: 1px solid #ddd;
-	height: 1px;
+	height: 2px;
 	position: absolute;
-	top: 45px;
+	top: 47px;
 	left: -1%;
 	width: 102%;
 	z-index: 1;
 }
 
 .number-bubbles-container .progress-step-bubble {
-	background-color: #ddd;
+	background-color: #fff;
+	border: 4px solid #ddd;
 	border-radius: 50px;
 	-webkit-border-radius: 50px;
 	-moz-border-radius: 50px;
 	-ms-border-radius: 50px;
 	-o-border-radius: 50px;
-	color: #999;
+	color: #777;
 	height: 50px;
 	margin: auto;
 	position: relative;
@@ -41,7 +42,9 @@
 
 .number-bubbles-container .progress-step-active .progress-step-bubble {
 	color: #fff;
-	background-color: #999;
+	/*background-color: #999;*/
+	border: 4px solid #2EA2CC;
+	background-color: #2EA2CC;
 }
 
 .number-bubbles-container .progress-step-bubble p {
