@@ -198,10 +198,10 @@ class EED_Core_Rest_Api extends \EED_Module {
 		$routes = apply_filters(
 			'EED_Core_Rest_Api__save_ee_route_data_for_version__routes',
 			array_replace_recursive(
-				$instance->_register_config_routes_for_version( $version, $hidden_endpoints ),
-				$instance->_register_meta_routes_for_version( $version, $hidden_endpoints ),
-				$instance->_register_model_routes_for_version( $version, $hidden_endpoints ),
-				$instance->_register_rpc_routes_for_version( $version, $hidden_endpoints )
+				$instance->_get_config_route_data_for_version( $version, $hidden_endpoints ),
+				$instance->_get_meta_route_data_for_version( $version, $hidden_endpoints ),
+				$instance->_get_model_route_data_for_version( $version, $hidden_endpoints ),
+				$instance->_get_rpc_route_data_for_version( $version, $hidden_endpoints )
 			)
 		);
 		update_option( self::saved_routes_option_names . $version, $routes, true );
@@ -238,7 +238,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	protected function _register_model_routes() {
 		$model_routes = array( );
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$model_routes[ EED_Core_Rest_Api::ee_api_namespace . $version ] = $this->_register_config_routes_for_version( $version, $hidden_endpoint );
+			$model_routes[ EED_Core_Rest_Api::ee_api_namespace . $version ] = $this->_get_config_route_data_for_version( $version, $hidden_endpoint );
 		}
 		return $model_routes;
 	}
@@ -249,7 +249,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param boolean $hidden_endpoint
 	 * @return array
 	 */
-	protected function _register_model_routes_for_version( $version, $hidden_endpoint = false ) {
+	protected function _get_model_route_data_for_version( $version, $hidden_endpoint = false ) {
 		$model_version_info = new \EventEspresso\core\libraries\rest_api\Model_Version_Info( $version );
 		$models_to_register = apply_filters(
 			'FHEE__EED_Core_REST_API___register_model_routes',
@@ -338,7 +338,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	protected function _register_rpc_routes() {
 		$routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$routes[ self::ee_api_namespace . $version ] = $this->_register_rpc_routes_for_version( $version, $hidden_endpoint );
+			$routes[ self::ee_api_namespace . $version ] = $this->_get_rpc_route_data_for_version( $version, $hidden_endpoint );
 		}
 		return $routes;
 	}
@@ -349,7 +349,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param boolean $hidden_endpoint
 	 * @return array
 	 */
-	protected function _register_rpc_routes_for_version( $version, $hidden_endpoint = false ) {
+	protected function _get_rpc_route_data_for_version( $version, $hidden_endpoint = false ) {
 		$this_versions_routes = array();
 			//checkin endpoint
 			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)' ] = array(
@@ -455,7 +455,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	protected function _register_config_routes() {
 		$config_routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$config_routes[ self::ee_api_namespace . $version ] = $this->_register_config_routes_for_version( $version,	$hidden_endpoint );
+			$config_routes[ self::ee_api_namespace . $version ] = $this->_get_config_route_data_for_version( $version,	$hidden_endpoint );
 		}
 		return $config_routes;
 	}
@@ -466,7 +466,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param boolean $hidden_endpoint
 	 * @return array
 	 */
-	protected function _register_config_routes_for_version( $version, $hidden_endpoint ) {
+	protected function _get_config_route_data_for_version( $version, $hidden_endpoint ) {
 		return array(
 			'config' => array(
 				array(
@@ -488,7 +488,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	protected function _register_meta_routes() {
 		$meta_routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$meta_routes[ self::ee_api_namespace . $version ] = $this->_register_meta_routes_for_version( $version, $hidden_endpoint );
+			$meta_routes[ self::ee_api_namespace . $version ] = $this->_get_meta_route_data_for_version( $version, $hidden_endpoint );
 		}
 		return $meta_routes;
 	}
@@ -499,7 +499,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @param boolean $hidden_endpoint
 	 * @return array
 	 */
-	protected function _register_meta_routes_for_version( $version, $hidden_endpoint = false ) {
+	protected function _get_meta_route_data_for_version( $version, $hidden_endpoint = false ) {
 		return array( 
 			'resources'  => array(
 				array(
