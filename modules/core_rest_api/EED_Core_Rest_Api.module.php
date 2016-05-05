@@ -166,6 +166,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * }
 	 */
 	public static function get_ee_route_data() {
+
 		$ee_routes = get_option( self::saved_routes_option_names, null );
 		if( ! $ee_routes || ( defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE )){
 			self::save_ee_routes();
@@ -334,7 +335,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 				'include' => array(
 					'required' => false,
 					'default' => '*',
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
 				),
 				'calculate' => array(
 					'required' => false,
@@ -368,32 +368,26 @@ class EED_Core_Rest_Api extends \EED_Module {
 				'where' => array(
 					'required' => false,
 					'default' => array(),
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#where for documentation', 'event_espresso' ),
 					),
 				'limit' => array(
 					'required' => false,
 					'default' => EED_Core_Rest_Api::get_default_query_limit(),
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#limit for documentation', 'event_espresso' )
 				),
 				'order_by' => array(
 					'required' => false,
 					'default' => $default_orderby,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#order_by for documentation', 'event_espresso' )
 				),
 				'group_by' => array(
 					'required' => false,
 					'default' => null,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#group_by for documentation', 'event_espresso' )
 				),
 				'having' => array(
 					'required' => false,
 					'default' => null,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#having for documentation', 'event_espresso' )
 				),
 				'caps' => array(
 					'required' => false,
 					'default' => EEM_Base::caps_read,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#caps for documentation', 'event_espresso' )
 				),
 			)
 		);
