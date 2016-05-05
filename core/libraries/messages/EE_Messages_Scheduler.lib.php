@@ -71,9 +71,6 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param string $task  The task the request is being generated for.
 	 */
 	public static function initiate_scheduled_non_blocking_request( $task ) {
-		//transient is used for flood control on msg_cron_trigger requests
-		$transient_key = 'ee_trans_' . uniqid( $task );
-		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
 		$request_url = add_query_arg(
 			EE_Messages_Scheduler::get_request_params( $task ),
 			site_url()
