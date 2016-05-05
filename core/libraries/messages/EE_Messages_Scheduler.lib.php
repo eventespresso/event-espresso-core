@@ -73,7 +73,10 @@ class EE_Messages_Scheduler extends EE_BASE {
 	public static function initiate_scheduled_non_blocking_request( $task ) {
 		if ( apply_filters( 'EE_Messages_Scheduler__initiate_scheduled_non_blocking_request__do_separate_request', true ) ) {
 			$request_url  = add_query_arg(
-				EE_Messages_Scheduler::get_request_params( $task ),
+				array_merge(
+					array( 'ee' => 'msg_cron_trigger' ),
+					EE_Messages_Scheduler::get_request_params( $task )
+				),
 				site_url()
 			);
 			$request_args = array(
@@ -104,7 +107,6 @@ class EE_Messages_Scheduler extends EE_BASE {
 		$transient_key = 'ee_trans_' . uniqid( $task );
 		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
 		return array(
-			'ee' => 'msg_cron_trigger',
 			'type' => $task,
 			'key' => $transient_key,
 		);
@@ -123,7 +125,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 		foreach ( $request_args as $request_key => $request_value ) {
 			EE_Registry::instance()->REQ->set( $request_key, $request_value );
 		}
-		EED_Messages::instance()->run_cron( null );
+		EED_Messages::instance()->run_cron();
 	}
 
 

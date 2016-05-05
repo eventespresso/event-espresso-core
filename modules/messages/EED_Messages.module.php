@@ -125,7 +125,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static function _register_routes() {
 		EE_Config::register_route( 'msg_url_trigger', 'Messages', 'run' );
-		EE_Config::register_route( 'msg_cron_trigger', 'Messages', 'run_cron' );
+		EE_Config::register_route( 'msg_cron_trigger', 'Messages', 'execute_batch_request' );
 		EE_Config::register_route( 'msg_browser_trigger', 'Messages', 'browser_trigger' );
 		EE_Config::register_route( 'msg_browser_error_trigger', 'Messages', 'browser_error_trigger' );
 		do_action( 'AHEE__EED_Messages___register_routes' );
@@ -235,12 +235,24 @@ class EED_Messages  extends EED_Module {
 	 * This is triggered by the 'msg_cron_trigger' route.
 	 * @param WP $WP
 	 */
-	public function run_cron( $WP ) {
+	public function execute_batch_request( $WP ) {
+		$this->run_cron();
+		header( 'HTTP/1.1 200 OK' );
+		exit();
+	}
+
+
+
+
+	/**
+	 * This gets executed on wp_cron jobs or when a batch request is initated on its own separate non regular wp request.
+	 *
+	 */
+	public function run_cron() {
 		self::_load_controller();
 		//get required vars
 		$cron_type = EE_Registry::instance()->REQ->get( 'type' );
 		$transient_key = EE_Registry::instance()->REQ->get( 'key' );
-		header( 'HTTP/1.1 200 OK' );
 
 		//now let's verify transient, if not valid exit immediately
 		if ( ! get_transient( $transient_key ) ) {
@@ -263,7 +275,6 @@ class EED_Messages  extends EED_Module {
 			 */
 			trigger_error( esc_attr( sprintf( __( 'There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) ) );
 		}
-		exit();
 	}
 
 
