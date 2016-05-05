@@ -75,11 +75,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 		$transient_key = 'ee_trans_' . uniqid( $task );
 		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
 		$request_url = add_query_arg(
-			array(
-				'ee' => 'msg_cron_trigger',
-				'type' => $task,
-				'key' => $transient_key,
-			),
+			EE_Messages_Scheduler::get_request_params( $task ),
 			site_url()
 		);
 		$request_args = array(
@@ -99,10 +95,45 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 
 	/**
+	 * This returns the request params used for a scheduled message task request.
+	 * @param string $task  The task the request is for.
+	 */
+	public static function get_request_params( $task ) {
+		//transient is used for flood control on msg_cron_trigger requests
+		$transient_key = 'ee_trans_' . uniqid( $task );
+		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
+		return array(
+			'ee' => 'msg_cron_trigger',
+			'type' => $task,
+			'key' => $transient_key,
+		);
+	}
+
+
+
+
+	/**
+	 * This is used to execute an immediate call to the run_cron task performed by EED_Messages
+	 * @param string $task The task the request is being generated for.
+	 */
+	public static function initiate_immediate_request_on_cron( $task ) {
+		$request_args = EE_Messages_Scheduler::get_request_params( $task );
+		//set those request args in the request so it gets picked up
+		foreach ( $request_args as $request_key => $request_value ) {
+			EE_Registry::instance()->REQ->set( $request_key, $request_value );
+		}
+		EED_Messages::instance()->run_cron( null );
+	}
+
+
+
+
+
+	/**
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__generation wp cron event
 	 */
 	public static function batch_generation() {
-		EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( 'generate' );
+		EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
 	}
 
 
@@ -112,7 +143,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__sending
 	 */
 	public static function batch_sending() {
-		EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( 'send' );
+		EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
 	}
 
 } //end EE_Messages_Scheduler
