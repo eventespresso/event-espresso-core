@@ -71,19 +71,23 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param string $task  The task the request is being generated for.
 	 */
 	public static function initiate_scheduled_non_blocking_request( $task ) {
-		$request_url = add_query_arg(
-			EE_Messages_Scheduler::get_request_params( $task ),
-			site_url()
-		);
-		$request_args = array(
-			'timeout' => 300,
-			'blocking' => ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? true : false,
-			'sslverify' => false,
-			'redirection' => 10,
-		);
-		$response = wp_remote_get( $request_url, $request_args );
-		if ( is_wp_error( $response ) ) {
-			trigger_error( $response->get_error_message() );
+		if ( apply_filters( 'EE_Messages_Scheduler__initiate_scheduled_non_blocking_request__do_separate_request', true ) ) {
+			$request_url  = add_query_arg(
+				EE_Messages_Scheduler::get_request_params( $task ),
+				site_url()
+			);
+			$request_args = array(
+				'timeout'     => 300,
+				'blocking'    => ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? true : false,
+				'sslverify'   => false,
+				'redirection' => 10,
+			);
+			$response     = wp_remote_get( $request_url, $request_args );
+			if ( is_wp_error( $response ) ) {
+				trigger_error( $response->get_error_message() );
+			}
+		} else {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( $task );
 		}
 	}
 
