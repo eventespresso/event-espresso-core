@@ -421,6 +421,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _transaction_legend_items() {
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$items = array();
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
 			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
