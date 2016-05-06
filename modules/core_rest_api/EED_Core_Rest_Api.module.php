@@ -166,17 +166,52 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * }
 	 */
 	public static function get_ee_route_data() {
-		$ee_routes = get_option( self::saved_routes_option_names, null );
-		if( ! $ee_routes || ( defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE )){
-			self::save_ee_routes();
-			$ee_routes = get_option( self::saved_routes_option_names, array() );
+		$ee_routes = array();
+		foreach( self::versions_served() as $version => $hidden_endpoints ) {
+			$ee_routes[  self::ee_api_namespace . $version ] = self::_get_ee_route_data_for_version( $version, $hidden_endpoints );
 		}
 		return $ee_routes;
+	}
+	
+	/**
+	 * Gets the EE route data from the wp options if it exists already, 
+	 * otherwise re-generates it and saves it to the option
+	 * @param string $version
+	 * @param boolean $hidden_endpoints
+	 * @return array
+	 */
+	protected static function _get_ee_route_data_for_version( $version, $hidden_endpoints = false ) {
+		$ee_routes = get_option( self::saved_routes_option_names . $version , null );
+		if( ! $ee_routes || ( defined('EE_REST_API_DEBUG_MODE') && EE_REST_API_DEBUG_MODE )){
+			$ee_routes = self::_save_ee_route_data_for_version( $version, $hidden_endpoints );
+		}
+		return $ee_routes;
+	}
+	
+	/**
+	 * Saves the EE REST API route data to a wp option and returns it
+	 * @param string $version
+	 * @param boolean $hidden_endpoints
+	 */
+	protected static function _save_ee_route_data_for_version( $version, $hidden_endpoints = false ) {
+		$instance = self::instance();
+		$routes = apply_filters(
+			'EED_Core_Rest_Api__save_ee_route_data_for_version__routes',
+			array_replace_recursive(
+				$instance->_get_config_route_data_for_version( $version, $hidden_endpoints ),
+				$instance->_get_meta_route_data_for_version( $version, $hidden_endpoints ),
+				$instance->_get_model_route_data_for_version( $version, $hidden_endpoints ),
+				$instance->_get_rpc_route_data_for_version( $version, $hidden_endpoints )
+			)
+		);
+		update_option( self::saved_routes_option_names . $version, $routes, true );
+		return $routes;
 	}
 
 	/**
 	 * Calculates all the EE routes and saves it to a wordpress option so we don't
 	 * need to calculate it on every request
+	 * @deprecated since version 4.9.1
 	 * @return void
 	 */
 	public static function save_ee_routes() {
@@ -198,36 +233,49 @@ class EED_Core_Rest_Api extends \EED_Module {
 	/**
 	 * Gets all the route information relating to EE models
 	 * @return array @see get_ee_route_data
+	 * @deprecated since version 4.9.1
 	 */
 	protected function _register_model_routes() {
+		$model_routes = array( );
+		foreach( self::versions_served() as $version => $hidden_endpoint ) {
+			$model_routes[ EED_Core_Rest_Api::ee_api_namespace . $version ] = $this->_get_config_route_data_for_version( $version, $hidden_endpoint );
+		}
+		return $model_routes;
+	}
+	
+	/**
+	 * Gets the route data for EE models in the specified version
+	 * @param string $version
+	 * @param boolean $hidden_endpoint
+	 * @return array
+	 */
+	protected function _get_model_route_data_for_version( $version, $hidden_endpoint = false ) {
+		$model_version_info = new \EventEspresso\core\libraries\rest_api\Model_Version_Info( $version );
 		$models_to_register = apply_filters(
 			'FHEE__EED_Core_REST_API___register_model_routes',
-			EE_Registry::instance()->non_abstract_db_models
+			$model_version_info->models_for_requested_version()
 		);
 		//let's not bother having endpoints for extra metas
 		unset($models_to_register['Extra_Meta']);
 		unset($models_to_register['Extra_Join']);
-		$model_routes = array( );
-		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-
-			foreach ( $models_to_register as $model_name => $model_classname ) {
-				$model = \EE_Registry::instance()->load_model( $model_name );
-				//yes we could just register one route for ALL models, but then they wouldn't show up in the index
-				$ee_namespace = self::ee_api_namespace . $version;
-				$plural_model_route = EEH_Inflector::pluralize_and_lower( $model_name );
-				$singular_model_route = $plural_model_route . '/(?P<id>\d+)' ;
-				$model_routes[ $ee_namespace ][ $plural_model_route ] = array(
-						array(
-							'callback' => array(
-								'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-								'handle_request_get_all' ),
-							'methods' => WP_REST_Server::READABLE,
-							'hidden_endpoint' => $hidden_endpoint,
-							'args' => $this->_get_read_query_params( $model, $version ),
-							'_links' => array(
-								'self' => rest_url( $ee_namespace . $singular_model_route ),
-							)
-						),
+		$model_routes = array();
+		foreach ( $models_to_register as $model_name => $model_classname ) {
+			$model = \EE_Registry::instance()->load_model( $model_name );
+			//yes we could just register one route for ALL models, but then they wouldn't show up in the index
+			$plural_model_route = EEH_Inflector::pluralize_and_lower( $model_name );
+			$singular_model_route = $plural_model_route . '/(?P<id>\d+)' ;
+			$model_routes[ $plural_model_route ] = array(
+					array(
+						'callback' => array(
+							'EventEspresso\core\libraries\rest_api\controllers\model\Read',
+							'handle_request_get_all' ),
+						'methods' => WP_REST_Server::READABLE,
+						'hidden_endpoint' => $hidden_endpoint,
+						'args' => $this->_get_read_query_params( $model, $version ),
+						'_links' => array(
+							'self' => rest_url( EED_Core_Rest_Api::ee_api_namespace . $version . $singular_model_route ),
+						)
+					),
 //						array(
 //							'callback' => array(
 //								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
@@ -235,16 +283,16 @@ class EED_Core_Rest_Api extends \EED_Module {
 //							'methods' => WP_REST_Server::CREATABLE,
 //							'hidden_endpoint' => $hidden_endpoint
 //						)
-					);
-				$model_routes[ $ee_namespace ][ $singular_model_route ] = array(
-						array(
-							'callback' => array(
-								'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-								'handle_request_get_one' ),
-							'methods' => WP_REST_Server::READABLE,
-							'hidden_endpoint' => $hidden_endpoint,
-							'args' => $this->_get_response_selection_query_params( $model, $version)
-						),
+				);
+			$model_routes[ $singular_model_route ] = array(
+					array(
+						'callback' => array(
+							'EventEspresso\core\libraries\rest_api\controllers\model\Read',
+							'handle_request_get_one' ),
+						'methods' => WP_REST_Server::READABLE,
+						'hidden_endpoint' => $hidden_endpoint,
+						'args' => $this->_get_response_selection_query_params( $model, $version)
+					),
 //						array(
 //							'callback' => array(
 //								'EventEspresso\core\libraries\rest_api\controllers\model\Write',
@@ -252,22 +300,22 @@ class EED_Core_Rest_Api extends \EED_Module {
 //							'methods' => WP_REST_Server::EDITABLE,
 //							'hidden_endpoint' => $hidden_endpoint
 //							),
+			);
+			//@todo: also handle  DELETE for a single item
+			foreach ( $model->relation_settings() as $relation_name => $relation_obj ) {
+				$related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
+					$relation_name,
+					$relation_obj
 				);
-				//@todo: also handle  DELETE for a single item
-				foreach ( $model->relation_settings() as $relation_name => $relation_obj ) {
-					$related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
-						$relation_name,
-						$relation_obj
-					);
-					$model_routes[ $ee_namespace ][ $singular_model_route . '/' . $related_model_name_endpoint_part ] = array(
-							array(
-								'callback' => array(
-									'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-									'handle_request_get_related' ),
-								'methods' => WP_REST_Server::READABLE,
-								'hidden_endpoint' => $hidden_endpoint,
-								'args' => $this->_get_read_query_params( $relation_obj->get_other_model(), $version ),
-							),
+				$model_routes[ $singular_model_route . '/' . $related_model_name_endpoint_part ] = array(
+						array(
+							'callback' => array(
+								'EventEspresso\core\libraries\rest_api\controllers\model\Read',
+								'handle_request_get_related' ),
+							'methods' => WP_REST_Server::READABLE,
+							'hidden_endpoint' => $hidden_endpoint,
+							'args' => $this->_get_read_query_params( $relation_obj->get_other_model(), $version ),
+						),
 //							array(
 //								'callback' => array(
 //									'EventEspresso\core\libraries\rest_api\controllers\model\Write',
@@ -275,24 +323,34 @@ class EED_Core_Rest_Api extends \EED_Module {
 //								'methods' => WP_REST_Server::EDITABLE,
 //								'hidden_endpoint' => $hidden_endpoint
 //							)
-						);
-					//@todo: handle delete related and possibly remove relation (not sure hwo to distinguish)
-				}
+					);
+				//@todo: handle delete related and possibly remove relation (not sure hwo to distinguish)
 			}
 		}
-
 		return $model_routes;
 	}
 
 	/**
 	 * Adds all the RPC-style routes (remote procedure call-like routes, ie
 	 * routes that don't conform to the traditional REST CRUD-style).
+	 * @deprecated since 4.9.1
 	 */
 	protected function _register_rpc_routes() {
 		$routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$ee_namespace = self::ee_api_namespace . $version;
-			$this_versions_routes = array();
+			$routes[ self::ee_api_namespace . $version ] = $this->_get_rpc_route_data_for_version( $version, $hidden_endpoint );
+		}
+		return $routes;
+	}
+	
+	/**
+	 * 
+	 * @param string $version
+	 * @param boolean $hidden_endpoint
+	 * @return array
+	 */
+	protected function _get_rpc_route_data_for_version( $version, $hidden_endpoint = false ) {
+		$this_versions_routes = array();
 			//checkin endpoint
 			$this_versions_routes[ 'registrations/(?P<REG_ID>\d+)/toggle_checkin_for_datetime/(?P<DTT_ID>\d+)' ] = array(
 				array(
@@ -310,14 +368,12 @@ class EED_Core_Rest_Api extends \EED_Module {
 					)
 				)
 			);
-			$routes[ $ee_namespace ] = apply_filters(
+			return apply_filters(
 				'FHEE__EED_Core_Rest_Api___register_rpc_routes__this_versions_routes',
 				$this_versions_routes,
 				$version,
 				$hidden_endpoint
 			);
-		}
-		return $routes;
 	}
 
 	/**
@@ -333,7 +389,6 @@ class EED_Core_Rest_Api extends \EED_Module {
 				'include' => array(
 					'required' => false,
 					'default' => '*',
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#Including_Specific_Fields_and_Related_Entities_in_Results for documentation', 'event_espresso' ),
 				),
 				'calculate' => array(
 					'required' => false,
@@ -367,32 +422,26 @@ class EED_Core_Rest_Api extends \EED_Module {
 				'where' => array(
 					'required' => false,
 					'default' => array(),
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#where for documentation', 'event_espresso' ),
 					),
 				'limit' => array(
 					'required' => false,
 					'default' => EED_Core_Rest_Api::get_default_query_limit(),
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#limit for documentation', 'event_espresso' )
 				),
 				'order_by' => array(
 					'required' => false,
 					'default' => $default_orderby,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#order_by for documentation', 'event_espresso' )
 				),
 				'group_by' => array(
 					'required' => false,
 					'default' => null,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#group_by for documentation', 'event_espresso' )
 				),
 				'having' => array(
 					'required' => false,
 					'default' => null,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#having for documentation', 'event_espresso' )
 				),
 				'caps' => array(
 					'required' => false,
 					'default' => EEM_Base::caps_read,
-					'description' => __( 'See http://developer.eventespresso.com/docs/ee4-rest-api-reading/#caps for documentation', 'event_espresso' )
 				),
 			)
 		);
@@ -401,31 +450,58 @@ class EED_Core_Rest_Api extends \EED_Module {
 	/**
 	 * Gets routes for the config
 	 * @return array @see _register_model_routes
+	 * @deprecated since version 4.9.1
 	 */
 	protected function _register_config_routes() {
 		$config_routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$config_routes[ self::ee_api_namespace . $version ][ 'config' ] = array(
-					array(
-						'callback' => array(
-							'EventEspresso\core\libraries\rest_api\controllers\config\Read',
-							'handle_request' ),
-						'methods' => WP_REST_Server::READABLE,
-						'hidden_endpoint' => $hidden_endpoint
-						),
-				);
+			$config_routes[ self::ee_api_namespace . $version ] = $this->_get_config_route_data_for_version( $version,	$hidden_endpoint );
 		}
 		return $config_routes;
+	}
+	
+	/**
+	 * Gets routes for the config for the specified version
+	 * @param string $version
+	 * @param boolean $hidden_endpoint
+	 * @return array
+	 */
+	protected function _get_config_route_data_for_version( $version, $hidden_endpoint ) {
+		return array(
+			'config' => array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\config\Read',
+						'handle_request' ),
+					'methods' => WP_REST_Server::READABLE,
+					'hidden_endpoint' => $hidden_endpoint
+				),
+			)
+		);
 	}
 
 	/**
 	 * Gets the meta info routes
 	 * @return array @see _register_model_routes
+	 * @deprecated since version 4.9.1
 	 */
 	protected function _register_meta_routes() {
 		$meta_routes = array();
 		foreach( self::versions_served() as $version => $hidden_endpoint ) {
-			$meta_routes[ self::ee_api_namespace . $version ][ '/resources' ] = array(
+			$meta_routes[ self::ee_api_namespace . $version ] = $this->_get_meta_route_data_for_version( $version, $hidden_endpoint );
+		}
+		return $meta_routes;
+	}
+	
+	/**
+	 * 
+	 * @param string $version
+	 * @param boolean $hidden_endpoint
+	 * @return array
+	 */
+	protected function _get_meta_route_data_for_version( $version, $hidden_endpoint = false ) {
+		return array( 
+			'resources'  => array(
 				array(
 					'callback' => array(
 						'EventEspresso\core\libraries\rest_api\controllers\model\Meta',
@@ -433,9 +509,8 @@ class EED_Core_Rest_Api extends \EED_Module {
 					'methods' => WP_REST_Server::READABLE,
 					'hidden_endpoint' => $hidden_endpoint
 				)
-			);
-		}
-		return $meta_routes;
+			)
+		);
 	}
 
 
