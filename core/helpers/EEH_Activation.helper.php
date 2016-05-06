@@ -50,7 +50,7 @@ class EEH_Activation {
 	 */
 	public static function ensure_table_name_has_prefix( $table_name ) {
 		global $wpdb;
-		return strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		return strpos( $table_name, $wpdb->base_prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 	}
 
 
