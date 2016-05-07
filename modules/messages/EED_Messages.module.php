@@ -265,16 +265,21 @@ class EED_Messages  extends EED_Module {
 		//if made it here, lets' delete the transient to keep the db clean
 		delete_transient( $transient_key );
 
-		$method = 'batch_' . $cron_type . '_from_queue';
-		if ( method_exists( self::$_MSG_PROCESSOR, $method ) ) {
-			self::$_MSG_PROCESSOR->$method();
-		} else {
-			//no matching task
-			/**
-			 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
-			 */
-			trigger_error( esc_attr( sprintf( __( 'There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) ) );
+		if ( apply_filters( 'FHEE__EED_Messages__run_cron__use_wp_cron', true ) ) {
+
+			$method = 'batch_' . $cron_type . '_from_queue';
+			if ( method_exists( self::$_MSG_PROCESSOR, $method ) ) {
+				self::$_MSG_PROCESSOR->$method();
+			} else {
+				//no matching task
+				/**
+				 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
+				 */
+				trigger_error( esc_attr( sprintf( __( 'There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) ) );
+			}
 		}
+
+		do_action( 'FHEE__EED_Messages__run_cron__end' );
 	}
 
 
