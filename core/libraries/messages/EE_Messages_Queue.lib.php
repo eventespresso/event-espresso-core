@@ -346,7 +346,7 @@ class EE_Messages_Queue {
 	 * @return bool
 	 */
 	public function is_locked( $type = EE_Messages_Queue::action_generating ) {
-		return (bool) get_transient( $this->_get_lock_key( $type ) );
+		return apply_filters( 'FHEE__EE_Messages_Queue__is_locked', (bool) get_transient( $this->_get_lock_key( $type ) ), $this );
 	}
 
 
