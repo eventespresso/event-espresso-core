@@ -651,11 +651,21 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 		if(! empty($jquery_validation_rules)){
-			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
+			foreach( $this->get_display_strategy()->get_html_input_ids( true ) as $html_id_with_pound_sign ) {
+				$jquery_validation_js[ $html_id_with_pound_sign ] = $jquery_validation_rules;
+			}
 		}else{
 			return array();
 		}
 		return $jquery_validation_js;
+	}
+	
+	/**
+	 * Returns an array of all the 
+	 * @return array
+	 */
+	protected function _get_html_input_ids() {
+		return array( $this->html_id( true ) );
 	}
 
 	/**
