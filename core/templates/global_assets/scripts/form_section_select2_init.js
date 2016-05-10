@@ -16,11 +16,15 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 					if( typeof function_named === 'function' ) {
 						var obj_for_data = new function_named( select2_args.ajax.data_interface_args );
 						select2_args.ajax.data = function( params) {
-							return obj_for_data.prep_data( params );
+							return obj_for_data.prepData( params );
+						};
+						select2_args.ajax.beforeSend = function( xhr ) {
+							return obj_for_data.beforeSend( xhr );
 						};
 						select2_args.ajax.processResults = function( data, params ) {
 							return obj_for_data.processResults( data, params );
-						}
+						};
+						
 					}
 				}
 			}
@@ -34,8 +38,14 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 	this.items_per_page = this.default_query_params.limit || 10;
 	this.search_field = data_interface_args.search_field;
 	this.value_field = data_interface_args.value_field;
+	this.nonce = data_interface_args.nonce;
 	
-	this.prep_data = function ( params ) {
+	/**
+	 * Changes the request params set by select2 and prepares them for an EE4 REST request
+	 * @param object params
+	 * @returns object
+	 */
+	this.prepData = function ( params ) {
 		params.page = params.page || 1;
 		var new_params =  this.default_query_params;
 		new_params.limit = [
@@ -48,9 +58,28 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 		var search_term = params.term || '';
 		new_params.where[this.search_field]= [ 'like', '%' + search_term + '%' ];
 		new_params.include=this.search_field;
+		new_params._wpnonce = this.nonce;
 		return new_params;
 	};
 	
+	/**
+	 * Sets the wp nonce header for authentication
+	 * @param xhr xhr
+	 * @returns void
+	 */
+	this.beforeSend = function( xhr ) {
+		 xhr.setRequestHeader( 'X-WP-Nonce', this.nonce );
+//		 if (beforeSend) {
+//			return beforeSend.apply(this, arguments);
+//		}
+	}
+	
+	/**
+	 * Takes incoming EE4 REST API response and turns into a data format select2 can handle
+	 * @param object data
+	 * @param object params
+	 * @returns object
+	 */
 	this.processResults = function ( data, params ){
 		formatted_results = [];
 		for( var i=0; i<data.length; i++ ) {

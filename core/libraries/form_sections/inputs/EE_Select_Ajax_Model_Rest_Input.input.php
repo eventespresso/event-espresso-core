@@ -59,7 +59,8 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 				'data_interface_args' => array(
 					'default_query_params' => (object)$query_params,
 					'search_field' => $search_field,
-					'value_field' => $treat_input_as_field
+					'value_field' => $treat_input_as_field,
+					'nonce' => wp_create_nonce( 'wp_rest' )
 				),
 			),
 			'cache' => true,
