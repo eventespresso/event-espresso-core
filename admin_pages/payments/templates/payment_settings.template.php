@@ -27,6 +27,7 @@ $form = new EE_Form_Section_Proper(
 			'test' => new EE_Select_Ajax_Model_Rest_Input(
 				array(
 					'model_name' => 'Event',
+					'default' => 473
 				)
 			)
 		)

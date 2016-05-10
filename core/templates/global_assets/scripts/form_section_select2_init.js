@@ -36,7 +36,7 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 function EE_Select2_REST_API_Interface( data_interface_args ) {
 	this.default_query_params = data_interface_args.default_query_params || {};
 	this.items_per_page = this.default_query_params.limit || 10;
-	this.search_field = data_interface_args.search_field;
+	this.display_field = data_interface_args.display_field;
 	this.value_field = data_interface_args.value_field;
 	this.nonce = data_interface_args.nonce;
 	
@@ -56,8 +56,8 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 			new_params.where = {};
 		}
 		var search_term = params.term || '';
-		new_params.where[this.search_field]= [ 'like', '%' + search_term + '%' ];
-		new_params.include=this.search_field;
+		new_params.where[this.display_field]= [ 'like', '%' + search_term + '%' ];
+		new_params.include=this.display_field;
 		new_params._wpnonce = this.nonce;
 		return new_params;
 	};
@@ -86,7 +86,7 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 			formatted_results.push(
 				{
 					id: data[i][this.value_field], 
-					text: data[i][this.search_field]
+					text: data[i][this.display_field]
 				}
 			);
 		}
