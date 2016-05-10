@@ -45,7 +45,9 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 		if( typeof new_params.where === 'undefined' ) {
 			new_params.where = {};
 		}
-		new_params.where[this.search_field]= [ 'like', '%' + params.term + '%' ];
+		var search_term = params.term || '';
+		new_params.where[this.search_field]= [ 'like', '%' + search_term + '%' ];
+		new_params.include=this.search_field;
 		return new_params;
 	};
 	
