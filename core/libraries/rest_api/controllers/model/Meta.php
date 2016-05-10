@@ -124,7 +124,8 @@ class Meta extends Base {
 			'default_timezone' => array(
 				'string' => \EEH_DTT_Helper::get_valid_timezone_string(),
 				'offset' => get_option( 'gmt_offset' )
-			)
+			),
+			'default_currency' => \EE_Config::instance()->currency
 		);
 		$rest_response_obj->set_data( $response_data );
 		return $rest_response_obj;
