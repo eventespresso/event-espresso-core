@@ -20,17 +20,3 @@
 	</p>
 </div>
 <?php
-$form = new EE_Form_Section_Proper(
-	array(
-		'name' => 'test',
-		'subsections' => array(
-			'test' => new EE_Select_Ajax_Model_Rest_Input(
-				array(
-					'model_name' => 'Event',
-					'default' => 473
-				)
-			)
-		)
-	)
-);
-echo $form->get_html_and_js();
