@@ -16,20 +16,20 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 
 	/**
 	 * @param array | EE_Question_Option[] $answer_options
-	 * @param array $input_settings
+	 * @param array $input_settings {
+	 *	@type string $model_name the name of model to be used for searching, both via the REST API and server-side model queries
+	 *	@type array $query_params default query parameters which will apply to both REST API queries and server-side queries
+	 *	@type string $value_field_name the name of the model field on this model to 
+	 *		be used for the HTML select's option's values
+	 *	@type string $display_field_name the name of the model field on thsi model
+	 *		to be used for the HTML select's option's display text
+	 *	@type array $select2_args arguments to be passed directly into the select2's JS constructor
+	 * }
+	 * And the arguments accepted by EE_Form_Input_With_Options_Base
 	 */
 	public function __construct( $input_settings = array() ) {
 		//needed input settings:
-		//model name
-		//query params
-		//value_field_name
-		//display_field_name
-		//is_multi
 		//select2_args
-		if( isset( $input_settings[ 'multi' ] )
-			&& $input_settings[ 'multi' ] === true ) {
-			//todo
-		} 
 		$this->_model_name = EEH_Array::is_set( 
 			$input_settings,
 			'model_name',
@@ -67,7 +67,8 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 			'cache' => true,
 			'width' => '100',
 		);
-		$this->set_display_strategy( new EE_Select2_Display_Strategy( $default_select2_args ) );
+		$select2_args = array_replace_recursive( $default_select2_args, EEH_Array::is_set( $input_settings, 'select2_args', array() ) );
+		$this->set_display_strategy( new EE_Select2_Display_Strategy( $select2_args ) );
 		parent::__construct( array(), $input_settings );
 	}
 	
@@ -120,4 +121,4 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 
 }
 
-// End of file EE_HABTM_Input.input.php
+// End of file EE_Select_Ajax_Model_Rest_Input.input.php
