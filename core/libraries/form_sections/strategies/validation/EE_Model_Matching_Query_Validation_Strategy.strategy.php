@@ -20,12 +20,14 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
 	protected $_query_params;
 	protected $_input_field_name;
 
+
+
 	/**
-	 * 
 	 * @param string $validation_error_message
-	 * @param EEM_Base $model_name
-	 * @param array $query_params @see EEM_Base::get_all()
+	 * @param string $model_name  name of an EEM_Base model
+	 * @param array  $query_params     @see EEM_Base::get_all()
 	 * @param string $input_field_name the input will be treated as this field's value
+	 * @throws \EE_Error
 	 */
 	public function __construct( $validation_error_message = NULL, $model_name = '', $query_params = array(), $input_field_name = '' ) {
 		if( ! EE_Registry::instance()->is_model_name( $model_name ) ) {
@@ -40,8 +42,13 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
 		parent::__construct( $validation_error_message );
 	}
 
+
+
 	/**
 	 * @param $normalized_value
+	 * @return bool|void
+	 * @throws \EE_Error
+	 * @throws \EE_Validation_Error
 	 */
 	public function validate($normalized_value) {
 		if( empty( $normalized_value ) ) {
@@ -53,7 +60,7 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
 			throw new EE_Validation_Error( $this->get_validation_error_message(), 'no_matching_model_object' );
 		}
 	}
-	
+
 	/**
 	 * Gets the model used for querying
 	 * @return EEM_Base
@@ -61,7 +68,7 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
 	public function get_model() {
 		return $this->_model;
 	}
-	
+
 	/**
 	 * Returns query params used for model query
 	 * @return array
@@ -69,10 +76,10 @@ class EE_Model_Matching_Query_Validation_Strategy extends EE_Validation_Strategy
 	public function get_query_params() {
 		return (array)$this->_query_params;
 	}
-	
+
 	/**
 	 * Gets the name of the field that will be used for lookup.
-	 * eg it could be "EVT_name", meaning that if there is a model object in 
+	 * eg it could be "EVT_name", meaning that if there is a model object in
 	 * the database that has that event name, and matching the other query parameters
 	 * on this strategy, the input will pass validation server-side
 	 * @return string

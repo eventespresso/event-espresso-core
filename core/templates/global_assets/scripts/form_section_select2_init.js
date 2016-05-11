@@ -1,6 +1,11 @@
-/* 
+/*
  * Hook into when the EE forms are initialized, and initialize the select2 inputs
  * indicated in the localized
+ *
+ * @param {Object} passed_in_args
+ * @param {Object} passed_in_args.form_data
+ * @param {Object} passed_in_args.form_data.other_data
+ * @param {Object} passed_in_args.form_data.other_data.select2s
  */
 jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_in_args){
 	if ( typeof passed_in_args.form_data !== 'undefined'
@@ -24,7 +29,7 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 						select2_args.ajax.processResults = function( data, params ) {
 							return obj_for_data.processResults( data, params );
 						};
-						
+
 					}
 				}
 			}
@@ -33,16 +38,19 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 	}
 });
 
+/**
+ * @param {object} data_interface_args
+ */
 function EE_Select2_REST_API_Interface( data_interface_args ) {
 	this.default_query_params = data_interface_args.default_query_params || {};
 	this.items_per_page = this.default_query_params.limit || 10;
 	this.display_field = data_interface_args.display_field;
 	this.value_field = data_interface_args.value_field;
 	this.nonce = data_interface_args.nonce;
-	
+
 	/**
 	 * Changes the request params set by select2 and prepares them for an EE4 REST request
-	 * @param object params
+	 * @param {object} params
 	 * @returns object
 	 */
 	this.prepData = function ( params ) {
@@ -61,10 +69,10 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 		new_params._wpnonce = this.nonce;
 		return new_params;
 	};
-	
+
 	/**
 	 * Sets the wp nonce header for authentication
-	 * @param xhr xhr
+	 * @param {object} xhr
 	 * @returns void
 	 */
 	this.beforeSend = function( xhr ) {
@@ -72,20 +80,20 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 //		 if (beforeSend) {
 //			return beforeSend.apply(this, arguments);
 //		}
-	}
-	
+	};
+
 	/**
 	 * Takes incoming EE4 REST API response and turns into a data format select2 can handle
-	 * @param object data
-	 * @param object params
+	 * @param {object} data
+	 * @param {object} params
 	 * @returns object
 	 */
 	this.processResults = function ( data, params ){
-		formatted_results = [];
+		var formatted_results = [];
 		for( var i=0; i<data.length; i++ ) {
 			formatted_results.push(
 				{
-					id: data[i][this.value_field], 
+					id: data[i][this.value_field],
 					text: data[i][this.display_field]
 				}
 			);
