@@ -659,14 +659,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 		return $jquery_validation_js;
 	}
-	
-	/**
-	 * Returns an array of all the 
-	 * @return array
-	 */
-	protected function _get_html_input_ids() {
-		return array( $this->html_id( true ) );
-	}
 
 	/**
 	 * Sets the input's default value for use in displaying in the form. Note: value should be
