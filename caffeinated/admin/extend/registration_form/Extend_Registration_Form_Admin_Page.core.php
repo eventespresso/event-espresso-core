@@ -911,7 +911,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * @return    void
 	 */
 	public function email_validation_settings_form() {
-		echo $this->_email_validation_settings_form()->get_html_and_js();
+		echo $this->_email_validation_settings_form()->get_html();
 	}
 
 

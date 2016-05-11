@@ -97,7 +97,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 */
 	public function layout_subsection( $form_section ){
 //		d( $form_section );
-		return EEH_HTML::nl(1) . $form_section->get_html_and_js() . EEH_HTML::nl(-1);
+		return EEH_HTML::nl(1) . $form_section->get_html() . EEH_HTML::nl(-1);
 	}
 
 

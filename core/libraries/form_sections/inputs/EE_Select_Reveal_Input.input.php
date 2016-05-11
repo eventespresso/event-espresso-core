@@ -60,6 +60,7 @@ class EE_Select_Reveal_Input extends EE_Select_Input{
 	 * @return array
 	 */
 	public function get_other_js_data( $form_other_js_data = array() ) {
+		$form_other_js_data = parent::get_other_js_data( $form_other_js_data );
 		if( ! isset($form_other_js_data[ 'select_reveal_inputs' ] ) ) {
 			$form_other_js_data[ 'select_reveal_inputs' ] = array();
 		}

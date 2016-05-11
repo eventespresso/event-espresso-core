@@ -682,6 +682,7 @@ final class EE_System {
 		add_action( 'init', array( $this, 'initialize' ), 10 );
 		add_action( 'init', array( $this, 'initialize_last' ), 100 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		add_action('admin_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 
 		if ( is_admin() && apply_filters( 'FHEE__EE_System__brew_espresso__load_pue', TRUE )  ) {
@@ -1274,6 +1275,8 @@ final class EE_System {
 				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery' ), '1.15.0', TRUE );
 				wp_register_script( 'jquery-validate-extra-methods', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js', array( 'jquery', 'jquery-validate' ), '1.15.0', TRUE );
 			}
+			wp_register_script( 'select2', EE_GLOBAL_ASSETS_URL . 'scripts/select2.min.js', array(), '4.0.2', true );
+			wp_register_style( 'select2', EE_GLOBAL_ASSETS_URL . 'css/select2.min.css', array(), '4.0.2', 'all' );
 		}
 	}
 

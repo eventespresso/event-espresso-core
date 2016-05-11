@@ -5,7 +5,7 @@
  * the php code just provides form_section_validation.js with teh variables to use.
  * Important: in order for the JS to be loaded properly, you must construct a form section
  * before the hook wp_enqueue_scripts is called (so that the form section can enqueue its needed scripts).
- * However, you may output the form (usually by calling get_html_and_js) anywhere you like.
+ * However, you may output the form (usually by calling get_html) anywhere you like.
  */
 class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
@@ -96,8 +96,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 
-		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
-		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		//ok so we are definetely going to want the forms JS,
+		//so enqueue it or remember to enqueue it during wp_enqueue_scripts
+		if( did_action( 'wp_enqueue_scripts' ) 
+			|| did_action( 'admin_enqueue_scripts' ) ) {
+			//ok so they've constructed this object after when they should have.
+			//just enqueue the generic form scripts and initialize the form immediately in the JS
+			$this->wp_enqueue_scripts( true );
+		} else {
+			add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+			add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		}
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
 
 		if( isset( $options_array[ 'name' ] ) ) {
@@ -179,7 +188,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param array $req_data   should usually be $_POST (the default).
 	 *                          However, you CAN supply a different array.
 	 *                          Consider using set_defaults() instead however.
-	 *                          (If you rendered the form in the page using echo $form_x->get_html_and_js()
+	 *                          (If you rendered the form in the page using echo $form_x->get_html()
 	 *                          the inputs will have the correct name in the request data for this function
 	 *                          to find them and populate the form with them.
 	 *                          If you have a flat form (with only input subsections),
@@ -359,8 +368,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Returns the JS for validating the form (and subsections) inside script tags.
 	 * Also returns the HTML for the form, except for the form opening and closing tags
 	 * (as the form section doesn't know where you necessarily want to send the information to), and except for a submit button.
+	 * @deprecated since 4.9.0. You should instead call enqueue_js during the "wp_enqueue_scripts"
+	 * and get_html when you are about to display the form.
 	 */
 	public function get_html_and_js(){
+		//no doin_it_wrong yet because we ourselves are still doing it wrong...
+		//and theoretically this CAN be used properly, provided its used durign "wp_enqueue_scripts"
 		$this->enqueue_js();
 		return $this->get_html();
 	}
@@ -384,6 +397,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function enqueue_js(){
 		$this->_enqueue_and_localize_form_js();
+		foreach( $this->subsections() as $subsection ) {
+			$subsection->enqueue_js();
+		}
 	}
 
 
