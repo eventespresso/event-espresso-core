@@ -39,9 +39,14 @@ class ProgressStep implements ProgressStepInterface{
 	protected $html_class;
 
 	/**
-	 * @var int|string $id
+	 * @var string $id
 	 */
 	protected $id = '';
+
+	/**
+	 * @var int $order
+	 */
+	protected $order = 0;
 
 	/**
 	 * @var string $text
@@ -53,12 +58,14 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * ProgressStep constructor
 	 *
-	 * @param int|string $id
-	 * @param string     $html_class
-	 * @param string     $text
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @param int $order
+	 * @param string $id
+	 * @param string $html_class
+	 * @param string $text
+	 * @throws InvalidDataTypeException
 	 */
-	public function __construct( $id, $html_class, $text ) {
+	public function __construct( $order, $id, $html_class, $text ) {
+		$this->setOrder( $order );
 		$this->setId( $id );
 		$this->setHtmlClass( $html_class );
 		$this->setText( $text );
@@ -103,7 +110,7 @@ class ProgressStep implements ProgressStepInterface{
 
 
 	/**
-	 * @return int|string
+	 * @return string
 	 */
 	public function id() {
 		return $this->id;
@@ -113,14 +120,38 @@ class ProgressStep implements ProgressStepInterface{
 
 	/**
 	 * @access protected
-	 * @param int|string $id
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @param string $id
+	 * @throws InvalidDataTypeException
 	 */
-	protected function setId( $id = 0 ) {
-		if ( ! ( is_int( $id ) || is_string( $id ) ) ) {
-			throw new InvalidDataTypeException( '$id', $id, 'integer or string' );
+	protected function setId( $id = '' ) {
+		if ( ! is_string( $id ) ) {
+			throw new InvalidDataTypeException( '$id', $id, 'string' );
 		}
 		$this->id = $id;
+	}
+
+
+
+
+	/**
+	 * @return int
+	 */
+	public function order() {
+		return $this->order;
+	}
+
+
+
+	/**
+	 * @access protected
+	 * @param int $order
+	 * @throws InvalidDataTypeException
+	 */
+	protected function setOrder( $order = 0 ) {
+		if ( ! is_int( $order ) ) {
+			throw new InvalidDataTypeException( '$order', $order, 'integer' );
+		}
+		$this->order = $order;
 	}
 
 
@@ -137,7 +168,7 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * @access protected
 	 * @param string $html_class
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws InvalidDataTypeException
 	 */
 	protected function setHtmlClass( $html_class ) {
 		if ( ! is_string( $html_class ) ) {
@@ -163,7 +194,7 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * @access protected
 	 * @param string $text
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws InvalidDataTypeException
 	 */
 	protected function setText( $text ) {
 		if ( ! is_string( $text ) ) {
