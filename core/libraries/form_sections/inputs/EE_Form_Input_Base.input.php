@@ -641,7 +641,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	public function get_jquery_validation_rules(){
-
+		$jquery_validation_js = array();
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
 			$jquery_validation_rules = array_replace_recursive(

@@ -1,15 +1,12 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- *
  * Class EE_Radio_Button_Display_Strategy
- *
  * displays a set of radio buttons
  *
- * @package 			Event Espresso
+ * @package     Event Espresso
  * @subpackage 	core
- * @author 				Mike Nelson
- * @since 				$VID:$
- *
+ * @author      Mike Nelson
+ * @since       4.6
  */
 class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strategy {
 
@@ -18,7 +15,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strateg
 	 * @throws EE_Error
 	 * @return string of html to display the field
 	 */
-	function display(){
+	public function display(){
 		$input = $this->get_input();
 		$input->set_label_sizes();
 		$label_size_class = $input->get_label_size_class();
