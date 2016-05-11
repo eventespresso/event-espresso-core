@@ -25,9 +25,14 @@ interface ProgressStepInterface {
 	public function setIsCurrent( $is_current = true );
 
 	/**
-	 * @return int|string
+	 * @return string
 	 */
 	public function id();
+
+	/**
+	 * @return int
+	 */
+	public function order();
 
 	/**
 	 * @return string
