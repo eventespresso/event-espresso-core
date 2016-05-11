@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\progress_steps;
 use EE_Request;
 use EventEspresso\Core\Exceptions\InvalidClassException;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
+use EventEspresso\Core\Exceptions\InvalidIdentifierException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\CollectionInterface;
@@ -27,7 +28,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class ProgressStepManager {
 
 	/**
-	 * @var ProgressStepsDisplayInterface[] $collection
+	 * @var ProgressStepInterface[] $collection
 	 */
 	protected $collection;
 
@@ -128,13 +129,31 @@ class ProgressStepManager {
 	}
 
 
-	public function setStep() {
-		$this->collection->current()->setIsCurrent( false );
-		$set = $this->collection->setCurrent(
-			$this->request->get( 'ee-step', $this->default_step )
-		);
-		if ( $set ) {
+
+	/**
+	 * @param string $step
+	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
+	 */
+	public function setCurrentStep( $step = '' ) {
+		// use incoming value if it's set, otherwise use request param if it's set, otherwise use default
+		$step = ! empty( $step )
+			? $step
+			: $this->request->get( 'ee-step', $this->default_step );
+		// grab the step previously known as current, in case we need to revert
+		$current_current_step = $this->collection->current();
+		// verify that requested step exists
+		if ( ! $this->collection->has( $step ) ) {
+			throw new InvalidIdentifierException( $step, $this->default_step );
+		}
+		if ( $this->collection->setCurrent( $step ) ) {
+			// if the old boss is the same as the new boss, then nothing changes
+			if ( $this->collection->current() !== $current_current_step ) {
+				$current_current_step->setIsCurrent( false );
+			}
 			$this->collection->current()->setIsCurrent();
+		} else {
+			$this->collection->setCurrent( $current_current_step->id() );
+			$current_current_step->setIsCurrent( true );
 		}
 	}
 
