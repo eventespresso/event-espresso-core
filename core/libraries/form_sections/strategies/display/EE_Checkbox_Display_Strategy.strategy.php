@@ -5,10 +5,10 @@
  *
  * displays a set of checkbox inputs
  *
- * @package 			Event Espresso
+ * @package     Event Espresso
  * @subpackage 	core
- * @author 				Mike Nelson
- * @since 				4.6
+ * @author      Mike Nelson
+ * @since       4.6
  *
  */
 class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy {
@@ -18,7 +18,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy {
 	 * @throws EE_Error
 	 * @return string of html to display the field
 	 */
-	function display(){
+	public function display(){
 		$input = $this->get_input();
 		//d( $input );
 		$multi = count( $input->options() ) > 1 ? TRUE : FALSE;
