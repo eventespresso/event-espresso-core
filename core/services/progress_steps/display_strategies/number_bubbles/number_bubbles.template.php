@@ -15,9 +15,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 <div class="ee-progress-step-main-container">
 	<div class="progress-step-container number-bubbles-container">
 		<?php foreach ( $progress_steps as $progress_step ) : ?>
-		<div data-step-nmbr="<?php echo $progress_step->id();?>" id="progress-step-<?php echo $progress_step->id(); ?>" class="progress-step-number <?php echo $progress_step->htmlClass(); ?>">
+		<div data-step-nmbr="<?php echo $progress_step->order();?>" id="progress-step-<?php echo $progress_step->id(); ?>" class="progress-step-number <?php echo $progress_step->htmlClass(); ?>">
 			<div class="progress-step-line"></div>
-			<div class="progress-step-bubble"><p><?php echo $progress_step->id(); ?></p></div>
+			<div class="progress-step-bubble"><p><?php echo $progress_step->order(); ?></p></div>
 			<span class="progress-step-text"><?php echo $progress_step->text(); ?></span>
 		</div>
 		<?php endforeach;?>
