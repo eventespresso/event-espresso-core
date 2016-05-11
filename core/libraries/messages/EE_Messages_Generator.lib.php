@@ -118,13 +118,13 @@ class EE_Messages_Generator {
 	 */
 	public function generate( $save = true ) {
 		//iterate through the messages in the queue, generate, and add to new queue.
-		$this->_generation_queue->get_queue()->rewind();
-		while ( $this->_generation_queue->get_queue()->valid() ) {
+		$this->_generation_queue->get_message_repository()->rewind();
+		while ( $this->_generation_queue->get_message_repository()->valid() ) {
 			//reset "current" properties
 			$this->_reset_current_properties();
 
 			/** @type EE_Message $msg */
-			$msg = $this->_generation_queue->get_queue()->current();
+			$msg = $this->_generation_queue->get_message_repository()->current();
 
 			if ( $this->_verify() ) {
 				//let's get generating!
@@ -135,10 +135,10 @@ class EE_Messages_Generator {
 			 * need to get the next object and capture it for setting manually after deletes.  The reason is that when
 			 * an object is removed from the repo then valid for the next object will fail.
 			 */
-			$this->_generation_queue->get_queue()->next();
-			$next_msg = $this->_generation_queue->get_queue()->current();
+			$this->_generation_queue->get_message_repository()->next();
+			$next_msg = $this->_generation_queue->get_message_repository()->current();
 			//restore pointer to current item
-			$this->_generation_queue->get_queue()->set_current( $msg );
+			$this->_generation_queue->get_message_repository()->set_current( $msg );
 
 			//if there are error messages then let's set the status and the error message.
 			if ( $this->_error_msg ) {
@@ -154,10 +154,10 @@ class EE_Messages_Generator {
 				$msg->set_modified( time() );
 			} else {
 				//remove from db
-				$this->_generation_queue->get_queue()->delete();
+				$this->_generation_queue->get_message_repository()->delete();
 			}
 			//next item
-			$this->_generation_queue->get_queue()->set_current( $next_msg );
+			$this->_generation_queue->get_message_repository()->set_current( $next_msg );
 		}
 
 		//generation queue is ALWAYS saved to record any errors in the generation process.
@@ -215,7 +215,7 @@ class EE_Messages_Generator {
 		try {
 			$addressees = $this->_current_message_type->get_addressees(
 				$this->_current_data_handler,
-				$this->_generation_queue->get_queue()->current()->context()
+				$this->_generation_queue->get_message_repository()->current()->context()
 			);
 		} catch ( EE_Error $e ) {
 			$this->_error_msg[] = $e->getMessage();
@@ -225,7 +225,7 @@ class EE_Messages_Generator {
 
 		//if no addressees then get out because there is nothing to generation (possible bad data).
 		if ( ! $this->_valid_addressees( $addressees ) ) {
-			$this->_generation_queue->get_queue()->current()->set_STS_ID( EEM_Message::status_debug_only );
+			$this->_generation_queue->get_message_repository()->current()->set_STS_ID( EEM_Message::status_debug_only );
 			$this->_error_msg[] = __( 'This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
 			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.', 'event_espresso' );
 			return false;
@@ -260,7 +260,7 @@ class EE_Messages_Generator {
 	protected function _get_message_template_group() {
 		//is there a GRP_ID already on the EE_Message object?  If there is, then a specific template has been requested
 		//so let's use that.
-		$GRP_ID = $this->_generation_queue->get_queue()->current()->GRP_ID();
+		$GRP_ID = $this->_generation_queue->get_message_repository()->current()->GRP_ID();
 
 		if ( $GRP_ID ) {
 			//attempt to retrieve from repo first
@@ -396,8 +396,8 @@ class EE_Messages_Generator {
 					$this->_ready_queue->add(
 						$message,
 						array(),
-						$this->_generation_queue->get_queue()->is_preview(),
-						$this->_generation_queue->get_queue()->is_test_send()
+						$this->_generation_queue->get_message_repository()->is_preview(),
+						$this->_generation_queue->get_message_repository()->is_test_send()
 					);
 					$generated_count++;
 				}
@@ -458,7 +458,7 @@ class EE_Messages_Generator {
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because that means this
 		//context is turned off) EXCEPT if we're previewing
 		if ( empty( $templates['to'][ $context ] )
-		     && ! $this->_generation_queue->get_queue()->is_preview()
+		     && ! $this->_generation_queue->get_message_repository()->is_preview()
 		     && ! $this->_current_messenger->allow_empty_to_field() ) {
 			//we silently exit here and do NOT record a fail because the message is "turned off" by having no "to" field.
 			return false;
@@ -559,7 +559,7 @@ class EE_Messages_Generator {
 			return false;
 		}
 		/** @type EE_Message $message */
-		$message = $this->_generation_queue->get_queue()->current();
+		$message = $this->_generation_queue->get_message_repository()->current();
 		try {
 			$this->_current_messenger = $message->valid_messenger( true ) ? $message->messenger_object() : null;
 		} catch ( Exception $e ) {
@@ -574,10 +574,10 @@ class EE_Messages_Generator {
 		/**
 		 * Check if there is any generation data, but only if this is not for a preview.
 		 */
-		if ( ! $this->_generation_queue->get_queue()->get_generation_data()
+		if ( ! $this->_generation_queue->get_message_repository()->get_generation_data()
 		     && (
-			     ! $this->_generation_queue->get_queue()->is_preview()
-			     && $this->_generation_queue->get_queue()->get_data_handler() !== 'EE_Messages_Preview_incoming_data' )
+			     ! $this->_generation_queue->get_message_repository()->is_preview()
+			     && $this->_generation_queue->get_message_repository()->get_data_handler() !== 'EE_Messages_Preview_incoming_data' )
 		) {
 			$this->_error_msg[] = __( 'There is no generation data for this message. Unable to generate.' );
 		}
@@ -603,15 +603,15 @@ class EE_Messages_Generator {
 			return false;
 		}
 
-		$generation_data = $this->_generation_queue->get_queue()->get_generation_data();
+		$generation_data = $this->_generation_queue->get_message_repository()->get_generation_data();
 
 		/** @type EE_Messages_incoming_data $data_handler_class_name - well not really... just the class name actually */
-		$data_handler_class_name = $this->_generation_queue->get_queue()->get_data_handler()
-			? $this->_generation_queue->get_queue()->get_data_handler()
+		$data_handler_class_name = $this->_generation_queue->get_message_repository()->get_data_handler()
+			? $this->_generation_queue->get_message_repository()->get_data_handler()
 			: 'EE_Messages_' .  $this->_current_message_type->get_data_handler( $generation_data ) . '_incoming_data';
 
 		//If this EE_Message is for a preview, then let's switch out to the preview data handler.
-		if ( $this->_generation_queue->get_queue()->is_preview() ) {
+		if ( $this->_generation_queue->get_message_repository()->is_preview() ) {
 			$data_handler_class_name  = 'EE_Messages_Preview_incoming_data';
 		}
 

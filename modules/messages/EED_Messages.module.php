@@ -665,7 +665,7 @@ class EED_Messages  extends EED_Module {
 			//get count of queued for generation
 			$count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( array( EEM_Message::status_incomplete, EEM_Message::status_idle ) );
 
-			if ( $count_to_generate > 0 && self::$_MSG_PROCESSOR->get_queue()->get_queue()->count() !== 0 ) {
+			if ( $count_to_generate > 0 && self::$_MSG_PROCESSOR->get_queue()->get_message_repository()->count() !== 0 ) {
 				add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true' );
 				return true;
 			} else {
@@ -812,7 +812,7 @@ class EED_Messages  extends EED_Module {
 		);
 		$generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview( $mtg );
 		if ( $generated_preview_queue instanceof EE_Messages_Queue ) {
-			return $generated_preview_queue->get_queue()->current()->content();
+			return $generated_preview_queue->get_message_repository()->current()->content();
 		} else {
 			return $generated_preview_queue;
 		}

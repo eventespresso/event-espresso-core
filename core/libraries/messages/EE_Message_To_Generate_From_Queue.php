@@ -43,10 +43,10 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 	 */
 	protected function _get_content() {
 		$content = '';
-		$this->queue->get_queue()->rewind();
-		while ( $this->queue->get_queue()->valid() ) {
-			$content .= $this->queue->get_queue()->current()->content();
-			$this->queue->get_queue()->next();
+		$this->queue->get_message_repository()->rewind();
+		while ( $this->queue->get_message_repository()->valid() ) {
+			$content .= $this->queue->get_message_repository()->current()->content();
+			$this->queue->get_message_repository()->next();
 		}
 		return $content;
 	}
@@ -62,12 +62,12 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate {
 		if ( ! empty( $custom_subject ) ) {
 			return $custom_subject;
 		}
-		$this->queue->get_queue()->rewind();
-		$count_of_items = $this->queue->get_queue()->count();
+		$this->queue->get_message_repository()->rewind();
+		$count_of_items = $this->queue->get_message_repository()->count();
 
 		//if $count of items in queue == 1, then let's just return the subject for that item.
 		if ( $count_of_items === 1 ) {
-			return $this->queue->get_queue()->current()->subject();
+			return $this->queue->get_message_repository()->current()->subject();
 		}
 
 		return sprintf(
