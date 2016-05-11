@@ -68,11 +68,12 @@ class CollectionLoader {
 	 *
 	 * @param CollectionDetailsInterface $collection_details
 	 * @param CollectionInterface        $collection
-	 * @param LocatorInterface                $file_locator
+	 * @param LocatorInterface           $file_locator
 	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
 	 */
 	public function __construct(
 		CollectionDetailsInterface $collection_details,
@@ -106,6 +107,7 @@ class CollectionLoader {
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
 	 */
 	protected function loadAllFromFilepaths() {
 		if ( ! $this->file_locator instanceof FileLocator ) {
@@ -137,6 +139,7 @@ class CollectionLoader {
 	 * @access protected
 	 * @param  string $filepath
 	 * @return string
+	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
@@ -254,6 +257,7 @@ class CollectionLoader {
 	 * @access protected
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
 	 */
 	protected function loadFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
@@ -276,6 +280,7 @@ class CollectionLoader {
 	 * @access protected
 	 * @param  string $FQCN Fully Qualified Class Name
 	 * @return string
+	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
 	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
 	 */
