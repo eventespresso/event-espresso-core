@@ -883,9 +883,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	 * Overrides parent to add js data from validation and display strategies
+	 *
 	 * @param array $form_other_js_data
 	 * @return array
 	 */
@@ -893,11 +894,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$form_other_js_data = $this->get_other_js_data_from_strategies( $form_other_js_data );
 		return $form_other_js_data;
 	}
-	
+
+
+
 	/**
 	 * Gets other JS data for localization from this input's strategies, like
 	 * the validation strategies and the display strategy
+	 *
 	 * @param array $form_other_js_data
+	 * @return array
 	 */
 	public function get_other_js_data_from_strategies( $form_other_js_data = array() ) {
 		$form_other_js_data = $this->get_display_strategy()->get_other_js_data( $form_other_js_data );
@@ -906,16 +911,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 		return $form_other_js_data;
 	}
-	
+
 	/**
-	 * Override parent because we want to give our strategies an opprtunity to enqueue some js and css
+	 * Override parent because we want to give our strategies an opportunity to enqueue some js and css
 	 * @return void
 	 */
 	public function enqueue_js(){
 		//ask our display strategy and validation strategies if they have js to enqueue
 		$this->enqueue_js_from_strategies();
 	}
-	
+
 	/**
 	 * Tells strategies when its ok to enqueue their js and css
 	 * @return void
