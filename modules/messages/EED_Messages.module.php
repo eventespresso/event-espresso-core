@@ -663,23 +663,33 @@ class EED_Messages  extends EED_Module {
 			self::$_MSG_PROCESSOR->generate_for_all_active_messengers( $message_type, $data );
 
 			//get count of queued for generation
-			$count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
+			$count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( array( EEM_Message::status_incomplete, EEM_Message::status_idle ) );
 
-			if ( $count_to_generate > 0 ) {
+			if ( $count_to_generate > 0 && self::$_MSG_PROCESSOR->get_queue()->get_message_repository()->count() !== 0 ) {
 				add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true' );
 				return true;
 			} else {
 				$count_failed = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() );
-				EE_Error::add_error( sprintf(
-					_n(
-						'The payment notification generation failed.',
-						'%d payment notifications failed being sent.',
-						$count_failed,
-						'event_espresso'
-					),
-					$count_failed
-				), __FILE__, __FUNCTION__, __LINE__ );
-				return false;
+				/**
+				 * Verify that there are actually errors.  If not then we return a success message because the queue might have been emptied due to successful
+				 * IMMEDIATE generation.
+				 */
+				if ( $count_failed > 0 ) {
+					EE_Error::add_error( sprintf(
+						_n(
+							'The payment notification generation failed.',
+							'%d payment notifications failed being sent.',
+							$count_failed,
+							'event_espresso'
+						),
+						$count_failed
+					), __FILE__, __FUNCTION__, __LINE__ );
+
+					return false;
+				} else {
+					add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true' );
+					return true;
+				}
 			}
 		} else {
 			EE_Error::add_error(
@@ -802,7 +812,7 @@ class EED_Messages  extends EED_Module {
 		);
 		$generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview( $mtg );
 		if ( $generated_preview_queue instanceof EE_Messages_Queue ) {
-			return $generated_preview_queue->get_queue()->current()->content();
+			return $generated_preview_queue->get_message_repository()->current()->content();
 		} else {
 			return $generated_preview_queue;
 		}
