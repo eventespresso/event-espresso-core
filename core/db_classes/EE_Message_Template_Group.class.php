@@ -340,7 +340,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function get_template_pack_name() {
-		return $this->get_extra_meta( 'MTP_template_pack', TRUE, 'default' );
+		return $this->get_extra_meta( 'MTP_template_pack', true, 'default' );
 	}
 
 
