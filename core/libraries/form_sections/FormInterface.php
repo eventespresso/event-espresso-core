@@ -18,6 +18,15 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 interface FormInterface {
 
+	/**
+	 * @return \EE_Form_Section_Proper
+	 */
+	public function form();
+
+	/**
+	 * @param \EE_Form_Section_Proper $form
+	 */
+	public function setForm( \EE_Form_Section_Proper $form ) ;
 
 	/**
 	 * a public name for the form that can be displayed on the frontend of a site
