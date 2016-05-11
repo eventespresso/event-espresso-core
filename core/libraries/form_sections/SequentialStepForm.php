@@ -23,7 +23,7 @@ abstract class SequentialStepForm extends Form implements SequentialStepFormInte
 	/**
 	 * @var int $order
 	 */
-	protected $order = 1;
+	private $order = 1;
 
 
 
