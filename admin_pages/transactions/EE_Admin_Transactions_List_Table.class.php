@@ -429,7 +429,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			: '';
 
 		$view_related_messages_lnk = '';
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
 			$view_related_messages_lnk = '<li>' . $related_messages_link . '</li>';
 		}
 
