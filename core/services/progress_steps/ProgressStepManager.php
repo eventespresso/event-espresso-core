@@ -30,22 +30,30 @@ class ProgressStepManager {
 	/**
 	 * @var ProgressStepInterface[] $collection
 	 */
-	protected $collection;
+	private $collection;
 
 	/**
 	 * @var string $default_step
 	 */
-	protected $default_step;
+	private $default_step;
+
+	/**
+	 * the key used for the URL param that denotes the current form step
+	 * defaults to 'ee-form-step'
+	 *
+	 * @var string $form_step_url_key
+	 */
+	private $form_step_url_key = '';
 
 	/**
 	 * @var ProgressStepsDisplayInterface $display_strategy
 	 */
-	protected $display_strategy;
+	private $display_strategy;
 
 	/**
 	 * @var EE_Request $request
 	 */
-	protected $request;
+	private $request;
 
 
 
@@ -54,6 +62,7 @@ class ProgressStepManager {
 	 *
 	 * @param string              $display_strategy_name
 	 * @param string              $default_step
+	 * @param string              $form_step_url_key
 	 * @param CollectionInterface $collection
 	 * @param \EE_Request         $request
 	 * @throws InvalidClassException
@@ -63,11 +72,13 @@ class ProgressStepManager {
 	public function __construct(
 		$display_strategy_name = 'number_bubbles',
 		$default_step = '',
+		$form_step_url_key = '',
 		CollectionInterface $collection = null,
 		EE_Request $request = null
 	) {
 		$this->setDisplayStrategy( $display_strategy_name );
 		$this->setDefaultStep( $default_step );
+		$this->setFormStepUrlKey( $form_step_url_key );
 		if ( ! $collection instanceof CollectionInterface ) {
 			$collection = new Collection( '\EventEspresso\core\services\progress_steps\ProgressStepInterface' );
 		}
@@ -131,14 +142,27 @@ class ProgressStepManager {
 
 
 	/**
+	 * @param string $form_step_url_key
+	 * @throws InvalidDataTypeException
+	 */
+	public function setFormStepUrlKey( $form_step_url_key = 'ee-form-step' ) {
+		if ( ! is_string( $form_step_url_key ) ) {
+			throw new InvalidDataTypeException( '$form_step_key', $form_step_url_key, 'string' );
+		}
+		$this->form_step_url_key = ! empty( $form_step_url_key ) ? $form_step_url_key : 'ee-form-step';
+	}
+
+
+
+	/**
 	 * @param string $step
-	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
+	 * @throws InvalidIdentifierException
 	 */
 	public function setCurrentStep( $step = '' ) {
 		// use incoming value if it's set, otherwise use request param if it's set, otherwise use default
 		$step = ! empty( $step )
 			? $step
-			: $this->request->get( 'ee-step', $this->default_step );
+			: $this->request->get( $this->form_step_url_key, $this->default_step );
 		// grab the step previously known as current, in case we need to revert
 		$current_current_step = $this->collection->current();
 		// verify that requested step exists
@@ -189,10 +213,10 @@ class ProgressStepManager {
 	/**
 	 * echos out HTML
 	 *
-	 * @return void
+	 * @return string
 	 */
 	public function displaySteps() {
-		echo \EEH_Template::display_template(
+		return \EEH_Template::display_template(
 			$this->display_strategy->getTemplate(),
 			array( 'progress_steps' => $this->collection ),
 			true
