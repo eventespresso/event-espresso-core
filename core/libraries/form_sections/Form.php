@@ -3,7 +3,8 @@ namespace EventEspresso\core\libraries\form_sections;
 
 use EE_Form_Section_Proper;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
-use EventEspresso\Core\Exceptions\InvalidEntityException;
+use EventEspresso\Core\Exceptions\InvalidFormSubmissionException;
+use LogicException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -17,14 +18,9 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
 abstract class Form implements FormInterface{
-
-	/**
-	 * @var \EE_Form_Section_Proper $form
-	 */
-	private $form;
 
 	/**
 	 * @var string $form_name
@@ -40,6 +36,11 @@ abstract class Form implements FormInterface{
 	 * @var string $slug
 	 */
 	private $slug;
+
+	/**
+	 * @var \EE_Form_Section_Proper $form
+	 */
+	private $form;
 
 
 
@@ -61,8 +62,12 @@ abstract class Form implements FormInterface{
 
 	/**
 	 * @return \EE_Form_Section_Proper
+	 * @throws LogicException
 	 */
 	public function form() {
+		if ( ! $this->formIsValid() ) {
+			return null;
+		}
 		return $this->form;
 	}
 
@@ -70,18 +75,36 @@ abstract class Form implements FormInterface{
 
 	/**
 	 * @return boolean
-	 * @throws \LogicException
+	 * @throws LogicException
 	 */
 	public function formIsValid() {
 		if ( ! $this->form instanceof \EE_Form_Section_Proper ) {
-			throw new \LogicException(
-				sprintf(
-					__( 'The "%1$s" form is invalid or missing', 'event_espresso' ),
-					$this->form_name
-				)
-			);
+			static $generated = false;
+			if ( ! $generated ) {
+				$generated = true;
+				$this->generate();
+			}
+			return $this->verifyForm();
 		}
 		return true;
+	}
+
+
+
+	/**
+	 * @return boolean
+	 * @throws LogicException
+	 */
+	public function verifyForm() {
+		if ( $this->form instanceof \EE_Form_Section_Proper ) {
+			return true;
+		}
+		throw new LogicException(
+			sprintf(
+				__( 'The "%1$s" form is invalid or missing', 'event_espresso' ),
+				$this->form_name
+			)
+		);
 	}
 
 
@@ -189,7 +212,7 @@ abstract class Form implements FormInterface{
 	 */
 	public function localizeVariables() {
 		\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		//form variables are localized when calling EE_Form_Section_Base::enqueue_js, which is done during SelectEvent::enqueueStylesAndScripts()
+		//form variables are localized when calling EE_Form_Section_Base::enqueue_js, which is done during Form::enqueueStylesAndScripts()
 	}
 
 
@@ -198,13 +221,12 @@ abstract class Form implements FormInterface{
 	 * used for setting up css and js
 	 *
 	 * @return void
+	 * @throws LogicException
+	 * @throws \EE_Error
 	 */
 	public function enqueueStylesAndScripts() {
 		\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		if ( ! $this->form instanceof \EE_Form_Section_Proper ) {
-			$this->generate();
-		}
-		$this->form->enqueue_js();
+		$this->form()->enqueue_js();
 
 	}
 
@@ -224,13 +246,12 @@ abstract class Form implements FormInterface{
 	 * returns a string of HTML that can be directly echoed in a template
 	 *
 	 * @return string
+	 * @throws LogicException
+	 * @throws \EE_Error
 	 */
 	public function display() {
 		\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		if ( ! $this->form instanceof \EE_Form_Section_Proper ) {
-			$this->generate();
-		}
-		return $this->form->get_html();
+		return $this->form()->get_html();
 	}
 
 
@@ -239,10 +260,21 @@ abstract class Form implements FormInterface{
 	 * handles processing the form submission
 	 * returns true or false depending on whether the form was processed successfully or not
 	 *
-	 * @return boolean
+	 * @param array $form_data
+	 * @return bool
+	 * @throws \EE_Error
+	 * @throws \LogicException
+	 * @throws InvalidFormSubmissionException
 	 */
-	public function process() {
-		// TODO: Implement process() method.
+	public function process( $form_data = array() ) {
+		if ( ! $this->form()->was_submitted( $form_data ) ) {
+			throw new InvalidFormSubmissionException( $this->form_name );
+		}
+		$this->form->receive_form_submission( $form_data );
+		if ( $this->form->is_valid() ) {
+			return $this->form->valid_data();
+		}
+		return array();
 	}
 
 
