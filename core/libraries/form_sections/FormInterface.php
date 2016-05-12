@@ -106,9 +106,10 @@ interface FormInterface {
 	 * handles processing the form submission
 	 * returns true or false depending on whether the form was processed successfully or not
 	 *
-	 * @return boolean
+	 * @param array $form_data
+	 * @return bool
 	 */
-	public function process();
+	public function process( $form_data = array() );
 
 
 }
