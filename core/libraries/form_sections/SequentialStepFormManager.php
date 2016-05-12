@@ -246,6 +246,7 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidInterfaceException
 	 */
 	protected function GenerateProgressSteps( Collection $progress_steps_collection ) {
+		/** @var SequentialStepForm $form_step */
 		foreach ( $this->form_steps as $form_step ) {
 			// is this step active ?
 			if ( ! $form_step->initialize() ) {
@@ -350,7 +351,9 @@ abstract class SequentialStepFormManager {
 	 * @return bool
 	 */
 	public function processCurrentStepForm( $form_data = array() ) {
-		$this->getCurrentStep()->process( $form_data );
+		if ( $this->getCurrentStep()->process( $form_data ) ) {
+			wp_safe_redirect( $this->getCurrentStep()->redirectUrl() );
+		}
 	}
 
 
