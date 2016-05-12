@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections;
 
+use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use InvalidArgumentException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -32,6 +33,30 @@ interface SequentialStepFormInterface extends FormInterface {
 	 */
 	public function setOrder( $order );
 
+
+
+	/**
+	 * @return string
+	 */
+	public function redirectUrl();
+
+
+
+	/**
+	 * @param string $redirect_url
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidArgumentException
+	 */
+	public function setRedirectUrl( $redirect_url );
+
+
+
+	/**
+	 * @param array $redirect_args
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidArgumentException
+	 */
+	public function addRedirectArgs( $redirect_args = array() );
 
 }
 // End of file SequentialStepFormInterface.php
