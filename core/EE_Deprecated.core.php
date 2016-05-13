@@ -697,12 +697,14 @@ class EE_messages {
 	 * @param string $method
 	 */
 	public function _class_is_deprecated( $method ) {
-		// EE_messages has been deprecated
-		EE_Error::doing_it_wrong(
-			'EE_messages::' . $method,
-			__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
-			'4.9.0'
-		);
+		// EE_messages has been deprecated, but let's not throw doing_it_wrong() just yet
+		if ( version_compare( EVENT_ESPRESSO_VERSION, '4.10.0.p', '>=' ) ) {
+			EE_Error::doing_it_wrong(
+				'EE_messages::' . $method,
+				__( 'EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.' ),
+				'4.9.0'
+			);
+		}
 		// Please use EE_Message_Resource_Manager instead
 		$this->_message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 	}
