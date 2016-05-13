@@ -923,10 +923,10 @@ class EE_messages {
 		if ( ! $error && ! $send ) {
 			$generated_queue = $processor->generate_queue( false );
 			//get message and return.
-			$generated_queue->get_queue()->rewind();
+			$generated_queue->get_message_repository()->rewind();
 			$messages = array();
-			while ( $generated_queue->get_queue()->valid() ) {
-				$message = $generated_queue->get_queue()->current();
+			while ( $generated_queue->get_message_repository()->valid() ) {
+				$message = $generated_queue->get_message_repository()->current();
 				if ( $message instanceof EE_Message ) {
 					//set properties that might be expected by add-ons (backward compat)
 					$message->content = $message->content();
@@ -934,7 +934,7 @@ class EE_messages {
 					$message->template_variation = $message->get_template_pack_variation();
 					$messages[] = $message;
 				}
-				$generated_queue->get_queue()->next();
+				$generated_queue->get_message_repository()->next();
 			}
 			return $messages;
 		}

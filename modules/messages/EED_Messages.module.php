@@ -265,16 +265,21 @@ class EED_Messages  extends EED_Module {
 		//if made it here, lets' delete the transient to keep the db clean
 		delete_transient( $transient_key );
 
-		$method = 'batch_' . $cron_type . '_from_queue';
-		if ( method_exists( self::$_MSG_PROCESSOR, $method ) ) {
-			self::$_MSG_PROCESSOR->$method();
-		} else {
-			//no matching task
-			/**
-			 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
-			 */
-			trigger_error( esc_attr( sprintf( __( 'There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) ) );
+		if ( apply_filters( 'FHEE__EED_Messages__run_cron__use_wp_cron', true ) ) {
+
+			$method = 'batch_' . $cron_type . '_from_queue';
+			if ( method_exists( self::$_MSG_PROCESSOR, $method ) ) {
+				self::$_MSG_PROCESSOR->$method();
+			} else {
+				//no matching task
+				/**
+				 * trigger error so this gets in the error logs.  This is important because it happens on a non user request.
+				 */
+				trigger_error( esc_attr( sprintf( __( 'There is no task corresponding to this route %s', 'event_espresso' ), $cron_type ) ) );
+			}
 		}
+
+		do_action( 'FHEE__EED_Messages__run_cron__end' );
 	}
 
 
@@ -663,23 +668,33 @@ class EED_Messages  extends EED_Module {
 			self::$_MSG_PROCESSOR->generate_for_all_active_messengers( $message_type, $data );
 
 			//get count of queued for generation
-			$count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_incomplete );
+			$count_to_generate = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( array( EEM_Message::status_incomplete, EEM_Message::status_idle ) );
 
-			if ( $count_to_generate > 0 ) {
+			if ( $count_to_generate > 0 && self::$_MSG_PROCESSOR->get_queue()->get_message_repository()->count() !== 0 ) {
 				add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true' );
 				return true;
 			} else {
 				$count_failed = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() );
-				EE_Error::add_error( sprintf(
-					_n(
-						'The payment notification generation failed.',
-						'%d payment notifications failed being sent.',
-						$count_failed,
-						'event_espresso'
-					),
-					$count_failed
-				), __FILE__, __FUNCTION__, __LINE__ );
-				return false;
+				/**
+				 * Verify that there are actually errors.  If not then we return a success message because the queue might have been emptied due to successful
+				 * IMMEDIATE generation.
+				 */
+				if ( $count_failed > 0 ) {
+					EE_Error::add_error( sprintf(
+						_n(
+							'The payment notification generation failed.',
+							'%d payment notifications failed being sent.',
+							$count_failed,
+							'event_espresso'
+						),
+						$count_failed
+					), __FILE__, __FUNCTION__, __LINE__ );
+
+					return false;
+				} else {
+					add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', '__return_true' );
+					return true;
+				}
 			}
 		} else {
 			EE_Error::add_error(
@@ -802,7 +817,7 @@ class EED_Messages  extends EED_Module {
 		);
 		$generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview( $mtg );
 		if ( $generated_preview_queue instanceof EE_Messages_Queue ) {
-			return $generated_preview_queue->get_queue()->current()->content();
+			return $generated_preview_queue->get_message_repository()->current()->content();
 		} else {
 			return $generated_preview_queue;
 		}

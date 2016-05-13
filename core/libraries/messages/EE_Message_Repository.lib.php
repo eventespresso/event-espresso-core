@@ -118,6 +118,7 @@ class EE_Message_Repository extends EE_Base_Class_Repository {
 
 			$this->next();
 		}
+		do_action( 'AHEE__EE_Message_Repository__saveAll__after', $save_tracking, $this );
 		return $save_tracking;
 	}
 

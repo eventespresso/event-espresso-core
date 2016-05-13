@@ -217,7 +217,7 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_queue()->save() if desire
+	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_message_repository()->save() if desire
 	 * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
 	 * @param EE_Message_To_Generate $message_to_generate
 	 * @return  EE_Messages_Queue
@@ -326,11 +326,11 @@ class EE_Messages_Processor {
 		$generated_queue = $this->generate_and_return( array( $message_to_generate ) );
 		if ( $generated_queue->execute( false ) ) {
 			//the first queue item should be the preview
-			$generated_queue->get_queue()->rewind();
-			if ( ! $generated_queue->get_queue()->valid() ) {
+			$generated_queue->get_message_repository()->rewind();
+			if ( ! $generated_queue->get_message_repository()->valid() ) {
 				return $generated_queue;
 			}
-			return $generated_queue->get_queue()->is_test_send() ? true : $generated_queue;
+			return $generated_queue->get_message_repository()->is_test_send() ? true : $generated_queue;
 		} else {
 			return false;
 		}
