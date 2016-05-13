@@ -13,6 +13,13 @@ abstract class EE_Table_Base{
 	 */
 	protected $_pk_column;
 
+
+	/**
+	 * Whether this table is a global table (in multisite) or specific to site.
+	 * @var bool
+	 */
+	protected $_global;
+
 	/**
 	 *
 	 * @global type $wpdb
@@ -22,18 +29,30 @@ abstract class EE_Table_Base{
 	 *					or whether each site on a multisite install has a copy of this table
 	 */
 	function __construct($table_name, $pk_column, $global = false ){
+		$this->_global = $global;
+		$prefix = $this->get_table_prefix();
+		//if they added the prefix, let's remove it because we delay adding the prefix until right when its needed.
+		if ( strpos( $table_name, $prefix ) > 0 ) {
+			$table_name = str_replace( $prefix, '', $table_name );
+		}
+		$this->_table_name = $table_name;
+		$this->_pk_column = $pk_column;
+	}
+
+
+
+
+	/**
+	 *  This returns the table prefix
+	 */
+	public function get_table_prefix() {
 		global $wpdb;
-		if( $global ) {
+		if ( $this->_global ) {
 			$prefix = $wpdb->base_prefix;
 		} else {
 			$prefix = $wpdb->prefix;
 		}
-		//if they didn't add the prefix, let's add it
-		if( strpos( $table_name, $prefix ) !== 0 ) {
-			$table_name = $prefix . $table_name;
-		}
-		$this->_table_name = $table_name;
-		$this->_pk_column = $pk_column;
+		return $prefix;
 	}
 
 	function _construct_finalize_with_alias($table_alias){
@@ -41,7 +60,7 @@ abstract class EE_Table_Base{
 	}
 
 	function get_table_name(){
-		return $this->_table_name;
+		return $this->get_table_prefix() . $this->_table_name;
 	}
 	function get_table_alias(){
 		if( ! $this->_table_alias){
