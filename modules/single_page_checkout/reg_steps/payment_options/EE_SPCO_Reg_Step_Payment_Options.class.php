@@ -500,6 +500,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * sold_out_events
+	 * displays notices regarding events that have sold out since hte registrant first signed up
 	 *
 	 * @param \EE_Event[] $sold_out_events_array
 	 * @return \EE_Form_Section_Proper
@@ -551,6 +552,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * _insufficient_spaces_available
+	 * displays notices regarding events that do not have enough remaining spaces
+	 * to satisfy the current number of registrations looking to pay
 	 *
 	 * @param \EE_Event[] $insufficient_spaces_events_array
 	 * @return \EE_Form_Section_Proper
