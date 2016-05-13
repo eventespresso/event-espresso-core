@@ -248,9 +248,20 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	}
 
 
-
+	/**
+	 * Returns stati that indicate the message has failed sending
+	 * @return array  array of strings for possible stati.
+	 */
 	public function stati_indicating_failed_sending() {
-		return apply_filters( 'FHEE__EEM_Message__stati_indicating_failed_sending', array( self::status_failed, self::status_retry, self::status_debug_only ) );
+		$failed_stati = array(
+			self::status_failed,
+			self::status_retry,
+		);
+		//if WP_DEBUG is set, then let's include debug_only fails
+		if ( WP_DEBUG ) {
+			$failed_stati[] = self::status_debug_only;
+		}
+		return apply_filters( 'FHEE__EEM_Message__stati_indicating_failed_sending', $failed_stati );
 	}
 
 
