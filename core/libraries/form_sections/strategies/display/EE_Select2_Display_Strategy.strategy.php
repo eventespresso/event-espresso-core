@@ -36,7 +36,7 @@ class EE_Select2_Display_Strategy extends EE_Select_Display_Strategy{
 	 */
 	public function enqueue_js() {
 		wp_enqueue_script( 'form_section_select2_init', EE_GLOBAL_ASSETS_URL . 'scripts/form_section_select2_init.js', array( 'select2' ), '1.0.0', true );
-		wp_enqueue_style( 'select2' );
+		wp_enqueue_style( 'select2', EE_GLOBAL_ASSETS_URL . 'css/select2.min.css', array(), '4.0.2', 'all' );
 	}
 	
 	/**
