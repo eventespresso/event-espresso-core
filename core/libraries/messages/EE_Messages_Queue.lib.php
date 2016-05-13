@@ -25,9 +25,9 @@ class EE_Messages_Queue {
 
 
 	/**
-	 * @type EE_Message_Repository $_queue
+	 * @type EE_Message_Repository $_message_repository
 	 */
-	protected $_queue;
+	protected $_message_repository;
 
 	/**
 	 * Sets the limit of how many messages are generated per process.
@@ -72,9 +72,9 @@ class EE_Messages_Queue {
 	 * @param \EE_Message_Repository       $message_repository
 	 */
 	public function __construct( EE_Message_Repository $message_repository ) {
-		$this->_batch_count = apply_filters( 'FHEE__EE_Messages_Queue___batch_count', 50 );
-		$this->_rate_limit = $this->get_rate_limit();
-		$this->_queue = $message_repository;
+		$this->_batch_count        = apply_filters( 'FHEE__EE_Messages_Queue___batch_count', 50 );
+		$this->_rate_limit         = $this->get_rate_limit();
+		$this->_message_repository = $message_repository;
 	}
 
 
@@ -94,7 +94,7 @@ class EE_Messages_Queue {
 	public function add( EE_Message $message, $data = array(), $preview = false, $test_send = false ) {
 		$data['preview'] = $preview;
 		$data['test_send'] = $test_send;
-		return $this->_queue->add( $message, $data );
+		return $this->_message_repository->add( $message, $data );
 	}
 
 
@@ -107,21 +107,21 @@ class EE_Messages_Queue {
 	 * @return bool
 	 */
 	public function remove( EE_Message $message, $persist = false ) {
-		if ( $persist && $this->_queue->current() !== $message ) {
+		if ( $persist && $this->_message_repository->current() !== $message ) {
 			//get pointer on right message
-			if ( $this->_queue->has( $message ) ) {
-				$this->_queue->rewind();
-				while( $this->_queue->valid() ) {
-					if ( $this->_queue->current() === $message ) {
+			if ( $this->_message_repository->has( $message ) ) {
+				$this->_message_repository->rewind();
+				while( $this->_message_repository->valid() ) {
+					if ( $this->_message_repository->current() === $message ) {
 						break;
 					}
-					$this->_queue->next();
+					$this->_message_repository->next();
 				}
 			} else {
 				return false;
 			}
 		}
-		return $persist ? $this->_queue->delete() : $this->_queue->remove( $message );
+		return $persist ? $this->_message_repository->delete() : $this->_message_repository->remove( $message );
 	}
 
 
@@ -132,7 +132,7 @@ class EE_Messages_Queue {
 	 * @return array()  @see EE_Messages_Repository::saveAll() for return values.
 	 */
 	public function save() {
-		return $this->_queue->saveAll();
+		return $this->_message_repository->saveAll();
 	}
 
 
@@ -142,8 +142,8 @@ class EE_Messages_Queue {
 	/**
 	 * @return EE_Message_Repository
 	 */
-	public function get_queue() {
-		return $this->_queue;
+	public function get_message_repository() {
+		return $this->_message_repository;
 	}
 
 
@@ -346,7 +346,14 @@ class EE_Messages_Queue {
 	 * @return bool
 	 */
 	public function is_locked( $type = EE_Messages_Queue::action_generating ) {
-		return (bool) get_transient( $this->_get_lock_key( $type ) );
+		return filter_var(
+			apply_filters(
+				'FHEE__EE_Messages_Queue__is_locked',
+				get_transient( $this->_get_lock_key( $type ) ),
+				$this
+			),
+			FILTER_VALIDATE_BOOLEAN
+		);
 	}
 
 
@@ -401,7 +408,7 @@ class EE_Messages_Queue {
 		// always make sure we save because either this will get executed immediately on a separate request
 		// or remains in the queue for the regularly scheduled queue batch.
 		$this->save();
-		if ( $this->_queue->count_by_priority_and_status( $priority, $status ) ) {
+		if ( $this->_message_repository->count_by_priority_and_status( $priority, $status ) ) {
 			EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( $task );
 		}
 	}
@@ -430,11 +437,11 @@ class EE_Messages_Queue {
 	public function execute( $save = true, $sending_messenger = null, $by_priority = false ) {
 		$messages_sent = 0;
 		$this->_did_hook = array();
-		$this->_queue->rewind();
-		while ( $this->_queue->valid() ) {
+		$this->_message_repository->rewind();
+		while ( $this->_message_repository->valid() ) {
 			$error_messages = array();
 			/** @type EE_Message $message */
-			$message = $this->_queue->current();
+			$message = $this->_message_repository->current();
 			//if the message in the queue has a sent status, then skip
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
 				continue;
@@ -468,7 +475,7 @@ class EE_Messages_Queue {
 			$this->_set_error_message( $message, $error_messages );
 			//add modified time
 			$message->set_modified( time() );
-			$this->_queue->next();
+			$this->_message_repository->next();
 		}
 		if ( $save ) {
 			$this->save();
@@ -506,8 +513,8 @@ class EE_Messages_Queue {
 				$this->_did_hook[ $message_type->name ] = 1;
 			}
 			//if preview then use preview method
-			return $this->_queue->is_preview()
-				? $this->_do_preview( $message, $messenger, $message_type, $this->_queue->is_test_send() )
+			return $this->_message_repository->is_preview()
+				? $this->_do_preview( $message, $messenger, $message_type, $this->_message_repository->is_test_send() )
 				: $this->_do_send( $message, $messenger, $message_type );
 		}
 		return false;
@@ -529,8 +536,8 @@ class EE_Messages_Queue {
 	public function count_STS_in_queue( $status ) {
 		$count = 0;
 		$status = is_array( $status ) ? $status : array( $status );
-		$this->_queue->rewind();
-		foreach( $this->_queue as $message ) {
+		$this->_message_repository->rewind();
+		foreach( $this->_message_repository as $message ) {
 			if ( in_array( $message->STS_ID(), $status ) ) {
 				$count++;
 			}

@@ -50,7 +50,7 @@ class EEH_Activation {
 	 */
 	public static function ensure_table_name_has_prefix( $table_name ) {
 		global $wpdb;
-		return strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		return strpos( $table_name, $wpdb->base_prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 	}
 
 
@@ -806,7 +806,7 @@ class EEH_Activation {
 		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
 		if (
-			$wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name
+			EEH_Activation::table_exists(  $table_name )
 			&& $wpdb->get_var( $index_exists_query ) === $table_name //using get_var with the $index_exists_query returns the table's name
 		) {
 			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $index_name" );
