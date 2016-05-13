@@ -268,7 +268,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$reg_count = 0;
 		// loop thru registrations to gather info
 		$registrations = $this->checkout->transaction->registrations( $this->checkout->reg_cache_where_params );
-		$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::verify_spaces_remaining_for_sale(
+		$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
 			$registrations,
 			$this->checkout->revisit
 		);
@@ -414,12 +414,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * remove_ejected_registrations
 	 *
+	 * if a registrant has lost their potential space at an event due to lack of payment,
+	 * then this method removes them from the list of registrations being paid for during this request
+	 *
 	 * @param \EE_Registration[] $registrations
 	 * @return \EE_Registration[]
 	 * @throws \EE_Error
 	 */
 	public static function remove_ejected_registrations( array $registrations ) {
-		$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::verify_spaces_remaining_for_sale(
+		$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
 			$registrations,
 			EE_Registry::instance()->SSN->checkout()->revisit
 		);
@@ -436,29 +439,41 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * verify_spaces_remaining_for_sale
+	 * find_registrations_that_lost_their_space
+	 *
+	 * If a registrant chooses an offline payment method like Invoice,
+	 * then no space is reserved for them at the event until they fully pay fo that site
+	 * (unless the event's default reg status is set to APPROVED)
+	 * if a registrant then later returns to pay, but the number of spaces available has been reduced due to sales,
+	 * then this method will determine which registrations have lost the ability to complete the reg process.
 	 *
 	 * @param \EE_Registration[] $registrations
 	 * @param bool               $revisit
 	 * @return array
 	 * @throws \EE_Error
 	 */
-	public static function verify_spaces_remaining_for_sale( array $registrations, $revisit = false ) {
+	public static function find_registrations_that_lost_their_space( array $registrations, $revisit = false ) {
+		// registrations per event
 		$event_reg_count = array();
+		// spaces left per event
+		$event_spaces_remaining = array();
+		// registrations that have lost their space
 		$ejected_registrations = array();
 		foreach ( $registrations as $REG_ID => $registration ) {
 			if ( $registration->status_ID() === EEM_Registration::status_id_approved ) {
 				continue;
 			}
-			if ( ! isset( $event_reg_count[ $registration->event_ID() ] ) ) {
-				$event_reg_count[ $registration->event_ID() ] = 0;
+			$EVT_ID = $event_spaces_remaining[ $registration->event_ID() ];
+			if ( ! isset( $event_reg_count[ $EVT_ID ] ) ) {
+				$event_reg_count[ $EVT_ID ] = 0;
 			}
-			$event_reg_count[ $registration->event_ID() ]++;
-			$spaces_remaining_for_sale = $registration->event()->spaces_remaining_for_sale();
+			$event_reg_count[ $EVT_ID ]++;
+			if ( ! isset( $event_spaces_remaining[ $EVT_ID ] ) ) {
+				$event_spaces_remaining[ $EVT_ID ] = $registration->event()->spaces_remaining_for_sale();
+			}
 			if (
 				$revisit
-				&& $spaces_remaining_for_sale > 0
-				&& $event_reg_count[ $registration->event_ID() ] > $spaces_remaining_for_sale
+				&& $event_reg_count[ $EVT_ID ] > $event_spaces_remaining[ $EVT_ID ]
 			) {
 				$ejected_registrations[ $REG_ID ] = $registration->event();
 			}
@@ -1477,7 +1492,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			default:
-				$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::verify_spaces_remaining_for_sale(
+				$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
 					EE_Registry::instance()->SSN->checkout()->transaction->registrations(
 						EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
 					),
