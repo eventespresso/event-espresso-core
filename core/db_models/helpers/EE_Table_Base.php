@@ -32,7 +32,7 @@ abstract class EE_Table_Base{
 		$this->_global = $global;
 		$prefix = $this->get_table_prefix();
 		//if they added the prefix, let's remove it because we delay adding the prefix until right when its needed.
-		if ( strpos( $table_name, $prefix ) > 0 ) {
+		if ( strpos( $table_name, $prefix ) > -1 ) {
 			$table_name = str_replace( $prefix, '', $table_name );
 		}
 		$this->_table_name = $table_name;
