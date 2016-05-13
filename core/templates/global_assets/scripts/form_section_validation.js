@@ -215,7 +215,7 @@ jQuery(document).ready(function($){
 			//console.log( form_data );
 			//now apply those validation rules to each html form, and show the server-side errors properly
 			$.each( form_data, function( input_id, validation_rules ){
-				var form_input = $( ":input[id^='" + input_id + "']" );
+				var form_input = $( input_id );
 				//EEFV.console_log( 'EEFV.apply_rules > input_id', input_id, false );
 				//EEFV.console_log( 'EEFV.apply_rules > validation_rules', validation_rules, false );
 				//alert( 'form_input ID = ' + form_input.attr('id') );
