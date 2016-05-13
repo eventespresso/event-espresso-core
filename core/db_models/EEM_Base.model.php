@@ -206,6 +206,13 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_timezone;
 
+
+	/**
+	 * This holds the id of the blog currently making the query.  Has no bearing on single site but is used for multisite.
+	 * @var int
+	 */
+	protected static $_model_query_blog_id;
+
 	/**
 	 * A copy of _fields, except the array keys are the model names pointed to by
 	 * the field
@@ -416,6 +423,11 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		/**
+		 * Set blogid for models to current blog.
+		 */
+		EEM_Base::set_model_query_blog_id();
+
+		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
 		 * just use EE_Register_Model_Extension
 		 * @var EE_Table_Base[] $_tables
@@ -543,7 +555,31 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			return array();
 		}
-}
+	}
+
+
+	/**
+	 * Used to set the $_model_query_blog_id static property.
+	 *
+	 * @param int $blog_id  If provided then will set the blog_id for the models to this id.  If not provided then the
+	 *                      value for get_current_blog_id() will be used.
+	 */
+	public static function set_model_query_blog_id( $blog_id = 0 ) {
+		EEM_Base::$_model_query_blog_id = $blog_id > 0 ? (int) $blog_id : get_current_blog_id();
+	}
+
+
+
+
+	/**
+	 * Returns whatever is set as the internal $model_query_blog_id.
+	 *
+	 * @return int
+	 */
+	public static function get_model_query_blog_id() {
+		return EEM_Base::$_model_query_blog_id;
+	}
+
 
 
 	/**
