@@ -423,9 +423,11 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		/**
-		 * Set blogid for models to current blog.
+		 * Set blogid for models to current blog. However we ONLY do this if $_model_query_blog_id is not already set.
 		 */
-		EEM_Base::set_model_query_blog_id();
+		if ( empty( EEM_Base::$_model_query_blog_id ) ) {
+			EEM_Base::set_model_query_blog_id();
+		}
 
 		/**
 		 * Filters the list of tables on a model. It is best to NOT use this directly and instead
