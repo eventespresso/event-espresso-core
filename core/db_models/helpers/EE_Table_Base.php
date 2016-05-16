@@ -66,10 +66,8 @@ abstract class EE_Table_Base{
 
 		if ( $this->_global ) {
 			$prefix = $wpdb->base_prefix;
-		} elseif ( EEM_Base::get_model_query_blog_id() !== get_current_blog_id() ) {
-			$prefix = $wpdb->get_blog_prefix( EEM_Base::get_model_query_blog_id() );
 		} else {
-			$prefix = $wpdb->prefix;
+			$prefix = $wpdb->get_blog_prefix( EEM_Base::get_model_query_blog_id() );
 		}
 		return $prefix;
 	}
