@@ -94,7 +94,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		);
 		$select2_args = array_replace_recursive(
 			$default_select2_args,
-			EEH_Array::is_set( $input_settings, 'select2_args', array() )
+			(array)EEH_Array::is_set( $input_settings, 'select2_args', array() )
 		);
 		$this->set_display_strategy( new EE_Select2_Display_Strategy( $select2_args ) );
 		parent::__construct( array(), $input_settings );
