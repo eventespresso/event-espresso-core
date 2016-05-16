@@ -5,8 +5,21 @@
  * about the table\s alias, private key, etc.
  */
 abstract class EE_Table_Base{
+
+	/**
+	 * This holds the table_name without the table prefix.
+	 * @var string
+	 */
 	var $_table_name;
+
+
+	/**
+	 * This holds what is used as the alias for the table in queries.
+	 * @var string
+	 */
 	var $_table_alias;
+
+
 	/**
 	 * Table's private key column
 	 * @var string
@@ -22,7 +35,7 @@ abstract class EE_Table_Base{
 
 	/**
 	 *
-	 * @global type $wpdb
+	 * @global wpdb $wpdb
 	 * @param string $table_name with or without wpdb prefix
 	 * @param string $pk_column
 	 * @param boolean $global whether the table is "global" as in there is only 1 table on an entire multisite install,
@@ -43,7 +56,10 @@ abstract class EE_Table_Base{
 
 
 	/**
-	 *  This returns the table prefix
+	 * This returns the table prefix for the current model state.
+	 *
+	 * @global wpdb     $wpdb
+	 * @return string
 	 */
 	public function get_table_prefix() {
 		global $wpdb;
@@ -58,19 +74,42 @@ abstract class EE_Table_Base{
 		return $prefix;
 	}
 
+
+	/**
+	 * Used to set the table_alias property
+	 *
+	 * @param string $table_alias
+	 */
 	function _construct_finalize_with_alias($table_alias){
 		$this->_table_alias = $table_alias;
 	}
 
+
+	/**
+	 * Returns the fully qualified table name for the database (includes the table prefix current for the blog).
+	 * @return string
+	 */
 	function get_table_name(){
 		return $this->get_table_prefix() . $this->_table_name;
 	}
+
+
+
+
+	/**
+	 * Provides what is currently set as the alias for the table to be used in queries.
+	 *
+	 * @return string
+	 * @throws EE_Error
+	 */
 	function get_table_alias(){
 		if( ! $this->_table_alias){
 			throw new EE_Error("You must call _construct_finalize_with_alias before using the EE_Table_Base. Did you forget to call parent::__construct at the end of your EEMerimental_Base child's __construct?");
 		}
 		return $this->_table_alias;
 	}
+
+
 
 	/**
 	 *
