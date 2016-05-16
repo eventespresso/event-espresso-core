@@ -861,6 +861,9 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//verify that any NEW models instantiated retain that change.
 		$question = EEM_Question::reset();
 		$this->assertEquals( EEM_Base::get_model_query_blog_id(), 2 );
+
+		//make sure we restore the models to blog 1 for future tests.
+		EEM_Base::set_model_query_blog_id(1);
 	}
         
  
