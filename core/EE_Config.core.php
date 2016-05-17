@@ -1494,13 +1494,11 @@ class EE_Core_Config extends EE_Config_Base {
 	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
-		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
-		$current_main_site_id = !empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
 		// set default organization settings
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
-		$this->ee_ueip_optin = is_main_site() ? get_option( 'ee_ueip_optin', TRUE ) : get_blog_option( $current_main_site_id, 'ee_ueip_optin', TRUE );
-		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', FALSE ) : TRUE;
+		$this->ee_ueip_optin = $this->_get_main_ee_ueip_optin();
+		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', false ) : true;
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
@@ -1622,7 +1620,67 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = '';
 		$this->cancel_page_url = '';
 		$this->thank_you_page_url = '';
+	}
 
+
+	/**
+	 * Used to return what the optin value is set for the EE User Experience Program.
+	 * This accounts for multisite and this value being requested for a subsite.  In multisite, the value is set
+	 * on the main site only.
+	 *
+	 * @return mixed|void
+	 */
+	protected function _get_main_ee_ueip_optin() {
+		//if this is the main site then we can just bypass our direct query.
+		if ( is_main_site() ) {
+			return get_option( 'ee_ueip_optin', false );
+		}
+		global $wpdb;
+		$current_network_main_site = is_multisite() ? get_current_site() : null;
+		$current_main_site_id = ! empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
+		$option = 'ee_ueip_optin';
+
+		//set correct table for query
+		$table_name = $wpdb->get_blog_prefix( $current_main_site_id ) . 'options';
+
+
+		//rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
+		//get_blog_option() does a switch_to_blog an that could cause infinite recursion because EE_Core_Config might be
+		//re-constructed on the blog switch.  Note, we are still executing any core wp filters on this option retrieval.
+		//this bit of code is basically a direct copy of get_option.
+		$pre = apply_filters( 'pre_option_' . $option, false, $option );
+		if ( false !== $pre ) {
+			return $pre;
+		}
+		// prevent non-existent options from triggering multiple queries
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+		if ( isset( $notoptions[ $option ] ) ) {
+			return apply_filters( 'default_option_' . $option, false, $option );
+		}
+
+		$alloptions = wp_load_alloptions();
+
+		if ( isset( $alloptions[ $option ] ) ) {
+			$value = $alloptions[ $option ];
+		} else {
+			$value = wp_cache_get( $option, 'options' );
+
+			if ( false === $value ) {
+				$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s LIMIT 1", $option ) );
+				if ( is_object( $row ) ) {
+					$value = $row->option_value;
+					wp_cache_add( $option, $value, 'options' );
+				} else { //option doesn't exist, so we must cache its non-existence
+					if ( ! is_array( $notoptions ) ) {
+						$notoptions = array();
+					}
+					$notoptions[ $option ] = true;
+					wp_cache_set( 'notoptions', $notoptions, 'options' );
+					return apply_filters( 'default_option_' . $option, false, $option );
+				}
+			}
+		}
+		return apply_filters( 'option_' . $option, maybe_unserialize( $value ), $option );
 	}
 
 
