@@ -16,6 +16,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * This class contains all the code related to Event Espresso capabilities.
  * Assigned to the EE_Registry::instance()->CAP property.
  *
+ * @link https://github.com/eventespresso/event-espresso-core/tree/master/docs/K--Capability-System
+ *
  * @since 4.5.0
  * @package Event Espresso
  * @subpackage core, capabilities

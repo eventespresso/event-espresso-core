@@ -640,7 +640,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	public function get_jquery_validation_rules(){
-
+		$jquery_validation_js = array();
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
 			$jquery_validation_rules = array_replace_recursive(
@@ -650,9 +650,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 		if(! empty($jquery_validation_rules)){
-			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
-		}else{
-			return array();
+			foreach( $this->get_display_strategy()->get_html_input_ids( true ) as $html_id_with_pound_sign ) {
+				$jquery_validation_js[ $html_id_with_pound_sign ] = $jquery_validation_rules;
+			}
 		}
 		return $jquery_validation_js;
 	}

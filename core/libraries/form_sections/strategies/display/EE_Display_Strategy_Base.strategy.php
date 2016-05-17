@@ -42,6 +42,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	protected function _append_chars( $string = '', $chars = '-' ) {
 		return  $this->_remove_chars( $string, $chars ) . $chars;
 	}
+	
+	/**
+	 * Gets the HTML IDs of all the inputs
+	 * @return array
+	 */
+	public function get_html_input_ids( $add_pound_sign = false ) {
+		return array( $this->get_input()->html_id( $add_pound_sign ) );
+	}
 
 
 

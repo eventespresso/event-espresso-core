@@ -206,6 +206,13 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	protected $_timezone;
 
+
+	/**
+	 * This holds the id of the blog currently making the query.  Has no bearing on single site but is used for multisite.
+	 * @var int
+	 */
+	protected static $_model_query_blog_id;
+
 	/**
 	 * A copy of _fields, except the array keys are the model names pointed to by
 	 * the field
@@ -354,9 +361,9 @@ abstract class EEM_Base extends EE_Base{
 	protected $_custom_selections = array();
 
 	/**
-	 * key => value Entity Map using  ID => model object
+	 * key => value Entity Map using  array( EEM_Base::$_model_query_blog_id => array( ID => model object ) )
 	 * caches every model object we've fetched from the DB on this request
-	 * @var EE_Base_Class[]
+	 * @var array
 	 */
 	protected $_entity_map;
 
@@ -413,6 +420,13 @@ abstract class EEM_Base extends EE_Base{
 					get_class( $this )
 				)
 			);
+		}
+
+		/**
+		 * Set blogid for models to current blog. However we ONLY do this if $_model_query_blog_id is not already set.
+		 */
+		if ( empty( EEM_Base::$_model_query_blog_id ) ) {
+			EEM_Base::set_model_query_blog_id();
 		}
 
 		/**
@@ -543,7 +557,31 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			return array();
 		}
-}
+	}
+
+
+	/**
+	 * Used to set the $_model_query_blog_id static property.
+	 *
+	 * @param int $blog_id  If provided then will set the blog_id for the models to this id.  If not provided then the
+	 *                      value for get_current_blog_id() will be used.
+	 */
+	public static function set_model_query_blog_id( $blog_id = 0 ) {
+		EEM_Base::$_model_query_blog_id = $blog_id > 0 ? (int) $blog_id : get_current_blog_id();
+	}
+
+
+
+
+	/**
+	 * Returns whatever is set as the internal $model_query_blog_id.
+	 *
+	 * @return int
+	 */
+	public static function get_model_query_blog_id() {
+		return EEM_Base::$_model_query_blog_id;
+	}
+
 
 
 	/**
@@ -1643,8 +1681,8 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->has_primary_key_field() ){
 			foreach($items_for_deletion as $item_for_deletion_row ){
 				$pk_value = $item_for_deletion_row[ $this->get_primary_key_field()->get_qualified_column() ];
-				if( isset( $this->_entity_map[ $pk_value ] ) ){
-					unset( $this->_entity_map[ $pk_value ] );
+				if( isset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $pk_value ] ) ){
+					unset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $pk_value ] );
 				}
 			}
 		}
@@ -4131,7 +4169,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function get_from_entity_map( $id ){
-		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : NULL;
+		return isset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] ) ? $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] : NULL;
 	}
 
 
@@ -4145,6 +4183,9 @@ abstract class EEM_Base extends EE_Base{
 	 * 		So, if the database doesn't agree with what's in the entity mapper, ignore the database"
 	 * 		If the database gets updated directly and you want the entity mapper to reflect that change,
 	 * 		then this method should be called immediately after the update query
+	 *
+	 * Note: The map is indexed by whatever the current blog id is set (via EEM_Base::$_model_query_blog_id).  This is so
+	 * on multisite, the entity map is specific to the query being done for a specific site.
 	 *
 	 * @param 	EE_Base_Class $object
 	 * @throws EE_Error
@@ -4164,7 +4205,7 @@ abstract class EEM_Base extends EE_Base{
 		if ( $classInstance ) {
 			return $classInstance;
 		} else {
-			$this->_entity_map[ $object->ID() ] = $object;
+			$this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $object->ID() ] = $object;
 			return $object;
 		}
 	}

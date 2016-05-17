@@ -815,7 +815,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$fc_items['blank'] = array( 'class' => 'blank', 'desc' => '' );
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
 			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
 			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
 				$fc_items['view_related_messages'] = array(
