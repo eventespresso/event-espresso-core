@@ -864,12 +864,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * _get_registrations_to_apply_payment_to
-	 *
-	 * 	generates HTML for displaying a series of checkboxes in the admin payment modal window
+	 *    generates HTML for displaying a series of checkboxes in the admin payment modal window
 	 * which allows the admin to only apply the payment to the specific registrations
 	 *
-	 *	@access protected
+	 * @access protected
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _get_registrations_to_apply_payment_to() {
 		// we want any registration with an active status (ie: not deleted or cancelled)
@@ -885,42 +885,68 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			)
 		);
-		$registrations_to_apply_payment_to = '<br /><div id="txn-admin-apply-payment-to-registrations-dv"  style="clear: both; margin: 1.5em 0 0; display: none;">';
-		$registrations_to_apply_payment_to .= '<br /><div class="admin-primary-mbox-tbl-wrap">';
-		$registrations_to_apply_payment_to .= '<table class="admin-primary-mbox-tbl">';
-		$registrations_to_apply_payment_to .= '<thead><tr>';
-		$registrations_to_apply_payment_to .= '<td>' . __( 'ID', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td>' . __( 'Registrant', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td>' . __( 'Ticket', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td>' . __( 'Event', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-cntr">' . __( 'Paid', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-owing-td jst-cntr">' . __( 'Owing', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td class="jst-cntr">' . __( 'Apply', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '</tr></thead><tbody>';
+		$registrations_to_apply_payment_to = EEH_HTML::br() . EEH_HTML::div(
+			'', 'txn-admin-apply-payment-to-registrations-dv', '', 'clear: both; margin: 1.5em 0 0; display: none;'
+		);
+		$registrations_to_apply_payment_to .= EEH_HTML::br() . EEH_HTML::div( '', '', 'admin-primary-mbox-tbl-wrap' );
+		$registrations_to_apply_payment_to .= EEH_HTML::table( '', '', 'admin-primary-mbox-tbl' );
+		$registrations_to_apply_payment_to .= EEH_HTML::thead(
+			EEH_HTML::tr(
+				EEH_HTML::th( __( 'ID', 'event_espresso' ) ) .
+				EEH_HTML::th( __( 'Registrant', 'event_espresso' ) ) .
+				EEH_HTML::th( __( 'Ticket', 'event_espresso' ) ) .
+				EEH_HTML::th( __( 'Event', 'event_espresso' ) ) .
+				EEH_HTML::th( __( 'Paid', 'event_espresso' ), '', 'txn-admin-payment-paid-td jst-cntr' ) .
+				EEH_HTML::th( __( 'Owing', 'event_espresso' ), '', 'txn-admin-payment-owing-td jst-cntr' ) .
+				EEH_HTML::th( __( 'Apply', 'event_espresso' ), '', 'jst-cntr' )
+			)
+		);
+		$registrations_to_apply_payment_to .= EEH_HTML::tbody();
 		// get registrations for TXN
 		$registrations = $this->_transaction->registrations( $query_params );
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
+				$attendee_name = $registration->attendee() instanceof EE_Attendee
+					? $registration->attendee()->full_name()
+					: __( 'Unknown Attendee', 'event_espresso' );
 				$owing = $registration->final_price() - $registration->paid();
-				$taxable = $registration->ticket()->taxable() ? ' <span class="smaller-text lt-grey-text"> ' . __( '+ tax', 'event_espresso' ) . '</span>' : '';
-				$checked = empty( $existing_reg_payments ) || in_array( $registration->ID(), $existing_reg_payments ) ? ' checked="checked"' : '';
-				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
-				// add html for checkbox input and label
-				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' ) . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
-				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-rght">' . $registration->pretty_paid() . '</td>';
-				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-owing-td jst-rght">' . EEH_Template::format_currency( $owing ) . '</td>';
-				$registrations_to_apply_payment_to .= '<td class="jst-cntr">';
+				$taxable = $registration->ticket()->taxable()
+					? ' <span class="smaller-text lt-grey-text"> ' . __( '+ tax', 'event_espresso' ) . '</span>'
+					: '';
+				$checked = empty( $existing_reg_payments ) || in_array( $registration->ID(), $existing_reg_payments )
+					? ' checked="checked"'
+					: '';
 				$disabled = $registration->final_price() > 0 ? '' : ' disabled';
-				$registrations_to_apply_payment_to .= '<input type="checkbox" value="' . $registration->ID() . '" name="txn_admin_payment[registrations]"' . $checked . $disabled . '>';
-				$registrations_to_apply_payment_to .= '</td>';
-				$registrations_to_apply_payment_to .= '</tr>';
+				$registrations_to_apply_payment_to .= EEH_HTML::tr(
+					EEH_HTML::td( $registration->ID() ) .
+					EEH_HTML::td( $attendee_name ) .
+					EEH_HTML::td(
+						$registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable
+					) .
+					EEH_HTML::td( $registration->event_name() ) .
+					EEH_HTML::td( $registration->pretty_paid(), '', 'txn-admin-payment-paid-td jst-cntr' ) .
+					EEH_HTML::td( EEH_Template::format_currency( $owing ), '', 'txn-admin-payment-owing-td jst-cntr' ) .
+					EEH_HTML::td(
+						'<input type="checkbox" value="' . $registration->ID()
+						. '" name="txn_admin_payment[registrations]"'
+						. $checked . $disabled . '>',
+						'', 'jst-cntr'
+					),
+					'apply-payment-registration-row-' . $registration->ID()
+				);
 			}
 		}
-		$registrations_to_apply_payment_to .= '</tbody></table></div>';
-		$registrations_to_apply_payment_to .= '<p class="clear description">' . __( 'The payment will only be applied to the registrations that have a check mark in their corresponding check box. Checkboxes for free registrations have been disabled.', 'event_espresso' ) . '</p></div>';
+		$registrations_to_apply_payment_to .= EEH_HTML::tbodyx();
+		$registrations_to_apply_payment_to .= EEH_HTML::tablex();
+		$registrations_to_apply_payment_to .= EEH_HTML::divx();
+		$registrations_to_apply_payment_to .= EEH_HTML::p(
+			__(
+				'The payment will only be applied to the registrations that have a check mark in their corresponding check box. Checkboxes for free registrations have been disabled.',
+				'event_espresso'
+			),
+			'', 'clear description'
+		);
+		$registrations_to_apply_payment_to .= EEH_HTML::divx();
 		$this->_template_args[ 'registrations_to_apply_payment_to' ] = $registrations_to_apply_payment_to;
 	}
 
