@@ -1,10 +1,14 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections;
 
+use EE_Submit_Input;
+use EEH_HTML;
+use InvalidArgumentException;
+use LogicException;
+use DomainException;
 use EE_Form_Section_Proper;
 use EventEspresso\Core\Exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Exceptions\InvalidFormSubmissionException;
-use LogicException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -23,6 +27,35 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 abstract class Form implements FormInterface{
 
 	/**
+	 * will add opening and closing HTML form tags as well as a submit button
+	 */
+	const ADD_FORM_TAGS_AND_SUBMIT = 'add_form_tags_and_submit';
+
+	/**
+	 * will add opening and closing HTML form tags but NOT a submit button
+	 */
+	const ADD_FORM_TAGS_ONLY = 'add_form_tags_only';
+
+	/**
+	 * will NOT add opening and closing HTML form tags but will add a submit button
+	 */
+	const ADD_FORM_SUBMIT_ONLY = 'add_form_submit_only';
+
+	/**
+	 * will NOT add opening and closing HTML form tags NOR a submit button
+	 */
+	const DO_NOT_SETUP_FORM = 'do_not_setup_form';
+
+	/**
+	 * if set to false, then this form has no displayable content,
+	 * and will only be used for processing data sent passed via GET or POST
+	 * defaults to true ( ie: form has displayable content )
+	 *
+	 * @var boolean $displayable
+	 */
+	private $displayable = true;
+
+	/**
 	 * @var string $form_name
 	 */
 	private $form_name;
@@ -38,6 +71,26 @@ abstract class Form implements FormInterface{
 	private $slug;
 
 	/**
+	 * @var string $form_action
+	 */
+	private $form_action;
+
+	/**
+	 * form params in key value pairs
+	 * can be added to form action URL or as hidden inputs
+	 *
+	 * @var array $form_args
+	 */
+	private $form_args = array();
+
+	/**
+	 * value of one of the string constant above
+	 *
+	 * @var string $form_config
+	 */
+	private $form_config;
+
+	/**
 	 * @var \EE_Form_Section_Proper $form
 	 */
 	private $form;
@@ -50,23 +103,46 @@ abstract class Form implements FormInterface{
 	 * @param string $form_name
 	 * @param string $admin_name
 	 * @param string $slug
+	 * @param string $form_action
+	 * @param string $form_config
 	 * @throws InvalidDataTypeException
+	 * @throws DomainException
 	 */
-	public function __construct( $form_name, $admin_name, $slug ) {
+	public function __construct(
+		$form_name,
+		$admin_name,
+		$slug,
+		$form_action = '',
+		$form_config = Form::ADD_FORM_TAGS_AND_SUBMIT
+	) {
 		$this->setFormName( $form_name );
 		$this->setAdminName( $admin_name );
 		$this->setSlug( $slug );
+		$this->setFormAction( $form_action );
+		$this->setFormConfig( $form_config );
 	}
 
 
 
 	/**
+	 * @param bool $for_display
 	 * @return \EE_Form_Section_Proper
-	 * @throws LogicException
+	 * @throws \EE_Error
+	 * @throws \LogicException
 	 */
-	public function form() {
+	public function form( $for_display = true ) {
 		if ( ! $this->formIsValid() ) {
 			return null;
+		}
+		if ( $for_display ) {
+			$form_config = $this->formConfig();
+			if (
+				$form_config === Form::ADD_FORM_TAGS_AND_SUBMIT
+				|| $form_config === Form::ADD_FORM_SUBMIT_ONLY
+			) {
+				$this->appendSubmitButton();
+				$this->clearFormButtonFloats();
+			}
 		}
 		return $this->form;
 	}
@@ -114,6 +190,24 @@ abstract class Form implements FormInterface{
 	 */
 	public function setForm( \EE_Form_Section_Proper $form ) {
 		$this->form = $form;
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function displayable() {
+		return $this->displayable;
+	}
+
+
+
+	/**
+	 * @param boolean $displayable
+	 */
+	public function setDisplayable( $displayable = false ) {
+		$this->displayable = filter_var( $displayable, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -191,6 +285,90 @@ abstract class Form implements FormInterface{
 
 
 	/**
+	 * @return string
+	 */
+	public function formAction() {
+		return ! empty( $this->form_args )
+			? add_query_arg( $this->form_args, $this->form_action )
+			: $this->form_action;
+	}
+
+
+
+	/**
+	 * @param string $form_action
+	 * @throws InvalidDataTypeException
+	 */
+	public function setFormAction( $form_action ) {
+		if ( ! is_string( $form_action ) ) {
+			throw new InvalidDataTypeException( '$form_action', $form_action, 'string' );
+		}
+		$this->form_action = $form_action;
+	}
+
+
+
+	/**
+	 * @param array $form_args
+	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \InvalidArgumentException
+	 */
+	public function addFormActionArgs( $form_args = array() ) {
+		if ( is_object( $form_args ) ) {
+			throw new InvalidDataTypeException(
+				'$form_args',
+				$form_args,
+				'anything other than an object was expected.'
+			);
+		}
+		if ( empty( $form_args ) ) {
+			throw new InvalidArgumentException(
+				__( 'The redirect arguments can not be an empty array.', 'event_espresso' )
+			);
+		}
+		$this->form_args = array_merge( $this->form_args, $form_args );
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function formConfig() {
+		return $this->form_config;
+	}
+
+
+
+	/**
+	 * @param string $form_config
+	 * @throws DomainException
+	 */
+	public function setFormConfig( $form_config ) {
+		if (
+			! in_array(
+				$form_config,
+				array(
+					Form::ADD_FORM_TAGS_AND_SUBMIT,
+					Form::ADD_FORM_TAGS_ONLY,
+					Form::ADD_FORM_SUBMIT_ONLY,
+					Form::DO_NOT_SETUP_FORM
+				)
+			)
+		) {
+			throw new DomainException(
+				sprintf(
+					__( '"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\Form', 'event_espresso' ),
+					$form_config
+				)
+			);
+		}
+		$this->form_config = $form_config;
+	}
+
+
+
+	/**
 	 * called after the form is instantiated
 	 * and used for performing any logic that needs to occur early
 	 * before any of the other methods are called.
@@ -206,18 +384,6 @@ abstract class Form implements FormInterface{
 
 
 	/**
-	 * used for localizing any string or variables for use in JS
-	 *
-	 * @return void
-	 */
-	public function localizeVariables() {
-		\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		//form variables are localized when calling EE_Form_Section_Base::enqueue_js, which is done during Form::enqueueStylesAndScripts()
-	}
-
-
-
-	/**
 	 * used for setting up css and js
 	 *
 	 * @return void
@@ -225,8 +391,7 @@ abstract class Form implements FormInterface{
 	 * @throws \EE_Error
 	 */
 	public function enqueueStylesAndScripts() {
-		\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		$this->form()->enqueue_js();
+		$this->form( false )->enqueue_js();
 
 	}
 
@@ -242,6 +407,90 @@ abstract class Form implements FormInterface{
 
 
 	/**
+	 * creates and returns an EE_Submit_Input labeled "Submit"
+	 *
+	 * @param string $text
+	 * @return \EE_Submit_Input
+	 */
+	public function generateSubmitButton( $text = '' ) {
+		return new EE_Submit_Input(
+			array(
+				'html_name'             => 'ee-form-submit-' . $this->slug(),
+				'html_id'               => 'ee-form-submit-' . $this->slug(),
+				'html_class'            => 'ee-form-submit',
+				'html_label'            => '&nbsp;',
+				'other_html_attributes' => ' rel="' . $this->slug() . '"',
+				'default'               => ! empty( $text ) ? $text : __( 'Submit', 'event_espresso' )
+			)
+		);
+	}
+
+
+
+	/**
+	 * calls generateSubmitButton() and appends it onto the form along with a float clearing div
+	 *
+	 * @return void
+	 * @throws \LogicException
+	 * @throws \EE_Error
+	 */
+	public function appendSubmitButton() {
+		if ( $this->form->subsection_exists( $this->slug() . '-submit-btn' ) ) {
+			return;
+		}
+		$this->form->add_subsections(
+			array( $this->slug() . '-submit-btn' => $this->generateSubmitButton() ),
+			null,
+			false
+		);
+	}
+
+
+
+	/**
+	 * creates and returns an EE_Submit_Input labeled "Cancel"
+	 *
+	 * @param string $text
+	 * @return \EE_Submit_Input
+	 */
+	public function generateCancelButton( $text = '' ) {
+		$cancel_button = new EE_Submit_Input(
+			array(
+				'html_name'             => 'ee-form-submit-' . $this->slug(), // YES! Same name as submit !!!
+				'html_id'               => 'ee-cancel-form-' . $this->slug(),
+				'html_class'            => 'ee-cancel-form',
+				'html_label'            => '&nbsp;',
+				'other_html_attributes' => ' rel="' . $this->slug() . '"',
+				'default'               => ! empty( $text ) ? $text : __( 'Cancel', 'event_espresso' )
+			)
+		);
+		$cancel_button->set_button_css_attributes( false );
+		return $cancel_button;
+	}
+
+
+
+	/**
+	 * appends a float clearing div onto end of form
+	 *
+	 * @return void
+	 * @throws \EE_Error
+	 */
+	public function clearFormButtonFloats() {
+		$this->form->add_subsections(
+			array(
+				'clear-submit-btn-float' => new \EE_Form_Section_HTML(
+					EEH_HTML::div( '', '', 'clear-float' ) . EEH_HTML::divx()
+				)
+			),
+			null,
+			false
+		);
+	}
+
+
+
+	/**
 	 * takes the generated form and displays it along with ony other non-form HTML that may be required
 	 * returns a string of HTML that can be directly echoed in a template
 	 *
@@ -250,8 +499,22 @@ abstract class Form implements FormInterface{
 	 * @throws \EE_Error
 	 */
 	public function display() {
-		\EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		return $this->form()->get_html();
+		$form_html = '';
+		$form_config = $this->formConfig();
+		if (
+			$form_config === Form::ADD_FORM_TAGS_AND_SUBMIT
+			|| $form_config === Form::ADD_FORM_TAGS_ONLY
+		) {
+			$form_html .= $this->form()->form_open( $this->formAction() );
+		}
+		$form_html .= $this->form()->get_html();
+		if (
+			$form_config === Form::ADD_FORM_TAGS_AND_SUBMIT
+			|| $form_config === Form::ADD_FORM_TAGS_ONLY
+		) {
+			$form_html .= $this->form()->form_close();
+		}
+		return $form_html;
 	}
 
 
@@ -267,14 +530,25 @@ abstract class Form implements FormInterface{
 	 * @throws InvalidFormSubmissionException
 	 */
 	public function process( $form_data = array() ) {
-		if ( ! $this->form()->was_submitted( $form_data ) ) {
+		if ( ! $this->form( false )->was_submitted( $form_data ) ) {
 			throw new InvalidFormSubmissionException( $this->form_name );
 		}
 		$this->form->receive_form_submission( $form_data );
-		if ( $this->form->is_valid() ) {
-			return $this->form->valid_data();
+		if ( ! $this->form->is_valid() ) {
+			throw new InvalidFormSubmissionException(
+				$this->form_name,
+				sprintf(
+					__(
+						'The "%1$s" form is invalid. Please correct the following errors and resubmit: %2$s %3$s',
+						'event_espresso'
+					),
+					$this->form_name,
+					'<br />',
+					$this->form->get_validation_error_string()
+				)
+			);
 		}
-		return array();
+		return $this->form->valid_data();
 	}
 
 
