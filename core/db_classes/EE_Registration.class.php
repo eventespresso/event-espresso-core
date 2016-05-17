@@ -1285,9 +1285,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	}
 
 
+
 	/**
 	 * @param array $query_params
 	 * @return \EE_Registration[]
+	 * @throws \EE_Error
 	 */
 	public function payments( $query_params = array() ) {
 		return $this->get_many_related( 'Payment', $query_params );
@@ -1297,7 +1299,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * @param array $query_params
-	 * @return \EE_Registration[]
+	 * @return \EE_Registration_Payment[]
+	 * @throws \EE_Error
 	 */
 	public function registration_payments( $query_params = array() ) {
 		return $this->get_many_related( 'Registration_Payment', $query_params );
