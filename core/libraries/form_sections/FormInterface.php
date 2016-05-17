@@ -28,6 +28,25 @@ interface FormInterface {
 	 */
 	public function setForm( \EE_Form_Section_Proper $form ) ;
 
+
+
+	/**
+	 * if set to false, then this form has no displayable content,
+	 * and will only be used for processing data sent passed via GET or POST
+	 *
+	 * @return boolean
+	 */
+	public function displayable();
+
+
+
+	/**
+	 * @param boolean $displayable
+	 */
+	public function setDisplayable( $displayable = false );
+
+
+
 	/**
 	 * a public name for the form that can be displayed on the frontend of a site
 	 *
@@ -53,6 +72,36 @@ interface FormInterface {
 
 
 	/**
+	 * @return string
+	 */
+	public function formAction();
+
+
+	/**
+	 * @param string $form_action
+	 */
+	public function setFormAction( $form_action );
+
+
+
+	/**
+	 * @param array $form_args
+	 */
+	public function addFormActionArgs( $form_args = array() );
+
+	/**
+	 * @return string
+	 */
+	public function formConfig();
+
+
+	/**
+	 * @param string $form_config
+	 */
+	public function setFormConfig( $form_config );
+
+
+	/**
 	 * called after the form is instantiated
 	 * and used for performing any logic that needs to occur early
 	 * before any of the other methods are called.
@@ -62,15 +111,6 @@ interface FormInterface {
 	 * @return boolean
 	 */
 	public function initialize();
-
-
-
-	/**
-	 * used for localizing any string or variables for use in JS
-	 *
-	 * @return void
-	 */
-	public function localizeVariables();
 
 
 
