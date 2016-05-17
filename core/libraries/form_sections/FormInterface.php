@@ -23,10 +23,12 @@ interface FormInterface {
 	 */
 	public function form();
 
+
+
 	/**
 	 * @param \EE_Form_Section_Proper $form
 	 */
-	public function setForm( \EE_Form_Section_Proper $form ) ;
+	public function setForm( \EE_Form_Section_Proper $form );
 
 
 
@@ -55,12 +57,14 @@ interface FormInterface {
 	public function formName();
 
 
+
 	/**
 	 * a public name for the form that can be displayed, but only in the admin
 	 *
 	 * @return string
 	 */
 	public function adminName();
+
 
 
 	/**
@@ -71,10 +75,12 @@ interface FormInterface {
 	public function slug();
 
 
+
 	/**
 	 * @return string
 	 */
 	public function formAction();
+
 
 
 	/**
@@ -89,16 +95,20 @@ interface FormInterface {
 	 */
 	public function addFormActionArgs( $form_args = array() );
 
+
+
 	/**
 	 * @return string
 	 */
 	public function formConfig();
 
 
+
 	/**
 	 * @param string $form_config
 	 */
 	public function setFormConfig( $form_config );
+
 
 
 	/**
@@ -150,6 +160,45 @@ interface FormInterface {
 	 * @return bool
 	 */
 	public function process( $form_data = array() );
+
+
+
+	/**
+	 * creates and returns an EE_Submit_Input labeled "Submit"
+	 *
+	 * @param string $text
+	 * @return \EE_Submit_Input
+	 */
+	public function generateSubmitButton( $text = '' );
+
+
+
+	/**
+	 * calls generateSubmitButton() and appends it onto the form along with a float clearing div
+	 *
+	 * @return void
+	 */
+	public function appendSubmitButton();
+
+
+
+	/**
+	 * creates and returns an EE_Submit_Input labeled "Cancel"
+	 *
+	 * @param string $text
+	 * @return \EE_Submit_Input
+	 */
+	public function generateCancelButton( $text = '' );
+
+
+
+	/**
+	 * appends a float clearing div onto end of form
+	 *
+	 * @return void
+	 */
+	public function clearFormButtonFloats();
+
 
 
 }
