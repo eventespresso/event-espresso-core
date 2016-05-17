@@ -93,7 +93,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$this->_layout_strategy = $options_array['layout_strategy'];
 		}
 		if( ! $this->_layout_strategy){
-			$this->_layout_strategy = new EE_Two_Column_Layout();
+			$this->_layout_strategy = is_admin() ? new EE_Admin_Two_Column_Layout() : new EE_Two_Column_Layout();
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 
@@ -239,6 +239,18 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * returns true if subsection exists
+	 *
+	 * @param string $name
+	 * @return boolean
+	 */
+	public function subsection_exists( $name ){
+		return isset( $this->_subsections[ $name ] ) ? true : false;
+	}
+
+
+
+	/**
 	 * Gets the subsection specified by its name
 	 *
 	 * @param string $name
@@ -255,7 +267,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		if( $require_construction_to_be_finalized ){
 			$this->ensure_construct_finalized_called();
 		}
-		return isset($this->_subsections[$name]) ? $this->_subsections[$name] : NULL;
+		return $this->subsection_exists( $name ) ? $this->_subsections[$name] : NULL;
 	}
 
 
@@ -809,18 +821,18 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * then new subsections are added before or after that subsection,
 	 * otherwise to the start or end of the entire subsections array.
 	 *
-	 * @param EE_Form_Section_Base[] $new_subsections                                                 array of new form subsections where keys are their names
-	 * @param string                 $subsection_name_to_target                                       an existing for section that $new_subsections should be added before or after
-	 *                                                                                                IF $subsection_name_to_target is null, then $new_subsections will be added to
-	 *                                                                                                the beginning or end of the entire subsections array
-	 * @param boolean                $add_before                                                      whether to add $new_subsections, before or after $subsection_name_to_target,
-	 *                                                                                                or if $subsection_name_to_target is null, before or after entire subsections array
+	 * @param EE_Form_Section_Base[] $new_subsections            array of new form subsections where keys are their names
+	 * @param string                 $subsection_name_to_target  an existing form section that $new_subsections should be added before or after
+	 *                                                           IF $subsection_name_to_target is null, then $new_subsections will be added to
+	 *                                                           the beginning or end of the entire subsections array
+	 * @param boolean                $add_before                 whether to add $new_subsections, before or after $subsection_name_to_target,
+	 *                                                           or if $subsection_name_to_target is null, before or after entire subsections array
 	 * @return void
 	 * @throws \EE_Error
 	 */
 	public function add_subsections( $new_subsections, $subsection_name_to_target = NULL, $add_before = true ){
-		foreach($new_subsections as $subsection_name => $subsection){
-			if( ! $subsection instanceof EE_Form_Section_Base){
+		foreach( $new_subsections as $subsection_name => $subsection ){
+			if( ! $subsection instanceof EE_Form_Section_Base ){
 				EE_Error::add_error(
 					sprintf(
 						__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),
@@ -829,12 +841,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 						$this->name()
 					)
 				);
-				unset($new_subsections[$subsection_name]);
+				unset( $new_subsections[ $subsection_name ] );
 			}
 		}
 
 		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_target, $add_before );
-
 		/*$subsections_before = array();
 		if( $subsection_name_to_target ){
 			foreach( $this->_subsections as $subsection_name => $subsection ) {
