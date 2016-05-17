@@ -19,7 +19,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @var EE_Registration_Processor $_instance
 	 * @access    private
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
 	/**
 	 * initial reg status at the beginning of this request.
@@ -49,7 +49,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * Cache of the reg final price for registrations corresponding to a ticket line item
 	 * @var array @see EEH_Line_Item::calculate_reg_final_prices_per_line_item()'s return value
 	 */
-	protected $_reg_final_price_per_tkt_line_item = null;
+	protected $_reg_final_price_per_tkt_line_item;
 
 
 
@@ -176,6 +176,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 *
 	 * @param \EE_Registration $registration
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function generate_reg_code( EE_Registration $registration ) {
 	// figure out where to start parsing the reg code
@@ -249,13 +250,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * 	manually_update_registration_status
+	 *    manually_update_registration_status
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Registration $registration
-	 * @param string 	$new_reg_status
-	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
-	 * 	@return boolean
+	 * @param string          $new_reg_status
+	 * @param bool            $save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function manually_update_registration_status( EE_Registration $registration, $new_reg_status = '', $save = true ) {
 		// set initial REG_Status
@@ -268,10 +270,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			EE_Registry::instance()->CAP->current_user_can( 'ee_edit_registration', 'toggle_registration_status', $registration->ID() )
 		) {
 			// change status to new value
-			if ( $registration->set_status( $this->new_reg_status( $registration->ID() ) )) {
-				if ( $save ) {
-					$registration->save();
-				}
+			if ( $registration->set_status( $this->new_reg_status( $registration->ID() ) ) && $save ) {
+				$registration->save();
 			}
 			return TRUE;
 		}
@@ -334,16 +334,21 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
-	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * @param bool            $save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function toggle_registration_status_for_default_approved_events( EE_Registration $registration, $save = TRUE ) {
+		$reg_status = $registration->status_ID();
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $reg_status );
 		// if not already, toggle reg status to approved IF the event default reg status is approved
+		// ( as long as the registration wasn't cancelled or declined at some point )
 		if (
-			$registration->status_ID() !== EEM_Registration::status_id_approved &&
-			$registration->event()->default_registration_status() == EEM_Registration::status_id_approved
+			$reg_status !== EEM_Registration::status_id_cancelled &&
+			$reg_status !== EEM_Registration::status_id_declined &&
+			$reg_status !== EEM_Registration::status_id_approved &&
+			$registration->event()->default_registration_status() === EEM_Registration::status_id_approved
 		) {
 			// set incoming REG_Status
 			$this->set_new_reg_status( $registration->ID(), EEM_Registration::status_id_approved );
@@ -412,7 +417,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		// toggle reg status to approved IF
 		if (
 			// REG status is pending payment
-			$registration->status_ID() == EEM_Registration::status_id_pending_payment
+			$registration->status_ID() === EEM_Registration::status_id_pending_payment
 			// AND no monies are owing
 			&& (
 				(
@@ -490,33 +495,45 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * sets reg status based either on passed param or on transaction status and event pre-approval setting
 	 *
 	 * @param \EE_Registration $registration
-	 * @param array 	$additional_details
+	 * @param array            $additional_details
 	 * @return bool
+	 * @throws \EE_Error
 	 */
 	public function update_registration_after_checkout_or_payment(  EE_Registration $registration, $additional_details = array() ) {
 		// set initial REG_Status
 		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
 
 		// if the registration status gets updated, then save the registration
-		if ( $this->toggle_registration_status_for_default_approved_events( $registration, false ) || $this->toggle_registration_status_if_no_monies_owing( $registration, false, $additional_details )) {
+		if (
+			$this->toggle_registration_status_for_default_approved_events( $registration, false )
+			|| $this->toggle_registration_status_if_no_monies_owing( $registration, false, $additional_details )
+		) {
 			$registration->save();
 		}
 
 		// set new  REG_Status
 		$this->set_new_reg_status( $registration->ID(), $registration->status_ID() );
-		return $this->reg_status_updated( $registration->ID() ) && $this->new_reg_status( $registration->ID() ) == EEM_Registration::status_id_approved ? true : false;
+		return $this->reg_status_updated( $registration->ID() )
+		       && $this->new_reg_status( $registration->ID() ) === EEM_Registration::status_id_approved
+			? true
+			: false;
 	}
+
+
 
 	/**
 	 * Updates the registration' final prices based on the current line item tree (taking into account
 	 * discounts, taxes, and other line items unrelated to tickets.)
+	 *
 	 * @param EE_Transaction $transaction
-	 * @param boolean $save_regs whether to immediately save registrations in this function or not
+	 * @param boolean        $save_regs whether to immediately save registrations in this function or not
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function update_registration_final_prices( $transaction, $save_regs = true ) {
 		$reg_final_price_per_ticket_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
 		foreach( $transaction->registrations() as $registration ) {
+			/** @var EE_Line_Item $line_item */
 			$line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $registration );
 			if( isset( $reg_final_price_per_ticket_line_item[ $line_item->ID() ] ) ) {
 				$registration->set_final_price( $reg_final_price_per_ticket_line_item[ $line_item->ID() ] );
@@ -529,6 +546,8 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		$this->fix_reg_final_price_rounding_issue( $transaction );
 	}
 
+
+
 	/**
 	 * Makes sure there is no rounding errors for the REG_final_prices.
 	 * Eg, if we have 3 registrations for $1, and there is a $0.01 discount between the three of them,
@@ -539,8 +558,10 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * we just grab one registrant at random and make them responsible for it.
 	 * This should be used after setting REG_final_prices (it's done automatically as part of
 	 * EE_Registration_Processor::update_registration_final_prices())
+	 *
 	 * @param EE_Transaction $transaction
 	 * @return boolean success verifying that there is NO difference after this method is done
+	 * @throws \EE_Error
 	 */
 	public function fix_reg_final_price_rounding_issue( $transaction ) {
 		$reg_final_price_sum = EEM_Registration::instance()->sum(
@@ -551,20 +572,20 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			),
 			'REG_final_price'
 		);
-		$diff =  $transaction->total() - floatval( $reg_final_price_sum );
+		$diff =  $transaction->total() - (float) $reg_final_price_sum;
 		//ok then, just grab one of the registrations
-		if( $diff != 0 ) {
+		if( $diff !== 0 ) {
 			$a_reg = EEM_Registration::instance()->get_one(
 					array(
 						array(
 							'TXN_ID' => $transaction->ID()
 						)
 					));
-			$success = $a_reg instanceof EE_Registration ? $a_reg->save(
-				array(
-					'REG_final_price' => ( $a_reg->final_price() + $diff )
+			$success = $a_reg instanceof EE_Registration
+				? $a_reg->save(
+					array( 'REG_final_price' => $a_reg->final_price() + $diff )
 				)
-			) : false;
+				: false;
 			return $success ? true : false;
 		} else {
 			return true;
