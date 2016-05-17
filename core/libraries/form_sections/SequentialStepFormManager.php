@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections;
 
+use EE_Error;
 use EE_Request;
 use EventEspresso\Core\Exceptions\BaseException;
 use EventEspresso\Core\Exceptions\InvalidClassException;
@@ -12,6 +13,7 @@ use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\progress_steps\ProgressStep;
 use EventEspresso\core\services\progress_steps\ProgressStepCollection;
 use EventEspresso\core\services\progress_steps\ProgressStepManager;
+use Exception;
 use InvalidArgumentException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -403,7 +405,6 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidArgumentException
 	 */
 	public function processForm( $form_data = array() ) {
-		// \EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
 		$this->buildCurrentStepFormForProcessing();
 		$this->processCurrentStepForm( $form_data );
 	}
@@ -509,23 +510,32 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidDataTypeException
 	 */
 	public function processCurrentStepForm( $form_data = array() ) {
-		// \EEH_Debug_Tools::printr( __FUNCTION__, __CLASS__, __FILE__, __LINE__, 2 );
-		if ( $this->getCurrentStep()->process( $form_data ) ) {
-			$current_step = $this->getCurrentStep();
-			// otay, we are advancing to the next step
-			$this->form_steps->next();
-			if ( $this->form_steps->valid() ) {
-				$current_step->addRedirectArgs(
-					array( $this->formStepUrlKey() => $this->getCurrentStep()->slug() )
-				);
+		try {
+			if ( $this->getCurrentStep()->process( $form_data ) ) {
+				$current_step = $this->getCurrentStep();
+				// otay, we are advancing to the next step
+				$this->form_steps->next();
+				// but only if it exists
+				if ( $this->form_steps->valid() ) {
+					$current_step->addRedirectArgs(
+						array( $this->formStepUrlKey() => $this->getCurrentStep()->slug() )
+					);
+				}
+				wp_safe_redirect( $current_step->redirectUrl() );
+				exit();
 			}
-			wp_safe_redirect( $current_step->redirectUrl() );
-		} /*else {
-			// wp_safe_redirect( $this->getCurrentStep()->redirectUrl() );
-		}*/
-		// \EEH_Debug_Tools::printr( $this->baseUrl(), '$this->baseUrl()', __FILE__, __LINE__ );
-		// \EEH_Debug_Tools::printr( $this->getCurrentStep()->redirectUrl(), '$this->getCurrentStep()->redirectUrl()', __FILE__, __LINE__ );
-		// die();
+		} catch ( Exception $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		EE_Error::get_notices( false, true );
+		/** @var SequentialStepFormInterface $previous_step */
+		$previous_step = $this->form_steps->previous();
+		$previous_step->setRedirectUrl( $this->baseUrl() );
+		$previous_step->addRedirectArgs(
+			array( $this->formStepUrlKey() => $previous_step->slug() )
+		);
+		wp_safe_redirect( $previous_step->redirectUrl() );
+		exit();
 	}
 
 
