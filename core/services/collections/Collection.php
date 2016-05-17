@@ -3,6 +3,7 @@ namespace EventEspresso\core\services\collections;
 
 use EventEspresso\Core\Exceptions\InvalidEntityException;
 use EventEspresso\Core\Exceptions\InvalidInterfaceException;
+use LimitIterator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -222,6 +223,131 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 		 }
 		 return false;
 	 }
+
+
+
+	 /**
+	  * Returns the object occupying the index before the current object,
+	  * unless this is already the first object, in which case it just returns the first object
+	  *
+	  * @return mixed
+	  */
+	 public function previous() {
+		 $index = $this->indexOf( $this->current() );
+		 if ( $index === 0 ) {
+			 return $this->current();
+		 }
+		 $index--;
+		 return $this->objectAtIndex( $index );
+	 }
+
+
+
+	 /**
+	  * Returns the index of a given object, or false if not found
+	  *
+	  * @see http://stackoverflow.com/a/8736013
+	  * @param $object
+	  * @return boolean|int|string
+	  */
+	 public function indexOf( $object ) {
+		 if ( ! $this->contains( $object ) ) {
+			 return false;
+		 }
+		 foreach ( $this as $index => $obj ) {
+			 if ( $obj === $object ) {
+				 return $index;
+			 }
+		 }
+	 }
+
+
+
+	 /**
+	  * Returns the object at the given index
+	  *
+	  * @see http://stackoverflow.com/a/8736013
+	  * @param $index
+	  * @return mixed
+	  */
+	 public function objectAtIndex( $index ) {
+		 $iterator = new LimitIterator( $this, $index, 1 );
+		 $iterator->rewind();
+		 return $iterator->current();
+	 }
+
+
+
+	 /**
+	  * Returns the sequence of objects as specified by the offset and length
+	  *
+	  * @see http://stackoverflow.com/a/8736013
+	  * @param int $offset
+	  * @param int $length
+	  * @return array
+	  */
+	 public function slice( $offset, $length ) {
+		 $slice = array();
+		 $iterator = new LimitIterator( $this, $offset, $length );
+		 foreach ( $iterator as $object ) {
+			 $slice[] = $object;
+		 }
+		 return $slice;
+	 }
+
+
+
+	 /**
+	  * Inserts an object (or an array of objects) at a certain point
+	  *
+	  * @see http://stackoverflow.com/a/8736013
+	  * @param mixed $objects A single object or an array of objects
+	  * @param integer $index
+	  */
+	 public function insertAt( $objects, $index ) {
+		 if ( ! is_array( $objects ) ) {
+			 $objects = array( $objects );
+		 }
+		 // check to ensure that objects don't already exist in the collection
+		 foreach ( $objects as $key => $object ) {
+			 if ( $this->contains( $object ) ) {
+				 unset( $objects[ $key ] );
+			 }
+		 }
+		 // do we have any objects left?
+		 if ( ! $objects ) {
+			 return;
+		 }
+		 // detach any objects at or past this index
+		 $remaining = array();
+		 if ( $index < $this->count() ) {
+			 $remaining = $this->slice( $index, $this->count() - $index );
+			 foreach ( $remaining as $object ) {
+				 $this->detach( $object );
+			 }
+		 }
+		 // add the new objects we're splicing in
+		 foreach ( $objects as $object ) {
+			 $this->attach( $object );
+		 }
+		 // attach the objects we previously detached
+		 foreach ( $remaining as $object ) {
+			 $this->attach( $object );
+		 }
+	 }
+
+
+
+	 /**
+	  * Removes the object at the given index
+	  *
+	  * @see http://stackoverflow.com/a/8736013
+	  * @param integer $index
+	  */
+	 public function removeAt( $index ) {
+		 $this->detach( $this->objectAtIndex( $index ) );
+	 }
+
 
 
  }

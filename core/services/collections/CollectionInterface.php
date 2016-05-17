@@ -102,6 +102,61 @@ interface CollectionInterface {
 	 */
 	public function setCurrentUsingObject( $object );
 
+	/**
+	 * Returns the object occupying the index before the current object,
+	 * unless this is already the first object, in which case it just returns the first object
+	 *
+	 * @return mixed
+	 */
+	public function previous();
+
+		/**
+	 * Returns the index of a given object, or false if not found
+	 *
+	 * @see http://stackoverflow.com/a/8736013
+	 * @param $object
+	 * @return boolean|int|string
+	 */
+	public function indexOf( $object );
+
+
+	/**
+	 * Returns the object at the given index
+	 *
+	 * @see http://stackoverflow.com/a/8736013
+	 * @param $index
+	 * @return mixed
+	 */
+	public function objectAtIndex( $index );
+
+	/**
+	 * Returns the sequence of objects as specified by the offset and length
+	 *
+	 * @see http://stackoverflow.com/a/8736013
+	 * @param int $offset
+	 * @param int $length
+	 * @return array
+	 */
+	public function slice( $offset, $length );
+
+	/**
+	 * Inserts an object (or an array of objects) at a certain point
+	 *
+	 * @see http://stackoverflow.com/a/8736013
+	 * @param mixed   $objects A single object or an array of objects
+	 * @param integer $index
+	 */
+	public function insertAt( $objects, $index );
+
+	/**
+	 * Removes the object at the given index
+	 *
+	 * @see http://stackoverflow.com/a/8736013
+	 * @param integer $index
+	 */
+	public function removeAt( $index ) ;
+
+
 }
 // End of file CollectionInterface.php
 // Location: /CollectionInterface.php
