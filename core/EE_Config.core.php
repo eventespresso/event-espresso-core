@@ -1488,6 +1488,15 @@ class EE_Core_Config extends EE_Config_Base {
 
 
 	/**
+	 * This caches the _ee_ueip_option in case this config is reset in the same
+	 * request across blog switches in a multisite context.
+	 * Avoids extra queries to the db for this option.
+	 * @var bool
+	 */
+	public static $ee_ueip_option;
+
+
+	/**
 	 *    class constructor
 	 *
 	 * @access    public
@@ -1635,6 +1644,12 @@ class EE_Core_Config extends EE_Config_Base {
 		if ( is_main_site() ) {
 			return get_option( 'ee_ueip_optin', false );
 		}
+
+		//is this already cached for this request?  If so use it.
+		if ( ! empty( EE_Core_Config::$ee_ueip_option ) ) {
+			return EE_Core_Config::$ee_ueip_option;
+		}
+
 		global $wpdb;
 		$current_network_main_site = is_multisite() ? get_current_site() : null;
 		$current_main_site_id = ! empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
@@ -1647,40 +1662,24 @@ class EE_Core_Config extends EE_Config_Base {
 		//rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
 		//get_blog_option() does a switch_to_blog an that could cause infinite recursion because EE_Core_Config might be
 		//re-constructed on the blog switch.  Note, we are still executing any core wp filters on this option retrieval.
-		//this bit of code is basically a direct copy of get_option.
+		//this bit of code is basically a direct copy of get_option without any caching because we are NOT switched to the blog
+		//for the purpose of caching.
 		$pre = apply_filters( 'pre_option_' . $option, false, $option );
 		if ( false !== $pre ) {
-			return $pre;
+			EE_Core_Config::$ee_ueip_option = $pre;
+			return EE_Core_Config::$ee_ueip_option;
 		}
-		// prevent non-existent options from triggering multiple queries
-		$notoptions = wp_cache_get( 'notoptions', 'options' );
-		if ( isset( $notoptions[ $option ] ) ) {
+
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s LIMIT 1", $option ) );
+		if ( is_object( $row ) ) {
+			$value = $row->option_value;
+		} else { //option does not exist so use default.
 			return apply_filters( 'default_option_' . $option, false, $option );
 		}
 
-		$alloptions = wp_load_alloptions();
+		EE_Core_Config::$ee_ueip_option = apply_filters( 'option_' . $option, maybe_unserialize( $value ), $option );
 
-		if ( isset( $alloptions[ $option ] ) ) {
-			$value = $alloptions[ $option ];
-		} else {
-			$value = wp_cache_get( $option, 'options' );
-
-			if ( false === $value ) {
-				$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s LIMIT 1", $option ) );
-				if ( is_object( $row ) ) {
-					$value = $row->option_value;
-					wp_cache_add( $option, $value, 'options' );
-				} else { //option doesn't exist, so we must cache its non-existence
-					if ( ! is_array( $notoptions ) ) {
-						$notoptions = array();
-					}
-					$notoptions[ $option ] = true;
-					wp_cache_set( 'notoptions', $notoptions, 'options' );
-					return apply_filters( 'default_option_' . $option, false, $option );
-				}
-			}
-		}
-		return apply_filters( 'option_' . $option, maybe_unserialize( $value ), $option );
+		return EE_Core_Config::$ee_ueip_option;
 	}
 
 
