@@ -1454,7 +1454,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function _reg_details_meta_box() {
 		EEH_Autoloader::register_line_item_display_autoloaders();
 		EEH_Autoloader::register_line_item_filter_autoloaders();
-		EE_Registry::instance()->load_Helper( 'Line_Item' );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
@@ -1505,7 +1505,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'dashicons dashicons-email-alt'
 			)
 			: '';
-		
+
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
 		$payment = ! $payment instanceof EE_Payment ? EE_Payment::new_instance() : $payment;
