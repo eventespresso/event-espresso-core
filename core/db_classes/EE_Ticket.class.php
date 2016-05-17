@@ -1005,7 +1005,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		foreach ( $this->datetimes() as $datetime ) {
 			$times[] = $datetime->start_date_and_time();
 		}
-		return $this->name() . " @ " . implode( ", ", $times ) . " for " . $this->price();
+		return $this->name() . " @ " . implode( ", ", $times ) . " for " . $this->pretty_price();
 	}
 
 
