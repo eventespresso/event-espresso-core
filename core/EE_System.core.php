@@ -99,22 +99,19 @@ final class EE_System {
 
 	/**
 	 * resets the instance and returns it
-	 * @param  bool $full  Whether a full reset (includes performing any activation/upgrades/migrations) vs partial (just
-	 *                     setting the request type).
 	 * @return EE_System
 	 */
-	public static function reset( $full = true ){
+	public static function reset(){
 		self::$_instance->_req_type = NULL;
 
 		//make sure none of the old hooks are left hanging around
-		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations');
-		self::instance()->detect_activations_or_upgrades();
+		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' );
 
-		if ( $full ) {
-			//we need to reset the migration manager in order for it to detect DMSs properly
-			EE_Data_Migration_Manager::reset();
-			self::instance()->perform_activations_upgrades_and_migrations();
-		}
+		//we need to reset the migration manager in order for it to detect DMSs properly
+		EE_Data_Migration_Manager::reset();
+		self::instance()->detect_activations_or_upgrades();
+		self::instance()->perform_activations_upgrades_and_migrations();
+
 		return self::instance();
 	}
 
