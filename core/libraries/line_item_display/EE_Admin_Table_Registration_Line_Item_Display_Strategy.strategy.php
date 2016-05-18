@@ -141,9 +141,9 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
 		$registration = isset( $options['EE_Registration'] ) ? $options['EE_Registration'] : null;
 		$registration_total = $registration instanceof EE_Registration ? $registration->pretty_final_price() : 0;
 		//if no valid registration object then we're not going to show the approximate text.
-		$total_match = $registration instanceof EE_Registration ? $registration->final_price() == $line_item->total() : true;
-
-
+		$total_match = $registration instanceof EE_Registration
+			? $registration->final_price() === $line_item->total()
+			: true;
 
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );
