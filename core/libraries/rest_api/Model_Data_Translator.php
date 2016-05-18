@@ -101,9 +101,14 @@ class Model_Data_Translator {
    public static function prepare_field_value_for_json( $field_obj, $original_value, $requested_version ) {
 		if( $original_value === EE_INF ) {
 			$new_value = Model_Data_Translator::ee_inf_in_rest;
-		} elseif( $field_obj instanceof \EE_Datetime_Field &&
-			$original_value instanceof \DateTime ) {
-			$new_value = $original_value->format( 'c' );
+		} elseif( $field_obj instanceof \EE_Datetime_Field ) {
+			if( $original_value instanceof \DateTime ) {
+				$new_value = $original_value->format( 'c' );
+			} elseif( is_int( $original_value ) ) {
+				$new_value = date( 'Y-m-d H:i:s', $original_value ); 
+			} else {
+				$new_value = $original_value;
+			}
 			$new_value = mysql_to_rfc3339( $new_value );
 		} else {
 			$new_value = $original_value;

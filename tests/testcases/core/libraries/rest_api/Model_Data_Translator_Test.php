@@ -39,7 +39,7 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 		//assert the reg date matches and is in the right format
 		$this->assertArrayHasKey( 'where', $rest_query );
 		$this->assertArrayHasKey( 'REG_date', $rest_query[ 'where' ] );
-		$this->assertEquals( strtotime( $mysql_date ), $rest_query[ 'where' ][ 'REG_date' ] );
+		$this->assertEquals( strtotime( $mysql_date ), rest_parse_date( $rest_query[ 'where' ][ 'REG_date' ] ) );
 		//assert statuses got translated
 		$this->assertArrayHasKey( 'STS_ID', $rest_query[ 'where' ] );
 		$this->assertEquals( $statuses_in_query, $rest_query[ 'where' ][ 'STS_ID' ][1]);
