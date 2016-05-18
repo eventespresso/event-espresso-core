@@ -384,6 +384,25 @@ label.error { display : block; color : #FE2A00 !important; }
 	top:1px;
 }
 
+.ee-composite-dashicon {
+	position: relative;
+}
+.ee-composite-dashicon span {
+	position: relative;
+	z-index: 10;
+}
+.ee-composite-dashicon .ee-icon + .ee-icon,
+.ee-composite-dashicon .ee-icon + .dashicons,
+.ee-composite-dashicon .dashicons + .ee-icon,
+.ee-composite-dashicon .dashicons + .dashicons {
+	margin-left:-17px !important;
+}
+.ee-composite-dashicon span:nth-child(even) {
+	color:#222;
+	text-shadow: -1px -1px 1px #fff;
+	z-index: 20;
+}
+
 .help-tab-content img {
 	border : 2px solid #E7E7E7;
 }
