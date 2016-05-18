@@ -42,7 +42,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 * @var boolean
 	 */
 	protected $_test_transactions;
-	const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll'; //Authnet URL
+	const LIVE_URL = 'https://secure2.authorize.net/gateway/transact.dll'; //Authnet URL
 	const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
 	private $VERIFY_PEER = false;
 	private $_x_post_fields = array(
@@ -86,17 +86,19 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	
 	/**
 	 * TEMPORARY CALLBACK! Do not use
-	 * Callback which filters the server url. This is added so site admins can test
-	 * integration with the June 30th 2016 Authorize.net switch to Akamai servers
+	 * Callback which filters the server url. This is added so site admins can revert to using
+	 * the old AIM server in case Akamai service breaks their integration.
+	 * Using Akamai will, however, be mandatory on June 30th 2016 Authorize.net
 	 * (see http://www.authorize.net/support/akamaifaqs/#firewall?utm_campaign=April%202016%20Technical%20Updates%20for%20Merchants.html&utm_medium=email&utm_source=Eloqua&elqTrackId=46103bdc375c411a979c2f658fc99074&elq=7026706360154fee9b6d588b27d8eb6a&elqaid=506&elqat=1&elqCampaignId=343)
 	 * Once that happens, this will be obsolete and WILL BE REMOVED.
 	 * @param string $url
 	 * @param EEG_Aim $gateway_object
 	 * @return string
 	 */
-	public function possibly_use_akamai_server( $url, EEG_Aim $gateway_object ) {
-		if( $gateway_object->_server === 'akamai' && ! $gateway_object->_debug_mode ) {
-			return 'https://secure2.authorize.net/gateway/transact.dll';
+	public function possibly_use_deprecated_aim_server( $url, EEG_Aim $gateway_object ) {
+		if(  $gateway_object->_server === 'authorize.net' 
+			&& ! $gateway_object->_debug_mode ) {
+			return 'https://secure.authorize.net/gateway/transact.dll';
 		} else {
 			return $url;
 		}
@@ -118,7 +120,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 */
 
 	public function do_direct_payment($payment, $billing_info = null) {
-			add_filter( 'FHEE__EEG_Aim___get_server_url', array( $this, 'possibly_use_akamai_server' ), 10, 2 );
+			add_filter( 'FHEE__EEG_Aim___get_server_url', array( $this, 'possibly_use_deprecated_aim_server' ), 10, 2 );
 			// Enable test mode if needed
 			//4007000000027  <-- test successful visa
 			//4222222222222  <-- test failure card number
@@ -306,7 +308,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				}
 			}
 		}
-		$this->log(array('AIM Request sent:'=>$request_array),$payment);
+		$this->log(array('AIM Request sent:'=>$request_array, 'Server URL' => $this->_get_server_url() ),$payment);
 	}
 
 	/**

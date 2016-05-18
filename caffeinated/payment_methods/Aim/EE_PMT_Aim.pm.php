@@ -194,8 +194,8 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						apply_filters(
 							'FHEE__EE_PMT_Aim__generate_new_settings_form__server_select_input__options',
 							array(
-								'authorize.net' => __( 'Authorize.net (default)', 'event_espresso' ),
-								'akamai' => __( 'Authorize.net/Akamai', 'event_espresso' )
+								'akamai' => __( 'Authorize.net/Akamai (default)', 'event_espresso' ),
+								'authorize.net' => __( 'Authorize.net (deprecated)', 'event_espresso' ),
 							),
 							$this
 						),
