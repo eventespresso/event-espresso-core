@@ -204,6 +204,7 @@ class EEH_Line_Item {
 	public static function decrement_quantity( EE_Line_Item $line_item, $qty = 1 ) {
 		if( ! $line_item->is_percent() ) {
 			$qty -= $line_item->quantity();
+			$qty = max( $qty, 0 );
 			$line_item->set_quantity( $qty );
 			$line_item->set_total( $line_item->unit_price() * $qty );
 			$line_item->save();
