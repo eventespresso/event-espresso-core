@@ -485,7 +485,19 @@ class EEH_Template {
 	 * @return string the html output for the button
 	 */
 	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '', $title = '' ) {
-		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
+		$icon_html = '';
+		if ( ! empty( $icon ) ) {
+			$dashicons = preg_split( "(ee-icon |dashicons )", $icon );
+			$dashicons = array_filter( $dashicons );
+			$count = count( $dashicons );
+			$icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
+			foreach ( $dashicons as $dashicon ) {
+				$type = strpos( $dashicon, 'ee-icon' ) !== false ? 'ee-icon ' : 'dashicons ';
+				$icon_html .= '<span class="' . $type . $dashicon . '"></span>';
+			}
+			$icon_html .= $count > 1 ? '</span>' : '';
+		}
+		$label = ! empty( $icon ) ? $icon_html . $label : $label;
 		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
 		return $button;
 	}
