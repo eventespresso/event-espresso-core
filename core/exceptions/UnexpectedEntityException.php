@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\exceptions;
+namespace EventEspresso\Core\Exceptions;
 
 use DomainException;
 
