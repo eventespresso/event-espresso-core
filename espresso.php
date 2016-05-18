@@ -66,7 +66,7 @@ if ( function_exists( 'espresso_version' ) ) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.9.0.rc.032';
+		return apply_filters( 'FHEE__espresso__espresso_version', '4.9.0.rc.032' );
 	}
 
 	// define versions
