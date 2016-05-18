@@ -103,7 +103,7 @@ class Model_Data_Translator {
 			$new_value = Model_Data_Translator::ee_inf_in_rest;
 		} elseif( $field_obj instanceof \EE_Datetime_Field ) {
 			if( $original_value instanceof \DateTime ) {
-				$new_value = $original_value->format( 'c' );
+				$new_value = $original_value->format( 'Y-m-d H:i:s' );
 			} elseif( is_int( $original_value ) ) {
 				$new_value = date( 'Y-m-d H:i:s', $original_value ); 
 			} else {
