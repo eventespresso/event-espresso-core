@@ -33,7 +33,7 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 					}
 				}
 			}
-			var input = jQuery( '#' + select2_input_id ).select2( select2_args );
+			jQuery( '#' + select2_input_id ).select2( select2_args );
 		});
 	}
 });
