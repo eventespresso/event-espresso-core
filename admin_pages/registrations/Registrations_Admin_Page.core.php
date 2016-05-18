@@ -1187,19 +1187,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-
-
 	/**
-	 * 		_set_approve_or_decline_reg_status_buttons
-	*		@access protected
-	*		@return string
-	*/
+	 * set_reg_status_buttons_metabox
+	 *
+	 * @access protected
+	 * @return string
+	 * @throws \EE_Error
+	 */
 	public function set_reg_status_buttons_metabox() {
 
 		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
 		$is_complete = $this->_registration->transaction()->is_completed();
-
 		//let's get an array of all possible buttons that we can just reference
 		$status_buttons = $this->_get_reg_status_buttons();
 		$template_args[ 'reg_status_value' ] = $this->_registration->pretty_status();
@@ -1217,7 +1215,27 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['form_url'] = REG_ADMIN_URL;
 		$template_args['REG_ID'] = $this->_registration->ID();
 		$template_args['nonce'] = wp_nonce_field( 'change_reg_status_nonce',  'change_reg_status_nonce', FALSE, FALSE );
-
+		$template_args['registration_moved_notice'] = '';
+		$reg_moved = $this->_registration->get_extra_meta( 'registration-moved', true, array() );
+		if ( isset( $reg_moved['NEW_REG_ID'] ) ) {
+			$reg_details_url = add_query_arg(
+				array(
+					'action'  => 'view_registration',
+					'_REG_ID' => $reg_moved['NEW_REG_ID'],
+				),
+				REG_ADMIN_URL
+			);
+			$template_args['registration_moved_notice'] = sprintf(
+				__(
+					'%1$sThis registration was cancelled and moved to a %2$snew registration%3$s.%4$s',
+					'event_espresso'
+				),
+				'<p class="important-notice">',
+				'<a href="' . $reg_details_url . '">',
+				'</a>',
+				'</p>'
+			);
+		}
 		EEH_Template::display_template( $template, $template_args );
 
 	}
