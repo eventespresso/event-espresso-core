@@ -968,6 +968,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 				continue;
 			}
+			// add css and JS for current step
+			$reg_step->enqueue_styles_and_scripts();
 			// i18n
 			$reg_step->translate_js_strings();
 			if ( $reg_step->is_current_step() ) {
@@ -1194,9 +1196,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		 */
 		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
 
-		// add css and JS for current step
-		$this->checkout->current_step->enqueue_styles_and_scripts();
-	}
+x	}
 
 
 
