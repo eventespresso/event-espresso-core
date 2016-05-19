@@ -1196,7 +1196,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		 */
 		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
 
-x	}
+	}
 
 
 
