@@ -27,11 +27,10 @@ class NumberBubblesProgressStepsDisplay implements ProgressStepsDisplayInterface
 	 */
 	public function enqueueStylesAndScripts() {
 		// core/services/progress_steps/display_strategies/number_bubbles/number_bubbles.css
-		wp_register_style(
+		wp_enqueue_style(
 			'ee_progress_steps_display_number_bubbles',
 			plugin_dir_url( __FILE__ ) . 'number_bubbles.css'
 		);
-		wp_enqueue_style( 'ee_progress_steps_display_number_bubbles' );
 	}
 
 
