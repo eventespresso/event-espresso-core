@@ -469,6 +469,8 @@ abstract class SequentialStepFormManager {
 			$this->progress_step_manager->setCurrentStep(
 				$form_step->slug()
 			);
+			// mark all previous progress steps as completed
+			$this->progress_step_manager->setPreviousStepsCompleted();
 			$this->progress_step_manager->enqueueStylesAndScripts();
 			$this->addFormActionArgs();
 			$form_step->setFormAction( $this->formAction() );
@@ -516,8 +518,6 @@ abstract class SequentialStepFormManager {
 			$current_step = $this->getCurrentStep();
 			// form processing should either throw exceptions or return true
 			if ( $current_step->process( $form_data ) ) {
-				// mark current progress step completed
-				$this->progress_step_manager->setCurrentStepCompleted();
 				// otay, we are advancing to the next step
 				$this->form_steps->next();
 				// but only if it exists
@@ -526,6 +526,7 @@ abstract class SequentialStepFormManager {
 						array( $this->formStepUrlKey() => $this->getCurrentStep()->slug() )
 					);
 				}
+				EE_Error::get_notices( false, true );
 				wp_safe_redirect( $current_step->redirectUrl() );
 				exit();
 			}
