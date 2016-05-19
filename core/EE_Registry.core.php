@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
-* EE_Registry Class
+ * EE_Registry Class
  *
  * Centralized Application Data Storage and Management
  *
@@ -1069,7 +1069,7 @@ class EE_Registry {
 		EEH_Activation::reset();
 		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
-		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
+		unset( $instance->LIB->EE_Data_Migration_Manager );
 		$instance->LIB = new stdClass();
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
