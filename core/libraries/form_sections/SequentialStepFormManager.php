@@ -511,8 +511,13 @@ abstract class SequentialStepFormManager {
 	 */
 	public function processCurrentStepForm( $form_data = array() ) {
 		try {
-			if ( $this->getCurrentStep()->process( $form_data ) ) {
-				$current_step = $this->getCurrentStep();
+			// grab instance of current step because after calling next(),
+			// any calls to getCurrentStep() will return the "next" step because we advanced
+			$current_step = $this->getCurrentStep();
+			// form processing should either throw exceptions or return true
+			if ( $current_step->process( $form_data ) ) {
+				// mark current progress step completed
+				$this->progress_step_manager->setCurrentStepCompleted();
 				// otay, we are advancing to the next step
 				$this->form_steps->next();
 				// but only if it exists
