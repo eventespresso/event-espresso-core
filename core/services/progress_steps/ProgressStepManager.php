@@ -223,6 +223,18 @@ class ProgressStepManager {
 		);
 	}
 
+
+
+	/**
+	 * @param bool $completed
+	 * @return \EventEspresso\core\services\progress_steps\ProgressStepInterface
+	 */
+	public function setCurrentStepCompleted( $completed = true ) {
+		return $this->collection->current()->setIsCompleted( $completed );
+	}
+
+
+
 }
 
 // End of file ProgressStepManager.php
