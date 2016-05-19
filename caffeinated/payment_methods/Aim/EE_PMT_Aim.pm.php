@@ -76,6 +76,10 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				'cvv'=>new EE_CVV_Input( array(
 					'required'=>true,
 					'html_label_text' => __( 'CVV', 'event_espresso' ) ) ),
+				'thingy' => new EE_Select_Ajax_Model_Rest_Input( 
+					array(
+						'model_name' => 'Payment_Method'
+					))
 			)
 		));
 		$billing_form->add_subsections( array(

@@ -208,7 +208,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function enqueue_styles_and_scripts() {
 		$transaction = $this->checkout->transaction;
-		if( ! $transaction instanceof EE_Transaction ) {
+		//if the transaction isn't set or nothing is owed on it, don't enqueue any JS
+		if( ! $transaction instanceof EE_Transaction 
+			|| EEH_Money::compare_floats( $transaction->remaining(), 0 ) ) {
 			return;
 		}
 		foreach( EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart ) as $payment_method ) {
