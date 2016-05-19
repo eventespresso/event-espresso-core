@@ -184,6 +184,25 @@ class ProgressStepManager {
 
 
 	/**
+	 * setPreviousStepsCompleted
+	 */
+	public function setPreviousStepsCompleted() {
+		$current_current_step = $this->collection->current();
+		$this->collection->rewind();
+		while ( $this->collection->valid() ) {
+			if ( $this->collection->current() === $current_current_step ) {
+				break;
+			}
+			$this->setCurrentStepCompleted();
+			$this->collection->next();
+		}
+		$this->collection->setCurrentUsingObject( $current_current_step );
+		return false;
+	}
+
+
+
+	/**
 	 * @return ProgressStepInterface
 	 */
 	public function currentStep() {
