@@ -22,36 +22,36 @@ class ProgressStep implements ProgressStepInterface{
 
 
 	/**
-	 * @var boolean $is_current
+	 * @var boolean $current
 	 */
-	protected $is_current = false;
+	private $current = false;
 
 
 	/**
 	 * @var boolean $completed
 	 */
-	protected $completed = false;
+	private $completed = false;
 
 
 	/**
 	 * @var string $html_class
 	 */
-	protected $html_class;
+	private $html_class;
 
 	/**
 	 * @var string $id
 	 */
-	protected $id = '';
+	private $id = '';
 
 	/**
 	 * @var int $order
 	 */
-	protected $order = 0;
+	private $order = 0;
 
 	/**
 	 * @var string $text
 	 */
-	protected $text = '';
+	private $text = '';
 
 
 
@@ -77,16 +77,16 @@ class ProgressStep implements ProgressStepInterface{
 	 * @return boolean
 	 */
 	public function isCurrent() {
-		return $this->is_current;
+		return $this->current;
 	}
 
 
 
 	/**
-	 * @param boolean $is_current
+	 * @param boolean $current
 	 */
-	public function setIsCurrent( $is_current = true ) {
-		$this->is_current = filter_var( $is_current, FILTER_VALIDATE_BOOLEAN );
+	public function setIsCurrent( $current = true ) {
+		$this->current = filter_var( $current, FILTER_VALIDATE_BOOLEAN );
 	}
 
 
@@ -94,7 +94,7 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * @return boolean
 	 */
-	public function completed() {
+	public function isCompleted() {
 		return $this->completed;
 	}
 
@@ -103,7 +103,7 @@ class ProgressStep implements ProgressStepInterface{
 	/**
 	 * @param boolean $completed
 	 */
-	public function setCompleted( $completed = true ) {
+	public function setIsCompleted( $completed = true ) {
 		$this->completed = filter_var( $completed, FILTER_VALIDATE_BOOLEAN );
 	}
 
@@ -160,7 +160,13 @@ class ProgressStep implements ProgressStepInterface{
 	 * @return string
 	 */
 	public function htmlClass() {
-		return $this->is_current ? $this->html_class . ' progress-step-active' : $this->html_class;
+		$html_class = $this->html_class;
+		if ( $this->current ) {
+			$html_class .= ' progress-step-active';
+		} else if ( $this->completed ) {
+			$html_class .= ' progress-step-completed';
+		}
+		return $html_class;
 	}
 
 
