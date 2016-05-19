@@ -207,6 +207,19 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return void
 	 */
 	public function enqueue_styles_and_scripts() {
+		$transaction = $this->checkout->transaction;
+		if( ! $transaction instanceof EE_Transaction ) {
+			return;
+		}
+		foreach( EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart ) as $payment_method ) {
+			$type_obj = $payment_method->type_obj();
+			if( $type_obj instanceof EE_PMT_Base ) {
+				$billing_form = $type_obj->generate_new_billing_form( $transaction );
+				if( $billing_form instanceof EE_Form_Section_Proper ) {
+					$billing_form->enqueue_js();
+				}
+			}
+		}
 	}
 
 
