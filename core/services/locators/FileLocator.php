@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\services\locators;
 
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
 use FilesystemIterator;
 use GlobIterator;
 
@@ -36,7 +36,7 @@ class FileLocator extends Locator {
 
 	/**
 	 * @param string $file_mask
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function setFileMask( $file_mask ) {
 		if ( ! is_string( $file_mask ) ) {
@@ -75,7 +75,7 @@ class FileLocator extends Locator {
 	 * @access public
 	 * @param array|string $directory_paths
 	 * @return \FilesystemIterator
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function locate( $directory_paths ) {
 		if ( ! ( is_string( $directory_paths ) || is_array( $directory_paths ) ) ) {
