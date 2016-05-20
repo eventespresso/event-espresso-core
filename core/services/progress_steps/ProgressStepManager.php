@@ -2,10 +2,10 @@
 namespace EventEspresso\core\services\progress_steps;
 
 use EE_Request;
-use EventEspresso\Core\Exceptions\InvalidClassException;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
-use EventEspresso\Core\Exceptions\InvalidIdentifierException;
-use EventEspresso\Core\Exceptions\InvalidInterfaceException;
+use  EventEspresso\core\exceptions\InvalidClassException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidIdentifierException;
+use  EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\progress_steps\display_strategies\ProgressStepsDisplayInterface;
