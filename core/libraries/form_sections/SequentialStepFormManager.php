@@ -3,12 +3,11 @@ namespace EventEspresso\core\libraries\form_sections;
 
 use EE_Error;
 use EE_Request;
-use EventEspresso\Core\Exceptions\BaseException;
-use EventEspresso\Core\Exceptions\InvalidClassException;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
-use EventEspresso\Core\Exceptions\InvalidEntityException;
-use EventEspresso\Core\Exceptions\InvalidIdentifierException;
-use EventEspresso\Core\Exceptions\InvalidInterfaceException;
+use  EventEspresso\core\exceptions\InvalidClassException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidEntityException;
+use  EventEspresso\core\exceptions\InvalidIdentifierException;
+use  EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\progress_steps\ProgressStep;
 use EventEspresso\core\services\progress_steps\ProgressStepCollection;
@@ -106,7 +105,6 @@ abstract class SequentialStepFormManager {
 	 * @param string     $progress_step_style
 	 * @throws InvalidDataTypeException
 	 * @throws InvalidArgumentException
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
 	 */
 	public function __construct(
 		$base_url,
@@ -128,8 +126,7 @@ abstract class SequentialStepFormManager {
 
 	/**
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function baseUrl() {
 		if ( strpos( $this->base_url, $this->getCurrentStep()->slug() ) === false ) {
@@ -212,13 +209,23 @@ abstract class SequentialStepFormManager {
 
 	/**
 	 * @return void
+	 * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
 	 * @throws InvalidDataTypeException
-	 * @throws BaseException
 	 */
 	protected function setCurrentStepFromRequest() {
 		$current_step_slug = $this->request()->get( $this->formStepUrlKey(), $this->defaultFormStep() );
 		if ( ! $this->form_steps->setCurrent( $current_step_slug ) ) {
-			throw new BaseException( 'Form Step could not be set' );
+			throw new InvalidIdentifierException(
+				$current_step_slug,
+				$this->defaultFormStep(),
+				$message = sprintf(
+					__(
+						'The "%1$s" form step could not be set.',
+						'event_espresso'
+					),
+					$current_step_slug
+				)
+			);
 		}
 	}
 
@@ -226,8 +233,7 @@ abstract class SequentialStepFormManager {
 
 	/**
 	 * @return SequentialStepFormInterface
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function getCurrentStep() {
 		return $this->form_steps->current();
@@ -237,8 +243,7 @@ abstract class SequentialStepFormManager {
 
 	/**
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function formAction() {
 		if ( ! is_string( $this->form_action ) || empty( $this->form_action ) ) {
@@ -265,7 +270,6 @@ abstract class SequentialStepFormManager {
 	/**
 	 * @param array $form_action_args
 	 * @throws InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
 	 */
 	public function addFormActionArgs( $form_action_args = array() ) {
 		if ( ! is_array( $form_action_args ) ) {
@@ -343,7 +347,6 @@ abstract class SequentialStepFormManager {
 	/**
 	 * @param Collection $progress_steps_collection
 	 * @return ProgressStepManager
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
 	 * @throws InvalidEntityException
 	 * @throws InvalidDataTypeException
 	 * @throws InvalidClassException
@@ -380,7 +383,6 @@ abstract class SequentialStepFormManager {
 
 
 	/**
-	 * @throws BaseException
 	 * @throws InvalidClassException
 	 * @throws InvalidDataTypeException
 	 * @throws InvalidEntityException
@@ -396,7 +398,6 @@ abstract class SequentialStepFormManager {
 
 	/**
 	 * @param array $form_data
-	 * @throws BaseException
 	 * @throws InvalidClassException
 	 * @throws InvalidDataTypeException
 	 * @throws InvalidEntityException
@@ -417,7 +418,6 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidEntityException
 	 * @throws InvalidInterfaceException
 	 * @throws InvalidIdentifierException
-	 * @throws BaseException
 	 * @throws InvalidArgumentException
 	 */
 	public function buildCurrentStepFormForDisplay() {
@@ -438,7 +438,6 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidEntityException
 	 * @throws InvalidInterfaceException
 	 * @throws InvalidIdentifierException
-	 * @throws BaseException
 	 * @throws InvalidArgumentException
 	 */
 	public function buildCurrentStepFormForProcessing() {
@@ -450,7 +449,6 @@ abstract class SequentialStepFormManager {
 	/**
 	 * @param bool $for_display
 	 * @return \EventEspresso\core\libraries\form_sections\SequentialStepFormInterface
-	 * @throws BaseException
 	 * @throws InvalidIdentifierException
 	 * @throws InvalidClassException
 	 * @throws InvalidDataTypeException
@@ -507,7 +505,6 @@ abstract class SequentialStepFormManager {
 	/**
 	 * @param array $form_data
 	 * @return bool
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
 	 * @throws InvalidArgumentException
 	 * @throws InvalidDataTypeException
 	 */
@@ -549,8 +546,7 @@ abstract class SequentialStepFormManager {
 	/**
 	 * @param bool $return_as_string
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function displayCurrentStepForm( $return_as_string = true ) {
 		if ( $return_as_string ) {
