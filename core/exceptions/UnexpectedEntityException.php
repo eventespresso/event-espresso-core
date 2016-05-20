@@ -1,8 +1,6 @@
 <?php
 namespace EventEspresso\Core\Exceptions;
 
-use DomainException;
-
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -17,7 +15,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class UnexpectedEntityException extends DomainException {
+class UnexpectedEntityException extends \UnexpectedValueException {
 
 	/**
 	 * UnexpectedEntityException constructor

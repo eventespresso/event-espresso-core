@@ -1,8 +1,6 @@
 <?php
 namespace EventEspresso\Core\Exceptions;
 
-use UnexpectedValueException;
-
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -18,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class EntityNotFoundException extends UnexpectedValueException {
+class EntityNotFoundException extends \UnexpectedValueException {
 
 
 	/**
