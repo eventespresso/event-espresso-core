@@ -12,6 +12,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * interface SequentialStepFormInterface
+ * interface for building forms that work as part of a multi-stepped sequential form
  *
  * @package       Event Espresso
  * @author        Brent Christensen
