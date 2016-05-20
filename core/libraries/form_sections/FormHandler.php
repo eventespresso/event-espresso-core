@@ -131,6 +131,20 @@ abstract class FormHandler implements FormHandlerInterface{
 
 
 	/**
+	 * @return array
+	 */
+	public static function getFormConfigConstants() {
+		return array(
+			FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
+			FormHandler::ADD_FORM_TAGS_ONLY,
+			FormHandler::ADD_FORM_SUBMIT_ONLY,
+			FormHandler::DO_NOT_SETUP_FORM,
+		);
+	}
+
+
+
+	/**
 	 * @param bool $for_display
 	 * @return \EE_Form_Section_Proper
 	 * @throws \EE_Error
