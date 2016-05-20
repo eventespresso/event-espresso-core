@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\Core\Exceptions;
+namespace EventEspresso\core\exceptions;
 
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
