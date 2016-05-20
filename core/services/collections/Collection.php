@@ -10,11 +10,12 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 /**
  * Class Collection
- * Description
+ * class for managing a set of entities that all adhere to the same interface
+ * unofficially follows Interop\Container\ContainerInterface
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
  class Collection extends \SplObjectStorage implements CollectionInterface {
 
