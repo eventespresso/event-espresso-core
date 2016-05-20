@@ -2,7 +2,7 @@
 namespace EventEspresso\core\libraries\form_sections;
 
 use DomainException;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
 use InvalidArgumentException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
