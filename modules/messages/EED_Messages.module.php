@@ -804,7 +804,7 @@ class EED_Messages  extends EED_Module {
 	 * @param  string $context This should correspond with a valid context for the message type
 	 * @param  string $messenger This should correspond with a valid messenger.
 	 * @param bool 	  $send true we will do a test send using the messenger delivery, false we just do a regular preview
-	 * @return string          The body of the message.
+	 * @return string|bool          The body of the message or if send is requested, sends.
 	 */
 	public static function preview_message( $type, $context, $messenger, $send = false ) {
 		self::_load_controller();
@@ -815,7 +815,7 @@ class EED_Messages  extends EED_Module {
 			$context,
 			true
 		);
-		$generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview( $mtg );
+		$generated_preview_queue = self::$_MSG_PROCESSOR->generate_for_preview( $mtg, $send );
 		if ( $generated_preview_queue instanceof EE_Messages_Queue ) {
 			return $generated_preview_queue->get_message_repository()->current()->content();
 		} else {

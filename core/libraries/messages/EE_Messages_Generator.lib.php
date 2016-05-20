@@ -401,6 +401,11 @@ class EE_Messages_Generator {
 					);
 					$generated_count++;
 				}
+
+				//if the current MSG being generated is for a test send then we'll only use ONE message in the generation.
+				if ( $this->_generation_queue->get_message_repository()->is_test_send() ) {
+					break 2;
+				}
 			}
 		}
 
