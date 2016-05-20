@@ -18,7 +18,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-interface SequentialStepFormInterface extends FormInterface {
+interface SequentialStepFormInterface extends FormHandlerInterface {
 
 
 	/**
