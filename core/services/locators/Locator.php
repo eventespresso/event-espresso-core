@@ -2,7 +2,7 @@
 namespace EventEspresso\core\services\locators;
 
 use Countable;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
 use FilesystemIterator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -33,7 +33,7 @@ abstract class Locator implements LocatorInterface, Countable {
 	 *
 	 * @access public
 	 * @param array $flags controls how files are found and/or file data is returned
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function __construct( $flags = array() ) {
 		if ( empty( $flags ) ) {
@@ -52,7 +52,7 @@ abstract class Locator implements LocatorInterface, Countable {
 	 * @see    http://php.net/manual/en/class.filesystemiterator.php#filesystemiterator.constants
 	 * @access public
 	 * @param array $flags
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function setFlags( $flags ) {
 		if ( ! is_array( $flags ) ) {
