@@ -13,7 +13,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class SequentialStepForm
- * Description
+ * abstract parent class for building a form that is one part of a multi-stepped sequential form.
+ * it handles storing data about the form step order and where the form should redirect to when completed
  *
  * @package       Event Espresso
  * @author        Brent Christensen
