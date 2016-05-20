@@ -12,7 +12,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class ProgressStepCollection
- * Description
+ * an SplObjectStorage container for objects that implement
+ * \EventEspresso\core\services\progress_steps\ProgressStepInterface
  *
  * @package       Event Espresso
  * @subpackage    core
