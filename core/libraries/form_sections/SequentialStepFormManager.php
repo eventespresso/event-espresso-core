@@ -112,7 +112,7 @@ abstract class SequentialStepFormManager {
 		$base_url,
 		$default_form_step,
 		$form_action = '',
-		$form_config = Form::ADD_FORM_TAGS_AND_SUBMIT,
+		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
 		$progress_step_style = 'number_bubbles',
 		EE_Request $request
 	) {
