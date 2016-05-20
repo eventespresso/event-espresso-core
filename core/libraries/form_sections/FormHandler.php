@@ -7,8 +7,8 @@ use InvalidArgumentException;
 use LogicException;
 use DomainException;
 use EE_Form_Section_Proper;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
-use EventEspresso\Core\Exceptions\InvalidFormSubmissionException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidFormSubmissionException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -330,7 +330,7 @@ abstract class FormHandler implements FormHandlerInterface{
 
 	/**
 	 * @param array $form_args
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 * @throws \InvalidArgumentException
 	 */
 	public function addFormActionArgs( $form_args = array() ) {
