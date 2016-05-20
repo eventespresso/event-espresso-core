@@ -20,7 +20,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-abstract class SequentialStepForm extends Form implements SequentialStepFormInterface {
+abstract class SequentialStepForm extends FormHandler implements SequentialStepFormInterface {
 
 	/**
 	 * numerical value used for sorting form steps
@@ -65,7 +65,7 @@ abstract class SequentialStepForm extends Form implements SequentialStepFormInte
 		$admin_name,
 		$slug,
 		$form_action = '',
-		$form_config = Form::ADD_FORM_TAGS_AND_SUBMIT
+		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT
 	) {
 		$this->setOrder( $order );
 		parent::__construct( $form_name, $admin_name, $slug, $form_action, $form_config );
