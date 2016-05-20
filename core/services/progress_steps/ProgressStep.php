@@ -11,12 +11,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class ProgressStep
- * Description
+ * class primarily intended for use with \EventEspresso\core\services\progress_steps\ProgressStepManager
+ * that defines the details of a particular form step and it's current state within a sequence of form steps
  *
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
 class ProgressStep implements ProgressStepInterface{
 
@@ -161,9 +162,9 @@ class ProgressStep implements ProgressStepInterface{
 	 */
 	public function htmlClass() {
 		$html_class = $this->html_class;
-		if ( $this->current ) {
+		if ( $this->isCurrent() ) {
 			$html_class .= ' progress-step-active';
-		} else if ( $this->completed ) {
+		} else if ( $this->isCompleted() ) {
 			$html_class .= ' progress-step-completed';
 		}
 		return $html_class;
