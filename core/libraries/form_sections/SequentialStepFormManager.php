@@ -349,7 +349,7 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidClassException
 	 * @throws InvalidInterfaceException
 	 */
-	protected function GenerateProgressSteps( Collection $progress_steps_collection ) {
+	protected function generateProgressSteps( Collection $progress_steps_collection ) {
 		$current_step = $this->getCurrentStep();
 		/** @var SequentialStepForm $form_step */
 		foreach ( $this->form_steps as $form_step ) {
@@ -463,7 +463,7 @@ abstract class SequentialStepFormManager {
 		$this->setCurrentStepFromRequest();
 		$form_step = $this->getCurrentStep();
 		if ( $for_display && $form_step->displayable() ) {
-			$this->progress_step_manager = $this->GenerateProgressSteps(
+			$this->progress_step_manager = $this->generateProgressSteps(
 				$this->getProgressStepsCollection()
 			);
 			$this->progress_step_manager->setCurrentStep(
