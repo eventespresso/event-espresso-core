@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\Core\Exceptions;
+namespace EventEspresso\core\exceptions;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -48,7 +48,7 @@ class BaseException extends \Exception {
 	 * @param string     $message
 	 * @param int        $code
 	 * @param \Exception $previous
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
+	 * @throws \EventEspresso\core\exceptions\BaseException
 	 */
 	public function __construct( $message, $code = 0, \Exception $previous = null ) {
 		parent::__construct( $message, $code, $previous );
@@ -61,7 +61,7 @@ class BaseException extends \Exception {
 
 	/**
 	 * @access public
-	 * @throws \EventEspresso\Core\Exceptions\BaseException
+	 * @throws \EventEspresso\core\exceptions\BaseException
 	 */
 	public function get_error() {
 		if ( apply_filters( 'FHEE__BaseException__get_error__show_normal_exceptions', false ) ) {
