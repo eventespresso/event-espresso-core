@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\locators;
 
-use EventEspresso\Core\Exceptions\InvalidClassException;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidClassException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\Core\Psr4Autoloader;
 use FilesystemIterator;
 
@@ -38,7 +38,7 @@ class FqcnLocator extends Locator {
 	 * @access protected
 	 * @param string $namespace
 	 * @param string $namespace_base_dir
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	protected function setNamespace( $namespace, $namespace_base_dir ) {
 		if ( ! is_string( $namespace ) ) {
@@ -79,8 +79,8 @@ class FqcnLocator extends Locator {
 	 * @access public
 	 * @param string|array $namespaces
 	 * @return FilesystemIterator
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function locate( $namespaces ) {
 		if ( ! ( is_string( $namespaces ) || is_array( $namespaces ) ) ) {
@@ -104,8 +104,8 @@ class FqcnLocator extends Locator {
 	 * @access protected
 	 * @param array $partial_namespace
 	 * @return FilesystemIterator
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	protected function FindFQCNsByNamespace( $partial_namespace ) {
 		$iterator = new FilesystemIterator(
@@ -141,8 +141,8 @@ class FqcnLocator extends Locator {
 	 * @access protected
 	 * @param  string $partial_namespace almost fully qualified class name ?
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
 	 */
 	protected function getDirectoryFromPartialNamespace( $partial_namespace ) {
 		if ( empty( $partial_namespace ) ) {
