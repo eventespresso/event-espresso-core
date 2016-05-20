@@ -9,6 +9,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Interface ProgressStepsConfigInterface
+ * interface for persisting the state of a form's progress
  *
  * @package EventEspresso\core\services\progress_steps
  */
