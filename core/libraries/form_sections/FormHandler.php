@@ -529,17 +529,17 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * handles processing the form submission
 	 * returns true or false depending on whether the form was processed successfully or not
 	 *
-	 * @param array $form_data
+	 * @param array $submitted_form_data
 	 * @return bool
 	 * @throws \EE_Error
 	 * @throws \LogicException
 	 * @throws InvalidFormSubmissionException
 	 */
-	public function process( $form_data = array() ) {
-		if ( ! $this->form( false )->was_submitted( $form_data ) ) {
+	public function process( $submitted_form_data = array() ) {
+		if ( ! $this->form( false )->was_submitted( $submitted_form_data ) ) {
 			throw new InvalidFormSubmissionException( $this->form_name );
 		}
-		$this->form->receive_form_submission( $form_data );
+		$this->form->receive_form_submission( $submitted_form_data );
 		if ( ! $this->form->is_valid() ) {
 			throw new InvalidFormSubmissionException(
 				$this->form_name,
