@@ -170,10 +170,10 @@ interface FormHandlerInterface {
 	 * handles processing the form submission
 	 * returns true or false depending on whether the form was processed successfully or not
 	 *
-	 * @param array $form_data
+	 * @param array $submitted_form_data
 	 * @return bool
 	 */
-	public function process( $form_data = array() );
+	public function process( $submitted_form_data = array() );
 
 
 
