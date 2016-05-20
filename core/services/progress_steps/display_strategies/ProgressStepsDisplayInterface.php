@@ -9,8 +9,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Interface ProgressStepsDisplayInterface
+ * interface for building classes that work with \EventEspresso\core\services\progress_steps\ProgressStepManager
+ * and handle displaying the Progress Steps using a particular styling or theme
  *
- * @package EventEspresso\core\services\progress_steps\display_strategies
+*@package EventEspresso\core\services\progress_steps\display_strategies
  */
 interface ProgressStepsDisplayInterface {
 
