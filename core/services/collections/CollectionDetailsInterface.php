@@ -9,6 +9,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Interface CollectionDetailsInterface
+ * interface for defining classes that can be used for loading objects into a
+ * \EventEspresso\core\services\collections\Collection
  *
  * @package EventEspresso\core\services\collections
  */
