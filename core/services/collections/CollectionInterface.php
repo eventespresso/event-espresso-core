@@ -9,6 +9,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Interface CollectionInterface
+ * interface for classes that manage a set of entities that all adhere to the same interface
+ * unofficially follows Interop\Container\ContainerInterface
  *
  * @package EventEspresso\core\services\collections
  */
