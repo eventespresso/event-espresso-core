@@ -22,7 +22,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author  Brent Christensen
  * @since   4.9.0
  */
-interface FormInterface {
+interface FormHandlerInterface {
 
 	/**
 	 * the absolute top level form section being used on the page

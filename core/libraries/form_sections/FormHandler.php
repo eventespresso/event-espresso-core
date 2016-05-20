@@ -17,17 +17,18 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 /**
- * Class Form
+ * Class FormHandler
  * abstract parent class for handling the last mile of boilerplate client code required
  * for displaying and processing a typical form.
  * allow your form to integrate with other systems that utilize the
  * \EventEspresso\core\libraries\form_sections\FormInterface interface
+
  *
- * @package       Event Espresso
+*@package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-abstract class Form implements FormInterface{
+abstract class FormHandler implements FormHandlerInterface{
 
 	/**
 	 * will add opening and closing HTML form tags as well as a submit button
@@ -118,7 +119,7 @@ abstract class Form implements FormInterface{
 		$admin_name,
 		$slug,
 		$form_action = '',
-		$form_config = Form::ADD_FORM_TAGS_AND_SUBMIT
+		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT
 	) {
 		$this->setFormName( $form_name );
 		$this->setAdminName( $admin_name );
@@ -142,8 +143,8 @@ abstract class Form implements FormInterface{
 		if ( $for_display ) {
 			$form_config = $this->formConfig();
 			if (
-				$form_config === Form::ADD_FORM_TAGS_AND_SUBMIT
-				|| $form_config === Form::ADD_FORM_SUBMIT_ONLY
+				$form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+				|| $form_config === FormHandler::ADD_FORM_SUBMIT_ONLY
 			) {
 				$this->appendSubmitButton();
 				$this->clearFormButtonFloats();
@@ -354,10 +355,10 @@ abstract class Form implements FormInterface{
 			! in_array(
 				$form_config,
 				array(
-					Form::ADD_FORM_TAGS_AND_SUBMIT,
-					Form::ADD_FORM_TAGS_ONLY,
-					Form::ADD_FORM_SUBMIT_ONLY,
-					Form::DO_NOT_SETUP_FORM
+					FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
+					FormHandler::ADD_FORM_TAGS_ONLY,
+					FormHandler::ADD_FORM_SUBMIT_ONLY,
+					FormHandler::DO_NOT_SETUP_FORM
 				)
 			)
 		) {
@@ -507,15 +508,15 @@ abstract class Form implements FormInterface{
 		$form_html = '';
 		$form_config = $this->formConfig();
 		if (
-			$form_config === Form::ADD_FORM_TAGS_AND_SUBMIT
-			|| $form_config === Form::ADD_FORM_TAGS_ONLY
+			$form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+			|| $form_config === FormHandler::ADD_FORM_TAGS_ONLY
 		) {
 			$form_html .= $this->form()->form_open( $this->formAction() );
 		}
 		$form_html .= $this->form()->get_html();
 		if (
-			$form_config === Form::ADD_FORM_TAGS_AND_SUBMIT
-			|| $form_config === Form::ADD_FORM_TAGS_ONLY
+			$form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+			|| $form_config === FormHandler::ADD_FORM_TAGS_ONLY
 		) {
 			$form_html .= $this->form()->form_close();
 		}
@@ -559,5 +560,5 @@ abstract class Form implements FormInterface{
 
 
 }
-// End of file Form.php
-// Location: /Form.php
+// End of file FormHandler.php
+// Location: /FormHandler.php
