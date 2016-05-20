@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\Core;
+namespace EventEspresso\core;
 
 /**
  * Class Psr4Autoloader
