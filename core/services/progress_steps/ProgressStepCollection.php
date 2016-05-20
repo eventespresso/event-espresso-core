@@ -25,7 +25,7 @@ class ProgressStepCollection extends Collection {
 	/**
 	 * ProgressStepCollection constructor.
 	 *
-	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
 	 */
 	public function __construct() {
 		parent::__construct( '\EventEspresso\core\services\progress_steps\ProgressStepInterface' );
