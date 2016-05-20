@@ -1,10 +1,10 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
-use EventEspresso\Core\Exceptions\InvalidClassException;
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
-use EventEspresso\Core\Exceptions\InvalidEntityException;
-use EventEspresso\Core\Exceptions\InvalidFilePathException;
+use  EventEspresso\core\exceptions\InvalidClassException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidEntityException;
+use  EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\services\locators\LocatorInterface;
 use EventEspresso\core\services\locators\FileLocator;
 
@@ -69,11 +69,11 @@ class CollectionLoader {
 	 * @param CollectionDetailsInterface $collection_details
 	 * @param CollectionInterface        $collection
 	 * @param LocatorInterface           $file_locator
-	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	 */
 	public function __construct(
 		CollectionDetailsInterface $collection_details,
@@ -104,10 +104,10 @@ class CollectionLoader {
 
 	/**
 	 * @access protected
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	 */
 	protected function loadAllFromFilepaths() {
 		if ( ! $this->file_locator instanceof FileLocator ) {
@@ -139,10 +139,10 @@ class CollectionLoader {
 	 * @access protected
 	 * @param  string $filepath
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
 	 */
 	protected function loadClassFromFilepath( $filepath ) {
 		if ( ! is_string( $filepath ) ) {
@@ -171,7 +171,7 @@ class CollectionLoader {
 	 * @param        $entity
 	 * @param  mixed $identifier
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	 */
 	protected function addEntityToCollection( $entity, $identifier ) {
 		do_action(
@@ -218,7 +218,7 @@ class CollectionLoader {
 	 * @param        $entity
 	 * @param  mixed $identifier
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	 */
 	protected function setIdentifier( $entity, $identifier ) {
 		if ( $this->collection_details->identifierType() === CollectionDetails::ID_OBJECT_HASH ) {
@@ -255,9 +255,9 @@ class CollectionLoader {
 	 * loadFromFQCNs
 	 *
 	 * @access protected
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	 */
 	protected function loadFromFQCNs() {
 		$FQCNs = $this->collection_details->getCollectionFQCNs();
@@ -280,9 +280,9 @@ class CollectionLoader {
 	 * @access protected
 	 * @param  string $FQCN Fully Qualified Class Name
 	 * @return string
-	 * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidEntityException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
 	 */
 	protected function loadClassFromFQCN( $FQCN ) {
 		if ( ! is_string( $FQCN ) ) {
