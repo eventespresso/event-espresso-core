@@ -9,8 +9,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Interface ProgressStepInterface
+ * interface for building classes that work with \EventEspresso\core\services\progress_steps\ProgressStepManager
+ * and define the details of a particular form step and it's current state within a sequence of form steps
  *
- * @package EventEspresso\core\services\progress_steps
+*@package EventEspresso\core\services\progress_steps
  */
 interface ProgressStepInterface {
 
