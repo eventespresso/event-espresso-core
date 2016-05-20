@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
-use EventEspresso\Core\Exceptions\InvalidEntityException;
-use EventEspresso\Core\Exceptions\InvalidInterfaceException;
+use  EventEspresso\core\exceptions\InvalidEntityException;
+use  EventEspresso\core\exceptions\InvalidInterfaceException;
 use LimitIterator;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -34,7 +34,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * Collection constructor
 	  *
 	  * @param string $collection_interface
-	  * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	  * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
 	  */
 	 public function __construct( $collection_interface ) {
 		 $this->setCollectionInterface( $collection_interface );
@@ -47,7 +47,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  *
 	  * @access protected
 	  * @param  string $collection_interface
-	  * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	  * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
 	  */
 	 protected function setCollectionInterface( $collection_interface ) {
 		 if ( ! ( interface_exists( $collection_interface ) || class_exists( $collection_interface ) ) ) {
@@ -68,7 +68,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * @param        $object
 	  * @param  mixed $identifier
 	  * @return bool
-	  * @throws \EventEspresso\Core\Exceptions\InvalidEntityException
+	  * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	  */
 	 public function add( $object, $identifier = null ) {
 		 if ( ! $object instanceof $this->collection_interface ) {
@@ -260,6 +260,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 				 return $index;
 			 }
 		 }
+		 return false;
 	 }
 
 
