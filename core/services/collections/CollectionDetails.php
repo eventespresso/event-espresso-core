@@ -1,10 +1,10 @@
 <?php
 namespace EventEspresso\core\services\collections;
 
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
-use EventEspresso\Core\Exceptions\InvalidFilePathException;
-use EventEspresso\Core\Exceptions\InvalidIdentifierException;
-use EventEspresso\Core\Exceptions\InvalidInterfaceException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidFilePathException;
+use  EventEspresso\core\exceptions\InvalidIdentifierException;
+use  EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\locators\FqcnLocator;
 use EventEspresso\core\services\locators\LocatorInterface;
 
@@ -154,11 +154,11 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * @param string           $identifier_type
 	 * @param string           $identifier_callback
 	 * @param LocatorInterface $file_locator
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+	 * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
 	 */
 	public function __construct(
 		$collection_name,
@@ -195,7 +195,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * @access protected
 	 * @param string $collection_interface
-	 * @throws \EventEspresso\Core\Exceptions\InvalidInterfaceException
+	 * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
 	 */
 	protected function setCollectionInterface( $collection_interface ) {
 		if ( ! ( interface_exists( $collection_interface ) || class_exists( $collection_interface ) ) ) {
@@ -223,7 +223,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 *
 	 * @access protected
 	 * @param string $collection_name
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	protected function setCollectionName( $collection_name ) {
 		if ( ! is_string( $collection_name ) ) {
@@ -251,7 +251,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * @access protected
 	 * @param string $identifier_type
-	 * @throws \EventEspresso\Core\Exceptions\InvalidIdentifierException
+	 * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
 	 */
 	protected function setIdentifierType( $identifier_type ) {
 		if (
@@ -284,7 +284,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * @access protected
 	 * @param string $identifier_callback
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	protected function setIdentifierCallback( $identifier_callback = 'identifier' ) {
 		if ( ! is_string( $identifier_callback ) ) {
@@ -311,7 +311,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 *
 	 * @access protected
 	 * @param string $file_mask
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	protected function setFileMasks( $file_mask ) {
 		$this->file_mask = ! empty( $file_mask ) ? $file_mask : '*.php';
@@ -337,8 +337,8 @@ class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * @access public
 	 * @param string|array $collection_FQCNs
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function setCollectionFQCNs( $collection_FQCNs ) {
 		foreach ( (array) $collection_FQCNs as $collection_FQCN ) {
@@ -360,8 +360,8 @@ class CollectionDetails implements CollectionDetailsInterface {
 	 * @access protected
 	 * @param  string $partial_FQCN
 	 * @return array
-	 * @throws \EventEspresso\Core\Exceptions\InvalidDataTypeException
-	 * @throws \EventEspresso\Core\Exceptions\InvalidClassException
+	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
+	 * @throws \EventEspresso\core\exceptions\InvalidClassException
 	 */
 	protected function getFQCNsFromPartialNamespace( $partial_FQCN ) {
 		if ( ! $this->file_locator instanceof FqcnLocator ) {
@@ -386,7 +386,7 @@ class CollectionDetails implements CollectionDetailsInterface {
 	/**
 	 * @access public
 	 * @param string|array $collection_paths
-	 * @throws \EventEspresso\Core\Exceptions\InvalidFilePathException
+	 * @throws \EventEspresso\core\exceptions\InvalidFilePathException
 	 */
 	public function setCollectionPaths( $collection_paths ) {
 		foreach ( (array) $collection_paths as $collection_path ) {
