@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\services\progress_steps;
 
-use EventEspresso\Core\Exceptions\InvalidDataTypeException;
+use  EventEspresso\core\exceptions\InvalidDataTypeException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
