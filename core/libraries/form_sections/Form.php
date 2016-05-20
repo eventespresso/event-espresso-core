@@ -18,7 +18,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class Form
- * Description
+ * abstract parent class for handling the last mile of boilerplate client code required
+ * for displaying and processing a typical form.
+ * allow your form to integrate with other systems that utilize the
+ * \EventEspresso\core\libraries\form_sections\FormInterface interface
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -91,6 +94,8 @@ abstract class Form implements FormInterface{
 	private $form_config;
 
 	/**
+	 * the absolute top level form section being used on the page
+	 *
 	 * @var \EE_Form_Section_Proper $form
 	 */
 	private $form;
