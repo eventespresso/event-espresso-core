@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\Core\Exceptions;
+namespace EventEspresso\core\exceptions;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -16,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class InvalidInterfaceException extends BaseException {
+class InvalidInterfaceException extends \DomainException {
 
 	/**
 	 * InvalidInterfaceException constructor.
