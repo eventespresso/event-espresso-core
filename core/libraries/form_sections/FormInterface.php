@@ -12,6 +12,12 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Interface FormInterface
  *
+ * The Event Espresso Form Sections library located at "\core\libraries\form_sections\"
+ * gives you everything you need to build a form and process it's data upon submission.
+ * This interface is for building classes that handle the last mile of boilerplate client code
+ * for displaying and processing a typical form, and allow your forms to integrate
+ * with other systems that utilize this interface
+ *
  * @package Event Espresso
  * @author  Brent Christensen
  * @since   4.9.0
@@ -19,6 +25,8 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface FormInterface {
 
 	/**
+	 * the absolute top level form section being used on the page
+	 *
 	 * @return \EE_Form_Section_Proper
 	 */
 	public function form();
@@ -98,6 +106,9 @@ interface FormInterface {
 
 
 	/**
+	 * if data regarding the form's state needs to be persisted,
+	 * then this method can be used to retrieve that data
+	 *
 	 * @return string
 	 */
 	public function formConfig();
@@ -105,6 +116,9 @@ interface FormInterface {
 
 
 	/**
+	 * if data regarding the form's state needs to be persisted,
+	 * the this method can be used for setting the persisted data locally
+	 *
 	 * @param string $form_config
 	 */
 	public function setFormConfig( $form_config );
