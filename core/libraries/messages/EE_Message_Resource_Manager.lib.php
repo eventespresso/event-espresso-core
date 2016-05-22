@@ -140,8 +140,8 @@ class EE_Message_Resource_Manager {
 		$this->_initialized = true;
 		$this->_messenger_collection_loader->load_messengers_from_folder();
 		$this->_message_type_collection_loader->load_message_types_from_folder();
-		$this->_set_active_messengers_and_message_types();
 		$this->get_has_activated_messengers_option( true );
+		$this->_set_active_messengers_and_message_types();
 	}
 
 
