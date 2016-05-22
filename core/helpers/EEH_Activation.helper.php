@@ -1415,7 +1415,7 @@ class EEH_Activation {
 	 * @throws EE_Error
 	 */
 	protected static function _activate_and_generate_default_messengers_and_message_templates(
-		EE_message_Resource_Manager $message_resource_manager
+		EE_Message_Resource_Manager $message_resource_manager
 	) {
 		/** @type EE_messenger[] $messengers_to_generate */
 		$messengers_to_generate = self::_get_default_messengers_to_generate_on_activation( $message_resource_manager );
