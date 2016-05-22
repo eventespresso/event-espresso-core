@@ -1092,6 +1092,8 @@ class EE_Registry {
 
 		//handle of objects cached on LIB
 		unset( $instance->LIB->EE_Data_Migration_Manager );
+		unset( $instance->LIB->EE_Messages_Processor );
+		unset( $instance->LIB->EE_Messages_Queue );
 
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
