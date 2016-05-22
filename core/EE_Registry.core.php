@@ -1061,6 +1061,8 @@ class EE_Registry {
 	 * - $NET_CFG (EE_Network_Config): The config is shared network wide so no need to reset.
 	 * - $REQ:  Still on the same request so no need to change.
 	 * - $CAP: There is no site specific state in the EE_Capability class.
+	 * - $SSN: Although ideally, the session should not be shared between site switches, we can't reset it because only one Session
+	 *         can be active in a single request.  Resetting could resolve in "headers already sent" errors.
 	 * - $addons:  In multisite, the state of the addons is something controlled via hooks etc in a normal request.  So
 	 *             for now, we won't reset the addons because it could break calls to an add-ons class/methods in the
 	 *             switch or on the restore.
@@ -1087,7 +1089,6 @@ class EE_Registry {
 		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
 		$instance->CART = null;
-		$instance->SSN = null;
 		$instance->MRM = null;
 
 		//handle of objects cached on LIB
