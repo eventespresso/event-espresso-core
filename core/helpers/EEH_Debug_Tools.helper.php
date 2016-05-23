@@ -346,16 +346,38 @@ class EEH_Debug_Tools{
 
 
 	/**
-	 * This basically mimics the WordPress _doing_it_wrong() function except adds our own messaging etc.  Very useful for providing helpful messages to developers when the method of doing something has been deprecated, or we want to make sure they use something the right way.
+	 * This basically mimics the WordPress _doing_it_wrong() function except adds our own messaging etc.
+	 * Very useful for providing helpful messages to developers when the method of doing something has been deprecated,
+	 * or we want to make sure they use something the right way.
 	 *
 	 * @access public
-	 * @param  string $function The function that was called
-	 * @param  string $message A message explaining what has been done incorrectly
-	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param string $function      The function that was called
+	 * @param string $message       A message explaining what has been done incorrectly
+	 * @param string $version       The version of Event Espresso where the error was added
+	 * @param string  $applies_when a version string for when you want the doing_it_wrong notice to begin appearing
+	 *                              for a deprecated function. This allows deprecation to occur during one version,
+	 *                              but not have any notices appear until a later version. This allows developers
+	 *                              extra time to update their code before notices appear.
 	 * @param int     $error_type
-	 * @uses trigger_error()
+	 * @uses   trigger_error()
 	 */
-	public function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
+	public function doing_it_wrong(
+		$function,
+		$message,
+		$version,
+		$applies_when = EVENT_ESPRESSO_VERSION,
+		$error_type = E_USER_DEPRECATED
+	) {
+		// because we swapped the parameter order around for the last two params,
+		// let's verify that some third party isn't still passing an error type value for the third param
+		if ( is_int( $applies_when ) ) {
+			$error_type = $applies_when;
+			$applies_when = EVENT_ESPRESSO_VERSION;
+		}
+		// if not displaying notices yet, then just leave
+		if ( version_compare( EVENT_ESPRESSO_VERSION, $applies_when, '<' ) ) {
+			return;
+		}
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
 		$version = $version === null ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
 		$error_message = sprintf( esc_html__('%1$s was called %2$sincorrectly%3$s. %4$s %5$s','event_espresso' ), $function, '<strong>', '</strong>', $message, $version );
