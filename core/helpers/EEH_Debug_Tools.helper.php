@@ -365,21 +365,22 @@ class EEH_Debug_Tools{
 		$function,
 		$message,
 		$version,
-		$applies_when = EVENT_ESPRESSO_VERSION,
+		$applies_when = '',
 		$error_type = E_USER_DEPRECATED
 	) {
+		$applies_when = ! empty( $applies_when ) ? $applies_when : espresso_version();
 		// because we swapped the parameter order around for the last two params,
 		// let's verify that some third party isn't still passing an error type value for the third param
 		if ( is_int( $applies_when ) ) {
 			$error_type = $applies_when;
-			$applies_when = EVENT_ESPRESSO_VERSION;
+			$applies_when = espresso_version();
 		}
 		// if not displaying notices yet, then just leave
 		if ( version_compare( EVENT_ESPRESSO_VERSION, $applies_when, '<' ) ) {
 			return;
 		}
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
-		$version = $version === null ? '' : sprintf( __('(This message was added in version %s of Event Espresso.', 'event_espresso' ), $version );
+		$version = $version === null ? '' : sprintf( __('(This message was added in version %s of Event Espresso)', 'event_espresso' ), $version );
 		$error_message = sprintf( esc_html__('%1$s was called %2$sincorrectly%3$s. %4$s %5$s','event_espresso' ), $function, '<strong>', '</strong>', $message, $version );
 
 		//don't trigger error if doing ajax, instead we'll add a transient EE_Error notice that in theory should show on the next request.
