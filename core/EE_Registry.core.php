@@ -1092,9 +1092,11 @@ class EE_Registry {
 		$instance->MRM = null;
 
 		//handle of objects cached on LIB
-		unset( $instance->LIB->EE_Data_Migration_Manager );
-		unset( $instance->LIB->EE_Messages_Processor );
-		unset( $instance->LIB->EE_Messages_Queue );
+		foreach ( $instance->_classes_to_unset_from_LIB_on_reset() as $class_name ) {
+			if ( isset( $instance->LIB->$class_name ) ) {
+				unset( $instance->LIB->$class_name );
+			}
+		}
 
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
@@ -1103,6 +1105,21 @@ class EE_Registry {
 		}
 
 		return $instance;
+	}
+
+
+
+
+	/**
+	 * Returns a filtered array of classes to unset from the $LIB property when EE_Registry::reset is called.
+	 * @return array
+	 */
+	protected function _classes_to_unset_from_LIB_on_reset() {
+		return apply_filters( 'EE_Registry___classes_to_unset_from_LIB_on_reset', array(
+			'EE_Data_Migration_Manager',
+			'EE_Messages_Processor',
+			'EE_Messages_Queue',
+		));
 	}
 
 
