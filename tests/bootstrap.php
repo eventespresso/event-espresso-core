@@ -6,6 +6,14 @@
  * @package 		Event Espresso
  * @subpackage 	Tests
  */
+error_reporting( -1 );
+set_error_handler(
+	function( $err_severity, $err_msg, $err_file, $err_line ) {
+		$err_msg = "\n$err_msg\nin file: $err_file line #: $err_line\n\n";
+		throw new \RuntimeException( $err_msg . $err_file . $err_line, $err_severity );
+	}
+);
+
 require( dirname( __FILE__ ) . '/includes/define-constants.php' );
 // load PSR4 autoloader
 require_once( EE_PLUGIN_DIR . 'core/Psr4Autoloader.php' );
