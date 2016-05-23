@@ -1145,7 +1145,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$function,
 		$message,
 		$version,
-		$applies_when = EVENT_ESPRESSO_VERSION,
+		$applies_when = '',
 		$error_type = E_USER_DEPRECATED
 	) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
