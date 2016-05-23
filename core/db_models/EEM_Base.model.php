@@ -1919,7 +1919,17 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __( 'WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"', 'event_espresso' ), $wpdb_method, var_export( $arguments_to_provide, true ) ) );
 			}
 		}elseif( $result === false ) {
-			EE_Error::add_error( sprintf( __( 'A database error has occurred. Turn on WP_DEBUG for more information.', 'event_espresso' )), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_error( 
+				sprintf( 
+					__( 'A database error has occurred. Turn on WP_DEBUG for more information.||A database error occurred doing wpdb method "%1$s", with arguments "%2$s". The error was "%3$s"', 'event_espresso' ),
+					$wpdb_method,
+					var_export( $arguments_to_provide, true ),
+					$wpdb->last_error
+				), 
+				__FILE__, 
+				__FUNCTION__, 
+				__LINE__
+			);
 		}
 		return $result;
 	}
