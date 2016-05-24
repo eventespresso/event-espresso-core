@@ -1367,13 +1367,7 @@ class EEH_Activation {
 				// (otherwise we might reactivate something user's intentionally deactivated.)
 				// we also skip if the message type is not installed.
 				if (
-					(
-						isset( $has_activated[ $active_messenger->name ] )
-						&& in_array(
-							$default_message_type_name_for_messenger,
-							$has_activated[ $active_messenger->name ]
-						)
-					)
+					$message_resource_manager->has_message_type_been_activated_for_messenger( $default_message_type_name_for_messenger, $active_messenger->name )
 					|| $message_resource_manager->is_message_type_active_for_messenger(
 						$active_messenger->name,
 						$default_message_type_name_for_messenger
@@ -1425,7 +1419,10 @@ class EEH_Activation {
 			$default_message_type_names_for_messenger = $messenger_to_generate->get_default_message_types();
 			//verify the default message types match an installed message type.
 			foreach ( $default_message_type_names_for_messenger as $key => $name ) {
-				if ( ! isset( $installed_message_types[ $name ] ) ) {
+				if (
+					! isset( $installed_message_types[ $name ] )
+					|| $message_resource_manager->has_message_type_been_activated_for_messenger( $name, $messenger_to_generate->name )
+				) {
 					unset( $default_message_type_names_for_messenger[ $key ] );
 				}
 			}
@@ -1470,6 +1467,7 @@ class EEH_Activation {
 		$active_messengers = $message_resource_manager->active_messengers();
 		$installed_messengers = $message_resource_manager->installed_messengers();
 		$has_activated = $message_resource_manager->get_has_activated_messengers_option();
+
 		$messengers_to_generate = array();
 		foreach ( $installed_messengers as $installed_messenger ) {
 			//if installed messenger is a messenger that should be activated on install
