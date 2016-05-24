@@ -761,7 +761,7 @@ class EE_Message_Resource_Manager {
 		if ( $message_type_names ) {
 			// cycle thru message types
 			foreach ( $message_type_names as $message_type_name ) {
-				//only register the message type as active IF it isn't already active!
+				//only register the message type as active IF it isn't already active
 				//and if its actually installed.
 				if (
 					! $this->is_message_type_active_for_messenger( $messenger->name, $message_type_name )
