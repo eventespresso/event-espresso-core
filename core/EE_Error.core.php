@@ -1146,7 +1146,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$message,
 		$version,
 		$applies_when = '',
-		$error_type = E_USER_DEPRECATED
+		$error_type = null
 	) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
 			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $applies_when, $error_type );
