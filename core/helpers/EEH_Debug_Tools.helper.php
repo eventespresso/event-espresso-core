@@ -366,9 +366,10 @@ class EEH_Debug_Tools{
 		$message,
 		$version,
 		$applies_when = '',
-		$error_type = E_USER_DEPRECATED
+		$error_type = null
 	) {
 		$applies_when = ! empty( $applies_when ) ? $applies_when : espresso_version();
+		$error_type = $error_type !== null ? $error_type : E_USER_NOTICE;
 		// because we swapped the parameter order around for the last two params,
 		// let's verify that some third party isn't still passing an error type value for the third param
 		if ( is_int( $applies_when ) ) {
