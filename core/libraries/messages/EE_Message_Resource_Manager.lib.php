@@ -140,8 +140,8 @@ class EE_Message_Resource_Manager {
 		$this->_initialized = true;
 		$this->_messenger_collection_loader->load_messengers_from_folder();
 		$this->_message_type_collection_loader->load_message_types_from_folder();
-		$this->_set_active_messengers_and_message_types();
 		$this->get_has_activated_messengers_option( true );
+		$this->_set_active_messengers_and_message_types();
 	}
 
 
@@ -761,7 +761,7 @@ class EE_Message_Resource_Manager {
 		if ( $message_type_names ) {
 			// cycle thru message types
 			foreach ( $message_type_names as $message_type_name ) {
-				//only register the message type as active IF it isn't already active!
+				//only register the message type as active IF it isn't already active
 				//and if its actually installed.
 				if (
 					! $this->is_message_type_active_for_messenger( $messenger->name, $message_type_name )
