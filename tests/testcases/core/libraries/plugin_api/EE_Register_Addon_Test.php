@@ -81,12 +81,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 	//test registering a bare minimum addon, and then de-registering it
 	public function test_register_mock_addon_fail(){
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "()";
 		//we're registering the addon WAAAY after EE_System has set thing up, so
 		//registering this first time should throw an E_USER_NOTICE
 		try{
 			EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
 			EE_UnitTestCase::fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
-		}catch( RuntimeException $e ){
+		}catch(PHPUnit_Framework_Error_Notice $e){
 			EE_UnitTestCase::assertTrue(True);
 		}
 
@@ -94,7 +95,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		try{
 			EE_Registry::instance()->addons->EE_New_Addon;
 			EE_UnitTestCase::fail('The addon New_Addon should not have been registered because its called at the wrong time');
-		}catch( RuntimeException $e ){
+		}catch(PHPUnit_Framework_Error_Notice $e){
 			EE_UnitTestCase::assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 		}
 		//check DMSs weren't setup either

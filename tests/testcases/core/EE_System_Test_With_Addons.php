@@ -395,7 +395,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 			try{
 				EE_Registry::instance()->addons->EE_New_Addon;
 				$this->fail('EE_New_Addon is still registered. Deregister failed');
-			}catch( RuntimeException $e ){
+			}catch(PHPUnit_Framework_Error_Notice $e){
 				$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 			}
 			//verify DMSs deregistered
