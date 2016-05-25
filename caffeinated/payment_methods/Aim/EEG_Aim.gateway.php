@@ -409,10 +409,10 @@ class EEG_Aim extends EE_Onsite_Gateway{
  */
 class EE_AuthorizeNetAIM_Response {
 
-	const APPROVED = 1;
-	const DECLINED = 2;
-	const ERROR = 3;
-	const HELD = 4;
+	const APPROVED = '1';
+	const DECLINED = '2';
+	const ERROR = '3';
+	const HELD = '4';
 
 	protected $_x_post_fields = array(
 		"version" => "3.1",
