@@ -1918,7 +1918,7 @@ class EE_Core_Config extends EE_Config_Base {
 		}
 
 		EE_Core_Config::$ee_ueip_option = apply_filters( 'option_' . $option, maybe_unserialize( $value ), $option );
-
+		return EE_Core_Config::$ee_ueip_option;
 	}
 
 
