@@ -377,7 +377,7 @@ class EEH_Debug_Tools{
 			$applies_when = espresso_version();
 		}
 		// if not displaying notices yet, then just leave
-		if ( version_compare( EVENT_ESPRESSO_VERSION, $applies_when, '<' ) ) {
+		if ( version_compare( espresso_version(), $applies_when, '<' ) ) {
 			return;
 		}
 		do_action( 'AHEE__EEH_Debug_Tools__doing_it_wrong_run', $function, $message, $version);
