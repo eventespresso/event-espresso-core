@@ -484,8 +484,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		EE_Registry::instance()->load_helper('Template');
-
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
 		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
@@ -989,7 +987,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false, $exclude_nonce = false ) {
-		EE_Registry::instance()->load_helper('URL');
 
 		//if there is a _wp_http_referer include the values from the request but only if sticky = true
 		if ( $sticky ) {
@@ -1219,7 +1216,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( isset( $this->_route_config['qtips'] ) ) {
 			$qtips = (array) $this->_route_config['qtips'];
 			//load qtip loader
-			EE_Registry::instance()->load_helper('Qtip_Loader', array(), TRUE);
 			$path = array(
 				$this->_get_dir() . '/qtips/',
 				EE_ADMIN_PAGES . basename($this->_get_dir()) . '/qtips/'
@@ -1438,7 +1434,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//current set timezone for timezone js
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		echo '<span id="current_timezone" class="hidden">' . EEH_DTT_Helper::get_timezone() . '</span>';
 	}
 
@@ -2053,7 +2048,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function espresso_ratings_request() {
 		$template_path = EE_ADMIN_TEMPLATE . 'espresso_ratings_request_content.template.php';
-		EE_Registry::instance()->load_helper( 'Template' );
 		EEH_Template::display_template( $template_path, array() );
 	}
 
@@ -2540,9 +2534,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string        html string of legend
 	 */
 	protected function _display_legend( $items ) {
-		$template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
+		$this->_template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
 		$legend_template = EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
-		return EEH_Template::display_template($legend_template, $template_args, TRUE);
+		return EEH_Template::display_template($legend_template, $this->_template_args, TRUE);
 	}
 
 
@@ -2564,7 +2558,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * The json object is populated by whatever is set in the $_template_args property.
 	 *
-	 * @return json object
+	 * @return string json object
 	 */
 	protected function _return_json( $sticky_notices = false ) {
 
@@ -2678,7 +2672,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _get_main_nav_tabs() {
 		//let's generate the html using the EEH_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 	}
 
@@ -2716,7 +2709,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$content = $generator == 'string' ? EEH_Form_Fields::get_form_fields($input_vars, $id) : EEH_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
@@ -3129,8 +3121,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This makes available the WP transient system for temporarily moving data between routes
 	 *
 	 * @access protected
-	 * @param route $route the route that should receive the transient
-	 * @param data $data  the data that gets sent
+	 * @param string $route the route that should receive the transient
+	 * @param array $data  the data that gets sent
 	 * @param bool $notices If this is for notices then we use this to indicate so, otherwise its just a normal route transient.
 	 * @param bool $skip_route_verify Used to indicate we want to skip route verification.  This is usually ONLY used when we are adding a transient before page_routes have been defined.
 	 * @return void
@@ -3425,9 +3417,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
 		add_filter( 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', '__return_true' );
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', FALSE, $payment );
-		$this->_template_args['success'] = $success;
-		return $success;
+		do_action( 'AHEE__EE_Admin_Page___process_admin_payment_notification', $payment );
+		$this->_template_args['success'] = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', false, $payment );
+		return $this->_template_args[ 'success' ];
 	}
 
 

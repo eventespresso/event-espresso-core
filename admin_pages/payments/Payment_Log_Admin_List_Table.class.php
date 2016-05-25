@@ -107,7 +107,6 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = array();
 		//todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$payment_methods = EEM_Payment_Method::instance()->get_all();
 		$payment_method_names = array(array('id'=>'all','text'=>  __("All", 'event_espresso')),array('id'=>'0','text'=>  __("Unknown Payment Method", 'event_espresso')));
 		foreach($payment_methods as $payment_method){

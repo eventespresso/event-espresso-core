@@ -78,7 +78,6 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_ticket_line_item_list() {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		if ( ! $this->_data['data'] instanceof EE_Ticket ) {
 			return '';
@@ -117,7 +116,6 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	private function _get_tax_line_item_list() {
 
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		if ( ! $this->_data['data'] instanceof EE_Messages_Addressee ) {
 			return '';
@@ -146,7 +144,6 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	private function _get_additional_line_item_list() {
 
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		if ( ! $this->_data['data'] instanceof EE_Messages_Addressee ) {
 			return '';
@@ -180,7 +177,6 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_price_mod_line_item_list() {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		if ( ! $this->_data['data'] instanceof EE_Line_Item ) {
 			return '';

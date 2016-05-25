@@ -50,7 +50,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_DUE_DATE_*]' => __( 'This is a special dynamic shortcode that allows one to output a payment due date.  It will only result in a date shown if there is money owing.  Three parameters are available on this shortcode:', 'event_espresso' )
 				. '<ul>'
 				. '<li>' . sprintf( __( '%sformat:%s This is used to indicate what format the date is in.  Default is whatever is set as date formats for your website.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
-				. '<li>' . sprintf( __( '%days_until_due:%s This is the number of days form the transaction creation date that the payment is due.  Defaults to 30.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '<li>' . sprintf( __( '%sdays_until_due:%s This is the number of days form the transaction creation date that the payment is due.  Defaults to 30.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
 				. '<li>' . sprintf( __( '%sprefix_text:%s You can use this to indicate what text will prefix the date string.  Defaults to "Payment in full due by:"', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>',
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
@@ -85,8 +85,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-
-		EE_Registry::instance()->load_helper( 'Template' );
 
 		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
 		$transaction = $this->_data->txn instanceof EE_Transaction ? $this->_data->txn : null;
@@ -265,10 +263,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( $total_owing > 0 ) {
 			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_owing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' );
-
-			//we need to re run this string through the parser to catch any shortcodes that are in it.
-			$this->_set_shortcode_helper();
-			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			$owing_content = !empty( $attrs['none_owing']) ? $attrs['none_owing'] : '';
 		}
@@ -481,7 +476,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$reg = $this->_data->primary_reg_obj;
 		$message_type = isset( $this->_extra_data['message_type'] ) ? $this->_extra_data['message_type'] : '';
 		if ( ! $reg instanceof EE_Registration || empty( $message_type ) ) {
-			return'';
+			return '';
 		}
 
 		$switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type  ? true : false;
@@ -495,11 +490,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		if ( ! empty( $switch_to_url ) ) {
 
-		return  '
-<form method="post" action="' . $switch_to_url . '" >
-	<input class="print_button" type="submit" value="' . $switch_to_label . '" />
-</form>
-		';
+			return  '
+	<form method="post" action="' . $switch_to_url . '" >
+		<input class="print_button" type="submit" value="' . $switch_to_label . '" />
+	</form>
+			';
 		}
 		return '';
 	}
@@ -578,8 +573,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			$content = $opening_tag . sprintf( $custom_text, '<a href="[PAYMENT_URL]">', '</a>' ) . $closing_tag;
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
-			$this->_set_shortcode_helper();
-			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
+			$owing_content = $this->_shortcode_helper->parse_message_template( $content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_message );
 		} else {
 			return '';
 		}

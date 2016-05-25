@@ -30,10 +30,10 @@ class EE_Form_Section_HTML extends EE_Form_Section_Base{
 
 
 	/**
-	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.
+	 * Returns the HTML
 	 * @return string
 	 */
-	public function get_html_and_js() {
+	public function get_html() {
 		return $this->_html;
 	}
 

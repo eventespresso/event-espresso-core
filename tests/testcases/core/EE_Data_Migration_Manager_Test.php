@@ -27,6 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 /**
  * @group core/data_migration_scripts
  * @group core
+ * @group activation
  */
 class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_all_data_migration_scripts_available(){
@@ -84,9 +85,10 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertArrayhasKey('4.1.0',$dms_ran['Core']);
 	}
 	public function test_get_most_up_to_date_dms(){
+		EE_Data_Migration_Manager::reset();
 		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		//yes, this test will need to be updated everytime we add a new core DMS
-		$this->assertEquals('EE_DMS_Core_4_8_0',$dms_classname);
+		$this->assertEquals('EE_DMS_Core_4_9_0',$dms_classname);
 	}
 
 	/**

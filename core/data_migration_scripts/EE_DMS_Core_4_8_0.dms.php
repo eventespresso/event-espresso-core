@@ -90,6 +90,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 * @return bool
 	 */
 	public function schema_changes_before_migration() {
+		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 		$now_in_mysql = current_time( 'mysql', true );
 
 		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
@@ -501,15 +502,15 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 
 		$table_name = 'esp_status';
-		$sql = "STS_ID varchar(3) collate utf8_bin NOT NULL,
-					  STS_code varchar(45) collate utf8_bin NOT NULL,
-					  STS_type set('event','registration','transaction','payment','email') collate utf8_bin NOT NULL,
+		$sql = "STS_ID varchar(3) NOT NULL,
+					  STS_code varchar(45) NOT NULL,
+					  STS_type varchar(45) NOT NULL,
 					  STS_can_edit tinyint(1) NOT NULL DEFAULT 0,
-					  STS_desc tinytext collate utf8_bin,
+					  STS_desc tinytext,
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
-		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+		$this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -705,7 +706,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CNT_is_EU" => '%d',
 							"CNT_active" => '%d',
 						);
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
+		if ( EEH_Activation::table_exists( $country_table ) ) {
 			foreach( $newer_countries as $country ) {
 				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
@@ -742,7 +743,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CUR_dec_plc" => '%d',
 							"CUR_active" => '%d',
 						);
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
+		if ( EEH_Activation::table_exists( $currency_table ) ) {
 			foreach( $newer_currencies as $currency ) {
 				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
@@ -775,13 +776,3 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		$wpdb->query( $query );
 	}
 }
-
-
-
-
-
-
-
-
-
-

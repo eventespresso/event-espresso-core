@@ -49,6 +49,17 @@ jQuery(document).ready(function($){
 			EEFV.add_custom_validators();
 			//add a trigger so anyone can know when forms are getting re-initialized
 			jQuery(document).trigger( 'EEFV:initialize', form_data );
+			//let's execute a trigger for each form in the localized data. This way
+			//client code doesn't need to manually loop over it all
+			$.each( form_data, function( html_id, form_data_for_specific_section ){
+				jQuery(document).trigger( 
+					'EEFV:initialize_specific_form', 
+					{ 
+						'html_id' : html_id, 
+						'form_data' : form_data_for_specific_section 
+					} 
+				);
+			});
 		},
 
 
