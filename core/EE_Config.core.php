@@ -398,6 +398,10 @@ final class EE_Config {
 	 * @return   bool
 	 */
 	public function update_espresso_config( $add_success = false, $add_error = true ) {
+		// don't allow config updates during WP heartbeats
+		if ( \EE_Registry::instance()->REQ->get( 'action', '' ) === 'heartbeat' ) {
+			return false;
+		}
 		// commented out the following re: https://events.codebasehq.com/projects/event-espresso/tickets/8197
 		//$clone = clone( self::$_instance );
 		//self::$_instance = NULL;
@@ -725,6 +729,10 @@ final class EE_Config {
 	 * @return    bool
 	 */
 	public function update_config( $section = '', $name = '', $config_obj = '', $throw_errors = true ) {
+		// don't allow config updates during WP heartbeats
+		if ( \EE_Registry::instance()->REQ->get( 'action', '' ) === 'heartbeat' ) {
+			return false;
+		}
 		$config_obj = maybe_unserialize( $config_obj );
 		// get class name of the incoming object
 		$config_class = get_class( $config_obj );
