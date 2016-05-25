@@ -64,7 +64,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	 * @param string $table_name
 	 * @param string $create_sql
 	 * @return array
-	 * @global WPDB  $wpdb
+	 * @global wpdb  $wpdb
 	 */
 	public function dont_short_circuit_new_addon_table( $short_circuit = FALSE, $table_name = '', $create_sql = '' ){
 		if( in_array( $table_name, array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' ) ) && ! EEH_Activation::table_exists( $table_name) ){
@@ -86,24 +86,24 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//registering this first time should throw an E_USER_NOTICE
 		try{
 			EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-			EE_UnitTestCase::fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
+			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
 		}catch(PHPUnit_Framework_Error_Notice $e){
-			EE_UnitTestCase::assertTrue(True);
+			$this->assertTrue(True);
 		}
 
 		//check that we didn't actually register the addon
 		try{
 			EE_Registry::instance()->addons->EE_New_Addon;
-			EE_UnitTestCase::fail('The addon New_Addon should not have been registered because its called at the wrong time');
+			$this->fail('The addon New_Addon should not have been registered because its called at the wrong time');
 		}catch(PHPUnit_Framework_Error_Notice $e){
-			EE_UnitTestCase::assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 		}
 		//check DMSs weren't setup either
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		EE_UnitTestCase::assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//check that we didn't register the addon's deactivation hook either
-		EE_UnitTestCase::assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
+		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
 	}
 
 
@@ -112,7 +112,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//we're registering the addon with the wrong parameters
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){
-			EE_UnitTestCase::assertTrue( FALSE );
+			$this->assertTrue( FALSE );
 		}
 		try{
 			EE_Register_Addon::register($this->_addon_name, array(
@@ -120,38 +120,38 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 				'min_core_version'=>'4.0.0',
 				'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts'
 			));
-			EE_UnitTestCase::fail('We should have received a warning that the \'plugin_main_file\' is a required argument when registerign an addon');
+			$this->fail('We should have received a warning that the \'plugin_main_file\' is a required argument when registerign an addon');
 		}catch(EE_Error $e){
-			EE_UnitTestCase::assertTrue(True);
+			$this->assertTrue(True);
 		}
 
 		//check that we didn't actually register the addon
 		try{
 			EE_Registry::instance()->addons->EE_New_Addon;
-			EE_UnitTestCase::fail('The addon New_Addon should not have been registered because its called at the wrong time');
+			$this->fail('The addon New_Addon should not have been registered because its called at the wrong time');
 		}catch( RuntimeException $e ){
-			EE_UnitTestCase::assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 		}
 		//check DMSs weren't setup either
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		EE_UnitTestCase::assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//check that we didn't register the addon's de-activaiton hook either
-		EE_UnitTestCase::assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
+		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
 	}
 
 
 
 	public function test_register_mock_addon_success(){
 		//ensure model and class extensions weren't setup beforehand
-		EE_UnitTestCase::assertFalse( $this->_class_has_been_extended() );
-		EE_UnitTestCase::assertFalse( $this->_model_has_been_extended() );
+		$this->assertFalse( $this->_class_has_been_extended() );
+		$this->assertFalse( $this->_model_has_been_extended() );
 
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){
-			EE_UnitTestCase::assertTrue( FALSE );
+			$this->assertTrue( FALSE );
 		}
-		EE_UnitTestCase::assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 
 
 		//just to make this test truly test the "eea-new-addon", use its own addon params
@@ -160,13 +160,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		require_once( EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php' );
 		EE_New_Addon::register_addon();
 
-		EE_UnitTestCase::assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 		//check DMSs were setup properly too
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		EE_UnitTestCase::assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
+		$this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		//and check the deactivation hook was setup properly
-		EE_UnitTestCase::assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
+		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
 
 		//check that the model was registered properly
 		EE_System::instance()->load_core_configuration();
@@ -174,14 +174,14 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
 
 		$dms = EE_Registry::instance()->load_dms('New_Addon_1_0_0');
-		EE_UnitTestCase::assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
+		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
 		$dms->set_migrating( FALSE );
 		$dms->schema_changes_before_migration();
 		$dms->schema_changes_after_migration();
-		EE_UnitTestCase::assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
+		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
 		//check that the model extension was registered properly
-		EE_UnitTestCase::assertTrue( $this->_class_has_been_extended( TRUE ) );
-		EE_UnitTestCase::assertTrue( $this->_model_has_been_extended( TRUE ) );
+		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
+		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
 
 		//check that the caps maps were registered properly too
 		$this->_pretend_capabilities_registered();
@@ -191,8 +191,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$current_user->add_role('administrator');
 		$a_thing = $this->new_model_obj_with_dependencies('New_Addon_Thing', array( 'NEW_wp_user' => $current_user->ID ));
 		$others_thing = $this->new_model_obj_with_dependencies('New_Addon_Thing', array( 'NEW_wp_user' => $other_user->ID ));
-		EE_UnitTestCase::assertTrue( EE_Capabilities::instance()->user_can( $current_user, 'edit_thing', 'testing_edit', $a_thing->ID() ) );
-		EE_UnitTestCase::assertTrue( EE_Capabilities::instance()->user_can( $current_user, 'edit_thing', 'testing_edit', $others_thing->ID() ) );
+		$this->assertTrue( EE_Capabilities::instance()->user_can( $current_user, 'edit_thing', 'testing_edit', $a_thing->ID() ) );
+		$this->assertTrue( EE_Capabilities::instance()->user_can( $current_user, 'edit_thing', 'testing_edit', $others_thing->ID() ) );
 	}
 
 	/**
@@ -212,7 +212,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 		//verify new caps are in the role
 		$role = get_role( 'administrator' );
-		EE_UnitTestCase::assertContains(
+		$this->assertContains(
 			array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
 			$role->capabilities );
 	}
@@ -223,26 +223,26 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	 */
 //	function test_register_mock_addon_success_using_its_callback(){
 //		//ensure model and class extensions weren't setup beforehand
-//		EE_UnitTestCase::assertFalse( $this->_class_has_been_extended() );
-//		EE_UnitTestCase::assertFalse( $this->_model_has_been_extended() );
+//		$this->assertFalse( $this->_class_has_been_extended() );
+//		$this->assertFalse( $this->_model_has_been_extended() );
 //
 //		$this->_pretend_addon_hook_time();
 //		if( did_action( 'activate_plugin' ) ){
-//			EE_UnitTestCase::assertTrue( FALSE );
+//			$this->assertTrue( FALSE );
 //		}
-//		EE_UnitTestCase::assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+//		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 //
 //
 //		//use the function in mocks/addons/new_addon/eea-new-addon.php
 //		load_espresso_new_addon();
 //
-//		EE_UnitTestCase::assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+//		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 //		//check DMSs were setup properly too
 //		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-//		EE_UnitTestCase::assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
+//		$this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 //
 //		//and check the deactivation hook was setup properly
-//		EE_UnitTestCase::assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
+//		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
 //
 //		//check that the model was registered properly
 //		EE_System::instance()->load_core_configuration();
@@ -250,13 +250,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 //		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
 //
 //		$dms = EE_Registry::instance()->load_dms('New_Addon_1_0_0');
-//		EE_UnitTestCase::assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
+//		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
 //		$dms->schema_changes_before_migration();
 //		$dms->schema_changes_after_migration();
-//		EE_UnitTestCase::assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
+//		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
 //		//check that the model extension was registered properly
-//		EE_UnitTestCase::assertTrue( $this->_class_has_been_extended( TRUE ) );
-//		EE_UnitTestCase::assertTrue( $this->_model_has_been_extended( TRUE ) );
+//		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
+//		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
 //	}
 	/**
 	 * check that when we register an addon and then another after the 'activate_plugin'
@@ -268,8 +268,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	public function test_register_mock_addon__activation() {
 		$this->_pretend_after_plugin_activation();
 		EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-		EE_UnitTestCase::assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
-		EE_UnitTestCase::assertWPOptionExists( EE_Registry::instance()->addons->EE_New_Addon->get_activation_indicator_option_name());
+		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+		$this->assertWPOptionExists( EE_Registry::instance()->addons->EE_New_Addon->get_activation_indicator_option_name());
 	}
 
 
@@ -285,16 +285,16 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		EE_System::reset();
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){
-			EE_UnitTestCase::assertTrue( FALSE );
+			$this->assertTrue( FALSE );
 		}
-		EE_UnitTestCase::assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 		EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-		EE_UnitTestCase::assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 
 		global $wp_actions;
 		$times_load_addons_fired = $wp_actions[ 'AHEE__EE_System__load_espresso_addons' ];
 		do_action( 'activate_plugin' );
-		EE_UnitTestCase::assertGreaterThan($times_load_addons_fired, $wp_actions[ 'AHEE__EE_System__load_espresso_addons' ] );
+		$this->assertGreaterThan($times_load_addons_fired, $wp_actions[ 'AHEE__EE_System__load_espresso_addons' ] );
 	}
 
 	public function tearDown() {
@@ -303,25 +303,25 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			EE_Register_Addon::deregister($this->_addon_name);
 			try{
 				EE_Registry::instance()->addons->EE_New_Addon;
-				EE_UnitTestCase::fail('EE_New_Addon is still registered. Deregister failed');
+				$this->fail('EE_New_Addon is still registered. Deregister failed');
 			}catch( RuntimeException $e ){
-				EE_UnitTestCase::assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+				$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 			}
 			//verify the de-activation hook was removed
-			EE_UnitTestCase::assertFalse( has_action( 'deactivate_' . $main_file_path_before_deregistration ) );
+			$this->assertFalse( has_action( 'deactivate_' . $main_file_path_before_deregistration ) );
 			//verify the models were deregistered
 			EE_System::instance()->load_core_configuration();
-			EE_UnitTestCase::assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
-			EE_UnitTestCase::assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->models);
+			$this->assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
+			$this->assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->models);
 			EE_Registry::instance()->reset_model( 'Attendee' );
 			//verify that the model and class extensions have been removed
-			EE_UnitTestCase::assertFalse( $this->_class_has_been_extended() );
-			EE_UnitTestCase::assertFalse( $this->_model_has_been_extended() );
+			$this->assertFalse( $this->_class_has_been_extended() );
+			$this->assertFalse( $this->_model_has_been_extended() );
 		}
 
 		//verify DMSs deregistered
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		EE_UnitTestCase::assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0',$DMSs_available);
 
 		$this->_stop_pretending_addon_hook_time();
 		$this->_stop_pretending_after_plugin_activation();
@@ -338,7 +338,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 //		$this->_pretend_addon_hook_time();
 //		require_once( EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php' );
 //		EE_New_Addon::register_addon();
-//		EE_UnitTestCase::assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+//		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 //
 //		//and then it should be torn down by tearDown()
 //	}
@@ -424,24 +424,24 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//use reflection to test this protected method
 		$method = new ReflectionMethod('EE_Register_Addon', '_effective_version');
 		$method->setAccessible(true);
-		EE_UnitTestCase::assertEquals( '4.3.0.dev.000', $method->invoke( null, '4.3.0' ) );
-		EE_UnitTestCase::assertEquals( '4.3.0.p.000', $method->invoke( null, '4.3.0.p' ) );
-		EE_UnitTestCase::assertEquals( '4.3.0.rc.123', $method->invoke( null, '4.3.0.rc.123' ) );
+		$this->assertEquals( '4.3.0.dev.000', $method->invoke( null, '4.3.0' ) );
+		$this->assertEquals( '4.3.0.p.000', $method->invoke( null, '4.3.0.p' ) );
+		$this->assertEquals( '4.3.0.rc.123', $method->invoke( null, '4.3.0.rc.123' ) );
 	}
 
 	public function test_meets_min_core_version_requirement(){
 		//use reflection to test this protected method
 		$method = new ReflectionMethod('EE_Register_Addon', '_meets_min_core_version_requirement');
 		$method->setAccessible(true);
-		EE_UnitTestCase::assertTrue( $method->invoke( null, '4.3.0', '4.3.0.p' ) );
-		EE_UnitTestCase::assertTrue( $method->invoke( null, '4.3.0', '4.3.0.rc.032' ) );
-		EE_UnitTestCase::assertTrue( $method->invoke( null, '4.3.0.p', '4.3.0.p' ) );
-		EE_UnitTestCase::assertTrue( $method->invoke( null, '4.3.0.p', '4.4.0.p' ) );
-		EE_UnitTestCase::assertTrue( $method->invoke( null, '4.3.0.rc.000', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0', '4.3.0.rc.032' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.p', '4.3.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.p', '4.4.0.p' ) );
+		$this->assertTrue( $method->invoke( null, '4.3.0.rc.000', '4.3.0.p' ) );
 
-		EE_UnitTestCase::assertFalse( $method->invoke( null, '4.4.0', '4.3.0.p' ) );
-		EE_UnitTestCase::assertFalse( $method->invoke( null, '4.4.0.p', '4.3.0.p' ) );
-		EE_UnitTestCase::assertFalse( $method->invoke( null, '4.3.0.rc.123', '4.3.0.rc.001' ) );
+		$this->assertFalse( $method->invoke( null, '4.4.0', '4.3.0.p' ) );
+		$this->assertFalse( $method->invoke( null, '4.4.0.p', '4.3.0.p' ) );
+		$this->assertFalse( $method->invoke( null, '4.3.0.rc.123', '4.3.0.rc.001' ) );
 	}
 
 }
