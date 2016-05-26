@@ -1295,6 +1295,40 @@ class EEH_Line_Item {
 
 
 	/**
+	 * @param \EE_Line_Item $total_line_item
+	 * @param \EE_Line_Item $ticket_line_item
+	 * @return float | null
+	 * @throws \OutOfRangeException
+	 */
+	public static function calculate_final_price_for_ticket_line_item( \EE_Line_Item $total_line_item, \EE_Line_Item $ticket_line_item ) {
+		static $final_prices_per_ticket_line_item = array();
+		if ( empty( $final_prices_per_ticket_line_item ) ) {
+			$final_prices_per_ticket_line_item = \EEH_Line_Item::calculate_reg_final_prices_per_line_item(
+				$total_line_item
+			);
+		}
+		//ok now find this new registration's final price
+		if ( isset( $final_prices_per_ticket_line_item[ $ticket_line_item->ID() ] ) ) {
+			return $final_prices_per_ticket_line_item[ $ticket_line_item->ID() ];
+		}
+		$message = sprintf(
+			__(
+				'The final price for the ticket line item (ID:%1$d) could not be calculated.',
+				'event_espresso'
+			),
+			$ticket_line_item->ID()
+		);
+		if ( WP_DEBUG ) {
+			throw new \OutOfRangeException( $message );
+		} else {
+			EE_Log::instance()->log( __CLASS__, __FUNCTION__, $message );
+		}
+		return null;
+	}
+
+
+
+	/**
 	 * Creates a duplicate of the line item tree, except only includes billable items
 	 * and the portion of line items attributed to billable things
 	 *
