@@ -18,6 +18,16 @@ if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 
 class Model_Data_Translator_Test extends EE_UnitTestCase{
+	
+	public function setUp() {
+		parent::setUp();
+		if ( ! class_exists( 'WP_Rest_Request' ) ) {
+			$this->markTestSkipped(
+				'Test being run on a version of WP that does not have the REST framework installed'
+			);
+		}
+	}
+	
 	public function test_prepare_query_params_for_rest_api() {
 		$mysql_date = '2015-01-01 00:00:00';
 		$statuses_in_query = array(
