@@ -102,7 +102,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		// echo "\n next: " . $next_month->format( 'M j, Y g:i a' );
 		//let's setup some registrations to test.
 		$registrations = $this->factory->registration->create_many( 4 );
-		EE_UnitTestCase::assertCount(
+		$this->assertCount(
 			4,
 			$registrations,
 			'there should be 4 registrations in total, not ' . count( $registrations )
@@ -134,7 +134,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		$registrations = $this->_admin_page->get_registrations();
 		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
 		// $this->reg_debug( $registrations );
-		EE_UnitTestCase::assertCount(
+		$this->assertCount(
 			2,
 			$registrations,
 			'there should be 2 registrations for today, not ' . count( $registrations )
@@ -145,7 +145,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		$registrations = $this->_admin_page->get_registrations();
 		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
 		// $this->reg_debug( $registrations );
-		EE_UnitTestCase::assertCount(
+		$this->assertCount(
 			2,
 			$registrations,
 			'there should be 2 registrations for this month, not ' . count( $registrations )
@@ -157,7 +157,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		$registrations = $this->_admin_page->get_registrations();
 		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() MONTH_RANGE: " . $_GET[ 'month_range' ];
 		// $this->reg_debug( $registrations );
-		EE_UnitTestCase::assertCount(
+		$this->assertCount(
 			1,
 			$registrations,
 			'there should be 1 registration for ' . $_GET['month_range'] . ', not ' . count( $registrations )
@@ -201,15 +201,15 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		$_REQUEST['_REG_ID'] = $testing_registration->ID();
 		$this->_load_requirements();
 		$success = $this->_admin_page->set_registration_status_from_request( EEM_Registration::status_id_not_approved );
-		EE_UnitTestCase::assertArrayHasKey( 'success', $success );
-		EE_UnitTestCase::assertTrue( $success['success'] );
-		EE_UnitTestCase::assertArrayHasKey( 'REG_ID', $success );
+		$this->assertArrayHasKey( 'success', $success );
+		$this->assertTrue( $success['success'] );
+		$this->assertArrayHasKey( 'REG_ID', $success );
 		$this->assertArrayContains( $testing_registration->ID(), $success['REG_ID'] );
 
 		//verify registration got changed to not approved.
 		/** @var EE_Registration $actual_registration */
 		$actual_registration = EEM_Registration::reset()->instance()->get_one_by_ID( $testing_registration->ID() );
-		EE_UnitTestCase::assertEquals( EEM_Registration::status_id_not_approved, $actual_registration->status_ID() );
+		$this->assertEquals( EEM_Registration::status_id_not_approved, $actual_registration->status_ID() );
 	}
 
 
@@ -232,16 +232,16 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		$_REQUEST['_REG_ID'] = $expected_ids;
 		$this->_load_requirements();
 		$success = $this->_admin_page->set_registration_status_from_request( EEM_Registration::status_id_not_approved );
-		EE_UnitTestCase::assertArrayHasKey( 'success', $success );
-		EE_UnitTestCase::assertTrue( $success['success'] );
-		EE_UnitTestCase::assertArrayHasKey( 'REG_ID', $success );
-		EE_UnitTestCase::assertCount( 3, $success['REG_ID'] );
-		EE_UnitTestCase::assertEquals( $expected_ids, $success['REG_ID'] );
+		$this->assertArrayHasKey( 'success', $success );
+		$this->assertTrue( $success['success'] );
+		$this->assertArrayHasKey( 'REG_ID', $success );
+		$this->assertCount( 3, $success['REG_ID'] );
+		$this->assertEquals( $expected_ids, $success['REG_ID'] );
 
 		//verify registrations got changed to approved (or stayed there).
 		$registrations = EEM_Registration::reset()->instance()->get_all( array( array( 'STS_ID' => EEM_Registration::status_id_not_approved ) ) );
-		EE_UnitTestCase::assertCount( 3, $registrations );
-		EE_UnitTestCase::assertEquals( $expected_ids, array_keys( $registrations ) );
+		$this->assertCount( 3, $registrations );
+		$this->assertEquals( $expected_ids, array_keys( $registrations ) );
 
 	}
 
