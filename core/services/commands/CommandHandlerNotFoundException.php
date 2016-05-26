@@ -20,16 +20,16 @@ class CommandHandlerNotFoundException extends \OutOfBoundsException
 
 	/**
 	 * @access public
-	 * @param  string     $command_name
+	 * @param  string     $command_handler_name
 	 * @param  string     $message
 	 * @param  int        $code
 	 * @param  \Exception $previous
 	 */
-	public function __construct( $command_name, $message = '', $code = 0, \Exception $previous = null ) {
+	public function __construct( $command_handler_name, $message = '', $code = 0, \Exception $previous = null ) {
 		if ( empty( $message ) ) {
 			$message = sprintf(
 				__( 'The requested Command Handler "%1$s" could not be located or does not exist.', 'event_espresso' ),
-				$command_name
+				$command_handler_name
 			);
 		}
 		parent::__construct( $message, $code, $previous );
