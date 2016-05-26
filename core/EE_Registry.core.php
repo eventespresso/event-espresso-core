@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
-* EE_Registry Class
+ * EE_Registry Class
  *
  * Centralized Application Data Storage and Management
  *
@@ -516,7 +516,58 @@ class EE_Registry {
 
 
 	/**
-	 *    loads and tracks classes
+	 * instantiates, caches, and injects dependencies for classes that use a fully qualified classname
+	 *
+	 * @param bool|string $class_name - $class name
+	 * @param array       $arguments  - an argument or array of arguments to pass to the class upon instantiation
+	 * @param bool        $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
+	 * @param bool        $cache
+	 * @param bool        $load_only
+	 * @param bool|string $addon
+	 * @return mixed                    null = failure to load or instantiate class object.
+	 *                                  object = class loaded and instantiated successfully.
+	 *                                  bool = fail or success when $load_only is true
+	 */
+	public function create(
+		$class_name = false,
+		$arguments = array(),
+		$from_db = false,
+		$cache = true,
+		$load_only = false,
+		$addon = false
+	) {
+		if ( ! class_exists( $class_name ) ) {
+			return null;
+		}
+		// if we're only loading the class and it already exists, then let's just return true immediately
+		if ( $load_only ) {
+			return true;
+		}
+		$addon = $addon ? 'addon' : '';
+		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
+		// $cache is controlled by individual calls to separate Registry loader methods like load_class()
+		// $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
+		if ( $this->_cache_on && $cache && ! $load_only ) {
+			// return object if it's already cached
+			$cached_class = $this->_get_cached_class( $class_name, $addon );
+			if ( $cached_class !== null ) {
+				return $cached_class;
+			}
+		}
+		// instantiate the requested object
+		$class_obj = $this->_create_object( $class_name, $arguments, $addon, $from_db );
+		if ( $this->_cache_on && $cache ) {
+			// save it for later... kinda like gum  { : $
+			$this->_set_cached_class( $class_obj, $class_name, $addon, $from_db );
+		}
+		$this->_cache_on = true;
+		return $class_obj;
+	}
+
+
+
+	/**
+	 * instantiates, caches, and injects dependencies for classes
 	 *
 	 * @param array $file_paths
 	 * @param string $class_prefix - EE  or EEM or... ???
@@ -1051,9 +1102,25 @@ class EE_Registry {
 
 
 	/**
-	 * Resets the registry and everything in it (eventually, getting it to properly
-	 * reset absolutely everything will probably be tricky. right now it just resets
-	 * the config, data migration manager, and the models)
+	 * Resets the registry.
+	 *
+	 * The criteria for what gets reset is based on what can be shared between sites on the same request when switch_to_blog
+	 * is used in a multisite install.  Here is a list of things that are NOT reset.
+	 *
+	 * - $_dependency_map
+	 * - $_class_abbreviations
+	 * - $NET_CFG (EE_Network_Config): The config is shared network wide so no need to reset.
+	 * - $REQ:  Still on the same request so no need to change.
+	 * - $CAP: There is no site specific state in the EE_Capability class.
+	 * - $SSN: Although ideally, the session should not be shared between site switches, we can't reset it because only one Session
+	 *         can be active in a single request.  Resetting could resolve in "headers already sent" errors.
+	 * - $addons:  In multisite, the state of the addons is something controlled via hooks etc in a normal request.  So
+	 *             for now, we won't reset the addons because it could break calls to an add-ons class/methods in the
+	 *             switch or on the restore.
+	 * - $modules
+	 * - $shortcodes
+	 * - $widgets
+	 * - $LIB:  Only specific classes get unset from $LIB (current EE_Data_Migration_Manager) that persist state.
 	 *
 	 * @param boolean $hard whether to reset data in the database too, or just refresh
 	 * the Registry to its state at the beginning of the request
@@ -1062,21 +1129,48 @@ class EE_Registry {
 	 * currently reinstantiate the singletons at the moment)
 	 * @param   bool    $reset_models    Defaults to true.  When false, then the models are not reset.  This is so client
 	 *                                  code instead can just change the model context to a different blog id if necessary
+	 *
 	 * @return EE_Registry
 	 */
 	public static function reset( $hard = false, $reinstantiate = true, $reset_models = true ) {
 		$instance = self::instance();
 		EEH_Activation::reset();
+
+		//properties that get reset
 		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
-		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
-		$instance->LIB = new stdClass();
+		$instance->CART = null;
+		$instance->MRM = null;
+
+		//handle of objects cached on LIB
+		foreach ( $instance->_classes_to_unset_from_LIB_on_reset() as $class_name ) {
+			if ( isset( $instance->LIB->$class_name ) ) {
+				unset( $instance->LIB->$class_name );
+			}
+		}
+
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
 				$instance->reset_model( $model_name );
 			}
 		}
+
 		return $instance;
+	}
+
+
+
+
+	/**
+	 * Returns a filtered array of classes to unset from the $LIB property when EE_Registry::reset is called.
+	 * @return array
+	 */
+	protected function _classes_to_unset_from_LIB_on_reset() {
+		return apply_filters( 'EE_Registry___classes_to_unset_from_LIB_on_reset', array(
+			'EE_Data_Migration_Manager',
+			'EE_Messages_Processor',
+			'EE_Messages_Queue',
+		));
 	}
 
 

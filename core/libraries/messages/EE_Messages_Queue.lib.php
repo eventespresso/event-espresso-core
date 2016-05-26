@@ -438,16 +438,19 @@ class EE_Messages_Queue {
 		$messages_sent = 0;
 		$this->_did_hook = array();
 		$this->_message_repository->rewind();
+
 		while ( $this->_message_repository->valid() ) {
 			$error_messages = array();
 			/** @type EE_Message $message */
 			$message = $this->_message_repository->current();
 			//if the message in the queue has a sent status, then skip
 			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
+				$this->_message_repository->next();
 				continue;
 			}
 			//if $by_priority is set and does not match then continue;
 			if ( $by_priority && $by_priority != $message->priority() ) {
+				$this->_message_repository->next();
 				continue;
 			}
 			//error checking

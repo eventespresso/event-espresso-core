@@ -641,6 +641,16 @@ class EE_Error extends Exception {
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];
 		$dev_msg = isset( $msg[1] ) ? $msg[1] : $msg[0];
+		/**
+		 * Do an action so other code can be triggered when a notice is created
+		 * @param string $type can be 'errors', 'attention', or 'success'
+		 * @param string $user_msg message displayed to user when WP_DEBUG is off
+		 * @param string $user_msg message displayed to user when WP_DEBUG is on 
+		 * @param string $file file where error was generated
+		 * @param string $func function where error was generated
+		 * @param string $line line where error was generated
+		 */
+		do_action( 'AHEE__EE_Error___add_notice', $type, $user_msg, $dev_msg, $file, $func, $line );
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
