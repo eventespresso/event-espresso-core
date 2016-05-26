@@ -3,6 +3,7 @@ namespace EventEspresso\core\libraries\form_sections;
 
 use DomainException;
 use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\services\commands\CommandBus;
 use InvalidArgumentException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -49,15 +50,13 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 	/**
 	 * SequentialStepForm constructor
 	 *
-	 * @param int    $order
-	 * @param string $form_name
-	 * @param string $admin_name
-	 * @param string $slug
-	 * @param string $form_action
-	 * @param string $form_config
-	 * @throws InvalidArgumentException
-	 * @throws DomainException
-	 * @throws InvalidDataTypeException
+	 * @param int        $order
+	 * @param string     $form_name
+	 * @param string     $admin_name
+	 * @param string     $slug
+	 * @param string     $form_action
+	 * @param string     $form_config
+	 * @param CommandBus $command_bus
 	 */
 	public function __construct(
 		$order,
@@ -65,10 +64,11 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 		$admin_name,
 		$slug,
 		$form_action = '',
-		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT
+		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
+		CommandBus $command_bus = null
 	) {
 		$this->setOrder( $order );
-		parent::__construct( $form_name, $admin_name, $slug, $form_action, $form_config );
+		parent::__construct( $form_name, $admin_name, $slug, $form_action, $form_config, $command_bus );
 	}
 
 
