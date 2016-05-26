@@ -1191,7 +1191,7 @@ jQuery(document).ready(function($) {
 						price_amount = $(this).val();
 						idref = 'add-new-ticket-PRC_amount';
 						price_amount = price_amount !== '' ? parseFloat(price_amount) : 0;
-						price_amount = accounting.toFixed( price_amount );
+						price_amount = accounting.toFixed( price_amount, 6 );
 					}
 
 					if ( $(this).hasClass('add-new-ticket-TKT_name') ) {
@@ -1594,7 +1594,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			totals.subtotal = accounting.formatNumber(runningtotal);
+			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal, 6 ), 6 );
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
@@ -1605,7 +1605,7 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			totals.finalTotal = accounting.formatNumber(runningtotal);
+			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal, 6 ), 6 );
 
 			return totals;
 		},
@@ -1638,7 +1638,7 @@ jQuery(document).ready(function($) {
 			var price_amount = this.getTotalPrice();
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text(accounting.formatMoney(price_amount.finalTotal));
 			TKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount.finalTotal));
-			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal));
+			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal, 6 ));
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
 			return TKTrow;
 		},
