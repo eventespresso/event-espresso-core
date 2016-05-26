@@ -234,7 +234,7 @@ class Prices_List_Table extends EE_Admin_List_Table
     public function column_amount($item)
     {
         if ($this->_price_types[ $item->type() ]->is_percent()) {
-            return '<div class="pad-amnt-rght">' . number_format($item->amount(), 1) . '%</div>';
+            return '<div class="pad-amnt-rght">' . $item->amount() . '%</div>';
         } else {
             return '<div class="pad-amnt-rght">' . EEH_Template::format_currency($item->amount()) . '</div>';
         }
