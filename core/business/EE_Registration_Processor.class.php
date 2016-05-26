@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php use EventEspresso\core\services\registration\Create;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 EE_Registry::instance()->load_class( 'Processor_Base' );
 
 /**
@@ -47,6 +49,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 	/**
 	 * Cache of the reg final price for registrations corresponding to a ticket line item
+	 * @deprecated
 	 * @var array @see EEH_Line_Item::calculate_reg_final_prices_per_line_item()'s return value
 	 */
 	protected $_reg_final_price_per_tkt_line_item;
@@ -78,7 +81,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 	/**
 	 * generate_ONE_registration_from_line_item
-	 *
 	 * Although a ticket line item may have a quantity greater than 1,
 	 * this method will ONLY CREATE ONE REGISTRATION !!!
 	 * Regardless of the ticket line item quantity.
@@ -89,11 +91,14 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * after SPCO has already been initialized. So if an additional ticket was added to the cart, you can simply pass
 	 * the line item to this method to add a second ticket, and in this case, you would not want to add 2 tickets.
 	 *
-	 * @param EE_Line_Item $line_item
+	 * @deprecated
+	 * @param EE_Line_Item    $line_item
 	 * @param \EE_Transaction $transaction
-	 * @param int $att_nmbr
-	 * @param int $total_ticket_count
+	 * @param int             $att_nmbr
+	 * @param int             $total_ticket_count
 	 * @return \EE_Registration | null
+	 * @throws \OutOfRangeException
+	 * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
 	 * @throws \EE_Error
 	 */
 	public function generate_ONE_registration_from_line_item( EE_Line_Item $line_item, EE_Transaction $transaction, $att_nmbr = 1, $total_ticket_count = 1 ) {
@@ -103,55 +108,13 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			EE_Error::add_error( sprintf( __( "Line item %s did not contain a valid ticket", "event_espresso" ), $line_item->ID() ), __FILE__, __FUNCTION__, __LINE__ );
 			return null;
 		}
-		$first_datetime = $ticket->get_first_related( 'Datetime' );
-		if ( ! $first_datetime instanceof EE_Datetime ) {
-			EE_Error::add_error( sprintf( __( "The ticket (%s) is not associated with any valid datetimes.", "event_espresso" ), $ticket->name() ), __FILE__, __FUNCTION__, __LINE__ );
-			return null;
-		}
-		$event = $first_datetime->get_first_related( 'Event' );
-		if ( ! $event instanceof EE_Event ) {
-			EE_Error::add_error( sprintf( __( "The ticket (%s) is not associated with a valid event.", "event_espresso" ), $ticket->name() ), __FILE__, __FUNCTION__, __LINE__ );
-			return null;
-		}
-		$reg_url_link = $this->generate_reg_url_link( $att_nmbr, $line_item );
-
-		if( $this->_reg_final_price_per_tkt_line_item === null ) {
-			$this->_reg_final_price_per_tkt_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
-		}
-		//ok now find this new registration's final price
-		if( isset( $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ) ) {
-			$final_price = $this->_reg_final_price_per_tkt_line_item[ $line_item->ID() ] ;
-		}else{
-			$message = sprintf( __( 'The ticket line item (ID:%1$d) had no entry in the reg_final_price_per_tkt_line_item array.', 'event_espresso' ), $line_item->ID() );
-			if( WP_DEBUG ){
-				throw new EE_Error( $message );
-			}else{
-				EE_Log::instance()->log(__CLASS__, __FUNCTION__, $message );
-			}
-			$final_price = $ticket->get_ticket_total_with_taxes();
-
-		}
-		// now create a new registration for the ticket
-		$registration = EE_Registration::new_instance(
-			array(
-				'EVT_ID'          => $event->ID(),
-				'TXN_ID'          => $transaction->ID(),
-				'TKT_ID'          => $ticket->ID(),
-				'STS_ID'          => EEM_Registration::status_id_incomplete,
-				'REG_date'        => $transaction->datetime(),
-				'REG_final_price' => $final_price,
-				'REG_session'     => EE_Registry::instance()->SSN->id(),
-				'REG_count'       => $att_nmbr,
-				'REG_group_size'  => $total_ticket_count,
-				'REG_url_link'    => $reg_url_link
-			)
+		return Create::registrationForTransaction(
+			$transaction,
+			$ticket,
+			$line_item,
+			$att_nmbr,
+			$total_ticket_count
 		);
-		$registration->set_reg_code( $this->generate_reg_code( $registration ) );
-		$registration->save();
-		$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
-		$registration->_add_relation_to( $line_item->ticket(), 'Ticket', array(), $line_item->ticket()->ID() );
-		$transaction->_add_relation_to( $registration, 'Registration' );
-		return $registration;
 	}
 
 
@@ -159,14 +122,13 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	/**
 	 * generates reg_url_link
 	 *
+	 * @deprecated
 	 * @param int           $att_nmbr
 	 * @param EE_Line_Item | string $item
 	 * @return string
 	 */
 	public function generate_reg_url_link( $att_nmbr, $item ) {
-		$reg_url_link = $item instanceof EE_Line_Item ? $item->code() : $item;
-		$reg_url_link = $att_nmbr . '-' . md5( $reg_url_link . microtime() );
-		return $reg_url_link;
+		return Create::regUrlLink( $att_nmbr, $item );
 	}
 
 
@@ -174,22 +136,17 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	/**
 	 * generates reg code
 	 *
+	 * @deprecated
 	 * @param \EE_Registration $registration
 	 * @return string
 	 * @throws \EE_Error
 	 */
 	public function generate_reg_code( EE_Registration $registration ) {
-	// figure out where to start parsing the reg code
-		$chars = strpos( $registration->reg_url_link(), '-' ) + 5;
-		// TXN_ID + TKT_ID + first 3 and last 3 chars of reg_url_link
-		$new_reg_code = array(
-			$registration->transaction_ID(),
-			$registration->ticket_ID(),
-			substr( $registration->reg_url_link(), 0, $chars )
+		return apply_filters(
+			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
+			Create::regCodeFromRegistration( $registration ),
+			$registration
 		);
-		// now put it all together
-		$new_reg_code = implode( '-', $new_reg_code );
-		return apply_filters( 'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code', $new_reg_code, $registration );
 	}
 
 
@@ -245,6 +202,21 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 */
 	public function reg_status_updated( $REG_ID ) {
 		return $this->new_reg_status( $REG_ID ) !== $this->old_reg_status( $REG_ID ) ? true : false;
+	}
+
+
+
+	/**
+	 * @param \EE_Registration $registration
+	 * @throws \EE_Error
+	 */
+	public function update_registration_status_and_trigger_notifications( \EE_Registration $registration ) {
+		$this->toggle_incomplete_registration_status_to_default( $registration, false );
+		$this->toggle_registration_status_for_default_approved_events( $registration, false );
+		$this->toggle_registration_status_if_no_monies_owing( $registration, false );
+		$registration->save();
+		// trigger notifications
+		$this->trigger_registration_update_notifications( $registration );
 	}
 
 
