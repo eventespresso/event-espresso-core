@@ -516,7 +516,58 @@ class EE_Registry {
 
 
 	/**
-	 *    loads and tracks classes
+	 * instantiates, caches, and injects dependencies for classes that use a fully qualified classname
+	 *
+	 * @param bool|string $class_name - $class name
+	 * @param array       $arguments  - an argument or array of arguments to pass to the class upon instantiation
+	 * @param bool        $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
+	 * @param bool        $cache
+	 * @param bool        $load_only
+	 * @param bool|string $addon
+	 * @return mixed                    null = failure to load or instantiate class object.
+	 *                                  object = class loaded and instantiated successfully.
+	 *                                  bool = fail or success when $load_only is true
+	 */
+	public function create(
+		$class_name = false,
+		$arguments = array(),
+		$from_db = false,
+		$cache = true,
+		$load_only = false,
+		$addon = false
+	) {
+		if ( ! class_exists( $class_name ) ) {
+			return null;
+		}
+		// if we're only loading the class and it already exists, then let's just return true immediately
+		if ( $load_only ) {
+			return true;
+		}
+		$addon = $addon ? 'addon' : '';
+		// $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
+		// $cache is controlled by individual calls to separate Registry loader methods like load_class()
+		// $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
+		if ( $this->_cache_on && $cache && ! $load_only ) {
+			// return object if it's already cached
+			$cached_class = $this->_get_cached_class( $class_name, $addon );
+			if ( $cached_class !== null ) {
+				return $cached_class;
+			}
+		}
+		// instantiate the requested object
+		$class_obj = $this->_create_object( $class_name, $arguments, $addon, $from_db );
+		if ( $this->_cache_on && $cache ) {
+			// save it for later... kinda like gum  { : $
+			$this->_set_cached_class( $class_obj, $class_name, $addon, $from_db );
+		}
+		$this->_cache_on = true;
+		return $class_obj;
+	}
+
+
+
+	/**
+	 * instantiates, caches, and injects dependencies for classes
 	 *
 	 * @param array $file_paths
 	 * @param string $class_prefix - EE  or EEM or... ???
