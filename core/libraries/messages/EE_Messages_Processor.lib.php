@@ -217,14 +217,15 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_queue()->save() if desire
+	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_message_repository()->save() if desire
 	 * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
 	 * @param EE_Message_To_Generate $message_to_generate
+	 * @param bool                   $test_send             Whether this item is for a test send or not.
 	 * @return  EE_Messages_Queue
 	 */
-	public function queue_for_generation( EE_Message_To_Generate $message_to_generate ) {
+	public function queue_for_generation( EE_Message_To_Generate $message_to_generate, $test_send = false ) {
 		if ( $message_to_generate->valid() ) {
-			$this->_generator->create_and_add_message_to_queue( $message_to_generate );
+			$this->_generator->create_and_add_message_to_queue( $message_to_generate, $test_send );
 		}
 	}
 
@@ -308,10 +309,11 @@ class EE_Messages_Processor {
 	/**
 	 * Generate for preview and execute right away.
 	 *
-*@param   EE_Message_To_Generate $message_to_generate
+	 * @param   EE_Message_To_Generate $message_to_generate
+	 * @param   bool                   $test_send                Whether this is a test send or not.
 	 * @return  EE_Messages_Queue | bool   false if unable to generate otherwise the generated queue.
 	 */
-	public function generate_for_preview( EE_Message_To_Generate $message_to_generate ) {
+	public function generate_for_preview( EE_Message_To_Generate $message_to_generate, $test_send = false ) {
 		if ( ! $message_to_generate->valid() ) {
 			EE_Error::add_error(
 				__( 'Unable to generate preview because of invalid data', 'event_espresso' ),
@@ -323,14 +325,16 @@ class EE_Messages_Processor {
 		}
 		//just make sure preview is set on the $message_to_generate (in case client forgot)
 		$message_to_generate->set_preview( true );
-		$generated_queue = $this->generate_and_return( array( $message_to_generate ) );
+		$this->_init_queue_and_generator();
+		$this->queue_for_generation( $message_to_generate, $test_send );
+		$generated_queue = $this->_generator->generate( false );
 		if ( $generated_queue->execute( false ) ) {
 			//the first queue item should be the preview
-			$generated_queue->get_queue()->rewind();
-			if ( ! $generated_queue->get_queue()->valid() ) {
+			$generated_queue->get_message_repository()->rewind();
+			if ( ! $generated_queue->get_message_repository()->valid() ) {
 				return $generated_queue;
 			}
-			return $generated_queue->get_queue()->is_test_send() ? true : $generated_queue;
+			return $generated_queue->get_message_repository()->is_test_send() ? true : $generated_queue;
 		} else {
 			return false;
 		}

@@ -729,7 +729,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$filtered_messages_link = '';
 		//message list table link (filtered by REG_ID
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
 			$filtered_messages_link = '<li>'
 			                          . EEH_MSG_Template::get_message_action_link(
 											'see_notifications_for',

@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
-* EE_Registry Class
+ * EE_Registry Class
  *
  * Centralized Application Data Storage and Management
  *
@@ -1051,27 +1051,75 @@ class EE_Registry {
 
 
 	/**
-	 * Resets the registry and everything in it (eventually, getting it to properly
-	 * reset absolutely everything will probably be tricky. right now it just resets
-	 * the config, data migration manager, and the models)
+	 * Resets the registry.
+	 *
+	 * The criteria for what gets reset is based on what can be shared between sites on the same request when switch_to_blog
+	 * is used in a multisite install.  Here is a list of things that are NOT reset.
+	 *
+	 * - $_dependency_map
+	 * - $_class_abbreviations
+	 * - $NET_CFG (EE_Network_Config): The config is shared network wide so no need to reset.
+	 * - $REQ:  Still on the same request so no need to change.
+	 * - $CAP: There is no site specific state in the EE_Capability class.
+	 * - $SSN: Although ideally, the session should not be shared between site switches, we can't reset it because only one Session
+	 *         can be active in a single request.  Resetting could resolve in "headers already sent" errors.
+	 * - $addons:  In multisite, the state of the addons is something controlled via hooks etc in a normal request.  So
+	 *             for now, we won't reset the addons because it could break calls to an add-ons class/methods in the
+	 *             switch or on the restore.
+	 * - $modules
+	 * - $shortcodes
+	 * - $widgets
+	 * - $LIB:  Only specific classes get unset from $LIB (current EE_Data_Migration_Manager) that persist state.
+	 *
 	 * @param boolean $hard whether to reset data in the database too, or just refresh
 	 * the Registry to its state at the beginning of the request
 	 * @param boolean $reinstantiate whether to create new instances of EE_Registry's singletons too,
 	 * or just reset without re-instantiating (handy to set to FALSE if you're not sure if you CAN
 	 * currently reinstantiate the singletons at the moment)
+	 * @param   bool    $reset_models    Defaults to true.  When false, then the models are not reset.  This is so client
+	 *                                  code instead can just change the model context to a different blog id if necessary
+	 *
 	 * @return EE_Registry
 	 */
-	public static function reset( $hard = false, $reinstantiate = true ) {
+	public static function reset( $hard = false, $reinstantiate = true, $reset_models = true ) {
 		$instance = self::instance();
 		EEH_Activation::reset();
+
+		//properties that get reset
 		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
-		$instance->LIB->EE_Data_Migration_Manager = EE_Data_Migration_Manager::reset();
-		$instance->LIB = new stdClass();
-		foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
-			$instance->reset_model( $model_name );
+		$instance->CART = null;
+		$instance->MRM = null;
+
+		//handle of objects cached on LIB
+		foreach ( $instance->_classes_to_unset_from_LIB_on_reset() as $class_name ) {
+			if ( isset( $instance->LIB->$class_name ) ) {
+				unset( $instance->LIB->$class_name );
+			}
 		}
+
+		if ( $reset_models ) {
+			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
+				$instance->reset_model( $model_name );
+			}
+		}
+
 		return $instance;
+	}
+
+
+
+
+	/**
+	 * Returns a filtered array of classes to unset from the $LIB property when EE_Registry::reset is called.
+	 * @return array
+	 */
+	protected function _classes_to_unset_from_LIB_on_reset() {
+		return apply_filters( 'EE_Registry___classes_to_unset_from_LIB_on_reset', array(
+			'EE_Data_Migration_Manager',
+			'EE_Messages_Processor',
+			'EE_Messages_Queue',
+		));
 	}
 
 

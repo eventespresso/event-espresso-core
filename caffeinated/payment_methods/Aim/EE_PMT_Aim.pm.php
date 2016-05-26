@@ -180,15 +180,31 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						)
 					)),
 					'required_billing_inputs' => new EE_Checkbox_Multi_Input( 
-							$billing_input_names,
+						$billing_input_names,
+						array(
+							'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
+							'default' => array_diff(
+										array_keys( $billing_input_names ),
+										array( 'address2', 'phone', 'company', 'fax' )
+							),
+							'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
+						)
+					),
+					'server' => new EE_Select_Input(
+						apply_filters(
+							'FHEE__EE_PMT_Aim__generate_new_settings_form__server_select_input__options',
 							array(
-								'html_label_text' => sprintf( __("Required Payment Form Fields %s", 'event_espresso'),  $this->get_help_tab_link() ),
-								'default' => array_diff(
-											array_keys( $billing_input_names ),
-											array( 'address2', 'phone', 'company', 'fax' )
-								),
-								'html_help_text' => __('Note: if fields are excluded they cannot be required.', 'event_espresso')
-							)),
+								'authorize.net' => __( 'Authorize.net (default)', 'event_espresso' ),
+								'akamai' => __( 'Authorize.net/Akamai', 'event_espresso' )
+							),
+							$this
+						),
+						array(
+							'html_label_text' => __( 'Server', 'event_espresso' ),
+							'html_help_text' => __( 'The Gateway Server where payment requests will be sent', 'event_espresso' )
+						)
+					)
+						
 				)
 			)
 		);

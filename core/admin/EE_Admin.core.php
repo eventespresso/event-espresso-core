@@ -174,7 +174,7 @@ final class EE_Admin {
 	*/
 	public function init() {
 		//only enable most of the EE_Admin IF we're not in full maintenance mode
-		if ( EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance ){
+		if ( EE_Maintenance_Mode::instance()->models_can_query() ){
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
@@ -764,6 +764,48 @@ final class EE_Admin {
 
 	}
 
+
+
+	/**
+	 * @deprecated 4.8.41
+	 * @access     public
+	 * @param  int      $post_ID
+	 * @param  \WP_Post $post
+	 * @return void
+	 */
+	public static function parse_post_content_on_save( $post_ID, $post ) {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__(
+				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+				'event_espresso'
+			),
+			'4.8.41'
+		);
+		EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $post_ID, $post );
+	}
+
+
+
+	/**
+	 * @deprecated 4.8.41
+	 * @access     public
+	 * @param  $option
+	 * @param  $old_value
+	 * @param  $value
+	 * @return void
+	 */
+	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__(
+				'Usage is deprecated. Use EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save() instead.',
+				'event_espresso'
+			),
+			'4.8.41'
+		);
+		EventEspresso\core\admin\PostShortcodeTracking::reset_page_for_posts_on_change( $option, $old_value, $value );
+	}
 
 }
 // End of file EE_Admin.core.php

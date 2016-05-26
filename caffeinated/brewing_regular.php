@@ -85,7 +85,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$price_type_table = $wpdb->prefix."esp_price_type";
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '$price_type_table'") == $price_type_table) {
+		if ( EEH_Activation::table_exists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';//include trashed price types
 			$tax_price_type_count = $wpdb->get_var( $SQL );

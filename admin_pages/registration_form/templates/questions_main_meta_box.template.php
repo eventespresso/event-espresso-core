@@ -278,7 +278,7 @@ $has_answers = $question->has_answers();
 					<label for="QST_required_text"><?php _e('Required Text', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
 				</th>
 				<td>
-					<input type="text" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php  $question->f('QST_required_text')?>"/>
+					<input type="text" maxlength="100" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php  $question->f('QST_required_text')?>"/>
 
 				</td>
 			</tr>

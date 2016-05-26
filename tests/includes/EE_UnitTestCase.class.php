@@ -331,7 +331,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		switch ( $page ) {
 			case 'decaf_events' :
-				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+			case 'events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Mock.php';
 				break;
 			case 'registrations' :
 				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
