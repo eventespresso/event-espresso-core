@@ -291,7 +291,10 @@ class CollectionLoader {
 		if ( ! class_exists( $FQCN ) ) {
 			throw new InvalidClassException( $FQCN );
 		}
-		return $this->addEntityToCollection( new $FQCN(), $FQCN );
+		return $this->addEntityToCollection(
+			\EE_Registry::create( $FQCN ),
+			$FQCN
+		);
 	}
 
 
