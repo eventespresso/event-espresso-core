@@ -15,6 +15,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CommandBusInterface {
 
 	/**
+	 * @return CommandHandlerManagerInterface
+	 */
+	public function getCommandHandlerManager();
+
+	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
 	 * @return mixed
 	 */
