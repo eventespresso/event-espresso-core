@@ -217,16 +217,16 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			true,
 			true
 		);
-		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
+		$this->assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
-		EE_UnitTestCase::assertNotEquals( 0, $payment->ID() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
-		EE_UnitTestCase::assertEquals(
+		$this->assertNotEquals( 0, $payment->ID() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
+		$this->assertEquals(
 			$successful_payment_actions + 1,
 			$wp_actions['AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful']
 		);
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			$payment_actions + 1,
 			$wp_actions['AHEE__EE_Payment_Processor__update_txn_based_on_payment']
 		);
@@ -241,7 +241,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 	 * @param EE_Payment $payment
 	 */
 	public function assert_payment_message_trigger_for_success( $transaction, $payment ) {
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->get( 'STS_ID' ) );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->get( 'STS_ID' ) );
 	}
 
 
@@ -274,26 +274,26 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 		// simulate payment save performed in EE_PMT_Base::process_payment()
 		$payment->save();
 		//$this->new_model_obj_with_dependencies( 'Registration', array( 'TXN_ID' => $txn->ID(), 'REG_count' => 1 ) );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		/** @type EE_Payment_Processor $payment_processor */
 		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		$payment_processor->update_txn_based_on_payment( $txn, $payment );
 		//the payment should have been saved, and the txn appropriately updated
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
-		EE_UnitTestCase::assertEquals( $payment, $txn->last_payment() );
-		EE_UnitTestCase::assertEquals( 10.00, $payment->amount() );
-		EE_UnitTestCase::assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( $payment, $txn->last_payment() );
+		$this->assertEquals( 10.00, $payment->amount() );
+		$this->assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			10.00,
 			$transaction_payments->recalculate_total_payments_for_transaction(
 				$txn,
 				EEM_Payment::status_id_approved
 			)
 		);
-		EE_UnitTestCase::assertEquals( 10.00, $txn->paid() );
-		EE_UnitTestCase::assertEquals( EEM_Transaction::complete_status_code, $txn->status_ID() );
+		$this->assertEquals( 10.00, $txn->paid() );
+		$this->assertEquals( EEM_Transaction::complete_status_code, $txn->status_ID() );
 	}
 
 
@@ -319,27 +319,27 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			false
 		);
 		//because this is from an OFFLINE gateway, the payment shouldn't be saved
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_pending, $payment->status() );
 		/** @type EE_Payment_Processor $payment_processor */
 		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		$payment_processor->update_txn_based_on_payment( $txn, $payment );
 		//the payment should have NOT been saved, and the txn appropriately updated
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $payment->status() );
-		EE_UnitTestCase::assertEquals( 0, $payment->ID() );
-		EE_UnitTestCase::assertEquals( null, $txn->last_payment() );
-		EE_UnitTestCase::assertEquals( 0, $payment->amount() );
-		EE_UnitTestCase::assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
+		$this->assertEquals( EEM_Payment::status_id_pending, $payment->status() );
+		$this->assertEquals( 0, $payment->ID() );
+		$this->assertEquals( null, $txn->last_payment() );
+		$this->assertEquals( 0, $payment->amount() );
+		$this->assertEquals( $txn->ID(), $payment->get( 'TXN_ID' ) );
 		/** @type EE_Transaction_Payments $transaction_payments */
 		$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			0,
 			$transaction_payments->recalculate_total_payments_for_transaction(
 				$txn,
 				EEM_Payment::status_id_approved
 			)
 		);
-		EE_UnitTestCase::assertEquals( 0, $txn->paid() );
-		EE_UnitTestCase::assertEquals( EEM_Transaction::incomplete_status_code, $txn->status_ID() );
+		$this->assertEquals( 0, $txn->paid() );
+		$this->assertEquals( EEM_Transaction::incomplete_status_code, $txn->status_ID() );
 	}
 
 
@@ -376,12 +376,12 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			true,
 			true
 		);
-		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
+		$this->assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
-		EE_UnitTestCase::assertNotEquals( 0, $payment->ID() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_declined, $payment->status() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_declined, $this->_get_payment_status_in_db( $payment ) );
-		EE_UnitTestCase::assertEquals(
+		$this->assertNotEquals( 0, $payment->ID() );
+		$this->assertEquals( EEM_Payment::status_id_declined, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_declined, $this->_get_payment_status_in_db( $payment ) );
+		$this->assertEquals(
 			$successful_payment_actions,
 			EEH_Array::is_set(
 				$wp_actions,
@@ -410,20 +410,20 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			0
 		);
 		$payment = $payment_processor->process_payment( $pm, $transaction, null, null, 'success', 'CART', true, true );
-		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
+		$this->assertInstanceOf( 'EE_Payment', $payment );
 		//verify it's already been saved
-		EE_UnitTestCase::assertNotEquals( 0, $payment->ID() );
+		$this->assertNotEquals( 0, $payment->ID() );
 		//assert that the payment still has its default status
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(),
 			$payment->status()
 		);
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			EEM_Payment::instance()->field_settings_for( 'STS_ID' )->get_default_value(),
 			$this->_get_payment_status_in_db( $payment )
 		);
 		//assert that the we haven't notified of successful payment JUST yet...
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			$successful_payment_actions,
 			EEH_Array::is_set(
 				$wp_actions,
@@ -437,10 +437,10 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			$transaction,
 			$pm
 		);
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $payment->status() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_pending, $this->_get_payment_status_in_db( $payment ) );
+		$this->assertEquals( EEM_Payment::status_id_pending, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_pending, $this->_get_payment_status_in_db( $payment ) );
 		//and the payment-approved action should have NOT been triggered
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			$successful_payment_actions,
 			EEH_Array::is_set(
 				$wp_actions,
@@ -455,10 +455,10 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			$pm
 		);
 		//payment should be what the gateway set it to be, which was approved
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
 		//and the payment-approved action should have been triggered
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			$successful_payment_actions + 1,
 			EEH_Array::is_set(
 				$wp_actions,
@@ -478,9 +478,9 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			$pm
 		);
 		//payment should be what the gateway set it to be, which was failed
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->status() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		//and the payment-approved action should have NOT been triggered this time because it's a duplicate
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals(
 			$successful_payment_actions + 1,
 			EEH_Array::is_set(
 				$wp_actions,
@@ -506,9 +506,9 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
 		$payment = $payment_processor->process_payment( $pm, $transaction, null, null, 'success', 'CART', true, true );
 		// offline payments are not saved... because no payment ever actually happened
-		EE_UnitTestCase::assertEquals( 0, $payment->ID() );
-		EE_UnitTestCase::assertEquals( EEM_Transaction::incomplete_status_code, $transaction->status_ID() );
-		EE_UnitTestCase::assertEquals(
+		$this->assertEquals( 0, $payment->ID() );
+		$this->assertEquals( EEM_Transaction::incomplete_status_code, $transaction->status_ID() );
+		$this->assertEquals(
 			$successful_payment_actions + 1,
 			$wp_actions['AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made']
 		);
@@ -524,8 +524,8 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 	public function test_process_ipn() {
 		/** @type EE_Payment_Method $pm */
 		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Mock_Offsite' ) );
-		EE_UnitTestCase::assertInstanceOf( 'EE_PMT_Mock_Offsite', $pm->type_obj() );
-		EE_UnitTestCase::assertInstanceOf( 'EEG_Mock_Offsite', $pm->type_obj()->get_gateway() );
+		$this->assertInstanceOf( 'EE_PMT_Mock_Offsite', $pm->type_obj() );
+		$this->assertInstanceOf( 'EEG_Mock_Offsite', $pm->type_obj()->get_gateway() );
 		$txn = $this->new_typical_transaction();
 		//we don't want to bother sending messages. We're not wanting ot test that right now
 		remove_all_filters( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' );
@@ -534,11 +534,11 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 			'gateway_txn_id' => $payment->txn_id_chq_nmbr(),
 			'status'         => EEM_Payment::status_id_approved,
 		);
-		EE_UnitTestCase::assertNotEmpty( $payment->ID() );
+		$this->assertNotEmpty( $payment->ID() );
 		$payment = EE_Payment_Processor::instance()->process_ipn( $fake_req_data, $txn, $pm->slug() );
-		EE_UnitTestCase::assertInstanceOf( 'EE_Payment', $payment );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $payment->STS_ID() );
-		EE_UnitTestCase::assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
+		$this->assertInstanceOf( 'EE_Payment', $payment );
+		$this->assertEquals( EEM_Payment::status_id_approved, $payment->STS_ID() );
+		$this->assertEquals( EEM_Payment::status_id_approved, $this->_get_payment_status_in_db( $payment ) );
 	}
 
 
