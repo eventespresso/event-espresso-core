@@ -292,7 +292,7 @@ class CollectionLoader {
 			throw new InvalidClassException( $FQCN );
 		}
 		return $this->addEntityToCollection(
-			\EE_Registry::create( $FQCN ),
+			\EE_Registry::instance()->create( $FQCN ),
 			$FQCN
 		);
 	}
