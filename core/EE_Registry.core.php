@@ -815,7 +815,7 @@ class EE_Registry {
 			} else if ( $reflector->getConstructor() === null && $reflector->isInstantiable() && empty( $arguments ) ) {
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
 				$instantiation_mode = "2) no constructor but instantiable";
-				$class_obj = $reflector->newInstanceWithoutConstructor();
+				$class_obj = $reflector->newInstance();
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
 				$instantiation_mode = "3) new_instance_from_db()";
 				$class_obj = call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
