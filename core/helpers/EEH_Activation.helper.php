@@ -1731,10 +1731,12 @@ class EEH_Activation {
 		$new_error = $wpdb->last_error;
 		$wpdb->last_error = $old_error;
 		$EZSQL_ERROR = $ezsql_error_cache;
-		if( empty( $new_error ) ){
-			return TRUE;
+		//if there was an error, and it mentions a table not existing
+		if( ! empty( $new_error )
+			&& preg_match( '~^Table .* doesn\'t exist~', $new_error ) ) {
+			return false;
 		}else{
-			return FALSE;
+			return true;
 		}
 	}
 
