@@ -126,6 +126,12 @@ class EE_Messages_Generator {
 			/** @type EE_Message $msg */
 			$msg = $this->_generation_queue->get_message_repository()->current();
 
+			//skip if the current $msg is NOT incomplete (queued for generation)
+			if ( $msg->STS_ID() !== EEM_Message::status_incomplete ) {
+				$this->_generation_queue->get_message_repository()->next();
+				continue;
+			}
+
 			if ( $this->_verify() ) {
 				//let's get generating!
 				$this->_generate();
