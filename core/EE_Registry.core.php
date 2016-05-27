@@ -536,6 +536,7 @@ class EE_Registry {
 		$load_only = false,
 		$addon = false
 	) {
+		$class_name = $this->_dependency_map->get_alias( $class_name );
 		if ( ! class_exists( $class_name ) ) {
 			return null;
 		}
@@ -600,6 +601,7 @@ class EE_Registry {
 			// add class prefix ONCE!!!
 			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
+		$class_name = $this->_dependency_map->get_alias( $class_name );
 		$class_exists = class_exists( $class_name );
 		// if we're only loading the class and it already exists, then let's just return true immediately
 		if ( $load_only && $class_exists ) {
@@ -788,6 +790,7 @@ class EE_Registry {
 	 */
 	protected function _create_object( $class_name, $arguments = array(), $type = '', $from_db = false ) {
 		$class_obj = null;
+		$instantiation_mode = '0) none';
 		// don't give up! you gotta...
 		try {
 			// create reflection
@@ -803,27 +806,30 @@ class EE_Registry {
 			if ( $this->_dependency_map->has( $class_name ) ) {
 				$arguments = $this->_resolve_dependencies( $reflector, $class_name, $arguments );
 			}
-			// instantiate the class and add to the LIB array for tracking
-			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
-			if ( $reflector->getConstructor() === null || $reflector->isAbstract() ) {
-				// no constructor = static methods only... nothing to instantiate, loading file was enough
-				//$instantiation_mode = "no constructor";
+			// instantiate the class if possible
+			if ( $reflector->isAbstract() ) {
+				// nothing to instantiate, loading file was enough
+				// does not throw an exception so $instantiation_mode is unused
+				// $instantiation_mode = "1) no constructor abstract class";
 				$class_obj = true;
+			} else if ( $reflector->getConstructor() === null && $reflector->isInstantiable() && empty( $arguments ) ) {
+				// no constructor = static methods only... nothing to instantiate, loading file was enough
+				$instantiation_mode = "2) no constructor but instantiable";
+				$class_obj = $reflector->newInstanceWithoutConstructor();
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
-				//$instantiation_mode = "new_instance_from_db";
+				$instantiation_mode = "3) new_instance_from_db()";
 				$class_obj = call_user_func_array( array( $class_name, 'new_instance_from_db' ), $arguments );
 			} else if ( method_exists( $class_name, 'new_instance' ) ) {
-				//$instantiation_mode = "new_instance";
+				$instantiation_mode = "4) new_instance()";
 				$class_obj = call_user_func_array( array( $class_name, 'new_instance' ), $arguments );
 			} else if ( method_exists( $class_name, 'instance' ) ) {
-				//$instantiation_mode = "instance";
+				$instantiation_mode = "5) instance()";
 				$class_obj = call_user_func_array( array( $class_name, 'instance' ), $arguments );
 			} else if ( $reflector->isInstantiable() ) {
-				//$instantiation_mode = "isInstantiable";
+				$instantiation_mode = "6) constructor";
 				$class_obj = $reflector->newInstanceArgs( $arguments );
 			} else {
 				// heh ? something's not right !
-				//$instantiation_mode = 'none';
 				throw new EE_Error(
 					sprintf(
 						__( 'The %s file %s could not be instantiated.', 'event_espresso' ),
@@ -834,7 +840,14 @@ class EE_Registry {
 			}
 		} catch ( Exception $e ) {
 			if ( ! $e instanceof EE_Error ) {
-				$e = new EE_Error( $e->getMessage() );
+				$e = new EE_Error(
+					sprintf(
+						__( '%1$s %2$s instantiation mode : %3$s', 'event_espresso' ),
+						$e->getMessage(),
+						'<br />',
+						$instantiation_mode
+					)
+				);
 			}
 			$e->get_error();
 		}
@@ -954,9 +967,8 @@ class EE_Registry {
 	protected function _resolve_dependency( $class_name, $param_class , $arguments, $index ) {
 		$dependency = null;
 		// should dependency be loaded from cache ?
-		$cache_on = $this->_dependency_map->loading_strategy_for_class_dependency(
-			$class_name, $param_class
-		) !== EE_Dependency_Map::load_new_object
+		$cache_on = $this->_dependency_map->loading_strategy_for_class_dependency( $class_name, $param_class )
+		            !== EE_Dependency_Map::load_new_object
 			? true
 			: false;
 		// we might have a dependency...
