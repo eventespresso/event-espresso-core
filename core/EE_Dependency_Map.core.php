@@ -62,6 +62,11 @@ class EE_Dependency_Map {
 	 */
 	protected $_class_loaders = array();
 
+	/**
+	 * @type array $_aliases
+	 */
+	protected $_aliases = array();
+
 
 
 	/**
@@ -84,6 +89,7 @@ class EE_Dependency_Map {
 	public function initialize() {
 		$this->_register_core_dependencies();
 		$this->_register_core_class_loaders();
+		$this->_register_core_aliases();
 	}
 
 
@@ -112,7 +118,14 @@ class EE_Dependency_Map {
 	 */
 	public static function register_dependencies( $class, $dependencies ) {
 		if ( ! isset( self::$_instance->_dependency_map[ $class ] ) ) {
-			self::$_instance->_dependency_map[ $class ] = (array)$dependencies;
+			// we need to make sure that any aliases used when registering a dependency
+			// get resolved to the correct class name
+			foreach ( (array) $dependencies as $dependency => $load_source ) {
+				$alias = self::$_instance->get_alias( $dependency );
+				unset( $dependencies[ $dependency ] );
+				$dependencies[ $alias ] = $load_source;
+			}
+			self::$_instance->_dependency_map[ $class ] = (array) $dependencies;
 			return true;
 		}
 		return false;
@@ -136,6 +149,7 @@ class EE_Dependency_Map {
 				)
 			);
 		}
+		$class_name = self::$_instance->get_alias( $class_name );
 		if ( ! isset( self::$_instance->_class_loaders[ $class_name ] ) ) {
 			self::$_instance->_class_loaders[ $class_name ] = $loader;
 			return true;
@@ -189,6 +203,7 @@ class EE_Dependency_Map {
 	 * @return int
 	 */
 	public function loading_strategy_for_class_dependency( $class_name = '', $dependency = '' ) {
+		$dependency = $this->get_alias( $dependency );
 		return $this->has_dependency_for_class( $class_name, $dependency )
 			? $this->_dependency_map[ $class_name ][ $dependency ]
 			: EE_Dependency_Map::not_registered;
@@ -213,6 +228,53 @@ class EE_Dependency_Map {
 		return $this->_class_loaders;
 	}
 
+
+
+	/**
+	 * adds an alias for a classname
+	 *
+	 * @param string $class_name
+	 * @param string $alias
+	 * @return bool
+	 */
+	public function add_alias( $class_name, $alias ) {
+		$this->_aliases[ $class_name ] = $alias;
+	}
+
+
+
+	/**
+	 * returns TRUE if the provided class name has an alias
+	 *
+	 * @param string $class_name
+	 * @return boolean
+	 */
+	public function has_alias( $class_name = '' ) {
+		return isset( $this->_aliases[ $class_name ] ) ? true : false;
+	}
+
+
+
+	/**
+	 * returns alias for class name if one exists, otherwise returns the original classname
+	 * functions recursively, so that multiple aliases can be used to drill down to a classname
+	 *  for example:
+	 *      if the following two entries were added to the _aliases array:
+	 *          array(
+	 *              'interface_alias'           => 'some\namespace\interface'
+	 *              'some\namespace\interface'  => 'some\namespace\classname'
+	 *          )
+	 *      then one could use EE_Registry::instance()->create( 'interface_alias' )
+	 *      to load an instance of 'some\namespace\classname'
+	 *
+	 * @param string $class_name
+	 * @return boolean
+	 */
+	public function get_alias( $class_name = '' ) {
+		return $this->has_alias( $class_name )
+			? $this->get_alias( $this->_aliases[ $class_name ] )
+			: $class_name;
+	}
 
 
 	/**
@@ -278,7 +340,10 @@ class EE_Dependency_Map {
 			'EE_Message_To_Generate_From_Request' => array(
 				'EE_Message_Resource_Manager' => EE_Dependency_Map::load_from_cache,
 				'EE_Request_Handler' => EE_Dependency_Map::load_from_cache
-			)
+			),
+			'EventEspresso\core\services\commands\CommandBus' => array(
+				'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => EE_Dependency_Map::load_from_cache
+			),
 		);
 	}
 
@@ -354,6 +419,25 @@ class EE_Dependency_Map {
 				}
 				return null;
 			},
+			'EventEspresso\core\services\commands\CommandBus' => function () {
+				return EE_Registry::instance()->create( 'CommandBus' );
+			},
+			'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => function () {
+				return EE_Registry::instance()->create( 'CommandHandlerManagerInterface' );
+			},
+		);
+	}
+
+
+	/**
+	 * can be used for supplying alternate names for classes,
+	 * or for connecting interface names to instantiable classes
+	 */
+	protected function _register_core_aliases() {
+		$this->_aliases = array(
+			'CommandBus'                                                          => 'EventEspresso\core\services\commands\CommandBus',
+			'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
+			'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
 		);
 	}
 
