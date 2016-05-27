@@ -34,6 +34,42 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * This test verifies that the generation queue only generates messages with the status of incomplete.
+	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/9787
+	 * @group 9787
+	 */
+	function test_generate_only_incomplete_messages() {
+		$message_processor = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+		//make sure there is nothing in the queue
+		$this->assertFalse( $message_processor->batch_generate_from_queue( array(), true ) );
+
+		//get an event (with relations via creating the ticket) in the db for the message preview
+		$this->factory->ticket_chained->create();
+
+		//get some ready to generate
+		$this->factory->message->create_many( 5 );
+
+		/** @var EE_Messages_Queue $new_queue */
+		$new_queue = $message_processor->batch_generate_from_queue();
+		$this->assertInstanceOf( 'EE_Messages_Queue', $new_queue );
+
+		//now let's grab the generated messages from this queue and send it in to the batch_generate_from_queue
+		$messages = array();
+		$new_queue->get_message_repository()->rewind();
+		while ( $new_queue->get_message_repository()->valid() ) {
+			$messages[] = $new_queue->get_message_repository()->current();
+			$new_queue->get_message_repository()->next();
+		}
+
+		/** @var EE_Messages_Queue $newer_queue */
+		$newer_queue = $message_processor->batch_generate_from_queue( $messages );
+		$this->assertInstanceOf( 'EE_Messages_Queue', $newer_queue );
+		//there should be NO fails in the queue.
+		$this->assertEquals( 0, $newer_queue->count_STS_in_queue( array( EEM_Message::status_failed ) ) );
+	}
+
+
 
 } //end EE_Messages_Generator_Test class
 // Location: tests/testcases/core/libraries/messages/EE_Messages_Generator_Test.php
