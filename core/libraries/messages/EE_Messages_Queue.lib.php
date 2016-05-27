@@ -444,7 +444,7 @@ class EE_Messages_Queue {
 			/** @type EE_Message $message */
 			$message = $this->_message_repository->current();
 			//if the message in the queue has a sent status, then skip
-			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_sent() ) ) {
+			if ( ! in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send() ) ) {
 				$this->_message_repository->next();
 				continue;
 			}
