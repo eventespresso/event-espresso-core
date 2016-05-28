@@ -459,8 +459,14 @@ class EE_Messages_Processor {
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
 				'MSG_ID' => array( 'IN', $message_ids ),
-				'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
-			)
+				'STS_ID' => array(
+					'IN',
+					array_merge(
+						EEM_Message::instance()->stati_indicating_sent(),
+						array( EEM_Message::status_retry )
+					),
+				),
+			),
 		));
 		//set the Messages to resend.
 		foreach ( $messages as $message ) {
