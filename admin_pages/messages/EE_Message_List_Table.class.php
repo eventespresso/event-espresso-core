@@ -405,7 +405,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		//the messages system is in debug mode.
 		//Note: for backward compat with previous iterations, this is necessary because there may be EEM_Message::status_debug_only
 		//messages in the database.
-		if ( EEM_Message::debug() ) {
+		if ( ! EEM_Message::debug() ) {
 			$query_params[0]['AND*debug_only_conditional'] = array(
 				'STS_ID' => array( '!=', EEM_Message::status_debug_only )
 			);

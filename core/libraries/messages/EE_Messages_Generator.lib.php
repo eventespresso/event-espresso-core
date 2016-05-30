@@ -152,7 +152,7 @@ class EE_Messages_Generator {
 			//don't persist debug_only messages if the messages system is not in debug mode.
 			if (
 				$msg->STS_ID() === EEM_Message::status_debug_only
-				&& EEM_Message::debug()
+				&& ! EEM_Message::debug()
 			) {
 				$this->_generation_queue->get_message_repository()->delete();
 				$this->_generation_queue->get_message_repository()->set_current( $next_msg );
