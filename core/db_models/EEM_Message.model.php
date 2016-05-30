@@ -82,8 +82,12 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 
 	/**
-	 * This is for failed messages that are only displayed when `WP_DEBUG` is true.  Usually this is used for more informational
-	 * messages that may not indicate anything is broken.
+	 * This is used for more informational messages that may not indicate anything is broken but still cannot be generated
+	 * or sent correctly. An example of a message that would get flagged this way would be when a not approved message was queued
+	 * for generation, but at time of generation, the attached registration(s) are approved. So the message queued for generation
+	 * is no longer valid.  Messages for this status will only persist in the db and be viewable in the message activity
+	 * list table when the messages system is in debug mode.
+	 * @see EEM_Message::debug()
 	 */
 	const status_debug_only = 'MDO';
 
