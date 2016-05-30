@@ -202,13 +202,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *                             But if the data has already been validated
 	 *                             (eg you validated the data then stored it in the DB)
 	 *                             you may want to skip this step.
-	 * @param bool       $previously_submitted_data
 	 */
-	public function receive_form_submission( $req_data = null, $validate = true, $previously_submitted_data = false ){
+	public function receive_form_submission( $req_data = null, $validate = true ){
 		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
-		if( $previously_submitted_data ){
-			$req_data = $this->get_submitted_form_data_from_session();
-		} else if( $req_data === null ){
+		if( $req_data === null ){
 			$req_data = array_merge( $_GET, $_POST );
 		}
 		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data', $req_data, $this );
@@ -687,7 +684,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 			$subsection->_validate();
 		}
-		if ( $this->is_valid() ) {
+		//if it's invalid, we're going to want to re-display so remember what they submitted
+		if ( ! $this->is_valid() ) {
 			$this->store_submitted_form_data_in_session();
 		}
 	}
@@ -1196,6 +1194,22 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			return $child_section->find_section_from_path( $subpath );
 		} else {
 			return null;
+		}
+	}
+	
+	/**
+	 * Populates this form and its subsections with data from the session.
+	 * (Wrapper for EE_Form_Section_Proper::populate_defaults)
+	 * Returns true if the form was populated from the session, false otherwise
+	 * @return boolean
+	 */
+	public function populate_from_session() {
+		$session_data = $this->get_submitted_form_data_from_session();
+		$this->populate_defaults( $session_data );
+		if( $this->form_data_present_in( $$session_data ) ) {
+			return true; 
+		} else {
+			return false;
 		}
 	}
 
