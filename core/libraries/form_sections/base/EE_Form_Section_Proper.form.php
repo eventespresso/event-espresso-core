@@ -212,6 +212,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$this->_normalize( $req_data );
 		if( $validate ){
 			$this->_validate();
+			//if it's invalid, we're going to want to re-display so remember what they submitted
+			if ( ! $this->is_valid() ) {
+				$this->store_submitted_form_data_in_session();
+			}
 		}
 		do_action( 'AHEE__EE_Form_Section_Proper__receive_form_submission__end', $req_data, $this, $validate );
 	}
@@ -684,10 +688,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 			$subsection->_validate();
 		}
-		//if it's invalid, we're going to want to re-display so remember what they submitted
-		if ( ! $this->is_valid() ) {
-			$this->store_submitted_form_data_in_session();
-		}
 	}
 
 
@@ -700,7 +700,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	protected function store_submitted_form_data_in_session() {
 		return EE_Session::instance()->set_session_data(
-			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values() )
+			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => array( $this->html_name_prefix() => $this->submitted_values() ) )
 		);
 	}
 
@@ -714,7 +714,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	protected function get_submitted_form_data_from_session() {
 		return EE_Session::instance()->get_session_data(
-			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY )
+			 \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
 		);
 	}
 
@@ -1207,7 +1207,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function populate_from_session() {
 		$form_data_in_session = $this->get_submitted_form_data_from_session();
 		$this->receive_form_submission( $form_data_in_session );
-		if( $this->form_data_present_in( $$form_data_in_session ) ) {
+		if( $this->form_data_present_in( $form_data_in_session ) ) {
 			return true; 
 		} else {
 			return false;
