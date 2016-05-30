@@ -1710,6 +1710,19 @@ class EEH_Activation {
 			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
+	
+	/**
+	 * Gets the mysql error code from the last used query by wpdb
+	 * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
+	 */
+	public static function last_wpdb_error_code() {
+		global $wpdb;
+		if( $wpdb->use_mysqli ) {
+			return mysqli_errno( $wpdb->dbh );
+		} else {
+			return mysql_errno( $wpdb->dbh );
+		}
+	}
 
 	/**
 	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
@@ -1731,9 +1744,22 @@ class EEH_Activation {
 		$new_error = $wpdb->last_error;
 		$wpdb->last_error = $old_error;
 		$EZSQL_ERROR = $ezsql_error_cache;
-		//if there was an error, and it mentions a table not existing
-		if( ! empty( $new_error )
-			&& preg_match( '~^Table .* doesn\'t exist~', $new_error ) ) {
+		//if there was a table doesn't exist error
+		if( 
+			! empty( $new_error )
+			&& (
+				in_array(
+					EEH_Activation::last_wpdb_error_code(),
+					array(
+						1051, //bad table
+						1109, //unknown table
+						117, //no such table
+					)
+				)
+				|| 
+				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
+			) 
+		) {
 			return false;
 		}else{
 			return true;
