@@ -1199,14 +1199,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	
 	/**
 	 * Populates this form and its subsections with data from the session.
-	 * (Wrapper for EE_Form_Section_Proper::populate_defaults)
+	 * (Wrapper for EE_Form_Section_Proper::receive_form_submission, so it shows
+	 * validation errors when displaying too)
 	 * Returns true if the form was populated from the session, false otherwise
 	 * @return boolean
 	 */
 	public function populate_from_session() {
-		$session_data = $this->get_submitted_form_data_from_session();
-		$this->populate_defaults( $session_data );
-		if( $this->form_data_present_in( $$session_data ) ) {
+		$form_data_in_session = $this->get_submitted_form_data_from_session();
+		$this->receive_form_submission( $form_data_in_session );
+		$this->flush_submitted_form_data_from_session();
+		if( $this->form_data_present_in( $$form_data_in_session ) ) {
 			return true; 
 		} else {
 			return false;
