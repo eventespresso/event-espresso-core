@@ -414,6 +414,42 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 	}
 
 
+
+
+	/**
+	 * This returns whether EEM_Message is in debug mode or not.
+	 *
+	 * Currently "debug mode" is used to control the handling of the EEM_Message::debug_only status when generating/sending
+	 * messages.
+	 *
+	 * Debug mode can be set by either:
+	 *
+	 * 1. Sending in a value for the $set_debug argument
+	 * 2. Defining `EE_DEBUG_MESSAGES` constant in wp-config.php
+	 * 3. Overriding the above via the provided filter.
+	 *
+	 * @param bool|null     $set_debug  If provided, then the debug mode will be set internally until reset via the provided
+	 *                                  boolean. When no argument is provided (default null) then the debug mode will be returned.
+	 *
+	 * @return bool         true means Messages is in debug mode.  false means messages system is not in debug mode.
+	 */
+	public static function debug( $set_debug = null ) {
+		static $is_debugging = null;
+
+		//initialize (use constant if set).
+		if ( is_null( $set_debug ) && is_null( $is_debugging ) ) {
+			$is_debugging = defined( 'EE_DEBUG_MESSAGES' ) && EE_DEBUG_MESSAGES;
+		}
+
+		if ( ! is_null( $set_debug ) ) {
+			$is_debugging = filter_var( $set_debug, FILTER_VALIDATE_BOOLEAN );
+		}
+
+		//return filtered value
+		return apply_filters( 'FHEE__EEM_Message__debug', $is_debugging );
+	}
+
+
 }
 // End of file EEM_Message.model.php
 // Location: /includes/models/EEM_Message.model.php
