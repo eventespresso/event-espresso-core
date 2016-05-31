@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\form_sections\form_handler;
+namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\CommandBusInterface;

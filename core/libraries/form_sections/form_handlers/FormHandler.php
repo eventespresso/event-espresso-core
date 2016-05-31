@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\form_sections\form_handler;
+namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Submit_Input;
 use EEH_HTML;
@@ -22,7 +22,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * abstract parent class for handling the last mile of boilerplate client code required
  * for displaying and processing a typical form.
  * allow your form to integrate with other systems that utilize the
- * \EventEspresso\core\libraries\form_sections\form_handler\FormInterface interface
+ * \EventEspresso\core\libraries\form_sections\form_handlers\FormInterface interface
 
  *
 *@package       Event Espresso
@@ -385,7 +385,7 @@ abstract class FormHandler implements FormHandlerInterface{
 		) {
 			throw new DomainException(
 				sprintf(
-					__( '"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\form_handler\Form', 'event_espresso' ),
+					__( '"%1$s" is not a valid value for the form config. Please use one of the class constants on \EventEspresso\core\libraries\form_sections\form_handlers\Form', 'event_espresso' ),
 					$form_config
 				)
 			);

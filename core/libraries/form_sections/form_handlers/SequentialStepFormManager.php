@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\libraries\form_sections\form_handler;
+namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Error;
 use EE_Request;
@@ -448,7 +448,7 @@ abstract class SequentialStepFormManager {
 
 	/**
 	 * @param bool $for_display
-	 * @return \EventEspresso\core\libraries\form_sections\form_handler\SequentialStepFormInterface
+	 * @return \EventEspresso\core\libraries\form_sections\form_handlers\SequentialStepFormInterface
 	 * @throws InvalidIdentifierException
 	 * @throws InvalidClassException
 	 * @throws InvalidDataTypeException
