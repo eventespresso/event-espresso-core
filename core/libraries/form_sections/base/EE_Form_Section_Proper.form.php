@@ -714,7 +714,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	protected function get_submitted_form_data_from_session() {
 		return EE_Session::instance()->get_session_data(
-			 \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
+			\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
 		);
 	}
 
@@ -1196,7 +1196,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Populates this form and its subsections with data from the session.
 	 * (Wrapper for EE_Form_Section_Proper::receive_form_submission, so it shows
@@ -1208,7 +1208,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$form_data_in_session = $this->get_submitted_form_data_from_session();
 		$this->receive_form_submission( $form_data_in_session );
 		if( $this->form_data_present_in( $form_data_in_session ) ) {
-			return true; 
+			return true;
 		} else {
 			return false;
 		}
