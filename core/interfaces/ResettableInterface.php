@@ -19,8 +19,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 interface ResettableInterface {
 
+	/**
+	 * @return mixed
+	 */
 	public static function reset();
 
 }
 // End of file ResettableInterface.php
-// Location: /ResettableInterface.php
+// Location: core/interfaces/ResettableInterface.php
