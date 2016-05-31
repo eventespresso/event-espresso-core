@@ -1745,9 +1745,8 @@ class EEH_Activation {
 		$wpdb->last_error = $old_error;
 		$EZSQL_ERROR = $ezsql_error_cache;
 		//if there was a table doesn't exist error
-		if( 
-			! empty( $new_error )
-			&& (
+		if( ! empty( $new_error ) ) {
+			if(
 				in_array(
 					EEH_Activation::last_wpdb_error_code(),
 					array(
@@ -1758,12 +1757,19 @@ class EEH_Activation {
 				)
 				|| 
 				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
-			) 
-		) {
-			return false;
-		}else{
-			return true;
+			) {
+				return false;
+			} else {
+				//log this because that's weird. Just use the normal PHP error log
+				error_log( 
+					sprintf(
+						__( 'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)', 'event_espresso' ),
+					$new_error
+					)
+				);
+			}
 		}
+		return true;
 	}
 
 	/**
