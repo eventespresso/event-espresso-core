@@ -3,7 +3,7 @@ namespace EventEspresso\core\libraries\form_sections;
 
 use EE_Submit_Input;
 use EEH_HTML;
-use EventEspresso\core\services\commands\CommandBus;
+use EventEspresso\core\services\commands\CommandBusInterface;
 use InvalidArgumentException;
 use LogicException;
 use DomainException;
@@ -103,7 +103,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	private $form;
 
 	/**
-	 * @var CommandBus $command_bus
+	 * @var CommandBusInterface $command_bus
 	 */
 	protected $command_bus;
 
@@ -112,12 +112,12 @@ abstract class FormHandler implements FormHandlerInterface{
 	/**
 	 * Form constructor.
 	 *
-	 * @param string     $form_name
+	 * @param string $form_name
 	 * @param string     $admin_name
 	 * @param string     $slug
 	 * @param string     $form_action
 	 * @param string     $form_config
-	 * @param CommandBus $command_bus
+	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		$form_name,
@@ -125,7 +125,7 @@ abstract class FormHandler implements FormHandlerInterface{
 		$slug,
 		$form_action = '',
 		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-		CommandBus $command_bus = null
+		CommandBusInterface $command_bus = null
 	) {
 		$this->setFormName( $form_name );
 		$this->setAdminName( $admin_name );
