@@ -313,7 +313,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			EE_System::instance()->load_core_configuration();
 			$this->assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
 			$this->assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->models);
-			EE_Registry::instance()->reset_model( 'Attendee' );
+			EEM_Attendee::instance()->reset();
 			//verify that the model and class extensions have been removed
 			$this->assertFalse( $this->_class_has_been_extended() );
 			$this->assertFalse( $this->_model_has_been_extended() );
@@ -397,7 +397,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private function _model_has_been_extended( $throw_error = FALSE){
 		try{
 			/** @var EEM_Attendee $att */
-			$att = EE_Registry::instance()->reset_model( 'Attendee');
+			$att = EEM_Attendee::instance()->reset();
 			if( ! $att->has_field('ATT_foobar')){
 				if( $throw_error ){
 					throw new EE_Error(sprintf( __( 'The field ATT_foobar is not on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
