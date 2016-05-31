@@ -11,7 +11,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Encryption {
+class EE_Encryption implements EventEspresso\core\interfaces\UnsettableInterface {
 
   // instance of the EE_Encryption object
 	protected static $_instance = null;
