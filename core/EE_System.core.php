@@ -9,7 +9,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_System {
+final class EE_System implements EventEspresso\core\interfaces\ResettableInterface {
 
 
 	/**
