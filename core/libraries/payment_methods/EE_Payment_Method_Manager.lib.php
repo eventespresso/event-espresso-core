@@ -12,7 +12,7 @@
  * @since       4.5
  *
  */
-class EE_Payment_Method_Manager {
+class EE_Payment_Method_Manager implements EventEspresso\core\interfaces\ResettableInterface {
 
 	/**
 	 * 	instance of the EE_Payment_Method_Manager object
