@@ -9,7 +9,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  *
  * ------------------------------------------------------------------------
  */
- class EE_Import {
+ class EE_Import implements EventEspresso\core\interfaces\ResettableInterface {
 
 	const do_insert = 'insert';
 	const do_update = 'update';
