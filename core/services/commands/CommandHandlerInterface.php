@@ -12,14 +12,15 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * @package EventEspresso\core\services\commands
  */
-interface CommandHandlerInterface 
+interface CommandHandlerInterface
 {
 
 	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
+	 * @param \EE_Capabilities                                       $capabilities
 	 * @return mixed
 	 */
-	public function handle( CommandInterface $command );
+	public function handle( CommandInterface $command, \EE_Capabilities $capabilities );
 
 }
 // End of file CommandHandlerInterface.php
