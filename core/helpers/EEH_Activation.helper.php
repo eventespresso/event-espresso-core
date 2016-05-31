@@ -6,7 +6,7 @@
  * @subpackage	/helpers/
  * @author		Brent Christensen
  */
-class EEH_Activation {
+class EEH_Activation implements EventEspresso\core\interfaces\ResettableInterface {
 
 	/**
 	 * constant used to indicate a cron task is no longer in use
