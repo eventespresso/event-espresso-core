@@ -26,7 +26,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Cart {
+ class EE_Cart implements EventEspresso\core\interfaces\ResettableInterface {
 
 	/**
 	 * 	instance of the EE_Cart object
