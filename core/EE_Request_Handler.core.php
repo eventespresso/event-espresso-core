@@ -6,7 +6,7 @@
  * @subpackage  /core/
  * @author      Brent Christensen
  */
-final class EE_Request_Handler {
+final class EE_Request_Handler implements EventEspresso\core\interfaces\UnsettableInterface {
 
 	/**
 	 * 	@var 	array	$_params 	$_REQUEST parameters
