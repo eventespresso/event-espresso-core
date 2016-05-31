@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EED_Module extends EE_Configurable {
+abstract class EED_Module extends EE_Configurable implements EventEspresso\core\interfaces\ResettableInterface {
 
 	/**
 	 * 	instance of the EED_Module object
@@ -44,6 +44,14 @@ abstract class EED_Module extends EE_Configurable {
 	 */
 	protected $theme = '';
 
+
+
+	/**
+	 * @return mixed
+	 */
+	public static function reset() {
+		static::$_instance = null;
+	}
 
 
 
