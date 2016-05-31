@@ -52,7 +52,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 	/**
 	 * indicates an attempt was a made to send this message
-	 * at the scheduled time, but it failed at the time modified.  This differs from MDO status in that it will ALWAYs
+	 * at the scheduled time, but it failed at the time modified.  This differs from MDO status in that it will ALWAYS
 	 * appear to the end user.
 	 */
 	const status_failed = 'MFL';
@@ -326,8 +326,9 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 
 
-
-
+	/**
+	 * @return string
+	 */
 	public function get_pretty_label_for_results() {
 		$expected_vars = $this->_expected_vars_for_query_inject();
 		$pretty_label = '';
