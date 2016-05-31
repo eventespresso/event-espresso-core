@@ -2,7 +2,7 @@
 namespace EventEspresso\core\libraries\form_sections;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\services\commands\CommandBus;
+use EventEspresso\core\services\commands\CommandBusInterface;
 use InvalidArgumentException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -55,7 +55,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 	 * @param string     $slug
 	 * @param string     $form_action
 	 * @param string     $form_config
-	 * @param CommandBus $command_bus
+	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		$order,
@@ -64,7 +64,7 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 		$slug,
 		$form_action = '',
 		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-		CommandBus $command_bus = null
+		CommandBusInterface $command_bus = null
 	) {
 		$this->setOrder( $order );
 		parent::__construct( $form_name, $admin_name, $slug, $form_action, $form_config, $command_bus );
