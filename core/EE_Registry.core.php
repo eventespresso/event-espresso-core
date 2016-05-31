@@ -1083,7 +1083,6 @@ class EE_Registry {
 	 */
 	public static function reset( $hard = false, $reinstantiate = true, $reset_models = true ) {
 		$instance = self::instance();
-		EEH_Activation::reset();
 		$instance->_cache_on = true;
 		//handle of objects cached on LIB
 		foreach ( $instance->LIB as $class_name => $class ) {
@@ -1096,7 +1095,7 @@ class EE_Registry {
 				}
 			}
 		}
-		$instance->CFG = null;
+		$instance->CFG = $instance->load_core('Config');
 		$instance->CART = null;
 		$instance->MRM = null;
 		return $instance;
