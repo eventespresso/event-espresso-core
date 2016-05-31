@@ -16,7 +16,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @since         4.9.0
  *
  */
-class EE_Dependency_Map {
+class EE_Dependency_Map implements EventEspresso\core\interfaces\UnsettableInterface {
 
 
 	/**
