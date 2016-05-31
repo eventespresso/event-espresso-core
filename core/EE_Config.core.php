@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Config {
+final class EE_Config implements EventEspresso\core\interfaces\ResettableInterface {
 
 
 	/**
