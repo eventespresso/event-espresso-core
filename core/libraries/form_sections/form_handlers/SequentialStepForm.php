@@ -1,8 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections;
 
-use DomainException;
-use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\CommandBus;
 use InvalidArgumentException;
 

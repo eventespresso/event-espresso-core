@@ -8,8 +8,8 @@ use InvalidArgumentException;
 use LogicException;
 use DomainException;
 use EE_Form_Section_Proper;
-use  EventEspresso\core\exceptions\InvalidDataTypeException;
-use  EventEspresso\core\exceptions\InvalidFormSubmissionException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );

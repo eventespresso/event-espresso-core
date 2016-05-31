@@ -3,11 +3,11 @@ namespace EventEspresso\core\libraries\form_sections;
 
 use EE_Error;
 use EE_Request;
-use  EventEspresso\core\exceptions\InvalidClassException;
-use  EventEspresso\core\exceptions\InvalidDataTypeException;
-use  EventEspresso\core\exceptions\InvalidEntityException;
-use  EventEspresso\core\exceptions\InvalidIdentifierException;
-use  EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\progress_steps\ProgressStep;
 use EventEspresso\core\services\progress_steps\ProgressStepCollection;

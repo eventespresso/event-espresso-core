@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\libraries\form_sections;
 
-use  EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use InvalidArgumentException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
