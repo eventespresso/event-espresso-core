@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Admin {
+final class EE_Admin implements EventEspresso\core\interfaces\ResettableInterface, EventEspresso\core\interfaces\UnsettableInterface {
 
 	/**
 	 * @access private
@@ -44,6 +44,16 @@ final class EE_Admin {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+
+
+
+	/**
+	 * @return EE_Admin
+	 */
+	public static function reset() {
+		self::$_instance = null;
+		return self::instance();
 	}
 
 
