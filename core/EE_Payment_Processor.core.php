@@ -11,7 +11,7 @@ EE_Registry::instance()->load_class( 'Processor_Base' );
  * @author			Mike Nelson
  *
  */
-class EE_Payment_Processor extends EE_Processor_Base {
+class EE_Payment_Processor extends EE_Processor_Base implements EventEspresso\core\interfaces\ResettableInterface {
 	/**
      * 	@var EE_Payment_Processor $_instance
 	 * 	@access 	private
@@ -31,6 +31,16 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+
+
+
+	/**
+	 * @return EE_Payment_Processor
+	 */
+	public static function reset() {
+		self::$_instance = null;
+		return self::instance();
 	}
 
 
@@ -694,4 +704,4 @@ class EE_Payment_Processor extends EE_Processor_Base {
 
 
 
- }
+}
