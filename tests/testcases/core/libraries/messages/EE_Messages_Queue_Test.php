@@ -205,4 +205,28 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * This is used to test the execute method when there are messages in the queue that are NOT with a status representing
+	 * to send.  They should NOT get sent if that's the case.
+	 * @group 9787
+	 */
+	public function test_send_only_ready_to_send_messages() {
+		//get some messages ready for the test and add to queue
+		$queue = $this->_get_queue();
+		for ( $i = 0; $i < 5; $i++ ) {
+			$queue->add( $this->factory->message->create() );
+		}
+
+		//should be 5 items in the queue with MIC status
+		$this->assertEquals( 5, $queue->count_STS_in_queue( array( EEM_Message::status_incomplete ) ) );
+
+		//now if we execute now, NOTHING should get sent and we should still see all messages in the queue as MIC.
+		//anything else and we know the test has failed.
+		$queue->execute();
+
+		$this->assertEquals( 5, $queue->count_STS_in_queue( array( EEM_Message::status_incomplete ) ) );
+
+	}
+
+
 } //end EE_Messages_Queue_Test

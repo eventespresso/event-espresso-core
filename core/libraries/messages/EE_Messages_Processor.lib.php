@@ -459,8 +459,14 @@ class EE_Messages_Processor {
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
 				'MSG_ID' => array( 'IN', $message_ids ),
-				'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
-			)
+				'STS_ID' => array(
+					'IN',
+					array_merge(
+						EEM_Message::instance()->stati_indicating_sent(),
+						array( EEM_Message::status_retry )
+					),
+				),
+			),
 		));
 		//set the Messages to resend.
 		foreach ( $messages as $message ) {
@@ -510,10 +516,13 @@ class EE_Messages_Processor {
 
 		foreach ( $regs_to_send as $status_group ) {
 			foreach ( $status_group as $status_id => $registrations ) {
-				$messages_to_generate = $messages_to_generate + $this->setup_mtgs_for_all_active_messengers(
+				$messages_to_generate = array_merge(
+					$messages_to_generate,
+					$this->setup_mtgs_for_all_active_messengers(
 						EEH_MSG_Template::convert_reg_status_to_message_type( $status_id ),
 						array( $registrations, $status_id )
-					);
+					)
+				);
 			}
 		}
 
