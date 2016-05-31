@@ -24,7 +24,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Maintenance_Mode {
+class EE_Maintenance_Mode implements EventEspresso\core\interfaces\ResettableInterface {
 
 	/**
 	 * constants available to client code for interpreting the values of EE_Maintenance_Mode::level().
