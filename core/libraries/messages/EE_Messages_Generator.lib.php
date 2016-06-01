@@ -126,11 +126,6 @@ class EE_Messages_Generator {
 			/** @type EE_Message $msg */
 			$msg = $this->_generation_queue->get_message_repository()->current();
 
-			if ( $this->_verify() ) {
-				//let's get generating!
-				$this->_generate();
-			}
-
 			/**
 			 * need to get the next object and capture it for setting manually after deletes.  The reason is that when
 			 * an object is removed from the repo then valid for the next object will fail.
@@ -139,6 +134,20 @@ class EE_Messages_Generator {
 			$next_msg = $this->_generation_queue->get_message_repository()->current();
 			//restore pointer to current item
 			$this->_generation_queue->get_message_repository()->set_current( $msg );
+
+			//skip and delete if the current $msg is NOT incomplete (queued for generation)
+			if ( $msg->STS_ID() !== EEM_Message::status_incomplete ) {
+				//we keep this item in the db just remove from the repo.
+				$this->_generation_queue->get_message_repository()->remove( $msg );
+				//next item
+				$this->_generation_queue->get_message_repository()->set_current( $next_msg );
+				continue;
+			}
+
+			if ( $this->_verify() ) {
+				//let's get generating!
+				$this->_generate();
+			}
 
 			//if there are error messages then let's set the status and the error message.
 			if ( $this->_error_msg ) {
