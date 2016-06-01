@@ -204,6 +204,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *                             you may want to skip this step.
 	 */
 	public function receive_form_submission( $req_data = null, $validate = true ){
+		$this->flush_submitted_form_data_from_session();
 		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
 		if( $req_data === null ){
 			$req_data = array_merge( $_GET, $_POST );
@@ -218,6 +219,71 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 		}
 		do_action( 'AHEE__EE_Form_Section_Proper__receive_form_submission__end', $req_data, $this, $validate );
+	}
+
+
+
+	/**
+	 * caches the originally submitted input values in the session
+	 * so that they can be used to repopulate the form if it failed validation
+	 *
+	 * @return boolean whether or not the data was successfully stored in the session
+	 */
+	protected function store_submitted_form_data_in_session() {
+		return EE_Session::instance()->set_session_data(
+			array(
+				\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => array(
+					$this->html_name_prefix() => $this->submitted_values()
+				)
+			)
+		);
+	}
+
+
+
+	/**
+	 * retrieves the originally submitted input values in the session
+	 * so that they can be used to repopulate the form if it failed validation
+	 *
+	 * @return array
+	 */
+	protected function get_submitted_form_data_from_session() {
+		return EE_Session::instance()->get_session_data(
+			\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
+		);
+	}
+
+
+
+	/**
+	 * flushed the originally submitted input values from the session
+	 *
+	 * @return boolean whether or not the data was successfully removed from the session
+	 */
+	protected function flush_submitted_form_data_from_session() {
+		return EE_Session::instance()->reset_data(
+			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY )
+		);
+	}
+
+
+
+	/**
+	 * Populates this form and its subsections with data from the session.
+	 * (Wrapper for EE_Form_Section_Proper::receive_form_submission, so it shows
+	 * validation errors when displaying too)
+	 * Returns true if the form was populated from the session, false otherwise
+	 *
+	 * @return boolean
+	 */
+	public function populate_from_session() {
+		$form_data_in_session = $this->get_submitted_form_data_from_session();
+		$this->receive_form_submission( $form_data_in_session );
+		if ( $this->form_data_present_in( $form_data_in_session ) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 
@@ -422,11 +488,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * returns HTML for displaying this form section. recursively calls display_section() on all subsections
 	 *
+	 * @param bool $display_previously_submitted_data
 	 * @return string
-	 * @throws \EE_Error
 	 */
-	public function get_html(){
+	public function get_html( $display_previously_submitted_data = true ){
 		$this->ensure_construct_finalized_called();
+		if ( $display_previously_submitted_data ) {
+			$this->populate_from_session();
+		}
 		return $this->_layout_strategy->layout_form();
 	}
 
@@ -681,54 +750,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * calling parent::_validate() first.
 	 */
 	protected function _validate() {
-		$this->flush_submitted_form_data_from_session();
 		foreach($this->get_validatable_subsections() as $subsection_name => $subsection){
 			if(method_exists($this,'_validate_'.$subsection_name)){
 				call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
 			}
 			$subsection->_validate();
 		}
-	}
-
-
-
-	/**
-	 * caches the originally submitted input values in the session
-	 * so that they can be used to repopulate the form if it failed validation
-	 *
-	 * @return boolean whether or not the data was successfully stored in the session
-	 */
-	protected function store_submitted_form_data_in_session() {
-		return EE_Session::instance()->set_session_data(
-			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => array( $this->html_name_prefix() => $this->submitted_values() ) )
-		);
-	}
-
-
-
-	/**
-	 * retrieves the originally submitted input values in the session
-	 * so that they can be used to repopulate the form if it failed validation
-	 *
-	 * @return array
-	 */
-	protected function get_submitted_form_data_from_session() {
-		return EE_Session::instance()->get_session_data(
-			\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
-		);
-	}
-
-
-
-	/**
-	 * flushed the originally submitted input values from the session
-	 *
-	 * @return boolean whether or not the data was successfully removed from the session
-	 */
-	protected function flush_submitted_form_data_from_session() {
-		return EE_Session::instance()->reset_data(
-			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY )
-		);
 	}
 
 
@@ -1194,23 +1221,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			return $child_section->find_section_from_path( $subpath );
 		} else {
 			return null;
-		}
-	}
-
-	/**
-	 * Populates this form and its subsections with data from the session.
-	 * (Wrapper for EE_Form_Section_Proper::receive_form_submission, so it shows
-	 * validation errors when displaying too)
-	 * Returns true if the form was populated from the session, false otherwise
-	 * @return boolean
-	 */
-	public function populate_from_session() {
-		$form_data_in_session = $this->get_submitted_form_data_from_session();
-		$this->receive_form_submission( $form_data_in_session );
-		if( $this->form_data_present_in( $form_data_in_session ) ) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 
