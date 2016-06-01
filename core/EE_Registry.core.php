@@ -842,9 +842,10 @@ class EE_Registry {
 			if ( ! $e instanceof EE_Error ) {
 				$e = new EE_Error(
 					sprintf(
-						__( '%1$s %2$s instantiation mode : %3$s', 'event_espresso' ),
-						$e->getMessage(),
+						__( 'The following error occurred while attempting to instantiate "%1$s": %2$s %3$s %2$s instantiation mode : %4$s', 'event_espresso' ),
+						$class_name,
 						'<br />',
+						$e->getMessage(),
 						$instantiation_mode
 					)
 				);
