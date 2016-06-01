@@ -23,16 +23,26 @@ class CommandBus implements CommandBusInterface
 	 */
 	private $command_handler_manager;
 
+	/**
+	 * @type \EE_Capabilities $capabilities
+	 */
+	private $capabilities;
+
 
 
 	/**
-	 * CommandBus constructor.
+	 * CommandBus constructor
 	 *
-	 * @param \EventEspresso\core\services\commands\CommandHandlerManagerInterface $command_handler_manager
+	 * @param CommandHandlerManagerInterface $command_handler_manager
+	 * @param \EE_Capabilities               $capabilities
 	 */
-	public function __construct( CommandHandlerManagerInterface $command_handler_manager )
+	public function __construct(
+		CommandHandlerManagerInterface $command_handler_manager,
+		\EE_Capabilities $capabilities
+	)
 	{
 		$this->command_handler_manager = $command_handler_manager;
+		$this->capabilities = $capabilities;
 	}
 
 
@@ -53,7 +63,7 @@ class CommandBus implements CommandBusInterface
 	public function execute( CommandInterface $command )
 	{
 		$command_handler = $this->command_handler_manager->getCommandHandler( $command );
-		return $command_handler->handle( $command );
+		return $command_handler->handle( $command, $this->capabilities );
 	}
 
 
