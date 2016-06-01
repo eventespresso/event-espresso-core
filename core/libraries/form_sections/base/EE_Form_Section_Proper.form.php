@@ -204,7 +204,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *                             you may want to skip this step.
 	 */
 	public function receive_form_submission( $req_data = null, $validate = true ){
-		$this->flush_submitted_form_data_from_session();
 		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
 		if( $req_data === null ){
 			$req_data = array_merge( $_GET, $_POST );
@@ -279,6 +278,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function populate_from_session() {
 		$form_data_in_session = $this->get_submitted_form_data_from_session();
 		$this->receive_form_submission( $form_data_in_session );
+		$this->flush_submitted_form_data_from_session();
 		if ( $this->form_data_present_in( $form_data_in_session ) ) {
 			return true;
 		} else {
