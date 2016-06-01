@@ -136,7 +136,12 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__generation wp cron event
 	 */
 	public static function batch_generation() {
-		EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
+		 */
+		if ( apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false ) ) {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
+		}
 	}
 
 
@@ -146,7 +151,12 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__sending
 	 */
 	public static function batch_sending() {
-		EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
+		 */
+		if ( apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false ) ) {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
+		}
 	}
 
 } //end EE_Messages_Scheduler
