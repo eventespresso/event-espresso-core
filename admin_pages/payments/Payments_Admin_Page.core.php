@@ -763,23 +763,23 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
 		EE_Registry::instance()->CFG = apply_filters( 'FHEE__Payments_Admin_Page___update_payment_settings__CFG', EE_Registry::instance()->CFG );
 
-		$superform = new EE_Form_Section_Proper(
-			array(
-				'subsections' => array(
-					'phony' => new EE_Phone_Input()
-				)
-			)
-		);
-		$superform->receive_form_submission( $_POST );
-		if ( ! $superform->is_valid() ) {
-			EE_Error::add_error(
-				__( "Super Form is invalid... but where are the inline error messages?", 'event_espresso' ),
-				__FILE__,
-				__FUNCTION__,
-				__LINE__
-			);
-			$this->_redirect_after_action( 0, 'settings', 'updated', array( 'action' => 'payment_settings' ) );
-		}
+		// $superform = new EE_Form_Section_Proper(
+		// 	array(
+		// 		'subsections' => array(
+		// 			'phony' => new EE_Phone_Input()
+		// 		)
+		// 	)
+		// );
+		// $superform->receive_form_submission( $_POST );
+		// if ( ! $superform->is_valid() ) {
+		// 	EE_Error::add_error(
+		// 		__( "Super Form is invalid... but where are the inline error messages?", 'event_espresso' ),
+		// 		__FILE__,
+		// 		__FUNCTION__,
+		// 		__LINE__
+		// 	);
+		// 	$this->_redirect_after_action( 0, 'settings', 'updated', array( 'action' => 'payment_settings' ) );
+		// }
 
 		$what = __('Payment Settings','event_espresso');
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
