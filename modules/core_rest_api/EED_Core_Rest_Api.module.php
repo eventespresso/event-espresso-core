@@ -79,6 +79,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function set_hooks_rest_api() {
 		//set hooks which account for changes made to the API
 		EED_Core_Rest_Api::_set_hooks_for_changes();
+		EED_Core_Rest_Api::maybe_notify_of_basic_auth_removal();
 	}
 
 	/**
@@ -88,6 +89,31 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function set_hooks_for_changes(){
 		self::_set_hooks_for_changes();
+	}
+	
+	/**
+	 * If the user appears to be using WP API basic auth, tell them (via a persistent
+	 * admin notice and an email) that we're going to remove it soon, so they should
+	 * replace it with application passwords.
+	 */
+	public static function maybe_notify_of_basic_auth_removal() {
+		if( ! isset( $_SERVER['PHP_AUTH_USER'] ) 
+			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
+			return;
+		}
+		//ok they're using the WP API with Basic Auth
+		$message = sprintf(
+			__( 'We noticed you\'re using the WP API, which is used by the Event Espresso 4 mobile apps. Because of security and compatibility concerns, we will soon be removing our default authentication mechanism, WP API Basic Auth, from Event Espresso. It is recommended you instead install the %1$sWP Application Passwords plugin%2$s and use it with the EE4 Mobile apps.%3$sIf you have installed the WP API Basic Auth plugin separately, or are not using the Event Espresso 4 mobile apps, you can disregard this message.%3$sThe Event Espresso Team', 'event_espresso' ),
+			'<a href="https://wordpress.org/plugins/application-passwords/">',
+			'</a>',
+			'<br/>'
+		);
+		EE_Error::add_persistent_admin_notice( 'using_basic_auth', $message );
+		if( ! get_option( 'ee_notified_admin_on_basic_auth_removal', false ) ) {
+			add_option( 'ee_notified_admin_on_basic_auth_removal', true );
+			wp_mail( get_option( 'admin_email' ), __( 'Notice of Removal of WP API Basic Auth From Event Espresso 4', 'event_espresso' ), $message );
+		}
 	}
 	/**
 	 * Loads all the hooks which make requests to old versions of the API
