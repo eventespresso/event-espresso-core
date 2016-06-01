@@ -249,6 +249,21 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 			self::expired_cron_task_name => EEH_Activation::cron_task_no_longer_in_use
 		);
 	}
+	
+	/**
+	 * @group current
+	 */
+	function test_table_exists__success() {
+		$this->assertTrue( EEH_Activation::table_exists( 'posts' ) );
+		$this->assertTrue( EEH_Activation::table_exists( 'esp_attendee_meta' ) );
+	}
+	
+	/**
+	 * @group current
+	 */
+	function test_table_exists__false() {
+		$this->assertFalse( EEH_Activation::table_exists( 'monkeys' ) );
+	}
 
 
 
