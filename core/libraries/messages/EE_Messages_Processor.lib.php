@@ -81,7 +81,7 @@ class EE_Messages_Processor {
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
 				$this->_queue->unlock_queue();
-				$this->_queue->initiate_request_by_priority( 'send' );
+				$new_queue->initiate_request_by_priority( 'send' );
 				return $new_queue;
 			}
 		}
