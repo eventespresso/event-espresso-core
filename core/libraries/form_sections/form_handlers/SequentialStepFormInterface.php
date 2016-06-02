@@ -59,6 +59,22 @@ interface SequentialStepFormInterface extends FormHandlerInterface {
 	 */
 	public function addRedirectArgs( $redirect_args = array() );
 
+
+
+	/**
+	 * @return string
+	 */
+	public function redirectTo();
+
+
+
+	/**
+	 * @param string $redirect_to
+	 */
+	public function setRedirectTo( $redirect_to );
+
+
+
 }
 // End of file SequentialStepFormInterface.php
 // Location: /SequentialStepFormInterface.php
