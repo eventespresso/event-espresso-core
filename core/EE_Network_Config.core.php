@@ -93,13 +93,26 @@ final class EE_Network_Config {
 	 * 		@return void
 	 */
 	private function _load_config() {
+		//load network config start hook
+		do_action( 'AHEE__EE_Network_Config___load_config__start', $this );
 		$config = $this->get_config();
-		foreach ( $config as $prop => $settings ) {
-			$prop_class = is_object( $settings ) ? get_class( $this->{$prop} ) : FALSE;
-			if ( ! empty( $settings ) && ( ! $prop_class || ( $settings instanceof $prop_class ))) {
-				$this->{$prop} = $settings;
+		foreach ( $config as $config_prop => $settings ) {
+			if ( is_object( $settings ) && property_exists( $this, $config_prop ) ) {
+				$this->{$config_prop} = apply_filters( 'FHEE__EE_Network_Config___load_config__config_settings', $settings, $config_prop, $this );
+				if ( method_exists( $settings, 'populate' ) ) {
+					$this->{$config_prop}->populate();
+				}
+				if ( method_exists( $settings, 'do_hooks' ) ) {
+					$this->{$config_prop}->do_hooks();
+				}
 			}
 		}
+		if ( apply_filters( 'FHEE__EE_Network_Config___load_config__update_network_config', false ) ) {
+			$this->update_config();
+		}
+
+		//load network config end hook
+		do_action( 'AHEE__EE_Network_Config___load_config__end', $this );
 	}
 
 
@@ -132,8 +145,9 @@ final class EE_Network_Config {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_config();
+
 		// update
-		$saved = $saved_config == $this ? TRUE : update_site_option( 'ee_network_config', $this );
+		$saved = $saved_config === $this ? TRUE : update_site_option( 'ee_network_config', $this );
 		do_action( 'AHEE__EE_Network_Config__update_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
