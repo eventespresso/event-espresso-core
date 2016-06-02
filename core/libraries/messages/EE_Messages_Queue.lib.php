@@ -431,7 +431,7 @@ class EE_Messages_Queue {
 		 *
 		 * - message priorities don't matter
 		 * - existing unprocessed messages in the queue will not get processed unless manually triggered.
-		 * - things will be perceived to take longer to happen for end users (i.e. registrations) because of the aditional
+		 * - things will be perceived to take longer to happen for end users (i.e. registrations) because of the additional
 		 *   processing happening on the same request.
 		 * - any race condition protection (locks) are removed because they don't apply when things are processed on
 		 *   the same request.
