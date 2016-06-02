@@ -2736,7 +2736,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				function( $post, $metabox ) {
 					echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );
 				},
-				$this->_current_screen_id,
+				$this->_current_screen->id,
 				'normal',
 				'high',
 				$callback_args
@@ -2756,7 +2756,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				function( $post, $metabox ) {
 					echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );
 				},
-				$this->_current_screen_id,
+				$this->_current_screen->id,
 				'side',
 				'high',
 				$callback_args
@@ -2770,7 +2770,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'espresso_global_message_settings',
 				__( 'Global Message Settings', 'event_espresso' ),
 				array( $this, 'global_messages_settings_metabox_content' ),
-				$this->_current_screen_id,
+				$this->_current_screen->id,
 				'normal',
 				'low',
 				array()
