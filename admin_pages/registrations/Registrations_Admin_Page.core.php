@@ -1849,10 +1849,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$att_check = $this->_registration->attendee();
 		$attendee = $att_check instanceof EE_Attendee ? $att_check : EEM_Attendee::instance()->create_default_object();
 
-		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show cereate button or not)
+		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show create button or not)
 		if ( ! $this->_registration->is_primary_registrant() ) {
+
 			$primary_registration = $this->_registration->get_primary_registration();
-			$primary_attendee = $primary_registration->attendee();
+			$primary_attendee = $primary_registration instanceof EE_Registration
+				? $primary_registration->attendee()
+				: null;
 
 			if ( ! $primary_attendee instanceof EE_Attendee || $attendee->ID() !== $primary_attendee->ID() ) {
 				//in here?  This means the displayed registration is not the primary registrant but ALREADY HAS its own custom attendee object so let's not worry about the primary reg.
@@ -1918,8 +1921,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = count( $this->_req_data['_REG_ID'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
-
-				$REG = $REGM->get_one_by_ID($REG_ID);
+				/** @var EE_Registration $REG */
+				$REG = $REGM->get_one_by_ID( $REG_ID);
 				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
 				if ( $payment_count > 0 ) {
 					$name = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' );
