@@ -205,7 +205,7 @@ class EE_Network_Core_Config extends EE_Config_Base {
 	 * EE_Network_Core_Config constructor.
 	 */
 	public function __construct() {
-		$this->site_license_key = true;
+		$this->site_license_key = '';
 		$this->do_messages_on_same_request = false;
 	}
 
