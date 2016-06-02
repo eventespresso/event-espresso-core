@@ -195,8 +195,17 @@ class EE_Network_Core_Config extends EE_Config_Base {
 
 
 
+	/**
+	 * This indicates whether messages system processing should be done on the same request or not.
+	 * @var
+	 */
+	public $do_messages_on_same_request;
+
+
+
 	public function __construct() {
-		$this->site_license_key = NULL;
+		$this->site_license_key = true;
+		$this->do_messages_on_same_request = false;
 	}
 
 }
