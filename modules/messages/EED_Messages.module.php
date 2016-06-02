@@ -66,7 +66,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * @return EED_Module
+	 * @return EED_Messages
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
@@ -245,7 +245,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * This gets executed on wp_cron jobs or when a batch request is initated on its own separate non regular wp request.
+	 * This gets executed on wp_cron jobs or when a batch request is initiated on its own separate non regular wp request.
 	 *
 	 */
 	public function run_cron() {
