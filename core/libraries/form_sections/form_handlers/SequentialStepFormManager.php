@@ -509,36 +509,25 @@ abstract class SequentialStepFormManager {
 	 * @throws InvalidDataTypeException
 	 */
 	public function processCurrentStepForm( $form_data = array() ) {
+		// grab instance of current step because after calling next() below,
+		// any calls to getCurrentStep() will return the "next" step because we advanced
+		$current_step = $this->getCurrentStep();
 		try {
-			// grab instance of current step because after calling next(),
-			// any calls to getCurrentStep() will return the "next" step because we advanced
-			$current_step = $this->getCurrentStep();
 			// form processing should either throw exceptions or return true
 			if ( $current_step->process( $form_data ) ) {
 				// otay, we are advancing to the next step
-				$this->form_steps->next();
-				// but only if it exists
-				if ( $this->form_steps->valid() ) {
-					$current_step->addRedirectArgs(
-						array( $this->formStepUrlKey() => $this->getCurrentStep()->slug() )
-					);
-				}
-				EE_Error::get_notices( false, true );
-				wp_safe_redirect( $current_step->redirectUrl() );
-				exit();
+				$current_step->setRedirectTo( SequentialStepForm::REDIRECT_TO_NEXT_STEP );
+				$this->redirectForm();
 			}
+
 		} catch ( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
 		}
+		// something went wrong, so grab the errors
 		EE_Error::get_notices( false, true );
-		/** @var SequentialStepFormInterface $previous_step */
-		$previous_step = $this->form_steps->previous();
-		$previous_step->setRedirectUrl( $this->baseUrl() );
-		$previous_step->addRedirectArgs(
-			array( $this->formStepUrlKey() => $previous_step->slug() )
-		);
-		wp_safe_redirect( $previous_step->redirectUrl() );
-		exit();
+		// redirect back to the display portion for this step
+		// so that those errors can be displayed
+		$this->redirectForm();
 	}
 
 
@@ -554,6 +543,45 @@ abstract class SequentialStepFormManager {
 		}
 		echo $this->getCurrentStep()->display();
 		return '';
+	}
+
+
+
+	/**
+	 * handles where to go to next
+	 */
+	public function redirectForm() {
+		/** @var SequentialStepFormInterface $redirect_step */
+		$redirect_step = $this->getCurrentStep();
+		switch( $redirect_step->redirectTo() ) {
+
+			case SequentialStepForm::REDIRECT_TO_OTHER :
+				// going somewhere else, so just check out now
+				wp_safe_redirect( $redirect_step->redirectUrl() );
+				exit();
+				break;
+
+			case SequentialStepForm::REDIRECT_TO_PREV_STEP :
+				$redirect_step = $this->form_steps->previous();
+				break;
+
+			case SequentialStepForm::REDIRECT_TO_CURRENT_STEP :
+				// $redirect_step is already set to current
+				break;
+
+			case SequentialStepForm::REDIRECT_TO_NEXT_STEP :
+			default :
+				$this->form_steps->next();
+				if ( $this->form_steps->valid() ) {
+					$redirect_step = $this->form_steps->current();
+				}
+		}
+		$redirect_step->setRedirectUrl( $this->baseUrl() );
+		$redirect_step->addRedirectArgs(
+			array( $this->formStepUrlKey() => $redirect_step->slug() )
+		);
+		wp_safe_redirect( $redirect_step->redirectUrl() );
+		exit();
 	}
 
 
