@@ -25,6 +25,22 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
 	 */
 	private $commandHandlers;
 
+	/**
+	 * @type \EE_Registry $registry
+	 */
+	private $registry;
+
+
+
+	/**
+	 * CommandHandlerManager constructor
+	 *
+	 * @param \EE_Registry $registry
+	 */
+	public function __construct( \EE_Registry $registry ) {
+		$this->registry = $registry;
+	}
+
 
 
 	/**
@@ -81,7 +97,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
 		if ( isset( $this->commandHandlers[ $command_name ] ) ) {
 			return $this->commandHandlers[ $command_name ];
 		} else if ( class_exists( $command_handler ) ) {
-			return new $command_handler();
+			return $this->registry->create( $command_handler );
 		}
 		throw new CommandHandlerNotFoundException( $command_handler );
 	}
