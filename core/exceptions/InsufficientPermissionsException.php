@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\commands;
+namespace EventEspresso\core\exceptions;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -8,14 +8,14 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 /**
- * Class CommandHandlerPermissionsException
- * Thrown when the current user does not have the required permissions to execute the requested service
+ * Class InsufficientPermissionsException
+ * Thrown when the current user does not have the required permissions to execute the requested action
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CommandHandlerPermissionsException extends \RuntimeException {
+class InsufficientPermissionsException extends \RuntimeException {
 
 	/**
 	 * @access public
@@ -40,5 +40,5 @@ class CommandHandlerPermissionsException extends \RuntimeException {
 
 
 }
-// End of file CommandHandlerPermissionsException.php
-// Location: /CommandHandlerPermissionsException.php
+// End of file InsufficientPermissionsException.php
+// Location: /InsufficientPermissionsException.php
