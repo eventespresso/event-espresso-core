@@ -15,7 +15,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CommandInterface
 {
 
-	// I can do ANYTHING !!!
+	/**
+	 * @return mixed
+	 */
+	public function execute();
 
 }
 // End of file CommandInterface.php
