@@ -317,6 +317,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'func' => '_settings',
 				'capability' => 'manage_options'
 			),
+			'update_global_settings' => array(
+				'func' => '_update_global_settings',
+				'capability' => 'manage_options',
+				'noheader' => true
+			),
 			'generate_now' => array(
 				'func' => '_generate_now',
 				'capability' => 'ee_send_message',
@@ -2728,10 +2733,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			add_meta_box(
 				'espresso_' . $msgr . '_settings',
 				$label,
-				create_function(
-					'$post, $metabox',
-					'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
-				),
+				function( $post, $metabox ) {
+					echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );
+				},
 				$this->_current_screen_id,
 				'normal',
 				'high',
@@ -2749,10 +2753,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			add_meta_box(
 				'espresso_' . $mt . '_inactive_mts',
 				$label,
-				create_function(
-					'$post, $metabox',
-					'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
-				),
+				function( $post, $metabox ) {
+					echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );
+				},
 				$this->_current_screen_id,
 				'side',
 				'high',
@@ -2760,6 +2763,107 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			);
 		}
 
+		//register metabox for global messages settings but only when on the main site.  On single site installs this will
+		//always result in the metabox showing, on multisite installs the metabox will only show on the main site.
+		if ( is_main_site() ) {
+			add_meta_box(
+				'espresso_global_message_settings',
+				__( 'Global Message Settings', 'event_espresso' ),
+				array( $this, 'global_messages_settings_metabox_content' ),
+				$this->_current_screen_id,
+				'normal',
+				'low',
+				array()
+			);
+		}
+
+	}
+
+
+
+
+	/**
+	 *  This generates the content for the global messages settings metabox.
+	 * @return string
+	 */
+	public function global_messages_settings_metabox_content() {
+		$form = $this->_generate_global_settings_form();
+		echo $form->form_open(
+			$this->add_query_args_and_nonce( array( 'action' => 'update_global_settings' ), EE_MSG_ADMIN_URL ),
+			'POST'
+		)
+		. $form->get_html()
+		. $form->form_close();
+	}
+
+
+	/**
+	 * This generates and returns the form object for the global messages settings.
+	 * @return EE_Form_Section_Proper
+	 */
+	protected function _generate_global_settings_form() {
+		EE_Registry::instance()->load_helper( 'HTML' );
+		/** @var EE_Network_Core_Config $network_config */
+		$network_config = EE_Registry::instance()->NET_CFG->core;
+		return new EE_Form_Section_Proper(
+			array(
+				'name' => 'global_messages_settings',
+				'html_id' => 'global_messages_settings',
+				'html_class' => 'form-table',
+				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+				'subsections' => apply_filters(
+					'FHEE__Messages_Admin_Page__global_messages_settings_metabox_content__form_subsections',
+					array(
+						'do_messages_on_same_request' => new EE_Yes_No_Input(
+							array(
+								'default' => $network_config->do_messages_on_same_request,
+								'html_label_text' => __( 'Generate and send all messages on the same request?', 'event_espresso' ),
+								'html_help_text' => __( 'By default the messages system uses a more efficient means of processing messages on separate requests and utilizes the wp-cron scheduling system.  This makes things execute faster for people registering for your events.  However, if the wp-cron system is disabled on your site and there is no alternative in place, then you can change this so messages are always executed on the same request.', 'event_espresso' ),
+							)
+						),
+						'update_settings' => new EE_Submit_Input(
+							array(
+								'default' => __( 'Update', 'event_espresso' ),
+								'html_label_text' => '&nbsp'
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+
+
+	/**
+	 * This handles updating the global settings set on the admin page.
+	 * @throws \EE_Error
+	 */
+	protected function _update_global_settings() {
+		/** @var EE_Network_Core_Config $network_config */
+		$network_config = EE_Registry::instance()->NET_CFG->core;
+		$form = $this->_generate_global_settings_form();
+		if ( $form->was_submitted() ) {
+			$form->receive_form_submission();
+			if ( $form->is_valid() ) {
+				$valid_data = $form->valid_data();
+				foreach( $valid_data as $property => $value ) {
+					$setter = 'set_' . $property;
+					if ( method_exists( $network_config, $setter ) ) {
+						$network_config->{$setter}( $value );
+					} else if (
+						property_exists( $network_config, $property )
+						&& $network_config->{$property} !== $value
+					) {
+						$network_config->{$property} = $value;
+					}
+				}
+				//only update if the form submission was valid!
+				EE_Registry::instance()->NET_CFG->update_config( true, false );
+				EE_Error::overwrite_success();
+				EE_Error::add_success( __( 'Global message settings were updated', 'event_espresso' ) );
+			}
+		}
+		$this->_redirect_after_action( 0, '', '', array( 'action' => 'settings' ), true );
 	}
 
 
