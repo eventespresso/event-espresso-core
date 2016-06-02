@@ -90,14 +90,14 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function set_hooks_for_changes(){
 		self::_set_hooks_for_changes();
 	}
-	
+
 	/**
 	 * If the user appears to be using WP API basic auth, tell them (via a persistent
 	 * admin notice and an email) that we're going to remove it soon, so they should
 	 * replace it with application passwords.
 	 */
 	public static function maybe_notify_of_basic_auth_removal() {
-		if( ! isset( $_SERVER['PHP_AUTH_USER'] ) 
+		if( ! isset( $_SERVER['PHP_AUTH_USER'] )
 			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
 			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
 			return;
@@ -198,9 +198,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $ee_routes;
 	}
-	
+
 	/**
-	 * Gets the EE route data from the wp options if it exists already, 
+	 * Gets the EE route data from the wp options if it exists already,
 	 * otherwise re-generates it and saves it to the option
 	 * @param string $version
 	 * @param boolean $hidden_endpoints
@@ -213,11 +213,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $ee_routes;
 	}
-	
+
+
+
 	/**
 	 * Saves the EE REST API route data to a wp option and returns it
-	 * @param string $version
+	 *
+	 * @param string  $version
 	 * @param boolean $hidden_endpoints
+	 * @return mixed|null|void
 	 */
 	protected static function _save_ee_route_data_for_version( $version, $hidden_endpoints = false ) {
 		$instance = self::instance();
@@ -268,7 +272,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $model_routes;
 	}
-	
+
 	/**
 	 * Gets the route data for EE models in the specified version
 	 * @param string $version
@@ -368,9 +372,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $routes;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $version
 	 * @param boolean $hidden_endpoint
 	 * @return array
@@ -485,7 +489,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $config_routes;
 	}
-	
+
 	/**
 	 * Gets routes for the config for the specified version
 	 * @param string $version
@@ -518,15 +522,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $meta_routes;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $version
 	 * @param boolean $hidden_endpoint
 	 * @return array
 	 */
 	protected function _get_meta_route_data_for_version( $version, $hidden_endpoint = false ) {
-		return array( 
+		return array(
 			'resources'  => array(
 				array(
 					'callback' => array(
