@@ -17,10 +17,9 @@ interface CommandHandlerInterface
 
 	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
-	 * @param \EE_Capabilities                                       $capabilities
 	 * @return mixed
 	 */
-	public function handle( CommandInterface $command, \EE_Capabilities $capabilities );
+	public function handle( CommandInterface $command );
 
 }
 // End of file CommandHandlerInterface.php
