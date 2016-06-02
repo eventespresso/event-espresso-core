@@ -362,7 +362,10 @@ class EE_Messages_Queue {
 		 * @see usage of this filter in EE_Messages_Queue::initiate_request_by_priority() method.
 		 *            Also implemented here because messages processed on the same request should not have any locks applied.
 		 */
-		if ( apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false ) ) {
+		if (
+			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
 			$is_locked = false;
 		}
 
@@ -423,7 +426,7 @@ class EE_Messages_Queue {
 		// or remains in the queue for the regularly scheduled queue batch.
 		$this->save();
 		/**
-		 * This filter allows users to override processing of messages on separate requests and instead have everything
+		 * This filter/option allows users to override processing of messages on separate requests and instead have everything
 		 * happen on the same request.  If this is utilized remember:
 		 *
 		 * - message priorities don't matter
@@ -433,7 +436,10 @@ class EE_Messages_Queue {
 		 * - any race condition protection (locks) are removed because they don't apply when things are processed on
 		 *   the same request.
 		 */
-		if ( apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false ) ) {
+		if (
+			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
 			$messages_processor = EE_Registry::instance()->load_lib( 'Messages_Processor' );
 			if ( $messages_processor instanceof EE_Messages_Processor ) {
 				return $messages_processor->process_immediately_from_queue( $this );
