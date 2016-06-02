@@ -21,6 +21,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 abstract class SequentialStepForm extends FormHandler implements SequentialStepFormInterface {
 
+	const REDIRECT_TO_NEXT_STEP = 'redirect_to_next_step';
+	const REDIRECT_TO_CURRENT_STEP = 'redirect_to_current_step';
+	const REDIRECT_TO_PREV_STEP = 'redirect_to_prev_step';
+	const REDIRECT_TO_OTHER = 'redirect_to_other';
+
 	/**
 	 * numerical value used for sorting form steps
 	 *
@@ -42,6 +47,22 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 	 * @var array $redirect_args
 	 */
 	private $redirect_args = array();
+
+	/**
+	 * Which step should be redirected to after form processing.
+	 * Usually after successfully processing this value would be REDIRECT_TO_NEXT_STEP
+	 * If a form is invalid and requires errors to be corrected,
+	 * then this value would be REDIRECT_TO_CURRENT_STEP so that form can be resubmitted
+	 * Some form handlers do not have a form that is displayable,
+	 * and only perform data processing, but if an error occurs,
+	 * then this value needs to be set to REDIRECT_TO_PREV_STEP
+	 * since the current step has no displayable content.
+	 * if the form is completely finished, and needs to redirect to somewhere
+	 * completely different, then this value will be REDIRECT_TO_OTHER
+	 *
+	 * @var string $redirect_to
+	 */
+	private $redirect_to = SequentialStepForm::REDIRECT_TO_CURRENT_STEP;
 
 
 
@@ -146,6 +167,40 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 			);
 		}
 		$this->redirect_args = array_merge( $this->redirect_args, $redirect_args );
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function redirectTo() {
+		return $this->redirect_to;
+	}
+
+
+
+	/**
+	 * @param string $redirect_to
+	 */
+	public function setRedirectTo( $redirect_to ) {
+		if (
+			! in_array(
+				$redirect_to,
+				array(
+					SequentialStepForm::REDIRECT_TO_NEXT_STEP,
+					SequentialStepForm::REDIRECT_TO_CURRENT_STEP,
+					SequentialStepForm::REDIRECT_TO_PREV_STEP
+				)
+			)
+		) {
+			throw new InvalidDataTypeException(
+				'setRedirectTo()',
+				$redirect_to,
+				'one of the SequentialStepForm class constants'
+			);
+		}
+		$this->redirect_to = $redirect_to;
 	}
 
 
