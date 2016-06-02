@@ -516,14 +516,19 @@ class EE_Registry {
 
 
 	/**
-	 * instantiates, caches, and injects dependencies for classes that use a fully qualified classname
+	 * instantiates, caches, and automatically resolves dependencies
+	 * for classes that use a Fully Qualified Class Name.
+	 * if the class is not capable of being loaded using PSR-4 autoloading,
+	 * then you need to use one of the existing load_*() methods
+	 * which can resolve the classname and filepath from the passed arguments
 	 *
-	 * @param bool|string $class_name - $class name
-	 * @param array       $arguments  - an argument or array of arguments to pass to the class upon instantiation
-	 * @param bool        $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
-	 * @param bool        $cache
-	 * @param bool        $load_only
-	 * @param bool|string $addon
+	 * @param bool|string $class_name   Fully Qualified Class Name
+	 * @param array       $arguments    an argument, or array of arguments to pass to the class upon instantiation
+	 * @param bool $from_db             some classes are instantiated from the db
+	 *                                  and thus call a different method to instantiate
+	 * @param bool        $cache        whether to cache the instantiated object for reuse
+	 * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
+	 * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
 	 * @return mixed                    null = failure to load or instantiate class object.
 	 *                                  object = class loaded and instantiated successfully.
 	 *                                  bool = fail or success when $load_only is true
@@ -570,17 +575,18 @@ class EE_Registry {
 	/**
 	 * instantiates, caches, and injects dependencies for classes
 	 *
-	 * @param array $file_paths
-	 * @param string $class_prefix - EE  or EEM or... ???
-	 * @param bool|string $class_name - $class name
-	 * @param string $type - file type - core? class? helper? model?
-	 * @param mixed $arguments - an argument or array of arguments to pass to the class upon instantiation
-	 * @param bool $from_db - some classes are instantiated from the db and thus call a different method to instantiate
-	 * @param bool $cache
-	 * @param bool $load_only
-	 * @return null|object|bool  	null = failure to load or instantiate class object.
-	 *                              object = class loaded and instantiated successfully.
-	 *                              bool = fail or success when $load_only is true
+	 * @param array $file_paths         an array of paths to folders to look in
+	 * @param string      $class_prefix EE  or EEM or... ???
+	 * @param bool|string $class_name   $class name
+	 * @param string      $type         file type - core? class? helper? model?
+	 * @param mixed       $arguments    an argument or array of arguments to pass to the class upon instantiation
+	 * @param bool        $from_db      some classes are instantiated from the db
+	 *                                  and thus call a different method to instantiate
+	 * @param bool        $cache        whether to cache the instantiated object for reuse
+	 * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
+	 * @return null|object|bool         null = failure to load or instantiate class object.
+	 *                                  object = class loaded and instantiated successfully.
+	 *                                  bool = fail or success when $load_only is true
 	 */
 	protected function _load(
 		$file_paths = array(),
