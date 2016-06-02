@@ -345,6 +345,11 @@ class EE_Dependency_Map {
 			),
 			'EventEspresso\core\services\commands\CommandBus' => array(
 				'EventEspresso\core\services\commands\CommandHandlerManager' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\commands\CommandHandlerManager' => array(
+				'EE_Registry' => EE_Dependency_Map::load_from_cache,
+			),
+			'EventEspresso\core\services\capabilities\RegistrationsCapChecker' => array(
 				'EE_Capabilities' => EE_Dependency_Map::load_from_cache,
 			),
 		);
@@ -429,6 +434,11 @@ class EE_Dependency_Map {
 			'EventEspresso\core\services\commands\CommandHandlerManager' => function () {
 				return EE_Registry::instance()->create( 'CommandHandlerManagerInterface' );
 			},
+			'EventEspresso\core\services\capabilities\RegistrationsCapChecker' => function () {
+				return EE_Registry::instance()->create(
+					'RegistrationsCapChecker'
+				);
+			},
 		);
 	}
 
@@ -443,6 +453,7 @@ class EE_Dependency_Map {
 			'EventEspresso\core\services\commands\CommandBusInterface'            => 'EventEspresso\core\services\commands\CommandBus',
 			'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
 			'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
+			'RegistrationsCapChecker'                                             => 'EventEspresso\core\services\capabilities\RegistrationsCapChecker',
 		);
 	}
 
