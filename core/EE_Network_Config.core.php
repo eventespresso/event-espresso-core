@@ -143,11 +143,9 @@ final class EE_Network_Config {
 	 */
 	public function update_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );
-		// compare existing settings with what's already saved'
-		$saved_config = $this->get_config();
 
 		// update
-		$saved = $saved_config === $this ? TRUE : update_site_option( 'ee_network_config', $this );
+		$saved = update_site_option( 'ee_network_config', $this );
 		do_action( 'AHEE__EE_Network_Config__update_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
