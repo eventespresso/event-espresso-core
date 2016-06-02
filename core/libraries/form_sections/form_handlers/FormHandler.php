@@ -3,7 +3,6 @@ namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Submit_Input;
 use EEH_HTML;
-use EventEspresso\core\services\commands\CommandBusInterface;
 use InvalidArgumentException;
 use LogicException;
 use DomainException;
@@ -103,21 +102,22 @@ abstract class FormHandler implements FormHandlerInterface{
 	private $form;
 
 	/**
-	 * @var CommandBusInterface $command_bus
+	 * @var \EE_Registry $registry
 	 */
-	protected $command_bus;
+	protected $registry;
 
 
 
 	/**
 	 * Form constructor.
+
 	 *
-	 * @param string $form_name
+*@param string $form_name
 	 * @param string     $admin_name
 	 * @param string     $slug
 	 * @param string     $form_action
 	 * @param string     $form_config
-	 * @param CommandBusInterface $command_bus
+	 * @param \EE_Registry $registry
 	 */
 	public function __construct(
 		$form_name,
@@ -125,14 +125,14 @@ abstract class FormHandler implements FormHandlerInterface{
 		$slug,
 		$form_action = '',
 		$form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-		CommandBusInterface $command_bus = null
+		\EE_Registry $registry
 	) {
 		$this->setFormName( $form_name );
 		$this->setAdminName( $admin_name );
 		$this->setSlug( $slug );
 		$this->setFormAction( $form_action );
 		$this->setFormConfig( $form_config );
-		$this->command_bus = $command_bus;
+		$this->registry = $registry;
 	}
 
 
