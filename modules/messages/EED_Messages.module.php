@@ -878,14 +878,14 @@ class EED_Messages  extends EED_Module {
 				)
 			)
 		);
-
+		$generated_queue = false;
 		if ( $messages ) {
 			$generated_queue = self::$_MSG_PROCESSOR->batch_generate_from_queue( $messages );
 		}
 
 		if ( ! $generated_queue instanceof EE_Messages_Queue ) {
 			EE_Error::add_error(
-				__( 'The messages were not generated.  This is could mean because there is already a batch being generated on a separate request or because the selected messages are not ready for generation.  You can wait a minute or two and try again.', 'event_espresso' ),
+				__( 'The messages were not generated. This could mean there is already a batch being generated on a separate request, or because the selected messages are not ready for generation. Please wait a minute or two and try again.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
@@ -914,14 +914,14 @@ class EED_Messages  extends EED_Module {
 				)
 			)
 		);
-
+		$sent_queue = false;
 		if ( $messages ) {
 			$sent_queue = self::$_MSG_PROCESSOR->batch_send_from_queue( $messages );
 		}
 
 		if ( ! $sent_queue instanceof EE_Messages_Queue ) {
 			EE_Error::add_error(
-				__( 'The messages were not sent.  This is could be because there is already a batch being sent on a separate request or because the selected messages are not sendable.  You can wait a minute or two and try again.', 'event_espresso' ),
+				__( 'The messages were not sent. This could mean there is already a batch being sent on a separate request, or because the selected messages are not sendable. Please wait a minute or two and try again.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		} else {
