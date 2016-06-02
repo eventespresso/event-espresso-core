@@ -36,7 +36,25 @@ class EE_Float_Field extends EE_Model_Field_Base{
 	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
 		$EE = EE_Registry::instance();
-		return number_format( $value_on_field_to_be_outputted, $EE->CFG->currency->dec_plc, $EE->CFG->currency->dec_mrk, $EE->CFG->currency->thsnds) ;
+		$localized_float = number_format( $value_on_field_to_be_outputted, $EE->CFG->currency->dec_plc, $EE->CFG->currency->dec_mrk, $EE->CFG->currency->thsnds) ;
+		//note however: this only includes the number of decimal places we'd want for currency, which might not be right
+		//we don't want to lose any extra precision, 
+		//so: compare everything after the decimal place (of original and localized)
+		//and use the longer of the two
+		$pos_of_decimal_in_localized_string = strpos( 
+				$localized_float, 
+				EE_Config::instance()->currency->dec_mrk 
+			);
+		$float_as_string = (string)$value_on_field_to_be_outputted;
+		$contents_after_decimal = substr(
+			$float_as_string,
+			strpos(
+				$float_as_string,
+				'.'
+			) - 1
+		);
+		$localized_float = substr( $localized_float, 0, $pos_of_decimal_in_localized_string - 1 ) . $contents_after_decimal;			
+		return $localized_float;
 	}
 
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {

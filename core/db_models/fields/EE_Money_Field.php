@@ -43,11 +43,30 @@ class EE_Money_Field extends EE_Float_Field{
 	 * @return string
 	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
-		$pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-
-		if($schema == 'localized_float'){
-			return $pretty_float;
+		if( $schema === 'localized_float') {
+			$local_float_with_whole_pennies = number_format( $value_on_field_to_be_outputted, EE_Config::instance()->currency->dec_plc, EE_Config::instance()->currency->dec_mrk, EE_Config::instance()->currency->thsnds) ;
+			if( $this->whole_pennies_only() ) {
+				return $local_float_with_whole_pennies;
+			}
+			$local_float_arbitrary_precision = parent::prepare_for_pretty_echoing( $value_on_field_to_be_outputted );
+			$pos_of_decimal_place = strpos( 
+				$local_float_arbitrary_precision, 
+				EE_Config::instance()->currency->dec_mrk 
+			);
+			$local_float_arbitrary_precision_length_after_decimal = $pos_of_decimal_place !== false ? strlen(
+					substr( 
+						$local_float_arbitrary_precision,
+						$pos_of_decimal_place
+					)
+				) : 
+				0;
+			if( $local_float_arbitrary_precision_length_after_decimal <= EE_Config::instance()->currency->dec_plc ){ 
+				return $local_float_with_whole_pennies;
+			} else {
+				return $local_float_arbitrary_precision;
+			}
 		}
+		
 		if($schema == 'no_currency_code'){
 //			echo "schema no currency!";
 			$display_code = false;
