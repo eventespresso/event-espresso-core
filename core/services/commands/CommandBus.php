@@ -9,7 +9,50 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class CommandBus
- * Description
+ * Routes Command objects to their respective CommandHandlers,
+ * which can then utilize services within the core domain to complete the requested command.
+ * Normally the CommandBus would be injected into the constructors of classes using it's interface
+ *
+ *      public function __construct( CommandBusInterface $command_bus )
+ *
+ * and then used something like this:
+ *
+ *      $result = $this->command_bus->execute(
+ *          new Vendor\some\namespace\to\MyCommand(
+ *              new SomeEntity( $_GET['data_from_HTTP_request'] )
+ *          )
+ *      );
+ *
+ * the benefit of using the CommandBus is that it allows other request types,
+ * such as the API, or CLI, to route data to the same services,
+ * with less duplication within the client code:
+ *
+ *      $result = $this->command_bus->execute(
+ *          new Vendor\some\namespace\to\MyCommand(
+ *              new SomeEntity( $data_from_API_request )
+ *          )
+ *      );
+ *
+ * Event Espresso CommandBus Commands, however, are self executing,
+ * meaning they are capable of routing themselves to the CommandBus,
+ * because they possess their own internal reference to it.
+ *
+ * So as long as your client code has a reference to the EE_Registry,
+ * it can use the create() method to generate the required Command objects,
+ * which will automatically handle resolving their dependency on the CommandBus.
+ *
+ * This means you can simply do the following in your client code:
+ *
+ *      $result = $this->registry
+ *          ->create(
+ *              'Vendor\some\namespace\to\MyCommand',
+ *              array( $request_data )
+ *          )
+ *          ->execute();
+ *
+ * without having to inject the CommandBus,
+ * because you will likely have a reference to EE_Registry
+ * (or DI container) in your client code already
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -40,7 +83,8 @@ class CommandBus implements CommandBusInterface
 	/**
 	 * @return CommandHandlerManagerInterface
 	 */
-	public function getCommandHandlerManager() {
+	public function getCommandHandlerManager()
+	{
 		return $this->command_handler_manager;
 	}
 
@@ -52,8 +96,9 @@ class CommandBus implements CommandBusInterface
 	 */
 	public function execute( CommandInterface $command )
 	{
-		$command_handler = $this->command_handler_manager->getCommandHandler( $command );
-		return $command_handler->handle( $command );
+		return $this->command_handler_manager
+			->getCommandHandler( $command )
+			->handle( $command );
 	}
 
 
