@@ -96,11 +96,12 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 
 
-
-
 	/**
-	 * This returns the request params used for a scheduled message task request.
-	 * @param string $task  The task the request is for.
+	 * This returns
+	 * the request params used for a scheduled message task request.
+	 *
+	 * @param string $task The task the request is for.
+	 * @return array
 	 */
 	public static function get_request_params( $task ) {
 		//transient is used for flood control on msg_cron_trigger requests
