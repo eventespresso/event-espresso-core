@@ -748,7 +748,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		foreach ( EEM_Message::instance()->all_statuses() as $status ) {
-			if ( $status === EEM_Message::status_debug_only && ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) ) {
+			if ( $status === EEM_Message::status_debug_only && ! EEM_Message::debug() ) {
 				continue;
 			}
 			$status_bulk_actions = $common_bulk_actions;
@@ -850,7 +850,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'desc' => EEH_Template::pretty_status( EEM_Message::status_retry, false, 'sentence' )
 				)
 		);
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		if ( EEM_Message::debug() ) {
 			$status_items['debug_only_status'] = array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_debug_only,
 				'desc' => EEH_Template::pretty_status( EEM_Message::status_debug_only, false, 'sentence' )
