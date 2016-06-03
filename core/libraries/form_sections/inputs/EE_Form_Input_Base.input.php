@@ -506,7 +506,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			} else {
 				$this->_raw_value = $this->_sanitize( $raw_input );
 			}
-			//we want ot mostly leave the input alone in case we need to re-display it to the user
+			//we want to mostly leave the input alone in case we need to re-display it to the user
 			$this->_normalized_value = $this->_normalization_strategy->normalize( $this->raw_value() );
 		} catch ( EE_Validation_Error $e ) {
 			$this->add_validation_error( $e );
