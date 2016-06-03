@@ -94,6 +94,15 @@ abstract class FormHandler implements FormHandlerInterface{
 	 */
 	private $form_config;
 
+
+	/**
+	 * whether or not the form was determined to be invalid
+
+	 *
+*@var boolean $form_has_errors
+	 */
+	private $form_has_errors;
+
 	/**
 	 * the absolute top level form section being used on the page
 	 *
@@ -405,6 +414,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @return boolean
 	 */
 	public function initialize() {
+		$this->form_has_errors = \EE_Error::has_error( true );
 		return true;
 	}
 
@@ -534,7 +544,7 @@ abstract class FormHandler implements FormHandlerInterface{
 		) {
 			$form_html .= $this->form()->form_open( $this->formAction() );
 		}
-		$form_html .= $this->form()->get_html();
+		$form_html .= $this->form()->get_html( $this->form_has_errors );
 		if (
 			$form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
 			|| $form_config === FormHandler::ADD_FORM_TAGS_ONLY
