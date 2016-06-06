@@ -163,10 +163,35 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 		}
 		if ( empty( $redirect_args ) ) {
 			throw new InvalidArgumentException(
-				__( 'The redirect arguments can not be an empty array.', 'event_espresso' )
+				__( 'The redirect argument can not be an empty array.', 'event_espresso' )
 			);
 		}
-		$this->redirect_args = array_merge( $this->redirect_args, $redirect_args );
+		$this->redirect_args = array_merge( $this->redirect_args, (array) $redirect_args );
+	}
+
+
+
+	/**
+	 * @param array $redirect_arg_keys_to_remove
+	 * @throws InvalidDataTypeException
+	 * @throws InvalidArgumentException
+	 */
+	public function removeRedirectArgs( $redirect_arg_keys_to_remove = array() ) {
+		if ( is_object( $redirect_arg_keys_to_remove ) ) {
+			throw new InvalidDataTypeException(
+				'$redirect_arg_keys_to_remove',
+				$redirect_arg_keys_to_remove,
+				'anything other than an object was expected.'
+			);
+		}
+		if ( empty( $redirect_arg_keys_to_remove ) ) {
+			throw new InvalidArgumentException(
+				__( 'The $redirect_arg_keys_to_remove argument can not be an empty array.', 'event_espresso' )
+			);
+		}
+		foreach ( $redirect_arg_keys_to_remove as $redirect_arg_key ) {
+			unset( $this->redirect_args[ $redirect_arg_key ] );
+		}
 	}
 
 
@@ -190,14 +215,15 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
 				array(
 					SequentialStepForm::REDIRECT_TO_NEXT_STEP,
 					SequentialStepForm::REDIRECT_TO_CURRENT_STEP,
-					SequentialStepForm::REDIRECT_TO_PREV_STEP
+					SequentialStepForm::REDIRECT_TO_PREV_STEP,
+					SequentialStepForm::REDIRECT_TO_OTHER,
 				)
 			)
 		) {
 			throw new InvalidDataTypeException(
 				'setRedirectTo()',
 				$redirect_to,
-				'one of the SequentialStepForm class constants'
+				'one of the SequentialStepForm class constants was expected.'
 			);
 		}
 		$this->redirect_to = $redirect_to;
