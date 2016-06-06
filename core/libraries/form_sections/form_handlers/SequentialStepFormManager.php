@@ -236,6 +236,9 @@ abstract class SequentialStepFormManager {
 	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
 	 */
 	public function getCurrentStep() {
+		if ( ! $this->form_steps->current() instanceof SequentialStepForm ) {
+			throw new InvalidFormHandlerException( $this->form_steps->current() );
+		}
 		return $this->form_steps->current();
 	}
 
@@ -359,6 +362,9 @@ abstract class SequentialStepFormManager {
 			// is this step active ?
 			if ( ! $form_step->initialize() ) {
 				continue;
+			}
+			if ( $form_step->submitBtnText() === __( 'Submit', 'event_espresso' ) ) {
+				$form_step->setSubmitBtnText( __( 'Next Step', 'event_espresso' ) );
 			}
 			$progress_steps_collection->add(
 				new ProgressStep(
@@ -503,36 +509,6 @@ abstract class SequentialStepFormManager {
 
 
 	/**
-	 * @param array $form_data
-	 * @return bool
-	 * @throws InvalidArgumentException
-	 * @throws InvalidDataTypeException
-	 */
-	public function processCurrentStepForm( $form_data = array() ) {
-		// grab instance of current step because after calling next() below,
-		// any calls to getCurrentStep() will return the "next" step because we advanced
-		$current_step = $this->getCurrentStep();
-		try {
-			// form processing should either throw exceptions or return true
-			if ( $current_step->process( $form_data ) ) {
-				// otay, we are advancing to the next step
-				$current_step->setRedirectTo( SequentialStepForm::REDIRECT_TO_NEXT_STEP );
-				$this->redirectForm();
-			}
-
-		} catch ( Exception $e ) {
-			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
-		}
-		// something went wrong, so grab the errors
-		EE_Error::get_notices( false, true );
-		// redirect back to the display portion for this step
-		// so that those errors can be displayed
-		$this->redirectForm();
-	}
-
-
-
-	/**
 	 * @param bool $return_as_string
 	 * @return string
 	 * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
@@ -548,12 +524,39 @@ abstract class SequentialStepFormManager {
 
 
 	/**
-	 * handles where to go to next
+	 * @param array $form_data
+	 * @return bool
+	 * @throws InvalidArgumentException
+	 * @throws InvalidDataTypeException
 	 */
-	public function redirectForm() {
-		/** @var SequentialStepFormInterface $redirect_step */
-		$redirect_step = $this->getCurrentStep();
-		switch( $redirect_step->redirectTo() ) {
+	public function processCurrentStepForm( $form_data = array() ) {
+		// grab instance of current step because after calling next() below,
+		// any calls to getCurrentStep() will return the "next" step because we advanced
+		$current_step = $this->getCurrentStep();
+		try {
+			// form processing should either throw exceptions or return true
+			$current_step->process( $form_data );
+		} catch ( Exception $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+			// something went wrong,
+			// so grab the errors so that when we redirect back
+			// to the display portion for this step
+			// those errors can be displayed
+			EE_Error::get_notices( false, true );
+		}
+		$this->redirectForm( $current_step );
+	}
+
+
+
+	/**
+	 * handles where to go to next
+	 *
+	 * @param \EventEspresso\core\libraries\form_sections\form_handlers\SequentialStepFormInterface $current_step
+	 */
+	public function redirectForm( SequentialStepFormInterface $current_step ) {
+		$redirect_step = $current_step;
+		switch( $current_step->redirectTo() ) {
 
 			case SequentialStepForm::REDIRECT_TO_OTHER :
 				// going somewhere else, so just check out now
@@ -565,22 +568,24 @@ abstract class SequentialStepFormManager {
 				$redirect_step = $this->form_steps->previous();
 				break;
 
-			case SequentialStepForm::REDIRECT_TO_CURRENT_STEP :
-				// $redirect_step is already set to current
-				break;
-
 			case SequentialStepForm::REDIRECT_TO_NEXT_STEP :
-			default :
 				$this->form_steps->next();
 				if ( $this->form_steps->valid() ) {
 					$redirect_step = $this->form_steps->current();
 				}
+				break;
+
+			case SequentialStepForm::REDIRECT_TO_CURRENT_STEP :
+			default :
+				// $redirect_step is already set
+
 		}
-		$redirect_step->setRedirectUrl( $this->baseUrl() );
-		$redirect_step->addRedirectArgs(
+		$current_step->setRedirectUrl( $this->baseUrl() );
+		$current_step->addRedirectArgs(
+			// use the slug for whatever step we are redirecting too
 			array( $this->formStepUrlKey() => $redirect_step->slug() )
 		);
-		wp_safe_redirect( $redirect_step->redirectUrl() );
+		wp_safe_redirect( $current_step->redirectUrl() );
 		exit();
 	}
 
