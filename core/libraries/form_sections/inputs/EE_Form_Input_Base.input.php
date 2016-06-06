@@ -499,15 +499,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$raw_input = $this->find_form_data_for_this_section( $req_data );
 			//super simple sanitization for now
 			if ( is_array( $raw_input )) {
-				$this->_raw_value = array();
+				$raw_value = array();
 				foreach( $raw_input as $key => $value ) {
-					$this->_raw_value[ $key ] = $this->_sanitize( $value );
+					$raw_value[ $key ] = $this->_sanitize( $value );
 				}
+				$this->_set_raw_value( $raw_value );
 			} else {
-				$this->_raw_value = $this->_sanitize( $raw_input );
+				$this->_set_raw_value( $this->_sanitize( $raw_input ) );
 			}
 			//we want to mostly leave the input alone in case we need to re-display it to the user
-			$this->_normalized_value = $this->_normalization_strategy->normalize( $this->raw_value() );
+			$this->_set_normalized_value( $this->_normalization_strategy->normalize( $this->raw_value() ) );
 		} catch ( EE_Validation_Error $e ) {
 			$this->add_validation_error( $e );
 		}
@@ -664,7 +665,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	public function set_default($value){
+		$this->_set_normalized_value( $value );
+		$this->_set_raw_value( $value );
+	}
+	
+	/**
+	 * Sets the normalized value on this input
+	 * @param mixed $value
+	 */
+	protected function _set_normalized_value( $value ) {
 		$this->_normalized_value = $value;
+	}
+	
+	/**
+	 * Sets the raw value on this input (ie, exactly as the user submitted it)
+	 * @param mixed $value
+	 */
+	protected function _set_raw_value( $value ) {
 		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );
 	}
 
@@ -743,11 +760,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		//if we need more logic than this we'll make a strategy for it
 		if( $this->_sensitive_data_removal_strategy &&
 				! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal ){
-			$this->_raw_value = NULL;
+			$this->_set_raw_value( null );
 		}
 		//and clean the normalized value according to the appropriate strategy
-		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
-			$this->_normalized_value
+		$this->_set_normalized_value(
+			$this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
+				$this->_normalized_value
+			)
 		);
 	}
 
