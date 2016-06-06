@@ -75,6 +75,11 @@ abstract class FormHandler implements FormHandlerInterface{
 	private $slug;
 
 	/**
+	 * @var string $submit_btn_text
+	 */
+	private $submit_btn_text;
+
+	/**
 	 * @var string $form_action
 	 */
 	private $form_action;
@@ -94,12 +99,10 @@ abstract class FormHandler implements FormHandlerInterface{
 	 */
 	private $form_config;
 
-
 	/**
 	 * whether or not the form was determined to be invalid
-
 	 *
-*@var boolean $form_has_errors
+	 * @var boolean $form_has_errors
 	 */
 	private $form_has_errors;
 
@@ -141,6 +144,7 @@ abstract class FormHandler implements FormHandlerInterface{
 		$this->setSlug( $slug );
 		$this->setFormAction( $form_action );
 		$this->setFormConfig( $form_config );
+		$this->setSubmitBtnText( __( 'Submit', 'event_espresso' ) );
 		$this->registry = $registry;
 	}
 
@@ -166,7 +170,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws \EE_Error
 	 * @throws \LogicException
 	 */
-	public function form( $for_display = true ) {
+	public function form( $for_display = false ) {
 		if ( ! $this->formIsValid() ) {
 			return null;
 		}
@@ -323,6 +327,27 @@ abstract class FormHandler implements FormHandlerInterface{
 	/**
 	 * @return string
 	 */
+	public function submitBtnText() {
+		return $this->submit_btn_text;
+	}
+
+
+
+	/**
+	 * @param string $submit_btn_text
+	 */
+	public function setSubmitBtnText( $submit_btn_text ) {
+		if ( ! is_string( $submit_btn_text ) ) {
+			throw new InvalidDataTypeException( '$submit_btn_text', $submit_btn_text, 'string' );
+		}
+		$this->submit_btn_text = $submit_btn_text;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
 	public function formAction() {
 		return ! empty( $this->form_args )
 			? add_query_arg( $this->form_args, $this->form_action )
@@ -457,7 +482,7 @@ abstract class FormHandler implements FormHandlerInterface{
 				'html_class'            => 'ee-form-submit',
 				'html_label'            => '&nbsp;',
 				'other_html_attributes' => ' rel="' . $this->slug() . '"',
-				'default'               => ! empty( $text ) ? $text : __( 'Submit', 'event_espresso' )
+				'default'               => ! empty( $text ) ? $text : $this->submitBtnText()
 			)
 		);
 	}
@@ -467,16 +492,17 @@ abstract class FormHandler implements FormHandlerInterface{
 	/**
 	 * calls generateSubmitButton() and appends it onto the form along with a float clearing div
 	 *
+	 * @param string $text
 	 * @return void
 	 * @throws \LogicException
 	 * @throws \EE_Error
 	 */
-	public function appendSubmitButton() {
+	public function appendSubmitButton( $text = '' ) {
 		if ( $this->form->subsection_exists( $this->slug() . '-submit-btn' ) ) {
 			return;
 		}
 		$this->form->add_subsections(
-			array( $this->slug() . '-submit-btn' => $this->generateSubmitButton() ),
+			array( $this->slug() . '-submit-btn' => $this->generateSubmitButton( $text ) ),
 			null,
 			false
 		);
@@ -544,7 +570,7 @@ abstract class FormHandler implements FormHandlerInterface{
 		) {
 			$form_html .= $this->form()->form_open( $this->formAction() );
 		}
-		$form_html .= $this->form()->get_html( $this->form_has_errors );
+		$form_html .= $this->form( true )->get_html( $this->form_has_errors );
 		if (
 			$form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
 			|| $form_config === FormHandler::ADD_FORM_TAGS_ONLY
@@ -567,11 +593,11 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws InvalidFormSubmissionException
 	 */
 	public function process( $submitted_form_data = array() ) {
-		if ( ! $this->form( false )->was_submitted( $submitted_form_data ) ) {
+		if ( ! $this->form()->was_submitted( $submitted_form_data ) ) {
 			throw new InvalidFormSubmissionException( $this->form_name );
 		}
-		$this->form->receive_form_submission( $submitted_form_data );
-		if ( ! $this->form->is_valid() ) {
+		$this->form( true )->receive_form_submission( $submitted_form_data );
+		if ( ! $this->form()->is_valid() ) {
 			throw new InvalidFormSubmissionException(
 				$this->form_name,
 				sprintf(
@@ -581,11 +607,11 @@ abstract class FormHandler implements FormHandlerInterface{
 					),
 					$this->form_name,
 					'<br />',
-					$this->form->get_validation_error_string()
+					$this->form()->submission_error_message()
 				)
 			);
 		}
-		return $this->form->valid_data();
+		return $this->form()->valid_data();
 	}
 
 
