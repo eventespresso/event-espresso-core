@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
+
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * EE_Select_Ajax_Model_Rest_Input
  * select input which uses ajax and the EE4 REST API to access the EE4 models
@@ -8,7 +11,6 @@
  * @subpackage
  * @author				Mike Nelson
  */
-use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
 class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 
 	/**
@@ -31,8 +33,8 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 	/**
 	 * @param array $input_settings     {
 	 * @type string $model_name         the name of model to be used for searching, both via the REST API and server-side model queries
-	 * @type array  $query_params       default query parameters which will apply to both REST API queries and server-side queries. This should be 
-	 *									in the exact format that will be used for server-side model usage (eg use index 0 for where conditions, not 
+	 * @type array  $query_params       default query parameters which will apply to both REST API queries and server-side queries. This should be
+	 *									in the exact format that will be used for server-side model usage (eg use index 0 for where conditions, not
 	 *									the string "where")
 	 * @type string $value_field_name   the name of the model field on this model to
 	 *                                  be used for the HTML select's option's values
@@ -86,9 +88,9 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 				'delay' => '250',
 				'data_interface' => 'EE_Select2_REST_API_Interface',
 				'data_interface_args' => array(
-					'default_query_params' => (object)Model_Data_Translator::prepare_query_params_for_rest_api( 
+					'default_query_params' => (object)Model_Data_Translator::prepare_query_params_for_rest_api(
 						$query_params,
-						$model 
+						$model
 					),
 					'display_field' => $this->_display_field_name,
 					'value_field' => $this->_value_field_name,
