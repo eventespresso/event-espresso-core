@@ -87,6 +87,20 @@ interface FormHandlerInterface {
 	/**
 	 * @return string
 	 */
+	public function submitBtnText();
+
+
+
+	/**
+	 * @param string $submit_btn_text
+	 */
+	public function setSubmitBtnText( $submit_btn_text );
+
+
+
+	/**
+	 * @return string
+	 */
 	public function formAction();
 
 
