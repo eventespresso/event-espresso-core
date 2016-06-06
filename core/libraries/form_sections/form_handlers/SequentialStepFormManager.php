@@ -363,9 +363,6 @@ abstract class SequentialStepFormManager {
 			if ( ! $form_step->initialize() ) {
 				continue;
 			}
-			if ( $form_step->submitBtnText() === __( 'Submit', 'event_espresso' ) ) {
-				$form_step->setSubmitBtnText( __( 'Next Step', 'event_espresso' ) );
-			}
 			$progress_steps_collection->add(
 				new ProgressStep(
 					$form_step->order(),
@@ -466,6 +463,9 @@ abstract class SequentialStepFormManager {
 		$this->form_steps = $this->getFormStepsCollection();
 		$this->setCurrentStepFromRequest();
 		$form_step = $this->getCurrentStep();
+		if ( $form_step->submitBtnText() === __( 'Submit', 'event_espresso' ) ) {
+			$form_step->setSubmitBtnText( __( 'Next Step', 'event_espresso' ) );
+		}
 		if ( $for_display && $form_step->displayable() ) {
 			$this->progress_step_manager = $this->generateProgressSteps(
 				$this->getProgressStepsCollection()
