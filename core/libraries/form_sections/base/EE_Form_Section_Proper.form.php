@@ -231,9 +231,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	protected function store_submitted_form_data_in_session() {
 		return EE_Session::instance()->set_session_data(
 			array(
-				\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => array(
-					$this->html_name_prefix() => $this->submitted_values()
-				)
+				\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values( true )
 			)
 		);
 	}
@@ -449,13 +447,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				)
 			);
 		}
-		if( ! parent::is_valid()){
+		if( ! parent::is_valid() ) {
 			return false;
 		}
-		//ok so no errors general to this entire form section. so let's check the subsections
+		// ok so no general errors to this entire form section.
+		// so let's check the subsections, but only set errors if that hasn't been done yet
+		$set_submission_errors = $this->submission_error_message() === '' ? true : false;
 		foreach( $this->get_validatable_subsections() as $subsection ){
 			if( ! $subsection->is_valid() || $subsection->get_validation_error_string() !== '' ){
-				$this->set_submission_error_message( $subsection->get_validation_error_string() );
+				if ( $set_submission_errors ) {
+					$this->set_submission_error_message( $subsection->get_validation_error_string() );
+				}
 				return false;
 			}
 		}
@@ -735,16 +737,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * Sanitizes all the data and sets the sanitized value of each field
+	 *
 	 * @param array $req_data like $_POST
 	 * @return void
 	 */
-	protected function _normalize($req_data) {
-		$this->_received_submission = TRUE;
+	protected function _normalize( $req_data ) {
+		$this->_received_submission = true;
 		$this->_validation_errors = array();
-		foreach($this->get_validatable_subsections() as $subsection){
-			try{
-				$subsection->_normalize($req_data);
-			}catch( EE_Validation_Error $e ){
+		foreach ( $this->get_validatable_subsections() as $subsection ) {
+			try {
+				$subsection->_normalize( $req_data );
+			} catch ( EE_Validation_Error $e ) {
 				$subsection->add_validation_error( $e );
 			}
 		}
@@ -929,9 +932,18 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$submitted_values = array();
 		foreach( $this->subsections() as $subsection_name => $subsection ) {
 			if( $subsection instanceof EE_Form_Input_Base ) {
-				$submitted_values[ $subsection_name ] = $subsection->raw_value();
+				// is this input part of an array of inputs?
+				if ( strpos( $subsection->html_name(), '[' ) !== false ) {
+					$full_input_name = \EEH_Array::convert_array_values_to_keys(
+						explode( '[', str_replace( ']', '', $subsection->html_name() ) ),
+						$subsection->raw_value()
+					);
+					$submitted_values = $submitted_values + $full_input_name;
+				} else {
+					$submitted_values[ $subsection->html_name() ] = $subsection->raw_value();
+				}
 			} else if( $subsection instanceof EE_Form_Section_Proper && $include_subforms ) {
-				$subform_input_values = $subsection->_input_values( $include_subforms, $flatten );
+				$subform_input_values = $subsection->submitted_values( $include_subforms, $flatten );
 				if( $flatten ) {
 					$submitted_values = array_merge( $submitted_values, $subform_input_values );
 				} else {
