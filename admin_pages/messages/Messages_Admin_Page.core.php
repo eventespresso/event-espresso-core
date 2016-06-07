@@ -2814,10 +2814,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'subsections' => apply_filters(
 					'FHEE__Messages_Admin_Page__global_messages_settings_metabox_content__form_subsections',
 					array(
-						'do_messages_on_same_request' => new EE_Yes_No_Input(
+						'do_messages_on_same_request' => new EE_Select_Input(
+							array(
+								true =>  __("On the same request", "event_espresso"),
+								false =>  __("On a separate request", "event_espresso")
+							),
 							array(
 								'default' => $network_config->do_messages_on_same_request,
-								'html_label_text' => __( 'Generate and send all messages on the same request?', 'event_espresso' ),
+								'html_label_text' => __( 'Generate and send all messages:', 'event_espresso' ),
 								'html_help_text' => __( 'By default the messages system uses a more efficient means of processing messages on separate requests and utilizes the wp-cron scheduling system.  This makes things execute faster for people registering for your events.  However, if the wp-cron system is disabled on your site and there is no alternative in place, then you can change this so messages are always executed on the same request.', 'event_espresso' ),
 							)
 						),
