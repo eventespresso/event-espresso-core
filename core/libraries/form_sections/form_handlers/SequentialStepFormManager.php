@@ -537,13 +537,20 @@ abstract class SequentialStepFormManager {
 			// form processing should either throw exceptions or return true
 			$current_step->process( $form_data );
 		} catch ( Exception $e ) {
+			// something went wrong, so convert any the exception to an EE_Error
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
-			// something went wrong,
-			// so grab the errors so that when we redirect back
-			// to the display portion for this step
-			// those errors can be displayed
-			EE_Error::get_notices( false, true );
+			// prevent redirect to next step or other if exception was thrown
+			if (
+				$current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_NEXT_STEP
+				|| $current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_OTHER
+			) {
+				$current_step->setRedirectTo( SequentialStepForm::REDIRECT_TO_CURRENT_STEP );
+			}
 		}
+		// save notices to a transient so that when we redirect back
+		// to the display portion for this step
+		// those notices can be displayed
+		EE_Error::get_notices( false, true );
 		$this->redirectForm( $current_step );
 	}
 
