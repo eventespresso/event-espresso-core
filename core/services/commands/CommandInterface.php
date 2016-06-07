@@ -16,6 +16,11 @@ interface CommandInterface
 {
 
 	/**
+	 * @return \EventEspresso\core\services\commands\CommandBusInterface
+	 */
+	public function commandBus();
+
+	/**
 	 * @return mixed
 	 */
 	public function execute();

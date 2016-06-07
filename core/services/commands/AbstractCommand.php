@@ -40,6 +40,15 @@ abstract class AbstractCommand implements CommandInterface
 
 
 	/**
+	 * @return \EventEspresso\core\services\commands\CommandBusInterface
+	 */
+	public function commandBus() {
+		return $this->command_bus;
+	}
+
+
+
+	/**
 	 * @return mixed
 	 */
 	public function execute()
