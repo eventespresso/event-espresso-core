@@ -8,7 +8,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 /**
- * Class AbstractCommand
+ * Class Command
  * Abstract parent class for self executing DTOs (Data Transfer Object)
  * that route specific data from client code to a specific CommandHandler.
  * Data is set upon construction, and then passed to the CommandBus
@@ -18,8 +18,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-abstract class AbstractCommand implements CommandInterface
+abstract class Command implements CommandInterface
 {
+
+	/**
+	 * @var \EE_Registry $registry
+	 */
+	private $registry;
 
 	/**
 	 * @var CommandBusInterface $command_bus
@@ -27,14 +32,26 @@ abstract class AbstractCommand implements CommandInterface
 	private $command_bus;
 
 
+
 	/**
-	 * AbstractCommand constructor
+	 * Command constructor
 	 *
+	 * @param \EE_Registry        $registry
 	 * @param CommandBusInterface $command_bus
 	 */
-	public function __construct( CommandBusInterface $command_bus )
+	public function __construct( \EE_Registry $registry, CommandBusInterface $command_bus )
 	{
+		$this->registry = $registry;
 		$this->command_bus = $command_bus;
+	}
+
+
+
+	/**
+	 * @return \EE_Registry
+	 */
+	public function registry() {
+		return $this->registry;
 	}
 
 
@@ -58,5 +75,5 @@ abstract class AbstractCommand implements CommandInterface
 
 
 }
-// End of file AbstractCommand.php
-// Location: /AbstractCommand.php
+// End of file Command.php
+// Location: /Command.php
