@@ -266,7 +266,7 @@ class EE_Error extends Exception {
 	    if ( $check_stored && ! $has_error ) {
 		    $notices = (array) get_option( 'ee_notices', array() );
 		    foreach ( $notices as $type => $notice ) {
-			    if ( $type === 'errors' ) {
+			    if ( $type === 'errors' && $notice ) {
 				    return true;
 			    }
 		    }
