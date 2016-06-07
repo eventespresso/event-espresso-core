@@ -14,11 +14,11 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class CreateTicketLineItemCommandHandler
- * Description
+ * generates and validates a new ticket line item 
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- * @since         $VID:$
+ * @since         4.9.0
  */
 class CreateTicketLineItemCommandHandler implements CommandHandlerInterface
 {

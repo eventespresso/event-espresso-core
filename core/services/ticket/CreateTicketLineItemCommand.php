@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\services\ticket;
 
-use EventEspresso\core\services\commands\AbstractCommand;
+use EventEspresso\core\services\commands\SelfExecutingCommand;
 use EventEspresso\core\services\commands\CommandBusInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -12,13 +12,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class CreateTicketLineItemCommand
- * Description
+ * DTO for passing data to CreateTicketLineItemCommandHandler
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateTicketLineItemCommand extends AbstractCommand
+class CreateTicketLineItemCommand extends SelfExecutingCommand
 {
 
 
@@ -37,6 +37,11 @@ class CreateTicketLineItemCommand extends AbstractCommand
 	 */
 	private $quantity = 1;
 
+	/**
+	 * @var \EE_Line_Item $ticket_line_item
+	 */
+	protected $ticket_line_item;
+
 
 
 	/**
@@ -45,18 +50,20 @@ class CreateTicketLineItemCommand extends AbstractCommand
 	 * @param \EE_Transaction     $transaction
 	 * @param \EE_Ticket          $ticket
 	 * @param int                 $quantity
+	 * @param \EE_Registry        $registry
 	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		\EE_Transaction $transaction,
 		\EE_Ticket $ticket,
-		$quantity,
+		$quantity = 1,
+		\EE_Registry $registry,
 		CommandBusInterface $command_bus
 	) {
 		$this->transaction = $transaction;
 		$this->ticket = $ticket;
 		$this->quantity = $quantity;
-		parent::__construct( $command_bus );
+		parent::__construct( $registry, $command_bus, 'ticket_line_item' );
 	}
 
 
@@ -84,6 +91,15 @@ class CreateTicketLineItemCommand extends AbstractCommand
 	 */
 	public function quantity() {
 		return $this->quantity;
+	}
+
+
+
+	/**
+	 * @return \EE_Line_Item
+	 */
+	public function ticketLineItem() {
+		return $this->ticket_line_item;
 	}
 
 
