@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\services\commands;
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -66,12 +68,17 @@ abstract class Command implements CommandInterface
 
 
 	/**
+	 * @param string $command_name
+	 * @param array  $arguments
 	 * @return mixed
 	 */
-	public function execute()
-	{
-		return $this->command_bus->execute( $this );
+	public function executeSubCommand( $command_name, $arguments = array() ) {
+		if ( ! is_string( $command_name ) ) {
+			throw new InvalidDataTypeException( '$command_name', $command_name, 'string' );
+		}
+		return $this->registry->create( $command_name, (array) $arguments );
 	}
+
 
 
 }
