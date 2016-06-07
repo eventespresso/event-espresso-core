@@ -1051,6 +1051,20 @@ class EED_Messages  extends EED_Module {
 
 	}
 
+
+
+
+	/**
+	 *  Resets all the static properties in this class when called.
+	 */
+	public static function reset() {
+		self::$_EEMSG = null;
+		self::$_message_resource_manager = null;
+		self::$_MSG_PROCESSOR = null;
+		self::$_MSG_PATHS = null;
+		self::$_TMP_PACKS = array();
+	}
+
 }
 // End of file EED_Messages.module.php
 // Location: /modules/messages/EED_Messages.module.php
