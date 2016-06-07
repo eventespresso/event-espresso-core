@@ -26,6 +26,8 @@ interface CommandInterface
 	public function registry();
 
 	/**
+	 * Given a valid Command class name, will execute that Command using the supplied arguments array
+	 * 
 	 * @param string $command_name
 	 * @param array  $arguments
 	 * @return mixed
