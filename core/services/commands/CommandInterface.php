@@ -21,9 +21,16 @@ interface CommandInterface
 	public function commandBus();
 
 	/**
+	 * @return \EE_Registry
+	 */
+	public function registry();
+
+	/**
+	 * @param string $command_name
+	 * @param array  $arguments
 	 * @return mixed
 	 */
-	public function execute();
+	public function executeSubCommand( $command_name, $arguments = array() );
 
 }
 // End of file CommandInterface.php
