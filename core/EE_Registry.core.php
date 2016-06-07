@@ -898,23 +898,23 @@ class EE_Registry {
 
 	/**
 	 * _resolve_dependencies
-	 *
 	 * examines the constructor for the requested class to determine
 	 * if any dependencies exist, and if they can be injected.
 	 * If so, then those classes will be added to the array of arguments passed to the constructor
 	 * PLZ NOTE: this is achieved by type hinting the constructor params
 	 * For example:
-	 * 		if attempting to load a class "Foo" with the following constructor:
+	 *        if attempting to load a class "Foo" with the following constructor:
 	 *        __construct( Bar $bar_class, Fighter $grohl_class )
-	 * 		then $bar_class and $grohl_class will be added to the $arguments array,
-	 * 		but only IF they are NOT already present in the incoming arguments array,
-	 * 		and the correct classes can be loaded
+	 *        then $bar_class and $grohl_class will be added to the $arguments array,
+	 *        but only IF they are NOT already present in the incoming arguments array,
+	 *        and the correct classes can be loaded
 	 *
 	 * @access protected
 	 * @param ReflectionClass $reflector
-	 * @param string $class_name
-	 * @param array $arguments
+	 * @param string          $class_name
+	 * @param array           $arguments
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	protected function _resolve_dependencies( ReflectionClass $reflector, $class_name, $arguments = array() ) {
 		// let's examine the constructor
@@ -954,7 +954,17 @@ class EE_Registry {
 			) {
 				$arguments = $this->_resolve_dependency( $class_name, $param_class, $arguments, $index );
 			} else {
-				$arguments[ $index ] = $param->getDefaultValue();
+				try {
+					$arguments[ $index ] = $param->getDefaultValue();
+				} catch ( ReflectionException $e ) {
+					throw new ReflectionException(
+						sprintf(
+							__( '%1$s for parameter "$%2$s"', 'event_espresso' ),
+							$e->getMessage(),
+							$param->getName()
+						)
+					);
+				}
 			}
 
 		}
