@@ -1,4 +1,4 @@
-<?php use EventEspresso\core\services\registration\Create;
+<?php
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 EE_Registry::instance()->load_class( 'Processor_Base' );
@@ -101,20 +101,36 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
 	 * @throws \EE_Error
 	 */
-	public function generate_ONE_registration_from_line_item( EE_Line_Item $line_item, EE_Transaction $transaction, $att_nmbr = 1, $total_ticket_count = 1 ) {
+	public function generate_ONE_registration_from_line_item(
+		EE_Line_Item $line_item,
+		EE_Transaction $transaction,
+		$att_nmbr = 1,
+		$total_ticket_count = 1
+	) {
 		// grab the related ticket object for this line_item
 		$ticket = $line_item->ticket();
 		if ( ! $ticket instanceof EE_Ticket ) {
-			EE_Error::add_error( sprintf( __( "Line item %s did not contain a valid ticket", "event_espresso" ), $line_item->ID() ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				sprintf( __( "Line item %s did not contain a valid ticket", "event_espresso" ), $line_item->ID() ),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
 			return null;
 		}
-		return Create::registrationForTransaction(
-			$transaction,
-			$ticket,
-			$line_item,
-			$att_nmbr,
-			$total_ticket_count
-		);
+		return 
+		EE_Registry::instance()
+		           ->create(
+			           'CreateRegistrationCommand',
+			           array(
+				           $transaction,
+				           $ticket,
+				           $line_item,
+				           $att_nmbr,
+				           $total_ticket_count
+			           )
+		           )
+		           ->registration();
 	}
 
 
@@ -128,7 +144,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return string
 	 */
 	public function generate_reg_url_link( $att_nmbr, $item ) {
-		return Create::regUrlLink( $att_nmbr, $item );
+		return $reg_url_link = EE_Registry::instance()
+           ->create(
+               'CreateRegUrlLinkCommand',
+               array( $att_nmbr, $item )
+           )
+           ->regUrlLink();
 	}
 
 
@@ -144,7 +165,16 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	public function generate_reg_code( EE_Registration $registration ) {
 		return apply_filters(
 			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
-			Create::regCodeFromRegistration( $registration ),
+			EE_Registry::instance()
+		        ->create(
+			        'CreateRegCodeCommand',
+			        array(
+				        $registration->reg_url_link(),
+				        $registration->transaction_ID(),
+				        $registration->ticket_ID(),
+			        )
+		        )
+		        ->regCode(),
 			$registration
 		);
 	}
