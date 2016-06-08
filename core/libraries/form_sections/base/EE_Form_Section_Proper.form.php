@@ -275,6 +275,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function populate_from_session() {
 		$form_data_in_session = $this->get_submitted_form_data_from_session();
+		if ( empty( $form_data_in_session ) ) {
+			return false;
+		}
 		$this->receive_form_submission( $form_data_in_session );
 		$this->flush_submitted_form_data_from_session();
 		if ( $this->form_data_present_in( $form_data_in_session ) ) {
