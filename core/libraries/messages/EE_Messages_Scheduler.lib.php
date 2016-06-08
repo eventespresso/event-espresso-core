@@ -141,8 +141,8 @@ class EE_Messages_Scheduler extends EE_BASE {
 		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
 		 */
 		if (
-			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
-			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+			! apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
 		) {
 			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
 		}
@@ -159,8 +159,8 @@ class EE_Messages_Scheduler extends EE_BASE {
 		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
 		 */
 		if (
-			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
-			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+			! apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
 		) {
 			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
 		}
