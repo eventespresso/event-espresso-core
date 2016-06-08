@@ -185,7 +185,7 @@ class EEH_Line_Item {
 		}
 		foreach( $line_item->children() as $child ) {
 			if( $child->is_sub_line_item() ) {
-				EEH_Line_Item::update_quantity( $child, $line_item->quantity() );
+				EEH_Line_Item::update_quantity( $child, $qty );
 			}
 		}
 	}
@@ -203,7 +203,7 @@ class EEH_Line_Item {
 	 */
 	public static function decrement_quantity( EE_Line_Item $line_item, $qty = 1 ) {
 		if( ! $line_item->is_percent() ) {
-			$qty -= $line_item->quantity();
+			$qty = $line_item->quantity() - $qty;
 			$qty = max( $qty, 0 );
 			$line_item->set_quantity( $qty );
 			$line_item->set_total( $line_item->unit_price() * $qty );
@@ -211,7 +211,7 @@ class EEH_Line_Item {
 		}
 		foreach( $line_item->children() as $child ) {
 			if( $child->is_sub_line_item() ) {
-				EEH_Line_Item::update_quantity( $child, $line_item->quantity() );
+				EEH_Line_Item::update_quantity( $child, $qty );
 			}
 		}
 	}
@@ -261,15 +261,6 @@ class EEH_Line_Item {
 		$event = sprintf( _x( '(For %1$s)', '(For Event Name)', 'event_espresso' ), $first_datetime_name );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
-		if ( ! $events_sub_total instanceof EE_Line_Item ) {
-			throw new EE_Error(
-				sprintf(
-					__( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ),
-					$ticket->ID(),
-					$total_line_item->ID()
-				)
-			);
-		}
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance( array(
 			'LIN_name'       	=> $ticket->name(),
@@ -347,17 +338,6 @@ class EEH_Line_Item {
 		return $success;
 	}
 
-
-
-	/**
-	 * @param \EE_Line_Item $line_item
-	 * @param int           $qty
-	 * @throws \EE_Error
-	 */
-	public static function cancel_line_item( EE_Line_Item $line_item, $qty = 1 ) {
-		$line_item->set_type( EEM_Line_Item::type_cancellation );
-		EEH_Line_Item::decrement_quantity( $line_item, $qty );
-	}
 
 
 	/**
@@ -576,7 +556,17 @@ class EEH_Line_Item {
 				)
 			);
 		}
-		return EEH_Line_Item::get_event_line_item( $grand_total, $event );
+		$events_sub_total = EEH_Line_Item::get_event_line_item( $grand_total, $event );
+		if ( ! $events_sub_total instanceof EE_Line_Item ) {
+			throw new EE_Error(
+				sprintf(
+					__( 'There is no events sub-total for ticket %s on total line item %d', 'event_espresso' ),
+					$ticket->ID(),
+					$grand_total->ID()
+				)
+			);
+		}
+		return $events_sub_total;
 	}
 
 
