@@ -340,6 +340,11 @@ abstract class FormHandler implements FormHandlerInterface{
 		if ( ! is_string( $submit_btn_text ) ) {
 			throw new InvalidDataTypeException( '$submit_btn_text', $submit_btn_text, 'string' );
 		}
+		if ( empty( $submit_btn_text ) ) {
+			throw new InvalidArgumentException(
+				__( 'Can not set Submit button text because an empty string was provided.', 'event_espresso' )
+			);
+		}
 		$this->submit_btn_text = $submit_btn_text;
 	}
 
@@ -475,6 +480,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @return \EE_Submit_Input
 	 */
 	public function generateSubmitButton( $text = '' ) {
+		$text = ! empty( $text ) ? $text : $this->submitBtnText();
 		return new EE_Submit_Input(
 			array(
 				'html_name'             => 'ee-form-submit-' . $this->slug(),
@@ -482,7 +488,7 @@ abstract class FormHandler implements FormHandlerInterface{
 				'html_class'            => 'ee-form-submit',
 				'html_label'            => '&nbsp;',
 				'other_html_attributes' => ' rel="' . $this->slug() . '"',
-				'default'               => ! empty( $text ) ? $text : $this->submitBtnText()
+				'default'               => $text
 			)
 		);
 	}
