@@ -1035,21 +1035,26 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 							foreach( $registrations as $registration ) {
-								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
+								if ( ! $registration instanceof EE_Registration ) {
+									continue;
+								}
+								$this->_template_args['event_attendees'][$registration->ID()]['STS_ID'] 			= $registration->status_ID();
+								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 			= $registration->count();
 								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
-								$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
+								$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 		= $ticket_price;
 								// attendee info
 								$attendee = $registration->get_first_related('Attendee');
 								if ( $attendee instanceof EE_Attendee ) {
-									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= $attendee->ID();
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
-									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . __(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
-									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
+									$this->_template_args['event_attendees'][$registration->ID()]['email']
+										= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . __(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	=  implode(',<br>', $attendee->full_address_as_array() );
 								} else {
-									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= '';
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
-									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
-									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['email'] 		= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	= '';
 								}
 							}
 							break;
