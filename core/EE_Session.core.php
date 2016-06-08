@@ -149,7 +149,7 @@
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
-			return NULL;
+			return;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! defined( 'ESPRESSO_SESSION' ) ) {
