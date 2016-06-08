@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\services\registration;
 
+use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\SelfExecutingCommand;
 use EventEspresso\core\services\commands\CommandBusInterface;
 
@@ -57,7 +58,6 @@ class CreateRegistrationCommand extends SelfExecutingCommand
 	 * CreateRegistrationCommand constructor.
 	 *
 	 * @param \EE_Transaction     $transaction
-	 * @param \EE_Ticket          $ticket
 	 * @param \EE_Line_Item       $ticket_line_item
 	 * @param int                 $reg_count
 	 * @param int                 $reg_group_size
@@ -66,15 +66,25 @@ class CreateRegistrationCommand extends SelfExecutingCommand
 	 */
 	public function __construct(
 		\EE_Transaction $transaction,
-		\EE_Ticket $ticket,
 		\EE_Line_Item $ticket_line_item,
 		$reg_count = 1,
 		$reg_group_size = 0,
 		\EE_Registry $registry,
 		CommandBusInterface $command_bus
 	) {
+		// grab the related ticket object for this line_item
+		$this->ticket = $ticket_line_item->ticket();
+		if ( ! $this->ticket instanceof \EE_Ticket ) {
+			throw new InvalidEntityException(
+				is_object( $this->ticket ) ? get_class( $this->ticket ) : gettype( $this->ticket ),
+				'EE_Ticket',
+				sprintf(
+					__( "Line item %s did not contain a valid ticket", "event_espresso" ),
+					$ticket_line_item->ID()
+				)
+			);
+		}
 		$this->transaction = $transaction;
-		$this->ticket = $ticket;
 		$this->ticket_line_item = $ticket_line_item;
 		$this->reg_count = absint( $reg_count );
 		$this->reg_group_size = absint( $reg_group_size );
