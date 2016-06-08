@@ -229,7 +229,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return boolean whether or not the data was successfully stored in the session
 	 */
 	protected function store_submitted_form_data_in_session() {
-		return EE_Session::instance()->set_session_data(
+		return EE_Registry::instance()->SSN->set_session_data(
 			array(
 				\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY => $this->submitted_values( true )
 			)
@@ -245,7 +245,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	protected function get_submitted_form_data_from_session() {
-		return EE_Session::instance()->get_session_data(
+		return EE_Registry::instance()->SSN->get_session_data(
 			\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
 		);
 	}
@@ -258,7 +258,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return boolean whether or not the data was successfully removed from the session
 	 */
 	protected function flush_submitted_form_data_from_session() {
-		return EE_Session::instance()->reset_data(
+		return EE_Registry::instance()->SSN->reset_data(
 			array( \EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY )
 		);
 	}
