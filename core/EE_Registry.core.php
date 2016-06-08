@@ -524,9 +524,9 @@ class EE_Registry {
 	 *
 	 * @param bool|string $class_name   Fully Qualified Class Name
 	 * @param array       $arguments    an argument, or array of arguments to pass to the class upon instantiation
-	 * @param bool $from_db             some classes are instantiated from the db
-	 *                                  and thus call a different method to instantiate
 	 * @param bool        $cache        whether to cache the instantiated object for reuse
+	 * @param bool        $from_db      some classes are instantiated from the db
+	 *                                  and thus call a different method to instantiate
 	 * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
 	 * @param bool|string $addon        if true, will cache the object in the EE_Registry->$addons array
 	 * @return mixed                    null = failure to load or instantiate class object.
@@ -536,8 +536,8 @@ class EE_Registry {
 	public function create(
 		$class_name = false,
 		$arguments = array(),
+		$cache = false,
 		$from_db = false,
-		$cache = true,
 		$load_only = false,
 		$addon = false
 	) {
