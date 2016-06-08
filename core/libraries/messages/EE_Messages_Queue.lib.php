@@ -346,7 +346,10 @@ class EE_Messages_Queue {
 	 * @return bool
 	 */
 	public function is_locked( $type = EE_Messages_Queue::action_generating ) {
-		return filter_var(
+		/**
+		 * This filters the default is_locked behaviour.
+		 */
+		$is_locked = filter_var(
 			apply_filters(
 				'FHEE__EE_Messages_Queue__is_locked',
 				get_transient( $this->_get_lock_key( $type ) ),
@@ -354,6 +357,20 @@ class EE_Messages_Queue {
 			),
 			FILTER_VALIDATE_BOOLEAN
 		);
+
+		/**
+		 * @see usage of this filter in EE_Messages_Queue::initiate_request_by_priority() method.
+		 *            Also implemented here because messages processed on the same request should not have any locks applied.
+		 */
+		if (
+			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			$is_locked = false;
+		}
+
+
+		return $is_locked;
 	}
 
 
@@ -408,6 +425,29 @@ class EE_Messages_Queue {
 		// always make sure we save because either this will get executed immediately on a separate request
 		// or remains in the queue for the regularly scheduled queue batch.
 		$this->save();
+		/**
+		 * This filter/option allows users to override processing of messages on separate requests and instead have everything
+		 * happen on the same request.  If this is utilized remember:
+		 *
+		 * - message priorities don't matter
+		 * - existing unprocessed messages in the queue will not get processed unless manually triggered.
+		 * - things will be perceived to take longer to happen for end users (i.e. registrations) because of the additional
+		 *   processing happening on the same request.
+		 * - any race condition protection (locks) are removed because they don't apply when things are processed on
+		 *   the same request.
+		 */
+		if (
+			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			$messages_processor = EE_Registry::instance()->load_lib( 'Messages_Processor' );
+			if ( $messages_processor instanceof EE_Messages_Processor ) {
+				return $messages_processor->process_immediately_from_queue( $this );
+			}
+			//if we get here then that means the messages processor couldn't be loaded so messages will just remain
+			//queued for manual triggering by end user.
+		}
+
 		if ( $this->_message_repository->count_by_priority_and_status( $priority, $status ) ) {
 			EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( $task );
 		}
