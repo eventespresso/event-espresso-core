@@ -904,8 +904,8 @@ class EE_Message_Resource_Manager {
 				$this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ]
 			);
 
-			//we always record (even on deactivation) that a message type has been activated because there should be at least
-			//record in the "has_activated" option that it WAS active at one point.
+			//we always record (even on deactivation) that a message type has been activated because there should at
+			//least be a record in the "has_activated" option that it WAS active at one point.
 			$messenger = $this->get_messenger( $messenger_name );
 			$this->_set_messenger_has_activated_message_type( $messenger, $message_type_name );
 		}
