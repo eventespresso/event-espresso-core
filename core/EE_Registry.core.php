@@ -1161,6 +1161,9 @@ class EE_Registry {
 		$instance->MRM = null;
 		$instance->LIB = new stdClass();
 
+		//messages reset
+		EED_Messages::reset();
+
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
 				$instance->reset_model( $model_name );
