@@ -58,8 +58,8 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 		$validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
 			? EE_Registry::instance()->CFG->registration->email_validation_level
 			: 'wp_default';
-		if ( ! preg_match( '/^.+\@\S+$/', $email ) ) { // \.\S+
-			// email not in correct {string}@{string} format
+		if ( ! preg_match( '/^.+\@\S+\.\S+$/', $email ) ) {
+			// email not in correct {string}@{string}.{string} format
 			return false;
 		} else {
 			$atIndex = strrpos( $email, "@" );
