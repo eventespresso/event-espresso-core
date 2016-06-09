@@ -34,10 +34,18 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		$this->validate_core_dependency_map( $this->_dependency_map->dependency_map() );
 	}
 
+
+
+	/**
+	 * @param        $dependencies_or_load
+	 * @param string $classname
+	 */
 	public function validate_core_dependency_map( $dependencies_or_load, $classname = '' ) {
 		if ( is_array( $dependencies_or_load ) ) {
 			foreach ( $dependencies_or_load as $classname => $dependency ) {
-				$this->validate_core_dependency_map( $dependency, $classname );
+				if ( $dependency !== null ) {
+					$this->validate_core_dependency_map( $dependency, $classname );
+				}
 			}
 		} else {
 			// verify that a valid class constant has been set for the value
@@ -65,7 +73,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		);
 		//loop through and verify the class loader can successfully load the class it is set for
 		foreach ( $this->_dependency_map->class_loaders() as $class => $loader ) {
-			if ( isset( $skip[ $class ] ) ) {
+			if ( isset( $skip[ $class ] ) || strpos( $class, 'Command' ) !== false ) {
 				continue;
 			}
 			$dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
