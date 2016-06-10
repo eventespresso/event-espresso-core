@@ -118,19 +118,18 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			);
 			return null;
 		}
-		return 
-		EE_Registry::instance()
-		           ->create(
-			           'CreateRegistrationCommand',
-			           array(
-				           $transaction,
-				           $ticket,
-				           $line_item,
-				           $att_nmbr,
-				           $total_ticket_count
-			           )
-		           )
-		           ->registration();
+		return EE_Registry::instance()->BUS->execute(
+			EE_Registry::instance() ->create(
+	           'EventEspresso\core\services\registration\CreateRegistrationCommand',
+	           array(
+		           $transaction,
+		           $ticket,
+		           $line_item,
+		           $att_nmbr,
+		           $total_ticket_count
+	           )
+           )
+		);
 	}
 
 
@@ -144,12 +143,12 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return string
 	 */
 	public function generate_reg_url_link( $att_nmbr, $item ) {
-		return $reg_url_link = EE_Registry::instance()
-           ->create(
-               'CreateRegUrlLinkCommand',
-               array( $att_nmbr, $item )
-           )
-           ->regUrlLink();
+		return EE_Registry::instance()->BUS->execute(
+			EE_Registry::instance()->create(
+				'EventEspresso\core\services\registration\CreateRegUrlLinkCommand',
+				array( $att_nmbr, $item )
+			)
+		);
 	}
 
 
@@ -165,16 +164,16 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	public function generate_reg_code( EE_Registration $registration ) {
 		return apply_filters(
 			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
-			EE_Registry::instance()
-		        ->create(
-			        'CreateRegCodeCommand',
-			        array(
-				        $registration->reg_url_link(),
-				        $registration->transaction_ID(),
-				        $registration->ticket_ID(),
-			        )
-		        )
-		        ->regCode(),
+			EE_Registry::instance()->BUS->execute(
+				EE_Registry::instance()->create(
+					'EventEspresso\core\services\registration\CreateRegCodeCommand',
+					array(
+						$registration->reg_url_link(),
+						$registration->transaction_ID(),
+						$registration->ticket_ID(),
+					)
+				)
+			),
 			$registration
 		);
 	}
