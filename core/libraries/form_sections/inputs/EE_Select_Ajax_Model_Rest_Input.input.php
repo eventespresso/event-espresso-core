@@ -144,9 +144,11 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 			)
 		);
 		$select_options = array();
-		foreach( $display_values as $db_rows ) {
-			$db_rows = (array)$db_rows;
-			$select_options[ $db_rows[ $this->_value_field_name ] ] = $db_rows[ $this->_display_field_name ];
+		if( is_array( $select_options ) ) {
+			foreach( $display_values as $db_rows ) {
+				$db_rows = (array)$db_rows;
+				$select_options[ $db_rows[ $this->_value_field_name ] ] = $db_rows[ $this->_display_field_name ];
+			}
 		}
 		$this->set_select_options( $select_options );
 		parent::_set_raw_value( $value );
