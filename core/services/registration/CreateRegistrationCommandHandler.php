@@ -3,7 +3,7 @@ namespace EventEspresso\core\services\registration;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\commands\CommandHandlerInterface;
+use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateRegistrationCommandHandler implements CommandHandlerInterface
+class CreateRegistrationCommandHandler extends CommandHandler
 {
 
 
@@ -41,23 +41,19 @@ class CreateRegistrationCommandHandler implements CommandHandlerInterface
 		$transaction = $command->transaction();
 		$reg_group_size = $command->regGroupSize();
 		// generate a REG_url_link
-		$reg_url_link = $command->registry()
-			->create(
-				'CreateRegUrlLinkCommand',
-				array( $reg_count, $ticket_line_item )
-			)
-			->regUrlLink();
+		$reg_url_link = $this->executeSubCommand(
+			'EventEspresso\core\services\registration\CreateRegUrlLinkCommand',
+			array( $reg_count, $ticket_line_item )
+		);
 		// and a REG_code
-		$reg_code = $command->registry()
-			->create(
-				'CreateRegCodeCommand',
-				array(
-					$reg_url_link,
-					$transaction->ID(),
-					$ticket->ID()
-				)
+		$reg_code = $this->executeSubCommand(
+			'EventEspresso\core\services\registration\CreateRegCodeCommand',
+			array(
+				$reg_url_link,
+				$transaction->ID(),
+				$ticket->ID()
 			)
-			->regCode();
+		);
 		$final_price = \EEH_Line_Item::calculate_final_price_for_ticket_line_item(
 			$transaction->total_line_item(),
 			$ticket_line_item
