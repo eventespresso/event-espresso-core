@@ -2,8 +2,7 @@
 namespace EventEspresso\core\services\registration;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\services\commands\SelfExecutingCommand;
-use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\commands\Command;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -19,7 +18,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateRegCodeCommand extends SelfExecutingCommand
+class CreateRegCodeCommand extends Command
 {
 
 	/**
@@ -51,22 +50,16 @@ class CreateRegCodeCommand extends SelfExecutingCommand
 
 
 	/**
-	 * @param \EE_Registration                                          $registration
-	 * @param \EE_Registry                                              $registry
-	 * @param \EventEspresso\core\services\commands\CommandBusInterface $command_bus
-	 * @return \EventEspresso\core\services\registration\CreateRegCodeCommand
+	 * @param \EE_Registration $registration
+	 * @return CreateRegCodeCommand
 	 */
 	public static function fromRegistration(
-		\EE_Registration $registration,
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		\EE_Registration $registration
 	) {
 		return new self(
 			$registration->reg_url_link(),
 			$registration->transaction_ID(),
-			$registration->ticket_ID(),
-			$registry,
-			$command_bus
+			$registration->ticket_ID()
 		);
 	}
 
@@ -78,15 +71,11 @@ class CreateRegCodeCommand extends SelfExecutingCommand
 	 * @param string              $reg_url_link
 	 * @param int                 $TXN_ID
 	 * @param int                 $TKT_ID
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		$reg_url_link,
 		$TXN_ID,
-		$TKT_ID,
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		$TKT_ID
 	) {
 		if ( empty( $reg_url_link ) || ! is_string( $reg_url_link ) ) {
 			throw new InvalidDataTypeException( '$reg_url_link', $reg_url_link, 'string' );
@@ -94,7 +83,6 @@ class CreateRegCodeCommand extends SelfExecutingCommand
 		$this->reg_url_link = $reg_url_link;
 		$this->TXN_ID = absint( $TXN_ID );
 		$this->TKT_ID = absint( $TKT_ID );
-		parent::__construct( $registry, $command_bus, 'reg_code' );
 	}
 
 
