@@ -3,7 +3,7 @@ namespace EventEspresso\core\services\ticket;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\commands\CommandHandlerInterface;
+use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -14,13 +14,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class CreateTicketLineItemCommandHandler
- * generates and validates a new ticket line item 
+ * generates and validates a new ticket line item
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateTicketLineItemCommandHandler implements CommandHandlerInterface
+class CreateTicketLineItemCommandHandler extends CommandHandler
 {
 
 
