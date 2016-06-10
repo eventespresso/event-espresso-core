@@ -1,8 +1,7 @@
 <?php
 namespace EventEspresso\core\services\registration;
 
-use EventEspresso\core\services\commands\CommandBusInterface;
-use EventEspresso\core\services\commands\SelfExecutingCommand;
+use EventEspresso\core\services\commands\Command;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -18,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CopyRegistrationDetailsCommand extends SelfExecutingCommand
+class CopyRegistrationDetailsCommand extends Command
 {
 
 
@@ -40,19 +39,14 @@ class CopyRegistrationDetailsCommand extends SelfExecutingCommand
 	 *
 	 * @param \EE_Registration    $target_registration
 	 * @param \EE_Registration    $registration_to_copy
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	v
 	 */
 	public function __construct(
 		\EE_Registration $target_registration,
-		\EE_Registration $registration_to_copy,
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		\EE_Registration $registration_to_copy
 	) {
 		$this->target_registration = $target_registration;
 		$this->registration_to_copy = $registration_to_copy;
-		parent::__construct( $registry, $command_bus );
 	}
 
 
