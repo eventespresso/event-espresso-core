@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\Command;

@@ -859,7 +859,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$att_nmbr++;
 					$CreateRegistrationCommand = EE_Registry::instance()
                        ->create(
-                           'EventEspresso\core\services\registration\CreateRegistrationCommand',
+                           'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
                            array(
 	                           $transaction,
 	                           $line_item,

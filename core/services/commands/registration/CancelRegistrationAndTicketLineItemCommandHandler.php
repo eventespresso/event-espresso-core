@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
@@ -36,7 +36,7 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
 		}
 		$registration = $command->registration();
 		$this->executeSubCommand(
-			'EventEspresso\core\services\ticket\CancelTicketLineItemCommand',
+			'EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommand',
 			array( $registration->transaction(), $registration->ticket() )
 		);
 		// cancel original registration

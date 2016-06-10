@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -45,7 +45,7 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
 		}
 		// apply any applicable promotions that were initially used during registration to new line items
 		do_action(
-			'AHEE__\EventEspresso\core\services\ticket\CreateTicketLineItemCommandHandler__handle__new_ticket_line_item_added',
+			'AHEE__\EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommandHandler__handle__new_ticket_line_item_added',
 			$command->transaction()->total_line_item(),
 			$command->ticket(),
 			$command->transaction(),

@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;

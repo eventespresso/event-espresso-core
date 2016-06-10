@@ -120,7 +120,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		}
 		return EE_Registry::instance()->BUS->execute(
 			EE_Registry::instance() ->create(
-	           'EventEspresso\core\services\registration\CreateRegistrationCommand',
+	           'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
 	           array(
 		           $transaction,
 		           $ticket,
@@ -145,7 +145,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	public function generate_reg_url_link( $att_nmbr, $item ) {
 		return EE_Registry::instance()->BUS->execute(
 			EE_Registry::instance()->create(
-				'EventEspresso\core\services\registration\CreateRegUrlLinkCommand',
+				'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
 				array( $att_nmbr, $item )
 			)
 		);
@@ -166,7 +166,7 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
 			EE_Registry::instance()->BUS->execute(
 				EE_Registry::instance()->create(
-					'EventEspresso\core\services\registration\CreateRegCodeCommand',
+					'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
 					array(
 						$registration->reg_url_link(),
 						$registration->transaction_ID(),

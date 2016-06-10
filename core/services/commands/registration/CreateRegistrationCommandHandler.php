@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -42,12 +42,12 @@ class CreateRegistrationCommandHandler extends CommandHandler
 		$reg_group_size = $command->regGroupSize();
 		// generate a REG_url_link
 		$reg_url_link = $this->executeSubCommand(
-			'EventEspresso\core\services\registration\CreateRegUrlLinkCommand',
+			'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
 			array( $reg_count, $ticket_line_item )
 		);
 		// and a REG_code
 		$reg_code = $this->executeSubCommand(
-			'EventEspresso\core\services\registration\CreateRegCodeCommand',
+			'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
 			array(
 				$reg_url_link,
 				$transaction->ID(),

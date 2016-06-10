@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
@@ -32,7 +32,7 @@ class CreateRegUrlLinkCommandHandler extends CommandHandler
 			throw new InvalidEntityException( get_class( $command ), 'CreateRegUrlLinkCommand' );
 		}
 		return apply_filters(
-			'FHEE__\EventEspresso\core\services\registration\CreateRegUrlLinkCommandHandler__handle__new_reg_url_link',
+			'FHEE__\EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommandHandler__handle__new_reg_url_link',
 			$command->regCount() . '-' . md5( $command->baseCode() . microtime() ),
 			$command
 		);

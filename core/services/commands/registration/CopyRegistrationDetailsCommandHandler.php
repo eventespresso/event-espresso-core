@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidEntityException;

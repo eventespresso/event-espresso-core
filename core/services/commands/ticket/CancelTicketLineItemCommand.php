@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\services\commands\Command;
