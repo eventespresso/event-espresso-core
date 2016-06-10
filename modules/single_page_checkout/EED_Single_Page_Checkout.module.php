@@ -857,17 +857,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				//do the following for each ticket of this type they selected
 				for ( $x = 1; $x <= $line_item->quantity(); $x++ ) {
 					$att_nmbr++;
-					$registration = EE_Registry::instance()
+					$CreateRegistrationCommand = EE_Registry::instance()
                        ->create(
-                           'CreateRegistrationCommand',
+                           'EventEspresso\core\services\registration\CreateRegistrationCommand',
                            array(
 	                           $transaction,
 	                           $line_item,
 	                           $att_nmbr,
 	                           $this->checkout->total_ticket_count
                            )
-                       )
-                       ->registration();
+                       );
+					$registration = EE_Registry::instance()->BUS->execute( $CreateRegistrationCommand );
 					if ( ! $registration instanceof EE_Registration ) {
 						throw new InvalidEntityException(
 							is_object( $registration ) ? get_class( $registration ) : gettype( $registration ),
