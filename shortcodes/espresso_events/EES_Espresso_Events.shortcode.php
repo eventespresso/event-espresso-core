@@ -84,8 +84,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		if ( apply_filters( 'FHEE__fallback_shortcode_processor__EES_Espresso_Events', FALSE )) {
 			EED_Events_Archive::instance()->event_list();
 		}
-		// merge in any attributes passed via fallback shortcode processor
-		$attributes = array_merge( (array)$attributes, (array)$this->_attributes );
 		//set default attributes
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
