@@ -2,7 +2,7 @@
 namespace EventEspresso\core\services\registration;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\services\commands\CommandHandlerInterface;
+use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -19,7 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateRegCodeCommandHandler implements CommandHandlerInterface{
+class CreateRegCodeCommandHandler extends CommandHandler{
 
 
 
