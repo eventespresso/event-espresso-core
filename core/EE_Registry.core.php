@@ -31,6 +31,12 @@ class EE_Registry {
 	protected $_class_abbreviations = array();
 
 	/**
+	 * @access public
+	 * @var \EventEspresso\core\services\commands\CommandBusInterface $BUS
+	 */
+	public $BUS;
+
+	/**
 	 *    EE_Cart Object
 	 * @access    public
 	 * @var    EE_Cart $CART
@@ -217,14 +223,15 @@ class EE_Registry {
 				'EE_Network_Config'           => 'NET_CFG',
 				'EE_Request_Handler'          => 'REQ',
 				'EE_Message_Resource_Manager' => 'MRM',
+				'EventEspresso\core\services\commands\CommandBus' => 'BUS',
 			)
 		);
 		// class library
-		$this->LIB = new StdClass();
-		$this->addons = new StdClass();
-		$this->modules = new StdClass();
-		$this->shortcodes = new StdClass();
-		$this->widgets = new StdClass();
+		$this->LIB = new stdClass();
+		$this->addons = new stdClass();
+		$this->modules = new stdClass();
+		$this->shortcodes = new stdClass();
+		$this->widgets = new stdClass();
 		$this->load_core( 'Base', array(), true );
 		// add our request and response objects to the cache
 		$request_loader = $this->_dependency_map->class_loader( 'EE_Request' );
@@ -543,7 +550,12 @@ class EE_Registry {
 	) {
 		$class_name = $this->_dependency_map->get_alias( $class_name );
 		if ( ! class_exists( $class_name ) ) {
-			return null;
+			// maybe the class is registered with a preceding \
+			$class_name = strpos( $class_name, '\\' ) !== 0 ? '\\' . $class_name : $class_name;
+			// still doesn't exist ?
+			if ( ! class_exists( $class_name ) ) {
+				return null;
+			}
 		}
 		// if we're only loading the class and it already exists, then let's just return true immediately
 		if ( $load_only ) {
@@ -1039,6 +1051,9 @@ class EE_Registry {
 	 * @return void
 	 */
 	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false ) {
+		if ( empty( $class_obj ) ) {
+			return;
+		}
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
@@ -1297,6 +1312,9 @@ class EE_Registry {
 
 
 
+	/**
+	 * @return \EE_Config
+	 */
 	public static function CFG() {
 		return self::instance()->CFG;
 	}
