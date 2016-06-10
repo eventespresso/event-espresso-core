@@ -346,57 +346,49 @@ class EE_Dependency_Map {
 			'EventEspresso\core\services\commands\CommandBus' => array(
 				'EventEspresso\core\services\commands\CommandHandlerManager' => EE_Dependency_Map::load_from_cache,
 			),
+			'EventEspresso\services\commands\CommandHandler' => array(
+				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
+				'CommandBusInterface' => EE_Dependency_Map::load_from_cache,
+			),
 			'EventEspresso\core\services\commands\CommandHandlerManager' => array(
 				'EE_Registry' => EE_Dependency_Map::load_from_cache,
 			),
 			'EventEspresso\core\services\capabilities\RegistrationsCapChecker' => array(
 				'EE_Capabilities' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\CreateRegistrationCommand' => array(
-				null, null, null, null, null,
+			'EventEspresso\core\services\registration\CreateRegistrationCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\CreateRegUrlLinkCommand' => array(
-				null, null,
+			'EventEspresso\core\services\registration\CreateRegUrlLinkCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\CreateRegCodeCommand' => array(
-				null, null, null,
+			'EventEspresso\core\services\registration\CreateRegCodeCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\CopyRegistrationDetailsCommand' => array(
-				null, null,
+			'EventEspresso\core\services\registration\CopyRegistrationDetailsCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\CopyRegistrationPaymentsCommand' => array(
-				null, null,
+			'EventEspresso\core\services\registration\CopyRegistrationPaymentsCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\CancelRegistrationAndTicketLineItemCommand' => array(
-				null, null,
+			'EventEspresso\core\services\registration\CancelRegistrationAndTicketLineItemCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\registration\UpdateRegistrationAndTransactionAfterChangeCommand' => array(
-				null, null,
+			'EventEspresso\core\services\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler' => array(
 				'EE_Registry'         => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\ticket\CreateTicketLineItemCommand' => array(
-				null,
-				null,
-				null,
+			'EventEspresso\core\services\ticket\CreateTicketLineItemCommandHandler' => array(
 				'EE_Registry'                                     => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
-			'EventEspresso\core\services\ticket\CancelTicketLineItemCommand' => array(
-				null,
-				null,
+			'EventEspresso\core\services\ticket\CancelTicketLineItemCommandHandler' => array(
 				'EE_Registry'                                     => EE_Dependency_Map::load_from_cache,
 				'EventEspresso\core\services\commands\CommandBus' => EE_Dependency_Map::load_from_cache,
 			),
@@ -479,15 +471,15 @@ class EE_Dependency_Map {
 			'EventEspresso\core\services\commands\CommandBus' => 'create',
 			'EventEspresso\core\services\commands\CommandHandlerManager' => 'create',
 			'EventEspresso\core\services\capabilities\RegistrationsCapChecker' => 'create',
-			'EventEspresso\core\services\registration\CreateRegistrationCommand' => 'create',
-			'EventEspresso\core\services\registration\CreateRegUrlLinkCommand' => 'create',
-			'EventEspresso\core\services\registration\CreateRegCodeCommand' => 'create',
-			'EventEspresso\core\services\registration\CopyRegistrationDetailsCommand' => 'create',
-			'EventEspresso\core\services\registration\CopyRegistrationPaymentsCommand' => 'create',
-			'EventEspresso\core\services\registration\CancelRegistrationAndTicketLineItemCommand' => 'create',
-			'EventEspresso\core\services\registration\UpdateRegistrationAndTransactionAfterChangeCommand' => 'create',
-			'EventEspresso\core\services\ticket\CreateTicketLineItemCommand' => 'create',
-			'EventEspresso\core\services\ticket\CancelTicketLineItemCommand' => 'create',
+			'EventEspresso\core\services\registration\CreateRegistrationCommandHandler' => 'create',
+			'EventEspresso\core\services\registration\CreateRegUrlLinkCommandHandler' => 'create',
+			'EventEspresso\core\services\registration\CreateRegCodeCommandHandler' => 'create',
+			'EventEspresso\core\services\registration\CopyRegistrationDetailsCommandHandler' => 'create',
+			'EventEspresso\core\services\registration\CopyRegistrationPaymentsCommandHandler' => 'create',
+			'EventEspresso\core\services\registration\CancelRegistrationAndTicketLineItemCommandHandler' => 'create',
+			'EventEspresso\core\services\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler' => 'create',
+			'EventEspresso\core\services\ticket\CreateTicketLineItemCommandHandler' => 'create',
+			'EventEspresso\core\services\ticket\CancelTicketLineItemCommandHandler' => 'create',
 		);
 	}
 
@@ -503,15 +495,15 @@ class EE_Dependency_Map {
 			'CommandHandlerManagerInterface'                                      => 'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
 			'EventEspresso\core\services\commands\CommandHandlerManagerInterface' => 'EventEspresso\core\services\commands\CommandHandlerManager',
 			'RegistrationsCapChecker'                                             => 'EventEspresso\core\services\capabilities\RegistrationsCapChecker',
-			'CreateRegCodeCommand'                                                => 'EventEspresso\core\services\registration\CreateRegCodeCommand',
-			'CreateRegUrlLinkCommand'                                             => 'EventEspresso\core\services\registration\CreateRegUrlLinkCommand',
-			'CreateRegistrationCommand'                                           => 'EventEspresso\core\services\registration\CreateRegistrationCommand',
-			'CopyRegistrationDetailsCommand'                                      => 'EventEspresso\core\services\registration\CopyRegistrationDetailsCommand',
-			'CopyRegistrationPaymentsCommand'                                     => 'EventEspresso\core\services\registration\CopyRegistrationPaymentsCommand',
-			'CancelRegistrationAndTicketLineItemCommand'                          => 'EventEspresso\core\services\registration\CancelRegistrationAndTicketLineItemCommand',
-			'UpdateRegistrationAndTransactionAfterChangeCommand'                  => 'EventEspresso\core\services\registration\UpdateRegistrationAndTransactionAfterChangeCommand',
-			'CreateTicketLineItemCommand'                                         => 'EventEspresso\core\services\ticket\CreateTicketLineItemCommand',
-			'CancelTicketLineItemCommand'                                         => 'EventEspresso\core\services\ticket\CancelTicketLineItemCommand',
+			'CreateRegCodeCommandHandler'                                         => 'EventEspresso\core\services\registration\CreateRegCodeCommand',
+			'CreateRegUrlLinkCommandHandler'                                      => 'EventEspresso\core\services\registration\CreateRegUrlLinkCommand',
+			'CreateRegistrationCommandHandler'                                    => 'EventEspresso\core\services\registration\CreateRegistrationCommand',
+			'CopyRegistrationDetailsCommandHandler'                               => 'EventEspresso\core\services\registration\CopyRegistrationDetailsCommand',
+			'CopyRegistrationPaymentsCommandHandler'                              => 'EventEspresso\core\services\registration\CopyRegistrationPaymentsCommand',
+			'CancelRegistrationAndTicketLineItemCommandHandler'                   => 'EventEspresso\core\services\registration\CancelRegistrationAndTicketLineItemCommandHandler',
+			'UpdateRegistrationAndTransactionAfterChangeCommandHandler'           => 'EventEspresso\core\services\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
+			'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\ticket\CreateTicketLineItemCommand',
+			'CancelTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\ticket\CancelTicketLineItemCommand',
 		);
 	}
 
