@@ -30,12 +30,12 @@ class InvalidDataTypeException extends \InvalidArgumentException {
 	 */
 	public function __construct( $var_name, $variable, $expected, $message = '', $code = 0, \Exception $previous = null ) {
 		if ( empty( $message ) ) {
-			$expected .= strpos( ' was expected.', $expected ) === false
+			$expected = strpos( ' was expected.', $expected ) === false
 				? $this->addIndefiniteArticle( $expected ) . ' was expected.'
 				: $expected;
 			$message = sprintf(
 				__(
-					'The supplied data for "%1$s" was %2$s, but %3$s was expected.',
+					'The supplied data for "%1$s" was %2$s, but %3$s',
 					'event_espresso'
 				),
 				$var_name,
@@ -53,6 +53,9 @@ class InvalidDataTypeException extends \InvalidArgumentException {
 	 * @return string
 	 */
 	protected function addIndefiniteArticle( $string ) {
+		if ( strtolower( $string ) === 'null' ) {
+			return $string;
+		}
 		return ( stripos( 'aeiou', $string[0] ) !== false ? 'an ' : 'a ' ) . $string;
 	}
 }
