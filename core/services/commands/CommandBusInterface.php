@@ -23,7 +23,7 @@ interface CommandBusInterface {
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
 	 * @return mixed
 	 */
-	public function execute( CommandInterface $command );
+	public function execute( $command );
 
 }
 // End of file CommandBusInterface.php

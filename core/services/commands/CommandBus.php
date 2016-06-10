@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\core\services\commands;
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -94,8 +96,11 @@ class CommandBus implements CommandBusInterface
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
 	 * @return mixed
 	 */
-	public function execute( CommandInterface $command )
+	public function execute( $command )
 	{
+		if ( ! $command instanceof CommandInterface ) {
+			throw new InvalidDataTypeException( __METHOD__.'( $command )', $command, 'CommandInterface' );
+		}
 		return $this->command_handler_manager
 			->getCommandHandler( $command )
 			->handle( $command );
