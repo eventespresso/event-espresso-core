@@ -326,7 +326,9 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$this->assertTrue( $form->was_submitted( $post_data ) );
 	}
 	/**
-	 * @group 9874
+	 * @group 9784
+	 * Verify EE_FOrm_SEction_proper::submitted_values() generates an array
+	 * exactly like the submitted data
 	 */
 	public function test_submitted_values() {
 		$form = new EE_Form_Section_Proper(
@@ -376,6 +378,41 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$form->receive_form_submission( 
 			$submitted_data
 		);
+		$this->assertEquals(
+			$submitted_data,
+			$form->submitted_values( true )
+		);
+	}
+	
+	/**
+	 * @group 9784
+	 * Verify EE_FOrm_section_Proper::submitted_values generates the post-like submission
+	 * array when there are custom names on inputs
+	 */
+	public function test_submitted_values__custom_html_name_on_input(){
+		$form = new EE_Form_Section_Proper(
+			array(
+				'name' => 'top',
+				'subsections' => array(
+					'middle' => new EE_Form_Section_Proper(
+						array(
+							'subsections' => array(
+								'bottom' => new EE_Text_Input(
+									array(
+										'html_name' => 'custom_html_name'
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+		$form->_construct_finalize(null, null);
+		$submitted_data = array(
+			'html_name' => 'value'
+		);
+		$form->receive_form_submission( $submitted_data );
 		$this->assertEquals(
 			$submitted_data,
 			$form->submitted_values( true )
