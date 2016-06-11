@@ -3,6 +3,7 @@ namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Error;
 use EE_Request;
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -537,7 +538,10 @@ abstract class SequentialStepFormManager {
 			// form processing should either throw exceptions or return true
 			$current_step->process( $form_data );
 		} catch ( Exception $e ) {
-			// something went wrong, so convert any the exception to an EE_Error
+			// something went wrong, so...
+			// if WP_DEBUG === true, display the Exception and stack trace right now
+			new ExceptionStackTraceDisplay( $e );
+			// else convert the Exception to an EE_Error
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
 			// prevent redirect to next step or other if exception was thrown
 			if (

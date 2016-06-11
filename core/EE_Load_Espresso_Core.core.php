@@ -75,6 +75,8 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 		do_action( 'EE_Load_Espresso_Core__handle_request__initialize_core_loading' );
 		// PSR4 Autoloaders
 		$this->registry->load_core( 'EE_Psr4AutoloaderInit' );
+		// create and cache the CommandBus
+		$this->registry->create( 'CommandBusInterface', array(), true );
 		// workarounds for PHP < 5.3
 		$this->_load_class_tools();
 		// load interfaces

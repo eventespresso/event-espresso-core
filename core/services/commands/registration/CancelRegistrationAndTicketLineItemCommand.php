@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {

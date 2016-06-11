@@ -1,8 +1,7 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
-use EventEspresso\core\services\commands\CommandBusInterface;
-use EventEspresso\core\services\commands\SelfExecutingCommand;
+use EventEspresso\core\services\commands\Command;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -18,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-abstract class SingleRegistrationCommand extends SelfExecutingCommand
+abstract class SingleRegistrationCommand extends Command
 {
 
 
@@ -33,18 +32,11 @@ abstract class SingleRegistrationCommand extends SelfExecutingCommand
 	 * CancelRegistrationAndTicketLineItemCommand constructor.
 	 *
 	 * @param \EE_Registration    $registration
-	 * @param string              $property
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
-		\EE_Registration $registration,
-		$property = '',
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		\EE_Registration $registration
 	) {
 		$this->registration = $registration;
-		parent::__construct( $registry, $command_bus, $property );
 	}
 
 

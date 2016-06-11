@@ -1,8 +1,7 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
-use EventEspresso\core\services\commands\SelfExecutingCommand;
-use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\commands\Command;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -18,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateRegUrlLinkCommand extends SelfExecutingCommand
+class CreateRegUrlLinkCommand extends Command
 {
 
 
@@ -44,14 +43,10 @@ class CreateRegUrlLinkCommand extends SelfExecutingCommand
 	 *
 	 * @param int                 $reg_count
 	 * @param mixed               $base_code
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		$reg_count = 1,
-		$base_code = '',
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		$base_code = ''
 	) {
 		$this->reg_count = absint( $reg_count );
 		$this->base_code = $base_code instanceof \EE_Line_Item ? $base_code->code() : $base_code;
@@ -63,7 +58,6 @@ class CreateRegUrlLinkCommand extends SelfExecutingCommand
 				)
 			);
 		}
-		parent::__construct( $registry, $command_bus, 'reg_url_link' );
 	}
 
 

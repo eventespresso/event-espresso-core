@@ -1,10 +1,10 @@
 <?php
-namespace EventEspresso\core\services\registration;
+namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\commands\CommandHandlerInterface;
+use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -22,7 +22,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CopyRegistrationDetailsCommandHandler implements CommandHandlerInterface
+class CopyRegistrationDetailsCommandHandler extends CommandHandler
 {
 
 

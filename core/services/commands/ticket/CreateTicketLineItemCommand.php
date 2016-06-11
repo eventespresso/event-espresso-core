@@ -1,8 +1,7 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
-use EventEspresso\core\services\commands\SelfExecutingCommand;
-use EventEspresso\core\services\commands\CommandBusInterface;
+use EventEspresso\core\services\commands\Command;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -18,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateTicketLineItemCommand extends SelfExecutingCommand
+class CreateTicketLineItemCommand extends Command
 {
 
 
@@ -50,20 +49,15 @@ class CreateTicketLineItemCommand extends SelfExecutingCommand
 	 * @param \EE_Transaction     $transaction
 	 * @param \EE_Ticket          $ticket
 	 * @param int                 $quantity
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		\EE_Transaction $transaction,
 		\EE_Ticket $ticket,
-		$quantity = 1,
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		$quantity = 1
 	) {
 		$this->transaction = $transaction;
 		$this->ticket = $ticket;
 		$this->quantity = $quantity;
-		parent::__construct( $registry, $command_bus, 'ticket_line_item' );
 	}
 
 

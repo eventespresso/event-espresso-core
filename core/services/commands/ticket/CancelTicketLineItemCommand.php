@@ -1,9 +1,8 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\exceptions\EntityNotFoundException;
-use EventEspresso\core\services\commands\CommandBusInterface;
-use EventEspresso\core\services\commands\SelfExecutingCommand;
+use EventEspresso\core\services\commands\Command;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -19,7 +18,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CancelTicketLineItemCommand extends SelfExecutingCommand
+class CancelTicketLineItemCommand extends Command
 {
 
 
@@ -43,23 +42,16 @@ class CancelTicketLineItemCommand extends SelfExecutingCommand
 	/**
 	 * @param \EE_Line_Item       $ticket_line_item
 	 * @param int                 $quantity
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	 */
 	public static function fromTicketLineItem(
 		\EE_Line_Item $ticket_line_item,
-		$quantity = 1,
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		$quantity = 1
 	) {
 		new self(
 			$ticket_line_item->transaction(),
 			$ticket_line_item->ticket(),
 			$quantity,
-			$ticket_line_item,
-			$registry,
-			$command_bus
-
+			$ticket_line_item
 		);
 	}
 
@@ -72,23 +64,18 @@ class CancelTicketLineItemCommand extends SelfExecutingCommand
 	 * @param \EE_Ticket          $ticket
 	 * @param int                 $quantity
 	 * @param \EE_Line_Item       $ticket_line_item
-	 * @param \EE_Registry        $registry
-	 * @param CommandBusInterface $command_bus
 	 */
 	public function __construct(
 		\EE_Transaction $transaction,
 		\EE_Ticket $ticket,
 		$quantity = 1,
-		\EE_Line_Item $ticket_line_item = null,
-		\EE_Registry $registry,
-		CommandBusInterface $command_bus
+		\EE_Line_Item $ticket_line_item = null
 	) {
 		$this->transaction = $transaction;
 		$this->ticket = $ticket;
 		$this->ticket_line_item = $ticket_line_item instanceof \EE_Line_Item
 			? $ticket_line_item
 			: $this->getTicketLineItem( $transaction, $ticket );
-		parent::__construct( $registry, $command_bus );
 	}
 
 

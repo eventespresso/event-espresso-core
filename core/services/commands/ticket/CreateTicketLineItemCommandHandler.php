@@ -1,9 +1,9 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\commands\CommandHandlerInterface;
+use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -14,13 +14,13 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class CreateTicketLineItemCommandHandler
- * generates and validates a new ticket line item 
+ * generates and validates a new ticket line item
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CreateTicketLineItemCommandHandler implements CommandHandlerInterface
+class CreateTicketLineItemCommandHandler extends CommandHandler
 {
 
 
@@ -45,7 +45,7 @@ class CreateTicketLineItemCommandHandler implements CommandHandlerInterface
 		}
 		// apply any applicable promotions that were initially used during registration to new line items
 		do_action(
-			'AHEE__\EventEspresso\core\services\ticket\CreateTicketLineItemCommandHandler__handle__new_ticket_line_item_added',
+			'AHEE__\EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommandHandler__handle__new_ticket_line_item_added',
 			$command->transaction()->total_line_item(),
 			$command->ticket(),
 			$command->transaction(),

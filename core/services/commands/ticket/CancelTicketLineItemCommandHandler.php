@@ -1,8 +1,8 @@
 <?php
-namespace EventEspresso\core\services\ticket;
+namespace EventEspresso\core\services\commands\ticket;
 
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\services\commands\CommandHandlerInterface;
+use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -19,7 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class CancelTicketLineItemCommandHandler implements CommandHandlerInterface
+class CancelTicketLineItemCommandHandler extends CommandHandler
 {
 
 
@@ -36,6 +36,7 @@ class CancelTicketLineItemCommandHandler implements CommandHandlerInterface
 		}
 		$ticket_line_item = $command->ticketLineItem();
 		// first we need to decrement the ticket quantity
+		\EEH_Line_Item::decrement_quantity( $ticket_line_item, 1 );
 		// no tickets left for this line item ?
 		if ( (int) $ticket_line_item->quantity() === 0 ) {
 			// then just set this line item as cancelled, save, and get out
