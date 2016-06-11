@@ -325,6 +325,62 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 			);
 		$this->assertTrue( $form->was_submitted( $post_data ) );
 	}
+	/**
+	 * @group 9874
+	 */
+	public function test_submitted_values() {
+		$form = new EE_Form_Section_Proper(
+			array(
+				'name' => 'top',
+				'subsections' => array(
+					'middle' => new EE_Form_Section_Proper(
+						array(
+							'subsections' => array(
+								'bottom_input1' => new EE_Phone_Input(),
+								'bottom_radio' => new EE_Radio_Button_Input(
+									array(
+										'op1' => 'option1',
+										'op2' => 'option2',
+										'op3' => 'option3'
+									)
+								)
+							)
+						)
+					),
+					'middle_radio' => new EE_Radio_Button_Input(
+						array(
+							'op1' => 'option1',
+							'op2' => 'option2',
+							'op3' => 'option3'
+						)
+					)
+				)
+			)
+		);
+		$form->_construct_finalize(null, null );
+		$submitted_data = array(
+			'top' => array(
+				'middle' => array(
+					'bottom_input1' => 'not-a-phone-number',
+					'middle_radio' => array(
+						'op2',
+						'not-existent-op'
+					)
+				),
+				'middle_radio' => array(
+					'op2',
+					'not-existent-op'
+				)
+			)
+		);
+		$form->receive_form_submission( 
+			$submitted_data
+		);
+		$this->assertEquals(
+			$submitted_data,
+			$form->submitted_values( true )
+		);
+	}
 }
 
 // End of file EE_Form_Section_Proper_Test.php
