@@ -1,37 +1,23 @@
 <?php
 
-if (!defined('EVENT_ESPRESSO_VERSION'))
+if (!defined('EVENT_ESPRESSO_VERSION')){
 	exit('No direct script access allowed');
-
+}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
  *
  * EE_PMT_Aim
  *
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 class EE_PMT_Aim extends EE_PMT_Base{
 
-	
+
 	/**
-	 *
 	 * @param EE_Payment_Method $pm_instance
 	 * @return EE_PMT_Aim
+	 * @throws \EE_Error
 	 */
 	public function __construct($pm_instance = NULL) {
 		$this->_setup_properties();
@@ -46,16 +32,20 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 */
 	protected function _setup_properties() {
 		require_once($this->file_folder().'EEG_Aim.gateway.php');
-		$this->_gateway = new EEG_AIM();
+		$this->_gateway = new EEG_Aim();
 		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
 		$this->_default_description = __( 'Please provide the following billing information.', 'event_espresso' );
 		$this->_requires_https = true;
 	}
 
+
+
 	/**
 	 * Creates the billing form for this payment method type
+	 *
 	 * @param \EE_Transaction $transaction
 	 * @return EE_Billing_Info_Form
+	 * @throws \EE_Error
 	 */
 	public function generate_new_billing_form( EE_Transaction $transaction = NULL ) {
 		$billing_form = new EE_Billing_Attendee_Info_Form($this->_pm_instance,array(
@@ -98,6 +88,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		if( $settings_form->get_input( 'required_billing_inputs' ) instanceof EE_Checkbox_Multi_Input ) {
 			$required_inputs = $settings_form->get_input( 'required_billing_inputs' )->normalized_value();
 			//only change the requirement of inputs which are allowed to be changed
+			/** @var EE_Form_Input_Base[] $inputs_to_evaluate */
 			$inputs_to_evaluate = array_intersect_key( 
 				$billing_form->inputs(), 
 				$this->billing_input_names()
@@ -121,20 +112,28 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	 *
 	 * @param \EE_Billing_Info_Form $billing_form
 	 * @return \EE_Billing_Info_Form
+	 * @throws \EE_Error
 	 */
 	public function apply_billing_form_debug_settings( EE_Billing_Info_Form $billing_form ) {
-		if ( $this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta( 'test_transactions', TRUE, FALSE )) {
+		if (
+			$this->_pm_instance->debug_mode() 
+			|| $this->_pm_instance->get_extra_meta( 'test_transactions', TRUE, FALSE )
+		) {
 			$billing_form->get_input( 'credit_card' )->set_default( '4007000000027' );
 			$billing_form->get_input( 'exp_year' )->set_default( '2020' );
 			if( $billing_form->get_subsection( 'cvv' ) instanceof EE_Form_Input_Base ) {
-				$billing_form->get_input( 'cvv' )->set_default(( '123' ));
+				$billing_form->get_input( 'cvv' )->set_default( '123' );
 			}
 			$billing_form->add_subsections(
 				array( 'fyi_about_autofill' => $billing_form->payment_fields_autofilled_notice_html() ),
 				'credit_card'
 			);
 			$billing_form->add_subsections(
-				array( 'debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php' )),
+				array(
+					'debug_content' => new EE_Form_Section_HTML_From_Template(
+						__DIR__.DS.'templates'.DS.'authorize_net_aim_debug_info.template.php' 
+					)
+				),
 				'first_name'
 			);
 		}
@@ -194,8 +193,8 @@ class EE_PMT_Aim extends EE_PMT_Base{
 						apply_filters(
 							'FHEE__EE_PMT_Aim__generate_new_settings_form__server_select_input__options',
 							array(
-								'authorize.net' => __( 'Authorize.net (default)', 'event_espresso' ),
-								'akamai' => __( 'Authorize.net/Akamai', 'event_espresso' )
+								'akamai' => __( 'Authorize.net/Akamai (default)', 'event_espresso' ),
+								'authorize.net' => __( 'Authorize.net (deprecated)', 'event_espresso' ),
 							),
 							$this
 						),
@@ -236,7 +235,8 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	/**
 	 * Overrides parent so we always have all billing inputs in the returned array,
 	 * not just the ones included at the time. This helps simplify the gateway code
-	 * @param type $billing_form
+	 * 
+	 * @param EE_Billing_Info_Form $billing_form
 	 * @return array
 	 */
 	protected function _get_billing_values_from_form( $billing_form ){
