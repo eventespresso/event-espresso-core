@@ -111,14 +111,19 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 
 
 	/**
-	 * Before setting the default, sets the options so that the current selections
-	 * appear on initial display
+	 * Before setting the raw value (usually because we're setting the default,
+	 * or we've received a form submission and this might be re-displayed to the user), 
+	 * sets the options so that the current selections appear on initial display.
+	 * 
+	 * Note: because this input uses EE_Model_Matching_Query_Validation_Strategy
+	 * for validation, this input's options only affect DISPLAY and NOT validation,
+	 * which is why its ok to just assume the provided $value to be in the list of acceptable values
 	 *
 	 * @param mixed $value
 	 * @return void
 	 * @throws \EE_Error
 	 */
-	public function set_default( $value ) {
+	protected function _set_raw_value( $value ) {
 
 		$values_for_options = (array)$value;
 		$value_field = $this->_get_model()->field_settings_for( $this->_value_field_name );
@@ -139,12 +144,14 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 			)
 		);
 		$select_options = array();
-		foreach( $display_values as $db_rows ) {
-			$db_rows = (array)$db_rows;
-			$select_options[ $db_rows[ $this->_value_field_name ] ] = $db_rows[ $this->_display_field_name ];
+		if( is_array( $select_options ) ) {
+			foreach( $display_values as $db_rows ) {
+				$db_rows = (array)$db_rows;
+				$select_options[ $db_rows[ $this->_value_field_name ] ] = $db_rows[ $this->_display_field_name ];
+			}
 		}
 		$this->set_select_options( $select_options );
-		parent::set_default( $value );
+		parent::_set_raw_value( $value );
 	}
 
 	/**
