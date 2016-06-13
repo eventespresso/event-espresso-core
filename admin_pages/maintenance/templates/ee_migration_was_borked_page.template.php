@@ -6,7 +6,7 @@
 <a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Errors", 'event_espresso');?></a>
 <ul class="migration-warnings" style="display:none">
 <?php foreach($most_recent_migration->get_errors() as $error){ ?>
-	<li><?php echo $error ?></li>
+	<li style="overflow-y:auto;max-height:100px"><?php echo esc_html($error)?></li>
 <?php }?>
 </ul>
 <h2><?php _e("Fill out the below form to automatically Send Event Espresso a Crash Report", "event_espresso");?></h2>

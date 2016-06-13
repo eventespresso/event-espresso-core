@@ -251,7 +251,7 @@
 	/*margin-left:0 !important;*/
 	padding: 10px 0;
 }
- .espresso_events .ee-event-datetimes-ul li {
+.espresso_events .ee-event-datetimes-ul li {
  	list-style-type: none;
  	margin: 0 0 1em;
 }
@@ -948,6 +948,16 @@ input.ee-register-button {
 	border-bottom: 1px dotted #999;
 }
 
+.ee-clearfix:before,
+.ee-clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.ee-clearfix:after {
+	clear: both;
+}
+
 /******************* TEMPLATE FIXES ****************** */
 
 article .espresso_events,
@@ -960,6 +970,10 @@ article .espresso_venues {
 	margin-bottom: 48px;
 }
 
+.ee-clearfix .ee-event-datetimes-li {
+	float: left;
+	width: 50%;
+}
 
 /******************* iCal ****************** */
 
@@ -1007,6 +1021,21 @@ article .espresso_venues {
 	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+a[href*="message_type=receipt"],
+a[href*="message_type=receipt"]:active,
+a[href*="message_type=receipt"]:visited {
+	margin-top: 1em;
+}
+
+/******************* SMALL SCREENS ****************** */
+
+@media only screen and (max-width: 640px) {
+	.ee-clearfix .ee-event-datetimes-li {
+		float: none;
+		width: auto;
+	}
 }
 
 /*******************************************************/

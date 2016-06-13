@@ -161,7 +161,6 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 	 * @return EE_Payment[]
 	 */
 	public function get_payments_made_between_dates( $start_date = '', $end_date = '', $format = '', $timezone = '' ) {
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$timezone = empty( $timezone ) ? EEH_DTT_Helper::get_timezone() : $timezone;
 		//if $start_date or $end date, verify $format is included.
 		if ( ( ! empty( $start_date ) || ! empty( $end_date ) ) && empty( $format ) ) {

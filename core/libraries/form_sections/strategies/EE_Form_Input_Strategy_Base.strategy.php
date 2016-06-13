@@ -21,4 +21,12 @@ abstract class EE_Form_Input_Strategy_Base{
 	function _construct_finalize(EE_Form_Input_Base $form_input){
 		$this->_input = $form_input;
 	}
+	
+	/**
+	 * Gets this strategy's input
+	 * @return EE_Form_Input_Base
+	 */
+	public function get_input() {
+		return $this->_input;
+	}
 }

@@ -14,6 +14,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 /**
  * @group core
+ * @group activation
  */
 class EE_System_Test extends EE_UnitTestCase{
 	protected $_mock_addon_name = 'New_Addon';

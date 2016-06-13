@@ -84,7 +84,6 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage {
 			if( ! in_array( $invoice_settings[ 'invoice_css' ], array( '', 'simple.css' ) ) ){
 				EE_Error::add_persistent_admin_notice( 'invoice_css_not_updated', sprintf( __( 'You had previously set your Invoice Payment Method\'s stylesheet to be %1$s, but that setting has moved. PDF and HTML Invoices and Receipts are now Messages, which means you can easily modify them from your Wordpress Dashboard instead of using filters or uploading template files. Please visit Messages -> Receipt and Messages -> Invoice to change their stylesheets.', 'event_espresso'), $invoice_settings[ 'invoice_css' ] ), FALSE );
 			}
-			EE_Registry::instance()->load_helper( 'Template' );
 			$templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
 			$overridden_invoice_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php', NULL, FALSE, FALSE, TRUE );
 			$overridden_receipt_body= EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php', NULL, FALSE, FALSE, TRUE );

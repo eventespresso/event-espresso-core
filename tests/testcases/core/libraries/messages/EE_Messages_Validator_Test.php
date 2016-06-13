@@ -13,6 +13,7 @@
  * @since 		4.6.0
  * @package 		Event Espresso
  * @subpackage 	tests
+ * @group       messages
  */
 class EE_Messages_Validator_Test extends EE_UnitTestCase {
 

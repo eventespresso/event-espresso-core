@@ -24,7 +24,7 @@ class EEH_HTML {
 	 *	@var 	$_instance
 	 * 	@access 	private
 	 */
-	private static $_instance = NULL;
+	private static $_instance;
 
 	/**
 	 *	@var array	$_indent
@@ -93,7 +93,15 @@ class EEH_HTML {
 	 * @param bool   $force_close
 	 * @return string
 	 */
-	protected static function _open_tag( $tag = 'div', $content = '', $id = '', $class = '', $style = '', $other_attributes = '', $force_close = FALSE ) {
+	protected static function _open_tag(
+		$tag = 'div',
+		$content = '',
+		$id = '',
+		$class = '',
+		$style = '',
+		$other_attributes = '',
+		$force_close = false
+	) {
 		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
 		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
 		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
@@ -108,9 +116,10 @@ class EEH_HTML {
 
 
 	/**
-	 * Generates HTML closing </XX> tag - if passed the id or class attribute used for the opening tag, will append a comment
+	 * Generates HTML closing </XX> tag - if passed the id or class attribute
+	 * used for the opening tag, will append a comment
 	 *
-	 * @access protected
+*@access protected
 	 * @param string $tag
 	 * @param string $id - html id attribute
 	 * @param string $class - html class attribute
@@ -118,12 +127,11 @@ class EEH_HTML {
 	 * @return string
 	 */
 	protected static function _close_tag( $tag = 'div', $id = '', $class = '', $indent = TRUE ) {
+		$comment = '';
 		if ( $id ) {
 			$comment = EEH_HTML::comment( 'close ' . $id ) . EEH_HTML::nl( 0, $tag );
 		} else if ( $class ) {
 			$comment = EEH_HTML::comment( 'close ' . $class ) . EEH_HTML::nl( 0, $tag );
-		} else {
-			$comment = '';
 		}
 		$html = $indent ? EEH_HTML::nl( -1, $tag ) : '';
 		$html .= '</' . $tag . '>' . $comment;
@@ -179,18 +187,88 @@ class EEH_HTML {
 	public static function h1( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h1', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
+
+
+
+	/**
+	 * Generates HTML <h2></h2> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::h2( 'This is a Heading' );
+	 *
+	 * @param string $content          - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id               - html id attribute
+	 * @param string $class            - html class attribute
+	 * @param string $style            - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
 	public static function h2( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h2', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
+
+
+
+	/**
+	 * Generates HTML <h3></h3> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::h3( 'This is a Heading' );
+	 *
+	 * @param string $content          - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id               - html id attribute
+	 * @param string $class            - html class attribute
+	 * @param string $style            - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
 	public static function h3( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h3', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
+
+
+
+	/**
+	 * Generates HTML <h4></h4> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::h4( 'This is a Heading' );
+	 *
+	 * @param string $content          - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id               - html id attribute
+	 * @param string $class            - html class attribute
+	 * @param string $style            - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
 	public static function h4( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
+
+
+
+	/**
+	 * Generates HTML <h5></h5> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::h5( 'This is a Heading' );
+	 *
+	 * @param string $content          - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id               - html id attribute
+	 * @param string $class            - html class attribute
+	 * @param string $style            - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
 	public static function h5( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h5', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
+
+
+
+	/**
+	 * Generates HTML <h6></h6> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::h6( 'This is a Heading' );
+	 *
+	 * @param string $content          - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id               - html id attribute
+	 * @param string $class            - html class attribute
+	 * @param string $style            - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
 	public static function h6( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
 		return EEH_HTML::_open_tag( 'h6', $content, $id, $class, $style, $other_attributes, TRUE );
 	}
@@ -685,7 +763,7 @@ class EEH_HTML {
 		if ( ! isset( EEH_HTML::$_indent[ $tag ] )) {
 			EEH_HTML::$_indent[ $tag ] = 0;
 		}
-		EEH_HTML::$_indent[ $tag ] += intval( $indent );
+		EEH_HTML::$_indent[ $tag ] += (int)$indent;
 		EEH_HTML::$_indent[ $tag ] = EEH_HTML::$_indent[ $tag ] >= 0 ? EEH_HTML::$_indent[ $tag ] : 0;
 	}
 
@@ -724,6 +802,24 @@ class EEH_HTML {
 		);
 	}
 
+
+
+	/**
+	 * Retrieves the list of tags considered "simple", that are probably safe for
+	 * use in inputs
+	 * @global array $allowedtags
+	 * @return array
+	 */
+	public static function get_simple_tags(){
+		global $allowedtags;
+		$tags_we_allow = $allowedtags;
+		$tags_we_allow['ol']=array();
+		$tags_we_allow['ul']=array();
+		$tags_we_allow['li']=array();
+		$tags_we_allow['br']=array();
+		$tags_we_allow['p']=array();
+		return apply_filters( 'FHEE__EEH_HTML__get_simple_tags', $tags_we_allow );
+	}
 
 
 }

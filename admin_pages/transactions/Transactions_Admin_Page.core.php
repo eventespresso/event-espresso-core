@@ -420,31 +420,44 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	 *	@return array
 	 */
 	protected function _transaction_legend_items() {
+		EE_Registry::instance()->load_helper( 'MSG_Template' );
+		$items = array();
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
+			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
+			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
+				$items['view_related_messages'] = array(
+					'class' => $related_for_icon['css_class'],
+					'desc' => $related_for_icon['label'],
+				);
+			}
+		}
+
 		$items = apply_filters(
 			'FHEE__Transactions_Admin_Page___transaction_legend_items__items',
-			array(
-				'view_details' => array(
-					'class' => 'dashicons dashicons-cart',
-					'desc' => __('View Transaction Details', 'event_espresso')
-				),
-				'view_invoice' => array(
-					'class' => 'dashicons dashicons-media-spreadsheet',
-					'desc' => __('View Transaction Invoice', 'event_espresso')
-				),
-				'view_receipt' => array(
-					'class' => 'dashicons dashicons-media-default',
-					'desc' => __('View Transaction Receipt', 'event_espresso' )
-				),
-				'view_registration' => array(
-					'class' => 'dashicons dashicons-clipboard',
-					'desc' => __('View Registration Details', 'event_espresso')
+			array_merge( $items,
+				array(
+					'view_details' => array(
+						'class' => 'dashicons dashicons-cart',
+						'desc' => __('View Transaction Details', 'event_espresso')
+					),
+					'view_invoice' => array(
+						'class' => 'dashicons dashicons-media-spreadsheet',
+						'desc' => __('View Transaction Invoice', 'event_espresso')
+					),
+					'view_receipt' => array(
+						'class' => 'dashicons dashicons-media-default',
+						'desc' => __('View Transaction Receipt', 'event_espresso' )
+					),
+					'view_registration' => array(
+						'class' => 'dashicons dashicons-clipboard',
+						'desc' => __('View Registration Details', 'event_espresso')
+					)
 				)
 			)
 		);
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ) {
-
-			EE_Registry::instance()->load_helper( 'MSG_Template' );
 			if ( EEH_MSG_Template::is_mt_active( 'payment_reminder' ) ) {
 				$items['send_payment_reminder'] = array(
 					'class' => 'dashicons dashicons-email-alt',
@@ -518,7 +531,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _transaction_details() {
 		do_action( 'AHEE__Transactions_Admin_Page__transaction_details__start', $this->_transaction );
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		$this->_set_transaction_status_array();
 
@@ -533,7 +545,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->ID();
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
 
-		$this->_template_args['txn_datetime']['value'] = $this->_transaction->get_datetime('TXN_timestamp', 'l F j, Y', 'g:i:s a' );
+		$this->_template_args['txn_datetime']['value'] = $this->_transaction->get_i18n_datetime('TXN_timestamp');
 		$this->_template_args['txn_datetime']['label'] = __( 'Date', 'event_espresso' );
 
 		$this->_template_args['txn_status']['value'] = self::$_txn_status[ $this->_transaction->get('STS_ID') ];
@@ -550,7 +562,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'espresso_transactions_send_payment_reminder'
 			)
 		) {
-			EE_Registry::instance()->load_helper( 'MSG_Template' );
 			$this->_template_args['send_payment_reminder_button'] =
 				EEH_MSG_Template::is_mt_active( 'payment_reminder' )
 				&& $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code
@@ -1056,7 +1067,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['prime_reg_phone'] 	= $primary_att->phone();
 		$this->_template_args['edit_attendee_url'] 	= EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'edit_attendee', 'post' => $primary_att->ID()  ), REG_ADMIN_URL );
 		// get formatted address for registrant
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		$this->_template_args[ 'formatted_address' ] = EEH_Address::format( $primary_att );
 		echo EEH_Template::display_template( TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_registrant.template.php', $this->_template_args, TRUE );
 	}
@@ -1622,7 +1632,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$registration_payment_data = array();
 		//if non empty reg_ids lets get an array of registrations and update the values for the apply_payment/refund rows.
 		if ( ! empty( $REG_IDs ) ) {
-			EE_Registry::instance()->load_helper( 'Template' );
 			$registrations = EEM_Registration::instance()->get_all( array( array( 'REG_ID' => array( 'IN', $REG_IDs ) ) ) );
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {

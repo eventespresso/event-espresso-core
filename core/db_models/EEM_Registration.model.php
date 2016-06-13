@@ -129,6 +129,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Checkin'=>new EE_Has_Many_Relation(),
 			'Registration_Payment' => new EE_Has_Many_Relation(),
 			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
+			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletes even if there are messages in the queue related
 		);
 		$this->_model_chain_to_wp_user = 'Event';
 
@@ -183,7 +184,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//and the table hasn't actually been created, this could have an error
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
@@ -286,7 +286,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
 
 		$results = $this->_get_all_wpdb_results(
@@ -320,7 +319,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
 
 		//prepare the query interval for displaying offset
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
 
 		//inner date query
@@ -515,14 +513,27 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @return int
 	 */
 	public function count_registrations_checked_into_datetime( $DTT_ID, $checked_in = true) {
-		return $this->count(
-			array(
-				array(
-					'Checkin.CHK_in' => $checked_in,
-					'Checkin.DTT_ID' => $DTT_ID
-				)
-			)
+		global $wpdb;
+		//subquery to get latest checkin
+		$query = $wpdb->prepare(
+			'SELECT '
+				. 'COUNT( DISTINCT checkins.REG_ID ) '
+			. 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+				. '( SELECT '
+					. 'max( CHK_timestamp ) AS latest_checkin, '
+					. 'REG_ID AS REG_ID '
+				. 'FROM ' . EEM_Checkin::instance()->table() . ' '
+				. 'WHERE DTT_ID=%d '
+				. 'GROUP BY REG_ID'
+			. ') AS most_recent_checkin_per_reg '
+			. 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+				. 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+			. 'WHERE '
+				. 'checkins.CHK_in=%d',
+			$DTT_ID,
+			$checked_in
 		);
+		return (int)$wpdb->get_var( $query );
 	}
 
 	/**
@@ -533,14 +544,94 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @return int
 	 */
 	public function count_registrations_checked_into_event( $EVT_ID, $checked_in = true ) {
-		return $this->count(
-			array(
-				array(
-					'Checkin.CHK_in' => $checked_in,
-					'Checkin.Datetime.EVT_ID' => $EVT_ID
-				)
-			)
+		global $wpdb;
+		//subquery to get latest checkin
+		$query = $wpdb->prepare(
+			'SELECT '
+				. 'COUNT( DISTINCT checkins.REG_ID ) '
+			. 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+				. '( SELECT '
+					. 'max( CHK_timestamp ) AS latest_checkin, '
+					. 'REG_ID AS REG_ID '
+				. 'FROM ' . EEM_Checkin::instance()->table() . ' AS c '
+				. 'INNER JOIN ' . EEM_Datetime::instance()->table() . ' AS d '
+				. 'ON c.DTT_ID=d.DTT_ID '
+				. 'WHERE d.EVT_ID=%d '
+				. 'GROUP BY REG_ID'
+			. ') AS most_recent_checkin_per_reg '
+			. 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+				. 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+			. 'WHERE '
+				. 'checkins.CHK_in=%d',
+			$EVT_ID,
+			$checked_in
 		);
+		return (int)$wpdb->get_var( $query );
+	}
+
+
+
+
+
+	/**
+	 * The purpose of this method is to retrieve an array of
+	 * EE_Registration objects that represent the latest registration
+	 * for each ATT_ID given in the function argument.
+	 *
+	 * @param array $attendee_ids
+	 * @return EE_Registration[]
+	 */
+	public function get_latest_registration_for_each_of_given_contacts( $attendee_ids = array() ) {
+		//first do a native wp_query to get the latest REG_ID's matching these attendees.
+		global $wpdb;
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$attendee_table = $wpdb->posts;
+		$attendee_ids = is_array( $attendee_ids )
+			? array_map( 'absint', $attendee_ids )
+			: array( (int) $attendee_ids );
+		$attendee_ids = implode( ',', $attendee_ids );
+
+
+		//first we do a query to get the registration ids
+		// (because a group by before order by causes the order by to be ignored.)
+		$registration_id_query = "
+			SELECT registrations.registration_ids as registration_id
+			FROM (
+				SELECT
+					Attendee.ID as attendee_ids,
+					Registration.REG_ID as registration_ids
+				FROM $registration_table AS Registration
+				JOIN $attendee_table AS Attendee
+					ON Registration.ATT_ID = Attendee.ID
+					AND Attendee.ID IN ( $attendee_ids )
+				ORDER BY Registration.REG_ID DESC
+			  ) AS registrations
+			  GROUP BY registrations.attendee_ids
+		";
+
+		$registration_ids = $wpdb->get_results(
+			$registration_id_query,
+			ARRAY_A
+		);
+
+		if ( empty( $registration_ids ) ) {
+			return array();
+		}
+
+		$ids_for_model_query = array();
+		//let's flatten the ids so they can be used in the model query.
+		foreach ( $registration_ids as $registration_id ) {
+			if ( isset( $registration_id['registration_id'] ) ) {
+				$ids_for_model_query[] = $registration_id['registration_id'];
+			}
+		}
+
+		//construct query
+		$_where = array(
+			'REG_ID' => array( 'IN', $ids_for_model_query )
+		);
+
+		return $this->get_all( array( $_where ) );
 	}
 
 

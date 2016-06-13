@@ -488,7 +488,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 	public function generate_form_input( $registration = null, $answer = null, $input_constructor_args = array() ) {
 		$identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
 
-		$input_constructor_args = array_merge( 
+		$input_constructor_args = array_merge(
 				array(
 					'required' => $this->required() ? true : false,
 					'html_label_text' => $this->display_text(),
@@ -502,7 +502,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		// has this question been answered ?
 		if ( $answer instanceof EE_Answer ) {
 			//answer gets htmlspecialchars called on it, undo that please
-			//beceause the form input's display strategy may call esc_attr too
+			//because the form input's display strategy may call esc_attr too
 			//which also does html special characters
 			$values_with_html_special_chars = $answer->value();
 			if( is_array( $values_with_html_special_chars ) ) {
@@ -531,11 +531,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 		switch ( $this->type() ) {
 			// Text
 			case EEM_Question::QST_type_text :
-				if( $identifier == 'email' ){
-					$result = new EE_Email_Input( $input_constructor_args );
-				}else{
-					$result = new EE_Text_Input( $input_constructor_args );
-				}
+				$result = new EE_Text_Input( $input_constructor_args );
 				break;
 			// Textarea
 			case EEM_Question::QST_type_textarea :
@@ -557,7 +553,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 					$this,
 					$registration,
 					$answer
-				);				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
+				);				
+				$result = new EE_State_Select_Input( $state_options, $input_constructor_args );
 				break;
 			// Country Dropdown
 			case EEM_Question::QST_type_country :
@@ -580,9 +577,37 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable 
 				break;
 			case EEM_Question::QST_type_html_textarea :
 				$input_constructor_args[ 'validation_strategies' ][] = new EE_Simple_HTML_Validation_Strategy();
-				$input =  new EE_Text_Area_Input( $input_constructor_args );
-				$input->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
-				$result = $input;
+				$result =  new EE_Text_Area_Input( $input_constructor_args );
+				$result->remove_validation_strategy( 'EE_Plaintext_Validation_Strategy' );
+				break;
+			case EEM_Question::QST_type_email :
+				$result = new EE_Email_Input( $input_constructor_args );
+				break;
+			case EEM_Question::QST_type_us_phone :
+				$result = new EE_Phone_Input( $input_constructor_args );
+				break;
+			case EEM_Question::QST_type_int :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Int_Validation_Strategy();
+				$result = new EE_Text_Input( $input_constructor_args );
+				break;
+			case EEM_Question::QST_type_decimal :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_Float_Validation_Strategy();
+				$result = new EE_Text_Input( $input_constructor_args );
+				break;
+			case EEM_Question::QST_type_url :
+				$input_constructor_args[ 'validation_strategies' ][] = new EE_URL_Validation_Strategy();
+				$result = new EE_Text_Input( $input_constructor_args );
+				break;
+			case EEM_Question::QST_type_year :
+				$result = new EE_Year_Input(
+						$input_constructor_args,
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__four_digit', true, $this ),
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__early_range', 100, $this ),
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__year_question__end_range', 100, $this )
+						);
+				break;
+			case EEM_Question::QST_type_multi_select :
+				$result = new EE_Select_Multiple_Input( $this->options(), $input_constructor_args );
 				break;
 			// fallback
 			default :

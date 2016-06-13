@@ -160,7 +160,6 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function display_bot_trap_success() {
-		EE_Registry::instance()->load_helper( 'HTML' );
 		add_filter( 'FHEE__EED_Single_Page_Checkout__run', '__return_false' );
 		$bot_notice = __( 'Thank you so much. Your ticket selections have been received for consideration.', 'event_espresso' );
 		$bot_notice = isset( $_REQUEST[ 'ee-notice' ] ) && $_REQUEST[ 'ee-notice' ] !== '' ? sanitize_text_field( stripslashes( $_REQUEST[ 'ee-notice' ] ) ) : $bot_notice;

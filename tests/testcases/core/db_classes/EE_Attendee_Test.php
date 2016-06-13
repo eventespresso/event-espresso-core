@@ -64,7 +64,7 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 		$form_values = array(
 				'first_name'	=> 'e',
 				'last_name'	=> 'e',
-				'email'		=> 'efe@ew.ew',
+				'email'		=> 'developers@eventespresso.com',
 				'address'		=> '123',
 				'address2'	=> '',
 				'city'			=> 'someville',
@@ -77,8 +77,7 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 				'exp_year'=>'2020',
 				'cvv'=>'123',
 			);
-		$form->receive_form_submission( array(
-			$form_name => $form_values  ) );
+		$form->receive_form_submission( array( $form_name => $form_values  ) );
 		$this->assertTrue( $form->is_valid(), 'error was: ' . $form->get_validation_error_string()  );
 		$p = $this->new_model_obj_with_dependencies('Payment', array( 'PMD_ID'=>$pm->ID() ) );
 		$reg = $this->new_model_obj_with_dependencies('Registration',array( 'TXN_ID' => $p->TXN_ID() ) );
@@ -100,4 +99,4 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 	}
 }
 
-// End of file EE_Attendee_Test.php
+// End of file tests/testcases/core/db_classes/EE_Attendee_Test.php
