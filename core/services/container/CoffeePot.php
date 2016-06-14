@@ -21,15 +21,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * Class CoffeePot
  * A Dependency Injection container
  * example usage:
- *      // instantiate the container
- *      $coffee_pot = new CoffeePot();
- *      // create a dependency injector class for resolving class constructor arguments
- *      $injector = new DependencyInjector( $this );
- *      // and some coffeemakers, one for creating new instances
- *      $coffee_pot->addCoffeeMaker( new NewCoffeeMaker( $this, $injector ), CoffeeMaker::BREW_NEW );
- *      // and one for shared services
- *      $coffee_pot->addCoffeeMaker( new SharedCoffeeMaker( $this, $injector ), CoffeeMaker::BREW_SHARED );
- *      // now add some classes that use FQCNs, PSR-4 autoloading, and interface aliases
+ *      // first add some classes that use FQCNs, PSR-4 autoloading, and interface aliases
  *      // a simple PSR-4 compatible class with no aliases
  *      $coffee_pot->addRecipe(
  *          new Recipe(
@@ -314,10 +306,10 @@ class CoffeePot implements CoffeePotInterface
 	/**
 	 * Adds instructions on how to brew objects
 	 *
-	 * @param Recipe $recipe
+	 * @param RecipeInterface $recipe
 	 * @return mixed
 	 */
-	public function addRecipe( Recipe $recipe )
+	public function addRecipe( RecipeInterface $recipe )
 	{
 		$this->addAliases( $recipe->identifier(), $recipe->filters() );
 		return $this->recipes->add( $recipe, $this->processIdentifier( $recipe->identifier() ) );
@@ -330,7 +322,7 @@ class CoffeePot implements CoffeePotInterface
 	 *
 	 * @param string $identifier
 	 * @param string $type
-	 * @return Recipe
+	 * @return RecipeInterface
 	 */
 	public function getRecipe( $identifier, $type = '' )
 	{
@@ -494,12 +486,12 @@ class CoffeePot implements CoffeePotInterface
 	 * clones a default recipe and then copies details
 	 * from the incoming request to it so that it can be used
 	 *
-	 * @param Recipe $default_recipe
+	 * @param RecipeInterface $default_recipe
 	 * @param string $identifier
 	 * @param string $type
-	 * @return Recipe
+	 * @return RecipeInterface
 	 */
-	private function copyDefaultRecipe( Recipe $default_recipe, $identifier, $type = '' )
+	private function copyDefaultRecipe( RecipeInterface $default_recipe, $identifier, $type = '' )
 	{
 		$recipe = clone( $default_recipe );
 		if ( ! empty( $type ) ) {
