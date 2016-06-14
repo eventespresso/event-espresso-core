@@ -66,9 +66,9 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 <?php endif; */ ?>
 
 	<?php if ( EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'display_admin_settings_options_promote_and_affiliate' ) ) : ?>
-		<h4 class="ee-admin-settings-hdr">
+		<h3 class="ee-admin-settings-hdr">
 			<?php _e('Promote Event Espresso', 'event_espresso'); ?> <span id="affiliate_info"><?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?></span>
-		</h4>
+		</h3>
 
 		<table class="form-table">
 			<tbody>
@@ -101,9 +101,9 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 		</table>
 	<?php endif; ?>
 
-	<h2 class="ee-admin-settings-hdr">
+	<h3 class="ee-admin-settings-hdr">
 		<?php _e('Help Tour Global Activation', 'event_espresso'); ?> <span id="help_tour_activation"><?php echo EEH_Template::get_help_tab_link('help_tour_activation_info'); ?></span>
-	</h2>
+	</h3>
 
 	<table class="form-table">
 		<tbody>

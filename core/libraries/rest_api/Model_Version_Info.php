@@ -39,7 +39,7 @@ class Model_Version_Info {
 	 *
 	 * @var array
 	 */
-	protected $_model_changes = null;
+	protected $_model_changes = array();
 
 	/**
 	 *
@@ -91,10 +91,10 @@ class Model_Version_Info {
 	public function __construct( $requested_version ) {
 		$this->_requested_version = $requested_version;
 		$this->_model_changes = array(
-			'4.8.28' => array(
+			'4.8.29' => array(
 				//first version where the REST API is in EE core, so no need
 				//to specify how its different from the previous
-			)
+			),
 		);
 
 		//setup data for "extra" fields added onto resources which don't actually exist on models
@@ -389,6 +389,27 @@ class Model_Version_Info {
 			}
 		}
 		return $extra_properties;
+	}
+
+	/**
+	 * Gets all the related models for the specified model. It's good to use this
+	 * in case this model didn't exist for this version or something
+	 * @param \EEM_Base $model
+	 * @return \EE_Model_Relation_Base[]
+	 */
+	public function relation_settings( \EEM_Base $model ) {
+		$relations = array();
+		foreach( $model->relation_settings() as $relation_name => $relation_obj ) {
+			if( $this->is_model_name_in_this_version(  $relation_name ) ) {
+				$relations[ $relation_name ] = $relation_obj;
+			}
+		}
+		//filter the results, but use the old filter name
+		return apply_filters(
+			'FHEE__Read__create_entity_from_wpdb_result__related_models_to_include',
+			$relations,
+			$model
+		);
 	}
 
 }

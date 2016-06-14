@@ -101,7 +101,7 @@ $has_answers = $question->has_answers();
 							</span></p>
 					<?php } ?>
 
-
+					<?php echo $question_type_descriptions; ?>
 
 				</td>
 			</tr>
@@ -112,7 +112,7 @@ $has_answers = $question->has_answers();
 					</label>
 				</th>
 				<td>
-					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max == EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>" min="1">
+					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max === EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>" min="1">
 					<p>
 						<span class="description">
 							<?php _e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
@@ -278,7 +278,7 @@ $has_answers = $question->has_answers();
 					<label for="QST_required_text"><?php _e('Required Text', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
 				</th>
 				<td>
-					<input type="text" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php  $question->f('QST_required_text')?>"/>
+					<input type="text" maxlength="100" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php  $question->f('QST_required_text')?>"/>
 
 				</td>
 			</tr>

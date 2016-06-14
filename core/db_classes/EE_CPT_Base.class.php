@@ -206,7 +206,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 				$related_objs = $this->get_many_related( $related_name, $where_params );
 				$revision_related_objs = $revision_obj->get_many_related( $related_name, $where_params );
 				//load helper
-				EE_Registry::instance()->load_helper( 'Array' );
 				//remove related objs from this object that are not in revision
 				//array_diff *should* work cause I think objects are indexed by ID?
 				$related_to_remove = EEH_Array::object_array_diff( $related_objs, $revision_related_objs );
@@ -242,12 +241,11 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @param string $meta_key
 	 * @param mixed  $meta_value
 	 * @param mixed  $prev_value
-	 * @throws EE_Error
 	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
 	 */
 	public function update_post_meta( $meta_key, $meta_value, $prev_value = NULL ) {
-		if ( !$this->ID() ) {
-			throw new EE_Error( sprintf( __( "You must save this custom post type before adding or updating a post meta field", "event_espresso" ) ) );
+		if ( ! $this->ID() ) {
+			$this->save();
 		}
 		return update_post_meta( $this->ID(), $meta_key, $meta_value, $prev_value );
 	}
@@ -259,12 +257,11 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @param mixed $meta_key
 	 * @param mixed $meta_value
 	 * @param bool  $unique . If postmeta for this $meta_key already exists, whether to add an additional item or not
-	 * @throws EE_Error
 	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
 	 */
 	public function add_post_meta( $meta_key, $meta_value, $unique = FALSE ) {
-		if ( !$this->ID() ) {
-			throw new EE_Error( sprintf( __( "You must save this custom post type before adding or updating a post meta field", "event_espresso" ) ) );
+		if ( $this->ID() ) {
+			$this->save();
 		}
 		return add_post_meta( $this->ID(), $meta_key, $meta_value, $unique );
 	}
@@ -276,12 +273,13 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 *
 	 * @param mixed $meta_key
 	 * @param mixed $meta_value
-	 * @throws EE_Error
 	 * @return boolean False for failure. True for success.
 	 */
 	public function delete_post_meta( $meta_key, $meta_value = '' ) {
 		if ( ! $this->ID() ) {
-			throw new EE_Error( sprintf( __( "Can not delete post meta field for a post that has never been saved.", "event_espresso" ) ) );
+			//there are obviously no postmetas for this if it's not saved
+			//so let's just report this as a success
+			return true;
 		}
 		return delete_post_meta( $this->ID(), $meta_key, $meta_value );
 	}

@@ -36,7 +36,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return EE_Event
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -389,7 +389,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
 	/**
-	 * @return bool
+	 * @return int
 	 */
 	function wp_user() {
 		return $this->get( 'EVT_wp_user' );
@@ -856,7 +856,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 			}
 
 			//if $ticket_limit == infinity then let's drop out right away and just return that because any infinity amount trumps all other "available" amounts.
-			if ( $remaining == EE_INF ) {
+			if ( $remaining === EE_INF ) {
 				return EE_INF;
 			}
 
@@ -1238,7 +1238,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return string
 	 */
 	public function get_admin_edit_link() {
-		EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce( array(
 			'page' => 'espresso_events',
 			'action' => 'edit',
@@ -1256,7 +1255,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 * @return string
 	 */
 	public function get_admin_settings_link() {
-		EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce( array(
 			'page' => 'espresso_events',
 			'action' => 'default_event_settings'
@@ -1276,7 +1274,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 	 */
 	public function get_admin_overview_link() {
 
-		EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce( array(
 			'page' => 'espresso_events',
 			'action' => 'default'

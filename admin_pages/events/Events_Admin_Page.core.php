@@ -30,31 +30,31 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
-	 * _event
 	 * This will hold the event object for event_details screen.
 	 *
 	 * @access protected
-	 * @var object
+	 * @var EE_Event $_event
 	 */
 	protected $_event;
 
 
 	/**
 	 * This will hold the category object for category_details screen.
-	 * @var object
+	 *
+	 * @var stdClass $_category
 	 */
 	protected $_category;
 
 
 	/**
 	 * This will hold the event model instance
-	 * @var object
+	 *
+	 * @var EEM_Event $_event_model
 	 */
 	protected $_event_model;
 
 
 	protected function _init_page_props() {
-
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
@@ -62,11 +62,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_cpt_model_names = array(
 			'create_new' => 'EEM_Event',
 			'edit' => 'EEM_Event'
-			);
+		);
 		$this->_cpt_edit_routes = array(
 			'espresso_events' => 'edit'
-			);
-
+		);
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
@@ -100,9 +99,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _set_page_routes() {
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		//is there a evt_id in the request?
 		$evt_id = ! empty( $this->_req_data['EVT_ID'] ) && ! is_array( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : 0;
@@ -373,9 +370,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'event_editor_other'
 					)
 				),
-				'help_tour' => array(
+				/*'help_tour' => array(
 					'Event_Edit_Help_Tour'
-				),
+				),*/
 				'qtips' => array( 'EE_Event_Editor_Decaf_Tips' ),
 				'require_nonce' => FALSE
 			),
@@ -446,7 +443,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_edit_category'
 						)
 					),
-				'help_tour' => array('Event_Edit_Category_Help_Tour'),
+				/*'help_tour' => array('Event_Edit_Category_Help_Tour'),*/
 					'metaboxes' => array('_publish_post_box'),
 					'require_nonce' => FALSE
 					),
@@ -601,14 +598,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( empty ( $event )) {
 			return;
 		}
+		$orig_status = $event->status();
 		// first check if event is active.
-		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed ) {
+		if (
+			$orig_status === EEM_Event::cancelled
+		    || $orig_status === EEM_Event::postponed
+		    || $event->is_expired()
+		    || $event->is_inactive()
+		) {
 			return;
 		}
-		$orig_status = $event->status();
 		//made it here so it IS active... next check that any of the tickets are sold.
 		if ( $event->is_sold_out( true ) ) {
-			if ( $event->status() !== $orig_status && $orig_status !== EEM_Event::sold_out  ) {
+			if ( $orig_status !== EEM_Event::sold_out && $event->status() !== $orig_status ) {
 				EE_Error::add_attention(
 					sprintf(
 						__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
@@ -631,7 +633,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			return;
 		}
 		//made it here so show warning
-		EE_Error::add_attention( $this->_edit_event_warning() );
+		$this->_edit_event_warning();
 	}
 
 
@@ -645,7 +647,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string
 	 */
 	protected function _edit_event_warning() {
-		return __('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso');
+		// we don't want to add warnings during these requests
+		if ( isset( $this->_req_data['action'] ) && $this->_req_data['action'] === 'editpost' ) {
+			return;
+		}
+		EE_Error::add_attention(
+			__('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso')
+		);
 	}
 
 
@@ -770,7 +778,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( !empty( $id ) ) {
 			$post = get_post( $id );
 			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . __('Shortcode', 'event_espresso') . '</a> ';
-			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=\'' . $post->ID . '\']"">';
+			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=' . $post->ID . ']">';
 		}
 		return $return;
 	}
@@ -982,7 +990,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$DTT = $evtobj->_add_relation_to( $DTM, 'Datetime' );
 
 			//load DTT helper
-			EE_Registry::instance()->load_helper('DTT_Helper');
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
@@ -1117,7 +1124,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 				$TKT->save();
 			}
@@ -1205,7 +1211,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	protected function _ee_autosave_create_new() {
-		$this->_ee_autosave_edit();
+		// $this->_ee_autosave_edit();
 	}
 
 
@@ -1213,65 +1219,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _ee_autosave_edit() {
-
 		return; //TEMPORARILY EXITING CAUSE THIS IS A TODO
-
-		$postid = isset( $this->_req_data['post_ID'] ) ? $this->_req_data['post_ID'] : NULL;
-
-
-		//if no postid then get out cause we need it for stuff in here
-		if ( empty( $postid ) ) return;
-
-
-		//handle datetime saves
-		$items = array();
-
-		$get_one_where = array( $this->_event_model()->primary_key_name() => $postid );
-		$event = $this->_event_model()->get_one( array($get_one_where) );
-
-		//now let's get the attached datetimes from the most recent autosave
-		$dtts = $event->get_many_related('Datetime');
-
-		$dtt_ids = array();
-		foreach( $dtts as $dtt ) {
-			$dtt_ids[] = $dtt->ID();
-			$order = $dtt->order();
-			$this->_template_args['data']['items']['ID-'.$order] = $dtt->ID();
-		}
-		$this->_template_args['data']['items']['datetime_IDS'] = serialize( $dtt_ids );
-
-		//handle DECAF venues
-		//we need to make sure that the venue_id gets updated in the form so that future autosaves will properly conntect that venue to the event.
-		if ( $do_venue_autosaves = apply_filters( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
-			$venue = $event->get_first_related('Venue');
-			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
-		}
-
-
-		//handle ticket updates.
-		$tickets = $event->get_many_related('Ticket');
-
-		$ticket_ids = array();
-		$price_ids = array();
-		foreach ( $tickets as $ticket ) {
-			$ticket_ids[] = $price->ID();
-			$ticket_order = $price->get('TKT_order');
-			$this->_template_args['data']['items']['edit-ticket-id-' . $ticket_order] = $ticket->ID();
-			$this->_template_args['data']['items']['edit-ticket-event-id-' . $order] = $event->ID();
-
-			//now we have to make sure the prices are updated appropriately
-			$prices = $ticket->get_many_related('Prices');
-
-			foreach ( $prices as $price ) {
-				$price_ids[] = $price->ID();
-				$price_order = $price->get('PRC_order');
-				$this->_template_args['data']['items']['quick-edit-ticket-price-id-ticketrow-' . $ticket_order . '-' . $price_order] = $price->ID();
-				$this->_template_args['data']['items']['edit-ticket-price-id-ticketrow-' . $ticket_row . '-' . $price_row] = $price->ID();
-				$this->_template_args['data']['items']['edit-ticket-price-is-default-ticketrow-' . $ticket_row . '-' . $price_row] = $price->get('PRC_is_default');
-			}
-			$this->_template_args['data']['items']['price-IDs-ticketrow-' . $ticket_row] = implode(',', $price_ids);
-		}
-		$this->_template_args['data']['items']['ticket-IDs'] = implode(',', $ticket_ids);
 	}
 
 
@@ -1287,7 +1235,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _generate_publish_box_extra_content() {
 
 		//load formatter helper
-  		EE_Registry::instance()->load_helper( 'Formatter' );
 
   		//args for getting related registrations
   		$approved_query_args = array( array( 'REG_deleted' => 0, 'STS_ID' => EEM_Registration::status_id_approved ) );
@@ -1425,38 +1372,34 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		 * 3. For each ticket get related prices
 		 */
 		$times = EE_Registry::instance()->load_model('Datetime' )->get_all_event_dates( $event_id );
-		EE_Registry::instance()->load_helper('DTT_Helper' );
 		/** @type EE_Datetime $first_datetime */
-		$first_datetime = array_slice( $times, 0, 1 );
+		$first_datetime = reset( $times );
 		//do we get related tickets?
-		if ( $first_datetime[ 0 ]->get( 'DTT_ID' ) !== 0 ) {
-			foreach ( $times as $time ) {
-				if ( $time instanceof EE_Datetime ) {
-					$existing_datetime_ids[] = $time->get('DTT_ID');
-					$template_args['time'] = $time;
-					$related_tickets = $time->tickets(
-						array(
-							array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ),
-							'default_where_conditions' => 'none'
-						)
-					);
+		if ( $first_datetime instanceof EE_Datetime
+			&& $first_datetime->ID() !== 0 ) {
+			$existing_datetime_ids[] = $first_datetime->get('DTT_ID');
+			$template_args['time'] = $first_datetime;
+			$related_tickets = $first_datetime->tickets(
+				array(
+					array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ),
+					'default_where_conditions' => 'none'
+				)
+			);
 
-					if ( !empty($related_tickets) ) {
-						$template_args['total_ticket_rows'] = count($related_tickets);
-						$row = 0;
-						foreach ( $related_tickets as $ticket ) {
-							$existing_ticket_ids[] = $ticket->get('TKT_ID');
-							$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket, FALSE, $row );
+			if ( !empty($related_tickets) ) {
+				$template_args['total_ticket_rows'] = count($related_tickets);
+				$row = 0;
+				foreach ( $related_tickets as $ticket ) {
+					$existing_ticket_ids[] = $ticket->get('TKT_ID');
+					$template_args['ticket_rows'] .= $this->_get_ticket_row($ticket, FALSE, $row );
 
-							$row++;
-						}
-					} else {
-						$template_args['total_ticket_rows'] = 1;
-						/** @type EE_Ticket $ticket */
-						$ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
-						$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket );
-					}
+					$row++;
 				}
+			} else {
+				$template_args['total_ticket_rows'] = 1;
+				/** @type EE_Ticket $ticket */
+				$ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
+				$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket );
 			}
 		} else {
 			$template_args['time'] = $times[0];
@@ -1945,7 +1888,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+		if (
+			! $this->_cpt_model_obj instanceof EE_Event
+			|| $this->_cpt_model_obj->ID() !== $EVT_ID
+		) {
+			$this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+		}
+
+		if ( ! $this->_cpt_model_obj instanceof EE_Event ) {
+			return false;
+		}
 
 		//need to delete related tickets and prices first.
 		$datetimes = $this->_cpt_model_obj->get_many_related('Datetime');
@@ -2169,9 +2121,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_details($view) {
 
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);

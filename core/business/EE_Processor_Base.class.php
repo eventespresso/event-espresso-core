@@ -61,7 +61,6 @@ class EE_Processor_Base {
 	 * @param bool $display_request
 	 */
 	protected function log( $class = '', $func = '', $line = '', EE_Transaction $transaction, $info = array(), $display_request = false ) {
-		EE_Registry::instance()->load_helper( 'Debug_Tools' );
 		if ( WP_DEBUG && false ) {
 			if ( $transaction instanceof EE_Transaction ) {
 				// don't serialize objects

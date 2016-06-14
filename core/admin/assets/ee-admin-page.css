@@ -1,4 +1,5 @@
-.add-new-h2 { margin-left : 15px; }
+.espresso-admin .add-new-h2,
+.espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
 .tablenav div { margin-right : 15px; }
 .tablenav select { margin : 0 1em 0 0 !important; }
@@ -683,11 +684,16 @@ label.error { display : block; color : #FE2A00 !important; }
 	border: none;
 }
 
+.espresso-admin .wp-list-table td {
+	overflow: hidden !important;
+	position: relative;
+}
 .wp-list-table .ee-status-strip-td {
-	min-height: 125px;
 	display: block !important;
 	height: 100% !important;
+	min-height: 125px;
 	overflow: auto !important;
+	position: absolute;
 	width: 5px;
 }
 
@@ -951,4 +957,10 @@ input.ee-register-button {
 	font-size: .8em;
 	font-color: #dcc;
 	font-weight: normal;
+}
+
+/** Google Chart adjustments **/
+.admin-report-chart-dv {
+	background: #fff;
+	padding: 10px;
 }

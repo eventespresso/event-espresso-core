@@ -51,7 +51,6 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );
 		// Set up some default widget settings.
 		$defaults = array(
@@ -273,9 +272,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			$after_widget = '';
 			// but NOT an events archives page, cuz that would be like two event lists on the same page
 			$show_everywhere = isset( $instance['show_everywhere'] ) ? (bool) absint( $instance['show_everywhere'] ) : TRUE;
-			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {	
+			if ( $show_everywhere || ! ( $post->post_type == 'espresso_events' && is_archive() )) {
 				// let's use some of the event helper functions'
-				EE_Registry::instance()->load_helper( 'Event_View' );
 				// make separate vars out of attributes
 
 
@@ -345,9 +343,10 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								default :
 									$len_class =  ' one-line';
 							}
-							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
+							$event_url = apply_filters( 'FHEE_EEW_Upcoming_Events__widget__event_url', $event->get_permalink(), $event );
+							echo '<h5 class="ee-upcoming-events-widget-title-h5"><a class="ee-widget-event-name-a' . $len_class . '" href="' . $event_url . '">' . $event->name() . '</a></h5>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
-								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
+								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . $event_url . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
 							}
 							$desc = $event->short_description( 25 );
 							if ( $show_dates ) {

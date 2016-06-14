@@ -23,6 +23,11 @@
  */
 class EED_Event_Single  extends EED_Module {
 
+	/**
+	 * @type bool $using_get_the_excerpt
+	 */
+	protected static $using_get_the_excerpt = false;
+
 
 	/**
 	 * @type EE_Template_Part_Manager $template_parts
@@ -150,7 +155,6 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load css
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 	}
 
 
@@ -171,12 +175,14 @@ class EED_Event_Single  extends EED_Module {
 		}
 		// not a custom template?
 		if (
-			EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php'
+			EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true )->get_selected_template() != 'single-espresso_events.php'
+			|| apply_filters( 'FHEE__EED_Event_Single__template_include__allow_custom_selected_template', FALSE )
 			&& ! post_password_required( $post )
 		) {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
+			add_filter( 'get_the_excerpt', array( 'EED_Event_Single', 'get_the_excerpt' ), 1, 1 );
 			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
 			add_action( 'loop_end', array( 'EED_Event_Single', 'loop_end' ));
 			// don't display entry meta because the existing theme will take car of that
@@ -215,6 +221,36 @@ class EED_Event_Single  extends EED_Module {
 	}
 
 
+
+	/**
+	 *    get_the_excerpt - kinda hacky, but if a theme is using get_the_excerpt(), then we need to remove our filters on the_content()
+	 *
+	 * @access    public
+	 * @param        string $excerpt
+	 * @return        string
+	 */
+	public static function get_the_excerpt( $excerpt = '' ) {
+		EED_Event_Single::$using_get_the_excerpt = true;
+		add_filter( 'wp_trim_excerpt', array( 'EED_Event_Single', 'end_get_the_excerpt' ), 999, 1 );
+		return $excerpt;
+	}
+
+
+
+	/**
+	 * end_get_the_excerpt
+	 *
+	 * @access public
+	 * @param  string $text
+	 * @return string
+	 */
+	public static function end_get_the_excerpt( $text = '' ) {
+		EED_Event_Single::$using_get_the_excerpt = false;
+		return $text;
+	}
+
+
+
 	/**
 	 * 	event_details
 	 *
@@ -228,6 +264,7 @@ class EED_Event_Single  extends EED_Module {
 		if (
 			$current_post_ID != $post->ID
 			&& $post->post_type == 'espresso_events'
+			&& ! EED_Event_Single::$using_get_the_excerpt
 			&& ! post_password_required()
 		) {
 			// Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
@@ -359,7 +396,6 @@ class EED_Event_Single  extends EED_Module {
 	public function wp_enqueue_scripts() {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && apply_filters( 'FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE )) {
-			EE_Registry::instance()->load_helper( 'File' );
 			// first check uploads folder
 			if ( is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
 				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
@@ -368,7 +404,6 @@ class EED_Event_Single  extends EED_Module {
 			}
 			wp_enqueue_script( $this->theme );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-				EE_Registry::instance()->load_helper( 'Maps' );
 				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 			}
 		}
@@ -388,7 +423,6 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	bool
 	 */
 	public static function display_venue() {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		/** @type EE_Event_Single_Config $config */
 		$config = EED_Event_Single::instance()->config();
 		$display_venue= isset( $config->display_venue ) ? $config->display_venue : TRUE;

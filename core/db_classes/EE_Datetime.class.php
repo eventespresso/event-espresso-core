@@ -75,7 +75,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 * @return EE_Datetime
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -762,7 +762,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function ticket_types_available_for_purchase( $query_params = array() ) {
 		// first check if datetime is valid
-		if ( !( $this->is_upcoming() || $this->is_active() ) || $this->sold_out() ) {
+		if ( ! ( $this->is_upcoming() || $this->is_active() ) || $this->sold_out() ) {
 			return array();
 		}
 		if ( empty( $query_params ) ) {

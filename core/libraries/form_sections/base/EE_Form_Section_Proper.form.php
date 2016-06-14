@@ -5,7 +5,7 @@
  * the php code just provides form_section_validation.js with teh variables to use.
  * Important: in order for the JS to be loaded properly, you must construct a form section
  * before the hook wp_enqueue_scripts is called (so that the form section can enqueue its needed scripts).
- * However, you may output the form (usually by calling get_html_and_js) anywhere you like.
+ * However, you may output the form (usually by calling get_html) anywhere you like.
  */
 class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
@@ -56,21 +56,21 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
 	 * so that they know who their parent is, and what name they've been given.
-	 * @param array $options_array {
-	 *	@type $subsections EE_Form_Section_Validatable[] where keys are the section's name
-	 *	@type $include string[] numerically-indexed where values are section names to be included,
-	 *		and in that order. This is handy if you want
-	 *		the subsections to be ordered differently than the default, and if you override which fields are shown
-	 *	@type $exclude string[] values are subsections to be excluded. This is handy if you want
-	 *		to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude',
-	 *		the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
-	 *	@type $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
-	 * } @see EE_Form_Section_Validatable::__construct()
 	 *
+	 * @param array $options_array   {
+	 * @type        $subsections     EE_Form_Section_Validatable[] where keys are the section's name
+	 * @type        $include         string[] numerically-indexed where values are section names to be included,
+	 *                               and in that order. This is handy if you want
+	 *                               the subsections to be ordered differently than the default, and if you override which fields are shown
+	 * @type        $exclude         string[] values are subsections to be excluded. This is handy if you want
+	 *                               to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude',
+	 *                               the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
+	 * @type        $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
+	 *                               } @see EE_Form_Section_Validatable::__construct()
+	 * @throws \EE_Error
 	 */
 	public function __construct( $options_array = array() ){
-		EE_Registry::instance()->load_helper('Formatter');
-		$options_array = apply_filters( 'FHEE__EE_Form_Section_Proper___construct__options_array', $options_array, $this );
+		$options_array = (array) apply_filters( 'FHEE__EE_Form_Section_Proper___construct__options_array', $options_array, $this );
 		//call parent first, as it may be setting the name
 		parent::__construct($options_array);
 		//if they've included subsections in the constructor, add them now
@@ -97,9 +97,22 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 
-		add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
-		add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		//ok so we are definitely going to want the forms JS,
+		//so enqueue it or remember to enqueue it during wp_enqueue_scripts
+		if( did_action( 'wp_enqueue_scripts' )
+			|| did_action( 'admin_enqueue_scripts' ) ) {
+			//ok so they've constructed this object after when they should have.
+			//just enqueue the generic form scripts and initialize the form immediately in the JS
+			\EE_Form_Section_Proper::wp_enqueue_scripts( true );
+		} else {
+			add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+			add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+		}
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
+
+		if( isset( $options_array[ 'name' ] ) ) {
+			$this->_construct_finalize( null, $options_array[ 'name' ] );
+		}
 	}
 
 
@@ -172,26 +185,33 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * After the form section is initially created, call this to sanitize the data in the submission
 	 * which relates to this form section, validate it, and set it as properties on the form.
-	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
-	 * supply a different array. Consider using set_defaults() instead however. (If you rendered
-	 * the form in the page using echo $form_x->get_html_and_js() the inputs will have the correct name
-	 * in the request data for this function to find them and populate the form with them.
-	 * If you have a flat form (with only input subsections), you can supply a flat array where keys
-	 * are the form input names and values are their values)
+	 *
+	 * @param array|null $req_data   should usually be $_POST (the default).
+	 *                          However, you CAN supply a different array.
+	 *                          Consider using set_defaults() instead however.
+	 *                          (If you rendered the form in the page using echo $form_x->get_html()
+	 *                          the inputs will have the correct name in the request data for this function
+	 *                          to find them and populate the form with them.
+	 *                          If you have a flat form (with only input subsections),
+	 *                          you can supply a flat array where keys
+	 *                          are the form input names and values are their values)
 	 * @param boolean $validate whether or not to perform validation on this data. Default is,
-	 * of course, to validate that data, and set errors on the invalid values. But if the data
-	 * has already been validated (eg you validated the data then stored it in the DB) you may want
-	 * to skip this step.
+	 *                          of course, to validate that data, and set errors on the invalid values.
+	 *                          But if the data has already been validated
+	 *                          (eg you validated the data then stored it in the DB) you may want to skip this step.
 	 * @return void
 	 */
 	public function receive_form_submission($req_data = NULL, $validate = TRUE){
+		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__req_data', $req_data, $this, $validate );
 		if( $req_data === NULL){
-			$req_data = $_REQUEST;
+			$req_data = array_merge( $_GET, $_POST );
 		}
+		$req_data = apply_filters( 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data', $req_data, $this );
 		$this->_normalize($req_data);
 		if( $validate ){
 			$this->_validate();
 		}
+		do_action( 'AHEE__EE_Form_Section_Proper__receive_form_submission__end', $req_data, $this, $validate );
 	}
 
 
@@ -220,12 +240,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * Gets the subsection specified by its name
+	 *
 	 * @param string $name
-	 * @param boolean $require_construction_to_be_finalized most client code should
-	 * leave this as TRUE so that the inputs will be properly configured. However,
-	 * some client code may be ok with construction finalize being called later
-	 * (realizing that the subsections' html names might not be set yet, etc.)
+	 * @param boolean $require_construction_to_be_finalized most client code should leave this as TRUE
+	 *                                                      so that the inputs will be properly configured.
+	 *                                                      However, some client code may be ok
+	 *                                                      with construction finalize being called later
+	 *                                                      (realizing that the subsections' html names
+	 *                                                      might not be set yet, etc.)
 	 * @return EE_Form_Section_Base
+	 * @throws \EE_Error
 	 */
 	public function get_subsection($name, $require_construction_to_be_finalized = TRUE ){
 		if( $require_construction_to_be_finalized ){
@@ -297,8 +321,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * Gets the value of the specified input. Should be called after receive_form_submission()
 	 * or populate_defaults() on the form, where the normalized value on the input is set.
+	 *
 	 * @param string $name
 	 * @return mixed depending on the input's type and its normalization strategy
+	 * @throws \EE_Error
 	 */
 	public function get_input_value($name){
 		$input = $this->get_input($name);
@@ -321,7 +347,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		//ok so no errors general to this entire form section. so let's check the subsections
 		foreach( $this->get_validatable_subsections() as $subsection ){
-			if( ! $subsection->is_valid() || $subsection->get_validation_error_string() != '' ){
+			if( ! $subsection->is_valid() || $subsection->get_validation_error_string() !== '' ){
 				$this->set_submission_error_message( $subsection->get_validation_error_string() );
 				return false;
 			}
@@ -349,8 +375,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Returns the JS for validating the form (and subsections) inside script tags.
 	 * Also returns the HTML for the form, except for the form opening and closing tags
 	 * (as the form section doesn't know where you necessarily want to send the information to), and except for a submit button.
+	 *
+	 * @deprecated since 4.9.0. You should instead call enqueue_js during the "wp_enqueue_scripts"
+	 *             and get_html when you are about to display the form.
+	 * @throws \EE_Error
 	 */
 	public function get_html_and_js(){
+		//no doing_it_wrong yet because we ourselves are still doing it wrong...
+		//and theoretically this CAN be used properly, provided its used during "wp_enqueue_scripts"
 		$this->enqueue_js();
 		return $this->get_html();
 	}
@@ -359,7 +391,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * returns HTML for displaying this form section. recursively calls display_section() on all subsections
+	 *
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function get_html(){
 		$this->ensure_construct_finalized_called();
@@ -370,10 +404,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * enqueues JS for the form
+	 *
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function enqueue_js(){
 		$this->_enqueue_and_localize_form_js();
+		foreach( $this->subsections() as $subsection ) {
+			$subsection->enqueue_js();
+		}
 	}
 
 
@@ -385,11 +424,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * However, registering the form js and localizing it can happen when we
 	 * actually output the form (which is preferred, seeing how teh form's fields
 	 * could change until it's actually outputted)
+	 * @param boolean $init_form_validation_automatically whether or not we want the form validation to be triggered automatically or not
 	 * @return void
 	 */
-	public static function wp_enqueue_scripts(){
+	public static function wp_enqueue_scripts( $init_form_validation_automatically = true ){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL . 'scripts' . DS . 'form_section_validation.js', array( 'jquery-validate', 'jquery-ui-datepicker', 'jquery-validate-extra-methods' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_validation_init', array( 'init' => $init_form_validation_automatically ? true : false ) );
 	}
 
 
@@ -398,6 +439,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * gets the variables used by form_section_validation.js.
 	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
 	 * but before the wordpress hook wp_loaded
+	 *
+	 * @throws \EE_Error
 	 */
 	public function _enqueue_and_localize_form_js(){
 		$this->ensure_construct_finalized_called();
@@ -413,21 +456,37 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * add our form section data to a static variable accessible by all form sections
+	 *
 	 * @param bool $return_for_subsection
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function localize_validation_rules( $return_for_subsection = FALSE ){
 		// we only want to localize vars ONCE for the entire form, so if the form section doesn't have a parent, then it must be the top dog
-		if ( ! $this->parent_section() || $return_for_subsection ) {
+		if ( $return_for_subsection || ! $this->parent_section() ) {
 			EE_Form_Section_Proper::$_js_localization['form_data'][ $this->html_id() ] = array(
 				'form_section_id'=> $this->html_id( TRUE ),
 				'validation_rules'=> $this->get_jquery_validation_rules(),
+				'other_data' => $this->get_other_js_data(),
 				'errors'=> $this->subsection_validation_errors_by_html_name()
 			);
 			EE_Form_Section_Proper::$_scripts_localized = true;
 		}
 	}
 
+	/**
+	 * Gets an array of extra data that will be useful for client-side javascript.
+	 * This is primarily data added by inputs and forms in addition to any
+	 * scripts they might enqueue
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data( $form_other_js_data = array() ) {
+		foreach( $this->subsections() as $subsection ) {
+			$form_other_js_data = $subsection->get_other_js_data( $form_other_js_data );
+		}
+		return $form_other_js_data;
+	}
 
 
 	/**
@@ -474,6 +533,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//allow inputs and stuff to hook in their JS and stuff here
 		do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
+		$email_validation_level = isset( EE_Registry::instance()->CFG->registration->email_validation_level )
+			? EE_Registry::instance()->CFG->registration->email_validation_level
+			: 'wp_default';
+		EE_Form_Section_Proper::$_js_localization['email_validation_level'] = $email_validation_level;
 		wp_enqueue_script( 'ee_form_section_validation' );
 		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_vars', EE_Form_Section_Proper::$_js_localization );
 	}
@@ -527,7 +590,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * Gets the JS to put inside the jquery validation rules for subsection of this form section. See parent function for more...
 	 * @return array
 	 */
-	function get_jquery_validation_rules(){
+	public function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
 		foreach($this->get_validatable_subsections() as $subsection){
 			$jquery_validation_rules = array_merge( $jquery_validation_rules,  $subsection->get_jquery_validation_rules() );
@@ -700,7 +763,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * Indicates whether or not this form has received a submission yet
 	 * (ie, had receive_form_submission called on it yet)
+	 *
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function has_received_submission(){
 		$this->ensure_construct_finalized_called();
@@ -725,6 +790,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * @param array $inputs_to_hide
+	 * @throws \EE_Error
 	 */
 	public function hide($inputs_to_hide= array()){
 		foreach($inputs_to_hide as $input_to_hide){
@@ -738,19 +804,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 	/**
 	 * add_subsections
-	 *
 	 * Adds the listed subsections to the form section.
 	 * If $subsection_name_to_target is provided,
 	 * then new subsections are added before or after that subsection,
 	 * otherwise to the start or end of the entire subsections array.
 	 *
-	 * @param EE_Form_Section_Base[] $new_subsections 	array of new form subsections where keys are their names
-	 * @param string $subsection_name_to_target 					an existing for section that $new_subsections should be added before or after
-	 * 																								IF $subsection_name_to_target is null, then $new_subsections will be added to
-	 * 																								the beginning or end of the entire subsections array
-	 * @param boolean $add_before 										whether to add $new_subsections, before or after $subsection_name_to_target,
-	 * 																								or if $subsection_name_to_target is null, before or after entire subsections array
+	 * @param EE_Form_Section_Base[] $new_subsections                                                 array of new form subsections where keys are their names
+	 * @param string                 $subsection_name_to_target                                       an existing for section that $new_subsections should be added before or after
+	 *                                                                                                IF $subsection_name_to_target is null, then $new_subsections will be added to
+	 *                                                                                                the beginning or end of the entire subsections array
+	 * @param boolean                $add_before                                                      whether to add $new_subsections, before or after $subsection_name_to_target,
+	 *                                                                                                or if $subsection_name_to_target is null, before or after entire subsections array
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function add_subsections( $new_subsections, $subsection_name_to_target = NULL, $add_before = true ){
 		foreach($new_subsections as $subsection_name => $subsection){
@@ -767,7 +833,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 		}
 
-		EE_Registry::instance()->load_helper( 'Array' );
 		$this->_subsections = EEH_Array::insert_into_array( $this->_subsections, $new_subsections, $subsection_name_to_target, $add_before );
 
 		/*$subsections_before = array();
@@ -855,13 +920,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 
-
 	/**
 	 * Returns the prefix that should be used on child of this form section for
 	 * their html names. If this form section itself has a parent, prepends ITS
 	 * prefix onto this form section's prefix. Used primarily by
 	 * EE_Form_Input_Base::_set_default_html_name_if_empty
+	 *
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function html_name_prefix(){
 		if( $this->parent_section() instanceof EE_Form_Section_Proper ){
@@ -871,29 +937,39 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 	}
 
+
+
 	/**
 	 * Gets the name, but first checks _construct_finalize has been called. If not,
 	 * calls it (assumes there is no parent and that we want the name to be whatever
 	 * was set, which is probably nothing, or the classname)
+	 *
 	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function name(){
 		$this->ensure_construct_finalized_called();
 		return parent::name();
 	}
 
+
+
 	/**
-	 *
 	 * @return EE_Form_Section_Proper
+	 * @throws \EE_Error
 	 */
 	public function parent_section(){
 		$this->ensure_construct_finalized_called();
 		return parent::parent_section();
 	}
 
+
+
 	/**
 	 * make sure construction finalized was called, otherwise children might not be ready
+	 *
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function ensure_construct_finalized_called(){
 		if( ! $this->_construction_finalized ){
@@ -947,6 +1023,45 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			}
 		}
 		return $validation_errors;
+	}
+
+
+
+	/**
+	 * This isn't just the name of an input, it's a path pointing to an input. The
+	 * path is similar to a folder path: slash (/) means to descend into a subsection,
+	 * dot-dot-slash (../) means to ascend into the parent section.
+	 * After a series of slashes and dot-dot-slashes, there should be the name of an input,
+	 * which will be returned.
+	 * Eg, if you want the related input to be conditional on a sibling input name 'foobar'
+	 * just use 'foobar'. If you want it to be conditional on an aunt/uncle input name
+	 * 'baz', use '../baz'. If you want it to be conditional on a cousin input,
+	 * the child of 'baz_section' named 'baz_child', use '../baz_section/baz_child'.
+	 * Etc
+	 * @param string|false $form_section_path we accept false also because substr( '../', '../' ) = false
+	 * @return EE_Form_Section_Base
+	 */
+	public function find_section_from_path( $form_section_path ) {
+		//check if we can find the input from purely going straight up the tree
+		$input = parent::find_section_from_path( $form_section_path );
+		if( $input instanceof EE_Form_Section_Base ) {
+			return $input;
+		}
+
+		$next_slash_pos = strpos( $form_section_path, '/' );
+		if( $next_slash_pos !== false ) {
+			$child_section_name = substr( $form_section_path, 0, $next_slash_pos );
+			$subpath = substr( $form_section_path, $next_slash_pos + 1 );
+		} else {
+			$child_section_name = $form_section_path;
+			$subpath = '';
+		}
+		$child_section =  $this->get_subsection( $child_section_name );
+		if ( $child_section instanceof EE_Form_Section_Base ) {
+			return $child_section->find_section_from_path( $subpath );
+		} else {
+			return null;
+		}
 	}
 
 }

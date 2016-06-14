@@ -51,10 +51,11 @@ function ee_resurse_into_array($data) {
 	<?php _e("System Information", "event_espresso");?>
 </h1>
 <div class="padding">
-	<h3 class="espresso-header"><?php _e("Raw System Data", "event_espresso");?></h3>
+	<h2><?php _e("Raw System Data", "event_espresso");?></h2>
 	<textarea class="system_status_info">
 		<?php print_r($system_stati)?>
 	</textarea>
+	<h2><?php _e("System Data (formatted)", "event_espresso");?></h2>
 	<table class="widefat">
 		<?php
 		foreach ($system_stati as $status_category_slug => $data) {

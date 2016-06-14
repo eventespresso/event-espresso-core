@@ -2,7 +2,7 @@
 <?php _e('The Registration Details table shows Registration Items that are associated with a registration. You can resend registration information by clicking on the Resend Registration button. You can also view a transaction for a registration by clicking on the View Transaction button.', 'event_espresso'); ?>
 </p>
 </p>
-<h3><?php _e('Registration Items', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Registration Items', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This area of the table shows information about any events that were included in this registration.', 'event_espresso'); ?><br />
 </p>
@@ -46,7 +46,7 @@
 </li>
 </ul>
 </p>
-<h3><?php _e('Registration Session Details', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Registration Session Details', 'event_espresso'); ?></strong></p>
 <p>
 <ul>
 <li>

@@ -16,7 +16,6 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 class EEH_Line_Item_Test extends EE_UnitTestCase{
 
 	static function setUpBeforeClass() {
-		EE_Registry::instance()->load_helper('Line_Item');
 	}
 
 	public function test_get_items_subtotal(){
@@ -552,7 +551,6 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	}
         
         /**
-         * @group current
          * @group 4710
          */
         function test_set_line_items_taxable() {

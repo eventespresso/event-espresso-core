@@ -3,28 +3,30 @@ EE_Registry::instance()->load_class( 'Processor_Base' );
 
 /**
  * Class EE_Transaction_Processor
- *
- * This class contains business logic pertaining specifically to the interaction of EE_Transaction and EE_Registration model objects
- * Provides methods for manipulating and processing changes to an EE_Transaction and it's related EE_Registrations with regards to the checkout/registration process
- *
- * @package 			Event Espresso
- * @subpackage 	core
- * @author 				Brent Christensen
- * @since 				4.6.0
- *
- */
+ * This class contains business logic pertaining specifically to
+ * the interaction of EE_Transaction and EE_Registration model objects
+ * Provides methods for manipulating and processing changes to an EE_Transaction
+ * and it's related EE_Registrations with regards to the checkout/registration process
 
+*
+*@package     Event Espresso
+ * @subpackage 	core
+ * @author      Brent Christensen
+ * @since       4.6.0
+ */
 class EE_Transaction_Processor extends EE_Processor_Base {
 
 	/**
 	 * 	@var EE_Registration_Processor $_instance
 	 * 	@access 	private
 	 */
-	private static $_instance = NULL;
+	private static $_instance;
 
 	/**
-	 * 	@var array $registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
-	 * 	@access 	private
+	 * array of query WHERE params to use when retrieving cached registrations from a transaction
+	 *
+	 * @var array $registration_query_params
+	 * @access private
 	 */
 	private $_registration_query_params = array();
 
@@ -33,14 +35,14 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *
 	 * @var string
 	 */
-	protected $_old_txn_status = null;
+	protected $_old_txn_status;
 
 	/**
 	 * txn status at the end of the request after all processing.
 	 *
 	 * @var string
 	 */
-	protected $_new_txn_status = null;
+	protected $_new_txn_status;
 
 
 
@@ -155,23 +157,26 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			// if NOT checking ALL steps (only checking one step)
 			if ( ! $check_all ) {
 				// and this is the one
-				if ( $slug == $reg_step_slug ) {
+				if ( $slug === $reg_step_slug ) {
 					return $reg_step_completed;
 				} else {
 					// skip to next reg step in loop
 					continue;
 				}
 			}
-			// if any reg step is NOT completed (ignoring any specific steps), then just leave
-			if ( $reg_step_completed !== true && $slug != $reg_step_slug ) {
-				return false;
-			} else if ( $slug == $reg_step_slug ) {
+			// $check_all must be true, else we would never have gotten to this point
+			if ( $slug === $reg_step_slug ) {
 				// if we reach this point, then we are testing either:
 				// all_reg_steps_completed_except() or
 				// all_reg_steps_completed_except_final_step(),
-				// and since this is the reg step exception being tested
-				// we want to return true if this reg step is NOT completed
+				// and since this is the reg step EXCEPTION being tested
+				// we want to return true (yes true) if this reg step is NOT completed
+				// ie: "is everything completed except the final step?"
+				// "that is correct... the final step is not completed, but all others are."
 				return $reg_step_completed !== true ? true : false;
+			} else if ( $reg_step_completed !== true ) {
+				// if any reg step is NOT completed, then ALL steps are not completed
+				return false;
 			}
 		}
 
@@ -274,10 +279,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function set_reg_step_initiated( EE_Transaction $transaction, $reg_step_slug ) {
-		$current_time = time();
-		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, $current_time );
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, time() );
 	}
 
 
@@ -290,9 +295,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function set_reg_step_completed( EE_Transaction $transaction, $reg_step_slug ) {
-		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, TRUE );
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, true );
 	}
 
 
@@ -305,9 +311,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function set_reg_step_not_completed( EE_Transaction $transaction, $reg_step_slug ) {
-		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, FALSE );
+		return $this->_set_reg_step_completed_status( $transaction, $reg_step_slug, false );
 	}
 
 
@@ -316,16 +323,16 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * set_reg_step_completed
 	 * given a valid reg step slug, this sets the TXN_reg_step completed status which is either:
 	 *
-	 *
 	 * @access private
-	 * @param \EE_Transaction $transaction
-	 * @param string          $reg_step_slug
-	 * @param boolean | int $status
+	 * @param  \EE_Transaction $transaction
+	 * @param  string          $reg_step_slug
+	 * @param  boolean|int     $status
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	private function _set_reg_step_completed_status( EE_Transaction $transaction, $reg_step_slug, $status ) {
 		// validate status
-		$status = is_bool( $status ) || is_numeric( $status ) ? $status : false;
+		$status = is_bool( $status ) || is_int( $status ) ? $status : false;
 		// get reg steps array
 		$txn_reg_steps = $transaction->reg_steps();
 		// if reg step does NOT exist
@@ -341,11 +348,12 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			return false;
 		}
 		// if current status value matches the incoming value (no change)
-		if ( $txn_reg_steps[ $reg_step_slug ] === $status ) {
+		// type casting as int means values should collapse to either 0, 1, or a timestamp like 1234567890
+		if ( (int)$txn_reg_steps[ $reg_step_slug ] === (int)$status ) {
 			// this will happen in cases where multiple AJAX requests occur during the same step
 			return true;
 		}
-		// if we're trying to set a start time
+		// if we're trying to set a start time, but it has already been set...
 		if ( is_numeric( $status ) && is_numeric( $txn_reg_steps[ $reg_step_slug ] )) {
 			// skip the update below, but don't return FALSE so that errors won't be displayed
 			return true;
@@ -388,22 +396,25 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * 	toggle_failed_transaction_status
+	 *    toggle_failed_transaction_status
 	 * upgrades a TXNs status from failed to abandoned,
 	 * meaning that contact information has been captured for at least one registrant
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * 	@return 	boolean
+	 * @return    boolean
+	 * @throws \EE_Error
 	 */
 	public function toggle_failed_transaction_status( EE_Transaction $transaction ) {
+		$existing_txn_status = $transaction->status_ID();
 		// set incoming TXN_Status
-		$this->set_old_txn_status( $transaction->status_ID() );
+		$this->set_old_txn_status( $existing_txn_status );
 		// if TXN status is still set as "failed"...
-		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code ) {
+		if ( $existing_txn_status === EEM_Transaction::failed_status_code ) {
 			// set incoming TXN_Status
 			$this->set_new_txn_status( EEM_Transaction::abandoned_status_code );
 			$transaction->set_status( EEM_Transaction::abandoned_status_code );
+			$transaction->save();
 			return TRUE;
 		}
 		return FALSE;
@@ -414,19 +425,26 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * toggle_abandoned_transaction_status
 	 * upgrades a TXNs status from failed or abandoned to incomplete
-
-	 * 	@access public
-	 * @param EE_Transaction $transaction
-	 * 	@return 	boolean
+	 *
+	 * @access public
+	 * @param  EE_Transaction $transaction
+	 * @return boolean
 	 */
 	public function toggle_abandoned_transaction_status( EE_Transaction $transaction ) {
 		// set incoming TXN_Status
 		$this->set_old_txn_status( $transaction->status_ID() );
 		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
-		if ( $transaction->status_ID() == EEM_Transaction::failed_status_code || $transaction->status_ID() == EEM_Transaction::abandoned_status_code ) {
+		$txn_status = $transaction->status_ID();
+		if (
+			$txn_status === EEM_Transaction::failed_status_code
+			|| $txn_status === EEM_Transaction::abandoned_status_code
+		) {
 			$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			// if a contact record for the primary registrant has been created
-			if ( $transaction->primary_registration() instanceof EE_Registration && $transaction->primary_registration()->attendee() instanceof EE_Attendee ) {
+			if (
+				$transaction->primary_registration() instanceof EE_Registration
+				&& $transaction->primary_registration()->attendee() instanceof EE_Attendee
+			) {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->set_new_txn_status( EEM_Transaction::incomplete_status_code );
 			} else {
@@ -442,16 +460,27 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * 	manually_update_registration_statuses
+	 * manually_update_registration_statuses
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * @param string  	$new_reg_status
-	 * @param array 	$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
-	 * 	@return 	boolean
+	 * @param string         $new_reg_status
+	 * @param array          $registration_query_params array of query WHERE params to use
+	 *                                                  when retrieving cached registrations from a transaction
+	 * @return    boolean
+	 * @throws \EE_Error
 	 */
-	public function manually_update_registration_statuses( EE_Transaction $transaction, $new_reg_status = '', $registration_query_params = array() ) {
-		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'manually_update_registration_status', $transaction, $registration_query_params, $new_reg_status );
+	public function manually_update_registration_statuses(
+		EE_Transaction $transaction,
+		$new_reg_status = '',
+		$registration_query_params = array()
+	) {
+		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
+			'manually_update_registration_status',
+			$transaction,
+			$registration_query_params,
+			$new_reg_status
+		);
 		// send messages
 		/** @type EE_Registration_Processor $registration_processor */
 		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
@@ -459,39 +488,69 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$transaction->primary_registration(),
 			array( 'manually_updated' 	=> true )
 		);
-		do_action( 'AHEE__EE_Transaction_Processor__manually_update_registration_statuses', $transaction, $status_updates );
+		do_action(
+			'AHEE__EE_Transaction_Processor__manually_update_registration_statuses',
+			$transaction,
+			$status_updates
+		);
 		return $status_updates;
 	}
 
 
 
 	/**
-	 * 	toggle_registration_statuses_for_default_approved_events
+	 * toggle_registration_statuses_for_default_approved_events
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * @param array 	$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
-	 * 	@return 	boolean
+	 * @param array          $registration_query_params array of query WHERE params to use
+	 *                                                  when retrieving cached registrations from a transaction
+	 * @return    boolean
+	 * @throws \EE_Error
 	 */
-	public function toggle_registration_statuses_for_default_approved_events( EE_Transaction $transaction, $registration_query_params = array() ) {
-		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'toggle_registration_status_for_default_approved_events', $transaction, $registration_query_params );
-		do_action( 'AHEE__EE_Transaction_Processor__toggle_registration_statuses_for_default_approved_events', $transaction, $status_updates );
+	public function toggle_registration_statuses_for_default_approved_events(
+		EE_Transaction $transaction,
+		$registration_query_params = array()
+	) {
+		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
+			'toggle_registration_status_for_default_approved_events',
+			$transaction,
+			$registration_query_params
+		);
+		do_action(
+			'AHEE__EE_Transaction_Processor__toggle_registration_statuses_for_default_approved_events',
+			$transaction,
+			$status_updates
+		);
 		return $status_updates;
 	}
 
 
 
 	/**
-	 * 	toggle_registration_statuses_if_no_monies_owing
+	 * toggle_registration_statuses_if_no_monies_owing
 	 *
-	 * 	@access public
+	 * @access public
 	 * @param EE_Transaction $transaction
-	 * @param array 	$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
-	 * 	@return 	boolean
+	 * @param array          $registration_query_params array of query WHERE params to use
+	 *                                                  when retrieving cached registrations from a transaction
+	 * @return    boolean
+	 * @throws \EE_Error
 	 */
-	public function toggle_registration_statuses_if_no_monies_owing( EE_Transaction $transaction, $registration_query_params = array() ) {
-		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor( 'toggle_registration_status_if_no_monies_owing', $transaction, $registration_query_params );
-		do_action( 'AHEE__EE_Transaction_Processor__toggle_registration_statuses_if_no_monies_owing', $transaction, $status_updates );
+	public function toggle_registration_statuses_if_no_monies_owing(
+		EE_Transaction $transaction,
+		$registration_query_params = array()
+	) {
+		$status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
+			'toggle_registration_status_if_no_monies_owing',
+			$transaction,
+			$registration_query_params
+		);
+		do_action(
+			'AHEE__EE_Transaction_Processor__toggle_registration_statuses_if_no_monies_owing',
+			$transaction,
+			$status_updates
+		);
 		return $status_updates;
 	}
 
@@ -501,13 +560,18 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * update_transaction_and_registrations_after_checkout_or_payment
 	 * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
 	 *
-	 * @param EE_Transaction $transaction
-	 * @param \EE_Payment | NULL    $payment
-	 * @param array          $registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @param EE_Transaction     $transaction
+	 * @param \EE_Payment | NULL $payment
+	 * @param array              $registration_query_params    array of query WHERE params to use
+	 *                                                         when retrieving cached registrations from a transaction
 	 * @throws \EE_Error
 	 * @return array
 	 */
-	public function update_transaction_and_registrations_after_checkout_or_payment( EE_Transaction $transaction, $payment = NULL, $registration_query_params = array() ) {
+	public function update_transaction_and_registrations_after_checkout_or_payment(
+		EE_Transaction $transaction,
+		$payment = null,
+		$registration_query_params = array()
+	) {
 		// set incoming TXN_Status, and consider it new since old status should have been set
 		$this->set_new_txn_status( $transaction->status_ID() );
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $transaction->status_ID(), '$transaction->status_ID()' );
@@ -515,20 +579,21 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		$this->_set_registration_query_params( $registration_query_params );
 		// get final reg step status
 		$finalized = $this->final_reg_step_completed( $transaction );
-		// if the 'finalize_registration' step has been initiated (has a timestamp) but has not yet been fully completed (TRUE)
-		if ( is_numeric( $finalized ) && $finalized !== true ) {
+		// if the 'finalize_registration' step has been initiated (has a timestamp)
+		// but has not yet been fully completed (TRUE)
+		if ( is_int( $finalized ) && $finalized !== false && $finalized !== true ) {
 			$this->set_reg_step_completed( $transaction, 'finalize_registration' );
 			$finalized = true;
 		}
 		$transaction->save();
 		// array of details to aid in decision making by systems
 		$update_params = array(
-			'old_txn_status' 			=> $this->old_txn_status(),
-			'new_txn_status' 		=> $this->new_txn_status(),
-			'finalized' 					=> $finalized,
-			'revisit' 						=> $this->_revisit,
-			'payment_updates' 	=> $payment instanceof EE_Payment ? TRUE : FALSE,
-			'last_payment'			=> $payment
+			'old_txn_status'  => $this->old_txn_status(),
+			'new_txn_status'  => $this->new_txn_status(),
+			'finalized'       => $finalized,
+			'revisit'         => $this->_revisit,
+			'payment_updates' => $payment instanceof EE_Payment ? true : false,
+			'last_payment'    => $payment
 		);
 		// now update the registrations and add the results to our $update_params
 		$update_params['status_updates'] = $this->_call_method_on_registrations_via_Registration_Processor(
@@ -545,8 +610,11 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 			$transaction->primary_registration(),
 			$update_params
 		);
-
-		do_action( 'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment', $transaction, $update_params );
+		do_action(
+			'AHEE__EE_Transaction_Processor__update_transaction_and_registrations_after_checkout_or_payment',
+			$transaction,
+			$update_params
+		);
 		return $update_params;
 	}
 
@@ -559,13 +627,19 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * @access private
 	 * @param string 	$method_name
 	 * @param EE_Transaction $transaction
-	 * @param array 	$registration_query_params - array of query WHERE params to use when retrieving cached registrations from a transaction
+	 * @param array          $registration_query_params array of query WHERE params to use
+	 *                                                  when retrieving cached registrations from a transaction
 	 * @param string 	$additional_param
 	 * @throws \EE_Error
 	 * @return boolean
 	 */
-	private function _call_method_on_registrations_via_Registration_Processor( $method_name,  EE_Transaction $transaction, $registration_query_params = array(), $additional_param = NULL ) {
-		$response = FALSE;
+	private function _call_method_on_registrations_via_Registration_Processor(
+		$method_name,
+		EE_Transaction $transaction,
+		$registration_query_params = array(),
+		$additional_param = null
+	) {
+		$response = false;
 		/** @type EE_Registration_Processor $registration_processor */
 		$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 		// check that method exists
@@ -578,9 +652,13 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 		foreach ( $transaction->registrations( $this->_registration_query_params ) as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				if ( $additional_param ) {
-					$response = $registration_processor->$method_name( $registration, $additional_param ) ? TRUE : $response;
+					$response = $registration_processor->{$method_name}( $registration, $additional_param )
+						? true
+						: $response;
 				} else {
-					$response = $registration_processor->$method_name( $registration ) ? TRUE : $response;
+					$response = $registration_processor->{$method_name}( $registration )
+						? true
+						: $response;
 				}
 			}
 		}
@@ -591,16 +669,16 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 	/**
 	 * set_transaction_payment_method_based_on_registration_statuses
-	 *
 	 * sets or unsets the PMD_ID field on the TXN based on the related REG statuses
 	 * basically if ALL Registrations are "Not Approved", then the EE_Transaction.PMD_ID is set to null,
 	 * but if any Registration has a different status, then EE_Transaction.PMD_ID is set to either:
-	 * 		the first "default" Payment Method
-	 * 		the first active Payment Method
-	 * 	whichever is found first.
+	 *        the first "default" Payment Method
+	 *        the first active Payment Method
+	 *    whichever is found first.
 	 *
 	 * @param  EE_Registration $edited_registration
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function set_transaction_payment_method_based_on_registration_statuses(
 		EE_Registration $edited_registration
@@ -620,11 +698,17 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 					$transaction->set_payment_method_ID( null );
 					$transaction->save();
 				} else {
-					$available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart );
+					$available_payment_methods = EEM_Payment_Method::instance()->get_all_for_transaction(
+						$transaction,
+						EEM_Payment_Method::scope_cart
+					);
 					if ( ! empty( $available_payment_methods ) ) {
 						$PMD_ID = 0;
 						foreach ( $available_payment_methods as $available_payment_method ) {
-							if ( $available_payment_method instanceof EE_Payment_Method && $available_payment_method->open_by_default() ) {
+							if (
+								$available_payment_method instanceof EE_Payment_Method
+							    && $available_payment_method->open_by_default()
+							) {
 								$PMD_ID = $available_payment_method->ID();
 								break;
 							}

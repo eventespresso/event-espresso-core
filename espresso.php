@@ -5,8 +5,8 @@
   Plugin Name:		Event Espresso
   Plugin URI:  		http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.8.29.rc.005
-  Author: 			Event Espresso
+  Version:			4.9.1.rc.006
+  Author:			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		    GPLv2
   TextDomain: 		event_espresso
@@ -34,7 +34,8 @@
  * @package 	Event Espresso
  * @author 		Seth Shoultes
  * @copyright 	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @license 	{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @license 	{@link http://eventespresso.com/support/terms-conditions/}
+ * @see         Plugin Licensing
  * @link 		{@link http://www.eventespresso.com}
  * @since 		4.0
  *
@@ -65,13 +66,13 @@ if ( function_exists( 'espresso_version' ) ) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.8.29.rc.005';
+		return apply_filters( 'FHEE__espresso__espresso_version', '4.9.1.rc.006' );
 	}
 
 	// define versions
 	define( 'EVENT_ESPRESSO_VERSION', espresso_version() );
-	define( 'EE_MIN_WP_VER_REQUIRED', '4.0' );
-	define( 'EE_MIN_WP_VER_RECOMMENDED', '4.1' );
+	define( 'EE_MIN_WP_VER_REQUIRED', '4.1' );
+	define( 'EE_MIN_WP_VER_RECOMMENDED', '4.4.2' );
 	define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
 	define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.44' );
 	define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
@@ -152,6 +153,7 @@ if ( function_exists( 'espresso_version' ) ) {
 	//want to change its default value! or find when -1 means infinity
 	define( 'EE_INF_IN_DB', -1 );
 	define( 'EE_INF', INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX );
+	define( 'EE_DEBUG', false );
 
 	/**
 	 *    espresso_plugin_activation

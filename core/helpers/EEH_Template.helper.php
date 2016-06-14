@@ -235,7 +235,6 @@ class EEH_Template {
 			// array to hold all possible template paths
 			$full_template_paths = array();
 
-			EE_Registry::instance()->load_helper('File');
 			// loop through $templates
 			foreach ( $templates as $template ) {
 				// normalize directory separators
@@ -263,14 +262,16 @@ class EEH_Template {
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
 				// path to the directory of the current theme: /wp-content/themes/(current WP theme)/
-				array_unshift( $full_template_paths, get_template_directory() . DS . $file_name );
+				array_unshift( $full_template_paths, get_stylesheet_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
-			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
+			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths, $file_name );
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
 					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
+					// hook that can be used to display the full template path that will be used
+					do_action( 'AHEE__EEH_Template__locate_template__full_template_path', $template_path );
 					break;
 				}
 			}
@@ -323,8 +324,6 @@ class EEH_Template {
 	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
-		//require the template validator for verifying variables are set according to how the template requires
-		EE_Registry::instance()->load_helper( 'Template_Validator' );
 
 		/**
 		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
@@ -595,7 +594,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<h3>' . __('Status Legend', 'event_espresso') . '</h3>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
@@ -621,7 +620,6 @@ class EEH_Template {
 	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
 		$data = (array)$data;
 	}
-	EE_Registry::instance()->load_helper('Array');
 	ob_start();
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
@@ -825,3 +823,35 @@ class EEH_Template {
 //	return $amount;
 //}
 //add_filter( 'FHEE__EEH_Template__format_currency__amount', 'convert_zero_to_free', 10, 2 );
+
+
+if ( ! function_exists( 'espresso_pagination' ) ) {
+	/**
+	 *    espresso_pagination
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	function espresso_pagination() {
+		global $wp_query;
+		$big = 999999999; // need an unlikely integer
+		$pagination = paginate_links(
+		array(
+		'base'         => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+		'format'       => '?paged=%#%',
+		'current'      => max( 1, get_query_var( 'paged' ) ),
+		'total'        => $wp_query->max_num_pages,
+		'show_all'     => true,
+		'end_size'     => 10,
+		'mid_size'     => 6,
+		'prev_next'    => true,
+		'prev_text'    => __( '&lsaquo; PREV', 'event_espresso' ),
+		'next_text'    => __( 'NEXT &rsaquo;', 'event_espresso' ),
+		'type'         => 'plain',
+		'add_args'     => false,
+		'add_fragment' => ''
+		)
+		);
+		echo ! empty( $pagination ) ? '<div class="ee-pagination-dv clear">' . $pagination . '</div>' : '';
+	}
+}

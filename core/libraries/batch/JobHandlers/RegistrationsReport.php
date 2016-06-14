@@ -56,7 +56,6 @@ class RegistrationsReport extends JobHandlerFile {
 			0,
 			1,
 			$job_parameters->extra_datum( 'questions_data' ) );
-		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
@@ -122,7 +121,6 @@ class RegistrationsReport extends JobHandlerFile {
 			$job_parameters->units_processed(),
 			$batch_size,
 			$job_parameters->extra_datum( 'questions_data' ) );
-		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
@@ -151,7 +149,6 @@ class RegistrationsReport extends JobHandlerFile {
 	 *
 	 */
 	function get_csv_data_for( $event_id, $offset, $limit, $questions_for_these_regs_rows ) {
-		\EE_Registry::instance()->load_helper( 'Export' );
 		$reg_fields_to_include = array(
 			'TXN_ID',
 			'ATT_ID',
@@ -191,6 +188,7 @@ class RegistrationsReport extends JobHandlerFile {
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
 				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
 				'limit' => array( $offset, $limit ),
+				'caps' => \EEM_Base::caps_read_admin
 			),
 			$event_id
 		);
@@ -235,22 +233,22 @@ class RegistrationsReport extends JobHandlerFile {
 				//get pretty status
 				$stati = \EEM_Status::instance()->localized_status( array(
 					$reg_row[ 'Registration.STS_ID' ] => __( 'unknown', 'event_espresso' ),
-					$reg_row[ 'Transaction.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
+					$reg_row[ 'TransactionTable.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
 						FALSE,
 						'sentence' );
 				$reg_csv_array[__("Registration Status", 'event_espresso')] = $stati[ $reg_row[ 'Registration.STS_ID' ] ];
 				//get pretty transaction status
-				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'Transaction.STS_ID' ] ];
-				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
-				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'TransactionTable.STS_ID' ] ];
+				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'TransactionTable.TXN_total' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? \EEH_Export::prepare_value_from_db_for_display( \EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'TransactionTable.TXN_paid' ], 'localized_float' ) : '0.00';
 				$payment_methods = array();
 				$gateway_txn_ids_etc = array();
 				$payment_times = array();
-				if( $is_primary_reg && $reg_row[ 'Transaction.TXN_ID' ] ){
+				if( $is_primary_reg && $reg_row[ 'TransactionTable.TXN_ID' ] ){
 					$payments_info = \EEM_Payment::instance()->get_all_wpdb_results(
 							array(
 								array(
-									'TXN_ID' => $reg_row[ 'Transaction.TXN_ID' ],
+									'TXN_ID' => $reg_row[ 'TransactionTable.TXN_ID' ],
 									'STS_ID' => \EEM_Payment::status_id_approved
 								),
 								'force_join' => array( 'Payment_Method' ),
@@ -392,7 +390,8 @@ class RegistrationsReport extends JobHandlerFile {
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' )
+				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
+				'caps' => \EEM_Base::caps_read_admin
 			),
 			$event_id
 		);

@@ -51,7 +51,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 
 	/**
 	 * @param array $answer_options
-	 * @param array $input_settings
+	 * @param array $input_settings {
+	 *	@type int|string $label_size
+	 *	@type boolean $display_html_label_text
+	 * }
+	 * And all the options accepted by EE_Form_Input_Base
 	 */
 	public function __construct( $answer_options = array(), $input_settings = array() ) {
 		if ( isset( $input_settings['label_size'] )) {
@@ -147,7 +151,6 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	 */
 	protected function _flatten_select_options( $arr ){
 		$flat_array = array();
-		EE_Registry::instance()->load_helper('Array');
 		if ( EEH_Array::is_multi_dimensional_array( $arr )) {
 			foreach( $arr as $sub_array ){
 				foreach( $sub_array as $key => $value ) {

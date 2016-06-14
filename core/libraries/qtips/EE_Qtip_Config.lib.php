@@ -15,7 +15,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Qtip_Config	
+ * EE_Qtip_Config
  *
  * This is the parent class for the Qtip PHP library for interfacing with the qTip2 js library.
  *
@@ -162,7 +162,7 @@ abstract class EE_Qtip_Config extends EE_Base {
 					'offset' => 0, //use to set the offset of the tip in relation to its corner position.
 					)
 				),
-			
+
 			);
 	}
 
@@ -247,7 +247,7 @@ abstract class EE_Qtip_Config extends EE_Base {
  *
  * ------------------------------------------------------------------------
  *
- * EE_Qtip	
+ * EE_Qtip
  *
  * All Qtips should be derivatives of this object.
  *
@@ -267,7 +267,7 @@ class EE_Qtip extends EE_Base {
 	public function __construct( $setup_array ) {
 		foreach ( $setup_array as $prop => $value ) {
 			if ( EEH_Class_Tools::has_property( $this, $prop ) )
-				$this->$prop = $value;
+				$this->{$prop} = $value;
 		}
 	}
 }

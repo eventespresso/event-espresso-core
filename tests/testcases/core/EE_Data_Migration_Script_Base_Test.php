@@ -27,6 +27,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 /**
  * @group core/data_migration_scripts
  * @group core
+ * @group activation
  */
 class EE_Data_Migration_Script_Base_Test extends EE_UnitTestCase{
 	/**

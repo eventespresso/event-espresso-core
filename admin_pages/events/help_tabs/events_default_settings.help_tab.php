@@ -1,4 +1,4 @@
-<h2><?php _e('Default Event Settings', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Default Event Settings', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Customize the default settings for your events.', 'event_espresso'); ?>
 </p>

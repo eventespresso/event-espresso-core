@@ -247,7 +247,6 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @param EE_Payment_Method[] $payment_methods. If NULL is provided defaults to all payment methods active in the cart
 	 */
 	function verify_button_urls( $payment_methods = NULL ) {
-		EE_Registry::instance()->load_helper( 'URL' );
 		$payment_methods = is_array( $payment_methods ) ? $payment_methods : $this->get_all_active(EEM_Payment_Method::scope_cart);
 		foreach ( $payment_methods as $payment_method ) {
 			try {
@@ -300,31 +299,31 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method[]
 	 */
 	protected function _create_objects( $rows = array() ) {
+		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		$payment_methods = parent::_create_objects( $rows );
 		/* @var $payment_methods EE_Payment_Method[] */
 		$usable_payment_methods = array();
 		foreach ( $payment_methods as $key => $payment_method ) {
-			try {
-				$payment_method->type_obj();
+			if ( EE_Payment_Method_Manager::instance()->payment_method_type_exists( $payment_method->type() ) ) {
 				$usable_payment_methods[ $key ] = $payment_method;
-			}
-			catch ( EE_Error $e ) {
-				//if it threw an exception, its because the payment type object
-				//isn't defined (probably because somehow the DB got borked,
-				//or an addon which defined it got deactivated
-				//so deactivate it and move on
+				//some payment methods enqueue their scripts in EE_PMT_*::__construct
+				//which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue
+				//its scripts). but for backwards-compat we should continue to do that
+				$payment_method->type_obj();
+			} elseif( $payment_method->active() ) {				
+				//only deactivate and notify the admin if the payment is active somewhere
 				$payment_method->deactivate();
 				$payment_method->save();
-				EE_Error::add_attention(
+				EE_Error::add_persistent_admin_notice(
+					'auto-deactivated-' . $payment_method->type(),
 					sprintf(
-						__( 'An error occurred while attempting to use the "%1$s" payment method, so it was deactivated.%2$sWas the "%1$s" Plugin recently deactivated?%2$sIt can be reactivated on the %3$sPlugins admin page%4$s||%2$sThe actual error was:%2$s%5$s', 'event_espresso' ),
-						$payment_method->name(),
+						__( 'The payment method %1$s was automatically deactivated because it appears its associated Event Espresso Addon was recently deactivated.%2$sIt can be reactivated on the %3$sPlugins admin page%4$s, then you can reactivate the payment method.', 'event_espresso' ),
+						$payment_method->admin_name(),
 						'<br />',
 						'<a href="' . admin_url('plugins.php') . '">',
-						'</a>',
-						$e->getMessage()
+						'</a>'
 					),
-					__FILE__, __FUNCTION__, __LINE__
+					true
 				);
 			}
 		}
@@ -357,5 +356,25 @@ class EEM_Payment_Method extends EEM_Base {
 	}
 
 
+	/**
+	 * Returns the payment method used for the last payment made for a registration.
+	 *
+	 * Note: if an offline payment method was selected on the related transaction then this will have no payment methods returned.
+	 * It will ONLY return a payment method for a PAYMENT recorded against the registration.
+	 *
+	 * @param EE_Registration|int $registration_or_reg_id  Either the EE_Registration object or the id for the registration.
+	 * @return EE_Payment|null
+	 */
+	public function get_last_used_for_registration( $registration_or_reg_id ) {
+		$registration_id = EEM_Registration::instance()->ensure_is_ID( $registration_or_reg_id );
+
+		$query_params = array(
+			0 => array(
+				'Payment.Registration.REG_ID' => $registration_id,
+			),
+			'order_by' => array( 'Payment.PAY_ID' => 'DESC' )
+		);
+		return $this->get_one( $query_params );
+	}
 
 }

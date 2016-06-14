@@ -244,13 +244,13 @@ final class EE_Config {
 			// load_core_config__start hook
 			$settings = apply_filters( 'FHEE__EE_Config___load_core_config__config_settings', $settings, $config, $this );
 			if ( is_object( $settings ) && property_exists( $this, $config ) ) {
-				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
+				$this->{$config} = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 				//call configs populate method to ensure any defaults are set for empty values.
 				if ( method_exists( $settings, 'populate' ) ) {
-					$this->$config->populate();
+					$this->{$config}->populate();
 				}
 				if ( method_exists( $settings, 'do_hooks' ) ) {
-					$this->$config->do_hooks();
+					$this->{$config}->do_hooks();
 				}
 			}
 		}
@@ -373,7 +373,7 @@ final class EE_Config {
 			if ( $addon_config_obj instanceof $config_class && ! $addon_config_obj instanceof __PHP_Incomplete_Class ) {
 				$this->update_config( 'addons', $addon_name, $addon_config_obj, FALSE );
 			}
-			$this->addons->$addon_name = NULL;
+			$this->addons->{$addon_name} = NULL;
 		}
 	}
 
@@ -793,61 +793,6 @@ final class EE_Config {
 
 
 
-
-	/**
-	 *    update_post_shortcodes
-	 *
-	 * @access    public
-	 * @param $page_for_posts
-	 * @return    void
-	 */
-	public function update_post_shortcodes( $page_for_posts = '' ) {
-		// make sure page_for_posts is set
-		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
-		// critical page shortcodes that we do NOT want added to the Posts page (blog)
-		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
-		// allow others to mess stuff up :D
-		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
-		// verify that post_shortcodes is set
-		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
-		// cycle thru post_shortcodes
-		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
-			// are there any shortcodes to track ?
-			if ( ! empty( $shortcodes )) {
-				// loop thru list of tracked shortcodes
-				foreach( $shortcodes as $shortcode => $post_id ) {
-					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
-					if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $page_for_posts ) {
-						// then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
-						unset( $this->core->post_shortcodes[ $post_name ][ $shortcode ] );
-					}
-					// skip the posts page, because we want all shortcodes registered for it
-					if ( $post_name == $page_for_posts ) {
-						continue;
-					}
-					// make sure post still exists
-					$post = get_post( $post_id );
-					if ( $post ) {
-						// check that the post name matches what we have saved
-						if ( $post->post_name == $post_name ) {
-							// if so, then break before hitting the unset below
-							continue;
-						}
-					}
-					// we don't like missing posts around here >:(
-					unset( $this->core->post_shortcodes[ $post_name ] );
-				}
-			} else {
-				// you got no shortcodes to keep track of !
-				unset( $this->core->post_shortcodes[ $post_name ] );
-			}
-		}
-		//only show errors
-		$this->update_espresso_config();
-	}
-
-
-
 	/**
 	 * 	get_page_for_posts
 	 *
@@ -881,9 +826,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function register_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -899,9 +841,6 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function initialize_shortcodes_and_modules() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		// allow shortcodes to set hooks for the rest of the system
 		$this->_initialize_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -918,9 +857,6 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
-			return;
-		}
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
 		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
@@ -997,7 +933,7 @@ final class EE_Config {
 		}
 		register_widget( $widget_class );
 		// add to array of registered widgets
-		EE_Registry::instance()->widgets->$widget_class = $widget_path . DS . $widget_class . $widget_ext;
+		EE_Registry::instance()->widgets->{$widget_class} = $widget_path . DS . $widget_class . $widget_ext;
 	}
 
 
@@ -1082,7 +1018,7 @@ final class EE_Config {
 		}
 		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->{$shortcode} = $shortcode_path . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
@@ -1172,8 +1108,8 @@ final class EE_Config {
 			return FALSE;
 		}
 		// add to array of registered modules
-		EE_Registry::instance()->modules->$module_class = $module_path . $module_class . $module_ext;
-		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
+		EE_Registry::instance()->modules->{$module_class} = $module_path . $module_class . $module_ext;
+		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->{$module_class} );
 		return TRUE;
 	}
 
@@ -1250,7 +1186,7 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
 		$module_class = 'EED_' . $module;
-		if ( ! isset( EE_Registry::instance()->modules->$module_class )) {
+		if ( ! isset( EE_Registry::instance()->modules->{$module_class} )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -1445,10 +1381,10 @@ class EE_Config_Base{
 			throw new EE_Error( sprintf( __('%1$s::get_pretty() has been called with the property %2$s which does not exist on the %1$s config class.', 'event_espresso' ), get_class( $this ), $property ) );
 		}
 		//just handling escaping of strings for now.
-		if ( is_string( $this->$property ) ) {
-			return stripslashes( $this->$property );
+		if ( is_string( $this->{$property} ) ) {
+			return stripslashes( $this->{$property} );
 		}
-		return $this->$property;
+		return $this->{$property};
 	}
 
 
@@ -1461,8 +1397,8 @@ class EE_Config_Base{
 		//loop through the properties for this class and see if they are set.  If they are NOT, then grab the
 		//default from our $defaults object.
 		foreach ( get_object_vars( $defaults ) as $property => $value ) {
-			if ( is_null( $this->$property ) ) {
-				$this->$property = $value;
+			if ( is_null( $this->{$property} ) ) {
+				$this->{$property} = $value;
 			}
 		}
 
@@ -1475,8 +1411,8 @@ class EE_Config_Base{
 	 *		@ override magic methods
 	 *		@ return void
 	 */
-//	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->$a); }
-//	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->$a = $b ); }
+//	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->{$a}); }
+//	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->{$a} = $b ); }
 	/**
 	 *        __isset
 	 *
@@ -1552,19 +1488,26 @@ class EE_Core_Config extends EE_Config_Base {
 
 
 	/**
+	 * This caches the _ee_ueip_option in case this config is reset in the same
+	 * request across blog switches in a multisite context.
+	 * Avoids extra queries to the db for this option.
+	 * @var bool
+	 */
+	public static $ee_ueip_option;
+
+
+	/**
 	 *    class constructor
 	 *
 	 * @access    public
 	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
-		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
-		$current_main_site_id = !empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
 		// set default organization settings
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
-		$this->ee_ueip_optin = is_main_site() ? get_option( 'ee_ueip_optin', TRUE ) : get_blog_option( $current_main_site_id, 'ee_ueip_optin', TRUE );
-		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', FALSE ) : TRUE;
+		$this->ee_ueip_optin = $this->_get_main_ee_ueip_optin();
+		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', false ) : true;
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
@@ -1686,7 +1629,57 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = '';
 		$this->cancel_page_url = '';
 		$this->thank_you_page_url = '';
+	}
 
+
+	/**
+	 * Used to return what the optin value is set for the EE User Experience Program.
+	 * This accounts for multisite and this value being requested for a subsite.  In multisite, the value is set
+	 * on the main site only.
+	 *
+	 * @return mixed|void
+	 */
+	protected function _get_main_ee_ueip_optin() {
+		//if this is the main site then we can just bypass our direct query.
+		if ( is_main_site() ) {
+			return get_option( 'ee_ueip_optin', false );
+		}
+
+		//is this already cached for this request?  If so use it.
+		if ( ! empty( EE_Core_Config::$ee_ueip_option ) ) {
+			return EE_Core_Config::$ee_ueip_option;
+		}
+
+		global $wpdb;
+		$current_network_main_site = is_multisite() ? get_current_site() : null;
+		$current_main_site_id = ! empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
+		$option = 'ee_ueip_optin';
+
+		//set correct table for query
+		$table_name = $wpdb->get_blog_prefix( $current_main_site_id ) . 'options';
+
+
+		//rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
+		//get_blog_option() does a switch_to_blog an that could cause infinite recursion because EE_Core_Config might be
+		//re-constructed on the blog switch.  Note, we are still executing any core wp filters on this option retrieval.
+		//this bit of code is basically a direct copy of get_option without any caching because we are NOT switched to the blog
+		//for the purpose of caching.
+		$pre = apply_filters( 'pre_option_' . $option, false, $option );
+		if ( false !== $pre ) {
+			EE_Core_Config::$ee_ueip_option = $pre;
+			return EE_Core_Config::$ee_ueip_option;
+		}
+
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s LIMIT 1", $option ) );
+		if ( is_object( $row ) ) {
+			$value = $row->option_value;
+		} else { //option does not exist so use default.
+			return apply_filters( 'default_option_' . $option, false, $option );
+		}
+
+		EE_Core_Config::$ee_ueip_option = apply_filters( 'option_' . $option, maybe_unserialize( $value ), $option );
+
+		return EE_Core_Config::$ee_ueip_option;
 	}
 
 
@@ -1937,7 +1930,6 @@ class EE_Currency_Config extends EE_Config_Base {
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
-		EE_Registry::instance()->load_helper( 'Activation' );
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
 		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() ) ) {
 			// retrieve the country settings from the db, just in case they have been customized
@@ -1982,6 +1974,14 @@ class EE_Registration_Config extends EE_Config_Base {
 	 * eg 'RPP'
 	 */
 	public $default_STS_ID;
+
+	/**
+	 * level of validation to apply to email addresses
+	 *
+	 * @var string $email_validation_level
+	 * options: 'basic', 'wp_default', 'i18n', 'i18n_dns'
+	 */
+	public $email_validation_level;
 
 	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
@@ -2082,6 +2082,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+		$this->email_validation_level = 'wp_default';
 		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();
@@ -2574,8 +2575,8 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
-			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		if ( ! empty( $this->php->max_input_vars ) && ( $input_count >= $this->php->max_input_vars ) && ( PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 3 && PHP_RELEASE_VERSION >=9 ) ) {
+			return  sprintf( __('The maximum number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.%1$sThere are %2$d inputs and the maximum amount currently allowed by your server is %3$d.', 'event_espresso'), '<br>', $input_count, $this->php->max_input_vars);
 		} else {
 			return '';
 		}

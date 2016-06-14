@@ -25,7 +25,6 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		EE_Registry::instance()->load_helper('DTT_Helper');
 	}
 
 
@@ -73,7 +72,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 
 		// TEST 3: bogus timezone string
 		try {
-			$timezone_string = EEH_DTT_Helper::get_valid_timezone_string( 'i got funky pants and like to dance' );
+			$timezone_string = EEH_DTT_Helper::get_valid_timezone_string( 'me got funky pants and like to dance' );
 			$this->fail( sprintf( __( 'The timezone string %1$s should have thrown an Exception, but did not!', 'event_espresso' ), $timezone_string ));
 		} catch( EE_Error $e ) {
 			$this->assertTrue( true );
