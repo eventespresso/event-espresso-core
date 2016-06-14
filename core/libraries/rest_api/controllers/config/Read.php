@@ -49,7 +49,7 @@ class Read {
 		return array(
 			'default_timezone' => array(
 				'string' => \EEH_DTT_Helper::get_valid_timezone_string(),
-				'offset' => get_option( 'gmt_offset' )
+				'offset' => \EEH_DTT_Helper::get_site_timezone_gmt_offset(),
 			),
 			'default_currency' => \EE_Config::instance()->currency
 		);

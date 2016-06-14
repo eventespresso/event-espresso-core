@@ -119,6 +119,24 @@ class EEH_DTT_Helper {
 		$timezone_string = $timezone_string !== false ? $timezone_string : EEH_DTT_Helper::get_timezone_string_from_abbreviations_list( $gmt_offset );
 		return $timezone_string;
 	}
+	
+	/**
+	 * Gets the site's GMT offset based on either the timezone string
+	 * (in which case teh gmt offset will vary depending on the location's 
+	 * observance of daylight savings time) or the gmt_offset wp option
+	 * @return int seconds offset
+	 */
+	public static function get_site_timezone_gmt_offset() {
+		$timezone_string = get_option( 'timezone_string' );
+		if( $timezone_string ) {
+			try {
+				$timezone = new DateTimeZone( $timezone_string );
+				return $timezone->getOffset( new DateTime() ); //in WordPress DateTime defaults to UTC
+			} catch( Exception $e ){}
+		}
+		$offset = get_option( 'gmt_offset' );
+		return (float)$offset * HOUR_IN_SECONDS;
+	}
 
 
 
