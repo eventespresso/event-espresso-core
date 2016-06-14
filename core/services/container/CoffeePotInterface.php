@@ -2,6 +2,8 @@
 namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\services\container\exceptions\InvalidServiceException;
+use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -60,10 +62,10 @@ interface CoffeePotInterface extends ContainerInterface
 	/**
 	 * Adds instructions on how to brew objects
 	 *
-	 * @param Recipe $recipe
+	 * @param RecipeInterface $recipe
 	 * @return mixed
 	 */
-	public function addRecipe( Recipe $recipe );
+	public function addRecipe( RecipeInterface $recipe );
 
 
 
