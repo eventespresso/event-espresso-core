@@ -35,11 +35,11 @@ class LoadOnlyCoffeeMaker extends CoffeeMaker
 
 
 	/**
-	 * @param Recipe $recipe
+	 * @param RecipeInterface $recipe
 	 * @param array  $arguments
 	 * @return mixed
 	 */
-	public function brew( Recipe $recipe, $arguments = array() )
+	public function brew( RecipeInterface $recipe, $arguments = array() )
 	{
 		$this->resolveClassAndFilepath( $recipe );
 		return null;
