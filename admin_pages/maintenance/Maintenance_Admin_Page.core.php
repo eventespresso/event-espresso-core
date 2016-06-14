@@ -265,7 +265,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				)
 			);
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		//localize script stuff
 		wp_localize_script('ee-maintenance', 'ee_maintenance', array(
 			'migrating'=>  __("Migrating...", "event_espresso"),
@@ -361,7 +360,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function _system_status(){
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
 		$this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
-		EE_Registry::instance()->load_helper('Array');
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
@@ -420,7 +418,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * destroy the old ee4 data, or just try initializing ee4 default data
 	 */
 	public function _reset_db( $nuke_old_ee4_data = TRUE ){
-		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 
 		if( $nuke_old_ee4_data ){
@@ -441,7 +438,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * Deletes ALL EE tables, Records, and Options from the database.
 	 */
 	public function _delete_db(){
-		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 		EEH_Activation::delete_all_espresso_cpt_data();
 		EEH_Activation::delete_all_espresso_tables_and_data();
@@ -455,7 +451,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * sets up EE4 to rerun the migrations from ee3 to ee4
 	 */
 	public function _rerun_migration_from_ee3(){
-		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 		EEH_Activation::delete_all_espresso_cpt_data();
 		EEH_Activation::delete_all_espresso_tables_and_data(false);

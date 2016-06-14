@@ -285,7 +285,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 			EEM_Datetime::instance();
 		}
 
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		//make sure now is in the timezone we want to test with.
 		$now =  new Datetime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
 		$now->setTimeZone( new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );

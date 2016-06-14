@@ -793,61 +793,6 @@ final class EE_Config {
 
 
 
-
-	/**
-	 *    update_post_shortcodes
-	 *
-	 * @access    public
-	 * @param $page_for_posts
-	 * @return    void
-	 */
-	public function update_post_shortcodes( $page_for_posts = '' ) {
-		// make sure page_for_posts is set
-		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
-		// critical page shortcodes that we do NOT want added to the Posts page (blog)
-		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
-		// allow others to mess stuff up :D
-		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
-		// verify that post_shortcodes is set
-		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
-		// cycle thru post_shortcodes
-		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
-			// are there any shortcodes to track ?
-			if ( ! empty( $shortcodes )) {
-				// loop thru list of tracked shortcodes
-				foreach( $shortcodes as $shortcode => $post_id ) {
-					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
-					if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $page_for_posts ) {
-						// then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
-						unset( $this->core->post_shortcodes[ $post_name ][ $shortcode ] );
-					}
-					// skip the posts page, because we want all shortcodes registered for it
-					if ( $post_name == $page_for_posts ) {
-						continue;
-					}
-					// make sure post still exists
-					$post = get_post( $post_id );
-					if ( $post ) {
-						// check that the post name matches what we have saved
-						if ( $post->post_name == $post_name ) {
-							// if so, then break before hitting the unset below
-							continue;
-						}
-					}
-					// we don't like missing posts around here >:(
-					unset( $this->core->post_shortcodes[ $post_name ] );
-				}
-			} else {
-				// you got no shortcodes to keep track of !
-				unset( $this->core->post_shortcodes[ $post_name ] );
-			}
-		}
-		//only show errors
-		$this->update_espresso_config();
-	}
-
-
-
 	/**
 	 * 	get_page_for_posts
 	 *
@@ -1543,19 +1488,26 @@ class EE_Core_Config extends EE_Config_Base {
 
 
 	/**
+	 * This caches the _ee_ueip_option in case this config is reset in the same
+	 * request across blog switches in a multisite context.
+	 * Avoids extra queries to the db for this option.
+	 * @var bool
+	 */
+	public static $ee_ueip_option;
+
+
+	/**
 	 *    class constructor
 	 *
 	 * @access    public
 	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
-		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
-		$current_main_site_id = !empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
 		// set default organization settings
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
-		$this->ee_ueip_optin = is_main_site() ? get_option( 'ee_ueip_optin', TRUE ) : get_blog_option( $current_main_site_id, 'ee_ueip_optin', TRUE );
-		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', FALSE ) : TRUE;
+		$this->ee_ueip_optin = $this->_get_main_ee_ueip_optin();
+		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', false ) : true;
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
@@ -1677,7 +1629,57 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->txn_page_url = '';
 		$this->cancel_page_url = '';
 		$this->thank_you_page_url = '';
+	}
 
+
+	/**
+	 * Used to return what the optin value is set for the EE User Experience Program.
+	 * This accounts for multisite and this value being requested for a subsite.  In multisite, the value is set
+	 * on the main site only.
+	 *
+	 * @return mixed|void
+	 */
+	protected function _get_main_ee_ueip_optin() {
+		//if this is the main site then we can just bypass our direct query.
+		if ( is_main_site() ) {
+			return get_option( 'ee_ueip_optin', false );
+		}
+
+		//is this already cached for this request?  If so use it.
+		if ( ! empty( EE_Core_Config::$ee_ueip_option ) ) {
+			return EE_Core_Config::$ee_ueip_option;
+		}
+
+		global $wpdb;
+		$current_network_main_site = is_multisite() ? get_current_site() : null;
+		$current_main_site_id = ! empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
+		$option = 'ee_ueip_optin';
+
+		//set correct table for query
+		$table_name = $wpdb->get_blog_prefix( $current_main_site_id ) . 'options';
+
+
+		//rather than getting blog option for the $current_main_site_id, we do a direct $wpdb query because
+		//get_blog_option() does a switch_to_blog an that could cause infinite recursion because EE_Core_Config might be
+		//re-constructed on the blog switch.  Note, we are still executing any core wp filters on this option retrieval.
+		//this bit of code is basically a direct copy of get_option without any caching because we are NOT switched to the blog
+		//for the purpose of caching.
+		$pre = apply_filters( 'pre_option_' . $option, false, $option );
+		if ( false !== $pre ) {
+			EE_Core_Config::$ee_ueip_option = $pre;
+			return EE_Core_Config::$ee_ueip_option;
+		}
+
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $table_name WHERE option_name = %s LIMIT 1", $option ) );
+		if ( is_object( $row ) ) {
+			$value = $row->option_value;
+		} else { //option does not exist so use default.
+			return apply_filters( 'default_option_' . $option, false, $option );
+		}
+
+		EE_Core_Config::$ee_ueip_option = apply_filters( 'option_' . $option, maybe_unserialize( $value ), $option );
+
+		return EE_Core_Config::$ee_ueip_option;
 	}
 
 
@@ -1928,7 +1930,6 @@ class EE_Currency_Config extends EE_Config_Base {
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
-		EE_Registry::instance()->load_helper( 'Activation' );
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
 		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() ) ) {
 			// retrieve the country settings from the db, just in case they have been customized
@@ -1973,6 +1974,14 @@ class EE_Registration_Config extends EE_Config_Base {
 	 * eg 'RPP'
 	 */
 	public $default_STS_ID;
+
+	/**
+	 * level of validation to apply to email addresses
+	 *
+	 * @var string $email_validation_level
+	 * options: 'basic', 'wp_default', 'i18n', 'i18n_dns'
+	 */
+	public $email_validation_level;
 
 	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
@@ -2073,6 +2082,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+		$this->email_validation_level = 'wp_default';
 		$this->show_pending_payment_options = TRUE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_steps = array();

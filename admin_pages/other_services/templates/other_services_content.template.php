@@ -193,6 +193,27 @@
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
+																<h4>AffiliateWP Integration</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ee4/affiliate-wp-integration-231x151.jpg"></a>AffiliateWP is an affiliate plugin for WordPress. With AffiliateWP, your affiliates can promote your products and services, which improves your website’s SEO rankings, drives more traffic to your site, and increases sales/revenue.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-affiliatewp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="http://eventespresso.com/wiki/affiliatewp-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=affiliatewp_integration&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
 																<h4>Third-party Add-ons</h4>
 															</div>
 															<div class="desc column-description">

@@ -156,7 +156,6 @@ class EED_Events_Archive  extends EED_Module {
 		// load other required components
 		$this->load_event_list_assets();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		//add query filters
 		EEH_Event_Query::add_query_filters();
 		// set params that will get used by the filters
@@ -202,7 +201,6 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function template_include( $template = '' ) {
 		// don't add content filter for dedicated EE child themes or private posts
-		EE_Registry::instance()->load_helper( 'Template' );
 		if ( ! EEH_Template::is_espresso_theme() ) {
 			/** @type EE_Events_Archive_Config $config */
 			$config = $this->config();
@@ -211,12 +209,13 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 			}
 			// if NOT a custom template
-			if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php'
+			if (
+				EE_Registry::instance()->load_core( 'Front_Controller', array(), false, true )->get_selected_template() != 'archive-espresso_events.php'
 				|| apply_filters( 'FHEE__EED_Event_Archive__template_include__allow_custom_selected_template', FALSE )
 			) {
 				// don't display entry meta because the existing theme will take care of that
 				add_filter( 'FHEE__EED_Events_Archive__template_include__events_list_active', '__return_true' );
-				// load functions.php file for the theme (loaded by WP if using child theme)
+			// load functions.php file for the theme (loaded by WP if using child theme)
 				EEH_Template::load_espresso_theme_functions();
 				// because we don't know if the theme is using the_excerpt()
 				add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
@@ -526,10 +525,8 @@ class EED_Events_Archive  extends EED_Module {
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-			EE_Registry::instance()->load_helper( 'Maps' );
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 		}
-		EE_Registry::instance()->load_helper( 'Event_View' );
 	}
 
 
@@ -547,7 +544,6 @@ class EED_Events_Archive  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
 			// first check uploads folder
-			EE_Registry::instance()->load_helper( 'File' );
 			if ( EEH_File::is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
 				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			} else {
@@ -676,7 +672,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	bool
 	 */
 	public static function display_venue() {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		$config = EE_Registry::instance()->CFG->template_settings->EED_Events_Archive;
 		return isset( $config->display_venue ) && $config->display_venue && EEH_Venue_View::venue_name() ? TRUE : FALSE;
 	}
@@ -734,7 +729,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public function get_post_data() {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EEH_Event_Query::set_query_params();
 	}
 	/**
@@ -742,7 +736,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public function posts_fields( $SQL, WP_Query $wp_query ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_fields( $SQL, $wp_query );
 	}
@@ -751,7 +744,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_fields_sql_for_orderby( $orderby_params = array() ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_fields_sql_for_orderby( $orderby_params );
 	}
@@ -760,7 +752,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public function posts_join( $SQL, WP_Query $wp_query ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_join( $SQL, $wp_query );
 	}
@@ -769,7 +760,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_join_sql_for_terms( $join_terms = NULL ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_join_sql_for_terms( $join_terms );
 	}
@@ -778,7 +768,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_join_for_orderby( $orderby_params = array() ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_join_for_orderby( $orderby_params );
 	}
@@ -787,7 +776,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_where( $SQL, $wp_query );
 	}
@@ -796,7 +784,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_where_sql_for_show_expired( $show_expired );
 	}
@@ -805,7 +792,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_where_sql_for_event_category_slug( $event_category_slug );
 	}
@@ -814,7 +800,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_where_sql_for_event_list_month( $month = NULL ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_where_sql_for_event_list_month( $month );
 	}
@@ -823,7 +808,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public function posts_orderby( $SQL, WP_Query $wp_query ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_orderby( $SQL, $wp_query );
 	}
@@ -832,7 +816,6 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@since 4.4.0
 	 */
 	public static function posts_orderby_sql( $orderby_params = array(), $sort = 'ASC' ) {
-		EE_Registry::instance()->load_helper( 'Event_Query' );
 		EED_Events_Archive::_doing_it_wrong_notice( __FUNCTION__ );
 		return EEH_Event_Query::posts_orderby_sql( $orderby_params, $sort );
 	}

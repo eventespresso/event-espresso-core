@@ -160,6 +160,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'Country'=>new EE_Belongs_To_Relation(),
 			'Event'=>new EE_HABTM_Relation('Registration', FALSE ),
 			'WP_User' => new EE_Belongs_To_Relation(),
+			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletion of attendees even if they have messages in the queue for them.
 		);
 		$this->_caps_slug = 'contacts';
 		parent::__construct( $timezone );

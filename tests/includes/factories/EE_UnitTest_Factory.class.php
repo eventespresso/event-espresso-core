@@ -89,10 +89,22 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 	public $payment;
 
 
+
+
+	/**
+	 * @type EE_UnitTest_Factory_For_Message
+	 */
+	public $message;
+
+
+
+
 	/**
 	 * @var EE_UnitTest_Factory_for_Specific_Builds
 	 */
 	public $complex_factory;
+
+
 
 
 
@@ -120,6 +132,7 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->attendee_chained = new EE_UnitTest_Factory_For_Attendee( $this, true );
 		$this->status = new EE_UnitTest_Factory_For_Status( $this );
 		$this->payment = new EE_UnitTest_Factory_For_Payment( $this );
+		$this->message = new EE_UnitTest_Factory_For_Message( $this );
 
 		//complex relationship factory
 		//This is a unique factory (not extending WP_UnitTest_Factory_for_Thing) that builds EE objects from a given special formatted

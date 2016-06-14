@@ -207,8 +207,6 @@ abstract class  EE_Messages_Template_Pack {
 			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
 		}
 
-		//load template helper
-		EE_Registry::instance()->load_helper( 'Template' );
 
 	}
 
@@ -255,7 +253,7 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param EE_messenger      $messenger
+	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
 	 *
 	 * @return array          Returns an multi-level associative array indexed by template context and field in the format:
@@ -312,10 +310,10 @@ abstract class  EE_Messages_Template_Pack {
 	 * Utility method for retrieving a specific template matching the given parameters
 	 *
 	 * @param null | EE_Messages_Template_Pack_Default $default_pack
-	 * @param EE_messenger    $messenger
-	 * @param EE_message_type $message_type
-	 * @param string          $field          The field reference for the specific template being looked up.
-	 * @param string          $context      The context reference for the specific template being looked up
+	 * @param EE_messenger                             $messenger
+	 * @param EE_message_type                          $message_type
+	 * @param string                                   $field          The field reference for the specific template being looked up.
+	 * @param string                                   $context      The context reference for the specific template being looked up
 	 *
 	 * @return string          The template contents.
 	 */

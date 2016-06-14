@@ -206,7 +206,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 				$related_objs = $this->get_many_related( $related_name, $where_params );
 				$revision_related_objs = $revision_obj->get_many_related( $related_name, $where_params );
 				//load helper
-				EE_Registry::instance()->load_helper( 'Array' );
 				//remove related objs from this object that are not in revision
 				//array_diff *should* work cause I think objects are indexed by ID?
 				$related_to_remove = EEH_Array::object_array_diff( $related_objs, $revision_related_objs );

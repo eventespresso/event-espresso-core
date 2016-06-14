@@ -67,7 +67,6 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_recipient_ticket_list( $primary = FALSE ) {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_recipient_ticket_list_parsed( $this->_data['data'], $primary );
@@ -135,7 +134,6 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_recipient_datetime_list( $primary = FALSE ) {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_recipient_datetime_list_parsed( $this->_data['data'], $primary );

@@ -107,7 +107,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = $where = array();
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
@@ -260,6 +259,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
+
+
 
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
 	}

@@ -30,7 +30,12 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 
 
 
-	function validate_email_address( $counter, $email_address, $assert_success = true ) {
+	/**
+	 * @param      $counter
+	 * @param      $email_address
+	 * @param bool $assert_success
+	 */
+	public function validate_email_address( $counter, $email_address, $assert_success = true ) {
 
 		if ( $assert_success ) {
 			$success = true;
@@ -105,7 +110,137 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 
 
 
-	function test_validate__pass() {
+	public function test_validate__pass_basic() {
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'basic';
+		// these should pass ALL validations
+		$good_addys = array(
+			'bogus@eventespresso.com',
+			'developers@eventespresso.museum',
+			'üñîçøðé@example.com', // (Unicode characters in local part)
+			'äöüÄÖÜß@eventespresso.com', // lötsä umläüts
+			'用户@例子.广告', // ( Chinese, Unicode )
+			'उपयोगकर्ता@उदाहरण.कॉम', // ( Hindi, Unicode )
+			'юзер@екзампл.ком', // ( Ukrainian, Unicode )
+			'θσερ@εχαμπλε.ψομ', // ( Greek, Unicode )
+			'Dörte@Sörensen.example.com', // ( German, Unicode )
+			// short domain
+			'developers@e.com',
+			'developers@eventespresso.c',
+			// from https://en.wikipedia.org/wiki/Email_address#Examples
+			'niceandsimple@example.com',
+			'very.common@example.com',
+			'a.little.lengthy.but.fine@dept.example.com',
+			'disposable.style.email.with+symbol@example.com',
+			"!#$%&'*+-/=?^_`{}|~@example.org",
+		    // the following, despite being valid, do NOT pass our validation
+		    //'user@[IPv6:2001:db8:1ff::a0b:dbd0]',
+			'"much.more unusual"@example.com',
+			'"very.unusual.@.unusual.com"@example.com',
+			'"very.(),:;<>[]\".VERY.\"very@\ \"very\".unusual"@strange.example.com',
+			'postbox@com',
+			'admin@mailserver1', // local domain name with no TLD
+			'"()<>[]:,;@\\"!#$%&\'*+-/=?^_`{}| ~.a"@example.org',
+			'" "@example.org', // (space between the quotes)
+			// the following, despite being INVALID, pass validation when they should NOT
+			// haxxor
+			'<script>alert("XSS ATTACK")</script>@eventespresso.com',
+		);
+		// turn off DNS checks
+		foreach ( $good_addys as $count => $good_addy ) {
+			$this->validate_email_address( $count, $good_addy );
+		}
+	}
+
+
+
+	public function test_validate__fail_basic(){
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'basic';
+		$bad_addys = array(
+			// double dots
+			'develop..ers@eventespresso.com',
+			'developers@event..espresso.com',
+			// no local
+			'@eventespresso.com',
+			// no domain
+			'developers@',
+		);
+		foreach ( $bad_addys as $count => $bad_addy ) {
+			$this->validate_email_address( $count, $bad_addy, false );
+		}
+	}
+
+
+
+	public function test_validate__pass_wp_default() {
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'wp_default';
+		// these should pass ALL validations
+		$good_addys = array(
+			'bogus@eventespresso.com',
+			'developers@eventespresso.museum',
+			// short domain
+			'developers@e.com',
+			'developers@eventespresso.c',
+			// from https://en.wikipedia.org/wiki/Email_address#Examples
+			'niceandsimple@example.com',
+			'very.common@example.com',
+			'a.little.lengthy.but.fine@dept.example.com',
+			'disposable.style.email.with+symbol@example.com',
+			"!#$%&'*+-/=?^_`{}|~@example.org",
+			// the following, despite being valid, do NOT pass WordPress is_email() validation
+		    //'üñîçøðé@example.com', // (Unicode characters in local part)
+		    //'äöüÄÖÜß@eventespresso.com', // lötsä umläüts
+		    //'用户@例子.广告', // ( Chinese, Unicode )
+		    //'उपयोगकर्ता@उदाहरण.कॉम', // ( Hindi, Unicode )
+		    //'юзер@екзампл.ком', // ( Ukrainian, Unicode )
+		    //'θσερ@εχαμπλε.ψομ', // ( Greek, Unicode )
+		    //'Dörte@Sörensen.example.com', // ( German, Unicode )
+			//'user@[IPv6:2001:db8:1ff::a0b:dbd0]',
+			//'"much.more unusual"@example.com',
+			//'"very.unusual.@.unusual.com"@example.com',
+			//'"very.(),:;<>[]\".VERY.\"very@\ \"very\".unusual"@strange.example.com',
+			//'postbox@com',
+			//'admin@mailserver1', // local domain name with no TLD
+			//'"()<>[]:,;@\\"!#$%&\'*+-/=?^_`{}| ~.a"@example.org',
+			//'" "@example.org', // (space between the quotes)
+		);
+		// turn off DNS checks
+		foreach ( $good_addys as $count => $good_addy ) {
+			$this->validate_email_address( $count, $good_addy );
+		}
+	}
+
+
+
+	public function test_validate__fail_wp_default() {
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'wp_default';
+		$bad_addys = array(
+			// double dots
+			'develop..ers@eventespresso.com',
+			'developers@event..espresso.com',
+			// haxxor
+			'<script>alert("XSS ATTACK")</script>@eventespresso.com',
+			// no local
+			'@eventespresso.com',
+			// no domain
+			'developers@',
+			// valid but international
+			'üñîçøðé@example.com', // (Unicode characters in local part)
+			'äöüÄÖÜß@eventespresso.com', // lötsä umläüts
+			'用户@例子.广告', // ( Chinese, Unicode )
+			'उपयोगकर्ता@उदाहरण.कॉम', // ( Hindi, Unicode )
+			'юзер@екзампл.ком', // ( Ukrainian, Unicode )
+			'θσερ@εχαμπλε.ψομ', // ( Greek, Unicode )
+			'Dörte@Sörensen.example.com', // ( German, Unicode )
+		);
+		foreach ( $bad_addys as $count => $bad_addy ) {
+			$this->validate_email_address( $count, $bad_addy, false );
+		}
+	}
+
+
+
+	public function test_validate__pass_i18n() {
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'i18n';
 		// these should pass ALL validations
 		$good_addys = array(
 			'bogus@eventespresso.com',
@@ -126,14 +261,14 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 			'disposable.style.email.with+symbol@example.com',
 			"!#$%&'*+-/=?^_`{}|~@example.org",
 		    // the following, despite being valid, do NOT pass our validation
-			//'user@[IPv6:2001:db8:1ff::a0b:dbd0]',
-			//'"much.more unusual"@example.com',
-			//'"very.unusual.@.unusual.com"@example.com',
-			//'"very.(),:;<>[]\".VERY.\"very@\ \"very\".unusual"@strange.example.com',
-			//'postbox@com',
-			//'admin@mailserver1', // local domain name with no TLD
-			//'"()<>[]:,;@\\"!#$%&\'*+-/=?^_`{}| ~.a"@example.org',
-			//'" "@example.org', // (space between the quotes)
+		    //'user@[IPv6:2001:db8:1ff::a0b:dbd0]',
+		    //'"much.more unusual"@example.com',
+		    //'"very.unusual.@.unusual.com"@example.com',
+		    //'"very.(),:;<>[]\".VERY.\"very@\ \"very\".unusual"@strange.example.com',
+		    //'postbox@com',
+		    //'admin@mailserver1', // local domain name with no TLD
+		    //'"()<>[]:,;@\\"!#$%&\'*+-/=?^_`{}| ~.a"@example.org',
+		    //'" "@example.org', // (space between the quotes)
 		);
 		// turn off DNS checks
 		foreach ( $good_addys as $count => $good_addy ) {
@@ -143,7 +278,8 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 
 
 
-	function test_validate__fail(){
+	public function test_validate__fail_i18n() {
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'i18n';
 		$bad_addys = array(
 			// double dots
 			'develop..ers@eventespresso.com',
@@ -164,7 +300,8 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 
 
 
-	function test_DNS_and_MX_record_check_fail(){
+	public function test_DNS_and_MX_record_check_fail(){
+		EE_Registry::instance()->CFG->registration->email_validation_level = 'i18n_dns';
 		$bad_addys = array(
 			// no MX records (bogus addresses)
 			'valid-but-not-real@example.com',
@@ -175,11 +312,9 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 			'θσερ@εχαμπλε.ψομ', // ( Greek, Unicode )
 			'Dörte@Sörensen.example.com', // ( German, Unicode )
 		);
-		add_filter( 'FHEE__EE_Email_Validation_Strategy___validate_email__perform_dns_checks', '__return_true' );
 		foreach ( $bad_addys as $count => $bad_addy ) {
 			$this->validate_email_address( $count, $bad_addy, false );
 		}
-		remove_filter( 'FHEE__EE_Email_Validation_Strategy___validate_email__perform_dns_checks', '__return_true' );
 	}
 
 

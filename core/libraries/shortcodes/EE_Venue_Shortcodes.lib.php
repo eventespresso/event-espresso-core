@@ -212,13 +212,11 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case 'formatted_address' :
-				EE_Registry::instance()->load_helper( 'Formatter' );
 				return EEH_Address::format( $venue );
 				break;
 
 			case 'gmap_link':
 			case 'gmap_link_img':
-				EE_Registry::instance()->load_helper( 'Maps' );
 				$state = $venue->state_obj();
 				$country = $venue->country_obj();
 				$atts = array(

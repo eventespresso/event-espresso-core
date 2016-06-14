@@ -120,9 +120,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_page_routes() {
 
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		//is there a vnu_id in the request?
 		$vnu_id = ! empty( $this->_req_data['VNU_ID'] ) && ! is_array( $this->_req_data['VNU_ID'] ) ? $this->_req_data['VNU_ID'] : 0;
@@ -1237,9 +1235,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_details($view) {
 
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);
@@ -1390,7 +1386,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );

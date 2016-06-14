@@ -9,50 +9,65 @@
  */
 
 function json_basic_auth_handler( $user ) {
-	global $wp_json_basic_auth_error;
+    global $wp_json_basic_auth_error;
+    $wp_json_basic_auth_error = null;
 
-	$wp_json_basic_auth_error = null;
+    // Don't authenticate twice
+    if ( ! empty( $user ) ) {
+        return $user;
+    }
+	//account for issue where some servers remove the PHP auth headers
+	//so instead look for auth info in a custom environment variable set by rewrite rules
+	//probably in .htaccess
+    if( ! isset( $_SERVER['PHP_AUTH_USER'] ) ) {
+        if( isset( $_SERVER['HTTP_AUTHORIZATION'])) {
+            $header = $_SERVER['HTTP_AUTHORIZATION'];
+        } elseif( isset( $_SERVER[ 'REDIRECT_HTTP_AUTHORIZATION' ] ) ) {
+            $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } else {
+			$header = null;
+		}
+        if( ! empty( $header ) ) {
+              list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode( ':', base64_decode( substr( $header, 6 ) ) );
+        }
+    }
 
-	// Don't authenticate twice
-	if ( ! empty( $user ) ) {
-		return $user;
-	}
+    // Check that we're trying to authenticate
+    if ( !isset( $_SERVER['PHP_AUTH_USER'] ) ) {
+        return $user;
+    }
+    $username = $_SERVER['PHP_AUTH_USER'];
+    $password = $_SERVER['PHP_AUTH_PW'];
 
-	// Check that we're trying to authenticate
-	if ( !isset( $_SERVER['PHP_AUTH_USER'] ) ) {
-		return $user;
-	}
+    /**
+     * In multi-site, wp_authenticate_spam_check filter is run on authentication. This filter calls
+     * get_currentuserinfo which in turn calls the determine_current_user filter. This leads to infinite
+     * recursion and a stack overflow unless the current function is removed from the determine_current_user
+     * filter during authentication.
+     */
+    remove_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
+    remove_filter( 'authenticate', 'wp_authenticate_spam_check', 99 );
 
-	$username = $_SERVER['PHP_AUTH_USER'];
-	$password = $_SERVER['PHP_AUTH_PW'];
+    $user = wp_authenticate( $username, $password );
 
-	/**
-	 * In multi-site, wp_authenticate_spam_check filter is run on authentication. This filter calls
-	 * get_currentuserinfo which in turn calls the determine_current_user filter. This leads to infinite
-	 * recursion and a stack overflow unless the current function is removed from the determine_current_user
-	 * filter during authentication.
-	 */
-	remove_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
+    add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
+    add_filter( 'authenticate', 'wp_authenticate_spam_check', 99 );
 
-	$user = wp_authenticate( $username, $password );
+    if ( is_wp_error( $user ) ) {
+        $wp_json_basic_auth_error = $user;
+        return null;
+    }
 
-	add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
-
-	if ( is_wp_error( $user ) ) {
-		$wp_json_basic_auth_error = $user;
-		return null;
-	}
-
-	$wp_json_basic_auth_error = true;
-	//if we found a user, remove regular cookie filters because
-	//they're just going to overwrite what we've found
-	if( $user->ID ){
-		remove_filter( 'determine_current_user', 'wp_validate_auth_cookie' );
-		remove_filter( 'determine_current_user', 'wp_validate_logged_in_cookie', 20 );
-	}
-	return $user->ID;
+    $wp_json_basic_auth_error = true;
+    //if we found a user, remove regular cookie filters because
+    //they're just going to overwrite what we've found
+    if( $user->ID ){
+        remove_filter( 'determine_current_user', 'wp_validate_auth_cookie' );
+        remove_filter( 'determine_current_user', 'wp_validate_logged_in_cookie', 20 );
+    }
+    return $user->ID;
 }
-add_filter( 'determine_current_user', 'json_basic_auth_handler', 5 );
+add_filter( 'determine_current_user', 'json_basic_auth_handler', 20 );
 
 function json_basic_auth_error( $error ) {
 	// Passthrough other errors
