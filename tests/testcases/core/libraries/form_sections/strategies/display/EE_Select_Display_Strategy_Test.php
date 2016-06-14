@@ -37,7 +37,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		$this->assertEquals( "baz'em", $input->normalized_value() );
 		$this->assertEquals( "baz'em", $input->raw_value() );
 		$expected_output2 = '
-<select id="form-input1" name="form[input1]" class="" style="">
+<select id="form-input1" name="form[input1]" class="" style="" >
 	<option value="foo">Foo</option>
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em" selected="selected">Baz</option>
