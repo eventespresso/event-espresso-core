@@ -39,6 +39,21 @@ class Read {
 			);
 		}
 	}
+	
+	/**
+	 * Handles the request for public config data
+	 * @param \WP_REST_Request $request
+	 * @return \EE_Config|\WP_Error
+	 */
+	public static function handle_request_site_info( \WP_REST_Request $request) {
+		return array(
+			'default_timezone' => array(
+				'string' => \EEH_DTT_Helper::get_valid_timezone_string(),
+				'offset' => get_option( 'gmt_offset' )
+			),
+			'default_currency' => \EE_Config::instance()->currency
+		);
+	}
 }
 
 // End of file Read.php

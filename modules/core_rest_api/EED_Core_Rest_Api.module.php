@@ -476,6 +476,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 					'methods' => WP_REST_Server::READABLE,
 					'hidden_endpoint' => $hidden_endpoint
 				),
+			),
+			'site_info' => array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\config\Read',
+						'handle_request_site_info' ),
+					'methods' => WP_REST_Server::READABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+				)
 			)
 		);
 	}
