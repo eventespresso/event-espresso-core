@@ -15,11 +15,21 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CoffeeMakerInterface {
 
 	/**
-	 * @param Recipe    $recipe
+	 * @return array
+	 */
+	public static function getTypes();
+
+	/**
+	 * @param $type
+	 */
+	public static function validateType( $type );
+
+	/**
+	 * @param RecipeInterface    $recipe
 	 * @param array     $arguments
 	 * @return mixed
 	 */
-	public function brew( Recipe $recipe, $arguments = array() );
+	public function brew( RecipeInterface $recipe, $arguments = array() );
 
 	/**
 	 * @return string
