@@ -1,8 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-use ReflectionClass;
-use ReflectionMethod;
 use UnexpectedValueException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
@@ -21,7 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @author        Brent Christensen
  * @since         4.9.1
  */
-class DependencyInjector
+class DependencyInjector implements InjectorInterface
 {
 
 	/**
@@ -85,10 +83,10 @@ class DependencyInjector
 	 * and returns that instead of creating a new one
 	 *
 	 * @access protected
-	 * @param ReflectionClass $reflector
+	 * @param \ReflectionClass $reflector
 	 * @return \ReflectionMethod
 	 */
-	protected function getConstructor( ReflectionClass $reflector )
+	protected function getConstructor( \ReflectionClass $reflector )
 	{
 		if (
 			! isset( $this->constructors[ $reflector->getName() ] )
@@ -107,10 +105,10 @@ class DependencyInjector
 	 * and returns that instead of creating a new one
 	 *
 	 * @access protected
-	 * @param ReflectionMethod $constructor
+	 * @param \ReflectionMethod $constructor
 	 * @return \ReflectionParameter[]
 	 */
-	protected function getParameters( ReflectionMethod $constructor )
+	protected function getParameters( \ReflectionMethod $constructor )
 	{
 		if ( ! isset( $this->parameters[ $constructor->class ] ) ) {
 			$this->parameters[ $constructor->class ] = $constructor->getParameters();
@@ -134,11 +132,11 @@ class DependencyInjector
 	 *        and the correct classes can be loaded
 	 *
 	 * @access public
-	 * @param ReflectionClass $reflector
+	 * @param \ReflectionClass $reflector
 	 * @param array           $arguments
 	 * @return array
 	 */
-	public function resolveDependencies( ReflectionClass $reflector, $arguments = array() )
+	public function resolveDependencies( \ReflectionClass $reflector, $arguments = array() )
 	{
 		$resolved_parameters = array();
 		// let's examine the constructor
