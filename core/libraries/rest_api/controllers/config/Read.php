@@ -41,7 +41,7 @@ class Read {
 	}
 	
 	/**
-	 * Handles the request for public config data
+	 * Handles the request for public site info
 	 * @param \WP_REST_Request $request
 	 * @return \EE_Config|\WP_Error
 	 */

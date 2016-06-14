@@ -84,8 +84,10 @@ class Model_Data_Translator {
 			$new_value = self::ee_inf_in_rest;
 		} elseif( $field_obj instanceof \EE_Datetime_Field &&
 			$original_value instanceof \DateTime ) {
+			$timezone = $original_value->getTimezone();
+			$original_value->setTimezone( new \DateTimeZone( 'UTC' ) );
 			$new_value = $original_value->format( 'c' );
-			$new_value = mysql_to_rfc3339( $new_value );
+			$original_value->setTimezone( $timezone );
 		} else {
 			$new_value = $original_value;
 		}
