@@ -91,9 +91,9 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 	 * CoffeeMaker constructor.
 	 *
 	 * @param CoffeePotInterface $coffee_pot
-	 * @param DependencyInjector $injector
+	 * @param InjectorInterface  $injector
 	 */
-	public function __construct( CoffeePotInterface $coffee_pot, DependencyInjector $injector )
+	public function __construct( CoffeePotInterface $coffee_pot, InjectorInterface $injector )
 	{
 		$this->coffee_pot = $coffee_pot;
 		$this->injector   = $injector;
@@ -122,10 +122,10 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
 
 	/**
-	 * @param Recipe $recipe
+	 * @param RecipeInterface $recipe
 	 * @throws InvalidClassException
 	 */
-	protected function resolveClassAndFilepath( Recipe $recipe )
+	protected function resolveClassAndFilepath( RecipeInterface $recipe )
 	{
 		$paths = $recipe->paths();
 		if ( ! empty( $paths ) ) {
