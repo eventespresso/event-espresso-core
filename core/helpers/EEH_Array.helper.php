@@ -159,4 +159,15 @@ class EEH_Array extends EEH_Base {
 	}
 
 
+
+	/**
+	 * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+	 * @param array $array
+	 * @return bool
+	 */
+	public static function is_array_numerically_and_sequentially_indexed(array $array) {
+		return ! empty($array) ? array_keys($array) === range(0, count($array) - 1) : true;
+	}
+
+
 } //end EEH_Template class
