@@ -9,6 +9,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  * Interface CoffeePotInterface
+ * for Event Espresso compatible Dependency Injection containers
  *
  * @package EventEspresso\core\services\container
  */
