@@ -72,7 +72,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  */
 	 public function add( $object, $identifier = null ) {
 		 if ( ! $object instanceof $this->collection_interface ) {
-			 throw new InvalidEntityException( get_class( $object ), $this->collection_interface );
+			 throw new InvalidEntityException( $object, $this->collection_interface );
 		 }
 		 $this->attach( $object );
 		 $this->setIdentifier( $object, $identifier );
@@ -269,7 +269,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * Returns the object at the given index
 	  *
 	  * @see http://stackoverflow.com/a/8736013
-	  * @param $index
+	  * @param int $index
 	  * @return mixed
 	  */
 	 public function objectAtIndex( $index ) {
@@ -304,7 +304,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  *
 	  * @see http://stackoverflow.com/a/8736013
 	  * @param mixed $objects A single object or an array of objects
-	  * @param integer $index
+	  * @param int $index
 	  */
 	 public function insertAt( $objects, $index ) {
 		 if ( ! is_array( $objects ) ) {
@@ -344,7 +344,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * Removes the object at the given index
 	  *
 	  * @see http://stackoverflow.com/a/8736013
-	  * @param integer $index
+	  * @param int $index
 	  */
 	 public function removeAt( $index ) {
 		 $this->detach( $this->objectAtIndex( $index ) );
