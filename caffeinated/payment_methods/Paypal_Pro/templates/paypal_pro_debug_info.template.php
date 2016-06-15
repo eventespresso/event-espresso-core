@@ -35,8 +35,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 						<strong><?php _e('Testing Guidelines', 'event_espresso'); ?></strong>
 					</p>
 					<ul style="margin:1em 2em 1.5em; line-height:1.2em;">
-						<li><?php _e('While testing, use the credit card number listed below. Other numbers will produce an error.', 'event_espresso'); ?></li>
-						<li><?php _e('Expiry Date can be any valid date in the future', 'event_espresso'); ?></li>
+						<li><?php _e('While testing, use the credit card number associated with your sandbox account.', 'event_espresso'); ?></li>
+						<li><?php printf(
+							__('To find the sandbox account\'s credit card, go to %1$s, then "Dashboard", then under Sandbox click "Accounts", then click your account and click "Profile", then in the popup that appears click on the "Funding" tab. Your testing card is listed there.', 'event_espresso'),
+							'<a href="http://developer.paypal.com">developer.paypal.com</a>'); ?></li>
 						<li><?php printf(__('CVV2 should be 115 (see %s paypals documentation for other special codes %s)', 'event_espresso'),'<a href="https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions#id108HH0RJ0TS" target="_blank">','</a>'); ?></li>
 					</ul>
 
@@ -55,8 +57,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 							</thead>
 							<tbody>
 								<tr>
-									<td><?php _e('Master Card', 'event_espresso'); ?></td>
-									<td>5424180818927383</td>
+									<td><?php _e('Visa (our Event Espresso Sandbox Account\'s testing card)', 'event_espresso'); ?></td>
+									<td>4127143344648082</td>
 								</tr>
 							</tbody>
 						</table>
