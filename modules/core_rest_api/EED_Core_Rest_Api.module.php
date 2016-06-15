@@ -79,6 +79,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 	public static function set_hooks_rest_api() {
 		//set hooks which account for changes made to the API
 		EED_Core_Rest_Api::_set_hooks_for_changes();
+		EED_Core_Rest_Api::maybe_notify_of_basic_auth_removal();
 	}
 
 	/**
@@ -88,6 +89,36 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function set_hooks_for_changes(){
 		self::_set_hooks_for_changes();
+	}
+
+	/**
+	 * If the user appears to be using WP API basic auth, tell them (via a persistent
+	 * admin notice and an email) that we're going to remove it soon, so they should
+	 * replace it with application passwords.
+	 */
+	public static function maybe_notify_of_basic_auth_removal() {
+		if( ! isset( $_SERVER['PHP_AUTH_USER'] )
+			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
+			return;
+		}
+		//ok they're using the WP API with Basic Auth
+		$message = sprintf(
+			__( 'We noticed you\'re using the WP API, which is used by the Event Espresso 4 mobile apps. Because of security and compatibility concerns, we will soon be removing our default authentication mechanism, WP API Basic Auth, from Event Espresso. It is recommended you instead install the %1$sWP Application Passwords plugin%2$s and use it with the EE4 Mobile apps. See %3$sour mobile app documentation%2$s for more information. %4$sIf you have installed the WP API Basic Auth plugin separately, or are not using the Event Espresso 4 mobile apps, you can disregard this message.%4$sThe Event Espresso Team', 'event_espresso' ),
+			'<a href="https://wordpress.org/plugins/application-passwords/">',
+			'</a>',
+			'<a href="https://eventespresso.com/wiki/ee4-event-apps/#authentication">',
+			'<br/>'
+		);
+		EE_Error::add_persistent_admin_notice( 'using_basic_auth', $message );
+		if( ! get_option( 'ee_notified_admin_on_basic_auth_removal', false ) ) {
+			add_option( 'ee_notified_admin_on_basic_auth_removal', true );
+			//piggy back off EE_Error::set_content_type, which sets the content type to HTML
+			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
+			//and send the message to the site admin too
+			wp_mail( get_option( 'admin_email' ), __( 'Notice of Removal of WP API Basic Auth From Event Espresso 4', 'event_espresso' ), $message );
+			remove_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
+		}
 	}
 	/**
 	 * Loads all the hooks which make requests to old versions of the API
@@ -172,9 +203,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $ee_routes;
 	}
-	
+
 	/**
-	 * Gets the EE route data from the wp options if it exists already, 
+	 * Gets the EE route data from the wp options if it exists already,
 	 * otherwise re-generates it and saves it to the option
 	 * @param string $version
 	 * @param boolean $hidden_endpoints
@@ -187,11 +218,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $ee_routes;
 	}
-	
+
+
+
 	/**
 	 * Saves the EE REST API route data to a wp option and returns it
-	 * @param string $version
+	 *
+	 * @param string  $version
 	 * @param boolean $hidden_endpoints
+	 * @return mixed|null|void
 	 */
 	protected static function _save_ee_route_data_for_version( $version, $hidden_endpoints = false ) {
 		$instance = self::instance();
@@ -242,7 +277,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $model_routes;
 	}
-	
+
 	/**
 	 * Gets the route data for EE models in the specified version
 	 * @param string $version
@@ -342,9 +377,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $routes;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $version
 	 * @param boolean $hidden_endpoint
 	 * @return array
@@ -459,7 +494,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $config_routes;
 	}
-	
+
 	/**
 	 * Gets routes for the config for the specified version
 	 * @param string $version
@@ -492,15 +527,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 		}
 		return $meta_routes;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $version
 	 * @param boolean $hidden_endpoint
 	 * @return array
 	 */
 	protected function _get_meta_route_data_for_version( $version, $hidden_endpoint = false ) {
-		return array( 
+		return array(
 			'resources'  => array(
 				array(
 					'callback' => array(

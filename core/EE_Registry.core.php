@@ -1132,7 +1132,6 @@ class EE_Registry {
 	 * - $modules
 	 * - $shortcodes
 	 * - $widgets
-	 * - $LIB:  Only specific classes get unset from $LIB (current EE_Data_Migration_Manager) that persist state.
 	 *
 	 * @param boolean $hard whether to reset data in the database too, or just refresh
 	 * the Registry to its state at the beginning of the request
@@ -1153,13 +1152,10 @@ class EE_Registry {
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
 		$instance->CART = null;
 		$instance->MRM = null;
+		$instance->LIB = new stdClass();
 
-		//handle of objects cached on LIB
-		foreach ( $instance->_classes_to_unset_from_LIB_on_reset() as $class_name ) {
-			if ( isset( $instance->LIB->$class_name ) ) {
-				unset( $instance->LIB->$class_name );
-			}
-		}
+		//messages reset
+		EED_Messages::reset();
 
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
@@ -1168,21 +1164,6 @@ class EE_Registry {
 		}
 
 		return $instance;
-	}
-
-
-
-
-	/**
-	 * Returns a filtered array of classes to unset from the $LIB property when EE_Registry::reset is called.
-	 * @return array
-	 */
-	protected function _classes_to_unset_from_LIB_on_reset() {
-		return apply_filters( 'EE_Registry___classes_to_unset_from_LIB_on_reset', array(
-			'EE_Data_Migration_Manager',
-			'EE_Messages_Processor',
-			'EE_Messages_Queue',
-		));
 	}
 
 

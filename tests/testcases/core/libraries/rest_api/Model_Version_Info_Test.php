@@ -17,6 +17,16 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Model_Version_Info_Test extends \EE_UnitTestCase{
+	
+	public function setUp() {
+		parent::setUp();
+		if ( ! class_exists( 'WP_Rest_Request' ) ) {
+			$this->markTestSkipped(
+				'Test being run on a version of WP that does not have the REST framework installed'
+			);
+		}
+	}
+	
 	/**
 	 * pretend currently we're on 4.9, but they send in a request for 4.8. So this
 	 * shoudl return all the changes from 4.9

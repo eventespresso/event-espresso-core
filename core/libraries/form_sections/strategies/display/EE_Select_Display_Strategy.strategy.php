@@ -33,6 +33,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 
 		$html .= $this->_input->required() ? ' required' : '';
 		$html .= ' style="' . $this->_input->html_style() . '"';
+		$html .= ' ' . $this->_input->other_html_attributes();
 		$html .= '>';
 
 //		EEH_HTML::indent( 1, 'select' );

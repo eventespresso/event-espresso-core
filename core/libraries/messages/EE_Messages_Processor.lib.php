@@ -66,6 +66,50 @@ class EE_Messages_Processor {
 	}
 
 
+
+	/**
+	 * This method can be utilized to process messages from a queue and they will be processed immediately on the same request.
+	 * Please note that this method alone does not bypass the usual "locks" for generation/sending (it assumes client code
+	 * has already filtered those if necessary).
+	 *
+	 * @param EE_Messages_Queue $queue_to_process
+	 * @return bool  true for success false for error.
+	 */
+	public function process_immediately_from_queue( EE_Messages_Queue $queue_to_process ) {
+		$success = false;
+		$messages_to_send = array();
+		$messages_to_generate = array();
+		//loop through and setup the various messages from the queue so we know what is being processed
+		$queue_to_process->get_message_repository()->rewind();
+		foreach ( $queue_to_process->get_message_repository() as $message ) {
+			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
+				$messages_to_generate[] = $message;
+				continue;
+			}
+
+			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send() ) ) {
+				$messages_to_send[] = $message;
+				continue;
+			}
+		}
+
+		//do generation/sends
+		if ( $messages_to_generate ) {
+			$success = $this->batch_generate_from_queue( $messages_to_generate, true );
+		}
+
+		if ( $messages_to_send ) {
+			$sent = $this->batch_send_from_queue( $messages_to_send, true );
+			//if there was messages to generate and it failed, then we override any success value for the sending process
+			//otherwise we just use the return from batch send.  The intent is that there is a simple response for success/fail.
+			//Either everything was successful or we consider it a fail.  To be clear, this is a limitation of doing
+			//all messages processing on the same request.
+			$success = $messages_to_generate && ! $success ? false : $sent;
+		}
+		return $success;
+	}
+
+
 	/**
 	 * Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
 	 *
@@ -81,7 +125,7 @@ class EE_Messages_Processor {
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
 				$this->_queue->unlock_queue();
-				$this->_queue->initiate_request_by_priority( 'send' );
+				$new_queue->initiate_request_by_priority( 'send' );
 				return $new_queue;
 			}
 		}
@@ -459,8 +503,14 @@ class EE_Messages_Processor {
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
 				'MSG_ID' => array( 'IN', $message_ids ),
-				'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
-			)
+				'STS_ID' => array(
+					'IN',
+					array_merge(
+						EEM_Message::instance()->stati_indicating_sent(),
+						array( EEM_Message::status_retry )
+					),
+				),
+			),
 		));
 		//set the Messages to resend.
 		foreach ( $messages as $message ) {
@@ -510,10 +560,13 @@ class EE_Messages_Processor {
 
 		foreach ( $regs_to_send as $status_group ) {
 			foreach ( $status_group as $status_id => $registrations ) {
-				$messages_to_generate = $messages_to_generate + $this->setup_mtgs_for_all_active_messengers(
+				$messages_to_generate = array_merge(
+					$messages_to_generate,
+					$this->setup_mtgs_for_all_active_messengers(
 						EEH_MSG_Template::convert_reg_status_to_message_type( $status_id ),
 						array( $registrations, $status_id )
-					);
+					)
+				);
 			}
 		}
 
