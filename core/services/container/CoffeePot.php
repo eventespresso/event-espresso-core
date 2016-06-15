@@ -118,10 +118,7 @@ class CoffeePot implements CoffeePotInterface
     {
         $identifier = $this->filterIdentifier($identifier);
         if ($this->carafe->has($identifier)) {
-            return $this->validateService(
-                $identifier,
-                $this->carafe->get($identifier)
-            );
+            return $this->carafe->get($identifier);
         }
         throw new ServiceNotFoundException($identifier);
     }
@@ -193,7 +190,8 @@ class CoffeePot implements CoffeePotInterface
      */
     public function addCoffeeMaker(CoffeeMakerInterface $coffee_maker, $type)
     {
-        return $this->coffee_makers->add($coffee_maker, CoffeeMaker::validateType($type));
+        $type = CoffeeMaker::validateType($type);
+        return $this->coffee_makers->add($coffee_maker, $type);
     }
 
 
@@ -208,7 +206,8 @@ class CoffeePot implements CoffeePotInterface
         if ( ! is_callable($closure)) {
             throw new InvalidDataTypeException('$closure', $closure, 'Closure');
         }
-        if ($this->reservoir->add($closure, $this->processIdentifier($identifier))) {
+        $identifier = $this->processIdentifier($identifier);
+        if ($this->reservoir->add($closure, $identifier)) {
             return $closure;
         }
         return null;
@@ -223,10 +222,9 @@ class CoffeePot implements CoffeePotInterface
      */
     public function addService($identifier, $service)
     {
-        return $this->carafe->add(
-            $this->validateService($identifier, $service),
-            $this->processIdentifier($identifier)
-        );
+        $identifier = $this->processIdentifier($identifier);
+        $service = $this->validateService($identifier, $service);
+        return $this->carafe->add($service, $identifier);
     }
 
 
@@ -240,7 +238,8 @@ class CoffeePot implements CoffeePotInterface
     public function addRecipe(RecipeInterface $recipe)
     {
         $this->addAliases($recipe->identifier(), $recipe->filters());
-        return $this->recipes->add($recipe, $this->processIdentifier($recipe->identifier()));
+        $identifier = $this->processIdentifier($recipe->identifier());
+        return $this->recipes->add($recipe, $identifier);
     }
 
 
@@ -256,7 +255,7 @@ class CoffeePot implements CoffeePotInterface
     {
         $identifier = $this->processIdentifier($identifier);
         if ($this->recipes->has($identifier)) {
-            return $this->recipes->get($this->processIdentifier($identifier));
+            return $this->recipes->get($identifier);
         }
         $default_recipes = $this->getDefaultRecipes();
         $matches = array();
