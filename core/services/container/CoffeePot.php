@@ -101,7 +101,7 @@ class CoffeePot implements CoffeePotInterface
     public function has($identifier)
     {
         $identifier = $this->filterIdentifier($identifier);
-        return $this->carafe->has($identifier) ? true : false;
+        return $this->carafe->has($identifier);
     }
 
 
