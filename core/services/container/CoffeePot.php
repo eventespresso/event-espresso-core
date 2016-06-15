@@ -95,7 +95,8 @@ class CoffeePot implements CoffeePotInterface
      * `has($identifier)` returning true does not mean that `get($identifier)` will not throw an exception.
      * It does however mean that `get($identifier)` will not throw a `ServiceNotFoundException`.
      *
-     * @param string $identifier Identifier of the entry to look for.
+     * @param string $identifier  Identifier of the entry to look for.
+     *                            Typically a Fully Qualified Class Name
      * @return boolean
      */
     public function has($identifier)
@@ -216,7 +217,8 @@ class CoffeePot implements CoffeePotInterface
 
 
     /**
-     * @param string $identifier
+     * @param  string $identifier Identifier for the entity class that the service applies to
+     *                            Typically a Fully Qualified Class Name
      * @param mixed  $service
      * @return bool
      */
@@ -247,7 +249,8 @@ class CoffeePot implements CoffeePotInterface
     /**
      * Get instructions on how to brew objects
      *
-     * @param string $identifier
+     * @param  string $identifier Identifier for the entity class that the recipe applies to
+     *                            Typically a Fully Qualified Class Name
      * @param string $type
      * @return RecipeInterface
      */
@@ -286,7 +289,8 @@ class CoffeePot implements CoffeePotInterface
     /**
      * adds class name aliases to list of filters
      *
-     * @param  string $identifier
+     * @param  string $identifier Identifier for the entity class that the alias applies to
+     *                            Typically a Fully Qualified Class Name
      * @param  array  $aliases
      * @return void
      * @throws InvalidIdentifierException
@@ -330,7 +334,8 @@ class CoffeePot implements CoffeePotInterface
     /**
      * filters alias identifiers to find the real class name
      *
-     * @param  string $identifier
+     * @param  string $identifier Identifier for the entity class that the filter applies to
+     *                            Typically a Fully Qualified Class Name
      * @return string
      * @throws InvalidIdentifierException
      */
@@ -345,9 +350,10 @@ class CoffeePot implements CoffeePotInterface
 
 
     /**
-     * filters alias identifiers to find the real class name
+     * verifies and standardizes identifiers
      *
-     * @param  string $identifier
+     * @param  string $identifier Identifier for the entity class
+     *                            Typically a Fully Qualified Class Name
      * @return string
      * @throws InvalidIdentifierException
      */
@@ -444,9 +450,10 @@ class CoffeePot implements CoffeePotInterface
 
 
     /**
-     * @param string $identifier
+     * @param  string $identifier Identifier for the entity class that the service applies to
+     *                            Typically a Fully Qualified Class Name
      * @param mixed  $service
-     * @return mixed
+     * @return object
      * @throws InvalidServiceException
      */
     private function validateService($identifier, $service)
