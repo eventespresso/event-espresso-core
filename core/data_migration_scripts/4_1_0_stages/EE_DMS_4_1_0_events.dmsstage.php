@@ -210,6 +210,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				}
 				$this->_add_post_metas($event_row, $post_id);
 
+			} else {
+				$guide = null;
 			}
 			$items_migrated_this_step++;
 			if($guid){
