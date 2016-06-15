@@ -62,6 +62,14 @@ class NewCoffeeMaker extends CoffeeMaker
 					$injector->resolveDependencies( $reflector, $arguments )
 				);
 			};
+		} else if ( method_exists( $reflector->getName(), 'new_instance' ) ) {
+			$injector = $this->injector();
+			$closure = function ( $arguments ) use ( $reflector, $injector ) {
+				return call_user_func_array(
+					array( $reflector->getName(), 'new_instance' ),
+					$injector->resolveDependencies( $reflector, $arguments )
+				);
+			};
 		} else {
 			$injector = $this->injector();
 			$closure = function ( $arguments ) use ( $reflector, $injector ) {
