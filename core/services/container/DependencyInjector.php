@@ -28,6 +28,11 @@ class DependencyInjector implements InjectorInterface
     private $coffee_pot;
 
     /**
+     * @var \EEH_Array $array_helper
+     */
+    private $array_helper;
+
+    /**
      * @var \ReflectionClass[] $reflectors
      */
     private $reflectors;
@@ -48,10 +53,12 @@ class DependencyInjector implements InjectorInterface
      * DependencyInjector constructor
      *
      * @param CoffeePotInterface $coffee_pot
+     * @param \EEH_Array         $array_helper
      */
-    public function __construct(CoffeePotInterface $coffee_pot)
+    public function __construct(CoffeePotInterface $coffee_pot, \EEH_Array $array_helper)
     {
         $this->coffee_pot = $coffee_pot;
+        $this->array_helper = $array_helper;
     }
 
 
@@ -137,7 +144,7 @@ class DependencyInjector implements InjectorInterface
     {
         // if arguments array is numerically and sequentially indexed, then we want it to remain as is,
         // else wrap it in an additional array so that it doesn't get split into multiple parameters
-        $arguments = $this->arrayIsNumericallyAndSequentiallyIndexed($arguments)
+        $arguments = $this->array_helper->is_array_numerically_and_sequentially_indexed($arguments)
             ? $arguments
             : array($arguments);
         $resolved_parameters = array();
@@ -184,7 +191,7 @@ class DependencyInjector implements InjectorInterface
             ) {
                 // attempt to inject the dependency
                 $dependency = $this->coffee_pot->brew($param_class, $arguments);
-                if ( ! $dependency === $param_class) {
+                if ( ! $dependency instanceof $param_class) {
                     throw new UnexpectedValueException(
                         sprintf(
                             __(
@@ -203,18 +210,6 @@ class DependencyInjector implements InjectorInterface
             }
         }
         return $resolved_parameters;
-    }
-
-
-
-    /**
-     * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
-     * @param array $array
-     * @return bool
-     */
-    protected function arrayIsNumericallyAndSequentiallyIndexed(array $array)
-    {
-        return ! empty($array) ? array_keys($array) === range(0, count($array) - 1) : true;
     }
 
 
