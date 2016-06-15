@@ -142,7 +142,8 @@ class Recipe implements RecipeInterface
 
 
     /**
-     * @param string $identifier
+     * @param  string $identifier Identifier for the entity class that the Recipe applies to
+     *                            Typically a Fully Qualified Class Name
      */
     public function setIdentifier($identifier)
     {
@@ -192,7 +193,9 @@ class Recipe implements RecipeInterface
 
 
     /**
-     * @param array $filters
+     * @param array $filters an array of filters where keys are the aliases and values are the FQCNs
+     *                          example:
+     *                          array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
      */
     public function setFilters(array $filters)
     {
@@ -212,7 +215,7 @@ class Recipe implements RecipeInterface
 
 
     /**
-     * @param string $type
+     * @param string $type one of the class constants returned from CoffeeMaker::getTypes()
      */
     public function setType($type = CoffeeMaker::BREW_NEW)
     {
