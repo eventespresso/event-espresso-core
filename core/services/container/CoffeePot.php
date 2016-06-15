@@ -20,85 +20,12 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 /**
  * Class CoffeePot
  * A Dependency Injection container
- * example usage:
- *      // first add some classes that use FQCNs, PSR-4 autoloading, and interface aliases
- *      // a simple PSR-4 compatible class with no aliases
- *      $coffee_pot->addRecipe(
- *          new Recipe(
- *              '\EventEspresso\core\services\address\formatters\AddressFormatter',
- *              CoffeeMaker::BREW_SHARED
- *          )
- *      );
- *      // PSR-4 compatible class with aliases
- *      $coffee_pot->addRecipe(
- *          new Recipe(
- *              '\EventEspresso\core\services\commands\CommandHandlerManager',
- *              CoffeeMaker::BREW_SHARED,
- *              array(
- *                  'CommandHandlerManager',
- *                  'CommandHandlerManagerInterface',
- *                  '\EventEspresso\core\services\commands\CommandHandlerManagerInterface'
- *              )
- *          )
- *      );
- *      // PSR-4 compatible class with aliases, with dependency on CommandHandlerManager from above
- *      $coffee_pot->addRecipe(
- *          new Recipe(
- *              '\EventEspresso\core\services\commands\CommandBus',
- *              CoffeeMaker::BREW_SHARED,
- *              array(
- *                  'CommandBus',
- *                  'CommandBusInterface',
- *                  '\EventEspresso\core\services\commands\CommandBusInterface',
- *              )
- *          )
- *      );
- *      $command_bus = $coffee_pot->brew( 'CommandBus' );
- *      // $command_bus will be an instance of CommandBus with an injected instance of CommandHandlerManager
- *      $command_bus2 = $coffee_pot->get( 'CommandBus' );
- *      var_dump( $command_bus === $command_bus2 ); // true
- *      // LEGACY classes that are NOT compatible with PSR-4 autoloading, and so must specify a filepath
- *      // no alias
- *      $coffee_pot->addRecipe(
- *          new Recipe(
- *              'EE_Encryption',
- *              CoffeeMaker::BREW_SHARED,
- *              array(),
- *              EE_CORE . 'core\EE_Encryption.core.php'
- *          )
- *      );
- *      // has an alias, and depends on the previous class
- *      $coffee_pot->addRecipe(
- *          new Recipe(
- *              'EE_Session',
- *              CoffeeMaker::BREW_SHARED,
- *              array( 'Session' ),
- *              EE_CORE . 'core\EE_Session.core.php'
- *          )
- *      );
- *      $session = $coffee_pot->brew( 'Session' );
- *      // $session will be an instance of EE_Session with an injected instance of EE_Encryption
-
- *      // WILDCARD * Recipes
- *      // building Recipes for EVERY single class would be really tedious,
- *      // so CoffeePot supports Wildcards in both the class names and filepaths
- *      // here's a Recipe that handles ALL of the standard core EE db model classes:
- *      $coffee_pot->addRecipe(
- *          new EventEspresso\core\services\container\Recipe(
- *              'EEM_*', // targets any class using the "EEM_" prefix
- *              CoffeeMaker::BREW_SHARED,
- *              array(),
- *              EE_MODELS . '*.model.php' // replaces wildcard with full class name
- *          )
- *      );
- *      $attendee_model = $coffee_pot->brew( 'EEM_Attendee' );
- *      $registration_model = $coffee_pot->brew( 'EEM_Registration' );
- *      $transaction_model = $coffee_pot->brew( 'EEM_Transaction' );
- *      // all work and are all handled by the one Recipe
+ * see /docs/N--Core-Functionality/dependency-injection-coffeepot.md
+ * for extensive documentation and examples
  *
- * @package       Event Espresso
- * @author        Brent Christensen
- * @since         4.9.1
+ * @package Event Espresso
+ * @author  Brent Christensen
+ * @since   4.9.1
  */
 class CoffeePot implements CoffeePotInterface
 {
