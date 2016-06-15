@@ -470,7 +470,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		);
 		$sql_conditions = array();
 		foreach($conditions as $column => $value){
-			$sql_conditions [] = "$column = '$value'";
+			$sql_conditions [] = $wpdb->prepare("$column = %s", $value );
 		}
 		$query = "SELECT VNU_ID
 					FROM
