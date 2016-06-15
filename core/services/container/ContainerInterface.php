@@ -1,9 +1,11 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
+
+
 
 /**
  * copy of Interop\Container\ContainerInterface
@@ -13,30 +15,31 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @license http://www.opensource.org/licenses/mit-license.php MIT (see the LICENSE file)
  * @since   4.9.0
  */
-interface ContainerInterface {
+interface ContainerInterface
+{
 
-	/**
-	 * Finds an entry of the container by its identifier and returns it.
-	 *
-	 * @param string $id Identifier of the entry to look for.
-	 * @throws ServiceNotFoundException  No entry was found for this identifier.
-	 * @throws InvalidServiceException Error while retrieving the entry.
-	 * @return mixed Entry.
-	 */
-	public function get( $id );
+    /**
+     * Finds an entry of the container by its identifier and returns it.
+     *
+     * @param string $id Identifier of the entry to look for.
+     * @throws ServiceNotFoundException  No entry was found for this identifier.
+     * @throws InvalidServiceException Error while retrieving the entry.
+     * @return mixed Entry.
+     */
+    public function get($id);
 
 
 
-	/**
-	 * Returns true if the container can return an entry for the given identifier.
-	 * Returns false otherwise.
-	 * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
-	 * It does however mean that `get($id)` will not throw a `NotFoundException`.
-	 *
-	 * @param string $id Identifier of the entry to look for.
-	 * @return boolean
-	 */
-	public function has( $id );
+    /**
+     * Returns true if the container can return an entry for the given identifier.
+     * Returns false otherwise.
+     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
+     * It does however mean that `get($id)` will not throw a `NotFoundException`.
+     *
+     * @param string $id Identifier of the entry to look for.
+     * @return boolean
+     */
+    public function has($id);
 
 
 }

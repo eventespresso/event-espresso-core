@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
 
 
@@ -24,26 +24,26 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class LoadOnlyCoffeeMaker extends CoffeeMaker
 {
 
-	/**
-	 * @return string
-	 */
-	public function type()
-	{
-		return CoffeeMaker::BREW_LOAD_ONLY;
-	}
+    /**
+     * @return string
+     */
+    public function type()
+    {
+        return CoffeeMaker::BREW_LOAD_ONLY;
+    }
 
 
 
-	/**
-	 * @param RecipeInterface $recipe
-	 * @param array  $arguments
-	 * @return mixed
-	 */
-	public function brew( RecipeInterface $recipe, $arguments = array() )
-	{
-		$this->resolveClassAndFilepath( $recipe );
-		return null;
-	}
+    /**
+     * @param RecipeInterface $recipe
+     * @param array           $arguments
+     * @return mixed
+     */
+    public function brew(RecipeInterface $recipe, $arguments = array())
+    {
+        $this->resolveClassAndFilepath($recipe);
+        return null;
+    }
 
 
 

@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
-	exit( 'No direct script access allowed' );
+if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+    exit('No direct script access allowed');
 }
 
 
@@ -24,48 +24,48 @@ class SharedCoffeeMaker extends CoffeeMaker
 
 
 
-	/**
-	 * @return string
-	 */
-	public function type()
-	{
-		return CoffeeMaker::BREW_SHARED;
-	}
+    /**
+     * @return string
+     */
+    public function type()
+    {
+        return CoffeeMaker::BREW_SHARED;
+    }
 
 
 
-	/**
-	 * @param RecipeInterface    $recipe
-	 * @param array     $arguments
-	 * @return mixed
-	 */
-	public function brew( RecipeInterface $recipe, $arguments = array() )
-	{
-		$this->resolveClassAndFilepath( $recipe );
-		$reflector = $this->injector()->getReflectionClass( $recipe->fqcn() );
-		if ( $reflector->getConstructor() === null ) {
-			$service = $reflector->newInstance();
-		} else if ( $reflector->isInstantiable() ) {
-			$service = $reflector->newInstanceArgs(
-				$this->injector()->resolveDependencies( $reflector, $arguments )
-			);
-		} else if ( method_exists( $reflector->getName(), 'instance' ) ) {
-			$service = call_user_func_array(
-				array( $reflector->getName(), 'instance' ),
-				$this->injector()->resolveDependencies( $reflector, $arguments )
-			);
-		} else if ( method_exists( $reflector->getName(), 'new_instance' ) ) {
-			$service = call_user_func_array(
-				array( $reflector->getName(), 'new_instance' ),
-				$this->injector()->resolveDependencies( $reflector, $arguments )
-			);
-		} else {
-			$service = $reflector->newInstanceArgs(
-				$this->injector()->resolveDependencies( $reflector, $arguments )
-			);
-		}
-		return $this->coffeePot()->addService( $recipe->identifier(), $service );
-	}
+    /**
+     * @param RecipeInterface $recipe
+     * @param array           $arguments
+     * @return mixed
+     */
+    public function brew(RecipeInterface $recipe, $arguments = array())
+    {
+        $this->resolveClassAndFilepath($recipe);
+        $reflector = $this->injector()->getReflectionClass($recipe->fqcn());
+        if ($reflector->getConstructor() === null) {
+            $service = $reflector->newInstance();
+        } else if ($reflector->isInstantiable()) {
+            $service = $reflector->newInstanceArgs(
+                $this->injector()->resolveDependencies($reflector, $arguments)
+            );
+        } else if (method_exists($reflector->getName(), 'instance')) {
+            $service = call_user_func_array(
+                array($reflector->getName(), 'instance'),
+                $this->injector()->resolveDependencies($reflector, $arguments)
+            );
+        } else if (method_exists($reflector->getName(), 'new_instance')) {
+            $service = call_user_func_array(
+                array($reflector->getName(), 'new_instance'),
+                $this->injector()->resolveDependencies($reflector, $arguments)
+            );
+        } else {
+            $service = $reflector->newInstanceArgs(
+                $this->injector()->resolveDependencies($reflector, $arguments)
+            );
+        }
+        return $this->coffeePot()->addService($recipe->identifier(), $service);
+    }
 
 }
 // End of file SharedCoffeeMaker.php
