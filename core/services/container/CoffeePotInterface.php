@@ -1,10 +1,6 @@
 <?php
 namespace EventEspresso\core\services\container;
 
-use EventEspresso\core\exceptions\InvalidIdentifierException;
-use EventEspresso\core\services\container\exceptions\InvalidServiceException;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
-
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
@@ -35,8 +31,6 @@ interface CoffeePotInterface extends ContainerInterface
      * @param array   $arguments  an array of arguments to be passed to the entity constructor
      * @param string  $type
      * @return mixed
-     * @throws ServiceNotFoundException No service was found for this identifier.
-     * @throws InvalidServiceException Error while retrieving the service.
      */
     public function brew($identifier, $arguments = array(), $type = '');
 
@@ -85,7 +79,6 @@ interface CoffeePotInterface extends ContainerInterface
      * @param  string $identifier
      * @param  array  $aliases
      * @return string
-     * @throws InvalidIdentifierException
      */
     public function addAliases($identifier, $aliases);
 
