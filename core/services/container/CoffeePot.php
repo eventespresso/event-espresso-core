@@ -20,9 +20,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 /**
  * Class CoffeePot
  * A Dependency Injection container
- * see /docs/N--Core-Functionality/dependency-injection-coffeepot.md
- * for extensive documentation and examples
  *
+ * @see     /docs/N--Core-Functionality/dependency-injection-coffeepot.md
+ *          for extensive documentation and examples
  * @package Event Espresso
  * @author  Brent Christensen
  * @since   4.9.1
