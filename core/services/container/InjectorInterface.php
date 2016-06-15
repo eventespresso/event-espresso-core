@@ -9,6 +9,8 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  * Interface InjectorInterface
+ * for classes that recursively resolve and inject dependencies
+ * into the arguments array passed to a class upon instantiation.
  *
  * @package EventEspresso\core\services\container
  */
