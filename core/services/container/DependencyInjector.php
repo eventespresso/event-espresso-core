@@ -61,7 +61,6 @@ class DependencyInjector implements InjectorInterface
      * checks if a ReflectionClass object has already been generated for a class
      * and returns that instead of creating a new one
      *
-     * @access public
      * @param string $class_name
      * @return \ReflectionClass
      */
@@ -83,7 +82,6 @@ class DependencyInjector implements InjectorInterface
      * checks if a ReflectionMethod object has already been generated for the class constructor
      * and returns that instead of creating a new one
      *
-     * @access protected
      * @param \ReflectionClass $reflector
      * @return \ReflectionMethod
      */
@@ -105,7 +103,6 @@ class DependencyInjector implements InjectorInterface
      * checks if an array of ReflectionParameter objects has already been generated for the class constructor
      * and returns that instead of creating a new one
      *
-     * @access protected
      * @param \ReflectionMethod $constructor
      * @return \ReflectionParameter[]
      */
@@ -132,7 +129,6 @@ class DependencyInjector implements InjectorInterface
      *        but only IF they are NOT already present in the incoming arguments array,
      *        and the correct classes can be loaded
      *
-     * @access public
      * @param \ReflectionClass $reflector
      * @param array            $arguments
      * @return array
