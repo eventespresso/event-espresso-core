@@ -54,6 +54,11 @@ class SharedCoffeeMaker extends CoffeeMaker
 				array( $reflector->getName(), 'instance' ),
 				$this->injector()->resolveDependencies( $reflector, $arguments )
 			);
+		} else if ( method_exists( $reflector->getName(), 'new_instance' ) ) {
+			$service = call_user_func_array(
+				array( $reflector->getName(), 'new_instance' ),
+				$this->injector()->resolveDependencies( $reflector, $arguments )
+			);
 		} else {
 			$service = $reflector->newInstanceArgs(
 				$this->injector()->resolveDependencies( $reflector, $arguments )
