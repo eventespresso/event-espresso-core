@@ -34,11 +34,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * Collection constructor
 	  *
 	  * @param string $collection_interface
-	  * @param bool   $enforce_contract
 	  * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
 	  */
-	 public function __construct( $collection_interface = '', $enforce_contract = true ) {
-		 $this->setCollectionInterface( $collection_interface, $enforce_contract );
+	 public function __construct( $collection_interface ) {
+		 $this->setCollectionInterface( $collection_interface );
 	 }
 
 
@@ -48,14 +47,10 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  *
 	  * @access protected
 	  * @param  string $collection_interface
-	  * @param         $enforce_contract
 	  * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
 	  */
-	 protected function setCollectionInterface( $collection_interface, $enforce_contract ) {
-		 if (
-			 $enforce_contract
-			 && ! ( interface_exists( $collection_interface ) || class_exists( $collection_interface ) )
-		 ) {
+	 protected function setCollectionInterface( $collection_interface ) {
+		 if ( ! ( interface_exists( $collection_interface ) || class_exists( $collection_interface ) ) ) {
 			 throw new InvalidInterfaceException( $collection_interface );
 		 }
 		 $this->collection_interface = $collection_interface;
@@ -76,7 +71,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	  * @throws \EventEspresso\core\exceptions\InvalidEntityException
 	  */
 	 public function add( $object, $identifier = null ) {
-		 if ( $this->collection_interface !== '' && ! $object instanceof $this->collection_interface ) {
+		 if ( ! $object instanceof $this->collection_interface ) {
 			 throw new InvalidEntityException( get_class( $object ), $this->collection_interface );
 		 }
 		 $this->attach( $object );
