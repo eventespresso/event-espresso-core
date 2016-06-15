@@ -3,6 +3,7 @@ namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
+use EventEspresso\core\services\container\exceptions\InstantiationException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -122,6 +123,34 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
 
 
     /**
+     * Examines the constructor to determine which method should be used for instantiation
+     *
+     * @param \ReflectionClass $reflector
+     * @return mixed
+     */
+    protected function resolveInstantiationMethod(\ReflectionClass $reflector)
+    {
+        if ($reflector->getConstructor() === null) {
+            return 'NewInstance';
+        } else if ($reflector->isInstantiable()) {
+            return 'NewInstanceArgs';
+        } else if (method_exists($reflector->getName(), 'instance')) {
+            return 'instance';
+        } else if (method_exists($reflector->getName(), 'new_instance')) {
+            return 'new_instance';
+        } else if (method_exists($reflector->getName(), 'new_instance_from_db')) {
+            return 'new_instance_from_db';
+        } else {
+            throw new InstantiationException($reflector->getName());
+        }
+    }
+
+
+
+    /**
+     * Ensures files for classes that are not PSR-4 compatible are loaded
+     * and then verifies that classes exist where applicable
+     *
      * @param RecipeInterface $recipe
      * @throws InvalidClassException
      */
