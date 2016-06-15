@@ -154,11 +154,11 @@ class CoffeePot implements CoffeePotInterface
 		// create collection for storing shared services
 		$this->carafe    = new Collection( '', false );
 		// create collection for storing recipes that tell how to build services and entities
-		$this->recipes   = new Collection( '', false );
+		$this->recipes   = new Collection( 'EventEspresso\core\services\container\RecipeInterface' );
 		// create collection for storing closures for constructing new entities
-		$this->reservoir = new Collection( '', false );
+		$this->reservoir = new Collection( 'Closure' );
 		// create collection for storing the generators that build our services and entity closures
-		$this->coffee_makers = new Collection( '\EventEspresso\core\services\container\CoffeeMakerInterface' );
+		$this->coffee_makers = new Collection( 'EventEspresso\core\services\container\CoffeeMakerInterface' );
 	}
 
 
@@ -252,7 +252,8 @@ class CoffeePot implements CoffeePotInterface
 		} else {
 			// if identifier is for a non-shared entity,
 			// then either a cached closure already existed, or was just brewed
-			$entity = $this->reservoir->get( $identifier );
+			$closure = $this->reservoir->get( $identifier );
+			$entity = $closure( $arguments );
 		}
 		return $entity;
 	}
@@ -262,10 +263,11 @@ class CoffeePot implements CoffeePotInterface
 	/**
 	 * @param CoffeeMakerInterface $coffee_maker
 	 * @param string               $type
+	 * @return bool
 	 */
 	public function addCoffeeMaker( CoffeeMakerInterface $coffee_maker, $type )
 	{
-		$this->coffee_makers->add( $coffee_maker, CoffeeMaker::validateType( $type ) );
+		return $this->coffee_makers->add( $coffee_maker, CoffeeMaker::validateType( $type ) );
 	}
 
 
@@ -361,7 +363,7 @@ class CoffeePot implements CoffeePotInterface
 	 *
 	 * @param  string $identifier
 	 * @param  array $aliases
-	 * @return string
+	 * @return void
 	 * @throws InvalidIdentifierException
 	 */
 	public function addAliases( $identifier, $aliases )
@@ -370,7 +372,7 @@ class CoffeePot implements CoffeePotInterface
 			return;
 		}
 		$identifier = $this->processIdentifier( $identifier );
-		foreach ( $aliases as $alias ) {
+		foreach ( (array) $aliases as $alias ) {
 			$this->filters[ $this->processIdentifier( $alias ) ] = $identifier;
 		}
 	}
