@@ -44,40 +44,32 @@ class NewCoffeeMaker extends CoffeeMaker
     {
         $this->resolveClassAndFilepath($recipe);
         $reflector = $this->injector()->getReflectionClass($recipe->fqcn());
-        if ($reflector->getConstructor() === null) {
-            $closure = function () use ($reflector) {
-                return $reflector->newInstance();
-            };
-        } else if ($reflector->isInstantiable()) {
-            $injector = $this->injector();
-            $closure = function ($arguments) use ($reflector, $injector) {
-                return $reflector->newInstanceArgs(
-                    $injector->resolveDependencies($reflector, $arguments)
-                );
-            };
-        } else if (method_exists($reflector->getName(), 'instance')) {
-            $injector = $this->injector();
-            $closure = function ($arguments) use ($reflector, $injector) {
-                return call_user_func_array(
-                    array($reflector->getName(), 'instance'),
-                    $injector->resolveDependencies($reflector, $arguments)
-                );
-            };
-        } else if (method_exists($reflector->getName(), 'new_instance')) {
-            $injector = $this->injector();
-            $closure = function ($arguments) use ($reflector, $injector) {
-                return call_user_func_array(
-                    array($reflector->getName(), 'new_instance'),
-                    $injector->resolveDependencies($reflector, $arguments)
-                );
-            };
-        } else {
-            $injector = $this->injector();
-            $closure = function ($arguments) use ($reflector, $injector) {
-                return $reflector->newInstanceArgs(
-                    $injector->resolveDependencies($reflector, $arguments)
-                );
-            };
+        $method = $this->resolveInstantiationMethod($reflector);
+        switch ($method) {
+            case 'instance' :
+            case 'new_instance' :
+            case 'new_instance_from_db';
+                $injector = $this->injector();
+                $closure = function ($arguments) use ($reflector, $method, $injector) {
+                    return call_user_func_array(
+                        array($reflector->getName(), $method),
+                        $injector->resolveDependencies($reflector, $arguments)
+                    );
+                };
+                break;
+            case 'newInstance' :
+                $closure = function () use ($reflector) {
+                    return $reflector->newInstance();
+                };
+                break;
+            case 'newInstanceArgs' :
+            default :
+                $injector = $this->injector();
+                $closure = function ($arguments) use ($reflector, $injector) {
+                    return $reflector->newInstanceArgs(
+                        $injector->resolveDependencies($reflector, $arguments)
+                    );
+                };
         }
         return $this->coffeePot()->addClosure($recipe->identifier(), $closure);
     }
