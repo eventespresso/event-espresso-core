@@ -78,6 +78,10 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		));
 		$this->_layout_strategy = new EE_Admin_Two_Column_Layout();
 		parent::__construct($options_array);
+		$debug_mode = $this->_subsections[ 'PMD_debug_mode' ];
+		if( $debug_mode instanceof EE_Form_Input_Base ) {
+			$debug_mode->set_html_help_text( __( 'This Gateways has a Sandbox Server (also known as Testing Server, Quality Assurance Server, etc). While in debug mode and using this sandbox server, real payments will not be processed.', 'event_espresso' ) );
+		}
 	}
 
 
