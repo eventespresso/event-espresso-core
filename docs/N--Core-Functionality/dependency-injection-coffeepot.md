@@ -282,3 +282,24 @@ $this->CoffeePot->addRecipe(
 ```
 
 Now anytime **CoffeePot** encounters a class that type hints for ` OtherInterface ` it will inject the cached instance of ` OtherClass `.
+
+
+###WILDCARD * Recipes
+
+Building Recipes for EVERY single class would be really tedious, so CoffeePot supports Wildcards in both the class names and filepaths.
+Here's a Recipe that handles ALL of the standard core EE db model classes:
+
+```
+$coffee_pot->addRecipe(
+    new EventEspresso\core\services\container\Recipe(
+        'EEM_*', // targets any class using the "EEM_" prefix
+        CoffeeMaker::BREW_SHARED, // we want shared services (like singletons)
+        array(),	// no filters (aliases)
+        EE_MODELS . '*.model.php' // replaces wildcard with full class name
+    )
+);
+$attendee_model = $coffee_pot->brew( 'EEM_Attendee' );
+$registration_model = $coffee_pot->brew( 'EEM_Registration' );
+$transaction_model = $coffee_pot->brew( 'EEM_Transaction' );
+```
+all of the returned objects are correct and are all handled by one Recipe
