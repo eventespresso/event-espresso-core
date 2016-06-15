@@ -9,6 +9,8 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  * Interface RecipeInterface
+ * for Recipe DTOs (Data Transfer Object) used in CoffeePot
+ * for relaying information about how to construct an object
  *
  * @package EventEspresso\core\services\container
  */
@@ -51,13 +53,22 @@ interface RecipeInterface
 
 
     /**
-     * @param string $identifier
+     * @param  string $identifier Identifier for the entity class that the Recipe applies to
+     *                            Typically a Fully Qualified Class Name
      */
     public function setIdentifier($identifier);
 
 
 
     /**
+     * Ensures incoming string is a valid Fully Qualified Class Name,
+     * except if this is the default wildcard Recipe ( * ),
+     * or it's NOT an actual FQCN because the Recipe is using filepaths
+     * for classes that are not PSR-4 compatible
+     * PLZ NOTE:
+     *  Recipe::setFqcn() has a check to see if Recipe::$paths is empty or not,
+     *  therefore you should always call Recipe::setPaths() before Recipe::setFqcn()
+     *
      * @param string $fqcn
      */
     public function setFqcn($fqcn);
@@ -65,20 +76,28 @@ interface RecipeInterface
 
 
     /**
-     * @param array $filters
+     * @param array $filters    an array of filters where keys are the aliases and values are the FQCNs
+     *                          example:
+     *                          array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
      */
     public function setFilters(array $filters);
 
 
 
     /**
-     * @param string $type
+     * @param string $type one of the class constants returned from CoffeeMaker::getTypes()
      */
     public function setType($type = CoffeeMaker::BREW_NEW);
 
 
 
     /**
+     * Ensures incoming paths is a valid filepath, or array of valid filepaths,
+     * and merges them in with any existing filepaths
+     * PLZ NOTE:
+     *  Recipe::setFqcn() has a check to see if Recipe::$paths is empty or not,
+     *  therefore you should always call Recipe::setPaths() before Recipe::setFqcn()
+     *
      * @param string|array $paths
      */
     public function setPaths($paths = array());
