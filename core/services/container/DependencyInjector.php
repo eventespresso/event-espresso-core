@@ -138,6 +138,11 @@ class DependencyInjector implements InjectorInterface
 	 */
 	public function resolveDependencies( \ReflectionClass $reflector, $arguments = array() )
 	{
+		// if arguments array is numerically and sequentially indexed, then we want it to remain as is,
+		// else wrap it in an additional array so that it doesn't get split into multiple parameters
+		$arguments = $this->arrayIsNumericallyAndSequentiallyIndexed( $arguments )
+			? $arguments
+			: array( $arguments );
 		$resolved_parameters = array();
 		// let's examine the constructor
 		// let's examine the constructor
@@ -201,6 +206,18 @@ class DependencyInjector implements InjectorInterface
 			}
 		}
 		return $resolved_parameters;
+	}
+
+
+
+	/**
+	 * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+	 * @param array $array
+	 * @return bool
+	 */
+	protected function arrayIsNumericallyAndSequentiallyIndexed( array $array )
+	{
+		return ! empty( $array ) ? array_keys( $array ) === range( 0, count( $array ) - 1 ) : true;
 	}
 
 
