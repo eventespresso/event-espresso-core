@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\CollectionInterface;
+use EventEspresso\core\services\collections\LooseCollection;
 use EventEspresso\core\services\container\exceptions\InvalidServiceException;
 use EventEspresso\core\services\container\exceptions\ServiceExistsException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
@@ -78,7 +79,7 @@ class CoffeePot implements CoffeePotInterface
         // array for storing class aliases
         $this->filters = array();
         // create collection for storing shared services
-        $this->carafe = new Collection('', false);
+        $this->carafe = new LooseCollection( '' );
         // create collection for storing recipes that tell how to build services and entities
         $this->recipes = new Collection('EventEspresso\core\services\container\RecipeInterface');
         // create collection for storing closures for constructing new entities
