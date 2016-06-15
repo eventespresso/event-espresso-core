@@ -43,26 +43,24 @@ class SharedCoffeeMaker extends CoffeeMaker
     {
         $this->resolveClassAndFilepath($recipe);
         $reflector = $this->injector()->getReflectionClass($recipe->fqcn());
-        if ($reflector->getConstructor() === null) {
-            $service = $reflector->newInstance();
-        } else if ($reflector->isInstantiable()) {
-            $service = $reflector->newInstanceArgs(
-                $this->injector()->resolveDependencies($reflector, $arguments)
-            );
-        } else if (method_exists($reflector->getName(), 'instance')) {
-            $service = call_user_func_array(
-                array($reflector->getName(), 'instance'),
-                $this->injector()->resolveDependencies($reflector, $arguments)
-            );
-        } else if (method_exists($reflector->getName(), 'new_instance')) {
-            $service = call_user_func_array(
-                array($reflector->getName(), 'new_instance'),
-                $this->injector()->resolveDependencies($reflector, $arguments)
-            );
-        } else {
-            $service = $reflector->newInstanceArgs(
-                $this->injector()->resolveDependencies($reflector, $arguments)
-            );
+        $method = $this->resolveInstantiationMethod($reflector);
+        switch ($method) {
+            case 'instance' :
+            case 'new_instance' :
+            case 'new_instance_from_db';
+                $service = call_user_func_array(
+                    array($reflector->getName(), $method),
+                    $this->injector()->resolveDependencies($reflector, $arguments)
+                );
+                break;
+            case 'newInstance' :
+                $service = $reflector->newInstance();
+                break;
+            case 'newInstanceArgs' :
+            default :
+                $service = $reflector->newInstanceArgs(
+                    $this->injector()->resolveDependencies($reflector, $arguments)
+                );
         }
         return $this->coffeePot()->addService($recipe->identifier(), $service);
     }
