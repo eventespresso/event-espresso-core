@@ -384,11 +384,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Gets the HTML, JS, and CSS necessary to display this field according
-	 * to the parent form's layout strategy
+	 * Gets the HTML
 	 * @return string
 	 */
-	public function get_html_and_js(){
+	public function get_html(){
 		return $this->_parent_section->get_html_for_input($this);
 	}
 
@@ -641,7 +640,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	public function get_jquery_validation_rules(){
-
+		$jquery_validation_js = array();
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
 			$jquery_validation_rules = array_replace_recursive(
@@ -651,9 +650,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 		if(! empty($jquery_validation_rules)){
-			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
-		}else{
-			return array();
+			foreach( $this->get_display_strategy()->get_html_input_ids( true ) as $html_id_with_pound_sign ) {
+				$jquery_validation_js[ $html_id_with_pound_sign ] = $jquery_validation_rules;
+			}
 		}
 		return $jquery_validation_js;
 	}
@@ -882,6 +881,54 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return TRUE;
 		}else{
 			return FALSE;
+		}
+	}
+
+	/**
+	 * Overrides parent to add js data from validation and display strategies
+	 *
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data( $form_other_js_data = array() ) {
+		$form_other_js_data = $this->get_other_js_data_from_strategies( $form_other_js_data );
+		return $form_other_js_data;
+	}
+
+
+
+	/**
+	 * Gets other JS data for localization from this input's strategies, like
+	 * the validation strategies and the display strategy
+	 *
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data_from_strategies( $form_other_js_data = array() ) {
+		$form_other_js_data = $this->get_display_strategy()->get_other_js_data( $form_other_js_data );
+		foreach( $this->get_validation_strategies() as $validation_strategy ) {
+			$form_other_js_data = $validation_strategy->get_other_js_data( $form_other_js_data );
+		}
+		return $form_other_js_data;
+	}
+
+	/**
+	 * Override parent because we want to give our strategies an opportunity to enqueue some js and css
+	 * @return void
+	 */
+	public function enqueue_js(){
+		//ask our display strategy and validation strategies if they have js to enqueue
+		$this->enqueue_js_from_strategies();
+	}
+
+	/**
+	 * Tells strategies when its ok to enqueue their js and css
+	 * @return void
+	 */
+	public function enqueue_js_from_strategies() {
+		$this->get_display_strategy()->enqueue_js();
+		foreach( $this->get_validation_strategies() as $validation_strategy ) {
+			$validation_strategy->enqueue_js();
 		}
 	}
 }

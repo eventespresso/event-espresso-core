@@ -55,10 +55,10 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	public function layout_subsection( $form_section ){
 		$html = '';
 		if ( $form_section instanceof EE_Form_Section_HTML ) {
-			$html .= $form_section->get_html_and_js();
+			$html .= $form_section->get_html();
 		} else {
 			$html .= EEH_HTML::tr(
-				EEH_HTML::td( $form_section->get_html_and_js(), '', '', '', 'colspan="2"' )
+				EEH_HTML::td( $form_section->get_html(), '', '', '', 'colspan="2"' )
 			);
 		}
 		return $html;

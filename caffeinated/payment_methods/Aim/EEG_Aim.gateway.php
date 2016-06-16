@@ -26,9 +26,17 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EEG_Aim extends EE_Onsite_Gateway{
+
+	const LIVE_URL    = 'https://secure2.authorize.net/gateway/transact.dll'; //Authnet URL
+
+	const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
+
 	protected $_login_id;
+
 	protected $_transaction_key;
+
 	protected $_server;
+
 	protected $_currencies_supported = array(
 		'AUD',
 		'USD',
@@ -37,41 +45,95 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		'GBP',
 		'NZD',
 	);
+
 	/**
 	 * Whether to send test transactions (even to live site)
+	 *
 	 * @var boolean
 	 */
 	protected $_test_transactions;
-	const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll'; //Authnet URL
-	const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
-	private $VERIFY_PEER = false;
-	private $_x_post_fields = array(
-		"version" => "3.1",
-		"delim_char" => ",",
-		"delim_data" => "TRUE",
+
+	private   $VERIFY_PEER            = false;
+
+	private   $_x_post_fields         = array(
+		"version"        => "3.1",
+		"delim_char"     => ",",
+		"delim_data"     => "TRUE",
 		"relay_response" => "FALSE",
-		"encap_char" => "|",
+		"encap_char"     => "|",
 	);
-	private $_additional_line_items = array();
+
+	private   $_additional_line_items = array();
+
 	/**
 	 * A list of all fields in the AIM API.
 	 * Used to warn user if they try to set a field not offered in the API.
 	 */
-	private $_all_aim_fields = array("address", "allow_partial_auth", "amount",
-		"auth_code", "authentication_indicator", "bank_aba_code", "bank_acct_name",
-		"bank_acct_num", "bank_acct_type", "bank_check_number", "bank_name",
-		"card_code", "card_num", "cardholder_authentication_value", "city", "company",
-		"country", "cust_id", "customer_ip", "delim_char", "delim_data", "description",
-		"duplicate_window", "duty", "echeck_type", "email", "email_customer",
-		"encap_char", "exp_date", "fax", "first_name", "footer_email_receipt",
-		"freight", "header_email_receipt", "invoice_num", "last_name", "line_item",
-		"login", "method", "phone", "po_num", "recurring_billing", "relay_response",
-		"ship_to_address", "ship_to_city", "ship_to_company", "ship_to_country",
-		"ship_to_first_name", "ship_to_last_name", "ship_to_state", "ship_to_zip",
-		"split_tender_id", "state", "tax", "tax_exempt", "test_request", "tran_key",
-		"trans_id", "type", "version", "zip", "solution_id"
+	private $_all_aim_fields = array(
+		"address",
+		"allow_partial_auth",
+		"amount",
+		"auth_code",
+		"authentication_indicator",
+		"bank_aba_code",
+		"bank_acct_name",
+		"bank_acct_num",
+		"bank_acct_type",
+		"bank_check_number",
+		"bank_name",
+		"card_code",
+		"card_num",
+		"cardholder_authentication_value",
+		"city",
+		"company",
+		"country",
+		"cust_id",
+		"customer_ip",
+		"delim_char",
+		"delim_data",
+		"description",
+		"duplicate_window",
+		"duty",
+		"echeck_type",
+		"email",
+		"email_customer",
+		"encap_char",
+		"exp_date",
+		"fax",
+		"first_name",
+		"footer_email_receipt",
+		"freight",
+		"header_email_receipt",
+		"invoice_num",
+		"last_name",
+		"line_item",
+		"login",
+		"method",
+		"phone",
+		"po_num",
+		"recurring_billing",
+		"relay_response",
+		"ship_to_address",
+		"ship_to_city",
+		"ship_to_company",
+		"ship_to_country",
+		"ship_to_first_name",
+		"ship_to_last_name",
+		"ship_to_state",
+		"ship_to_zip",
+		"split_tender_id",
+		"state",
+		"tax",
+		"tax_exempt",
+		"test_request",
+		"tran_key",
+		"trans_id",
+		"type",
+		"version",
+		"zip",
+		"solution_id"
 	);
-	
+
 	/**
 	 * Gets the URL where the request should go. This is filterable
 	 * @return string
@@ -83,20 +145,22 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$this
 		);
 	}
-	
+
 	/**
 	 * TEMPORARY CALLBACK! Do not use
-	 * Callback which filters the server url. This is added so site admins can test
-	 * integration with the June 30th 2016 Authorize.net switch to Akamai servers
+	 * Callback which filters the server url. This is added so site admins can revert to using
+	 * the old AIM server in case Akamai service breaks their integration.
+	 * Using Akamai will, however, be mandatory on June 30th 2016 Authorize.net
 	 * (see http://www.authorize.net/support/akamaifaqs/#firewall?utm_campaign=April%202016%20Technical%20Updates%20for%20Merchants.html&utm_medium=email&utm_source=Eloqua&elqTrackId=46103bdc375c411a979c2f658fc99074&elq=7026706360154fee9b6d588b27d8eb6a&elqaid=506&elqat=1&elqCampaignId=343)
 	 * Once that happens, this will be obsolete and WILL BE REMOVED.
 	 * @param string $url
 	 * @param EEG_Aim $gateway_object
 	 * @return string
 	 */
-	public function possibly_use_akamai_server( $url, EEG_Aim $gateway_object ) {
-		if( $gateway_object->_server === 'akamai' && ! $gateway_object->_debug_mode ) {
-			return 'https://secure2.authorize.net/gateway/transact.dll';
+	public function possibly_use_deprecated_aim_server( $url, EEG_Aim $gateway_object ) {
+		if(  $gateway_object->_server === 'authorize.net'
+			&& ! $gateway_object->_debug_mode ) {
+			return 'https://secure.authorize.net/gateway/transact.dll';
 		} else {
 			return $url;
 		}
@@ -118,7 +182,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 */
 
 	public function do_direct_payment($payment, $billing_info = null) {
-			add_filter( 'FHEE__EEG_Aim___get_server_url', array( $this, 'possibly_use_akamai_server' ), 10, 2 );
+			add_filter( 'FHEE__EEG_Aim___get_server_url', array( $this, 'possibly_use_deprecated_aim_server' ), 10, 2 );
 			// Enable test mode if needed
 			//4007000000027  <-- test successful visa
 			//4222222222222  <-- test failure card number
@@ -164,8 +228,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$this->setField('fax', $billing_info['fax']);
 			$this->setField('cust_id', $primary_registrant->ID());
 			$this->setField('phone', $billing_info['phone']);
-			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
-			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
+			//invoice_num would be nice to have it be unique per SPCO page-load, that way if users
+			//press back, they don't submit a duplicate. However, we may be keeping the user on teh same spco page
 			//in which case, we need to generate teh invoice num per request right here...
 			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
 			//tell AIM that any duplicates sent in the next 5 minutes are to be ignored
@@ -187,8 +251,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				}
 				$payment_status = $response->approved ? $this->_pay_model->approved_status() : $this->_pay_model->declined_status();
 				$payment->set_status($payment_status);
-				//make sure we interpret the AMT as a float, not an international string (where periods are thousand seperators)
-				$payment->set_amount( floatval( $response->amount ) );
+				//make sure we interpret the AMT as a float, not an international string (where periods are thousand separators)
+				$payment->set_amount( (float) $response->amount );
 				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
 				$payment->set_txn_id_chq_nmbr( $txn_id );
 				$payment->set_extra_accntng($primary_registrant->reg_code());
@@ -200,10 +264,10 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			}
 		return $payment;
 	}
-	
+
 	/**
 	 * Sets billing data for the upcoming request to AIM that is considered sensitive;
-	 * also this method can be overriden by children classes to easily change
+	 * also this method can be overridden by children classes to easily change
 	 * what billing data gets sent
 	 * @param array $billing_info
 	 */
@@ -229,10 +293,12 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			substr($item_description, 0, 255),
 			number_format(abs($item_quantity), 2, '.', ''),
 			number_format(abs($item_unit_price), 2, '.', ''),
-			$item_taxable == 'N' ? 'N' : 'Y'
+			$item_taxable === 'N' ? 'N' : 'Y'
 			);
 		$this->_additional_line_items[] = implode('<|>', $args);
 	}
+
+
 
 	/**
 	 * Set an individual name/value pair. This will append x_ to the name
@@ -240,6 +306,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 *
 	 * @param string $name
 	 * @param string $value
+	 * @throws AuthorizeNetException
 	 */
 	protected function setField($name, $value) {
 		if (in_array($name, $this->_all_aim_fields)) {
@@ -249,10 +316,14 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			To set a custom field use setCustomField('field','value') instead.");
 		}
 	}
+
+
+
 	/**
 	 * Posts the request to AuthorizeNet & returns response.
 	 *
-	 * @return AuthorizeNetARB_Response The response.
+	 * @param $payment
+	 * @return \EE_AuthorizeNetAIM_Response
 	 */
 	private function _sendRequest($payment) {
 		$this->_x_post_fields['login'] = $this->_login_id;
@@ -274,7 +345,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		curl_setopt($curl_request, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl_request, CURLOPT_SSL_VERIFYHOST, 2);
 		if ($this->VERIFY_PEER) {
-			curl_setopt($curl_request, CURLOPT_CAINFO, dirname(dirname(__FILE__)) . '/ssl/cert.pem');
+			curl_setopt($curl_request, CURLOPT_CAINFO, dirname( __DIR__ ) . '/ssl/cert.pem');
 		} else {
 			curl_setopt($curl_request, CURLOPT_SSL_VERIFYPEER, false);
 		}
@@ -306,13 +377,17 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				}
 			}
 		}
-		$this->log(array('AIM Request sent:'=>$request_array),$payment);
+		$this->log(array('AIM Request sent:'=>$request_array, 'Server URL' => $this->_get_server_url() ),$payment);
 	}
+
+
 
 	/**
 	 * Logs the response and cleans it
+	 *
 	 * @param EE_AuthorizeNetAIM_Response $response_obj
-	 * @param EE_Payment $payment
+	 * @param EE_Payment                  $payment
+	 * @return \EE_AuthorizeNetAIM_Response
 	 */
 	private function _log_and_clean_response($response_obj,$payment){
 		$response_obj->account_number = '';
@@ -323,18 +398,21 @@ class EEG_Aim extends EE_Onsite_Gateway{
 }
 
 
+
 /**
+ * Class EE_AuthorizeNetAIM_Response
+ *
  * Parses an AuthorizeNet AIM Response.
  *
- * @package	AuthorizeNet
+ * @package    AuthorizeNet
  * @subpackage AuthorizeNetAIM
  */
 class EE_AuthorizeNetAIM_Response {
 
-	const APPROVED = 1;
-	const DECLINED = 2;
-	const ERROR = 3;
-	const HELD = 4;
+	const APPROVED = '1';
+	const DECLINED = '2';
+	const ERROR = '3';
+	const HELD = '4';
 
 	protected $_x_post_fields = array(
 		"version" => "3.1",
@@ -396,12 +474,12 @@ class EE_AuthorizeNetAIM_Response {
 	private $_response_array = array(); // An array with the split response.
 
 	/**
-	 * Constructor. Parses the AuthorizeNet response string.
+	 * Constructor. Parses the AuthorizeNet response string
 	 *
-	 * @param string $response	  The response from the AuthNet server.
-	 * @param string $delimiter	 The delimiter used (default is ",")
-	 * @param string $encap_char	The encap_char used (default is "|")
-	 * @param array  $custom_fields Any custom fields set in the request.
+	 * @param string $response The response from the AuthNet server.
+	 * @var string $delimiter	 The delimiter used (default is ",")
+	 * @var string $encap_char	The encap_char used (default is "|")
+	 * @var array  $custom_fields Any custom fields set in the request.
 	 */
 
 	public function __construct($response) {
@@ -476,10 +554,10 @@ class EE_AuthorizeNetAIM_Response {
 			$this->requested_amount = $this->_response_array[53];
 			$this->balance_on_card = $this->_response_array[54];
 
-			$this->approved = ($this->response_code == self::APPROVED);
-			$this->declined = ($this->response_code == self::DECLINED);
-			$this->error = ($this->response_code == self::ERROR);
-			$this->held = ($this->response_code == self::HELD);
+			$this->approved = ($this->response_code === self::APPROVED);
+			$this->declined = ($this->response_code === self::DECLINED);
+			$this->error = ($this->response_code === self::ERROR);
+			$this->held = ($this->response_code === self::HELD);
 
 			if ($this->error || $this->declined || $this->held) {
 				$this->error_message = '<p><strong class="credit_card_failure">Attention: your transaction was declined for the following reason(s):</strong><br />' . $this->response_reason_text . '<br /><span class="response_code">Response Code: ' . $this->response_code . '<br /></span><span class="response_subcode">Response Subcode: ' . $this->response_subcode . '</span></p><p>To try again, <a href="#payment_options">please click here</a>.</p> ';
@@ -499,6 +577,28 @@ class EE_AuthorizeNetAIM_Response {
 		}
 	}
 
+}
+
+if ( ! class_exists( 'AuthorizeNetException' ) ) {
+	/**
+	 * Class AuthorizeNetException
+	 *
+	 * @package    AuthorizeNet
+	 */
+	class AuthorizeNetException extends Exception {
+
+		/**
+		 * Construct the exception. Note: The message is NOT binary safe.
+		 * @link http://php.net/manual/en/exception.construct.php
+		 * @param string $message [optional] The Exception message to throw.
+		 * @param int $code [optional] The Exception code.
+		 * @param Exception $previous [optional] The previous exception used for the exception chaining. Since 5.3.0
+		 * @since 5.1.0
+		 */
+		public function __construct( $message = "", $code = 0, Exception $previous = null ) {
+			parent::__construct( $message, $code, $previous );
+		}
+	}
 }
 
 
