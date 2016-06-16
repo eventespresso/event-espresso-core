@@ -334,6 +334,17 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'post_type'=>'espresso_events',//post_type
 			'post_status'=>$post_status,//status
 		);
+		$cols_n_values_with_no_invalid_text = array();
+		foreach( $cols_n_values as $col => $value ) {
+			$value_sans_invalid_chars = $wpdb->strip_invalid_text_for_column( $this->_new_table, $col, $value );
+			if( ! is_wp_error( $value_sans_invalid_chars ) ) {
+				$cols_n_values_with_no_invalid_text[ $col ] = $value_sans_invalid_chars; 
+			} else {
+				//otherwise leave it as-is. It will blow everything up and stop the migration
+				$cols_n_values_with_no_invalid_text[ $col ] = $value;
+			}
+		}
+		$cols_n_values = $cols_n_values_with_no_invalid_text;
 		$datatypes = array(
 			'%s',//EVT_name
 			'%s',//EVT_desc
