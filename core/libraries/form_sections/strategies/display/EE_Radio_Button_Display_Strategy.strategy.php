@@ -36,6 +36,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strateg
 			$html .= ' type="radio"';
 			$html .= ' value="' . esc_attr( $value ) . '"';
 			$html .= $input->raw_value() === $value ? ' checked="checked"' : '';
+			$html .= ' ' . $this->_input->other_html_attributes();
 			$html .= '>&nbsp;';
 			$html .= $display_text;
 			$html .= EEH_HTML::nl( -1, 'radio' ) . '</label>';

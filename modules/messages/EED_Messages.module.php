@@ -66,7 +66,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * @return EED_Module
+	 * @return EED_Messages
 	 */
 	public static function instance() {
 		return parent::get_instance( __CLASS__ );
@@ -245,7 +245,7 @@ class EED_Messages  extends EED_Module {
 
 
 	/**
-	 * This gets executed on wp_cron jobs or when a batch request is initated on its own separate non regular wp request.
+	 * This gets executed on wp_cron jobs or when a batch request is initiated on its own separate non regular wp request.
 	 *
 	 */
 	public function run_cron() {
@@ -878,12 +878,14 @@ class EED_Messages  extends EED_Module {
 				)
 			)
 		);
-
-		$generated_queue = self::$_MSG_PROCESSOR->batch_generate_from_queue( $messages );
+		$generated_queue = false;
+		if ( $messages ) {
+			$generated_queue = self::$_MSG_PROCESSOR->batch_generate_from_queue( $messages );
+		}
 
 		if ( ! $generated_queue instanceof EE_Messages_Queue ) {
 			EE_Error::add_error(
-				__( 'The messages were not generated.  This is usually because there is already a batch being generated on a separate request.  You can wait a minute or two and try again.', 'event_espresso' ),
+				__( 'The messages were not generated. This could mean there is already a batch being generated on a separate request, or because the selected messages are not ready for generation. Please wait a minute or two and try again.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		}
@@ -912,12 +914,14 @@ class EED_Messages  extends EED_Module {
 				)
 			)
 		);
-
-		$sent_queue = self::$_MSG_PROCESSOR->batch_send_from_queue( $messages );
+		$sent_queue = false;
+		if ( $messages ) {
+			$sent_queue = self::$_MSG_PROCESSOR->batch_send_from_queue( $messages );
+		}
 
 		if ( ! $sent_queue instanceof EE_Messages_Queue ) {
 			EE_Error::add_error(
-				__( 'The messages were not sent.  This is usually because there is already a batch being sent on a separate request.  You can wait a minute or two and try again.', 'event_espresso' ),
+				__( 'The messages were not sent. This could mean there is already a batch being sent on a separate request, or because the selected messages are not sendable. Please wait a minute or two and try again.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
 		} else {
@@ -966,18 +970,47 @@ class EED_Messages  extends EED_Module {
 
 		//get queue and count
 		$queue_count = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_resend );
-		if ( $queue_count > 0 ) {
+
+		if (
+			$queue_count > 0
+		) {
 			EE_Error::add_success(
 				sprintf(
 					_n(
 						'%d message successfully queued for resending.',
-				        '%d messages successfully queued for resending.',
-				        $queue_count,
-				        'event_espresso'
-				    ),
-				    $queue_count
+						'%d messages successfully queued for resending.',
+						$queue_count,
+						'event_espresso'
+					),
+					$queue_count
 				)
 			);
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority
+		 */
+		} elseif (
+			apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', true )
+			|| EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			$queue_count = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue( EEM_Message::status_sent );
+			if ( $queue_count > 0 ) {
+				EE_Error::add_success(
+					sprintf(
+						_n(
+							'%d message successfully sent.',
+							'%d messages successfully sent.',
+							$queue_count,
+							'event_espresso'
+						),
+						$queue_count
+					)
+				);
+			} else {
+				EE_Error::add_error(
+					__( 'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.', 'event_espresso' ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
 		} else {
 			EE_Error::add_error(
 				__( 'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.', 'event_espresso' ),
@@ -1016,6 +1049,20 @@ class EED_Messages  extends EED_Module {
 			}
 		}
 
+	}
+
+
+
+
+	/**
+	 *  Resets all the static properties in this class when called.
+	 */
+	public static function reset() {
+		self::$_EEMSG = null;
+		self::$_message_resource_manager = null;
+		self::$_MSG_PROCESSOR = null;
+		self::$_MSG_PATHS = null;
+		self::$_TMP_PACKS = array();
 	}
 
 }
