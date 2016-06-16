@@ -20,12 +20,13 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 	public function _set_props() {
 		$this->label = __('Default', 'event_espresso');
 		$this->dbref = 'default';
-		$this->description = __('This is the default template pack included with Event Espress core messages system.', 'event_espresso');
+		$this->description = __('This is the default template pack included with Event Espresso core messages system.', 'event_espresso');
 		$this->_base_url = EE_PLUGIN_DIR_URL . 'core/libraries/messages/defaults/default/';
 		$this->_base_path = EE_LIBRARIES . 'messages/defaults/default/';
 		$this->_supports = array(
 			'email' => array(
 				'cancelled_registration', 'declined_registration', 'not_approved_registration', 'pending_approval', 'registration',
+					'registration_summary',
 				'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
 				),
 			'html' => array(

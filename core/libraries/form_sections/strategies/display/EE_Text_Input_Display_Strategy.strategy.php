@@ -27,13 +27,25 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 		$this->_type = $type;
 		parent::__construct();
 	}
+
+
+
 	/**
 	 * Gets the html "type" attribute's value
 	 * @return string
 	 */
 	function get_type(){
+		if (
+			$this->_type == 'email'
+			&& ! apply_filters( 'FHEE__EE_Text_Input_Display_Strategy__use_html5_email', false )
+		) {
+			return 'text';
+		}
 		return $this->_type;
 	}
+
+
+
 	/**
 	 *
 	 * @return string of html to display the field
@@ -48,7 +60,7 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base{
 		$input .= $this->_input->required() ? ' required' : '';
 		$input .= ' value="' . $this->_input->raw_value_in_form() . '"';
 		$input .= ' style="' . $this->_input->html_style() . '"';
-		$input .= $this->_input->html_other_attributes();
+		$input .= $this->_input->other_html_attributes();
 		$input .= '/>';
 		return $input;
 	}

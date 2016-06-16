@@ -1,4 +1,4 @@
-<h2><?php _e('Default Pricing', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Default Pricing', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows all default prices that have been created with Event Espresso. These default prices can be applied to all events that are created.', 'event_espresso'); ?>
 </p>

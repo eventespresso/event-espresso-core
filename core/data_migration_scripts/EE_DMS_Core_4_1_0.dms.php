@@ -111,13 +111,13 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 						ATT_ID BIGINT(20) UNSIGNED NOT NULL,
 						ATT_fname VARCHAR(45) NOT NULL,
 						ATT_lname VARCHAR(45) NOT	NULL,
-						ATT_address VARCHAR(45) DEFAULT	NULL,
-						ATT_address2 VARCHAR(45) DEFAULT	NULL,
+						ATT_address VARCHAR(255) DEFAULT	NULL,
+						ATT_address2 VARCHAR(255) DEFAULT	NULL,
 						ATT_city VARCHAR(45) DEFAULT	NULL,
 						STA_ID INT(10) DEFAULT	NULL,
 						CNT_ISO VARCHAR(45) DEFAULT	NULL,
 						ATT_zip VARCHAR(12) DEFAULT	NULL,
-						ATT_email VARCHAR(100) NOT NULL,
+						ATT_email VARCHAR(255) NOT NULL,
 						ATT_phone VARCHAR(45) DEFAULT NULL,
 							PRIMARY KEY  (ATTM_ID),
 								KEY ATT_fname (ATT_fname),
@@ -505,8 +505,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_venue_meta';
 		$sql = "VNUM_ID INT(11) NOT NULL AUTO_INCREMENT,
 			VNU_ID BIGINT(20) UNSIGNED NOT NULL DEFAULT 0,
-			VNU_address VARCHAR(100) DEFAULT NULL,
-			VNU_address2 VARCHAR(100) DEFAULT NULL,
+			VNU_address VARCHAR(255) DEFAULT NULL,
+			VNU_address2 VARCHAR(255) DEFAULT NULL,
 			VNU_city VARCHAR(100) DEFAULT NULL,
 			STA_ID INT(11) DEFAULT NULL,
 			CNT_ISO VARCHAR(2) DEFAULT NULL,
@@ -557,7 +557,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $state_table . "'") == $state_table ) {
+		if ( EEH_Activation::table_exists( $state_table ) ) {
 
 			$SQL = "SELECT COUNT('STA_ID') FROM " . $state_table;
 			$states = $wpdb->get_var($SQL);
@@ -649,7 +649,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
+		if ( EEH_Activation::table_exists( $country_table ) ) {
 
 			$SQL = "SELECT COUNT('CNT_ISO') FROM " . $country_table;
 			$countries = $wpdb->get_var($SQL);
@@ -901,7 +901,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_type_table = $wpdb->prefix."esp_price_type";
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '$price_type_table'") == $price_type_table) {
+		if ( EEH_Activation::table_exists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
 			$price_types_exist = $wpdb->get_var( $SQL );
@@ -934,7 +934,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
+		if ( EEH_Activation::table_exists(  $price_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
 			$prices_exist = $wpdb->get_var( $SQL );
@@ -960,7 +960,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$ticket_table = $wpdb->prefix."esp_ticket";
-		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_table'") == $ticket_table ) {
+		if ( EEH_Activation::table_exists( $ticket_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
 			$tickets_exist = $wpdb->get_var($SQL);
@@ -975,7 +975,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
 
-		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_price_table'") == $ticket_price_table ) {
+		if ( EEH_Activation::table_exists( $ticket_price_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
 			$ticket_prc_exist = $wpdb->get_var($SQL);

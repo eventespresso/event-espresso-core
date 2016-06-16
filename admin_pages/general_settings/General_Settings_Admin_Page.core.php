@@ -220,7 +220,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//scripts
 		wp_enqueue_script('ee_admin_js');
 	}
-	public function admin_init() {}
+
+	public function admin_init() {
+		EE_Registry::$i18n_js_strings[ 'invalid_server_response' ] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'error_occurred' ] = __( 'An error occurred! Please refresh the page and try again.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'confirm_delete_state' ] = __( 'Are you sure you want to delete this State / Province?', 'event_espresso' );
+		$protocol = isset( $_SERVER[ 'HTTPS' ] ) ? 'https://' : 'http://';
+		EE_Registry::$i18n_js_strings[ 'ajax_url' ] = admin_url( 'admin-ajax.php?page=espresso_general_settings', $protocol );
+	}
+
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
 
@@ -247,13 +255,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script( 'gen_settings_countries' );
 		wp_enqueue_style( 'organization-css' );
 
-		global $eei18n_js_strings;
-		$eei18n_js_strings['invalid_server_response'] = __( 'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['error_occurred'] = __(  'An error occurred! Please refresh the page and try again.', 'event_espresso' );
-		$eei18n_js_strings['confirm_delete_state'] = __(  'Are you sure you want to delete this State / Province?', 'event_espresso' );
-		$protocol = isset( $_SERVER['HTTPS'] ) ? 'https://' : 'http://';
-		$eei18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php?page=espresso_general_settings' , $protocol );
-		wp_localize_script( 'gen_settings_countries', 'eei18n', $eei18n_js_strings );
 	}
 
 
@@ -264,7 +265,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		// Check to make sure all of the main pages are setup properly,
 		// if not create the default pages and display an admin notice
-		EE_Registry::instance()->load_helper( 'Activation' );
 		EEH_Activation::verify_default_pages_exist();
 
 		$this->_transient_garbage_collection();
@@ -304,15 +304,15 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		);
 		foreach ( $critical_pages as $critical_page_name => $critical_page_id ) {
 			// has the page changed ?
-			if ( EE_Registry::instance()->CFG->core->$critical_page_name != $critical_page_id ) {
+			if ( EE_Registry::instance()->CFG->core->{$critical_page_name} !== $critical_page_id ) {
 				// grab post object for old page
-				$post = get_post( EE_Registry::instance()->CFG->core->$critical_page_name );
+				$post = get_post( EE_Registry::instance()->CFG->core->{$critical_page_name} );
 				// update post shortcodes for old page
-				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
+				EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $critical_page_id, $post );
 				// grab post object for new page
 				$post = get_post( $critical_page_id );
 				// update post shortcodes for new page
-				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
+				EventEspresso\core\admin\PostShortcodeTracking::parse_post_content_on_save( $critical_page_id, $post );
 			}
 		}
 		// set page IDs
@@ -363,7 +363,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		//UXIP settings
 		$this->_template_args['ee_ueip_optin'] = isset( EE_Registry::instance()->CFG->core->ee_ueip_optin ) ? EE_Registry::instance()->CFG->core->get_pretty( 'ee_ueip_optin' ) : TRUE;
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$STA_ID = isset( EE_Registry::instance()->CFG->organization->STA_ID ) ? EE_Registry::instance()->CFG->organization->STA_ID : 4;
 		$this->_template_args['states'] = new EE_Question_Form_Input(
 				EE_Question::new_instance ( array(
@@ -503,7 +502,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : $CNT_ISO;
 
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$this->_template_args['values'] = $this->_yes_no_values;
 
@@ -554,7 +552,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		}
 
 		// for ajax
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
@@ -609,7 +606,6 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			return '';
 		}
 		// for ajax
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
 		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
 		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'state_form_field_label_wrap' ), 10, 2 );
@@ -667,18 +663,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
-			EE_Error::add_error( __( 'An error occurred. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? sanitize_text_field( $this->_req_data['STA_abbrev'] ) : FALSE;
 		if ( ! $STA_abbrev ) {
-			EE_Error::add_error( __( 'An error occurred. No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No State ISO code or an invalid State ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 		$STA_name = isset( $this->_req_data['STA_name'] ) ?  sanitize_text_field( $this->_req_data['STA_name'] ) :
 			FALSE;
 		if ( ! $STA_name ) {
-			EE_Error::add_error( __( 'An error occurred. No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No State name or an invalid State name was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 
@@ -690,11 +686,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'STA_active' => TRUE
 			);
 			$success = EEM_State::instance()->insert ( $cols_n_values );
+			EE_Error::add_success( __( 'The State was added successfully.', 'event_espresso' ) );
 		}
 
 		if ( defined( 'DOING_AJAX' )) {
 			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE );
-			echo json_encode( array( 'return_data' => $CNT_ISO, 'success' => __( 'The State was added successfully.', 'event_espresso' ), 'errors' => $notices['errors'] ));
+			echo json_encode( array_merge( $notices, array( 'return_data' => $CNT_ISO ) ) );
 			die();
 		} else {
 			$this->_redirect_after_action( $success, 'State', 'added', array( 'action' => 'country_settings' ) );
@@ -714,7 +711,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
 		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? sanitize_text_field( $this->_req_data['STA_abbrev'] ) : FALSE;
 		if ( ! $STA_ID ) {
-			EE_Error::add_error( __( 'An error occurred. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = EEM_State::instance()->delete_by_ID( $STA_ID );
@@ -746,7 +743,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
-			EE_Error::add_error( __( 'An error occurred. No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No Country ISO code or an invalid Country ISO code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
 		$cols_n_values = array();

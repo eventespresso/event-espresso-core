@@ -65,8 +65,6 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_ticket_list() {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
-
 
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_ticket_list_for_main();
@@ -91,7 +89,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * This returns the parsed ticket list for main template;
 	 */
 	private function _get_ticket_list_for_main() {
-		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'attendee', 'line_item_list', 'primary_registration_details');
+		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'attendee', 'line_item_list', 'primary_registration_details', 'recipient_details' );
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$tktparsed = '';
@@ -112,7 +110,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_ticket_list_for_event() {
-		$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee', 'venue', 'line_item_list', 'primary_registration_details');
+		$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee', 'venue', 'line_item_list', 'primary_registration_details', 'recipient_details' );
 		$template = is_array($this->_data['template'] ) && isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 		$event = $this->_data['data'];
 
@@ -138,7 +136,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_ticket_list_for_attendee() {
-		$valid_shortcodes = array('ticket', 'event_list', 'datetime_list', 'attendee', 'primary_registration_details');
+		$valid_shortcodes = array('ticket', 'event_list', 'datetime_list', 'attendee', 'primary_registration_details', 'recipient_details');
 
 		$template = is_array($this->_data['template']) && isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 		$registration = $this->_data['data'];

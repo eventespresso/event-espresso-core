@@ -1,4 +1,4 @@
-<h2><?php _e('Messages Settings', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Messages Settings', 'event_espresso'); ?></strong></p>
 <p><?php _e('On its first activation, Event Espresso will automatically setup the core messenger (email) and message types (registration and payment).', 'event_espresso'); ?>
 </p>
 <p><strong><?php _e('Recommendations', 'event_espresso'); ?></strong><br />

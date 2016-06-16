@@ -4,19 +4,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link			http://www.eventespresso.com
- * @ version		4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_Messages_Addressee
  *
  * This class is just for preparing an Addressee object used by the Messages subsystem of EE.  We take an incoming array of data and set it up in a formatted object that will be consistent among all message_types. That way each element will be present in every addressee object but just might not contain a value depending on the data received.
@@ -36,9 +23,25 @@ class EE_Messages_Addressee extends EE_Base {
 	 */
 	public $user_id;  //if available we'll use this to set the fname and lname (admin)
 	public $fname; //this will always be the admin fname (set later via incoming user_id)
-	public $lname; //this will always be the admin lnmae (set later via incoming user_id)
+	public $lname; //this will always be the admin lname (set later via incoming user_id)
 	public $primary_registration_id;
 	public $attendee_registration_id;
+
+
+	/**
+	 * This is should represent the data object that can be used to regenerate this addressee if needed.
+	 * It is saved to the MSG_recipient_ID column in the generated EE_Message using this data.
+	 * @type int
+	 */
+	public $recipient_id;
+
+
+	/**
+	 * This represents the reference to the EE_Base_Class child that the $recipient_ID is for (eg. 'Registration', 'Attendee')
+	 * It is saved to the MSG_recipient_type column in the generated EE_Message using this data.
+	 * @type string
+	 */
+	public $recipient_type;
 
 
 	/**
@@ -52,12 +55,42 @@ class EE_Messages_Addressee extends EE_Base {
 	/**
 	 * Attendee related
 	 */
-	public $primary_att_obj; //holds the attendee object for the primary attendee
-	public $primary_reg_obj; //holds the reg object for the primary attendee
-	public $att_obj; //holds the attendee object for an attendee
-	public $reg_obj; //holds the registration object for an attendee
-	public $questions; //EE_Question[] (indexed by EE_Answer->ID())
-	public $answers; //EE_Answer[]
+
+	/**
+	 * holds the attendee object for the primary attendee
+	 * @type EE_Attendee $primary_att_obj
+	 */
+	public $primary_att_obj;
+
+	/**
+	 * holds the registration object for the primary attendee
+	 * @type EE_Registration $primary_reg_obj
+	 */
+	public $primary_reg_obj;
+
+	/**
+	 * holds the attendee object for an attendee
+	 * @type EE_Attendee $att_obj
+	 */
+	public $att_obj;
+
+	/**
+	 * holds the registration object for an attendee
+	 * @type EE_Registration $reg_obj
+	 */
+	public $reg_obj;
+
+	/**
+	 * array of EE_Question objects (indexed by EE_Answer->ID())
+	 * @type EE_Question[] $questions
+	 */
+	public $questions;
+
+	/**
+	 * array of EE_Answer objects
+	 * @type EE_Answer[] $answers
+	 */
+	public $answers;
 
 
 
@@ -111,13 +144,11 @@ class EE_Messages_Addressee extends EE_Base {
 
 
 
-
 	/**
 	 * constructor
 	 *
 	 * @access public
 	 * @param array $addressee_data We're expecting an incoming array of data that will be used to fill the properties for the object.
-	 * @return void
 	 */
 	public function __construct( $addressee_data ) {
 		$this->_data = $addressee_data;
@@ -136,8 +167,8 @@ class EE_Messages_Addressee extends EE_Base {
 	protected function _set_properties() {
 
 		foreach ( $this->_data as $prop => $value ) {
-			if( EEH_Class_Tools::has_property( $this, $prop ) )
-				$this->$prop = $value;
+			if( property_exists( $this, $prop ) )
+				$this->{$prop} = $value;
 		}
 
 		//if user_id present we'll use this to set the fname and lname and admin_email.

@@ -30,8 +30,8 @@ CREATE TABLE `wp_events_prices` (
 				'TTM_ID'=>new EE_Foreign_Key_Int_Field('TTM_ID', __('Ticket Template ID','event_espresso'), false, 0, 'Ticket_Template'),
 				'TKT_name'=>new EE_Plain_Text_Field('TKT_name', __('Ticket Name', 'event_espresso'), false, ''),
 				'TKT_description'=>new EE_Plain_Text_Field('TKT_description', __('Description of Ticket', 'event_espresso'), false, '' ),
-				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'TKT_start_date'=>new EE_Datetime_Field('TKT_start_date', __('Start time/date of Ticket','event_espresso'), false, time(), $timezone ),
+				'TKT_end_date'=>new EE_Datetime_Field('TKT_end_date', __('End time/date of Ticket','event_espresso'), false, time(), $timezone ),
 				'TKT_min'=>new EE_Integer_Field('TKT_min', __('Minimum quantity of this ticket that must be purchased', 'event_espresso'), false, 0 ),
 				'TKT_max'=>new EE_Integer_Field('TKT_max', __('Maximum quantity of this ticket that can be purchased in one transaction', 'event_espresso'), false, -1 ),
 				'TKT_price'=> new EE_Money_Field('TKT_price', 'Final calculated price for ticket', false, 0),
@@ -100,7 +100,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 	const price_type_member_discount = 3;
 	const price_type_percent_surcharge = 4;
 	const price_type_flat_surcharge = 5;
-	
+
 	function __construct() {
 		global $wpdb;
 		$this->_pretty_name = __("Prices", "event_espresso");
@@ -117,7 +117,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		//create the member discount if there is any
 		//commented-out because we may actually NOT be supporting this in 4.1
 //		if($old_row['event_cost'] != $old_row['member_price']){
-//			$member_price_discount_id = $this->_insert_new_member_price($old_row);	
+//			$member_price_discount_id = $this->_insert_new_member_price($old_row);
 //		}else{
 //			$member_price_discount_id = 0;
 //		}
@@ -154,7 +154,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			$this->_insert_datetime_ticket_relation($new_datetime_id, $ticket_id);
 		}
 		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_ticket_table, $tickets_for_old_price);
-		
+
 	}
 	/**
 	 * Creates a 4.1 price base type
@@ -162,7 +162,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 	 * @param type $old_price
 	 * @return int
 	 */
-	private function _insert_new_price($old_price){		
+	private function _insert_new_price($old_price){
 		global $wpdb;
 		$cols_n_values = array(
 			'PRT_ID'=>self::price_type_base,
@@ -173,7 +173,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			'PRC_order'=>0,
 			'PRC_deleted'=>false,
 			'PRC_parent'=>null
-		
+
 		);
 		$datatypes = array(
 			'%d',//PRT_ID
@@ -199,7 +199,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 	 * @param type $old_price
 	 * @return int
 	 */
-//	private function _insert_new_member_price($old_price){		
+//	private function _insert_new_member_price($old_price){
 //		$discount_amount = floatval($old_price['event_cost']) - floatval($old_price['member_price']);
 //		global $wpdb;
 //		$cols_n_values = array(
@@ -211,7 +211,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 //			'PRC_order'=>10,
 //			'PRC_deleted'=>false,
 //			'PRC_parent'=>null
-//		
+//
 //		);
 //		$datatypes = array(
 //			'%d',//PRT_ID
@@ -237,8 +237,8 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 	 * @param type $old_price
 	 * @return int
 	 */
-	private function _insert_new_surcharge_price($old_price){		
-		
+	private function _insert_new_surcharge_price($old_price){
+
 		if($old_price['surcharge_type'] == 'flat_rate'){
 			$price_type = self::price_type_flat_surcharge;
 		}else{
@@ -254,7 +254,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			'PRC_order'=>20,
 			'PRC_deleted'=>false,
 			'PRC_parent'=>null
-		
+
 		);
 		$datatypes = array(
 			'%d',//PRT_ID
@@ -312,7 +312,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			'TKT_row'=>0,//doesn't matter because UI reset this on first save anyways
 			'TKT_deleted'=>false,
 			'TKT_parent'=>0
-		
+
 		);
 		$datatypes = array(
 			'%d',//TTM_ID
@@ -341,7 +341,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	/**
 	 * Adds a join between a ticket and a price
 	 * @global type $wpdb
@@ -353,7 +353,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		$cols_n_values = array(
 			'TKT_ID'=>$new_ticket_id,
-			'PRC_ID'=>$new_price_id,		
+			'PRC_ID'=>$new_price_id,
 		);
 		$datatypes = array(
 			'%d',//TKT_ID
@@ -367,7 +367,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	/**
 	 * Adds a join between a ticket and a datetime
 	 * @global type $wpdb
@@ -379,7 +379,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		$cols_n_values = array(
 			'TKT_ID'=>$new_ticket_id,
-			'DTT_ID'=>$new_datetime_id,		
+			'DTT_ID'=>$new_datetime_id,
 		);
 		$datatypes = array(
 			'%d',//TKT_ID
@@ -393,7 +393,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	/**
 	 * Simply gets the 3.1 event row data
 	 * @global type $wpdb
@@ -413,7 +413,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 	private function _get_ticket_count(){
 		return $this->_ticket_count++;
 	}
-	
+
 	/**
 	 * Using the 3.1 event id, gets the 4.1 datetimes for it
 	 * @param int $old_event_id
@@ -426,5 +426,5 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		return $datetime_ids;
 	}
 }
-//@todo: tell users that in 3.1 the limit was on registration PER event,in 4.1 it's limit PER TICKET... SO, if they sell 2 different types of tickets 
+//@todo: tell users that in 3.1 the limit was on registration PER event,in 4.1 it's limit PER TICKET... SO, if they sell 2 different types of tickets
 //

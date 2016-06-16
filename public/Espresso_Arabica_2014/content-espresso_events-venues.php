@@ -1,6 +1,9 @@
 <?php
 //echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
-if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive() && espresso_display_venue_in_event_list() ) ) :
+if (
+	( is_single() && espresso_display_venue_in_event_details() )
+	|| ( is_archive() && espresso_display_venue_in_event_list() )
+) :
 	global $post;
 	do_action( 'AHEE_event_details_before_venue_details', $post );
 	$venue_name = espresso_venue_name( 0, 'details', FALSE );
@@ -12,7 +15,7 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 
 <div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
 	<h3 class="event-venues-h3 ee-event-h3">
-		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
+		<?php _e( 'Location', 'event_espresso' ); ?>
 	</h3>
 	<h4><strong><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; <strong> <?php echo $venue_name; ?></strong></h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
@@ -34,7 +37,7 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 		<?php if ( $venue_description ) : ?>
 	<p>
 		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
-		<?php echo $venue_description; ?>
+		<?php echo do_shortcode( $venue_description ); ?>
 	</p>
 		<?php endif;  ?>
 	<?php else : ?>
@@ -50,5 +53,16 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 <!-- .espresso-venue-dv -->
 <?php
 do_action( 'AHEE_event_details_after_venue_details', $post );
+else :
+	if ( espresso_venue_is_password_protected() ) :
+?>
+	<div class="espresso-venue-dv  espresso-password-protected-venue-dv" >
+		<h3 class="event-venues-h3 ee-event-h3">
+			<?php _e( 'Location', 'event_espresso' );?>
+		</h3>
+		<?php echo espresso_password_protected_venue_form(); ?>
+	</div>
+<?php
+	endif;
 endif;
 ?>

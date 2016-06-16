@@ -11,11 +11,6 @@ jQuery(document).ready(function($) {
 		theForm.submit();
 	});
 
-	var dates = $( '.datepicker' ).datepicker({
-		defaultDate: "-1m",
-		numberOfMonths: 2
-	});/**/
-
 	$('.confirm-delete').on( 'click', function() {
 		var what = $(this).attr('rel');
 		var answer = confirm( eei18n.confirm_delete );
@@ -27,30 +22,60 @@ jQuery(document).ready(function($) {
 
 	var dialog_content = {};
 	var d_contents = '';
+	var txn_admin_payments_table = $( '#txn-admin-payments-tbl' );
 
 
-
-	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-edit-lnk', function() {
+	txn_admin_payments_table.on( 'click', '.txn-admin-payment-action-edit-lnk', function() {
 		display_payments_and_refunds_modal_dialog();
-		$('.txn-reg-status-change-reg-status').val('NAN');
 		// grab payment ID
-		var PAY_ID = $(this).attr('rel');
-		$('#admin-modal-dialog-edit-payment-h2').show();
-		$('#admin-modal-dialog-edit-payment-h2 > span').html(PAY_ID);
-		// transfer values from table to modal box form
-		$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
-		$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
-		$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
-		$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
-		$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
-		$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
-		$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
-		$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
-		$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
-		$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).text() );
+		var PAY_ID = $(this).data( 'paymentId');
+		var payAmt = accounting.unformat( $('#payment-amount-' + PAY_ID ).text() );
 
-		$('#txn-admin-modal-dialog-edit-payment-lnk').show();
-		$('#txn-admin-modal-dialog-cancel-lnk').show();
+		//display depending on whether amount is negative (refund) or positive (payment).
+		if ( payAmt < 0 ) {
+			//refund
+			$('.txn-reg-status-change-reg-status').val('RCN');
+            $('#txn-admin-payment-type-inp').val(-1);
+			$('#admin-modal-dialog-edit-refund-h2').show();
+			$('#admin-modal-dialog-edit-refund-h2' ).find('span').html(PAY_ID);
+			// transfer values from table to modal box form
+			$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
+			$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
+			$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
+			$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+			$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
+			$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
+			$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
+			$('#txn-admin-payment-amount-inp').val( payAmt * -1 );
+			$('#txn-admin-apply-payment-to-all-registrations-inp').data( 'paymentId', PAY_ID );
+			$('#txn-admin-apply-payment-to-some-registrations-inp').data( 'paymentId', PAY_ID );
+
+			$('#txn-admin-modal-dialog-edit-refund-lnk').show();
+			$('#txn-admin-modal-dialog-cancel-lnk').show();
+		} else {
+			//payment
+			$('.txn-reg-status-change-reg-status').val('NAN');
+			$('#admin-modal-dialog-edit-payment-h2').show().find('span').html(PAY_ID);
+			// transfer values from table to modal box form
+			$('#txn-admin-payment-payment-id-inp').val( PAY_ID );
+            $('#txn-admin-payment-type-inp').val(1);
+			$('#txn-admin-payment-status-slct').val($('#payment-STS_ID-' + PAY_ID ).text());
+			$('#txn-admin-payment-date-inp').val( $('#payment-date-' + PAY_ID ).text() );
+			$('#txn-admin-payment-method-slct').val( $('#payment-gateway-id-' + PAY_ID ).text() );
+			$('#txn-admin-payment-gateway-response-inp').val( $('#payment-response-' + PAY_ID ).text() );
+			$('#txn-admin-payment-txn-id-chq-nmbr-inp').val( $('#payment-txn-id-chq-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-po-nmbr-inp').val( $('#payment-po-nmbr-' + PAY_ID ).text() );
+			$('#txn-admin-payment-accounting-inp').val( $('#payment-accntng-' + PAY_ID ).text() );
+			$('#txn-admin-payment-details-inp').val( $('#payment-details-' + PAY_ID ).text() );
+			$('#txn-admin-payment-amount-inp').val( $('#payment-amount-' + PAY_ID ).text() );
+			$('#txn-admin-apply-payment-to-all-registrations-inp').data( 'paymentId', PAY_ID );
+			$('#txn-admin-apply-payment-to-some-registrations-inp').data( 'paymentId', PAY_ID );
+
+			$('#txn-admin-modal-dialog-edit-payment-lnk').show();
+			$('#txn-admin-modal-dialog-cancel-lnk').show();
+		}
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
@@ -73,10 +98,10 @@ jQuery(document).ready(function($) {
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
-	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
+	txn_admin_payments_table.on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
 		display_delete_payment_modal_dialog();
 		//grab payment ID
-		var PAY_ID = $(this).attr('rel');
+		var PAY_ID = $(this).data( 'paymentId');
 		$('#delete-txn-admin-payment-payment-id-inp').val( PAY_ID );
 		$('.delete-txn-reg-status-change-reg-status').val('NAN');
 		$('#admin-modal-dialog-delete-payment-h2').show();
@@ -165,6 +190,16 @@ jQuery(document).ready(function($) {
 	});
 
 
+    $(document).on( 'click', '#txn-admin-modal-dialog-edit-refund-lnk', function( event ) {
+        event.preventDefault();
+        if ( validate_form_inputs() ) {
+            $('#espresso-ajax').val(1);
+            toggleaAjaxActivity();
+            apply_payment_or_refund( 'edit' );
+        }
+    });
+
+
 	$(document).on( 'click', '#txn-admin-modal-dialog-delete-lnk', function( event ) {
 		event.preventDefault();
 		$('#delete-espresso-ajax').val(1);
@@ -201,6 +236,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeIn('fast');
+            $('#txn-admin-modal-dialog-edit-refund-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-delete-lnk').fadeIn('fast');
 			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeIn('fast');
 			$('#delete-ee-ajax-processing-text').fadeOut('fast');
@@ -210,6 +246,7 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeOut('fast');
+            $('#txn-admin-modal-dialog-edit-refund-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-delete-lnk').fadeOut('fast');
 			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
@@ -222,8 +259,7 @@ jQuery(document).ready(function($) {
 
 	function apply_payment_or_refund( editOrApply ) {
 
-		var formURL = $('#txn-admin-apply-payment-frm').attr('action');
-		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
+		//var formURL = $('#txn-admin-apply-payment-frm').attr('action');
 		$('#espresso-ajax').val(1);
 		$('#txn-admin-noheader-inp').val('true');
 
@@ -232,38 +268,47 @@ jQuery(document).ready(function($) {
 		formData.page = 'espresso_transactions';
 		formData.action = 'espresso_apply_payment';
 		formData.noheader = true;
-		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
-		formData.txn_admin_payment.amount = accounting.unformat(formData.txn_admin_payment.amount);
-//		response = new Object();
+		formData.ee_admin_ajax = true;
+		formData.txn_admin_payment.amount = accounting.unformat( formData.txn_admin_payment.amount );
 
 		$.ajax({
 					type: "POST",
 					url:  ajaxurl,
 					data: formData,
 					dataType: "json",
-					beforeSend: function(jqXHR, obj) {
+					beforeSend: function() {
 						do_before_admin_page_ajax();
 					},
 					success: function( response ) {
-						/*console.log(response);/**/
-						if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+
+						if ( typeof(response.data.return_data) !== 'undefined' && response.data.return_data !== false && response.data.return_data !== null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
-						} else if ( response.errors ) {
-							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 						} else {
-							response.errors = eei18n.invalid_server_response;
-							show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+							if( typeof(response.error) == 'undefined' ||  response.error == false || response.error == null || response.error == '' ) {
+								response.error = eei18n.invalid_server_response;
+								response.errors = response.error;
+							}
+							//hide the modal dialogue and show the error
+							overlay.trigger('click');
+							show_admin_page_ajax_msg( response );
+                                                        
 						}
 					},
 					error: function(response) {
-						/*console.log(response);/**/
-						if ( typeof(response.errors) === 'undefined' ) {
+						if ( typeof(response.error) === 'undefined' ) {
+							response.error = eei18n.error_occurred;
 							response.errors = eei18n.error_occurred;
 						}
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+						show_admin_page_ajax_msg( response );
 					}
 			});
+	}
+
+
+	function process_notifications( response, show_before ) {
+		show_before = typeof( show_before ) !== 'undefined' && show_before !== '' ? show_before : '.nav-tab-wrapper';
+		show_admin_page_ajax_msg( response, show_before );
 	}
 
 
@@ -288,7 +333,7 @@ jQuery(document).ready(function($) {
 		$('#delete-txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-delete-payment-frm').serializeFullArray();
 		var PAY_ID = $( '#delete-txn-admin-payment-payment-id-inp' ).val();
-		var delBtn = $( '.txn-admin-payment-action-delete-lnk[rel="' + PAY_ID + '"]');
+		var delBtn = $( '.txn-admin-payment-action-delete-lnk[data-payment-id="' + PAY_ID + '"]');
 		formData.ee_admin_ajax = true;
 		formData.noheader = true;
 		formData.page = 'espresso_transactions';
@@ -302,22 +347,24 @@ jQuery(document).ready(function($) {
 						do_before_admin_page_ajax();
 					},
 					success: function(response){
-						if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+						if ( typeof(response.data.return_data) !== 'undefined' && response.data.return_data !== false && response.data.return_data !== null ) {
 							delBtn.closest('tr').remove();
 							process_delete_payment( response );
-						} else if ( response.errors ) {
-							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper' );
+						} else if ( response.error ) {
+							show_admin_page_ajax_msg( response );
 						} else {
 							response = {};
-							response.errors = eei18n.invalid_server_response;
-							show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+							response.error = eei18n.invalid_server_response;
+							response.errors = response.error;
+							show_admin_page_ajax_msg( response );
 						}
 					},
 					error: function(response) {
-						if ( typeof(response.errors) === 'undefined' ) {
-							response.errors = eei18n.error_occurred;
+						if ( typeof(response.error) === 'undefined' ) {
+							response.error = eei18n.error_occurred;
+							response.errors = response.error;
 						}
-						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+						show_admin_page_ajax_msg( response );
 					}
 			});
 	}
@@ -331,10 +378,10 @@ jQuery(document).ready(function($) {
 		overlay.trigger('click');
 
 		// grab PAY ID from return data
-		var PAY_ID = response.return_data.PAY_ID;
+		var PAY_ID = response.data.return_data.PAY_ID;
 
 		if ( response.edit_or_apply === 'apply' ) {
-			// grab empty paymnet table row
+			// grab empty payment table row
 			var newRow = '\n				<tr id="txn-admin-payment-tr-PAY_ID">' + $('#txn-admin-payment-empty-row-tr').html() + '\n				</tr>\n';
 			// insert new PAY_ID
 			newRow = newRow.replace( /PAY_ID/g, PAY_ID );
@@ -344,9 +391,35 @@ jQuery(document).ready(function($) {
 
 		update_payment( PAY_ID, response );
 		update_payment_totals( response );
+		update_registration_payment_totals( response );
+		process_notifications( response );
 
-		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
+	}
 
+
+
+
+	/**
+	 * update registration payment table totals from ajax response.
+	 * @param response
+	 */
+	function update_registration_payment_totals( response ) {
+		if ( ! response.data.return_data.registrations ) {
+			return;
+		}
+
+		for ( var regID in response.data.return_data.registrations ) {
+			if ( response.data.return_data.registrations.hasOwnProperty(regID) ) {
+				var regProps = response.data.return_data.registrations[regID];
+				if ( regProps.owing ) {
+					$('.txn-admin-payment-owing-td', '#apply-payment-registration-row-' + regID).html( regProps.owing );
+				}
+
+				if ( regProps.paid ) {
+					$('.txn-admin-payment-paid-td', '#apply-payment-registration-row-' + regID).html( regProps.paid );
+				}
+			}
+		}
 	}
 
 
@@ -360,31 +433,31 @@ jQuery(document).ready(function($) {
 
 	function update_payment( PAY_ID, response ) {
 		// payment-status
-		update_payment_status(PAY_ID, response.return_data.STS_ID);
-		$('#payment-STS_ID-' + PAY_ID).html( response.return_data.pay_status );
+		update_payment_status(PAY_ID, response.data.return_data.STS_ID);
+		$('#payment-STS_ID-' + PAY_ID).html( response.data.return_data.pay_status );
 		// payment-date
-		$('#payment-date-' + PAY_ID).html( response.return_data.date );
+		$('#payment-date-' + PAY_ID).html( response.data.return_data.date );
 		// payment-method
-		$('#payment-method-' + PAY_ID).html( response.return_data.method );
+		$('#payment-method-' + PAY_ID).html( response.data.return_data.method );
 		// payment-gateway
-		$('#payment-gateway-' + PAY_ID).html( response.return_data.gateway );
-		$('#payment-gateway-id-' + PAY_ID).html( response.return_data.PM_ID );
+		$('#payment-gateway-' + PAY_ID).html( response.data.return_data.gateway );
+		$('#payment-gateway-id-' + PAY_ID).html( response.data.return_data.PM_ID );
 		// payment-gateway_response
-		$('#payment-response-' + PAY_ID).html( response.return_data.gateway_response );
+		$('#payment-response-' + PAY_ID).html( response.data.return_data.gateway_response );
 		// payment-txn_id_chq_nmbr
-		$('#payment-txn-id-chq-nmbr-' + PAY_ID).html( response.return_data.txn_id_chq_nmbr );
+		$('#payment-txn-id-chq-nmbr-' + PAY_ID).html( response.data.return_data.txn_id_chq_nmbr );
 		// payment-po_number
-		$('#payment-po-nmbr-' + PAY_ID).html( response.return_data.po_number );
+		$('#payment-po-nmbr-' + PAY_ID).html( response.data.return_data.po_number );
 		// payment-extra_accntng
-		$('#payment-accntng-' + PAY_ID).html( response.return_data.extra_accntng );
+		$('#payment-accntng-' + PAY_ID).html( response.data.return_data.extra_accntng );
 		// payment-amount
-		var payment = accounting.formatMoney( response.return_data.amount );
+		var payment = accounting.formatMoney( response.data.return_data.amount );
 		$('#payment-amount-' + PAY_ID).html( payment );
 		// update amount span class
 		if ( accounting.unformat(payment) < 0 ) {
-			response.return_data.pay_status = 'PDC';
+			response.data.return_data.pay_status = 'PDC';
 		}
-		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
+		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.data.return_data.pay_status );
 
 	}
 
@@ -394,17 +467,21 @@ jQuery(document).ready(function($) {
 		//alert( response.toSource() );
 
 		// payment-total
-		var totalPaid = response.return_data.total_paid;
+		var totalPaid = parseFloat( response.data.return_data.total_paid );
 		$('#txn-admin-payment-total').html( accounting.formatMoney( totalPaid ) );
 		// total-amount-due
-		var txnTotal = $('#txn-admin-grand-total').text(); //this is already in decimal format, no unformatting needed
+		//this is already in decimal format, no unformatting needed
+		var txnTotal = parseFloat($('#txn-admin-grand-total').text() );
 		var totalAmountDue = txnTotal - totalPaid;
-        
+		//console.log( JSON.stringify( 'txnTotal: ' + txnTotal, null, 4 ) );
+		//console.log( JSON.stringify( 'totalPaid: ' + totalPaid, null, 4 ) );
+		//console.log( JSON.stringify( 'totalAmountDue: ' + totalAmountDue, null, 4 ) );
+		//console.log( JSON.stringify( 'accounting.formatMoney( totalAmountDue ): ' + accounting.formatMoney( totalAmountDue ), null, 4 ) );
 		//$('#txn-admin-total-amount-due').html( totalAmountDue.toFixed(2) );
 		$('#txn-amount-due-h2 > span').html( accounting.formatMoney( totalAmountDue ) );
 
-		$('#txn-status').html( eei18n.txn_status_array[ response.return_data.txn_status ] );
-		$('#txn-status').removeClass().addClass( 'status-' + response.return_data.txn_status  );
+		$('#txn-status').html( eei18n.txn_status_array[ response.data.return_data.txn_status ] );
+		$('#txn-status').removeClass().addClass( 'status-' + response.data.return_data.txn_status  );
 
 		if ( totalPaid === txnTotal ) {
 			//alert( 'paid in full' );
@@ -445,17 +522,16 @@ jQuery(document).ready(function($) {
 	}
 
 
-
-
 	function process_delete_payment( response ) {
 		toggleaAjaxActivity( true );
 		overlay.trigger('click');
-		if ( typeof(response.return_data.PAY_ID) !== 'undefined' && response.return_data.PAY_ID !== false && response.return_data.PAY_ID !== null ) {
+		if ( typeof(response.data.return_data.PAY_ID) !== 'undefined' && response.data.return_data.PAY_ID !== false && response.data.return_data.PAY_ID !== null ) {
 			// grab PAY ID from return data
-			var PAY_ID = response.return_data.PAY_ID;
+			var PAY_ID = response.data.return_data.PAY_ID;
 			update_payment_totals( response );
+			update_registration_payment_totals( response );
 		}
-		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', false );
+		show_admin_page_ajax_msg( response );
 	}
 
 
@@ -468,5 +544,50 @@ jQuery(document).ready(function($) {
 	$(document).on( 'click', '#del-txn-admin-modal-dialog-cancel-lnk', function() {
 		overlay.trigger('click');
 	});
+
+
+	function update_registration_payments_inputs( reg_payments ) {
+		var check_all = false;
+		if ( typeof( reg_payments ) === 'undefined' ) {
+			reg_payments = [];
+			check_all = true;
+		}
+		var REG_ID;
+		$( 'input[name="txn_admin_payment[registrations]"]' ).each( function() {
+			REG_ID = parseInt( $( this ).val() );
+			if ( $.inArray( REG_ID, reg_payments ) > -1 || check_all ) {
+				$( this ).prop( 'checked', true );
+			} else {
+				$( this ).prop( 'checked', false );
+			}
+		} );
+
+	}
+
+
+	function display_payment_registrations_table() {
+		$( '#txn-admin-apply-payment-to-registrations-dv' ).slideDown();
+	}
+
+	function hide_payment_registrations_table() {
+		$( '#txn-admin-apply-payment-to-registrations-dv' ).slideUp();
+	}
+
+	eedialog.on( 'click', '#txn-admin-apply-payment-to-some-registrations-inp', function() {
+		if ( $( this ).is( ':checked' ) ) {
+			display_payment_registrations_table();
+			var PAY_ID = $( this ).data( 'paymentId' );
+			var reg_payments = $.parseJSON( $( '#reg-payments-' + PAY_ID ).html() );
+			update_registration_payments_inputs( reg_payments );
+		}
+	} );
+
+	eedialog.on( 'click', '#txn-admin-apply-payment-to-all-registrations-inp', function() {
+		if ( $( this ).is( ':checked' ) ) {
+			hide_payment_registrations_table();
+			update_registration_payments_inputs();
+		}
+	} );
+
 
 });

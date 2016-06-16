@@ -102,13 +102,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$this->_fields = array(
 			'Registration'=>array(
 				'REG_ID'=>new EE_Primary_Key_Int_Field('REG_ID', __('Registration ID','event_espresso')),
-				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Even tID','event_espresso'), false, 0, 'Event'),
+				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
 				'ATT_ID'=>new EE_Foreign_Key_Int_Field('ATT_ID', __('Attendee ID','event_espresso'), false, 0, 'Attendee'),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Final Price of registration','event_espresso'), false, 0),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, time(), $timezone ),
+				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Registration\'s share of the transaction total','event_espresso'), false, 0),
+				'REG_paid'=>new EE_Money_Field('REG_paid', __('Amount paid to date towards registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
@@ -125,7 +126,10 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Ticket'=>new EE_Belongs_To_Relation(),
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Answer'=>new EE_Has_Many_Relation(),
-			'Checkin'=>new EE_Has_Many_Relation()
+			'Checkin'=>new EE_Has_Many_Relation(),
+			'Registration_Payment' => new EE_Has_Many_Relation(),
+			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
+			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletes even if there are messages in the queue related
 		);
 		$this->_model_chain_to_wp_user = 'Event';
 
@@ -135,10 +139,29 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
+	 * 	reg_statuses_that_allow_payment
+	 * 	a filterable list of registration statuses that allow a registrant to make a payment
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function reg_statuses_that_allow_payment() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_approved,
+				EEM_Registration::status_id_pending_payment,
+			)
+		);
+	}
+
+
+
+	/**
 	 * 		get list of registration statuses
 	 *
 	 *
-	 *		@access private
+	 *		@access public
 	 *		@param array $exclude The status ids to exclude from the returned results
 	 *		@param bool  $translated If true will return the values as singular localized strings
 	 *		@return array
@@ -159,8 +182,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	private function _get_registration_status_array( $exclude = array() ) {
 		//in the very rare circumstance that we are deleting a model's table's data
 		//and the table hasn't actually been created, this could have an error
+		/** @type WPDB $wpdb */
 		global $wpdb;
-		EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
@@ -231,17 +254,18 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*		retrieve registration for a specific transaction attendee from db
 	*
 	* 		@access		public
-	* 		@param		$TXN_ID
-	* 		@param		$ATT_ID
-	* 		@param		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
+	* 		@param	int	$TXN_ID
+	* 		@param    int		$ATT_ID
+	* 		@param    int		$att_nmbr 	in case the ATT_ID is the same for multiple registrations (same details used) then the attendee number is required
 	*		@return 		mixed		array on success, FALSE on fail
 	*/
-	public function get_registration_for_transaction_attendee( $TXN_ID = FALSE, $ATT_ID = FALSE, $att_nmbr = FALSE ) {
+	public function get_registration_for_transaction_attendee( $TXN_ID = 0, $ATT_ID = 0, $att_nmbr = 0 ) {
 		return $this->get_one(array(
 			array(
 				'TXN_ID'=>$TXN_ID,
-				'ATT_ID'=>$ATT_ID),
-			'limit'=>array($att_nmbr-1,1)
+				'ATT_ID'=>$ATT_ID
+			),
+			'limit'=>array( min( ( $att_nmbr-1 ), 0 ), 1 )
 		));
 	}
 
@@ -254,28 +278,93 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {
-		$sql_date = date("Y-m-d H:i:s", strtotime($period));
 
-		//don't include incomplete regs by default
-		$where = array('REG_date'=>array('>=',$sql_date), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
+		$sql_date = $this->convert_datetime_for_query( 'REG_date', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
+		$where = array( 'REG_date' => array( '>=', $sql_date ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
-		if ( ! EE_Registry::instance()->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
+
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
 
 		$results = $this->_get_all_wpdb_results(
 				array(
 					$where,
 					'group_by'=>'regDate',
-					'order_by'=>array('REG_date'=>'DESC')
+					'order_by'=>array('REG_date'=>'ASC')
 				),
 				OBJECT,
 				array(
-					'regDate'=>array('DATE(Registration.REG_date)','%s'),
+					'regDate'=>array( 'DATE(' . $query_interval . ')','%s'),
 					'total'=>array('count(REG_ID)','%d')
 				));
 		return $results;
 	}
+
+
+	/**
+	 * Get the number of registrations per day including the count of registrations for each Registration Status.
+	 * Note: EEM_Registration::status_id_incomplete registrations are excluded from the results.
+	 *
+	 * @param string $period
+	 *
+	 * @return stdClass[] with properties Registration_REG_date and a column for each registration status as the STS_ID
+	 *                    (i.e. RAP)
+	 */
+	public function get_registrations_per_day_and_per_status_report( $period = '-1 month' ) {
+		global $wpdb;
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$event_table = $wpdb->posts;
+		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
+
+		//prepare the query interval for displaying offset
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
+
+		//inner date query
+		$inner_date_query = "SELECT DISTINCT REG_date from $registration_table ";
+		$inner_where = " WHERE";
+		//exclude events not authored by user if permissions in effect
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
+			$inner_date_query .= "LEFT JOIN $event_table ON ID = EVT_ID";
+			$inner_where .= " post_author = " . get_current_user_id() . " AND";
+		}
+		$inner_where .= " REG_date >= '$sql_date'";
+		$inner_date_query .= $inner_where;
+
+		//start main query
+		$select = "SELECT DATE($query_interval) as Registration_REG_date, ";
+		$join = '';
+		$join_parts = array();
+		$select_parts = array();
+
+		//loop through registration stati to do parts for each status.
+		foreach ( EEM_Registration::reg_status_array() as $STS_ID => $STS_code ) {
+			if ( $STS_ID === EEM_Registration::status_id_incomplete ) {
+				continue;
+			}
+			$select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
+			$join_parts[] = "$registration_table AS $STS_code ON $STS_code.REG_date = dates.REG_date AND $STS_code.STS_ID = '$STS_ID'";
+		}
+
+		//setup the selects
+		$select .= implode(', ', $select_parts );
+		$select .= " FROM ($inner_date_query) AS dates LEFT JOIN ";
+
+		//setup the joins
+		$join .= implode( " LEFT JOIN ", $join_parts );
+
+		//now let's put it all together
+		$query = $select . $join . ' GROUP BY Registration_REG_date';
+
+		//and execute it
+		$results = $wpdb->get_results(
+			$query,
+			ARRAY_A
+		);
+		return $results;
+	}
+
 
 
 
@@ -284,14 +373,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	*		get the number of registrations per event  for the Registration Admin page Reports Tab
 	* 		@access		public
+	 * @param $period string which can be passed to php's strtotime function (eg "-1 month")
 	 *		@return stdClass[] each with properties event_name, reg_limit, and total
 	*/
 	public function get_registrations_per_event_report( $period = '-1 month' ) {
-		$date_sql = date("Y-m-d H:i:s", strtotime($period));
 
-		//do not include incomplete registrations by default
+		$date_sql = $this->convert_datetime_for_query( 'REG_date', date( "Y-m-d H:i:s", strtotime( $period )), 'Y-m-d H:i:s', 'UTC' );
+		$where = array( 'REG_date' => array( '>=', $date_sql ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 
-		$where = array( 'REG_date'=>array('>=',$date_sql ), 'STS_ID' => array( '!=', EEM_Registration::status_id_incomplete ) );
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
@@ -313,11 +402,71 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
+	 * Get the number of registrations per event grouped by registration status.
+	 * Note: EEM_Registration::status_id_incomplete registrations are excluded from the results.
+	 *
+	 * @param string $period
+	 *
+	 * @return stdClass[] with properties `Registration_Event` and a column for each registration status as the STS_ID
+	 *                    (i.e. RAP)
+	 */
+	public function get_registrations_per_event_and_per_status_report( $period = '-1 month' ) {
+		global $wpdb;
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$event_table = $wpdb->posts;
+		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
+
+		//inner date query
+		$inner_date_query = "SELECT DISTINCT EVT_ID, REG_date from $registration_table ";
+		$inner_where = " WHERE";
+		//exclude events not authored by user if permissions in effect
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
+			$inner_date_query .= "LEFT JOIN $event_table ON ID = EVT_ID";
+			$inner_where .= " post_author = " . get_current_user_id() . " AND";
+		}
+		$inner_where .= " REG_date >= '$sql_date'";
+		$inner_date_query .= $inner_where;
+
+		//build main query
+		$select = "SELECT Event.post_title as Registration_Event, ";
+		$join = '';
+		$join_parts = array();
+		$select_parts = array();
+
+		//loop through registration stati to do parts for each status.
+		foreach ( EEM_Registration::reg_status_array() as $STS_ID => $STS_code ) {
+			if ( $STS_ID === EEM_Registration::status_id_incomplete ) {
+				continue;
+			}
+			$select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
+			$join_parts[] = "$registration_table AS $STS_code ON $STS_code.EVT_ID = dates.EVT_ID AND $STS_code.STS_ID = '$STS_ID' AND $STS_code.REG_date = dates.REG_date";
+		}
+
+		//setup the selects
+		$select .= implode( ', ', $select_parts );
+		$select .= " FROM ($inner_date_query) AS dates LEFT JOIN $event_table as Event ON Event.ID = dates.EVT_ID LEFT JOIN ";
+
+		//setup remaining joins
+		$join .= implode( " LEFT JOIN ", $join_parts );
+
+		//now put it all together
+		$query = $select . $join . ' GROUP BY Registration_Event';
+
+		//and execute
+		$results = $wpdb->get_results(
+			$query,
+			ARRAY_A
+		);
+		return $results;
+	}
+
+
+	/**
 	 * Returns the EE_Registration of the primary attendee on the transaction id provided
 	 * @param int $TXN_ID
 	 * @return EE_Registration
 	 */
-	public function get_primary_registration_for_transaction_ID( $TXN_ID = FALSE){
+	public function get_primary_registration_for_transaction_ID( $TXN_ID = 0){
 		if( ! $TXN_ID ){
 			return false;
 		}
@@ -343,6 +492,147 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		return $this->count($query_params);
 	}
 
+	/**
+	 * Deletes all registrations with no transactions. Note that this needs to be very efficient
+	 * and so it uses wpdb directly
+	 * @global WPDB $wpdb
+	 * @return int number deleted
+	 */
+	public function delete_registrations_with_no_transaction() {
+		/** @type WPDB $wpdb */
+		global $wpdb;
+		return $wpdb->query(
+				'DELETE r FROM ' . $this->table() . ' r LEFT JOIN ' . EEM_Transaction::instance()->table() . ' t ON r.TXN_ID = t.TXN_ID WHERE t.TXN_ID IS NULL' );
+	}
+
+	/**
+	 *  Count registrations checked into (or out of) a datetime
+	 *
+	 * @param int $DTT_ID datetime ID
+	 * @param boolean $checked_in whether to count registrations checked IN or OUT
+	 * @return int
+	 */
+	public function count_registrations_checked_into_datetime( $DTT_ID, $checked_in = true) {
+		global $wpdb;
+		//subquery to get latest checkin
+		$query = $wpdb->prepare(
+			'SELECT '
+				. 'COUNT( DISTINCT checkins.REG_ID ) '
+			. 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+				. '( SELECT '
+					. 'max( CHK_timestamp ) AS latest_checkin, '
+					. 'REG_ID AS REG_ID '
+				. 'FROM ' . EEM_Checkin::instance()->table() . ' '
+				. 'WHERE DTT_ID=%d '
+				. 'GROUP BY REG_ID'
+			. ') AS most_recent_checkin_per_reg '
+			. 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+				. 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+			. 'WHERE '
+				. 'checkins.CHK_in=%d',
+			$DTT_ID,
+			$checked_in
+		);
+		return (int)$wpdb->get_var( $query );
+	}
+
+	/**
+	 *  Count registrations checked into (or out of) an event.
+	 *
+	 * @param int $EVT_ID event ID
+	 * @param boolean $checked_in whether to count registrations checked IN or OUT
+	 * @return int
+	 */
+	public function count_registrations_checked_into_event( $EVT_ID, $checked_in = true ) {
+		global $wpdb;
+		//subquery to get latest checkin
+		$query = $wpdb->prepare(
+			'SELECT '
+				. 'COUNT( DISTINCT checkins.REG_ID ) '
+			. 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+				. '( SELECT '
+					. 'max( CHK_timestamp ) AS latest_checkin, '
+					. 'REG_ID AS REG_ID '
+				. 'FROM ' . EEM_Checkin::instance()->table() . ' AS c '
+				. 'INNER JOIN ' . EEM_Datetime::instance()->table() . ' AS d '
+				. 'ON c.DTT_ID=d.DTT_ID '
+				. 'WHERE d.EVT_ID=%d '
+				. 'GROUP BY REG_ID'
+			. ') AS most_recent_checkin_per_reg '
+			. 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+				. 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+			. 'WHERE '
+				. 'checkins.CHK_in=%d',
+			$EVT_ID,
+			$checked_in
+		);
+		return (int)$wpdb->get_var( $query );
+	}
+
+
+
+
+
+	/**
+	 * The purpose of this method is to retrieve an array of
+	 * EE_Registration objects that represent the latest registration
+	 * for each ATT_ID given in the function argument.
+	 *
+	 * @param array $attendee_ids
+	 * @return EE_Registration[]
+	 */
+	public function get_latest_registration_for_each_of_given_contacts( $attendee_ids = array() ) {
+		//first do a native wp_query to get the latest REG_ID's matching these attendees.
+		global $wpdb;
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$attendee_table = $wpdb->posts;
+		$attendee_ids = is_array( $attendee_ids )
+			? array_map( 'absint', $attendee_ids )
+			: array( (int) $attendee_ids );
+		$attendee_ids = implode( ',', $attendee_ids );
+
+
+		//first we do a query to get the registration ids
+		// (because a group by before order by causes the order by to be ignored.)
+		$registration_id_query = "
+			SELECT registrations.registration_ids as registration_id
+			FROM (
+				SELECT
+					Attendee.ID as attendee_ids,
+					Registration.REG_ID as registration_ids
+				FROM $registration_table AS Registration
+				JOIN $attendee_table AS Attendee
+					ON Registration.ATT_ID = Attendee.ID
+					AND Attendee.ID IN ( $attendee_ids )
+				ORDER BY Registration.REG_ID DESC
+			  ) AS registrations
+			  GROUP BY registrations.attendee_ids
+		";
+
+		$registration_ids = $wpdb->get_results(
+			$registration_id_query,
+			ARRAY_A
+		);
+
+		if ( empty( $registration_ids ) ) {
+			return array();
+		}
+
+		$ids_for_model_query = array();
+		//let's flatten the ids so they can be used in the model query.
+		foreach ( $registration_ids as $registration_id ) {
+			if ( isset( $registration_id['registration_id'] ) ) {
+				$ids_for_model_query[] = $registration_id['registration_id'];
+			}
+		}
+
+		//construct query
+		$_where = array(
+			'REG_ID' => array( 'IN', $ids_for_model_query )
+		);
+
+		return $this->get_all( array( $_where ) );
+	}
 
 
 

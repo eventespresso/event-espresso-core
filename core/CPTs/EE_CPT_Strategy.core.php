@@ -78,7 +78,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public static function instance() {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_CPT_Strategy )) {
+		if ( ! self::$_instance instanceof EE_CPT_Strategy ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -100,7 +100,7 @@ class EE_CPT_Strategy extends EE_BASE {
 //		d( $this->_CPTs );
 //		d( $this->_CPT_endpoints );
 //		d( $this->_CPT_taxonomies );
-		// load EE_Request_Handler
+
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
 
@@ -177,6 +177,15 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
+	 * @return array
+	 */
+	public function get_CPT_taxonomies() {
+		return $this->_CPT_taxonomies;
+	}
+
+
+
+	/**
 	 *    _set_CPT_terms
 	 *
 	 * @access private
@@ -186,7 +195,9 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( empty( $this->_CPT_terms )) {
 			$terms = EEM_Term::instance()->get_all_CPT_post_tags();
 			foreach ( $terms as $term ) {
-				$this->_CPT_terms[ $term->slug() ] = $term;
+				if ( $term instanceof EE_Term ) {
+					$this->_CPT_terms[ $term->slug() ] = $term;
+				}
 			}
 		}
 	}
@@ -278,10 +289,11 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return void
 	 */
 	public function pre_get_posts( $WP_Query ) {
-		// check that postz-type is set
+		// check that post-type is set
 		if ( ! $WP_Query instanceof WP_Query ) {
 			return;
 		}
+
 		// add our conditionals
 		$this->_set_EE_tags_on_WP_Query( $WP_Query );
 		// check for terms
@@ -328,6 +340,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( isset( $WP_Query->query_vars['post_type'] )) {
 			// loop thru post_types as array
 			foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
+
 				// is current query for an EE CPT ?
 				if ( isset( $this->_CPTs[ $post_type ] )) {
 					// is EE on or off ?
@@ -336,8 +349,13 @@ class EE_CPT_Strategy extends EE_BASE {
 						if( ! has_filter( 'template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
 							add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
 						}
+						if( has_filter( 'the_content',array( EE_Maintenance_Mode::instance(), 'the_content' ) ) ) {
+							add_filter( 'the_content', array( $this, 'inject_EE_shortcode_placeholder' ), 1 );
+						}
 						return;
 					}
+					// load EE_Request_Handler (this was added as a result of https://events.codebasehq.com/projects/event-espresso/tickets/9037
+					EE_Registry::instance()->load_core( 'Request_Handler' );
 					// grab details for the CPT the current query is for
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type
@@ -356,7 +374,7 @@ class EE_CPT_Strategy extends EE_BASE {
 						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
 						EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
 					}
-					$this->_possibly_set_ee_request_var( $post_type );
+					$this->_possibly_set_ee_request_var();
 					// convert post_type to model name
 					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
 					// get CPT table data via CPT Model
@@ -412,6 +430,21 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 
+	/*
+	 * inject_EE_shortcode_placeholder
+	 * in order to display the M-Mode notice on our CPT routes,
+	 * we need to first inject what looks like one of our shortcodes,
+	 * so that it can be replaced with the actual M-Mode notice
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function inject_EE_shortcode_placeholder() {
+		return '[ESPRESSO_';
+	}
+
+
+
 	/**
 	 *    posts_join
 	 *
@@ -446,11 +479,11 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( is_array( $posts )) {
 			foreach( $posts as $key => $post ) {
 				if ( isset( $this->_CPTs[ $post->post_type ] )) {
-					$post->$CPT_class = $this->CPT_model->instantiate_class_from_post_object( $post );
+					$post->{$CPT_class} = $this->CPT_model->instantiate_class_from_post_object( $post );
 				}
 			}
 		}
-		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 1 );
+		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1 );
 		return $posts;
 	}
 
@@ -471,7 +504,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		$scheme = is_ssl() ? 'https' : 'http';
 		$url = get_admin_url( EE_Config::instance()->core->current_blog_id, 'admin.php', $scheme );
 		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
-		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'], 'post' =>$ID, 'action' =>'edit' ), $url ), 'edit', 'edit_nonce' );
+		return wp_nonce_url( add_query_arg( array( 'page' => $post->post_type, 'post' =>$ID, 'action' =>'edit' ), $url ), 'edit', 'edit_nonce' );
 	}
 
 

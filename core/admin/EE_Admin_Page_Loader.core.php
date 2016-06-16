@@ -133,12 +133,14 @@ class EE_Admin_Page_Loader {
 	 * @return void
 	 */
 	private function _define_caffeinated_constants() {
-		define( 'EE_CORE_CAF_ADMIN', EE_PLUGIN_DIR_PATH . 'caffeinated/admin/');
-		define( 'EE_CORE_CAF_ADMIN_URL', EE_PLUGIN_DIR_URL . 'caffeinated/admin/');
-		define( 'EE_CORE_CAF_ADMIN_NEW', EE_CORE_CAF_ADMIN . 'new/');
-		define( 'EE_CORE_CAF_ADMIN_EXTEND', EE_CORE_CAF_ADMIN . 'extend/');
-		define( 'EE_CORE_CAF_ADMIN_EXTEND_URL', EE_CORE_CAF_ADMIN_URL . 'extend/');
-		define( 'EE_CORE_CAF_ADMIN_HOOKS', EE_CORE_CAF_ADMIN . 'hooks/');
+		if ( ! defined( 'EE_CORE_CAF_ADMIN'  ) ) {
+			define( 'EE_CORE_CAF_ADMIN', EE_PLUGIN_DIR_PATH . 'caffeinated/admin/');
+			define( 'EE_CORE_CAF_ADMIN_URL', EE_PLUGIN_DIR_URL . 'caffeinated/admin/');
+			define( 'EE_CORE_CAF_ADMIN_NEW', EE_CORE_CAF_ADMIN . 'new/');
+			define( 'EE_CORE_CAF_ADMIN_EXTEND', EE_CORE_CAF_ADMIN . 'extend/');
+			define( 'EE_CORE_CAF_ADMIN_EXTEND_URL', EE_CORE_CAF_ADMIN_URL . 'extend/');
+			define( 'EE_CORE_CAF_ADMIN_HOOKS', EE_CORE_CAF_ADMIN . 'hooks/');
+		}
 	}
 
 
@@ -616,7 +618,6 @@ class EE_Admin_Page_Loader {
 //		$dir_ref = array(
 //			EE_ADMIN => array('core', 'class')
 //		);
-//		EE_Registry::instance()->load_helper( 'Autoloader' );
 //		EEH_Autoloader::try_autoload($dir_ref, $className );
 //	}
 
@@ -638,7 +639,6 @@ class EE_Admin_Page_Loader {
 //			$dir_ref[ EE_CORE_CAF_ADMIN . $pathinfo['dir'] . DS . $pathinfo['folder'] . DS] = array('core', 'class');
 //		}
 //
-//		EE_Registry::instance()->load_helper( 'Autoloader' );
 //		EEH_Autoloader::try_autoload($dir_ref, $className );
 //	}
 

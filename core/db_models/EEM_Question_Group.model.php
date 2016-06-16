@@ -28,8 +28,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	const system_address = 2;
   	// private instance of the Attendee object
 	protected static $_instance = NULL;
-
-
+        
+        
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Question Group','event_espresso');
 		$this->plural_item = __('Question Groups','event_espresso');
@@ -57,11 +57,14 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 			'Event_Question_Group'=>new EE_Has_Many_Relation(),
 			'WP_User' => new EE_Belongs_To_Relation(),
 		);
+		//this model is generally available for reading
+		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+		$this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('QSG_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form('QSG_system');
+		$this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form('QSG_system');
 		parent::__construct( $timezone );
+
 	}
-
-
-
 	/**
 	 * searches the db for the question group with the latest question order and returns that value.
 	 * @access public

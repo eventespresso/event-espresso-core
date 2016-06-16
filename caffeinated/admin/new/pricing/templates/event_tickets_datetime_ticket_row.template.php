@@ -55,7 +55,7 @@
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID ); ?>
 
 			<div class="basic-ticket-container">
-				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
+				<h4 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h4>
 				<div style="clear:both"></div>
 				<table class="basic-ticket-info">
 					<thead>
@@ -117,7 +117,7 @@
 				</div>
 			</div>
 			<div class="price-table-container">
-				<h5 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h5>
+				<h4 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h4>
 				<table class="price-table">
 					<thead class="price-table-info"<?php echo $show_price_modifier; ?>>
 						<tr>
@@ -161,19 +161,23 @@
 				</table>
 			</div>
 			<div style="clear:both"></div>
-			<h5 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h5>
+			<h4 class="tickets-heading"><?php _e('Event Datetimes', 'event_espresso'); ?></h4>
 			<p><?php _e('This ticket will be usable (allow entrance) for the following selected event datetimes (click to select).  The "# Datetimes" amount (above) indicates how many of the assigned datetimes the ticket holder can gain access to:', 'event_espresso'); ?></p>
 			<ul class="datetime-tickets-list">
 				<?php echo $ticket_datetimes_list; ?>
 			</ul>
 
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template__advanced_details_end', $tkt_row, $TKT_ID ); ?>
-
-			<div class="save-cancel-button-container">
-				<label for="edit-ticket-TKT_is_default_selector"><?php _e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
-				<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector" value="1"<?php echo $disabled ? ' disabled' : ''; ?>>
-				<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
-				<!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Update Ticket', 'event_espresso'); ?></button>--><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Close', 'event_espresso'); ?></button>
+			<div class="ee-editor-footer-container">
+				<div class="ee-editor-id-container">
+					<span class="ee-item-id"><?php echo $TKT_ID ? 'Ticket ID: ' . $TKT_ID : ''; ?></span>
+				</div>
+				<div class="save-cancel-button-container">
+					<label for="edit-ticket-TKT_is_default_selector"><?php _e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
+					<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector" value="1"<?php echo $disabled ? ' disabled' : ''; ?>>
+					<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
+					<!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Update Ticket', 'event_espresso'); ?></button>--><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Close', 'event_espresso'); ?></button>
+				</div>
 			</div>
 			<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
 			<input type="hidden" name="starting_ticket_datetime_rows[<?php echo $tkt_row; ?>]" id="starting-ticket-datetime-rows-<?php echo $tkt_row; ?>" value="<?php echo $starting_ticket_datetime_rows; ?>" class="starting-ticket-datetime-rows">

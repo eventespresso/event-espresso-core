@@ -58,6 +58,34 @@ class EE_Html_messenger extends EE_messenger  {
 	}
 
 
+
+
+	/**
+	 * HTML Messenger desires execution immediately.
+	 * @see  parent::send_now() for documentation.
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function send_now() {
+		return true;
+	}
+
+
+
+
+	/**
+	 * HTML Messenger allows an empty to field.
+	 * @see parent::allow_empty_to_field() for documentation
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function allow_empty_to_field() {
+		return true;
+	}
+
+
+
+
 	/**
 	 * @see abstract declaration in EE_messenger for details.
 	 */
@@ -112,12 +140,8 @@ class EE_Html_messenger extends EE_messenger  {
 				'required' => array('[DATETIME_LIST]')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'question_list'),
+				'shortcodes' => array('attendee'),
 				'required' => array('[ATTENDEE_LIST]')
-				),
-			'question_list' => array(
-				'shortcodes' => array('question'),
-				'required' => array('[QUESTION_LIST]')
 				),
 			'tax_line_item_list' => array(
 				'shortcodes' => array('line_item'),
@@ -271,17 +295,6 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '5',
 						'shortcodes_required' => array('[ATTENDEE_LIST]')
 					),
-					'question_list' => array(
-						'input' => 'textarea',
-						'label' => '[QUESTION_LIST]',
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
-						'shortcodes_required' => array('[QUESTION_LIST]')
-					),
 					'tax_line_item_list' => array(
 						'input' => 'textarea',
 						'label' => '[TAX_LINE_ITEM_LIST]',
@@ -409,8 +422,9 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _get_main_template( $preview = FALSE ) {
 		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, 'main' );
 
-		//require template helper
-		EE_Registry::instance()->load_helper( 'Template' );
+		//include message type as a template arg
+		$this->_template_args['message_type'] = $this->_incoming_message_type;
+
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 

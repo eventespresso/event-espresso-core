@@ -54,6 +54,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+
+	/**
+	 * Will contain the count of trashed items for the view label.
+	 * @var int
+	 */
+	protected $_trashed_count;
+
+
+
 	/**
 	 * _screen
 	 * This is what will be referenced as the slug for the current screen
@@ -66,7 +75,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * _admin_page
-	 * @var object  this is the EE_Admin_Page object
+	 *
+	 * @var EE_Admin_Page  this is the EE_Admin_Page object
 	 */
 	protected $_admin_page;
 
@@ -212,8 +222,27 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 	/**
+	 * Used to indicate what should be the primary column for the list table. If not present then falls back to what WP calculates
+	 * as the primary column.
+	 * @type string
+	 */
+	protected $_primary_column = '';
+
+
+
+
+	/**
+	 * Used to indicate whether the table has a checkbox column or not.
+	 * @type bool
+	 */
+	protected $_has_checkbox_column = false;
+
+
+
+
+	/**
 	 * constructor
-	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
+	 * @param EE_Admin_Page $admin_page we use this for obtaining everything we need in the list table.
 	 */
 	public function __construct( EE_Admin_Page $admin_page ) {
 		$this->_admin_page = $admin_page;
@@ -232,6 +261,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_nonce_action_ref = $this->_view;
 
 		$this->_set_properties();
+
+		//set primary column
+		add_filter( 'list_table_primary_column', array( $this, 'set_primary_column' ) );
 
 		//set parent defaults
 		parent::__construct($this->_wp_list_args);
@@ -256,7 +288,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * properties set:
 	 * _wp_list_args = what the arguments required for the parent _wp_list_table.
 	 * _columns = set the columns in an array.
-	 * _sortable_columns = colums that are sortable (array).
+	 * _sortable_columns = columns that are sortable (array).
 	 * _hidden_columns = columns that are hidden (array)
 	 * _default_orderby = the default orderby for sorting.
 	 *
@@ -277,7 +309,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 *
 	 * @abstract
 	 * @access protected
-	 * @return html string
+	 * @return string
 	 */
 	abstract protected function _get_table_filters();
 
@@ -304,7 +336,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	/**
 	 * _get_hidden_fields
 	 * returns a html string of hidden fields so if any table filters are used the current view will be respected.
-	 * @return html string
+	 * @return string
 	 */
 	protected function _get_hidden_fields() {
 		$action = isset( $this->_req_data['route'] ) ? $this->_req_data['route'] : '';
@@ -370,9 +402,42 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 			$sortable[$id] = $_data;
 		}
-		$this->_column_headers = array( $columns, $hidden, $sortable );
+		$primary = $this->get_primary_column_name();
+		$this->_column_headers = array( $columns, $hidden, $sortable, $primary );
 	}
 
+
+	/**
+	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 * @return string
+	 */
+	protected function get_primary_column_name() {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'get_primary_column_name' ) && $parent == 'WP_List_Table' ) {
+				return parent::get_primary_column_name();
+			}
+		}
+		return $this->_primary_column;
+	}
+
+
+
+	/**
+	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 *
+	 * @param object $item
+	 * @param string $column_name
+	 * @param string $primary
+	 * @return string
+	 */
+	protected function handle_row_actions( $item, $column_name, $primary ) {
+		foreach( class_parents( $this ) as $parent ) {
+			if ( method_exists( $parent, 'handle_row_actions' ) && $parent == 'WP_List_Table' ) {
+				return parent::handle_row_actions( $item, $column_name, $primary );
+			}
+		}
+		return '';
+	}
 
 
 
@@ -423,6 +488,23 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 
+	/**
+	 * Callback for 'list_table_primary_column' WordPress filter
+	 *
+	 * If child EE_Admin_List_Table classes set the _primary_column property then that will be set as the primary column when class
+	 * is instantiated.
+	 *
+	 * @see WP_List_Table::get_primary_column_name
+	 * @param string $column_name
+	 * @return string
+	 */
+	public function set_primary_column( $column_name ) {
+		return ! empty( $this->_primary_column ) ? $this->_primary_column : $column_name;
+	}
+
+
+
+
 
 	public function prepare_items() {
 
@@ -447,7 +529,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 *
 	 * This can be overridden by child classes, but allows for hooking in for custom columns.
 	 *
-	 * @param EE_Base_Class
+	 * @param object $item
 	 * @param string $column_name The column being called.
 	 *
 	 * @return string html content for the column
@@ -516,7 +598,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 */
 	public function single_row( $item ) {
 		$row_class = $this->_get_row_class( $item );
-		echo '<tr' . $row_class . '>';
+		echo '<tr class="' . esc_attr( $row_class ) . '">';
 		$this->single_row_columns( $item );
 		echo '</tr>';
 	}
@@ -532,12 +614,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		static $row_class = '';
 		$row_class = ( $row_class == '' ? 'alternate' : '' );
 
-		$new_row = $row_class;
+		$new_row_class = $row_class;
 
-		if ( !empty($this->_ajax_sorting_callback) )
-			$new_row .= ' rowsortable';
+		if ( !empty($this->_ajax_sorting_callback) ) {
+			$new_row_class .= ' rowsortable';
+		}
 
-		return ' class="' . $new_row . '"';
+		return $new_row_class;
 	}
 
 
@@ -570,23 +653,36 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * column.
 	 *
 	 * @since 3.1.0
-	 * @access protected
 	 *
 	 * @param object $item The current item
 	 */
-	protected function single_row_columns( $item ) {
-		list( $columns, $hidden ) = $this->get_column_info();
+	public function single_row_columns( $item ) {
+		list( $columns, $hidden, $sortable, $primary ) = $this->get_column_info();
+
+		global $wp_version;
+		$use_hidden_class = version_compare( $wp_version, '4.3-RC', '>=' );
 
 		foreach ( $columns as $column_name => $column_display_name ) {
-			$class = "class='$column_name column-$column_name'";
 
-			$style = '';
-			if ( in_array( $column_name, $hidden ) )
-				$style = ' style="display:none;"';
+			/**
+			 * With WordPress version 4.3.RC+ WordPress started using the hidden css class to control whether columns are
+			 * hidden or not instead of using "display:none;".  This bit of code provides backward compat.
+			 */
+			$hidden_class = $use_hidden_class && in_array( $column_name, $hidden ) ? ' hidden' : '';
+			$style = ! $use_hidden_class && in_array( $column_name, $hidden ) ? ' style="display:none;"' : '';
 
-			$attributes = "$class$style";
+			$classes = $column_name . ' column-' . $column_name.$hidden_class;
+			if ( $primary == $column_name ) {
+				$classes .= ' has-row-actions column-primary';
+			}
 
-			if ( 'cb' == $column_name ) {
+			$data = ' data-colname="' . wp_strip_all_tags( $column_display_name ) . '"';
+
+			$class = "class='$classes'";
+
+			$attributes = "$class$style$data";
+
+			if ( 'cb' === $column_name ) {
 				echo '<th scope="row" class="check-column">';
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_cb_content', $this->column_cb( $item ), $item, $this );
 				echo '</th>';
@@ -594,11 +690,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			elseif ( method_exists( $this, 'column_' . $column_name ) ) {
 				echo "<td $attributes>";
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_' . $column_name . '__column_content', call_user_func( array( $this, 'column_' . $column_name ), $item ), $item, $this );
+				echo $this->handle_row_actions( $item, $column_name, $primary );
 				echo "</td>";
 			}
 			else {
 				echo "<td $attributes>";
 				echo apply_filters( 'FHEE__EE_Admin_List_Table__single_row_columns__column_default__column_content', $this->column_default( $item, $column_name ), $item, $column_name, $this );
+				echo $this->handle_row_actions( $item, $column_name, $primary );
 				echo "</td>";
 			}
 		}

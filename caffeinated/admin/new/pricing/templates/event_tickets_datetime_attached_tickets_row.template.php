@@ -4,7 +4,7 @@
 			<div class="datetime-description-container">
 				<textarea name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_description]" class="event-datetime-DTT_description ee-full-textarea-inp" placeholder="Datetime Description (optional)"><?php echo $DTT_description; ?></textarea>
 			</div>
-			<h5 class="datetime-tickets-heading"><?php _e('Assigned Tickets', 'event_espresso'); ?></h5>
+			<h4 class="datetime-tickets-heading"><?php _e('Assigned Tickets', 'event_espresso'); ?></h4>
 
 			<ul class="datetime-tickets-list">
 				<?php echo $datetime_tickets_list; ?>
@@ -12,7 +12,7 @@
 			
 			
 			<div class="add-datetime-ticket-container">
-				<h5 class="datetime-tickets-heading"><?php _e('Add New Ticket', 'event_espresso'); ?></h5><?php echo $add_new_datetime_ticket_help_link; ?><br>
+				<h4 class="datetime-tickets-heading"><?php _e('Add New Ticket', 'event_espresso'); ?></h4><?php echo $add_new_datetime_ticket_help_link; ?><br>
 				<table class="add-new-ticket-table">
 					<thead>
 						<tr valign="top">
@@ -49,13 +49,18 @@
 						</tr>
 					</tbody>
 				</table>
-				<div class="save-cancel-button-container">
-					<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-primary ee-create-button">
-						<?php _e('Create Ticket', 'event_espresso'); ?>
-					</button>
-					<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-secondary ee-cancel-button add-edit">
-						<?php _e('Close', 'event_espresso'); ?>
-					</button>
+				<div class="ee-editor-footer-container">
+					<div class="ee-editor-id-container">
+						<span class="ee-item-id"><?php echo $DTT_ID ? 'Datetime ID: ' . $DTT_ID : ''; ?></span>
+					</div>
+					<div class="save-cancel-button-container">
+						<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-primary ee-create-button">
+							<?php _e('Create Ticket', 'event_espresso'); ?>
+						</button>
+						<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-secondary ee-cancel-button add-edit">
+							<?php _e('Close', 'event_espresso'); ?>
+						</button>
+					</div>
 				</div>
 				<div style="clear:both"></div>
 			</div>
@@ -73,4 +78,5 @@
  * $show_tickets_row
  * $datetime_tickets_list
  * $add_new_datetime_ticket_help_link
+ * $DTT_ID
  */

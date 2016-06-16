@@ -1,4 +1,5 @@
-.add-new-h2 { margin-left : 15px; }
+.espresso-admin .add-new-h2,
+.espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
 .tablenav div { margin-right : 15px; }
 .tablenav select { margin : 0 1em 0 0 !important; }
@@ -172,6 +173,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .big-text { font-size : 1.2em; line-height : 1.6em; letter-spacing : -.5px; }
 .bigger-text { font-size : 1.5em; line-height : 2em; letter-spacing : -.75px; }
 .huge-text { font-size : 2em; line-height : 2.4em; letter-spacing : -1px; }
+.ee-infinity-sign { font-size: 1.5em; line-height: 1em; letter-spacing: -.25px; vertical-align: bottom; }
 
 .float-right { float : right; }
 .left { float : left; }
@@ -225,9 +227,9 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .ee-spinner {
 	font-family: 'dashicons';
 	display: inline-block;
-    	font-style: normal;
-    	font-weight: normal;
-    	line-height: 1;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
 	vertical-align: middle;
 }
 
@@ -356,6 +358,10 @@ label.error { display : block; color : #FE2A00 !important; }
 .ui-timepicker-div td { font-size : 90%; }
 .ui-tpicker-grid-label { background : none; border : none; margin : 0; padding : 0; }
 
+.ui-timepicker-div .ui_tpicker_unit_hide {
+	display:none;
+}
+
 .ee-upload-form-dv {
 	margin : 2em 0;
 }
@@ -474,6 +480,32 @@ label.error { display : block; color : #FE2A00 !important; }
 	width : 230px;
 }
 
+.espresso-admin .wp-list-table .show-on-mobile-view-only {
+	display: none;
+}
+
+
+/*wp-list-table media query*/
+@media screen and ( max-width: 782px ) {
+	.espresso-admin .wp-list-table .column-primary {
+		width: 100% !important;
+	}
+
+	.espresso-admin .wp-list-table .is-ee-status-column, .espresso-admin .wp-list-table .is-ee-status-column {
+		display: table-cell !important;
+		vertical-align: top;
+	}
+
+	.espresso-admin .wp-list-table .show-on-mobile-view-only {
+		display: inline;
+	}
+
+	/** hide qtips when in mobile view **/
+	.qtip {
+		display: none !important;
+	}
+}
+
 /** CAFFEINATED PREVIEW CSS **/
 .ee-admin-caf-preview-contents {
 	padding    : 10px;
@@ -481,19 +513,19 @@ label.error { display : block; color : #FE2A00 !important; }
 }
 
 .ee-caf-preview-text {
-   float: left;
+	float: left;
 	padding: 0 10px;
 }
 
 .ee-caf-preview-action-box {
-    float: right;
+	float: right;
 	padding : 10px;
 }
 
 #ee-admin-caf-preview-container .button-large {
-    height: 50px;
-    font-size: 1.5em;
-    padding: 10px 15px 0;
+	height: 50px;
+	font-size: 1.5em;
+	padding: 10px 15px 0;
 }
 
 .ee-admin-caf-preview-img, .ee-admin-caf-preview-img img {
@@ -613,6 +645,11 @@ label.error { display : block; color : #FE2A00 !important; }
 	width: 256px;
 }
 
+.dashicons-star-filled::before {
+	color: #e6b800;
+	font-size: 18px;
+}
+
 /** EE-status thingies **/
 .ee-status {
 	display          : block;
@@ -637,8 +674,32 @@ label.error { display : block; color : #FE2A00 !important; }
 	min-height: 20px;
 }
 
+.wp-list-table .ee-status-strip .check-column {
+	border-left-style: solid;
+	border-left-width: 4px;
+}
+
+.wp-list-table tr.ee-status-strip {
+	display: table-row;
+	border: none;
+}
+
+.espresso-admin .wp-list-table td {
+	overflow: hidden !important;
+	position: relative;
+}
 .wp-list-table .ee-status-strip-td {
+	display: block !important;
+	height: 100% !important;
 	min-height: 125px;
+	overflow: auto !important;
+	position: absolute;
+	width: 5px;
+}
+
+.ee-status-text-small {
+	font-size: .9em;
+	font-style: italic;
 }
 
 .ee-table-wrap {
@@ -679,25 +740,25 @@ div.updated.ee-notices-attention {
 /** EE-INPUT-SELECTORS**/
 /**************************/
 .ee-text-inp, .ee-small-text-inp {
-    width: 100%;
+	width: 100%;
 }
 
 .ee-small-text-inp {
-    max-width: 100%;
-    min-width:  50px;
+	max-width: 100%;
+	min-width:  50px;
 }
 
 .ee-large-text-inp {
-    width: 100%;
+	width: 100%;
 }
 
 .ee-full-textarea-inp {
-    width: 100%;
-    height: 100px;
+	width: 100%;
+	height: 100px;
 }
 
 .ee-inp-right {
-    text-align: right;
+	text-align: right;
 }
 
 .ee-numeric {
@@ -727,7 +788,7 @@ input.mid-text  { width: 100px; }
 	text-decoration: none !important;
 	text-align: center;
 	line-height: 1em;
-/*	line-height: 1;*/
+	/*	line-height: 1;*/
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
 	border-radius: 0;
@@ -889,3 +950,17 @@ input.ee-register-button {
 	color: #8A549A;
 }
 
+
+/** other styling - footnotes etc **/
+.ee-footnote-text {
+	font-style: italic;
+	font-size: .8em;
+	font-color: #dcc;
+	font-weight: normal;
+}
+
+/** Google Chart adjustments **/
+.admin-report-chart-dv {
+	background: #fff;
+	padding: 10px;
+}

@@ -483,7 +483,9 @@ class EE_Data_Migration_Manager{
 	public function migration_step( $step_size = 0 ){
 
 		//bandaid fix for issue https://events.codebasehq.com/projects/event-espresso/tickets/7535
-		remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
+		if ( class_exists( 'EE_CPT_Strategy' ) ) {
+			remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
+		}
 
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
@@ -495,9 +497,11 @@ class EE_Data_Migration_Manager{
 					//but dont forget to make sure initial data is there
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
-					$this->initialize_db_for_enqueued_ee_plugins();
-					//make sure the datetime and ticket total sold are correct
+					//saving migrations ran should actually be unnecessary, but leaving in place just in case
+					//remember this migration was finished (even if we timeout initing db for core and plugins)
 					$this->_save_migrations_ran();
+					//make sure DB was updated AFTER we've recorded the migration was done
+					$this->initialize_db_for_enqueued_ee_plugins();
 					return array(
 						'records_to_migrate'=>1,
 						'records_migrated'=>1,
@@ -537,6 +541,8 @@ class EE_Data_Migration_Manager{
 			}
 			//do what we came to do!
 			$currently_executing_script->migration_step($step_size);
+			//can we wrap it up and verify default data?
+			$init_dbs = false;
 			switch($currently_executing_script->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
@@ -563,7 +569,7 @@ class EE_Data_Migration_Manager{
 						EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure initial data is there
-						$this->initialize_db_for_enqueued_ee_plugins();
+						$init_dbs = true;
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
@@ -602,6 +608,10 @@ class EE_Data_Migration_Manager{
 			//however, if we throw an exception, and return that, then the next request
 			//won't have as much info in it, and it may be able to save
 			throw new EE_Error(sprintf(__("The error '%s' occurred updating the status of the migration. This is a FATAL ERROR, but the error is preventing the system from remembering that. Please contact event espresso support.", "event_espresso"),$successful_save));
+		}
+		//if we're all done, initialize EE plugins' default data etc.
+		if( $init_dbs ) {
+			$this->initialize_db_for_enqueued_ee_plugins();
 		}
 		return $response_array;
 	}
@@ -655,6 +665,36 @@ class EE_Data_Migration_Manager{
 		$current_database_state = get_option(self::current_database_state);
 		$current_database_state[ $slug_and_version[ 'slug' ] ]=$slug_and_version[ 'version' ];
 		update_option(self::current_database_state,$current_database_state);
+	}
+
+	/**
+	 * Determines if the database is currently at a state matching what's indicated in $slug and $version.
+	 * @param array $slug_and_version {
+	 *	@type string $slug like 'Core' or 'Calendar',
+	 *	@type string $version like '4.1.0'
+	 * }
+	 * @return boolean
+	 */
+	public function database_needs_updating_to( $slug_and_version ) {
+
+		$slug = $slug_and_version[ 'slug' ];
+		$version = $slug_and_version[ 'version' ];
+		$current_database_state = get_option(self::current_database_state);
+		if( ! isset( $current_database_state[ $slug ] ) ) {
+			return true;
+		}else{
+			//just compare the first 3 parts of version string, eg "4.7.1", not "4.7.1.dev.032" because DBs shouldn't change on nano version changes
+			$version_parts_current_db_state = array_slice( explode('.', $current_database_state[ $slug ] ), 0, 3);
+			$version_parts_of_provided_db_state = array_slice( explode( '.', $version ), 0, 3 );
+			$needs_updating = false;
+			foreach($version_parts_current_db_state as $offset => $version_part_in_current_db_state ) {
+				if( $version_part_in_current_db_state < $version_parts_of_provided_db_state[ $offset ] ) {
+					$needs_updating = true;
+					break;
+				}
+			}
+			return $needs_updating;
+		}
 	}
 
 	/**
@@ -729,7 +769,7 @@ class EE_Data_Migration_Manager{
 		//because if it has finished, then it obviously couldn't be the cause of this error, right? (because its all done)
 		if(isset($last_ran_migration_script_properties['class']) && isset($last_ran_migration_script_properties['_status']) && $last_ran_migration_script_properties['_status'] != self::status_completed){
 			//ok then just add this error to its list of errors
-			$last_ran_migration_script_properties['_errors'] = $error_message;
+			$last_ran_migration_script_properties['_errors'][] = $error_message;
 			$last_ran_migration_script_properties['_status'] = self::status_fatal_error;
 		}else{
 			//so we don't even know which script was last running
@@ -916,20 +956,35 @@ class EE_Data_Migration_Manager{
 	 * in the queue, calls EE_System::initialize_db_if_no_migrations_required().
 	 */
 	public function initialize_db_for_enqueued_ee_plugins() {
+//		EEH_Debug_Tools::instance()->start_timer( 'initialize_db_for_enqueued_ee_plugins' );
 		$queue = $this->get_db_initialization_queue();
-		foreach( $queue as $plugin_slug ){
-			if( $plugin_slug == 'Core' ){
-				EE_System::instance()->initialize_db_if_no_migrations_required();
+		foreach( $queue as $plugin_slug ) {
+			$most_up_to_date_dms = $this->get_most_up_to_date_dms( $plugin_slug );
+			if( ! $most_up_to_date_dms ) {
+				//if there is NO DMS for this plugin, obviously there's no schema to verify anyways
+				$verify_db = false;
 			}else{
-				//just loop through the addons to make sure
+				$most_up_to_date_dms_migrates_to = $this->script_migrates_to_version( $most_up_to_date_dms );
+				$verify_db = $this->database_needs_updating_to( $most_up_to_date_dms_migrates_to );
+			}
+			if( $plugin_slug == 'Core' ){
+				EE_System::instance()->initialize_db_if_no_migrations_required(
+						false,
+						$verify_db
+					);
+			}else{
+				//just loop through the addons to make sure their database is setup
 				foreach( EE_Registry::instance()->addons as $addon ) {
 					if( $addon->name() == $plugin_slug ) {
-						$addon->initialize_db_if_no_migrations_required();
+
+						$addon->initialize_db_if_no_migrations_required( $verify_db );
 						break;
 					}
 				}
 			}
 		}
+//		EEH_Debug_Tools::instance()->stop_timer( 'initialize_db_for_enqueued_ee_plugins' );
+//		EEH_Debug_Tools::instance()->show_times();
 		//because we just initialized the DBs for the enqueued ee plugins
 		//we don't need to keep remembering which ones needed to be initialized
 		delete_option( self::db_init_queue_option_name );

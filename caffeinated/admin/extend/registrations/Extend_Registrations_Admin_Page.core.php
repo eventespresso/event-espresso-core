@@ -29,16 +29,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
+
+	/**
+	 * This is used to hold the reports template data which is setup early in the request.
+	 * @type array
+	 */
+	protected $_reports_template_data = array();
+
+
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
 		define( 'REG_CAF_TEMPLATE_PATH', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/templates/');
 		define( 'REG_CAF_ASSETS', EE_CORE_CAF_ADMIN_EXTEND . 'registrations/assets/');
 		define( 'REG_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registrations/assets/');
 	}
-
-
-
-
 
 
 	protected function _extend_page_config() {
@@ -99,7 +103,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 						'filename' => 'registrations_reports'
 						)
 					),
-				'help_tour' => array( 'Registration_Reports_Help_Tour' ),
+				/*'help_tour' => array( 'Registration_Reports_Help_Tour' ),*/
 				'require_nonce' => FALSE
 				),
 			'event_registrations' => array(
@@ -149,9 +153,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			);
 
-		// var_dump($this->_req_data);
-		// exit();
-
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		$this->_page_config['contact_list']['list_table'] = 'Extend_EE_Attendee_Contact_List_Table';
 		$this->_page_config['default']['list_table'] = 'Extend_EE_Registrations_List_Table';
@@ -161,7 +162,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	protected function _ajax_hooks() {
 		parent::_ajax_hooks();
-		add_action('wp_ajax_get_newsletter_form_content', array( $this, 'get_newsletter_form_content') );
+		add_action( 'wp_ajax_get_newsletter_form_content', array( $this, 'get_newsletter_form_content' ) );
 	}
 
 
@@ -170,10 +171,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		parent::load_scripts_styles();
 
 		//if newsletter message type is active then let's add filter and load js for it.
-		EE_Registry::instance()->load_helper('MSG_Template');
 		if ( EEH_MSG_Template::is_mt_active('newsletter') ) {
 			//enqueue newsletter js
-			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_style( 'ee-newsletter-trigger-css', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.css', array(), EVENT_ESPRESSO_VERSION );
 			//hook in buttons for newsletter message type trigger.
 			add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
@@ -183,17 +183,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 	public function load_scripts_styles_reports() {
-		//styles
-		wp_enqueue_style('jquery-jqplot-css');
-
-		//scripts
-		global $is_IE;
-		if ( $is_IE ) {
-			wp_enqueue_script( 'excanvas' );
-		}
-
-		wp_register_script('espresso_reg_admin_regs_per_day', REG_CAF_ASSETS_URL  . 'espresso_reg_admin_regs_per_day_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_register_script('espresso_reg_admin_regs_per_event', REG_CAF_ASSETS_URL . 'espresso_reg_admin_regs_per_event_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'ee-reg-reports-js', REG_CAF_ASSETS_URL . 'ee-registration-admin-reports.js', array( 'google-charts' ), EVENT_ESPRESSO_VERSION, true );
+		wp_enqueue_script( 'ee-reg-reports-js' );
+		$this->_registration_reports_js_setup();
 	}
 
 
@@ -352,7 +344,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		}
 
 		//need to get a list of shortcodes that are available for the newsletter message type.
-		EE_Registry::instance()->load_helper('MSG_Template');
 		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', FALSE );
 		foreach ( $shortcodes as $field => $shortcode_array ) {
 			$codes[$field] = implode(', ', array_keys($shortcode_array ) );
@@ -388,58 +379,124 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$success = TRUE;
 		//first we need to make sure we have a GRP_ID so we know what template we're sending and updating!
 		if ( empty( $this->_req_data['newsletter_mtp_selected'] ) ) {
-			EE_Error::add_error( __('In order to send a message, a Message Template GRP_ID is needed. It was not provided so messages were not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error(
+				__(
+					'In order to send a message, a Message Template GRP_ID is needed. It was not provided so messages were not sent.',
+					'event_espresso'
+				),
+				__FILE__, __FUNCTION__, __LINE__
+			);
 			$success = FALSE;
 		}
 
 		if ( $success ) {
 			//update Message template in case there are any changes
-			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['newsletter_mtp_selected'] );
-			$MTPs = $MTPG instanceof EE_Message_Template_Group ? $MTPG->context_templates() : array();
-			if ( empty( $MTPs ) ) {
-				EE_Error::add_error( __('Unable to retrieve message template fields from the db. Messages not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-				$success = FALSE;
+			$Message_Template_Group = EEM_Message_Template_Group::instance()->get_one_by_ID(
+				$this->_req_data['newsletter_mtp_selected']
+			);
+			$Message_Templates = $Message_Template_Group instanceof EE_Message_Template_Group
+				? $Message_Template_Group->context_templates()
+				: array();
+			if ( empty( $Message_Templates ) ) {
+				EE_Error::add_error(
+					__(
+						'Unable to retrieve message template fields from the db. Messages not sent.',
+						'event_espresso'
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 			}
 
 			//let's just update the specific fields
-			foreach ( $MTPs['attendee'] as $MTP ) {
-				$field = $MTP->get('MTP_template_field');
-				$content = $MTP->get('MTP_content');
-				$new_content = $content;
-				switch( $field ) {
-					case 'from' :
-						$new_content = !empty( $this->_req_data['batch_message']['from'] ) ? $this->_req_data['batch_message']['from'] : $content;
-						break;
-					case 'subject' :
-						$new_content = !empty( $this->_req_data['batch_message']['subject'] ) ? $this->_req_data['batch_message']['subject'] : $content;
-						break;
-					case 'content' :
-						$new_content = $content;
-						$new_content['newsletter_content'] = !empty( $this->_req_data['batch_message']['content'] ) ? $this->_req_data['batch_message']['content'] : $content['newsletter_content'];
-						break;
-					default :
-						continue;
-						break;
+			foreach ( $Message_Templates['attendee'] as $Message_Template ) {
+				if ( $Message_Template instanceof EE_Message_Template ) {
+					$field = $Message_Template->get( 'MTP_template_field' );
+					$content = $Message_Template->get( 'MTP_content' );
+					$new_content = $content;
+					switch ( $field ) {
+						case 'from' :
+							$new_content = ! empty( $this->_req_data['batch_message']['from'] )
+								? $this->_req_data['batch_message']['from']
+								: $content;
+							break;
+						case 'subject' :
+							$new_content = ! empty( $this->_req_data['batch_message']['subject'] )
+								? $this->_req_data['batch_message']['subject']
+								: $content;
+							break;
+						case 'content' :
+							$new_content = $content;
+							$new_content['newsletter_content'] = ! empty( $this->_req_data['batch_message']['content'] )
+								? $this->_req_data['batch_message']['content']
+								: $content['newsletter_content'];
+							break;
+						default :
+							continue;
+							break;
+					}
+					$Message_Template->set( 'MTP_content', $new_content );
+					$Message_Template->save();
 				}
-				$MTP->set('MTP_content', $new_content);
-				$MTP->save();
 			}
 
 			//great fields are updated!  now let's make sure we just have contact objects (EE_Attendee).
-			$id_type = !empty( $this->_req_data['batch_message']['id_type'] ) ? $this->_req_data['batch_message']['id_type'] : 'registration';
+			$id_type = ! empty( $this->_req_data['batch_message']['id_type'] )
+				? $this->_req_data['batch_message']['id_type']
+				: 'registration';
 
 			//id_type will affect how we assemble the ids.
-			$ids = !empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
+			$ids = ! empty( $this->_req_data['batch_message']['ids'] )
+				? json_decode( stripslashes($this->_req_data['batch_message']['ids']) )
+				: array();
 
-			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
-
-			//we do _action because ALL triggers are handled in EED_Messages.
-			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
+			$registrations_used_for_contact_data = array();
+			//using switch because eventually we'll have other contexts that will be used for generating messages.
+			switch ( $id_type ) {
+				case 'registration' :
+					$registrations_used_for_contact_data = EEM_Registration::instance()->get_all(
+						array(
+							array(
+								'REG_ID' => array( 'IN', $ids )
+							)
+						)
+					);
+					break;
+				case 'contact' :
+					$registrations_used_for_contact_data = EEM_Registration::instance()->get_latest_registration_for_each_of_given_contacts( $ids );
+					break;
+			}
+			do_action(
+				'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send__with_registrations',
+				$registrations_used_for_contact_data,
+				$Message_Template_Group->ID()
+			);
+			//kept for backward compat, internally we no longer use this action.
+			//@deprecated 4.8.36.rc.002
+			$contacts = $id_type == 'registration'
+				? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids )
+				: EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
+			do_action(
+				'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send',
+				$contacts,
+				$Message_Template_Group->ID()
+			);
 		}
 		$query_args = array(
-			'action' => !empty( $this->_req_data['redirect_back_to'] ) ? $this->_req_data['redirect_back_to'] : 'default'
+			'action' => !empty( $this->_req_data['redirect_back_to'] )
+				? $this->_req_data['redirect_back_to']
+				: 'default'
 			);
 		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+	}
+
+
+	/**
+	 * This is called when javascript is being enqueued to setup the various data needed for the reports js.
+	 * Also $this->{$_reports_template_data} property is set for later usage by the _registration_reports method.
+	 */
+	protected function _registration_reports_js_setup() {
+		$this->_reports_template_data['admin_reports'][] = $this->_registrations_per_day_report();
+		$this->_reports_template_data['admin_reports'][] = $this->_registrations_per_event_report();
 	}
 
 
@@ -451,126 +508,153 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*		@return void
 	*/
 	protected function _registration_reports() {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$page_args = array();
-
-		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
-//		$page_args['admin_reports'][] = 'chart1';
-
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
-
-//		EEH_Debug_Tools::printr( $page_args, '$page_args' );
-
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_reports_template_data, true );
 		// the final template wrapper
 		$this->display_admin_page_with_no_sidebar();
 
 	}
 
 
-
-
-
-
 	/**
-	 * 		generates Business Report showing total registratiopns per day
-	*		@access private
-	*		@return void
-	*/
+	 * Generates Business Report showing total registrations per day.
+	 * @param string $period The period (acceptable by PHP Datetime constructor) for which the report is generated.
+	 *
+	 * @return string
+	 */
 	private function _registrations_per_day_report( $period = '-1 month' ) {
-
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
-		$report_JS = 'espresso_reg_admin_regs_per_day';
 
-		wp_enqueue_script( $report_JS );
+		$results = EEM_Registration::instance()->get_registrations_per_day_and_per_status_report( $period );
 
-		$REG = EEM_Registration::instance();
-
-		$results = $REG->get_registrations_per_day_report( $period );
-
-		//EEH_Debug_Tools::printr( $results, '$registrations_per_day' );
-		$regs = array();
-		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-		$xmax = 0;
-		$ymax = 0;
 		$results = (array) $results;
-		foreach ( $results as $result ) {
-			$regs[] = array( $result->regDate, (int)$result->total );
-			$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
-			$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
-			$ymax = $result->total > $ymax ? $result->total : $ymax;
-		}
+		$regs = array();
+		$subtitle = '';
 
-		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));
-		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-		// calculate # days between our min and max dates
-		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+		if( $results ) {
+			$column_titles = array();
+			$tracker = 0;
+			foreach ( $results as $result ) {
+				$report_column_values = array();
+				foreach( $result as $property_name => $property_value ) {
+					$property_value = $property_name == 'Registration_REG_date' ? $property_value : (int) $property_value;
+					$report_column_values[] = $property_value;
+					if ( $tracker === 0 ) {
+						if ( $property_name == 'Registration_REG_date' ) {
+							$column_titles[] = __( 'Date (only days with registrations are shown)', 'event_espresso' );
+						} else {
+							$column_titles[] = EEH_Template::pretty_status( $property_name, false, 'sentence' );
+						}
+					}
+				}
+				$tracker++;
+				$regs[] = $report_column_values;
+			}
+
+			//make sure the column_titles is pushed to the beginning of the array
+			array_unshift( $regs, $column_titles );
+			//setup the date range.
+			$DateTimeZone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
+			$beginning_date = new DateTime( "now " . $period, $DateTimeZone );
+			$ending_date = new DateTime( "now", $DateTimeZone );
+			$subtitle = sprintf(
+				_x( 'For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso' ),
+				$beginning_date->format( 'Y-m-d' ),
+				$ending_date->format( 'Y-m-d' )
+			);
+		}
 
 		$report_title = __( 'Total Registrations per Day', 'event_espresso' );
 
 		$report_params = array(
-				'title' 	=> $report_title,
-				'id' 		=> $report_ID,
-				'regs' 	=> $regs,
-				'xmin' 	=> $xmin,
-				'xmax' 	=> $xmax,
-				'ymax' 	=> ceil($ymax * 1.25),
-				'span' 	=> $span,
-				'width'	=> ceil(900 / $span),
-				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )
-			);
-		wp_localize_script( $report_JS, 'regPerDay', $report_params );
+			'title' 	=> $report_title,
+			'subtitle' => $subtitle,
+			'id' 		=> $report_ID,
+			'regs' 	=> $regs,
+			'noResults' => empty( $regs ),
+			'noRegsMsg' => sprintf(
+				__(
+					'%sThere are currently no registration records in the last month for this report.%s',
+					'event_espresso'
+				),
+				'<h2>' . $report_title . '</h2><p>',
+				'</p>'
+			),
+		);
+		wp_localize_script( 'ee-reg-reports-js', 'regPerDay', $report_params );
 
 		return $report_ID;
 	}
 
 
-
-
-
-
 	/**
-	 * 		generates Business Report showing total registratiopns per event
-	*		@access private
-	*		@return void
-	*/
-	private function _get_registrations_per_event_report( $period = '-1 month' ) {
+	 * Generates Business Report showing total registrations per event.
+	 * @param string $period The period (acceptable by PHP Datetime constructor) for which the report is generated.
+	 *
+	 * @return string
+	 */
+	private function _registrations_per_event_report( $period = '-1 month' ) {
 
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
-		$report_JS = 'espresso_reg_admin_regs_per_event';
 
-		wp_enqueue_script( $report_JS );
+		$results = EEM_Registration::instance()->get_registrations_per_event_and_per_status_report( $period );
 
-		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-		$REG = EEM_Registration::instance();
-
-		$results = $REG->get_registrations_per_event_report( $period );
-		//EEH_Debug_Tools::printr( $results, '$registrations_per_event' );
-		$regs = array();
-		$ymax = 0;
 		$results = (array) $results;
-		foreach ( $results as $result ) {
-			$regs[] = array( wp_trim_words( $result->event_name, 4, '...' ), (int)$result->total );
-			$ymax = $result->total > $ymax ? $result->total : $ymax;
-		}
+		$regs = array();
+		$subtitle = '';
 
-		$span = $period == 'week' ? 9 : 33;
+		if ( $results ) {
+			$column_titles = array();
+			$tracker = 0;
+			foreach ( $results as $result ) {
+				$report_column_values = array();
+				foreach( $result as $property_name => $property_value ) {
+					$property_value = $property_name == 'Registration_Event' ? wp_trim_words( $property_value, 4, '...' ) : (int) $property_value;
+					$report_column_values[] = $property_value;
+					if ( $tracker === 0 ) {
+						if ( $property_name == 'Registration_Event' ) {
+							$column_titles[] = __( 'Event', 'event_espresso' );
+						} else {
+							$column_titles[] = EEH_Template::pretty_status( $property_name, false, 'sentence' );
+						}
+					}
+				}
+				$tracker++;
+				$regs[] = $report_column_values;
+			}
+
+			//make sure the column_titles is pushed to the beginning of the array
+			array_unshift( $regs, $column_titles );
+
+			//setup the date range.
+			$DateTimeZone = new DateTimeZone( EEH_DTT_Helper::get_timezone() );
+			$beginning_date = new DateTime( "now " . $period, $DateTimeZone );
+			$ending_date = new DateTime( "now", $DateTimeZone );
+			$subtitle = sprintf(
+				_x( 'For the period: %1$s to %2$s', 'Used to give date range', 'event_espresso' ),
+				$beginning_date->format( 'Y-m-d' ),
+				$ending_date->format( 'Y-m-d' )
+			);
+		}
 
 		$report_title = __( 'Total Registrations per Event', 'event_espresso' );
 
 		$report_params = array(
 			'title' 	=> $report_title,
+			'subtitle' => $subtitle,
 			'id' 		=> $report_ID,
 			'regs' 	=> $regs,
-			'ymax' 	=> ceil($ymax * 1.25),
-			'span' 	=> $span,
-			'width'	=> ceil(900 / $span),
-			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )
+			'noResults' => empty( $regs ),
+			'noRegsMsg' => sprintf(
+				__(
+					'%sThere are currently no registration records in the last month for this report.%s',
+					'event_espresso'
+				),
+				'<h2>' . $report_title . '</h2><p>',
+				'</p>'
+			),
 		);
-		wp_localize_script( $report_JS, 'regPerEvent', $report_params );
+		wp_localize_script( 'ee-reg-reports-js', 'regPerEvent', $report_params );
 
 		return $report_ID;
 	}
@@ -880,8 +964,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		//if DTT is included we do multiple datetimes.
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
-			$query_params['default_where_conditions'] = 'this_model_only';
 		}
+
+		//make sure we only have default where on the current regs
+		$query_params['default_where_conditions'] = 'this_model_only';
 
 		$status_ids_array = apply_filters( 'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
 
@@ -917,7 +1003,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_params['limit'] = $limit;
 		$query_params['force_join'] = array('Attendee');//force join to attendee model so that it gets cached, because we're going to need the attendee for each registration
 		if($count){
-			$registrations = EEM_Registration::instance()->count(array($query_params[0]));
+			$registrations = EEM_Registration::instance()->count(array($query_params[0], 'default_where_conditions' => 'this_model_only' ));
 		}else{
 			$registrations = EEM_Registration::instance()->get_all($query_params);
 

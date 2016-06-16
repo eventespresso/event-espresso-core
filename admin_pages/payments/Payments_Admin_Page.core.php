@@ -129,65 +129,22 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$payment_method_list_config = array(
-				'nav' => array(
-					'label' => __('Payment Methods', 'event_espresso'),
-					'order' => 10
-					),
-				'metaboxes' => $this->_default_espresso_metaboxes,
-                'help_tabs' => array_merge(
-			array(
+			'nav'           => array(
+				'label' => __( 'Payment Methods', 'event_espresso' ),
+				'order' => 10
+			),
+			'metaboxes'     => $this->_default_espresso_metaboxes,
+			'help_tabs'     => array_merge(
+				array(
 					'payment_methods_overview_help_tab' => array(
-						'title' => __('Payment Methods Overview', 'event_espresso'),
+						'title'    => __( 'Payment Methods Overview', 'event_espresso' ),
 						'filename' => 'payment_methods_overview'
-						)),
-//					'payment_methods_overview_authorizenet_aim_help_tab' => array(
-//						'title' => __('Authorize.net AIM Settings', 'event_espresso'),
-//						'filename' => 'payment_methods_overview_authorizenet_aim'
-//						),
-//					'payment_methods_overview_bank_draft_help_tab' => array(
-//						'title' => __('Bank Draft Settings', 'event_espresso'),
-//						'filename' => 'payment_methods_overview_bank_draft'
-//						),
-//					'payment_methods_overview_check_help_tab' => array(
-//						'title' => __('Check Settings', 'event_espresso'),
-//						'filename' => 'payment_methods_overview_check'
-//						),
-//					'payment_methods_overview_invoice_help_tab' => array(
-//						'title' => __('Invoice Settings', 'event_espresso'),
-//						'filename' => 'payment_methods_overview_invoice'
-//						),
-//					'payment_methods_overview_paypalpro_help_tab' => array(
-//						'title' => __('PayPal Pro Settings', 'event_espresso'),
-//						'filename' => 'payment_methods_overview_paypalpro'
-//						),
-//					'payment_methods_overview_paypalstandard_help_tab' => array(
-//						'title' => __('PayPal Standard Settings', 'event_espresso'),
-//						'filename' => 'payment_methods_overview_paypalstandard'
-//						),
-//					'payment_methods_overview_mijireh_help_tab' => array(
-//						'title' => __("Mijireh Settings", 'event_espresso'),
-//						'filename' => 'payment_methods_overview_mijireh'
-//						),
-					/*'payment_methods_overview_2checkout_help_tab' => array(
-						'title' => __('2Checkout Settings', 'event_espresso'),
-						'filename' => 'payment_methods_overview_2checkout'
-						),
-					'payment_methods_overview_authorizenet_sim_help_tab' => array(
-						'title' => __('Authorize.net SIM Settings', 'event_espresso'),
-						'filename' => 'payment_methods_overview_authorizenet_sim'
-						),
-					'payment_methods_overview_eway_help_tab' => array(
-						'title' => __('eWay Settings', 'event_espresso'),
-						'filename' => 'payment_methods_overview_eway'
-						),
-					'payment_methods_overview_stripe_help_tab' => array(
-						'title' => __('Stripe Settings', 'event_espresso'),
-						'filename' => 'payment_methods_overview_stripe'
-						)*/
-				$this->_add_payment_method_help_tabs()),
-				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
-				'require_nonce' => FALSE
-				);
+					)
+				),
+				$this->_add_payment_method_help_tabs() ),
+			'help_tour'     => array( 'Payment_Methods_Selection_Help_Tour' ),
+			'require_nonce' => false
+		);
 
 		$this->_page_config = array(
 			'default' => $payment_method_list_config,
@@ -195,17 +152,17 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 20
-					),
+				),
 				'help_tabs' => array(
 					'payment_methods_settings_help_tab' => array(
 						'title' => __('Payment Method Settings', 'event_espresso'),
 						'filename' => 'payment_methods_settings'
-						)
-					),
-				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
+					)
+				),
+				//'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
-				),
+			),
 			'payment_log'=>array(
 				'nav'=> array(
 					'label' => __("Logs", 'event_espresso'),
@@ -215,7 +172,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'require_nonce'=> FALSE
 			)
-			);
+		);
 	}
 
 
@@ -231,9 +188,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				continue;
 			}
 			foreach( $payment_method_type->help_tabs_config() as $help_tab_name => $config ){
+				$template_args = isset( $config[ 'template_args' ] ) ? $config[ 'template_args' ] : array();
+				$template_args[ 'admin_page_obj' ] = $this;
 				$all_pmt_help_tabs_config[$help_tab_name] = array(
 					'title'=>$config['title'],
-					'content'=>EEH_Template::display_template( $payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', array('admin_page_obj'=>$this), true)
+					'content'=>EEH_Template::display_template( 
+							$payment_method_type->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', 
+							$template_args, 
+							true)
 				);
 			}
 		}
@@ -283,10 +245,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		 */
 		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		EEM_Payment_Method::instance()->verify_button_urls();
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		EE_Registry::instance()->load_helper( 'HTML' );
 		//setup tabs, one for each payment method type
 		$tabs = array();
+		$payment_methods = array();
 		foreach( EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj ) {
 			// we don't want to show admin-only PMTs for now
 			if ( $pmt_obj instanceof EE_PMT_Admin_Only ) {
@@ -308,34 +269,37 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					)
 				);
 			}
-
-			add_meta_box(
-				//html id
-				'espresso_' . $payment_method->slug() . '_payment_settings',
-				//title
-				sprintf( __('%s Settings', 'event_espresso'), $payment_method->admin_name() ),
-				//callback
-				array( $this, 'payment_method_settings_meta_box' ),
-				//post type
-				NULL,
-				//context
-				'normal',
-				//priority
-				'default',
-				//callback args
-				array( 'payment_method' => $payment_method )
-			);
-
-			//setup for tabbed content
-			$tabs[$payment_method->slug()] = array(
-				'label' => $payment_method->admin_name(),
-				'class' =>  $payment_method->active() ? 'gateway-active' : '',
-				'href' => 'espresso_' . $payment_method->slug() . '_payment_settings',
-				'title' => __('Modify this Payment Method', 'event_espresso'),
-				'slug' => $payment_method->slug()
-			);
+			$payment_methods[ $payment_method->slug() ] = $payment_method;
 		}
-
+		$payment_methods = apply_filters( 'FHEE__Payments_Admin_Page___payment_methods_list__payment_methods', $payment_methods );
+		foreach( $payment_methods as $payment_method ) {
+			if ( $payment_method instanceof EE_Payment_Method ) {
+				add_meta_box(
+					//html id
+					'espresso_' . $payment_method->slug() . '_payment_settings',
+					//title
+					sprintf( __( '%s Settings', 'event_espresso' ), $payment_method->admin_name() ),
+					//callback
+					array( $this, 'payment_method_settings_meta_box' ),
+					//post type
+					null,
+					//context
+					'normal',
+					//priority
+					'default',
+					//callback args
+					array( 'payment_method' => $payment_method )
+				);
+				//setup for tabbed content
+				$tabs[ $payment_method->slug() ] = array(
+					'label' => $payment_method->admin_name(),
+					'class' => $payment_method->active() ? 'gateway-active' : '',
+					'href'  => 'espresso_' . $payment_method->slug() . '_payment_settings',
+					'title' => __( 'Modify this Payment Method', 'event_espresso' ),
+					'slug'  => $payment_method->slug()
+				);
+			}
+		}
 		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $this->_get_active_payment_method_slug() );
 		$this->display_admin_page_with_sidebar();
 
@@ -451,7 +415,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'update_' . $payment_method->slug()										=> $this->_update_payment_method_button( $payment_method ),
 						'deactivate_' . $payment_method->slug()								=> $this->_deactivate_payment_method_button( $payment_method ),
 						'fine_print_' . $payment_method->slug()									=> $this->_fine_print()
-					)
+					),
+					$payment_method
 				)
 			)
 		);
@@ -661,7 +626,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 								)
 							)
 						)
-					)
+					),
+					$payment_method
 				)
 			)
 		);
@@ -867,6 +833,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			//makes sure start date is the lowest value and vice versa
 			$start_date = min( $start_date, $end_date );
 			$end_date = max( $start_date, $end_date );
+
+			//convert for query
+			$start_date = EEM_Change_Log::instance()->convert_datetime_for_query( 'LOG_time', date( 'Y-m-d H:i:s', $start_date ), 'Y-m-d H:i:s' );
+			$end_date = EEM_Change_Log::instance()->convert_datetime_for_query( 'LOG_time', date( 'Y-m-d H:i:s', $end_date ), 'Y-m-d H:i:s' );
 
 			$query_params[0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
 

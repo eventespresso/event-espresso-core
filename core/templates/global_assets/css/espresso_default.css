@@ -40,8 +40,8 @@
 	font-weight: 400;
 	font-variant: normal;
 	line-height: 1;
-    	text-align: center;
-    	text-decoration: inherit;
+    text-align: center;
+    text-decoration: inherit;
 	text-transform: none;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -251,7 +251,7 @@
 	/*margin-left:0 !important;*/
 	padding: 10px 0;
 }
- .espresso_events .ee-event-datetimes-ul li {
+.espresso_events .ee-event-datetimes-ul li {
  	list-style-type: none;
  	margin: 0 0 1em;
 }
@@ -634,15 +634,15 @@ input.ee-register-button {
 	cursor: pointer;
 	font-size: 21px;
 	font-weight: bold;
-	height: 30px;
-	line-height: 24px;
+	height: 26px;
+	line-height: 20px;
 	padding: 0;
 	position: absolute;
-	right: -15px;
+	right: -12px;
 	text-align: center;
-	top: -15px;
+	top: -12px;
 	vertical-align: middle;
-	width: 30px;
+	width: 26px;
 }
 .close-espresso-notice:hover {
 	background: #ffffff;
@@ -766,6 +766,12 @@ input.ee-register-button {
 	font-size: 2em;
 	line-height: 2.4em;
 	letter-spacing: -.5px;
+}
+
+.ee-infinity-sign {
+	font-size: 1.5em;
+	line-height: 1em;
+	letter-spacing: -.25px;
 }
 
 .indented-text {
@@ -942,6 +948,16 @@ input.ee-register-button {
 	border-bottom: 1px dotted #999;
 }
 
+.ee-clearfix:before,
+.ee-clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.ee-clearfix:after {
+	clear: both;
+}
+
 /******************* TEMPLATE FIXES ****************** */
 
 article .espresso_events,
@@ -954,6 +970,10 @@ article .espresso_venues {
 	margin-bottom: 48px;
 }
 
+.ee-clearfix .ee-event-datetimes-li {
+	float: left;
+	width: 50%;
+}
 
 /******************* iCal ****************** */
 
@@ -1001,6 +1021,21 @@ article .espresso_venues {
 	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+}
+
+a[href*="message_type=receipt"],
+a[href*="message_type=receipt"]:active,
+a[href*="message_type=receipt"]:visited {
+	margin-top: 1em;
+}
+
+/******************* SMALL SCREENS ****************** */
+
+@media only screen and (max-width: 640px) {
+	.ee-clearfix .ee-event-datetimes-li {
+		float: none;
+		width: auto;
+	}
 }
 
 /*******************************************************/

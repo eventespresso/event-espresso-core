@@ -1,25 +1,10 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package		Event Espresso
- * @ author			Event Espresso
- * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		 4.0
- *
- * ------------------------------------------------------------------------
- *
  * class EE_Request_Handler
  *
- * @package         Event Espresso
+ * @package     Event Espresso
  * @subpackage  /core/
- * @author          Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author      Brent Christensen
  */
 final class EE_Request_Handler {
 
@@ -47,35 +32,30 @@ final class EE_Request_Handler {
 	 *	@var 	boolean
 	 * 	@access public
 	 */
-	public $ajax = FALSE;
+	public $ajax = false;
 
 	/**
 	 * 	whether current request is via AJAX from the frontend of the site
 	 *	@var 	boolean
 	 * 	@access public
 	 */
-	public $front_ajax = FALSE;
+	public $front_ajax = false;
 
 
 
 	/**
 	 *    class constructor
 	 *
-	 * @access    public
-	 * @param WP_Query $wp
+	 * @access public
+	 * @param  EE_Request $request
 	 * @return \EE_Request_Handler
 	 */
-	public function __construct( $wp = NULL ) {
-		//if somebody forgot to provide us with WP, that's ok because its global
-		if( ! $wp){
-			global $wp;
-		}
+	public function __construct( EE_Request $request ) {
 		// grab request vars
-		$this->_params = $_REQUEST;
+		$this->_params = $request->params();
 		// AJAX ???
-		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
-		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
-		$this->set_request_vars( $wp );
+		$this->ajax = defined( 'DOING_AJAX' ) && DOING_AJAX ? true : false;
+		$this->front_ajax = defined( 'EE_FRONT_AJAX' ) && EE_FRONT_AJAX ? true : false;
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
 	}
 
@@ -85,10 +65,27 @@ final class EE_Request_Handler {
 	 *    set_request_vars
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return void
 	 */
-	public function set_request_vars( $wp = NULL ) {
+	public function parse_request( $wp = null ) {
+		//if somebody forgot to provide us with WP, that's ok because its global
+		if ( ! $wp instanceof WP ) {
+			global $wp;
+		}
+		$this->set_request_vars( $wp );
+	}
+
+
+
+	/**
+	 *    set_request_vars
+	 *
+	 * @access public
+	 * @param WP $wp
+	 * @return void
+	 */
+	public function set_request_vars( $wp = null ) {
 		if ( ! is_admin() ) {
 			// set request post_id
 			$this->set( 'post_id', $this->get_post_id_from_request( $wp ));
@@ -96,7 +93,7 @@ final class EE_Request_Handler {
 			$this->set( 'post_name', $this->get_post_name_from_request( $wp ));
 			// set request post_type
 			$this->set( 'post_type', $this->get_post_type_from_request( $wp ));
-			// TRUE or FALSE ? is this page being used by EE ?
+			// true or false ? is this page being used by EE ?
 			$this->set_espresso_page();
 		}
 	}
@@ -107,24 +104,22 @@ final class EE_Request_Handler {
 	 *    get_post_id_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return int
 	 */
-	public function get_post_id_from_request( $wp = NULL ) {
-		if( ! $wp){
+	public function get_post_id_from_request( $wp = null ) {
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
-		$post_id = NULL;
+		$post_id = null;
 		if ( isset( $wp->query_vars['p'] )) {
 			$post_id = $wp->query_vars['p'];
 		}
 		if ( ! $post_id && isset( $wp->query_vars['page_id'] )) {
 			$post_id = $wp->query_vars['page_id'];
 		}
-		if ( ! $post_id && isset( $wp->request )) {
-			if ( is_numeric( basename( $wp->request ))) {
-				$post_id = basename( $wp->request );
-			}
+		if ( ! $post_id && isset( $wp->request ) && is_numeric( basename( $wp->request ))) {
+			$post_id = basename( $wp->request );
 		}
 		return $post_id;
 	}
@@ -135,14 +130,14 @@ final class EE_Request_Handler {
 	 *    get_post_name_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return string
 	 */
-	public function get_post_name_from_request( $wp = NULL ) {
-		if( ! $wp){
+	public function get_post_name_from_request( $wp = null ) {
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
-		$post_name = NULL;
+		$post_name = null;
 		if ( isset( $wp->query_vars['name'] ) && ! empty( $wp->query_vars['name'] )) {
 			$post_name = $wp->query_vars['name'];
 		}
@@ -154,7 +149,7 @@ final class EE_Request_Handler {
 			if ( ! is_numeric( $possible_post_name )) {
 				/** @type WPDB $wpdb */
 				global $wpdb;
-				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_status="publish" AND post_name=%d';
+				$SQL = "SELECT ID from $wpdb->posts WHERE post_status='publish' AND post_name=%s";
 				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
 				if ( $possible_post_name ) {
 					$post_name = $possible_post_name;
@@ -164,7 +159,7 @@ final class EE_Request_Handler {
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			/** @type WPDB $wpdb */
 			global $wpdb;
-			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_status="publish" AND ID=%d';
+			$SQL = "SELECT post_name from $wpdb->posts WHERE post_status='publish' AND ID=%d";
 			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
 			if( $possible_post_name ) {
 				$post_name = $possible_post_name;
@@ -179,15 +174,40 @@ final class EE_Request_Handler {
 	 *    get_post_type_from_request
 	 *
 	 * @access public
-	 * @param WP_Query $wp
+	 * @param WP $wp
 	 * @return mixed
 	 */
-	public function get_post_type_from_request( $wp = NULL ) {
-		if( ! $wp){
+	public function get_post_type_from_request( $wp = null ) {
+		if ( ! $wp instanceof WP ){
 			global $wp;
 		}
-		return isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : NULL;
+		return isset( $wp->query_vars['post_type'] ) ? $wp->query_vars['post_type'] : null;
 	}
+
+
+
+	/**
+	 * Just a helper method for getting the url for the displayed page.
+	 * @param  WP $wp
+	 * @return bool|string|void
+	 */
+	public function get_current_page_permalink( $wp = null ) {
+		$post_id = $this->get_post_id_from_request( $wp );
+		if ( $post_id ) {
+			$current_page_permalink = get_permalink( $post_id );
+		} else {
+			if ( ! $wp instanceof WP ) {
+				global $wp;
+			}
+			if ( $wp->request ) {
+				$current_page_permalink = site_url( $wp->request );
+			} else {
+				$current_page_permalink = esc_url( site_url( $_SERVER[ 'REQUEST_URI' ] ) );
+			}
+		}
+		return $current_page_permalink;
+	}
+
 
 
 	/**
@@ -197,8 +217,19 @@ final class EE_Request_Handler {
 	 * 		@return bool
 	 */
 	public function test_for_espresso_page() {
+		global $wp;
+		/** @type EE_CPT_Strategy $EE_CPT_Strategy */
+		$EE_CPT_Strategy = EE_Registry::instance()->load_core( 'CPT_Strategy' );
+		$espresso_CPT_taxonomies = $EE_CPT_Strategy->get_CPT_taxonomies();
+		if ( is_array( $espresso_CPT_taxonomies ) ) {
+			foreach ( $espresso_CPT_taxonomies as $espresso_CPT_taxonomy =>$details ) {
+				if ( isset( $wp->query_vars, $wp->query_vars[ $espresso_CPT_taxonomy ] ) ) {
+					return true;
+				}
+			}
+		}
 		// load espresso CPT endpoints
-		$espresso_CPT_endpoints = EE_Registry::instance()->load_core('CPT_Strategy')->get_CPT_endpoints();
+		$espresso_CPT_endpoints = $EE_CPT_Strategy->get_CPT_endpoints();
 		$post_type_CPT_endpoints = array_flip( $espresso_CPT_endpoints );
 		$post_types = (array)$this->get( 'post_type' );
 		foreach ( $post_types as $post_type ) {
@@ -207,13 +238,13 @@ final class EE_Request_Handler {
 				// kk we know this is an espresso page, but is it a specific post ?
 				if ( ! $this->get( 'post_name' ) ) {
 					// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
-					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
+					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : null;
 					// if the post type matches on of our then set the endpoint
 					if ( $post_name ) {
 						$this->set( 'post_name', $post_name );
 					}
 				}
-				return TRUE;
+				return true;
 			}
 		}
 		if ( $this->get( 'post_name' )) {
@@ -223,22 +254,22 @@ final class EE_Request_Handler {
 			$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
 			// was a post name passed ?
 			if (  isset( $espresso_pages[ $this->get( 'post_name' ) ] )) {
-				 return TRUE;
+				 return true;
 			}
 		}
-		return FALSE;
+		return false;
 	}
 
 
 
 	/**
-	 *    is_espresso_page
+	 *  is_espresso_page
 	 *
 	 * @access    public
-	 * @param null $value
+	 * @param null|bool $value
 	 * @return    mixed
 	 */
-	public function set_espresso_page( $value = NULL ) {
+	public function set_espresso_page( $value = null ) {
 		$value = $value ? $value : $this->test_for_espresso_page();
 		$this->_params['is_espresso_page'] = $value;
 	}
@@ -252,7 +283,7 @@ final class EE_Request_Handler {
 	 *  @return 	mixed
 	 */
 	public function is_espresso_page() {
-		return isset( $this->_params['is_espresso_page'] ) ? $this->_params['is_espresso_page'] : FALSE;
+		return isset( $this->_params['is_espresso_page'] ) ? $this->_params['is_espresso_page'] : false;
 	}
 
 
@@ -276,9 +307,13 @@ final class EE_Request_Handler {
 	 * @param bool $override_ee
 	 * @return    void
 	 */
-	public function set( $key, $value, $override_ee = FALSE ) {
+	public function set( $key, $value, $override_ee = false ) {
 		// don't allow "ee" to be overwritten unless explicitly instructed to do so
-		if ( $key != 'ee' || ( $key == 'ee' && empty( $this->_params['ee'] )) || ( $key == 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )) {
+		if (
+			$key !== 'ee' ||
+			( $key === 'ee' && empty( $this->_params['ee'] ))
+			|| ( $key === 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )
+		) {
 			$this->_params[ $key ] = $value;
 		}
 	}
@@ -293,7 +328,7 @@ final class EE_Request_Handler {
 	 * @param null $default
 	 * @return    mixed
 	 */
-	public function get( $key, $default = NULL ) {
+	public function get( $key, $default = null ) {
 		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : $default;
 	}
 
@@ -307,7 +342,7 @@ final class EE_Request_Handler {
 	 * @return    boolean
 	 */
 	public function is_set( $key ) {
-		return isset( $this->_params[ $key ] ) ? TRUE : FALSE;
+		return isset( $this->_params[ $key ] ) ? true : false;
 	}
 
 
@@ -347,7 +382,7 @@ final class EE_Request_Handler {
 	 * @return    mixed
 	 */
 	public function get_notice( $key ) {
-		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : NULL;
+		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : null;
 	}
 
 
@@ -381,8 +416,8 @@ final class EE_Request_Handler {
 	 * @param $item
 	 * @param $key
 	 */
-	function sanitize_text_field_for_array_walk( &$item, &$key ) {
-		$item = strpos( $item, 'email' ) !== FALSE ? sanitize_email( $item ) : sanitize_text_field( $item );
+	public function sanitize_text_field_for_array_walk( &$item, &$key ) {
+		$item = strpos( $item, 'email' ) !== false ? sanitize_email( $item ) : sanitize_text_field( $item );
 	}
 
 
@@ -392,7 +427,7 @@ final class EE_Request_Handler {
 	 * @param $b
 	 * @return bool
 	 */
-	public function __set($a,$b) { return FALSE; }
+	public function __set($a,$b) { return false; }
 
 
 
@@ -400,7 +435,7 @@ final class EE_Request_Handler {
 	 * @param $a
 	 * @return bool
 	 */
-	public function __get($a) { return FALSE; }
+	public function __get($a) { return false; }
 
 
 
@@ -408,7 +443,7 @@ final class EE_Request_Handler {
 	 * @param $a
 	 * @return bool
 	 */
-	public function __isset($a) { return FALSE; }
+	public function __isset($a) { return false; }
 
 
 
@@ -416,28 +451,28 @@ final class EE_Request_Handler {
 	 * @param $a
 	 * @return bool
 	 */
-	public function __unset($a) { return FALSE; }
+	public function __unset($a) { return false; }
 
 
 
 	/**
 	 * @return bool
 	 */
-	public function __clone() { return FALSE; }
+	public function __clone() {}
 
 
 
 	/**
 	 * @return bool
 	 */
-	public function __wakeup() { return FALSE; }
+	public function __wakeup() {}
 
 
 
 	/**
 	 *
 	 */
-	public function __destruct() { return FALSE; }
+	public function __destruct() {}
 
 
 }

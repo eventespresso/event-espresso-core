@@ -15,52 +15,66 @@
  * @subpackage 	tests
  */
 class EEH_Activation_Test extends EE_UnitTestCase {
-
+	const current_cron_task_name = 'current_one';
+	const expired_cron_task_name = 'expired_one';
 
 
 	/**
 	 * The purpose of this test is to ensure that generation of default templates works as expected.
 	 *
 	 * @since 4.5.0
+	 * @group failing
 	 */
 	public function test_generate_default_message_templates() {
 		/**
 		 * Testing default messengers setup on activation (or introduction on migration)
 		 */
 		//first let's make sure all message templates got setup on new install as they should be.
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		EE_Registry::instance()->load_helper( 'Activation' );
-		$installed_messengers = EEH_MSG_Template::get_installed_message_objects();
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		// messengers that have been activated and verified installed
+		$active_messengers = $message_resource_manager->active_messengers();
+		// ALL installed messengers regardless of whether they are active or not
+		$installed_messengers = $message_resource_manager->installed_messengers();
 		$should_be_installed = array();
-		foreach( $installed_messengers['messengers'] as $msgr ) {
+		foreach( $active_messengers as $msgr ) {
 			$this->assertInstanceOf( 'EE_messenger', $msgr );
 			if ( $msgr->activate_on_install ) {
 				$should_be_installed[] = $msgr->name;
 			}
 		}
-
-		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
 		//loop through $should_be_installed and verify that those that should be active ARE active.
 		foreach ( $should_be_installed as $msgr_name ) {
-			$this->assertTrue( isset( $active_messengers[$msgr_name] ), sprintf( 'The messenger %s should be active on fresh install, but it is not.', $msgr_name ) );
+			$this->assertTrue(
+				isset( $installed_messengers[ $msgr_name ] ),
+				sprintf( 'The messenger %s should be active on fresh install, but it is not.', $msgr_name )
+			);
 		}
 
 		//now verify that the code doesn't run new message template generation etc.
 		$this->assertFalse( EEH_Activation::generate_default_message_templates() );
 
 
-		//now we simulate someone who's deactivated a messenger and we simulate a migration that triggers generating default message templates again.  The html messenger should STICK and NOT be activated.
-		unset( $active_messengers['html'] );
-		EEH_MSG_Template::update_active_messengers_in_db( $active_messengers );
+		// now we simulate someone who's deactivated a messenger
+		// and we simulate a migration that triggers generating default message templates again.
+		//  The html messenger should STICK and NOT be activated.
+		$message_resource_manager->deactivate_messenger( 'html' );
+
+		//do the same for message type
+		$message_resource_manager->deactivate_message_type_for_messenger( 'not_approved', 'email' );
+
+		//Reset messages to test stickiness
+		EE_Registry::reset();
 
 		$activated_response = EEH_Activation::generate_default_message_templates();
 
-		//verify we got a response (html should generate templates)
+		//verify we got a response (html should not have templates generated)
 		$this->assertFalse( $activated_response );
 
-		//doublecheck we still don't html in the active messengers array
-		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		// double check we still don't have html in the active messengers array
+		$active_messengers = $message_resource_manager->get_active_messengers_option( true );
 		$this->assertFalse( isset( $active_messengers['html'] ) );
+		$this->assertFalse( $message_resource_manager->is_message_type_active_for_messenger( 'email', 'not_approved' ) );
 	}
 
 
@@ -77,36 +91,47 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * @group 7595
 	 */
 	public function test_filtered_default_message_types_on_activation() {
-		EE_Registry::instance()->load_helper( 'MSG_Template' );
-		EE_Registry::instance()->load_helper( 'Activation' );
-
+		/** @type EE_Message_Resource_Manager $message_resource_manager */
+		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		//let's clear out all active messengers to get an accurate test of initial generation of message templates.
 		global $wpdb;
-		$mtpg_table = $wpdb->prefix . 'esp_message_template_group';
-		$mtp_table = $wpdb->prefix . 'esp_message_template';
-		$evt_mtp_table = $wpdb->prefix . 'esp_event_message_template';
-		$query = "DELETE FROM  $mtpg_table WHERE 'GRP_ID' > 0";
+		// delete message_template_group templates
+		$message_template_group_table = $wpdb->prefix . 'esp_message_template_group';
+		$query = "DELETE FROM $message_template_group_table WHERE 'GRP_ID' > 0";
 		$wpdb->query( $query );
-		$query = "DELETE FROM $mtp_table WHERE 'MTP_ID' > 0";
+		// delete message_template templates
+		$message_template_table = $wpdb->prefix . 'esp_message_template';
+		$query = "DELETE FROM $message_template_table WHERE 'MTP_ID' > 0";
 		$wpdb->query($query);
-		$query = "DELETE FROM $evt_mtp_table WHERE 'EMT_ID' > 0";
+		// delete event_message_template templates
+		$event_message_template_table = $wpdb->prefix . 'esp_event_message_template';
+		$query = "DELETE FROM $event_message_template_table WHERE 'EMT_ID' > 0";
 		$wpdb->query( $query );
-		EEH_MSG_Template::update_active_messengers_in_db(array() );
 
-
+		$message_resource_manager->update_active_messengers_option( array() );
 		//set a filter for the invalid message type
-		add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', function( $default_types, $messenger ) {
-			$default_types[] = 'bogus_message_type';
-			return $default_types;
-		}, 10, 2);
+		add_filter(
+			'FHEE__EE_messenger__get_default_message_types__default_types',
+			function( $default_types ) {
+				$default_types[] = 'bogus_message_type';
+				return $default_types;
+			}, 10, 2
+		);
 
-		//activate messages... if there's any problems then errors will trigger a fail.
-		EEH_Activation::generate_default_message_templates();
+		try {
+			//activate messages... if there's any problems then errors will trigger a fail.
+			EEH_Activation::generate_default_message_templates();
+		} catch( EE_Error $e ){
+			$this->assertInstanceOf( 'EE_Error', $e );
+		}
 
 		//all went well so let's make sure the activated system does NOT have our invalid message type string.
-		$active_messengers = EEH_MSG_Template::get_active_messengers_in_db();
+		$active_messengers = $message_resource_manager->get_active_messengers_option( true );
 		foreach( $active_messengers as $messenger => $settings ) {
-			$this->assertFalse( isset( $settings['settings'][$messenger . '-message_types']['bogus_message_type'] ), sprintf( 'The %s messenger should not have "bogus_message_type" active on it but it does.', $messenger ) );
+			$this->assertFalse(
+				isset( $settings[ 'settings' ][ $messenger . '-message_types' ][ 'bogus_message_type' ] ),
+				sprintf( 'The %s messenger should not have "bogus_message_type" active on it but it does.', $messenger )
+			);
 		}
 	}
 
@@ -123,7 +148,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 			wp_delete_user( $wp_user->ID );
 		}
 		//set some users; and just make it interesting by having the first user NOT be an admin
-		$non_admin_users = $this->factory->user->create_many( 2 );
+		$this->factory->user->create_many( 2 );
 		$users = $this->factory->user->create_many( 2 );
 		//make users administrators.
 		foreach ( $users as $user_id ) {
@@ -141,7 +166,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		/**
 		 * ok now let's verify EEH_Activation::reset() properly clears the cache
 		 * on EEH_Activation. This is important for subsequent unit tests (because
-		 * EEH_Activation::reset() is called beween unit tests), but also when an admin
+		 * EEH_Activation::reset() is called between unit tests), but also when an admin
 		 * resets their EE database, or when anyone wants to reset that cache)
 		 * clear out any previous users that may be lurking in teh system
 		 */
@@ -166,4 +191,81 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		$this->assertEquals( EEH_Activation::get_default_creator_id(), $new_expected_id );
 
 	}
+
+	function test_get_cron_tasks__old() {
+		add_filter( 'FHEE__EEH_Activation__get_cron_tasks', array( $this, 'change_cron_tasks' ) );
+		$old_cron_tasks = EEH_Activation::get_cron_tasks( 'old' );
+		$this->assertArrayHasKey( self::expired_cron_task_name, $old_cron_tasks );
+		$this->assertArrayNotHasKey( self::current_cron_task_name, $old_cron_tasks );
+	}
+	function test_get_cron_tasks__all() {
+		add_filter( 'FHEE__EEH_Activation__get_cron_tasks', array( $this, 'change_cron_tasks' ) );
+		$old_cron_tasks = EEH_Activation::get_cron_tasks( 'all' );
+		$this->assertArrayHasKey( self::expired_cron_task_name, $old_cron_tasks );
+		$this->assertArrayHasKey( self::current_cron_task_name, $old_cron_tasks );
+	}
+
+
+	/**
+	 * @see   https://events.codebasehq.com/projects/event-espresso/tickets/9501
+	 * @since 4.8.36
+	 */
+	function test_remove_cron_tasks_with_empty_timestamp_values() {
+		//first cache existing cron array
+		$old_cron_option = _get_cron_array();
+		//merge in a bunch of empty timestamps
+		$empty_timestamps = array(
+			time() + 30 => array(),
+			time() + 600 => array(),
+			time() - 400 => array()
+		);
+		_set_cron_array(
+			array_merge( $empty_timestamps, $old_cron_option )
+		);
+
+		//now let's run the EEH_Activation::remove_cron_tasks
+		EEH_Activation::remove_cron_tasks();
+
+		//and verify that there are no empty timestamps
+		$updated_cron_option = _get_cron_array();
+		$this->assertEquals( count( $old_cron_option ), count( $updated_cron_option ) );
+
+		//now restore
+		_set_cron_array( $old_cron_option );
+	}
+
+
+	/**
+	 * Makes it so this function can be independent on what the current cron tasks actually are
+	 * (because they'll likely change, whereas some of these functions just want to check that
+	 * we are retrieving cron tasks correctly)
+	 *
+	 * @param array $old_cron_tasks
+	 * @return array
+	 */
+	function change_cron_tasks( $old_cron_tasks ) {
+		return array(
+			self::current_cron_task_name => 'hourly',
+			self::expired_cron_task_name => EEH_Activation::cron_task_no_longer_in_use
+		);
+	}
+	
+	/**
+	 * @group current
+	 */
+	function test_table_exists__success() {
+		$this->assertTrue( EEH_Activation::table_exists( 'posts' ) );
+		$this->assertTrue( EEH_Activation::table_exists( 'esp_attendee_meta' ) );
+	}
+	
+	/**
+	 * @group current
+	 */
+	function test_table_exists__false() {
+		$this->assertFalse( EEH_Activation::table_exists( 'monkeys' ) );
+	}
+
+
+
 } //end class EEH_Activation_Test
+// location: tests/testcases/core/helpers/EEH_Activation_Test.php

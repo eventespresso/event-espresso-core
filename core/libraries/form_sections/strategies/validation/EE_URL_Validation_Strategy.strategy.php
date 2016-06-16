@@ -15,7 +15,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	public function __construct( $validation_error_message = NULL ) {
 		if( ! $validation_error_message ){
-			$validation_error_message = __("Please enter a valid URL", "event_espresso");
+			$validation_error_message = __("Please enter a valid URL. Eg https://eventespresso.com", "event_espresso");
 		}
 		parent::__construct( $validation_error_message );
 	}
@@ -34,8 +34,12 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 			if (filter_var($normalized_value, FILTER_VALIDATE_URL) === false){
 				throw new EE_Validation_Error( $this->get_validation_error_message(), 'invalid_url');
 			}else{
-				EE_Registry::instance()->load_helper('URL');
-				if( ! EEH_URL::remote_file_exists($normalized_value)){
+				if( ! EEH_URL::remote_file_exists(
+						$normalized_value,
+						array(
+							'sslverify' => false, 
+							'limit_response_size' => 4095,//we don't really care for a full response, but we do want headers at least. Lets just ask for a one block
+						))){
 					throw new EE_Validation_Error(sprintf(__("That URL seems to be broken. Please enter a valid URL", "event_espresso")));
 				}
 			}

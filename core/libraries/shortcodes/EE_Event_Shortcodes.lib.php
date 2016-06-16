@@ -51,7 +51,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes specific to event related data', 'event_espresso');
 		$this->_shortcodes = array(
 			'[EVENT_ID]' => __('Will be replaced by the event ID of an event', 'event_espresso'),
-			'[EVENT_IDENTIFIER]' => __('Will be replaced with the event identifier of an event', 'event_espresso'),
 			'[EVENT]' => __('The name of the event', 'event_espresso'),
 			'[EVENT_NAME]' => __("This also can be used for the name of the event", 'event_espresso'),
 			'[EVENT_PHONE]' => __('The phone number for the event (usually an info number)', 'event_espresso'),
@@ -62,15 +61,22 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
 			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
+			'[EVENT_TOTAL_AVAILABLE_SPACES_*]' => sprintf(
+				__( 'This will parse to the total available spaces for an event. Calculating total spaces is approximate because it is dependent on the complexity of limits on your event.  There are two methods of calculation (which can be indicated by the %1$smethod%2$s param on the shortcode).  %1$scurrent%2$s which will do a more accurate calculation of total available spaces based on current sales, and %1$sfull%2$s which will be the maximum total available spaces that is on the event in optimal conditions. The shortcode will default to current.', 'event_espresso' ),
+				'<code>',
+				'</code>'
+				),
+			'[EVENT_TOTAL_SPOTS_TAKEN]' => __( 'This shortcode will parse to the output the total approved registrations for this event', 'event_espresso' ),
 			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event if you have it set via custom field in your event, otherwise it will use the Facebook URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_facebook</code> and the value as your facebook url.', 'event_espresso'),
-			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url', 'event_espresso')
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event if you have it set via custom field in your event, otherwise it will use the Twitter URL set in "Your Organization Settings". To set the facebook url in your event, add a custom field with the key as <code>event_twitter</code> and the value as your facebook url', 'event_espresso'),
+			'[EVENT_META_*]' => __('This is a special dynamic shortcode. After the "*", add the exact name for your custom field, if there is a value set for that custom field within the event then it will be output in place of this shortcode.', 'event_espresso'),
+			'[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' => __( 'This parses to the url for the registration list table filtered by registrations for this event.', 'event_espresso' ),
 			);
 	}
 
 
 	protected function _parser( $shortcode ) {
 
-		EE_Registry::instance()->load_helper( 'Formatter' );
 
 		$this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
@@ -91,10 +97,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_ID]' :
 				return $this->_event->ID();
-				break;
-
-			case '[EVENT_IDENTIFIER]' :
-				return isset($this->_data['line_ref']) ? $this->_data['line_ref']: '';
 				break;
 
 			case '[EVENT]' :
@@ -157,7 +159,42 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 				return $user_data->user_email;
 				break;
 
+			case '[EVENT_TOTAL_SPOTS_TAKEN]' :
+				return EEM_Registration::instance()->count( array( array( 'EVT_ID' => $this->_event->ID(), 'STS_ID' => EEM_Registration::status_id_approved ) ), 'REG_ID', true );
+				break;
+
+			case '[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]' :
+				return EEH_URL::add_query_args_and_nonce(
+					array(
+						'event_id' => $this->_event->ID(),
+						'page' => 'espresso_registrations',
+						'action' => 'default'
+					),
+					admin_url( 'admin.php' ),
+					true
+				);
+				break;
 		}
+
+		if ( strpos( $shortcode, '[EVENT_META_*' ) !== false ) {
+			$shortcode = str_replace( '[EVENT_META_*', '', $shortcode );
+			$shortcode = trim( str_replace( ']', '', $shortcode ) );
+
+			//pull the meta value from the event post
+			$event_meta = $this->_event->get_post_meta( $shortcode, true );
+
+			return !empty( $event_meta ) ? $this->_event->get_post_meta( $shortcode, true ) : '';
+
+		}
+
+		if ( strpos( $shortcode, '[EVENT_TOTAL_AVAILABLE_SPACES_*' ) !== false ) {
+			$attrs = $this->_get_shortcode_attrs( $shortcode );
+			$method = empty( $attrs['method'] ) ? 'current' : $attrs['method'];
+			$method = $method === 'current';
+			$available = $this->_event->total_available_spaces($method);
+			return $available === EE_INF ? '&infin;' : $available;
+		}
+
 		return '';
 	}
 

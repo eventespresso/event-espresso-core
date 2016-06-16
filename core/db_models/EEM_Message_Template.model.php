@@ -30,11 +30,14 @@ class EEM_Message_Template extends EEM_Base {
 	protected static $_instance = NULL;
 
 
+
 	/**
-	 * 		private constructor to prevent direct creation
-	 * 		@Constructor
-	 * 		@access protected
-	 * 		@return void
+	 * private constructor to prevent direct creation
+	 *
+	 * @Constructor
+	 * @access protected
+	 * @param string $timezone
+	 * @throws \EE_Error
 	 */
 	protected function __construct( $timezone = NULL ) {
 		$this->singular_item = __('Message Template','event_espresso');
@@ -50,13 +53,17 @@ class EEM_Message_Template extends EEM_Base {
 				'MTP_template_field'=>new EE_Plain_Text_Field('MTP_template_field', __('Field Name for this Template', 'event_espresso'), false, 'default' ),
 				'MTP_context'=>new EE_Plain_Text_Field('MTP_context', __('Message Type Context for this field', 'event_espresso'),false,'admin' ),
 				'MTP_content'=>new EE_Serialized_Text_Field('MTP_content', __('The field content for the template', 'event_espresso'), false, ''),
-				)
+			)
 		);
 
 		$this->_model_relations = array(
 			'Message_Template_Group' => new EE_Belongs_To_Relation()
 			);
 		$this->_model_chain_to_wp_user = 'Message_Template_Group';
+		foreach( $this->_cap_contexts_to_cap_action_map as $context => $action ){
+			$this->_cap_restriction_generators[ $context ] = new EE_Restriction_Generator_Global( 'Message_Template_Group.MTP_is_global');
+		}
+		$this->_caps_slug = 'messages';
 		parent::__construct( $timezone );
 	}
 

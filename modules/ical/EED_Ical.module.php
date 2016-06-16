@@ -140,7 +140,6 @@ class EED_Ical  extends EED_Module {
 				if ( is_array( $venue ) && ! empty( $venue )) {
 					$venue = array_shift( $venue );
 					if ( $venue instanceof EE_Venue ) {
-						 EE_Registry::instance()->load_helper( 'Venue_View' );
 						$location = espresso_venue_raw_address( 'inline', $venue->ID(), FALSE );
 					}
 				}
@@ -152,7 +151,7 @@ class EED_Ical  extends EED_Module {
 				$timestamp = date( EED_Ical::iCal_datetime_format );
 				$location = EED_Ical::_escape_ICal_data( $location );
 				$summary = EED_Ical::_escape_ICal_data( $event->name() );
-				$description = EED_Ical::_escape_ICal_data( wp_strip_all_tags( $event->description() ));
+				$description = EED_Ical::_escape_ICal_description( wp_strip_all_tags( $event->description() ));
 				$status = $datetime->get_active_status();
 				$status = $status == EE_Datetime::cancelled ? 'Cancelled' : 'Confirmed';
 				$status = EED_Ical::_escape_ICal_data( $status );
@@ -208,8 +207,24 @@ class EED_Ical  extends EED_Module {
 		return preg_replace( '/([\,;])/', '\\\$1', $string );
 	}
 
+	/**
+	 * 	_escape_ICal_description
+	 *
+	 *	@access 	private
+	 *  	@param	string $description
+	 *  	@return	string
+	 */
+	private static function _escape_ICal_description( $description = '' ) {
+			
+			//Escape spcial chars within the decription
+			$description = EED_Ical::_escape_ICal_data( $description );
 
+		    //Remove line breaks and output in iCal format
+		    $description = str_replace( array( "\r\n", "\n"), '\n', $description );
 
+		return $description;
+	}
+	
 }
 // End of file EED_Ical.module.php
 // Location: /modules/ical/EED_Ical.module.php

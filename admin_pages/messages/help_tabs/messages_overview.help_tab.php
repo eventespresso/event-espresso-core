@@ -1,4 +1,4 @@
-<h2><?php _e('Messages Overview', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Messages Overview', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('The Messages system is used by Event Espresso to prepare messages for different uses (Message Types) and these messages are delivered by different Messengers. <br /><br />This framework offers a large amount of flexibility. This page shows message templates that have been created with Event Espresso and are currently enable for at least one event.', 'event_espresso'); ?>
 </p>

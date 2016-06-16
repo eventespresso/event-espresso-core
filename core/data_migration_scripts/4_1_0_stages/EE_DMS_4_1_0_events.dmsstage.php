@@ -99,9 +99,9 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_name'=>new EE_Plain_Text_Field('post_title', __('Event Name','event_espresso'), false, ''),
 				'EVT_desc'=>new EE_Simple_HTML_Field('post_content', __("Event Description", "event_espresso"), false, ''),
 				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
-				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
+				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, time()),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Description", "event_espresso"), false,''),
-				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
+				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, time()),
 				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
 				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
 				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
@@ -113,7 +113,7 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', __("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
 				'EVT_display_ticket_selector'=>new EE_Boolean_Field('EVT_display_ticket_selector', __("Display Display Ticket Selector Flag", "event_espresso"), false, 1),
-				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
+				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, time()),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
@@ -148,8 +148,8 @@ CREATE TABLE `wp_events_start_end` (
 			'Datetime'=>array(
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso')),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
-				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
+				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, time(), $timezone ),
+				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, time(), $timezone ),
 				'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, 999999),
 				'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0 ),
 				'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
@@ -327,8 +327,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'post_modified'=>$old_event['submitted'],//EVT_modified
 			'post_modified_gmt'=>get_gmt_from_date($old_event['submitted']),
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
-			'post_parent'=>null,//parent maybe get this from some REM field?
-			'menu_order'=>null,//EVT_order
+			'post_parent'=>0,//parent maybe get this from some REM field?
+			'menu_order'=>0,//EVT_order
 			'post_type'=>'espresso_events',//post_type
 			'post_status'=>$post_status,//status
 		);
@@ -351,7 +351,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$cols_n_values,
 				$datatypes);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_table, $cols_n_values, $datatypes));
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_table, $cols_n_values, $datatypes));
 			return 0;
 		}
 		return $wpdb->insert_id;
@@ -412,7 +412,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$cols_n_values,
 				$datatypes);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_meta_table, $cols_n_values, $datatypes));
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_event, $this->_new_meta_table, $cols_n_values, $datatypes));
 			return 0;
 		}
 		return $wpdb->insert_id;
@@ -462,7 +462,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'VNU_address2' => $old_event[ 'address2' ],
 			'VNU_city' => $old_event[ 'city' ],
 			'VNU_zip' => $old_event[ 'zip' ],
-			'post_title'=> stripslashes($old_event['venue_title']),
+			'post_title'=> $this->_get_venue_title_for_event( $old_event ),
 			'VNU_phone'=>$old_event['venue_phone'],//VNU_phone
 			'VNU_url'=>$old_event['venue_url'],//VNU_url
 			'VNU_virtual_phone'=>$old_event['virtual_phone'],//VNU_virtual_phone
@@ -480,6 +480,15 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$id = $wpdb->get_var( $query );
 		return $id;
 	}
+	
+	/**
+	 * Gets teh venue's title or makes one up if there is none
+	 * @param array $event_data_array keys are events_details columns and valuesa re their values
+	 * @return string
+	 */
+	protected function _get_venue_title_for_event( $event_data_array ) {
+		return $event_data_array['venue_title'] ? stripslashes($event_data_array['venue_title']) : stripslashes( sprintf( __( 'Venue of %s', 'event_espresso' ), $event_data_array['event_name']));
+	}
 
 	/**
 	 * Inserts the CPT
@@ -489,7 +498,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _insert_venue_into_posts($old_event){
 		global $wpdb;
 		$insertion_array = array(
-					'post_title'=>$old_event['venue_title'] ? stripslashes($old_event['venue_title']) : stripslashes( sprintf( __( 'Venue of %s', 'event_espresso' ), $old_event['event_name'])),//VNU_name
+					'post_title'=> $this->_get_venue_title_for_event( $old_event ),//VNU_name
 					'post_content'=>'',//VNU_desc
 					'post_name'=> $this->_find_unique_slug( $old_event['venue_title'], sanitize_title( 'venue-of-' . $old_event['event_name'] ) ),//VNU_identifier
 					'post_date'=>current_time('mysql'),//VNU_created
@@ -498,7 +507,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 					'post_modified'=>current_time('mysql'),//VNU_modified
 					'post_modified_gmt'=>get_gmt_from_date(current_time('mysql')),
 					'post_author'=>$old_event['wp_user'],//VNU_wp_user
-					'post_parent'=>null,//parent
+					'post_parent'=>0,//parent
 					'menu_order'=>0,//VNU_order
 					'post_type'=>'espresso_venues'//post_type
 				);
@@ -520,7 +529,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$insertion_array,
 				$datatypes_array);
 		if( ! $success ){
-			$this->add_error($this->get_migration_script->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_venue, $this->_new_table, $insertion_array, $datatypes_array));
 			return 0;
 		}
 		return $wpdb->insert_id;

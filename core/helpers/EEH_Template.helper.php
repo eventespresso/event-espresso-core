@@ -141,12 +141,38 @@ class EEH_Template {
 	 *    locate_template
 	 *
 	 *    locate a template file by looking in the following places, in the following order:
+	 *        <server path up to>/wp-content/themes/<current active WordPress theme>/
 	 *        <assumed full absolute server path>
 	 *        <server path up to>/wp-content/uploads/espresso/templates/<current EE theme>/
 	 *        <server path up to>/wp-content/uploads/espresso/templates/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/templates/<current EE theme>/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/public/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/core/templates/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
+	 *
+	 * 		Example:
+	 * 		  You are using the WordPress Twenty Sixteen theme,
+	 *        and you want to customize the "some-event.template.php" template,
+	 * 		  which is located in the "/relative/path/to/" folder relative to the main EE plugin folder.
+	 * 		  Assuming WP is installed on your server in the "/home/public_html/" folder,
+	 *        EEH_Template::locate_template() will look at the following paths in order until the template is found:
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/public/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/core/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/relative/path/to/some-event.template.php
+	 *
+	 * 		  Had you passed an absolute path to your template that was in some other location,
+	 *        ie: "/absolute/path/to/some-event.template.php"
+	 * 		  then the search would have been :
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /absolute/path/to/some-event.template.php
+	 *
+	 * 		  and stopped there upon finding it in the second location
 	 *
 	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
@@ -204,29 +230,49 @@ class EEH_Template {
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
-
+			$templates = is_array( $templates ) ? $templates : array( $templates );
+			$template_folder_paths = is_array( $template_folder_paths ) ? $template_folder_paths : array( $template_folder_paths );
 			// array to hold all possible template paths
 			$full_template_paths = array();
 
 			// loop through $templates
-			foreach ( (array)$templates as $template ) {
+			foreach ( $templates as $template ) {
+				// normalize directory separators
+				$template = EEH_File::standardise_directory_separators( $template );
+				$file_name = basename( $template );
+				$template_path_minus_file_name = substr( $template, 0, ( strlen( $file_name ) * -1 ) );
 				// while looping through all template folder paths
-				foreach ( (array)$template_folder_paths as $template_folder_path ) {
-					// build up our template locations array by combining our template folder paths with our templates
-					$full_template_paths[] = rtrim( $template_folder_path, DS ) . DS . $template;
+				foreach ( $template_folder_paths as $template_folder_path ) {
+					// normalize directory separators
+					$template_folder_path = EEH_File::standardise_directory_separators( $template_folder_path );
+					// determine if any common base path exists between the two paths
+					$common_base_path = EEH_Template::_find_common_base_path(
+						array( $template_folder_path, $template_path_minus_file_name )
+					);
+					if ( $common_base_path !== '' ) {
+						// both paths have a common base, so just tack the filename onto our search path
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $file_name;
+					} else {
+						// no common base path, so let's just concatenate
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $template;
+					}
+					// build up our template locations array by adding our resolved paths
+					$full_template_paths[] = $resolved_path;
 				}
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
+				// path to the directory of the current theme: /wp-content/themes/(current WP theme)/
+				array_unshift( $full_template_paths, get_stylesheet_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
-			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
-
-
+			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths, $file_name );
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
 					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
-				    break;
+					// hook that can be used to display the full template path that will be used
+					do_action( 'AHEE__EEH_Template__locate_template__full_template_path', $template_path );
+					break;
 				}
 			}
 		}
@@ -244,6 +290,33 @@ class EEH_Template {
 
 
 	/**
+	 * _find_common_base_path
+	 *
+	 * given two paths, this determines if there is a common base path between the two
+	 *
+	 * @param array $paths
+	 * @return string
+	 */
+	protected static function _find_common_base_path( $paths ) {
+		$last_offset = 0;
+		$common_base_path = '';
+		while ( ( $index = strpos( $paths[ 0 ], DS, $last_offset ) ) !== false ) {
+			$dir_length = $index - $last_offset + 1;
+			$directory = substr( $paths[ 0 ], $last_offset, $dir_length );
+			foreach ( $paths as $path ) {
+				if ( substr( $path, $last_offset, $dir_length ) != $directory ) {
+					return $common_base_path;
+				}
+			}
+			$common_base_path .= $directory;
+			$last_offset = $index + 1;
+		}
+		return substr( $common_base_path, 0, -1 );
+	}
+
+
+
+	/**
 	 * load and display a template
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
@@ -251,8 +324,6 @@ class EEH_Template {
 	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
-		//require the template validator for verifying variables are set according to how the template requires
-		EE_Registry::instance()->load_helper( 'Template_Validator' );
 
 		/**
 		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
@@ -524,7 +595,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<h3>' . __('Status Legend', 'event_espresso') . '</h3>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
@@ -550,7 +621,6 @@ class EEH_Template {
 	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
 		$data = (array)$data;
 	}
-	EE_Registry::instance()->load_helper('Array');
 	ob_start();
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
@@ -604,9 +674,13 @@ class EEH_Template {
 	 * @param      $per_page
 	 * @param      $url
 	 * @param bool $show_num_field
+	 * @param string $paged_arg_name
+	 * @param array $items_label
+	 *
+	 * @return string
 	 */
-	public static function paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
-		echo self::get_paging_html( $total_items, $current, $per_page, $url, $show_num_field );
+	public static function paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE, $paged_arg_name = 'paged', $items_label = array() ) {
+		echo self::get_paging_html( $total_items, $current, $per_page, $url, $show_num_field, $paged_arg_name, $items_label );
 	}
 
 
@@ -622,76 +696,121 @@ class EEH_Template {
 	 * @param  integer $per_page 		How many items per page.
 	 * @param  string   $url                  	What the base url for page links is.
 	 * @param  boolean $show_num_field  Whether to show the input for changing page number.
+	 * @param  string   $paged_arg_name     The name of the key for the paged query argument.
+	 * @param  array   $items_label    An array of singular/plural values for the items label:
+	 *                                 array(
+	 *                                  'single' => 'item',
+	 *                                  'plural' => 'items'
+	 *                                 )
 	 * @return  string
 	 */
-	public static function get_paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
+	public static function get_paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE, $paged_arg_name = 'paged', $items_label = array() ) {
 		$page_links = array();
 		$disable_first = $disable_last = '';
 		$total_items = (int) $total_items;
 		$per_page = (int) $per_page;
 		$current = (int) $current;
+		$paged_arg_name = empty( $paged_arg_name ) ? 'paged' : sanitize_key( $paged_arg_name );
 
-		$total_pages = round( ceil( $total_items ) / $per_page );
+		//filter items_label
+		$items_label = apply_filters(
+			'FHEE__EEH_Template__get_paging_html__items_label',
+			$items_label
+		);
 
-		if ( $total_pages <= 1)
+		if ( empty( $items_label )
+		     || ! is_array( $items_label )
+		     || ! isset( $items_label['single'] )
+		     || ! isset( $items_label['plural'] ) ) {
+			$items_label = array(
+				'single' => __( '1 item', 'event_espresso' ),
+				'plural' => __( '%s items', 'event_espresso' )
+			);
+		} else {
+			$items_label = array(
+				'single' => '1 ' . esc_html( $items_label['single'] ),
+				'plural' => '%s ' . esc_html( $items_label['plural'] )
+			);
+		}
+
+		$total_pages = ceil( $total_items / $per_page );
+
+		if ( $total_pages <= 1 )
 			return '';
 
-		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+		$item_label = $total_items > 1 ? sprintf( $items_label['plural'], $total_items ) : $items_label['single'];
 
-		if ( $current == 1 )
+		$output = '<span class="displaying-num">' . $item_label . '</span>';
+
+		if ( $current === 1 ) {
 			$disable_first = ' disabled';
-		if ( $current == $total_pages )
+		}
+		if ( $current == $total_pages ) {
 			$disable_last = ' disabled';
+		}
 
 		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'first-page' . $disable_first,
 			esc_attr__( 'Go to the first page' ),
-			esc_url( remove_query_arg( 'paged', $url ) ),
+			esc_url( remove_query_arg( $paged_arg_name, $url ) ),
 			'&laquo;'
 		);
 
-		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+		$page_links[] = sprintf(
+			'<a class="%s" title="%s" href="%s">%s</a>',
 			'prev-page' . $disable_first,
 			esc_attr__( 'Go to the previous page' ),
-			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $url ) ),
+			esc_url( add_query_arg( $paged_arg_name, max( 1, $current-1 ), $url ) ),
 			'&lsaquo;'
 		);
 
-		if ( ! $show_num_field )
+		if ( ! $show_num_field ) {
 			$html_current_page = $current;
-		else
-			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name='paged' value='%s' size='%d' />",
+		} else {
+			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name=$paged_arg_name value='%s' size='%d' />",
 				esc_attr__( 'Current page' ),
 				$current,
 				strlen( $total_pages )
 			);
+		}
 
-		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
-		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
+		$html_total_pages = sprintf(
+			'<span class="total-pages">%s</span>',
+			number_format_i18n( $total_pages )
+		);
+		$page_links[] = sprintf(
+			_x( '%3$s%1$s of %2$s%4$s', 'paging' ),
+			$html_current_page,
+			$html_total_pages,
+			'<span class="paging-input">',
+			'</span>'
+		);
 
-		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+		$page_links[] = sprintf(
+			'<a class="%s" title="%s" href="%s">%s</a>',
 			'next-page' . $disable_last,
 			esc_attr__( 'Go to the next page' ),
-			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $url ) ),
+			esc_url( add_query_arg( $paged_arg_name, min( $total_pages, $current+1 ), $url ) ),
 			'&rsaquo;'
 		);
 
-		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+		$page_links[] = sprintf(
+			'<a class="%s" title="%s" href="%s">%s</a>',
 			'last-page' . $disable_last,
 			esc_attr__( 'Go to the last page' ),
-			esc_url( add_query_arg( 'paged', $total_pages, $url ) ),
+			esc_url( add_query_arg( $paged_arg_name, $total_pages, $url ) ),
 			'&raquo;'
 		);
 
-		$pagination_links_class = 'pagination-links';
-		$output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
-
-		if ( $total_pages )
+		$output .= "\n" . '<span class="pagination-links">' . join( "\n", $page_links ) . '</span>';
+		// set page class
+		if ( $total_pages ) {
 			$page_class = $total_pages < 2 ? ' one-page' : '';
-		else
+		} else {
 			$page_class = ' no-pages';
+		}
 
-		return "<div class='tablenav-pages{$page_class}'>$output</div>";
+		return '<div class="tablenav"><div class="tablenav-pages' . $page_class . '">' . $output . '</div></div>';
 	}
 
 
@@ -705,3 +824,35 @@ class EEH_Template {
 //	return $amount;
 //}
 //add_filter( 'FHEE__EEH_Template__format_currency__amount', 'convert_zero_to_free', 10, 2 );
+
+
+if ( ! function_exists( 'espresso_pagination' ) ) {
+	/**
+	 *    espresso_pagination
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	function espresso_pagination() {
+		global $wp_query;
+		$big = 999999999; // need an unlikely integer
+		$pagination = paginate_links(
+		array(
+		'base'         => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+		'format'       => '?paged=%#%',
+		'current'      => max( 1, get_query_var( 'paged' ) ),
+		'total'        => $wp_query->max_num_pages,
+		'show_all'     => true,
+		'end_size'     => 10,
+		'mid_size'     => 6,
+		'prev_next'    => true,
+		'prev_text'    => __( '&lsaquo; PREV', 'event_espresso' ),
+		'next_text'    => __( 'NEXT &rsaquo;', 'event_espresso' ),
+		'type'         => 'plain',
+		'add_args'     => false,
+		'add_fragment' => ''
+		)
+		);
+		echo ! empty( $pagination ) ? '<div class="ee-pagination-dv clear">' . $pagination . '</div>' : '';
+	}
+}

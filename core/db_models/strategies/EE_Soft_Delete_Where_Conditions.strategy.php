@@ -1,7 +1,17 @@
 <?php
-
-/*
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+/**
+ *
+ * Class EE_Default_Where_Conditions
+ * 
  * Strategy specifically for adding where conditions specific to CPT models.
+ *
+ * @package         Event Espresso
+ * @subpackage    core/db_models
+ * @author				Mike Nelson
+ * @since		 	   4.6.0
  */
 class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions{
 	/**
@@ -15,18 +25,12 @@ class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions{
 	function __construct(){}
 	/**
 	 * Gets the where default where conditions for a custom post type model
-	 * @param string $model_relation_path. Eg, from Event to Payment, this should be "Registration.Transaction.Payment"
 	 * @return array like EEM_Base::get_all's $query_params's index [0] (where conditions)
 	 */
-	function get_default_where_conditions($model_relation_chain = null){
-		//make sure there's a period at the end of $model_relation_chain
-		if($model_relation_chain != '' && $model_relation_chain[strlen($model_relation_chain)-1] !='.'){
-			$model_relation_chain=$model_relation_chain.".";
-		}
-
+	protected function _get_default_where_conditions(){
 		$trashed_field_name = $this->deleted_field_name();
 		return array(
-			$model_relation_chain.$trashed_field_name => false,
+			$trashed_field_name => false
 		);
 	}
 	/**

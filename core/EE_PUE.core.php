@@ -45,12 +45,11 @@ class EE_PUE {
 	 *	class constructor
 	 *
 	 *	@access public
-	 *	@return void
 	 */
 	public function __construct() {
 //		throw new EE_Error('error');
 
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
 
 		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
 		if ( !defined('MONTH_IN_SECONDS' ) )
@@ -64,7 +63,7 @@ class EE_PUE {
 		$ueip_optin = EE_Registry::instance()->CFG->core->ee_ueip_optin;
 		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 
-		//has optin been selected for datacollection?
+		//has optin been selected for data collection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
 		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
@@ -153,7 +152,7 @@ class EE_PUE {
 			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
 			$api_key = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? EE_Registry::instance()->NET_CFG->core->site_license_key : '';
-			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+			$host_server_url = 'https://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 			//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
 			//For example:
@@ -179,7 +178,7 @@ class EE_PUE {
 				'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 				'options_page_slug' => 'espresso_general_settings',
 				'plugin_basename' => EE_PLUGIN_BASENAME,
-				'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
+				'use_wp_update' => true, //if TRUE then you want FREE versions of the plugin to be updated from WP
 				'extra_stats' => $extra_stats,
 				'turn_on_notices_saved' => true
 			);
@@ -195,7 +194,7 @@ class EE_PUE {
 	 */
 	 public static function espresso_data_collection_optin_text( $extra = TRUE ) {
 	 	if ( ! $extra ) {
-			 echo '<h4 '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
+			 echo '<h2 class="ee-admin-settings-hdr" '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').EEH_Template::get_help_tab_link('organization_logo_info').'</h2>';
 			 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<p><em>', '</em></p>','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
 		} else {
 			$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
