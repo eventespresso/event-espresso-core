@@ -212,10 +212,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			$ticket_selector_url = add_query_arg( array( 'ticket_selector' => 'iframe', 'event' => $id ), site_url() );
 
 			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">' . __('Embed', 'event_espresso') . '</a> ';
+			$iframe_string = esc_html( '<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>' );
 			$permalink_string .= '
 <div id="js-ts-iframe" style="display:none">
 	<div style="width:100%; height: 500px;">
-		<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>
+		' . $iframe_string . '
 	</div>
 </div>';
 		}
