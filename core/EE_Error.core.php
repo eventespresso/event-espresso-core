@@ -548,7 +548,7 @@ class EE_Error extends Exception {
 		self::_add_notice ( 'errors', $msg, $file, $func, $line );
 		self::$_error_count++;
 	}
-	
+
 	/**
 	 * If WP_DEBUG is active, throws an exception. If WP_DEBUG is off, just
 	 * adds an error
@@ -992,7 +992,7 @@ class EE_Error extends Exception {
 		$notices = '';
 		// check for persistent admin notices
 		//filter the list though so plugins can notify the admin in a different way if they want
-		$persistent_admin_notices = apply_filters( 
+		$persistent_admin_notices = apply_filters(
 			'FHEE__EE_Error__get_persistent_admin_notices',
 			get_option( 'ee_pers_admin_notices', FALSE ),
 			'ee_pers_admin_notices',
@@ -1115,7 +1115,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 
 		try {
 			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
-			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' ); 
+			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
 			if ( ! $clear ) {
 				//get existing log file and append new log info
 				$exception_log = EEH_File::get_file_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file ) . $exception_log;
@@ -1132,26 +1132,39 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 
 	/**
 	 * This is just a wrapper for the EEH_Debug_Tools::instance()->doing_it_wrong() method.
-	 *
-	 * doing_it_wrong() is used in those cases where a normal PHP error won't get thrown, but the code execution is done in a manner that could lead to unexpected results (i.e. running to early, or too late in WP or EE loading process).
-	 *
+	 * doing_it_wrong() is used in those cases where a normal PHP error won't get thrown,
+	 * but the code execution is done in a manner that could lead to unexpected results
+	 * (i.e. running to early, or too late in WP or EE loading process).
 	 * A good test for knowing whether to use this method is:
-	 * 1. Is there going to be a PHP error if something isn't setup/used correctly? Yes -> use EE_Error::add_error() or throw new EE_Error()
-	 * 2. If this is loaded before something else, it won't break anything, but just wont' do what its supposed to do? Yes -> use EE_Error::doing_it_wrong()
+	 * 1. Is there going to be a PHP error if something isn't setup/used correctly?
+	 * Yes -> use EE_Error::add_error() or throw new EE_Error()
+	 * 2. If this is loaded before something else, it won't break anything,
+	 * but just wont' do what its supposed to do? Yes -> use EE_Error::doing_it_wrong()
 	 *
 	 * @uses   constant WP_DEBUG test if wp_debug is on or not
-	 * @param  string $function The function that was called
-	 * @param  string $message A message explaining what has been done incorrectly
-	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param string $function      The function that was called
+	 * @param string $message       A message explaining what has been done incorrectly
+	 * @param string $version       The version of Event Espresso where the error was added
+	 * @param string  $applies_when a version string for when you want the doing_it_wrong notice to begin appearing
+	 *                              for a deprecated function. This allows deprecation to occur during one version,
+	 *                              but not have any notices appear until a later version. This allows developers
+	 *                              extra time to update their code before notices appear.
 	 * @param int     $error_type
-	 * @return void
 	 */
-	public static function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
+	public static function doing_it_wrong(
+		$function,
+		$message,
+		$version,
+		$applies_when = '',
+		$error_type = null
+	) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
-			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
+			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $applies_when, $error_type );
 		}
 	}
-	
+
+
+
 	/**
 	 * Like get_notices, but returns an array of all the notices of the given type.
 	 * @return array {

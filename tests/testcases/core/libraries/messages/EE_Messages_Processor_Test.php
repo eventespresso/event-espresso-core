@@ -290,6 +290,15 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase {
 
 		//setup up messages we'll use for sending that have the right status
 		$messages_with_right_status = $this->factory->message->create_many( 5, array( 'STS_ID' => EEM_Message::status_sent ) );
+		//include some EEM_Message::status_retry messages in the "right_status" group
+		$i = 0;
+		foreach ( $messages_with_right_status as $message ) {
+			$message->set_STS_ID( EEM_Message::status_retry );
+			$i++;
+			if ( $i === 2 ) {
+				break;
+			}
+		}
 		$messages_with_wrong_status = $this->factory->message->create_many( 5 );
 
 		$messages_with_right_status = array_map(
