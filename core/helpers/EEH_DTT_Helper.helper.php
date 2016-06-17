@@ -135,7 +135,7 @@ class EEH_DTT_Helper {
 			} catch( Exception $e ){}
 		}
 		$offset = get_option( 'gmt_offset' );
-		return (float)$offset * HOUR_IN_SECONDS;
+		return $offset * HOUR_IN_SECONDS;
 	}
 
 
