@@ -869,6 +869,32 @@ class EEH_DTT_Helper {
 			: 'DATE_ADD(' . $field_for_interval .', INTERVAL ' . $offset . ' HOUR)';
 		return $query_interval;
 	}
+	
+	/**
+	 * Gets a string which we're happy to display for the default timezone
+	 * @return string
+	 */
+	public static function get_timezone_string_for_display() {
+		$timezone_string = get_option( 'timezone_string' );
+		if( $timezone_string ) {
+			//well that was easy. 
+			return $timezone_string;
+		}
+		//they haven't set the timezone string, so let's return a string like "UTC+1"
+		$gmt_offset = get_option( 'gmt_offset' );
+		if( intval( $gmt_offset ) > 0 ) {
+			$prefix = '+';
+		} else {
+			$prefix = '';
+		}
+		$parts = explode( '.', (string) $gmt_offset );
+		if( count( $parts ) === 1 ) {
+			$parts[1] = '00';
+		} else {
+			$parts[1] *= .6;
+		}
+		return sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
+	}
 
 
 
