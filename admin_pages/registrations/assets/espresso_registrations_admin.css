@@ -405,6 +405,10 @@
 	background-color : #FCB93C;
 }
 
+.ee-status-legend-RWL {
+	background-color : #8A549A;
+}
+
 .status-RPP { color : #00B1CA; }
 
 .status-RCN { color : #AC9D9C; }
@@ -416,6 +420,8 @@
 .status-RNA { color : #E76700; }
 
 .status-RIC { color : #FCB93C; }
+
+.status-RWL { color : #8A549A; }
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
 	margin-left : 10px;
