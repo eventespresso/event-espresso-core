@@ -297,13 +297,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment {
 	 * @throws \EE_Error
 	 */
 	public function timestamp( $dt_frmt = '', $tm_frmt = '' ) {
-
-		if( ! empty( $dt_frmt ) || ! empty( $tm_frmt ) ) {
-			$format = $dt_frmt . ' ' . $tm_frmt;
-		} else {
-			$format = '';
-		}
-		
+		$format = trim( $dt_frmt . ' ' . $tm_frmt);
 		return $this->get_i18n_datetime( 'PAY_timestamp', $format );
 	}
 
