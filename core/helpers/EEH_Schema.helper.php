@@ -112,7 +112,7 @@ class EEH_Schema {
 	 */
 	public static function addressRegion( EEI_Address $obj_with_address = null ) {
 		$state = $obj_with_address->state_name();
-		if ( ! empty( $state ) && $state != __( 'Unknown', 'event_espresso' ) ) {
+		if ( ! empty( $state ) ) {
 			return '<span itemprop="addressRegion">' . $state . '</span>';
 		} else {
 			return '';
@@ -131,7 +131,7 @@ class EEH_Schema {
 	 */
 	public static function addressCountry( EEI_Address $obj_with_address = null ) {
 		$country = $obj_with_address->country_name();
-		if ( ! empty( $country ) && $country != __( 'Unknown', 'event_espresso' ) ) {
+		if ( ! empty( $country ) ) {
 			return '<span itemprop="addressCountry">' . $country . '</span>';
 		} else {
 			return '';
