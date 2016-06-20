@@ -209,8 +209,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function enqueue_styles_and_scripts() {
 		$transaction = $this->checkout->transaction;
 		//if the transaction isn't set or nothing is owed on it, don't enqueue any JS
-		if( ! $transaction instanceof EE_Transaction 
-			|| EEH_Money::compare_floats( $transaction->remaining(), 0 ) ) {
+		if( ! $transaction instanceof EE_Transaction || EEH_Money::compare_floats( $transaction->remaining(), 0 ) ) {
 			return;
 		}
 		foreach( EEM_Payment_Method::instance()->get_all_for_transaction( $transaction, EEM_Payment_Method::scope_cart ) as $payment_method ) {
@@ -478,7 +477,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $registration->status_ID() === EEM_Registration::status_id_approved ) {
 				continue;
 			}
-			$EVT_ID = $event_spaces_remaining[ $registration->event_ID() ];
+			$EVT_ID = $registration->event_ID();
 			if ( ! isset( $event_reg_count[ $EVT_ID ] ) ) {
 				$event_reg_count[ $EVT_ID ] = 0;
 			}
@@ -491,9 +490,31 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				&& $event_reg_count[ $EVT_ID ] > $event_spaces_remaining[ $EVT_ID ]
 			) {
 				$ejected_registrations[ $REG_ID ] = $registration->event();
+				if ( $registration->status_ID() !== EEM_Registration::status_id_wait_list ) {
+					/** @type EE_Registration_Processor $registration_processor */
+					$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
+					$registration_processor->manually_update_registration_status(
+						$registration,
+						EEM_Registration::status_id_wait_list
+					);
+				}
+
 			}
 		}
 		return $ejected_registrations;
+	}
+
+
+
+	/**
+	 * _hide_reg_step_submit_button
+	 * removes the html for the reg step submit button
+	 * by replacing it with an empty string via filter callback
+	 *
+	 * @return void
+	 */
+	protected function _adjust_registration_status_if_event_old_sold() {
 	}
 
 
@@ -1510,13 +1531,16 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			default:
+				$registrations = EE_Registry::instance()->SSN->checkout()->transaction->registrations(
+					EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
+				);
 				$ejected_registrations = EE_SPCO_Reg_Step_Payment_Options::find_registrations_that_lost_their_space(
-					EE_Registry::instance()->SSN->checkout()->transaction->registrations(
-						EE_Registry::instance()->SSN->checkout()->reg_cache_where_params
-					),
+					$registrations,
 					EE_Registry::instance()->SSN->checkout()->revisit
 				);
-				if ( ! empty( $ejected_registrations ) ) {
+				// calculate difference between the two arrays
+				$registrations = array_diff( $registrations, $ejected_registrations );
+				if ( empty( $registrations ) ) {
 					$this->_redirect_because_event_sold_out();
 					return false;
 				}
