@@ -941,7 +941,7 @@ jQuery(document).ready( function($) {
 				//  check for payment_amount
 				if ( typeof response.payment_amount !== 'undefined' ) {
 					SPCO.payment_amount = parseFloat( response.payment_amount );
-					//console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
+					console.log( JSON.stringify( 'SPCO.payment_amount: ' + SPCO.payment_amount, null, 4 ) );
 					// trigger a custom event so that other JS functions can add listeners for the "spco_payment_amount" event
 					SPCO.main_container.trigger( 'spco_payment_amount', [ SPCO.payment_amount ] );
 				}
@@ -949,10 +949,10 @@ jQuery(document).ready( function($) {
 				if ( typeof response.errors !== 'undefined' ) {
                    // no response...
                     SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response, true  );
-                } else if ( typeof response.redirect_url !== 'undefined' ) {
-                    // redirect browser
+                } else if ( typeof response.redirect_url !== 'undefined' && response.redirect_url !== '' ) {
+					$( '#espresso-ajax-loading' ).show();
+					// redirect browser
                     window.location.replace( response.redirect_url );
-					$('#espresso-ajax-loading').show();
                 } else if ( typeof response.attention !== 'undefined' ) {
                     // Achtung Baby!!!
                     SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response, true  );
