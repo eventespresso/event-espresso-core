@@ -128,14 +128,14 @@ class EEH_DTT_Helper {
 	 */
 	public static function get_site_timezone_gmt_offset() {
 		$timezone_string = get_option( 'timezone_string' );
-		if( $timezone_string ) {
+		if ( $timezone_string ) {
 			try {
 				$timezone = new DateTimeZone( $timezone_string );
 				return $timezone->getOffset( new DateTime() ); //in WordPress DateTime defaults to UTC
 			} catch( Exception $e ){}
 		}
 		$offset = get_option( 'gmt_offset' );
-		return $offset * HOUR_IN_SECONDS;
+		return (int) ( $offset * HOUR_IN_SECONDS );
 	}
 
 
