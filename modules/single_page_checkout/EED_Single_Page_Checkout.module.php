@@ -1324,7 +1324,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function unlock_transaction() {
-		$this->checkout->transaction->unlock();
+		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+			$this->checkout->transaction->unlock();
+		}
 	}
 
 
