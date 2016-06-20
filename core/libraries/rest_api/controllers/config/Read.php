@@ -48,7 +48,7 @@ class Read {
 	public static function handle_request_site_info( \WP_REST_Request $request) {
 		return array(
 			'default_timezone' => array(
-				'string' => \EEH_DTT_Helper::get_timezone_string_for_display(),
+				'string' => \EEH_DTT_Helper::get_timezone_string(),
 				'offset' => \EEH_DTT_Helper::get_site_timezone_gmt_offset(),
 			),
 			'default_currency' => \EE_Config::instance()->currency

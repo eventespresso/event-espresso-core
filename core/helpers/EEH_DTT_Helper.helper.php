@@ -871,29 +871,28 @@ class EEH_DTT_Helper {
 	}
 	
 	/**
-	 * Gets a string which we're happy to display for the default timezone
+	 * This will return either the timezone string represented in the WP options or a string representing the UTC offset
+	 * that is set if timezone_string is not available.
+	 *
 	 * @return string
 	 */
-	public static function get_timezone_string_for_display() {
+	public static function get_timezone_string() {
 		$timezone_string = get_option( 'timezone_string' );
 		if( $timezone_string ) {
 			//well that was easy. 
 			return $timezone_string;
 		}
-		//they haven't set the timezone string, so let's return a string like "UTC+1"
+		//they haven't set the timezone string, so let's return a string like "UTC+1" since negative values are stored in
+		//the db with a negative sign, we don't need to set the sign.
 		$gmt_offset = get_option( 'gmt_offset' );
-		if( intval( $gmt_offset ) > 0 ) {
-			$prefix = '+';
-		} else {
-			$prefix = '';
-		}
-		$parts = explode( '.', (string) $gmt_offset );
-		if( count( $parts ) === 1 ) {
-			$parts[1] = '00';
-		} else {
-			$parts[1] *= .6;
-		}
-		return sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
+		if ( $gmt_offset == 0 )
+			$timezone_string = 'UTC+0';
+		elseif ( $gmt_offset < 0 )
+			$timezone_string = 'UTC' . $gmt_offset;
+		else
+			$timezone_string = 'UTC+' . $gmt_offset;
+
+		return $timezone_string;
 	}
 
 
