@@ -829,6 +829,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' )
 				),
+			'wait_list' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_wait_list,
+				'desc'  => EEH_Template::pretty_status( EEM_Registration::status_id_wait_list, false, 'sentence' )
+			),
 			'incomplete_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_incomplete,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_incomplete, FALSE, 'sentence' )
