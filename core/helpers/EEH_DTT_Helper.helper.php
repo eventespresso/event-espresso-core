@@ -882,7 +882,7 @@ class EEH_DTT_Helper {
 		}
 		//they haven't set the timezone string, so let's return a string like "UTC+1"
 		$gmt_offset = get_option( 'gmt_offset' );
-		if( intval( $gmt_offset ) > 0 ) {
+		if( intval( $gmt_offset ) >= 0 ) {
 			$prefix = '+';
 		} else {
 			$prefix = '';
@@ -891,7 +891,10 @@ class EEH_DTT_Helper {
 		if( count( $parts ) === 1 ) {
 			$parts[1] = '00';
 		} else {
-			$parts[1] *= .6;
+			//convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
+			//to minutes, eg 30 or 15, respectively
+			$hour_fraction = (float)( '0.' . $parts[1] );
+			$parts[1] = (string)$hour_fraction * 60;
 		}
 		return sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
 	}
