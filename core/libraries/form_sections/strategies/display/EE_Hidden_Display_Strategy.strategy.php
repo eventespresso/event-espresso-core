@@ -32,7 +32,7 @@ class EE_Hidden_Display_Strategy extends EE_Display_Strategy_Base{
 	 */
 	function display(){
 		$input = $this->_input;		
-		return "<input type='hidden' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}' value='{$input->raw_value_in_form()}'/>";
+		return "<input type='hidden' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}' value='{$input->raw_value_in_form()}' {$input->other_html_attributes()}/>";
 	}
 }
 
