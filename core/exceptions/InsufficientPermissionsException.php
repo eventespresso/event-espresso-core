@@ -28,10 +28,10 @@ class InsufficientPermissionsException extends \RuntimeException {
 		if ( empty( $message ) ) {
 			$message = sprintf(
 				__(
-					'We\'re sorry, but you do not have the required permissions to perform the following action: ',
+					'We\'re sorry, but you do not have the required permissions to perform the following action: %1$s',
 					'event_espresso'
 				),
-				$action
+				ucwords(str_replace('_', ' ', $action))
 			);
 		}
 		parent::__construct( $message, $code, $previous );
