@@ -1,8 +1,5 @@
 <?php
-namespace EventEspresso\core\services\capabilities;
-
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InsufficientPermissionsException;
+namespace EventEspresso\core\domain\services\capabilities;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -41,21 +38,7 @@ class RegistrationsCapChecker extends CapabilitiesChecker
 	 */
 	public function editRegistrations( \EE_Registration $registration, $action_name )
 	{
-		if ( ! is_string( $action_name ) ) {
-			throw new InvalidDataTypeException( '$action_name', $action_name, 'string' );
-		}
-		$action_slug = strtolower( str_replace( ' ', '_', $action_name ) );
-		if (
-			! $this->capabilities()->current_user_can(
-				'ee_edit_registrations',
-				$action_slug,
-				$registration->ID()
-			)
-		) {
-			throw new InsufficientPermissionsException( $action_name );
-		}
-
-		return true;
+		return $this->processCapCheck( new CapCheck( 'ee_edit_registration', $action_name, $registration->ID() ) );
 	}
 
 }
