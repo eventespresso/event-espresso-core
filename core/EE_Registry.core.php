@@ -1016,10 +1016,10 @@ class EE_Registry {
 				// set the cache on property for the recursive loading call
 				$this->_cache_on = $cache_on;
 				// if not, then let's try and load it via the registry
-				if ( $loader === 'create' ) {
-					$dependency = $this->{$loader}($param_class, array(), $cache_on);
-				} else {
+				if ( method_exists( $this, $loader ) ) {
 					$dependency = $this->{$loader}($param_class);
+				} else {
+					$dependency = $this->create($param_class, array(), $cache_on);
 				}
 			}
 		}
