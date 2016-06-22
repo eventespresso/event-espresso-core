@@ -1,6 +1,7 @@
 <?php
 namespace EventEspresso\core\services\commands\registration;
 
+use EventEspresso\core\domain\services\registration\UpdateRegistrationService;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
@@ -23,6 +24,25 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
 {
 
 
+	/**
+	 * @var UpdateRegistrationService $update_registration_service
+	 */
+	private $update_registration_service;
+
+
+
+	/**
+	 * Command constructor
+	 *
+	 * @param UpdateRegistrationService $update_registration_service
+	 */
+	public function __construct(
+		UpdateRegistrationService $update_registration_service
+	) {
+		$this->update_registration_service = $update_registration_service;
+	}
+
+
 
 	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
@@ -32,17 +52,16 @@ class UpdateRegistrationAndTransactionAfterChangeCommandHandler extends CommandH
 	{
 		/** @var UpdateRegistrationAndTransactionAfterChangeCommand $command */
 		if ( ! $command instanceof UpdateRegistrationAndTransactionAfterChangeCommand ) {
-			throw new InvalidEntityException( get_class( $command ), 'UpdateRegistrationAndTransactionAfterChangeCommand' );
+			throw new InvalidEntityException(
+				get_class($command),
+				'UpdateRegistrationAndTransactionAfterChangeCommand'
+			);
 		}
-		// reset transaction status back to incomplete
-		$command->registration()->transaction()->set_status( \EEM_Transaction::incomplete_status_code );
-		// update transaction and all line item totals and subtotals
-		$command->registration()->transaction()->total_line_item()->recalculate_total_including_taxes();
-		/** @type \EE_Registration_Processor $registration_processor */
-		$registration_processor = \EE_Registry::instance()->load_class( 'Registration_Processor' );
-		$registration_processor->update_registration_status_and_trigger_notifications( $command->registration() );
-		return true;
+		return $this->update_registration_service->updateRegistrationAndTransaction($command->registration());
 	}
+
+
+
 }
 // End of file UpdateRegistrationAndTransactionAfterChangeCommandHandler.php
 // Location: /UpdateRegistrationAndTransactionAfterChangeCommandHandler.php
