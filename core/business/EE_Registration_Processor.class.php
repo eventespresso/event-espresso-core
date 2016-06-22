@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\domain\entities\RegCode;
+use EventEspresso\core\domain\entities\RegUrlLink;
+use EventEspresso\core\domain\services\registration\CreateRegistrationService;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 EE_Registry::instance()->load_class( 'Processor_Base' );
@@ -75,107 +78,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 	 * @return EE_Registration_Processor
 	 */
 	private function __construct() {
-	}
-
-
-
-	/**
-	 * generate_ONE_registration_from_line_item
-	 * Although a ticket line item may have a quantity greater than 1,
-	 * this method will ONLY CREATE ONE REGISTRATION !!!
-	 * Regardless of the ticket line item quantity.
-	 * This means that any code calling this method is responsible for ensuring
-	 * that the final registration count matches the ticket line item quantity.
-	 * This was done to make it easier to match the number of registrations
-	 * to the number of tickets in the cart, when the cart has been edited
-	 * after SPCO has already been initialized. So if an additional ticket was added to the cart, you can simply pass
-	 * the line item to this method to add a second ticket, and in this case, you would not want to add 2 tickets.
-	 *
-	 * @deprecated
-	 * @param EE_Line_Item    $line_item
-	 * @param \EE_Transaction $transaction
-	 * @param int             $att_nmbr
-	 * @param int             $total_ticket_count
-	 * @return \EE_Registration | null
-	 * @throws \OutOfRangeException
-	 * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
-	 * @throws \EE_Error
-	 */
-	public function generate_ONE_registration_from_line_item(
-		EE_Line_Item $line_item,
-		EE_Transaction $transaction,
-		$att_nmbr = 1,
-		$total_ticket_count = 1
-	) {
-		// grab the related ticket object for this line_item
-		$ticket = $line_item->ticket();
-		if ( ! $ticket instanceof EE_Ticket ) {
-			EE_Error::add_error(
-				sprintf( __( "Line item %s did not contain a valid ticket", "event_espresso" ), $line_item->ID() ),
-				__FILE__,
-				__FUNCTION__,
-				__LINE__
-			);
-			return null;
-		}
-		return EE_Registry::instance()->BUS->execute(
-			EE_Registry::instance() ->create(
-	           'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
-	           array(
-		           $transaction,
-		           $ticket,
-		           $line_item,
-		           $att_nmbr,
-		           $total_ticket_count
-	           )
-           )
-		);
-	}
-
-
-
-	/**
-	 * generates reg_url_link
-	 *
-	 * @deprecated
-	 * @param int           $att_nmbr
-	 * @param EE_Line_Item | string $item
-	 * @return string
-	 */
-	public function generate_reg_url_link( $att_nmbr, $item ) {
-		return EE_Registry::instance()->BUS->execute(
-			EE_Registry::instance()->create(
-				'EventEspresso\core\services\commands\registration\CreateRegUrlLinkCommand',
-				array( $att_nmbr, $item )
-			)
-		);
-	}
-
-
-
-	/**
-	 * generates reg code
-	 *
-	 * @deprecated
-	 * @param \EE_Registration $registration
-	 * @return string
-	 * @throws \EE_Error
-	 */
-	public function generate_reg_code( EE_Registration $registration ) {
-		return apply_filters(
-			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
-			EE_Registry::instance()->BUS->execute(
-				EE_Registry::instance()->create(
-					'EventEspresso\core\services\commands\registration\CreateRegCodeCommand',
-					array(
-						$registration->reg_url_link(),
-						$registration->transaction_ID(),
-						$registration->ticket_ID(),
-					)
-				)
-			),
-			$registration
-		);
 	}
 
 
@@ -591,6 +493,121 @@ class EE_Registration_Processor extends EE_Processor_Base {
 		} else {
 			return true;
 		}
+	}
+
+
+
+	/**
+	 * generate_ONE_registration_from_line_item
+	 * Although a ticket line item may have a quantity greater than 1,
+	 * this method will ONLY CREATE ONE REGISTRATION !!!
+	 * Regardless of the ticket line item quantity.
+	 * This means that any code calling this method is responsible for ensuring
+	 * that the final registration count matches the ticket line item quantity.
+	 * This was done to make it easier to match the number of registrations
+	 * to the number of tickets in the cart, when the cart has been edited
+	 * after SPCO has already been initialized. So if an additional ticket was added to the cart, you can simply pass
+	 * the line item to this method to add a second ticket, and in this case, you would not want to add 2 tickets.
+	 *
+	 * @deprecated
+	 * @since 4.9.1
+	 * @param EE_Line_Item    $line_item
+	 * @param \EE_Transaction $transaction
+	 * @param int             $att_nmbr
+	 * @param int             $total_ticket_count
+	 * @return \EE_Registration | null
+	 * @throws \OutOfRangeException
+	 * @throws \EventEspresso\core\exceptions\UnexpectedEntityException
+	 * @throws \EE_Error
+	 */
+	public function generate_ONE_registration_from_line_item(
+		EE_Line_Item $line_item,
+		EE_Transaction $transaction,
+		$att_nmbr = 1,
+		$total_ticket_count = 1
+	) {
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'\EventEspresso\core\domain\services\registration\CreateRegistrationService::create()'),
+			'4.9.1',
+			'5.0.0'
+		);
+		// grab the related ticket object for this line_item
+		$ticket = $line_item->ticket();
+		if ( ! $ticket instanceof EE_Ticket) {
+			EE_Error::add_error(
+				sprintf(__("Line item %s did not contain a valid ticket", "event_espresso"), $line_item->ID()),
+				__FILE__,
+				__FUNCTION__,
+				__LINE__
+			);
+			return null;
+		}
+		$registration_service = new CreateRegistrationService();
+		// then generate a new registration from that
+		return $registration_service->create(
+			$ticket->get_related_event(),
+			$transaction,
+			$ticket,
+			$line_item,
+			$att_nmbr,
+			$total_ticket_count
+		);
+	}
+
+
+
+	/**
+	 * generates reg_url_link
+	 *
+	 * @deprecated
+	 * @since 4.9.1
+	 * @param int                   $att_nmbr
+	 * @param EE_Line_Item | string $item
+	 * @return string
+	 */
+	public function generate_reg_url_link($att_nmbr, $item)
+	{
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'EventEspresso\core\domain\entities\RegUrlLink'),
+			'4.9.1',
+			'5.0.0'
+		);
+		return new RegUrlLink($att_nmbr, $item);
+	}
+
+
+
+	/**
+	 * generates reg code
+	 *
+	 * @deprecated
+	 * @since 4.9.1
+	 * @param \EE_Registration $registration
+	 * @return string
+	 * @throws \EE_Error
+	 */
+	public function generate_reg_code(EE_Registration $registration)
+	{
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'EventEspresso\core\domain\entities\RegCode'),
+			'4.9.1',
+			'5.0.0'
+		);
+		return apply_filters(
+			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
+			new RegCode(
+				RegUrlLink::fromRegistration($registration),
+				$registration->transaction(),
+				$registration->ticket()
+			),
+			$registration
+		);
 	}
 
 
