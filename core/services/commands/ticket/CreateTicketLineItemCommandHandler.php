@@ -1,8 +1,8 @@
 <?php
 namespace EventEspresso\core\services\commands\ticket;
 
+use EventEspresso\core\domain\services\ticket\CreateTicketLineItemService;
 use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\commands\CommandHandler;
 use EventEspresso\core\services\commands\CommandInterface;
 
@@ -24,6 +24,23 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
 {
 
 
+	/**
+	 * @var CreateTicketLineItemService $factory
+	 */
+	private $factory;
+
+
+
+	/**
+	 * Command constructor
+	 *
+	 * @param CreateTicketLineItemService $factory
+	 */
+	public function __construct(CreateTicketLineItemService $factory) {
+		$this->factory = $factory;
+	}
+
+
 
 	/**
 	 * @param \EventEspresso\core\services\commands\CommandInterface $command
@@ -35,23 +52,11 @@ class CreateTicketLineItemCommandHandler extends CommandHandler
 			throw new InvalidEntityException( get_class( $command ), 'CreateTicketLineItemCommand' );
 		}
 		// create new line item for ticket
-		$ticket_line_item = \EEH_Line_Item::add_ticket_purchase(
-			$command->transaction()->total_line_item(),
-			$command->ticket(),
-			$command->quantity()
-		);
-		if ( ! $ticket_line_item instanceof \EE_Line_Item ) {
-			throw new UnexpectedEntityException( $ticket_line_item, 'EE_Line_Item' );
-		}
-		// apply any applicable promotions that were initially used during registration to new line items
-		do_action(
-			'AHEE__\EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommandHandler__handle__new_ticket_line_item_added',
-			$command->transaction()->total_line_item(),
-			$command->ticket(),
+		return $this->factory->create(
 			$command->transaction(),
+			$command->ticket(),
 			$command->quantity()
 		);
-		return $ticket_line_item;
 	}
 
 
