@@ -1215,6 +1215,6 @@ class EE_Null_Address_Formatter extends \EventEspresso\core\services\address\for
  *
  * @deprecated 4.9.0
  */
-class EE_Generic_Address extends \EventEspresso\core\entities\GenericAddress {}
+class EE_Generic_Address extends \EventEspresso\core\domain\entities\GenericAddress {}
 
 
