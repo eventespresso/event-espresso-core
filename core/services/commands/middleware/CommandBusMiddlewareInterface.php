@@ -18,10 +18,11 @@ interface CommandBusMiddlewareInterface
 {
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
+     * @param \Closure         $next
      * @return mixed
      */
-    public function handle(CommandInterface $command);
+    public function handle(CommandInterface $command, \Closure $next);
 
 }
 // End of file CommandBusMiddlewareInterface.php
