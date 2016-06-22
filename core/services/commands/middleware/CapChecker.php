@@ -46,17 +46,18 @@ class CapChecker implements CommandBusMiddlewareInterface
 
 
     /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
+     * @param CommandInterface $command
+     * @param \Closure         $next
      * @return mixed
      */
-    public function handle(CommandInterface $command)
+    public function handle(CommandInterface $command, \Closure $next)
     {
-        if ( ! $command instanceof CommandRequiresCapCheckInterface) {
-            return;
+        if ( $command instanceof CommandRequiresCapCheckInterface) {
+            $this->capabilities_checker->processCapCheck(
+                $command->getCapCheck()
+            );
         }
-        $this->capabilities_checker->processCapCheck(
-            $command->getCapCheck()
-        );
+        return $next($command);
     }
 
 
