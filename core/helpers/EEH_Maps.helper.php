@@ -103,8 +103,10 @@ class EEH_Maps {
 	 * registers scripts for maps
 	 */
 	public static function espresso_google_map_js() {
-		$api_key = EE_Registry::instance()->CFG->map_settings->google_map_api_key;
-		$api_url = "https://maps.googleapis.com/maps/api/js?key=$api_key&callback=initMap";
+		$api_url = sprintf(
+			"https://maps.googleapis.com/maps/api/js?key=%s",
+			EE_Registry::instance()->CFG->map_settings->google_map_api_key
+		);
 		wp_register_script( 'gmap_api', $api_url, array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
 	}
