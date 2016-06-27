@@ -70,22 +70,29 @@ class Recipe implements RecipeInterface
 
 
 
-    /**
-     * Recipe constructor.
-     *
-     * @param string $identifier class identifier: typically a \Fully\Qualified\ClassName
-     * @param string $type       recipe type: one of the class constants on
-     *                           \EventEspresso\core\services\container\CoffeeMaker
-     * @param array  $filters    array of class aliases, or class interfaces
-     * @param array  $paths      if class can not be loaded via PSR-4 autoloading,
-     *                           then supply a filepath, or array of filepaths, so that it can be included
-     */
-    public function __construct($identifier, $type = CoffeeMaker::BREW_NEW, $filters = array(), $paths = array())
+	/**
+	 * Recipe constructor.
+	 *
+	 * @param string $identifier class identifier: typically a \Fully\Qualified\ClassName
+	 * @param string $type       recipe type: one of the class constants on
+	 *                           \EventEspresso\core\services\container\CoffeeMaker
+	 * @param array  $filters    array of class aliases, or class interfaces
+	 * @param array  $paths      if class can not be loaded via PSR-4 autoloading,
+	 *                           then supply a filepath, or array of filepaths, so that it can be included
+	 * @param string $fqcn
+	 */
+    public function __construct(
+	    $identifier,
+	    $type = CoffeeMaker::BREW_NEW,
+	    $filters = array(),
+	    $paths = array(),
+	    $fqcn = ''
+    )
     {
         $this->setIdentifier($identifier);
         $this->setType($type);
         $this->setPaths($paths);
-        $this->setFqcn($identifier);
+        $this->setFqcn($fqcn);
         $this->setFilters((array)$filters);
     }
 
@@ -171,6 +178,7 @@ class Recipe implements RecipeInterface
      */
     public function setFqcn($fqcn)
     {
+	    $fqcn = ! empty($fqcn) ? $fqcn : $this->identifier;
         if ( ! is_string($fqcn)) {
             throw new InvalidDataTypeException(
                 '$fqcn',
