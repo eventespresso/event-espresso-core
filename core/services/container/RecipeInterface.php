@@ -9,7 +9,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 /**
  * Interface RecipeInterface
- * for Recipe DTOs (Data Transfer Object) used in CoffeePot
+ * for Recipe DTOs (Data Transfer Object) used in CoffeeShop
  * for relaying information about how to construct an object
  *
  * @package EventEspresso\core\services\container
