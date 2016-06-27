@@ -1,4 +1,4 @@
-# Dependency Injection and The Event Espresso CoffeePot
+# Dependency Injection and The Event Espresso CoffeeShop
 
 As programmers, we love coffee. You could say we are dependent on coffee.
 If we could, we would probably inject that dependency right into our blood streams!
@@ -42,15 +42,15 @@ $my_class = new MyClass( new Thing() );
 
 Now that you've injected your dependency into your class, you can freely manipulate the incoming dependency at run time. Ideally you should type hint for interfaces instead of concrete classes, because then you can substitute the incoming dependency for any other class that implements that interface, giving you tons of flexibility, especially when unit testing.
 
-###CoffeePot Dependency Injection (DI) Container
+###CoffeeShop Dependency Injection (DI) Container
 
-Now the only "shortcoming" with injecting your dependencies like this, is that any code that wants to use ` MyClass ` is responsible for providing an instance of ` Thing ` when creating ` MyClass `. And this can be tedious. Thankfully, Dependency Injection (DI) containers can manage this responsibility for you. A DI container is an object (or group of objects working together) that knows how to instantiate classes and provide them with the dependencies they require. And because we love coffee so much at Event Espresso, our DI container is called **CoffeePot**.
+Now the only "shortcoming" with injecting your dependencies like this, is that any code that wants to use ` MyClass ` is responsible for providing an instance of ` Thing ` when creating ` MyClass `. And this can be tedious. Thankfully, Dependency Injection (DI) containers can manage this responsibility for you. A DI container is an object (or group of objects working together) that knows how to instantiate classes and provide them with the dependencies they require. And because we love coffee so much at Event Espresso, our DI container is called **CoffeeShop**.
 
-We'll take care of the initial setup of the **CoffeePot**, as well as making sure that it's available to all Event Espresso Modules, Payment Methods, Addons, etc. So we'll skip that part and get right to showing you how it works.
+We'll take care of the initial setup of the **CoffeeShop**, as well as making sure that it's available to all Event Espresso Modules, Payment Methods, Addons, etc. So we'll skip that part and get right to showing you how it works.
 
 So let's assume the following for our example:
 
- - that the **CoffeePot** DI container is accessible in your controller via ` $this->CoffeePot() `
+ - that the **CoffeeShop** DI container is accessible in your controller via ` $this->CoffeeShop() `
  - you want to load a class named ` MyClass ` that requires the ` EEM_Attendee ` model in order to retrieve some data from the database
  - you are using PSR-4 compatible namespaces, and ` MyClass ` is located in the ` \Vendor\Namespace\Folder\ ` directory
 
@@ -72,12 +72,12 @@ class MyClass
 then your controller could load the ` MyClass ` class like this:
 
 ```
-$my_class = $this->CoffeePot()->brew( 'Vendor\Namespace\Folder\MyClass' );
+$my_class = $this->CoffeeShop()->brew( 'Vendor\Namespace\Folder\MyClass' );
 ```
 
 and... uhh... **THAT'S IT!!!**
 
-Because you were using PSR-4 compatible namespaces, and because we had already instructed the **CoffeePot** DI container on how to inject our models into other classes, ` MyClass ` automatically received an instance of the ` EEM_Attendee ` model as a constructor param.
+Because you were using PSR-4 compatible namespaces, and because we had already instructed the **CoffeeShop** DI container on how to inject our models into other classes, ` MyClass ` automatically received an instance of the ` EEM_Attendee ` model as a constructor param.
 
 ###Passing Additional Arguments to your Constructors
 
@@ -106,30 +106,30 @@ class MyClass
 
 How do you pass arguments to your constructor you ask?
 
-Easily, through the second parameter of the ` CoffeePot::brew() ` method we showed you earlier.
+Easily, through the second parameter of the ` CoffeeShop::brew() ` method we showed you earlier.
 
 ```
-$my_class = $this->CoffeePot()->brew(
+$my_class = $this->CoffeeShop()->brew(
     'Vendor\Namespace\Folder\MyClass',
     array( 123, 'yada yada yada' )
 );
 ```
 
-Add as many parameters as you want, **CoffeePot** will automatically resolve your class's dependencies. But remember if you need to pass an argument **AFTER** an injected dependency, then you need to leave space for it:
+Add as many parameters as you want, **CoffeeShop** will automatically resolve your class's dependencies. But remember if you need to pass an argument **AFTER** an injected dependency, then you need to leave space for it:
 
 ```
-$my_class = $this->CoffeePot()->brew(
+$my_class = $this->CoffeeShop()->brew(
     'Vendor\Namespace\Folder\MyClass',
     array( 123, 'yada yada yada', null, 'another string' )
 );
 // where null will get replaced by the EEM_Attendee model
 ```
 
-###CoffeePot Recipes - Configuring New Dependencies
+###CoffeeShop Recipes - Configuring New Dependencies
 
-> what if I want to inject some other class of my own that CoffeePot doesn't already know about ?
+> what if I want to inject some other class of my own that CoffeeShop doesn't already know about ?
 
-Well before that new dependency can be injected, we need to tell **CoffeePot** about that class, where to find it, and exactly how to load it. We do this with **Recipes**, which are a set of instructions, that tell **CoffeePot** about your class.
+Well before that new dependency can be injected, we need to tell **CoffeeShop** about that class, where to find it, and exactly how to load it. We do this with **Recipes**, which are a set of instructions, that tell **CoffeeShop** about your class.
 
 So let's create that other class and add it as a parameter to ` MyClass `.
 
@@ -172,10 +172,10 @@ class MyClass
 }
 ```
 
-Now to tell **CoffeePot** about this other class, we need to create a **Recipe** for it
+Now to tell **CoffeeShop** about this other class, we need to create a **Recipe** for it
 
 ```
-$this->CoffeePot->addRecipe(
+$this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         'Vendor\Namespace\OtherFolder\OtherClass'
     )
@@ -184,15 +184,15 @@ $this->CoffeePot->addRecipe(
 
 and... uhh... **THAT'S IT!!!**
 
-**CoffeePot** will now inject your ` OtherClass ` anywhere that you type hint for it.
+**CoffeeShop** will now inject your ` OtherClass ` anywhere that you type hint for it.
 
-**Note: By default, anytime you call ` CoffeePot::brew() ` you will receive a new unique instantiation of the requested class. So calling ` CoffeePot::brew() ` multiple times in a row with the same parameters will result in multiple instantiations of the same class. These are separate unique objects.**
+**Note: By default, anytime you call ` CoffeeShop::brew() ` you will receive a new unique instantiation of the requested class. So calling ` CoffeeShop::brew() ` multiple times in a row with the same parameters will result in multiple instantiations of the same class. These are separate unique objects.**
 
 > What if I don't want a new instantiation, but instead want a cached copy of an existing object that doesn't need to be unique?
 
 ###CoffeeMakers and Recipe Types
 
-Internally, **CoffeePot** uses a series of **CoffeeMaker** classes which determine how and when your objects are constructed and returned. When creating a **Recipe** you can set which **CoffeeMaker** to use for your brew.
+Internally, **CoffeeShop** uses a series of **CoffeeMaker** classes which determine how and when your objects are constructed and returned. When creating a **Recipe** you can set which **CoffeeMaker** to use for your brew.
 
 There are currently three types:
 
@@ -211,7 +211,7 @@ To specify which **CoffeeMaker** should be used by your **Recipe**, you need to 
 like so:
 
 ```
-$this->CoffeePot->addRecipe(
+$this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         'Vendor\Namespace\OtherFolder\OtherClass',
         EventEspresso\core\services\container\CoffeeMaker::BREW_SHARED
@@ -223,9 +223,9 @@ This would result in the exact instance of ` OtherClass` being returned every ti
 
 ###Type Hinting for Interfaces and Filters (Aliases)
 
-> To do Dependency Inversion properly you shouldn't type hint for concrete classes like that, but instead type hint for interfaces. How does CoffeePot know what concrete class to use if I'm not specifying that in my type hinting ?
+> To do Dependency Inversion properly you shouldn't type hint for concrete classes like that, but instead type hint for interfaces. How does CoffeeShop know what concrete class to use if I'm not specifying that in my type hinting ?
 
-The third parameter for your **Recipe** allows you to pass an array of class "aliases", that (keeping with the Coffee analogy) we will refer to as **Filters**. **Filters** allow you to specify alternative names that you want **CoffeePot** to recognize as referencing the class your **Recipe** is for.
+The third parameter for your **Recipe** allows you to pass an array of class "aliases", that (keeping with the Coffee analogy) we will refer to as **Filters**. **Filters** allow you to specify alternative names that you want **CoffeeShop** to recognize as referencing the class your **Recipe** is for.
 
 If you wanted to type hint for an interface that is implemented by ` OtherClass`, you would first need to change your class declaration and constructor for the class injecting it:
 
@@ -272,7 +272,7 @@ class MyClass
 then specify that interface in the **Filters** array passed to your **Recipe**:
 
 ```
-$this->CoffeePot->addRecipe(
+$this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         'Vendor\Namespace\OtherFolder\OtherClass',
         EventEspresso\core\services\container\CoffeeMaker::BREW_SHARED,
@@ -281,12 +281,12 @@ $this->CoffeePot->addRecipe(
 );
 ```
 
-Now anytime **CoffeePot** encounters a class that type hints for ` OtherInterface ` it will inject the cached instance of ` OtherClass `.
+Now anytime **CoffeeShop** encounters a class that type hints for ` OtherInterface ` it will inject the cached instance of ` OtherClass `.
 
 
 ###WILDCARD * Recipes
 
-Building Recipes for EVERY single class would be really tedious, so CoffeePot supports Wildcards in both the class names and filepaths.
+Building Recipes for EVERY single class would be really tedious, so CoffeeShop supports Wildcards in both the class names and filepaths.
 Here's a Recipe that handles ALL of the standard core EE db model classes:
 
 ```
