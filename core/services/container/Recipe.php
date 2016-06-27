@@ -52,12 +52,13 @@ class Recipe implements RecipeInterface
     private $filters = array();
 
     /**
-     * one of the class constants from CoffeePot:
-     *  CoffeePot::BREW_FACTORY - creates a new instance
-     *  CoffeePot::BREW_PROTOTYPE - creates a shared instance
-     *  CoffeePot::BREW_SINGLETON - creates a cloned instance
-     *
-     * @var string $type
+     * one of the class constants from CoffeeShop:
+     *  CoffeeMaker::BREW_NEW - creates a new instance
+     *  CoffeeMaker::BREW_SHARED - creates a shared instance
+     *  CoffeeMaker::BREW_LOAD_ONLY - loads but does not instantiate
+
+*
+*@var string $type
      */
     private $type;
 
