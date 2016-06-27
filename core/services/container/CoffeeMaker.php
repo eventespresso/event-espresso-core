@@ -14,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 /**
  * Class CoffeeMaker
  * Abstract Parent class for CoffeeMakers which are responsible
- * for building objects that are requested from the CoffeePot
+ * for building objects that are requested from the CoffeeShop
  *
  * @package       Event Espresso
  * @author        Brent Christensen
