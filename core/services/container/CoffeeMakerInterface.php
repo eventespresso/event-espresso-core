@@ -10,7 +10,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 /**
  * Interface CoffeeMakerInterface
  * for CoffeeMaker classes which are responsible
- * for building objects that are requested from the CoffeePot
+ * for building objects that are requested from the CoffeeShop
  *
  * @package EventEspresso\core\services\container
  */
