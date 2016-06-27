@@ -9,6 +9,6 @@ Below you will find descriptions and examples of new changes that are beginning 
 ##Table of Contents
 
 - [Namespaces and PSR-4 Compatible Autoloading](psr-4-autoloading.md)
-- [Dependency Injection and the CoffeePot DI container](dependency-injection-coffeepot.md)
+- [Dependency Injection and the CoffeeShop DI container](dependency-injection-coffeepot.md)
 - [Middleware Request Stack](middleware-request-stack.md)
 - [Command Bus and Hexagonal Architecture](command-bus-hexagonal-architecture.md)
