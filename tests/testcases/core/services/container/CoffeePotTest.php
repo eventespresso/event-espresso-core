@@ -1,5 +1,5 @@
 <?php
-use EventEspresso\core\services\container\CoffeePot;
+use EventEspresso\core\services\container\CoffeeShop;
 use EventEspresso\core\services\container\DependencyInjector;
 use EventEspresso\core\services\container\Recipe;
 use EventEspresso\core\services\container\CoffeeMaker;
@@ -25,7 +25,7 @@ class CoffeePotTest extends EE_UnitTestCase
 {
 
     /**
-     * @var CoffeePot $CoffeePot
+     * @var CoffeeShop $CoffeePot
      */
     private $CoffeePot;
 
@@ -42,7 +42,7 @@ class CoffeePotTest extends EE_UnitTestCase
     public function setUp()
     {
         // instantiate the container
-        $this->CoffeePot = new CoffeePot();
+        $this->CoffeePot = new CoffeeShop();
         // create a dependency injector class for resolving class constructor arguments
         $this->DependencyInjector = new DependencyInjector(
             $this->CoffeePot,
@@ -81,7 +81,7 @@ class CoffeePotTest extends EE_UnitTestCase
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
-                    'CoffeePot::addCoffeeMaker() should Not have thrown the following Exception: %1$s'
+                    'CoffeeShop::addCoffeeMaker() should Not have thrown the following Exception: %1$s'
                 )
             );
         }
@@ -100,7 +100,7 @@ class CoffeePotTest extends EE_UnitTestCase
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
-                    'CoffeePot::addClosure() should Not have thrown the following Exception: %1$s',
+                    'CoffeeShop::addClosure() should Not have thrown the following Exception: %1$s',
                     $e->getMessage()
                 )
             );
@@ -117,7 +117,7 @@ class CoffeePotTest extends EE_UnitTestCase
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
-                    'CoffeePot::addService() should Not have thrown the following Exception: %1$s',
+                    'CoffeeShop::addService() should Not have thrown the following Exception: %1$s',
                     $e->getMessage()
                 )
             );
@@ -137,7 +137,7 @@ class CoffeePotTest extends EE_UnitTestCase
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
-                    'CoffeePot::addCoffeeMaker() should Not have thrown the following Exception: %1$s',
+                    'CoffeeShop::addCoffeeMaker() should Not have thrown the following Exception: %1$s',
                     $e->getMessage()
                 )
             );
@@ -157,7 +157,7 @@ class CoffeePotTest extends EE_UnitTestCase
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
-                    'CoffeePot::getRecipe() should Not have thrown the following Exception: %1$s',
+                    'CoffeeShop::getRecipe() should Not have thrown the following Exception: %1$s',
                     $e->getMessage()
                 )
             );
@@ -173,7 +173,7 @@ class CoffeePotTest extends EE_UnitTestCase
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
-                    'CoffeePot::addAliases() should Not have thrown the following Exception: %1$s',
+                    'CoffeeShop::addAliases() should Not have thrown the following Exception: %1$s',
                     $e->getMessage()
                 )
             );
@@ -195,7 +195,7 @@ class CoffeePotTest extends EE_UnitTestCase
         try {
             // attempt to get class that should NOT have a valid Recipe yet
             $this->CoffeePot->get('EE_Class_For_Testing_Loading');
-            $this->fail('CoffeePot::get() should have thrown an Exception');
+            $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
@@ -209,7 +209,7 @@ class CoffeePotTest extends EE_UnitTestCase
         try {
             // attempt to get class that should NOT have a valid Recipe yet
             $this->CoffeePot->get('EE_Class_For_Testing_Loading');
-            $this->fail('CoffeePot::get() should have thrown an Exception');
+            $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
@@ -242,7 +242,7 @@ class CoffeePotTest extends EE_UnitTestCase
         try {
             // attempt to get class that should NOT have a valid Recipe yet
             $this->CoffeePot->get('EE_Class_For_Testing_Loading');
-            $this->fail('CoffeePot::get() should have thrown an Exception');
+            $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
@@ -275,7 +275,7 @@ class CoffeePotTest extends EE_UnitTestCase
         try {
             // attempt to get class that should NOT have a valid Recipe yet
             $this->CoffeePot->get('EE_Taxes');
-            $this->fail('CoffeePot::get() should have thrown an Exception');
+            $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
@@ -306,7 +306,7 @@ class CoffeePotTest extends EE_UnitTestCase
         try {
             // attempt to get class that should NOT have a valid Recipe yet
             $this->CoffeePot->get('EE_Taxes');
-            $this->fail('CoffeePot::get() should have thrown an Exception');
+            $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
@@ -337,7 +337,7 @@ class CoffeePotTest extends EE_UnitTestCase
         try {
             // attempt to get class that should NOT have a valid Recipe yet
             $this->CoffeePot->get('EE_Session_Mock');
-            $this->fail('CoffeePot::get() should have thrown an Exception');
+            $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
