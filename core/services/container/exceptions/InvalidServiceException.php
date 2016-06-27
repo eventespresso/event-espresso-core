@@ -32,7 +32,7 @@ class InvalidServiceException extends \UnexpectedValueException
         if (empty($message)) {
             $message = sprintf(
                 __(
-                    'The "%1$s" service could not be retrieved from the CoffeePot, but "%2$s" was received.',
+                    'The "%1$s" service could not be retrieved from the CoffeeShop, but "%2$s" was received.',
                     'event_espresso'
                 ),
                 $service_name,
