@@ -19,7 +19,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 /**
- * Class CoffeePot
+ * Class CoffeeShop
  * A Dependency Injection container
  *
  * @see     /docs/N--Core-Functionality/dependency-injection-coffeepot.md
@@ -28,7 +28,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
  * @author  Brent Christensen
  * @since   4.9.1
  */
-class CoffeePot implements CoffeePotInterface
+class CoffeeShop implements CoffeePotInterface
 {
 
 
@@ -72,7 +72,7 @@ class CoffeePot implements CoffeePotInterface
 
 
     /**
-     * CoffeePot constructor
+     * CoffeeShop constructor
      */
     public function __construct()
     {
@@ -469,5 +469,5 @@ class CoffeePot implements CoffeePotInterface
     }
 
 }
-// End of file CoffeePot.php
-// Location: /CoffeePot.php
+// End of file CoffeeShop.php
+// Location: /CoffeeShop.php
