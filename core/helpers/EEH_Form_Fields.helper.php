@@ -370,9 +370,6 @@ class EEH_Form_Fields {
 			}
 			$values=$converted_values;
 		}
-		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
-		//EE_Registry::instance()->load_helper( 'Formatter' );
 
 		$field = '<select id="' . EEH_Formatter::ee_tep_output_string($name) . '" name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
 		//Debug

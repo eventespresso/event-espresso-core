@@ -66,7 +66,6 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form{
 				$attendee,
 				$this 
 			)
-
 		);
 	}
 

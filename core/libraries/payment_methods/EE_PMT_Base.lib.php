@@ -101,11 +101,8 @@ abstract class EE_PMT_Base{
 		if($this->_gateway){
 			$this->_gateway->set_payment_model( EEM_Payment::instance() );
 			$this->_gateway->set_payment_log( EEM_Change_Log::instance() );
-			EE_Registry::instance()->load_helper( 'Template' );
 			$this->_gateway->set_template_helper( new EEH_Template() );
-			EE_Registry::instance()->load_helper( 'Line_Item' );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
-			EE_Registry::instance()->load_helper( 'Money' );
 			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
@@ -611,7 +608,6 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function payment_overview_content(EE_Payment $payment){
-		EE_Registry::instance()->load_helper('Template');
 		return EEH_Template::display_template(EE_LIBRARIES.'payment_methods'.DS.'templates'.DS.'payment_details_content.template.php', array('payment_method'=>$this->_pm_instance,'payment'=>$payment) , true);
 	}
 
@@ -622,7 +618,7 @@ abstract class EE_PMT_Base{
 	 * values are: array {
 	 *	@type string $title i18n name for the help tab
 	 *	@type string $filename name of the file located in ./help_tabs/ (ie, in a folder next to this file)
-	 *	@type array $template_args any arguments you want passed to the template file while rendering. 
+	 *	@type array $template_args any arguments you want passed to the template file while rendering.
 	 *				Keys will be variable names and values with be their values.
 	 */
 	public function help_tabs_config(){
@@ -677,7 +673,6 @@ abstract class EE_PMT_Base{
 	 * @return string html for the link to a help tab
 	 */
 	public function get_help_tab_link(){
-		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::get_help_tab_link( $this->get_help_tab_name() );
 	}
 

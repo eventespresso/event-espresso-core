@@ -6,18 +6,18 @@ To do a basic batch job, which can run from the same admin page as other basic j
 <?php
 /**
  *
- * Class AttendeesReport 
+ * Class AttendeesReport
  *
  * Description here
  *
  * @package         Event Espresso
- * @subpackage    
+ * @subpackage
  * @author				Mike Nelson
  * @since		 	   $VID:$
  *
  */
 
-namespace EventEspressoBatchRequest\JobHandlers; 
+namespace EventEspressoBatchRequest\JobHandlers;
 use EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile;
 use EventEspressoBatchRequest\Helpers\BatchRequestException;
 use EventEspressoBatchRequest\Helpers\JobParameters;
@@ -29,8 +29,8 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 
 
 class AttendeesReport extends JobHandlerFile {
-	
-	
+
+
 	public function create_job(JobParameters $job_parameters) {
 		if( ! \EE_Capabilities::instance()->current_user_can( 'ee_read_contacts', 'generating_report' ) ) {
 			throw new BatchRequestException(
@@ -45,7 +45,6 @@ class AttendeesReport extends JobHandlerFile {
 		$job_parameters->set_job_size( $this->count_units_to_process() );
 		//we should also set the header columns
 		$csv_data_for_row = $this->get_csv_data( 0, 1 );
-		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $filepath, $csv_data_for_row, true );
 		//if we actually processed a row there, record it
 		if( $job_parameters->job_size() ) {
@@ -56,11 +55,10 @@ class AttendeesReport extends JobHandlerFile {
 			__( 'Contacts report started successfully...', 'event_espresso' )
 		);
 	}
-	
+
 
 	public function continue_job(JobParameters $job_parameters, $batch_size = 50) {
 		$csv_data = $this->get_csv_data( $job_parameters->units_processed(), $batch_size );
-		\EE_Registry::instance()->load_helper( 'Export' );
 		\EEH_Export::write_data_array_to_csv( $job_parameters->extra_datum( 'filepath' ), $csv_data, false );
 		$units_processed = count( $csv_data );
 		$job_parameters->mark_processed( $units_processed );
@@ -79,7 +77,7 @@ class AttendeesReport extends JobHandlerFile {
 				$extra_response_data );
 	}
 
-	
+
 	public function cleanup_job(JobParameters $job_parameters) {
 		$this->_file_helper->delete(
 			\EEH_File::remove_filename_from_filepath( $job_parameters->extra_datum( 'filepath' ) ),
@@ -88,13 +86,13 @@ class AttendeesReport extends JobHandlerFile {
 		);
 		return new JobStepResponse( $job_parameters, __( 'Cleaned up temporary file', 'event_espresso' ) );
 	}
-	
+
 	public function count_units_to_process() {
 		return \EEM_Attendee::instance()->count();
 	}
 	public function get_csv_data( $offset, $limit ) {
-		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results( 
-				array( 
+		$attendee_rows = \EEM_Attendee::instance()->get_all_wpdb_results(
+				array(
 					'limit' => array( $offset, $limit ),
 					'force_join' => array( 'State', 'Country' ) ) );
 		$csv_data = array();
@@ -133,7 +131,7 @@ After creating this job handler class and autoloading it, you just need to redir
 This snippet of code generates the desired URL and then echoes a link:
 
 ```php
-$job_starter_url = EE_Admin_Page::add_query_args_and_nonce( 
+$job_starter_url = EE_Admin_Page::add_query_args_and_nonce(
 				array(
 					'page' => 'espresso_support',
 					'action' => 'batch_file_create',
@@ -149,7 +147,7 @@ So when users click this link, this happens:
 | ------------------ | ---------------------------------- |
 The user is directed to the batch processing page (where they see a progress bar and some text describing what is happening) | The request is turned into a JobParameters object, and passed into AttendeesReport ::create_job()
 The user sees the progress bar update | AJAX requests are sent to the server, and AttendeesReport::continue_job() is called each time until it notices the job is done
-The CSV file is downloaded, and then the user is redirected to where they came from | The user downloads the temporary CSV file, then an AJAX request is sent which gets passed into ATtendeesReport::cleanup_job() which deletes the temporary file
+The CSV file is downloaded, and then the user is redirected to where they came from | The user downloads the temporary CSV file, then an AJAX request is sent which gets passed into AttendeesReport::cleanup_job() which deletes the temporary file
 
 Here is a sample video:
 

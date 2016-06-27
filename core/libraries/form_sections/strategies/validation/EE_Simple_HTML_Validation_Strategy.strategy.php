@@ -35,6 +35,21 @@ class EE_Simple_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 
 	/**
+	 * add_more_tags
+	 *
+	 * generates and returns a string that lists the top-level HTML tags that are allowable for this input
+	 *
+	 * @return string
+	 */
+	public function get_list_of_allowed_tags() {
+		$allowed_tags = $this->_get_allowed_tags();
+		ksort( $allowed_tags );
+		return implode( ', ', array_keys( $allowed_tags ) );
+	}
+
+
+
+	/**
 	 * @param $normalized_value
 	 * @throws \EE_Validation_Error
 	 */

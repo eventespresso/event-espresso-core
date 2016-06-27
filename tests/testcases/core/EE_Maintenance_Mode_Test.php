@@ -11,7 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
+ * @group activation
  */
 class EE_Maintenance_Mode_Test extends EE_UnitTestCase{
 

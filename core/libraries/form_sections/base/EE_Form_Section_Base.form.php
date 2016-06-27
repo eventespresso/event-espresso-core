@@ -68,7 +68,7 @@ abstract class EE_Form_Section_Base {
 	 * @var boolean
 	 */
 	protected $_construction_finalized;
-
+	
 
 
 
@@ -81,7 +81,6 @@ abstract class EE_Form_Section_Base {
 	 */
 	public function __construct( $options_array = array() ) {
 		// used by display strategies
-		EE_Registry::instance()->load_helper('HTML');
 		// assign incoming values to properties
 		foreach( $options_array as $key => $value ) {
 			$key = '_' . $key;
@@ -182,9 +181,22 @@ abstract class EE_Form_Section_Base {
 
 	/**
 	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.
+	 * Note however, it's recommended that you instead call enqueue_js on the "wp_enqueue_scripts" action, 
+	 * and call get_html when you want to output the html. Calling get_html_and_js after
+	 * "wp_enqueue_scripts" has already fired seems to work for now, but is contrary
+	 * to the instructions on https://developer.wordpress.org/reference/functions/wp_enqueue_script/
+	 * and so might stop working anytime.
 	 * @return string
 	 */
-	abstract public function get_html_and_js();
+	public function get_html_and_js(){
+		return $this->get_html();
+	}
+	
+	/**
+	 * Gets the HTML for displaying this form section
+	 * @return string
+	 */
+	public abstract function get_html();
 
 
 
@@ -316,6 +328,16 @@ abstract class EE_Form_Section_Base {
 	public function form_close() {
 		return EEH_HTML::nl( -1, 'form' ) . '</form>' . EEH_HTML::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_HTML::nl();
 	}
+	
+	/**
+	 * enqueues JS (and CSS) for the form (ie immediately call wp_enqueue_script and
+	 * wp_enqueue_style; the scripts could have optionally been registered earlier)
+	 * Default does nothing, but child classes can override
+	 * @return void
+	 */
+	public function enqueue_js(){
+		//defaults to enqueue NO js or css
+	}
 
 	/**
 	 * Adds any extra data needed by js. Eventually we'll call wp_localize_script
@@ -369,5 +391,5 @@ abstract class EE_Form_Section_Base {
 	}
 	
 	
-}
+	}
 // End of file EE_Form_Section_Base.form.php

@@ -22,7 +22,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
 
 	/**
 	 * @param string $validation_error_message
-	 * @param arrat $requirement_conditions
+	 * @param array $requirement_conditions
 	 */
 	public function __construct( $validation_error_message = null, $requirement_conditions = array() ) {
 		if( ! $validation_error_message ){
@@ -83,7 +83,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
 	 * @param array $requirement_conditions
 	 */
 	public function set_requirement_conditions( $requirement_conditions ) {
-		$this->requirement_conditions = (array)$requirement_conditions;
+		$this->requirement_conditions = (array) $requirement_conditions;
 	}
 
 	/**
@@ -198,7 +198,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
 			switch( $op ) {
 				case '=':
 				default:
-					$meets_all_requirements = $input->normalized_value() == $value;
+					$meets_all_requirements = $input->normalized_value() === $value;
 			}
 			if( ! $meets_all_requirements ) {
 				break;
@@ -230,7 +230,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
 				);
 			}
 			$operator = $op_and_value[ 0 ];
-			$value = (string)$op_and_value[ 1 ];
+			$value = (string) $op_and_value[ 1 ];
 			if( $operator !== '=' ) {
 				EE_Error::throw_exception_if_debugging(
 					sprintf(
