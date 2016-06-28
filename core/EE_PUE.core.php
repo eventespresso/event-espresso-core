@@ -6,7 +6,7 @@
  * @subpackage	includes/core/
  * @author		Darren Ethier
  */
-class EE_PUE implements EventEspresso\core\interfaces\UnsettableInterface {
+class EE_PUE implements EventEspresso\core\interfaces\InterminableInterface {
 
 
 	/**
