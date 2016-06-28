@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Admin implements EventEspresso\core\interfaces\ResettableInterface, EventEspresso\core\interfaces\UnsettableInterface {
+final class EE_Admin implements EventEspresso\core\interfaces\ResettableInterface, EventEspresso\core\interfaces\InterminableInterface {
 
 	/**
 	 * @access private
