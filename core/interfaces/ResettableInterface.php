@@ -15,7 +15,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * because the class utilizes the "singleton" pattern and contains a cached instance of itself.
  *
  * @package EventEspresso\core\interfaces
- * @since   4.9.0
+ * @since   4.9.2
  */
 interface ResettableInterface {
 
