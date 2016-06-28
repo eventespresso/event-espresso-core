@@ -84,8 +84,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		if ( apply_filters( 'FHEE__fallback_shortcode_processor__EES_Espresso_Events', FALSE )) {
 			EED_Events_Archive::instance()->event_list();
 		}
-		// merge in any attributes passed via fallback shortcode processor
-		$attributes = array_merge( (array)$attributes, (array)$this->_attributes );
 		//set default attributes
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
@@ -99,9 +97,12 @@ class EES_Espresso_Events  extends EES_Shortcode {
 			'fallback_shortcode_processor' => FALSE
 		);
 		// allow the defaults to be filtered
-		$default_espresso_events_shortcode_atts = apply_filters( 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts', $default_espresso_events_shortcode_atts );
+		$default_espresso_events_shortcode_atts = apply_filters(
+			'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts',
+			$default_espresso_events_shortcode_atts
+		);
 		// grab attributes and merge with defaults, then extract
-		$attributes = array_merge( $default_espresso_events_shortcode_atts, $attributes );
+		$attributes = array_merge( (array) $default_espresso_events_shortcode_atts, (array) $attributes );
 		// make sure we use the_excerpt()
 		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
 		// apply query filters

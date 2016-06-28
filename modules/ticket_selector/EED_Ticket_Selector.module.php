@@ -201,21 +201,23 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function iframe_code_button( $permalink_string, $id, $new_title, $new_slug ) {
 		//make sure this is ONLY when editing and the event id has been set.
-		if ( ! empty( $id ) )  {
+		if ( ! empty( $id ) ) {
 			$post = get_post( $id );
-
 			//if NOT event then let's get out.
 			if ( $post->post_type !== 'espresso_events' ) {
 				return $permalink_string;
 			}
-
+			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">'
+			                     . __( 'Embed', 'event_espresso' )
+			                     . '</a> ';
 			$ticket_selector_url = add_query_arg( array( 'ticket_selector' => 'iframe', 'event' => $id ), site_url() );
-
-			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">' . __('Embed', 'event_espresso') . '</a> ';
+			$iframe_string = esc_html(
+				'<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>'
+			);
 			$permalink_string .= '
 <div id="js-ts-iframe" style="display:none">
 	<div style="width:100%; height: 500px;">
-		<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>
+		' . $iframe_string . '
 	</div>
 </div>';
 		}

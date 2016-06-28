@@ -1051,9 +1051,24 @@ class EE_Registry {
 
 
 	/**
-	 * Resets the registry and everything in it (eventually, getting it to properly
-	 * reset absolutely everything will probably be tricky. right now it just resets
-	 * the config, data migration manager, and the models)
+	 * Resets the registry.
+	 *
+	 * The criteria for what gets reset is based on what can be shared between sites on the same request when switch_to_blog
+	 * is used in a multisite install.  Here is a list of things that are NOT reset.
+	 *
+	 * - $_dependency_map
+	 * - $_class_abbreviations
+	 * - $NET_CFG (EE_Network_Config): The config is shared network wide so no need to reset.
+	 * - $REQ:  Still on the same request so no need to change.
+	 * - $CAP: There is no site specific state in the EE_Capability class.
+	 * - $SSN: Although ideally, the session should not be shared between site switches, we can't reset it because only one Session
+	 *         can be active in a single request.  Resetting could resolve in "headers already sent" errors.
+	 * - $addons:  In multisite, the state of the addons is something controlled via hooks etc in a normal request.  So
+	 *             for now, we won't reset the addons because it could break calls to an add-ons class/methods in the
+	 *             switch or on the restore.
+	 * - $modules
+	 * - $shortcodes
+	 * - $widgets
 	 *
 	 * @param boolean $hard whether to reset data in the database too, or just refresh
 	 * the Registry to its state at the beginning of the request
@@ -1062,20 +1077,29 @@ class EE_Registry {
 	 * currently reinstantiate the singletons at the moment)
 	 * @param   bool    $reset_models    Defaults to true.  When false, then the models are not reset.  This is so client
 	 *                                  code instead can just change the model context to a different blog id if necessary
+	 *
 	 * @return EE_Registry
 	 */
 	public static function reset( $hard = false, $reinstantiate = true, $reset_models = true ) {
 		$instance = self::instance();
 		EEH_Activation::reset();
+
+		//properties that get reset
 		$instance->_cache_on = true;
 		$instance->CFG = EE_Config::reset( $hard, $reinstantiate );
-		unset( $instance->LIB->EE_Data_Migration_Manager );
+		$instance->CART = null;
+		$instance->MRM = null;
 		$instance->LIB = new stdClass();
+
+		//messages reset
+		EED_Messages::reset();
+
 		if ( $reset_models ) {
 			foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
 				$instance->reset_model( $model_name );
 			}
 		}
+
 		return $instance;
 	}
 

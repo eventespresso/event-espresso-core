@@ -46,7 +46,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 		}
 		try {
 			$this->_validator->validate( $email_address );
-			EE_UnitTestCase::assertTrue(
+			$this->assertTrue(
 				$success,
 				sprintf(
 					'Email addy #%1$s "%2$s" passed validation when it should have failed.',
@@ -55,7 +55,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 				)
 			);
 		} catch ( EE_Validation_Error $e ) {
-			EE_UnitTestCase::assertTrue(
+			$this->assertTrue(
 				$fail,
 				sprintf(
 					'Email addy #%1$s "%2$s" failed validation when it should have passed.',
