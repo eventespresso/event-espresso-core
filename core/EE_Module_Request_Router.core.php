@@ -23,7 +23,7 @@
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Module_Request_Router implements EventEspresso\core\interfaces\UnsettableInterface {
+final class EE_Module_Request_Router implements EventEspresso\core\interfaces\InterminableInterface {
 
 	/**
 	 * 	@var 	array	$_previous_routes
