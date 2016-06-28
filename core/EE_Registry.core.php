@@ -8,7 +8,7 @@
  * @subpackage            core
  * @author                    Brent Christensen
  */
-class EE_Registry {
+class EE_Registry implements EventEspresso\core\interfaces\ResettableInterface {
 
 	/**
 	 *    EE_Registry Object
@@ -604,6 +604,9 @@ class EE_Registry {
 	 * @return null|object
 	 */
 	protected function _get_cached_class( $class_name, $class_prefix = '' ) {
+		if ( $class_name === 'EE_Registry' ) {
+			return $this;
+		}
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
 		} else {
@@ -959,6 +962,9 @@ class EE_Registry {
 	 * @return void
 	 */
 	protected function _set_cached_class( $class_obj, $class_name, $class_prefix = '', $from_db = false ) {
+		if ( $class_name === 'EE_Registry' ) {
+			return;
+		}
 		// return newly instantiated class
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
 			$class_abbreviation = $this->_class_abbreviations[ $class_name ];
@@ -1084,10 +1090,21 @@ class EE_Registry {
 	public static function reset( $hard = false, $reinstantiate = true, $reset_models = true ) {
 		$instance = self::instance();
 		$instance->_cache_on = true;
+		// reset some "special" classes
+		EEH_Activation::reset();
+		$instance->CFG = $instance->CFG->reset( $hard, $reinstantiate );
+		$instance->CART = null;
+		$instance->MRM = null;
 		//handle of objects cached on LIB
 		foreach ( $instance->LIB as $class_name => $class ) {
 			if ( isset( $instance->LIB->{$class_name} ) ) {
 				if ( $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\ResettableInterface ) {
+					if ( $instance->LIB->{$class_name} instanceof EEM_Base ) {
+						if ( $reset_models ) {
+							$instance->LIB->{$class_name}->reset();
+						}
+						continue;
+					}
 					$instance->LIB->{$class_name}->reset();
 				}
 				if ( ! $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\InterminableInterface ) {
@@ -1095,9 +1112,6 @@ class EE_Registry {
 				}
 			}
 		}
-		$instance->CFG = $instance->load_core('Config');
-		$instance->CART = null;
-		$instance->MRM = null;
 		return $instance;
 	}
 
