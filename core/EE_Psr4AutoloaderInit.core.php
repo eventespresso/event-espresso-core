@@ -23,6 +23,15 @@ class EE_Psr4AutoloaderInit {
 	 * @access    public
 	 */
 	public function __construct() {
+		EE_Psr4AutoloaderInit::initialize_psr4_loader();
+	}
+
+
+
+	/**
+	 * @return \EventEspresso\core\Psr4Autoloader
+	 */
+	public static function initialize_psr4_loader() {
 		static $initialized = false;
 		if ( ! $initialized ) {
 			// instantiate PSR4 autoloader
