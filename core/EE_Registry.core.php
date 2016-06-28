@@ -1106,6 +1106,7 @@ class EE_Registry implements EventEspresso\core\interfaces\ResettableInterface {
 						continue;
 					}
 					$instance->LIB->{$class_name}->reset();
+					continue;
 				}
 				if ( ! $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\InterminableInterface ) {
 					unset( $instance->LIB->{$class_name} );
