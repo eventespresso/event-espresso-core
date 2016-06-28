@@ -2598,6 +2598,11 @@ class EE_Map_Config extends EE_Config_Base {
 	public $use_google_maps;
 
 	/**
+	 * @var string $api_key
+	 */
+	public $google_map_api_key;
+
+	/**
 	 * @var int $event_details_map_width
 	 */
 	public $event_details_map_width;
@@ -2678,6 +2683,7 @@ class EE_Map_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default map settings
 		$this->use_google_maps = true;
+		$this->google_map_api_key = '';
 		// for event details pages (reg page)
 		$this->event_details_map_width = 585;            // ee_map_width_single
 		$this->event_details_map_height = 362;            // ee_map_height_single
