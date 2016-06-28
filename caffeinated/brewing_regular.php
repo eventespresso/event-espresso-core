@@ -15,7 +15,7 @@ define( 'EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
  * @subpackage	/caffeinated/brewing_regular.php
  * @author		Darren Ethier
  */
-class EE_Brewing_Regular extends EE_Base implements EventEspresso\core\interfaces\UnsettableInterface {
+class EE_Brewing_Regular extends EE_Base implements EventEspresso\core\interfaces\InterminableInterface {
 
 	/**
 	 * EE_Brewing_Regular constructor.
