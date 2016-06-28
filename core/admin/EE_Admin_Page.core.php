@@ -26,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Admin_Page extends EE_Base implements EventEspresso\core\interfaces\UnsettableInterface {
+abstract class EE_Admin_Page extends EE_Base implements EventEspresso\core\interfaces\InterminableInterface {
 
 
 	//set in _init_page_props()
