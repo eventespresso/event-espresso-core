@@ -67,6 +67,15 @@ class Psr4Autoloader {
 
 
 	/**
+	 * @return array
+	 */
+	public function prefixes() {
+		return $this->prefixes;
+	}
+
+
+
+	/**
 	 * Register loader with SPL autoloader stack.
 	 *
 	 * @return void
