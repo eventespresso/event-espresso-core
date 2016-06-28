@@ -8,19 +8,20 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 
 /**
- * Interface UnsettableInterface
+ * Interface InterminableInterface
  *
  * denotes that any class implementing this interface should NOT be unset(),
  * or have it's instance nulled, when switching between blogs, unit tests, etc
- * because the class does not contain any site or request specific data
+ * because the class does not contain any site or request specific data.
+ * ie: it should persist between changes
  *
  * @package EventEspresso\core\interfaces
  * @since 4.9.0
  */
-interface UnsettableInterface {
+interface InterminableInterface {
 
 	// no specific methods required
 
 }
-// End of file UnsettableInterface.php
-// Location: /UnsettableInterface.php
+// End of file InterminableInterface.php
+// Location: /InterminableInterface.php
