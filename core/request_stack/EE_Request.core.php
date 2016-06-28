@@ -8,7 +8,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Request {
+class EE_Request implements EventEspresso\core\interfaces\InterminableInterface {
 
 	/**
 	 * @access private
