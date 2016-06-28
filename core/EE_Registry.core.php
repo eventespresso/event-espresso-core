@@ -1090,7 +1090,7 @@ class EE_Registry {
 				if ( $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\ResettableInterface ) {
 					$instance->LIB->{$class_name}->reset();
 				}
-				if ( ! $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\UnsettableInterface ) {
+				if ( ! $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\InterminableInterface ) {
 					unset( $instance->LIB->{$class_name} );
 				}
 			}
