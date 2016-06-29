@@ -264,25 +264,9 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _find_unique_slug($event_name, $old_identifier = ''){
 		$count = 0;
 		$original_name = $event_name ? sanitize_title($event_name) : $old_identifier;
-		$event_slug = $original_name;
-		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
-			$event_slug = sanitize_title($original_name."-".++$count);
-		}
-		return $event_slug;
+		return wp_unique_post_slug($original_name, 0, 'publish', 'espresso_events', 0 );
 	}
 
-	/**
-	 * returns whether or not there is a post that has this same slug (post_title)
-	 * @global type $wpdb
-	 * @param type $slug
-	 * @return boolean
-	 */
-	private function _other_post_exists_with_that_slug($slug){
-		global $wpdb;
-		$query = $wpdb->prepare("SELECT COUNT(ID) FROM ".$this->_new_table." WHERE post_name = %s",$slug);
-		$count = $wpdb->get_var($query);
-		return (boolean)intval($count);
-	}
 	private function _insert_cpt($old_event){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
