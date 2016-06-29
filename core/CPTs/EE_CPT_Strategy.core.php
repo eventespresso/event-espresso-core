@@ -371,7 +371,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return string
 	 */
 	public function posts_fields( $SQL ) {
-		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 1 );
 		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
 			return $this->query_modifier->postsFields( $SQL );
 		}
@@ -388,7 +387,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return string
 	 */
 	public function posts_join( $SQL ) {
-		remove_filter( 'posts_join', array( $this, 'posts_join' ), 1 );
 		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
 			return $this->query_modifier->postsJoin( $SQL );
 		}
@@ -405,7 +403,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return \WP_Post[]
 	 */
 	public function the_posts( $posts ) {
-		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1 );
 		if ( $this->query_modifier instanceof EventEspresso\Core\CPTs\CptQueryModifier ) {
 			$this->query_modifier->thePosts( $posts );
 		}
