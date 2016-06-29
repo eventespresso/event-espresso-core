@@ -493,7 +493,7 @@ class CptQueryModifier {
 	public function getEditPostLink( $url, $ID ) {
 		// need to make sure we only edit links if our cpt
 		global $post;
-		if ( ! $post instanceof \WP_Post && $post->post_type !== $this->post_type ) {
+		if ( ! $post instanceof \WP_Post || $post->post_type !== $this->post_type ) {
 			return $url;
 		}
 		//k made it here so all is good.
