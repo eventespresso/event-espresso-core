@@ -39,7 +39,6 @@ class EE_Load_Textdomain extends EE_Base {
 	public static function load_textdomain() {
 		self::_maybe_get_langfile();
 		//now load the textdomain
-		EE_Registry::instance()->load_helper( 'File' );
 		if ( ! empty( self::$_lang ) && is_readable( EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo' ) ) {
 			load_plugin_textdomain('event_espresso', FALSE, EE_LANGUAGES_SAFE_LOC);
 		} else if ( ! empty( self::$_lang ) && is_readable( EE_LANGUAGES_SAFE_DIR . 'event-espresso-4-' . self::$_lang . '.mo' ) ) {

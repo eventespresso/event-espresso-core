@@ -287,23 +287,26 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 	/**
 	 *    toggle_incomplete_registration_status_to_default
-	 *
-	 * 		changes any incomplete registrations to either the event or global default registration status
+	 *        changes any incomplete registrations to either the event or global default registration status
 	 *
 	 * @access public
 	 * @param EE_Registration $registration
-	 * @param bool 	$save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
+	 * @param bool            $save TRUE will save the registration if the status is updated, FALSE will leave that up to client code
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function toggle_incomplete_registration_status_to_default( EE_Registration $registration, $save = TRUE ) {
+		$existing_reg_status = $registration->status_ID();
 		// set initial REG_Status
-		$this->set_old_reg_status( $registration->ID(), $registration->status_ID() );
+		$this->set_old_reg_status( $registration->ID(), $existing_reg_status );
 		// is the registration currently incomplete ?
 		if ( $registration->status_ID() === EEM_Registration::status_id_incomplete ) {
 			// grab default reg status for the event, if set
 			$event_default_registration_status = $registration->event()->default_registration_status();
 			// if no default reg status is set for the event, then use the global value
-			$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
+			$STS_ID = ! empty( $event_default_registration_status )
+				? $event_default_registration_status
+				: EE_Registry::instance()->CFG->registration->default_STS_ID;
 			// if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
 			$STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $STS_ID;
 			// set incoming REG_Status
@@ -475,7 +478,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( ! $registration instanceof EE_Registration ) {
 				throw new EE_Error( __( 'An invalid registration was received.', 'event_espresso' ) );
 			}
-			EE_Registry::instance()->load_helper( 'Debug_Tools' );
 			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), false, 'EE_Transaction: ' . $registration->transaction()->ID() );
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',

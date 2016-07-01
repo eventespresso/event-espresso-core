@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Messages_Gateways_incoming_data
  *
- * This is the child class for all incoming data to EE_Messages objects that originate in a gateway response.
+ * This is the child class for all incoming data to EE_messages objects that originate in a gateway response.
  *
  * @package		Event Espresso
  * @subpackage	includes/core/messages/data_class/EE_Messages_Gateways_incoming_data.core.php
@@ -64,6 +64,56 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		parent::__construct( $data );
 	}
 
+
+
+
+
+	/**
+	 * Returns database safe representation of the data later used to when instantiating this object.
+	 *
+	 * @param array $data The incoming data to be prepped.
+	 *
+	 * @return array   The prepped data for db
+	 */
+	static public function convert_data_for_persistent_storage( $data ) {
+		$prepped_data = array();
+
+		if ( $data[0] instanceof EE_Transaction ) {
+			$prepped_data['Transaction'] = $data[0]->ID();
+		}
+
+		if ( isset( $data[1] ) && $data[1] instanceof EE_Payment ) {
+			$prepped_data['Payment'] = $data[1]->ID();
+		}
+
+		if ( ! empty( $data[2] ) ) {
+			$prepped_data['filter'] = $data[2];
+		}
+
+		return $prepped_data;
+	}
+
+
+
+
+
+
+	/**
+	 * Data that has been stored in persistent storage that was prepped by _convert_data_for_persistent_storage
+	 * can be sent into this method and converted back into the format used for instantiating with this data handler.
+	 *
+	 * @param array  $data
+	 *
+	 * @return array
+	 */
+	static public function convert_data_from_persistent_storage( $data ) {
+		$prepped_data = array(
+			0 => isset( $data['Transaction'] ) ? EEM_Transaction::instance()->get_one_by_ID( $data['Transaction'] ) : null,
+			1 => isset( $data['Payment'] ) ? EEM_Payment::instance()->get_one_by_ID( $data['Payment'] ) : null,
+			2 => isset( $data['filter'] ) ? $data['filter'] : null
+		);
+		return $prepped_data;
+	}
 
 
 	/**

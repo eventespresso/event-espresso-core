@@ -201,7 +201,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Extend_Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE__Extend_Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
 		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
@@ -395,6 +395,16 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
 			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  esc_attr__('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		}
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
+			EE_Registry::instance()->load_helper( 'MSG_Template' );
+			$actionlinks[] = EEH_MSG_Template::get_message_action_link(
+				'see_notifications_for',
+				null,
+				array(
+					'EVT_ID' => $event->ID()
+				)
+			);
+		}
 		return $actionlinks;
 	}
 
@@ -407,7 +417,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'desc' => __('Event Reports', 'event_espresso')
 				);
 		}
-		$items['empty'] = array('class'=>'empty', 'desc' => '');
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
+			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
+			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
+				$items['view_related_messages'] = array(
+					'class' => $related_for_icon['css_class'],
+					'desc' => $related_for_icon['label'],
+				);
+			}
+		}
 		return $items;
 	}
 
@@ -634,7 +652,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		);
 		$this->_req_data = array_merge($this->_req_data, $new_request_args);
 
-		EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable(EE_CLASSES . 'EE_Export.class.php')) {
 			require_once(EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance($this->_req_data);
@@ -660,7 +677,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );
@@ -1177,7 +1193,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 // The version check was added to make sure Walker_Category_Checklist class is available
 global $wp_version;
 if ( $wp_version >= 4.4 ){
-	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php'; 
+	require_once ABSPATH . 'wp-admin/includes/class-walker-category-checklist.php';
 } else {
 	require_once ABSPATH . 'wp-admin/includes/template.php';
 }

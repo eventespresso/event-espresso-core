@@ -24,6 +24,7 @@ class EE_Messages_Contacts_incoming_data extends EE_Messages_incoming_data {
      *
      * @since    4.3.0
      * @param  EE_Attendee[]     $data expecting an array of EE_Attendee objects.
+     * @throws EE_Error
      * @access protected
      */
     public function __construct( $data = array() ) {
@@ -35,6 +36,43 @@ class EE_Messages_Contacts_incoming_data extends EE_Messages_incoming_data {
 
         parent::__construct( $data );
     }
+
+
+    /**
+     * @see parent class for phpdocs.
+     * @param array $attendees
+     * @return array
+     */
+    public static function convert_data_for_persistent_storage( $attendees ) {
+        $attendee_ids = array_filter ( array_map(
+            function( $attendee ) {
+                if ( $attendee instanceof EE_Attendee ) {
+                    return $attendee->ID();
+                }
+            },
+            $attendees
+            ) );
+        return $attendee_ids;
+    }
+
+
+
+
+    /**
+     * @see parent class for phpdocs
+     * @param array $attendee_ids
+     * @return EE_Attendee[]
+     */
+    public static function convert_data_from_persistent_storage( $attendee_ids ) {
+        $attendee_ids = (array) $attendee_ids;
+        $attendees = EEM_Attendee::instance()->get_all(
+          array(
+              array( 'ATT_ID' => array( 'IN', $attendee_ids ) )
+          )
+        );
+        return $attendees;
+    }
+
 
 
 

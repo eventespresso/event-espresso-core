@@ -175,7 +175,6 @@ class EED_Ticket_Selector extends  EED_Module {
 				TICKET_SELECTOR_ASSETS_URL . 'ticket_selector_iframe_embed.js?ver=' . EVENT_ESPRESSO_VERSION
 			)
 		);
-		EE_Registry::instance()->load_helper('Template');
 		$template_args[ 'notices' ] = EEH_Template::display_template(
 			EE_TEMPLATES . 'espresso-ajax-notices.template.php',
 			array(),
@@ -203,21 +202,23 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function iframe_code_button( $permalink_string, $id, $new_title, $new_slug ) {
 		//make sure this is ONLY when editing and the event id has been set.
-		if ( ! empty( $id ) )  {
+		if ( ! empty( $id ) ) {
 			$post = get_post( $id );
-
 			//if NOT event then let's get out.
 			if ( $post->post_type !== 'espresso_events' ) {
 				return $permalink_string;
 			}
-
+			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">'
+			                     . __( 'Embed', 'event_espresso' )
+			                     . '</a> ';
 			$ticket_selector_url = add_query_arg( array( 'ticket_selector' => 'iframe', 'event' => $id ), site_url() );
-
-			$permalink_string .= '<a id="js-ticket-selector-embed-trigger" class="button button-small" href="#"  tabindex="-1">' . __('Embed', 'event_espresso') . '</a> ';
+			$iframe_string = esc_html(
+				'<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>'
+			);
 			$permalink_string .= '
 <div id="js-ts-iframe" style="display:none">
 	<div style="width:100%; height: 500px;">
-		<iframe src="' . $ticket_selector_url . '" width="100%" height="100%"></iframe>
+		' . $iframe_string . '
 	</div>
 </div>';
 		}
@@ -358,8 +359,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		$ticket_selector = ! is_admin() ? EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url ) : '';
 		// if not redirecting to another site for registration
 		if ( ! $external_url ) {
-			EE_Registry::instance()->load_helper( 'Template' );
-			EE_Registry::instance()->load_helper( 'URL' );
 			// then display the ticket selector
 			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
 		} else {
@@ -389,7 +388,6 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function ticket_selector_form_open( $ID = 0, $external_url = '' ) {
 		// if redirecting, we don't need any anything else
 		if ( $external_url ) {
-			EE_Registry::instance()->load_helper( 'URL' );
 			$html = '<form method="GET" action="' . EEH_URL::refactor_url( $external_url ) . '">';
 			$query_args = EEH_URL::get_query_string( $external_url );
 			foreach ( $query_args as $query_arg => $value ) {
@@ -397,7 +395,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			}
 			return $html;
 		}
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = EEH_Event_View::event_link_url( $ID );
 		if ( ! $checkout_url ) {
 			EE_Error::add_error( __('The URL for the Event Details page could not be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );

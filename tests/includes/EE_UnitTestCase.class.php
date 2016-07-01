@@ -74,7 +74,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			'merged_filters'=>$merged_filters,
 			'wp_current_filter'=>$wp_current_filter
 		);
-		$this->_orig_current_user = clone $current_user;
+		$this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
 		parent::setUp();
 		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
@@ -301,7 +301,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function defineAdminConstants() {
-		if ( !defined( 'EE_ADMIN_PAGES' ) )
+		if ( ! defined( 'EE_ADMIN_PAGES' ) )
 			define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
 	}
 
@@ -331,13 +331,17 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		switch ( $page ) {
 			case 'decaf_events' :
-				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+			case 'events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Mock.php';
 				break;
 			case 'registrations' :
 				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
 				break;
 			case 'transactions' :
 				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
+				break;
+			case 'messages' :
+				require_once EE_TESTS_DIR . 'mocks/admin/messages/Messages_Admin_Page_Mock.php';
 				break;
 
 		}
@@ -907,7 +911,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
-		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$txn = $this->new_model_obj_with_dependencies( 'Transaction', array( 'TXN_paid' => 0 ) );
 		$total_line_item = EEH_Line_Item::create_total_line_item( $txn->ID() );
 		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );

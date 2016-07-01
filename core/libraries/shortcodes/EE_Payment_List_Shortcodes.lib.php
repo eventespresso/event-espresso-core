@@ -62,7 +62,6 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_payment_list( $shortcode ) {
 		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 
 		if ( ! $this->_data['data'] instanceof EE_Messages_Addressee ) {

@@ -412,12 +412,40 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['question']=$question;
 		$this->_template_args['question_types']= $question_types;
 		$this->_template_args['max_max'] = EEM_Question::instance()->absolute_max_for_system_question( $question->system_ID() );
-
+		$this->_template_args['question_type_descriptions'] = $this->_get_question_type_descriptions();
 		$this->_set_publish_post_box_vars( 'id', $ID );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'questions_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
 		$this->display_admin_page_with_sidebar();
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	protected function _get_question_type_descriptions() {
+		EE_Registry::instance()->load_helper('HTML');
+		$descriptions = '';
+		$question_type_descriptions = EEM_Question::instance()->question_descriptions();
+		foreach ( $question_type_descriptions as $type => $question_type_description ) {
+			if ( $type == 'HTML_TEXTAREA' ) {
+				$html = new EE_Simple_HTML_Validation_Strategy();
+				$question_type_description .= sprintf(
+					__( '%1$s(allowed tags: %2$s)', 'event_espresso' ),
+					'<br/>',
+					$html->get_list_of_allowed_tags()
+				);
+			}
+			$descriptions .= EEH_HTML::p(
+				$question_type_description,
+				'question_type_description-' . $type,
+				'question_type_description description',
+				'display:none;'
+			);
+		}
+		return $descriptions;
 	}
 
 

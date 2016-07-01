@@ -61,7 +61,6 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 
 		self::$_registry[$model_id] = $config;
 		self::$_extensions[$model_id] = array();
-		EE_Registry::instance()->load_helper('File');
 
 		if(isset($config['model_extension_paths'])){
 			require_once(EE_LIBRARIES.'plugin_api/db/EEME_Base.lib.php');

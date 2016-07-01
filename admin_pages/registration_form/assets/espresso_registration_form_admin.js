@@ -46,14 +46,13 @@ function espresso_update_option_order() {
 	allOptions.each( function(i) {
 		jQuery('.QSO_order', this).val(i);
 	});
-	return;
 }
 
 
 
 function espresso_reg_forms_show_or_hide_question_options(){
 	var val=jQuery('#QST_type').val();
-	if ( val === 'RADIO_BTN' || val === 'CHECKBOX' || val === 'DROPDOWN' ){
+	if ( val === 'RADIO_BTN' || val === 'CHECKBOX' || val === 'MULTI_SELECT' || val === 'DROPDOWN' ){
 		jQuery('#question_options').show();
 		espresso_reg_forms_show_option_desc();
 	}else{
@@ -64,6 +63,10 @@ function espresso_reg_forms_show_or_hide_question_options(){
 	}else{
 		jQuery('#text_input_question_options').hide();
 	}
+	jQuery('.question_type_description' ).hide();
+	jQuery('#question_type_description-' + val ).show();
+	//alert( 'question_type_description ID = ' + '#question_type_description-' + val );
+
 }
 
 
