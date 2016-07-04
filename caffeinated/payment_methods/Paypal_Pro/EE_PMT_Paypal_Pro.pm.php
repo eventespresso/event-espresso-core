@@ -134,7 +134,6 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				array( 'debug_content' => new EE_Form_Section_HTML_From_Template( dirname(__FILE__).DS.'templates'.DS.'paypal_pro_debug_info.template.php' )),
 				'first_name'
 			);
-			$billing_form->get_input( 'credit_card' )->set_default( '4127143344648082' );
 			$billing_form->get_input( 'credit_card_type' )->set_default( 'Visa' );
 			$billing_form->get_input( 'exp_year' )->set_default( 2018);
 			$billing_form->get_input( 'cvv' )->set_default( '115' );
