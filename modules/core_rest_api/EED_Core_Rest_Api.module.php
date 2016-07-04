@@ -568,6 +568,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
+					//by default, hide "hidden_endpoint"s, unless the request indicates
+					//to $force_show_ee_namespace, in which case only show that one
+					//namespace's endpoints (and hide all others)
 					if( ( $route[ 'hidden_endpoint' ] && $force_show_ee_namespace === '' )
 						|| ( $force_show_ee_namespace !== null && $force_show_ee_namespace !== $namespace ) ) {
 						$full_route = '/' . ltrim( $namespace, '/' ) . '/' . ltrim( $endpoint, '/' );
