@@ -877,8 +877,26 @@ class EEH_DTT_Helper {
 	public static function get_timezone_string_for_display() {
 		$timezone_string = get_option( 'timezone_string' );
 		if( $timezone_string ) {
+			static $mo_loaded = false;
+
+			$continents = array( 'Africa', 'America', 'Antarctica', 'Arctic', 'Asia', 'Atlantic', 'Australia', 'Europe', 'Indian', 'Pacific');
+
+			// Load translations for continents and cities just like wp_timezone_choice does
+			if ( ! $mo_loaded ) {
+				$locale = get_locale();
+				$mofile = WP_LANG_DIR . '/continents-cities-' . $locale . '.mo';
+				load_textdomain( 'continents-cities', $mofile );
+				$mo_loaded = true;
+			}
 			//well that was easy. 
-			return $timezone_string;
+			$parts = explode('/', $timezone_string );
+			//remove the continent
+			unset( $parts[0] );
+			$t_parts = array();
+			foreach( $parts as $part ) {
+				$t_parts[] = translate( str_replace( '_', ' ', $part ), 'continents-cities' );
+			}
+			return implode( ' - ', $t_parts );
 		}
 		//they haven't set the timezone string, so let's return a string like "UTC+1"
 		$gmt_offset = get_option( 'gmt_offset' );
