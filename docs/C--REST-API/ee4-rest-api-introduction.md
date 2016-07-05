@@ -32,7 +32,9 @@ The WP API index page contains all the EE4 routes, as well some meta information
 
 * version: the version of the Event Espresso 4 plugin installed on this site
 * documentation_url: where to learn more about how to use the API
-* addons: a JSON object with properties for each EE4 addon currently active
+* addons: a JSON object with properties for each EE4 addon currently active. Each addon contains
+    - name: the system name for identifying the addon
+    - version: the current version of the addon on this site
 * maintenance_mode: indicates whether Event Espresso is currently in maintenance mode. "0" means it is not in maintenance mode (so it can be used as normal), "1" indicates frontend-only maintenance mode (so the site should only be usable by site administrators), "2" indicates full maintenance mode (so the site should not be used, probably because the database needs to be migrated)
 * served_core_versions: indicates which EE4 API namespaces are available for use. Please see the section below on [#versioning-and-backwards-compatibility] for more info
 
@@ -68,11 +70,19 @@ Here is an example:
 
 This is an extra endpoint with site meta information. Currently it contains the following properties:
 
-* default_timezone: an object with 3 sub-properties:
-* * pretty: a string which can be used for displaying the timezone to users. This is translated into the site's language. If the site is in a specific city's timezone then it will display the city; if the site is in a simple UTC offset timezone, then that offset will be shown. The format of this property may change without notice, so your code should not depend on this being in a specific format
-* * string: this is the exact timezone string set in WordPress. It will be one of those listed on [http://php.net/manual/en/timezones.php], or it will be an empty string (eg if the site is set to a specific UTC offset)
-* * offset: the number of seconds to add onto times returned by the EE4 REST API to get them into the site's default timezone. Note this value can be negative, and it may change depending on whether daylight savings time is being observed
-
+- default_timezone: an object describing the site's default timezone, with 3 sub-properties:
+    * pretty: a string which can be used for displaying the timezone to users. This is translated into the site's language. If the site is in a specific city's timezone then it will display the city; if the site is in a simple UTC offset timezone, then that offset will be shown. The format of this property may change without notice, so your code should not depend on this being in a specific format
+    * string: this is the exact timezone string set in WordPress. It will be one of those listed on [http://php.net/manual/en/timezones.php], or it will be an empty string (eg if the site is set to a specific UTC offset)
+    * offset: the number of seconds to add onto times returned by the EE4 REST API to get them into the site's default timezone. Note this value can be negative, and it may change depending on whether daylight savings time is being observed
+- default_currency: an object describing the site's default currency, with 8 sub-properties:
+    * code: the currency code used for money amounts
+    * name: a pretty, but not translated, name for the currency, in its singular form
+    * name_plura: same as above, but plural
+    * sign: the character representing the currency
+    * sign_b4: 1 indicates the currency sign should be placed BEFORE the amount, 0 indicates it should be placed afterwards
+    * dec_plc: the number of digits to appear after the decimal place when displaying to users
+    * dec_mrk: the character to be used for the decimal mark when displaying to users
+    * thsnds: the character to be used for separating thousands
 For example:
 
 ```
