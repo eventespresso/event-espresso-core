@@ -877,45 +877,48 @@ class EEH_DTT_Helper {
 	 * @return string
 	 */
 	public static function get_timezone_string_for_display() {
-		$timezone_string = get_option( 'timezone_string' );
-		if( $timezone_string ) {
-			static $mo_loaded = false;
-			// Load translations for continents and cities just like wp_timezone_choice does
-			if ( ! $mo_loaded ) {
-				$locale = get_locale();
-				$mofile = WP_LANG_DIR . '/continents-cities-' . $locale . '.mo';
-				load_textdomain( 'continents-cities', $mofile );
-				$mo_loaded = true;
-			}
-			//well that was easy. 
-			$parts = explode('/', $timezone_string );
-			//remove the continent
-			unset( $parts[0] );
-			$t_parts = array();
-			foreach( $parts as $part ) {
-				$t_parts[] = translate( str_replace( '_', ' ', $part ), 'continents-cities' );
-			}
-			$pretty_timezone = implode( ' - ', $t_parts );
-		} else {
-			//they haven't set the timezone string, so let's return a string like "UTC+1"
-			$gmt_offset = get_option( 'gmt_offset' );
-			if( intval( $gmt_offset ) >= 0 ) {
-				$prefix = '+';
+		$pretty_timezone = apply_filters( 'FHEE__EEH_DTT_Helper__get_timezone_string_for_display', '' );
+		if( empty( $pretty_timezone ) ) {
+			$timezone_string = get_option( 'timezone_string' );
+			if( $timezone_string ) {
+				static $mo_loaded = false;
+				// Load translations for continents and cities just like wp_timezone_choice does
+				if ( ! $mo_loaded ) {
+					$locale = get_locale();
+					$mofile = WP_LANG_DIR . '/continents-cities-' . $locale . '.mo';
+					load_textdomain( 'continents-cities', $mofile );
+					$mo_loaded = true;
+				}
+				//well that was easy. 
+				$parts = explode('/', $timezone_string );
+				//remove the continent
+				unset( $parts[0] );
+				$t_parts = array();
+				foreach( $parts as $part ) {
+					$t_parts[] = translate( str_replace( '_', ' ', $part ), 'continents-cities' );
+				}
+				$pretty_timezone = implode( ' - ', $t_parts );
 			} else {
-				$prefix = '';
+				//they haven't set the timezone string, so let's return a string like "UTC+1"
+				$gmt_offset = get_option( 'gmt_offset' );
+				if( intval( $gmt_offset ) >= 0 ) {
+					$prefix = '+';
+				} else {
+					$prefix = '';
+				}
+				$parts = explode( '.', (string) $gmt_offset );
+				if( count( $parts ) === 1 ) {
+					$parts[1] = '00';
+				} else {
+					//convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
+					//to minutes, eg 30 or 15, respectively
+					$hour_fraction = (float)( '0.' . $parts[1] );
+					$parts[1] = (string)$hour_fraction * 60;
+				}
+				$pretty_timezone =  sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
 			}
-			$parts = explode( '.', (string) $gmt_offset );
-			if( count( $parts ) === 1 ) {
-				$parts[1] = '00';
-			} else {
-				//convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
-				//to minutes, eg 30 or 15, respectively
-				$hour_fraction = (float)( '0.' . $parts[1] );
-				$parts[1] = (string)$hour_fraction * 60;
-			}
-			$pretty_timezone =  sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
 		}
-		return apply_filters( 'FHEE__EEH_DTT_Helper__get_timezone_string_for_display', $pretty_timezone );
+		return $pretty_timezone;
 	}
 
 
