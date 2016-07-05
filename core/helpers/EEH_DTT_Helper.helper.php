@@ -873,52 +873,52 @@ class EEH_DTT_Helper {
 	/**
 	 * Retrieves the site's default timezone and returns it formatted so it's ready for display
 	 * to users. If you want to customize how its displayed feel free to fetch the 'timezone_string'
-	 * and 'gmt_offset' WordPress options directly; or use the filter FHEE__EEH_DTT_Helper__get_timezone_string_for_display.
+	 * and 'gmt_offset' WordPress options directly; or use the filter FHEE__EEH_DTT_Helper__get_timezone_string_for_display
+	 * (although note that we remove any HTML that may be added)
 	 * @return string
 	 */
 	public static function get_timezone_string_for_display() {
 		$pretty_timezone = apply_filters( 'FHEE__EEH_DTT_Helper__get_timezone_string_for_display', '' );
-		if( empty( $pretty_timezone ) ) {
-			$timezone_string = get_option( 'timezone_string' );
-			if( $timezone_string ) {
-				static $mo_loaded = false;
-				// Load translations for continents and cities just like wp_timezone_choice does
-				if ( ! $mo_loaded ) {
-					$locale = get_locale();
-					$mofile = WP_LANG_DIR . '/continents-cities-' . $locale . '.mo';
-					load_textdomain( 'continents-cities', $mofile );
-					$mo_loaded = true;
-				}
-				//well that was easy. 
-				$parts = explode('/', $timezone_string );
-				//remove the continent
-				unset( $parts[0] );
-				$t_parts = array();
-				foreach( $parts as $part ) {
-					$t_parts[] = translate( str_replace( '_', ' ', $part ), 'continents-cities' );
-				}
-				$pretty_timezone = implode( ' - ', $t_parts );
-			} else {
-				//they haven't set the timezone string, so let's return a string like "UTC+1"
-				$gmt_offset = get_option( 'gmt_offset' );
-				if( intval( $gmt_offset ) >= 0 ) {
-					$prefix = '+';
-				} else {
-					$prefix = '';
-				}
-				$parts = explode( '.', (string) $gmt_offset );
-				if( count( $parts ) === 1 ) {
-					$parts[1] = '00';
-				} else {
-					//convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
-					//to minutes, eg 30 or 15, respectively
-					$hour_fraction = (float)( '0.' . $parts[1] );
-					$parts[1] = (string)$hour_fraction * 60;
-				}
-				$pretty_timezone =  sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
-			}
+		if( ! empty( $pretty_timezone ) ) {
+			return esc_html( $pretty_timezone );
 		}
-		return $pretty_timezone;
+		$timezone_string = get_option( 'timezone_string' );
+		if( $timezone_string ) {
+			static $mo_loaded = false;
+			// Load translations for continents and cities just like wp_timezone_choice does
+			if ( ! $mo_loaded ) {
+				$locale = get_locale();
+				$mofile = WP_LANG_DIR . '/continents-cities-' . $locale . '.mo';
+				load_textdomain( 'continents-cities', $mofile );
+				$mo_loaded = true;
+			}
+			//well that was easy. 
+			$parts = explode('/', $timezone_string );
+			//remove the continent
+			unset( $parts[0] );
+			$t_parts = array();
+			foreach( $parts as $part ) {
+				$t_parts[] = translate( str_replace( '_', ' ', $part ), 'continents-cities' );
+			}
+			return implode( ' - ', $t_parts );
+		}
+		//they haven't set the timezone string, so let's return a string like "UTC+1"
+		$gmt_offset = get_option( 'gmt_offset' );
+		if( intval( $gmt_offset ) >= 0 ) {
+			$prefix = '+';
+		} else {
+			$prefix = '';
+		}
+		$parts = explode( '.', (string) $gmt_offset );
+		if( count( $parts ) === 1 ) {
+			$parts[1] = '00';
+		} else {
+			//convert the part after the decimal, eg "5" (from x.5) or "25" (from x.25)
+			//to minutes, eg 30 or 15, respectively
+			$hour_fraction = (float)( '0.' . $parts[1] );
+			$parts[1] = (string)$hour_fraction * 60;
+		}
+		return sprintf( __( 'UTC%1$s', 'event_espresso' ), $prefix . implode( ':', $parts ) );
 	}
 
 
