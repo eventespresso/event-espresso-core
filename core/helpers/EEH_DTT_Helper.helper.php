@@ -871,16 +871,15 @@ class EEH_DTT_Helper {
 	}
 	
 	/**
-	 * Gets a string which we're happy to display for the default timezone
+	 * Retrieves the site's default timezone and returns it formatted so it's ready for display
+	 * to users. If you want to customize how its displayed feel free to fetch the 'timezone_string'
+	 * and 'gmt_offset' WordPress options directly.
 	 * @return string
 	 */
 	public static function get_timezone_string_for_display() {
 		$timezone_string = get_option( 'timezone_string' );
 		if( $timezone_string ) {
 			static $mo_loaded = false;
-
-			$continents = array( 'Africa', 'America', 'Antarctica', 'Arctic', 'Asia', 'Atlantic', 'Australia', 'Europe', 'Indian', 'Pacific');
-
 			// Load translations for continents and cities just like wp_timezone_choice does
 			if ( ! $mo_loaded ) {
 				$locale = get_locale();
