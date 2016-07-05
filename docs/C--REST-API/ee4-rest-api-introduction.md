@@ -77,7 +77,7 @@ This is an extra endpoint with site meta information. Currently it contains the 
 - default_currency: an object describing the site's default currency, with 8 sub-properties:
     * code: the currency code used for money amounts
     * name: a pretty, but not translated, name for the currency, in its singular form
-    * name_plura: same as above, but plural
+    * name_plural: same as above, but plural
     * sign: the character representing the currency
     * sign_b4: 1 indicates the currency sign should be placed BEFORE the amount, 0 indicates it should be placed afterwards
     * dec_plc: the number of digits to appear after the decimal place when displaying to users
