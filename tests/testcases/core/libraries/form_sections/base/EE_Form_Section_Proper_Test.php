@@ -364,7 +364,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 			'top' => array(
 				'middle' => array(
 					'bottom_input1' => 'not-a-phone-number',
-					'middle_radio' => array(
+					'bottom_radio' => array(
 						'op2',
 						'not-existent-op'
 					)
@@ -410,7 +410,7 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		);
 		$form->_construct_finalize(null, null);
 		$submitted_data = array(
-			'html_name' => 'value'
+			'custom_html_name' => 'value'
 		);
 		$form->receive_form_submission( $submitted_data );
 		$this->assertEquals(

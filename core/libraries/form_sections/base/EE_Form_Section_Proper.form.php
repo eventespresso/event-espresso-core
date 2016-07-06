@@ -922,8 +922,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *
 	 * @param boolean $include_subforms  Whether to include inputs from subforms,
 	 *                                   or just this forms' direct children inputs
-	 * @param boolean $flatten           Whether to force the results into 1-dimensional array,
-	 *                                   or allow multidimensional array
 	 * @return array                     if $flatten is TRUE it will always be a 1-dimensional array
 	 *                                   with array keys being input names
 	 *                                   (regardless of whether they are from a subsection or not),
@@ -931,9 +929,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *                                   where keys are always subsection names and values are either
 	 *                                   the input's normalized value, or an array like the top-level array
 	 */
-	public function submitted_values( $include_subforms = false, $flatten = false ) {
+	public function submitted_values( $include_subforms = false ) {
 		$submitted_values = array();
-		foreach( $this->subsections() as $subsection_name => $subsection ) {
+		foreach( $this->subsections() as $subsection ) {
 			if( $subsection instanceof EE_Form_Input_Base ) {
 				// is this input part of an array of inputs?
 				if ( strpos( $subsection->html_name(), '[' ) !== false ) {
@@ -941,17 +939,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 						explode( '[', str_replace( ']', '', $subsection->html_name() ) ),
 						$subsection->raw_value()
 					);
-					$submitted_values = $submitted_values + $full_input_name;
+					$submitted_values = array_replace_recursive( $submitted_values, $full_input_name );
 				} else {
 					$submitted_values[ $subsection->html_name() ] = $subsection->raw_value();
 				}
 			} else if( $subsection instanceof EE_Form_Section_Proper && $include_subforms ) {
-				$subform_input_values = $subsection->submitted_values( $include_subforms, $flatten );
-				if( $flatten ) {
-					$submitted_values = array_merge( $submitted_values, $subform_input_values );
-				} else {
-					$submitted_values[ $subsection_name ] = $subform_input_values;
-				}
+				$subform_input_values = $subsection->submitted_values( $include_subforms );
+				$submitted_values = array_replace_recursive( $submitted_values, $subform_input_values );
 			}
 		}
 		return $submitted_values;
