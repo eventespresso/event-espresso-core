@@ -721,7 +721,7 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function introductory_html() {
-		return EEH_Template::locate_template( $this->file_folder() . 'templates' . DS . $this->system_name() . '_intro.template.php', array( 'pmt_obj' => $this, 'pm_instance' => $this->_pm_instance ) );
+		return EEH_Template::locate_template( $this->file_folder() . 'templates' . DS . strtolower( $this->system_name() ) . '_intro.template.php', array( 'pmt_obj' => $this, 'pm_instance' => $this->_pm_instance ) );
 	}
 
 
