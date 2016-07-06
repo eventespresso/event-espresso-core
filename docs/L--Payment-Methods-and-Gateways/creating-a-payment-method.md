@@ -1,5 +1,7 @@
 # Creating a Payment Method
 
+This section describes how to develop a payment method from scratch, and is useful knowledge. However, when it comes time to actually build it, you should read [How to Build a Payment Method using the Skeleton Folder](https://github.com/eventespresso/event-espresso-core/blob/FET-6935-add-introductory-area-to-each-gateway/docs/D--Addon-API/using-new-payment-method-addon-skeleton.md) to get a jump-start.
+
 ## Payment Method Properties to Set
 
 To create your own Payment Method, you create a class which extends `EE_PMT_Base` (found in core/libraries/payment_methods).
