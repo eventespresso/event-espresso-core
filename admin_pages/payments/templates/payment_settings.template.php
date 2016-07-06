@@ -27,4 +27,4 @@
 // 		),
 // 	)
 // );
-// echo $superform->get_html();
+// echo $superform->get_html_and_js();

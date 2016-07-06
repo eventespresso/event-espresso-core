@@ -508,7 +508,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param bool $display_previously_submitted_data
 	 * @return string
 	 */
-	public function get_html( $display_previously_submitted_data = false ){
+	public function get_html( $display_previously_submitted_data = true ){
 		$this->ensure_construct_finalized_called();
 		if ( $display_previously_submitted_data ) {
 			$this->populate_from_session();
