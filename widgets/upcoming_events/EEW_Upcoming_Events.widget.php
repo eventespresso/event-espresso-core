@@ -349,24 +349,24 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								$pswd_form = apply_filters( 'FHEE_EEW_Upcoming_Events__widget__password_form', get_the_password_form( $event->ID() ), $event );
 								echo $pswd_form;
 							} else {
-							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
-								echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . $event_url . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
-							}
-							$desc = $event->short_description( 25 );
-							if ( $show_dates ) {
-								$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', get_option( 'date_format' ));
-								$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', get_option( 'time_format' ));
-								$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', get_option( 'date_format' ));
-								$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', get_option( 'time_format' ));
-								if ( $date_range == TRUE ) {
-									echo espresso_event_date_range( $date_format, $time_format, $single_date_format, $single_time_format, $event->ID() );
-								}else{
-									echo espresso_list_of_event_dates( $event->ID(), $date_format, $time_format, FALSE, NULL, TRUE, TRUE, $date_limit );
+								if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
+									echo '<div class="ee-upcoming-events-widget-img-dv"><a class="ee-upcoming-events-widget-img" href="' . $event_url . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a></div>';
 								}
-							}
-							if ( $show_desc && $desc ) {
-								echo '<p style="margin-top: .5em">' . $desc . '</p>';
-							}
+								$desc = $event->short_description( 25 );
+								if ( $show_dates ) {
+									$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', get_option( 'date_format' ));
+									$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', get_option( 'time_format' ));
+									$single_date_format = apply_filters( 'FHEE__espresso_event_date_range__single_date_format', get_option( 'date_format' ));
+									$single_time_format = apply_filters( 'FHEE__espresso_event_date_range__single_time_format', get_option( 'time_format' ));
+									if ( $date_range == TRUE ) {
+										echo espresso_event_date_range( $date_format, $time_format, $single_date_format, $single_time_format, $event->ID() );
+									}else{
+										echo espresso_list_of_event_dates( $event->ID(), $date_format, $time_format, FALSE, NULL, TRUE, TRUE, $date_limit );
+									}
+								}
+								if ( $show_desc && $desc ) {
+									echo '<p style="margin-top: .5em">' . $desc . '</p>';
+								}
 							}
 							echo '</li>';
 						}
