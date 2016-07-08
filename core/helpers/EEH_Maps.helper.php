@@ -105,7 +105,7 @@ class EEH_Maps {
 	public static function espresso_google_map_js() {
 		$api_url = sprintf(
 			"https://maps.googleapis.com/maps/api/js?key=%s",
-			EE_Registry::instance()->CFG->map_settings->google_map_api_key
+			apply_filters( 'FHEE__EEH_Maps__espresso_google_maps_js__api_key', EE_Registry::instance()->CFG->map_settings->google_map_api_key )
 		);
 		wp_register_script( 'gmap_api', $api_url, array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
