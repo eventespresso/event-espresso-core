@@ -99,7 +99,7 @@
 				<td>
 					<input class="regular-text" type="text" name="organization_email" value="<?php echo $organization_email; ?>" />
 					<p class="description">
-						<?php _e('This is where notifications go to when you use the [CO_FORMATTED_EMAIL] and [CO_EMAIL] shortcodes in the message templates.', 'event_espresso'); ?>
+						<?php echo sprintf( esc_html__('This is where notifications go to when you use the %1$s[CO_FORMATTED_EMAIL]%2$s and %1$s[CO_EMAIL]%2$s shortcodes in the message templates.', 'event_espresso'), '<code>', '</code>' ); ?>
 					</p>
 				</td>
 			</tr>
