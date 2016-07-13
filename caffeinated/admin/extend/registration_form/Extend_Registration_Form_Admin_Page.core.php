@@ -974,7 +974,25 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					// grab validated data from form
 					$valid_data = $email_validation_settings_form->valid_data();
 					if ( isset( $valid_data['email_validation_level'] ) ) {
-						$EE_Registration_Config->email_validation_level = $valid_data['email_validation_level'];
+						if (
+							(
+								$valid_data['email_validation_level'] === 'i18n'
+								|| $valid_data['email_validation_level'] === 'i18n_dns'
+							)
+							&& ! defined('PREG_BAD_UTF8_ERROR')
+						){
+							EE_Error::add_error(
+								__(
+									'We\'re sorry, but it appears your server\'s version of PHP was not compiled with PCRE unicode support. Please contact your hosting company and ask them whether the PCRE compiled with your version of PHP on your server can be been built with the "--enable-unicode-properties" and "--enable-utf8" configuration switches to enable more complex regex expressions. If they are unable or unwilling to do so, then your server will not support international email addresses using UTF-8 unicode characters. This means you will either have to lower your email validation level to "Basic" or "WordPress Default", or switch to a hosting company that has/can enable PCRE unicode support on the server.',
+									'event_espresso'
+								),
+								__FILE__,
+								__FUNCTION__,
+								__LINE__
+							);
+						} else {
+							$EE_Registration_Config->email_validation_level = $valid_data['email_validation_level'];
+						}
 					} else {
 						EE_Error::add_error(
 							__(
