@@ -14,6 +14,8 @@
 					<p class="description"><?php _e('Turn Google maps on or off site wide for Event Espresso.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
+			<?php
+			if( apply_filters( 'FHEE__google_map__show_api_key_input', true ) ) { ?>
             <tr>
                 <th>
                     <label for="ee-google-map-api-key">
@@ -34,6 +36,7 @@
                     </p>
                 </td>
             </tr>
+			<?php } ?>
 
         </tbody>
 	</table>
