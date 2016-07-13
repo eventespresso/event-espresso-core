@@ -158,9 +158,25 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	 * @return EE_Price|false
 	 */
 	public function create_object( $args ) {
-		$this->_special_args[ 'PRT_ID' ] = isset( $args[ 'PRT_ID' ] ) ? $args[ 'PRT_ID' ] : 0;
-		if ( isset( $args[ 'PRT_ID' ] ) ) {
-			unset( $args[ 'PRT_ID' ] );
+		if ( isset( $args['TKT_end_date'] ) ) {
+			$this->_special_args['TKT_end_date'] = $args['TKT_end_date'];
+			unset( $args['TKT_end_date'] );
+		}
+		if ( isset( $args['PRT_ID']  ) ) {
+			$this->_special_args['PRT_ID'] = $args['PRT_id'];
+			unset( $args['PRT_ID'] );
+		}
+		if ( isset( $args['PRC_type'] ) ) {
+			$this->_special_args['PRC_type'] = $args['PRC_type'];
+			unset( $args['PRC_type'] );
+		}
+		if ( isset( $args['PRT_name'] ) ) {
+			$this->_special_args['PRT_name'] = $args['PRT_name'];
+			unset( $args['PRT_name'] );
+		}
+		if ( isset( $args['PRC_type_is_percent'] ) ) {
+			$this->_special_args['PRC_type_is_percent'] = $args['PRC_type_is_percent'];
+			unset( $args['PRC_type_is_percent'] );
 		}
 		$price = EE_Price::new_instance( $args );
 		$priceID = $price->save();

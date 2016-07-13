@@ -44,10 +44,29 @@ class Model_Data_Translator {
 		if( is_array( $original_value_maybe_array ) ) {
 			$new_value_maybe_array = array();
 			foreach( $original_value_maybe_array as $array_key => $array_item ) {
-				$new_value_maybe_array[ $array_key ] = self::prepare_field_value_from_json( $field_obj, $array_item, $requested_version );
+				$new_value_maybe_array[ $array_key ] = Model_Data_Translator::prepare_field_value_from_json( $field_obj, $array_item, $requested_version );
 			}
 		} else {
-			$new_value_maybe_array = self::prepare_field_value_from_json( $field_obj, $original_value_maybe_array, $requested_version );
+			$new_value_maybe_array = Model_Data_Translator::prepare_field_value_from_json( $field_obj, $original_value_maybe_array, $requested_version );
+		}
+		return $new_value_maybe_array;
+	}
+	
+	/**
+	 * Prepares an array of field values FOR use in JSON/REST API
+	 * @param type $field_obj
+	 * @param type $original_value_maybe_array
+	 * @param string $request_version (eg 4.8.36)
+	 * @return array
+	 */
+	public static function prepare_field_values_for_json( $field_obj, $original_value_maybe_array, $request_version ){
+		if( is_array( $original_value_maybe_array ) ) {
+			$new_value_maybe_array = array();
+			foreach( $original_value_maybe_array as $array_key => $array_item ) {
+				$new_value_maybe_array[ $array_key ] = Model_Data_Translator::prepare_field_value_for_json( $field_obj, $array_item, $request_version );
+			}
+		} else {
+			$new_value_maybe_array = Model_Data_Translator::prepare_field_value_for_json( $field_obj, $original_value_maybe_array, $request_version );
 		}
 		return $new_value_maybe_array;
 	}
@@ -81,13 +100,19 @@ class Model_Data_Translator {
 	*/
    public static function prepare_field_value_for_json( $field_obj, $original_value, $requested_version ) {
 		if( $original_value === EE_INF ) {
-			$new_value = self::ee_inf_in_rest;
-		} elseif( $field_obj instanceof \EE_Datetime_Field &&
-			$original_value instanceof \DateTime ) {
-			$timezone = $original_value->getTimezone();
-			$original_value->setTimezone( new \DateTimeZone( 'UTC' ) );
-			$new_value = $original_value->format( 'c' );
-			$original_value->setTimezone( $timezone );
+			$new_value = Model_Data_Translator::ee_inf_in_rest;
+		} elseif( $field_obj instanceof \EE_Datetime_Field ) {
+			if( $original_value instanceof \DateTime ) {
+				$timezone = $original_value->getTimezone();
+				$original_value->setTimezone( new \DateTimeZone( 'UTC' ) );
+				$new_value = $original_value->format( 'c' );
+				$original_value->setTimezone( $timezone );
+			} elseif( is_int( $original_value ) ) {
+				$new_value = date( 'Y-m-d H:i:s', $original_value ); 
+			} else {
+				$new_value = $original_value;
+			}
+			$new_value = mysql_to_rfc3339( $new_value );
 		} else {
 			$new_value = $original_value;
 		}
@@ -110,8 +135,8 @@ class Model_Data_Translator {
 	public static function prepare_conditions_query_params_for_models( $inputted_query_params_of_this_type, \EEM_Base $model, $requested_version ) {
 		$query_param_for_models = array();
 		foreach( $inputted_query_params_of_this_type as $query_param_key => $query_param_value ) {
-			$field = self::deduce_field_from_query_param( 
-				self::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ), 
+			$field = Model_Data_Translator::deduce_field_from_query_param( 
+				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ), 
 				$model
 			);
 			if( $field instanceof \EE_Model_Field_Base ) {
@@ -121,15 +146,80 @@ class Model_Data_Translator {
 					$translated_value = array( $op );
 					if( isset( $query_param_value[ 1 ] ) ) {
 						$value = $query_param_value[ 1 ];
-						$translated_value[1] = self::prepare_field_values_from_json( $field, $value, $requested_version );
+						$translated_value[1] = Model_Data_Translator::prepare_field_values_from_json( $field, $value, $requested_version );
 					}
 				} else {
-					$translated_value  = self::prepare_field_value_from_json( $field, $query_param_value, $requested_version );
+					$translated_value  = Model_Data_Translator::prepare_field_value_from_json( $field, $query_param_value, $requested_version );
 				}
 				$query_param_for_models[ $query_param_key ] = $translated_value;
 			} else {
 				//so it's not for a field, assume it's a logic query param key
-				$query_param_for_models[ $query_param_key ] = self::prepare_conditions_query_params_for_models( $query_param_value, $model, $requested_version );
+				$query_param_for_models[ $query_param_key ] = Model_Data_Translator::prepare_conditions_query_params_for_models( $query_param_value, $model, $requested_version );
+			}
+		}
+		return $query_param_for_models;
+	}
+	
+	/**
+	 * Prepares an array of model query params for use in the REST API
+	 * @param type $model_query_params
+	 * @param \EEM_Base $model
+	 * @param string $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4 REST API
+	 * @return array which can be passed into the EE4 REST API when querying a model resource
+	 */
+	public static function prepare_query_params_for_rest_api( $model_query_params, \EEM_Base $model,  $requested_version = null ) {
+		if( $requested_version === null ) {
+			$requested_version = \EED_Core_Rest_Api::latest_rest_api_version() ;
+		}
+		$rest_query_params = $model_query_params;
+		if ( isset( $model_query_params[0] ) ) {
+			$rest_query_params[ 'where' ] = Model_Data_Translator::prepare_conditions_query_params_for_rest_api(
+				$model_query_params[ 0 ],
+				$model,
+				$requested_version
+			);
+			unset( $rest_query_params[0] );
+		}
+		if ( isset( $model_query_params[ 'having' ] ) ) {
+			$rest_query_params[ 'having' ] = Model_Data_Translator::prepare_conditions_query_params_for_rest_api(
+				$model_query_params[ 'having' ],
+				$model,
+				$requested_version
+			);
+		}
+		return apply_filters( 'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_query_params_for_rest_api', $rest_query_params, $model_query_params, $model, $requested_version );
+	}
+	
+	/**
+	 * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
+	 * @param array $inputted_query_params_of_this_type eg like the "where" or "having" conditions query params passed into EEM_Base::get_all()
+	 * @param \EEM_Base $model
+	 * @param string $requested_version eg "4.8.36"
+	 * @return array ready for use in the rest api query params
+	 */
+	public static function prepare_conditions_query_params_for_rest_api( $inputted_query_params_of_this_type, \EEM_Base $model, $requested_version ) {
+		$query_param_for_models = array();
+		foreach( $inputted_query_params_of_this_type as $query_param_key => $query_param_value ) {
+			$field = Model_Data_Translator::deduce_field_from_query_param( 
+				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ), 
+				$model
+			);
+			if( $field instanceof \EE_Model_Field_Base ) {
+				//did they specify an operator?
+				if( is_array( $query_param_value ) ) {
+					$op = $query_param_value[ 0 ];
+					$translated_value = array( $op );
+					if( isset( $query_param_value[ 1 ] ) ) {
+						$value = $query_param_value[ 1 ];
+						$translated_value[1] = Model_Data_Translator::prepare_field_values_for_json( $field, $value, $requested_version );
+					}
+				} else {
+					$translated_value  = Model_Data_Translator::prepare_field_value_for_json( $field, $query_param_value, $requested_version );
+				}
+				$query_param_for_models[ $query_param_key ] = $translated_value;
+			} else {
+				//so it's not for a field, assume it's a logic query param key
+				$query_param_for_models[ $query_param_key ] = Model_Data_Translator::prepare_conditions_query_params_for_rest_api( $query_param_value, $model, $requested_version );
 			}
 		}
 		return $query_param_for_models;

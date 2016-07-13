@@ -71,9 +71,6 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes = array() ) {
 
-		// merge in any attributes passed via fallback shortcode processor
-		$attributes = array_merge( (array) $attributes, (array) $this->_attributes );
-
 		//set default attributes
 		$default_shortcode_attributes = array(
 			'event_id'      => null,
@@ -84,9 +81,12 @@ class EES_Espresso_Event_Attendees  extends EES_Shortcode {
 		);
 
 		// allow the defaults to be filtered
-		$default_shortcode_attributes = apply_filters( 'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts', $default_shortcode_attributes );
+		$default_shortcode_attributes = apply_filters(
+			'EES_Espresso_Event_Attendees__process_shortcode__default_shortcode_atts',
+			$default_shortcode_attributes
+		);
 		// grab attributes and merge with defaults, then extract
-		$attributes = array_merge( $default_shortcode_attributes, $attributes );
+		$attributes = array_merge( (array) $default_shortcode_attributes, (array) $attributes );
 
 		$template_args = array(
 			'contacts'      => array(),

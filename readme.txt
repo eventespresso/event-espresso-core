@@ -22,18 +22,19 @@ Event Espresso is a [WordPress event manager](https://eventespresso.com/?utm_sou
 = Why Online Event Management? =
 You shouldn't need to be convinced about how awesome online event management is, but in case you do:
 
-* save yourself countless hours of boring admin
-* create green, paperless [event registration](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=event+registration)
-* reduce costs
-* process sign-ups 24/7
+* Save yourself countless hours of boring admin
+* Create green, paperless [event registration](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=event+registration)
+* Reduce costs
+* Process sign-ups 24/7
 
 = What's Included? =
 
-* out-of-the-box event ticketing and registration from your WordPress website
-* process payments via PayPal IPN, or [buy a support license](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=buy+a+support+license&utm_campaign=ee4_decaf_whats_included) for more [payment options](https://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=more+payment+options&utm_campaign=ee4_decaf_whats_included).
-* automated confirmation emails
-* manage registrants (attendees) and export registrant (attendee) data
-* easily manage registrants' (attendees) profiles
+* Out-of-the-box event ticketing and registration from your WordPress website
+* Process payments via PayPal IPN, or [buy a support license](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=buy+a+support+license&utm_campaign=ee4_decaf_whats_included) for more [payment options](https://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=more+payment+options&utm_campaign=ee4_decaf_whats_included).
+* Automated confirmation emails
+* Manage registrants (attendees) and export registrant (attendee) data
+* Easily manage registrants' (attendees) profiles
+* [Mobile event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=mobile+event+apps&utm_campaign=ee4_decaf_whats_included) for ticket scanning and attendance tracking
 
 **Everything you need** to sell tickets and manage event registrations from your website.
 

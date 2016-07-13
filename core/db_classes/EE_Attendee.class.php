@@ -347,7 +347,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 	 * @return string
 	 */
 	public function state_abbrev() {
-		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : __( 'Unknown', 'event_espresso' );
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
 	}
 
 
@@ -368,7 +368,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 		if( $this->state_obj() ){
 			return $this->state_obj()->name();
 		}else{
-			return __( 'Unknown', 'event_espresso' );
+			return '';
 		}
 	}
 
@@ -416,7 +416,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
 		if( $this->country_obj() ){
 			return $this->country_obj()->name();
 		}else{
-			return __( 'Unknown', 'event_espresso' );
+			return '';
 		}
 	}
 

@@ -158,6 +158,8 @@ jQuery(document).ready(function($) {
 		init: function() {
 			$('#postbox-container-2 .postbox').hide();
 			$('#postbox-container-1 .postbox').hide();
+			//show just the global settings metabox
+			$( '#espresso_global_message_settings').show();
 			$('.mt-settings-content').hide();
 
 			return this; //make chainable
