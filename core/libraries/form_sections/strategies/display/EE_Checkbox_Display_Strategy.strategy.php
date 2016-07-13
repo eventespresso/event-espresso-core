@@ -40,7 +40,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy {
 		$input_raw_value = (array)$input->raw_value();
 		foreach( $input->options() as $value => $display_text ){
 			$value = $input->get_normalization_strategy()->unnormalize_one( $value );
-			$html_id = $multi ? $this->get_sub_input_id( $value ) : $input->html_id();
+			$html_id = $this->get_sub_input_id( $value );
 			$html .= EEH_HTML::nl( 0, 'checkbox' );
 			$html .= '<label for="' . $html_id . '" id="' . $html_id . '-lbl" class="ee-checkbox-label-after' . $label_size_class . '">';
 			$html .= EEH_HTML::nl( 1, 'checkbox' );
@@ -51,6 +51,7 @@ class EE_Checkbox_Display_Strategy extends EE_Compound_Input_Display_Strategy {
 			$html .= ' style="' . $input->html_style() . '"';
 			$html .= ' value="' . esc_attr( $value ) . '"';
 			$html .= ! empty( $input_raw_value ) && in_array( $value, $input_raw_value ) ? ' checked="checked"' : '';
+			$html .= ' ' . $this->_input->other_html_attributes();
 			$html .= '>&nbsp;';
 			$html .= $display_text;
 			$html .= EEH_HTML::nl( -1, 'checkbox' ) . '</label>';
