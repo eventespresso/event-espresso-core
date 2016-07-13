@@ -166,6 +166,9 @@ class OpenCoffeeShop {
 	public function michaelsTest()
 	{
 		\EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+		echo '<pre style="margin-left:180px;">';
+		echo '<h4>addRecipe for obj1</h4>';
+
 		//have one recipe for obj1
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
@@ -176,6 +179,15 @@ class OpenCoffeeShop {
 				'Vendor\Fully\Qualified\ClassName'
 			)
 		);
+
+		$obj1 = $this->CoffeeShop->brew('obj1', array());
+		echo 'brew obj1 directly (should be instance of ClassName):<br>';
+		var_dump($obj1);
+		$filter1 = $this->CoffeeShop->brew('filter1', array());
+		echo 'brew obj1 using filter1 alias (should be instance of ClassName):<br>';
+		var_dump($filter1);
+
+		echo '<h4>addRecipe for obj2</h4>';
 		//and a different recipe for obj2
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
@@ -186,6 +198,15 @@ class OpenCoffeeShop {
 				'Vendor\Fully\Qualified\ClassName'
 			)
 		);
+
+		$obj2 = $this->CoffeeShop->brew('obj2', array());
+		echo 'brew obj2 directly (should be instance of ClassName):<br>';
+		var_dump($obj2);
+		$filter2 = $this->CoffeeShop->brew('filter2', array());
+		echo 'brew obj2 using filter2 alias (should be instance of ClassName):<br>';
+		var_dump($filter2);
+
+		echo '<h4>addRecipe for obj3_uses_obj2</h4>';
 		//and then use obj2 in a recipe itself
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
@@ -196,6 +217,14 @@ class OpenCoffeeShop {
 				'Vendor\Fully\Qualified\ClassName2'
 			)
 		);
+
+		$obj3_uses_obj2 = $this->CoffeeShop->brew('obj3_uses_obj2', array());
+		echo 'brew obj3_uses_obj2 directly (should be instance of ClassName2):<br>';
+		var_dump($obj3_uses_obj2);
+		$obj2 = $this->CoffeeShop->brew('obj2', array());
+		echo 'brew obj2 directly again, which should now be instance of ClassName2, since we set "obj2" as an alias for "obj3_uses_obj2":<br>';
+		var_dump($obj2);
+		echo '</pre>';
 	}
 
 
