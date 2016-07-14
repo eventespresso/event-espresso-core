@@ -44,11 +44,12 @@ interface InjectorInterface
      *        and the correct classes can be loaded
      *
      * @access public
-     * @param \ReflectionClass $reflector
-     * @param array            $arguments
+     * @param \EventEspresso\core\services\container\RecipeInterface $recipe
+     * @param \ReflectionClass                                       $reflector
+     * @param array                                                  $arguments
      * @return array
      */
-    public function resolveDependencies(\ReflectionClass $reflector, $arguments = array());
+    public function resolveDependencies(RecipeInterface $recipe, \ReflectionClass $reflector, $arguments = array());
 
 }
 // End of file InjectorInterface.php
