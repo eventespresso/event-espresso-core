@@ -136,11 +136,12 @@ class DependencyInjector implements InjectorInterface
      *        but only IF they are NOT already present in the incoming arguments array,
      *        and the correct classes can be loaded
      *
-     * @param \ReflectionClass $reflector
-     * @param array            $arguments
+     * @param RecipeInterface   $recipe
+     * @param \ReflectionClass  $reflector
+     * @param array             $arguments
      * @return array
      */
-    public function resolveDependencies(\ReflectionClass $reflector, $arguments = array())
+    public function resolveDependencies(RecipeInterface $recipe, \ReflectionClass $reflector, $arguments = array())
     {
         // if arguments array is numerically and sequentially indexed, then we want it to remain as is,
         // else wrap it in an additional array so that it doesn't get split into multiple parameters
@@ -160,6 +161,7 @@ class DependencyInjector implements InjectorInterface
         if (empty($params)) {
             return $resolved_parameters;
         }
+        $ingredients = $recipe->ingredients();
         // and the keys for the incoming arguments array so that we can compare existing arguments with what is expected
         $argument_keys = array_keys($arguments);
         // now loop thru all of the constructors expected parameters
@@ -170,6 +172,12 @@ class DependencyInjector implements InjectorInterface
             // is this a dependency for a specific class ?
             $param_class = $param->getClass() ? $param->getClass()->name : null;
             if (
+                // param is specified in the list of ingredients for this Recipe
+                isset($ingredients[$param_class])
+            ) {
+                // attempt to inject the dependency
+                $resolved_parameters[$index] = $this->injectDependency($ingredients[$param_class]);
+            } else if (
                 // param is not even a class
                 empty($param_class)
                 // and something already exists in the incoming arguments for this param
@@ -190,19 +198,7 @@ class DependencyInjector implements InjectorInterface
             ! empty($param_class)
             ) {
                 // attempt to inject the dependency
-                $dependency = $this->coffee_pot->brew($param_class, $arguments);
-                if ( ! $dependency instanceof $param_class) {
-                    throw new UnexpectedValueException(
-                        sprintf(
-                            __(
-                                'Could not resolve dependency for "%1$s" for the "%2$s" class constructor.',
-                                'event_espresso'
-                            ),
-                            $param_class
-                        )
-                    );
-                }
-                $resolved_parameters[$index] = $dependency;
+                $resolved_parameters[$index] = $this->injectDependency($param_class);
             } else if ($param->isOptional()) {
                 $resolved_parameters[$index] = $param->getDefaultValue();
             } else {
@@ -213,6 +209,27 @@ class DependencyInjector implements InjectorInterface
     }
 
 
+
+    /**
+     * @param string $param_class
+     * @return mixed
+     */
+    private function injectDependency($param_class)
+    {
+        $dependency = $this->coffee_pot->brew($param_class);
+        if ( ! $dependency instanceof $param_class) {
+            throw new UnexpectedValueException(
+                sprintf(
+                    __(
+                        'Could not resolve dependency for "%1$s" for the "%2$s" class constructor.',
+                        'event_espresso'
+                    ),
+                    $param_class
+                )
+            );
+        }
+        return $dependency;
+    }
 
 }
 // End of file DependencyInjector.php
