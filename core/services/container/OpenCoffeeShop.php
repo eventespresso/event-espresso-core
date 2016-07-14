@@ -1,6 +1,10 @@
 <?php
 namespace EventEspresso\core\services\container;
 
+use EventEspresso\tests\mocks\core\services\container\Coffee;
+use EventEspresso\tests\mocks\core\services\container\HonduranBean;
+use EventEspresso\tests\mocks\core\services\container\KenyanBean;
+
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
@@ -80,10 +84,11 @@ class OpenCoffeeShop {
 		// PSR-4 compatible class with aliases
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
+				'CommandHandlerManager',
 				'EventEspresso\core\services\commands\CommandHandlerManager',
+                array(),
 				CoffeeMaker::BREW_SHARED,
 				array(
-					'CommandHandlerManager',
 					'CommandHandlerManagerInterface',
 					'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
 				)
@@ -92,10 +97,11 @@ class OpenCoffeeShop {
 		// PSR-4 compatible class with aliases, which dependency on CommandHandlerManager
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
+				'CommandBus',
 				'EventEspresso\core\services\commands\CommandBus',
+                array(),
 				CoffeeMaker::BREW_SHARED,
 				array(
-					'CommandBus',
 					'CommandBusInterface',
 					'EventEspresso\core\services\commands\CommandBusInterface',
 				)
@@ -106,6 +112,8 @@ class OpenCoffeeShop {
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
 				'EEI_*',
+				'',
+                array(),
 				CoffeeMaker::BREW_LOAD_ONLY,
 				array(),
 				array(
@@ -118,6 +126,8 @@ class OpenCoffeeShop {
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
 				'EEM_*',
+                '',
+                array(),
 				CoffeeMaker::BREW_SHARED,
 				array(),
 				EE_MODELS . '*.model.php'
@@ -127,6 +137,8 @@ class OpenCoffeeShop {
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
 				'EE_*',
+                '',
+                array(),
 				CoffeeMaker::BREW_SHARED,
 				array(),
 				array(
@@ -143,6 +155,8 @@ class OpenCoffeeShop {
 		$this->CoffeeShop->addRecipe(
 			new Recipe(
 				'EE_Admin_Page*',
+                '',
+                array(),
 				CoffeeMaker::BREW_LOAD_ONLY,
 				array(),
 				array( EE_ADMIN . '*.core.php' )
@@ -152,6 +166,8 @@ class OpenCoffeeShop {
 		// $this->CoffeeShop->addRecipe(
 		// 	new Recipe(
 		// 		'*_Admin_Page',
+         //        '',
+         //        array(),
 		// 		CoffeeMaker::BREW_SHARED,
 		// 		array(),
 		// 		array(
@@ -163,84 +179,58 @@ class OpenCoffeeShop {
 
 
 
-	public function michaelsTest()
-	{
-		\EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-		echo '<pre style="margin-left:180px;">';
-		echo '<h4>addRecipe for obj1</h4>';
-
-		//have one recipe for obj1
-		$this->CoffeeShop->addRecipe(
-			new Recipe(
-				'obj1',
-				CoffeeMaker::BREW_SHARED,
-				array('filter1'),
-				array(),
-				'Vendor\Fully\Qualified\ClassName'
-			)
-		);
-
-		$obj1 = $this->CoffeeShop->brew('obj1', array());
-		echo 'brew obj1 directly (should be instance of ClassName):<br>';
-		var_dump($obj1);
-		$filter1 = $this->CoffeeShop->brew('filter1', array());
-		echo 'brew obj1 using filter1 alias (should be instance of ClassName):<br>';
-		var_dump($filter1);
-
-		echo '<h4>addRecipe for obj2</h4>';
-		//and a different recipe for obj2
-		$this->CoffeeShop->addRecipe(
-			new Recipe(
-				'obj2',
-				CoffeeMaker::BREW_SHARED,
-				array('filter2'),
-				array(),
-				'Vendor\Fully\Qualified\ClassName'
-			)
-		);
-
-		$obj2 = $this->CoffeeShop->brew('obj2', array());
-		echo 'brew obj2 directly (should be instance of ClassName):<br>';
-		var_dump($obj2);
-		$filter2 = $this->CoffeeShop->brew('filter2', array());
-		echo 'brew obj2 using filter2 alias (should be instance of ClassName):<br>';
-		var_dump($filter2);
-
-		echo '<h4>addRecipe for obj3_uses_obj2</h4>';
-		//and then use obj2 in a recipe itself
-		$this->CoffeeShop->addRecipe(
-			new Recipe(
-				'obj3_uses_obj2',
-				CoffeeMaker::BREW_SHARED,
-				array('obj2'),
-				array(),
-				'Vendor\Fully\Qualified\ClassName2'
-			)
-		);
-
-		$obj3_uses_obj2 = $this->CoffeeShop->brew('obj3_uses_obj2', array());
-		echo 'brew obj3_uses_obj2 directly (should be instance of ClassName2):<br>';
-		var_dump($obj3_uses_obj2);
-		$obj2 = $this->CoffeeShop->brew('obj2', array());
-		echo 'brew obj2 directly again, which should now be instance of ClassName2, since we set "obj2" as an alias for "obj3_uses_obj2":<br>';
-		var_dump($obj2);
-		echo '</pre>';
-	}
-
+    public function michaelsTest()
+    {
+        \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        echo '<pre style="margin-left:180px;">';
+        // HonduranCoffee
+        echo '<h4>add Recipe for HonduranCoffee</h4>';
+        // have one recipe for HonduranCoffee
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'HonduranCoffee',
+                'EventEspresso\tests\mocks\core\services\container\Coffee',
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\HonduranBean'),
+                CoffeeMaker::BREW_NEW
+            )
+        );
+        /** @var Coffee $HonduranCoffee */
+        $HonduranCoffee = $this->CoffeeShop->brew('HonduranCoffee');
+        // test it
+        echo 'brew HonduranCoffee directly (should be instance of Coffee): ';
+        var_dump($HonduranCoffee instanceof Coffee);
+        var_dump($HonduranCoffee);
+        // test bean type
+        echo 'test that bean type is an instance of HonduranBean: ';
+        var_dump($HonduranCoffee->getBeans() instanceof HonduranBean);
+        var_dump($HonduranCoffee->getBeans());
+        echo '</pre>';
+        echo '<pre style="margin-left:180px;">';
+        // HonduranCoffee
+        echo '<h4>add Recipe for KenyanCoffee</h4>';
+        // and another recipe for KenyanCoffee
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'KenyanCoffee',
+                'EventEspresso\tests\mocks\core\services\container\Coffee',
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\KenyanBean'),
+                CoffeeMaker::BREW_NEW
+            )
+        );
+        /** @var Coffee $HonduranCoffee */
+        $KenyanCoffee = $this->CoffeeShop->brew('KenyanCoffee');
+        // test it
+        echo 'brew KenyanCoffee directly (should be instance of Coffee): ';
+        var_dump($KenyanCoffee instanceof Coffee);
+        var_dump($KenyanCoffee);
+        // test bean type
+        echo 'test that bean type is an instance of KenyanBean: ';
+        var_dump($KenyanCoffee->getBeans() instanceof KenyanBean);
+        var_dump($KenyanCoffee->getBeans());
+        echo '</pre>';
+    }
 
 
 }
 // End of file OpenCoffeeShop.php
 // Location: /OpenCoffeeShop.php
-
-
-namespace Vendor\Fully\Qualified;
-
-class ClassName {
-
-}
-
-
-class ClassName2 {
-
-}
