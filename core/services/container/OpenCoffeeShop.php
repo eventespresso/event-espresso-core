@@ -184,14 +184,23 @@ class OpenCoffeeShop {
         \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
         echo '<pre style="margin-left:180px;">';
         // HonduranCoffee
-        echo '<h4>add Recipe for HonduranCoffee</h4>';
+        echo '<h4>Add Recipe for using HonduranBean in place of BeanInterface</h4>';
         // have one recipe for HonduranCoffee
         $this->CoffeeShop->addRecipe(
             new Recipe(
+                'HonduranBean',
+                'EventEspresso\tests\mocks\core\services\container\HonduranBean',
+                array(),
+                CoffeeMaker::BREW_SHARED,
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface')
+            )
+        );
+        // HonduranCoffee
+        echo '<h4>Add Recipe for HonduranCoffee</h4>';
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
                 'HonduranCoffee',
-                'EventEspresso\tests\mocks\core\services\container\Coffee',
-                array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\HonduranBean'),
-                CoffeeMaker::BREW_NEW
+                'EventEspresso\tests\mocks\core\services\container\Coffee'
             )
         );
         /** @var Coffee $HonduranCoffee */
@@ -201,19 +210,17 @@ class OpenCoffeeShop {
         var_dump($HonduranCoffee instanceof Coffee);
         var_dump($HonduranCoffee);
         // test bean type
-        echo 'test that bean type is an instance of HonduranBean: ';
+        echo '<br/>test that bean type is an instance of HonduranBean: ';
         var_dump($HonduranCoffee->getBeans() instanceof HonduranBean);
         var_dump($HonduranCoffee->getBeans());
-        echo '</pre>';
-        echo '<pre style="margin-left:180px;">';
         // HonduranCoffee
-        echo '<h4>add Recipe for KenyanCoffee</h4>';
+        echo '<br/><h4>Add Recipe for KenyanCoffee</h4>';
         // and another recipe for KenyanCoffee
         $this->CoffeeShop->addRecipe(
             new Recipe(
                 'KenyanCoffee',
                 'EventEspresso\tests\mocks\core\services\container\Coffee',
-                array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\KenyanBean'),
+                array(), // NO ingredients
                 CoffeeMaker::BREW_NEW
             )
         );
@@ -224,7 +231,31 @@ class OpenCoffeeShop {
         var_dump($KenyanCoffee instanceof Coffee);
         var_dump($KenyanCoffee);
         // test bean type
-        echo 'test that bean type is an instance of KenyanBean: ';
+        echo '<br/>test that bean type is an instance of HonduranBean: ';
+        var_dump($KenyanCoffee->getBeans() instanceof HonduranBean);
+        var_dump($KenyanCoffee->getBeans());
+        echo '<br/><h4>BUT... It can\'t be KenyanCoffee if it\'s using HonduranBean</h4>';
+        echo 'Remove Recipe for KenyanCoffee<br/>';
+        $this->CoffeeShop->removeRecipe('KenyanCoffee');
+        echo 'and the Closure used for generating instances of KenyanCoffee<br/><br/>';
+        $this->CoffeeShop->removeClosure('KenyanCoffee');
+        echo '<h4>Now Add NEW Recipe for KenyanCoffee that specifies KenyanBean</h4>';
+        // and another recipe for KenyanCoffee
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'KenyanCoffee',
+                'EventEspresso\tests\mocks\core\services\container\Coffee',
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\KenyanBean'),
+                CoffeeMaker::BREW_NEW
+            )
+        );
+        // test it
+        echo 'brew another KenyanCoffee directly: ';
+        $KenyanCoffee = $this->CoffeeShop->brew('KenyanCoffee');
+        var_dump($KenyanCoffee instanceof Coffee);
+        var_dump($KenyanCoffee);
+        // test bean type
+        echo '<br/>and test that bean type is NOW an instance of KenyanBean: ';
         var_dump($KenyanCoffee->getBeans() instanceof KenyanBean);
         var_dump($KenyanCoffee->getBeans());
         echo '</pre>';
