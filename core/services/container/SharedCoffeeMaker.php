@@ -50,7 +50,7 @@ class SharedCoffeeMaker extends CoffeeMaker
             case 'new_instance_from_db';
                 $service = call_user_func_array(
                     array($reflector->getName(), $method),
-                    $this->injector()->resolveDependencies($reflector, $arguments)
+                    $this->injector()->resolveDependencies($recipe, $reflector, $arguments)
                 );
                 break;
             case 'newInstance' :
@@ -59,7 +59,7 @@ class SharedCoffeeMaker extends CoffeeMaker
             case 'newInstanceArgs' :
             default :
                 $service = $reflector->newInstanceArgs(
-                    $this->injector()->resolveDependencies($reflector, $arguments)
+                    $this->injector()->resolveDependencies($recipe, $reflector, $arguments)
                 );
         }
         return $this->coffeePot()->addService($recipe->identifier(), $service);
