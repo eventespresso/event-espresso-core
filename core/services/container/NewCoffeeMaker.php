@@ -50,10 +50,10 @@ class NewCoffeeMaker extends CoffeeMaker
             case 'new_instance' :
             case 'new_instance_from_db';
                 $injector = $this->injector();
-                $closure = function ($arguments) use ($reflector, $method, $injector) {
+                $closure = function ($arguments) use ($recipe, $reflector, $method, $injector) {
                     return call_user_func_array(
                         array($reflector->getName(), $method),
-                        $injector->resolveDependencies($reflector, $arguments)
+                        $injector->resolveDependencies($recipe, $reflector, $arguments)
                     );
                 };
                 break;
@@ -65,9 +65,9 @@ class NewCoffeeMaker extends CoffeeMaker
             case 'newInstanceArgs' :
             default :
                 $injector = $this->injector();
-                $closure = function ($arguments) use ($reflector, $injector) {
+                $closure = function ($arguments) use ($recipe, $reflector, $injector) {
                     return $reflector->newInstanceArgs(
-                        $injector->resolveDependencies($reflector, $arguments)
+                        $injector->resolveDependencies($recipe, $reflector, $arguments)
                     );
                 };
         }
