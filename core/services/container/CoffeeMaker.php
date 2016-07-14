@@ -164,10 +164,11 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
                 }
             }
         }
-        if ($recipe->type() !== CoffeeMaker::BREW_LOAD_ONLY && ! class_exists($recipe->fqcn())) {
+        if ($recipe->type() !== CoffeeMaker::BREW_LOAD_ONLY && ! class_exists($recipe->fqcn(), false)) {
             throw new InvalidClassException($recipe->identifier());
         }
     }
+
 
 
 
