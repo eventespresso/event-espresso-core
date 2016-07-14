@@ -19,12 +19,11 @@
             <tr>
                 <th>
                     <label for="ee-google-map-api-key">
-                        <?php _e('Google Maps API Key*', 'event_espresso') ?>
+                        <?php _e('Google Maps API Key', 'event_espresso') ?>
                     </label>
                 </th>
                 <td>
-                    <input type="text" id="ee-google-map-api-key" class="regular-text" name="google_map_api_key" value="<?php echo $map_settings->google_map_api_key; ?>"
-                           required />
+                    <input type="text" id="ee-google-map-api-key" class="regular-text" name="google_map_api_key" value="<?php echo $map_settings->google_map_api_key; ?>" />
                     <p class="description">
                         <?php
                             printf(
