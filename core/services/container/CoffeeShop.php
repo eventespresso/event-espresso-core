@@ -218,6 +218,22 @@ class CoffeeShop implements CoffeePotInterface
 
 
     /**
+     * @param string   $identifier
+     * @return boolean
+     */
+    public function removeClosure($identifier)
+    {
+        $identifier = $this->processIdentifier($identifier);
+        if ($this->reservoir->has($identifier)) {
+            $this->reservoir->remove($this->reservoir->get($identifier));
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /**
      * @param  string $identifier Identifier for the entity class that the service applies to
      *                            Typically a Fully Qualified Class Name
      * @param mixed  $service
@@ -233,6 +249,22 @@ class CoffeeShop implements CoffeePotInterface
 
 
     /**
+     * @param string $identifier
+     * @return boolean
+     */
+    public function removeService($identifier)
+    {
+        $identifier = $this->processIdentifier($identifier);
+        if ($this->carafe->has($identifier)) {
+            $this->carafe->remove($this->carafe->get($identifier));
+            return true;
+        }
+        return false;
+    }
+
+
+
+    /**
      * Adds instructions on how to brew objects
      *
      * @param RecipeInterface $recipe
@@ -243,6 +275,24 @@ class CoffeeShop implements CoffeePotInterface
         $this->addAliases($recipe->identifier(), $recipe->filters());
         $identifier = $this->processIdentifier($recipe->identifier());
         return $this->recipes->add($recipe, $identifier);
+    }
+
+
+
+    /**
+     * @param string $identifier The Recipe's identifier
+     * @return boolean
+     */
+    public function removeRecipe($identifier)
+    {
+        $identifier = $this->processIdentifier($identifier);
+        if ($this->recipes->has($identifier)) {
+            $this->recipes->remove(
+                $this->recipes->get($identifier)
+            );
+            return true;
+        }
+        return false;
     }
 
 
