@@ -44,23 +44,46 @@ class Recipe implements RecipeInterface
     private $fqcn;
 
     /**
-     * class name aliases - typically a Fully Qualified Interface that the class implements
-     * identifiers passed to the coffee pot will be run through the filters to find the correct class name
+     * a dependency class map array
+     * If a Recipe is for a single class (or group of classes that shares the EXACT SAME constructor arguments),
+     * and that class type hints for an interface, then this property allows you to configure what dependencies
+     * get used when instantiating the class.
+     * For example:
+     *  There's a class called Coffee, and one of its constructor arguments is BeanInterface
+     *  There are two implementations of BeanInterface: HonduranBean, and KenyanBean
+     *  We want one Coffee object to use HonduranBean for its BeanInterface,
+     *  and the 2nd Coffee object to use KenyanBean for its BeanInterface.
+     *  To do this, we need to create two Recipes:
+     *      one with an identifier of 'HonduranCoffee' using the following ingredients :
+     *          array('BeanInterface' => 'HonduranBean')
+     *      and the other with an identifier of 'KenyanCoffee' using the following ingredients :
+     *          array('BeanInterface' => 'KenyanBean')
+     *  Then, whenever the CoffeeShop brews an instance of HonduranCoffee,
+     *  an instance of HonduranBean will get injected for the BeanInterface dependency,
+     *  and whenever the CoffeeShop brews an instance of KenyanCoffee,
+     *  an instance of KenyanBean will get injected for the BeanInterface dependency
      *
-     * @var array $filters
+     * @var array $ingredients
      */
-    private $filters = array();
+    private $ingredients = array();
 
     /**
      * one of the class constants from CoffeeShop:
      *  CoffeeMaker::BREW_NEW - creates a new instance
      *  CoffeeMaker::BREW_SHARED - creates a shared instance
      *  CoffeeMaker::BREW_LOAD_ONLY - loads but does not instantiate
-
-*
-*@var string $type
+     *
+     * @var string $type
      */
     private $type;
+
+    /**
+     * class name aliases - typically a Fully Qualified Interface that the class implements
+     * identifiers passed to the CoffeeShop will be run through the filters to find the correct class name
+     *
+     * @var array $filters
+     */
+    private $filters = array();
 
     /**
      * array of full server filepaths to files that may contain the class
@@ -71,26 +94,34 @@ class Recipe implements RecipeInterface
 
 
 
-	/**
-	 * Recipe constructor.
-	 *
-	 * @param string $identifier class identifier: typically a \Fully\Qualified\ClassName
-	 * @param string $type       recipe type: one of the class constants on
-	 *                           \EventEspresso\core\services\container\CoffeeMaker
-	 * @param array  $filters    array of class aliases, or class interfaces
-	 * @param array  $paths      if class can not be loaded via PSR-4 autoloading,
-	 *                           then supply a filepath, or array of filepaths, so that it can be included
-	 * @param string $fqcn
-	 */
+    /**
+     * Recipe constructor.
+     *
+     * @param string $identifier    class identifier, can be an alias, or FQCN, or whatever
+     * @param string $fqcn          \Fully\Qualified\ClassName, optional if $identifier is FQCN
+     * @param array  $ingredients   array of dependencies that can not be resolved automatically,
+     *                              used for resolving concrete classes for type hinted interfaces
+     *                              for the dependencies of THIS class
+     * @param string $type          recipe type: one of the class constants on
+     *                              \EventEspresso\core\services\container\CoffeeMaker
+     * @param array  $filters       array of class aliases, or class interfaces
+     *                              this works somewhat opposite to the $ingredients array above,
+     *                              in that this array specifies interfaces or aliases
+     *                              that this Recipe can be used for when resolving OTHER class's dependencies
+     * @param array  $paths         if class can not be loaded via PSR-4 autoloading,
+     *                              then supply a filepath, or array of filepaths, so that it can be included
+     */
     public function __construct(
 	    $identifier,
+        $fqcn = '',
+        $ingredients = array(),
 	    $type = CoffeeMaker::BREW_NEW,
 	    $filters = array(),
-	    $paths = array(),
-	    $fqcn = ''
+	    $paths = array()
     )
     {
         $this->setIdentifier($identifier);
+        $this->setIngredients((array)$ingredients);
         $this->setType($type);
         $this->setPaths($paths);
         $this->setFqcn($fqcn);
@@ -122,9 +153,9 @@ class Recipe implements RecipeInterface
     /**
      * @return array
      */
-    public function filters()
+    public function ingredients()
     {
-        return (array)$this->filters;
+        return $this->ingredients;
     }
 
 
@@ -135,6 +166,16 @@ class Recipe implements RecipeInterface
     public function type()
     {
         return $this->type;
+    }
+
+
+
+    /**
+     * @return array
+     */
+    public function filters()
+    {
+        return (array)$this->filters;
     }
 
 
@@ -202,6 +243,37 @@ class Recipe implements RecipeInterface
 
 
     /**
+     * @param array $ingredients    an array of dependencies where keys are the aliases and values are the FQCNs
+     *                              example:
+     *                              array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
+     */
+    public function setIngredients(array $ingredients)
+    {
+        if (empty($ingredients)) {
+            return;
+        }
+        if ( ! is_array($ingredients)) {
+            throw new InvalidDataTypeException(
+                '$ingredients',
+                is_object($ingredients) ? get_class($ingredients) : gettype($ingredients),
+                __('array of class dependencies', 'event_espresso')
+            );
+        }
+        $this->ingredients = array_merge($this->ingredients, $ingredients);
+    }
+
+
+    /**
+     * @param string $type one of the class constants returned from CoffeeMaker::getTypes()
+     */
+    public function setType($type = CoffeeMaker::BREW_NEW)
+    {
+        $this->type = CoffeeMaker::validateType($type);
+    }
+
+
+
+    /**
      * @param array $filters an array of filters where keys are the aliases and values are the FQCNs
      *                          example:
      *                          array( 'ClassInterface' => 'Fully\Qualified\ClassName' )
@@ -219,16 +291,6 @@ class Recipe implements RecipeInterface
             );
         }
         $this->filters = array_merge($this->filters, $filters);
-    }
-
-
-
-    /**
-     * @param string $type one of the class constants returned from CoffeeMaker::getTypes()
-     */
-    public function setType($type = CoffeeMaker::BREW_NEW)
-    {
-        $this->type = CoffeeMaker::validateType($type);
     }
 
 
