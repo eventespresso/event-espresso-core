@@ -474,11 +474,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	/**
 	 * Performs basic sanitization on this value. But what sanitization can be performed anyways?
 	 * This value MIGHT be allowed to have tags, so we can't really remove them.
+	 *
 	 * @param string $value
 	 * @return null|string
 	 */
-	private function _sanitize($value){
-		return $value !== NULL ?stripslashes(html_entity_decode($value)) : NULL;//don't sanitize_text_field
+	private function _sanitize( $value ) {
+		return $value !== null ? stripslashes( html_entity_decode( trim( $value ) ) ) : null;
 	}
 
 
