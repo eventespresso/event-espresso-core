@@ -1,1 +1,2 @@
-<h2>All your base are belong to us! What you say? Make your time!</h2>
+<?php _e('PayPal Standard is an offline payment method', 'event_espresso');
+	<?php printf( __('PayPal Standard is an off-site payment method and is available to event organizers in many countries. Need a PayPal account? Call 1-855-456-1338 or %2$sclick here to sign up for a merchant account%2$s.', 'event_espresso'), '<a href="https://eventespresso.com/go/paypalstandard/" target="_blank">','</a>' ); ?>
