@@ -979,7 +979,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 								$valid_data['email_validation_level'] === 'i18n'
 								|| $valid_data['email_validation_level'] === 'i18n_dns'
 							)
-							&& ! defined('PREG_BAD_UTF8_ERROR')
+							&& defined('PREG_BAD_UTF8_ERROR')
 						){
 							EE_Error::add_error(
 								__(
