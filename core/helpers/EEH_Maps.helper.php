@@ -105,7 +105,7 @@ class EEH_Maps {
 	public static function espresso_google_map_js() {
 		$api_url = sprintf(
 			"https://maps.googleapis.com/maps/api/js?key=%s",
-			EE_Registry::instance()->CFG->map_settings->google_map_api_key
+			apply_filters( 'FHEE__EEH_Maps__espresso_google_maps_js__api_key', EE_Registry::instance()->CFG->map_settings->google_map_api_key )
 		);
 		wp_register_script( 'gmap_api', $api_url, array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
@@ -152,7 +152,10 @@ class EEH_Maps {
 
 			case 'map':
 				$scheme = is_ssl() ? 'https://' : 'http://';
-				return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2( $scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode( $address_string ) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode( $address_string ) . '&amp;sensor=false' ) . '" /></a>';
+
+				$api_key = apply_filters( 'FHEE__EEH_Maps__espresso_google_maps_link__api_key', EE_Registry::instance()->CFG->map_settings->google_map_api_key );
+
+				return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2( $scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode( $address_string ) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode( $address_string ) . '&amp;sensor=false&amp;key=' . $api_key ) . '" /></a>';
 		}
 
 		return '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
