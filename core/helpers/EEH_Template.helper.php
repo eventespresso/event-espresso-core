@@ -444,6 +444,9 @@ class EEH_Template {
 					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
 
+				// filter to allow global setting of display_code
+				$display_code = apply_filters( 'FHEE__EEH_Template__format_currency__display_code', $display_code );
+
 				// add currency code ?
 				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
 			}
