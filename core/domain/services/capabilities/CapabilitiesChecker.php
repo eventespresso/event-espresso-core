@@ -53,6 +53,8 @@ class CapabilitiesChecker
     /**
      * @param CapCheck|CapCheck[] $cap_check
      * @return bool
+     * @throws InvalidClassException
+     * @throws InsufficientPermissionsException
      */
     public function processCapCheck($cap_check)
     {
