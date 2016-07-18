@@ -2,6 +2,7 @@
 namespace EventEspresso\core\domain\services\capabilities;
 
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
+use EventEspresso\core\exceptions\InvalidClassException;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -50,11 +51,23 @@ class CapabilitiesChecker
 
 
     /**
-     * @param \EventEspresso\core\domain\services\capabilities\CapCheck $cap_check
+     * @param CapCheck|CapCheck[] $cap_check
      * @return bool
      */
-    public function processCapCheck(CapCheck $cap_check)
+    public function processCapCheck($cap_check)
     {
+        if (is_array($cap_check)){
+            foreach ($cap_check as $check) {
+                $this->processCapCheck($check);
+            }
+            return true;
+        }
+        // at this point, $cap_check should be an individual instance of CapCheck
+        if ( ! $cap_check instanceof CapCheck) {
+            throw new InvalidClassException(
+                '\EventEspresso\core\domain\services\capabilities\CapCheck'
+            );
+        }
         if (
             ! $this->capabilities()->current_user_can(
                 $cap_check->capability(),
