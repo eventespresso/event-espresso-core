@@ -54,12 +54,15 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 				$dependencies_or_load,
 				sprintf( 'The %s class has an invalid value in the EE_Dependency_Map.', $classname )
 			);
-			// now verify that a loader exists for the class
-			$loader = $this->_dependency_map->class_loader( $classname );
-			$this->assertNotEmpty(
-				$loader,
-				sprintf( 'A class loader should be set for "%s" but appears to be missing.', $classname )
-			);
+            // if class is not using PSR-4 compatible namespacing
+            if (strpos($classname,'\\') === false) {
+                // verify that a loader exists for the class
+                $loader = $this->_dependency_map->class_loader($classname);
+                $this->assertNotEmpty(
+                    $loader,
+                    sprintf('A class loader should be set for "%s" but appears to be missing.', $classname)
+                );
+            }
 		}
 	}
 
