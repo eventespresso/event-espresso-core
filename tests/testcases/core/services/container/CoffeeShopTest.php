@@ -6,6 +6,9 @@ use EventEspresso\core\services\container\CoffeeMaker;
 use EventEspresso\core\services\container\NewCoffeeMaker;
 use EventEspresso\core\services\container\SharedCoffeeMaker;
 use EventEspresso\core\services\container\LoadOnlyCoffeeMaker;
+use EventEspresso\tests\mocks\core\services\container\Coffee;
+use EventEspresso\tests\mocks\core\services\container\HonduranBean;
+use EventEspresso\tests\mocks\core\services\container\KenyanBean;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -14,20 +17,20 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 /**
- * Class CoffeePotTest
+ * Class CoffeeShopTest
  * Description
  *
  * @package       Event Espresso
  * @author        Brent Christensen
  * @since         $VID:$
  */
-class CoffeePotTest extends EE_UnitTestCase
+class CoffeeShopTest extends EE_UnitTestCase
 {
 
     /**
-     * @var CoffeeShop $CoffeePot
+     * @var CoffeeShop $CoffeeShop
      */
-    private $CoffeePot;
+    private $CoffeeShop;
 
     /**
      * @var DependencyInjector $DependencyInjector
@@ -42,20 +45,20 @@ class CoffeePotTest extends EE_UnitTestCase
     public function setUp()
     {
         // instantiate the container
-        $this->CoffeePot = new CoffeeShop();
+        $this->CoffeeShop = new CoffeeShop();
         // create a dependency injector class for resolving class constructor arguments
         $this->DependencyInjector = new DependencyInjector(
-            $this->CoffeePot,
-            new EEH_Array()
+            $this->CoffeeShop,
+            new \EEH_Array()
         );
         // and some coffeemakers, one for creating new instances
-        $this->CoffeePot->addCoffeeMaker(
-            new NewCoffeeMaker($this->CoffeePot, $this->DependencyInjector),
+        $this->CoffeeShop->addCoffeeMaker(
+            new NewCoffeeMaker($this->CoffeeShop, $this->DependencyInjector),
             CoffeeMaker::BREW_NEW
         );
         // and one for shared services
-        $this->CoffeePot->addCoffeeMaker(
-            new SharedCoffeeMaker($this->CoffeePot, $this->DependencyInjector),
+        $this->CoffeeShop->addCoffeeMaker(
+            new SharedCoffeeMaker($this->CoffeeShop, $this->DependencyInjector),
             CoffeeMaker::BREW_SHARED
         );
     }
@@ -64,7 +67,7 @@ class CoffeePotTest extends EE_UnitTestCase
 
     public function addDefaultRecipes()
     {
-        $this->CoffeePot->addRecipe(new Recipe(Recipe::DEFAULT_ID));
+        $this->CoffeeShop->addRecipe(new Recipe(Recipe::DEFAULT_ID));
     }
 
 
@@ -73,8 +76,8 @@ class CoffeePotTest extends EE_UnitTestCase
     {
         try {
             // and CoffeeMaker for classes that do not require instantiation
-            $added = $this->CoffeePot->addCoffeeMaker(
-                new LoadOnlyCoffeeMaker($this->CoffeePot, $this->DependencyInjector),
+            $added = $this->CoffeeShop->addCoffeeMaker(
+                new LoadOnlyCoffeeMaker($this->CoffeeShop, $this->DependencyInjector),
                 CoffeeMaker::BREW_LOAD_ONLY
             );
             $this->assertTrue($added);
@@ -95,7 +98,7 @@ class CoffeePotTest extends EE_UnitTestCase
             $closure = function () {
                 return 'I AM CLOSURE';
             };
-            $added = $this->CoffeePot->addClosure('i-am-closure', $closure);
+            $added = $this->CoffeeShop->addClosure('i-am-closure', $closure);
             $this->assertInstanceOf('Closure', $added);
         } catch (Exception $e) {
             $this->fail(
@@ -112,7 +115,7 @@ class CoffeePotTest extends EE_UnitTestCase
     public function test_addService()
     {
         try {
-            $added = $this->CoffeePot->addService('i-am-stdClass', new stdClass());
+            $added = $this->CoffeeShop->addService('i-am-stdClass', new stdClass());
             $this->assertTrue($added);
         } catch (Exception $e) {
             $this->fail(
@@ -132,7 +135,7 @@ class CoffeePotTest extends EE_UnitTestCase
             // add default recipe, which should handle loading for most PSR-4 compatible classes
             // as long as they are not type hinting for interfaces
             $this->assertTrue(
-                $this->CoffeePot->addRecipe(new Recipe(Recipe::DEFAULT_ID))
+                $this->CoffeeShop->addRecipe(new Recipe(Recipe::DEFAULT_ID))
             );
         } catch (Exception $e) {
             $this->fail(
@@ -150,7 +153,7 @@ class CoffeePotTest extends EE_UnitTestCase
     {
         $this->addDefaultRecipes();
         try {
-            $recipe = $this->CoffeePot->getRecipe(Recipe::DEFAULT_ID);
+            $recipe = $this->CoffeeShop->getRecipe(Recipe::DEFAULT_ID);
             $this->assertInstanceOf('EventEspresso\core\services\container\RecipeInterface', $recipe);
             $this->assertEquals(Recipe::DEFAULT_ID, $recipe->identifier());
             $this->assertEquals(CoffeeMaker::BREW_NEW, $recipe->type());
@@ -169,7 +172,7 @@ class CoffeePotTest extends EE_UnitTestCase
     public function test_addAliases()
     {
         try {
-            $this->CoffeePot->addAliases('EE_Class_For_Testing_Loading', array('Testing_Loading'));
+            $this->CoffeeShop->addAliases('EE_Class_For_Testing_Loading', array('Testing_Loading'));
         } catch (Exception $e) {
             $this->fail(
                 sprintf(
@@ -184,7 +187,7 @@ class CoffeePotTest extends EE_UnitTestCase
 
     public function test_has()
     {
-        $this->assertFalse($this->CoffeePot->has('EE_Class_For_Testing_Loading'));
+        $this->assertFalse($this->CoffeeShop->has('EE_Class_For_Testing_Loading'));
     }
 
 
@@ -194,7 +197,7 @@ class CoffeePotTest extends EE_UnitTestCase
         $this->addDefaultRecipes();
         try {
             // attempt to get class that should NOT have a valid Recipe yet
-            $this->CoffeePot->get('EE_Class_For_Testing_Loading');
+            $this->CoffeeShop->get('EE_Class_For_Testing_Loading');
             $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
@@ -208,15 +211,17 @@ class CoffeePotTest extends EE_UnitTestCase
         $this->addDefaultRecipes();
         try {
             // attempt to get class that should NOT have a valid Recipe yet
-            $this->CoffeePot->get('EE_Class_For_Testing_Loading');
+            $this->CoffeeShop->get('EE_Class_For_Testing_Loading');
             $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
         // add recipe for our mock class
-        $added = $this->CoffeePot->addRecipe(
+        $added = $this->CoffeeShop->addRecipe(
             new Recipe(
                 'EE_Class_For_Testing_Loading',
+                'EE_Class_For_Testing_Loading',
+                array(),
                 CoffeeMaker::BREW_NEW,
                 array(),
                 array(
@@ -226,10 +231,10 @@ class CoffeePotTest extends EE_UnitTestCase
         );
         $this->assertTrue($added);
         // attempt to brew class
-        $mock1 = $this->CoffeePot->brew('EE_Class_For_Testing_Loading');
+        $mock1 = $this->CoffeeShop->brew('EE_Class_For_Testing_Loading');
         $this->assertInstanceOf('EE_Class_For_Testing_Loading', $mock1);
         // and another one which should be a NEW instance
-        $mock2 = $this->CoffeePot->brew('EE_Class_For_Testing_Loading');
+        $mock2 = $this->CoffeeShop->brew('EE_Class_For_Testing_Loading');
         $this->assertInstanceOf('EE_Class_For_Testing_Loading', $mock2);
         $this->assertFalse($mock1 === $mock2);
     }
@@ -241,15 +246,17 @@ class CoffeePotTest extends EE_UnitTestCase
         $this->addDefaultRecipes();
         try {
             // attempt to get class that should NOT have a valid Recipe yet
-            $this->CoffeePot->get('EE_Class_For_Testing_Loading');
+            $this->CoffeeShop->get('EE_Class_For_Testing_Loading');
             $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
         // add recipe for our mock class
-        $added = $this->CoffeePot->addRecipe(
+        $added = $this->CoffeeShop->addRecipe(
             new Recipe(
                 'EE_Class_For_Testing_Loading',
+                'EE_Class_For_Testing_Loading',
+                array(),
                 CoffeeMaker::BREW_SHARED,
                 array(),
                 array(
@@ -259,10 +266,10 @@ class CoffeePotTest extends EE_UnitTestCase
         );
         $this->assertTrue($added);
         // attempt to brew class
-        $mock1 = $this->CoffeePot->brew('EE_Class_For_Testing_Loading');
+        $mock1 = $this->CoffeeShop->brew('EE_Class_For_Testing_Loading');
         $this->assertInstanceOf('EE_Class_For_Testing_Loading', $mock1);
         // and another one which should be the SAME instance
-        $mock2 = $this->CoffeePot->brew('EE_Class_For_Testing_Loading');
+        $mock2 = $this->CoffeeShop->brew('EE_Class_For_Testing_Loading');
         $this->assertInstanceOf('EE_Class_For_Testing_Loading', $mock2);
         $this->assertTrue($mock1 === $mock2);
     }
@@ -274,15 +281,17 @@ class CoffeePotTest extends EE_UnitTestCase
         $this->addDefaultRecipes();
         try {
             // attempt to get class that should NOT have a valid Recipe yet
-            $this->CoffeePot->get('EE_Taxes');
+            $this->CoffeeShop->get('EE_Taxes');
             $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
         // now add recipe for loading our entities as shared services (singletons)
-        $added = $this->CoffeePot->addRecipe(
+        $added = $this->CoffeeShop->addRecipe(
             new Recipe(
                 'EE_*',
+                '',
+                array(),
                 CoffeeMaker::BREW_NEW,
                 array(),
                 EE_CLASSES . '*.class.php'
@@ -290,10 +299,10 @@ class CoffeePotTest extends EE_UnitTestCase
         );
         $this->assertTrue($added);
         // attempt to brew EE_Taxes class since it is not coupled to EE_Base_Class
-        $object_1 = $this->CoffeePot->brew('EE_Taxes', array());
+        $object_1 = $this->CoffeeShop->brew('EE_Taxes', array());
         $this->assertInstanceOf('EE_Taxes', $object_1);
         // and another one which should be the SAME instance
-        $object_2 = $this->CoffeePot->brew('EE_Taxes', array());
+        $object_2 = $this->CoffeeShop->brew('EE_Taxes', array());
         $this->assertInstanceOf('EE_Taxes', $object_2);
         $this->assertFalse($object_1 === $object_2);
     }
@@ -305,15 +314,17 @@ class CoffeePotTest extends EE_UnitTestCase
         $this->addDefaultRecipes();
         try {
             // attempt to get class that should NOT have a valid Recipe yet
-            $this->CoffeePot->get('EE_Taxes');
+            $this->CoffeeShop->get('EE_Taxes');
             $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
         // now add recipe for loading our entities as shared services (singletons)
-        $added = $this->CoffeePot->addRecipe(
+        $added = $this->CoffeeShop->addRecipe(
             new Recipe(
                 'EE_*',
+                '',
+                array(),
                 CoffeeMaker::BREW_SHARED,
                 array(),
                 EE_CLASSES . '*.class.php'
@@ -321,10 +332,10 @@ class CoffeePotTest extends EE_UnitTestCase
         );
         $this->assertTrue($added);
         // attempt to brew EE_Taxes class since it is not coupled to EE_Base_Class
-        $object_1 = $this->CoffeePot->brew('EE_Taxes', array());
+        $object_1 = $this->CoffeeShop->brew('EE_Taxes', array());
         $this->assertInstanceOf('EE_Taxes', $object_1);
         // and another one which should be the SAME instance
-        $object_2 = $this->CoffeePot->brew('EE_Taxes', array());
+        $object_2 = $this->CoffeeShop->brew('EE_Taxes', array());
         $this->assertInstanceOf('EE_Taxes', $object_2);
         $this->assertTrue($object_1 === $object_2);
     }
@@ -336,15 +347,17 @@ class CoffeePotTest extends EE_UnitTestCase
         $this->addDefaultRecipes();
         try {
             // attempt to get class that should NOT have a valid Recipe yet
-            $this->CoffeePot->get('EE_Session_Mock');
+            $this->CoffeeShop->get('EE_Session_Mock');
             $this->fail('CoffeeShop::get() should have thrown an Exception');
         } catch (Exception $e) {
             $this->assertInstanceOf('Exception', $e);
         }
         // add default recipe for our mock classes
-        $added = $this->CoffeePot->addRecipe(
+        $added = $this->CoffeeShop->addRecipe(
             new Recipe(
                 'EE_*',
+                '',
+                array(),
                 CoffeeMaker::BREW_SHARED,
                 array(),
                 array(
@@ -354,10 +367,100 @@ class CoffeePotTest extends EE_UnitTestCase
         );
         $this->assertTrue($added);
         // attempt to brew EE_Session_Mock class which type hints for EE_Encryption
-        $session = $this->CoffeePot->brew('EE_Session_Mock', array());
+        $session = $this->CoffeeShop->brew('EE_Session_Mock', array());
         $this->assertInstanceOf('EE_Session_Mock', $session);
         $this->assertInstanceOf('EE_Encryption', $session->encryption());
     }
+
+
+
+    public function test_ingredients_and_dependency_substitution()
+    {
+        $this->addDefaultRecipes();
+        // Add Recipe for using HonduranBean in place of BeanInterface
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'HonduranBean',
+                'EventEspresso\tests\mocks\core\services\container\HonduranBean',
+                array(),
+                CoffeeMaker::BREW_SHARED,
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface')
+            )
+        );
+        // Add Recipe for HonduranCoffee
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'HonduranCoffee',
+                'EventEspresso\tests\mocks\core\services\container\Coffee'
+            )
+        );
+        /** @var Coffee $HonduranCoffee */
+        $HonduranCoffee = $this->CoffeeShop->brew('HonduranCoffee');
+        // test it
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\Coffee',
+            $HonduranCoffee,
+            "brew HonduranCoffee directly (should be instance of Coffee): "
+        );
+        // test that bean type is an instance of HonduranBean
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\HonduranBean',
+            $HonduranCoffee->getBeans(),
+            "bean type should be instance of HonduranBean"
+        );
+        // Add another Recipe for KenyanCoffee
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'KenyanCoffee',
+                'EventEspresso\tests\mocks\core\services\container\Coffee',
+                array(), // NO ingredients
+                CoffeeMaker::BREW_NEW
+            )
+        );
+        /** @var Coffee $HonduranCoffee */
+        $KenyanCoffee = $this->CoffeeShop->brew('KenyanCoffee');
+        // test it
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\Coffee',
+            $KenyanCoffee,
+            "brew KenyanCoffee directly (should be instance of Coffee): "
+        );
+        // test that bean type is an instance of HonduranBean
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\HonduranBean',
+            $KenyanCoffee->getBeans(),
+            "bean type should be instance of HonduranBean"
+        );
+        // BUT... It can't be KenyanCoffee if it's using HonduranBean
+        // Remove Recipe for KenyanCoffee";
+        $this->CoffeeShop->removeRecipe('KenyanCoffee');
+        // and the Closure used for generating instances of KenyanCoffee
+        $this->CoffeeShop->removeClosure('KenyanCoffee');
+        // Now Add NEW Recipe for KenyanCoffee that specifies KenyanBean
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'KenyanCoffee',
+                'EventEspresso\tests\mocks\core\services\container\Coffee',
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\KenyanBean'),
+                CoffeeMaker::BREW_NEW
+            )
+        );
+        // brew another KenyanCoffee directly
+        $KenyanCoffee = $this->CoffeeShop->brew('KenyanCoffee');
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\Coffee',
+            $KenyanCoffee,
+            "brew KenyanCoffee directly (should be instance of Coffee): "
+        );
+        // and test that bean type is NOW an instance of KenyanBean
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\KenyanBean',
+            $KenyanCoffee->getBeans(),
+            "bean type should be instance of KenyanBean"
+        );
+    }
+
+
 }
-// End of file CoffeePotTest.php
-// Location:\tests\testcases\core\services\container\CoffeePotTest.php
+// End of file CoffeeShopTest.php
+// Location: testcases/core/services/container/CoffeeShopTest.php
