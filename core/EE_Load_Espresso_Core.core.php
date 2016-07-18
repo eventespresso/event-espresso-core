@@ -79,7 +79,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 		// build DI container
 		$OpenCoffeeShop = new EventEspresso\core\services\container\OpenCoffeeShop();
 		$OpenCoffeeShop->addRecipes();
-		$OpenCoffeeShop->michaelsTest();
 		// $CoffeeShop = $OpenCoffeeShop->CoffeeShop();
 		// workarounds for PHP < 5.3
 		$this->_load_class_tools();
