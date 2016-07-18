@@ -164,6 +164,13 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
                 }
             }
         }
+        // re: using "false" for class_exists() second param:
+        // if a class name is not already known to PHP, then class_exists() will run through
+        // all of the registered spl_autoload functions until it either finds the class,
+        // or gets to the end of the registered spl_autoload functions.
+        // When the second parameter is true, it will also attempt to load the class file,
+        // but it will also trigger an error if the class can not be loaded.
+        // We don't want that extra error in the mix, so we have set the second param to "false"
         if ($recipe->type() !== CoffeeMaker::BREW_LOAD_ONLY && ! class_exists($recipe->fqcn(), false)) {
             throw new InvalidClassException($recipe->identifier());
         }
