@@ -226,7 +226,9 @@ class CoffeeShop implements CoffeePotInterface
         $identifier = $this->processIdentifier($identifier);
         if ($this->reservoir->has($identifier)) {
             $this->reservoir->remove($this->reservoir->get($identifier));
-            return true;
+            if ( ! $this->reservoir->has($identifier)) {
+                return true;
+            }
         }
         return false;
     }
@@ -257,7 +259,9 @@ class CoffeeShop implements CoffeePotInterface
         $identifier = $this->processIdentifier($identifier);
         if ($this->carafe->has($identifier)) {
             $this->carafe->remove($this->carafe->get($identifier));
-            return true;
+            if ( ! $this->carafe->has($identifier)) {
+                return true;
+            }
         }
         return false;
     }
@@ -290,7 +294,9 @@ class CoffeeShop implements CoffeePotInterface
             $this->recipes->remove(
                 $this->recipes->get($identifier)
             );
-            return true;
+            if ( ! $this->recipes->has($identifier)) {
+                return true;
+            }
         }
         return false;
     }
@@ -332,7 +338,12 @@ class CoffeeShop implements CoffeePotInterface
             // since we are using a default recipe, we need to set it's identifier and fqcn
             return $this->copyDefaultRecipe($this->recipes->get(Recipe::DEFAULT_ID), $identifier, $type);
         }
-        throw new OutOfBoundsException(__('Could not brew coffee because no recipes were found.', 'event_espresso'));
+        throw new OutOfBoundsException(
+            sprintf(
+                __('Could not brew coffee because no recipes were found for class "%1$s".', 'event_espresso'),
+                $identifier
+            )
+        );
     }
 
 
