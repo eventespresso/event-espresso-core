@@ -185,7 +185,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function invalidate_cached_route_data() {
 		//delete the saved EE REST API routes
-		delete_option( EED_Core_Rest_Api::saved_routes_option_names );
+		foreach( EED_Core_Rest_Api::versions_served() as $version => $hidden ){
+			delete_option( EED_Core_Rest_Api::saved_routes_option_names . $version );
+		}
 	}
 
 	/**
