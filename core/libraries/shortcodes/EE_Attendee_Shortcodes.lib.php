@@ -91,14 +91,21 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		if ( ! $registration instanceof EE_Registration ) {
 			//let's attempt to get the txn_id for the error message.
 			$txn_id = isset( $this->_xtra->txn ) && $this->_xtra->txn instanceof EE_Transaction ? $this->_xtra->txn->ID() : __('Unknown', 'event_espresso' );
-			throw new EE_Error( __('There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.', 'event_espresso' ) . '||' . sprintf( __('The transaction ID for this request is: %s', 'event_espresso' ), $txn_id ) );
+            $msg = __('There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.',
+                    'event_espresso');
+            $dev_msg = sprintf(__('The transaction ID for this request is: %s', 'event_espresso'), $txn_id);
+			throw new EE_Error( "{$msg}||{$msg} {$dev_msg}" );
 		}
 
 		//attendee obj for this registration
 		$attendee = isset( $this->_xtra->registrations[$registration->ID()]['att_obj'] ) ?  $this->_xtra->registrations[$registration->ID()]['att_obj'] : null ;
 
 		if ( ! $attendee instanceof EE_Attendee ) {
-			throw new EE_Error( __('There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.', 'event_espresso' ) . '||' . sprintf( __('The registration ID for this request is: %s', 'event_espresso' ), $registration->ID() ) );
+            $msg = __('There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.',
+                'event_espresso');
+            $dev_msg = sprintf(__('The registration ID for this request is: %s', 'event_espresso'),
+                $registration->ID());
+			throw new EE_Error("{$msg}||{$msg} {$dev_msg}");
 		}
 
 		switch ( $shortcode ) {
