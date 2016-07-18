@@ -48,6 +48,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 				}
 			}
 		} else {
+		    $classname = $this->_dependency_map->get_alias($classname);
 			// verify that a valid class constant has been set for the value
 			$this->assertEquals(
 				( EE_Dependency_Map::load_new_object || EE_Dependency_Map::load_from_cache ),
