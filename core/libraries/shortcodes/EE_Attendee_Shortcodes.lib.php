@@ -37,7 +37,12 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 	 */
 	protected $_xtra;
 
-	public function __construct() {
+
+
+    /**
+     * EE_Attendee_Shortcodes constructor.
+     */
+    public function __construct() {
 		parent::__construct();
 	}
 
@@ -66,7 +71,16 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 	}
 
 
-	protected function _parser( $shortcode ) {
+
+    /**
+     * handles shortcode parsing
+     *
+     * @access protected
+     * @param  string $shortcode the shortcode to be parsed.
+     * @return string
+     * @throws \EE_Error
+     */
+    protected function _parser( $shortcode ) {
 
 
 		$this->_xtra = !empty($this->_extra_data ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : NULL;
