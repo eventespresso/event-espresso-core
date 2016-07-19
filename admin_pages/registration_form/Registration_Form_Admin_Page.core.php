@@ -146,7 +146,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Questions'),
+					'label' => __('Questions', 'event_espresso'),
 					'order' => 10
 					),
 				'list_table' => 'Registration_Form_Questions_Admin_List_Table',
@@ -174,7 +174,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 			'question_groups' => array(
 				'nav' => array(
-					'label' => __('Question Groups'),
+					'label' => __('Question Groups', 'event_espresso'),
 					'order' => 20
 					),
 				'metaboxes' => $this->_default_espresso_metaboxes,
