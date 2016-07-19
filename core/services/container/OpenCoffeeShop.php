@@ -83,12 +83,12 @@ class OpenCoffeeShop {
 			new Recipe(
 				'CommandHandlerManager',
 				'EventEspresso\core\services\commands\CommandHandlerManager',
+                array(
+                    'CommandHandlerManagerInterface',
+                    'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
+                ),
                 array(),
-				CoffeeMaker::BREW_SHARED,
-				array(
-					'CommandHandlerManagerInterface',
-					'EventEspresso\core\services\commands\CommandHandlerManagerInterface',
-				)
+				CoffeeMaker::BREW_SHARED
 			)
 		);
 		// PSR-4 compatible class with aliases, which dependency on CommandHandlerManager
@@ -96,12 +96,12 @@ class OpenCoffeeShop {
 			new Recipe(
 				'CommandBus',
 				'EventEspresso\core\services\commands\CommandBus',
+                array(
+                    'CommandBusInterface',
+                    'EventEspresso\core\services\commands\CommandBusInterface',
+                ),
                 array(),
-				CoffeeMaker::BREW_SHARED,
-				array(
-					'CommandBusInterface',
-					'EventEspresso\core\services\commands\CommandBusInterface',
-				)
+				CoffeeMaker::BREW_SHARED
 			)
 		);
 		// LEGACY classes that are NOT compatible with PSR-4 autoloading, and so must specify a filepath
@@ -111,12 +111,12 @@ class OpenCoffeeShop {
 				'EEI_*',
 				'',
                 array(),
+                array(),
 				CoffeeMaker::BREW_LOAD_ONLY,
-				array(),
-				array(
-					EE_INTERFACES . '*.php',
-					EE_INTERFACES . '*.interfaces.php',
-				)
+                array(
+                    EE_INTERFACES . '*.php',
+                    EE_INTERFACES . '*.interfaces.php',
+                )
 			)
 		);
 		// add a wildcard recipe for loading models
@@ -125,8 +125,8 @@ class OpenCoffeeShop {
 				'EEM_*',
                 '',
                 array(),
+                array(),
 				CoffeeMaker::BREW_SHARED,
-				array(),
 				EE_MODELS . '*.model.php'
 			)
 		);
@@ -136,8 +136,8 @@ class OpenCoffeeShop {
 				'EE_*',
                 '',
                 array(),
-				CoffeeMaker::BREW_SHARED,
-				array(),
+                array(),
+                CoffeeMaker::BREW_SHARED,
 				array(
 					EE_CORE . '*.core.php',
 					EE_ADMIN . '*.core.php',
@@ -154,8 +154,8 @@ class OpenCoffeeShop {
 				'EE_Admin_Page*',
                 '',
                 array(),
-				CoffeeMaker::BREW_LOAD_ONLY,
-				array(),
+                array(),
+                CoffeeMaker::BREW_LOAD_ONLY,
 				array( EE_ADMIN . '*.core.php' )
 			)
 		);
@@ -163,10 +163,10 @@ class OpenCoffeeShop {
 		// $this->CoffeeShop->addRecipe(
 		// 	new Recipe(
 		// 		'*_Admin_Page',
-         //        '',
-         //        array(),
-		// 		CoffeeMaker::BREW_SHARED,
-		// 		array(),
+        //      '',
+        //      array(),
+        // 		array(),
+        // 		CoffeeMaker::BREW_SHARED,
 		// 		array(
 		// 			EE_ADMIN_PAGES . 'transactions' . DS . '*.core.php',
 		// 		)
