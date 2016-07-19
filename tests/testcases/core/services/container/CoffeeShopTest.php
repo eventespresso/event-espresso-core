@@ -7,8 +7,6 @@ use EventEspresso\core\services\container\NewCoffeeMaker;
 use EventEspresso\core\services\container\SharedCoffeeMaker;
 use EventEspresso\core\services\container\LoadOnlyCoffeeMaker;
 use EventEspresso\tests\mocks\core\services\container\Coffee;
-use EventEspresso\tests\mocks\core\services\container\HonduranBean;
-use EventEspresso\tests\mocks\core\services\container\KenyanBean;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
@@ -222,8 +220,8 @@ class CoffeeShopTest extends EE_UnitTestCase
                 'EE_Class_For_Testing_Loading',
                 'EE_Class_For_Testing_Loading',
                 array(),
-                CoffeeMaker::BREW_NEW,
                 array(),
+                CoffeeMaker::BREW_NEW,
                 array(
                     EE_TESTS_DIR . 'mocks/core/EE_Class_For_Testing_Loading.core.php',
                 )
@@ -257,8 +255,8 @@ class CoffeeShopTest extends EE_UnitTestCase
                 'EE_Class_For_Testing_Loading',
                 'EE_Class_For_Testing_Loading',
                 array(),
-                CoffeeMaker::BREW_SHARED,
                 array(),
+                CoffeeMaker::BREW_SHARED,
                 array(
                     EE_TESTS_DIR . 'mocks/core/EE_Class_For_Testing_Loading.core.php',
                 )
@@ -292,8 +290,8 @@ class CoffeeShopTest extends EE_UnitTestCase
                 'EE_*',
                 '',
                 array(),
-                CoffeeMaker::BREW_NEW,
                 array(),
+                CoffeeMaker::BREW_NEW,
                 EE_CLASSES . '*.class.php'
             )
         );
@@ -325,8 +323,8 @@ class CoffeeShopTest extends EE_UnitTestCase
                 'EE_*',
                 '',
                 array(),
-                CoffeeMaker::BREW_SHARED,
                 array(),
+                CoffeeMaker::BREW_SHARED,
                 EE_CLASSES . '*.class.php'
             )
         );
@@ -358,8 +356,8 @@ class CoffeeShopTest extends EE_UnitTestCase
                 'EE_*',
                 '',
                 array(),
-                CoffeeMaker::BREW_SHARED,
                 array(),
+                CoffeeMaker::BREW_SHARED,
                 array(
                     EE_TESTS_DIR . 'mocks/core/*.core.php',
                 )
@@ -382,9 +380,9 @@ class CoffeeShopTest extends EE_UnitTestCase
             new Recipe(
                 'HonduranBean',
                 'EventEspresso\tests\mocks\core\services\container\HonduranBean',
+                array('EventEspresso\tests\mocks\core\services\container\BeanInterface'),
                 array(),
-                CoffeeMaker::BREW_SHARED,
-                array('EventEspresso\tests\mocks\core\services\container\BeanInterface')
+                CoffeeMaker::BREW_SHARED
             )
         );
         // Add Recipe for HonduranCoffee
@@ -412,9 +410,7 @@ class CoffeeShopTest extends EE_UnitTestCase
         $this->CoffeeShop->addRecipe(
             new Recipe(
                 'KenyanCoffee',
-                'EventEspresso\tests\mocks\core\services\container\Coffee',
-                array(), // NO ingredients
-                CoffeeMaker::BREW_NEW
+                'EventEspresso\tests\mocks\core\services\container\Coffee'
             )
         );
         /** @var Coffee $HonduranCoffee */
@@ -441,6 +437,7 @@ class CoffeeShopTest extends EE_UnitTestCase
             new Recipe(
                 'KenyanCoffee',
                 'EventEspresso\tests\mocks\core\services\container\Coffee',
+                array(),
                 array('EventEspresso\tests\mocks\core\services\container\BeanInterface' => 'EventEspresso\tests\mocks\core\services\container\KenyanBean'),
                 CoffeeMaker::BREW_NEW
             )
@@ -457,6 +454,76 @@ class CoffeeShopTest extends EE_UnitTestCase
             'EventEspresso\tests\mocks\core\services\container\KenyanBean',
             $KenyanCoffee->getBeans(),
             "bean type should be instance of KenyanBean"
+        );
+    }
+
+
+
+    public function test_object_factories_using_addClosure()
+    {
+        $this->addDefaultRecipes();
+        // add recipe for EE_Request, since we're going to need it
+        $this->CoffeeShop->addRecipe(
+            new Recipe(
+                'Request',
+                'EE_Request',
+                array(),
+                array(),
+                CoffeeMaker::BREW_SHARED,
+                EE_CORE . 'request_stack/EE_Request.core.php'
+            )
+        );
+        // can't pass properties directly to a Closure
+        $coffee_shop = $this->CoffeeShop;
+        // create a Closure called "CoffeeFromRequest"
+        $this->CoffeeShop->addClosure(
+            'CoffeeFactory',
+            function() use ($coffee_shop) {
+                /** @var EE_Request $request */
+                $request = $coffee_shop->brew('EE_Request', array($_GET, $_POST, $_COOKIE));
+                $bean_type = $request->get('bean_type', 'Honduran');
+                $bean_type = in_array($bean_type, array('Honduran', 'Kenyan'))
+                    ? $bean_type
+                    : 'Honduran';
+                $bean_type = "{$bean_type}Bean";
+                return $coffee_shop->brew(
+                    'EventEspresso\tests\mocks\core\services\container\Coffee',
+                    array(
+                        $coffee_shop->brew(
+                            'EventEspresso\tests\mocks\core\services\container\\' . $bean_type
+                        )
+                    )
+                );
+            }
+        );
+        // brew a Coffee using the CoffeeFactory,
+        // which should use the default bean type since we haven't specified one
+        $default_coffee = $this->CoffeeShop->brew('CoffeeFactory');
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\Coffee',
+            $default_coffee,
+            'should be instance of Coffee'
+        );
+        // and test that default bean type is an instance of HonduranBean
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\HonduranBean',
+            $default_coffee->getBeans(),
+            'bean type should be instance of HonduranBean'
+        );
+        // now add a $_GET param specifying the bean type as Kenyan
+        $_GET['bean_type'] = 'Kenyan';
+        // brew another Coffee using the CoffeeFactory
+        $new_coffee = $this->CoffeeShop->brew('CoffeeFactory');
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\Coffee',
+            $new_coffee,
+            'should be instance of Coffee'
+        );
+        // and test that bean type is NOW an instance of KenyanBean
+        $this->assertInstanceOf(
+            'EventEspresso\tests\mocks\core\services\container\KenyanBean',
+            $new_coffee->getBeans(),
+            'bean type should be instance of KenyanBean'
         );
     }
 
