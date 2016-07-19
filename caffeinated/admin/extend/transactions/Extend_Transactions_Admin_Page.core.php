@@ -167,7 +167,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
 		}
 
-		$report_title = __( 'Total Revenue per Day' );
+		$report_title = __( 'Total Revenue per Day', 'event_espresso' );
 
 		$report_params = array(
 			'title' 		=> $report_title,
@@ -217,7 +217,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
 		}
 
-		$report_title = __( 'Total Revenue per Event' );
+		$report_title = __( 'Total Revenue per Event', 'event_espresso' );
 
 		$report_params = array(
 			'title' 		=> $report_title,
