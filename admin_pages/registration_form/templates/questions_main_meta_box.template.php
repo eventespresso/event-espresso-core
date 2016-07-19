@@ -252,8 +252,8 @@ $has_answers = $question->has_answers();
 					$disabled = $required_on || ! empty( $disabled ) ? ' disabled="disabled"' : '';
 					$id =  ! empty( $disabled ) && in_array( $QST_system, $system_required) ? '_disabled' : '';
 					$requiredOptions=array(
-						array('text'=>'Optional','id'=>0),
-						array('text'=>'Required','id'=>1)
+						array( 'text'=> esc_html__( 'Optional', 'event_espresso' ), 'id'=>0 ),
+						array( 'text'=> esc_html__( 'Required', 'event_espresso' ), 'id'=>1 )
 					);
 					echo EEH_Form_Fields::select_input('QST_required' . $id, $requiredOptions, $question->required(), 'id="QST_required' . $id . '"' . $disabled );
 					?>
