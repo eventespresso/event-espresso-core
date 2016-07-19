@@ -683,7 +683,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				$this->_admin_page_title .= '">';
 
 				$this->_admin_page_title .= sprintf(
-					__('Add Another New Registration to Event: "%1$s" ?'),
+					__('Add Another New Registration to Event: "%1$s" ?', 'event_espresso' ),
 					htmlentities( urldecode( $this->_req_data[ 'event_name' ] ), ENT_QUOTES, 'UTF-8' )
 				);
 				$this->_admin_page_title .= '</a>';
