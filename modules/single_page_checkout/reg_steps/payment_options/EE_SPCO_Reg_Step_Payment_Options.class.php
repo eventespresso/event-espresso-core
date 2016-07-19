@@ -266,7 +266,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * @return bool
+	 * @return \EE_Form_Section_Proper
 	 * @throws \EE_Error
 	 */
 	public function generate_reg_form() {
@@ -467,27 +467,38 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @throws \EE_Error
 	 */
 	public static function find_registrations_that_lost_their_space( array $registrations, $revisit = false ) {
-		// registrations per event
+        // registrations per event
 		$event_reg_count = array();
 		// spaces left per event
 		$event_spaces_remaining = array();
-		// registrations that have lost their space
+        // tickets left sorted by ID
+        $tickets_remaining = array();
+        // registrations that have lost their space
 		$ejected_registrations = array();
 		foreach ( $registrations as $REG_ID => $registration ) {
 			if ( $registration->status_ID() === EEM_Registration::status_id_approved ) {
 				continue;
 			}
 			$EVT_ID = $registration->event_ID();
-			if ( ! isset( $event_reg_count[ $EVT_ID ] ) ) {
-				$event_reg_count[ $EVT_ID ] = 0;
-			}
-			$event_reg_count[ $EVT_ID ]++;
-			if ( ! isset( $event_spaces_remaining[ $EVT_ID ] ) ) {
-				$event_spaces_remaining[ $EVT_ID ] = $registration->event()->spaces_remaining_for_sale();
-			}
+            $ticket = $registration->ticket();
+            if ( ! isset($tickets_remaining[$ticket->ID()])) {
+                $tickets_remaining[$ticket->ID()] = $ticket->remaining();
+            }
+            if ($tickets_remaining[$ticket->ID()] > 0) {
+                if ( ! isset($event_reg_count[$EVT_ID])) {
+                    $event_reg_count[$EVT_ID] = 0;
+                }
+                $event_reg_count[$EVT_ID]++;
+                if ( ! isset($event_spaces_remaining[$EVT_ID])) {
+                    $event_spaces_remaining[$EVT_ID] = $registration->event()->spaces_remaining_for_sale();
+                }
+            }
 			if (
 				$revisit
-				&& $event_reg_count[ $EVT_ID ] > $event_spaces_remaining[ $EVT_ID ]
+				&& (
+                    $tickets_remaining[$ticket->ID()] === 0
+				    || $event_reg_count[ $EVT_ID ] > $event_spaces_remaining[ $EVT_ID ]
+                )
 			) {
 				$ejected_registrations[ $REG_ID ] = $registration->event();
 				if ( $registration->status_ID() !== EEM_Registration::status_id_wait_list ) {
@@ -597,7 +608,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _insufficient_spaces_available( $insufficient_spaces_events_array = array() ) {
 		// set some defaults
-		$this->checkout->selected_method_of_payment = 'events_sold_out';
+		$this->checkout->selected_method_of_payment = 'invoice';
 		$insufficient_space_events = '';
 		foreach ( $insufficient_spaces_events_array as $event ) {
 			if ( $event instanceof EE_Event ) {
@@ -1165,7 +1176,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *
 	 * @access private
 	 * @param EE_Payment_Method $payment_method
-	 * @return \EE_Billing_Info_Form
+	 * @return \EE_Billing_Info_Form|\EE_Form_Section_HTML
 	 * @throws \EE_Error
 	 */
 	private function _get_billing_form_for_payment_method( EE_Payment_Method $payment_method ) {
@@ -2101,7 +2112,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * _post_payment_processing
 	 *
 	 * @access private
-	 * @param EE_Payment $payment
+	 * @param EE_Payment|bool $payment
 	 * @return bool
 	 * @throws \EE_Error
 	 */
@@ -2352,7 +2363,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * _validate_return
 	 *
 	 * @access private
-	 * @return bool
+	 * @return void
 	 * @throws \EE_Error
 	 */
 	private function _validate_offsite_return() {
