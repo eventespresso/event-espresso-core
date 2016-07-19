@@ -114,18 +114,18 @@ class Recipe implements RecipeInterface
     public function __construct(
 	    $identifier,
         $fqcn = '',
+        $filters = array(),
         $ingredients = array(),
 	    $type = CoffeeMaker::BREW_NEW,
-	    $filters = array(),
 	    $paths = array()
     )
     {
         $this->setIdentifier($identifier);
+        $this->setFilters((array)$filters);
         $this->setIngredients((array)$ingredients);
         $this->setType($type);
         $this->setPaths($paths);
         $this->setFqcn($fqcn);
-        $this->setFilters((array)$filters);
     }
 
 
@@ -153,6 +153,16 @@ class Recipe implements RecipeInterface
     /**
      * @return array
      */
+    public function filters()
+    {
+        return (array)$this->filters;
+    }
+
+
+
+    /**
+     * @return array
+     */
     public function ingredients()
     {
         return $this->ingredients;
@@ -166,16 +176,6 @@ class Recipe implements RecipeInterface
     public function type()
     {
         return $this->type;
-    }
-
-
-
-    /**
-     * @return array
-     */
-    public function filters()
-    {
-        return (array)$this->filters;
     }
 
 
