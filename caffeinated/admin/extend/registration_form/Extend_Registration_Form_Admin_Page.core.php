@@ -212,7 +212,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'question_groups' => array(
 				'nav' => array(
-					'label' => __('Question Groups'),
+					'label' => __('Question Groups', 'event_espresso'),
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
