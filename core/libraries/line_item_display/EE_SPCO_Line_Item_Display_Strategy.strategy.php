@@ -271,7 +271,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// start of row
 		$row_class = $options['odd'] ? 'item odd' : 'item';
 		$html = EEH_HTML::tr( '', '', $row_class );
-		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type() . ': ' : '';
+		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() . ': ' : '';
 		// name && desc
 		$name_and_desc = apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
