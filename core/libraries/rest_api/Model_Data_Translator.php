@@ -108,11 +108,10 @@ class Model_Data_Translator {
 				$new_value = $original_value->format( 'c' );
 				$original_value->setTimezone( $timezone );
 			} elseif( is_int( $original_value ) ) {
-				$new_value = date( 'Y-m-d H:i:s', $original_value ); 
+				$new_value = date( 'Y-m-d H:i:s', $original_value ) . '+00:00'; 
 			} else {
 				$new_value = $original_value;
 			}
-			$new_value = mysql_to_rfc3339( $new_value );
 		} else {
 			$new_value = $original_value;
 		}
