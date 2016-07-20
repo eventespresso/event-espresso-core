@@ -2255,7 +2255,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
-			$msg = sprintf ( __('The category %s was successfuly saved', 'event_espresso'), $category_name );
+			$msg = sprintf ( __('The category %s was successfully saved', 'event_espresso'), $category_name );
 			EE_Error::add_success( $msg );
 		}
 
