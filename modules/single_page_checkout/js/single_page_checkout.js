@@ -430,6 +430,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
+				$(this).val( $.trim( $(this).val() ) );
 				$(this).valid();
             });
 		},
