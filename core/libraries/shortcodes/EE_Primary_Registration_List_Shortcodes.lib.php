@@ -36,7 +36,7 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Primary Registrant List Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific primary registrant recipients list type data.', 'event_espresso');
 		$this->_shortcodes = array(
-			'[PRIMARY_REGISTRANT_TICKET_LIST]' => __('Will output a list of tickets that the primary registration receieved.', 'event_espresso'),
+			'[PRIMARY_REGISTRANT_TICKET_LIST]' => __('Will output a list of tickets that the primary registration received.', 'event_espresso'),
 			'[PRIMARY_REGISTRANT_DATETIME_LIST]' => __('Will output a list of datetimes that the primary registrant for the transaction has been registered for.', 'event_espresso')
 			);
 	}
