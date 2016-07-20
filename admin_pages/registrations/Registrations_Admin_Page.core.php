@@ -1820,7 +1820,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//edit link
 		$this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
-		$this->_template_args['att_edit_label'] = __('View/Edit Contact' );
+		$this->_template_args['att_edit_label'] = __('View/Edit Contact', 'event_espresso');
 
 		//create link
 		$this->_template_args['create_link'] = $primary_registration instanceof EE_Registration ? EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'duplicate_attendee',  '_REG_ID' => $this->_registration->ID() ), REG_ADMIN_URL ): '';
