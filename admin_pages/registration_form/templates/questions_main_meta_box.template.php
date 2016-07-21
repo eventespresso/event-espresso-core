@@ -91,9 +91,9 @@ $has_answers = $question->has_answers();
 						if( ! empty( $QST_system ) ) { ?>
 							<input type="hidden"  id="QST_type" name="QST_type" value="<?php echo $question->type()?>"/>
 						<?php
-							$explanatory_text = __('System question! This field cannot be changed.','event_espresso');
+							$explanatory_text = esc_html__('System question! This field cannot be changed.','event_espresso');
 						}else{
-							$explanatory_text = __('Because there are currently answers for this question in the database, your options to change the question type have been limited to similar question-types.','event_espresso');
+							$explanatory_text = esc_html__('Because there are currently answers for this question in the database, your options to change the question type have been limited to similar question-types.','event_espresso');
 						}
 						if ( ! empty( $QST_system ) || $has_answers ) { ?>
 							<p><span class="description" style="color:#D54E21;">
@@ -122,7 +122,7 @@ $has_answers = $question->has_answers();
 					<p>
 						<span class="description" style="color:#D54E21;">
 							<?php printf(
-									__( 'System question! The maximum number of characters that can be used for this question is %1$s', 'event_espresso' ),
+									esc_html__( 'System question! The maximum number of characters that can be used for this question is %1$s', 'event_espresso' ),
 									$max_max );?>
 						</span>
 					</p>
