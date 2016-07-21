@@ -47,7 +47,7 @@ $has_answers = $question->has_answers();
 					<p class="description">
 					<?php if ( ! empty( $QST_system )) { ?>
 					<span class="description" style="color:#D54E21;">
-						<?php _e('System question! This field cannot be changed.','event_espresso')?>
+						<?php esc_html_e('System question! This field cannot be changed.','event_espresso')?>
 					</span>
 					<?php } ?>
 
@@ -71,7 +71,7 @@ $has_answers = $question->has_answers();
 					<p class="description">
 					<?php if ( ! empty( $QST_system )) { ?>
 					<span class="description" style="color:#D54E21;">
-						<?php _e('System question! This field cannot be changed.','event_espresso')?>
+						<?php esc_html_e('System question! This field cannot be changed.','event_espresso')?>
 					</span>
 					<?php } ?>
 
@@ -108,14 +108,14 @@ $has_answers = $question->has_answers();
 			<tr id="text_input_question_options">
 				<th>
 					<label>
-						<?php _e( 'Maximum Allowed Response Size', 'event_espresso' );?>
+						<?php esc_html_e( 'Maximum Allowed Response Size', 'event_espresso' );?>
 					</label>
 				</th>
 				<td>
 					<input id="QST_max" name="QST_max" type="number" <?php echo $max_max === EE_INF ? '' : "max='$max_max'";?> value="<?php $question->f( 'QST_max' );?>" min="1">
 					<p>
 						<span class="description">
-							<?php _e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
+							<?php esc_html_e( 'Maximum number of characters allowed when answering this question', 'event_espresso' );?>
 						</span>
 					</p>
 					<?php if ( $QST_system ) { ?>
@@ -132,7 +132,7 @@ $has_answers = $question->has_answers();
 			<tr id="question_options">
 				<th>
 					<label>
-						<?php _e('Answer Options','event_espresso')?>
+						<?php esc_html_e('Answer Options','event_espresso')?>
 					</label>
 				</th>
 				<td>
@@ -141,10 +141,10 @@ $has_answers = $question->has_answers();
 						<thead>
 							<tr>
 								<th class="option-value-header">
-									<?php _e('Value','event_espresso')?>
+									<?php esc_html_e('Value','event_espresso')?>
 								</th>
 								<th class="option-desc-header">
-									<?php _e('Description (optional, only shown on registration form)','event_espresso')?>
+									<?php esc_html_e('Description (optional, only shown on registration form)','event_espresso')?>
 								</th>
 								<th>
 								</th>
@@ -224,15 +224,15 @@ $has_answers = $question->has_answers();
 					</table>
 
 					<a id="new-question-option" class="button" style="margin:0 0 1em 3px;">
-						<?php _e('Add Another Answer Option','event_espresso')?>
+						<?php esc_html_e('Add Another Answer Option','event_espresso')?>
 					</a><br/>
 
 					<p class="description">
-						<?php _e('Answer Options are the choices that you give people to select from for RADIO_BTN, CHECKBOX or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
+						<?php esc_html_e('Answer Options are the choices that you give people to select from for RADIO_BTN, CHECKBOX or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
 					</p>
 					<?php if ( $has_answers ) : ?>
 					<p class="description" style="color:#D54E21;">
-							<?php _e('Answer values that are uneditable are this way because there are registrations in the database that have answers for this question.  If you need to correct a mistake, or edit an existing option value, then trash the existing one and create a new option with the changes.  This will ensure that the existing registrations that chose the original answer will preserve that answer.', 'event_espresso'); ?>
+							<?php esc_html_e('Answer values that are uneditable are this way because there are registrations in the database that have answers for this question.  If you need to correct a mistake, or edit an existing option value, then trash the existing one and create a new option with the changes.  This will ensure that the existing registrations that chose the original answer will preserve that answer.', 'event_espresso'); ?>
 					</p>
 
 					<?php endif; ?>
@@ -258,15 +258,15 @@ $has_answers = $question->has_answers();
 					echo EEH_Form_Fields::select_input('QST_required' . $id, $requiredOptions, $question->required(), 'id="QST_required' . $id . '"' . $disabled );
 					?>
 						<p><span id="required_toggled_on" class="description" style="color:#D54E21;<?php echo $show_required_msg; ?>">
-						<?php _e('Required is set to optional, and this field is disabled, because the question is Admin-Only.','event_espresso')?>
+						<?php esc_html_e('Required is set to optional, and this field is disabled, because the question is Admin-Only.','event_espresso')?>
 						</span></p>
 						<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
-							<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
+							<?php esc_html_e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
 						</span></p>
 					<?php if ( ! empty( $disabled ) && in_array( $QST_system, $system_required ) ) { ?>
 						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
 						<p><span class="description" style="color:#D54E21;">
-						<?php _e('System question! This field cannot be changed.','event_espresso')?>
+						<?php esc_html_e('System question! This field cannot be changed.','event_espresso')?>
 					</span></p>
 					<?php } ?>
 
@@ -275,7 +275,7 @@ $has_answers = $question->has_answers();
 
 			<tr>
 				<th>
-					<label for="QST_required_text"><?php _e('Required Text', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
+					<label for="QST_required_text"><?php esc_html_e('Required Text', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
 				</th>
 				<td>
 					<input type="text" maxlength="100" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php  $question->f('QST_required_text')?>"/>
