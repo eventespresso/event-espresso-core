@@ -395,7 +395,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QST_ID'] ) && ! empty( $this->_req_data['QST_ID'] ) ? absint( $this->_req_data['QST_ID'] ) : FALSE;
 
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		switch( $this->_req_action ) {
+			case 'add_question' :
+				$this->_admin_page_title = esc_html__( 'Add Question', 'event_espresso' );
+				break;
+			case 'edit_question' :
+				$this->_admin_page_title = esc_html__( 'Edit Question', 'event_espresso' );
+				break;
+			default :
+				$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		}
+
 		// add PRC_ID to title if editing
 		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
 		if($ID){
