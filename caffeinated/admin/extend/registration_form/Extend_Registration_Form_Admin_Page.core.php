@@ -212,21 +212,21 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'question_groups' => array(
 				'nav' => array(
-					'label' => __('Question Groups', 'event_espresso'),
+					'label' => esc_html__('Question Groups', 'event_espresso'),
 					'order' => 20
 					),
 				'list_table' => 'Registration_Form_Question_Groups_Admin_List_Table',
 				'help_tabs' => array(
 					'registration_form_question_groups_help_tab' => array(
-						'title' => __('Question Groups', 'event_espresso'),
+						'title' => esc_html__('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
 						),
 					'registration_form_question_groups_table_column_headings_help_tab' => array(
-						'title' => __('Question Groups Table Column Headings', 'event_espresso'),
+						'title' => esc_html__('Question Groups Table Column Headings', 'event_espresso'),
 						'filename' => 'registration_form_question_groups_table_column_headings'
 						),
 					'registration_form_question_groups_views_bulk_actions_search_help_tab' => array(
-						'title' => __('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
+						'title' => esc_html__('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
 						'filename' => 'registration_form_question_groups_views_bulk_actions_search'
 						),
 					),
@@ -240,14 +240,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'add_question' => array(
 				'nav' => array(
-					'label' => __('Add Question', 'event_espresso'),
+					'label' => esc_html__('Add Question', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
                 'help_tabs' => array(
 					'registration_form_add_question_help_tab' => array(
-						'title' => __('Add Question', 'event_espresso'),
+						'title' => esc_html__('Add Question', 'event_espresso'),
 						'filename' => 'registration_form_add_question'
 						),
 					),
@@ -257,14 +257,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'add_question_group' => array(
 				'nav' => array(
-					'label' => __('Add Question Group', 'event_espresso'),
+					'label' => esc_html__('Add Question Group', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_add_question_group_help_tab' => array(
-						'title' => __('Add Question Group', 'event_espresso'),
+						'title' => esc_html__('Add Question Group', 'event_espresso'),
 						'filename' => 'registration_form_add_question_group'
 						),
 					),
@@ -274,7 +274,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'edit_question_group' => array(
 				'nav' => array(
-					'label' => __('Edit Question Group', 'event_espresso'),
+					'label' => esc_html__('Edit Question Group', 'event_espresso'),
 					'order' => 5,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['question_group_id']) ? add_query_arg(array('question_group_id' => $this->_req_data['question_group_id'] ), $this->_current_page_view_url )  : $this->_admin_base_url
@@ -282,7 +282,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_edit_question_group_help_tab' => array(
-						'title' => __('Edit Question Group', 'event_espresso'),
+						'title' => esc_html__('Edit Question Group', 'event_espresso'),
 						'filename' => 'registration_form_edit_question_group'
 						),
 					),
@@ -292,16 +292,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'view_reg_form_settings' => array(
 				'nav' => array(
-					'label' => __('Reg Form Settings', 'event_espresso'),
+					'label' => esc_html__('Reg Form Settings', 'event_espresso'),
 					'order' => 40
 					),
 				'labels' => array(
-					'publishbox' => __('Update Settings', 'event_espresso')
+					'publishbox' => esc_html__('Update Settings', 'event_espresso')
 					),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'help_tabs' => array(
 					'registration_form_reg_form_settings_help_tab' => array(
-						'title' => __('Registration Form Settings', 'event_espresso'),
+						'title' => esc_html__('Registration Form Settings', 'event_espresso'),
 						'filename' => 'registration_form_reg_form_settings'
 						),
 					),
@@ -318,11 +318,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 		//additional labels
 		$new_labels = array(
-			'add_question' => __('Add New Question', 'event_espresso'),
-			'delete_question' => __('Delete Question', 'event_espresso'),
-			'add_question_group' => __('Add New Question Group', 'event_espresso'),
-			'edit_question_group' => __('Edit Question Group', 'event_espresso'),
-			'delete_question_group' => __('Delete Question Group', 'event_espresso'),
+			'add_question' => esc_html__('Add New Question', 'event_espresso'),
+			'delete_question' => esc_html__('Delete Question', 'event_espresso'),
+			'add_question_group' => esc_html__('Add New Question Group', 'event_espresso'),
+			'edit_question_group' => esc_html__('Edit Question Group', 'event_espresso'),
+			'delete_question_group' => esc_html__('Delete Question Group', 'event_espresso'),
 			);
 		$this->_labels['buttons'] = array_merge( $this->_labels['buttons'], $new_labels );
 
@@ -372,10 +372,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('View All Questions', 'event_espresso'),
+				'label' => esc_html__('View All Questions', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_questions' => __('Trash', 'event_espresso'),
+					'trash_questions' => esc_html__('Trash', 'event_espresso'),
 					)
 				)
 		);
@@ -383,11 +383,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if ( EE_Registry::instance()->CAP->current_user_can('ee_delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
+				'label' => esc_html__('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_questions' => __('Delete Permanently', 'event_espresso'),
-					'restore_questions' => __('Restore', 'event_espresso'),
+					'delete_questions' => esc_html__('Delete Permanently', 'event_espresso'),
+					'restore_questions' => esc_html__('Restore', 'event_espresso'),
 					)
 				);
 		}
@@ -402,10 +402,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => esc_html__('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_question_groups' => __('Trash', 'event_espresso'),
+					'trash_question_groups' => esc_html__('Trash', 'event_espresso'),
 					)
 				)
 		);
@@ -413,11 +413,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_groups', 'espresso_registration_form_trash_question_groups' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
+				'label' => esc_html__('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_question_groups' => __('Delete Permanently', 'event_espresso'),
-					'restore_question_groups' => __('Restore', 'event_espresso'),
+					'delete_question_groups' => esc_html__('Delete Permanently', 'event_espresso'),
+					'restore_question_groups' => esc_html__('Restore', 'event_espresso'),
 					)
 				);
 		}
@@ -436,7 +436,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _question_groups_overview_list_table() {
-		$this->_search_btn_label = __('Question Groups', 'event_espresso');
+		$this->_search_btn_label = esc_html__('Question Groups', 'event_espresso');
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_question_group', 'add_question_group', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -493,7 +493,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}elseif( !empty($this->_req_data['QST_ID'])){
 			$success = $this->_delete_item( $this->_req_data['QST_ID'], $model );
 		}else{
-			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf(esc_html__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		return $success;
 	}
@@ -624,7 +624,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 
 		if ( $success !== FALSE ) {
-			$msg = $new_question_group ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
+			$msg = $new_question_group ? sprintf( esc_html__('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( esc_html__('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
 		$this->_redirect_after_action(FALSE, '', '', array('action'=>'edit_question_group','QSG_ID'=>$QSG_ID), TRUE);
@@ -640,14 +640,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if( $question instanceof EE_Question ) {
 			$new_question = $question->duplicate();
 			if( $new_question instanceof EE_Question ) {
-				$this->_redirect_after_action( true, __( 'Question', 'event_espresso' ), __( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
+				$this->_redirect_after_action( true, esc_html__( 'Question', 'event_espresso' ), esc_html__( 'Duplicated', 'event_espresso' ), array('action'=>'edit_question', 'QST_ID' => $new_question->ID() ), TRUE);
 			} else {
 				global $wpdb;
-				EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %1$d because: %2$s', 'event_espresso' ), $question_ID, $wpdb->last_error ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( sprintf( esc_html__( 'Could not duplicate question with ID %1$d because: %2$s', 'event_espresso' ), $question_ID, $wpdb->last_error ), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_redirect_after_action(false, '', '', array('action'=>'default'), false );
 			}
 		} else {
-			EE_Error::add_error( sprintf( __( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( esc_html__( 'Could not duplicate question with ID %d because it didn\'t exist!', 'event_espresso' ), $question_ID ), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_redirect_after_action( false, '', '', array( 'action' => 'default' ), false );
 		}
 	}
@@ -811,7 +811,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 */
 	public function update_question_group_order() {
 
-		$success = __( 'Question group order was updated successfully.', 'event_espresso' );
+		$success = esc_html__( 'Question group order was updated successfully.', 'event_espresso' );
 
 		// grab our row IDs
 		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] )
@@ -846,7 +846,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 
 		$errors = ! $success
-			? __( 'An error occurred. The question group order was not updated.', 'event_espresso' )
+			? esc_html__( 'An error occurred. The question group order was not updated.', 'event_espresso' )
 			: false;
 
 		echo json_encode( array( 'return_data' => false, 'success' => $success, 'errors' => $errors ));
@@ -895,11 +895,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			EE_Registry::instance()->CFG->registration
 		);
 		$success = $this->_update_espresso_configuration(
-			__('Registration Form Options', 'event_espresso'),
+			esc_html__('Registration Form Options', 'event_espresso'),
 			EE_Registry::instance()->CFG,
 			__FILE__, __FUNCTION__, __LINE__
 		);
-		$this->_redirect_after_action( $success, __('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
+		$this->_redirect_after_action( $success, esc_html__('Registration Form Options', 'event_espresso'), 'updated', array( 'action' => 'view_reg_form_settings' ) );
 	}
 
 
@@ -930,19 +930,19 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
 				'subsections'     => array(
 					'email_validation_hdr'           => new EE_Form_Section_HTML(
-						EEH_HTML::h2( __( 'Email Validation Settings', 'event_espresso' ) )
+						EEH_HTML::h2( esc_html__( 'Email Validation Settings', 'event_espresso' ) )
 					),
 					'email_validation_level' => new EE_Select_Input(
 						array(
-							'basic'      => __( 'Basic', 'event_espresso' ),
-							'wp_default' => __( 'WordPress Default', 'event_espresso' ),
-							'i18n'       => __( 'International', 'event_espresso' ),
-							'i18n_dns'   => __( 'International + DNS Check', 'event_espresso' ),
+							'basic'      => esc_html__( 'Basic', 'event_espresso' ),
+							'wp_default' => esc_html__( 'WordPress Default', 'event_espresso' ),
+							'i18n'       => esc_html__( 'International', 'event_espresso' ),
+							'i18n_dns'   => esc_html__( 'International + DNS Check', 'event_espresso' ),
 						),
 						array(
-							'html_label_text' => __( 'Email Validation Level', 'event_espresso' )
+							'html_label_text' => esc_html__( 'Email Validation Level', 'event_espresso' )
 							                     . EEH_Template::get_help_tab_link( 'email_validation_info' ),
-							'html_help_text'  => __( 'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.', 'event_espresso'),
+							'html_help_text'  => esc_html__( 'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.', 'event_espresso'),
 							'default' => isset( EE_Registry::instance()->CFG->registration->email_validation_level )
 								? EE_Registry::instance()->CFG->registration->email_validation_level
 								: 'wp_default',
@@ -977,7 +977,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						$EE_Registration_Config->email_validation_level = $valid_data['email_validation_level'];
 					} else {
 						EE_Error::add_error(
-							__(
+							esc_html__(
 								'Invalid or missing Email Validation settings. Please refresh the form and try again.',
 								'event_espresso'
 							),
