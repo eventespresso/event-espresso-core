@@ -134,6 +134,11 @@ jQuery(document).ready( function($) {
 		form_is_valid : false,
 		// amount to be paid during this TXN
 		payment_amount : 0,
+		// AJAX notice fadeout times
+		notice_fadeout_success : 6000,
+		notice_fadeout_attention : 10000,
+		notice_fadeout_errors : 10000,
+		notice_fadeout_min : 4000,
 
 
 
@@ -425,6 +430,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
+				$(this).val( $.trim( $(this).val() ) );
 				$(this).valid();
             });
 		},
@@ -1178,11 +1184,11 @@ jQuery(document).ready( function($) {
                 msg.success = typeof msg.success !== 'undefined' && msg.success ? msg.return_data.success + '<br />' + msg.success : msg.return_data.success;
             }
 			if ( typeof msg.attention !== 'undefined' && msg.attention ) {
-				SPCO.show_event_queue_ajax_msg( 'attention', msg.attention, 10000, end_ajax );
+				SPCO.show_event_queue_ajax_msg( 'attention', msg.attention, SPCO.notice_fadeout_attention, end_ajax );
 			} else if ( typeof msg.errors !== 'undefined' && msg.errors ) {
-                SPCO.show_event_queue_ajax_msg( 'error', msg.errors, 10000, end_ajax );
+                SPCO.show_event_queue_ajax_msg( 'error', msg.errors, SPCO.notice_fadeout_errors, end_ajax );
             } else if ( typeof msg.success !== 'undefined' && msg.success ) {
-				SPCO.show_event_queue_ajax_msg( 'success', msg.success, 6000, end_ajax );
+				SPCO.show_event_queue_ajax_msg( 'success', msg.success, SPCO.notice_fadeout_success, end_ajax );
 			}
 		},
 
@@ -1201,7 +1207,7 @@ jQuery(document).ready( function($) {
 				// ensure message type is set
 				var msg_type = typeof type !== 'undefined' && type !== '' ? type : 'error';
 				// make sure fade out time is not too short
-				fadeOut = typeof fadeOut === 'undefined' || fadeOut < 4000 ? 4000 : fadeOut;
+				fadeOut = typeof fadeOut === 'undefined' || fadeOut < SPCO.notice_fadeout_min ? SPCO.notice_fadeout_min : fadeOut;
 				// center notices on screen
 				$('#espresso-ajax-notices').eeCenter( 'fixed' );
 				// target parent container

@@ -1,17 +1,5 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowed'); }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link			http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
  *
  * EEH_Maps
  *
@@ -20,8 +8,6 @@
  * @package		Event Espresso
  * @subpackage	/helpers/EEH_Maps.helper.php
  * @author		Hugo Ashmore, Brent Christensen, Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EEH_Maps {
 
@@ -31,12 +17,11 @@ class EEH_Maps {
 
 	/**
 	 * google_map - creates a Google Map Link
-	 * @param  array $atts aray of attributes required for the map link generation
+	 *
+	 * @param  array $ee_gmaps_opts array of attributes required for the map link generation
 	 * @return string (link to map!)
 	 */
 	public static function google_map( $ee_gmaps_opts ){
-
-		//d( $ee_gmaps_opts );
 
 		$ee_map_width = isset( $ee_gmaps_opts['ee_map_width'] ) && ! empty( $ee_gmaps_opts['ee_map_width'] ) ? $ee_gmaps_opts['ee_map_width'] : '300';
 		$ee_map_height = isset( $ee_gmaps_opts['ee_map_height'] ) && ! empty( $ee_gmaps_opts['ee_map_height'] ) ? $ee_gmaps_opts['ee_map_height'] : '185';
@@ -115,25 +100,30 @@ class EEH_Maps {
 
 
 	/**
-	 * creates a Google Map Link
-	 * @param  array $atts aray of attributes required for the map link generation
-	 * @return string (link to map!)
+	 * registers scripts for maps
 	 */
 	public static function espresso_google_map_js() {
-		$scheme = is_ssl() ? 'https://' : 'http://';
-		wp_register_script( 'gmap_api', $scheme . 'maps.google.com/maps/api/js?sensor=false', array('jquery'), NULL, TRUE );
+		$api_url = sprintf(
+			"https://maps.googleapis.com/maps/api/js?key=%s",
+			apply_filters( 'FHEE__EEH_Maps__espresso_google_maps_js__api_key', EE_Registry::instance()->CFG->map_settings->google_map_api_key )
+		);
+		wp_register_script( 'gmap_api', $api_url, array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
 	}
 
 	/**
 	 * creates a Google Map Link
-	 * @param  array $atts aray of attributes required for the map link generation
+	 * @param  array $atts array of attributes required for the map link generation
 	 * @return string (link to map!)
 	 */
 	public static function google_map_link($atts) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		extract($atts);
-
+		/** @var string $address */
+		/** @var string $city */
+		/** @var string $state */
+		/** @var string $zip */
+		/** @var string $country */
 		$address = "{$address}";
 		$city = "{$city}";
 		$state = "{$state}";
@@ -162,7 +152,10 @@ class EEH_Maps {
 
 			case 'map':
 				$scheme = is_ssl() ? 'https://' : 'http://';
-				return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2( $scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode( $address_string ) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode( $address_string ) . '&amp;sensor=false' ) . '" /></a>';
+
+				$api_key = apply_filters( 'FHEE__EEH_Maps__espresso_google_maps_link__api_key', EE_Registry::instance()->CFG->map_settings->google_map_api_key );
+
+				return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2( $scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode( $address_string ) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode( $address_string ) . '&amp;sensor=false&amp;key=' . $api_key ) . '" /></a>';
 		}
 
 		return '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';

@@ -415,7 +415,8 @@ class EEH_Template {
 			return '';
 		}
 		//ensure amount is float
-		$amount = (float) $amount;
+		$amount = apply_filters( 'FHEE__EEH_Template__format_currency__raw_amount', (float) $amount );
+		$CNT_ISO = apply_filters( 'FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount );
 		// filter raw amount (allows 0.00 to be changed to "free" for example)
 		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
 		// still a number or was amount converted to a string like "free" ?
@@ -442,6 +443,9 @@ class EEH_Template {
 				}else{
 					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
+
+				// filter to allow global setting of display_code
+				$display_code = apply_filters( 'FHEE__EEH_Template__format_currency__display_code', $display_code );
 
 				// add currency code ?
 				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
