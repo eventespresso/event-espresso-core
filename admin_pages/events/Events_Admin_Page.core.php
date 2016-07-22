@@ -401,7 +401,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//template settings
 			'template_settings' => array(
 				'nav' => array(
-					'label' => __('Templates', 'event_espresso'),
+					'label' => esc_html__('Templates', 'event_espresso'),
 					'order' => 30
 				),
 				'metaboxes' => $this->_default_espresso_metaboxes,
