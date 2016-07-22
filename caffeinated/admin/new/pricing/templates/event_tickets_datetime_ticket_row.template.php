@@ -170,7 +170,7 @@
 			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template__advanced_details_end', $tkt_row, $TKT_ID ); ?>
 			<div class="ee-editor-footer-container">
 				<div class="ee-editor-id-container">
-					<span class="ee-item-id"><?php echo $TKT_ID ? 'Ticket ID: ' . $TKT_ID : ''; ?></span>
+					<span class="ee-item-id"><?php echo $TKT_ID ? sprintf( esc_html__( 'Ticket ID: %d', 'event_espresso' ), $TKT_ID ) : ''; ?></span>
 				</div>
 				<div class="save-cancel-button-container">
 					<label for="edit-ticket-TKT_is_default_selector"><?php _e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
