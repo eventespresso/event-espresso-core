@@ -161,7 +161,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//template settings
 		$new_page_config['template_settings'] = array(
 			'nav' => array(
-				'label' => __('Templates', 'event_espresso'),
+				'label' => esc_html__('Templates', 'event_espresso'),
 				'order' => 30
 			),
 			'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
