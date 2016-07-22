@@ -523,7 +523,17 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _edit_question_group( $type = 'add' ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QSG_ID'] ) && ! empty( $this->_req_data['QSG_ID'] ) ? absint( $this->_req_data['QSG_ID'] ) : FALSE;
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		
+		switch( $this->_req_action ) {
+			case 'add_question_group' :
+				$this->_admin_page_title = esc_html__( 'Add Question Group', 'event_espresso' );
+				break;
+			case 'edit_question_group' :
+				$this->_admin_page_title = esc_html__( 'Edit Question Group', 'event_espresso' );
+				break;
+			default :
+				$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		}
 		// add ID to title if editing
 		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
 		if($ID){
