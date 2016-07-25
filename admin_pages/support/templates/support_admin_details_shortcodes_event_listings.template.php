@@ -1,6 +1,6 @@
 <div class="padding">
 	<p>
-        <?php _e('Displays a list of events based on a set of criteria on a WordPress page or post. Unless otherwise specified, events are sorted by start date.', 'event_espresso'); ?> <?php echo sprintf( __('For a full list of available shortcodes, please view the %sshortcode documentation%s on our website.', 'event_espresso'), '<a href="https://eventespresso.com/wiki/setup-event-espresso-arabica-theme/">', '</a>' ); ?>
+        <?php esc_html_e('Displays a list of events based on a set of criteria on a WordPress page or post. Unless otherwise specified, events are sorted by start date.', 'event_espresso'); ?> <?php echo sprintf( esc_html__('For a full list of available shortcodes, please view the %sshortcode documentation%s on our website.', 'event_espresso'), '<a href="https://eventespresso.com/wiki/ee4-shortcodes-template-variables/">', '</a>' ); ?>
     </p>
 		<ul>
 			<li><strong><?php _e('Show a list of all of your events', 'event_espresso'); ?></strong><br /> [ESPRESSO_EVENTS]</li>
