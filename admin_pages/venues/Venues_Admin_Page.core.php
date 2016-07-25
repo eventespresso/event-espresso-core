@@ -343,7 +343,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'google_map_settings' => array(
 				'nav' => array(
-					'label' => __('Google Maps'),
+					'label' => esc_html__('Google Maps', 'event_espresso' ),
 					'order' => 40
 				),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
