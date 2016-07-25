@@ -14,7 +14,7 @@
 			<li><strong><?php esc_html_e('Order the event list by a specific set of parameters (refer to available options below)', 'event_espresso'); ?></strong><br />[ESPRESSO_EVENTS order_by=start_date,id]</li>
 		</ul>
             <p>
-                <?php esc_html_e('These parameters (options) are available for the order_by shortcode parameter above. Multiple parameters should be separated by a comma.', 'event_espresso'); ?>
+                <?php echo sprintf(esc_html__('These parameters (options) are available for the %s shortcode parameter above. Multiple parameters should be separated by a comma.', 'event_espresso'), 'order_by'); ?>
             </p>
             id<br />
             start_date<br />
