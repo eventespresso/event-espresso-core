@@ -557,10 +557,22 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function hide_old_endpoints( $route_data ) {
+		//allow API clients to override which endpoints get hidden, in case
+		//they want to discover particular endpoints
+		//also, we don't have access to the request so we have to just grab it from the superglobal
+		$force_show_ee_namespace = ltrim(
+			EEH_Array::is_set( $_REQUEST, 'force_show_ee_namespace', '' ),
+			'/'
+		);
+		
 		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
-					if( $route[ 'hidden_endpoint' ] ) {
+					//by default, hide "hidden_endpoint"s, unless the request indicates
+					//to $force_show_ee_namespace, in which case only show that one
+					//namespace's endpoints (and hide all others)
+					if( ( $route[ 'hidden_endpoint' ] && $force_show_ee_namespace === '' )
+						|| ( $force_show_ee_namespace !== null && $force_show_ee_namespace !== $namespace ) ) {
 						$full_route = '/' . ltrim( $namespace, '/' ) . '/' . ltrim( $endpoint, '/' );
 						unset( $route_data[ $full_route ] );
 					}
