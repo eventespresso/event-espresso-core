@@ -25,7 +25,13 @@ $no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode
 	<?php if ( $contacts ) : ?>
 		<ul class="event-attendees-list">
 			<?php foreach( $contacts as $contact ) :
-				EEH_Template::get_template_part( 'content', 'espresso_event_attendees', array( 'contact' => $contact, 'show_gravatar' => $show_gravatar ) );
+				EEH_Template::get_template_part( 'content', 'espresso_event_attendees', array( 
+					'contact'       => $contact, 
+					'event'         => $event,
+					'datetime'      => $datetime,
+					'ticket'        => $ticket,
+					'show_gravatar' => $show_gravatar 
+				) );
 				endforeach; ?>
 		</ul>
 	<?php else : ?>
