@@ -158,6 +158,25 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+    /**
+     * @deprecated
+     * @param string $permalink_string
+     * @param int    $id
+     * @param string $new_title
+     * @param string $new_slug
+     * @return string
+     */
+    public static function iframe_code_button($permalink_string, $id, $new_title, $new_slug)
+    {
+        \EventEspresso\core\libraries\iframe_display\Iframe::eventListIframeEmbedButton(
+            $permalink_string,
+            $id,
+            'ticket_selector'
+        );
+    }
+
+
+
 }
 // End of file EED_Ticket_Selector.module.php
 // Location: modules/ticket_selector/EED_Ticket_Selector.module.php
