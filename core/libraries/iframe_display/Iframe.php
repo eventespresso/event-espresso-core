@@ -291,23 +291,7 @@ class Iframe {
 		// add button for iframe code to event editor.
 		add_filter(
 			'get_sample_permalink_html',
-			function ( $permalink_string, $id ) use ( $route_name ) {
-				//make sure this is ONLY when editing and the event id has been set.
-				if ( ! empty( $id ) ) {
-					$post = get_post( $id );
-					//if NOT event then let's get out.
-					if ( $post->post_type !== 'espresso_events' ) {
-						return $permalink_string;
-					}
-					$permalink_string .= Iframe::embedButtonHtml(
-						'Event',
-						$route_name,
-						array( 'event' => $id ),
-						'button-small'
-					);
-				}
-				return $permalink_string;
-			},
+			array('\EventEspresso\core\libraries\iframe_display\Iframe', 'eventListIframeEmbedButton'),
 			10, 2
 		);
 		add_action(
@@ -315,6 +299,34 @@ class Iframe {
 			array( '\EventEspresso\core\libraries\iframe_display\Iframe', 'EventsAdminEmbedButtonAssets' ),
 			10
 		);
+	}
+
+
+
+    /**
+     * iframe embed code button to the Event editor.
+     *
+     * @param string $permalink_string
+     * @param int    $id
+     * @param string $route_name the named module route that generates the iframe
+     * @return string
+     */
+	public static function eventListIframeEmbedButton($permalink_string, $id, $route_name) {
+        //make sure this is ONLY when editing and the event id has been set.
+        if ( ! empty($id)) {
+            $post = get_post($id);
+            //if NOT event then let's get out.
+            if ($post->post_type !== 'espresso_events') {
+                return $permalink_string;
+            }
+            $permalink_string .= Iframe::embedButtonHtml(
+                'Event',
+                $route_name,
+                array('event' => $id),
+                'button-small'
+            );
+        }
+        return $permalink_string;
 	}
 
 
