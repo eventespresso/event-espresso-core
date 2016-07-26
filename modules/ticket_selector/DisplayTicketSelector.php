@@ -352,7 +352,7 @@ class DisplayTicketSelector {
 	/**
 	 * @return string
 	 */
-	public static function no_tkt_slctr_end_dv() {
+	public static function noTicketSelectorEndDiv() {
 		return '<div class="clear"></div></div>';
 	}
 
