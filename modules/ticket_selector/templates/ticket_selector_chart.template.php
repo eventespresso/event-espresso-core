@@ -453,11 +453,11 @@ $hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hi
 //EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
 remove_filter(
 	'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
-	array( '\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'no_tkt_slctr_end_dv' )
+	array('\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'noTicketSelectorEndDiv')
 );
 remove_filter(
 	'FHEE__EE_Ticket_Selector__after_view_details_btn',
-	array( '\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'no_tkt_slctr_end_dv' )
+	array('\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'noTicketSelectorEndDiv')
 );
 if ( ! $hide_ticket_selector ) {
 ?>
@@ -547,11 +547,11 @@ if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 <?php
 		add_filter(
 			'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
-			array( '\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'no_tkt_slctr_end_dv' )
+			array('\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'noTicketSelectorEndDiv')
 		);
 		add_filter(
 			'FHEE__EE_Ticket_Selector__after_view_details_btn',
-			array( '\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'no_tkt_slctr_end_dv' )
+			array('\EventEspresso\modules\ticket_selector\DisplayTicketSelector', 'noTicketSelectorEndDiv')
 		);
 		do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event );
 	}
