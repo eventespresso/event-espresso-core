@@ -17,6 +17,12 @@
  */
 class EED_Ticket_Selector extends  EED_Module {
 
+    /**
+     * @var EventEspresso\modules\ticket_selector\DisplayTicketSelector $ticket_selector
+     */
+    private static $ticket_selector;
+
+
 
 	/**
 	 * @return EED_Ticket_Selector
@@ -32,8 +38,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		$this->set_config_class( 'EE_Ticket_Selector_Config' );
 		$this->set_config_name( 'EED_Ticket_Selector' );
 	}
-
-
 
 
 
@@ -84,6 +88,19 @@ class EED_Ticket_Selector extends  EED_Module {
 	}
 
 
+
+    /**
+     * @return \EventEspresso\modules\ticket_selector\DisplayTicketSelector
+     */
+    public static function ticketSelector()
+    {
+        if ( ! EED_Ticket_Selector::$ticket_selector instanceof \EventEspresso\modules\ticket_selector\DisplayTicketSelector) {
+            EED_Ticket_Selector::$ticket_selector = new EventEspresso\modules\ticket_selector\DisplayTicketSelector();
+        }
+        return EED_Ticket_Selector::$ticket_selector;
+    }
+
+
 	/**
 	 * 	gets the ball rolling
 	 *
@@ -118,8 +135,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @return 	string
 	 */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
-		$ticket_selector = new EventEspresso\modules\ticket_selector\DisplayTicketSelector();
-		return $ticket_selector->display( $event, $view_details );
+		return EED_Ticket_Selector::ticketSelector()->display( $event, $view_details );
 	}
 
 
@@ -158,6 +174,34 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	/****************************** DEPRECATED ******************************/
+
+
+
+    /**
+     * @deprecated
+     * @return string
+     */
+    public static function display_view_details_btn()
+    {
+        // todo add doing_it_wrong() notice during next major version
+        return EED_Ticket_Selector::ticketSelector()->displayViewDetailsButton();
+    }
+
+
+
+    /**
+     * @deprecated
+     * @return string
+     */
+    public static function display_ticket_selector_submit()
+    {
+        // todo add doing_it_wrong() notice during next major version
+        return EED_Ticket_Selector::ticketSelector()->displaySubmitButton();
+    }
+
+
+
     /**
      * @deprecated
      * @param string $permalink_string
@@ -168,7 +212,8 @@ class EED_Ticket_Selector extends  EED_Module {
      */
     public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
-        \EventEspresso\core\libraries\iframe_display\Iframe::eventListIframeEmbedButton(
+        // todo add doing_it_wrong() notice during next major version
+        return \EventEspresso\core\libraries\iframe_display\Iframe::eventListIframeEmbedButton(
             $permalink_string,
             $id,
             $new_title,
@@ -177,6 +222,54 @@ class EED_Ticket_Selector extends  EED_Module {
         );
     }
 
+
+
+    /**
+     * @deprecated
+     * @param int    $ID
+     * @param string $external_url
+     * @return string
+     */
+    public static function ticket_selector_form_open($ID = 0, $external_url = '')
+    {
+        // todo add doing_it_wrong() notice during next major version
+        return EED_Ticket_Selector::ticketSelector()->formOpen($ID, $external_url);
+    }
+
+
+
+    /**
+     * @deprecated
+     * @return string
+     */
+    public static function ticket_selector_form_close()
+    {
+        // todo add doing_it_wrong() notice during next major version
+        return EED_Ticket_Selector::ticketSelector()->formClose();
+    }
+
+
+
+    /**
+     * @deprecated
+     * @return string
+     */
+    public static function no_tkt_slctr_end_dv()
+    {
+        // todo add doing_it_wrong() notice during next major version
+        return EED_Ticket_Selector::ticketSelector()->noTicketSelectorEndDiv();
+    }
+
+
+
+    /**
+     * @deprecated
+     */
+    public static function load_tckt_slctr_assets_admin()
+    {
+        // todo add doing_it_wrong() notice during next major version
+        \EventEspresso\core\libraries\iframe_display\Iframe::EventsAdminEmbedButtonAssets();
+    }
 
 
 }
