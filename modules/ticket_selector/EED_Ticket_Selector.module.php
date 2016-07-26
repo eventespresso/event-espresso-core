@@ -166,11 +166,13 @@ class EED_Ticket_Selector extends  EED_Module {
      * @param string $new_slug
      * @return string
      */
-    public static function iframe_code_button($permalink_string, $id, $new_title, $new_slug)
+    public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
         \EventEspresso\core\libraries\iframe_display\Iframe::eventListIframeEmbedButton(
             $permalink_string,
             $id,
+            $new_title,
+            $new_slug,
             'ticket_selector'
         );
     }
