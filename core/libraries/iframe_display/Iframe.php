@@ -291,7 +291,9 @@ class Iframe {
 		// add button for iframe code to event editor.
 		add_filter(
 			'get_sample_permalink_html',
-			array('\EventEspresso\core\libraries\iframe_display\Iframe', 'eventListIframeEmbedButton'),
+			function($permalink_string, $id, $new_title, $new_slug) use($route_name) {
+                return Iframe::eventListIframeEmbedButton($permalink_string, $id, $new_title, $new_slug, $route_name);
+            },
 			10, 2
 		);
 		add_action(
@@ -308,10 +310,12 @@ class Iframe {
      *
      * @param string $permalink_string
      * @param int    $id
+     * @param string $new_title (unused)
+     * @param string $new_slug (unused)
      * @param string $route_name the named module route that generates the iframe
      * @return string
      */
-	public static function eventListIframeEmbedButton($permalink_string, $id, $route_name) {
+	public static function eventListIframeEmbedButton($permalink_string, $id, $new_title, $new_slug, $route_name = '') {
         //make sure this is ONLY when editing and the event id has been set.
         if ( ! empty($id)) {
             $post = get_post($id);
