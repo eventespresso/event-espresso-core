@@ -334,8 +334,7 @@ class Iframe
         $new_title = '',
         $new_slug = '',
         $route_name = ''
-    )
-    {
+    ) {
         //make sure this is ONLY when editing and the event id has been set.
         if ( ! empty($id)) {
             $post = get_post($id);
