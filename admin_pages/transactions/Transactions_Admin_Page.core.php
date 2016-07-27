@@ -252,6 +252,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		EE_Registry::$i18n_js_strings[ 'error_occurred' ] = esc_html__( 'An error occurred! Please refresh the page and try again.', 'event_espresso' );
 		EE_Registry::$i18n_js_strings[ 'txn_status_array' ] = self::$_txn_status;
 		EE_Registry::$i18n_js_strings[ 'pay_status_array' ] = self::$_pay_status;
+		EE_Registry::$i18n_js_strings[ 'payments_total' ] = esc_html__( 'Payments Total', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'transaction_overpaid' ] = esc_html__( 'This transaction has been overpaid ! Payments Total', 'event_espresso' );
 	}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
