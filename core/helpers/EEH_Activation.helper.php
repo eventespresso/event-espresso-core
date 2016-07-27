@@ -1571,20 +1571,12 @@ class EEH_Activation {
 		}
 	}
 
-
-
 	/**
-	 * plugin_uninstall
-	 *
-	 * @access public
-	 * @static
-	 * @param bool $remove_all
+	 * Deletes all EE custom tables
 	 * @return void
 	 */
-	public static function delete_all_espresso_tables_and_data( $remove_all = true ) {
-		global $wpdb;
-		$undeleted_tables = array();
-
+	public static function drop_espresso_tables() {
+		$tables = array();
 		// load registry
 		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
 			if ( method_exists( $model_name, 'instance' )) {
@@ -1592,16 +1584,7 @@ class EEH_Activation {
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )) {
-							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case false :
-									$undeleted_tables[] = $table->get_table_name();
-								break;
-								case 0 :
-									// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-								break;
-								default:
-									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successfully <br /></h4>';
-							}
+							$tables[] = $table->get_table_name();
 						}
 					}
 				}
@@ -1618,9 +1601,31 @@ class EEH_Activation {
 			'esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
-			EEH_Activation::delete_db_table_if_empty( $table );
+			if ( EEH_Activation::db_table_is_empty( $table ) ) {
+				$tables[] = $table;
+			}
 		}
+		EEH_Activation::drop_tables( $tables );
+	}
 
+	public static function drop_tables( $table_names ) {
+		foreach( $table_names as $key => $table_name ) {
+			$table_names[ $key ] = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+		}
+		global $wpdb;
+		return $wpdb->query( 'DROP TABLE IF EXISTS ' . implode( ', ', $table_names ) );
+	}
+	/**
+	 * plugin_uninstall
+	 *
+	 * @access public
+	 * @static
+	 * @param bool $remove_all
+	 * @return void
+	 */
+	public static function delete_all_espresso_tables_and_data( $remove_all = true ) {
+		global $wpdb;
+		self::drop_espresso_tables();
 
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => true,
@@ -1690,13 +1695,6 @@ class EEH_Activation {
 		}
 
 		$errors = '';
-		if ( ! empty( $undeleted_tables )) {
-			$errors .= sprintf(
-				__( 'The following tables could not be deleted: %s%s', 'event_espresso' ),
-				'<br/>',
-				implode( ',<br/>', $undeleted_tables )
-			);
-		}
 		if ( ! empty( $undeleted_options )) {
 			$errors .= ! empty( $undeleted_tables ) ? '<br/>' : '';
 			$errors .= sprintf(
