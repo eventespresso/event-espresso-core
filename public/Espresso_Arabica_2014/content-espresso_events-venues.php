@@ -26,7 +26,7 @@ if (
 <?php endif;  ?>
 <?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php _e( 'Venue Website:', 'event_espresso' ); ?> </strong></span><?php echo $venue_website; ?>
+		<span class="small-text"><strong><?php _e( 'Venue Website:', 'event_espresso' ); ?></strong></span> <?php echo $venue_website; ?>
 	</p>
 <?php endif; ?>
 <?php  if ( espresso_venue_has_address( $post->ID )) : ?>
