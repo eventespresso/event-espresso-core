@@ -1605,15 +1605,28 @@ class EEH_Activation {
 				$tables[] = $table;
 			}
 		}
-		EEH_Activation::drop_tables( $tables );
+		return EEH_Activation::drop_tables( $tables );
 	}
 
+	/**
+	 * Drops all the tables mentioned in a single MYSQL query. Double-checks
+	 * each table name provided has a wpdb prefix attached, and that it exists.
+	 * Returns the list actually deleted
+	 * @global WPDB $wpdb
+	 * @param type $table_names
+	 * @return array of table names which we deleted
+	 */
 	public static function drop_tables( $table_names ) {
+		$tables_to_delete = array();
 		foreach( $table_names as $key => $table_name ) {
-			$table_names[ $key ] = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+			$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+			if( EEH_Activation::table_exists( $table_name ) ) {
+				$tables_to_delete[] = $table_name;
+			}
 		}
 		global $wpdb;
-		return $wpdb->query( 'DROP TABLE IF EXISTS ' . implode( ', ', $table_names ) );
+		$wpdb->query( 'DROP TABLE ' . implode( ', ', $tables_to_delete ) );
+		return $tables_to_delete;
 	}
 	/**
 	 * plugin_uninstall
@@ -1696,7 +1709,6 @@ class EEH_Activation {
 
 		$errors = '';
 		if ( ! empty( $undeleted_options )) {
-			$errors .= ! empty( $undeleted_tables ) ? '<br/>' : '';
 			$errors .= sprintf(
 				__( 'The following wp-options could not be deleted: %s%s', 'event_espresso' ),
 				'<br/>',
