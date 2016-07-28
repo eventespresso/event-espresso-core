@@ -38,16 +38,29 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page {
 
 
 
+	/**
+	 * get registrations for given parameters (used by list table)
+	 *
+	 * @param  int     $per_page how many registrations displayed per page
+	 * @param  boolean $count return the count or objects
+	 * @param  boolean $this_month whether to return for just this month
+	 * @param  boolean $today whether to return results for just today
+	 * @throws \EE_Error
+	 * @return mixed (int|array)  int = count || array of registration objects
+	 */
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
-			$this->_req_data = array_merge( $_POST, $_REQUEST );
+			$this->_req_data = array_merge( $_POST, $_GET );
 			return parent::get_registrations( $per_page, $count, $this_month, $today );
 	}
 
 
+
 	/**
 	 * Mock for _set_registration_status_from_request
+	 *
 	 * @param bool|false $status
 	 * @param bool|false $notify
+	 * @return array
 	 */
 	public function set_registration_status_from_request( $status = false, $notify = false ) {
 		$this->_req_data = array_merge( $_POST, $_REQUEST );

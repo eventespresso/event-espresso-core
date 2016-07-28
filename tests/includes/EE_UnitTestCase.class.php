@@ -331,7 +331,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		switch ( $page ) {
 			case 'decaf_events' :
-				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+			case 'events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Mock.php';
 				break;
 			case 'registrations' :
 				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
@@ -910,7 +911,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
-		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$txn = $this->new_model_obj_with_dependencies( 'Transaction', array( 'TXN_paid' => 0 ) );
 		$total_line_item = EEH_Line_Item::create_total_line_item( $txn->ID() );
 		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );

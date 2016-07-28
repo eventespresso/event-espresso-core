@@ -103,12 +103,15 @@ final class EE_System {
 	 */
 	public static function reset(){
 		self::$_instance->_req_type = NULL;
+
+		//make sure none of the old hooks are left hanging around
+		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' );
+
 		//we need to reset the migration manager in order for it to detect DMSs properly
 		EE_Data_Migration_Manager::reset();
-		//make sure none of the old hooks are left hanging around
-		remove_all_actions( 'AHEE__EE_System__perform_activations_upgrades_and_migrations');
 		self::instance()->detect_activations_or_upgrades();
 		self::instance()->perform_activations_upgrades_and_migrations();
+
 		return self::instance();
 	}
 
@@ -232,9 +235,6 @@ final class EE_System {
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type =  $this->detect_req_type($espresso_db_update);
 		//EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
-		if( $request_type != EE_System::req_type_normal){
-			$this->registry->load_helper('Activation');
-		}
 
 		switch($request_type){
 			case EE_System::req_type_new_activation:
@@ -685,6 +685,7 @@ final class EE_System {
 		add_action( 'init', array( $this, 'initialize' ), 10 );
 		add_action( 'init', array( $this, 'initialize_last' ), 100 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		add_action('admin_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 
 		if ( is_admin() && apply_filters( 'FHEE__EE_System__brew_espresso__load_pue', TRUE )  ) {
@@ -781,9 +782,6 @@ final class EE_System {
 		} else if ( ! EE_FRONT_AJAX ) {
 			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
-		} else if ( EE_Maintenance_Mode::instance()->level() ) {
-			// still need to make sure template helper functions are loaded in M-Mode
-			$this->registry->load_helper( 'Template' );
 		}
 		do_action( 'AHEE__EE_System__load_controllers__complete' );
 	}
@@ -925,7 +923,6 @@ final class EE_System {
 		}
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->registry->load_helper( 'URL' );
 		$menu_class = 'espresso_menu_item_class';
 		//we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
 		//because they're only defined in each of their respective constructors
@@ -1281,6 +1278,8 @@ final class EE_System {
 				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery' ), '1.15.0', TRUE );
 				wp_register_script( 'jquery-validate-extra-methods', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js', array( 'jquery', 'jquery-validate' ), '1.15.0', TRUE );
 			}
+			wp_register_script( 'select2', EE_GLOBAL_ASSETS_URL . 'scripts/select2.min.js', array(), '4.0.2', true );
+			wp_register_style( 'select2', EE_GLOBAL_ASSETS_URL . 'css/select2.min.css', array(), '4.0.2', 'all' );
 		}
 	}
 

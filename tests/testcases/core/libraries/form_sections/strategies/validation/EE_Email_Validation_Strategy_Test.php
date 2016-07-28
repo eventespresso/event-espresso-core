@@ -46,7 +46,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 		}
 		try {
 			$this->_validator->validate( $email_address );
-			EE_UnitTestCase::assertTrue(
+			$this->assertTrue(
 				$success,
 				sprintf(
 					'Email addy #%1$s "%2$s" passed validation when it should have failed.',
@@ -55,7 +55,7 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 				)
 			);
 		} catch ( EE_Validation_Error $e ) {
-			EE_UnitTestCase::assertTrue(
+			$this->assertTrue(
 				$fail,
 				sprintf(
 					'Email addy #%1$s "%2$s" failed validation when it should have passed.',
@@ -304,13 +304,13 @@ class EE_Email_Validation_Strategy_Test extends EE_UnitTestCase{
 		EE_Registry::instance()->CFG->registration->email_validation_level = 'i18n_dns';
 		$bad_addys = array(
 			// no MX records (bogus addresses)
-			'valid-but-not-real@example.com',
+			'valid-but-not-real@siiiiiiiiiiiiiiite.com',
 			'developers@eventespresso.museum',
 			'用户@例子.广告', // ( Chinese, Unicode )
 			'उपयोगकर्ता@उदाहरण.कॉम', // ( Hindi, Unicode )
 			'юзер@екзампл.ком', // ( Ukrainian, Unicode )
 			'θσερ@εχαμπλε.ψομ', // ( Greek, Unicode )
-			'Dörte@Sörensen.example.com', // ( German, Unicode )
+			'Dörte@Sörensen.staaaaaaaandooooooooort.com', // ( German, Unicode )
 		);
 		foreach ( $bad_addys as $count => $bad_addy ) {
 			$this->validate_email_address( $count, $bad_addy, false );

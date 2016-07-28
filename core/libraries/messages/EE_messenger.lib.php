@@ -641,8 +641,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( $send ) {
 			//are we overriding any existing template fields?
 			$settings = $this->get_existing_test_settings();
-			if ( !empty( $settings ) ) {
-				foreach( $settings as $field => $value ) {
+			if ( ! empty( $settings ) ) {
+				foreach ( $settings as $field => $value ) {
 					$this->_set_template_value( $field, $value );
 				}
 			}
@@ -732,8 +732,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//add message type to template args
 		$this->_template_args['message_type'] = $this->_incoming_message_type;
 
-		//require template helper
-		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 

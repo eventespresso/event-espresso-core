@@ -139,8 +139,6 @@ class EED_Add_New_State  extends EED_Module {
 		$input = $question_group_reg_form->get_subsection( 'state' );
 		// we're only doing this for state select inputs
 		if ( $input instanceof EE_State_Select_Input ) {
-			// load helpers
-			EE_Registry::instance()->load_helper( 'HTML' );
 			// grab any set values from the request
 			$country_name = str_replace( 'state', 'nsmf_new_state_country', $input->html_name() );
 			$state_name = str_replace( 'state', 'nsmf_new_state_name', $input->html_name() );

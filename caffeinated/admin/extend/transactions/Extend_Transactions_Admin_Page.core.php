@@ -100,7 +100,6 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		wp_register_script( 'ee-txn-reports-js', TXN_CAF_ASSETS_URL . 'ee-transaction-admin-reports.js', array( 'google-charts' ), EVENT_ESPRESSO_VERSION, true );
 		wp_enqueue_script( 'ee-txn-reports-js' );
 		$this->_transaction_reports_js_setup();
-		EE_Registry::instance()->load_helper('Money');
 		EE_Registry::$i18n_js_strings['currency_format'] = EEH_Money::get_format_for_google_charts();
 	}
 
@@ -163,13 +162,12 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			}
 
 			//setup the date range.
-			EE_Registry::instance()->load_helper( 'DTT_Helper' );
 			$beginning_date = new DateTime( 'now' . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 			$ending_date = new DateTime( 'now', new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
 		}
 
-		$report_title = __( 'Total Revenue per Day' );
+		$report_title = esc_html__( 'Total Revenue per Day', 'event_espresso' );
 
 		$report_params = array(
 			'title' 		=> $report_title,
@@ -214,13 +212,12 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			}
 
 			//setup the date range.
-			EE_Registry::instance()->load_helper( 'DTT_Helper' );
 			$beginning_date = new DateTime( 'now' . $period, new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 			$ending_date = new DateTime( 'now', new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
 			$subtitle = sprintf( _x( 'For the period: %s to %s', 'Used to give date range', 'event_espresso' ), $beginning_date->format( 'Y-m-d' ), $ending_date->format( 'Y-m-d' ) );
 		}
 
-		$report_title = __( 'Total Revenue per Event' );
+		$report_title = esc_html__( 'Total Revenue per Event', 'event_espresso' );
 
 		$report_params = array(
 			'title' 		=> $report_title,

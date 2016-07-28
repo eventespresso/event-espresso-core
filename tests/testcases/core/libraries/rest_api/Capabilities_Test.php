@@ -18,6 +18,11 @@ class Capabilities_Test extends \EE_UnitTestCase{
 	function setUp(){
 		parent::setUp();
 		add_filter( 'FHEE__EE_REST_API_Controller_Model_Read__get_permissions', array( $this, 'set_some_restrictions_for_tests', ) );
+		if ( ! class_exists( 'WP_Rest_Request' ) ) {
+			$this->markTestSkipped(
+				'Test being run on a version of WP that does not have the REST framework installed'
+			);
+		}
 	}
 
 

@@ -50,7 +50,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_DUE_DATE_*]' => __( 'This is a special dynamic shortcode that allows one to output a payment due date.  It will only result in a date shown if there is money owing.  Three parameters are available on this shortcode:', 'event_espresso' )
 				. '<ul>'
 				. '<li>' . sprintf( __( '%sformat:%s This is used to indicate what format the date is in.  Default is whatever is set as date formats for your website.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
-				. '<li>' . sprintf( __( '%days_until_due:%s This is the number of days form the transaction creation date that the payment is due.  Defaults to 30.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
+				. '<li>' . sprintf( __( '%sdays_until_due:%s This is the number of days form the transaction creation date that the payment is due.  Defaults to 30.', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>'
 				. '<li>' . sprintf( __( '%sprefix_text:%s You can use this to indicate what text will prefix the date string.  Defaults to "Payment in full due by:"', 'event_espresso' ), '<strong>', '</strong>' ) . '</li>',
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
@@ -85,8 +85,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-
-		EE_Registry::instance()->load_helper( 'Template' );
 
 		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
 		$transaction = $this->_data->txn instanceof EE_Transaction ? $this->_data->txn : null;

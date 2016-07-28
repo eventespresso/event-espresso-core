@@ -12,11 +12,11 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 	/**
 	 * Number of seconds between batch sends/generates on the cron job.
-	 * Defaults to 10 minutes in seconds.  If you want to change this interval, you can use the native WordPress
+	 * Defaults to 5 minutes in seconds.  If you want to change this interval, you can use the native WordPress
 	 * `cron_schedules` filter and modify the existing custom `ee_message_cron` schedule interval added.
 	 * @type int
 	 */
-	const message_cron_schedule = 600;
+	const message_cron_schedule = 300;
 
 	/**
 	 * Constructor
@@ -47,7 +47,7 @@ class EE_Messages_Scheduler extends EE_BASE {
 	public function custom_schedules( $schedules ) {
 		$schedules['ee_message_cron'] = array(
 			'interval' => self::message_cron_schedule,
-			'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 10 minutes)', 'event_espresso' )
+			'display' => __( 'This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)', 'event_espresso' )
 		);
 		return $schedules;
 	}
@@ -71,26 +71,62 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * @param string $task  The task the request is being generated for.
 	 */
 	public static function initiate_scheduled_non_blocking_request( $task ) {
-		//create nonce (this ensures that only valid requests are accepted)
-		$nonce = wp_create_nonce( 'EE_Messages_Scheduler_' . $task );
-		$request_url = add_query_arg(
-			array(
-				'ee' => 'msg_cron_trigger',
-				'type' => $task,
-				'_nonce' => $nonce,
-			),
-			site_url()
-		);
-		$request_args = array(
-			'timeout' => 300,
-			'blocking' => ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? true : false,
-			'sslverify' => false,
-			'redirection' => 10,
-		);
-		$response = wp_remote_get( $request_url, $request_args );
-		if ( is_wp_error( $response ) ) {
-			trigger_error( $response->get_error_message() );
+		if ( apply_filters( 'EE_Messages_Scheduler__initiate_scheduled_non_blocking_request__do_separate_request', true ) ) {
+			$request_url  = add_query_arg(
+				array_merge(
+					array( 'ee' => 'msg_cron_trigger' ),
+					EE_Messages_Scheduler::get_request_params( $task )
+				),
+				site_url()
+			);
+			$request_args = array(
+				'timeout'     => 300,
+				'blocking'    => ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ? true : false,
+				'sslverify'   => false,
+				'redirection' => 10,
+			);
+			$response     = wp_remote_get( $request_url, $request_args );
+			if ( is_wp_error( $response ) ) {
+				trigger_error( $response->get_error_message() );
+			}
+		} else {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( $task );
 		}
+	}
+
+
+
+	/**
+	 * This returns
+	 * the request params used for a scheduled message task request.
+	 *
+	 * @param string $task The task the request is for.
+	 * @return array
+	 */
+	public static function get_request_params( $task ) {
+		//transient is used for flood control on msg_cron_trigger requests
+		$transient_key = 'ee_trans_' . uniqid( $task );
+		set_transient( $transient_key, 1, 5 * MINUTE_IN_SECONDS );
+		return array(
+			'type' => $task,
+			'key' => $transient_key,
+		);
+	}
+
+
+
+
+	/**
+	 * This is used to execute an immediate call to the run_cron task performed by EED_Messages
+	 * @param string $task The task the request is being generated for.
+	 */
+	public static function initiate_immediate_request_on_cron( $task ) {
+		$request_args = EE_Messages_Scheduler::get_request_params( $task );
+		//set those request args in the request so it gets picked up
+		foreach ( $request_args as $request_key => $request_value ) {
+			EE_Registry::instance()->REQ->set( $request_key, $request_value );
+		}
+		EED_Messages::instance()->run_cron();
 	}
 
 
@@ -101,7 +137,15 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__generation wp cron event
 	 */
 	public static function batch_generation() {
-		EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( 'generate' );
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
+		 */
+		if (
+			! apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
+		}
 	}
 
 
@@ -111,7 +155,15 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__sending
 	 */
 	public static function batch_sending() {
-		EE_Messages_Scheduler::initiate_scheduled_non_blocking_request( 'send' );
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
+		 */
+		if (
+			! apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
+		}
 	}
 
 } //end EE_Messages_Scheduler

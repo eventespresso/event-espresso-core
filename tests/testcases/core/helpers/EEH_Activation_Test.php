@@ -23,13 +23,13 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * The purpose of this test is to ensure that generation of default templates works as expected.
 	 *
 	 * @since 4.5.0
+	 * @group failing
 	 */
 	public function test_generate_default_message_templates() {
 		/**
 		 * Testing default messengers setup on activation (or introduction on migration)
 		 */
 		//first let's make sure all message templates got setup on new install as they should be.
-		EE_Registry::instance()->load_helper( 'Activation' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		// messengers that have been activated and verified installed
@@ -60,6 +60,12 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		//  The html messenger should STICK and NOT be activated.
 		$message_resource_manager->deactivate_messenger( 'html' );
 
+		//do the same for message type
+		$message_resource_manager->deactivate_message_type_for_messenger( 'not_approved', 'email' );
+
+		//Reset messages to test stickiness
+		EE_Registry::reset();
+
 		$activated_response = EEH_Activation::generate_default_message_templates();
 
 		//verify we got a response (html should not have templates generated)
@@ -68,6 +74,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		// double check we still don't have html in the active messengers array
 		$active_messengers = $message_resource_manager->get_active_messengers_option( true );
 		$this->assertFalse( isset( $active_messengers['html'] ) );
+		$this->assertFalse( $message_resource_manager->is_message_type_active_for_messenger( 'email', 'not_approved' ) );
 	}
 
 
@@ -84,7 +91,6 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 	 * @group 7595
 	 */
 	public function test_filtered_default_message_types_on_activation() {
-		EE_Registry::instance()->load_helper( 'Activation' );
 		/** @type EE_Message_Resource_Manager $message_resource_manager */
 		$message_resource_manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
 		//let's clear out all active messengers to get an accurate test of initial generation of message templates.
@@ -242,6 +248,21 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 			self::current_cron_task_name => 'hourly',
 			self::expired_cron_task_name => EEH_Activation::cron_task_no_longer_in_use
 		);
+	}
+	
+	/**
+	 * @group current
+	 */
+	function test_table_exists__success() {
+		$this->assertTrue( EEH_Activation::table_exists( 'posts' ) );
+		$this->assertTrue( EEH_Activation::table_exists( 'esp_attendee_meta' ) );
+	}
+	
+	/**
+	 * @group current
+	 */
+	function test_table_exists__false() {
+		$this->assertFalse( EEH_Activation::table_exists( 'monkeys' ) );
 	}
 
 

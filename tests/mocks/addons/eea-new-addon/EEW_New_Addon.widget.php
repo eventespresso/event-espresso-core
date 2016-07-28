@@ -56,7 +56,6 @@ class EEW_New_Addon extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );
 
 		// Set up some default widget settings.

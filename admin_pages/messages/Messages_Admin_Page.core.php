@@ -108,21 +108,21 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-
 	/**
 	 * get_messengers_for_list_table
 	 *
 	 * @return array
+	 * @throws \EE_Error
 	 */
 	public function get_messengers_for_list_table() {
 		$m_values = array();
-		$messengers = $this->_message_resource_manager->active_messengers();
+		$active_messengers = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_messenger' ) );
 		//setup messengers for selects
 		$i = 1;
-		foreach ( $messengers as $messenger_name => $messenger ) {
-			if ( $messenger instanceof EE_messenger ) {
-				$m_values[ $i ][ 'id' ] = $messenger_name;
-				$m_values[ $i ][ 'text' ] = ucwords( $messenger->label[ 'singular' ] );
+		foreach ( $active_messengers as $active_messenger ) {
+			if ( $active_messenger instanceof EE_Message ) {
+				$m_values[ $i ]['id'] = $active_messenger->messenger();
+				$m_values[ $i ]['text'] = ucwords( $active_messenger->messenger_label() );
 				$i++;
 			}
 		}
@@ -131,24 +131,49 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-
 	/**
-	 * get_messengers_for_list_table
+	 * get_message_types_for_list_table
 	 *
 	 * @return array
-	*/
+	 * @throws \EE_Error
+	 */
 	public function get_message_types_for_list_table() {
 		$mt_values = array();
-		$message_types = $this->_message_resource_manager->installed_message_types();
+		$active_messages = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_message_type' ) );
 		$i = 1;
-		foreach ( $message_types as $message_type_name => $message_type ) {
-			if ( $message_type instanceof EE_message_type ) {
-				$mt_values[ $i ][ 'id' ] = $message_type_name;
-				$mt_values[ $i ][ 'text' ] = ucwords( $message_type->label[ 'singular' ] );
+		foreach ( $active_messages as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$mt_values[ $i ]['id'] = $active_message->message_type();
+				$mt_values[ $i ]['text'] = ucwords( $active_message->message_type_label() );
 				$i++;
 			}
 		}
 		return $mt_values;
+	}
+
+
+
+	/**
+	 * get_contexts_for_message_types_for_list_table
+	 *
+	 * @return array
+	 * @throws \EE_Error
+	 */
+	public function get_contexts_for_message_types_for_list_table() {
+		$contexts = array();
+		$active_message_contexts = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_context' ) );
+		foreach ( $active_message_contexts as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$message_type = $active_message->message_type_object();
+				if ( $message_type instanceof EE_message_type ) {
+					$message_type_contexts = $message_type->get_contexts();
+					foreach ( $message_type_contexts as $context => $context_details ) {
+						$contexts[ $context ] = $context_details['label'];
+					}
+				}
+			}
+		}
+		return $contexts;
 	}
 
 
@@ -203,7 +228,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_message_queue_list_table',
-				'capability' => 'ee_read_messages'
+				'capability' => 'ee_read_global_messages'
 			),
 			'global_mtps'=> array(
 				'func' => '_ee_default_messages_overview_list_table',
@@ -292,6 +317,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'func' => '_settings',
 				'capability' => 'manage_options'
 			),
+			'update_global_settings' => array(
+				'func' => '_update_global_settings',
+				'capability' => 'manage_options',
+				'noheader' => true
+			),
 			'generate_now' => array(
 				'func' => '_generate_now',
 				'capability' => 'ee_send_message',
@@ -341,7 +371,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 				),
 				'list_table' => 'EE_Message_List_Table',
-				'qtips' => array( 'EE_Message_List_Table_Tips' ),
+				// 'qtips' => array( 'EE_Message_List_Table_Tips' ),
 				'require_nonce' => false
 			),
 			'global_mtps' => array(
@@ -718,7 +748,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		foreach ( EEM_Message::instance()->all_statuses() as $status ) {
-			if ( $status === EEM_Message::status_debug_only && ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) ) {
+			if ( $status === EEM_Message::status_debug_only && ! EEM_Message::debug() ) {
 				continue;
 			}
 			$status_bulk_actions = $common_bulk_actions;
@@ -820,7 +850,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'desc' => EEH_Template::pretty_status( EEM_Message::status_retry, false, 'sentence' )
 				)
 		);
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		if ( EEM_Message::debug() ) {
 			$status_items['debug_only_status'] = array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_debug_only,
 				'desc' => EEH_Template::pretty_status( EEM_Message::status_debug_only, false, 'sentence' )
@@ -2489,7 +2519,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _settings() {
 
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 
 		$this->_set_m_mt_settings();
 
@@ -2704,11 +2733,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			add_meta_box(
 				'espresso_' . $msgr . '_settings',
 				$label,
-				create_function(
-					'$post, $metabox',
-					'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
-				),
-				$this->_current_screen_id,
+				function( $post, $metabox ) {
+					echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );
+				},
+				$this->_current_screen->id,
 				'normal',
 				'high',
 				$callback_args
@@ -2725,17 +2753,121 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			add_meta_box(
 				'espresso_' . $mt . '_inactive_mts',
 				$label,
-				create_function(
-					'$post, $metabox',
-					'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'
-				),
-				$this->_current_screen_id,
+				function( $post, $metabox ) {
+					echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );
+				},
+				$this->_current_screen->id,
 				'side',
 				'high',
 				$callback_args
 			);
 		}
 
+		//register metabox for global messages settings but only when on the main site.  On single site installs this will
+		//always result in the metabox showing, on multisite installs the metabox will only show on the main site.
+		if ( is_main_site() ) {
+			add_meta_box(
+				'espresso_global_message_settings',
+				__( 'Global Message Settings', 'event_espresso' ),
+				array( $this, 'global_messages_settings_metabox_content' ),
+				$this->_current_screen->id,
+				'normal',
+				'low',
+				array()
+			);
+		}
+
+	}
+
+
+
+
+	/**
+	 *  This generates the content for the global messages settings metabox.
+	 * @return string
+	 */
+	public function global_messages_settings_metabox_content() {
+		$form = $this->_generate_global_settings_form();
+		echo $form->form_open(
+			$this->add_query_args_and_nonce( array( 'action' => 'update_global_settings' ), EE_MSG_ADMIN_URL ),
+			'POST'
+		)
+		. $form->get_html()
+		. $form->form_close();
+	}
+
+
+	/**
+	 * This generates and returns the form object for the global messages settings.
+	 * @return EE_Form_Section_Proper
+	 */
+	protected function _generate_global_settings_form() {
+		EE_Registry::instance()->load_helper( 'HTML' );
+		/** @var EE_Network_Core_Config $network_config */
+		$network_config = EE_Registry::instance()->NET_CFG->core;
+		return new EE_Form_Section_Proper(
+			array(
+				'name' => 'global_messages_settings',
+				'html_id' => 'global_messages_settings',
+				'html_class' => 'form-table',
+				'layout_strategy' => new EE_Admin_Two_Column_Layout(),
+				'subsections' => apply_filters(
+					'FHEE__Messages_Admin_Page__global_messages_settings_metabox_content__form_subsections',
+					array(
+						'do_messages_on_same_request' => new EE_Select_Input(
+							array(
+								true =>  __("On the same request", "event_espresso"),
+								false =>  __("On a separate request", "event_espresso")
+							),
+							array(
+								'default' => $network_config->do_messages_on_same_request,
+								'html_label_text' => __( 'Generate and send all messages:', 'event_espresso' ),
+								'html_help_text' => __( 'By default the messages system uses a more efficient means of processing messages on separate requests and utilizes the wp-cron scheduling system.  This makes things execute faster for people registering for your events.  However, if the wp-cron system is disabled on your site and there is no alternative in place, then you can change this so messages are always executed on the same request.', 'event_espresso' ),
+							)
+						),
+						'update_settings' => new EE_Submit_Input(
+							array(
+								'default' => __( 'Update', 'event_espresso' ),
+								'html_label_text' => '&nbsp'
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+
+
+	/**
+	 * This handles updating the global settings set on the admin page.
+	 * @throws \EE_Error
+	 */
+	protected function _update_global_settings() {
+		/** @var EE_Network_Core_Config $network_config */
+		$network_config = EE_Registry::instance()->NET_CFG->core;
+		$form = $this->_generate_global_settings_form();
+		if ( $form->was_submitted() ) {
+			$form->receive_form_submission();
+			if ( $form->is_valid() ) {
+				$valid_data = $form->valid_data();
+				foreach( $valid_data as $property => $value ) {
+					$setter = 'set_' . $property;
+					if ( method_exists( $network_config, $setter ) ) {
+						$network_config->{$setter}( $value );
+					} else if (
+						property_exists( $network_config, $property )
+						&& $network_config->{$property} !== $value
+					) {
+						$network_config->{$property} = $value;
+					}
+				}
+				//only update if the form submission was valid!
+				EE_Registry::instance()->NET_CFG->update_config( true, false );
+				EE_Error::overwrite_success();
+				EE_Error::add_success( __( 'Global message settings were updated', 'event_espresso' ) );
+			}
+		}
+		$this->_redirect_after_action( 0, '', '', array( 'action' => 'settings' ), true );
 	}
 
 

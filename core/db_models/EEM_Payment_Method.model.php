@@ -247,7 +247,6 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @param EE_Payment_Method[] $payment_methods. If NULL is provided defaults to all payment methods active in the cart
 	 */
 	function verify_button_urls( $payment_methods = NULL ) {
-		EE_Registry::instance()->load_helper( 'URL' );
 		$payment_methods = is_array( $payment_methods ) ? $payment_methods : $this->get_all_active(EEM_Payment_Method::scope_cart);
 		foreach ( $payment_methods as $payment_method ) {
 			try {
@@ -311,7 +310,8 @@ class EEM_Payment_Method extends EEM_Base {
 				//which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue
 				//its scripts). but for backwards-compat we should continue to do that
 				$payment_method->type_obj();
-			} else {				
+			} elseif( $payment_method->active() ) {				
+				//only deactivate and notify the admin if the payment is active somewhere
 				$payment_method->deactivate();
 				$payment_method->save();
 				EE_Error::add_persistent_admin_notice(

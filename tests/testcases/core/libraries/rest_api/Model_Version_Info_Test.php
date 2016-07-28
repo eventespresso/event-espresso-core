@@ -17,6 +17,16 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  */
 class Model_Version_Info_Test extends \EE_UnitTestCase{
+	
+	public function setUp() {
+		parent::setUp();
+		if ( ! class_exists( 'WP_Rest_Request' ) ) {
+			$this->markTestSkipped(
+				'Test being run on a version of WP that does not have the REST framework installed'
+			);
+		}
+	}
+	
 	/**
 	 * pretend currently we're on 4.9, but they send in a request for 4.8. So this
 	 * shoudl return all the changes from 4.9
@@ -26,17 +36,6 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 		$model_info = new Model_Version_Info( '4.8.29' );
 		$changes = $model_info->model_changes_between_requested_version_and_current();
 		$this->assertArrayNotHasKey( '4.8.29', $changes );
-		$this->assertArrayHasKey( '4.9.0', $changes );
-	}
-
-	function test_get_all_models_for_requested_version__no_message_model_in_48(){
-		//pretend we are at version 4.9, and have the Registration_Payment model
-		//but the request is for 4.6, where there was no such model
-		$this->_pretend_current_version_49();
-
-		$model_info = new Model_Version_Info( '4.8.29' );
-		$models = $model_info->models_for_requested_version();
-		$this->assertArrayNotHasKey( 'Message', $models );
 	}
 
 	/**

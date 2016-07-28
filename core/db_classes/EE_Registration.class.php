@@ -484,7 +484,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		 *
 		 * @since 4.5.0
 		 */
-		EE_Registry::instance()->load_helper('Template');
 		$template_relative_path = 'modules/gateways/Invoice/lib/templates/receipt_body.template.php';
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
@@ -508,7 +507,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		 *
 		 * @since 4.5.0
 		 */
-		EE_Registry::instance()->load_helper('Template');
 		$template_relative_path = 'modules/gateways/Invoice/lib/templates/invoice_body.template.php';
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
@@ -531,10 +529,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * get Registration URL Link
-	 * @access        public
+	 *
+	 * @access public
+	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function reg_url_link() {
-		return $this->get( 'REG_url_link' );
+		return (string)$this->get( 'REG_url_link' );
 	}
 
 
@@ -586,7 +587,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return string
 	 */
 	public function get_admin_edit_url() {
-		EE_Registry::instance()->load_helper( 'URL' );
 		return EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_registrations', 'action' => 'view_registration', '_REG_ID' => $this->ID() ), admin_url( 'admin.php' ) );
 	}
 

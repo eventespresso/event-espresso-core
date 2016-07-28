@@ -430,7 +430,9 @@ abstract class EE_Messages_Validator extends EE_Base {
 					);
 					$err_msg .= sprintf(
 						__( '%2$sValid shortcodes for this field are: %1$s%3$s', 'event_espresso' ),
-						implode( ', ', $v_s )
+						implode( ', ', $v_s ),
+						'<strong>',
+						'</strong>'
 					);
 				}
 			}

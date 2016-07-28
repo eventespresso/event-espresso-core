@@ -393,7 +393,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 		$sql='QST_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					QST_display_text text NOT NULL,
 					QST_admin_label varchar(255) NOT NULL,
-					QST_system varchar(25) DEFAULT NULL,
+					QST_system varchar(25) NOT NULL DEFAULT "",
 					QST_type varchar(25) NOT NULL DEFAULT "TEXT",
 					QST_required tinyint(1) unsigned NOT NULL DEFAULT 0,
 					QST_required_text varchar(100) NULL,
@@ -706,7 +706,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CNT_is_EU" => '%d',
 							"CNT_active" => '%d',
 						);
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
+		if ( EEH_Activation::table_exists( $country_table ) ) {
 			foreach( $newer_countries as $country ) {
 				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
@@ -743,7 +743,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CUR_dec_plc" => '%d',
 							"CUR_active" => '%d',
 						);
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
+		if ( EEH_Activation::table_exists( $currency_table ) ) {
 			foreach( $newer_currencies as $currency ) {
 				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
