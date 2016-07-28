@@ -799,8 +799,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			get_post_type_archive_link('espresso_events'),
 			esc_html__("View Event Archive Page", "event_espresso"),
 			'button'
-		);
-		$this->_display_legend($this->_event_legend_items());
+		) . $this->_display_legend($this->_event_legend_items());
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
