@@ -304,7 +304,7 @@ class Iframe
         // add button for iframe code to event editor.
         add_filter(
             'get_sample_permalink_html',
-            function ($permalink_string, $id, $new_title, $new_slug) use ($route_name) {
+            function ($permalink_string, $id, $new_title = '', $new_slug = '') use ($route_name) {
                 return Iframe::eventListIframeEmbedButton($permalink_string, $id, $new_title, $new_slug, $route_name);
             },
             10, 2
