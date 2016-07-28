@@ -357,32 +357,30 @@ class Iframe
     /**
      * Adds an iframe embed code button to the Event editor.
      *
-     * @param string $route_name the named module route that generates the iframe
+     * return string
      */
-    public static function addEventListIframeEmbedButton($route_name)
+    public static function addEventListIframeEmbedButton()
     {
         // add button for iframe code to event editor.
-        add_action(
-            'AHEE__admin_list_wrapper_template__after_list_table',
-            function ($page_slug) use ($route_name) {
-                //make sure this is ONLY when editing and the event id has been set.
-                if ($page_slug === 'espresso_events') {
-                    echo \EEH_HTML::h3(__('iFrame Embed Code', 'event_espresso'));
-                    echo \EEH_HTML::p(__('Click the following buttons to generate iframe HTML that will allow you to embed your event content within the content of other websites.',
-                        'event_espresso'));
-                    echo Iframe::embedButtonHtml(
-                        'Events List',
-                        $route_name
-                    );
-                }
-            },
-            10, 1
-        );
-        add_action(
-            'admin_enqueue_scripts',
-            array('\EventEspresso\core\libraries\iframe_display\Iframe', 'EventsAdminEmbedButtonAssets'),
-            10
-        );
+        $iframe_embed = '';
+        //make sure this is ONLY when editing and the event id has been set.
+        if ($_GET['page'] === 'espresso_events') {
+            $iframe_embed .= \EEH_HTML::h3(__('iFrame Embed Code', 'event_espresso'));
+            $iframe_embed .= \EEH_HTML::p(
+                __('Click the following button(s) to generate iframe HTML that will allow you to embed your event content within the content of other websites.',
+                'event_espresso')
+            );
+            $iframe_embed .= ' &nbsp; ' . Iframe::embedButtonHtml(
+                'Events List',
+                'event_list'
+            ) . ' ';
+            add_action(
+                'admin_enqueue_scripts',
+                array('\EventEspresso\core\libraries\iframe_display\Iframe', 'EventsAdminEmbedButtonAssets'),
+                10
+            );
+        }
+        return $iframe_embed;
     }
 
 
