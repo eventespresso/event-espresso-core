@@ -284,10 +284,10 @@ class Iframe
         foreach ($localized_vars as $var_name => $vars) {
             foreach ($vars as $key => $value) {
                 if (is_scalar($value)) {
-                    $localized_vars[$key] = html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
+                    $localized_vars[$var_name][$key] = html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
                 }
             }
-            $JSON .= "/* <![CDATA[ */ var $var_name = " . wp_json_encode($localized_vars) . '; /* ]]> */';
+            $JSON .= "/* <![CDATA[ */ var $var_name = " . wp_json_encode($localized_vars[$var_name]) . '; /* ]]> */';
         }
         return $JSON;
     }
@@ -362,15 +362,15 @@ class Iframe
     public static function addEventListIframeEmbedButton()
     {
         // add button for iframe code to event editor.
-        $iframe_embed = '';
+        $html = '';
         //make sure this is ONLY when editing and the event id has been set.
         if ($_GET['page'] === 'espresso_events') {
-            $iframe_embed .= \EEH_HTML::h3(__('iFrame Embed Code', 'event_espresso'));
-            $iframe_embed .= \EEH_HTML::p(
+            $html .= \EEH_HTML::h3(__('iFrame Embed Code', 'event_espresso'));
+            $html .= \EEH_HTML::p(
                 __('Click the following button(s) to generate iframe HTML that will allow you to embed your event content within the content of other websites.',
                 'event_espresso')
             );
-            $iframe_embed .= ' &nbsp; ' . Iframe::embedButtonHtml(
+            $html .= ' &nbsp; ' . Iframe::embedButtonHtml(
                 'Events List',
                 'event_list'
             ) . ' ';
@@ -380,7 +380,10 @@ class Iframe
                 10
             );
         }
-        return $iframe_embed;
+        return apply_filters(
+            'FHEE__Iframe__addEventListIframeEmbedButton__html',
+            $html
+        );
     }
 
 
@@ -399,6 +402,39 @@ class Iframe
             $action,
             function () use ($iframe_name, $route_name) {
                 echo Iframe::embedButtonHtml($iframe_name, $route_name);
+            },
+            10
+        );
+    }
+
+
+
+    /**
+     * Adds an iframe embed code button via a WP apply_filters() as determined by the first parameter
+     *
+     * @param string $iframe_name
+     * @param string $route_name the named module route that generates the iframe
+     * @param string $filter     name of the WP apply_filters() to hook into
+     * @param bool   $append     if true, will add iframe embed button to end of content,
+     *                           else if false, will add to the beginning of the content
+     */
+    public static function addFilterIframeEmbedButton($iframe_name, $route_name, $filter, $append = true)
+    {
+        // add button for iframe code to event editor.
+        add_action(
+            $filter,
+            function ($filterable_content) use ($iframe_name, $route_name, $append) {
+                $embedButtonHtml = Iframe::embedButtonHtml($iframe_name, $route_name);
+                if (is_array($filterable_content)) {
+                    $filterable_content = $append
+                        ? array_push($filterable_content, $embedButtonHtml)
+                        : array_unshift($filterable_content, $embedButtonHtml);
+                } else {
+                    $filterable_content = $append
+                        ? $filterable_content . $embedButtonHtml
+                        : $embedButtonHtml . $filterable_content;
+                }
+                return $filterable_content;
             },
             10
         );
