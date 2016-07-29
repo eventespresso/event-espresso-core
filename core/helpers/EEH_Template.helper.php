@@ -235,7 +235,6 @@ class EEH_Template {
 			// array to hold all possible template paths
 			$full_template_paths = array();
 
-			EE_Registry::instance()->load_helper('File');
 			// loop through $templates
 			foreach ( $templates as $template ) {
 				// normalize directory separators
@@ -271,6 +270,8 @@ class EEH_Template {
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
 					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
+					// hook that can be used to display the full template path that will be used
+					do_action( 'AHEE__EEH_Template__locate_template__full_template_path', $template_path );
 					break;
 				}
 			}
@@ -323,8 +324,6 @@ class EEH_Template {
 	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
-		//require the template validator for verifying variables are set according to how the template requires
-		EE_Registry::instance()->load_helper( 'Template_Validator' );
 
 		/**
 		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
@@ -416,7 +415,8 @@ class EEH_Template {
 			return '';
 		}
 		//ensure amount is float
-		$amount = (float) $amount;
+		$amount = apply_filters( 'FHEE__EEH_Template__format_currency__raw_amount', (float) $amount );
+		$CNT_ISO = apply_filters( 'FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount );
 		// filter raw amount (allows 0.00 to be changed to "free" for example)
 		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
 		// still a number or was amount converted to a string like "free" ?
@@ -443,6 +443,9 @@ class EEH_Template {
 				}else{
 					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
+
+				// filter to allow global setting of display_code
+				$display_code = apply_filters( 'FHEE__EEH_Template__format_currency__display_code', $display_code );
 
 				// add currency code ?
 				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
@@ -621,7 +624,6 @@ class EEH_Template {
 	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
 		$data = (array)$data;
 	}
-	EE_Registry::instance()->load_helper('Array');
 	ob_start();
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {

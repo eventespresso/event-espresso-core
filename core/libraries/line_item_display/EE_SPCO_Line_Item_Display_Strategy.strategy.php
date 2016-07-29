@@ -71,9 +71,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 */
 	public function display_line_item( EE_Line_Item $line_item, $options = array() ) {
 
-		EE_Registry::instance()->load_helper( 'Template' );
-		EE_Registry::instance()->load_helper( 'HTML' );
-
 		$html = '';
 		// set some default options and merge with incoming
 		$default_options = array(
@@ -274,7 +271,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// start of row
 		$row_class = $options['odd'] ? 'item odd' : 'item';
 		$html = EEH_HTML::tr( '', '', $row_class );
-		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type() . ': ' : '';
+		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() . ': ' : '';
 		// name && desc
 		$name_and_desc = apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',

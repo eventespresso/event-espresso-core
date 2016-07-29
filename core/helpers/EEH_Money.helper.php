@@ -67,6 +67,8 @@ class EEH_Money extends EEH_Base  {
 		switch ($operator) {
 			// equal
 			case "=":
+			case "==":
+			case "===":
 			case "eq":
 				if (abs($float1 - $float2) < $epsilon) {
 					return true;

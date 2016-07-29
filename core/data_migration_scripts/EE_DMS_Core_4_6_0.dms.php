@@ -605,7 +605,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$table_name = $wpdb->prefix."esp_payment_method";
 		$user_id = EEH_Activation::get_default_creator_id();
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $table_name . "'") == $table_name ) {
+		if ( EEH_Activation::table_exists( $table_name ) ) {
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
@@ -672,7 +672,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$currency_table = $wpdb->prefix."esp_currency";
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $currency_table . "'") == $currency_table ) {
+		if ( EEH_Activation::table_exists( $currency_table ) ) {
 
 			$SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
 			$countries = $wpdb->get_var($SQL);

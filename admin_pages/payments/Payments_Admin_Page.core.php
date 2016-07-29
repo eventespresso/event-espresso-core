@@ -245,8 +245,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		 */
 		EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
 		EEM_Payment_Method::instance()->verify_button_urls();
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		EE_Registry::instance()->load_helper( 'HTML' );
 		//setup tabs, one for each payment method type
 		$tabs = array();
 		$payment_methods = array();
@@ -607,6 +605,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'FHEE__Payments_Admin_Page___activate_payment_method_button__form_subsections',
 					array(
 						new EE_Form_Section_HTML(
+							EEH_HTML::tr(
+								EEH_HTML::td( $payment_method->type_obj()->introductory_html(),
+									'',
+									'',
+									'',
+									'colspan="2"' 
+								)
+							) . 
 							EEH_HTML::tr(
 								EEH_HTML::th(
 									EEH_HTML::label( __( 'Click to Activate ', 'event_espresso' ))

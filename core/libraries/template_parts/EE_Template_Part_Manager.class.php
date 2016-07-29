@@ -170,7 +170,6 @@ class EE_Template_Part_Manager {
 		$list_item_css_class = '',
 		$list_item_css_id_prefix = ''
 	) {
-		EE_Registry::instance()->load_helper( 'HTML' );
 		$event_archive_display_order = EEH_HTML::ul( $list_css_id, $list_css_class );
 		$this->template_parts->rewind();
 		// loop through template parts and add template content

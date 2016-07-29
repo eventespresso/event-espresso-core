@@ -30,7 +30,13 @@ class EE_Detect_Login extends EE_Middleware {
 		$this->_request = $request;
 		$this->_response = $response;
 		global $pagenow;
-		if ( in_array( $pagenow, array( 'wp-login.php', 'wp-register.php' ) ) ) {
+		if (
+			in_array(
+				$pagenow,
+				array( 'wp-login.php', 'wp-register.php' )
+			)
+			&& ! $request->get( 'ee_load_on_login' )
+		) {
 			$this->_response->terminate_request();
 		}
 		$this->_response = $this->process_request_stack( $this->_request, $this->_response );

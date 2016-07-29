@@ -14,7 +14,7 @@ If you'd like a more hands-on tutorial, checkout [Building an EE4 Addon that use
 
 ## Authentication
 
-Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So you we suggest you [read their documentation on authentication](http://wp-api.org/guides/authentication.html).
+Some of the EE4 REST API data is public and requires no authentication, but much of it is protected and requires authentication. Because the EE4 REST API is built on the WP REST API, the authentication process is identical: once you authenticate with the WP JSON REST API, you are also authenticated with the EE4 JSON REST API. So we suggest you [read their documentation on authentication](http://v2.wp-api.org/guide/authentication/).
 
 If your application needs to write or delete EE4 data, or if it needs to read data that's normally not publicly-available, you'll need to authenticate (read our [google doc on permissions](https://docs.google.com/spreadsheets/d/1WWfMrmHaA-5LW468GnrgvNX1cQFOvKYq6jj61681GEE/edit?usp=sharing) for more info).
 
@@ -32,7 +32,7 @@ The "resources" in the Event Espresso REST API are built around the [EE4 models]
 
 Resources are the protoypes, and entities are the specific instances (just like models are the prototype, and model objects specific instances). Eg, "events" is a resource queryable on http://demoee.org/demo/wp-json/ee/v4.8.29/events which returns specific "event" entities.
 
-To see what entities exist, send a request to http://demoee.org/demo/wp-json/ee/v4.8.29/models, or just [click this link](click this link to see the resources from one of our servers) to see the resources from one of our servers.
+To see what entities exist, send a request to http://demoee.org/demo/wp-json/ee/v4.8.29/resources, or just [click this link](http://demoee.org/demo/wp-json/ee/v4.8.29/resources) to see the resources from one of our servers.
 
 Here is an excerpt:
 
@@ -126,15 +126,18 @@ Notice the collection of "fields". Here we see there is a field named "EVT_ID" w
 
 ## Versioning and Backwards Compatibility
 
-The EE4 REST API's versioning will follow the EE4 core version as it changes. Eg, whenever a change is made to the EE4 models in a particular version, a new served core version should be added to the EE4 REST API.
+Due to feedback from WordPress REST API developer Daniel Bachhuber, we have changed our versioning policy. (You can look at previous versions of this file in github to know what it was previously).
 
-Eg, even though a site might be running EE 4.9.0, the endpoints for EE4.8.29 (eg `wp-json/ee/v4.8.29/events`) are still available, in addition to the new 4.9.0 endpoints (eg `wp-json/ee/v4.9.0/events`). Why include both? The Event Espresso database in 4.9.0 is almost the same as in 4.8.29, except that 4.9.0 added a new table was added called `esp_message`, which corresponds to the `Message` model. So to reflect this change, the 4.9.0 endpoints include `wp-json/ee/v4.9.0/messages`, whereas 4.8.29 does not.
+New features and backwards-compatible changes will be added to the latest namespaced version of the EE REST API (eg at the time of writing, the latest versioned namespace is v4.8.36). A new versioned namespace will be released when a non-backwards-compatible change is added.
 
-This way, when you build an application that works with EE 4.8.29 and uses those endpoints, even though your app might run on installations of EE4.9.0 or 4.9.12 or 4.12.32, it can always use the EE4.8.29 endpoints and expect the same functionality. Likewise, if you build an application that uses the EE4.8.29 endpoints, if someone tries to use your application on a server only running Event Espresso 4.6, the 4.7 endpoints won't exist yet and so when the API clients realize this, can recommend upgrading EE.
+An exception to this is bugfixes however, especially security fixes: those can be added to the API at any time, and it's possible that they might break backwards compatibility. Of course we will aim to have no bugs and no such changes. 
 
-Having said this, we do not guarantee that we will be forever able to continue serving requests like 4.8.29 or other versions as EE4's core database changes. That's why when you query the `wp-json` index, in the "ee" entity, there is a property "served_core_versions" which describes which versions of EE4 are currently served on the queried server.
+For example, at the time of writing this article, the latest release of Event Espresso is 4.8.40.p, but the latest versioned namespace for the EE4 REST API is v4.8.36 (ie, to request the event list, you would send a request to `mysite.com/wp-json/ee/v4.8.36/events`, regardless of what the current version of Event Espresso is). However, if a backwards-incompatible change is going to be introduced, which isn't a bugfix, (eg we decide all dates should instead be unix timestamps instead of rfc3339 format, say in version 4.8.255), we would add a new versioned namespace (eg v4.8.255, so you could also send requests to `mysite.com/wp-json/ee/4.8.255/events`) which would include the latest change, and if possible, we would continue to support requests to the previous versioned namespaces (eg so you could continue to use v4.8.36 if you have code you'd rather not update right away to use the new endpoints).
 
-Also note, only the most current endpoints are listed in the index. Eg, if you query a server running EE4.8, only `wp-json/ee/v4.8/events` will appear in the index, NOT `wp-json/ee/v4.7/events` or `wp-json/ee/4.6/events`, although those will continue to work.
+Also note, only the most current endpoints are listed in the index. Eg, if you query a server running EE4.8.40, only `wp-json/ee/v4.8.36/events` will appear in the index, NOT `wp-json/ee/v4.8.29/events` or `wp-json/ee/4.8.34/events`, although those will continue to work.
+
+Note if you building an API client that might be used with installations of Event Espresso that you won't control: some users might try to use your application on older installations of Event Espresso, which might not have the versioned namespace your API client uses. Eg, they might only have Event Espresso 4.8.34.p installed, and so the v4.8.36 versioned namespace isn't available. 
+Also, because the EE4 REST API is modifyable by server-side code. So be aware that the particular installation of Event Espresso you are interacting with could have removed, added, or changed nearly any endpoint, resource, or behaviour. Your API client will need to be ready to handle unexpected behaviour like this.
 
 Please keep up to date on our developer.eventespresso.com blog for updates to the EE4 JSON REST API. You can subscribe to its [RSS feed](http://developer.eventespresso.com/feed/), or [follow us on twitter](https://twitter.com/eventespresso).
 

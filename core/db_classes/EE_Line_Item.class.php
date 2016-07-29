@@ -214,6 +214,34 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 
 	/**
+	 * Gets item_type
+	 * @return string
+	 */
+	function OBJ_type_i18n() {
+	    $obj_type = $this->OBJ_type();
+        switch ($obj_type) {
+            case 'Event':
+                $obj_type = __('Event', 'event_espresso');
+                break;
+            case 'Price':
+                $obj_type = __('Price', 'event_espresso');
+                break;
+            case 'Promotion':
+                $obj_type = __('Promotion', 'event_espresso');
+                break;
+            case 'Ticket':
+                $obj_type = __('Ticket', 'event_espresso');
+                break;
+            case 'Transaction':
+                $obj_type = __('Transaction', 'event_espresso');
+                break;
+        }
+		return apply_filters('FHEE__EE_Line_Item__OBJ_type_i18n', $obj_type, $this);
+	}
+
+
+
+	/**
 	 * Sets item_type
 	 * @param string $OBJ_type
 	 * @return boolean
@@ -883,13 +911,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		foreach ( $my_children as $child_line_item ) {
 			if ( $child_line_item instanceof EE_Line_Item ) {
 				if ( $child_line_item->is_percent() ) {
-					
+
 					//round as we go so that the line items add up ok
 					$percent_total = round(
 						$calculated_total_so_far * $child_line_item->percent() / 100,
 						EE_Registry::instance()->CFG->currency->dec_plc
 					);
-					
+
 					$child_line_item->set_total( $percent_total );
 					//so far all percent line items should have a quantity of 1
 					//(ie, no double percent discounts. Although that might be requested someday)
@@ -1060,7 +1088,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return EE_Line_Item[]
 	 */
 	function tax_descendants() {
-		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_tax_descendants( $this );
 	}
 
@@ -1071,7 +1098,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 * @return EE_Line_Item[]
 	 */
 	function get_items() {
-		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_line_item_descendants( $this );
 	}
 
@@ -1148,7 +1174,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 */
 	protected function _get_descendants_of_type( $type ) {
 		EE_Error::doing_it_wrong( 'EE_Line_Item::_get_descendants_of_type()', __('Method replaced with EEH_Line_Item::get_descendants_of_type()', 'event_espresso'), '4.6.0' );
-		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_descendants_of_type( $this, $type );
 	}
 
@@ -1161,7 +1186,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	 */
 	public function get_nearest_descendant_of_type( $type ) {
 		EE_Error::doing_it_wrong( 'EE_Line_Item::get_nearest_descendant_of_type()', __('Method replaced with EEH_Line_Item::get_nearest_descendant_of_type()', 'event_espresso'), '4.6.0' );
-		EE_Registry::instance()->load_helper( 'Line_Item' );
 		return EEH_Line_Item::get_nearest_descendant_of_type( $this, $type );
 	}
 

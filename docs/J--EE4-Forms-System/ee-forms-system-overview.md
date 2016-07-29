@@ -109,6 +109,7 @@ Event Espresso comes with many different built-in input types, like `EE_Email_In
 `EE_Month_Input` | select (dropdown) | string (January = "01", February = "02", etc) or integer (January = 1, February = 2, etc) | valid month number | constructor takes $leading_zero a boolean indicating whether values should be like "01" or 1
 `EE_Radio_Button_Input` | radio | string or integer | in list of options provided | options can be strings or integers which affects normalization and validation
 `EE_Select_Input` | select (dropdown) | string or integer | in list of options provided | options can be array of strings or integers
+`EE_Select_Reveal_Input` (EE4.8.41+) | select (dropdown) | string or integer | in list of options provided | same as `EE_Select_Input`, except related form sections are hidden or revealed by the selection. Eg if this input has 2 options "credit_card" and "echeck", and the input has sibling form sections BY THOSE SAME NAMES, then when "credit_card" is selected, the sibling "credit_card" form section will be revealed, and the "echeck" section will be hidden. That is, the values should be Relative Form Paths (see "Relative Form Paths" below), but are FROM THE INPUT's PARENT; in other words, they're form paths relative to this `EE_Select_Reveal_Input`, but automatically have `../` prepended onto them.
 `EE_State_Select_Input` | select (dropdown) | integer (state ID) | in list of options | Options taken from the wp_esp_state database table
 `EE_Submit_Input` | submit | string | none |
 `EE_Text_Area_Input` | textarea | string | none |
@@ -303,6 +304,7 @@ Each input can have zero or more validation strategies which dictate what data i
 
 | Class Name | Description |
 | ---------- | ----------- |
+`EE_Conditionally_Required_Validation_Strategy` (EE4.8.41+) | Same as `EE_Required_Validation_Strategy`, except the associated input is only required when provided the requirement conditions array is met. The requirement conditions array's top-level key a relative form path (see "Relative Form Paths" below), its value is an array. This 2nd level array has two items: the first is the operator (for now only '=' is accepted), and the 2nd argument is the  the value the field should be in order to make the field required. Eg `array( '../payment_type' => array( '=', 'credit_card' )` means this field is required, provided the sibling input "payment_type" has the value "credit_card".
 `EE_Credit_Card_Validation_Strategy` | Validates that the value is a valid credit card number
 `EE_Email_Validation_Strategy` | Validates that the value is a valid email address
 `EE_Enum_Validation_Strategy` | Validates that the value is one of the list of options provided to the strategy
@@ -361,6 +363,7 @@ class My_Custom_Validation_Form extends EE_Form_Section_Proper {
     }
     /**
     * Overrides parent's _validate() method to check
+    */
     protected function _validate() {
         if( $this->get_input_value( 'is_storm_trooper'' ) &&
             $this->get_input_value( 'passphrase' ) === NULL ) {
@@ -380,3 +383,31 @@ class My_Custom_Validation_Form extends EE_Form_Section_Proper {
 If a validation error is added to the form, it will be considered invalid and `is_valid()` will return FALSE. Also when re-displaying the form, the form-wide validation error should appear automatically at the top of the form.
 
 Note that this also enqueues a javascript file which could take care of performing the same logic client-side.
+
+##Relative Form Paths (EE4.8.41+)
+`EE_Select_Reveal_Input` and `EE_Conditionally_Required_Validation_Strategy` both use "relative form paths" to refer to other inputs in a form. These are modeled after filesystem paths. Pretend each formsection or form input is a directory in a filesystem. How would you change from the current directory, eg "/home/user/me/a" to "/home/user/me/b"? You'd type `cd ../b` right? Likewise, if you have a form with two sub-inputs, "a" and "b", and you want to refer to "b" from "a", you would you "../b". 
+That is, "../" means to look to the parent, and anything after that refers to a child form section. 
+For example, let's say we have a form that's structured like this
+
+```
+grantparent_form_section
+-parent_form_section
+--child_input
+--sibling_input
+-aunt_form_section
+--cousin_input
+```
+
+That is, `grandparent_form_section` has two children: `parent_form_section` and `aunt_form_section`; `parent_form_section` has two child inputs: `child_input` and `sibling_input`; and `aunt_form_section` has a single child: `cousin_input`.
+Here are some example relateive form paths, using this form structure:
+
+* From `parent_form_section` to `grandparent_form_section`: `../` (up a level)
+* From `parent_form_section` to `aunt_form_setion`: `../aunt_form_section` (up a level, down to "aunt_form_section")
+* From `parent_form_section` to `cousin_input`: `../aunt_form_section/cousin_input` (up a level, down to "aunt_form_section", then down to "cousin_input")
+* From `parent_form_section` to `child_input`: `child_input` (down to "child_input")
+* From `parent_form_section` to itself: '../parent_form_section` (up a level, down to "parent_form_section")
+* From `child_input` to `sibling_input`: `../sibling_input` (up a level, down to "sibling_input")
+* From 'child_input` to `parent_form_section`: `../` (up a level)
+* From `child_input` to `grandparent_form_section`: `../../` (up two levels)
+* From `child_input` to `cousin_input`: `../../aunt_form_section/cousin_input` (up two levels, then down to "aunt_form_section", then down to "cousin_input")
+* From `grandparent_form_section` to `child_input`: `parent_form_section/child_input` (down to "parent_form_section", then down to "child_input")
