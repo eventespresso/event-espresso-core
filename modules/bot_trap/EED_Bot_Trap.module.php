@@ -109,19 +109,23 @@ class EED_Bot_Trap  extends EED_Module {
 
 
 	/**
-	 * process_bot_trap
-	 *
-	 * @param array|string $response_callback  This is the callback that will be executed for handling the response with
-	 *                                         with the results of this processing.  It will receive two arguments.  The
-	 *                                         first indicating whether the trap was triggered (true) or not (false). The
-	 *                                         second whether it was caused by suspicious timing or not.
+     * process_bot_trap
+     *
+     * @param array|string $triggered_trap_callback Callback that will be executed for handling the
+     *                                              response if the bot trap is triggered.
+     *                                              It should receive one argument: a boolean indicating
+     *                                              whether the trap was triggered by suspicious timing or not.
 	 */
-	public static function process_bot_trap( $response_callback = array( 'EED_Bot_Trap', 'process_bot_trap_response' ) ) {
-		$trap_triggered = true;
+	public static function process_bot_trap( $triggered_trap_callback = array() ) {
 		// what's your email address Mr. Bot ?
-		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == '' ? true : false;
+		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] )
+                      && $_REQUEST[ 'tkt-slctr-request-processor-email' ] === ''
+            ? true
+            : false;
 		// get encrypted timestamp for when the form was originally displayed
-		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] ) : '';
+		$bot_trap_timestamp = isset( $_REQUEST[ 'tkt-slctr-request-processor-token' ] )
+            ? sanitize_text_field( $_REQUEST[ 'tkt-slctr-request-processor-token' ] )
+            : '';
 		// decrypt and convert to absolute  integer
 		if ( EE_Registry::instance()->CFG->registration->use_encryption ) {
 			EE_Registry::instance()->load_core( 'EE_Encryption' );
@@ -130,19 +134,20 @@ class EED_Bot_Trap  extends EED_Module {
 			$bot_trap_timestamp = absint( $bot_trap_timestamp );
 		}
 		// ticket form submitted too impossibly fast ( after now ) or more than an hour later ???
-		$suspicious_timing = $bot_trap_timestamp > time() || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS ) ? true : false;
+		$suspicious_timing = $bot_trap_timestamp > time() || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS )
+            ? true
+            : false;
 		// are we human ?
 		if ( $empty_trap && ! $suspicious_timing ) {
-			$trap_triggered = false;
+		    do_action('AHEE__EED_Bot_Trap__process_bot_trap__trap_not_triggered');
+			return;
 		}
-
-		//check the given callback is valid first before executing
-		if ( ! is_callable( $response_callback ) ) {
-			//invalid callback so lets just sub in our default.
-			$response_callback = array( 'EED_Bot_Trap', 'process_bot_trap_response' );
+		// check the given callback is valid first before executing
+		if ( ! is_callable($triggered_trap_callback ) ) {
+			// invalid callback so lets just sub in our default.
+            $triggered_trap_callback = array( 'EED_Bot_Trap', 'triggered_trap_response' );
 		}
-
-		call_user_func_array( $response_callback, array( $trap_triggered, $suspicious_timing ) );
+		call_user_func_array($triggered_trap_callback, array( $suspicious_timing ) );
 	}
 
 
@@ -151,14 +156,9 @@ class EED_Bot_Trap  extends EED_Module {
 	/**
 	 * This is the default callback executed by EED_Bot_Trap::process_bot_trap that handles the response.
 	 *
-	 * @param bool  $trap_triggered     If true, then the bot trap was triggered and form the bot trap was added to should
-	 *                                  not be submitted.  If false, then the bot trap did not get triggered.
 	 * @param bool  $suspicious_timing  If true, then the bot trap was triggered due to the suspicious timing test.
 	 */
-	public static function process_bot_trap_response( $trap_triggered, $suspicious_timing ) {
-		if ( ! $trap_triggered ) {
-			return;
-		}
+	public static function triggered_trap_response( $suspicious_timing ) {
 		// UH OH...
 		$redirect_url = add_query_arg(
 			array( 'ee' => 'ticket_selection_received' ),
