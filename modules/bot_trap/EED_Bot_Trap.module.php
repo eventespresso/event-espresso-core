@@ -108,14 +108,16 @@ class EED_Bot_Trap  extends EED_Module {
 	}
 
 
-
 	/**
 	 * process_bot_trap
 	 *
-	 * @access    public
-	 * @return    void
+	 * @param array|string $response_callback  This is the callback that will be executed for handling the response with
+	 *                                         with the results of this processing.  It will receive two arguments.  The
+	 *                                         first indicating whether the trap was triggered (true) or not (false). The
+	 *                                         second whether it was caused by suspicious timing or not.
 	 */
-	public static function process_bot_trap() {
+	public static function process_bot_trap( $response_callback = array( 'EED_Bot_Trap', 'process_bot_trap_response' ) ) {
+		$trap_triggered = true;
 		// what's your email address Mr. Bot ?
 		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] ) && $_REQUEST[ 'tkt-slctr-request-processor-email' ] == '' ? true : false;
 		// get encrypted timestamp for when the form was originally displayed
@@ -131,6 +133,30 @@ class EED_Bot_Trap  extends EED_Module {
 		$suspicious_timing = $bot_trap_timestamp > time() || $bot_trap_timestamp < ( time() - HOUR_IN_SECONDS ) ? true : false;
 		// are we human ?
 		if ( $empty_trap && ! $suspicious_timing ) {
+			$trap_triggered = false;
+		}
+
+		//check the given callback is valid first before executing
+		if ( is_callable( $response_callback ) ) {
+			//invalid callback so lets just sub in our default.
+			$response_callback = array( 'EED_Bot_Trap', 'process_bot_trap_response' );
+		}
+
+		call_user_func_array( $response_callback, array( $trap_triggered, $suspicious_timing ) );
+	}
+
+
+
+
+	/**
+	 * This is the default callback executed by EED_Bot_Trap::process_bot_trap that handles the response.
+	 *
+	 * @param bool  $trap_triggered     If true, then the bot trap was triggered and form the bot trap was added to should
+	 *                                  not be submitted.  If false, then the bot trap did not get triggered.
+	 * @param bool  $suspicious_timing  If true, then the bot trap was triggered due to the suspicious timing test.
+	 */
+	public static function process_bot_trap_response( $trap_triggered, $suspicious_timing ) {
+		if ( ! $trap_triggered ) {
 			return;
 		}
 		// UH OH...
