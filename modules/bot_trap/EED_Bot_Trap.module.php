@@ -205,8 +205,9 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function bot_trap_settings_form() {
-		echo EED_Bot_Trap::_bot_trap_settings_form()->get_html_and_js();
-	}
+        EED_Bot_Trap::_bot_trap_settings_form()->enqueue_js();
+        echo EED_Bot_Trap::_bot_trap_settings_form()->get_html();
+    }
 
 
 
