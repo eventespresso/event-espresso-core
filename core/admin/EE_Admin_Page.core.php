@@ -1966,17 +1966,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//we only add meta boxes if the page_route calls for it
-		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
-
-
-			//this simply loops through the callbacks provided and checks if there is a corresponding callback registered by the child - if there is then we go ahead and process the metabox loader.
+		if ( is_array( $this->_route_config ) && isset( $this->_route_config['metaboxes'] )
+			 && is_array(
+			 $this->_route_config['metaboxes']
+			 )
+		) {
+			// this simply loops through the callbacks provided
+			// and checks if there is a corresponding callback registered by the child
+			// if there is then we go ahead and process the metabox loader.
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
-				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
+				// first check for Closures
+				if ( is_callable( $metabox_callback ) ) {
+					$result = $metabox_callback();
+				} else if ( is_array( $metabox_callback ) && isset( $metabox_callback[0], $metabox_callback[1] ) ) {
+					$result = call_user_func( array( $metabox_callback[0], $metabox_callback[1] ) );
+				} else {
+					$result = call_user_func( array( $this, &$metabox_callback ) );
+				}
+				if ( $result === FALSE ) {
 					// user error msg
-				$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
-				// developer error msg
-				$error_msg .= '||' . sprintf( __( 'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.', 'event_espresso' ), $metabox_callback );
-				throw new EE_Error( $error_msg );
+					$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
+					// developer error msg
+					$error_msg .= '||' . sprintf(
+						__(
+							'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.',
+							'event_espresso'
+						),
+						$metabox_callback
+					);
+					throw new EE_Error( $error_msg );
 				}
 			}
 		}
@@ -3301,6 +3319,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 		return $this->_is_caf;
 	}
 
+
+
+	/**
+	 * @return mixed
+	 */
+	public function default_espresso_metaboxes() {
+		return $this->_default_espresso_metaboxes;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function admin_base_url() {
+		return $this->_admin_base_url;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function wp_page_slug() {
+		return $this->_wp_page_slug;
+	}
 
 
 
