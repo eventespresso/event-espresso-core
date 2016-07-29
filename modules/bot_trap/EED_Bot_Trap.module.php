@@ -137,7 +137,7 @@ class EED_Bot_Trap  extends EED_Module {
 		}
 
 		//check the given callback is valid first before executing
-		if ( is_callable( $response_callback ) ) {
+		if ( ! is_callable( $response_callback ) ) {
 			//invalid callback so lets just sub in our default.
 			$response_callback = array( 'EED_Bot_Trap', 'process_bot_trap_response' );
 		}
