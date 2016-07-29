@@ -161,7 +161,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//template settings
 		$new_page_config['template_settings'] = array(
 			'nav' => array(
-				'label' => __('Templates'),
+				'label' => esc_html__('Templates', 'event_espresso'),
 				'order' => 30
 			),
 			'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
@@ -454,7 +454,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$orig_event = EEM_Event::instance()->get_one_by_ID( $this->_req_data['EVT_ID'] );
 
 		if ( ! $orig_event instanceof EE_Event )
-			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso '), $this->_req_data['EVT_ID'] ) );
+			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso'), $this->_req_data['EVT_ID'] ) );
 
 		//k now let's clone the $orig_event before getting relations
 		$new_event = clone $orig_event;

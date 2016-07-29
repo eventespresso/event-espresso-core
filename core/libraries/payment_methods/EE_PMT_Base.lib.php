@@ -709,6 +709,20 @@ abstract class EE_PMT_Base{
 			$this->_gateway->update_txn_based_on_payment( $payment );
 		}
 	}
+	
+	/**
+	 * Returns a string of HTML describing this payment method type for an admin, 
+	 * primarily intended for them to read before activating it.
+	 * The easiest way to set this is to create a folder 'templates' alongside
+	 * your EE_PMT_{System_Name} file, and in it create a file named "{system_name}_intro.template.php".
+	 * Eg, if your payment method file is named "EE_PMT_Foo_Bar.pm.php", 
+	 * then you'd create a file named "templates" in the same folder as it, and name the file
+	 * "foo_bar_intro.template.php", and its content will be returned by this method
+	 * @return string
+	 */
+	public function introductory_html() {
+		return EEH_Template::locate_template( $this->file_folder() . 'templates' . DS . strtolower( $this->system_name() ) . '_intro.template.php', array( 'pmt_obj' => $this, 'pm_instance' => $this->_pm_instance ) );
+	}
 
 
 }
