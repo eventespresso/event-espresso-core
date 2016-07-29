@@ -15,6 +15,10 @@
  */
 /**
  * Class  EED_New_Addon
+ * 
+ * This is where miscellaneous action and filters callbacks should be setup to
+ * do your addon's business logic (that doesn't fit neatly into one of the
+ * other classes in the mock addon)
  *
  * @package			Event Espresso
  * @subpackage		eea-new-addon
