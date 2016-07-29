@@ -682,6 +682,7 @@ class EEH_Activation {
 	 *
 	 * @access public
 	 * @static
+	 * @deprecated instead use EventEspresso\core\services\database\TableManager::addColumn()
 	 * @param string $table_name  (without "wp_", eg "esp_attendee"
 	 * @param string $column_name
 	 * @param string $column_info if your SQL were 'ALTER TABLE table_name ADD price VARCHAR(10)', this would be
@@ -689,18 +690,7 @@ class EEH_Activation {
 	 * @return bool|int
 	 */
 	public static function add_column_if_it_doesnt_exist($table_name,$column_name,$column_info='INT UNSIGNED NOT NULL'){
-		if( apply_filters( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', FALSE ) ){
-			return FALSE;
-		}
-		global $wpdb;
-		$full_table_name= EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		$fields = self::get_fields_on_table($table_name);
-		if (!in_array($column_name, $fields)){
-			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
-			//echo "alter query:$alter_query";
-			return $wpdb->query($alter_query);
-		}
-		return TRUE;
+		return EE_Registry::instance()->load_service( 'TableManager' )->addColumn( $table_name, $column_name, $column_info );
 	}
 
 
