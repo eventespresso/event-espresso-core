@@ -91,7 +91,7 @@ class EED_Bot_Trap  extends EED_Module {
 	 * @return    void
 	 */
 	public static function generate_bot_trap() {
-		$do_not_enter = __( 'please do not enter anything in this input', 'event_espresso' );
+		$do_not_enter = esc_html__( 'please do not enter anything in this input', 'event_espresso' );
 		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin-left:-999em;">';
 		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
 		$html .= '<input type="email" name="tkt-slctr-request-processor-email" value=""/>';
@@ -166,7 +166,7 @@ class EED_Bot_Trap  extends EED_Module {
 		);
 		if ( $suspicious_timing ) {
 			$redirect_url = add_query_arg(
-				array( 'ee-notice' => urlencode( __( 'We\'re sorry, but your ticket selections could not be processed due to a server timing error. Please hit the back button on your browser and try again.', 'event_espresso' ) ) ),
+				array( 'ee-notice' => urlencode( esc_html__( 'We\'re sorry, but your ticket selections could not be processed due to a server timing error. Please hit the back button on your browser and try again.', 'event_espresso' ) ) ),
 				$redirect_url
 			);
 		}
@@ -187,7 +187,7 @@ class EED_Bot_Trap  extends EED_Module {
 	 */
 	public static function display_bot_trap_success() {
 		add_filter( 'FHEE__EED_Single_Page_Checkout__run', '__return_false' );
-		$bot_notice = __( 'Thank you so much. Your ticket selections have been received for consideration.', 'event_espresso' );
+		$bot_notice = esc_html__( 'Thank you so much. Your ticket selections have been received for consideration.', 'event_espresso' );
 		$bot_notice = isset( $_REQUEST[ 'ee-notice' ] ) && $_REQUEST[ 'ee-notice' ] !== '' ? sanitize_text_field( stripslashes( $_REQUEST[ 'ee-notice' ] ) ) : $bot_notice;
 		EE_Registry::instance()->REQ->add_output( EEH_HTML::div( $bot_notice, '', 'ee-attention' ) );
 	}
@@ -224,19 +224,19 @@ class EED_Bot_Trap  extends EED_Module {
 				'html_id'         			=> 'bot_trap_settings',
 				'layout_strategy' 	=> new EE_Admin_Two_Column_Layout(),
 				'subsections'     		=> array(
-					'bot_trap_hdr' 		=> new EE_Form_Section_HTML( EEH_HTML::h2( __( 'Bot Trap Settings', 'event_espresso' ) ) ),
+					'bot_trap_hdr' 		=> new EE_Form_Section_HTML( EEH_HTML::h2( esc_html__( 'Bot Trap Settings', 'event_espresso' ) ) ),
 					'use_bot_trap' 		=> new EE_Yes_No_Input(
 						array(
-							'html_label_text' 	=> __( 'Enable Bot Trap', 'event_espresso' ),
-							'html_help_text' 		=>  __( 'The Event Espresso Bot Trap will insert a fake input into your Ticket Selector forms that is hidden from regular site visitors, but visible to spam bots. Because the input asks for an email address, it is irresistible to spam bots who will of course enter text into it. Since regular site visitors can not see this input, any value detected during form submission means a bot has been detected, which will then be blocked from submitting the form.', 'event_espresso' ),
+							'html_label_text' 	=> esc_html__( 'Enable Bot Trap', 'event_espresso' ),
+							'html_help_text' 		=>  esc_html__( 'The Event Espresso Bot Trap will insert a fake input into your Ticket Selector forms that is hidden from regular site visitors, but visible to spam bots. Because the input asks for an email address, it is irresistible to spam bots who will of course enter text into it. Since regular site visitors can not see this input, any value detected during form submission means a bot has been detected, which will then be blocked from submitting the form.', 'event_espresso' ),
 							'default'        			=> isset( EE_Registry::instance()->CFG->registration->use_bot_trap ) ? EE_Registry::instance()->CFG->registration->use_bot_trap : true,
 							'required'        		=> false
 						)
 					),
 					'use_encryption' 		=> new EE_Yes_No_Input(
 						array(
-							'html_label_text' 	=> __( 'Encrypt Bot Trap Data', 'event_espresso' ),
-							'html_help_text' 		=>  __( 'One way to detect spam bots is by looking at how long it takes them to submit a form. They are often inhumanly fast, or will submit forms hours, days, or even weeks after the form was first scraped off the web. The Event Espresso Bot Trap will send a timestamp with the Ticket Selector form when it is submitted. By default, this timestamp is encrypted so that the spam bots can not change it, but encryption may cause issues on some servers due to configuration "conflicts". If you continuously get caught in the bot trap, then try setting this option to "No". This may increase the number of spam submissions you receive, but increases server compatibility.', 'event_espresso' ),
+							'html_label_text' 	=> esc_html__( 'Encrypt Bot Trap Data', 'event_espresso' ),
+							'html_help_text' 		=>  esc_html__( 'One way to detect spam bots is by looking at how long it takes them to submit a form. They are often inhumanly fast, or will submit forms hours, days, or even weeks after the form was first scraped off the web. The Event Espresso Bot Trap will send a timestamp with the Ticket Selector form when it is submitted. By default, this timestamp is encrypted so that the spam bots can not change it, but encryption may cause issues on some servers due to configuration "conflicts". If you continuously get caught in the bot trap, then try setting this option to "No". This may increase the number of spam submissions you receive, but increases server compatibility.', 'event_espresso' ),
 							'default'        			=> isset( EE_Registry::instance()->CFG->registration->use_encryption ) ? EE_Registry::instance()->CFG->registration->use_encryption : true,
 							'required'        		=> false
 						)
@@ -270,7 +270,7 @@ class EED_Bot_Trap  extends EED_Module {
 						$EE_Registration_Config->use_bot_trap = $valid_data[ 'use_bot_trap' ];
 						$EE_Registration_Config->use_encryption = $valid_data[ 'use_encryption' ];
 					} else {
-						EE_Error::add_error( __( 'Invalid or missing Bot Trap settings. Please refresh the form and try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_error( esc_html__( 'Invalid or missing Bot Trap settings. Please refresh the form and try again.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				} else {
 					if ( $bot_trap_settings_form->submission_error_message() != '' ) {
