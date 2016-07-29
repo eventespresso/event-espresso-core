@@ -128,22 +128,6 @@ class EED_New_Addon extends EED_Module {
 			wp_enqueue_script( 'espresso_new_addon' );
 		}
 	}
-
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __set($a,$b) { return FALSE; }
-	public function __get($a) { return FALSE; }
-	public function __isset($a) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-	public function __destruct() { return FALSE; }
-
  }
 // End of file EED_New_Addon.module.php
 // Location: /wp-content/plugins/eea-new-addon/EED_New_Addon.module.php
