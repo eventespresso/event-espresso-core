@@ -8,7 +8,7 @@ Well we can't do that with coffee... but we **can** do it with our classes.
 
 So instead of :
 
-```
+```php
 class MyClass
 {
 
@@ -25,7 +25,7 @@ $my_class = new MyClass();
 
 you inject the dependency into the class that needs it:
 
-```
+```php
 class MyClass
 {
 
@@ -56,7 +56,7 @@ So let's assume the following for our example:
 
 You would first have to add the ` EEM_Attendee ` model as a constructor param for the ` MyClass ` class like this:
 
-```
+```php
 class MyClass
 {
     private $attendee_model;
@@ -71,7 +71,7 @@ class MyClass
 
 then your controller could load the ` MyClass ` class like this:
 
-```
+```php
 $my_class = $this->CoffeeShop()->brew( 'Vendor\Namespace\Folder\MyClass' );
 ```
 
@@ -85,7 +85,7 @@ Because you were using PSR-4 compatible namespaces, and because we had already i
 
 No problem, first you'll need to add those parameters to your class constructor:
 
-```
+```php
 class MyClass
 {
     private $an_integer;
@@ -108,7 +108,7 @@ How do you pass arguments to your constructor you ask?
 
 Easily, through the second parameter of the ` CoffeeShop::brew() ` method we showed you earlier.
 
-```
+```php
 $my_class = $this->CoffeeShop()->brew(
     'Vendor\Namespace\Folder\MyClass',
     array( 123, 'yada yada yada' )
@@ -117,7 +117,7 @@ $my_class = $this->CoffeeShop()->brew(
 
 Add as many parameters as you want, **CoffeeShop** will automatically resolve your class's dependencies. But remember if you need to pass an argument **AFTER** an injected dependency, then you need to leave space for it:
 
-```
+```php
 $my_class = $this->CoffeeShop()->brew(
     'Vendor\Namespace\Folder\MyClass',
     array( 123, 'yada yada yada', null, 'another string' )
@@ -134,7 +134,7 @@ Well before that new dependency can be injected, we need to tell **CoffeeShop** 
 So let's create that other class and add it as a parameter to ` MyClass `.
 
 file: Vendor\Namespace\OtherFolder\OtherClass.php
-```
+```php
 namepace Vendor\Namespace\OtherFolder;
 
 class OtherClass
@@ -146,7 +146,7 @@ class OtherClass
 ```
 
 file: Vendor\Namespace\Folder\MyClass.php
-```
+```php
 namepace Vendor\Namespace\Folder;
 
 class MyClass
@@ -174,7 +174,7 @@ class MyClass
 
 Now to tell **CoffeeShop** about this other class, we need to create a **Recipe** for it. The first parameter will be some sort of unique identifier that is used internally for referencing the Recipe, and the second parameter is the Fully Qualified Class Name.
 
-```
+```php
 $this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -199,7 +199,7 @@ If you wanted to type hint for an interface that is implemented by ` OtherClass`
 
 
 file: Vendor\Namespace\OtherFolder\OtherClass.php
-```
+```php
 namepace Vendor\Namespace\OtherFolder;
 
 class OtherClass implements OtherInterface
@@ -211,7 +211,7 @@ class OtherClass implements OtherInterface
 ```
 
 file: Vendor\Namespace\Folder\MyClass.php
-```
+```php
 namepace Vendor\Namespace\Folder;
 
 class MyClass
@@ -239,7 +239,7 @@ class MyClass
 
 then specify that interface in the **Filters** array passed to your **Recipe**:
 
-```
+```php
 $this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -264,7 +264,7 @@ The next parameter for the Recipe class allows you to pass an array of "ingredie
 
 First let's define 'SomeOtherClass':
  
- ```
+ ```php
 namepace Vendor\Namespace\OtherFolder;
  
 class SomeOtherClass implements OtherInterface
@@ -278,7 +278,7 @@ class SomeOtherClass implements OtherInterface
  
  and  'ADifferentClass':
  
- ```
+ ```php
 namepace Vendor\Namespace\ADifferentFolder;
   
 class ADifferentClass
@@ -299,7 +299,7 @@ At this point, if you brewed an instance of 'ADifferentClass', it would receive 
   
 In order to correctly pass an instance of 'SomeOtherClass' to 'ADifferentClass', **WITHOUT** effecting the existing classes that type hint for 'OtherInterface', we need to create a new Recipe for 'ADifferentClass', and specify 'SomeOtherClass' as an ingredient to be used where 'OtherInterface' is requested. 
   
-```
+```php
 $this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -346,7 +346,7 @@ To specify which **CoffeeMaker** should be used by your **Recipe**, you need to 
 
 like so:
 
-```
+```php
 $this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -373,7 +373,7 @@ Since the CoffeeSop primarily depends on PSR-4 compatible namespacing to find an
 The final parameter for the Recipe class allows you to do this. Consider the following example:
 
 file: \some\PSR_4_incompatible\file_path\TO\old-school-legacy.class.php
-```
+```php
 // NO namepace
 
 class MY_Old_School_Legacy_Class_Name {
@@ -385,7 +385,7 @@ class MY_Old_School_Legacy_Class_Name {
 
 Unless you have registered an SPL Autoloader that can somehow manage to resolve that filepath when encountering that classname, we need to tell the CoffeeShop where to find that class by specifying the exact server path to use:
 
-```
+```php
 $this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -411,7 +411,7 @@ Now any class that type hints for 'MY_Old_School_Legacy_Class_Name', will receiv
 If you have a LOT of classes that do not follow PSR-4 compatible namespacing, then building Recipes for EVERY single class could be really tedious. So CoffeeShop supports Wildcards in both the class names and filepaths.
 Here's a Recipe that handles ALL of the standard core EE db model classes:
 
-```
+```php
 $this->CoffeeShop()->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -441,7 +441,7 @@ all of the returned objects are correct and are all handled by one Recipe
 
 This might initially look like a great idea:
 
- ```
+ ```php
 namepace Vendor\Namespace\Folder;
   
 class CleverClass
@@ -460,7 +460,7 @@ class CleverClass
 
 because later on down the road, if you need to add another dependency, you can just grab it from the CoffeeShop DI container without having to do anything else, or touch any other classes:
 
- ```
+ ```php
 namepace Vendor\Namespace\Folder;
   
 class CleverClass
@@ -485,7 +485,7 @@ ummm... no!
 
 This is commonly called Service Location and is bad because we are right back where we started from with hard coded dependencies. The above is not much different than the following:
 
- ```
+ ```php
 namepace Vendor\Namespace\Folder;
   
 class CleverClass
@@ -520,7 +520,7 @@ Let's do an example:
 
 Here's the class that we ultimately need to create based on the results of some business logic:
 
-```
+```php
 namepace Vendor\Namespace\Folder;
   
 class TrickyToBuild
@@ -548,7 +548,7 @@ class TrickyToBuild
  
  And here's our Factory class:
  
- ```
+ ```php
  namepace Vendor\Namespace\Folder;
    
  class TrickyToBuildFactory
@@ -580,7 +580,7 @@ class TrickyToBuild
 
 and an interface to define our Factory class:
 
-```
+```php
 namepace Vendor\Namespace\Folder;
   
 interface TrickyFactoryInterface
@@ -591,7 +591,7 @@ interface TrickyFactoryInterface
 
 and here's our main class that will eventually need to create an instance of TrickyToBuild using the TrickyToBuildFactory that we will inject into it's constructor:
 
-```
+```php
 namepace Vendor\Namespace\Folder;
 
 class MainClass
@@ -627,7 +627,7 @@ and there ya have it... object instantiation using newly acquired data and depen
 
 well using the above example as is, the only thing that needs to be done is to create a Recipe that tells the CoffeeShop what to build when it encounters TrickyFactoryInterface. Let's make a shared instance:
 
-```
+```php
 $this->CoffeeShop->addRecipe(
     new EventEspresso\core\services\container\Recipe(
         // identifier
@@ -652,7 +652,7 @@ And... uhhhh... **THAT'S IT!!!**
 
 If we **REALLY** want to get fancy though, we can move the logic within our dedicated TrickyToBuildFactory class directly into the CoffeeShop as a Closure (sorry... no coffee related term for that one).
 
-```
+```php
 // can't pass properties directly to a Closure
 $coffee_shop = $this->CoffeeShop;
 // create a Closure called "TrickyToBuildFactory"
