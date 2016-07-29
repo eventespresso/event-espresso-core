@@ -1,0 +1,308 @@
+/* General Styles and screens over 1280px in width */
+
+.ee-progress-step-main-container .number-bubbles-container {
+	display: inline-block;
+	position: relative;
+	margin: auto;
+}
+
+.number-bubbles-container .progress-step-number {
+	cursor: pointer;
+	display: inline-block;
+	padding: 20px 30px;
+	position: relative;
+	text-align: center;
+}
+
+.number-bubbles-container .progress-step-line {
+	background: #ddd;
+	border: 1px solid #ddd;
+	height: 0px;
+	position: absolute;
+	top: 36px;
+	left: -2%;
+	width: 104%;
+	z-index: 1;
+}
+
+.number-bubbles-container .progress-step-bubble {
+	background-color: #fff;
+	border: 2px solid #ddd;
+	border-radius: 30px;
+	-webkit-border-radius: 30px;
+	-moz-border-radius: 30px;
+	-ms-border-radius: 30px;
+	-o-border-radius: 30px;
+	color: #777;
+	height: 30px;
+	margin: auto;
+	position: relative;
+	text-align: center;
+	width: 30px;
+	z-index: 2;
+}
+
+.number-bubbles-container .progress-step-active .progress-step-bubble {
+	color: #fff;
+	border: 2px solid #2EA2CC;
+	background-color: #2EA2CC;
+}
+
+.number-bubbles-container .progress-step-completed .progress-step-bubble {
+	background-color: #ddd;
+	color: #fff;
+}
+
+.number-bubbles-container .progress-step-bubble p {
+	font-size: 21px;
+	font-weight: bold;
+	line-height: 27px;
+	margin: 0;
+	padding: 0;
+	text-align: center;
+}
+
+.number-bubbles-container .progress-step-text {
+	display: block;
+	margin: 1em;
+	font-size: 1.1em;
+}
+
+
+/* Admin One Column on Large Tablet  <<< OR >>>  Admin Two Column on Large Laptop */
+@media only screen and (min-width: 720px) and (max-width: 850px), (min-width: 1156px) and (max-width: 1280px) {
+
+	/* colors for debugging*/
+	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
+		/*border: 2px solid indianred;*/
+		/*background-color: indianred;*/
+	/*}*/
+
+	.number-bubbles-container .progress-step-number {
+		padding: 20px 25px;
+	}
+
+	.number-bubbles-container .progress-step-line {
+		top: 36px;
+	}
+
+	.number-bubbles-container .progress-step-bubble {
+		border-radius: 30px;
+		-webkit-border-radius: 30px;
+		-moz-border-radius: 30px;
+		-ms-border-radius: 30px;
+		-o-border-radius: 30px;
+		height: 30px;
+		width: 30px;
+	}
+
+	.number-bubbles-container .progress-step-bubble p {
+		font-size: 21px;
+		line-height: 27px;
+	}
+
+	.number-bubbles-container .progress-step-text {
+		margin: 1em .75em;
+		font-size: 1.1em;
+	}
+
+}
+
+/* Admin One Column on Tablet  <<< OR >>>  Admin Two Column on Laptop */
+@media only screen and (min-width: 600px) and (max-width: 719px), (min-width: 1024px) and (max-width: 1156px) {
+
+	/* colors for debugging*/
+	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
+		/*border: 2px solid orange;*/
+		/*background-color: orange;*/
+	/*}*/
+
+	.number-bubbles-container .progress-step-number {
+		padding: 17px 16px;
+	}
+
+	.number-bubbles-container .progress-step-line {
+		top: 30px;
+	}
+
+	.number-bubbles-container .progress-step-bubble {
+		border-radius: 25px;
+		-webkit-border-radius: 25px;
+		-moz-border-radius: 25px;
+		-ms-border-radius: 25px;
+		-o-border-radius: 25px;
+		height: 25px;
+		width: 25px;
+	}
+
+	.number-bubbles-container .progress-step-bubble p {
+		font-size: 18px;
+		line-height: 23px;
+	}
+
+	.number-bubbles-container .progress-step-text {
+		margin: .85em .65em;
+		font-size: .95em;
+	}
+
+}
+
+/* Admin Two Column */
+@media only screen and (min-width: 960px) and (max-width: 1024px) {
+
+	/* colors for debugging*/
+	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
+		/*border: 2px solid gold;*/
+		/*background-color: gold;*/
+	/*}*/
+
+	.number-bubbles-container .progress-step-number {
+		padding: 14px 12px;
+	}
+
+	.number-bubbles-container .progress-step-line {
+		top: 26px;
+	}
+
+	.number-bubbles-container .progress-step-bubble {
+		border-radius: 22px;
+		-webkit-border-radius: 22px;
+		-moz-border-radius: 22px;
+		-ms-border-radius: 22px;
+		-o-border-radius: 22px;
+		height: 22px;
+		width: 22px;
+	}
+
+	.number-bubbles-container .progress-step-bubble p {
+		font-size: 16px;
+		line-height: 20px;
+	}
+
+	.number-bubbles-container .progress-step-text {
+		margin: .5em;
+		font-size: .95em;
+	}
+
+}
+
+/* Admin One Column on Small Tablet  <<< OR >>>  Admin Two Column on Small Laptop */
+@media only screen and (min-width: 480px) and (max-width: 600px), (min-width: 850px) and (max-width: 960px) {
+
+	/* colors for debugging*/
+	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
+		/*border: 2px solid darkseagreen;*/
+		/*background-color: darkseagreen;*/
+	/*}*/
+
+	.number-bubbles-container .progress-step-number {
+		padding: 14px 15px;
+	}
+
+	.number-bubbles-container .progress-step-line {
+		top: 24px;
+	}
+
+	.number-bubbles-container .progress-step-bubble {
+		border-radius: 20px;
+		-webkit-border-radius: 20px;
+		-moz-border-radius: 20px;
+		-ms-border-radius: 20px;
+		-o-border-radius: 20px;
+		height: 20px;
+		width: 20px;
+	}
+
+	.number-bubbles-container .progress-step-bubble p {
+		font-size: 15px;
+		line-height: 18px;
+	}
+
+	.number-bubbles-container .progress-step-text {
+		margin: .5em;
+		font-size: .85em;
+	}
+
+}
+
+/* Admin One Column on Smart Phone */
+@media only screen and (min-width: 360px) and (max-width: 479px) {
+
+	/* colors for debugging*/
+	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
+		/*border: 2px solid lightskyblue;*/
+		/*background-color: lightskyblue;*/
+	/*}*/
+
+	.number-bubbles-container .progress-step-number {
+		padding: 10px 5px;
+	}
+
+	.number-bubbles-container .progress-step-line {
+		top: 20px;
+	}
+	.number-bubbles-container .progress-step-bubble {
+		border-radius: 17px;
+		-webkit-border-radius: 17px;
+		-moz-border-radius: 17px;
+		-ms-border-radius: 17px;
+		-o-border-radius: 17px;
+		height: 17px;
+		width: 17px;
+	}
+	.number-bubbles-container .progress-step-bubble p {
+		font-size: 13px;
+		line-height: 16px;
+	}
+
+	.number-bubbles-container .progress-step-text {
+		margin: .25em .5em;
+		font-size: .7em;
+	}
+
+}
+
+/* Admin One Column on Small Phone */
+@media only screen and (max-width: 359px) {
+
+	/* colors for debugging*/
+	/*.number-bubbles-container .progress-step-active .progress-step-bubble {*/
+	/*border: 2px solid mediumpurple;*/
+	/*background-color: mediumpurple;*/
+	/*}*/
+
+	.number-bubbles-container .progress-step-number {
+		padding: 5px 0;
+	}
+
+	.number-bubbles-container .progress-step-line {
+		top: 13px;
+		left: -2%;
+		width: 104%;
+	}
+	.number-bubbles-container .progress-step-bubble {
+		border-radius: 15px;
+		-webkit-border-radius: 15px;
+		-moz-border-radius: 15px;
+		-ms-border-radius: 15px;
+		-o-border-radius: 15px;
+		height: 15px;
+		width: 15px;
+	}
+	.number-bubbles-container .progress-step-bubble p {
+		font-size: 10px;
+		line-height: 14px;
+	}
+
+	.number-bubbles-container .progress-step-text {
+		margin: 0 .5em;
+		font-size: .6em;
+		white-space: pre;
+		word-wrap: break-word;
+	}
+
+}
+
+
+
+/* Location: core/services/progress_steps/display_strategies/number_bubbles/number_bubbles.css */
