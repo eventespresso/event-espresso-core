@@ -711,7 +711,7 @@ if ( ! function_exists( 'espresso_organization_address' )) {
 	 */
 	function espresso_organization_address( $type = 'inline' ) {
 		if ( EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ) {
-			$address = new EventEspresso\core\entities\GenericAddress(
+			$address = new EventEspresso\core\domain\entities\GenericAddress(
 				EE_Registry::instance()->CFG->organization->address_1,
 				EE_Registry::instance()->CFG->organization->address_2,
 				EE_Registry::instance()->CFG->organization->city,

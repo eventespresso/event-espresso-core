@@ -159,4 +159,30 @@ class EEH_Array extends EEH_Base {
 	}
 
 
+
+	/**
+	 * given a flat array like $array = array('A', 'B', 'C')
+	 * will convert into a multidimensional array like $array[A][B][C]
+	 * if $final_value is provided and is anything other than null,
+	 * then that will be set as the value for the innermost array key
+	 * like so: $array[A][B][C] = $final_value
+	 *
+	 * @param array $flat_array
+	 * @param mixed $final_value
+	 * @return array
+	 */
+	public static function convert_array_values_to_keys( array $flat_array, $final_value = null ) {
+		$multidimensional = array();
+		$reference = &$multidimensional;
+		foreach ( $flat_array as $key ) {
+			$reference[ $key ] = array();
+			$reference = &$reference[ $key ];
+		}
+		if ( $final_value !== null ) {
+			$reference = $final_value;
+		}
+		return $multidimensional;
+	}
+
+
 } //end EEH_Template class

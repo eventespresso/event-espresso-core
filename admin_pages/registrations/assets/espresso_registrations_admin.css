@@ -523,3 +523,7 @@
 #ee-add-reg-back-button-dv h3{
 	margin: .5em 0 0;
 }
+
+#reg-admin-transaction-attendees-table .reg-status-RCN {
+	color: #999;
+}
