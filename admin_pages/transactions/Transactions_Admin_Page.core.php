@@ -866,12 +866,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * _get_registrations_to_apply_payment_to
-	 *
-	 * 	generates HTML for displaying a series of checkboxes in the admin payment modal window
+	 *    generates HTML for displaying a series of checkboxes in the admin payment modal window
 	 * which allows the admin to only apply the payment to the specific registrations
 	 *
-	 *	@access protected
+	 * @access protected
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	protected function _get_registrations_to_apply_payment_to() {
 		// we want any registration with an active status (ie: not deleted or cancelled)
@@ -887,42 +887,68 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				)
 			)
 		);
-		$registrations_to_apply_payment_to = '<br /><div id="txn-admin-apply-payment-to-registrations-dv"  style="clear: both; margin: 1.5em 0 0; display: none;">';
-		$registrations_to_apply_payment_to .= '<br /><div class="admin-primary-mbox-tbl-wrap">';
-		$registrations_to_apply_payment_to .= '<table class="admin-primary-mbox-tbl">';
-		$registrations_to_apply_payment_to .= '<thead><tr>';
-		$registrations_to_apply_payment_to .= '<td>' . esc_html__( 'ID', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td>' . esc_html__( 'Registrant', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td>' . esc_html__( 'Ticket', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td>' . esc_html__( 'Event', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-cntr">' . esc_html__( 'Paid', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-owing-td jst-cntr">' . esc_html__( 'Owing', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '<td class="jst-cntr">' . esc_html__( 'Apply', 'event_espresso' ) . '</td>';
-		$registrations_to_apply_payment_to .= '</tr></thead><tbody>';
+		$registrations_to_apply_payment_to = EEH_HTML::br() . EEH_HTML::div(
+			'', 'txn-admin-apply-payment-to-registrations-dv', '', 'clear: both; margin: 1.5em 0 0; display: none;'
+		);
+		$registrations_to_apply_payment_to .= EEH_HTML::br() . EEH_HTML::div( '', '', 'admin-primary-mbox-tbl-wrap' );
+		$registrations_to_apply_payment_to .= EEH_HTML::table( '', '', 'admin-primary-mbox-tbl' );
+		$registrations_to_apply_payment_to .= EEH_HTML::thead(
+			EEH_HTML::tr(
+				EEH_HTML::th( esc_html__( 'ID', 'event_espresso' ) ) .
+				EEH_HTML::th( esc_html__( 'Registrant', 'event_espresso' ) ) .
+				EEH_HTML::th( esc_html__( 'Ticket', 'event_espresso' ) ) .
+				EEH_HTML::th( esc_html__( 'Event', 'event_espresso' ) ) .
+				EEH_HTML::th( esc_html__( 'Paid', 'event_espresso' ), '', 'txn-admin-payment-paid-td jst-cntr' ) .
+				EEH_HTML::th( esc_html__( 'Owing', 'event_espresso' ), '', 'txn-admin-payment-owing-td jst-cntr' ) .
+				EEH_HTML::th( esc_html__( 'Apply', 'event_espresso' ), '', 'jst-cntr' )
+			)
+		);
+		$registrations_to_apply_payment_to .= EEH_HTML::tbody();
 		// get registrations for TXN
 		$registrations = $this->_transaction->registrations( $query_params );
 		foreach ( $registrations as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
+				$attendee_name = $registration->attendee() instanceof EE_Attendee
+					? $registration->attendee()->full_name()
+					: esc_html__( 'Unknown Attendee', 'event_espresso' );
 				$owing = $registration->final_price() - $registration->paid();
-				$taxable = $registration->ticket()->taxable() ? ' <span class="smaller-text lt-grey-text"> ' . esc_html__( '+ tax', 'event_espresso' ) . '</span>' : '';
-				$checked = empty( $existing_reg_payments ) || in_array( $registration->ID(), $existing_reg_payments ) ? ' checked="checked"' : '';
-				$registrations_to_apply_payment_to .= '<tr id="apply-payment-registration-row-' . $registration->ID() . '">';
-				// add html for checkbox input and label
-				$registrations_to_apply_payment_to .= '<td>' . $registration->ID() . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->attendee() instanceof EE_Attendee ? $registration->attendee()->full_name() : esc_html__( 'Unknown Attendee', 'event_espresso' ) . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable . '</td>';
-				$registrations_to_apply_payment_to .= '<td>' . $registration->event_name() . '</td>';
-				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-paid-td jst-rght">' . $registration->pretty_paid() . '</td>';
-				$registrations_to_apply_payment_to .= '<td class="txn-admin-payment-owing-td jst-rght">' . EEH_Template::format_currency( $owing ) . '</td>';
-				$registrations_to_apply_payment_to .= '<td class="jst-cntr">';
+				$taxable = $registration->ticket()->taxable()
+					? ' <span class="smaller-text lt-grey-text"> ' . esc_html__( '+ tax', 'event_espresso' ) . '</span>'
+					: '';
+				$checked = empty( $existing_reg_payments ) || in_array( $registration->ID(), $existing_reg_payments )
+					? ' checked="checked"'
+					: '';
 				$disabled = $registration->final_price() > 0 ? '' : ' disabled';
-				$registrations_to_apply_payment_to .= '<input type="checkbox" value="' . $registration->ID() . '" name="txn_admin_payment[registrations]"' . $checked . $disabled . '>';
-				$registrations_to_apply_payment_to .= '</td>';
-				$registrations_to_apply_payment_to .= '</tr>';
+				$registrations_to_apply_payment_to .= EEH_HTML::tr(
+					EEH_HTML::td( $registration->ID() ) .
+					EEH_HTML::td( $attendee_name ) .
+					EEH_HTML::td(
+						$registration->ticket()->name() . ' : ' . $registration->ticket()->pretty_price() . $taxable
+					) .
+					EEH_HTML::td( $registration->event_name() ) .
+					EEH_HTML::td( $registration->pretty_paid(), '', 'txn-admin-payment-paid-td jst-cntr' ) .
+					EEH_HTML::td( EEH_Template::format_currency( $owing ), '', 'txn-admin-payment-owing-td jst-cntr' ) .
+					EEH_HTML::td(
+						'<input type="checkbox" value="' . $registration->ID()
+						. '" name="txn_admin_payment[registrations]"'
+						. $checked . $disabled . '>',
+						'', 'jst-cntr'
+					),
+					'apply-payment-registration-row-' . $registration->ID()
+				);
 			}
 		}
-		$registrations_to_apply_payment_to .= '</tbody></table></div>';
-		$registrations_to_apply_payment_to .= '<p class="clear description">' . esc_html__( 'The payment will only be applied to the registrations that have a check mark in their corresponding check box. Checkboxes for free registrations have been disabled.', 'event_espresso' ) . '</p></div>';
+		$registrations_to_apply_payment_to .= EEH_HTML::tbodyx();
+		$registrations_to_apply_payment_to .= EEH_HTML::tablex();
+		$registrations_to_apply_payment_to .= EEH_HTML::divx();
+		$registrations_to_apply_payment_to .= EEH_HTML::p(
+			esc_html__(
+				'The payment will only be applied to the registrations that have a check mark in their corresponding check box. Checkboxes for free registrations have been disabled.',
+				'event_espresso'
+			),
+			'', 'clear description'
+		);
+		$registrations_to_apply_payment_to .= EEH_HTML::divx();
 		$this->_template_args[ 'registrations_to_apply_payment_to' ] = $registrations_to_apply_payment_to;
 	}
 
@@ -1011,21 +1037,25 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 							foreach( $registrations as $registration ) {
-								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 						= $registration->get('REG_count');
+								if ( ! $registration instanceof EE_Registration ) {
+									continue;
+								}
+								$this->_template_args['event_attendees'][$registration->ID()]['STS_ID'] 			= $registration->status_ID();
+								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 			= $registration->count();
 								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
-								$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 				= $ticket_price;
+								$this->_template_args['event_attendees'][$registration->ID()]['ticket_price'] 		= $ticket_price;
 								// attendee info
 								$attendee = $registration->get_first_related('Attendee');
 								if ( $attendee instanceof EE_Attendee ) {
-									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= $attendee->ID();
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= $attendee->ID();
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
-									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
-									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		=  implode(',<br>', $attendee->full_address_as_array() );
+									$this->_template_args['event_attendees'][$registration->ID()]['email']		= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	=  implode(',<br>', $attendee->full_address_as_array() );
 								} else {
-									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 			= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= '';
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';
-									$this->_template_args['event_attendees'][$registration->ID()]['email'] 			= '';
-									$this->_template_args['event_attendees'][$registration->ID()]['address'] 		= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['email'] 		= '';
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	= '';
 								}
 							}
 							break;

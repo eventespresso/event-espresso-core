@@ -215,6 +215,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$exception_thrown = true;
 		}
 		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
+		$current_db_state = str_replace( '.decaf', '', $current_db_state );
 		if($exception_thrown ||
 				(	$most_recent_migration &&
 					$most_recent_migration instanceof EE_Data_Migration_Script_Base &&
