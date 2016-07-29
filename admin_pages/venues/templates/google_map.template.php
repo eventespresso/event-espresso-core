@@ -14,8 +14,30 @@
 					<p class="description"><?php _e('Turn Google maps on or off site wide for Event Espresso.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
+			<?php
+			if( apply_filters( 'FHEE__google_map__show_api_key_input', true ) ) { ?>
+            <tr>
+                <th>
+                    <label for="ee-google-map-api-key">
+                        <?php _e('Google Maps API Key', 'event_espresso') ?>
+                    </label>
+                </th>
+                <td>
+                    <input type="text" id="ee-google-map-api-key" class="regular-text" name="google_map_api_key" value="<?php echo $map_settings->google_map_api_key; ?>" />
+                    <p class="description">
+                        <?php
+                            printf(
+                                __('An API key is now required to use the Google Maps API: %1$sclick here to get an API key%2$s', 'event_espresso'),
+                                '<a href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,static_maps_backend&keyType=CLIENT_SIDE&reusekey=true" target="_blank">',
+                                '</a>'
+                            );
+                        ?>
+                    </p>
+                </td>
+            </tr>
+			<?php } ?>
 
-		</tbody>
+        </tbody>
 	</table>
 
 
@@ -27,7 +49,7 @@
 	<table class="form-table">
 		<tbody>
 
-			<tr>
+        <tr>
 				<th>
 					<label for="event_details_map_width">
 						<?php _e('Set Map Width', 'event_espresso') ?>
