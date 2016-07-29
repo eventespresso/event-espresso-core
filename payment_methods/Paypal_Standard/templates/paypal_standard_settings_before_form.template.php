@@ -25,7 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 ?>
-<strong style="color:#F00"><?php _e('Please Note:','event_espresso')?></strong> <?php		_e("You will need a PayPal Premier or Business account for the PayPal IPN to work correctly.	", 'event_espresso');	
+<strong style="color:#F00"><?php esc_html_e('Please Note:','event_espresso')?></strong> <?php esc_html_e("You will need a PayPal Premier or Business account for the PayPal IPN to work correctly.", 'event_espresso');
 
 
 // End of file paypal_standard_settings_before_form.template.php

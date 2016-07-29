@@ -606,6 +606,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					array(
 						new EE_Form_Section_HTML(
 							EEH_HTML::tr(
+								EEH_HTML::td( $payment_method->type_obj()->introductory_html(),
+									'',
+									'',
+									'',
+									'colspan="2"' 
+								)
+							) . 
+							EEH_HTML::tr(
 								EEH_HTML::th(
 									EEH_HTML::label( __( 'Click to Activate ', 'event_espresso' ))
 								) .
