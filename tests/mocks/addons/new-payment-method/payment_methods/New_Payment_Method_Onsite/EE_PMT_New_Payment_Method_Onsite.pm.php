@@ -25,6 +25,7 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		require_once($this->file_folder().'EEG_New_Payment_Method_Onsite.gateway.php');
 		$this->_gateway = new EEG_New_Payment_Method_Onsite();
 		$this->_pretty_name = __("New Payment Method Onsite", 'event_espresso');
+		$this->_requires_https = true;
 		parent::__construct($pm_instance);
 	}
 

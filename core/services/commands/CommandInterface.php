@@ -15,8 +15,6 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 interface CommandInterface
 {
 
-	// I can do ANYTHING !!!
-
 }
 // End of file CommandInterface.php
 // Location: core/services/commands/CommandInterface.php

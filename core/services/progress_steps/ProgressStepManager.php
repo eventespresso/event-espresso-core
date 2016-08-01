@@ -18,7 +18,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class ProgressStepManager
- * primarily used in conjunction with \EventEspresso\core\libraries\form_sections\SequentialStepFormManager
+ * primarily used in conjunction with \EventEspresso\core\libraries\form_sections\form_handlers\SequentialStepFormManager
  * for displaying a visual guide that details all of the form steps within a sequence,
  * which steps have been completed, and which step is the currently active form
  *

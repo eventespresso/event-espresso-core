@@ -12,7 +12,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  *
  * @package EventEspresso\core\services\commands
  */
-interface CommandHandlerInterface 
+interface CommandHandlerInterface
 {
 
 	/**

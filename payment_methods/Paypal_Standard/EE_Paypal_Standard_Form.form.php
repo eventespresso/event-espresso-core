@@ -49,9 +49,8 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form {
 						EE_PMT_Paypal_Standard::shipping_info_none     => __( "Do not prompt for an address", 'event_espresso' ),
 						EE_PMT_Paypal_Standard::shipping_info_optional => __( "Prompt for an address, but do not require it", 'event_espresso' ),
 						EE_PMT_Paypal_Standard::shipping_info_required => __( "Prompt for an address, and require it", 'event_espresso' )
-					) ),
-				),
-				'before_form_content_template' => $payment_method_type->file_folder() . DS . 'templates' . DS . 'paypal_standard_settings_before_form.template.php',
+					) )
+				)
 			)
 		);
 	}

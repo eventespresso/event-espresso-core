@@ -9,7 +9,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 
 /**
  * Class InvalidCommandHandlerException
- * Description
+ * thrown when the Command Handler for a Command could not be resolved
  *
  * @package       Event Espresso
  * @author        Brent Christensen
@@ -17,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class InvalidCommandHandlerException extends \DomainException
 {
-	
+
 	/**
 	 * @access public
 	 * @param  string     $command_name
