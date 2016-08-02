@@ -8,7 +8,7 @@
  * @author 				Brent Christensen
  *
  */
-class EE_Cron_Tasks extends EE_BASE {
+class EE_Cron_Tasks extends EE_Base {
 
 	/**
 	 * WordPress doesn't allow duplicate crons within 10 minutes of the original,
@@ -190,7 +190,7 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * and attempts to finalize any TXNs that have not been completed
 	 * but have had their sessions expired, most likely due to a user not
 	 * returning from an off-site payment gateway
-	 * 
+	 *
 	 * @throws \EE_Error
 	 */
 	public static function update_transaction_with_payment() {
@@ -303,7 +303,7 @@ class EE_Cron_Tasks extends EE_BASE {
 
 	/**
 	 * finalize_abandoned_transactions
-	 
+
 	 * loops through the self::$_abandoned_transactions array
 	 * and attempts to finalize any TXNs that have not been completed
 	 * but have had their sessions expired, most likely due to a user not
