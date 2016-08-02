@@ -51,7 +51,7 @@ class CapabilitiesChecker
 
 
     /**
-     * @param CapCheck|CapCheck[] $cap_check
+     * @param CapCheckInterface|CapCheckInterface[] $cap_check
      * @return bool
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
@@ -74,14 +74,17 @@ class CapabilitiesChecker
         if ($cap_check instanceof PublicCapabilities) {
             return true;
         }
-        if (
+        $capabilities = (array) $cap_check->capability();
+        foreach ($capabilities as $capability) {
+            if (
             ! $this->capabilities()->current_user_can(
-                $cap_check->capability(),
+                $capability,
                 $cap_check->context(),
                 $cap_check->ID()
             )
-        ) {
-            throw new InsufficientPermissionsException($cap_check->context());
+            ) {
+                throw new InsufficientPermissionsException($cap_check->context());
+            }
         }
         return true;
     }
