@@ -144,17 +144,9 @@ final class EE_Network_Config {
 	public function update_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );
 
-		//we have to compare existing saved config with config in memory because if there is no difference that means
-		//that the method executed fine but there just was no update.  WordPress doesn't distinguish between false because
-		//there were 0 records updated because of no change vs false because some error produced problems with the update.
-		$original = get_site_option( 'ee_network_config' );
-
-		if ( $original == $this ) {
-			return true;
-		}
 		// update
 		$saved = update_site_option( 'ee_network_config', $this );
-		
+
 		do_action( 'AHEE__EE_Network_Config__update_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
