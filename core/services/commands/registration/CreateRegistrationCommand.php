@@ -3,7 +3,6 @@ namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
-use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
