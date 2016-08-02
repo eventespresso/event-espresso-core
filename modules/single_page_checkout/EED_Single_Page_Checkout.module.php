@@ -869,7 +869,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
                            )
                         );
                     // override capabilities for frontend registrations
-                    if (! is_admin()) {
+                    if ( ! is_admin()) {
                         $CreateRegistrationCommand->setCapCheck(
                             new \EventEspresso\core\domain\services\capabilities\PublicCapabilities('',
                                 'create_new_registration')
@@ -898,7 +898,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @access public
 	 * @param EE_Registration $reg_A
 	 * @param EE_Registration $reg_B
-	 * @return array()
+	 * @return int
 	 */
 	public static function sort_registrations_by_REG_count( EE_Registration $reg_A, EE_Registration $reg_B ) {
 		// this shouldn't ever happen within the same TXN, but oh well
