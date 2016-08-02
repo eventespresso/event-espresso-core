@@ -144,6 +144,21 @@ final class EE_Network_Config {
 	public function update_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );
 
+		//need to bust cache for comparing original if this is a multisite install
+		if ( is_multisite() ) {
+			global $current_site;
+			$cache_key = $current_site->id . ':ee_network_config';
+			wp_cache_delete( $cache_key, 'site-options' );
+		}
+
+		//we have to compare existing saved config with config in memory because if there is no difference that means
+		//that the method executed fine but there just was no update.  WordPress doesn't distinguish between false because
+		//there were 0 records updated because of no change vs false because some error produced problems with the update.
+		$original = get_site_option( 'ee_network_config' );
+
+		if ( $original == $this ) {
+			return true;
+		}
 		// update
 		$saved = update_site_option( 'ee_network_config', $this );
 
@@ -154,13 +169,13 @@ final class EE_Network_Config {
 				$msg = is_multisite() ? __( 'The Event Espresso Network Configuration Settings have been successfully updated.', 'event_espresso' ) : __( 'Extra Event Espresso Configuration settings were successfully updated.', 'event_espresso' );
 				EE_Error::add_success( $msg );
 			}
-			return TRUE;
+			return true;
 		} else {
 			if ( $add_error ) {
 				$msg = is_multisite() ? __( 'The Event Espresso Network Configuration Settings were not updated.', 'event_espresso' ) : __( 'Extra Event Espresso Network Configuration settings were not updated.', 'event_espresso' );
 				EE_Error::add_error( $msg , __FILE__, __FUNCTION__, __LINE__ );
 			}
-			return FALSE;
+			return false;
 		}
 	}
 
