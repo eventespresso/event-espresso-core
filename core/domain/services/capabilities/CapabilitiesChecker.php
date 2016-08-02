@@ -51,6 +51,9 @@ class CapabilitiesChecker
 
 
     /**
+     * Verifies that the current user has ALL of the capabilities listed in the CapCheck DTO.
+     * If any of the individual capability checks fails, then the command will NOT be executed.
+     *
      * @param CapCheckInterface|CapCheckInterface[] $cap_check
      * @return bool
      * @throws InvalidClassException
