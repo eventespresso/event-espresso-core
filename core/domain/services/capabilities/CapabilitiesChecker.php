@@ -77,11 +77,11 @@ class CapabilitiesChecker
         $capabilities = (array) $cap_check->capability();
         foreach ($capabilities as $capability) {
             if (
-            ! $this->capabilities()->current_user_can(
-                $capability,
-                $cap_check->context(),
-                $cap_check->ID()
-            )
+                ! $this->capabilities()->current_user_can(
+                    $capability,
+                    $cap_check->context(),
+                    $cap_check->ID()
+                )
             ) {
                 throw new InsufficientPermissionsException($cap_check->context());
             }
