@@ -718,7 +718,7 @@ class EEH_Activation {
 				return $field_array;
 			}
 		}
-		return FALSE;
+		return array();
 	}
 
 
@@ -1710,7 +1710,7 @@ class EEH_Activation {
 			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
-	
+
 	/**
 	 * Gets the mysql error code from the last used query by wpdb
 	 * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
@@ -1755,13 +1755,13 @@ class EEH_Activation {
 						117, //no such table
 					)
 				)
-				|| 
+				||
 				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
 			) {
 				return false;
 			} else {
 				//log this because that's weird. Just use the normal PHP error log
-				error_log( 
+				error_log(
 					sprintf(
 						__( 'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)', 'event_espresso' ),
 					$new_error
