@@ -149,7 +149,7 @@
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
 		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
-			return NULL;
+			return;
 		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! defined( 'ESPRESSO_SESSION' ) ) {
@@ -196,7 +196,7 @@
 		// once everything is all said and done,
 		add_action( 'shutdown', array( $this, 'update' ), 100 );
 		add_action( 'shutdown', array( $this, 'garbage_collection' ), 999 );
-
+		add_filter( 'wp_redirect', array( $this, 'update_on_redirect' ), 100, 1 );
 	}
 
 
@@ -618,6 +618,19 @@
 
 
 
+	 /**
+	  * since WordPress has no do_action()s within wp_safe_redirect,
+	  * we have to hack into one of the supplied filters
+	  * in order to make sure the session is updated prior to redirecting.
+	  * This is a callback for the 'wp_redirect' filter
+	  *
+	  * @param string $location
+	  * @return mixed
+	  */
+	 public function update_on_redirect( $location ) {
+		 $this->update();
+		 return $location;
+	}
 
 
 	/**
@@ -647,6 +660,7 @@
 			|| ! (
 				EE_Registry::instance()->REQ->is_espresso_page()
 				|| EE_Registry::instance()->REQ->front_ajax
+				|| is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 			)
 		) {
 			return FALSE;

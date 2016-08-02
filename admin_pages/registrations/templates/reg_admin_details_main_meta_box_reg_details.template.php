@@ -1,7 +1,8 @@
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
 
-	<?php echo $view_transaction_button; ?>
+	<?php do_action( 'AHEE__reg_admin_details_main_meta_box_reg_details__top', $REG_ID ); ?>
 	<?php echo $resend_registration_button; ?>
+	<?php echo $view_transaction_button; ?>
 	<br/>
 
 	<h3 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span><?php _e( 'Registration Items', 'event_espresso' );?></h3>

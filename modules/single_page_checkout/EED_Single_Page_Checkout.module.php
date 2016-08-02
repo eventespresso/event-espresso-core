@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\exceptions\InvalidEntityException;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * Single Page Checkout (SPCO)
  *
@@ -855,15 +857,35 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				//do the following for each ticket of this type they selected
 				for ( $x = 1; $x <= $line_item->quantity(); $x++ ) {
 					$att_nmbr++;
-					$registration = $registration_processor->generate_ONE_registration_from_line_item(
-						$line_item,
-						$transaction,
-						$att_nmbr,
-						$this->checkout->total_ticket_count
-					);
-					if ( $registration instanceof EE_Registration ) {
-						$registrations[ $registration->ID() ] = $registration;
+					$CreateRegistrationCommand = EE_Registry::instance()
+                       ->create(
+                           'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+                           array(
+	                           $transaction,
+	                           $line_item,
+	                           $att_nmbr,
+	                           $this->checkout->total_ticket_count
+                           )
+                       );
+					//remove cap check middleware for this if in frontend
+					if ( EE_FRONT_AJAX || ! is_admin() ) {
+						add_filter( 'FHEE__EventEspresso_core_services_commands_CommandBus__command_bus_middleware', function ( $command_bus_middleware ) {
+							foreach ( $command_bus_middleware as $index => $middleware ) {
+								if ( $middleware instanceof \EventEspresso\core\services\commands\middleware\CapChecker ) {
+									unset( $command_bus_middleware[ $index ] );
+								}
+							}
+							return $middleware;
+						} );
 					}
+					$registration = EE_Registry::instance()->BUS->execute( $CreateRegistrationCommand );
+					if ( ! $registration instanceof EE_Registration ) {
+						throw new InvalidEntityException(
+							is_object( $registration ) ? get_class( $registration ) : gettype( $registration ),
+							'EE_Registration'
+						);
+					}
+					$registrations[ $registration->ID() ] = $registration;
 				}
 			}
 			$registration_processor->fix_reg_final_price_rounding_issue( $transaction );

@@ -42,6 +42,10 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 
+	/**
+	 * @param array $class_abbreviations
+	 * @return array
+	 */
 	public function unit_test_registry_class_abbreviations( $class_abbreviations = array() ) {
 		$class_abbreviations[ 'EE_Session_Mock' ] = 'SSN';
 		return $class_abbreviations;
@@ -49,6 +53,10 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 
+	/**
+	 * @param array $core_paths
+	 * @return array
+	 */
 	public function unit_test_registry_core_paths( $core_paths = array() ) {
 		$core_paths[] = EE_TESTS_DIR . 'mocks' . DS . 'core' . DS;
 		return $core_paths;
