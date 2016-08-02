@@ -30,7 +30,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 					 'The supplied entity is an instance of "%1$s", but an instance of "%2$s" was expected.',
 					 'event_espresso'
 				 ),
-				 $actual,
+				 is_object($actual) ? get_class($actual) : gettype($actual),
 				 $expected
 			 );
 		 }

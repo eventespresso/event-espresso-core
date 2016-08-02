@@ -867,6 +867,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	                           $this->checkout->total_ticket_count
                            )
                        );
+					//remove cap check middleware for this if in frontend
+					if ( EE_FRONT_AJAX || ! is_admin() ) {
+						add_filter( 'FHEE__EventEspresso_core_services_commands_CommandBus__command_bus_middleware', function ( $command_bus_middleware ) {
+							foreach ( $command_bus_middleware as $index => $middleware ) {
+								if ( $middleware instanceof \EventEspresso\core\services\commands\middleware\CapChecker ) {
+									unset( $command_bus_middleware[ $index ] );
+								}
+							}
+							return $middleware;
+						} );
+					}
 					$registration = EE_Registry::instance()->BUS->execute( $CreateRegistrationCommand );
 					if ( ! $registration instanceof EE_Registration ) {
 						throw new InvalidEntityException(
