@@ -21,7 +21,7 @@ class CapCheck implements CapCheckInterface
 {
 
     /**
-     * @var string $capability
+     * @var string|array $capability
      */
     private $capability;
 
@@ -38,9 +38,10 @@ class CapCheck implements CapCheckInterface
 
 
     /**
-     * @param string $capability - the capability to be checked, like: 'ee_edit_registrations'
-     * @param string $context    - what the user is attempting to do, like: 'Edit Registration'
-     * @param int    $ID         - (optional) ID for item where current_user_can is being called from
+     * @param string|array $capability - the capability to be checked, like: 'ee_edit_registrations',
+     *                                   or an array of capability strings
+     * @param string       $context    - what the user is attempting to do, like: 'Edit Registration'
+     * @param int          $ID         - (optional) ID for item where current_user_can is being called from
      */
     public function __construct($capability, $context, $ID = 0)
     {
@@ -58,7 +59,7 @@ class CapCheck implements CapCheckInterface
 
 
     /**
-     * @return string
+     * @return string|array
      */
     public function capability()
     {
