@@ -65,10 +65,14 @@ class CapabilitiesChecker
             return true;
         }
         // at this point, $cap_check should be an individual instance of CapCheck
-        if ( ! $cap_check instanceof CapCheck) {
+        if ( ! $cap_check instanceof CapCheckInterface) {
             throw new InvalidClassException(
-                '\EventEspresso\core\domain\services\capabilities\CapCheck'
+                '\EventEspresso\core\domain\services\capabilities\CapCheckInterface'
             );
+        }
+        // sometimes cap checks are conditional, and no capabilities are required
+        if ($cap_check instanceof PublicCapabilities) {
+            return true;
         }
         if (
             ! $this->capabilities()->current_user_can(
