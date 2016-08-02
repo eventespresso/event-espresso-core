@@ -30,23 +30,13 @@ class EED_Bot_Trap  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		if (
+        if (
 			apply_filters( 'FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true ) &&
-			EE_Registry::instance()->CFG->registration->use_bot_trap
+			\EE_Registry::instance()->CFG->registration->use_bot_trap
 		) {
-			define( 'EE_BOT_TRAP_BASE_URL', plugin_dir_url( __FILE__ ) . DS );
-			add_action(
-				'AHEE__ticket_selector_chart__template__after_ticket_selector',
-				array( 'EED_Bot_Trap', 'generate_bot_trap' ),
-				10, 2
-			);
-			add_action(
-				'EED_Ticket_Selector__process_ticket_selections__before',
-				array( 'EED_Bot_Trap', 'process_bot_trap' ),
-				1, 2
-			);
+            \EED_Bot_Trap::set_trap();
 			// redirect bots to bogus success page
-			EE_Config::register_route( 'ticket_selection_received', 'EED_Bot_Trap', 'display_bot_trap_success' );
+			\EE_Config::register_route( 'ticket_selection_received', 'EED_Bot_Trap', 'display_bot_trap_success' );
 		}
 	}
 
@@ -58,8 +48,38 @@ class EED_Bot_Trap  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
+	public static function set_trap() {
+        define('EE_BOT_TRAP_BASE_URL', plugin_dir_url(__FILE__) . DS);
+        add_action(
+            'AHEE__ticket_selector_chart__template__after_ticket_selector',
+            array('EED_Bot_Trap', 'generate_bot_trap'),
+            10, 2
+        );
+        add_action(
+            'EED_Ticket_Selector__process_ticket_selections__before',
+            array('EED_Bot_Trap', 'process_bot_trap'),
+            1, 2
+        );
+    }
+
+
+
+	/**
+	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
 	public static function set_hooks_admin() {
-		add_action(
+        if (
+            defined('DOING_AJAX')
+            && DOING_AJAX
+            && apply_filters('FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true)
+            && \EE_Registry::instance()->CFG->registration->use_bot_trap
+        ) {
+            \EED_Bot_Trap::set_trap();
+        }
+        add_action(
 			'AHEE__Extend_Registration_Form_Admin_Page___reg_form_settings_template',
 			array( 'EED_Bot_Trap', 'bot_trap_settings_form' ),
 			10
@@ -117,7 +137,7 @@ class EED_Bot_Trap  extends EED_Module {
      *                                              whether the trap was triggered by suspicious timing or not.
 	 */
 	public static function process_bot_trap( $triggered_trap_callback = array() ) {
-		// what's your email address Mr. Bot ?
+        // what's your email address Mr. Bot ?
 		$empty_trap = isset( $_REQUEST[ 'tkt-slctr-request-processor-email' ] )
                       && $_REQUEST[ 'tkt-slctr-request-processor-email' ] === ''
             ? true
@@ -170,11 +190,22 @@ class EED_Bot_Trap  extends EED_Module {
 				$redirect_url
 			);
 		}
-		wp_safe_redirect(
-			apply_filters( 'FHEE__EED_Bot_Trap__process_bot_trap__redirect_url', $redirect_url )
-		);
-		exit();
-	}
+		$redirect_url = apply_filters('FHEE__EED_Bot_Trap__process_bot_trap__redirect_url', $redirect_url);
+        // if AJAX, return the redirect URL
+        if (defined('DOING_AJAX') && DOING_AJAX) {
+            echo json_encode(
+                array_merge(
+                    \EE_Error::get_notices(false),
+                    array(
+                       'redirect_url' => $redirect_url
+                    )
+                )
+            );
+            exit();
+        }
+        wp_safe_redirect($redirect_url);
+        exit();
+    }
 
 
 
