@@ -26,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Admin_Page extends EE_BASE {
+abstract class EE_Admin_Page extends EE_Base {
 
 
 	//set in _init_page_props()
