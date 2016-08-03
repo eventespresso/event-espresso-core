@@ -51,7 +51,10 @@ class CapabilitiesChecker
 
 
     /**
-     * @param CapCheck|CapCheck[] $cap_check
+     * Verifies that the current user has ALL of the capabilities listed in the CapCheck DTO.
+     * If any of the individual capability checks fails, then the command will NOT be executed.
+     *
+     * @param CapCheckInterface|CapCheckInterface[] $cap_check
      * @return bool
      * @throws InvalidClassException
      * @throws InsufficientPermissionsException
@@ -65,19 +68,26 @@ class CapabilitiesChecker
             return true;
         }
         // at this point, $cap_check should be an individual instance of CapCheck
-        if ( ! $cap_check instanceof CapCheck) {
+        if ( ! $cap_check instanceof CapCheckInterface) {
             throw new InvalidClassException(
-                '\EventEspresso\core\domain\services\capabilities\CapCheck'
+                '\EventEspresso\core\domain\services\capabilities\CapCheckInterface'
             );
         }
-        if (
-            ! $this->capabilities()->current_user_can(
-                $cap_check->capability(),
-                $cap_check->context(),
-                $cap_check->ID()
-            )
-        ) {
-            throw new InsufficientPermissionsException($cap_check->context());
+        // sometimes cap checks are conditional, and no capabilities are required
+        if ($cap_check instanceof PublicCapabilities) {
+            return true;
+        }
+        $capabilities = (array) $cap_check->capability();
+        foreach ($capabilities as $capability) {
+            if (
+                ! $this->capabilities()->current_user_can(
+                    $capability,
+                    $cap_check->context(),
+                    $cap_check->ID()
+                )
+            ) {
+                throw new InsufficientPermissionsException($cap_check->context());
+            }
         }
         return true;
     }
