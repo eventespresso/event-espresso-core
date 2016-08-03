@@ -92,7 +92,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *    Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * @return \EEM_Registration
 	 */
-	protected function __construct( $timezone ) {
+	protected function __construct( $timezone = null ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 
