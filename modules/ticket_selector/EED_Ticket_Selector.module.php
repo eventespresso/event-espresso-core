@@ -486,11 +486,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * 	process_ticket_selections
 	 *
 	 *	@access public
-	 * 	@access 		public
-	 * 	@return		array  or FALSE
+	 * 	@return array|boolean
 	 */
 	public function process_ticket_selections() {
-		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
+        do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! is_admin() && ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' ))) {
 			EE_Error::add_error(
