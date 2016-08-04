@@ -657,50 +657,5 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	/***************************************		REGISTRATION SETTINGS 		***************************************/
-
-
-
-
-
-	protected function _reg_form_settings() {
-
-		$this->_template_args['values'] = $this->_yes_no_values;
-
-		$this->_template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
-		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': '';
-
-		$this->_template_args['recaptcha_publickey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : '';
-		$this->_template_args['recaptcha_privatekey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : '';
-		$this->_template_args['recaptcha_width'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_width ) ? absint( EE_Registry::instance()->CFG->registration->recaptcha_width ) : 500;
-
-		$this->_template_args['recaptcha_theme_options'] = array(
-				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
-				array('id'  => 'white','text'=> __('White', 'event_espresso')),
-				array('id'  => 'blackglass','text'=> __('Blackglass', 'event_espresso')),
-				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->get_pretty( 'recaptcha_theme' ) : 'clean';
-
-		$this->_template_args['recaptcha_language_options'] = array(
-				array('id'  => 'en','text'=> __('English', 'event_espresso')),
-				array('id'  => 'es','text'=> __('Spanish', 'event_espresso')),
-				array('id'  => 'nl','text'=> __('Dutch', 'event_espresso')),
-				array('id'  => 'fr','text'=> __('French', 'event_espresso')),
-				array('id'  => 'de','text'=> __('German', 'event_espresso')),
-				array('id'  => 'pt','text'=> __('Portuguese', 'event_espresso')),
-				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
-				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
-			);
-		$this->_template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
-
-		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();
-	}
-
-
-
 
 } //ends Registration_Form_Admin_Page class
