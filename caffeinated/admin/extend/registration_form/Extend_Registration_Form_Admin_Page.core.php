@@ -990,60 +990,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
                         if ( $email_validation_level === 'i18n' || $email_validation_level === 'i18n_dns' ) {
                             // in case we need to reset their email validation level,
                             // make sure that the previous value wasn't already set to one of the i18n options.
-                            // if so, then reset it back to "basic" since that is the only other option
-                            // that, despite offering poor validation, supports i18n email addresses
-                            if ($prev_email_validation_level === 'i18n' || $prev_email_validation_level === 'i18n_dns' ) {
+                            if ( $prev_email_validation_level === 'i18n' || $prev_email_validation_level === 'i18n_dns' ) {
+                                // if so, then reset it back to "basic" since that is the only other option that,
+                                // despite offering poor validation, supports i18n email addresses
                                 $prev_email_validation_level = 'basic';
                             }
-                            // first check that PCRE is enabled
-                            if ( ! defined('PREG_BAD_UTF8_ERROR')) {
-                                EE_Error::add_error(
-                                    sprintf(
-                                        esc_html__(
-                                            'We\'re sorry, but it appears that your server\'s version of PHP was not compiled with PCRE unicode support.%1$sPlease contact your hosting company and ask them whether the PCRE compiled with your version of PHP on your server can be been built with the "--enable-unicode-properties" and "--enable-utf8" configuration switches to enable more complex regex expressions.%1$sIf they are unable, or unwilling to do so, then your server will not support international email addresses using UTF-8 unicode characters. This means you will either have to lower your email validation level to "Basic" or "WordPress Default", or switch to a hosting company that has/can enable PCRE unicode support on the server.',
-                                            'event_espresso'
-                                        ),
-                                        '<br />'
-                                    ),
-                                    __FILE__,
-                                    __FUNCTION__,
-                                    __LINE__
-                                );
-                                // reset email validation level to previous value
+                            // confirm our i18n email validation will work on the server
+                            if ( ! $this->_verify_pcre_support($EE_Registration_Config, $email_validation_level)) {
+                                // or reset email validation level to previous value
                                 $email_validation_level = $prev_email_validation_level;
-                            } else {
-                                // PCRE support is enabled, but let's still
-                                // perform a test to see if the server will support it
-                                try {
-                                    // need to save the updated validation level to the config,
-                                    // so that the validation strategy picks it up.
-                                    // this will get bumped back down if it doesn't work
-                                    $EE_Registration_Config->email_validation_level = $email_validation_level;
-                                    $email_validator = new EE_Email_Validation_Strategy();
-                                    $i18n_email_address = apply_filters(
-                                        'FHEE__Extend_Registration_Form_Admin_Page__update_email_validation_settings_form__i18n_email_address',
-                                        'jägerjürgen@deutschland.com'
-                                    );
-                                    $email_validator->validate($i18n_email_address);
-                                } catch (Exception $e) {
-                                    EE_Error::add_error(
-                                        sprintf(
-                                            esc_html__(
-                                                'We\'re sorry, but it appears that your server\'s configuration will not support the "International" or "International + DNS Check" email validation levels.%1$sTo correct this issue, please consult with your hosting company regarding your server\'s PCRE settings.%1$sIt is recommended that your PHP version be configured to use PCRE 8.10 or newer.%1$sMore information regarding PCRE versions and installation can be found here: %2$s',
-                                                'event_espresso'
-                                            ),
-                                            '<br />',
-                                            '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank">http://php.net/manual/en/pcre.installation.php</a>'
-                                        ),
-                                        __FILE__, __FUNCTION__, __LINE__
-                                    );
-                                    // reset email validation level to previous value
-                                    $email_validation_level = $prev_email_validation_level;
-                                }
                             }
                         }
                         $EE_Registration_Config->email_validation_level = $email_validation_level;
-
                     } else {
 						EE_Error::add_error(
 							__(
@@ -1067,5 +1025,64 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		return $EE_Registration_Config;
 	}
+
+
+
+    /**
+     * confirms that the server's PHP version has the PCRE module enabled,
+     * and that the PCRE version works with our i18n email validation
+     *
+     * @param \EE_Registration_Config $EE_Registration_Config
+     * @param string                  $email_validation_level
+     * @return bool
+     */
+    private function _verify_pcre_support(EE_Registration_Config $EE_Registration_Config, $email_validation_level)
+    {
+        // first check that PCRE is enabled
+        if ( ! defined('PREG_BAD_UTF8_ERROR')) {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__(
+                        'We\'re sorry, but it appears that your server\'s version of PHP was not compiled with PCRE unicode support.%1$sPlease contact your hosting company and ask them whether the PCRE compiled with your version of PHP on your server can be been built with the "--enable-unicode-properties" and "--enable-utf8" configuration switches to enable more complex regex expressions.%1$sIf they are unable, or unwilling to do so, then your server will not support international email addresses using UTF-8 unicode characters. This means you will either have to lower your email validation level to "Basic" or "WordPress Default", or switch to a hosting company that has/can enable PCRE unicode support on the server.',
+                        'event_espresso'
+                    ),
+                    '<br />'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        } else {
+            // PCRE support is enabled, but let's still
+            // perform a test to see if the server will support it.
+            // but first, save the updated validation level to the config,
+            // so that the validation strategy picks it up.
+            // this will get bumped back down if it doesn't work
+            $EE_Registration_Config->email_validation_level = $email_validation_level;
+            try {
+                $email_validator = new EE_Email_Validation_Strategy();
+                $i18n_email_address = apply_filters(
+                    'FHEE__Extend_Registration_Form_Admin_Page__update_email_validation_settings_form__i18n_email_address',
+                    'jägerjürgen@deutschland.com'
+                );
+                $email_validator->validate($i18n_email_address);
+            } catch (Exception $e) {
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'We\'re sorry, but it appears that your server\'s configuration will not support the "International" or "International + DNS Check" email validation levels.%1$sTo correct this issue, please consult with your hosting company regarding your server\'s PCRE settings.%1$sIt is recommended that your PHP version be configured to use PCRE 8.10 or newer.%1$sMore information regarding PCRE versions and installation can be found here: %2$s',
+                            'event_espresso'
+                        ),
+                        '<br />',
+                        '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank">http://php.net/manual/en/pcre.installation.php</a>'
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
