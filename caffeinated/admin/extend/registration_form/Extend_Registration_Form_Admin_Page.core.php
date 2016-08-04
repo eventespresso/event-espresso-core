@@ -523,7 +523,17 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _edit_question_group( $type = 'add' ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QSG_ID'] ) && ! empty( $this->_req_data['QSG_ID'] ) ? absint( $this->_req_data['QSG_ID'] ) : FALSE;
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+
+		switch( $this->_req_action ) {
+			case 'add_question_group' :
+				$this->_admin_page_title = esc_html__( 'Add Question Group', 'event_espresso' );
+				break;
+			case 'edit_question_group' :
+				$this->_admin_page_title = esc_html__( 'Edit Question Group', 'event_espresso' );
+				break;
+			default :
+				$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		}
 		// add ID to title if editing
 		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
 		if($ID){
@@ -923,7 +933,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * @return EE_Form_Section_Proper
 	 */
 	protected function _email_validation_settings_form() {
-		return new EE_Form_Section_Proper(
+        return new EE_Form_Section_Proper(
 			array(
 				'name'            => 'email_validation_settings',
 				'html_id'         => 'email_validation_settings',
@@ -963,7 +973,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * @return \EE_Registration_Config
 	 */
 	public function update_email_validation_settings_form( EE_Registration_Config $EE_Registration_Config ) {
-		try {
+        $prev_email_validation_level = $EE_Registration_Config->email_validation_level;
+        try {
 			$email_validation_settings_form = $this->_email_validation_settings_form();
 			// if not displaying a form, then check for form submission
 			if ( $email_validation_settings_form->was_submitted() ) {
@@ -974,44 +985,80 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					// grab validated data from form
 					$valid_data = $email_validation_settings_form->valid_data();
 					if ( isset( $valid_data['email_validation_level'] ) ) {
-						if (
-							(
-								$valid_data['email_validation_level'] === 'i18n'
-								|| $valid_data['email_validation_level'] === 'i18n_dns'
-							)
-							&& ! defined('PREG_BAD_UTF8_ERROR')
-						){
-							EE_Error::add_error(
-								__(
-									'We\'re sorry, but it appears your server\'s version of PHP was not compiled with PCRE unicode support. Please contact your hosting company and ask them whether the PCRE compiled with your version of PHP on your server can be been built with the "--enable-unicode-properties" and "--enable-utf8" configuration switches to enable more complex regex expressions. If they are unable or unwilling to do so, then your server will not support international email addresses using UTF-8 unicode characters. This means you will either have to lower your email validation level to "Basic" or "WordPress Default", or switch to a hosting company that has/can enable PCRE unicode support on the server.',
-									'event_espresso'
-								),
-								__FILE__,
-								__FUNCTION__,
-								__LINE__
-							);
-						} else {
-							$EE_Registration_Config->email_validation_level = $valid_data['email_validation_level'];
-						}
-					} else {
+					    $email_validation_level = $valid_data['email_validation_level'];
+                        // now if they want to use international email addresses
+                        if ( $email_validation_level === 'i18n' || $email_validation_level === 'i18n_dns' ) {
+                            // in case we need to reset their email validation level,
+                            // make sure that the previous value wasn't already set to one of the i18n options.
+                            // if so, then reset it back to "basic" since that is the only other option
+                            // that, despite offering poor validation, supports i18n email addresses
+                            if ($prev_email_validation_level === 'i18n' || $prev_email_validation_level === 'i18n_dns' ) {
+                                $prev_email_validation_level = 'basic';
+                            }
+                            // first check that PCRE is enabled
+                            if ( ! defined('PREG_BAD_UTF8_ERROR')) {
+                                EE_Error::add_error(
+                                    sprintf(
+                                        esc_html__(
+                                            'We\'re sorry, but it appears that your server\'s version of PHP was not compiled with PCRE unicode support.%1$sPlease contact your hosting company and ask them whether the PCRE compiled with your version of PHP on your server can be been built with the "--enable-unicode-properties" and "--enable-utf8" configuration switches to enable more complex regex expressions.%1$sIf they are unable, or unwilling to do so, then your server will not support international email addresses using UTF-8 unicode characters. This means you will either have to lower your email validation level to "Basic" or "WordPress Default", or switch to a hosting company that has/can enable PCRE unicode support on the server.',
+                                            'event_espresso'
+                                        ),
+                                        '<br />'
+                                    ),
+                                    __FILE__,
+                                    __FUNCTION__,
+                                    __LINE__
+                                );
+                                // reset email validation level to previous value
+                                $email_validation_level = $prev_email_validation_level;
+                            } else {
+                                // PCRE support is enabled, but let's still
+                                // perform a test to see if the server will support it
+                                try {
+                                    // need to save the updated validation level to the config,
+                                    // so that the validation strategy picks it up.
+                                    // this will get bumped back down if it doesn't work
+                                    $EE_Registration_Config->email_validation_level = $email_validation_level;
+                                    $email_validator = new EE_Email_Validation_Strategy();
+                                    $i18n_email_address = apply_filters(
+                                        'FHEE__Extend_Registration_Form_Admin_Page__update_email_validation_settings_form__i18n_email_address',
+                                        'jägerjürgen@deutschland.com'
+                                    );
+                                    $email_validator->validate($i18n_email_address);
+                                } catch (Exception $e) {
+                                    EE_Error::add_error(
+                                        sprintf(
+                                            esc_html__(
+                                                'We\'re sorry, but it appears that your server\'s configuration will not support the "International" or "International + DNS Check" email validation levels.%1$sTo correct this issue, please consult with your hosting company regarding your server\'s PCRE settings.%1$sIt is recommended that your PHP version be configured to use PCRE 8.10 or newer.%1$sMore information regarding PCRE versions and installation can be found here: %2$s',
+                                                'event_espresso'
+                                            ),
+                                            '<br />',
+                                            '<a href="http://php.net/manual/en/pcre.installation.php" target="_blank">http://php.net/manual/en/pcre.installation.php</a>'
+                                        ),
+                                        __FILE__, __FUNCTION__, __LINE__
+                                    );
+                                    // reset email validation level to previous value
+                                    $email_validation_level = $prev_email_validation_level;
+                                }
+                            }
+                        }
+                        $EE_Registration_Config->email_validation_level = $email_validation_level;
+
+                    } else {
 						EE_Error::add_error(
 							__(
 								'Invalid or missing Email Validation settings. Please refresh the form and try again.',
 								'event_espresso'
 							),
-							__FILE__,
-							__FUNCTION__,
-							__LINE__
-						);
+                            __FILE__, __FUNCTION__, __LINE__
+                        );
 					}
 				} else {
 					if ( $email_validation_settings_form->submission_error_message() !== '' ) {
 						EE_Error::add_error(
 							$email_validation_settings_form->submission_error_message(),
-							__FILE__,
-							__FUNCTION__,
-							__LINE__
-						);
+                            __FILE__, __FUNCTION__, __LINE__
+                        );
 					}
 				}
 			}
