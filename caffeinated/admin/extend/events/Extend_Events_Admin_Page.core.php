@@ -454,7 +454,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$orig_event = EEM_Event::instance()->get_one_by_ID( $this->_req_data['EVT_ID'] );
 
 		if ( ! $orig_event instanceof EE_Event )
-			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso '), $this->_req_data['EVT_ID'] ) );
+			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso'), $this->_req_data['EVT_ID'] ) );
 
 		//k now let's clone the $orig_event before getting relations
 		$new_event = clone $orig_event;

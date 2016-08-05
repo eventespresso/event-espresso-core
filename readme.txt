@@ -11,7 +11,7 @@ Manage your events from your WordPress dashboard. Reduce your admin, reduce your
 
 == Description ==
 
-Manage your events from your WordPress dashboard. Reduce your admin, [reduce your costs](https://eventespresso.com/2010/08/friends-dont-let-friends-host-events-eventbrite/), make your life easier!
+Manage your events from your WordPress dashboard. Reduce your admin, [reduce your costs](https://eventespresso.com/2010/08/friends-dont-let-friends-host-events-eventbrite/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=reduce+your+costs+link), make your life easier!
 
 Event Espresso is a [WordPress event manager](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to sell tickets for events, workshops, events, trainings, conferences or concerts, register attendees for classes, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The decaf version of the plugin provides everything that you need to sell tickets, collect payments, and manage events all from within your WordPress dashboard.
 
@@ -34,7 +34,7 @@ You shouldn't need to be convinced about how awesome online event management is,
 * Automated confirmation emails
 * Manage registrants (attendees) and export registrant (attendee) data
 * Easily manage registrants' (attendees) profiles
-* [Mobile event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=mobile+event+apps&utm_campaign=ee4_decaf_whats_included) for ticket scanning and attendance tracking
+* [Android & Apple event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=mobile+event+apps&utm_campaign=ee4_decaf_whats_included) for ticket scanning and attendance tracking
 
 **Everything you need** to sell tickets and manage event registrations from your website.
 
@@ -151,6 +151,10 @@ Event Espresso is ticket and event management software for the modern world. Do 
 = Can I fully manage my events with Event Espresso Decaf? =
 
 You will be able to fully manage basic events with Event Espresso Decaf. This will be sufficient for many WordPress users. If you need advanced features you can check out our Premium [Event Management plugin](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Event+Management+plugin&utm_campaign=ee4_decaf_plugin_faq_tab)
+
+= Can I use the Android & Apple event apps with Event Espresso Decaf? =
+
+Yes, the [event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=event+apps&utm_campaign=ee4_decaf_plugin_faq_tab) work great with Event Espresso Decaf!
 
 = Will Event Espresso work on my server? =
 
