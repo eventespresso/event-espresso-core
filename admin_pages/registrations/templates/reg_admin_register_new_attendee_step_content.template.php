@@ -12,6 +12,6 @@
 				<label></label>
 			</div>
 		<?php endif; ?>
-		<input id="ee-new-registration-step-button" class="right button button-primary button-large" type="submit" value="<?php echo $step_button_text; ?>" />
+		<input id="ee-new-registration-step-button" class="float-right button button-primary button-large" type="submit" value="<?php echo $step_button_text; ?>" />
 	</div>
 </div>
