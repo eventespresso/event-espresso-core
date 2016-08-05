@@ -331,7 +331,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 	/**
 	 *        _get_question_target_db_column
-	 *	@deprecated as of 4.8.32.rc.001. Instead consider using 
+	 *	@deprecated as of 4.8.32.rc.001. Instead consider using
 	 * EE_Registration_Custom_Questions_Form located in admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
 	 * @access 	public
 	 * @param 	EE_Registration $registration (so existing answers for registration are included)
@@ -499,7 +499,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['Datetime.DTT_EVT_end'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
 		}
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
@@ -537,7 +537,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['Datetime.DTT_EVT_start'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
 		}
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
@@ -594,11 +594,9 @@ class EEM_Event  extends EEM_CPT_Base{
 		}
 
 		//merge remaining $where params with the and conditions.
-		$and_condtion = array_merge( $and_condition, $where_params );
-
-		$where_params['AND'] = $and_condition;
+		$where_params['AND'] = array_merge( $and_condition, $where_params );
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
@@ -642,7 +640,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		}
 
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 

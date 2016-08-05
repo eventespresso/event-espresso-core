@@ -237,6 +237,28 @@
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
+																<h4>Authorize.Net eCheck Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/authorize-net-echeck-231x152.jpg"></a><a href="https://eventespresso.com/go/authorizenetechecknet/">eCheck.Net</a> (eCheck Payment Gateway) is Authorize.Net’s exclusive electronic check processing solution. eCheck.Net enables event managers already processing credit card transactions through the Authorize.Net Payment Gateway to offer their customers an additional payment option.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-aim-echeck/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/authorizenet-aim-echeck-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=aim_echeck_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
 																<h4>Braintree Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
@@ -249,6 +271,118 @@
 																<li>
 																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-braintree-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=braintree_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
 																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/braintree-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=braintree_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>iDeal Mollie Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-ideal-mollie-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ideal_mollie_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ideal-mollie-gateway-231x151.jpg"></a><a href="https://www.mollie.com/nl/ideal" target="_blank">iDEAL</a> is to connect via Mollie easily without the usual technical and administrative burdens. iDEAL works directly with 9 large banks in the Netherlands: ABN AMRO, ASN Bank, ING, Knab, Rabobank, Regions Bank, SNS Bank, Triodos Bank and van Lanschot. Actual payments will take place in the familiar surroundings of the bank website.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-ideal-mollie-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ideal_mollie_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ideal-mollie-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ideal_mollie_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>ipay88 Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-ipay88-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ipay88_payment_gateway&ap_id=EEspresso" target="_blank"><img src="http://ee-screenshots.s3.amazonaws.com/ipay88-231x152.jpg"></a><a href="https://eventespresso.com/go/ipay88/">iPay88</a> is a leading payment provider in Malaysia.</p>
+																<p>iPay88 Payment Gateway add-on provides an easy and seamless integration to the iPay88 system. It uses the redirect method of payment. Your customers will be sent to a secure iPay88page, where they will choose the payment method they would like to use and proceed with the payment. After they have paid for the order, they will be returned to your site and presented with a "Thank You/Receipt" page.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-ipay88-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ipay88_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ipay88-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ipay88_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>MiGS Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-migs-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=migs_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/migs-payment-gateway-231x152.jpg"></a>The <a href="https://eventespresso.com/go/migs/" target="_blank">MasterCard Internet Gateway Service (MiGS)</a> payment method provides fast and secure electronic credit and debit card processing for your ticket sales and event registrations.</p>
+																<p>MiGS is available to event organizers (merchants) in Australia through a supported bank like Commonwealth bank or ANZ bank.</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-migs-payment-method/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=migs_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/migs-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=migs_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>PayPal Payflow Pro Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-payflow-pro-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_payflow_pro_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-paypal-payflow-231x152.jpg"></a>PayPal Payflow Pro will let you accept credit or debit cards on-site and is available to merchants in the United States, Canada, Australia, and New Zealand. This means that your registrants/attendees will be able to complete their registrations and pay without ever leaving your site.</p>
+																<p>Payflow Pro is different than PayPal Pro as it allows you to use an existing merchant account through another provider (processor).</p>
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-payflow-pro-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_payflow_pro_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/paypal-payflow-pro-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_payflow_pro_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
+																</li>
+															</ul>
+														</div>
+													</div>
+													
+												</div>
+												<div class="service-div-settings">
+													<div class="service-div-settings-top">
+														<div class="service-div-inner-content">
+															<div class="name column-name">
+																<h4>Sage Pay Payment Gateway</h4>
+															</div>
+															<div class="desc column-description">
+																<p><a href="https://eventespresso.com/product/eea-sage-pay-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/sage-pay_231x152.jpg"></a><a title="Sage Pay" href="http://www.sagepay.co.uk/our-payment-solutions/online-payments" target="_blank">Sage Pay</a> is a&nbsp;online payment gateway focused on serving european companies.&nbsp;There are now 250 employees working across Europe, serving over 50,000 customers. &nbsp;Sage Pay is known as one of the most trusted payment companies in Europe.</p>
+																
+															</div>
+														</div>
+														<div class="action-links">
+															<ul class="plugin-action-buttons-custom">
+																<li>
+																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-sage-pay-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
+																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/sage-pay-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
 																</li>
 															</ul>
 														</div>
@@ -280,28 +414,6 @@
 													<div class="service-div-settings-top">
 														<div class="service-div-inner-content">
 															<div class="name column-name">
-																<h4>PayPal Payflow Pro Payment Gateway</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-payflow-pro-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_payflow_pro_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ee4-paypal-payflow-231x152.jpg"></a>PayPal Payflow Pro will let you accept credit or debit cards on-site and is available to merchants in the United States, Canada, Australia, and New Zealand. This means that your registrants/attendees will be able to complete their registrations and pay without ever leaving your site.</p>
-																<p>Payflow Pro is different than PayPal Pro as it allows you to use an existing merchant account through another provider (processor).</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-payflow-pro-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_payflow_pro_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/paypal-payflow-pro-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_payflow_pro_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div>
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
 																<h4>Vanco Payment Gateway</h4>
 															</div>
 															<div class="desc column-description">
@@ -319,50 +431,9 @@
 													</div>
 													
 												</div>
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h4>iDeal Mollie Payment Gateway</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-ideal-mollie-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ideal_mollie_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/ideal-mollie-gateway-231x151.jpg"></a><a href="https://www.mollie.com/nl/ideal" target="_blank">iDEAL</a> is to connect via Mollie easily without the usual technical and administrative burdens. iDEAL works directly with 9 large banks in the Netherlands: ABN AMRO, ASN Bank, ING, Knab, Rabobank, Regions Bank, SNS Bank, Triodos Bank and van Lanschot. Actual payments will take place in the familiar surroundings of the bank website.</p>
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-ideal-mollie-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ideal_mollie_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/ideal-mollie-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ideal_mollie_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div>
 												
-												<div class="service-div-settings">
-													<div class="service-div-settings-top">
-														<div class="service-div-inner-content">
-															<div class="name column-name">
-																<h4>Sage Pay Payment Gateway</h4>
-															</div>
-															<div class="desc column-description">
-																<p><a href="https://eventespresso.com/product/eea-sage-pay-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank"><img src="https://ee-screenshots.s3.amazonaws.com/ee4/sage-pay_231x152.jpg"></a><a title="Sage Pay" href="http://www.sagepay.co.uk/our-payment-solutions/online-payments" target="_blank">Sage Pay</a> is a&nbsp;online payment gateway focused on serving european companies.&nbsp;There are now 250 employees working across Europe, serving over 50,000 customers. &nbsp;Sage Pay is known as one of the most trusted payment companies in Europe.</p>
-																
-															</div>
-														</div>
-														<div class="action-links">
-															<ul class="plugin-action-buttons-custom">
-																<li>
-																	<a class="plugin-div-button button button-primary" href="https://eventespresso.com/product/eea-sage-pay-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">Buy Now</a>
-																	<a class="plugin-div-button button button-secondary" href="https://eventespresso.com/wiki/sage-pay-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=sagepay_payment_gateway&ap_id=EEspresso" target="_blank">View Documentation</a>
-																</li>
-															</ul>
-														</div>
-													</div>
-													
-												</div>
+												
+												
 												<h3 class="service-settings-heading">Template Views</h3>
 												<div class="service-div-settings">
 													<div class="service-div-settings-top">
