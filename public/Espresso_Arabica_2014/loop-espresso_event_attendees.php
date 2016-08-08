@@ -7,11 +7,11 @@
  * @since 4.6.29
  * @author Darren Ethier
  *
- * Template Args that may be available in this template
+ * Template Args that are available in this template (yarr!)
  * @type EE_Attendee[] $contacts
  * @type EE_Event   $event
- * @type EE_Datetime    $datetime   will be present if datetime_id attribute is set in the shortcode
- * @type EE_Ticket  $ticket         will be present if ticket_id attribute is set in the shortcode
+ * @type EE_Datetime|null  $datetime  an EE_Datetime object will be available if the the datetime_id attribute is set in the shortcode and the id matches a valid datetime.
+ * @type EE_Ticket|null  $ticket  an EE_Ticket object will be available if the the ticket_id attribute is set in the shortcode and the id matches a valid ticket.
  * @type bool       $show_gravatar  whether to show gravatar or not.
  */
 
