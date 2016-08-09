@@ -1,84 +1,138 @@
 .ee-msg-switcher-container {
-	margin-top: 8px;
+    margin-top: 8px;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {
-	margin-top: 12px;
+    margin-top: 12px;
 }
 
 #mtp_valid_shortcodes .ee-shortcode-table-scroll {
-	max-height: 400px;
-	overflow: auto;
+    max-height: 400px;
+    overflow: auto;
 }
 
 #ee-msg-context-switcher-frm {
-	display: inline-block;
+    display: inline-block;
 }
 .messages-preview-button {
-	display: inline-block;
+    display: inline-block;
 }
 
 #espresso_espresso_messages_editor_overview #minor-publishing {
-	border: none;
+    border: none;
 }
 
 #minor-publishing ul li {
-	text-align: right;
+    text-align: right;
 }
 
 .resetbutton {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .mtp-inactive {
-	color: #AC9D93;
+    color: #AC9D93;
 }
 
 /** editor styles **/
 #ee-msg-non-global-fields-MTP_description {
-	height: 150px;
+    height: 150px;
 }
 
 .non-global-mtp-fields {
-	background-color: #dfdfdf;
-	padding: 10px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+    background-color: #dfdfdf;
+    padding: 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 }
 
 .ee-msg-switcher-container {
-	margin-top: 8px;
+    margin-top: 8px;
 }
+
+#mtp_valid_shortcodes .shortcode-field-table {
+    margin-top: 12px;
+}
+
+#mtp_valid_shortcodes .ee-shortcode-table-scroll {
+    max-height: 400px;
+    overflow: auto;
+}
+
+#ee-msg-context-switcher-frm {
+    display: inline-block;
+}
+.messages-preview-button {
+    display: inline-block;
+}
+
+#espresso_espresso_messages_editor_overview #minor-publishing {
+    border: none;
+}
+
+#minor-publishing ul li {
+    text-align: right;
+}
+
+.resetbutton {
+    margin-right: 5px;
+}
+
+.mtp-inactive {
+    color: #AC9D93;
+}
+
+
+#ee-msg-non-global-fields-MTP_description {
+    height: 150px;
+}
+
+.non-global-mtp-fields {
+    background-color: #dfdfdf;
+    padding: 10px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+#ee-msg-edit-frm h4 {
+    font-size: 1.5em;
+    margin-top: 40px;
+    margin-bottom: 10px;
+
+}
+
+
 
 /** overview table styles **/
 
 #Custom_Messages_Template_List_Table-table-frm .column-name {
-	width: 14%;
+    width: 14%;
 }
 
 #Messages_Template_List_Table-table-frm .column-messenger, #Custom_Messages_Template_List_Table-table-frm .column-messenger {
-	width: 14%;
+    width: 14%;
 }
 
 #Messages_Template_List_Table-table-frm .column-message_type, #Custom_Messages_Template_List_Table-table-frm .column-message_type {
-	width: 12%;
+    width: 12%;
 }
 
 #Messages_Template_List_Table-table-frm .column-description {
-	width: 60%;
+    width: 60%;
 }
 
 #Custom_Messages_Template_List_Table-table-frm .column-description {
-	width: 35%;
+    width: 35%;
 }
 
 #Custom_Messages_Template_List_Table-table-frm .column-actions {
-	width: 15%;
+    width: 15%;
 }
 
 #Messages_Template_List_Table-table-frm .column-actions {
-	width: 15%;
+    width: 15%;
 }
 
 #Custom_Messages_Template_List_Table-table-frm .column-events {
@@ -86,85 +140,106 @@
 	text-align: center;
 }
 
-#mtp_valid_shortcodes .shortcode-field-table {
-	margin-top: 12px;
+
+/** status sent **/
+.msg-status-MSN,
+.msg-status-MSN .check-column {
+    border-left-color: #70CC50;
+}
+.ee-status-legend-MSN {
+    background-color: #70CC50;
 }
 
-#mtp_valid_shortcodes .ee-shortcode-table-scroll {
-	max-height: 400px;
-	overflow: auto;
+/** status idle (queued for sending) **/
+.msg-status-MID,
+.msg-status-MID .check-column {
+    border-left-color: #00B1CA;
+}
+.ee-status-legend-MID {
+    background-color: #00B1CA;
 }
 
-#ee-msg-context-switcher-frm {
-	display: inline-block;
+
+/** status failed **/
+.msg-status-MFL,
+.msg-status-MFL .check-column {
+    border-left-color: #E44064;
 }
-.messages-preview-button {
-	display: inline-block;
+.ee-status-legend-MFL {
+    background-color: #E44064;
 }
 
-#espresso_espresso_messages_editor_overview #minor-publishing {
-	border: none;
+.msg-status-MDO,
+.msg-status-MDO .check-column {
+    border-left-color: #D2D405;
+}
+.ee-status-legend-MDO {
+    background-color: #D2D405;
 }
 
-#minor-publishing ul li {
-	text-align: right;
+
+/** status resend (queued for resending) **/
+.msg-status-MRS,
+.msg-status-MRS .check-column {
+    border-left-color: #FCB93C;
+}
+.ee-status-legend-MRS {
+    background-color: #FCB93C;
 }
 
-.resetbutton {
-	margin-right: 5px;
+
+/** status incomplete (queued for generation) **/
+.msg-status-MIC,
+.msg-status-MIC .check-column {
+    border-left-color: #A39D9C;
+}
+.ee-status-legend-MIC {
+    background-color: #A39D9C;
 }
 
-.mtp-inactive {
-	color: #AC9D93;
+
+/** status retry (failed sending but can be retried) **/
+.msg-status-MRT,
+.msg-status-MRT .check-column {
+    border-left-color: #E76700;
+}
+.ee-status-legend-MRT {
+    background-color: #E76700;
 }
 
-/** editor styles **/
-#ee-msg-non-global-fields-MTP_description {
-	height: 150px;
-}
-
-.non-global-mtp-fields {
-	background-color: #dfdfdf;
-	padding: 10px;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
-}
-
-#ee-msg-edit-frm h4 {
-	font-size: 1.5em;
-	margin-top: 40px;
-	margin-bottom: 10px;
-}
-
-#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"], #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
-	width: 94%;
-}
 
 .ee-messages-shortcodes-chooser {
-	float:right;
-	margin-top: 0px;
-	font-size: 1.4em;
-	cursor: pointer;
+    float:right;
+    margin-top: 0px;
+    font-size: 1.4em;
+    cursor: pointer;
 }
 
 h4 + .ee-messages-shortcodes-chooser {
-	padding-top: 10px;
+    padding-top: 10px;
 }
 
 .ee-shortcode-chooser-open {
-	position:absolute;
-	left: -250px;
+    position:absolute;
+    left: -250px;
 }
 
 .ee_shortcode_chooser_container {
-	background-color: white;
-	font-size: .7em;
-	text-align:left;
-	z-index: 4000;
-	height: 200px;
-	width: 250px;
-	overflow: scroll;
-	padding: 15px;
-	border: 1px grey solid;
+    background-color: white;
+    font-size: .7em;
+    text-align:left;
+    z-index: 4000;
+    height: 200px;
+    width: 250px;
+    overflow: scroll;
+    padding: 15px;
+    border: 1px grey solid;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"], #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
+    width: 94%;
+}
+
+#ee-msg-edit-frm #to-content {
+    width: 90%
 }

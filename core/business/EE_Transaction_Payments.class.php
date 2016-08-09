@@ -19,21 +19,21 @@ class EE_Transaction_Payments {
 	 * 	@var EE_Transaction_Payments $_instance
 	 * 	@access 	private
 	 */
-	private static $_instance = null;
+	private static $_instance;
 
 	/**
 	 * initial txn status at the beginning of this request.
 	 *
 	 * @var string
 	 */
-	protected $_old_txn_status = null;
+	protected $_old_txn_status;
 
 	/**
 	 * txn status at the end of the request after all processing.
 	 *
 	 * @var string
 	 */
-	protected $_new_txn_status = null;
+	protected $_new_txn_status;
 
 
 
@@ -120,9 +120,10 @@ class EE_Transaction_Payments {
 	 * then client code needs to take responsibility for saving the TXN
 	 * regardless of what happens within EE_Transaction_Payments;
 	 *
-	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
-	 * @param 	boolean $update_txn  	whether to save the TXN
-	 * @return 	boolean 	 	whether the TXN was saved
+	 * @param            EE_Transaction /int $transaction_obj_or_id EE_Transaction or its ID
+	 * @param    boolean $update_txn    whether to save the TXN
+	 * @return    boolean        whether the TXN was saved
+	 * @throws \EE_Error
 	 */
 	public function calculate_total_payments_and_update_status( EE_Transaction $transaction, $update_txn = true ){
 		// verify transaction
@@ -135,10 +136,10 @@ class EE_Transaction_Payments {
 		// calculate total paid
 		$total_paid = $this->recalculate_total_payments_for_transaction( $transaction );
 		// if total paid has changed
-		if ( $total_paid != $transaction->paid() ) {
+		if ( $total_paid !== false && (float)$total_paid !== $transaction->paid() ) {
 			$transaction->set_paid( $total_paid );
 			// maybe update status, and make sure to save transaction if not done already
-			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction, $update_txn )) {
+			if ( ! $transaction->update_status_based_on_total_paid( $update_txn ) ) {
 				if ( $update_txn ) {
 					return $transaction->save() ? true : false;
 				}
@@ -154,11 +155,14 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 *		recalculate_total_payments_for_transaction
-	 * 		@access		public
-	 * 		@param EE_Transaction $transaction
-	 *		@param	string $payment_status, one of EEM_Payment's statuses, like 'PAP' (Approved). By default, searches for approved payments
-	 *		@return 		mixed		float on success, false on fail
+	 * recalculate_total_payments_for_transaction
+	 *
+	 * @access public
+	 * @param EE_Transaction $transaction
+	 * @param string         $payment_status One of EEM_Payment's statuses, like 'PAP' (Approved).
+	 *                                       By default, searches for approved payments
+	 * @return float|false   float on success, false on fail
+	 * @throws \EE_Error
 	 */
 	public function recalculate_total_payments_for_transaction( EE_Transaction $transaction, $payment_status = EEM_Payment::status_id_approved ) {
 		// verify transaction
@@ -179,62 +183,15 @@ class EE_Transaction_Payments {
 
 
 
-	/**
-	 * possibly toggles TXN status
-	 *
-	 * @param EE_Transaction $transaction
-	 * @param 	boolean $update_txn  	whether to save the TXN
-	 * @return 	boolean 	 	whether the TXN was saved
-	 * @throws \EE_Error
-	 */
-	public function update_transaction_status_based_on_total_paid( EE_Transaction $transaction, $update_txn = TRUE ) {
-		// verify transaction
-		if ( ! $transaction instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'Please provide a valid EE_Transaction object.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
-		}
-		EE_Registry::instance()->load_helper( 'Money' );
-		// set incoming TXN_Status
-		$this->set_old_txn_status( $transaction->status_ID() );
-		// set transaction status based on comparison of TXN_paid vs TXN_total
-		if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total(), '>' ) ){
-			$new_txn_status = EEM_Transaction::overpaid_status_code;
-		} else if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total() ) ) {
-			$new_txn_status = EEM_Transaction::complete_status_code;
-		} else if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total(), '<' ) ) {
-			$new_txn_status = EEM_Transaction::incomplete_status_code;
-		} else {
-			EE_Error::add_error(
-				__( 'The total paid calculation for this transaction is inaccurate.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
-		}
-		if ( $new_txn_status !== $transaction->status_ID() ) {
-			// set incoming TXN_Status
-			$this->set_new_txn_status( $new_txn_status );
-			$transaction->set_status( $new_txn_status );
-			if ( $update_txn ) {
-				return $transaction->save() ? TRUE : FALSE;
-			}
-		}
-		return FALSE;
-	}
-
-
-
 
 	/**
 	 * delete_payment_and_update_transaction
-	 *
 	 * Before deleting the selected payment, we fetch it's transaction,
 	 * then delete the payment, and update the transactions' amount paid.
 	 *
 	 * @param EE_Payment $payment
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function delete_payment_and_update_transaction( EE_Payment $payment ) {
 		// verify payment
@@ -251,10 +208,10 @@ class EE_Transaction_Payments {
 		}
 
 		$transaction = $payment->transaction();
-
+		$TXN_status = $transaction->status_ID();
 		if (
-			$transaction->status_ID() === EEM_Transaction::abandoned_status_code
-			|| $transaction->status_ID() === EEM_Transaction::failed_status_code
+			$TXN_status === EEM_Transaction::abandoned_status_code
+			|| $TXN_status === EEM_Transaction::failed_status_code
 			|| $payment->amount() === 0
 		) {
 			EE_Error::add_success( __( 'The Payment was successfully deleted.', 'event_espresso' ) );
@@ -280,7 +237,7 @@ class EE_Transaction_Payments {
 			__(
 				'The Payment was successfully deleted, and the Transaction has been updated accordingly.',
 				'event_espresso'
-			) 
+			)
 		);
 		return true;
 	}
@@ -344,6 +301,43 @@ class EE_Transaction_Payments {
 		return true;
 	}
 
+
+
+	/**
+	 * possibly toggles TXN status
+	 *
+	 * @deprecated 4.9.1
+	 * @param EE_Transaction $transaction
+	 * @param    boolean     $update_txn whether to save the TXN
+	 * @return    boolean        whether the TXN was saved
+	 * @throws \EE_Error
+	 */
+	public function update_transaction_status_based_on_total_paid(EE_Transaction $transaction, $update_txn = true)
+	{
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'EE_Transaction::update_status_based_on_total_paid()'),
+			'4.9.1',
+			'5.0.0'
+		);
+		// verify transaction
+		if ( ! $transaction instanceof EE_Transaction) {
+			EE_Error::add_error(
+				__('Please provide a valid EE_Transaction object.', 'event_espresso'),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		// set incoming TXN_Status
+		$this->set_old_txn_status($transaction->status_ID());
+		// set transaction status based on comparison of TXN_paid vs TXN_total
+		$updated = $transaction->update_status_based_on_total_paid($update_txn);
+		if ($transaction->status_ID() !== $this->old_txn_status()) {
+			$this->set_new_txn_status($transaction->status_ID());
+		}
+		return $updated;
+	}
 }
 // End of file EE_Transaction_Payments.class.php
 // Location: /core/business/EE_Transaction_Payments.class.php

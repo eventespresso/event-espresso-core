@@ -49,7 +49,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 		$this->_page_config['custom_mtps'] = array(
 				'nav' => array(
 					'label' => __('Custom Message Templates', 'event_espresso'),
-					'order' => 15
+					'order' => 30
 					),
 				'list_table' => 'Custom_Messages_Template_List_Table',
 				'help_tabs' => array(
@@ -107,7 +107,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 	 * @param string $screen_id The unique screen id for the page.
 	 */
 	public function add_custom_mtps_columns( $columns, $screen_id ) {
-		if ( $screen_id !== 'espresso_messages_default' ) {
+		if ( $screen_id !== 'espresso_messages_global_mtps' ) {
 			return $columns;
 		}
 
@@ -129,7 +129,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 	 * @return string html content for the page.
 	 */
 	public function custom_mtp_create_button_column( $item, $screen_id ) {
-		if ( $screen_id !== 'espresso_messages_default' || ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messages_add_new_message_template' ) ) {
+		if ( $screen_id !== 'espresso_messages_global_mtps' || ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messages_add_new_message_template' ) ) {
 			return '';
 		}
 

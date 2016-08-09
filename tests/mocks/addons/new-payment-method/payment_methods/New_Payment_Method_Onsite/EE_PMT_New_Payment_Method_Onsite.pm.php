@@ -25,6 +25,7 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		require_once($this->file_folder().'EEG_New_Payment_Method_Onsite.gateway.php');
 		$this->_gateway = new EEG_New_Payment_Method_Onsite();
 		$this->_pretty_name = __("New Payment Method Onsite", 'event_espresso');
+		$this->_requires_https = true;
 		parent::__construct($pm_instance);
 	}
 
@@ -86,7 +87,6 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
-		EE_Registry::instance()->load_helper('Template');
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(

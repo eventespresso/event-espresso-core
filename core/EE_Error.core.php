@@ -255,13 +255,24 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	has_error
-	*	@access public
-	*	@return boolean
-	*/
-    public static function has_error(){
-		return self::$_error_count ? TRUE : FALSE;
-	}
+	 *    has_error
+	 *
+	 * @access public
+	 * @param bool $check_stored
+	 * @return bool
+	 */
+    public static function has_error( $check_stored = false ){
+	    $has_error = self::$_error_count ? true : false;
+	    if ( $check_stored && ! $has_error ) {
+		    $notices = (array) get_option( 'ee_notices', array() );
+		    foreach ( $notices as $type => $notice ) {
+			    if ( $type === 'errors' && $notice ) {
+				    return true;
+			    }
+		    }
+	    }
+	    return $has_error;
+    }
 
 
 
@@ -549,6 +560,23 @@ class EE_Error extends Exception {
 		self::$_error_count++;
 	}
 
+	/**
+	 * If WP_DEBUG is active, throws an exception. If WP_DEBUG is off, just
+	 * adds an error
+	 * @param string $msg
+	 * @param string $file
+	 * @param string $func
+	 * @param string $line
+	 * @throws EE_Error
+	 */
+	public static function throw_exception_if_debugging( $msg = null, $file = null, $func = null, $line = null ) {
+		if( WP_DEBUG ) {
+			throw new EE_Error( $msg );
+		} else  {
+			EE_Error::add_error( $msg, $file, $func, $line );
+		}
+	}
+
 
 
 
@@ -624,6 +652,16 @@ class EE_Error extends Exception {
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];
 		$dev_msg = isset( $msg[1] ) ? $msg[1] : $msg[0];
+		/**
+		 * Do an action so other code can be triggered when a notice is created
+		 * @param string $type can be 'errors', 'attention', or 'success'
+		 * @param string $user_msg message displayed to user when WP_DEBUG is off
+		 * @param string $user_msg message displayed to user when WP_DEBUG is on
+		 * @param string $file file where error was generated
+		 * @param string $func function where error was generated
+		 * @param string $line line where error was generated
+		 */
+		do_action( 'AHEE__EE_Error___add_notice', $type, $user_msg, $dev_msg, $file, $func, $line );
 		$msg = WP_DEBUG ? $dev_msg : $user_msg;
 		// add notice if message exists
 		if ( ! empty( $msg )) {
@@ -718,6 +756,23 @@ class EE_Error extends Exception {
 
 
 
+
+	/**
+	 * This simply returns non formatted error notices as they were sent into the EE_Error object.
+	 *
+	 * @since 4.9.0
+	 * @return array
+	 */
+	public static function get_vanilla_notices() {
+		return array(
+			'success' => isset( self::$_espresso_notices['success'] ) ? self::$_espresso_notices['success'] : array(),
+			'attention' => isset( self::$_espresso_notices['attention'] )  ? self::$_espresso_notices['attention'] : array(),
+			'errors' => isset( self::$_espresso_notices['errors'] ) ? self::$_espresso_notices['errors'] : array(),
+		);
+	}
+
+
+
 	/**
 	* 	compile all error or success messages into one string
 	*	@see EE_Error::get_raw_notices if you want the raw notices without any preparations made to them
@@ -747,7 +802,7 @@ class EE_Error extends Exception {
 		if ( $notices = get_option( 'ee_notices', FALSE )) {
 			foreach ( $notices as $type => $notice ) {
 				if ( is_array( $notice ) && ! empty( $notice )) {
-					// make sure that existsing notice type is an array
+					// make sure that existing notice type is an array
 					self::$_espresso_notices[ $type ] =  is_array( self::$_espresso_notices[ $type ] ) && ! empty( self::$_espresso_notices[ $type ] ) ? self::$_espresso_notices[ $type ] : array();
 					// merge stored notices with any newly created ones
 					self::$_espresso_notices[ $type ] = array_merge( self::$_espresso_notices[ $type ], $notice );
@@ -907,13 +962,13 @@ class EE_Error extends Exception {
 
 
 	/**
-	 * 	display_persistent_admin_notices
+	 * display_persistent_admin_notices
 	 *
-	 *  	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
-	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
-	* 	@param		string	$return_url	URL to go back to aftger nag notice is dismissed
-	 *  	@return 		string
+	 * @access public
+	 * @param  string $pan_name    the name, or key of the Persistent Admin Notice to be stored
+	 * @param  string $pan_message the message to be stored persistently until dismissed
+	 * @param  string $return_url  URL to go back to after nag notice is dismissed
+	 * @return string
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
@@ -933,6 +988,7 @@ class EE_Error extends Exception {
 				<div style="clear:both;"></div>
 			</div>';
 		}
+		return '';
 	}
 
 
@@ -948,7 +1004,7 @@ class EE_Error extends Exception {
 		$notices = '';
 		// check for persistent admin notices
 		//filter the list though so plugins can notify the admin in a different way if they want
-		$persistent_admin_notices = apply_filters( 
+		$persistent_admin_notices = apply_filters(
 			'FHEE__EE_Error__get_persistent_admin_notices',
 			get_option( 'ee_pers_admin_notices', FALSE ),
 			'ee_pers_admin_notices',
@@ -1024,10 +1080,10 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	*	and line number where exception or error was thrown
 	*
 	*	@access public
-	*	@ param string $file
-	*	@ param string $func
-	*	@ param string $line
-	*	@ return string
+	*	@param string $file
+	*	@param string $func
+	*	@param string $line
+	*	@return string
 	*/
 	public static function generate_error_code ( $file = '', $func = '', $line = '' ) {
 		$file = explode( '.', basename( $file ));
@@ -1069,10 +1125,9 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		$exception_log .= $ex['string'] . PHP_EOL;
 		$exception_log .= '----------------------------------------------------------------------------------------' . PHP_EOL;
 
-		EE_Registry::instance()->load_helper( 'File' );
 		try {
 			EEH_File::ensure_file_exists_and_is_writable( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file );
-			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' ); 
+			EEH_File::add_htaccess_deny_from_all( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' );
 			if ( ! $clear ) {
 				//get existing log file and append new log info
 				$exception_log = EEH_File::get_file_contents( EVENT_ESPRESSO_UPLOAD_DIR . 'logs' . DS . self::$_exception_log_file ) . $exception_log;
@@ -1089,27 +1144,39 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 
 	/**
 	 * This is just a wrapper for the EEH_Debug_Tools::instance()->doing_it_wrong() method.
-	 *
-	 * doing_it_wrong() is used in those cases where a normal PHP error won't get thrown, but the code execution is done in a manner that could lead to unexpected results (i.e. running to early, or too late in WP or EE loading process).
-	 *
+	 * doing_it_wrong() is used in those cases where a normal PHP error won't get thrown,
+	 * but the code execution is done in a manner that could lead to unexpected results
+	 * (i.e. running to early, or too late in WP or EE loading process).
 	 * A good test for knowing whether to use this method is:
-	 * 1. Is there going to be a PHP error if something isn't setup/used correctly? Yes -> use EE_Error::add_error() or throw new EE_Error()
-	 * 2. If this is loaded before something else, it won't break anything, but just wont' do what its supposed to do? Yes -> use EE_Error::doing_it_wrong()
+	 * 1. Is there going to be a PHP error if something isn't setup/used correctly?
+	 * Yes -> use EE_Error::add_error() or throw new EE_Error()
+	 * 2. If this is loaded before something else, it won't break anything,
+	 * but just wont' do what its supposed to do? Yes -> use EE_Error::doing_it_wrong()
 	 *
 	 * @uses   constant WP_DEBUG test if wp_debug is on or not
-	 * @param  string $function The function that was called
-	 * @param  string $message A message explaining what has been done incorrectly
-	 * @param  string $version The version of Event Espresso where the error was added
+	 * @param string $function      The function that was called
+	 * @param string $message       A message explaining what has been done incorrectly
+	 * @param string $version       The version of Event Espresso where the error was added
+	 * @param string  $applies_when a version string for when you want the doing_it_wrong notice to begin appearing
+	 *                              for a deprecated function. This allows deprecation to occur during one version,
+	 *                              but not have any notices appear until a later version. This allows developers
+	 *                              extra time to update their code before notices appear.
 	 * @param int     $error_type
-	 * @return void
 	 */
-	public static function doing_it_wrong( $function, $message, $version, $error_type = E_USER_NOTICE ) {
+	public static function doing_it_wrong(
+		$function,
+		$message,
+		$version,
+		$applies_when = '',
+		$error_type = null
+	) {
 		if ( defined('WP_DEBUG') && WP_DEBUG ) {
-			EE_Registry::instance()->load_helper('Debug_Tools');
-			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $error_type );
+			EEH_Debug_Tools::instance()->doing_it_wrong( $function, $message, $version, $applies_when, $error_type );
 		}
 	}
-	
+
+
+
 	/**
 	 * Like get_notices, but returns an array of all the notices of the given type.
 	 * @return array {

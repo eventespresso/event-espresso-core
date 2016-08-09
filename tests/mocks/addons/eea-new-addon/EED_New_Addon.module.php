@@ -15,6 +15,10 @@
  */
 /**
  * Class  EED_New_Addon
+ * 
+ * This is where miscellaneous action and filters callbacks should be setup to
+ * do your addon's business logic (that doesn't fit neatly into one of the
+ * other classes in the mock addon)
  *
  * @package			Event Espresso
  * @subpackage		eea-new-addon
@@ -128,22 +132,6 @@ class EED_New_Addon extends EED_Module {
 			wp_enqueue_script( 'espresso_new_addon' );
 		}
 	}
-
-
-
-
-	/**
-	 *		@ override magic methods
-	 *		@ return void
-	 */
-	public function __set($a,$b) { return FALSE; }
-	public function __get($a) { return FALSE; }
-	public function __isset($a) { return FALSE; }
-	public function __unset($a) { return FALSE; }
-	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }
-	public function __destruct() { return FALSE; }
-
  }
 // End of file EED_New_Addon.module.php
 // Location: /wp-content/plugins/eea-new-addon/EED_New_Addon.module.php

@@ -96,7 +96,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_current_page_view_url;
 
 	//sanitized request action (and nonce)
+	/**
+	 * @var string $_req_action
+	 */
 	protected $_req_action;
+
+	/**
+	 * @var string $_req_nonce
+	 */
 	protected $_req_nonce;
 
 	//search related
@@ -477,8 +484,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		EE_Registry::instance()->load_helper('Template');
-
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
 		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
@@ -982,7 +987,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false, $exclude_nonce = false ) {
-		EE_Registry::instance()->load_helper('URL');
 
 		//if there is a _wp_http_referer include the values from the request but only if sticky = true
 		if ( $sticky ) {
@@ -1212,7 +1216,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( isset( $this->_route_config['qtips'] ) ) {
 			$qtips = (array) $this->_route_config['qtips'];
 			//load qtip loader
-			EE_Registry::instance()->load_helper('Qtip_Loader', array(), TRUE);
 			$path = array(
 				$this->_get_dir() . '/qtips/',
 				EE_ADMIN_PAGES . basename($this->_get_dir()) . '/qtips/'
@@ -1431,7 +1434,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//current set timezone for timezone js
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		echo '<span id="current_timezone" class="hidden">' . EEH_DTT_Helper::get_timezone() . '</span>';
 	}
 
@@ -1976,17 +1978,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//we only add meta boxes if the page_route calls for it
-		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
-
-
-			//this simply loops through the callbacks provided and checks if there is a corresponding callback registered by the child - if there is then we go ahead and process the metabox loader.
+		if ( is_array( $this->_route_config ) && isset( $this->_route_config['metaboxes'] )
+			 && is_array(
+			 $this->_route_config['metaboxes']
+			 )
+		) {
+			// this simply loops through the callbacks provided
+			// and checks if there is a corresponding callback registered by the child
+			// if there is then we go ahead and process the metabox loader.
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
-				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
+				// first check for Closures
+				if ( is_callable( $metabox_callback ) ) {
+					$result = $metabox_callback();
+				} else if ( is_array( $metabox_callback ) && isset( $metabox_callback[0], $metabox_callback[1] ) ) {
+					$result = call_user_func( array( $metabox_callback[0], $metabox_callback[1] ) );
+				} else {
+					$result = call_user_func( array( $this, &$metabox_callback ) );
+				}
+				if ( $result === FALSE ) {
 					// user error msg
-				$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
-				// developer error msg
-				$error_msg .= '||' . sprintf( __( 'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.', 'event_espresso' ), $metabox_callback );
-				throw new EE_Error( $error_msg );
+					$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
+					// developer error msg
+					$error_msg .= '||' . sprintf(
+						__(
+							'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.',
+							'event_espresso'
+						),
+						$metabox_callback
+					);
+					throw new EE_Error( $error_msg );
 				}
 			}
 		}
@@ -2058,7 +2078,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function espresso_ratings_request() {
 		$template_path = EE_ADMIN_TEMPLATE . 'espresso_ratings_request_content.template.php';
-		EE_Registry::instance()->load_helper( 'Template' );
 		EEH_Template::display_template( $template_path, array() );
 	}
 
@@ -2565,9 +2584,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string        html string of legend
 	 */
 	protected function _display_legend( $items ) {
-		$template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
+		$this->_template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
 		$legend_template = EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
-		return EEH_Template::display_template($legend_template, $template_args, TRUE);
+		return EEH_Template::display_template($legend_template, $this->_template_args, TRUE);
 	}
 
 
@@ -2589,9 +2608,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * The json object is populated by whatever is set in the $_template_args property.
 	 *
-	 * @return json object
+	 * @return string json object
 	 */
-	protected function _return_json( $sticky_notices = FALSE ) {
+	protected function _return_json( $sticky_notices = false ) {
 
 		//make sure any EE_Error notices have been handled.
 		$this->_process_notices( array(), true, $sticky_notices );
@@ -2600,8 +2619,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
 		unset($this->_template_args['data']);
 		$json = array(
-			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
-			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
+			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : false,
+			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : false,
+			'errors' => isset( $this->_template_args['errors'] ) ? $this->_template_args['errors'] : false,
+			'attention' => isset( $this->_template_args['attention'] ) ? $this->_template_args['attention'] : false,
 			'notices' => EE_Error::get_notices(),
 			'content' => isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '',
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
@@ -2701,7 +2722,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _get_main_nav_tabs() {
 		//let's generate the html using the EEH_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 	}
 
@@ -2739,7 +2759,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$content = $generator == 'string' ? EEH_Form_Fields::get_form_fields($input_vars, $id) : EEH_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
@@ -2993,6 +3012,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
 
+		//first let's set individual error properties if doing_ajax and the properties aren't already set.
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$notices = EE_Error::get_notices( false );
+			if ( empty( $this->_template_args['success'] ) ) {
+				$this->_template_args['success'] = isset( $notices['success'] ) ? $notices['success'] : false;
+			}
+
+			if ( empty( $this->_template_args['errors'] ) ) {
+				$this->_template_args['errors'] = isset( $notices['errors'] ) ? $notices['errors'] : false;
+			}
+
+			if ( empty( $this->_template_args['attention'] ) ) {
+				$this->_template_args['attention'] = isset( $notices['attention'] ) ? $notices['attention'] : false;
+			}
+		}
+
 		$this->_template_args['notices'] = EE_Error::get_notices();
 
 		//IF this isn't ajax we need to create a transient for the notices using the route (however, overridden if $sticky_notices == true)
@@ -3136,8 +3171,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This makes available the WP transient system for temporarily moving data between routes
 	 *
 	 * @access protected
-	 * @param route $route the route that should receive the transient
-	 * @param data $data  the data that gets sent
+	 * @param string $route the route that should receive the transient
+	 * @param array $data  the data that gets sent
 	 * @param bool $notices If this is for notices then we use this to indicate so, otherwise its just a normal route transient.
 	 * @param bool $skip_route_verify Used to indicate we want to skip route verification.  This is usually ONLY used when we are adding a transient before page_routes have been defined.
 	 * @return void
@@ -3318,6 +3353,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * @return mixed
+	 */
+	public function default_espresso_metaboxes() {
+		return $this->_default_espresso_metaboxes;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function admin_base_url() {
+		return $this->_admin_base_url;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function wp_page_slug() {
+		return $this->_wp_page_slug;
+	}
+
+
 
 	/**
 	 * updates  espresso configuration settings
@@ -3432,9 +3493,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
 		add_filter( 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', '__return_true' );
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', FALSE, $payment );
-		$this->_template_args['success'] = $success;
-		return $success;
+		do_action( 'AHEE__EE_Admin_Page___process_admin_payment_notification', $payment );
+		$this->_template_args['success'] = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', false, $payment );
+		return $this->_template_args[ 'success' ];
 	}
 
 

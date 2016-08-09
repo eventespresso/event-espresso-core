@@ -373,6 +373,35 @@ label.error { display : block; color : #FE2A00 !important; }
 	margin-left : 2em; margin-right : 2em;
 }
 
+.espresso-admin .button .dashicons::before {
+	position: relative;
+	font-size: 20px;
+	top:0;
+	vertical-align: middle;
+}
+
+.espresso-admin .button .dashicons-email-alt::before {
+	top:1px;
+}
+
+.ee-composite-dashicon {
+	position: relative;
+}
+.ee-composite-dashicon span {
+	position: relative;
+	z-index: 10;
+}
+.ee-composite-dashicon .ee-icon + .ee-icon,
+.ee-composite-dashicon .ee-icon + .dashicons,
+.ee-composite-dashicon .dashicons + .ee-icon,
+.ee-composite-dashicon .dashicons + .dashicons {
+	margin-left:-17px !important;
+}
+.ee-composite-dashicon span:nth-child(even) {
+	color:#222;
+	text-shadow: -1px -1px 1px #fff;
+	z-index: 20;
+}
 
 .help-tab-content img {
 	border : 2px solid #E7E7E7;
@@ -684,11 +713,16 @@ label.error { display : block; color : #FE2A00 !important; }
 	border: none;
 }
 
+.espresso-admin .wp-list-table td {
+	overflow: hidden !important;
+	position: relative;
+}
 .wp-list-table .ee-status-strip-td {
-	min-height: 125px;
 	display: block !important;
 	height: 100% !important;
+	min-height: 125px;
 	overflow: auto !important;
+	position: absolute;
 	width: 5px;
 }
 
@@ -958,4 +992,85 @@ input.ee-register-button {
 .admin-report-chart-dv {
 	background: #fff;
 	padding: 10px;
+}
+
+/******************* RESPONSIVE TABLES ****************** */
+.ee-responsive-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0 2em;
+}
+
+/* Zebra striping */
+.ee-responsive-table tr:nth-of-type(even) {
+	background: #f9f9f9;
+}
+
+.ee-responsive-table th {
+	background: #ddd;
+	color: #444;
+	font-weight: bold;
+	text-align: center;
+}
+
+.ee-responsive-table th,
+.ee-responsive-table td {
+	padding: 6px;
+	border: 1px solid #eee;
+}
+
+.ee-responsive-table td {
+	color: #777;
+	text-align: left;
+}
+
+@media only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px) {
+
+	/* Force table to not be like tables anymore */
+	.ee-responsive-table,
+	.ee-responsive-table thead,
+	.ee-responsive-table tbody,
+	.ee-responsive-table th,
+	.ee-responsive-table td,
+	.ee-responsive-table tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	.ee-responsive-table thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	.ee-responsive-table tr {
+		border: 1px solid #ccc;
+	}
+
+	.ee-responsive-table td {
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	.ee-responsive-table td:before {
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+	}
+
+	/*
+	Label the data
+	*/
+	.ee-responsive-table td:before {
+		content: attr(data-th) ": ";
+	}
 }

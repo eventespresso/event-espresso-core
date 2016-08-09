@@ -313,18 +313,21 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//baseline DateTime object for testing
 		$now = new DateTime( "now" );
 		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
-		$timezoneTest = new DateTime( "now", new DateTimeZone( 'America/Vancouver' ) );
+		$timezoneTest = new DateTime( "now", $DateTimeZone );
+
+		//just in case some other test has messed up the default date format string in WordPress unit tests.
+		$expected_format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 
 		//test getting default formatted string and default formatted unix timestamp.
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );
-		$this->assertEquals( $now->format( 'F j, Y g:i a' ), $formatted_string );
+		$this->assertEquals( $now->format( $expected_format ), $formatted_string );
 		$timestamp_with_offset = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start', true );
 		$this->assertEquals( $now->format('U'), $timestamp_with_offset );
 
 		//test values when timezone and formats modified on EE_Datetime instantiation
 		$this->factory->datetime->create( array( 'formats' => array( 'Y-m-d', 'H:i:s' ), 'timezone' => 'America/Vancouver' ) );
 		$formatted_string = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' );
-		$this->assertEquals( $timezoneTest->format( 'Y-m-d H:i:s' ), $formatted_string );
+		$this->assertDateWithinOneMinute( $timezoneTest->format( 'Y-m-d H:i:s' ), $formatted_string, 'Y-m-d H:i:s' );
 		$unix_timestamp = EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start', true );
 		$this->assertEquals( $timezoneTest->format('U'), $unix_timestamp );
 	}
@@ -836,6 +839,31 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//so there are only 2 question groups, and we offset by 2. 
 		//so we shouldn't see any right?
 		$this->assertEmpty( $qsgs );
+	}
+
+
+	/**
+	 * Verifies that the EEM_Base::$_model_query_blog_id is not set until any model is instantiated and that if the blog id
+	 * is explicitly changed after instantiation (via the setter), future models instantiated will still retain the blog id
+	 * changed to.
+	 * @group 9743
+	 */
+	public function test_model_query_blog_id_set_on_instantiation() {
+
+		//instantiate a model and verify that sets to current_blog_id();
+		$attendee = EEM_Attendee::instance();
+		$this->assertEquals( EEM_Base::get_model_query_blog_id(), get_current_blog_id() );
+
+		//verify blog_id changes
+		EEM_Base::set_model_query_blog_id( 2 );
+		$this->assertEquals( EEM_Base::get_model_query_blog_id(), 2 );
+
+		//verify that any NEW models instantiated retain that change.
+		$question = EEM_Question::reset();
+		$this->assertEquals( EEM_Base::get_model_query_blog_id(), 2 );
+
+		//make sure we restore the models to blog 1 for future tests.
+		EEM_Base::set_model_query_blog_id(1);
 	}
         
  

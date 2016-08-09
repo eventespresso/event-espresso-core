@@ -206,7 +206,6 @@ class EED_Recaptcha  extends EED_Module {
 		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
 			// only display if they have NOT passed the test yet
 			if ( ! EED_Recaptcha::$_not_a_robot ) {
-				EE_Registry::instance()->load_helper( 'Template' );
 				EEH_Template::display_template(
 					RECAPTCHA_BASE_PATH . DS . 'templates' . DS . 'recaptcha.template.php',
 					array(
@@ -385,8 +384,6 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	protected static function _recaptcha_settings_form() {
 
-		EE_Registry::instance()->load_helper( 'HTML' );
-		EE_Registry::instance()->load_helper( 'Template' );
 
 		return new EE_Form_Section_Proper(
 			array(

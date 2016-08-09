@@ -92,7 +92,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *    Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * @return \EEM_Registration
 	 */
-	protected function __construct( $timezone ) {
+	protected function __construct( $timezone = null ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 
@@ -129,6 +129,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Checkin'=>new EE_Has_Many_Relation(),
 			'Registration_Payment' => new EE_Has_Many_Relation(),
 			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
+			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletes even if there are messages in the queue related
 		);
 		$this->_model_chain_to_wp_user = 'Event';
 
@@ -183,7 +184,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//and the table hasn't actually been created, this could have an error
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
@@ -286,7 +286,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
 
 		$results = $this->_get_all_wpdb_results(
@@ -320,7 +319,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
 
 		//prepare the query interval for displaying offset
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
 
 		//inner date query
@@ -515,14 +513,27 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @return int
 	 */
 	public function count_registrations_checked_into_datetime( $DTT_ID, $checked_in = true) {
-		return $this->count(
-			array(
-				array(
-					'Checkin.CHK_in' => $checked_in,
-					'Checkin.DTT_ID' => $DTT_ID
-				)
-			)
+		global $wpdb;
+		//subquery to get latest checkin
+		$query = $wpdb->prepare(
+			'SELECT '
+				. 'COUNT( DISTINCT checkins.REG_ID ) '
+			. 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+				. '( SELECT '
+					. 'max( CHK_timestamp ) AS latest_checkin, '
+					. 'REG_ID AS REG_ID '
+				. 'FROM ' . EEM_Checkin::instance()->table() . ' '
+				. 'WHERE DTT_ID=%d '
+				. 'GROUP BY REG_ID'
+			. ') AS most_recent_checkin_per_reg '
+			. 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+				. 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+			. 'WHERE '
+				. 'checkins.CHK_in=%d',
+			$DTT_ID,
+			$checked_in
 		);
+		return (int)$wpdb->get_var( $query );
 	}
 
 	/**
@@ -533,14 +544,29 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * @return int
 	 */
 	public function count_registrations_checked_into_event( $EVT_ID, $checked_in = true ) {
-		return $this->count(
-			array(
-				array(
-					'Checkin.CHK_in' => $checked_in,
-					'Checkin.Datetime.EVT_ID' => $EVT_ID
-				)
-			)
+		global $wpdb;
+		//subquery to get latest checkin
+		$query = $wpdb->prepare(
+			'SELECT '
+				. 'COUNT( DISTINCT checkins.REG_ID ) '
+			. 'FROM ' . EEM_Checkin::instance()->table() . ' AS checkins INNER JOIN'
+				. '( SELECT '
+					. 'max( CHK_timestamp ) AS latest_checkin, '
+					. 'REG_ID AS REG_ID '
+				. 'FROM ' . EEM_Checkin::instance()->table() . ' AS c '
+				. 'INNER JOIN ' . EEM_Datetime::instance()->table() . ' AS d '
+				. 'ON c.DTT_ID=d.DTT_ID '
+				. 'WHERE d.EVT_ID=%d '
+				. 'GROUP BY REG_ID'
+			. ') AS most_recent_checkin_per_reg '
+			. 'ON checkins.REG_ID=most_recent_checkin_per_reg.REG_ID '
+				. 'AND checkins.CHK_timestamp = most_recent_checkin_per_reg.latest_checkin '
+			. 'WHERE '
+				. 'checkins.CHK_in=%d',
+			$EVT_ID,
+			$checked_in
 		);
+		return (int)$wpdb->get_var( $query );
 	}
 
 

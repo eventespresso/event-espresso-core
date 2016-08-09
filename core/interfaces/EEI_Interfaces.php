@@ -10,18 +10,18 @@ interface EEI_Base{
 	 * gets the unique ID of the model object. If it hasn't been saved yet
 	 * to the database, this should be 0 or NULL
 	 */
-	function ID();
+	public function ID();
 	/**
 	 * Returns an array where keys are field names and values are their values
 	 * @return array
 	 */
-	function model_field_array();
+	public function model_field_array();
 
 	/**
 	 * Saves the thing to the database and returns success (or an ID)
 	 * @return boolean success on insert; or int on update (ID of newly inserted thing)
 	 */
-	function save();
+	public function save();
 
 	/**
 	 * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
@@ -119,30 +119,30 @@ interface EEI_Transaction extends EEI_Base {
 	 *
 	 * @return EEI_Payment
 	 */
-	function last_payment();
+	public function last_payment();
 	/**
 	 * Gets the total that should eb paid for this transaction
 	 * @return float
 	 */
-	function total();
+	public function total();
 
 	/**
 	 * Get the line item that represents the total for the transaction
 	 * @return EEI_Line_Item
 	 */
-	function total_line_item();
+	public function total_line_item();
 
 	/**
 	 * Gets the primary registration for this transaction
 	 * @return EEI_Registration
 	 */
-	function primary_registration();
+	public function primary_registration();
 
 	/**
 	 * Returns the balance due on the transaction
 	 * @return float
 	 */
-	function remaining();
+	public function remaining();
 
 	/**
 	 *        get Total Amount Paid to Date
@@ -165,19 +165,19 @@ interface EEI_Registration extends EEI_Base {
 	 * Gets the registration code
 	 * @return string
 	 */
-	function reg_code();
+	public function reg_code();
 
 	/**
 	 * Gets the attendee corresponding to this registration
 	 * @return EEI_Attendee
 	 */
-	function attendee();
+	public function attendee();
 
 	/**
 	 * Returns the event's name this registration is for
 	 * @return string
 	 */
-	function event_name();
+	public function event_name();
 }
 
 
@@ -225,6 +225,21 @@ interface EEI_Contact {
 }
 
 
+
+/**
+ * Interface EEI_Has_Address
+ */
+interface EEI_Has_Address {
+
+	public function address();
+	public function address2();
+	public function city();
+	public function state_ID();
+	public function state_obj();
+	public function country_ID();
+	public function country_obj();
+	public function zip();
+}
 
 
 
@@ -287,7 +302,7 @@ interface EEHI_Line_Item{
 	 * @param EE_Line_Item $total_line_item
 	 * @param EE_Line_Item $line_item
 	 */
-	public function add_item( EE_line_Item $total_line_item, EE_Line_Item $line_item );
+	public function add_item( EE_Line_Item $total_line_item, EE_Line_Item $line_item );
 	/**
 	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
 	 * tax and updates the total line item accordingly
@@ -295,14 +310,14 @@ interface EEHI_Line_Item{
 	 * @param float $amount
 	 * @param string $name
 	 * @param string $description
-         * @param string $code 
-         * @param boolean $add_to_existing_line_item if true and a duplicate line item with 
+         * @param string $code
+         * @param boolean $add_to_existing_line_item if true and a duplicate line item with
          *  the same code is found, $amount will be added onto it; otherwise will simply
          *  set the taxes to match $amount
 	 * @return EE_Line_Item the new tax created
 	 */
 	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL, $code = NULL, $add_to_existing_line_item = false );
-        
+
          /**
          * Makes all the line items which are children of $line_item taxable (or not).
          * Does NOT save the line items
@@ -350,7 +365,7 @@ interface EEHI_Money{
 	 * @param string $operator  The operator. Valid options are =, <=, <, >=, >, <>, eq, lt, lte, gt, gte, ne
 	 * @return boolean whether the equation is true or false
 	 */
-	function compare_floats( $float1, $float2, $operator='=' );
+	public function compare_floats( $float1, $float2, $operator='=' );
 }
 
 /**
@@ -388,6 +403,11 @@ interface EEI_Line_Item_Display {
 
 }
 
+
+
+/**
+ * Interface EEHI_File
+ */
 interface EEHI_File {
 	/**
 	 * ensure_file_exists_and_is_writable
@@ -397,7 +417,7 @@ interface EEHI_File {
 	 * @return bool
 	 */
 	public static function ensure_file_exists_and_is_writable( $full_file_path = '' );
-	
+
 	/**
 	 * ensure_folder_exists_and_is_writable
 	 * ensures that a folder exists and is writable, will attempt to create folder if it does not exist

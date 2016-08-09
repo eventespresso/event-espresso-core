@@ -47,9 +47,9 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		// add html5 required
 		$html .= $this->_input->required() ? ' required' : '';
 		$html .= ' style="' . $this->_input->html_style() . '"';
+		$html .= ' ' . $this->_input->other_html_attributes();
 		$html .= '>';
 
-		EE_Registry::instance()->load_helper('Array');
 		EEH_HTML::indent( 1, 'select' );
 		if( EEH_Array::is_multi_dimensional_array( $this->_input->options() )){
 			throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));

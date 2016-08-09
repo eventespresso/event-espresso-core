@@ -77,6 +77,7 @@ class EE_Cron_Tasks extends EE_BASE {
 			'AHEE__EE_System__load_core_configuration__complete',
 			array( 'EE_Cron_Tasks', 'log_scheduled_ee_crons' )
 		);
+		EE_Registry::instance()->load_lib( 'Messages_Scheduler' );
 	}
 
 
@@ -98,8 +99,8 @@ class EE_Cron_Tasks extends EE_BASE {
 		foreach ( $crons as $timestamp => $cron ) {
 			foreach ( $ee_crons as $ee_cron ) {
 				if ( isset( $cron[ $ee_cron ] ) ) {
+					do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $ee_cron, 'scheduled EE cron' );
 					foreach ( $cron[ $ee_cron ] as $ee_cron_details ) {
-						do_action( 'AHEE_log', __CLASS__, __FUNCTION__, $ee_cron, 'scheduled EE cron' );
 						if ( ! empty( $ee_cron_details[ 'args' ] )) {
 							do_action( 'AHEE_log', __CLASS__, __FUNCTION__, print_r( $ee_cron_details[ 'args' ], true ), "$ee_cron args" );
 						}
@@ -189,6 +190,8 @@ class EE_Cron_Tasks extends EE_BASE {
 	 * and attempts to finalize any TXNs that have not been completed
 	 * but have had their sessions expired, most likely due to a user not
 	 * returning from an off-site payment gateway
+	 * 
+	 * @throws \EE_Error
 	 */
 	public static function update_transaction_with_payment() {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );
@@ -214,8 +217,7 @@ class EE_Cron_Tasks extends EE_BASE {
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 				$payment = EEM_Payment::instance()->get_one_by_ID( $PAY_ID );
 				// verify transaction
-				if ( $transaction instanceof EE_Transaction &&
-						$payment instanceof EE_Payment ) {
+				if ( $transaction instanceof EE_Transaction && $payment instanceof EE_Payment ) {
 					// now try to update the TXN with any payments
 					$payment_processor->update_txn_based_on_payment( $transaction, $payment, true, true );
 				}
@@ -301,11 +303,13 @@ class EE_Cron_Tasks extends EE_BASE {
 
 	/**
 	 * finalize_abandoned_transactions
-	 *
+	 
 	 * loops through the self::$_abandoned_transactions array
 	 * and attempts to finalize any TXNs that have not been completed
 	 * but have had their sessions expired, most likely due to a user not
 	 * returning from an off-site payment gateway
+	 *
+	 * @throws \EE_Error
 	 */
 	public static function finalize_abandoned_transactions() {
 		do_action( 'AHEE_log', __CLASS__, __FUNCTION__ );

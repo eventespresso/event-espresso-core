@@ -27,9 +27,9 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout {
 	 */
 	public function layout_subsection( $form_section ){
 		if ( $form_section instanceof EE_Form_Section_Proper ) {
-			return EEH_HTML::no_row( $form_section->get_html_and_js(), 2 );
+			return EEH_HTML::no_row( $form_section->get_html(), 2 );
 		} else if ( $form_section instanceof EE_Form_Section_HTML ) {
-			return $form_section->get_html_and_js();
+			return EEH_HTML::no_row( $form_section->get_html(), 2 );
 		}
 		return '';
 	}

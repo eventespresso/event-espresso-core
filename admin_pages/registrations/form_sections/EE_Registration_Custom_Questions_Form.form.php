@@ -61,7 +61,10 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 				array(
 					'Event_Question_Group.EVT_ID' => $reg->event_ID(),
 					'Event_Question_Group.EQG_primary' => $reg->count() == 1 ? TRUE : FALSE,
-					'Question.QST_system' =>  ''
+					'OR' => array(
+						'Question.QST_system*blank' =>  '',
+						'Question.QST_system*null' => array( 'IS_NULL' ) 
+					)
 				),
 				'order_by' => array( 'QSG_order' => 'ASC' )
 			)
@@ -98,7 +101,17 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper{
 					'espresso-question-group-title-h5 section-title' )
 				)
 		);
-		foreach( $question_group->questions( array( array( 'QST_system' => '' ))) as $question ) {
+		$questions = $question_group->questions( 
+			array( 
+				array( 
+					'OR' => array(
+						'QST_system*blank' => '',
+						'QST_system*null' => array( 'IS_NULL' )
+					)
+				)
+			)
+		);
+		foreach( $questions as $question ) {
 			$parts_of_subsection[ $question->ID() ] = $question->generate_form_input( $registration );
 		}
 		$parts_of_subsection[ 'edit_link' ] = new EE_Form_Section_HTML(

@@ -52,6 +52,11 @@ abstract class EE_Model_Field_Base{
 		$this->_table_alias = $table_alias;
 		$this->_name = $name;
 		$this->_model_name = $model_name;
+		/**
+		 * allow for changing the defaults
+		 */
+		$this->_nicename = apply_filters( 'FHEE__EE_Model_Field_Base___construct_finalize___nicename', $this->_nicename, $this );
+		$this->_default_value = apply_filters( 'FHEE__EE_Model_Field_Base___construct_finalize___default_value', $this->_default_value, $this );
 	}
 	function get_table_alias(){
 		return $this->_table_alias;

@@ -36,10 +36,10 @@ class EEM_Status extends EEM_Base {
 		$this->singular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
-			'Status'=> new EE_Primary_Table('esp_status', 'STS_ID')
+			'StatusTable'=> new EE_Primary_Table('esp_status', 'STS_ID')
 		);
 		$this->_fields = array(
-			'Status'=>array(
+			'StatusTable'=>array(
 				'STS_ID'=> new EE_Primary_Key_String_Field('STS_ID', __('Status ID','event_espresso')),
 				'STS_code'=>new EE_Plain_Text_Field('STS_code',__('Status Code','event_espresso'),false, ''),
 				'STS_type'=>new EE_Enum_Text_Field(
@@ -47,14 +47,14 @@ class EEM_Status extends EEM_Base {
 					__("Type", "event_espresso"),
 					false,
 					'event',
-					array(
-						'event'=> __("Event", "event_espresso"),//deprecated
-						'registration'=>  __("Registration", "event_espresso"),
-						'transaction'=>  __("Transaction", "event_espresso"),
-						'payment'=>  __("Payment", "event_espresso"),
-						'email'=>  __("Email", "event_espresso")
-					)
-				),
+						array(
+							'event'=> __("Event", "event_espresso"),//deprecated
+							'registration'=>  __("Registration", "event_espresso"),
+							'transaction'=>  __("Transaction", "event_espresso"),
+							'payment'=>  __("Payment", "event_espresso"),
+							'email'=>  __("Email", "event_espresso"),
+							'message' => __("Message", "event_espresso")
+						)),
 				'STS_can_edit'=>new EE_Boolean_Field('STS_can_edit', __('Editable?','event_espresso'), false),
 				'STS_desc'=>new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
 				'STS_open'=>new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false,false)
@@ -207,6 +207,35 @@ class EEM_Status extends EEM_Base {
 	  		EE_Datetime::postponed => array(
 	  			__('postponed', 'event_espresso'),
 	  			__('postponed', 'event_espresso')
+	  		),
+			//messages related
+			EEM_Message::status_sent => array(
+				__('sent', 'event_espresso'),
+				__('sent', 'event_espresso')
+			),
+			EEM_Message::status_idle => array(
+				__('queued for sending', 'event_espresso'),
+				__('queued for sending', 'event_espresso'),
+			),
+	        EEM_Message::status_failed => array(
+		        __('failed', 'event_espresso'),
+		        __('failed', 'event_espresso'),
+	        ),
+			EEM_Message::status_debug_only => array(
+				__( 'debug only', 'event_espresso' ),
+				__( 'debug only', 'event_espresso' )
+			),
+	        EEM_Message::status_resend => array(
+		        __('queued for resending', 'event_espresso'),
+		        __('queued for resending', 'event_espresso'),
+	        ),
+	        EEM_Message::status_incomplete => array(
+		        __('queued for generating', 'event_espresso'),
+		        __('queued for generating', 'event_espresso'),
+	        ),
+			EEM_Message::status_retry => array(
+				__('failed sending, can be retried', 'event_espresso'),
+				__('failed sending, can be retried', 'event_espresso'),
   			),
 			EEM_CPT_Base::post_status_publish => array(
 	  			__('published', 'event_espresso'),
