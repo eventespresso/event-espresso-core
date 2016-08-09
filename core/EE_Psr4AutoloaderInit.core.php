@@ -15,7 +15,7 @@ class EE_Psr4AutoloaderInit {
 
 
 	/**
-	 * @type \EventEspresso\Core\Psr4Autoloader
+	 * @type \EventEspresso\core\Psr4Autoloader
 	 */
 	protected static $psr4_loader;
 
@@ -27,7 +27,7 @@ class EE_Psr4AutoloaderInit {
 		if ( ! $initialized ) {
 			// instantiate PSR4 autoloader
 			espresso_load_required( 'Psr4Autoloader', EE_CORE . 'Psr4Autoloader.php' );
-			EE_Psr4AutoloaderInit::$psr4_loader = new \EventEspresso\Core\Psr4Autoloader();
+			EE_Psr4AutoloaderInit::$psr4_loader = new \EventEspresso\core\Psr4Autoloader();
 			// register the autoloader
 			EE_Psr4AutoloaderInit::$psr4_loader->register();
 			// register the base directories for the namespace prefix
@@ -40,7 +40,7 @@ class EE_Psr4AutoloaderInit {
 
 
 	/**
-	 * @return \EventEspresso\Core\Psr4Autoloader
+	 * @return \EventEspresso\core\Psr4Autoloader
 	 */
 	public static function psr4_loader() {
 		return self::$psr4_loader;

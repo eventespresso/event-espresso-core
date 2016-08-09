@@ -188,13 +188,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					),
 
 				'edit_registration'	=> array(
-						'func' => '_update_attendee_registration_form',
-						'noheader' => TRUE,
-						'headers_sent_route'=>'view_registration',
-						'capability' => 'ee_edit_registration',
-						'obj_id' => $reg_id,
-						'_REG_ID' => $reg_id,
-					),
+					'func' => '_update_attendee_registration_form',
+					'noheader' => TRUE,
+					'headers_sent_route'=>'view_registration',
+					'capability' => 'ee_edit_registration',
+					'obj_id' => $reg_id,
+					'_REG_ID' => $reg_id,
+				),
 
 				'trash_registrations' => array(
 					'func' => '_trash_or_restore_registrations',
@@ -399,7 +399,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func'=> '_contact_list_report',
 					'noheader' => TRUE,
 					'capability' => 'ee_read_contacts',
-				)
+				),
 		);
 
 	}
@@ -448,7 +448,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'nav' => array(
 					'label' => __('REG Details', 'event_espresso'),
 					'order' => 15,
-					'url' => isset($this->_req_data['_REG_ID']) ? add_query_arg(array('_REG_ID' => $this->_req_data['_REG_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url,
+					'url' => isset($this->_req_data['_REG_ID'])
+						? add_query_arg(
+							array('_REG_ID' => $this->_req_data['_REG_ID'] ),
+							$this->_current_page_view_url
+						)
+						: $this->_admin_base_url,
 					'persistent' => FALSE
 				),
                 'help_tabs' => array(
@@ -1186,19 +1191,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-
-
 	/**
-	 * 		_set_approve_or_decline_reg_status_buttons
-	*		@access protected
-	*		@return string
-	*/
+	 * set_reg_status_buttons_metabox
+	 *
+	 * @access protected
+	 * @return string
+	 * @throws \EE_Error
+	 */
 	public function set_reg_status_buttons_metabox() {
 
 		//is registration for free event OR for a completed transaction? This will determine whether the set to pending option is shown.
 		$is_complete = $this->_registration->transaction()->is_completed();
-
 		//let's get an array of all possible buttons that we can just reference
 		$status_buttons = $this->_get_reg_status_buttons();
 		$template_args[ 'reg_status_value' ] = $this->_registration->pretty_status();
@@ -1216,7 +1219,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['form_url'] = REG_ADMIN_URL;
 		$template_args['REG_ID'] = $this->_registration->ID();
 		$template_args['nonce'] = wp_nonce_field( 'change_reg_status_nonce',  'change_reg_status_nonce', FALSE, FALSE );
-
 		EEH_Template::display_template( $template, $template_args );
 
 	}
@@ -1453,7 +1455,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function _reg_details_meta_box() {
 		EEH_Autoloader::register_line_item_display_autoloaders();
 		EEH_Autoloader::register_line_item_filter_autoloaders();
-		EE_Registry::instance()->load_Helper( 'Line_Item' );
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$transaction = $this->_registration->transaction() ? $this->_registration->transaction() : EE_Transaction::new_instance();
 		$this->_session = $transaction->session_data();
 
@@ -1470,10 +1472,40 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$attendee = $this->_registration->attendee();
 
+		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can(
+			'ee_read_transaction',
+			'espresso_transactions_view_transaction'
+		)
+			? EEH_Template::get_button_or_link(
+				EE_Admin_Page::add_query_args_and_nonce(
+					array( 'action' => 'view_transaction', 'TXN_ID' => $transaction->ID() ),
+					TXN_ADMIN_URL
+				),
+				esc_html__( ' View Transaction' ),
+				'button secondary-button right',
+				'dashicons dashicons-cart'
+			)
+			: '';
 
-		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
-		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee && EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
-
+		$this->_template_args['resend_registration_button'] = $attendee instanceof EE_Attendee
+		                                                      && EE_Registry::instance()->CAP->current_user_can(
+			'ee_send_message',
+			'espresso_registrations_resend_registration'
+		)
+			? EEH_Template::get_button_or_link(
+				EE_Admin_Page::add_query_args_and_nonce(
+					array(
+						'action'      => 'resend_registration',
+						'_REG_ID'     => $this->_registration->ID(),
+						'redirect_to' => 'view_registration'
+					),
+					REG_ADMIN_URL
+				),
+				esc_html__( ' Resend Registration' ),
+				'button secondary-button right',
+				'dashicons dashicons-email-alt'
+			)
+			: '';
 
 		$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 		$payment = $transaction->get_first_related( 'Payment' );
@@ -1760,6 +1792,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			foreach ( $registrations as $registration ) {
 				/* @var $registration EE_Registration */
 				$attendee = $registration->attendee() ? $registration->attendee() : EEM_Attendee::instance()->create_default_object();
+				$this->_template_args['attendees'][ $att_nmbr ]['STS_ID'] = $registration->status_ID();
 				$this->_template_args['attendees'][ $att_nmbr ]['fname'] = $attendee->fname();//( isset( $registration->ATT_fname ) & ! empty( $registration->ATT_fname ) ) ? $registration->ATT_fname : '';
 				$this->_template_args['attendees'][ $att_nmbr ]['lname'] = $attendee->lname();//( isset( $registration->ATT_lname ) & ! empty( $registration->ATT_lname ) ) ? $registration->ATT_lname : '';
 				$this->_template_args['attendees'][ $att_nmbr ]['email'] = $attendee->email();//( isset( $registration->ATT_email ) & ! empty( $registration->ATT_email ) ) ? $registration->ATT_email : '';
@@ -1768,13 +1801,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$this->_template_args['attendees'][ $att_nmbr ]['address'] = implode( ', ', $attendee->full_address_as_array() );
 
 				$this->_template_args['attendees'][ $att_nmbr ]['att_link'] = self::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
+				$this->_template_args['attendees'][ $att_nmbr ]['event_name'] = $registration->event_obj()->name();
 
 				$att_nmbr++;
 			}
 
 			//EEH_Debug_Tools::printr( $attendees, '$attendees  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span>', 'auto' );
-
-			$this->_template_args['event_name'] = $this->_registration->event_obj()->name();
 			$this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
 
 	//			$this->_template_args['registration_form_url'] = add_query_arg( array( 'action' => 'edit_registration', 'process' => 'attendees'  ), REG_ADMIN_URL );
@@ -1800,10 +1832,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$att_check = $this->_registration->attendee();
 		$attendee = $att_check instanceof EE_Attendee ? $att_check : EEM_Attendee::instance()->create_default_object();
 
-		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show cereate button or not)
+		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show create button or not)
 		if ( ! $this->_registration->is_primary_registrant() ) {
+
 			$primary_registration = $this->_registration->get_primary_registration();
-			$primary_attendee = $primary_registration->attendee();
+			$primary_attendee = $primary_registration instanceof EE_Registration
+				? $primary_registration->attendee()
+				: null;
 
 			if ( ! $primary_attendee instanceof EE_Attendee || $attendee->ID() !== $primary_attendee->ID() ) {
 				//in here?  This means the displayed registration is not the primary registrant but ALREADY HAS its own custom attendee object so let's not worry about the primary reg.
@@ -1869,8 +1904,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = count( $this->_req_data['_REG_ID'] ) > 1 ? 2 : 1;
 			// cycle thru checkboxes
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
-
-				$REG = $REGM->get_one_by_ID($REG_ID);
+				/** @var EE_Registration $REG */
+				$REG = $REGM->get_one_by_ID( $REG_ID);
 				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
 				if ( $payment_count > 0 ) {
 					$name = $REG->attendee() instanceof EE_Attendee ? $REG->attendee()->full_name() : __( 'Unknown Attendee', 'event_espresso' );
@@ -2489,7 +2524,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/***************************************		ATTENDEE DETAILS 		***************************************/
 
 
@@ -2501,7 +2535,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$action = !empty( $this->_req_data['return'] ) ? $this->_req_data['return'] : 'default';
 		//verify we have necessary info
 		if ( empty($this->_req_data['_REG_ID'] )  ) {
-			EE_Error::add_error( __('Unable to create the contact for the registration because the required paramaters are not present (_REG_ID )', 'event_espresso'),  __FILE__, __LINE__, __FUNCTION__ );
+			EE_Error::add_error( __('Unable to create the contact for the registration because the required parameters are not present (_REG_ID )', 'event_espresso'),  __FILE__, __LINE__, __FUNCTION__ );
 			$query_args = array( 'action' => $action );
 			$this->_redirect_after_action('', '', '', $query_args, TRUE);
 		}

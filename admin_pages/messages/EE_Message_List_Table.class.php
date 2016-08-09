@@ -135,7 +135,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 
 		$c_default[0] = array(
 			'id' => 'none_selected',
-			'text' => __( 'All Contexts', 'event_espresso ' )
+			'text' => __( 'All Contexts', 'event_espresso' )
 		);
 
 		$msgr_filters = count( $m_values ) > 1
