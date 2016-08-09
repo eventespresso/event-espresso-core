@@ -720,8 +720,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 					$extra_request,
 					'',
 					'',
-					false,
-					''
+					false
 				);
 			}
 			do_action( 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen );
