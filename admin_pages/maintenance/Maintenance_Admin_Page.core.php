@@ -335,8 +335,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			array(),
 			'button button-primary',
 			'',
-			false,
-			''
+			false
 		);
 		$this->_template_args['delete_db_url'] = EE_Admin_Page::add_query_args_and_nonce(
 			array( 'action' => 'delete_db' ),
