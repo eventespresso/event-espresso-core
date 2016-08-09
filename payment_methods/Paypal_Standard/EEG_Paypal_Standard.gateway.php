@@ -106,7 +106,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	) {
 		$redirect_args = array();
 		$transaction = $payment->transaction();
-		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
 		/** @type EE_Line_Item $total_line_item */
 		$total_line_item = $transaction->total_line_item();
