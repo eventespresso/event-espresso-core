@@ -66,6 +66,50 @@ class EE_Messages_Processor {
 	}
 
 
+
+	/**
+	 * This method can be utilized to process messages from a queue and they will be processed immediately on the same request.
+	 * Please note that this method alone does not bypass the usual "locks" for generation/sending (it assumes client code
+	 * has already filtered those if necessary).
+	 *
+	 * @param EE_Messages_Queue $queue_to_process
+	 * @return bool  true for success false for error.
+	 */
+	public function process_immediately_from_queue( EE_Messages_Queue $queue_to_process ) {
+		$success = false;
+		$messages_to_send = array();
+		$messages_to_generate = array();
+		//loop through and setup the various messages from the queue so we know what is being processed
+		$queue_to_process->get_message_repository()->rewind();
+		foreach ( $queue_to_process->get_message_repository() as $message ) {
+			if ( $message->STS_ID() === EEM_Message::status_incomplete ) {
+				$messages_to_generate[] = $message;
+				continue;
+			}
+
+			if ( in_array( $message->STS_ID(), EEM_Message::instance()->stati_indicating_to_send() ) ) {
+				$messages_to_send[] = $message;
+				continue;
+			}
+		}
+
+		//do generation/sends
+		if ( $messages_to_generate ) {
+			$success = $this->batch_generate_from_queue( $messages_to_generate, true );
+		}
+
+		if ( $messages_to_send ) {
+			$sent = $this->batch_send_from_queue( $messages_to_send, true );
+			//if there was messages to generate and it failed, then we override any success value for the sending process
+			//otherwise we just use the return from batch send.  The intent is that there is a simple response for success/fail.
+			//Either everything was successful or we consider it a fail.  To be clear, this is a limitation of doing
+			//all messages processing on the same request.
+			$success = $messages_to_generate && ! $success ? false : $sent;
+		}
+		return $success;
+	}
+
+
 	/**
 	 * Calls the EE_Messages_Queue::get_batch_to_generate() method and sends to EE_Messages_Generator.
 	 *
@@ -81,7 +125,7 @@ class EE_Messages_Processor {
 			if ( $new_queue instanceof EE_Messages_Queue ) {
 				//unlock queue
 				$this->_queue->unlock_queue();
-				$this->_queue->initiate_request_by_priority( 'send' );
+				$new_queue->initiate_request_by_priority( 'send' );
 				return $new_queue;
 			}
 		}
@@ -217,14 +261,15 @@ class EE_Messages_Processor {
 
 
 	/**
-	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_queue()->save() if desire
+	 * Queue for generation.  Note this does NOT persist to the db.  Client code should call get_message_repository()->save() if desire
 	 * to persist.  This method is provided to client code to decide what it wants to do with queued messages for generation.
 	 * @param EE_Message_To_Generate $message_to_generate
+	 * @param bool                   $test_send             Whether this item is for a test send or not.
 	 * @return  EE_Messages_Queue
 	 */
-	public function queue_for_generation( EE_Message_To_Generate $message_to_generate ) {
+	public function queue_for_generation( EE_Message_To_Generate $message_to_generate, $test_send = false ) {
 		if ( $message_to_generate->valid() ) {
-			$this->_generator->create_and_add_message_to_queue( $message_to_generate );
+			$this->_generator->create_and_add_message_to_queue( $message_to_generate, $test_send );
 		}
 	}
 
@@ -308,10 +353,11 @@ class EE_Messages_Processor {
 	/**
 	 * Generate for preview and execute right away.
 	 *
-*@param   EE_Message_To_Generate $message_to_generate
+	 * @param   EE_Message_To_Generate $message_to_generate
+	 * @param   bool                   $test_send                Whether this is a test send or not.
 	 * @return  EE_Messages_Queue | bool   false if unable to generate otherwise the generated queue.
 	 */
-	public function generate_for_preview( EE_Message_To_Generate $message_to_generate ) {
+	public function generate_for_preview( EE_Message_To_Generate $message_to_generate, $test_send = false ) {
 		if ( ! $message_to_generate->valid() ) {
 			EE_Error::add_error(
 				__( 'Unable to generate preview because of invalid data', 'event_espresso' ),
@@ -323,14 +369,16 @@ class EE_Messages_Processor {
 		}
 		//just make sure preview is set on the $message_to_generate (in case client forgot)
 		$message_to_generate->set_preview( true );
-		$generated_queue = $this->generate_and_return( array( $message_to_generate ) );
+		$this->_init_queue_and_generator();
+		$this->queue_for_generation( $message_to_generate, $test_send );
+		$generated_queue = $this->_generator->generate( false );
 		if ( $generated_queue->execute( false ) ) {
 			//the first queue item should be the preview
-			$generated_queue->get_queue()->rewind();
-			if ( ! $generated_queue->get_queue()->valid() ) {
+			$generated_queue->get_message_repository()->rewind();
+			if ( ! $generated_queue->get_message_repository()->valid() ) {
 				return $generated_queue;
 			}
-			return $generated_queue->get_queue()->is_test_send() ? true : $generated_queue;
+			return $generated_queue->get_message_repository()->is_test_send() ? true : $generated_queue;
 		} else {
 			return false;
 		}
@@ -455,8 +503,14 @@ class EE_Messages_Processor {
 		$messages = EEM_Message::instance()->get_all( array(
 			array(
 				'MSG_ID' => array( 'IN', $message_ids ),
-				'STS_ID' => array( 'IN', EEM_Message::instance()->stati_indicating_sent() )
-			)
+				'STS_ID' => array(
+					'IN',
+					array_merge(
+						EEM_Message::instance()->stati_indicating_sent(),
+						array( EEM_Message::status_retry )
+					),
+				),
+			),
 		));
 		//set the Messages to resend.
 		foreach ( $messages as $message ) {
@@ -506,10 +560,13 @@ class EE_Messages_Processor {
 
 		foreach ( $regs_to_send as $status_group ) {
 			foreach ( $status_group as $status_id => $registrations ) {
-				$messages_to_generate = $messages_to_generate + $this->setup_mtgs_for_all_active_messengers(
+				$messages_to_generate = array_merge(
+					$messages_to_generate,
+					$this->setup_mtgs_for_all_active_messengers(
 						EEH_MSG_Template::convert_reg_status_to_message_type( $status_id ),
 						array( $registrations, $status_id )
-					);
+					)
+				);
 			}
 		}
 

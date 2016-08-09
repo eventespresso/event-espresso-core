@@ -287,7 +287,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 * which relates to this form section, validate it, and set it as properties on the form.
 	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
 	 * supply a different array. Consider using set_defaults() instead however. (If you rendered
-	 * the form in the page using echo $form_x->get_html_and_js() the inputs will have the correct name
+	 * the form in the page using echo $form_x->get_html() the inputs will have the correct name
 	 * in the request data for this function to find them and populate the form with them.
 	 * If you have a flat form (with only input subsections), you can supply a flat array where keys
 	 * are the form input names and values are their values)

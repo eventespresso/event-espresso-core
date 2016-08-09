@@ -384,11 +384,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Gets the HTML, JS, and CSS necessary to display this field according
-	 * to the parent form's layout strategy
+	 * Gets the HTML
 	 * @return string
 	 */
-	public function get_html_and_js(){
+	public function get_html(){
 		return $this->_parent_section->get_html_for_input($this);
 	}
 
@@ -475,11 +474,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	/**
 	 * Performs basic sanitization on this value. But what sanitization can be performed anyways?
 	 * This value MIGHT be allowed to have tags, so we can't really remove them.
+	 *
 	 * @param string $value
 	 * @return null|string
 	 */
-	private function _sanitize($value){
-		return $value !== NULL ?stripslashes(html_entity_decode($value)) : NULL;//don't sanitize_text_field
+	private function _sanitize( $value ) {
+		return $value !== null ? stripslashes( html_entity_decode( trim( $value ) ) ) : null;
 	}
 
 
@@ -500,15 +500,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$raw_input = $this->find_form_data_for_this_section( $req_data );
 			//super simple sanitization for now
 			if ( is_array( $raw_input )) {
-				$this->_raw_value = array();
+				$raw_value = array();
 				foreach( $raw_input as $key => $value ) {
-					$this->_raw_value[ $key ] = $this->_sanitize( $value );
+					$raw_value[ $key ] = $this->_sanitize( $value );
 				}
+				$this->_set_raw_value( $raw_value );
 			} else {
-				$this->_raw_value = $this->_sanitize( $raw_input );
+				$this->_set_raw_value( $this->_sanitize( $raw_input ) );
 			}
-			//we want ot mostly leave the input alone in case we need to re-display it to the user
-			$this->_normalized_value = $this->_normalization_strategy->normalize( $this->raw_value() );
+			//we want to mostly leave the input alone in case we need to re-display it to the user
+			$this->_set_normalized_value( $this->_normalization_strategy->normalize( $this->raw_value() ) );
 		} catch ( EE_Validation_Error $e ) {
 			$this->add_validation_error( $e );
 		}
@@ -641,7 +642,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	public function get_jquery_validation_rules(){
-
+		$jquery_validation_js = array();
 		$jquery_validation_rules = array();
 		foreach($this->get_validation_strategies() as $validation_strategy){
 			$jquery_validation_rules = array_replace_recursive(
@@ -651,9 +652,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 
 		if(! empty($jquery_validation_rules)){
-			$jquery_validation_js[ $this->html_id( TRUE ) ] = $jquery_validation_rules;
-		}else{
-			return array();
+			foreach( $this->get_display_strategy()->get_html_input_ids( true ) as $html_id_with_pound_sign ) {
+				$jquery_validation_js[ $html_id_with_pound_sign ] = $jquery_validation_rules;
+			}
 		}
 		return $jquery_validation_js;
 	}
@@ -665,7 +666,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	public function set_default($value){
+		$this->_set_normalized_value( $value );
+		$this->_set_raw_value( $value );
+	}
+	
+	/**
+	 * Sets the normalized value on this input
+	 * @param mixed $value
+	 */
+	protected function _set_normalized_value( $value ) {
 		$this->_normalized_value = $value;
+	}
+	
+	/**
+	 * Sets the raw value on this input (ie, exactly as the user submitted it)
+	 * @param mixed $value
+	 */
+	protected function _set_raw_value( $value ) {
 		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );
 	}
 
@@ -744,11 +761,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		//if we need more logic than this we'll make a strategy for it
 		if( $this->_sensitive_data_removal_strategy &&
 				! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal ){
-			$this->_raw_value = NULL;
+			$this->_set_raw_value( null );
 		}
 		//and clean the normalized value according to the appropriate strategy
-		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
-			$this->_normalized_value
+		$this->_set_normalized_value(
+			$this->get_sensitive_data_removal_strategy()->remove_sensitive_data(
+				$this->_normalized_value
+			)
 		);
 	}
 
@@ -882,6 +901,54 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return TRUE;
 		}else{
 			return FALSE;
+		}
+	}
+
+	/**
+	 * Overrides parent to add js data from validation and display strategies
+	 *
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data( $form_other_js_data = array() ) {
+		$form_other_js_data = $this->get_other_js_data_from_strategies( $form_other_js_data );
+		return $form_other_js_data;
+	}
+
+
+
+	/**
+	 * Gets other JS data for localization from this input's strategies, like
+	 * the validation strategies and the display strategy
+	 *
+	 * @param array $form_other_js_data
+	 * @return array
+	 */
+	public function get_other_js_data_from_strategies( $form_other_js_data = array() ) {
+		$form_other_js_data = $this->get_display_strategy()->get_other_js_data( $form_other_js_data );
+		foreach( $this->get_validation_strategies() as $validation_strategy ) {
+			$form_other_js_data = $validation_strategy->get_other_js_data( $form_other_js_data );
+		}
+		return $form_other_js_data;
+	}
+
+	/**
+	 * Override parent because we want to give our strategies an opportunity to enqueue some js and css
+	 * @return void
+	 */
+	public function enqueue_js(){
+		//ask our display strategy and validation strategies if they have js to enqueue
+		$this->enqueue_js_from_strategies();
+	}
+
+	/**
+	 * Tells strategies when its ok to enqueue their js and css
+	 * @return void
+	 */
+	public function enqueue_js_from_strategies() {
+		$this->get_display_strategy()->enqueue_js();
+		foreach( $this->get_validation_strategies() as $validation_strategy ) {
+			$validation_strategy->enqueue_js();
 		}
 	}
 }

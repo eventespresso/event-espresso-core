@@ -50,7 +50,7 @@ class EEH_Activation {
 	 */
 	public static function ensure_table_name_has_prefix( $table_name ) {
 		global $wpdb;
-		return strpos( $table_name, $wpdb->prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		return strpos( $table_name, $wpdb->base_prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 	}
 
 
@@ -806,7 +806,7 @@ class EEH_Activation {
 		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
 		if (
-			$wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name
+			EEH_Activation::table_exists(  $table_name )
 			&& $wpdb->get_var( $index_exists_query ) === $table_name //using get_var with the $index_exists_query returns the table's name
 		) {
 			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $index_name" );
@@ -1367,13 +1367,7 @@ class EEH_Activation {
 				// (otherwise we might reactivate something user's intentionally deactivated.)
 				// we also skip if the message type is not installed.
 				if (
-					(
-						isset( $has_activated[ $active_messenger->name ] )
-						&& in_array(
-							$default_message_type_name_for_messenger,
-							$has_activated[ $active_messenger->name ]
-						)
-					)
+					$message_resource_manager->has_message_type_been_activated_for_messenger( $default_message_type_name_for_messenger, $active_messenger->name )
 					|| $message_resource_manager->is_message_type_active_for_messenger(
 						$active_messenger->name,
 						$default_message_type_name_for_messenger
@@ -1415,7 +1409,7 @@ class EEH_Activation {
 	 * @throws EE_Error
 	 */
 	protected static function _activate_and_generate_default_messengers_and_message_templates(
-		EE_message_Resource_Manager $message_resource_manager
+		EE_Message_Resource_Manager $message_resource_manager
 	) {
 		/** @type EE_messenger[] $messengers_to_generate */
 		$messengers_to_generate = self::_get_default_messengers_to_generate_on_activation( $message_resource_manager );
@@ -1425,7 +1419,10 @@ class EEH_Activation {
 			$default_message_type_names_for_messenger = $messenger_to_generate->get_default_message_types();
 			//verify the default message types match an installed message type.
 			foreach ( $default_message_type_names_for_messenger as $key => $name ) {
-				if ( ! isset( $installed_message_types[ $name ] ) ) {
+				if (
+					! isset( $installed_message_types[ $name ] )
+					|| $message_resource_manager->has_message_type_been_activated_for_messenger( $name, $messenger_to_generate->name )
+				) {
 					unset( $default_message_type_names_for_messenger[ $key ] );
 				}
 			}
@@ -1470,6 +1467,7 @@ class EEH_Activation {
 		$active_messengers = $message_resource_manager->active_messengers();
 		$installed_messengers = $message_resource_manager->installed_messengers();
 		$has_activated = $message_resource_manager->get_has_activated_messengers_option();
+
 		$messengers_to_generate = array();
 		foreach ( $installed_messengers as $installed_messenger ) {
 			//if installed messenger is a messenger that should be activated on install
@@ -1712,6 +1710,19 @@ class EEH_Activation {
 			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
+	
+	/**
+	 * Gets the mysql error code from the last used query by wpdb
+	 * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
+	 */
+	public static function last_wpdb_error_code() {
+		global $wpdb;
+		if( $wpdb->use_mysqli ) {
+			return mysqli_errno( $wpdb->dbh );
+		} else {
+			return mysql_errno( $wpdb->dbh );
+		}
+	}
 
 	/**
 	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
@@ -1733,11 +1744,32 @@ class EEH_Activation {
 		$new_error = $wpdb->last_error;
 		$wpdb->last_error = $old_error;
 		$EZSQL_ERROR = $ezsql_error_cache;
-		if( empty( $new_error ) ){
-			return TRUE;
-		}else{
-			return FALSE;
+		//if there was a table doesn't exist error
+		if( ! empty( $new_error ) ) {
+			if(
+				in_array(
+					EEH_Activation::last_wpdb_error_code(),
+					array(
+						1051, //bad table
+						1109, //unknown table
+						117, //no such table
+					)
+				)
+				|| 
+				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
+			) {
+				return false;
+			} else {
+				//log this because that's weird. Just use the normal PHP error log
+				error_log( 
+					sprintf(
+						__( 'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)', 'event_espresso' ),
+					$new_error
+					)
+				);
+			}
 		}
+		return true;
 	}
 
 	/**

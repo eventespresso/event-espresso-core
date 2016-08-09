@@ -161,7 +161,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//template settings
 		$new_page_config['template_settings'] = array(
 			'nav' => array(
-				'label' => __('Templates'),
+				'label' => esc_html__('Templates', 'event_espresso'),
 				'order' => 30
 			),
 			'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
@@ -395,7 +395,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
 			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  esc_attr__('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
 		}
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
 			EE_Registry::instance()->load_helper( 'MSG_Template' );
 			$actionlinks[] = EEH_MSG_Template::get_message_action_link(
 				'see_notifications_for',
@@ -417,7 +417,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					'desc' => __('Event Reports', 'event_espresso')
 				);
 		}
-		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_messages', 'view_filtered_messages' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
 			$related_for_icon = EEH_MSG_Template::get_message_action_icon( 'see_notifications_for' );
 			if ( isset( $related_for_icon['css_class']) && isset( $related_for_icon['label'] ) ) {
 				$items['view_related_messages'] = array(
@@ -454,7 +454,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$orig_event = EEM_Event::instance()->get_one_by_ID( $this->_req_data['EVT_ID'] );
 
 		if ( ! $orig_event instanceof EE_Event )
-			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso '), $this->_req_data['EVT_ID'] ) );
+			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso'), $this->_req_data['EVT_ID'] ) );
 
 		//k now let's clone the $orig_event before getting relations
 		$new_event = clone $orig_event;

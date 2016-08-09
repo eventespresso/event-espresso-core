@@ -1038,6 +1038,87 @@ a[href*="message_type=receipt"]:visited {
 	}
 }
 
+/******************* RESPONSIVE TABLES ****************** */
+.ee-responsive-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 1em 0 2em;
+}
+
+/* Zebra striping */
+.ee-responsive-table tr:nth-of-type(even) {
+	background: #f9f9f9;
+}
+
+.ee-responsive-table th {
+	background: #ddd;
+	color: #444;
+	font-weight: bold;
+	text-align: center;
+}
+
+.ee-responsive-table th,
+.ee-responsive-table td {
+	padding: 6px;
+	border: 1px solid #eee;
+}
+
+.ee-responsive-table td {
+	color: #777;
+	text-align: left;
+}
+
+@media only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px) {
+
+	/* Force table to not be like tables anymore */
+	.ee-responsive-table,
+	.ee-responsive-table thead,
+	.ee-responsive-table tbody,
+	.ee-responsive-table th,
+	.ee-responsive-table td,
+	.ee-responsive-table tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	.ee-responsive-table thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	.ee-responsive-table tr {
+		border: 1px solid #ccc;
+	}
+
+	.ee-responsive-table td {
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	.ee-responsive-table td:before {
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+	}
+
+	/*
+	Label the data
+	*/
+	.ee-responsive-table td:before {
+		content: attr(data-th) ": ";
+	}
+}
+
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
 /****         MOVE THIS FILE BEFORE EDITING         ****/

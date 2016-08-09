@@ -310,7 +310,8 @@ class EEM_Payment_Method extends EEM_Base {
 				//which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue
 				//its scripts). but for backwards-compat we should continue to do that
 				$payment_method->type_obj();
-			} else {				
+			} elseif( $payment_method->active() ) {				
+				//only deactivate and notify the admin if the payment is active somewhere
 				$payment_method->deactivate();
 				$payment_method->save();
 				EE_Error::add_persistent_admin_notice(

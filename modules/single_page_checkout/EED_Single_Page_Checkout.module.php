@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\exceptions\InvalidEntityException;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * Single Page Checkout (SPCO)
  *
@@ -11,11 +13,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	$_initialized - has the SPCO controller already been initialized ?
-	 * 	@access private
-	 *	@var bool $_initialized
+	 * $_initialized - has the SPCO controller already been initialized ?
+	 * @access private
+	 * @var bool $_initialized
 	 */
-	private static $_initialized = FALSE;
+	private static $_initialized = false;
+
+
+	/**
+	 * $_checkout_verified - is the EE_Checkout verified as correct for this request ?
+	 *
+	 * @access private
+	 * @var bool $_valid_checkout
+	 */
+	private static $_checkout_verified = true;
 
 	/**
 	 * 	$_reg_steps_array - holds initial array of reg steps
@@ -405,10 +416,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					? $this->_get_transaction_and_cart_for_previous_visit()
 					: $this->_get_cart_for_current_session_and_setup_new_transaction();
 				if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
-					EE_Error::add_error(
-						__( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ),
-						__FILE__, __FUNCTION__, __LINE__
-					);
 					// add some style and make it dance
 					$this->checkout->transaction = EE_Transaction::new_instance();
 					$this->add_styles_and_scripts();
@@ -850,15 +857,32 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				//do the following for each ticket of this type they selected
 				for ( $x = 1; $x <= $line_item->quantity(); $x++ ) {
 					$att_nmbr++;
-					$registration = $registration_processor->generate_ONE_registration_from_line_item(
-						$line_item,
-						$transaction,
-						$att_nmbr,
-						$this->checkout->total_ticket_count
-					);
-					if ( $registration instanceof EE_Registration ) {
-						$registrations[ $registration->ID() ] = $registration;
+                    /** @var EventEspresso\core\services\commands\registration\CreateRegistrationCommand $CreateRegistrationCommand */
+                    $CreateRegistrationCommand = EE_Registry::instance()
+                        ->create(
+                           'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+                           array(
+	                           $transaction,
+	                           $line_item,
+	                           $att_nmbr,
+	                           $this->checkout->total_ticket_count
+                           )
+                        );
+                    // override capabilities for frontend registrations
+                    if ( ! is_admin()) {
+                        $CreateRegistrationCommand->setCapCheck(
+                            new \EventEspresso\core\domain\services\capabilities\PublicCapabilities('',
+                                'create_new_registration')
+                        );
+                    }
+					$registration = EE_Registry::instance()->BUS->execute( $CreateRegistrationCommand );
+					if ( ! $registration instanceof EE_Registration ) {
+						throw new InvalidEntityException(
+							is_object( $registration ) ? get_class( $registration ) : gettype( $registration ),
+							'EE_Registration'
+						);
 					}
+					$registrations[ $registration->ID() ] = $registration;
 				}
 			}
 			$registration_processor->fix_reg_final_price_rounding_issue( $transaction );
@@ -874,7 +898,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @access public
 	 * @param EE_Registration $reg_A
 	 * @param EE_Registration $reg_B
-	 * @return array()
+	 * @return int
 	 */
 	public static function sort_registrations_by_REG_count( EE_Registration $reg_A, EE_Registration $reg_B ) {
 		// this shouldn't ever happen within the same TXN, but oh well
@@ -919,6 +943,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 			if ( ! $valid_registrant instanceof EE_Registration ) {
+				// hmmm... maybe we have the wrong session because the user is opening multiple tabs ?
+				if ( EED_Single_Page_Checkout::$_checkout_verified ) {
+					// clear the session, mark the checkout as unverified, and try again
+					EE_Registry::instance()->SSN->clear_session();
+					EED_Single_Page_Checkout::$_initialized = false;
+					EED_Single_Page_Checkout::$_checkout_verified = false;
+					$this->_initialize();
+					EE_Error::reset_notices();
+					return false;
+				}
 				EE_Error::add_error( __( 'We\'re sorry but there appears to be an error with the "reg_url_link" or the transaction itself. Please refresh the page and try again or contact support.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
@@ -953,6 +987,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 				continue;
 			}
+			// add css and JS for current step
+			$reg_step->enqueue_styles_and_scripts();
 			// i18n
 			$reg_step->translate_js_strings();
 			if ( $reg_step->is_current_step() ) {
@@ -1179,8 +1215,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		 */
 		do_action( 'AHEE__EED_Single_Page_Checkout__enqueue_styles_and_scripts__' . $this->checkout->current_step->slug(), $this );
 
-		// add css and JS for current step
-		$this->checkout->current_step->enqueue_styles_and_scripts();
 	}
 
 
@@ -1309,7 +1343,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function unlock_transaction() {
-		$this->checkout->transaction->unlock();
+		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+			$this->checkout->transaction->unlock();
+		}
 	}
 
 

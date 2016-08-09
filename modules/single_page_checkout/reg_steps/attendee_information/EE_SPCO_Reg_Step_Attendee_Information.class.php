@@ -263,6 +263,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$registration,
 					false
 				);
+				// add no info required class
+				$form_args['html_class'] .= ' ee-reg-form-no-info-required';
+
 			}
 		}
 		if ( $registration->is_primary_registrant() ) {

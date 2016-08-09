@@ -47,8 +47,8 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 		//verify bool returns that it was added
 		$this->assertTrue( $added );
 
-		//get_queue to verify EE_Message is in it.
-		$test_queue = $queue->get_queue();
+		//get_message_repository to verify EE_Message is in it.
+		$test_queue = $queue->get_message_repository();
 		$this->assertInstanceOf( 'EE_Message_Repository', $test_queue );
 
 		//verify the queue contains the message object
@@ -68,7 +68,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Queue
 	 */
 	function test_remove( EE_Messages_Queue $queue ) {
-		$test_queue = $queue->get_queue();
+		$test_queue = $queue->get_message_repository();
 
 		$test_queue->rewind();
 		$this->assertTrue( $test_queue->valid() );
@@ -96,7 +96,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	function test_save( EE_Messages_Queue $queue ) {
 		//first verify that the current EE_Message object in the queue does
 		//not have an ID() (it shouldn't)
-		$test_queue = $queue->get_queue();
+		$test_queue = $queue->get_message_repository();
 		$test_queue->rewind();
 		$this->assertEmpty( $test_queue->current()->ID() );
 
@@ -119,7 +119,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Queue
 	 */
 	function test_remove_with_persist( EE_Messages_Queue $queue ) {
-		$test_queue = $queue->get_queue();
+		$test_queue = $queue->get_message_repository();
 		$test_queue->rewind();
 		//verify we have a message object before removing
 		$message = $test_queue->current();
@@ -156,7 +156,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 
 		//test getting batch and that there is the right count in the batch.
 		$this->assertTrue( $queue->get_batch_to_generate() );
-		$this->assertEquals( 5, $queue->get_queue()->count() );
+		$this->assertEquals( 5, $queue->get_message_repository()->count() );
 
 		//test lock is set.
 		$lock_test_queue = $this->_get_queue();
@@ -187,7 +187,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 		$this->assertFalse( $test_queue->get_to_send_batch_and_send() );
 
 		//okay let's now set all messages to be ready for sending.
-		foreach( $queue->get_queue() as $message ) {
+		foreach( $queue->get_message_repository() as $message ) {
 			$message->set_STS_ID( EEM_Message::status_idle );
 		}
 
@@ -202,6 +202,30 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 		$this->assertEquals( 0, $test_queue->count_STS_in_queue( EEM_Message::instance()->stati_indicating_failed_sending() ) );
 		//verify all have been marked as sent.
 		$this->assertEquals( 5, $test_queue->count_STS_in_queue(EEM_Message::status_sent ) );
+	}
+
+
+	/**
+	 * This is used to test the execute method when there are messages in the queue that are NOT with a status representing
+	 * to send.  They should NOT get sent if that's the case.
+	 * @group 9787
+	 */
+	public function test_send_only_ready_to_send_messages() {
+		//get some messages ready for the test and add to queue
+		$queue = $this->_get_queue();
+		for ( $i = 0; $i < 5; $i++ ) {
+			$queue->add( $this->factory->message->create() );
+		}
+
+		//should be 5 items in the queue with MIC status
+		$this->assertEquals( 5, $queue->count_STS_in_queue( array( EEM_Message::status_incomplete ) ) );
+
+		//now if we execute now, NOTHING should get sent and we should still see all messages in the queue as MIC.
+		//anything else and we know the test has failed.
+		$queue->execute();
+
+		$this->assertEquals( 5, $queue->count_STS_in_queue( array( EEM_Message::status_incomplete ) ) );
+
 	}
 
 
