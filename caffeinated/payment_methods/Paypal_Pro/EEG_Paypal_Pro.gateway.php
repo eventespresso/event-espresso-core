@@ -126,11 +126,11 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		}else{
 			$order_items = array();
 			$item_amount = $payment->amount();
-			$single_item_desc = sprintf(__("Partial payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
+			$single_item_desc = sprintf(__("Payment of %s for %s", "event_espresso"),$payment->get_pretty( 'PAY_amount', 'no_currency_code' ),$primary_registrant->event_name());
 			$tax_amount = 0;
 			array_push($order_items,array(
 				// Item Name.  127 char max.
-				'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'l_name' => $primary_registrant->event_name(),
 				// Item description.  127 char max.
 				'l_desc' => $single_item_desc,
 				// Cost of individual item.
