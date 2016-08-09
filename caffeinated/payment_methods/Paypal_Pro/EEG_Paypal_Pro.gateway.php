@@ -100,12 +100,17 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			foreach ($total_line_item->get_items() as $line_item) {
 				$item = array(
 						// Item Name.  127 char max.
-						'l_name' => 
-						substr(
+						'l_name' => substr(
 							$this->_format_line_item_name( $line_item, $payment ),
-						0,127),
+							0,
+							127
+						),
 						// Item description.  127 char max.
-						'l_desc' => substr( $this->_format_line_item_desc( $line_item, $payment )),
+						'l_desc' => substr( 
+							$this->_format_line_item_desc( $line_item, $payment ),
+							0,
+							127
+						),
 						// Cost of individual item.
 						'l_amt' => $line_item->unit_price(),
 						// Item Number.  127 char max.
