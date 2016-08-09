@@ -372,6 +372,15 @@
 	border-left-color : #FCB93C;
 }
 
+/*wait-list*/
+.reg-status-RWL,
+.button-secondary.reg-status-RWL,
+.button-primary.reg-status-RWL,
+.reg-status-RWL ._REG_att_checked_in,
+.reg-status-RWL .check-column{
+	border-left-color : #8A549A;
+}
+
 .widefat td.column-_Reg_Status,
 .widefat th.column-_Reg_Status {
 	width : 10px;
