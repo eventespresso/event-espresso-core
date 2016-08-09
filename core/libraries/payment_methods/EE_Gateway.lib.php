@@ -343,7 +343,7 @@ abstract class EE_Gateway{
 	protected function _format_line_item_name( EEI_Line_Item $line_item, EEI_Payment $payment ) {
 		return apply_filters( 
 			'FHEE__EE_gateway___line_item_name', 
-			$line_item->name(), 
+			sprintf( _x( '%1$s for %2$s', 'Ticket for Event', 'event_espresso' ), $line_item->name(), $line_item->ticket_event_name() ), 
 			$this,
 			$line_item, 
 			$payment 
