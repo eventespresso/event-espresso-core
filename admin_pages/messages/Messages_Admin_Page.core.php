@@ -1575,8 +1575,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$extra_args,
 			'button-primary reset-default-button',
 			'',
-			false,
-			''
+			false
 		);
 		$test_settings_html .= '</div><div style="clear:both"></div>';
 		echo $test_settings_html;
