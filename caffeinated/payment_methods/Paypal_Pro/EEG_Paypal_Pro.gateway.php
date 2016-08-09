@@ -100,7 +100,15 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			foreach ($total_line_item->get_items() as $line_item) {
 				$item = array(
 						// Item Name.  127 char max.
-						'l_name' => substr($line_item->name(),0,127),
+						'l_name' => 
+						substr(
+							apply_filters(
+								'EEG_Paypal_Pro__do_direct_payment__full_amount_line_item_name',
+								$line_item->name(),
+								$line_item,
+								$transaction
+							),
+						0,127),
 						// Item description.  127 char max.
 						'l_desc' => substr($line_item->desc(),0,127),
 						// Cost of individual item.
@@ -130,7 +138,15 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$tax_amount = 0;
 			array_push($order_items,array(
 				// Item Name.  127 char max.
-				'l_name' => $primary_registrant->event_name(),
+				'l_name' => 
+				substr(
+					apply_filters(
+						'EEG_Paypal_Pro__do_direct_payment__partial_amount_line_item_name',
+						$primary_registrant->event_name(),
+						$primary_registrant,
+						$transaction
+					),
+				0,127),
 				// Item description.  127 char max.
 				'l_desc' => $single_item_desc,
 				// Cost of individual item.
