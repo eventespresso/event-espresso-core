@@ -676,8 +676,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	protected function _registration_checkin_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$reg_id = isset( $this->_req_data['_REGID'] ) ? $this->_req_data['_REGID'] : null;
-		$reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
-		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $reg->event_ID()), 'add-new-h2');
+        /** @var EE_Registration $reg */
+        $reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
+		$this->_admin_page_title .= $this->get_action_link_or_button(
+		    'new_registration',
+            'add-registrant',
+            array('event_id' => $reg->event_ID()),
+            'add-new-h2'
+        );
 
 		$legend_items = array(
 			'checkin' => array(
@@ -875,8 +881,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				array( 'event_id' => $this->_req_data['event_id'] ),
 				'add-new-h2',
 				'',
-				false,
-				''
+				false
 			)
 			: '';
 
