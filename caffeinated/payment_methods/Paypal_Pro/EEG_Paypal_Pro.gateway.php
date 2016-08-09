@@ -148,7 +148,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					),
 				0,127),
 				// Item description.  127 char max.
-				'l_desc' => $single_item_desc,
+				'l_desc' => substr($single_item_desc,0,127),
 				// Cost of individual item.
 				'l_amt' => $payment->amount(),
 				// Item Number.  127 char max.
