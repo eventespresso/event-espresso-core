@@ -325,7 +325,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @param string    $post_type
 	 */
 	protected function _generate_CptQueryModifier( WP_Query $WP_Query, $post_type ) {
-		$this->query_modifier = new EventEspresso\Core\CPTs\CptQueryModifier(
+		$this->query_modifier = new EventEspresso\core\CPTs\CptQueryModifier(
 			$post_type,
 			$this->_CPTs[ $post_type ],
 			$WP_Query,
