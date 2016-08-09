@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\Core\CPTs;
+namespace EventEspresso\core\CPTs;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
@@ -126,7 +126,7 @@ class CptQueryModifier {
 
 
 	/**
-	 * @return \EEM_Base[]
+	 * @return \EE_Table_Base[]
 	 */
 	public function modelTables() {
 		return $this->model_tables;
@@ -201,7 +201,7 @@ class CptQueryModifier {
 
 
 	/**
-	 * @return \EE_Request
+	 * @return \EE_Request_Handler
 	 */
 	public function request() {
 		return $this->request;
