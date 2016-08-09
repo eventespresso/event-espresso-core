@@ -2220,8 +2220,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				$delete_link_args,
 				'submitdelete deletion',
 				'',
-				false,
-				''
+				false
 			);
 		}
 
@@ -2469,8 +2468,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				array(),
 				'button-primary button-large',
 				$buy_now_url,
-				true,
-				''
+				true
 			)
 			: $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
@@ -3037,7 +3035,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *                              the _admin_base_url will be used as the default for the button base_url.
 	 *                              Otherwise this value will be used.
 	 * @param bool   $exclude_nonce If true then no nonce will be in the generated button link.
-	 * @param string $before_button
 	 * @return string
 	 * @throws \EE_Error
 	 */
@@ -3047,8 +3044,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$extra_request = array(),
 		$class = 'button-primary',
 		$base_url = '',
-		$exclude_nonce = false,
-		$before_button = ' '
+		$exclude_nonce = false
 	) {
 		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
 		if ( empty( $base_url ) && ! isset( $this->_page_routes[ $action ] ) ) {
@@ -3087,7 +3083,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$query_args = array_merge( $extra_request, $query_args );
 		}
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url, false, $exclude_nonce );
-		return $before_button . EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][ $type ], $class );
+		return EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][ $type ], $class );
 	}
 
 
