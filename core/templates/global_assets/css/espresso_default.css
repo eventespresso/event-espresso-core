@@ -704,11 +704,9 @@ input.ee-register-button {
 /******************* GENERAL ****************** */
 
 
-.right,
 .float-right {
 	float: right;
 }
-.left,
 .float-left {
 	float: left;
 }
