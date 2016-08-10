@@ -50,25 +50,69 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
 
 
 
-
 	/**
-	 * 		column_default
-	*/
-   	function column_DTT_EVT_start(EE_Registration $item){
-		$datetime_strings = array();
+	 *        column_default
+	 *
+	 * @param \EE_Registration $item
+	 * @return string
+	 */
+   	public function column_DTT_EVT_start(EE_Registration $item){
 		$remove_defaults = array('default_where_conditions' => 'none');
 		$ticket = $item->ticket();
 		$datetimes = $ticket instanceof EE_Ticket ? $ticket->datetimes($remove_defaults) : array();
-		$query_args = array(
-			'action'=>'event_registrations',
-			'event_id'=>$item->event_ID()
-			);
-		foreach($datetimes as $datetime){
-			$query_args['DTT_ID'] = $datetime->ID();
-			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
-			$datetime_strings[] = EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkin', 'espresso_registrations_registration_checkins', $item->ID() ) ? '<a href="' . $checkin_url . '" title="' . esc_attr__( 'View Checkins for this Event', 'event_espresso' ) . '">' . $datetime->get_i18n_datetime( 'DTT_EVT_start' ) . '</a>' : $datetime->get_i18n_datetime( 'DTT_EVT_start' );
+	    $EVT_ID = $item->event_ID();
+	    $datetime_string = '';
+	    foreach( $datetimes as $datetime ){
+		    if (
+			    EE_Registry::instance()->CAP->current_user_can(
+				    'ee_read_checkin',
+				    'espresso_registrations_registration_checkins',
+				    $item->ID()
+			    )
+		    ) {
+			    // open "a" tag and "href"
+			    $datetime_string .= '<a href="';
+			    // checkin URL
+			    $datetime_string .= EE_Admin_Page::add_query_args_and_nonce(
+				    array(
+					    'action'   => 'event_registrations',
+					    'event_id' => $EVT_ID,
+					    'DTT_ID'   => $datetime->ID(),
+				    ),
+				    REG_ADMIN_URL
+			    );
+			    // close "href"
+			    $datetime_string .= '"';
+			    // open "title" tag
+			    $datetime_string .= ' title="';
+			    // link title text
+			    $datetime_string .= esc_attr__( 'View Checkins for this Event', 'event_espresso' );
+			    // close "title" tag and end of "a" tag opening
+			    $datetime_string .= '">';
+			    // link text
+			    $datetime_string .= $datetime->get_i18n_datetime( 'DTT_EVT_start' );
+			    // close "a" tag
+			    $datetime_string .= '</a>';
+		    } else {
+			    $datetime_string .= $datetime->get_i18n_datetime( 'DTT_EVT_start' );
+		    }
+		    // add a "View Registrations" link that filters list by event AND datetime
+		    $datetime_string .= $this->row_actions(
+			    array(
+				    'event_datetime_filter' => '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+						    array( 'event_id' => $EVT_ID, 'datetime_id' => $datetime->ID() ),
+						    REG_ADMIN_URL
+					    ) . '" title="' . sprintf(
+						    esc_attr__(
+							    'Filter this list to only show registrations for this datetime %s',
+							    'event_espresso'
+						    ),
+						    $datetime->name()
+					    ) . '">' . __( 'View Registrations', 'event_espresso' ) . '</a>'
+			    )
+		    );
 		}
-		return implode("<br />",$datetime_strings);
+		return $datetime_string;
     }
 
 
