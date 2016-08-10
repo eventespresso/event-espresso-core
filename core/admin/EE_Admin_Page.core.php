@@ -490,7 +490,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//next verify if we need to load anything...
-		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
 		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
 
 		global $ee_menu_slugs;
@@ -1835,13 +1835,25 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * _set_list_table_object
 	 * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
+	 *
+	 * @throws \EE_Error
 	 */
 	protected function _set_list_table_object() {
-		if ( isset($this->_route_config['list_table'] ) ) {
-			if ( !class_exists( $this->_route_config['list_table'] ) )
-				throw new EE_Error( sprintf( __('The %s class defined for the list table does not exist.  Please check the spelling of the class ref in the $_page_config property on %s.', 'event_espresso'), $this->_route_config['list_table'], get_class($this) ) );
-			$a = new ReflectionClass($this->_route_config['list_table']);
-			$this->_list_table_object = $a->newInstance($this);
+		if ( isset( $this->_route_config['list_table'] ) ) {
+			if ( ! class_exists( $this->_route_config['list_table'] ) ) {
+				throw new EE_Error(
+					sprintf(
+						__(
+							'The %s class defined for the list table does not exist.  Please check the spelling of the class ref in the $_page_config property on %s.',
+							'event_espresso'
+						),
+						$this->_route_config['list_table'],
+						get_class( $this )
+					)
+				);
+			}
+			$list_table = $this->_route_config['list_table'];
+			$this->_list_table_object = new $list_table( $this );
 		}
 	}
 
@@ -2500,14 +2512,21 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url ) : add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
+		$this->_template_args['table_url'] = defined( 'DOING_AJAX')
+			? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url )
+			: add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
 		$this->_template_args['list_table'] = $this->_list_table_object;
 		$this->_template_args['current_route'] = $this->_req_action;
 		$this->_template_args['list_table_class'] = get_class( $this->_list_table_object );
 
 		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();
 		if( ! empty( $ajax_sorting_callback )) {
-			$sortable_list_table_form_fields = wp_nonce_field( $ajax_sorting_callback . '_nonce', $ajax_sorting_callback . '_nonce', FALSE, FALSE );
+			$sortable_list_table_form_fields = wp_nonce_field(
+				$ajax_sorting_callback . '_nonce',
+				$ajax_sorting_callback . '_nonce',
+				FALSE,
+				FALSE
+			);
 //			$reorder_action = 'espresso_' . $ajax_sorting_callback . '_nonce';
 //			$sortable_list_table_form_fields = wp_nonce_field( $reorder_action, 'ajax_table_sort_nonce', FALSE, FALSE );
 			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_page" name="ajax_table_sort_page" value="' . $this->page_slug .'" />';
@@ -2523,10 +2542,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
 
 		//display message about search results?
-		$this->_template_args['before_list_table'] .= apply_filters( 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg', !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '', $this->page_slug, $this->_req_data, $this->_req_action );
-
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-
+		$this->_template_args['before_list_table'] .= apply_filters(
+			'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+			! empty( $this->_req_data['s'] )
+				? '<p class="ee-search-results">' . sprintf(
+					__( 'Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso' ),
+					trim( $this->_req_data['s'], '%' )
+					) . '</p>'
+				: '',
+			$this->page_slug,
+			$this->_req_data,
+			$this->_req_action
+		);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			$template_path,
+			$this->_template_args,
+			true
+		);
 		// the final template wrapper
 		if ( $sidebar )
 			$this->display_admin_page_with_sidebar();
