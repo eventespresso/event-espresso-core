@@ -343,7 +343,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'google_map_settings' => array(
 				'nav' => array(
-					'label' => __('Google Maps'),
+					'label' => esc_html__('Google Maps', 'event_espresso' ),
 					'order' => 40
 				),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
@@ -1380,7 +1380,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
-			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
+			$msg = sprintf ( __('The category %s was successfully created', 'event_espresso'), $category_name );
 			EE_Error::add_success( $msg );
 		}
 

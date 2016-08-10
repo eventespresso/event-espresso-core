@@ -77,22 +77,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_admin_page_title = EVENTS_LABEL;
 		$this->_labels = array(
 			'buttons' => array(
-				'add' => __('Add New Event', 'event_espresso'),
-				'edit' => __('Edit Event', 'event_espresso'),
-				'delete' => __('Delete Event', 'event_espresso'),
-				'add_category' => __('Add New Category', 'event_espresso'),
-				'edit_category' => __('Edit Category', 'event_espresso'),
-				'delete_category' => __('Delete Category', 'event_espresso')
+				'add' => esc_html__('Add New Event', 'event_espresso'),
+				'edit' => esc_html__('Edit Event', 'event_espresso'),
+				'delete' => esc_html__('Delete Event', 'event_espresso'),
+				'add_category' => esc_html__('Add New Category', 'event_espresso'),
+				'edit_category' => esc_html__('Edit Category', 'event_espresso'),
+				'delete_category' => esc_html__('Delete Category', 'event_espresso')
 			),
 			'editor_title' => array(
-				'espresso_events' => __('Enter event title here', 'event_espresso')
+				'espresso_events' => esc_html__('Enter event title here', 'event_espresso')
 				),
 			'publishbox' => array(
-				'create_new' => __('Save New Event', 'event_espresso'),
-				'edit' => __('Update Event', 'event_espresso'),
-				'add_category' => __('Save New Category', 'event_espresso'),
-				'edit_category' => __('Update Category', 'event_espresso'),
-				'template_settings' => __( 'Update Settings', 'event_espresso' )
+				'create_new' => esc_html__('Save New Event', 'event_espresso'),
+				'edit' => esc_html__('Update Event', 'event_espresso'),
+				'add_category' => esc_html__('Save New Category', 'event_espresso'),
+				'edit_category' => esc_html__('Update Category', 'event_espresso'),
+				'template_settings' => esc_html__( 'Update Settings', 'event_espresso' )
 				)
 		);
 	}
@@ -230,29 +230,29 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
-					'label' => __('Overview', 'event_espresso'),
+					'label' => esc_html__('Overview', 'event_espresso'),
 					'order' => 10
 				),
 				'list_table' => 'Events_Admin_List_Table',
 				'help_tabs' => array(
 					'events_overview_help_tab' => array(
-						'title' => __('Events Overview', 'event_espresso'),
+						'title' => esc_html__('Events Overview', 'event_espresso'),
 						'filename' => 'events_overview'
 					),
 					'events_overview_table_column_headings_help_tab' => array(
-						'title' => __('Events Overview Table Column Headings', 'event_espresso'),
+						'title' => esc_html__('Events Overview Table Column Headings', 'event_espresso'),
 						'filename' => 'events_overview_table_column_headings'
 					),
 					'events_overview_filters_help_tab' => array(
-						'title' => __('Events Overview Filters', 'event_espresso'),
+						'title' => esc_html__('Events Overview Filters', 'event_espresso'),
 						'filename' => 'events_overview_filters'
 					),
 					'events_overview_view_help_tab' => array(
-						'title' => __('Events Overview Views', 'event_espresso'),
+						'title' => esc_html__('Events Overview Views', 'event_espresso'),
 						'filename' => 'events_overview_views'
 					),
 					'events_overview_other_help_tab' => array(
-						'title' => __('Events Overview Other', 'event_espresso'),
+						'title' => esc_html__('Events Overview Other', 'event_espresso'),
 						'filename' => 'events_overview_other'
 					)
 				),
@@ -267,50 +267,50 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'create_new' => array(
 				'nav' => array(
-					'label' => __('Add Event', 'event_espresso'),
+					'label' => esc_html__('Add Event', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false
 				),
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
 					'event_editor_help_tab' => array(
-						'title' => __('Event Editor', 'event_espresso'),
+						'title' => esc_html__('Event Editor', 'event_espresso'),
 						'filename' => 'event_editor'
 					),
 					'event_editor_title_richtexteditor_help_tab' => array(
-						'title' => __('Event Title & Rich Text Editor', 'event_espresso'),
+						'title' => esc_html__('Event Title & Rich Text Editor', 'event_espresso'),
 						'filename' => 'event_editor_title_richtexteditor'
 					),
 					'event_editor_venue_details_help_tab' => array(
-						'title' => __('Event Venue Details', 'event_espresso'),
+						'title' => esc_html__('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
 					'event_editor_event_datetimes_help_tab' => array(
-						'title' => __('Event Datetimes', 'event_espresso'),
+						'title' => esc_html__('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
 					'event_editor_event_tickets_help_tab' => array(
-						'title' => __('Event Tickets', 'event_espresso'),
+						'title' => esc_html__('Event Tickets', 'event_espresso'),
 						'filename' => 'event_editor_event_tickets'
 					),
 					'event_editor_event_registration_options_help_tab' => array(
-						'title' => __('Event Registration Options', 'event_espresso'),
+						'title' => esc_html__('Event Registration Options', 'event_espresso'),
 						'filename' => 'event_editor_event_registration_options'
 					),
 					'event_editor_tags_categories_help_tab' => array(
-						'title' => __('Event Tags & Categories', 'event_espresso'),
+						'title' => esc_html__('Event Tags & Categories', 'event_espresso'),
 						'filename' => 'event_editor_tags_categories'
 					),
 					'event_editor_questions_registrants_help_tab' => array(
-						'title' => __('Questions for Registrants', 'event_espresso'),
+						'title' => esc_html__('Questions for Registrants', 'event_espresso'),
 						'filename' => 'event_editor_questions_registrants'
 					),
 					'event_editor_save_new_event_help_tab' => array(
-						'title' => __('Save New Event', 'event_espresso'),
+						'title' => esc_html__('Save New Event', 'event_espresso'),
 						'filename' => 'event_editor_save_new_event'
 					),
 					'event_editor_other_help_tab' => array(
-						'title' => __('Event Other', 'event_espresso'),
+						'title' => esc_html__('Event Other', 'event_espresso'),
 						'filename' => 'event_editor_other'
 					)
 				),
@@ -322,7 +322,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'edit' => array(
 				'nav' => array(
-					'label' => __('Edit Event', 'event_espresso'),
+					'label' => esc_html__('Edit Event', 'event_espresso'),
 					'order' => 5,
 					'persistent' => false,
 					'url' => isset($this->_req_data['post']) ? EE_Admin_Page::add_query_args_and_nonce(array('post' => $this->_req_data['post'], 'action' => 'edit'), $this->_current_page_view_url) : $this->_admin_base_url
@@ -330,43 +330,43 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'metaboxes' => array('_register_event_editor_meta_boxes'),
 				'help_tabs' => array(
 					'event_editor_help_tab' => array(
-						'title' => __('Event Editor', 'event_espresso'),
+						'title' => esc_html__('Event Editor', 'event_espresso'),
 						'filename' => 'event_editor'
 					),
 					'event_editor_title_richtexteditor_help_tab' => array(
-						'title' => __('Event Title & Rich Text Editor', 'event_espresso'),
+						'title' => esc_html__('Event Title & Rich Text Editor', 'event_espresso'),
 						'filename' => 'event_editor_title_richtexteditor'
 					),
 					'event_editor_venue_details_help_tab' => array(
-						'title' => __('Event Venue Details', 'event_espresso'),
+						'title' => esc_html__('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
 					'event_editor_event_datetimes_help_tab' => array(
-						'title' => __('Event Datetimes', 'event_espresso'),
+						'title' => esc_html__('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
 					'event_editor_event_tickets_help_tab' => array(
-						'title' => __('Event Tickets', 'event_espresso'),
+						'title' => esc_html__('Event Tickets', 'event_espresso'),
 						'filename' => 'event_editor_event_tickets'
 					),
 					'event_editor_event_registration_options_help_tab' => array(
-						'title' => __('Event Registration Options', 'event_espresso'),
+						'title' => esc_html__('Event Registration Options', 'event_espresso'),
 						'filename' => 'event_editor_event_registration_options'
 					),
 					'event_editor_tags_categories_help_tab' => array(
-						'title' => __('Event Tags & Categories', 'event_espresso'),
+						'title' => esc_html__('Event Tags & Categories', 'event_espresso'),
 						'filename' => 'event_editor_tags_categories'
 					),
 					'event_editor_questions_registrants_help_tab' => array(
-						'title' => __('Questions for Registrants', 'event_espresso'),
+						'title' => esc_html__('Questions for Registrants', 'event_espresso'),
 						'filename' => 'event_editor_questions_registrants'
 					),
 					'event_editor_save_new_event_help_tab' => array(
-						'title' => __('Save New Event', 'event_espresso'),
+						'title' => esc_html__('Save New Event', 'event_espresso'),
 						'filename' => 'event_editor_save_new_event'
 					),
 					'event_editor_other_help_tab' => array(
-						'title' => __('Event Other', 'event_espresso'),
+						'title' => esc_html__('Event Other', 'event_espresso'),
 						'filename' => 'event_editor_other'
 					)
 				),
@@ -378,20 +378,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'default_event_settings' => array(
 				'nav' => array(
-					'label' => __('Default Settings', 'event_espresso'),
+					'label' => esc_html__('Default Settings', 'event_espresso'),
 					'order' => 40
 				),
 				'metaboxes' => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
 				'labels' => array(
-					'publishbox' => __('Update Settings', 'event_espresso')
+					'publishbox' => esc_html__('Update Settings', 'event_espresso')
 				),
 				'help_tabs' => array(
 					'default_settings_help_tab' => array(
-						'title' => __('Default Event Settings', 'event_espresso'),
+						'title' => esc_html__('Default Event Settings', 'event_espresso'),
 						'filename' => 'events_default_settings'
 					),
 					'default_settings_status_help_tab' => array(
-						'title' => __('Default Registration Status', 'event_espresso'),
+						'title' => esc_html__('Default Registration Status', 'event_espresso'),
 						'filename' => 'events_default_settings_status'
 					)
 				),
@@ -401,13 +401,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//template settings
 			'template_settings' => array(
 				'nav' => array(
-					'label' => __('Templates', 'event_espresso'),
+					'label' => esc_html__('Templates', 'event_espresso'),
 					'order' => 30
 				),
 				'metaboxes' => $this->_default_espresso_metaboxes,
 				'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
-						'title' => __('Templates', 'event_espresso'),
+						'title' => esc_html__('Templates', 'event_espresso'),
 						'filename' => 'general_settings_templates'
 					)
 				),
@@ -417,12 +417,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//event category stuff
 			'add_category' => array(
 				'nav' => array(
-					'label' => __('Add Category', 'event_espresso'),
+					'label' => esc_html__('Add Category', 'event_espresso'),
 					'order' => 15,
 					'persistent' => false),
 				'help_tabs' => array(
 					'add_category_help_tab' => array(
-						'title' => __('Add New Event Category', 'event_espresso'),
+						'title' => esc_html__('Add New Event Category', 'event_espresso'),
 						'filename' => 'events_add_category'
 						)
 					),
@@ -432,14 +432,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'edit_category' => array(
 				'nav' => array(
-					'label' => __('Edit Category', 'event_espresso'),
+					'label' => esc_html__('Edit Category', 'event_espresso'),
 					'order' => 15,
 					'persistent' => FALSE,
 					'url' => isset($this->_req_data['EVT_CAT_ID']) ? add_query_arg(array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 					),
 				'help_tabs' => array(
 					'edit_category_help_tab' => array(
-						'title' => __('Edit Event Category', 'event_espresso'),
+						'title' => esc_html__('Edit Event Category', 'event_espresso'),
 						'filename' => 'events_edit_category'
 						)
 					),
@@ -449,25 +449,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					),
 			'category_list' => array(
 				'nav' => array(
-					'label' => __('Categories', 'event_espresso'),
+					'label' => esc_html__('Categories', 'event_espresso'),
 					'order' => 20
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
 				'help_tabs' => array(
 					'events_categories_help_tab' => array(
-						'title' => __('Event Categories', 'event_espresso'),
+						'title' => esc_html__('Event Categories', 'event_espresso'),
 						'filename' => 'events_categories'
 					),
 					'events_categories_table_column_headings_help_tab' => array(
-						'title' => __('Event Categories Table Column Headings', 'event_espresso'),
+						'title' => esc_html__('Event Categories Table Column Headings', 'event_espresso'),
 						'filename' => 'events_categories_table_column_headings'
 					),
 					'events_categories_view_help_tab' => array(
-						'title' => __('Event Categories Views', 'event_espresso'),
+						'title' => esc_html__('Event Categories Views', 'event_espresso'),
 						'filename' => 'events_categories_views'
 					),
 					'events_categories_other_help_tab' => array(
-						'title' => __('Event Categories Other', 'event_espresso'),
+						'title' => esc_html__('Event Categories Other', 'event_espresso'),
 						'filename' => 'events_categories_other'
 					)
 				),
@@ -491,7 +491,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _add_screen_options_category_list() {
 		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __('Categories', 'event_espresso');
+		$this->_admin_page_title = esc_html__('Categories', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
@@ -557,10 +557,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => esc_html__('All', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_categories' => __('Delete Permanently', 'event_espresso')
+					'delete_categories' => esc_html__('Delete Permanently', 'event_espresso')
 					)
 				)
 		);
@@ -569,7 +569,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function admin_init() {
-		EE_Registry::$i18n_js_strings[ 'image_confirm' ] = __( 'Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'image_confirm' ] = esc_html__( 'Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso' );
 	}
 
 
@@ -613,7 +613,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			if ( $orig_status !== EEM_Event::sold_out && $event->status() !== $orig_status ) {
 				EE_Error::add_attention(
 					sprintf(
-						__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
+						esc_html__( 'Please note that the Event Status has automatically been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You can change the status back to something else before updating if you wish.', 'event_espresso' ),
 						EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' )
 					)
 				);
@@ -622,7 +622,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		} else if ( $orig_status === EEM_Event::sold_out ) {
 			EE_Error::add_attention(
 				sprintf(
-					__( 'Please note that the Event Status has automatically been changed to %s because more spaces have become available for this event, most likely due to abandoned transactions freeing up reserved tickets.  However, this change is not permanent until you update the event. If you wish, you can change the status back to something else before updating.',
+					esc_html__( 'Please note that the Event Status has automatically been changed to %s because more spaces have become available for this event, most likely due to abandoned transactions freeing up reserved tickets.  However, this change is not permanent until you update the event. If you wish, you can change the status back to something else before updating.',
 						'event_espresso' ),
 					EEH_Template::pretty_status( $event->status(), false, 'sentence' )
 				)
@@ -652,7 +652,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			return;
 		}
 		EE_Error::add_attention(
-			__('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso')
+			esc_html__('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso')
 		);
 	}
 
@@ -663,18 +663,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('View All Events', 'event_espresso'),
+				'label' => esc_html__('View All Events', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_events' => __('Move to Trash', 'event_espresso')
+					'trash_events' => esc_html__('Move to Trash', 'event_espresso')
 				)
 			),
 			'draft' => array(
 				'slug' => 'draft',
-				'label' => __('Draft', 'event_espresso'),
+				'label' => esc_html__('Draft', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'trash_events' => __('Move to Trash', 'event_espresso'),
+					'trash_events' => esc_html__('Move to Trash', 'event_espresso'),
 					)
 			),
 		);
@@ -682,11 +682,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
+				'label' => esc_html__('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'restore_events' => __('Restore From Trash', 'event_espresso'),
-					'delete_events' => __('Delete Permanently', 'event_espresso')
+					'restore_events' => esc_html__('Restore From Trash', 'event_espresso'),
+					'delete_events' => esc_html__('Delete Permanently', 'event_espresso')
 					)
 				);
 		}
@@ -698,15 +698,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$items = array(
 			'view_details' => array(
 				'class' => 'dashicons dashicons-search',
-				'desc' => __('View Event', 'event_espresso')
+				'desc' => esc_html__('View Event', 'event_espresso')
 			),
 			'edit_event' => array(
 				'class' => 'ee-icon ee-icon-calendar-edit',
-				'desc' => __('Edit Event Details', 'event_espresso')
+				'desc' => esc_html__('Edit Event Details', 'event_espresso')
 			),
 			'view_attendees' => array(
 				'class' => 'dashicons dashicons-groups',
-				'desc' => __('View Registrations for Event', 'event_espresso')
+				'desc' => esc_html__('View Registrations for Event', 'event_espresso')
 			)
 		);
 		$items  = apply_filters( 'FHEE__Events_Admin_Page___event_legend_items__items', $items );
@@ -777,7 +777,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//make sure this is only when editing
 		if ( !empty( $id ) ) {
 			$post = get_post( $id );
-			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . __('Shortcode', 'event_espresso') . '</a> ';
+			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . esc_html__('Shortcode', 'event_espresso') . '</a> ';
 			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=' . $post->ID . ']">';
 		}
 		return $return;
@@ -795,7 +795,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _events_overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
+		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), esc_html__("View Event Archive Page", "event_espresso"), 'button' ) .
 		$this->_display_legend($this->_event_legend_items());
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -855,9 +855,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//any errors?
 		if ( $success && FALSE === $att_success ) {
-			EE_Error::add_error( __('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( esc_html__('Event Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else if ( $success === FALSE ) {
-			EE_Error::add_error( __('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( esc_html__('Event Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
 
@@ -1323,7 +1323,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->verify_cpt_object();
 		add_meta_box(
 			'espresso_event_editor_tickets',
-			__( 'Event Datetime & Ticket', 'event_espresso' ),
+			esc_html__( 'Event Datetime & Ticket', 'event_espresso' ),
 			array( $this, 'ticket_metabox' ),
 			$this->page_slug,
 			'normal',
@@ -1331,7 +1331,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		add_meta_box(
 			'espresso_event_editor_event_options',
-			__( 'Event Registration Options', 'event_espresso' ),
+			esc_html__( 'Event Registration Options', 'event_espresso' ),
 			array( $this, 'registration_options_meta_box' ),
 			$this->page_slug,
 			'side',
@@ -1485,8 +1485,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function registration_options_meta_box() {
 
 		$yes_no_values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
+			array('id' => true, 'text' => esc_html__('Yes', 'event_espresso')),
+			array('id' => false, 'text' => esc_html__('No', 'event_espresso'))
 		);
 
 		$default_reg_status_values = EEM_Registration::reg_status_array(
@@ -1700,12 +1700,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				$success = $this->_change_event_status($EVT_ID, $event_status);
 			} else {
 				$success = FALSE;
-				$msg = __('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
+				$msg = esc_html__('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
 			$success = FALSE;
-			$msg = __('An error occurred. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
+			$msg = esc_html__('An error occurred. The event could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		$action = $event_status == 'trash' ? 'moved to the trash' : 'restored from the trash';
@@ -1735,14 +1735,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					$results = $this->_change_event_status($EVT_ID, $event_status);
 					$success = $results !== FALSE ? $success : FALSE;
 				} else {
-					$msg = sprintf(__('An error occurred. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
+					$msg = sprintf( esc_html__('An error occurred. Event #%d could not be moved to the trash because a valid event ID was not not supplied.', 'event_espresso'), $EVT_ID);
 					EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 					$success = FALSE;
 				}
 			}
 		} else {
 			$success = FALSE;
-			$msg = __('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
+			$msg = esc_html__('An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 		// in order to force a pluralized result message we need to send back a success status greater than 1
@@ -1763,7 +1763,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _change_event_status( $EVT_ID = 0, $event_status = '') {
 		// grab event id
 		if (!$EVT_ID) {
-			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
+			$msg = esc_html__('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1774,7 +1774,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$event_status = sanitize_key($event_status);
 		// grab status
 		if (empty($event_status)) {
-			$msg = __('An error occurred. No Event Status or an invalid Event Status was received.', 'event_espresso');
+			$msg = esc_html__('An error occurred. No Event Status or an invalid Event Status was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1798,7 +1798,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = $this->_cpt_model_obj->save();
 
 		if ($success === FALSE) {
-			$msg = sprintf(__('An error occurred. The event could not be %s.', 'event_espresso'), $action);
+			$msg = sprintf( esc_html__('An error occurred. The event could not be %s.', 'event_espresso'), $action);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1834,7 +1834,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
 		} else {
 			$success = FALSE;
-			$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
+			$msg = esc_html__('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 		}
 
@@ -1864,7 +1864,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				unset( $espresso_no_ticket_prices[ $EVT_ID ] );
 			} else {
 				$success = FALSE;
-				$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
+				$msg = esc_html__('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		}
@@ -1884,7 +1884,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	private function _permanently_delete_event( $EVT_ID = 0 ) {
 		// grab event id
 		if ( ! $EVT_ID ) {
-			$msg = __('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
+			$msg = esc_html__('An error occurred. No Event ID or an invalid Event ID was received.', 'event_espresso');
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -1942,10 +1942,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$success = $this->_cpt_model_obj->delete_permanently();
 		// did it all go as planned ?
 		if ($success) {
-			$msg = sprintf(__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
+			$msg = sprintf( esc_html__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_success($msg);
 		} else {
-			$msg = sprintf(__('An error occurred. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
+			$msg = sprintf( esc_html__('An error occurred. Event ID # %d could not be deleted.', 'event_espresso'), $EVT_ID);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
@@ -2060,9 +2060,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _template_settings() {
-		$this->_admin_page_title = __('Template Settings (Preview)', 'event_espresso');
+		$this->_admin_page_title = esc_html__('Template Settings (Preview)', 'event_espresso');
 		$this->_template_args['preview_img'] = '<img src="' . EVENTS_ASSETS_URL . DS . 'images' . DS . 'caffeinated_template_features.jpg" alt="' . esc_attr__( 'Template Settings Preview screenshot', 'event_espresso' ) . '" />';
-		$this->_template_args['preview_text'] = '<strong>'.__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
+		$this->_template_args['preview_text'] = '<strong>'.esc_html__( 'Template Settings is a feature that is only available in the Caffeinated version of Event Espresso. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.', 'event_espresso' ).'</strong>';
 		$this->display_admin_caf_preview_page( 'template_settings_tab' );
 	}
 
@@ -2112,7 +2112,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_search_btn_label = __('Categories', 'event_espresso');
+		$this->_search_btn_label = esc_html__('Categories', 'event_espresso');
 		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -2156,7 +2156,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//setup category select for term parents.
 		$category_select_values[] = array(
-			'text' => __('No Parent', 'event_espresso'),
+			'text' => esc_html__('No Parent', 'event_espresso'),
 			'id' => 0
 			);
 		foreach ( $all_terms as $term ) {
@@ -2234,7 +2234,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$category_parent = isset( $this->_req_data['category_parent'] ) ? $this->_req_data['category_parent'] : 0;
 
 		if ( empty( $category_name ) ) {
-			$msg = __( 'You must add a name for the category.', 'event_espresso' );
+			$msg = esc_html__( 'You must add a name for the category.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
@@ -2251,11 +2251,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
-			$msg = __( 'An error occurred and the category has not been saved to the database.', 'event_espresso' );
+			$msg = esc_html__( 'An error occurred and the category has not been saved to the database.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
-			$msg = sprintf ( __('The category %s was successfuly saved', 'event_espresso'), $category_name );
+			$msg = sprintf ( esc_html__('The category %s was successfully saved', 'event_espresso'), $category_name );
 			EE_Error::add_success( $msg );
 		}
 

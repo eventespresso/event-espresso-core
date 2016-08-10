@@ -606,12 +606,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * 	process_ticket_selections
 	 *
 	 *	@access public
-	 * 	@access 		public
-	 * 	@return		bool
+	 * 	@return array|boolean
 	 */
 	public function process_ticket_selections() {
-		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
-		//echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
+        do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! EED_Ticket_Selector::process_ticket_selector_nonce( 'process_ticket_selections_nonce' ) ) {
 			return false;

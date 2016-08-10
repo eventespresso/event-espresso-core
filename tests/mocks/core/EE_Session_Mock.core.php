@@ -54,6 +54,17 @@ class EE_Session_Mock extends EE_Session {
 		return  60 * MINUTE_IN_SECONDS;
 	}
 
+
+
+	/**
+	 * @return \EE_Encryption
+	 */
+	public function encryption() {
+		return $this->encryption;
+	}
+
+
+
 }
 // End of file EE_Session_Mock.core.php
 // Location: /tests/mocks/core/EE_Session_Mock.core.php

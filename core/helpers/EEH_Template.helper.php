@@ -480,15 +480,29 @@ class EEH_Template {
 
 	/**
 	 * This helper just returns a button or link for the given parameters
+	 *
 	 * @param  string $url   the url for the link
 	 * @param  string $label What is the label you want displayed for the button
 	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param string  $icon
-	 * @return string 	the html output for the button
+	 * @param string  $title
+	 * @return string the html output for the button
 	 */
-	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
-		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
-		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '', $title = '' ) {
+		$icon_html = '';
+		if ( ! empty( $icon ) ) {
+			$dashicons = preg_split( "(ee-icon |dashicons )", $icon );
+			$dashicons = array_filter( $dashicons );
+			$count = count( $dashicons );
+			$icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
+			foreach ( $dashicons as $dashicon ) {
+				$type = strpos( $dashicon, 'ee-icon' ) !== false ? 'ee-icon ' : 'dashicons ';
+				$icon_html .= '<span class="' . $type . $dashicon . '"></span>';
+			}
+			$icon_html .= $count > 1 ? '</span>' : '';
+		}
+		$label = ! empty( $icon ) ? $icon_html . $label : $label;
+		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
 		return $button;
 	}
 
