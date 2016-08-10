@@ -17,7 +17,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EED_Ticket_Sales_Monitor extends EED_Module {
 
-	const debug = false; 	//	true false
+	const debug = true; 	//	true false
 
 	/**
 	 * an array of raw ticket data from EED_Ticket_Selector
@@ -170,8 +170,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			$qty = EED_Ticket_Sales_Monitor::instance()->_validate_ticket_sale( $ticket, $qty );
 		}
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n qty: " . $qty;
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "()";
+			echo "<br /><br /><b> RETURNED QTY: " . $qty . '</b>';
 		}
 		return $qty;
 	}
@@ -189,41 +189,38 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _validate_ticket_sale( EE_Ticket $ticket, $qty = 1 ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
 		}
 		if ( ! $ticket instanceof EE_Ticket ) {
 			return 0;
 		}
 		if ( self::debug ) {
-			echo "\n . ticket->ID: " . $ticket->ID() . '<br />';
-			echo "\n . original ticket->reserved: " . $ticket->reserved() . '<br />';
+			echo "<br /><b> . ticket->ID: " . $ticket->ID() . '</b>';
+			echo "<br /> . original ticket->reserved: " . $ticket->reserved();
 		}
 		$ticket->refresh_from_db();
 		// first let's determine the ticket availability based on sales
 		$available = $ticket->qty( 'saleable' );
 		if ( self::debug ) {
-			echo "\n . . . ticket->qty: " . $ticket->qty() . '<br />';
-			echo "\n . . . ticket->sold: " . $ticket->sold() . '<br />';
-			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
-			echo "\n . . . ticket->qty(saleable): " . $ticket->qty( 'saleable' ) . '<br />';
-			echo "\n . . . available: " . $available . '<br />';
+			echo "<br /> . . . ticket->qty: " . $ticket->qty();
+			echo "<br /> . . . ticket->sold: " . $ticket->sold();
+			echo "<br /> . . . ticket->reserved: " . $ticket->reserved();
+			echo "<br /> . . . ticket->qty(saleable): " . $ticket->qty( 'saleable' );
+			echo "<br /> . . . available: " . $available;
 		}
 		if ( $available < 1 ) {
 			$this->_ticket_sold_out( $ticket );
 			return 0;
 		}
 		if ( self::debug ) {
-			echo "\n . . . qty: " . $qty . '<br />';
+			echo "<br /> . . . qty: " . $qty;
 		}
 		if ( $available < $qty ) {
 			$qty = $available;
 			if ( self::debug ) {
-				echo "\n . . . QTY ADJUSTED: " . $qty . '<br />';
+				echo "<br /> . . . QTY ADJUSTED: " . $qty;
 			}
 			$this->_ticket_quantity_decremented( $ticket );
-		}
-		if ( self::debug ) {
-			echo "\n\n . . . INCREASE RESERVED: " . $qty . '<br/><br/>';
 		}
 		$this->_reserve_ticket( $ticket, $qty );
 		return $qty;
@@ -243,7 +240,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _reserve_ticket( EE_Ticket $ticket, $quantity = 1 ) {
 		if ( self::debug ) {
-			echo "\n\n . . . INCREASE RESERVED: " . $quantity . '<br/><br/>';
+			echo "<br /><br /> . . . INCREASE RESERVED: " . $quantity;
 		}
 		$ticket->increase_reserved( $quantity );
 		return $ticket->save();
@@ -262,12 +259,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _release_reserved_ticket( EE_Ticket $ticket, $quantity = 1 ) {
 		if ( self::debug ) {
-			echo "\n . . . ticket->ID: " . $ticket->ID() . '<br />';
-			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+			echo "<br /> . . . ticket->ID: " . $ticket->ID();
+			echo "<br /> . . . ticket->reserved: " . $ticket->reserved();
 		}
 		$ticket->decrease_reserved( $quantity );
 		if ( self::debug ) {
-			echo "\n . . . ticket->reserved: " . $ticket->reserved() . '<br />';
+			echo "<br /> . . . ticket->reserved: " . $ticket->reserved();
 		}
 		return $ticket->save() ? 1 : 0;
 	}
@@ -285,8 +282,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _ticket_sold_out( EE_Ticket $ticket ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . . ticket->name: " . $this->_get_ticket_and_event_name( $ticket ) . '<br />';
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
+			echo "<br /> . . ticket->name: " . $this->_get_ticket_and_event_name( $ticket );
 		}
 		$this->sold_out_tickets[] = $this->_get_ticket_and_event_name( $ticket );
 	}
@@ -303,8 +300,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _ticket_quantity_decremented( EE_Ticket $ticket ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . . ticket->name: " . $this->_get_ticket_and_event_name( $ticket ) . '<br />';
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
+			echo "<br /> . . ticket->name: " . $this->_get_ticket_and_event_name( $ticket );
 		}
 		$this->decremented_tickets[] = $this->_get_ticket_and_event_name( $ticket );
 	}
@@ -400,7 +397,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _post_notices() {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
 		}
 		if ( ! empty( $this->sold_out_tickets ) ) {
 			EE_Error::add_attention(
@@ -450,8 +447,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _release_all_reserved_tickets_for_transaction( EE_Transaction $transaction ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . transaction->ID: " . $transaction->ID() . '<br />';
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
+			echo "<br /> . transaction->ID: " . $transaction->ID();
 		}
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
@@ -468,7 +465,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		// how many tickets were released
 		$count = 0;
 		if ( self::debug ) {
-			echo "\n . . . finalized: " . $finalized . '<br />';
+			echo "<br /> . . . finalized: " . $finalized;
 		}
 		$release_tickets_with_TXN_status = array(
 			EEM_Transaction::failed_status_code,
@@ -505,10 +502,10 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _release_reserved_ticket_for_registration( EE_Registration $registration, EE_Transaction $transaction ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
-			echo "\n . . registration->ID: " . $registration->ID() . '<br />';
-			echo "\n . . registration->status_ID: " . $registration->status_ID() . '<br />';
-			echo "\n . . transaction->status_ID(): " . $transaction->status_ID() . '<br />';
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
+			echo "<br /> . . registration->ID: " . $registration->ID();
+			echo "<br /> . . registration->status_ID: " . $registration->status_ID();
+			echo "<br /> . . transaction->status_ID(): " . $transaction->status_ID();
 		}
 		if (
 			// release Tickets for Failed Transactions and Abandoned Transactions
@@ -544,17 +541,17 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	public static function session_cart_reset( EE_Session $session ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
 		}
 		$cart = $session->cart();
 		if ( $cart instanceof EE_Cart ) {
 			if ( self::debug ) {
-				echo "\n\n cart instanceof EE_Cart: " . "<br />";
+				echo "<br /><br /> cart instanceof EE_Cart: ";
 			}
 			EED_Ticket_Sales_Monitor::instance()->_session_cart_reset( $cart );
 		} else {
 			if ( self::debug ) {
-				echo "\n\n invalid EE_Cart: " . "<br />";
+				echo "<br /><br /> invalid EE_Cart: ";
 				var_dump( $cart );
 			}
 		}
@@ -572,7 +569,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _session_cart_reset( EE_Cart $cart ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
 		}
 		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$ticket_line_items = $cart->get_tickets();
@@ -581,23 +578,27 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 		}
 		foreach ( $ticket_line_items as $ticket_line_item ) {
 			if ( self::debug ) {
-				echo "\n . ticket_line_item->ID(): " . $ticket_line_item->ID() . "<br />";
+				echo "<br /> . ticket_line_item->ID(): " . $ticket_line_item->ID();
 			}
 			if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_type() == 'Ticket' ) {
 				if ( self::debug ) {
-					echo "\n . . ticket_line_item->OBJ_ID(): " . $ticket_line_item->OBJ_ID() . "<br />";
+					echo "<br /> . . ticket_line_item->OBJ_ID(): " . $ticket_line_item->OBJ_ID();
 				}
 				$ticket = EEM_Ticket::instance()->get_one_by_ID( $ticket_line_item->OBJ_ID() );
 				if ( $ticket instanceof EE_Ticket ) {
 					if ( self::debug ) {
-						echo "\n . . ticket->ID(): " . $ticket->ID() . "<br />";
-						echo "\n . . ticket_line_item->quantity(): " . $ticket_line_item->quantity() . "<br />";
+						echo "<br /> . . ticket->ID(): " . $ticket->ID();
+						echo "<br /> . . ticket_line_item->quantity(): " . $ticket_line_item->quantity();
 					}
 					$this->_release_reserved_ticket( $ticket, $ticket_line_item->quantity() );
 				}
 			}
 		}
-	}
+        if (self::debug) {
+            echo "<br /><br /> RESET COMPLETED ";
+        }
+
+    }
 
 
 
@@ -632,7 +633,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 	 */
 	protected function _session_checkout_reset( EE_Checkout $checkout ) {
 		if ( self::debug ) {
-			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() <br />";
+			echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "() ";
 		}
 		// we want to release the each registration's reserved tickets if the session was cleared, but not if this is a revisit
 		if ( $checkout->revisit || ! $checkout->transaction instanceof EE_Transaction ) {
