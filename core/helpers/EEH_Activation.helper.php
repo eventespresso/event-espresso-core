@@ -1194,7 +1194,7 @@ class EEH_Activation {
 
 			$table_name = EEM_Status::instance()->table();
 
-			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
+			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO $table_name
@@ -1217,6 +1217,7 @@ class EEH_Activation {
 					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
 					('RIC', 'INCOMPLETE', 'registration', 0, NULL, 1),
+					('RWL', 'WAIT_LIST', 'registration', 0, NULL, 1),
 					('TFL', 'FAILED', 'transaction', 0, NULL, 0),
 					('TAB', 'ABANDONED', 'transaction', 0, NULL, 0),
 					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),
@@ -1710,7 +1711,7 @@ class EEH_Activation {
 			EE_Error::add_attention( $errors, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
-	
+
 	/**
 	 * Gets the mysql error code from the last used query by wpdb
 	 * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
@@ -1755,13 +1756,13 @@ class EEH_Activation {
 						117, //no such table
 					)
 				)
-				|| 
+				||
 				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
 			) {
 				return false;
 			} else {
 				//log this because that's weird. Just use the normal PHP error log
-				error_log( 
+				error_log(
 					sprintf(
 						__( 'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)', 'event_espresso' ),
 					$new_error
