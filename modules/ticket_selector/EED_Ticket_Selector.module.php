@@ -26,7 +26,9 @@
  */
 class EED_Ticket_Selector extends  EED_Module {
 
-	/**
+    const debug = true;    //	true false
+
+    /**
 	 * event that ticket selector is being generated for
 	 *
 	 * @access protected
@@ -679,31 +681,47 @@ class EED_Ticket_Selector extends  EED_Module {
 						}
 					}
 				}
-				do_action( 'AHEE__EE_Ticket_Selector__process_ticket_selections__after_tickets_added_to_cart', EE_Registry::instance()->CART, $this );
+				do_action(
+				    'AHEE__EE_Ticket_Selector__process_ticket_selections__after_tickets_added_to_cart',
+                    EE_Registry::instance()->CART,
+                    $this
+                );
 				//d( EE_Registry::instance()->CART );
 				//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE BEFORE CART UPDATE
 
 				if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__tckts_slctd', $tckts_slctd ) ) {
 					if ( apply_filters( 'FHEE__EED_Ticket_Selector__process_ticket_selections__success', $tickets_added ) ) {
-						do_action( 'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout', EE_Registry::instance()->CART, $this );
+						do_action(
+						    'FHEE__EE_Ticket_Selector__process_ticket_selections__before_redirecting_to_checkout',
+                            EE_Registry::instance()->CART,
+                            $this
+                        );
 						EE_Registry::instance()->CART->recalculate_all_cart_totals();
 						EE_Registry::instance()->CART->save_cart( FALSE );
 						EE_Registry::instance()->SSN->update();
 						//d( EE_Registry::instance()->CART );
-						//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
+						// die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< OR HERE TO KILL REDIRECT AFTER CART UPDATE
 						// just return TRUE for registrations being made from admin
 						if ( is_admin() ) {
 							return TRUE;
 						}
 
 						EE_Error::get_notices( false, true );
-						wp_safe_redirect( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url', EE_Registry::instance()->CFG->core->reg_page_url() ));
+						wp_safe_redirect(
+						    apply_filters(
+						        'FHEE__EE_Ticket_Selector__process_ticket_selections__success_redirect_url',
+                                EE_Registry::instance()->CFG->core->reg_page_url()
+                            )
+                        );
 						exit();
 
 					} else {
 						if ( ! EE_Error::has_error() ) {
 							// nothing added to cart
-							EE_Error::add_attention( __( 'No tickets were added for the event', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+							EE_Error::add_attention(
+							    __( 'No tickets were added for the event', 'event_espresso' ),
+                                __FILE__, __FUNCTION__, __LINE__
+                            );
 						}
 					}
 
@@ -712,7 +730,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					EE_Error::add_error( __( 'You need to select a ticket quantity before you can proceed.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
-			//die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT
+			// die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT
 			// at this point, just return if registration is being made from admin
 			if ( is_admin() ) {
 				return FALSE;
@@ -870,7 +888,13 @@ class EED_Ticket_Selector extends  EED_Module {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// get the number of spaces left for this datetime ticket
 		$available_spaces = self::_ticket_datetime_availability( $ticket );
-		// compare available spaces against the number of tickets being purchased
+        if (self::debug) {
+            echo "<br /><br /> " . __LINE__ . ") " . __METHOD__ . "()";
+            echo "<br /> . ticket->ID(): " . $ticket->ID();
+            echo "<br /> . requested qty: " . $qty;
+            echo "<br /> . available_spaces: " . $available_spaces;
+        }
+        // compare available spaces against the number of tickets being purchased
 		if ( $available_spaces >= $qty ) {
 			// allow addons to prevent a ticket from being added to cart
 			if (
