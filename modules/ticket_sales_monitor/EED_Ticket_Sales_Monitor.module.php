@@ -414,6 +414,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module {
 			add_filter( 'FHEE__EED_Ticket_Selector__process_ticket_selections__tckts_slctd', '__return_true' );
 			add_filter( 'FHEE__EED_Ticket_Selector__process_ticket_selections__success', '__return_false' );
 			$this->sold_out_tickets = array();
+            // and reset the cart
+            EED_Ticket_Sales_Monitor::session_cart_reset(EE_Registry::instance()->SSN);
 		}
 		if ( ! empty( $this->decremented_tickets ) ) {
 			EE_Error::add_attention(
