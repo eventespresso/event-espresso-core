@@ -94,6 +94,11 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			echo $new_row_content;
 			continue;
 		}
+
+		$ticket_details_css_id = apply_filters(
+            'FHEE__ticket_selector_chart_template__ticket_details_css_id',
+            "tckt-slctr-tkt-details-{$EVT_ID}-{$TKT_ID}"
+        );
 	?>
 				<tr class="tckt-slctr-tbl-tr <?php echo $status_class . ' ' . espresso_get_object_css_class( $ticket ); ?>">
 		<?php
@@ -116,10 +121,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					<td class="tckt-slctr-tbl-td-name">
 						<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 						<?php if ( $template_settings->show_ticket_details ) : ?>
-							<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo esc_attr( apply_filters( 'FHEE__ticket_selector_chart_template__show_ticket_details_link_title', __( 'click to show additional ticket details', 'event_espresso' )) ); ?>">
+							<a id="display-<?php echo $ticket_details_css_id; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="<?php echo $ticket_details_css_id; ?>" title="<?php echo esc_attr( apply_filters( 'FHEE__ticket_selector_chart_template__show_ticket_details_link_title', __( 'click to show additional ticket details', 'event_espresso' )) ); ?>">
 								<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>
 							</a>
-							<a id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php echo esc_attr( apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_details_link_title', __( 'click to hide additional ticket details', 'event_espresso' )) ); ?>" style="display:none;">
+							<a id="hide-<?php echo $ticket_details_css_id; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="<?php echo $ticket_details_css_id; ?>" title="<?php echo esc_attr( apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_details_link_title', __( 'click to hide additional ticket details', 'event_espresso' )) ); ?>" style="display:none;">
 								<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 							</a>
 						<?php endif; //end show details check ?>
@@ -217,7 +222,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<?php if ( $template_settings->show_ticket_details ) : ?>
 					<tr class="tckt-slctr-tkt-details-tr <?php echo espresso_get_object_css_class( $ticket, '', 'details' );?>">
 						<td class="tckt-slctr-tkt-details-td" colspan="3" >
-							<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
+							<div id="<?php echo $ticket_details_css_id; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 
 								<section class="tckt-slctr-tkt-details-sctn">
 									<h3><?php _e( 'Details', 'event_espresso' ); ?></h3>
