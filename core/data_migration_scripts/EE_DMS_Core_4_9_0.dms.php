@@ -173,6 +173,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				DTT_EVT_end datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 				DTT_reg_limit mediumint(8) DEFAULT -1,
 				DTT_sold mediumint(8) unsigned DEFAULT 0,
+ 			    DTT_reserved smallint(6) unsigned NOT NULL DEFAULT 0,
 				DTT_is_primary tinyint(1) unsigned NOT NULL DEFAULT 0,
 				DTT_order mediumint(3) unsigned DEFAULT 0,
 				DTT_parent int(10) unsigned DEFAULT 0,
@@ -182,7 +183,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				KEY EVT_ID (EVT_ID),
 				KEY DTT_is_primary (DTT_is_primary)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
-		
+
 		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				DTT_ID int(10) unsigned NOT NULL,
@@ -191,7 +192,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				KEY DTT_ID (DTT_ID),
 				KEY TKT_ID (TKT_ID)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-		
+
 		$table_name = 'esp_event_message_template';
 		$sql = "EMT_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				EVT_ID bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -328,7 +329,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				KEY MSG_created (MSG_created),
 				KEY MSG_modified (MSG_modified)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
-		
+
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				GRP_ID int(10) unsigned NOT NULL,
@@ -582,6 +583,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				TKT_description text NOT NULL,
 				TKT_qty mediumint(8) DEFAULT NULL,
 				TKT_sold mediumint(8) NOT NULL DEFAULT 0,
+				TKT_reserved smallint(6) unsigned NOT NULL DEFAULT 0,
 				TKT_uses tinyint(2) NOT NULL DEFAULT '-1',
 				TKT_required tinyint(2) unsigned NOT NULL DEFAULT '0',
 				TKT_min tinyint(2) unsigned NOT NULL DEFAULT '0',
@@ -633,7 +635,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 		$script_4_6_defaults = EE_Registry::instance()->load_dms('Core_4_6_0');
 		$script_4_6_defaults->add_default_admin_only_payments();
 		$script_4_6_defaults->insert_default_currencies();
-		
+
 		/** @var EE_DMS_Core_4_8_0 $script_4_8_defaults */
 		$script_4_8_defaults = EE_Registry::instance()->load_dms('Core_4_8_0');
 		$script_4_8_defaults->verify_new_countries();
