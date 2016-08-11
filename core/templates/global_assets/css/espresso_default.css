@@ -776,6 +776,9 @@ input.ee-register-button {
 	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
 }
 
+.purple-text {
+	 color: #8A549A;
+}
 .pink-text {
 	 color: #E44064;
 }

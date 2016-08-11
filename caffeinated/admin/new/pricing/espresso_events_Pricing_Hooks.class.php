@@ -959,10 +959,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
 			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable',
-		    'reg_list_url' => $default ? '' : EE_Admin_Page::add_query_args_and_nonce(
-				array( 'event_id' => $dtt->event()->ID(), 'datetime_id' => $dtt->ID() ),
-				REG_ADMIN_URL
-			)
+		    'reg_list_url' => $default || ! $dtt->event() instanceof \EE_Event
+                ? ''
+                : EE_Admin_Page::add_query_args_and_nonce(
+                    array( 'event_id' => $dtt->event()->ID(), 'datetime_id' => $dtt->ID() ),
+                    REG_ADMIN_URL
+                )
 		);
 
 		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon' ? ' style="display:none"' : '';

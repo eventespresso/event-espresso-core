@@ -774,6 +774,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			case EEM_Registration::status_id_declined:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
 				break;
+			case EEM_Registration::status_id_wait_list:
+				$icon = $show_icons ? '<span class="dashicons dashicons-clipboard ee-icon-size-16 purple-text"></span>' : '';
+				break;
 		}
 		return $icon . $status[ $this->status_ID() ];
 	}
