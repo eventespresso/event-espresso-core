@@ -43,8 +43,8 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes related to emails', 'event_espresso');
 		$this->_shortcodes = array(
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
-			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration. %1$sNOTE:%2$s If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso'),'<strong>','</strong>',
-			'[EVENT_AUTHOR_EMAIL]' => __('This is the same as %1$s shortcode except it is just a list of emails (not fancy headers).', 'event_espresso'), '[EVENT_AUTHOR_FORMATTED_EMAIL]',
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => sprintf( __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration. %1$sNOTE:%2$s If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso'),'<strong>','</strong>' ),
+			'[EVENT_AUTHOR_EMAIL]' => sprintf( __('This is the same as %1$s shortcode except it is just a list of emails (not fancy headers).', 'event_espresso'), '[EVENT_AUTHOR_FORMATTED_EMAIL]' ),
 			'[CO_FORMATTED_EMAIL]' => __('This parses to the formatted email address of the organization name set in Your Organization Settings. "My Organization &lt;myorg@email.com&gt;"', 'event_espresso' ),
 			'[CO_EMAIL]' => __('This will parse to the email address only for the organization set in Your Organization Settings.', 'event_espresso'),
 			'[ESPRESSO_ADMIN_FORMATTED_EMAIL]' => __('This parses to the formatted email address of the organization name set in Your Organization Settings. "My Organization &lt;myorg@email.com&gt;"', 'event_espresso' ),
