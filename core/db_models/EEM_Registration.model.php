@@ -58,8 +58,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate registration is on the WAIT_LIST .
-	 * Payments are allowed.
-	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
+	 * Payments are NOT allowed.
 	 * No space reserved.
 	 * Registration is active
 	 */
@@ -160,7 +159,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			array(
 				EEM_Registration::status_id_approved,
 				EEM_Registration::status_id_pending_payment,
-				EEM_Registration::status_id_wait_list,
 			)
 		);
 	}
