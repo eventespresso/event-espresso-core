@@ -63,10 +63,15 @@ if ( ! $empty_cart ) {
 		}
 	}
 	do_action( 'AHEE__SPCO__after_registration_steps' );
+    printf(
+        esc_html__('%1$scancel registration%2$s', 'event_espresso'),
+        '<a class="small-text float-right" href="' . $cancel_page_url . '">',
+        '</a><br class="clear"/><br />'
+    );
 
 } else {
 ?>
-	<h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php _e('Nothing in your Event Queue', 'event_espresso'); ?></h3>
+	<h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr"><?php esc_html_e('Nothing in your Event Queue', 'event_espresso'); ?></h3>
 	<p><?php echo $empty_msg; ?></p>
 	<?php echo $cookies_not_set_msg; ?>
 <?php
