@@ -26,7 +26,7 @@
  */
 class EED_Ticket_Selector extends  EED_Module {
 
-    const debug = true;    //	true false
+    const debug = false;    //	true false
 
     /**
 	 * event that ticket selector is being generated for
@@ -716,10 +716,10 @@ class EED_Ticket_Selector extends  EED_Module {
 						exit();
 
 					} else {
-						if ( ! EE_Error::has_error() ) {
+						if ( ! EE_Error::has_error() && ! EE_Error::has_error(true, 'attention') ) {
 							// nothing added to cart
 							EE_Error::add_attention(
-							    __( 'No tickets were added for the event', 'event_espresso' ),
+							    __( 'No tickets were added for the event.', 'event_espresso' ),
                                 __FILE__, __FUNCTION__, __LINE__
                             );
 						}
