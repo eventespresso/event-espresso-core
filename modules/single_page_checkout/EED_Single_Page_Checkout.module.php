@@ -1340,12 +1340,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'layout_strategy' =>
 						new EE_Template_Layout(
 							array(
-								'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
+								'layout_template_file' => SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
 								'template_args' => array(
 									'empty_cart' 		=> $empty_cart,
-									'revisit' 				=> $this->checkout->revisit,
-									'reg_steps' 			=> $this->checkout->reg_steps,
-									'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
+									'revisit' 			=> $this->checkout->revisit,
+									'reg_steps' 		=> $this->checkout->reg_steps,
+									'next_step' 		=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step
+                                        ? $this->checkout->next_step->slug()
+                                        : '',
+									'cancel_page_url'   => $this->checkout->cancel_page_url,
 									'empty_msg' 		=> apply_filters(
 										'FHEE__Single_Page_Checkout__display_spco_reg_form__empty_msg',
 										sprintf(
