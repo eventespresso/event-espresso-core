@@ -904,7 +904,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'pending_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' )
-				)/**/
+				),
+			'wait_list' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_wait_list,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_wait_list, FALSE, 'sentence' )
+				),
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
