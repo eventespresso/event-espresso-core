@@ -396,6 +396,7 @@ final class EE_Capabilities extends EE_Base {
 				'export',
 				'import',
 				'list_users',
+				'level_1', //required if user with this role shows up in author dropdowns
 			//basic ee access
 				'ee_read_ee',
 				//events
