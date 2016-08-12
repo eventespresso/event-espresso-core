@@ -201,16 +201,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return int
 	 */
 	public function wp_user() {
-		$user_id = 0;
-		try {
-			$event = $this->event();
-			if ( $event instanceof \EE_Event ) {
-				$user_id = $event->wp_user();
-			}
-		} catch ( EntityNotFoundException $e ) {
-			//do nothing, user_id has already been defined.
+		$event = $this->event();
+		if ( $event instanceof EE_Event ) {
+			return $event->wp_user();
 		}
-		return $user_id;
+		return 0;
 	}
 
 
