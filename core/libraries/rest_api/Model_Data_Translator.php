@@ -52,11 +52,12 @@ class Model_Data_Translator {
 		}
 		return $new_value_maybe_array;
 	}
-	
+
 	/**
 	 * Prepares an array of field values FOR use in JSON/REST API
-	 * @param type $field_obj
-	 * @param type $original_value_maybe_array
+	 *
+	 * @param \EE_Model_Field_Base $field_obj
+	 * @param mixed $original_value_maybe_array
 	 * @param string $request_version (eg 4.8.36)
 	 * @return array
 	 */
@@ -93,12 +94,16 @@ class Model_Data_Translator {
 		return $new_value;
 	}
 
+
+
 	/**
-	* Prepares a field's value for display in the API
-	* @param \EE_Model_Field_Base $field_obj
-	* @param mixed $original_value
-	* @return mixed
-	*/
+	 * Prepares a field's value for display in the API
+	 *
+	 * @param \EE_Model_Field_Base $field_obj
+	 * @param mixed                $original_value
+	 * @param                      $requested_version
+	 * @return mixed
+	 */
    public static function prepare_field_value_for_json( $field_obj, $original_value, $requested_version ) {
 		if( $original_value === EE_INF ) {
 			$new_value = Model_Data_Translator::ee_inf_in_rest;
@@ -106,7 +111,7 @@ class Model_Data_Translator {
 			if( $original_value instanceof \DateTime ) {
 				$new_value = $original_value->format( 'Y-m-d H:i:s' );
 			} elseif( is_int( $original_value ) ) {
-				$new_value = date( 'Y-m-d H:i:s', $original_value ); 
+				$new_value = date( 'Y-m-d H:i:s', $original_value );
 			} else {
 				$new_value = $original_value;
 			}
@@ -137,8 +142,8 @@ class Model_Data_Translator {
 	public static function prepare_conditions_query_params_for_models( $inputted_query_params_of_this_type, \EEM_Base $model, $requested_version ) {
 		$query_param_for_models = array();
 		foreach( $inputted_query_params_of_this_type as $query_param_key => $query_param_value ) {
-			$field = Model_Data_Translator::deduce_field_from_query_param( 
-				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ), 
+			$field = Model_Data_Translator::deduce_field_from_query_param(
+				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ),
 				$model
 			);
 			if( $field instanceof \EE_Model_Field_Base ) {
@@ -166,12 +171,12 @@ class Model_Data_Translator {
 
 	/**
 	 * Prepares an array of model query params for use in the REST API
-	 * @param type $model_query_params
+	 * @param array $model_query_params
 	 * @param \EEM_Base $model
 	 * @param string $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4 REST API
 	 * @return array which can be passed into the EE4 REST API when querying a model resource
 	 */
-	public static function prepare_query_params_for_rest_api( $model_query_params, \EEM_Base $model,  $requested_version = null ) {
+	public static function prepare_query_params_for_rest_api( array $model_query_params, \EEM_Base $model,  $requested_version = null ) {
 		if( $requested_version === null ) {
 			$requested_version = \EED_Core_Rest_Api::latest_rest_api_version() ;
 		}
@@ -193,7 +198,7 @@ class Model_Data_Translator {
 		}
 		return apply_filters( 'FHEE__EventEspresso\core\libraries\rest_api\Model_Data_Translator__prepare_query_params_for_rest_api', $rest_query_params, $model_query_params, $model, $requested_version );
 	}
-	
+
 	/**
 	 * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
 	 * @param array $inputted_query_params_of_this_type eg like the "where" or "having" conditions query params passed into EEM_Base::get_all()
@@ -204,8 +209,8 @@ class Model_Data_Translator {
 	public static function prepare_conditions_query_params_for_rest_api( $inputted_query_params_of_this_type, \EEM_Base $model, $requested_version ) {
 		$query_param_for_models = array();
 		foreach( $inputted_query_params_of_this_type as $query_param_key => $query_param_value ) {
-			$field = Model_Data_Translator::deduce_field_from_query_param( 
-				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ), 
+			$field = Model_Data_Translator::deduce_field_from_query_param(
+				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ),
 				$model
 			);
 			if( $field instanceof \EE_Model_Field_Base ) {
