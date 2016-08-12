@@ -196,7 +196,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			)
 		);
 
-		$event = $registration->event();
+		try {
+			$event = $registration->event();
+		} catch( \EventEspresso\core\exceptions\EntityNotFoundException $e ) {
+			$event = null;
+		}
 		$status = $event instanceof EE_Event ? $event->get_active_status() : EE_Datetime::inactive;
 		$this->_event_details = array(
 			'event' => $event,
