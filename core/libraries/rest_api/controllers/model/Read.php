@@ -426,11 +426,22 @@ class Read extends Base {
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
 			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
-				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
-					$field_obj,
-					$field_value,
-					$this->get_model_version_info()->requested_version()
-				);
+				if( $field_value instanceof \DateTime ) {
+					$timezone = $field_value->getTimezone();
+					$field_value->setTimezone( new \DateTimeZone( 'UTC' ) );
+					$result[ $field_name . '_gmt' ] = Model_Data_Translator::prepare_field_value_for_json(
+						$field_obj,
+						$field_value,
+						$this->get_model_version_info()->requested_version()
+					);
+					$field_value->setTimezone( $timezone );
+					$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
+						$field_obj,
+						$field_value,
+						$this->get_model_version_info()->requested_version()
+					);
+				}
+				
 			} else {
 				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
 					$field_obj,
