@@ -28,6 +28,11 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 	 */
 	protected $_value_field_name;
 
+	/**
+	 * @var array $_select_columns
+	 */
+	protected $_select_columns = array();
+
 
 
 	/**
@@ -68,6 +73,11 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 			$input_settings,
 			'display_field_name',
 			$model->get_a_field_of_type( 'EE_Text_Field_Base' )->get_name()
+		);
+		$this->_select_columns = EEH_Array::is_set(
+			$input_settings,
+			'select_columns',
+			array()
 		);
 		$this->_add_validation_strategy(
 			new EE_Model_Matching_Query_Validation_Strategy(
@@ -112,9 +122,9 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 
 	/**
 	 * Before setting the raw value (usually because we're setting the default,
-	 * or we've received a form submission and this might be re-displayed to the user), 
+	 * or we've received a form submission and this might be re-displayed to the user),
 	 * sets the options so that the current selections appear on initial display.
-	 * 
+	 *
 	 * Note: because this input uses EE_Model_Matching_Query_Validation_Strategy
 	 * for validation, this input's options only affect DISPLAY and NOT validation,
 	 * which is why its ok to just assume the provided $value to be in the list of acceptable values
@@ -123,11 +133,12 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 	 * @return void
 	 * @throws \EE_Error
 	 */
-	protected function _set_raw_value( $value ) {
-
+	public function _set_raw_value( $value ) {
 		$values_for_options = (array)$value;
 		$value_field = $this->_get_model()->field_settings_for( $this->_value_field_name );
 		$display_field = $this->_get_model()->field_settings_for( $this->_display_field_name );
+		$this->_select_columns[] = $value_field->get_qualified_column() . ' AS ' . $this->_value_field_name;
+		$this->_select_columns[] = $display_field->get_qualified_column() . ' AS ' . $this->_display_field_name;
 		$display_values = $this->_get_model()->get_all_wpdb_results(
 			array(
 				array(
@@ -135,19 +146,17 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 				)
 			),
 			ARRAY_A,
-			implode(
-				',',
-				array(
-					$value_field->get_qualified_column() . ' AS ' . $this->_value_field_name,
-					$display_field->get_qualified_column() . ' AS ' . $this->_display_field_name
-				)
-			)
+			implode( ',', $this->_select_columns )
 		);
 		$select_options = array();
 		if( is_array( $select_options ) ) {
 			foreach( $display_values as $db_rows ) {
 				$db_rows = (array)$db_rows;
-				$select_options[ $db_rows[ $this->_value_field_name ] ] = $db_rows[ $this->_display_field_name ];
+				$select_options[ $db_rows[ $this->_value_field_name ] ] = apply_filters(
+					'FHEE__EE_Select_Ajax_Model_Rest_Input___set_raw_value__select_option_value',
+					$db_rows[ $this->_display_field_name ],
+					$db_rows
+				);
 			}
 		}
 		$this->set_select_options( $select_options );
