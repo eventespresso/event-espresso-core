@@ -375,9 +375,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @throws \EE_Error
 	 */
     public function column_cb($item){
-	/** checkbox/lock **/
-	$transaction = $item->get_first_related( 'Transaction' );
-	$payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related( 'Payment' ) : 0;
+        /** checkbox/lock **/
+        $transaction = $item->get_first_related( 'Transaction' );
+        $payment_count = $transaction instanceof EE_Transaction ? $transaction->count_related( 'Payment' ) : 0;
 	    return $payment_count > 0
 		    ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() )
 		      . '<span class="ee-lock-icon"></span>'
@@ -398,7 +398,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @throws \EE_Error
 	 */
 	public function column__REG_ID(EE_Registration $item){
-		$attendee = $item->attendee();
+        $attendee = $item->attendee();
 		$content = $item->ID();
 		$content .= '<div class="show-on-mobile-view-only">';
 		$content .= '<br>';
@@ -441,13 +441,27 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	public function column_event_name(EE_Registration $item){
 		$this->_set_related_details( $item );
 		// page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
-		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$item->event_ID() ), EVENTS_ADMIN_URL );
-		$event_name = $item->event_name();
-		$event_name = $event_name ? $event_name : __("No Associated Event", 'event_espresso');
-		$edit_event = EE_Registry::instance()->CAP->current_user_can('ee_edit_event', 'edit_event', $item->event_ID() ) ? '<a class="ee-status-color-' . $this->_event_details['status'] . '" href="' . $edit_event_url . '" title="' . esc_attr( $this->_event_details['title_attr'] ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>' : wp_trim_words( $event_name, 30, '...' ) ;
-
-		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-		$actions['event_filter'] = '<a href="' . $edit_event_url . '" title="' . sprintf( esc_attr__( 'Filter this list to only show registrations for %s', 'event_espresso' ), $event_name ) .'">' .  __( 'View Registrations', 'event_espresso' ) . '</a>';
+        $EVT_ID = $item->event_ID();
+        $event_name = $item->event_name();
+        $event_name = $event_name ? $event_name : __("No Associated Event", 'event_espresso');
+        $event_name = wp_trim_words($event_name, 30, '...');
+        if ($EVT_ID) {
+            $edit_event_url = EE_Admin_Page::add_query_args_and_nonce(array('action' => 'edit', 'post' => $EVT_ID),
+                EVENTS_ADMIN_URL);
+            $edit_event = EE_Registry::instance()->CAP->current_user_can('ee_edit_event', 'edit_event', $EVT_ID)
+                ? '<a class="ee-status-color-' . $this->_event_details['status'] . '" href="' . $edit_event_url . '" title="' . esc_attr($this->_event_details['title_attr']) . '">' . $event_name . '</a>'
+                : $event_name;
+            $edit_event_url = EE_Admin_Page::add_query_args_and_nonce(array('event_id' => $EVT_ID), REG_ADMIN_URL);
+            $actions['event_filter'] = '<a href="' . $edit_event_url . '" title="';
+            $actions['event_filter'] .= sprintf(
+                esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
+                $event_name
+            );
+            $actions['event_filter'] .= '">' . __('View Registrations', 'event_espresso') . '</a>';
+        } else {
+            $edit_event = $event_name;
+            $actions['event_filter'] = '';
+        }
 
 		return sprintf('%1$s %2$s', $edit_event, $this->row_actions($actions) );
 	}
@@ -488,12 +502,20 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @throws \EE_Error
 	 */
    	public function column_ATT_fname(EE_Registration $item){
-   		$attendee = $item->attendee();
+        $attendee = $item->attendee();
 
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-		$link = EE_Registry::instance()->CAP->current_user_can('ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>' : $attendee_name;
-		$link .= $item->count() === 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>' : '';
+		$link = EE_Registry::instance()->CAP->current_user_can(
+		    'ee_read_registration',
+            'espresso_registrations_view_registration',
+            $item->ID()
+        )
+            ? '<a href="'.$edit_lnk_url.'" title="' . esc_attr__( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>'
+            : $attendee_name;
+		$link .= $item->count() === 1
+            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>'
+            : '';
 
 		$t = $item->get_first_related('Transaction');
 		$payment_count = $t instanceof EE_Transaction ? $t->count_related('Payment') : 0;
