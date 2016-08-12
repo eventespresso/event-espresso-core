@@ -90,10 +90,15 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		//get resource endpoint
 		$rest_controller = new EventEspresso\core\libraries\rest_api\controllers\model\Read();
 		$rest_controller->set_requested_version( EED_Core_Rest_Api::latest_rest_api_version() );
-		$url = $rest_controller->get_versioned_link_to( EEH_Inflector::pluralize_and_lower( $this->_model_name ) );
 		$default_select2_args = array(
 			'ajax' => array(
-				'url' => $url,
+				'url' => $rest_controller->get_versioned_link_to(
+					EEH_Array::is_set(
+						$input_settings,
+						'endpoint',
+						EEH_Inflector::pluralize_and_lower( $this->_model_name )
+					)
+				),
 				'dataType' => 'json',
 				'delay' => '250',
 				'data_interface' => 'EE_Select2_REST_API_Interface',
