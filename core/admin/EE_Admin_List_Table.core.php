@@ -782,6 +782,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
             if (WP_DEBUG) {
                 \EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
             }
+            $content .= $action_items;
         }
 		$content .= ! empty( $action_container ) ? '</' . $action_container . '>' : '';
 		return $content;
