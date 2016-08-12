@@ -32,7 +32,7 @@ Class  EE_New_Addon extends EE_Addon {
 			'New_Addon',
 			array(
 				'version' 					=> EE_NEW_ADDON_VERSION,
-				'plugin_slug' 			=> 'new_addon',
+				'plugin_slug' 			=> 'espresso_new_addon',
 				'min_core_version' => EE_NEW_ADDON_CORE_VERSION_REQUIRED,
 				'main_file_path' 		=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
