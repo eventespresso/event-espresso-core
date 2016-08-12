@@ -202,7 +202,7 @@ class Model_Version_Info {
 					}
 				}
 			}
-			$this->_cached_models_for_requested_version = $all_models_in_current_version;
+			$this->_cached_models_for_requested_version = apply_filters( 'FHEE__EventEspresso_core_libraries_rest_api__models_for_requested_version', $all_models_in_current_version, $this );
 		}
 		return $this->_cached_models_for_requested_version;
 	}
