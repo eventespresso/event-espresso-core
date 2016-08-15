@@ -1028,18 +1028,19 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 						case 'Ticket' :
 							$ticket = $item->ticket();
-							if ( empty( $ticket )) {
-								continue; //right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+							//right now we're only handling tickets here.  Cause its expected that only tickets will have attendees right?
+							if ( ! $ticket instanceof EE_Ticket ) {
+								continue;
 							}
 							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
-							$event = $ticket->get_first_related('Registration')->get_first_related('Event');
-							$event_name = $event instanceof EE_Event ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name') : '';
 
 							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 							foreach( $registrations as $registration ) {
 								if ( ! $registration instanceof EE_Registration ) {
 									continue;
 								}
+								$event = $registration->get_first_related( 'Event' );
+								$event_name = $event instanceof EE_Event ? $event->get( 'EVT_name' ) . ' - ' . $item->get( 'LIN_name' ) : '';
 								$this->_template_args['event_attendees'][$registration->ID()]['STS_ID'] 			= $registration->status_ID();
 								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 			= $registration->count();
 								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
