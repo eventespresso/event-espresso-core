@@ -1039,8 +1039,15 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 								if ( ! $registration instanceof EE_Registration ) {
 									continue;
 								}
-								$event = $registration->get_first_related( 'Event' );
-								$event_name = $event instanceof EE_Event ? $event->get( 'EVT_name' ) . ' - ' . $item->get( 'LIN_name' ) : '';
+                                try {
+                                    $event = $registration->event();
+                                    $event_name = $event instanceof EE_Event
+                                        ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name')
+                                        : '';
+                                } catch (Exception $e) {
+                                    EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+                                    $event_name = esc_html__('Unknown', 'event_espresso');
+                                }
 								$this->_template_args['event_attendees'][$registration->ID()]['STS_ID'] 			= $registration->status_ID();
 								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 			= $registration->count();
 								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
@@ -1050,7 +1057,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 								if ( $attendee instanceof EE_Attendee ) {
 									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= $attendee->ID();
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
-									$this->_template_args['event_attendees'][$registration->ID()]['email']		= '<a href="mailto:' . $attendee->email() . '?subject=' . $event->get('EVT_name') . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
+									$this->_template_args['event_attendees'][$registration->ID()]['email']		= '<a href="mailto:' . $attendee->email() . '?subject=' . $event_name . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
 									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	=  implode(',<br>', $attendee->full_address_as_array() );
 								} else {
 									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= '';
