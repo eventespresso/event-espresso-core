@@ -30,8 +30,13 @@ abstract class EES_Shortcode extends EE_Base {
 	protected $_attributes = array();
 
 	/**
-	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
-	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 * run - initial shortcode module setup called during "parse_request" hook by
+	 * \EE_Front_Controller::_initialize_shortcodes() IF this shortcode is going to execute during this request !
+	 * It may also get called by \EES_Shortcode::fallback_shortcode_processor() if the shortcode is being implemented
+	 * by a theme or plugin in a non-standard way.
+	 * Basically this method is primarily used for loading resources and assets like CSS or JS
+	 * that will be required by the shortcode when it is actually processed.
+	 * Please note that assets may not load if the fallback_shortcode_processor() is being used.
 	 *
 	 * @access    public
 	 * @param WP $WP
@@ -66,7 +71,7 @@ abstract class EES_Shortcode extends EE_Base {
 			return NULL;
 		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
-		$shortcode_obj = isset( EE_Registry::instance()->shortcodes->$shortcode ) ? EE_Registry::instance()->shortcodes->$shortcode : NULL;
+		$shortcode_obj = isset( EE_Registry::instance()->shortcodes->{$shortcode} ) ? EE_Registry::instance()->shortcodes->{$shortcode} : NULL;
 		return $shortcode_obj instanceof $shortcode_class || $shortcode_class == 'self' ? $shortcode_obj : new $shortcode_class();
 	}
 
@@ -82,6 +87,9 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
+		if ( EE_Maintenance_Mode::disable_frontend_for_maintenance() ) {
+			return null;
+		}
 		// what shortcode was actually parsed ?
 		$shortcode_class = get_called_class();
 		// notify rest of system that fallback processor was triggered

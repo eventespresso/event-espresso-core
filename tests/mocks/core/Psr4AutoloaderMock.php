@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\Tests\Mocks\Core;
 
-use EventEspresso\Core\Psr4Autoloader;
+use EventEspresso\core\Psr4Autoloader;
 
 class Psr4AutoloaderMock extends Psr4Autoloader {
 

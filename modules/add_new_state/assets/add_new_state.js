@@ -92,8 +92,8 @@ jQuery(document).ready(function($) {
 		* @param  {object} display_add_new_state_button
 		*/
 		display_add_new_state_form : function( display_add_new_state_button ) {
-			// get target element from "this" (the control element's) "rel" attribute
-			var add_new_state_dv = '#'+display_add_new_state_button.attr('rel') +'-dv';
+			// get target element from "this" (the control element's) "data" attribute
+			var add_new_state_dv = '#'+display_add_new_state_button.data('target') +'-dv';
 			// find all input's and add css classes: required and needs-value
 			$( add_new_state_dv ).find(':input').each( function() {
 				$(this).addClass('required needs-value').trigger('change');
@@ -108,14 +108,14 @@ jQuery(document).ready(function($) {
 		* @param  {object} new_state_submit_button
 		*/
 		submit_new_state : function( new_state_submit_button ) {
-			// get STATE ABBREV input id from "this" (the control element's) "rel" attribute
-			var new_state_rel = new_state_submit_button.attr("rel");
+			// get STATE ABBREV input id from "this" (the control element's) "data" attribute
+			var new_state_target = new_state_submit_button.data( 'target' );
 			// create id for new STATE NAME input
-			var new_state_name_id = new_state_rel.replace('new_state', 'new_state_name');
+			var new_state_name_id = new_state_target.replace('new_state', 'nsmf_new_state_name');
 			// create id for new STATE NAME input
-			var new_state_abbrv_id = new_state_rel.replace('new_state', 'new_state_abbrv');
+			var new_state_abbrv_id = new_state_target.replace('new_state', 'nsmf_new_state_abbrv');
 			// create id for new state COUNTRY input
-			var new_state_country_id = new_state_rel.replace('new_state', 'new_state_country');
+			var new_state_country_id = new_state_target.replace('new_state', 'nsmf_new_state_country');
 			// COUNTRY DETAILS
 			var  new_state_country = $('#'+new_state_country_id);
 			var  new_state_country_iso = new_state_country.children(':selected').val();
@@ -125,7 +125,7 @@ jQuery(document).ready(function($) {
 
 			if ( EE_ANS.validate_new_state_data( new_state_country_iso, new_state_name, new_state_abbrv )) {
 				// submit data via AJAX for db insertion
-				EE_ANS.save_new_state_to_db( new_state_country_iso, new_state_name, new_state_abbrv, new_state_rel );
+				EE_ANS.save_new_state_to_db( new_state_country_iso, new_state_name, new_state_abbrv, new_state_target );
 			}
 		},
 
@@ -161,15 +161,17 @@ jQuery(document).ready(function($) {
 		/**
 		 * @function process_new_state
 		 * @param  {object} new_state
-		 * @param  {string} new_state_rel
+		 * @param  {string} new_state_target
 		 */
-		process_new_state : function( new_state, new_state_rel ) {
+		process_new_state : function( new_state, new_state_target ) {
 			if ( typeof new_state.success !== 'undefined' && new_state.success === true ) {
 				//SPCO.console_log( 'PROCESS_NEW_STATE', '', true );
+				//SPCO.console_log_object( 'new_state', new_state, false );
+				//SPCO.console_log_object( 'new_state_target', new_state_target, false );
 				// TARGET INPUTS
-				var state_select_id  = new_state_rel.replace('new_state', 'state');
+				var state_select_id  = new_state_target.replace('new_state', 'state');
 				var state_select_dv = state_select_id +'-dv';
-				var country_select_id = new_state_rel.replace('new_state', 'country');
+				var country_select_id = new_state_target.replace('new_state', 'country');
 
 				//SPCO.console_log( 'state_select_id', state_select_id, false );
 				//SPCO.console_log( 'country_select_id', country_select_id, false );
@@ -206,11 +208,11 @@ jQuery(document).ready(function($) {
 					// set target select's value to this input's value
 					EE_ANS.add_option_to_dropdown( select_id, new_state.id, new_state.name, set_selected, new_state.country_name );
 				});
-				var add_new_state = new_state_rel.replace('new_state', 'add_new_state');
+				var add_new_state = new_state_target.replace('new_state', 'add_new_state');
 				$('#'+add_new_state).val('1');
 				// hide the target's div container - use slideToggle or addClass
 				$('#'+state_select_dv).slideToggle(250, function() {
-					var display_lnk = new_state_rel.replace('new_state', 'state');
+					var display_lnk = new_state_target.replace('new_state', 'state');
 					// display the control element that toggles display of this element
 					$('#display-'+display_lnk).show().fadeIn(50);
 				});
@@ -274,9 +276,9 @@ jQuery(document).ready(function($) {
 		 * @param  {string} state_country_iso
 		 * @param  {string} state_name
 		 * @param  {string} state_abbrv
-		 * @param  {string} new_state_rel
+		 * @param  {string} new_state_target
 		 */
-		save_new_state_to_db : function( state_country_iso, state_name, state_abbrv, new_state_rel ) {
+		save_new_state_to_db : function( state_country_iso, state_name, state_abbrv, new_state_target ) {
 
 			if ( ! EE_ANS.validate_new_state_data( state_country_iso, state_name, state_abbrv )) {
 				return false;
@@ -289,10 +291,10 @@ jQuery(document).ready(function($) {
 				data: {
 					action : 'espresso_add_new_state',
 					ee_front_ajax: 1,
-					add_new_state: 1,
-					new_state_country: state_country_iso,
-					new_state_name: state_name,
-					new_state_abbrv: state_abbrv,
+					nsmf_add_new_state: 1,
+					nsmf_new_state_country: state_country_iso,
+					nsmf_new_state_name: state_name,
+					nsmf_new_state_abbrv: state_abbrv,
 					EESID: eei18n.EESID,
 					noheader : 'true'
 				},
@@ -306,7 +308,7 @@ jQuery(document).ready(function($) {
 					if ( typeof response.success !== 'undefined' && response.success === true ) {
 						EE_ANS.message = SPCO.generate_message_object( SPCO.tag_message_for_debugging( 'Add New State: save_new_state_to_db', eei18n.ans_save_success ), '', '' );
 						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, EE_ANS.message, true );
-						EE_ANS.process_new_state( response, new_state_rel );
+						EE_ANS.process_new_state( response, new_state_target );
 					} else if ( typeof response.error !== 'undefined' && response.error !== '' ) {
 						EE_ANS.message = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'Add New State: save_new_state_to_db', response.error ), '' );
 						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, EE_ANS.message, true );
@@ -333,9 +335,9 @@ jQuery(document).ready(function($) {
 		 * @param  {object} cancel_new_state_link
 		 */
 		cancel_new_state : function( cancel_new_state_link ) {
-			// get target element from "this" (the control element's) "rel" attribute
-			var item_to_cancel = cancel_new_state_link.attr("rel");
-			var item_to_hide = item_to_cancel.replace('new_state', 'state');
+			// get target element from "this" (the control element's) "data" attribute
+			var item_to_cancel = cancel_new_state_link.data( 'target' );
+			var item_to_hide = item_to_cancel.replace('nsmf_new_state', 'state');
 			// hide the target's div container - use slideToggle or addClass
 			$('#'+item_to_hide+'-dv').slideToggle(250, function() {
 				// display the control element that toggles display of this element

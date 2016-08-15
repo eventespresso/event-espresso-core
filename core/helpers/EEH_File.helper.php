@@ -1,9 +1,34 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.0
+ *
+ */
+require_once( EE_HELPERS . 'EEH_Base.helper.php' );
+require_once( EE_INTERFACES . 'EEI_Interfaces.php' );
+/**
  *
  * Class EEH_File
  *
- * Description
+ * Mostly methods are wrappers for WP_Filesystem. Primarily these methods should be used
+ * when you intend to WRITE to the filesystem. Many of these methods throw an EE_Error
+ * when the current filesystem user doesn't have permission to read/write the given file.
+ * Note: that means if FS_METHOD is defined to be ssh or ftp, and the ftp password isn't
+ * entered into wp-config.php, code like `EEH_File::is_readable()` will THROW AN EXCEPTION
+ * when trying ot read anything, unless the user has just entered their ftp/ssh credentials
+ * into the wp filesystem credentials form. See http://ottopress.com/2011/tutorial-using-the-wp_filesystem/
+ * If you want to test your usage of EEH_File and WP_Filesystem, you can use our
+ * filesystem debugger plugin: https://github.com/eventespresso/filesystem-debug-helper,
+ * which simulates requiring ftp or ssh to access your site (even if your site is 
+ * actually local and you haven't set it up for ftp or ssh access)
  *
  * @package 			Event Espresso
  * @subpackage 	core
@@ -11,7 +36,7 @@
  * @since 				$VID:$
  *
  */
-class EEH_File extends EEH_Base {
+class EEH_File extends EEH_Base implements EEHI_File {
 
 	/**
 	 * @var string $_credentials_form
@@ -24,7 +49,7 @@ class EEH_File extends EEH_Base {
 	 * @param string|null $filepath the filepath we want to work in. If its in the 
 	 * wp uploads directory, we'll want to just use the filesystem directly.
 	 * If not provided, we have to assume its not in the uploads directory
-	 * @throws EE_Error
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return WP_Filesystem_Base
 	 */
 	private static function _get_wp_filesystem( $filepath = null) {
@@ -86,11 +111,11 @@ class EEH_File extends EEH_Base {
 					if ( $credentials === FALSE ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
 						throw new EE_Error( __('An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.', 'event_espresso'));
-					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {						
+					} elseif( is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
 						add_action( 'admin_notices', array( 'EEH_File', 'display_request_filesystem_credentials_form' ), 999 );
-						throw new EE_Error( 
-								sprintf( 
-										__( 'WP Filesystem Error: $1%s', 'event_espresso' ), 
+						throw new EE_Error(
+								sprintf(
+										__( 'WP Filesystem Error: $1%s', 'event_espresso' ),
 										$wp_filesystem->errors->get_error_message() ) );
 					}
 				}
@@ -119,7 +144,7 @@ class EEH_File extends EEH_Base {
 	 * @param string $file_name      - name of file if checking a file
 	 * @param string $file_ext       - file extension (ie: "php") if checking a file
 	 * @param string $type_of_file   - general type of file (ie: "module"), this is only used to improve error messages
-	 * @throws EE_Error
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function verify_filepath_and_permissions( $full_file_path = '', $file_name = '', $file_ext = '', $type_of_file = '' ) {
@@ -159,6 +184,7 @@ class EEH_File extends EEH_Base {
 	 * @access private
 	 * @param string $full_file_path - full server path to the folder or file
 	 * @param string $type_of_file - general type of file (ie: "module"), this is only used to improve error messages
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return string
 	 */
 	private static function _permissions_error_for_unreadable_filepath( $full_file_path = '', $type_of_file = '' ){
@@ -222,7 +248,7 @@ class EEH_File extends EEH_Base {
 					}
 					return false;
 				}
-				EEH_File::add_htaccess_deny_from_all( $folder );
+				EEH_File::add_index_file( $folder );
 			}
 		} elseif ( ! EEH_File::verify_is_writable( $folder, 'folder' )) {
 			return false;
@@ -236,7 +262,7 @@ class EEH_File extends EEH_Base {
 	 * verify_is_writable - checks if a file or folder is writable
 	 * @param string $full_path      - full server path to file or folder
 	 * @param string $file_or_folder - whether checking a file or folder
-	 * @throws EE_Error
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function verify_is_writable( $full_path = '', $file_or_folder = 'folder' ){
@@ -261,7 +287,7 @@ class EEH_File extends EEH_Base {
 	 * ensures that a file exists and is writable, will attempt to create file if it does not exist.
 	 * Also ensures all the parent folders exist, and if not tries to create them.
 	 * @param string $full_file_path
-	 * @throws EE_Error
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function ensure_file_exists_and_is_writable( $full_file_path = '' ) {
@@ -311,6 +337,7 @@ class EEH_File extends EEH_Base {
 	/**
 	 * get_file_contents
 	 * @param string $full_file_path
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return string
 	 */
 	public static function get_file_contents( $full_file_path = '' ){
@@ -330,7 +357,7 @@ class EEH_File extends EEH_Base {
 	 * @param string $full_file_path
 	 * @param string $file_contents - the content to be written to the file
 	 * @param string $file_type
-	 * @throws EE_Error
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function write_to_file( $full_file_path = '', $file_contents = '', $file_type = '' ){
@@ -359,13 +386,27 @@ class EEH_File extends EEH_Base {
 		return TRUE;
 	}
 
+	/**
+	 * Wrapper for WP_Filesystem_Base::delete
+	 *
+	 * @param string $filepath
+	 * @param boolean $recursive
+	 * @param boolean|string $type 'd' for directory, 'f' for file
+	 * @throws EE_Error if filesystem credentials are required
+	 * @return boolean
+	 */
+	public static function delete( $filepath, $recursive = false, $type = false ) {
+		$wp_filesystem = EEH_File::_get_wp_filesystem();
+		return $wp_filesystem->delete( $filepath, $recursive, $type ) ? TRUE : FALSE;
+	}
+
 
 
 	/**
 	 * exists
 	 * checks if a file exists using the WP filesystem
-	 *
 	 * @param string $full_file_path
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function exists( $full_file_path = '' ) {
@@ -380,6 +421,7 @@ class EEH_File extends EEH_Base {
 	 * checks if a file is_readable using the WP filesystem
 	 *
 	 * @param string $full_file_path
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function is_readable( $full_file_path = '' ) {
@@ -429,9 +471,9 @@ class EEH_File extends EEH_Base {
 
 
 	/**
-	 * add_htaccess_deny_from_all and an index.html file
-	 * in order to prevent folks from exploring filesystem at their leisure
+	 * add_htaccess_deny_from_all so the webserver cannot access this folder
 	 * @param string $folder
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return bool
 	 */
 	public static function add_htaccess_deny_from_all( $folder = '' ) {
@@ -441,12 +483,24 @@ class EEH_File extends EEH_Base {
 				return FALSE;
 			}
 		}
-		if ( ! EEH_File::exists( $folder . 'index.html' ) ) {
-			if ( ! EEH_File::write_to_file( $folder . 'index.html', 'cheating huh?', '.html' )) {
-				return FALSE;
+		
+		return TRUE;
+	}
+	
+	/**
+	 * Adds an index file to this folder, so folks can't list all the file's contents
+	 * @param string $folder
+	 * @throws EE_Error if filesystem credentials are required
+	 * @return boolean
+	 */
+	public static function add_index_file( $folder ) {
+		$folder = EEH_File::standardise_and_end_with_directory_separator( $folder );
+		if ( ! EEH_File::exists( $folder . 'index.php' ) ) {
+			if ( ! EEH_File::write_to_file( $folder . 'index.php', 'You are not permitted to read from this folder', '.php' )) {
+				return false;
 			}
 		}
-		return TRUE;
+		return true;
 	}
 
 
@@ -509,7 +563,7 @@ class EEH_File extends EEH_Base {
 	 * @param boolean $index_numerically if TRUE, the returned array will be indexed numerically;
 	 *		if FALSE (Default), returned array will be indexed by the filenames minus extensions.
 	 *		Set it TRUE if you know there are files in the directory with the same name but different extensions
-	 * @throws \EE_Error
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return array if $index_numerically == TRUE keys are numeric ,
 	 *		if $index_numerically == FALSE (Default) keys are what the class names SHOULD be;
 	 *		 and values are their filepaths
@@ -545,8 +599,8 @@ class EEH_File extends EEH_Base {
 	 * @param string $source_file
 	 * @param string $destination_file
 	 * @param boolean $overwrite
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return boolean success
-	 * @throws EE_Error
 	 */
 	public static function copy( $source_file, $destination_file, $overwrite = FALSE ){
 		$full_source_path = EEH_File::standardise_directory_separators( $source_file );
@@ -605,6 +659,7 @@ class EEH_File extends EEH_Base {
 	 * @param WP_Filesystem_Base $wp_filesystem we aren't initially sure which one
 	 * is in use, so you need to provide it
 	 * @param string $local_filepath the filepath to the folder/file locally
+	 * @throws EE_Error if filesystem credentials are required
 	 * @return string the remote filepath (eg the filepath the filesystem method, eg 
 	 * ftp or ssh, will use to access the folder
 	 */

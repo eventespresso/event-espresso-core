@@ -123,7 +123,6 @@ class EE_PMT_Check extends EE_PMT_Base{
 	 * @return string
 	 */
 	public function payment_overview_content(EE_Payment $payment){
-		EE_Registry::instance()->load_helper('Template');
 		$extra_meta_for_payment_method = $this->_pm_instance->all_extra_meta_array();
 		$template_vars = array_merge(
 						array(

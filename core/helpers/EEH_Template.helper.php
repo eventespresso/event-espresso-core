@@ -141,12 +141,38 @@ class EEH_Template {
 	 *    locate_template
 	 *
 	 *    locate a template file by looking in the following places, in the following order:
+	 *        <server path up to>/wp-content/themes/<current active WordPress theme>/
 	 *        <assumed full absolute server path>
 	 *        <server path up to>/wp-content/uploads/espresso/templates/<current EE theme>/
 	 *        <server path up to>/wp-content/uploads/espresso/templates/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/templates/<current EE theme>/
-	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/public/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/core/templates/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/
 	 *    as soon as the template is found in one of these locations, it will be returned or loaded
+	 *
+	 * 		Example:
+	 * 		  You are using the WordPress Twenty Sixteen theme,
+	 *        and you want to customize the "some-event.template.php" template,
+	 * 		  which is located in the "/relative/path/to/" folder relative to the main EE plugin folder.
+	 * 		  Assuming WP is installed on your server in the "/home/public_html/" folder,
+	 *        EEH_Template::locate_template() will look at the following paths in order until the template is found:
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/uploads/espresso/templates/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/public/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/core/templates/Espresso_Arabica_2014/relative/path/to/some-event.template.php
+	 *        /home/public_html/wp-content/plugins/event-espresso-core-reg/relative/path/to/some-event.template.php
+	 *
+	 * 		  Had you passed an absolute path to your template that was in some other location,
+	 *        ie: "/absolute/path/to/some-event.template.php"
+	 * 		  then the search would have been :
+	 *
+	 *        /home/public_html/wp-content/themes/twentysixteen/some-event.template.php
+	 *        /absolute/path/to/some-event.template.php
+	 *
+	 * 		  and stopped there upon finding it in the second location
 	 *
 	 * @param array|string $templates array of template file names including extension (or just a single string)
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
@@ -204,29 +230,49 @@ class EEH_Template {
 
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
-
+			$templates = is_array( $templates ) ? $templates : array( $templates );
+			$template_folder_paths = is_array( $template_folder_paths ) ? $template_folder_paths : array( $template_folder_paths );
 			// array to hold all possible template paths
 			$full_template_paths = array();
 
 			// loop through $templates
-			foreach ( (array)$templates as $template ) {
+			foreach ( $templates as $template ) {
+				// normalize directory separators
+				$template = EEH_File::standardise_directory_separators( $template );
+				$file_name = basename( $template );
+				$template_path_minus_file_name = substr( $template, 0, ( strlen( $file_name ) * -1 ) );
 				// while looping through all template folder paths
-				foreach ( (array)$template_folder_paths as $template_folder_path ) {
-					// build up our template locations array by combining our template folder paths with our templates
-					$full_template_paths[] = rtrim( $template_folder_path, DS ) . DS . $template;
+				foreach ( $template_folder_paths as $template_folder_path ) {
+					// normalize directory separators
+					$template_folder_path = EEH_File::standardise_directory_separators( $template_folder_path );
+					// determine if any common base path exists between the two paths
+					$common_base_path = EEH_Template::_find_common_base_path(
+						array( $template_folder_path, $template_path_minus_file_name )
+					);
+					if ( $common_base_path !== '' ) {
+						// both paths have a common base, so just tack the filename onto our search path
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $file_name;
+					} else {
+						// no common base path, so let's just concatenate
+						$resolved_path = EEH_File::end_with_directory_separator( $template_folder_path ) . $template;
+					}
+					// build up our template locations array by adding our resolved paths
+					$full_template_paths[] = $resolved_path;
 				}
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
+				// path to the directory of the current theme: /wp-content/themes/(current WP theme)/
+				array_unshift( $full_template_paths, get_stylesheet_directory() . DS . $file_name );
 			}
 			// filter final array of full template paths
-			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
-
-
+			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths, $file_name );
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
 					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
-				    break;
+					// hook that can be used to display the full template path that will be used
+					do_action( 'AHEE__EEH_Template__locate_template__full_template_path', $template_path );
+					break;
 				}
 			}
 		}
@@ -244,6 +290,33 @@ class EEH_Template {
 
 
 	/**
+	 * _find_common_base_path
+	 *
+	 * given two paths, this determines if there is a common base path between the two
+	 *
+	 * @param array $paths
+	 * @return string
+	 */
+	protected static function _find_common_base_path( $paths ) {
+		$last_offset = 0;
+		$common_base_path = '';
+		while ( ( $index = strpos( $paths[ 0 ], DS, $last_offset ) ) !== false ) {
+			$dir_length = $index - $last_offset + 1;
+			$directory = substr( $paths[ 0 ], $last_offset, $dir_length );
+			foreach ( $paths as $path ) {
+				if ( substr( $path, $last_offset, $dir_length ) != $directory ) {
+					return $common_base_path;
+				}
+			}
+			$common_base_path .= $directory;
+			$last_offset = $index + 1;
+		}
+		return substr( $common_base_path, 0, -1 );
+	}
+
+
+
+	/**
 	 * load and display a template
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
@@ -251,8 +324,6 @@ class EEH_Template {
 	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
-		//require the template validator for verifying variables are set according to how the template requires
-		EE_Registry::instance()->load_helper( 'Template_Validator' );
 
 		/**
 		 * These two filters are intended for last minute changes to templates being loaded and/or template arg
@@ -344,7 +415,8 @@ class EEH_Template {
 			return '';
 		}
 		//ensure amount is float
-		$amount = (float) $amount;
+		$amount = apply_filters( 'FHEE__EEH_Template__format_currency__raw_amount', (float) $amount );
+		$CNT_ISO = apply_filters( 'FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount );
 		// filter raw amount (allows 0.00 to be changed to "free" for example)
 		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
 		// still a number or was amount converted to a string like "free" ?
@@ -371,6 +443,9 @@ class EEH_Template {
 				}else{
 					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
+
+				// filter to allow global setting of display_code
+				$display_code = apply_filters( 'FHEE__EEH_Template__format_currency__display_code', $display_code );
 
 				// add currency code ?
 				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
@@ -405,15 +480,29 @@ class EEH_Template {
 
 	/**
 	 * This helper just returns a button or link for the given parameters
+	 *
 	 * @param  string $url   the url for the link
 	 * @param  string $label What is the label you want displayed for the button
 	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param string  $icon
-	 * @return string 	the html output for the button
+	 * @param string  $title
+	 * @return string the html output for the button
 	 */
-	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
-		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
-		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '', $title = '' ) {
+		$icon_html = '';
+		if ( ! empty( $icon ) ) {
+			$dashicons = preg_split( "(ee-icon |dashicons )", $icon );
+			$dashicons = array_filter( $dashicons );
+			$count = count( $dashicons );
+			$icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
+			foreach ( $dashicons as $dashicon ) {
+				$type = strpos( $dashicon, 'ee-icon' ) !== false ? 'ee-icon ' : 'dashicons ';
+				$icon_html .= '<span class="' . $type . $dashicon . '"></span>';
+			}
+			$icon_html .= $count > 1 ? '</span>' : '';
+		}
+		$label = ! empty( $icon ) ? $icon_html . $label : $label;
+		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
 		return $button;
 	}
 
@@ -523,7 +612,7 @@ class EEH_Template {
 		}
 
 		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<h3>' . __('Status Legend', 'event_espresso') . '</h3>' . "\n";
 		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
 		foreach ( $setup_array as $item => $details ) {
 			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
@@ -549,7 +638,6 @@ class EEH_Template {
 	if (is_object($data) || $data instanceof __PHP_Incomplete_Class ) {
 		$data = (array)$data;
 	}
-	EE_Registry::instance()->load_helper('Array');
 	ob_start();
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
@@ -753,3 +841,35 @@ class EEH_Template {
 //	return $amount;
 //}
 //add_filter( 'FHEE__EEH_Template__format_currency__amount', 'convert_zero_to_free', 10, 2 );
+
+
+if ( ! function_exists( 'espresso_pagination' ) ) {
+	/**
+	 *    espresso_pagination
+	 *
+	 * @access    public
+	 * @return    void
+	 */
+	function espresso_pagination() {
+		global $wp_query;
+		$big = 999999999; // need an unlikely integer
+		$pagination = paginate_links(
+		array(
+		'base'         => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+		'format'       => '?paged=%#%',
+		'current'      => max( 1, get_query_var( 'paged' ) ),
+		'total'        => $wp_query->max_num_pages,
+		'show_all'     => true,
+		'end_size'     => 10,
+		'mid_size'     => 6,
+		'prev_next'    => true,
+		'prev_text'    => __( '&lsaquo; PREV', 'event_espresso' ),
+		'next_text'    => __( 'NEXT &rsaquo;', 'event_espresso' ),
+		'type'         => 'plain',
+		'add_args'     => false,
+		'add_fragment' => ''
+		)
+		);
+		echo ! empty( $pagination ) ? '<div class="ee-pagination-dv clear">' . $pagination . '</div>' : '';
+	}
+}

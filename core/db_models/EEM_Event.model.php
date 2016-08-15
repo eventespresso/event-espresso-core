@@ -153,8 +153,6 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Attendee'=>new EE_HABTM_Relation('Registration'),
 			'WP_User' => new EE_Belongs_To_Relation(),
 		);
-
-		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
 		parent::__construct( $timezone );
@@ -333,7 +331,8 @@ class EEM_Event  extends EEM_CPT_Base{
 
 	/**
 	 *        _get_question_target_db_column
-	 *
+	 *	@deprecated as of 4.8.32.rc.001. Instead consider using
+	 * EE_Registration_Custom_Questions_Form located in admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
 	 * @access 	public
 	 * @param 	EE_Registration $registration (so existing answers for registration are included)
 	 * @param 	int 	$EVT_ID 	so all question groups are included for event (not just answers from registration).
@@ -373,7 +372,8 @@ class EEM_Event  extends EEM_CPT_Base{
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'] = array();
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
 					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
-
+					//leave responses as-is, don't convert stuff into html entities please!
+					$questions[ $qg->ID() ][ 'QSG_questions'][ $qst->ID() ][ 'htmlentities' ] = false;
 					if ( $qst->type() == 'RADIO_BTN' || $qst->type() == 'CHECKBOX' || $qst->type() == 'DROPDOWN' ) {
 						$QSOs = $qst->options(TRUE,$answer->value());
 						if ( is_array( $QSOs ) ) {
@@ -499,7 +499,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['Datetime.DTT_EVT_end'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_end' ) );
 		}
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
@@ -537,7 +537,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			$where_params['Datetime.DTT_EVT_start'] = array('>', EEM_Datetime::instance()->current_time_for_query( 'DTT_EVT_start' ) );
 		}
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
@@ -594,11 +594,9 @@ class EEM_Event  extends EEM_CPT_Base{
 		}
 
 		//merge remaining $where params with the and conditions.
-		$and_condtion = array_merge( $and_condition, $where_params );
-
-		$where_params['AND'] = $and_condition;
+		$where_params['AND'] = array_merge( $and_condition, $where_params );
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 
@@ -642,7 +640,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		}
 
 		$query_params[0] = $where_params;
-		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY" 
+		// don't use $query_params with count() because we don't want to include additional query clauses like "GROUP BY"
 		return $count ? $this->count( array( $where_params ), 'EVT_ID', true ) : $this->get_all( $query_params );
 	}
 

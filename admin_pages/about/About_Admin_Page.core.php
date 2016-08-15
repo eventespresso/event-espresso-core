@@ -128,7 +128,7 @@ class About_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _get_started_steps() {
-		$steps = '<h3>'.__('Getting Started').'</h3>';
+		$steps = '<h2>'.__('Getting Started').'</h2>';
 		$step_one = '<p>'.sprintf( __('%sStep 1%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
 		$step_two = '<p>'.sprintf( __('%sStep 2%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
 		$step_three = '<p>'.sprintf( __('%sStep 3%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
@@ -138,7 +138,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		$active_invoice_pm = EEM_Payment_Method::instance()->get_one_active( EEM_Payment_Method::scope_cart, array( array( 'PMD_type' => 'Invoice' ) ) );
 		$active_pms_count = EEM_Payment_Method::instance()->count_active( EEM_Payment_Method::scope_cart );
 		//done step two if a non-invoice paymetn method is active; or there is more than one PM active, or
-		//if only teh invoice is active but it's clearly been updated
+		//if only the invoice is active but it's clearly been updated
 		$done_step_two = $active_pms_count > 1  ||
 						 ( $active_pms_count === 1 && ! $active_invoice_pm )	||
 						 ( $active_invoice_pm instanceof EE_Payment_Method && (

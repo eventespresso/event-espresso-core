@@ -285,7 +285,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 			EEM_Datetime::instance();
 		}
 
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		//make sure now is in the timezone we want to test with.
 		$now =  new Datetime( '@' . ( time() + ( DAY_IN_SECONDS * 30 ) ) );
 		$now->setTimeZone( new DateTimeZone( EEH_DTT_Helper::get_timezone() ) );
@@ -401,4 +400,42 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		}
 	}
 
+
+	/**
+	 * @since 4.8.27.rc.005
+	 */
+	public function test_get_datetime_counts_by_status_and_get_datetime_count_for_status() {
+		//setup some datetimes for testing with
+		$upcoming_datetimes = $this->factory->datetime->create_many(5);
+		//set upcoming datetimes to actually be upcoming!
+		foreach( $upcoming_datetimes as $datetime ) {
+			$datetime->set('DTT_EVT_start', time() + 500 );
+			$datetime->save();
+		}
+
+		//setup some expired datetimes
+		$expired_datetimes = $this->factory->datetime->create_many(2);
+		//set expired
+		foreach( $expired_datetimes as $datetime ) {
+			$datetime->set( 'DTT_EVT_end', time() - 500 );
+			$datetime->set( 'DTT_EVT_start', time() - 1000 );
+			$datetime->save();
+		}
+
+		//active datetimes
+		$active_datetime = $this->factory->datetime->create( array( 'DTT_EVT_start' => time() - 500, 'DTT_EVT_end' => time() + 500 ) );
+
+		//now get the results from the method being tested
+		$datetimes_count = EEM_Datetime::instance()->get_datetime_counts_by_status();
+
+		$this->assertTrue( is_array( $datetimes_count ) );
+		$this->assertEquals( 1, $datetimes_count[ EE_Datetime::active ] );
+		$this->assertEquals( 5, $datetimes_count[ EE_Datetime::upcoming ] );
+		$this->assertEquals( 2, $datetimes_count[ EE_Datetime::expired ] );
+
+		//test just getting a specific status via get_datetime_count_for_status
+		$this->assertEquals( 5, EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::upcoming ) );
+		$this->assertEquals( 1, EEM_Datetime::instance()->get_datetime_count_for_status() );
+		$this->assertEquals( 2, EEM_Datetime::instance()->get_datetime_count_for_status( EE_Datetime::expired ) );
+	}
 }

@@ -56,7 +56,7 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 	 * @return array|string
 	 */
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
-		return parent::prepare_for_set_from_db( $this->_remove_tags(  $value_found_in_db_for_model_object ) );
+		return $this->_remove_tags( parent::prepare_for_set_from_db( $value_found_in_db_for_model_object ) );
 	}
 
 
@@ -66,11 +66,6 @@ class EE_Maybe_Serialized_Simple_HTML_Field extends EE_Maybe_Serialized_Text_Fie
 	 * @return array
 	 */
 	function _get_allowed_tags(){
-		global $allowedtags;
-		$tags_we_allow = $allowedtags;
-		$tags_we_allow['ol']=array();
-		$tags_we_allow['ul']=array();
-		$tags_we_allow['li']=array();
-		return apply_filters( 'FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags', $tags_we_allow, $this );
+		return apply_filters( 'FHEE__EE_Maybe_Serialized_Simple_HTML_Field___get_allowed_tags', EEH_HTML::get_simple_tags(), $this );
 	}
 }

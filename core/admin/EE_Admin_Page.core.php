@@ -55,7 +55,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	//template variables (used by templates)
 	protected $_template_path;
 	protected $_column_template_path;
-	protected $_template_args;
+
+	/**
+	 * @var array $_template_args
+	 */
+	protected $_template_args = array();
 
 	//this will hold the list table object for a given view.
 	protected $_list_table_object;
@@ -92,7 +96,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_current_page_view_url;
 
 	//sanitized request action (and nonce)
+	/**
+	 * @var string $_req_action
+	 */
 	protected $_req_action;
+
+	/**
+	 * @var string $_req_nonce
+	 */
 	protected $_req_nonce;
 
 	//search related
@@ -142,7 +153,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * 		@param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
 	 * 		@access public
-	 * 		@return void
 	 */
 	public function __construct( $routing = TRUE ) {
 
@@ -474,15 +484,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 	final protected function _page_setup() {
 
 		//requires?
-		EE_Registry::instance()->load_helper('Template');
-
 
 		//admin_init stuff - global - we're setting this REALLY early so if EE_Admin pages have to hook into other WP pages they can.  But keep in mind, not everything is available from the EE_Admin Page object at this point.
 		add_action( 'admin_init', array( $this, 'admin_init_global' ), 5 );
 
 
 		//next verify if we need to load anything...
-		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
+		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : '';
 		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
 
 		global $ee_menu_slugs;
@@ -979,7 +987,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = false, $sticky = false, $exclude_nonce = false ) {
-		EE_Registry::instance()->load_helper('URL');
 
 		//if there is a _wp_http_referer include the values from the request but only if sticky = true
 		if ( $sticky ) {
@@ -1209,7 +1216,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( isset( $this->_route_config['qtips'] ) ) {
 			$qtips = (array) $this->_route_config['qtips'];
 			//load qtip loader
-			EE_Registry::instance()->load_helper('Qtip_Loader', array(), TRUE);
 			$path = array(
 				$this->_get_dir() . '/qtips/',
 				EE_ADMIN_PAGES . basename($this->_get_dir()) . '/qtips/'
@@ -1428,7 +1434,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//current set timezone for timezone js
-		EE_Registry::instance()->load_helper('DTT_Helper');
 		echo '<span id="current_timezone" class="hidden">' . EEH_DTT_Helper::get_timezone() . '</span>';
 	}
 
@@ -1610,8 +1615,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//register all styles
 		wp_register_style( 'espresso-ui-theme', EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css', array(),EVENT_ESPRESSO_VERSION );
-
-		wp_register_style('jquery-jq-plot-css', JQPLOT_URL . 'jquery.jqplot.min.css', array('jquery'), EVENT_ESPRESSO_VERSION );
 		wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
 		//helpers styles
 		wp_register_style('ee-text-links', EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.css', array(), EVENT_ESPRESSO_VERSION );
@@ -1643,20 +1646,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_register_script( 'ee-moment', EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js', array('ee-moment-core'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script( 'ee-datepicker', EE_ADMIN_URL . 'assets/ee-datepicker.js', array('jquery-ui-timepicker-addon','ee-moment'), EVENT_ESPRESSO_VERSION, TRUE );
 
-		//excanvas
-		wp_register_script('excanvas', JQPLOT_URL . 'excanvas.min.js', array(), EVENT_ESPRESSO_VERSION, FALSE );
-
-		//jqplot library
-		wp_register_script('jqplot', JQPLOT_URL . 'jquery.jqplot.min.js', array('jquery'), '', FALSE);
-		wp_register_script('jqplot-barRenderer', JQPLOT_URL . 'plugins/jqplot.barRenderer.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-canvasTextRenderer', JQPLOT_URL . 'plugins/jqplot.canvasTextRenderer.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-canvasAxisTickRenderer', JQPLOT_URL . 'plugins/jqplot.canvasAxisTickRenderer.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-categoryAxisRenderer', JQPLOT_URL . 'plugins/jqplot.categoryAxisRenderer.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-dateAxisRenderer', JQPLOT_URL . 'plugins/jqplot.dateAxisRenderer.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-highlighter', JQPLOT_URL . 'plugins/jqplot.highlighter.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-pointLabels', JQPLOT_URL . 'plugins/jqplot.pointLabels.min.js', array('jqplot'), '', FALSE);
-		wp_register_script('jqplot-all', EE_ADMIN_URL . 'assets/ee-admin-jqlot-all.js', array('jqplot-pointLabels', 'jqplot-highlighter', 'jqplot-dateAxisRenderer', 'jqplot-categoryAxisRenderer', 'jqplot-canvasAxisTickRenderer', 'jqplot-canvasTextRenderer', 'jqplot-barRenderer'), EVENT_ESPRESSO_VERSION, FALSE );
-
+		//google charts
+		wp_register_script( 'google-charts', 'https://www.gstatic.com/charts/loader.js', array(), EVENT_ESPRESSO_VERSION, false );
 
 		//enqueue global scripts
 
@@ -1844,13 +1835,25 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * _set_list_table_object
 	 * WP_List_Table objects need to be loaded fairly early so automatic stuff WP does is taken care of.
+	 *
+	 * @throws \EE_Error
 	 */
 	protected function _set_list_table_object() {
-		if ( isset($this->_route_config['list_table'] ) ) {
-			if ( !class_exists( $this->_route_config['list_table'] ) )
-				throw new EE_Error( sprintf( __('The %s class defined for the list table does not exist.  Please check the spelling of the class ref in the $_page_config property on %s.', 'event_espresso'), $this->_route_config['list_table'], get_class($this) ) );
-			$a = new ReflectionClass($this->_route_config['list_table']);
-			$this->_list_table_object = $a->newInstance($this);
+		if ( isset( $this->_route_config['list_table'] ) ) {
+			if ( ! class_exists( $this->_route_config['list_table'] ) ) {
+				throw new EE_Error(
+					sprintf(
+						__(
+							'The %s class defined for the list table does not exist.  Please check the spelling of the class ref in the $_page_config property on %s.',
+							'event_espresso'
+						),
+						$this->_route_config['list_table'],
+						get_class( $this )
+					)
+				);
+			}
+			$list_table = $this->_route_config['list_table'];
+			$this->_list_table_object = new $list_table( $this );
 		}
 	}
 
@@ -1975,17 +1978,35 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//we only add meta boxes if the page_route calls for it
-		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
-
-
-			//this simply loops through the callbacks provided and checks if there is a corresponding callback registered by the child - if there is then we go ahead and process the metabox loader.
+		if ( is_array( $this->_route_config ) && isset( $this->_route_config['metaboxes'] )
+			 && is_array(
+			 $this->_route_config['metaboxes']
+			 )
+		) {
+			// this simply loops through the callbacks provided
+			// and checks if there is a corresponding callback registered by the child
+			// if there is then we go ahead and process the metabox loader.
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
-				if ( call_user_func( array($this, &$metabox_callback) ) === FALSE ) {
+				// first check for Closures
+				if ( is_callable( $metabox_callback ) ) {
+					$result = $metabox_callback();
+				} else if ( is_array( $metabox_callback ) && isset( $metabox_callback[0], $metabox_callback[1] ) ) {
+					$result = call_user_func( array( $metabox_callback[0], $metabox_callback[1] ) );
+				} else {
+					$result = call_user_func( array( $this, &$metabox_callback ) );
+				}
+				if ( $result === FALSE ) {
 					// user error msg
-				$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
-				// developer error msg
-				$error_msg .= '||' . sprintf( __( 'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.', 'event_espresso' ), $metabox_callback );
-				throw new EE_Error( $error_msg );
+					$error_msg =  __( 'An error occurred. The  requested metabox could not be found.', 'event_espresso' );
+					// developer error msg
+					$error_msg .= '||' . sprintf(
+						__(
+							'The metabox with the string "%s" could not be called. Check that the spelling for method names and actions in the "_page_config[\'metaboxes\']" array are all correct.',
+							'event_espresso'
+						),
+						$metabox_callback
+					);
+					throw new EE_Error( $error_msg );
 				}
 			}
 		}
@@ -2057,7 +2078,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	public function espresso_ratings_request() {
 		$template_path = EE_ADMIN_TEMPLATE . 'espresso_ratings_request_content.template.php';
-		EE_Registry::instance()->load_helper( 'Template' );
 		EEH_Template::display_template( $template_path, array() );
 	}
 
@@ -2492,14 +2512,21 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
 
-		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url ) : add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
+		$this->_template_args['table_url'] = defined( 'DOING_AJAX')
+			? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url )
+			: add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
 		$this->_template_args['list_table'] = $this->_list_table_object;
 		$this->_template_args['current_route'] = $this->_req_action;
 		$this->_template_args['list_table_class'] = get_class( $this->_list_table_object );
 
 		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();
 		if( ! empty( $ajax_sorting_callback )) {
-			$sortable_list_table_form_fields = wp_nonce_field( $ajax_sorting_callback . '_nonce', $ajax_sorting_callback . '_nonce', FALSE, FALSE );
+			$sortable_list_table_form_fields = wp_nonce_field(
+				$ajax_sorting_callback . '_nonce',
+				$ajax_sorting_callback . '_nonce',
+				FALSE,
+				FALSE
+			);
 //			$reorder_action = 'espresso_' . $ajax_sorting_callback . '_nonce';
 //			$sortable_list_table_form_fields = wp_nonce_field( $reorder_action, 'ajax_table_sort_nonce', FALSE, FALSE );
 			$sortable_list_table_form_fields .= '<input type="hidden" id="ajax_table_sort_page" name="ajax_table_sort_page" value="' . $this->page_slug .'" />';
@@ -2515,10 +2542,23 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
 
 		//display message about search results?
-		$this->_template_args['before_list_table'] .= apply_filters( 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg', !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '', $this->page_slug, $this->_req_data, $this->_req_action );
-
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
-
+		$this->_template_args['before_list_table'] .= apply_filters(
+			'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg',
+			! empty( $this->_req_data['s'] )
+				? '<p class="ee-search-results">' . sprintf(
+					__( 'Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso' ),
+					trim( $this->_req_data['s'], '%' )
+					) . '</p>'
+				: '',
+			$this->page_slug,
+			$this->_req_data,
+			$this->_req_action
+		);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			$template_path,
+			$this->_template_args,
+			true
+		);
 		// the final template wrapper
 		if ( $sidebar )
 			$this->display_admin_page_with_sidebar();
@@ -2544,9 +2584,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return string        html string of legend
 	 */
 	protected function _display_legend( $items ) {
-		$template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
+		$this->_template_args['items'] = apply_filters( 'FHEE__EE_Admin_Page___display_legend__items', (array) $items, $this );
 		$legend_template = EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php';
-		return EEH_Template::display_template($legend_template, $template_args, TRUE);
+		return EEH_Template::display_template($legend_template, $this->_template_args, TRUE);
 	}
 
 
@@ -2570,17 +2610,19 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @return void
 	 */
-	protected function _return_json( $sticky_notices = FALSE ) {
+	protected function _return_json( $sticky_notices = false ) {
 
 		//make sure any EE_Error notices have been handled.
-		$this->_process_notices( array(), TRUE, $sticky_notices );
+		$this->_process_notices( array(), true, $sticky_notices );
 
 
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
 		unset($this->_template_args['data']);
 		$json = array(
-			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : FALSE,
-			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : FALSE,
+			'error' => isset( $this->_template_args['error'] ) ? $this->_template_args['error'] : false,
+			'success' => isset( $this->_template_args['success'] ) ? $this->_template_args['success'] : false,
+			'errors' => isset( $this->_template_args['errors'] ) ? $this->_template_args['errors'] : false,
+			'attention' => isset( $this->_template_args['attention'] ) ? $this->_template_args['attention'] : false,
 			'notices' => EE_Error::get_notices(),
 			'content' => isset( $this->_template_args['admin_page_content'] ) ? $this->_template_args['admin_page_content'] : '',
 			'data' => array_merge( $data, array('template_args' => $this->_template_args ) ),
@@ -2680,7 +2722,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _get_main_nav_tabs() {
 		//let's generate the html using the EEH_Tabbed_Content helper.  We do this here so that it's possible for child classes to add in nav tabs dynamically at the last minute (rather than setting in the page_routes array)
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		return EEH_Tabbed_Content::display_admin_nav_tabs($this->_nav_tabs);
 	}
 
@@ -2715,7 +2756,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@uses EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
 	 */
 	protected function _generate_admin_form_fields( $input_vars = array(), $generator = 'string', $id = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$content = $generator == 'string' ? EEH_Form_Fields::get_form_fields($input_vars, $id) : EEH_Form_Fields::get_form_fields_array($input_vars);
 		return $content;
 	}
@@ -2831,16 +2871,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	/**
-	 * 	_redirect_after_action
-	 *	@param int 		$success 	- whether success was for two or more records, or just one, or none
+	 *    _redirect_after_action
+	 *
+	 * @param int $success - whether success was for two or more records, or just one, or none
 	 *	@param string 	$what 		- what the action was performed on
 	 *	@param string 	$action_desc 	- what was done ie: updated, deleted, etc
-	 *	@param int 		$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
+	 *	@param array 	$query_args		- an array of query_args to be added to the URL to redirect to after the admin action is completed
 	 *	@param BOOL     $override_overwrite by default all EE_Error::success messages are overwritten, this allows you to override this so that they show.
 	 *	@access protected
 	 *	@return void
 	 */
-	protected function _redirect_after_action( $success = FALSE, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
+	protected function _redirect_after_action( $success = 0, $what = 'item', $action_desc = 'processed', $query_args = array(), $override_overwrite = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -2984,6 +3025,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
+
+		//first let's set individual error properties if doing_ajax and the properties aren't already set.
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			$notices = EE_Error::get_notices( false );
+			if ( empty( $this->_template_args['success'] ) ) {
+				$this->_template_args['success'] = isset( $notices['success'] ) ? $notices['success'] : false;
+			}
+
+			if ( empty( $this->_template_args['errors'] ) ) {
+				$this->_template_args['errors'] = isset( $notices['errors'] ) ? $notices['errors'] : false;
+			}
+
+			if ( empty( $this->_template_args['attention'] ) ) {
+				$this->_template_args['attention'] = isset( $notices['attention'] ) ? $notices['attention'] : false;
+			}
+		}
 
 		$this->_template_args['notices'] = EE_Error::get_notices();
 
@@ -3310,6 +3367,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
+	/**
+	 * @return mixed
+	 */
+	public function default_espresso_metaboxes() {
+		return $this->_default_espresso_metaboxes;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function admin_base_url() {
+		return $this->_admin_base_url;
+	}
+
+
+
+	/**
+	 * @return mixed
+	 */
+	public function wp_page_slug() {
+		return $this->_wp_page_slug;
+	}
+
+
 
 	/**
 	 * updates  espresso configuration settings
@@ -3424,9 +3507,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
 		add_filter( 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications', '__return_true' );
-		$success = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', FALSE, $payment );
-		$this->_template_args['success'] = $success;
-		return $success;
+		do_action( 'AHEE__EE_Admin_Page___process_admin_payment_notification', $payment );
+		$this->_template_args['success'] = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', false, $payment );
+		return $this->_template_args[ 'success' ];
 	}
 
 

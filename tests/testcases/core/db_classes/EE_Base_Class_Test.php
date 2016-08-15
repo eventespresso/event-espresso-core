@@ -19,7 +19,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Base_Class_Test extends EE_UnitTestCase{
 	static function setUpBeforeClass() {
-//		EE_Registry::instance()->load_helper('Activation');
 //		EEH_Activation::create_table('esp_mock',
 //				"MCK_ID int(11) NOT NULL,
 //				PRIMARY KEY  (MCK_ID)");
@@ -27,12 +26,47 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 //		require_once(EE_TESTS_DIR.'mocks/core/db_classes/EE_Mock.class.php');
 		parent::setUpBeforeClass();
 	}
-	function test_new_instance(){
+
+
+
+    /**
+     * @return \EE_Attendee
+     */
+    function test_new_instance(){
 		$a = EE_Attendee::new_instance();
-		$this->assertNotNUll($a);
+		$this->assertNotNull($a);
 		$this->assertInstanceOf('EE_Attendee', $a);
 		return $a;
 	}
+
+
+
+
+	/**
+	 * @group 9273
+	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/9273
+	 */
+	function test_new_instance_with_existing_object_and_incoming_date_formats() {
+		//setup a EE_Payment object and save
+		$payment_object = EE_Payment::new_instance();
+		$payment_object->save();
+		$payment_object_id = $payment_object->ID();
+
+		//now let's setup a new payment object using that ID but with different formats than the defaults
+		//that way we can verify the timestamp gets set correctly.
+		$expected_date = '2016-24-01';
+		$payment_object_to_test = EE_Payment::new_instance(
+			array(
+				'PAY_ID' => $payment_object_id,
+				'PAY_timestamp' => '2016-24-01 3:45 pm',
+			),
+			'',
+			array( 'Y-d-m', 'g:i a' )
+		);
+		$this->assertEquals( $expected_date, $payment_object_to_test->get_date( 'PAY_timestamp' ) );
+	}
+
+
 	function test_set_and_get(){
 		$a = EE_Attendee::new_instance();
 		$a->set('ATT_fname','value1');
@@ -108,8 +142,11 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
             $r = EE_Registration::new_instance();
             $r->save();
             //verify the relations
-            $t_from_r = $r->transaction();
-            $this->assertNull( $t_from_r );
+            try {
+                $r->transaction();
+            } catch (Exception $e) {
+                $this->assertTrue(true);
+            }
             $rs_from_t = $t->registrations();
             $this->assertTrue( empty( $rs_from_t ) );
 
@@ -835,7 +872,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
                     $this->assertEquals( 1, $registration_payment->delete() );
                 }
             }
-            //now there shoudl eb no more registraiton payments on that payment right?
+            //now there should eb no more registration payments on that payment right?
             $reg_payments = $p->registration_payments();
             $this->assertTrue( empty( $reg_payments ) );
         }
@@ -868,3 +905,4 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 }
 
 // End of file EE_Base_Class_Test.php
+// Location testcases/core/db_classes/EE_Base_Class_Test.php

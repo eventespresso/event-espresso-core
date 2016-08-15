@@ -120,9 +120,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_page_routes() {
 
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		//is there a vnu_id in the request?
 		$vnu_id = ! empty( $this->_req_data['VNU_ID'] ) && ! is_array( $this->_req_data['VNU_ID'] ) ? $this->_req_data['VNU_ID'] : 0;
@@ -339,13 +337,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_editor_other'
 					)
 				),
-				'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
+				/*'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),*/
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),
 			'google_map_settings' => array(
 				'nav' => array(
-					'label' => __('Google Maps'),
+					'label' => esc_html__('Google Maps', 'event_espresso' ),
 					'order' => 40
 				),
 				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array('_publish_post_box' ) ),
@@ -388,7 +386,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_edit_category'
 					)
 				),
-				'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),
+				/*'help_tour' => array( 'Venues_Edit_Category_Help_Tour' ),*/
 				'require_nonce' => FALSE
 				),
 			'category_list' => array(
@@ -583,6 +581,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		$default_map_settings = new stdClass();
 		$default_map_settings->use_google_maps = TRUE;
+		$default_map_settings->google_map_api_key = '';
 		// for event details pages (reg page)
 		$default_map_settings->event_details_map_width = 585; 			// ee_map_width_single
 		$default_map_settings->event_details_map_height = 362; 			// ee_map_height_single
@@ -607,7 +606,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_set_add_edit_form_tags( 'update_google_map_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_VENUES_TEMPLATE_PATH . 'google_map.template.php', $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			EE_VENUES_TEMPLATE_PATH . 'google_map.template.php',
+			$this->_template_args,
+			true
+		);
 		$this->display_admin_page_with_sidebar();
 	}
 
@@ -617,6 +620,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			isset( $this->_req_data['use_google_maps'] )
 				? absint( $this->_req_data['use_google_maps'] )
 				: EE_Registry::instance()->CFG->map_settings->use_google_maps;
+
+		EE_Registry::instance()->CFG->map_settings->google_map_api_key =
+			isset( $this->_req_data['google_map_api_key'] )
+				? sanitize_text_field( $this->_req_data['google_map_api_key'] )
+				: EE_Registry::instance()->CFG->map_settings->google_map_api_key;
 
 		EE_Registry::instance()->CFG->map_settings->event_details_map_width =
 			isset( $this->_req_data['event_details_map_width'] )
@@ -688,10 +696,17 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				? sanitize_text_field( $this->_req_data['event_list_map_align'] )
 				: EE_Registry::instance()->CFG->map_settings->event_list_map_align;
 
-		EE_Registry::instance()->CFG->map_settings = apply_filters( 'FHEE__Extend_General_Settings_Admin_Page___update_google_map_settings__CFG_map_settings', EE_Registry::instance()->CFG->map_settings );
+		EE_Registry::instance()->CFG->map_settings = apply_filters(
+			'FHEE__Extend_General_Settings_Admin_Page___update_google_map_settings__CFG_map_settings',
+			EE_Registry::instance()->CFG->map_settings
+		);
 
 		$what = 'Google Map Settings';
-		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );
+		$success = $this->_update_espresso_configuration(
+			$what,
+			EE_Registry::instance()->CFG->map_settings,
+			__FILE__, __FUNCTION__, __LINE__
+		);
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'google_map_settings' ) );
 
 	}
@@ -1237,9 +1252,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _category_details($view) {
 
 		//load formatter helper
-		EE_Registry::instance()->load_helper( 'Formatter' );
 		//load field generator helper
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		$route = $view == 'edit' ? 'update_category' : 'insert_category';
 		$this->_set_add_edit_form_tags($route);
@@ -1367,7 +1380,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 			$cat_id = $insert_ids['term_id'];
-			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
+			$msg = sprintf ( __('The category %s was successfully created', 'event_espresso'), $category_name );
 			EE_Error::add_success( $msg );
 		}
 
@@ -1390,7 +1403,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 
-		EE_Registry::instance()->load_helper( 'File' );
 		if ( is_readable( EE_CLASSES . 'EE_Export.class.php') ) {
 			require_once( EE_CLASSES . 'EE_Export.class.php');
 			$EE_Export = EE_Export::instance( $this->_req_data );

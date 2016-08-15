@@ -17,6 +17,17 @@
 			<group>live</group>
         </exclude>
     </groups>
+	<listeners>
+		<listener class="SpeedTrapListener" file="includes/speed-trap-listener.php">
+			<arguments>
+				<array>
+					<element key="slowThreshold">
+						<integer>2000</integer>
+					</element>
+				</array>
+			</arguments>
+		</listener>
+	</listeners>
 	<php>
 		<ini name="display_errors" value="1" />
 	</php>

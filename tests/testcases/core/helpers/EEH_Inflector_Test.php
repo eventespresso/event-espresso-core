@@ -15,7 +15,6 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EEH_Inflector_Test extends EE_UnitTestCase{
 	public function __construct( $name = NULL, array $data = array( ), $dataName = '' ) {
-		EE_Registry::instance()->load_helper( 'Inflector' );
 		parent::__construct( $name, $data, $dataName );
 	}
 	public function test_pluralize_and_lower__basic() {

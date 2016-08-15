@@ -40,11 +40,12 @@ class EEH_Venue_View extends EEH_Base {
 	 * @access    public
 	 * @param int  $VNU_ID
 	 * @param bool $look_in_event
-	 * @param bool $privacy_check  Defaults to true.  When false, means even if the venue is private we return it
-	 *                             		     regardless of access.
-	 * @return EE_Venue | null
+	 * @param bool $privacy_check   Defaults to true.
+	 *                              When false, means even if the venue is private we return it regardless of access.
+	 * @param bool $password_check
+	 * @return \EE_Venue|null
 	 */
-	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE, $privacy_check = true ) {
+	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE, $privacy_check = true, $password_check = true ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
 		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
@@ -109,21 +110,35 @@ class EEH_Venue_View extends EEH_Base {
 			// sigh... pull it from the db
 			EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
 		}
-		return EEH_Venue_View::_get_venue( $privacy_check );
+		return EEH_Venue_View::_get_venue( $privacy_check, $password_check );
 	}
 
 
 
 	/**
-	 * 	return a single venue
+	 * return a single venue
 	 *
-	 *  @param bool $privacy_check  Defaults to true.  When false, means even if the venue is private we return it
-	 *                             		     regardless of access.
-	 *  @return 	EE_Venue
+	 * @param bool $privacy_check   Defaults to true.
+	 *                              When false, means even if the venue is private we return it regardless of access.
+	 * @param bool $password_check
+	 * @return 	EE_Venue
 	 */
-	protected static function _get_venue( $privacy_check = true ) {
+	protected static function _get_venue( $privacy_check = true, $password_check = true ) {
 		// check for private venues.
-		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->status() == 'private' && $privacy_check && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' ) ) {
+		if (
+			EEH_Venue_View::$_venue instanceof EE_Venue
+			&& EEH_Venue_View::$_venue->status() == 'private'
+			&& $privacy_check
+			&& ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_venues', 'get_venues' )
+		) {
+			return null;
+		}
+		// check for password protected venues
+		if (
+			EEH_Venue_View::$_venue instanceof EE_Venue
+			&& $password_check
+			&& post_password_required( EEH_Venue_View::$_venue->ID() )
+		) {
 			return null;
 		}
 		return EEH_Venue_View::$_venue instanceof EE_Venue ? EEH_Venue_View::$_venue : null;
@@ -167,6 +182,46 @@ class EEH_Venue_View extends EEH_Base {
 		}
 
 		return $venue->status() == 'private' ? true : false;
+	}
+
+
+
+
+	/**
+	 * returns true or false if a venue is password protected or not
+	 * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
+	 * @return bool
+	 */
+	public static function is_venue_password_protected( $VNU_ID = false ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID, true, true, false );
+		if (
+			$venue instanceof EE_Venue
+			&& post_password_required( $venue->ID() )
+		) {
+			return true;
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * If a venue is password protected, this will return the password form for gaining access
+	 * returns an empty string otherwise
+
+	 * @param bool $VNU_ID venue to check (optional). If not included will use internally derived venue object.
+	 *
+	 * @return string
+	 */
+	public static function password_protected_venue_form( $VNU_ID = false ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID, true, true, false );
+		if (
+			$venue instanceof EE_Venue
+			&& post_password_required( $venue->ID() )
+		) {
+			return get_the_password_form( $venue->ID() );
+		}
+		return '';
 	}
 
 
@@ -248,7 +303,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_address( $type = 'multiline', $VNU_ID = 0, $use_schema = true, $add_wrapper = true ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, $type, $use_schema, $add_wrapper );
 		}
 		return '';
@@ -266,7 +320,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_has_address( $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Address::format( $venue, 'inline', FALSE, FALSE );
 		}
 		return false;
@@ -285,7 +338,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_name( $link_to = 'details', $VNU_ID = 0 ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
 			$venue_name = apply_filters(
 				'FHEE__EEH_Venue__venue_name__append_private_venue_name',
 				EEH_Venue_View::is_venue_private()
@@ -347,7 +399,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_website_link( $VNU_ID = 0, $text = '' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
 			$url = $venue->venue_url();
 			$text = ! empty( $text ) ? $text : $url;
 			return ! empty( $url ) ? EEH_Schema::url( $url, $text ) : '';
@@ -367,7 +418,6 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_phone( $VNU_ID = 0) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
 			return EEH_Schema::telephone( $venue->phone() );
 		}
 		return '';
@@ -395,9 +445,6 @@ class EEH_Venue_View extends EEH_Base {
 			$map_cfg = EE_Registry::instance()->CFG->map_settings;
 			// are maps enabled ?
 			if ( $map_cfg->use_google_maps && $venue->enable_for_gmap() ) {
-
-				EE_Registry::instance()->load_helper( 'Maps' );
-				EE_Registry::instance()->load_helper( 'Formatter' );
 
 				$details_page = is_single();
 				$options = array();
@@ -444,7 +491,6 @@ class EEH_Venue_View extends EEH_Base {
 	 * @return string
 	 */
 	public static function espresso_google_static_map( EE_Venue $venue, $atts = array() ){
-		EE_Registry::instance()->load_helper('Maps');
 		$state = $venue->state_obj();
 		$country = $venue->country_obj();
 		$atts = shortcode_atts(

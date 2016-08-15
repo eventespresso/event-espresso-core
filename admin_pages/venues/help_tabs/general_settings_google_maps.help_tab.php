@@ -1,11 +1,11 @@
-<h2><?php _e('Google Maps', 'event_espresso'); ?></h2>
+<p><strong><?php _e('Google Maps', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows options for Google Maps. You can activate Google Maps by setting the toggle to Yes and clicking on the Save button to update settings.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently of each other. For an event to display a Google Map you must have it enabled in the event editor or in the venue metabox. This allows you to select which events you would like to display with a map.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Map Settings for Registration Page & Event List Options', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Map Settings for Registration Page & Event List Options', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Set Map Width', 'event_espresso'); ?></strong><br />

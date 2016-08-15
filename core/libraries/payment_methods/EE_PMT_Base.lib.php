@@ -98,16 +98,11 @@ abstract class EE_PMT_Base{
 		if ( $pm_instance instanceof EE_Payment_Method ){
 			$this->set_instance($pm_instance);
 		}
-		$this->_set_file_folder();
-		$this->_set_file_url();
 		if($this->_gateway){
 			$this->_gateway->set_payment_model( EEM_Payment::instance() );
 			$this->_gateway->set_payment_log( EEM_Change_Log::instance() );
-			EE_Registry::instance()->load_helper( 'Template' );
 			$this->_gateway->set_template_helper( new EEH_Template() );
-			EE_Registry::instance()->load_helper( 'Line_Item' );
 			$this->_gateway->set_line_item_helper( new EEH_Line_Item() );
-			EE_Registry::instance()->load_helper( 'Money' );
 			$this->_gateway->set_money_helper( new EEH_Money() );
 		}
 		if ( ! isset( $this->_has_billing_form ) ) {
@@ -175,6 +170,9 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function file_folder(){
+		if( ! $this->_file_folder ) {
+			$this->_set_file_folder();
+		}
 		return $this->_file_folder;
 	}
 
@@ -184,6 +182,9 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function file_url(){
+		if( ! $this->_file_url ) {
+			$this->_set_file_url();
+		}
 		return $this->_file_url;
 	}
 
@@ -607,14 +608,18 @@ abstract class EE_PMT_Base{
 	 * @return string
 	 */
 	public function payment_overview_content(EE_Payment $payment){
-		EE_Registry::instance()->load_helper('Template');
 		return EEH_Template::display_template(EE_LIBRARIES.'payment_methods'.DS.'templates'.DS.'payment_details_content.template.php', array('payment_method'=>$this->_pm_instance,'payment'=>$payment) , true);
 	}
 
 
 
 	/**
-	 * @return array exactly like EE_Admin_Page _page_config's 'help_tabs' attribute. @see EE_Admin_Page::_set_page_config()
+	 * @return array where keys are the help tab name,
+	 * values are: array {
+	 *	@type string $title i18n name for the help tab
+	 *	@type string $filename name of the file located in ./help_tabs/ (ie, in a folder next to this file)
+	 *	@type array $template_args any arguments you want passed to the template file while rendering.
+	 *				Keys will be variable names and values with be their values.
 	 */
 	public function help_tabs_config(){
 		return array();
@@ -668,7 +673,6 @@ abstract class EE_PMT_Base{
 	 * @return string html for the link to a help tab
 	 */
 	public function get_help_tab_link(){
-		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::get_help_tab_link( $this->get_help_tab_name() );
 	}
 
@@ -704,6 +708,20 @@ abstract class EE_PMT_Base{
 		if( $this->_gateway instanceof EE_Gateway ){
 			$this->_gateway->update_txn_based_on_payment( $payment );
 		}
+	}
+	
+	/**
+	 * Returns a string of HTML describing this payment method type for an admin, 
+	 * primarily intended for them to read before activating it.
+	 * The easiest way to set this is to create a folder 'templates' alongside
+	 * your EE_PMT_{System_Name} file, and in it create a file named "{system_name}_intro.template.php".
+	 * Eg, if your payment method file is named "EE_PMT_Foo_Bar.pm.php", 
+	 * then you'd create a file named "templates" in the same folder as it, and name the file
+	 * "foo_bar_intro.template.php", and its content will be returned by this method
+	 * @return string
+	 */
+	public function introductory_html() {
+		return EEH_Template::locate_template( $this->file_folder() . 'templates' . DS . strtolower( $this->system_name() ) . '_intro.template.php', array( 'pmt_obj' => $this, 'pm_instance' => $this->_pm_instance ) );
 	}
 
 

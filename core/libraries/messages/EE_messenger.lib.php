@@ -297,6 +297,40 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/**
+	 * This is used to indicate whether a messenger must be sent immediately or not.
+	 * eg. The HTML messenger will override this to return true because it should be displayed in user's browser right
+	 * away.  The PDF messenger is similar.
+	 *
+	 * This flag thus overrides any priorities that may be set on the message type used to generate the message.
+	 *
+	 * Default for this is false.  So children classes must override this if they want a message to be executed immediately.
+	 *
+	 * @since  4.9.0
+	 * @return bool
+	 */
+	public function send_now() {
+		return false;
+	}
+
+
+
+
+
+	/**
+	 * This is a way for a messenger to indicate whether it allows an empty to field or not.
+	 * Note: If the generated message is a for a preview, this value is ignored.
+	 * @since 4.9.0
+	 * @return bool
+	 */
+	public function allow_empty_to_field() {
+		return false;
+	}
+
+
+
+
+
+	/**
 	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
 	 * @see property definition for info on how its formatted.
 	 *
@@ -466,14 +500,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-
-
-
-
+	/**
+	 * @param $message_types
+	 * @param array $extra
+	 * @return mixed|string
+	 */
 	protected function _get_admin_content_events_edit( $message_types, $extra ) {
 		//defaults
 		$template_args = array();
-		$custom_templates = array();
 		$selector_rows = '';
 
 		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
@@ -483,54 +517,56 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$template_row_path = EE_LIBRARIES . 'messages/messenger/admin_templates/event_switcher_row.template.php';
 
 		//array of template objects for global and custom (non-trashed) (but remember just for this messenger!)
-		$global_templates = EEM_Message_Template_Group::instance()->get_all( array( array('MTP_messenger' => $this->name, 'MTP_is_global' => TRUE, 'MTP_is_active' => TRUE ) ) );
-		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event( $event_id, array( 'MTP_messenger' => $this->name, 'MTP_is_active' => TRUE ) );
+		$global_templates = EEM_Message_Template_Group::instance()->get_all(
+			array( array( 'MTP_messenger' => $this->name, 'MTP_is_global' => true, 'MTP_is_active' => true ) )
+		);
+		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event(
+			$event_id,
+			array(
+				'MTP_messenger' => $this->name,
+				'MTP_is_active' => true
+			)
+		);
 		$templates_for_event = !empty( $templates_for_event ) ? $templates_for_event : array();
 
 		//so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
 		foreach ( $global_templates as $mtpgID => $mtpg ) {
-			//verify this message type is supposed to show on this page
-			$mtp_obj = $mtpg->message_type_obj();
-			if ( ! $mtp_obj instanceof EE_message_type ) {
-				continue;
-			}
-			$mtp_obj->admin_registered_pages = (array) $mtp_obj->admin_registered_pages;
-			if ( ! in_array( 'events_edit', $mtp_obj->admin_registered_pages ) )
-				continue;
-			$stargs = array();
-			$default_value = '';
-			$select_values = array();
-			$select_values[$mtpgID] = __('Global', 'event_espresso');
-			$default_value = array_key_exists( $mtpgID, $templates_for_event ) && ! $mtpg->get('MTP_is_override' ) ? $mtpgID : NULL;
-
-			//if the override has been set for the global template, then that means even if there are custom templates already created we ignore them because of the set override.
-
-			if ( ! $mtpg->get('MTP_is_override' ) ) {
-				//any custom templates for this message type?
-				$custom_templates = EEM_Message_Template_Group::instance()->get_custom_message_template_by_m_and_mt( $this->name, $mtpg->message_type() );
-
-				foreach( $custom_templates as $cmtpgID => $cmtpg ) {
-					$select_values[$cmtpgID] = $cmtpg->name();
-					$default_value = array_key_exists( $cmtpgID, $templates_for_event ) ? $cmtpgID : $default_value;
+			if ( $mtpg instanceof EE_Message_Template_Group ) {
+				//verify this message type is supposed to show on this page
+				$mtp_obj = $mtpg->message_type_obj();
+				if ( ! $mtp_obj instanceof EE_message_type ) {
+					continue;
 				}
+				$mtp_obj->admin_registered_pages = (array)$mtp_obj->admin_registered_pages;
+				if ( ! in_array( 'events_edit', $mtp_obj->admin_registered_pages ) ) {
+					continue;
+				}
+				$select_values = array();
+				$select_values[ $mtpgID ] = __( 'Global', 'event_espresso' );
+				$default_value = array_key_exists( $mtpgID, $templates_for_event ) && ! $mtpg->get( 'MTP_is_override' ) ? $mtpgID : null;
+				//if the override has been set for the global template, then that means even if there are custom templates already created we ignore them because of the set override.
+				if ( ! $mtpg->get( 'MTP_is_override' ) ) {
+					//any custom templates for this message type?
+					$custom_templates = EEM_Message_Template_Group::instance()->get_custom_message_template_by_m_and_mt( $this->name, $mtpg->message_type() );
+					foreach ( $custom_templates as $cmtpgID => $cmtpg ) {
+						$select_values[ $cmtpgID ] = $cmtpg->name();
+						$default_value = array_key_exists( $cmtpgID, $templates_for_event ) ? $cmtpgID : $default_value;
+					}
+				}
+				//if there is no $default_value then we set it as the global
+				$default_value = empty( $default_value ) ? $mtpgID : $default_value;
+				$edit_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value ), admin_url( 'admin.php' ) );
+				$create_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ), admin_url( 'admin.php' ) );
+				$st_args[ 'mt_name' ] = ucwords( $mtp_obj->label[ 'singular' ] );
+				$st_args[ 'mt_slug' ] = $mtpg->message_type();
+				$st_args[ 'messenger_slug' ] = $this->name;
+				$st_args[ 'selector' ] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
+				//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
+				$st_args[ 'create_button' ] = $mtpg->get( 'MTP_is_override' ) ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __( 'Create New Custom', 'event_espresso' ) . '</a>';
+				$st_args[ 'create_button' ] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messages_add_new_message_template' ) ? $st_args[ 'create_button' ] : '';
+				$st_args[ 'edit_button' ] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID ) ? '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __( 'Edit', 'event_espresso' ) . '</a>' : '';
+				$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, true );
 			}
-
-			//if there is no $default_value then we set it as the global
-			$default_value = empty( $default_value ) ? $mtpgID : $default_value;
-
-			$edit_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value), admin_url('admin.php') );
-			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ), admin_url( 'admin.php' ) );
-
-			$st_args['mt_name'] = ucwords( $mtp_obj->label['singular'] );
-			$st_args['mt_slug'] = $mtpg->message_type();
-			$st_args['messenger_slug'] = $this->name;
-			$st_args['selector'] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
-
-			//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
-			$st_args['create_button'] =  $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
-			$st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_messages', 'espresso_messsages_add_new_message_template' ) ? $st_args['create_button'] : '';
-			$st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_message', 'espresso_messages_edit_message_template', $mtpgID ) ?  '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>' : '';
-			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
 		}
 
 		//if no selectors present then get out.
@@ -563,22 +599,24 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 	/** SETUP METHODS **/
-
 	/**
 	 * The following method doesn't NEED to be used by child classes but might be modified by the specific messenger
+	 * @param string $item
+	 * @param mixed $value
 	 */
 	protected function _set_template_value($item, $value) {
 		if ( array_key_exists($item, $this->_template_fields) ) {
 			$prop = '_' . $item;
-			$this->$prop= $value;
+			$this->{$prop}= $value;
 		}
 	}
 
 	/**
 	 * Sets up the message for sending.
-	 * @param  stdClass $message the message object that contains details about the message.
+	 * @param  EE_message $message the message object that contains details about the message.
 	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
-	 * @return bool | WP_Error
+	 * @return bool Very important that all messengers return bool for successful send or not.  Error messages can be
+	 *              added to EE_Error.
 	 */
 	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
@@ -590,12 +628,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * Sets up and returns message preview
-	 * @param  object $message incoming message object
+	 * @param  EE_Message $message incoming message object
 	 * @param EE_message_type $message_type This is whatever message type was used in combination with this messenger to generate the message.
 	 * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
 	 * @return string          return the message html content
 	 */
-	public function get_preview( $message, EE_message_type $message_type, $send = FALSE ) {
+	public function get_preview( EE_Message $message, EE_message_type $message_type, $send = false ) {
 		$this->_validate_and_setup( $message );
 
 		$this->_incoming_message_type = $message_type;
@@ -603,8 +641,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( $send ) {
 			//are we overriding any existing template fields?
 			$settings = $this->get_existing_test_settings();
-			if ( !empty( $settings ) ) {
-				foreach( $settings as $field => $value ) {
+			if ( ! empty( $settings ) ) {
+				foreach ( $settings as $field => $value ) {
 					$this->_set_template_value( $field, $value );
 				}
 			}
@@ -642,29 +680,33 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+
 	/**
 	 * simply validates the incoming message object and then sets up the properties for the messenger
-	 * @param  object $message message object
-	 * @throws \EE_Error
+	 * @param  EE_Message $message
+	 * @throws EE_Error
 	 */
-	protected function _validate_and_setup( $message ) {
-		if ( !is_object( $message ) )
-			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
+	protected function _validate_and_setup( EE_Message $message ) {
+		$template_pack = $message->get_template_pack();
+		$variation = $message->get_template_pack_variation();
 
 		//verify we have the required template pack value on the $message object.
-		if ( empty( $message->template_pack ) || ! $message->template_pack instanceof EE_Messages_Template_Pack ) {
-			throw new EE_Error( __('Incoming $message object must have a EE_Messages_Template_Pack object assigned to the template_pack property', 'event_espresso' ) );
+		if ( ! $template_pack instanceof EE_Messages_Template_Pack ) {
+			throw new EE_Error( __('Incoming $message object must have an EE_Messages_Template_Pack object available.', 'event_espresso' ) );
 		}
 
-		$this->_tmp_pack = $message->template_pack;
+		$this->_tmp_pack = $template_pack;
 
-		$this->_variation = !empty ( $message->variation ) ? $message->variation : 'default';
+		$this->_variation = $variation ? $variation : 'default';
 
 		$template_fields = $this->get_template_fields();
 
 		foreach ( $template_fields as $template => $value ) {
-			if ( $template !== 'extra' )
-				$this->_set_template_value($template, $message->$template);
+			if ( $template !== 'extra' ) {
+				$column_value = $message->get_field_or_extra_meta( 'MSG_' . $template );
+				$message_template_value = $column_value ? $column_value : null;
+				$this->_set_template_value( $template, $message_template_value );
+			}
 		}
 	}
 
@@ -690,8 +732,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//add message type to template args
 		$this->_template_args['message_type'] = $this->_incoming_message_type;
 
-		//require template helper
-		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 
@@ -727,8 +767,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_existing_test_settings() {
-		$settings = EEH_MSG_Template::get_active_messengers_in_db();
-		return isset( $settings[$this->name]['test_settings'] ) ? $settings[$this->name]['test_settings'] : array();
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$settings = $Message_Resource_Manager->get_active_messengers_option();
+		return isset( $settings[ $this->name ]['test_settings'] ) ? $settings[ $this->name ]['test_settings'] : array();
 	}
 
 
@@ -737,12 +779,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * All this does is set the existing test settings (in the db) for the messenger
 	 *
 	 * @access public
-	 * @return bool 	success/fail
+	 * @param $settings
+	 * @return bool success/fail
 	 */
 	public function set_existing_test_settings( $settings ) {
-		$existing = EEH_MSG_Template::get_active_messengers_in_db();
-		$existing[$this->name]['test_settings'] = $settings;
-		return EEH_MSG_Template::update_active_messengers_in_db( $existing );
+		/** @var EE_Message_Resource_Manager $Message_Resource_Manager */
+		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$existing = $Message_Resource_Manager->get_active_messengers_option();
+		$existing[ $this->name ]['test_settings'] = $settings;
+		return $Message_Resource_Manager->update_active_messengers_option( $existing );
 	}
 
 

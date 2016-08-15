@@ -16,7 +16,6 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 class EEH_Line_Item_Test extends EE_UnitTestCase{
 
 	static function setUpBeforeClass() {
-		EE_Registry::instance()->load_helper('Line_Item');
 	}
 
 	public function test_get_items_subtotal(){
@@ -814,6 +813,26 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	}
 	
 	
+        
+        /**
+         * @group 4710
+         */
+        function test_set_line_items_taxable() {
+            $t = $this->new_typical_transaction( array( 'taxable_tickets' => 0 ) );
+            EEH_Line_Item::add_unrelated_item( $t->total_line_item(), 'Excempt Line Item', 1, 'Description', 1, false, 'exemptme');
+            $reg_line_items = EEH_Line_Item::get_descendants_of_type( $t->total_line_item(), EEM_Line_Item::type_line_item );
+            foreach( $reg_line_items as $line_item ) {
+                $this->assertFalse( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
+            }
+            EEH_Line_Item::set_line_items_taxable( $t->total_line_item(), true, 'exemptme' );
+            foreach( $reg_line_items as $line_item ) {
+                if( $line_item->code() == 'exemptme' ) {
+                    $this->assertFalse( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
+                } else {
+                    $this->assertTrue( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
+                }
+            }
+        }
 
 
 }

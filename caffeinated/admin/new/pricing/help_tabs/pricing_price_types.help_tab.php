@@ -1,4 +1,4 @@
-<h3><?php _e('Price Types', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Price Types', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('This page shows all price types that have been created with Event Espresso.', 'event_espresso'); ?>
 </p>

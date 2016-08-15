@@ -1,5 +1,5 @@
 <p class="about-description"><?php _e('Event Espresso is created by an international team of passionate individuals with a drive to empower your events!', 'event_espresso'); ?></p>
-<h4 class="wp-people-group"><?php _e('Founders', 'event_espresso'); ?></h4>
+<h3 class="wp-people-group"><?php _e('Founders', 'event_espresso'); ?></h3>
 <ul class="wp-people-group" id="ee-people-group-owners">
 	<li class="wp-person" id="ee-person-sshoultes">
 		<a href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>">
@@ -20,7 +20,7 @@
 		<span class="title"><?php _e('Co-Founder', 'event_espresso'); ?></span>
 	</li>
 </ul>
-<h4 class="wp-people-group"><?php _e('Core Developers', 'event_espresso'); ?></h4>
+<h3 class="wp-people-group"><?php _e('Core Developers', 'event_espresso'); ?></h3>
 <ul class="wp-people-group" id="ee-people-group-core-developers">
 	<li class="wp-person" id="ee-person-bchristensen">
 		<a href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>">
@@ -59,7 +59,7 @@
 		<span class="title"><?php _e('Core Developer', 'event_espresso'); ?></span>
 	</li>
 </ul>
-<h4 class="wp-people-group"><?php _e('Support Staff', 'event_espresso'); ?></h4>
+<h3 class="wp-people-group"><?php _e('Support Staff', 'event_espresso'); ?></h3>
 <ul class="wp-people-group" id="ee-people-group-support-staff">
 	<li class="wp-person" id="ee-person-jfeck">
 		<a href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>">
@@ -103,7 +103,7 @@
 	</li>
 
 </ul>
-<h4 class="wp-people-group"><?php _e('Contributor Recognition', 'event_espresso'); ?></h4>
+<h3 class="wp-people-group"><?php _e('Contributor Recognition', 'event_espresso'); ?></h3>
 <p class="description">
 	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a GitHub pull request. Want to see your name listed here? %sWhen you submit a pull request that gets included in a major release%s, we\'ll add your name here linked to your GitHub profile.', 'event_espresso'), '<a href="https://github.com/eventespresso/event-espresso-core" title="Contribute to Event Espresso by making a pull request via GitHub">', '</a>' ); ?>
 </p>
@@ -117,7 +117,7 @@
 	</ul>
 
 </p>
-<h4 class="wp-people-group"><?php _e('External Libraries', 'event_espresso'); ?></h4>
+<h3 class="wp-people-group"><?php _e('External Libraries', 'event_espresso'); ?></h3>
 <p class="description">
 	<?php printf( __('Along with the libraries %sincluded with WordPress%s, Event Espresso utilizes the following third party libraries:', 'event_espresso'), '<a href="credits.php">', '</a>' ); ?>
 </p>

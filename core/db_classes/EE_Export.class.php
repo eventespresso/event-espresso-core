@@ -2,7 +2,10 @@
 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * EE_Export class
- *
+ * 
+ * For creating csv file exports/reports in a single request.
+ * Note that if you're creating a large csv file this is likely to timeout,
+ * and so it would be better to use EventEspressoBatchRequest\BatchRequestProcessor
  * @package				Event Espresso
  * @subpackage			includes/functions
  * @author					Brent Christensen
@@ -10,6 +13,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  * ------------------------------------------------------------------------
  */
  class EE_Export {
+	 
+	 const option_prefix = 'ee_report_job_';
 
 
   // instance of the EE_Export object
@@ -22,13 +27,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	var $EE_CSV = NULL;
 
-	var $_basic_header = array();
-	var $_question_groups = array();
-	var $_event_id = FALSE;
-	var $_event_identifier = FALSE;
-	var $_event_name = FALSE;
-	var $_event_description = FALSE;
-	var $_event_meta = FALSE;
 
 	private $_req_data = array();
 
@@ -88,9 +86,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			case 'report':
 				switch ($this->_req_data['action']) {
 
-					case 'everything':
-						$this->export_freakin_everything();
-					break;
 
 					case "event";
 					case "export_events";
@@ -123,29 +118,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		exit;
 
-	}
-
-
-
-	/**
-	 *		Export data for FREAKIN EVERYTHING !!!
-	 *
-	 *		usage: http://your-domain.tld/wp-admin/admin.php?event_espresso&export=report&action=everything&type=csv
-	 *
-	 *		@access public
-	 *		@return void
-	 */
-	function export_freakin_everything() {
-
-		$models_to_export = EE_Registry::instance()->non_abstract_db_models;
-
-		$table_data = $this->_get_export_data_for_models( array_keys( $models_to_export ) );
-
-		$filename = $this->generate_filename ( 'full-db-export' );
-
-		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			EE_Error::add_error(__("An error occurred and the Event details could not be exported from the database.", "event_espresso"), __FILE__, __FUNCTION__, __LINE__ );
-		}
 	}
 
 	/**
@@ -248,7 +220,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	}
 
 	function report_attendees(){
-		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( array( 'force_join' => array( 'State', 'Country' ) ) );
+		$attendee_rows = EEM_Attendee::instance()->get_all_wpdb_results( 
+			array( 
+				'force_join' => array( 'State', 'Country' ), 
+				'caps' => EEM_Base::caps_read_admin 
+			) 
+		);
 		$csv_data = array();
 		foreach( $attendee_rows as $attendee_row ){
 			$csv_row = array();
@@ -368,7 +345,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 					'Ticket.TKT_deleted' => array( 'IN', array( true, false ) )
 					),
 				'order_by' => array('Transaction.TXN_ID'=>'asc','REG_count'=>'asc'),
-				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' )
+				'force_join' => array( 'Transaction', 'Ticket', 'Attendee' ),
+				'caps' => EEM_Base::caps_read_admin
 			),
 			$event_id
 		);
@@ -414,22 +392,22 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				//get pretty status
 				$stati = EEM_Status::instance()->localized_status( array(
 					$reg_row[ 'Registration.STS_ID' ] => __( 'unknown', 'event_espresso' ),
-					$reg_row[ 'Transaction.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
+					$reg_row[ 'TransactionTable.STS_ID' ] => __( 'unknown', 'event_espresso' ) ),
 						FALSE,
 						'sentence' );
 				$reg_csv_array[__("Registration Status", 'event_espresso')] = $stati[ $reg_row[ 'Registration.STS_ID' ] ];
 				//get pretty trnasaction status
-				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'Transaction.STS_ID' ] ];
-				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'Transaction.TXN_total' ], 'localized_float' ) : '0.00';
-				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'Transaction.TXN_paid' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[__("Transaction Status", 'event_espresso')] = $stati[ $reg_row[ 'TransactionTable.STS_ID' ] ];
+				$reg_csv_array[ __( 'Transaction Amount Due', 'event_espresso' ) ] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_total', $reg_row[ 'TransactionTable.TXN_total' ], 'localized_float' ) : '0.00';
+				$reg_csv_array[ __( 'Amount Paid', 'event_espresso' )] = $is_primary_reg ? $this->_prepare_value_from_db_for_display( EEM_Transaction::instance(), 'TXN_paid', $reg_row[ 'TransactionTable.TXN_paid' ], 'localized_float' ) : '0.00';
 				$payment_methods = array();
 				$gateway_txn_ids_etc = array();
 				$payment_times = array();
-				if( $is_primary_reg && $reg_row[ 'Transaction.TXN_ID' ] ){
+				if( $is_primary_reg && $reg_row[ 'TransactionTable.TXN_ID' ] ){
 					$payments_info = EEM_Payment::instance()->get_all_wpdb_results(
 							array(
 								array(
-									'TXN_ID' => $reg_row[ 'Transaction.TXN_ID' ],
+									'TXN_ID' => $reg_row[ 'TransactionTable.TXN_ID' ],
 									'STS_ID' => EEM_Payment::status_id_approved
 								),
 								'force_join' => array( 'Payment_Method' ),
@@ -649,16 +627,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		}
 		return $table_data;
 	}
-
-
-
-
-
-
-
-
-
-
 }
 /* End of file EE_Export.class.php */
 /* Location: /includes/classes/EE_Export.class.php */

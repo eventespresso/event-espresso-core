@@ -21,6 +21,18 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 abstract class EE_Payment_Base_message_type extends EE_message_type {
 
 
+
+	/**
+	 * @see parent::get_priority() for documentation.
+	 * @return int
+	 */
+	public function get_priority() {
+		return EEM_Message::priority_high;
+	}
+
+
+
+
 	/**
 	 * see abstract declaration in parent class for details.
 	 */
@@ -56,23 +68,7 @@ abstract class EE_Payment_Base_message_type extends EE_message_type {
 
 
 
-
-
-	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
-		//there should be a transaction and payment object in the incoming data.
-		if ( $this->_data instanceof EE_Messages_incoming_data  ) {
-			$payment = !empty( $this->_data->payment ) ? $this->_data->payment : NULL;
-
-			if ( $payment instanceof EE_Payment ) {
-				return $payment->ID();
-			}
-		}
-		return 0;
-	}
-
-
-
-	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
+	protected function _get_admin_content_events_edit_for_messenger( EE_messenger $messenger ) {
 		//this is just a test
 		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
 	}

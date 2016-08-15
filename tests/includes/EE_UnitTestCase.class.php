@@ -74,7 +74,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			'merged_filters'=>$merged_filters,
 			'wp_current_filter'=>$wp_current_filter
 		);
-		$this->_orig_current_user = clone $current_user;
+		$this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
 		parent::setUp();
 		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
@@ -99,6 +99,18 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
 		$this->scenarios = new EE_Test_Scenario_Factory( $this );
 		EE_Registry::reset();
+
+		//IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
+		//updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
+		// 'user_has_cap' filter to do this
+		$_wp_test_version = getenv( 'WP_VERSION' );
+		if ( $_wp_test_version && $_wp_test_version == '4.1' ) {
+			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, $WP_User ) {
+				$WP_User->get_role_caps();
+
+				return $WP_User->allcaps;
+			}, 10, 4 );
+		}
 	}
 
 
@@ -289,7 +301,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function defineAdminConstants() {
-		if ( !defined( 'EE_ADMIN_PAGES' ) )
+		if ( ! defined( 'EE_ADMIN_PAGES' ) )
 			define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
 	}
 
@@ -319,13 +331,17 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		switch ( $page ) {
 			case 'decaf_events' :
-				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Decaf_Mock.php';
+			case 'events' :
+				require_once EE_TESTS_DIR . 'mocks/admin/events/Events_Admin_Page_Mock.php';
 				break;
 			case 'registrations' :
 				require_once EE_TESTS_DIR . 'mocks/admin/registrations/Registrations_Admin_Page_Mock.php';
 				break;
 			case 'transactions' :
 				require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
+				break;
+			case 'messages' :
+				require_once EE_TESTS_DIR . 'mocks/admin/messages/Messages_Admin_Page_Mock.php';
 				break;
 
 		}
@@ -535,9 +551,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function assertDateWithinOneMinute( $expected_date, $actual_date, $full_format, $custom_error_message = '' ) {
 		//take the incoming date strings convert to datetime objects and verify they are within one minute of each other
-		$expected_date = date_create_from_format( $full_format, $expected_date );
-		$actual_date = date_create_from_format( $full_format, $actual_date );
-		$difference = $actual_date->format('U') - $expected_date->format('U');
+		$expected_date_obj = date_create_from_format( $full_format, $expected_date );
+		$actual_date_obj = date_create_from_format( $full_format, $actual_date );
+		$date_parsing_error = '';
+		if( ! $expected_date_obj instanceof DateTime ) {
+			$date_parsing_error = sprintf(__( 'Expected date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $expected_date, true ), $full_format );
+		}
+		if( ! $actual_date_obj instanceof DateTime ) {
+			$date_parsing_error = sprintf(__( 'Actual date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $actual_date, true ), $full_format );
+		}
+		if( $date_parsing_error ) {
+			throw new EE_Error( $date_parsing_error );
+		}
+		$difference = $actual_date_obj->format('U') - $expected_date_obj->format('U');
 		$this->assertTrue( $difference < 60, $custom_error_message );
 	}
 
@@ -692,13 +718,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$this->assertEquals( get_class( $expected_object ), get_class( $actual_object ) );
 			foreach( $expected_object->model_field_array() as $field_name => $expected_value ){
 				$actual_value = $actual_object->get( $field_name );
-				if( $expected_value != $actual_value ){
+				if( $expected_value !== $actual_value ){
 					$this->fail(
 						sprintf(
-							__( 'EE objects of class "%1$s" did not match. They were: %2$s and %3$s', 'event_espresso' ),
+							__( 'EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso' ),
 							get_class( $expected_object),
 							print_r( $expected_object->model_field_array(), true ),
-							print_r( $actual_object->model_field_array(), true )
+							print_r( $actual_object->model_field_array(), true ),
+							$field_name,
+							print_r( $expected_value, true ),
+							print_r( $actual_value, true )
 						)
 					);
 				}
@@ -882,8 +911,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
-		EE_Registry::instance()->load_helper( 'Line_Item' );
-		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
+		$txn = $this->new_model_obj_with_dependencies( 'Transaction', array( 'TXN_paid' => 0 ) );
 		$total_line_item = EEH_Line_Item::create_total_line_item( $txn->ID() );
 		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
 		if( isset( $options[ 'ticket_types' ] ) ){

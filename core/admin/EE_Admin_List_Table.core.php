@@ -54,6 +54,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 
+
+	/**
+	 * Will contain the count of trashed items for the view label.
+	 * @var int
+	 */
+	protected $_trashed_count;
+
+
+
 	/**
 	 * _screen
 	 * This is what will be referenced as the slug for the current screen
@@ -66,7 +75,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * _admin_page
-	 * @var object  this is the EE_Admin_Page object
+	 *
+	 * @var EE_Admin_Page  this is the EE_Admin_Page object
 	 */
 	protected $_admin_page;
 
@@ -212,7 +222,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 
 	/**
-	 * Used to indicate what should be the primary column for the list table. If not present then fallsback to what WP calculates
+	 * Used to indicate what should be the primary column for the list table. If not present then falls back to what WP calculates
 	 * as the primary column.
 	 * @type string
 	 */
@@ -232,7 +242,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * constructor
-	 * @param EE_Admin_Page object $admin_page we use this for obtaining everything we need in the list table.
+	 * @param EE_Admin_Page $admin_page we use this for obtaining everything we need in the list table.
 	 */
 	public function __construct( EE_Admin_Page $admin_page ) {
 		$this->_admin_page = $admin_page;
@@ -278,7 +288,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * properties set:
 	 * _wp_list_args = what the arguments required for the parent _wp_list_table.
 	 * _columns = set the columns in an array.
-	 * _sortable_columns = colums that are sortable (array).
+	 * _sortable_columns = columns that are sortable (array).
 	 * _hidden_columns = columns that are hidden (array)
 	 * _default_orderby = the default orderby for sorting.
 	 *
@@ -299,7 +309,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 *
 	 * @abstract
 	 * @access protected
-	 * @return html string
+	 * @return string
 	 */
 	abstract protected function _get_table_filters();
 
@@ -326,7 +336,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	/**
 	 * _get_hidden_fields
 	 * returns a html string of hidden fields so if any table filters are used the current view will be respected.
-	 * @return html string
+	 * @return string
 	 */
 	protected function _get_hidden_fields() {
 		$action = isset( $this->_req_data['route'] ) ? $this->_req_data['route'] : '';
@@ -411,8 +421,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	}
 
 
+
 	/**
 	 * Added for WP4.1 backward compat (@see https://events.codebasehq.com/projects/event-espresso/tickets/8814)
+	 *
+	 * @param object $item
+	 * @param string $column_name
+	 * @param string $primary
 	 * @return string
 	 */
 	protected function handle_row_actions( $item, $column_name, $primary ) {
@@ -421,7 +436,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 				return parent::handle_row_actions( $item, $column_name, $primary );
 			}
 		}
-		'';
+		return '';
 	}
 
 
@@ -514,7 +529,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 *
 	 * This can be overridden by child classes, but allows for hooking in for custom columns.
 	 *
-	 * @param EE_Base_Class
+	 * @param object $item
 	 * @param string $column_name The column being called.
 	 *
 	 * @return string html content for the column
@@ -756,8 +771,20 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$action_class = ! empty( $action_class ) ? ' class="' . $action_class . '"' : '';
 		$action_id = ! empty( $action_id ) ? ' id="' . $action_id . '"' : '';
 		$content .= ! empty( $action_container ) ? '<' . $action_container . $action_class . $action_id . '>' : '';
-		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $item, $this );
-		$content .= ! empty( $container ) ? '</' . $container . '>' : '';
+        try {
+            $content .= apply_filters(
+                'FHEE__EE_Admin_List_Table___action_string__action_items',
+                $action_items,
+                $item,
+                $this
+            );
+        } catch (\Exception $e) {
+            if (WP_DEBUG) {
+                \EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+            }
+            $content .= $action_items;
+        }
+		$content .= ! empty( $action_container ) ? '</' . $action_container . '>' : '';
 		return $content;
 	}
 }

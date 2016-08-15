@@ -1,8 +1,8 @@
-<h3><?php _e('Bank Draft', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Bank Draft', 'event_espresso'); ?></strong></p>
 <p>
 <?php _e('Adjust the settings for the bank draft payment gateway.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Bank Draft Settings', 'event_espresso'); ?></h3>
+<p><strong><?php _e('Bank Draft Settings', 'event_espresso'); ?></strong></p>
 <ul>
 <li>
 <strong><?php _e('Page Title', 'event_espresso'); ?></strong><br />

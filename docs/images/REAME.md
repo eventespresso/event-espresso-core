@@ -1,0 +1,1 @@
+This folder is where all images referenced in the documentation are found.

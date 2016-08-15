@@ -373,7 +373,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	private function _maybe_do_schema_changes($before = true){
 		//so this property will be either _schema_changes_after_migration_ran or _schema_changes_before_migration_ran
 		$property_name = '_schema_changes_'. ($before ? 'before' : 'after').'_migration_ran';
-		if ( ! $this->$property_name ){
+		if ( ! $this->{$property_name} ){
 			try{
 				ob_start();
 				if($before){
@@ -388,7 +388,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 				throw $e;
 			}
 			//record that we've done these schema changes
-			$this->$property_name = true;
+			$this->{$property_name} = true;
 			//if there were any warnings etc, record them as non-fatal errors
 			if( $output ){
 				//there were some warnings
@@ -447,7 +447,6 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	protected function _old_table_exists( $table_name ) {
-		EE_Registry::instance()->load_helper( 'Activation' );
 		return EEH_Activation::table_exists( $table_name );
 	}
 
@@ -459,7 +458,6 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	protected function _delete_table_if_empty( $table_name ) {
-		EE_Registry::instance()->load_helper( 'Activation' );
 		return EEH_Activation::delete_db_table_if_empty( $table_name );
 	}
 
@@ -467,10 +465,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 	/**
 	 * It is preferred to use _table_has_not_changed_since_previous or _table_is_changed_in_this_version
-	 * as these are significantly more efficient.
+	 * as these are significantly more efficient or explicit.
 	 * Please see description of _table_is_new_in_this_version. This function will only set
 	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
-	 * new activation. ie, a more accurate name for this method would be "_table_added_previously_by_this_plugin" because the table will be cleared out if this is a new activation (ie, if its a new activation, it actually should exisy previously).
+	 * new activation. ie, a more accurate name for this method would be "_table_added_previously_by_this_plugin" because the table will be cleared out if this is a new activation (ie, if its a new activation, it actually should exist previously).
 	 * Otherwise, we'll always set $drop_pre_existing_tables to FALSE
 	 * because the table should have existed. Note, if the table is being MODIFIED in this
 	 * version being activated or migrated to, then you want _table_is_changed_in_this_version NOT this one.
@@ -547,7 +545,6 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param boolean $drop_pre_existing_tables
 	 */
 	private function _create_table_and_catch_errors( $table_name, $table_definition_sql, $engine_string = 'ENGINE=MyISAM', $drop_pre_existing_tables = FALSE ){
-		EE_Registry::instance()->load_helper('Activation');
 		try{
 			EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
 		}catch( EE_Error $e ) {
@@ -667,7 +664,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		unset($array_of_properties['_migration_stages']);
 		unset($array_of_properties['class']);
 		foreach($array_of_properties as $property_name => $property_value){
-			$this->$property_name = $property_value;
+			$this->{$property_name} = $property_value;
 		}
 		//_migration_stages are already instantiated, but have only default data
 		foreach($this->_migration_stages as $stage){

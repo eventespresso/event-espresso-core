@@ -1,4 +1,6 @@
-<?php if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php use EventEspresso\core\exceptions\UnexpectedEntityException;
+
+if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 /**
@@ -67,7 +69,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	 * @return EE_Ticket
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -1005,7 +1007,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 		foreach ( $this->datetimes() as $datetime ) {
 			$times[] = $datetime->start_date_and_time();
 		}
-		return $this->name() . " @ " . implode( ", ", $times ) . " for " . $this->price();
+		return $this->name() . " @ " . implode( ", ", $times ) . " for " . $this->pretty_price();
 	}
 
 
@@ -1080,15 +1082,33 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 	/**
 	 * Implementation of the EEI_Event_Relation interface method
 	 * @see EEI_Event_Relation for comments
-	 * @return EE_Event|null
+	 * @return EE_Event
 	 */
 	public function get_related_event() {
 		//get one datetime to use for getting the event
 		$datetime = $this->first_datetime();
-		if ( $datetime instanceof EE_Datetime ) {
-			return $datetime->event();
+		if ( ! $datetime instanceof \EE_Datetime ) {
+			throw new UnexpectedEntityException(
+				$datetime,
+				'EE_Datetime',
+				sprintf(
+					__( "The ticket (%s) is not associated with any valid datetimes.", "event_espresso" ),
+					$datetime->name()
+				)
+			);
 		}
-		return null;
+		$event = $datetime->event();
+		if ( ! $event instanceof \EE_Event ) {
+			throw new UnexpectedEntityException(
+				$event,
+				'EE_Event',
+				sprintf(
+					__( "The ticket (%s) is not associated with a valid event.", "event_espresso" ),
+					$this->name()
+				)
+			);
+		}
+		return $event;
 	}
 
 

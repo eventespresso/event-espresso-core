@@ -152,7 +152,7 @@ class EE_PUE {
 			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
 			$api_key = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? EE_Registry::instance()->NET_CFG->core->site_license_key : '';
-			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
+			$host_server_url = 'https://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 			//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
 			//For example:
@@ -178,7 +178,7 @@ class EE_PUE {
 				'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 				'options_page_slug' => 'espresso_general_settings',
 				'plugin_basename' => EE_PLUGIN_BASENAME,
-				'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
+				'use_wp_update' => true, //if TRUE then you want FREE versions of the plugin to be updated from WP
 				'extra_stats' => $extra_stats,
 				'turn_on_notices_saved' => true
 			);

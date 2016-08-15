@@ -37,7 +37,7 @@ final class EE_Network_Config {
 
 
 	/**
-	 * addons can add their specific network_confg objects to this property
+	 * addons can add their specific network_config objects to this property
 	 * @var EE_Config_Base[]
 	 */
 	public $addons;
@@ -71,7 +71,6 @@ final class EE_Network_Config {
 	 * 	class constructor
 	 *
 	 *  @access 	private
-	 *  @return 	void
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Network_Config__construct__begin',$this );
@@ -94,13 +93,26 @@ final class EE_Network_Config {
 	 * 		@return void
 	 */
 	private function _load_config() {
+		//load network config start hook
+		do_action( 'AHEE__EE_Network_Config___load_config__start', $this );
 		$config = $this->get_config();
-		foreach ( $config as $prop => $settings ) {
-			$prop_class = is_object( $settings ) ? get_class( $this->$prop ) : FALSE;
-			if ( ! empty( $settings ) && ( ! $prop_class || ( $settings instanceof $prop_class ))) {
-				$this->$prop = $settings;
+		foreach ( $config as $config_prop => $settings ) {
+			if ( is_object( $settings ) && property_exists( $this, $config_prop ) ) {
+				$this->{$config_prop} = apply_filters( 'FHEE__EE_Network_Config___load_config__config_settings', $settings, $config_prop, $this );
+				if ( method_exists( $settings, 'populate' ) ) {
+					$this->{$config_prop}->populate();
+				}
+				if ( method_exists( $settings, 'do_hooks' ) ) {
+					$this->{$config_prop}->do_hooks();
+				}
 			}
 		}
+		if ( apply_filters( 'FHEE__EE_Network_Config___load_config__update_network_config', false ) ) {
+			$this->update_config();
+		}
+
+		//load network config end hook
+		do_action( 'AHEE__EE_Network_Config___load_config__end', $this );
 	}
 
 
@@ -122,17 +134,34 @@ final class EE_Network_Config {
 
 
 	/**
-	 * 	update_config'
+	 *    update_config'
 	 *
-	 *  @access 	public
-	 *  @return 	boolean success
+	 * @access    public
+	 * @param bool $add_success
+	 * @param bool $add_error
+	 * @return bool success
 	 */
 	public function update_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Network_Config__update_config__begin',$this );
-		// compare existing settings with what's already saved'
-		$saved_config = $this->get_config();
+
+		//need to bust cache for comparing original if this is a multisite install
+		if ( is_multisite() ) {
+			global $current_site;
+			$cache_key = $current_site->id . ':ee_network_config';
+			wp_cache_delete( $cache_key, 'site-options' );
+		}
+
+		//we have to compare existing saved config with config in memory because if there is no difference that means
+		//that the method executed fine but there just was no update.  WordPress doesn't distinguish between false because
+		//there were 0 records updated because of no change vs false because some error produced problems with the update.
+		$original = get_site_option( 'ee_network_config' );
+
+		if ( $original == $this ) {
+			return true;
+		}
 		// update
-		$saved = $saved_config == $this ? TRUE : update_site_option( 'ee_network_config', $this );
+		$saved = update_site_option( 'ee_network_config', $this );
+
 		do_action( 'AHEE__EE_Network_Config__update_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
@@ -140,13 +169,13 @@ final class EE_Network_Config {
 				$msg = is_multisite() ? __( 'The Event Espresso Network Configuration Settings have been successfully updated.', 'event_espresso' ) : __( 'Extra Event Espresso Configuration settings were successfully updated.', 'event_espresso' );
 				EE_Error::add_success( $msg );
 			}
-			return TRUE;
+			return true;
 		} else {
 			if ( $add_error ) {
 				$msg = is_multisite() ? __( 'The Event Espresso Network Configuration Settings were not updated.', 'event_espresso' ) : __( 'Extra Event Espresso Network Configuration settings were not updated.', 'event_espresso' );
 				EE_Error::add_error( $msg , __FILE__, __FUNCTION__, __LINE__ );
 			}
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -180,8 +209,20 @@ class EE_Network_Core_Config extends EE_Config_Base {
 
 
 
+	/**
+	 * This indicates whether messages system processing should be done on the same request or not.
+	 * @var
+	 */
+	public $do_messages_on_same_request;
+
+
+
+	/**
+	 * EE_Network_Core_Config constructor.
+	 */
 	public function __construct() {
-		$this->site_license_key = NULL;
+		$this->site_license_key = '';
+		$this->do_messages_on_same_request = false;
 	}
 
 }

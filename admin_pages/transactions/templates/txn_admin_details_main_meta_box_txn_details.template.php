@@ -1,8 +1,8 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
-	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+	<h3 class="admin-primary-mbox-h4 hdr-has-icon">
 		<span class="dashicons dashicons-cart"></span><?php _e( 'Transaction Items', 'event_espresso' );?>
-	</h4>
+	</h3>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<?php echo $line_item_table; ?>
@@ -20,7 +20,7 @@
 		</a>
 	<br class="clear"/>
 
-		<h4 class="admin-primary-mbox-h4"><?php _e( 'Transaction Session Details', 'event_espresso' );?></h4>
+		<h3 class="admin-primary-mbox-h4"><?php _e( 'Transaction Session Details', 'event_espresso' );?></h3>
 
 		<table id="admin-primary-mbox-txn-extra-session-info-tbl" class="form-table skinny-rows">
 			<tbody>
@@ -40,11 +40,11 @@
 	<br class="clear"/>
 
 
-	<?php if ( $attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) ) : ?>
+	<?php if ( $attendee instanceof EE_Attendee && ( $grand_raw_total > 0 || $TXN_status != 'TCM' || ! empty( $payments ) ) ) : ?>
 
-	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
+	<h3 class="admin-primary-mbox-h4 hdr-has-icon">
 		<span class="ee-icon ee-icon-cash"></span><?php _e( 'Payment Details', 'event_espresso' );?>
-	</h4>
+	</h3>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl">
@@ -67,12 +67,16 @@
 			<tbody>
 		<?php if ( $payments ) : ?>
 			<?php $payment_total = 0; ?>
-			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
+			<?php foreach ( $payments as $PAY_ID => $payment ) :
+				$existing_reg_payment_json = isset( $existing_reg_payments[ $PAY_ID ] )
+					? wp_json_encode( $existing_reg_payments[ $PAY_ID ] )
+					: '{}';
+				?>
 				<tr id="txn-admin-payment-tr-<?php echo $PAY_ID;?>">
 					<td>
 						<span id="payment-status-<?php echo $PAY_ID; ?>" class="ee-status-strip-td ee-status-strip pymt-status-<?php echo $payment->STS_ID(); ?>"></span>
 						<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
-						<div id="reg-payments-<?php echo $PAY_ID;?>" class="hidden"><?php echo json_encode( $existing_reg_payments[ $PAY_ID ] );?></div>
+						<div id="reg-payments-<?php echo $PAY_ID;?>" class="hidden"><?php echo $existing_reg_payment_json; ?></div>
 					</td>
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
@@ -92,7 +96,7 @@
 						<div id="payment-id-<?php echo $PAY_ID;?>"><?php echo $PAY_ID;?></div>
 					</td>
 					<td class=" jst-left">
-						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
+						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'g:i a');?></div>
 					</td>
 					<td class=" jst-cntr">
 						<div id="payment-method-<?php echo $PAY_ID;?>">
@@ -275,7 +279,7 @@
 					<div class="txn-admin-apply-payment-date-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-date-inp" class=""><?php _e( 'Payment Date', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d h:i a', current_time( 'timestamp' )); ?>"/>
+						<input name="[date]txn_admin_payment" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d g:i a', current_time( 'timestamp' )); ?>"/>
 						<p class="description"><?php _e( 'The date the payment was actually made on', 'event_espresso' );?></p>
 					</div>
 

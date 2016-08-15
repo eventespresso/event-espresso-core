@@ -18,7 +18,6 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 		return maybe_serialize($value_of_field_on_model_object);
 	}
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
-		EE_Registry::instance()->load_helper( 'Array' );
 		$value_inputted_for_field_on_model_object = EEH_Array::maybe_unserialize( $value_inputted_for_field_on_model_object );
 		if(is_string($value_inputted_for_field_on_model_object)){
 			return parent::prepare_for_set($value_inputted_for_field_on_model_object);
@@ -34,7 +33,6 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 	 * @return array
 	 */
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {
-		EE_Registry::instance()->load_helper( 'Array' );
 		return EEH_Array::maybe_unserialize( $value_found_in_db_for_model_object );
 	}
 
@@ -50,7 +48,6 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 				$pretty_value = print_r($value_on_field_to_be_outputted,true);
 				break;
 			case 'as_table':
-				EE_Registry::instance()->load_helper('Template');
 				$pretty_value = EEH_Template::layout_array_as_table($value_on_field_to_be_outputted);
 				break;
 			default:

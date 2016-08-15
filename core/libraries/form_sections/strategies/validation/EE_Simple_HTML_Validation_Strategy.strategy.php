@@ -26,16 +26,25 @@ class EE_Simple_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 
 
 	/**
-	 * add_more_tags
+	 * get tags allowed
 	 */
 	protected function _get_allowed_tags() {
-		global $allowedtags;
-		$allowedtags[ 'ol' ] = array();
-		$allowedtags[ 'ul' ] = array();
-		$allowedtags[ 'li' ] = array();
-		$allowedtags[ 'br' ] = array();
-		$allowedtags[ 'p' ] = array();
-		return $allowedtags;
+		return EEH_HTML::get_simple_tags();
+	}
+
+
+
+	/**
+	 * add_more_tags
+	 *
+	 * generates and returns a string that lists the top-level HTML tags that are allowable for this input
+	 *
+	 * @return string
+	 */
+	public function get_list_of_allowed_tags() {
+		$allowed_tags = $this->_get_allowed_tags();
+		ksort( $allowed_tags );
+		return implode( ', ', array_keys( $allowed_tags ) );
 	}
 
 

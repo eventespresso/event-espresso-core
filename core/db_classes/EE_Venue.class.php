@@ -38,7 +38,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 	 * @return EE_Attendee
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -157,7 +157,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 	 * @return string
 	 */
 	public function state_abbrev() {
-		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : __( 'Unknown', 'event_espresso' );
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->abbrev() : '';
 	}
 
 
@@ -166,7 +166,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 	 * @return string
 	 */
 	public function state_name() {
-		return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() :  __( 'Unknown', 'event_espresso' );
+		return $this->state_obj() instanceof EE_State ? $this->state_obj()->name() :  '';
 	}
 
 
@@ -211,7 +211,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Address {
 	 * @return string
 	 */
 	public function country_name() {
-		return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() :  __( 'Unknown', 'event_espresso' );
+		return $this->country_obj() instanceof EE_Country ? $this->country_obj()->name() :  '';
 	}
 
 

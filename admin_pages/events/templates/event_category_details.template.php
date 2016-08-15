@@ -1,4 +1,4 @@
-<h4><?php echo $category->category_name ?></h4>
+<h3><?php echo $category->category_name ?></h3>
 <table class="form-table">
 	<tbody>
 		<tr>

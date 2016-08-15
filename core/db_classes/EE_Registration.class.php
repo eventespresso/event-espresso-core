@@ -1,4 +1,6 @@
-<?php if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php use EventEspresso\core\exceptions\EntityNotFoundException;
+
+if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 /**
@@ -8,7 +10,7 @@
  * @subpackage 	includes/classes/EE_Registration.class.php
  * @author 				Mike Nelson, Brent Christensen
  */
-class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration {
+class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration, EEI_Admin_Links {
 
 
 	/**
@@ -42,7 +44,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return EE_Registration
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
-		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
 		return $has_object ? $has_object : new self( $props_n_values, false, $timezone, $date_formats );
 	}
 
@@ -96,15 +98,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
 	/**
-	 *    Set Status ID
-	 *    updates the registration status and ALSO...
-	 *    calls reserve_registration_space() if the reg status changes TO approved from any other reg status
-	 *    calls release_registration_space() if the reg status changes FROM approved to any other reg status
+	 * Set Status ID
+	 * updates the registration status and ALSO...
+	 * calls reserve_registration_space() if the reg status changes TO approved from any other reg status
+	 * calls release_registration_space() if the reg status changes FROM approved to any other reg status
 	 *
 	 * @access        public
-	 * @param string $new_STS_ID
+	 * @param string  $new_STS_ID
 	 * @param boolean $use_default
 	 * @return bool
+	 * @throws \EE_Error
 	 */
 	public function set_status( $new_STS_ID = NULL, $use_default = FALSE ) {
 		// get current REG_Status
@@ -117,12 +120,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			&& ! empty( $new_STS_ID ) // as well as the new status
 		) {
 			// TO approved
-			if ( $new_STS_ID == EEM_Registration::status_id_approved ) {
+			if ( $new_STS_ID === EEM_Registration::status_id_approved ) {
 				// reserve a space by incrementing ticket and datetime sold values
 				$this->_reserve_registration_space();
 				do_action( 'AHEE__EE_Registration__set_status__to_approved', $this, $old_STS_ID, $new_STS_ID );
 			// OR FROM  approved
-			} else if ( $old_STS_ID == EEM_Registration::status_id_approved ) {
+			} else if ( $old_STS_ID === EEM_Registration::status_id_approved ) {
 				// release a space by decrementing ticket and datetime sold values
 				$this->_release_registration_space();
 				do_action( 'AHEE__EE_Registration__set_status__from_approved', $this, $old_STS_ID, $new_STS_ID );
@@ -223,7 +226,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return EE_Event
 	 */
 	public function event() {
-		return $this->get_first_related( 'Event' );
+		$event = $this->get_first_related('Event');
+		if ( ! $event instanceof \EE_Event) {
+			throw new EntityNotFoundException('Event ID', $this->event_ID());
+		}
+		return $event;
 	}
 
 
@@ -526,7 +533,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		 *
 		 * @since 4.5.0
 		 */
-		EE_Registry::instance()->load_helper('Template');
 		$template_relative_path = 'modules/gateways/Invoice/lib/templates/receipt_body.template.php';
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
@@ -550,7 +556,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		 *
 		 * @since 4.5.0
 		 */
-		EE_Registry::instance()->load_helper('Template');
 		$template_relative_path = 'modules/gateways/Invoice/lib/templates/invoice_body.template.php';
 		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
 
@@ -573,10 +578,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * get Registration URL Link
-	 * @access        public
+	 *
+	 * @access public
+	 * @return string
+	 * @throws \EE_Error
 	 */
 	public function reg_url_link() {
-		return $this->get( 'REG_url_link' );
+		return (string)$this->get( 'REG_url_link' );
 	}
 
 
@@ -628,7 +636,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return string
 	 */
 	public function get_admin_edit_url() {
-		EE_Registry::instance()->load_helper( 'URL' );
 		return EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_registrations', 'action' => 'view_registration', '_REG_ID' => $this->ID() ), admin_url( 'admin.php' ) );
 	}
 
@@ -808,6 +815,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				break;
 			case EEM_Registration::status_id_declined:
 				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
+				break;
+			case EEM_Registration::status_id_wait_list:
+				$icon = $show_icons ? '<span class="dashicons dashicons-clipboard ee-icon-size-16 purple-text"></span>' : '';
 				break;
 		}
 		return $icon . $status[ $this->status_ID() ];
@@ -1194,7 +1204,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @return EE_Transaction
 	 */
 	public function transaction() {
-		return $this->get_first_related( 'Transaction' );
+		$transaction = $this->get_first_related('Transaction');
+		if ( ! $transaction instanceof \EE_Transaction) {
+			throw new EntityNotFoundException('Transaction ID', $this->transaction_ID());
+		}
+		return $transaction;
 	}
 
 
@@ -1280,15 +1294,132 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		return $registrations;
 	}
 
+	/**
+	 * Return the link to the admin details for the object.
+	 * @return string
+	 */
+	public function get_admin_details_link() {
+		EE_Registry::instance()->load_helper( 'URL' );
+		return EEH_URL::add_query_args_and_nonce(
+			array(
+				'page' => 'espresso_registrations',
+				'action' => 'view_registration',
+				'_REG_ID' => $this->ID()
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
+	 * Returns the link to the editor for the object.  Sometimes this is the same as the details.
+	 * @return string
+	 */
+	public function get_admin_edit_link() {
+		return $this->get_admin_details_link();
+	}
+
+	/**
+	 * Returns the link to a settings page for the object.
+	 * @return string
+	 */
+	public function get_admin_settings_link() {
+		return $this->get_admin_details_link();
+	}
+
+	/**
+	 * Returns the link to the "overview" for the object (typically the "list table" view).
+	 * @return string
+	 */
+	public function get_admin_overview_link() {
+		EE_Registry::instance()->load_helper( 'URL' );
+		return EEH_URL::add_query_args_and_nonce(
+			array(
+				'page' => 'espresso_registrations'
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+
+
+	/**
+	 * @param array $query_params
+	 * @return \EE_Registration[]
+	 * @throws \EE_Error
+	 */
+	public function payments( $query_params = array() ) {
+		return $this->get_many_related( 'Payment', $query_params );
+	}
+
+
+
+	/**
+	 * @param array $query_params
+	 * @return \EE_Registration_Payment[]
+	 * @throws \EE_Error
+	 */
+	public function registration_payments( $query_params = array() ) {
+		return $this->get_many_related( 'Registration_Payment', $query_params );
+	}
+
+
+
+
+	/**
+	 * This grabs the payment method corresponding to the last payment made for the amount owing on the registration.
+	 * Note: if there are no payments on the registration there will be no payment method returned.
+	 *
+	 * @return EE_Payment_Method|null
+	 */
+	public function payment_method() {
+		return EEM_Payment_Method::instance()->get_last_used_for_registration( $this );
+	}
+
+
+
+	/**
+	 * @return \EE_Line_Item
+	 * @throws EntityNotFoundException
+	 * @throws \EE_Error
+	 */
+	public function ticket_line_item()
+	{
+		$ticket = $this->ticket();
+		$transaction = $this->transaction();
+		$line_item = null;
+		$ticket_line_items = \EEH_Line_Item::get_line_items_by_object_type_and_IDs(
+			$transaction->total_line_item(),
+			'Ticket',
+			array($ticket->ID())
+		);
+		foreach ($ticket_line_items as $ticket_line_item) {
+			if (
+				$ticket_line_item instanceof \EE_Line_Item
+				&& $ticket_line_item->OBJ_type() === 'Ticket'
+				&& $ticket_line_item->OBJ_ID() === $ticket->ID()
+			) {
+				$line_item = $ticket_line_item;
+				break;
+			}
+		}
+		if ( ! ($line_item instanceof \EE_Line_Item && $line_item->OBJ_type() === 'Ticket')) {
+			throw new EntityNotFoundException('Line Item Ticket ID', $ticket->ID());
+		}
+		return $line_item;
+	}
+
 
 
 	/**
 	 * @deprecated
-	 * @since 4.7.0
-	 * @access 	public
+	 * @since     4.7.0
+	 * @access    public
 	 */
-	public function price_paid() {
-		EE_Error::doing_it_wrong( 'EE_Registration::price_paid()', __( 'This method is deprecated, please use EE_Registration::final_price() instead.', 'event_espresso' ), '4.7.0' );
+	public function price_paid()
+	{
+		EE_Error::doing_it_wrong('EE_Registration::price_paid()',
+			__('This method is deprecated, please use EE_Registration::final_price() instead.', 'event_espresso'),
+			'4.7.0');
 		return $this->final_price();
 	}
 
@@ -1296,13 +1427,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 	/**
 	 * @deprecated
-	 * @since 4.7.0
+	 * @since     4.7.0
 	 * @access    public
 	 * @param    float $REG_final_price
 	 */
-	public function set_price_paid( $REG_final_price = 0.00 ) {
-		EE_Error::doing_it_wrong( 'EE_Registration::set_price_paid()', __( 'This method is deprecated, please use EE_Registration::set_final_price() instead.', 'event_espresso' ), '4.7.0' );
-		$this->set_final_price( $REG_final_price );
+	public function set_price_paid($REG_final_price = 0.00)
+	{
+		EE_Error::doing_it_wrong('EE_Registration::set_price_paid()',
+			__('This method is deprecated, please use EE_Registration::set_final_price() instead.', 'event_espresso'),
+			'4.7.0');
+		$this->set_final_price($REG_final_price);
 	}
 
 
@@ -1312,8 +1446,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 	 * @since 4.7.0
 	 * @return string
 	 */
-	public function pretty_price_paid() {
-		EE_Error::doing_it_wrong( 'EE_Registration::pretty_price_paid()', __( 'This method is deprecated, please use EE_Registration::pretty_final_price() instead.', 'event_espresso' ), '4.7.0' );
+	public function pretty_price_paid()
+	{
+		EE_Error::doing_it_wrong('EE_Registration::pretty_price_paid()',
+			__('This method is deprecated, please use EE_Registration::pretty_final_price() instead.',
+				'event_espresso'), '4.7.0');
 		return $this->pretty_final_price();
 	}
 

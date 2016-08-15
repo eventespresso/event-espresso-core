@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
 /**
  *
@@ -6,20 +6,20 @@ require_once ( EE_MODELS . 'EEM_Base.model.php' );
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen
+ * @author			Brent Christensen
  *
  */
 class EEM_Transaction extends EEM_Base {
 
-  	// private instance of the Transaction object
-	protected static $_instance = NULL;
+	// private instance of the Transaction object
+	protected static $_instance;
 
 	/**
 	 * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
 	 * but payment is pending. This is the state for transactions where payment is promised
 	 * from an offline gateway.
 	 */
-//	const open_status_code = 'TPN';
+	//	const open_status_code = 'TPN';
 
 	/**
 	 * Status ID(STS_ID on esp_status table) to indicate the transaction failed,
@@ -57,26 +57,25 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-
-
 	/**
-	 *	private constructor to prevent direct creation
+	 *    private constructor to prevent direct creation
 	 *
-	 *	@Constructor
-	 *	@access protected
-	 *	@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).
-	 * 		Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 *	@return EEM_Transaction
+	 * @Constructor
+	 * @access protected
+	 * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).
+	 *                         Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 * @return EEM_Transaction
+	 * @throws \EE_Error
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Transaction','event_espresso');
 		$this->plural_item = __('Transactions','event_espresso');
 
 		$this->_tables = array(
-			'Transaction'=>new EE_Primary_Table('esp_transaction','TXN_ID')
+			'TransactionTable'=>new EE_Primary_Table('esp_transaction','TXN_ID')
 		);
 		$this->_fields = array(
-			'Transaction'=>array(
+			'TransactionTable'=>array(
 				'TXN_ID'=>new EE_Primary_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso')),
 				'TXN_timestamp'=>new EE_Datetime_Field('TXN_timestamp', __('date when transaction was created','event_espresso'), false, time(), $timezone ),
 				'TXN_total'=>new EE_Money_Field('TXN_total', __('Total value of Transaction','event_espresso'), false, 0),
@@ -94,6 +93,7 @@ class EEM_Transaction extends EEM_Base {
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
 			'Payment_Method'=>new EE_Belongs_To_Relation(),
+			'Message' => new EE_Has_Many_Relation()
 		);
 		$this->_model_chain_to_wp_user = 'Registration.Event';
 		parent::__construct( $timezone );
@@ -130,21 +130,23 @@ class EEM_Transaction extends EEM_Base {
 	 * @return \stdClass[]
 	 */
 	public function get_revenue_per_day_report( $period = '-1 month' ) {
+		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date( 'Y-m-d H:i:s', strtotime( $period ) ), 'Y-m-d H:i:s', 'UTC' );
 
-		$sql_date = $this->convert_datetime_for_query( 'TXN_timestamp', date("Y-m-d H:i:s", strtotime($period) ), 'Y-m-d H:i:s', 'UTC' );
-		$results = $this->_get_all_wpdb_results(
+		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'TXN_timestamp' );
+		return $this->_get_all_wpdb_results(
 			array(
 				array(
-					'TXN_timestamp' => array('>=', $sql_date)),
-					'group_by' => 'txnDate',
-					'order_by' => array('TXN_timestamp' => 'DESC' )
-					),
-				OBJECT,
-				array(
-					'txnDate' => array('DATE(Transaction.TXN_timestamp)','%s'),
-					'revenue' => array('SUM(Transaction.TXN_paid)', '%d')
-					));
-		return $results;
+					'TXN_timestamp' => array( '>=', $sql_date )
+				),
+				'group_by' => 'txnDate',
+				'order_by' => array( 'TXN_timestamp' => 'ASC' )
+			),
+			OBJECT,
+			array(
+				'txnDate' => array( 'DATE(' . $query_interval . ')', '%s' ),
+				'revenue' => array( 'SUM(TransactionTable.TXN_paid)', '%d' )
+			)
+		);
 	}
 
 
@@ -157,23 +159,43 @@ class EEM_Transaction extends EEM_Base {
 	 * @throws \EE_Error
 	 * @return mixed
 	 */
-	public function get_revenue_per_event_report( $period = 'month' ) {
-		/** @type WPDB $wpdb */
+	public function get_revenue_per_event_report( $period = '-1 month' ) {
 		global $wpdb;
-		$date_mod = strtotime( '-1 ' . $period );
+		$transaction_table = $wpdb->prefix . 'esp_transaction';
+		$registration_table = $wpdb->prefix . 'esp_registration';
+		$event_table = $wpdb->posts;
+		$payment_table = $wpdb->prefix . 'esp_payment';
+		$sql_date = date( 'Y-m-d H:i:s', strtotime( $period ) );
+		$approved_payment_status = EEM_Payment::status_id_approved;
+		$extra_event_on_join = '';
+		//exclude events not authored by user if permissions in effect
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
+			$extra_event_on_join = ' AND Event.post_author = ' . get_current_user_id();
+		}
 
-		$SQL = 'SELECT post_title as event_name, SUM(TXN_paid) AS revenue';
-		$SQL .= ' FROM ' . $this->_get_main_table()->get_table_name() . ' txn';
-		$SQL .= ' LEFT JOIN ' . $wpdb->prefix . 'esp_registration reg ON reg.TXN_ID = txn.TXN_ID';
-		$SQL .= ' LEFT JOIN ' . $wpdb->posts . ' evt ON evt.ID = reg.EVT_ID';
-		$SQL .= ' WHERE REG_count = 1';
-		$SQL .= ' AND REG_date >= %d';
-		$SQL .= ' GROUP BY event_name';
-		$SQL .= ' ORDER BY event_name';
-		$SQL .= ' LIMIT 0, 24';
-
-		return $this->_do_wpdb_query( 'get_results', array(  $wpdb->prepare( $SQL, $date_mod ) ) );
-
+		return $wpdb->get_results(
+			"SELECT
+			Transaction_Event.event_name AS event_name,
+			SUM(Transaction_Event.paid) AS revenue
+			FROM
+				(
+					SELECT
+						DISTINCT Payment.TXN_ID,
+						Event.post_title AS event_name,
+						Payment.PAY_amount AS paid
+					FROM $transaction_table AS TransactionTable
+						JOIN $registration_table AS Registration
+							ON Registration.TXN_ID = TransactionTable.TXN_ID
+						JOIN $payment_table AS Payment
+							ON Payment.TXN_ID = Registration.TXN_ID
+							AND Payment.PAY_timestamp > '$sql_date'
+							AND Payment.STS_ID = '$approved_payment_status'
+						JOIN $event_table AS Event ON Registration.EVT_ID = Event.ID
+							$extra_event_on_join
+				) AS Transaction_Event
+			GROUP BY event_name",
+			OBJECT
+		);
 	}
 
 
@@ -198,18 +220,15 @@ class EEM_Transaction extends EEM_Base {
 
 
 
-
-
-
-
 	/**
 	 * Updates the provided EE_Transaction with all the applicable payments
 	 * (or fetch the EE_Transaction from its ID)
 	 *
 	 * @deprecated
-	 * @param EE_Transaction | int $transaction_obj_or_id
-	 * @param boolean $save_txn whether or not to save the transaction during this function call
+	 * @param EE_Transaction|int $transaction_obj_or_id
+	 * @param boolean            $save_txn whether or not to save the transaction during this function call
 	 * @return boolean
+	 * @throws \EE_Error
 	 */
 	public function update_based_on_payments( $transaction_obj_or_id, $save_txn = TRUE ){
 		EE_Error::doing_it_wrong(
@@ -219,7 +238,9 @@ class EEM_Transaction extends EEM_Base {
 		);
 		/** @type EE_Transaction_Processor $transaction_processor */
 		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this->ensure_is_obj( $transaction_obj_or_id ));
+		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
+			$this->ensure_is_obj( $transaction_obj_or_id )
+		);
 	}
 
 	/**
@@ -234,23 +255,82 @@ class EEM_Transaction extends EEM_Base {
 	public function delete_junk_transactions() {
 		/** @type WPDB $wpdb */
 		global $wpdb;
+		$deleted = false;
 		$time_to_leave_alone = apply_filters(
 			'FHEE__EEM_Transaction__delete_junk_transactions__time_to_leave_alone', WEEK_IN_SECONDS
 		);
-		$query = $wpdb->prepare( '
-			DELETE
-			FROM '. $this->table() . '
-			WHERE
-				STS_ID = %s AND
-				TXN_timestamp < %s',
-			EEM_Transaction::failed_status_code,
-			// use GMT time because that's what TXN_timestamps are in
-			gmdate(  'Y-m-d H:i:s', time() - $time_to_leave_alone )
+
+
+		/**
+		 * This allows code to filter the query arguments used for retrieving the transaction IDs to delete.
+		 * Useful for plugins that want to exclude transactions matching certain query parameters.
+		 * The query parameters should be in the format accepted by the EEM_Base model queries.
+		 */
+		$ids_query = apply_filters(
+			'FHEE__EEM_Transaction__delete_junk_transactions__initial_query_args',
+			array(
+				0 => array(
+					'STS_ID' => EEM_Transaction::failed_status_code,
+					'TXN_timestamp' => array( '<', time() - $time_to_leave_alone )
+				)
+			),
+			$time_to_leave_alone
 		);
-		return $wpdb->query( $query );
+
+
+		/**
+		 * This filter is for when code needs to filter the list of transaction ids that represent transactions
+		 * about to be deleted based on some other criteria that isn't easily done via the query args filter.
+		 */
+		$txn_ids = apply_filters(
+			'FHEE__EEM_Transaction__delete_junk_transactions__transaction_ids_to_delete',
+			EEM_Transaction::instance()->get_col( $ids_query, 'TXN_ID' ),
+			$time_to_leave_alone
+		);
+		//now that we have the ids to delete
+		if ( ! empty( $txn_ids ) && is_array( $txn_ids ) ) {
+			// first, make sure these TXN's are removed the "ee_locked_transactions" array
+			EEM_Transaction::unset_locked_transactions( $txn_ids );
+			// let's get deletin'...
+			// Why no wpdb->prepare?  Because the data is trusted.
+			// We got the ids from the original query to get them FROM
+			// the db (which is sanitized) so no need to prepare them again.
+			$query   = '
+				DELETE
+				FROM ' . $this->table() . '
+				WHERE
+					TXN_ID IN ( ' . implode( ",", $txn_ids ) . ')';
+			$deleted = $wpdb->query( $query );
+		}
+		if ( $deleted ) {
+			/**
+			 * Allows code to do something after the transactions have been deleted.
+			 */
+			do_action( 'AHEE__EEM_Transaction__delete_junk_transactions__successful_deletion', $txn_ids );
+		}
+		return $deleted;
 	}
 
 
+
+	/**
+	 * @param array $transaction_IDs
+	 * @return bool
+	 */
+	public static function unset_locked_transactions( array $transaction_IDs ) {
+		$locked_transactions = get_option( 'ee_locked_transactions', array() );
+		$update = false;
+		foreach ( $transaction_IDs as $TXN_ID ) {
+			if ( isset( $locked_transactions[ $TXN_ID ] ) ) {
+				unset( $locked_transactions[ $TXN_ID ] );
+				$update = true;
+			}
+		}
+		if ( $update ) {
+			update_option( 'ee_locked_transactions', $locked_transactions );
+		}
+		return $update;
+	}
 
 
 }

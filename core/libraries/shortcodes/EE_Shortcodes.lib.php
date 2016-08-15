@@ -125,11 +125,18 @@ abstract class EE_Shortcodes extends EE_Base {
 	protected $_GRP_ID;
 
 
+	/**
+	 * @since 4.9.0
+	 * @type EE_Message
+	 */
+	protected $_message;
+
+
 
 
 	/**
 	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
-	 * @var object
+	 * @var EEH_Parse_Shortcodes
 	 */
 	protected $_shortcode_helper;
 
@@ -148,6 +155,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	private function _set_defaults() {
 		$this->name = $this->description = '';
 		$this->_shortcodes = array();
+		$this->_set_shortcode_helper();
 	}
 
 
@@ -156,8 +164,6 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * loads an instance of the EE_Shortcode_Parser helper when requested
 	 */
 	protected function _set_shortcode_helper() {
-		//shortcode helper
-		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_helper = new EEH_Parse_Shortcodes();
 	}
@@ -165,8 +171,9 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 	public function get_shortcode_helper() {
-		if ( ! $this->_shortcode_helper instanceof EEH_Parse_Shortcodes )
+		if ( ! $this->_shortcode_helper instanceof EEH_Parse_Shortcodes ) {
 			$this->_set_shortcode_helper();
+		}
 		return $this->_shortcode_helper;
 	}
 
@@ -316,8 +323,9 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( isset( $this->_extra_data['messenger'] ) ) {
 			$this->_messenger = $this->_extra_data['messenger'];
 			$this->_message_type = $this->_extra_data['message_type'];
-			$this->_context = $this->_extra_data['context'];
-			$this->_GRP_ID = $this->_extra_data['GRP_ID'];
+			$this->_context = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message']->context() : '';
+			$this->_GRP_ID = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message']->GRP_ID() : 0;
+			$this->_message = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message'] : null;
 		}
 	}
 
@@ -357,6 +365,18 @@ abstract class EE_Shortcodes extends EE_Base {
 	 */
 	public function get_set_context() {
 		return $this->_context;
+	}
+
+
+
+
+	/**
+	 * This returns whatever the set EE_Message object is on this shortcode.
+	 * @since 4.9.0
+	 * @return EE_Message
+	 */
+	public function get_set_message() {
+		return $this->_message;
 	}
 
 

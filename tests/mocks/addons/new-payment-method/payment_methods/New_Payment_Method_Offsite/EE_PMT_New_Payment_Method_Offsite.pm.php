@@ -37,7 +37,10 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 		return array(
 			$this->get_help_tab_name() => array(
 				'title' => __('New Payment Method Offsite Settings', 'event_espresso'),
-				'filename' => 'new_payment_method_offsite'
+				'filename' => 'new_payment_method_offsite',
+				'template_args' => array(
+					'variable_x' => 'VARIABLE X',
+				)
 				),
 		);
 	}
@@ -58,7 +61,6 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 	 * @return EE_Payment_Method_Form
 	 */
 	public function generate_new_settings_form() {
-		EE_Registry::instance()->load_helper('Template');
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(

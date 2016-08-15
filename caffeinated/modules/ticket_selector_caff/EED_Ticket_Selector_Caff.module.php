@@ -69,7 +69,7 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 	 *  @return 	void
 	 */
 	public static function template_settings_form() {
-		echo EED_Ticket_Selector_Caff::_ticket_selector_settings_form()->get_html_and_js();
+		echo EED_Ticket_Selector_Caff::_ticket_selector_settings_form()->get_html();
 	}
 
 
@@ -77,8 +77,6 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 
 
 	public static function _ticket_selector_settings_form() {
-		EE_Registry::instance()->load_helper('HTML');
-		EE_Registry::instance()->load_helper('Template');
 
 		return new EE_Form_Section_Proper(
 			array(
