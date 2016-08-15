@@ -17,8 +17,8 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 			if( typeof select2_args.ajax !== 'undefined' ) {
 				if( typeof select2_args.ajax.data_interface !== 'undefined' ) {
 
-					console_log_object( 'select2_input_id', select2_input_id, 0 );
-					console_log_object( 'select2_args', select2_args, 0 );
+					// console_log_object( 'select2_input_id', select2_input_id, 0 );
+					// console_log_object( 'select2_args', select2_args, 0 );
 
 					var function_name_or_declaration = select2_args.ajax.data_interface;
 					var function_named = window[ function_name_or_declaration ];
@@ -37,7 +37,7 @@ jQuery(document).bind( 'EEFV:initialize_specific_form', function(event, passed_i
 					}
 				}
 			}
-			console_log_object( 'select2_args', select2_args, 0 );
+			// console_log_object( 'select2_args', select2_args, 0 );
 			jQuery( '#' + select2_input_id ).select2( select2_args );
 		});
 	}
@@ -59,7 +59,7 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 	 * @returns object
 	 */
 	this.prepData = function ( params ) {
-		console_log( 'prepData', '', true );
+		// console_log( 'prepData', '', true );
 		params.page = params.page || 1;
 		var new_params =  this.default_query_params;
 		new_params.limit = [
@@ -73,7 +73,7 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 		new_params.where[this.display_field]= [ 'like', '%' + search_term + '%' ];
 		// new_params.include=this.display_field;
 		new_params._wpnonce = this.nonce;
-		console_log_object( 'new_params', new_params, 0 );
+		// console_log_object( 'new_params', new_params, 0 );
 		return new_params;
 	};
 
@@ -96,10 +96,10 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 	 * @returns object
 	 */
 	this.processResults = function ( data, params ){
+		// console_log( 'processResults', '', true );
+		// console_log_object( 'data', data, 0 );
+		// console_log_object( 'params', params, 0 );
 		var formatted_results = [];
-		console_log( 'processResults', '', true );
-		console_log_object( 'data', data, 0 );
-		console_log_object( 'params', params, 0 );
 		for( var i=0; i<data.length; i++ ) {
 
 			formatted_results.push(
@@ -118,64 +118,4 @@ function EE_Select2_REST_API_Interface( data_interface_args ) {
 		  }
 		}
 	};
-}
-
-/**
- *  @function console_log
- *  print to the browser console
- * @param  {string} item_name
- * @param  {*} value
- * @param  {boolean} spacer
- */
-function console_log( item_name, value, spacer ) {
-	if ( typeof value === 'object' ) {
-		console_log_object( item_name, value, 0 );
-	} else {
-		if ( spacer === true ) {
-			console.log( ' ' );
-		}
-		if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
-			console.log( item_name + ' = ' + value );
-		} else if ( typeof item_name !== 'undefined' ) {
-			console.log( item_name );
-		}
-	}
-}
-
-/**
- * @function console_log_object
- * print object to the browser console
- * @param  {string} obj_name
- * @param  {object} obj
- * @param  {number} depth
- */
-function console_log_object( obj_name, obj, depth ) {
-	depth      = typeof depth !== 'undefined' ? depth : 0;
-	var spacer = '';
-	for ( var i = 0; i < depth; i++ ) {
-		spacer = spacer + '    ';
-	}
-	if ( typeof obj === 'object' ) {
-		if ( !depth ) {
-			console.log( ' ' );
-		}
-		if ( typeof obj_name !== 'undefined' ) {
-			console.log( spacer + 'OBJ: ' + obj_name + ' : ' );
-		} else {
-			console.log( spacer + 'OBJ : ' );
-		}
-		jQuery.each(
-			obj, function ( index, value ) {
-				if ( typeof value === 'object' && depth < 6 ) {
-					depth++;
-					console_log_object( index, value, depth );
-				} else {
-					console.log( spacer + index + ' = ' + value );
-				}
-				depth = 0;
-			}
-		);
-	} else {
-		console_log( spacer + obj_name, obj, true );
-	}
 }
