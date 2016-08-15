@@ -2085,6 +2085,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//remove relation to transaction for these registrations if NOT the existing registrations
 			$registration->_remove_relations('Transaction');
 
+			//delete permanently any related messages.
+			$registration->delete_related_permanently('Message');
+
 			//now delete this registration permanently
 			$registration->delete_permanently();
 		}
@@ -2096,6 +2099,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//we need to remove all the relationships on the transaction
 		$TXN->delete_related_permanently('Payment');
 		$TXN->delete_related_permanently('Extra_Meta');
+		$TXN->delete_related_permanently('Message');
 
 		//now we can delete this REG permanently (and the transaction of course)
 		$REG->delete_related_permanently('Transaction');
