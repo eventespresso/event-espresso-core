@@ -1120,6 +1120,28 @@ a[href*="message_type=receipt"]:visited {
 	}
 }
 
+/* Media File Uploader Input */
+.ee_media_url {
+    float: left;
+    width: 90% !important;
+}
+
+.ee_media_upload img {
+    margin: 8px 3px 0;
+    vertical-align: middle;
+}
+
+.ee_media_image {
+    max-width: 240px;
+    max-height: 240px;
+}
+
+@media screen and (max-width: 782px) {
+    .ee_media_upload img {
+        margin: 14px 3px 0;
+        vertical-align: middle;
+    }
+}
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
 /****         MOVE THIS FILE BEFORE EDITING         ****/

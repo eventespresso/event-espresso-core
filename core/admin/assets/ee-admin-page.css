@@ -139,10 +139,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	display : inline-block; width : 99%; min-width : 486px;
 }
 
-.ee_media_url {
-	width: 90% !important;
-}
-
 #admin-page-header { clear : both; padding : .25em 0 0; }
 .admin-page-header-edit-lnk { margin : 0 0 0 1em; font-size : 10px; }
 .admin-page-header-go-back-lnk { margin : 0 0 0 1em; font-size : 12px; }
@@ -1073,4 +1069,25 @@ input.ee-register-button {
 	.ee-responsive-table td:before {
 		content: attr(data-th) ": ";
 	}
+}
+
+/* Media File Uploader Input */
+.ee_media_url{
+    float: left;
+    width: 90% !important;
+}
+.ee_media_upload img {
+    margin:8px 3px 0;
+    vertical-align: middle;
+}
+.ee_media_image {
+    max-width: 240px;
+    max-height: 240px;
+}
+
+@media screen and (max-width: 782px){
+    .ee_media_upload img {
+        margin: 14px 3px 0;
+        vertical-align: middle;
+    }
 }
