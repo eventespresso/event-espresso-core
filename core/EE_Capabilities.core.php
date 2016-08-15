@@ -914,8 +914,16 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 				}
 			}
 		} else {
-			//not a cpt object so handled differently
-			if ( method_exists( $obj, 'wp_user' ) && $obj->wp_user() && $user_id == $obj->wp_user() ) {
+            //not a cpt object so handled differently
+            $has_cap = false;
+            try {
+                $has_cap = method_exists($obj, 'wp_user') && $obj->wp_user() && $user_id == $obj->wp_user();
+            } catch (Exception $e) {
+                if (WP_DEBUG) {
+                    EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+                }
+            }
+			if ($has_cap) {
 				$caps[] = $cap;
 			} else {
 				if ( ! empty( $this->others_cap ) ) {
@@ -1021,8 +1029,16 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 				$caps[] = $cap;
 			}
 		} else {
-			//not a cpt object so handled differently
-			if ( method_exists( $obj, 'wp_user' ) && $obj->wp_user() && $user_id == $obj->wp_user() ) {
+            //not a cpt object so handled differently
+            $has_cap = false;
+            try {
+                $has_cap = method_exists($obj, 'wp_user') && $obj->wp_user() && $user_id == $obj->wp_user();
+            } catch (Exception $e) {
+                if (WP_DEBUG) {
+                    EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+                }
+            }
+			if ($has_cap) {
 				$caps[] = $cap;
 			} elseif ( ! empty( $this->private_cap ) ) {
 				$caps[] = $this->private_cap;
