@@ -37,10 +37,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 	/**
 	 * loader for setting the $_admin_page_property
 	 *
-	 * @param string $timezone Timezone string to initialize the times in.
 	 * @since 4.6
 	 */
-	protected function _load_requirements( $timezone = 'America/Vancouver' ) {
+	protected function _load_requirements() {
 		$this->_admin_page = new Registrations_Admin_Page_Mock();
 	}
 
@@ -184,9 +183,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		}
 		if ( $return ) {
 			return $result;
-		} else {
-			echo $result;
 		}
+		echo $result;
+		return '';
 	}
 
 
@@ -224,9 +223,12 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 	 * @throws \EE_Error
 	 */
 	public function test__set_registration_status_from_request_for_multiple_registrations() {
+		/** @var EE_Transaction $txn */
 		$txn = $this->factory->transaction->create();
+		/** @var EE_Line_Item $tli */
 		$tli = EEH_Line_Item::create_total_line_item( $txn);
 		$tli->save();
+		/** @var EE_Ticket $tkt */
 		$tkt = $this->factory->ticket_chained->create();
 		EEH_Line_Item::add_ticket_purchase( $tli, $tkt );
 		//basically the same as the prior test except here we're testing multiple registrations.
