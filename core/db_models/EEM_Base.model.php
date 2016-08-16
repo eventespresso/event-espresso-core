@@ -1014,9 +1014,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
 	 * null is returned.
+
 	 *
-	 * @param array $query_params like EEM_Base's $query_params variable.
-	 * @return EE_Base_Class | NULL
+*@param array $query_params like EEM_Base's $query_params variable.
+	 * @return EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
 	 * @throws \EE_Error
 	 */
 	public function get_one($query_params = array()){
@@ -1810,7 +1811,11 @@ abstract class EEM_Base extends EE_Base{
 			foreach($objects_for_deletion as  $delete_object){
 				$values_for_each_cpk_for_a_row = array();
 				foreach($fields as $cpk_field){
-					$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()."=".$delete_object[$cpk_field->get_qualified_column()];
+					if ( $cpk_field instanceof EE_Model_Field_Base ){
+						$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()
+						                                   . "="
+						                                   . $delete_object[ $cpk_field->get_qualified_column() ];
+					}
 				}
 				$ways_to_identify_a_row[] = "(".implode(" AND ",$values_for_each_cpk_for_a_row).")";
 			}
@@ -1919,15 +1924,15 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __( 'WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"', 'event_espresso' ), $wpdb_method, var_export( $arguments_to_provide, true ) ) );
 			}
 		}elseif( $result === false ) {
-			EE_Error::add_error( 
-				sprintf( 
+			EE_Error::add_error(
+				sprintf(
 					__( 'A database error has occurred. Turn on WP_DEBUG for more information.||A database error occurred doing wpdb method "%1$s", with arguments "%2$s". The error was "%3$s"', 'event_espresso' ),
 					$wpdb_method,
 					var_export( $arguments_to_provide, true ),
 					$wpdb->last_error
-				), 
-				__FILE__, 
-				__FUNCTION__, 
+				),
+				__FILE__,
+				__FUNCTION__,
 				__LINE__
 			);
 		}
@@ -2379,12 +2384,16 @@ abstract class EEM_Base extends EE_Base{
 	 * saved to the DB would break some uniqueness requirement, like a primary key
 	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
 	 * can be either an EE_Base_Class or an array of fields n values
+	 *
 	 * @param EE_Base_Class|array $obj_or_fields_array
-	 * @param boolean $include_primary_key whether to use the model object's primary key when looking for conflicts
-	 * (ie, if false, we ignore the model object's primary key when finding "conflicts".
-	 * If true, it's also considered). Only works for INT primary key- STRING primary keys cannot be ignored
+	 * @param boolean       $include_primary_key       whether to use the model object's primary key
+	 *                                                 when looking for conflicts
+	 *                                                 (ie, if false, we ignore the model object's primary key
+	 *                                                 when finding "conflicts". If true, it's also considered).
+	 *                                                 Only works for INT primary key,
+	 *                                                 STRING primary keys cannot be ignored
 	 * @throws EE_Error
-	 * @return EE_Base_Class
+	 * @return EE_Base_Class|array
 	 */
 	public function get_one_conflicting($obj_or_fields_array, $include_primary_key = true ){
 		if($obj_or_fields_array instanceof EE_Base_Class){
@@ -3893,7 +3902,7 @@ abstract class EEM_Base extends EE_Base{
 	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Answer that would be ANS_ID field object
 	 * @param $field_obj
-	 * @return EE_Model_Field_Base
+	 * @return boolean
 	 */
 	public function is_primary_key_field( $field_obj ){
 		return $field_obj instanceof EE_Primary_Key_Field_Base ? TRUE : FALSE;
@@ -4580,7 +4589,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return array( $this->primary_key_name() => $this->get_primary_key_field());
 	}
-	
+
 
 
 
