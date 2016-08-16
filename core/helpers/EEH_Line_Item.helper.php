@@ -453,8 +453,13 @@ class EEH_Line_Item {
 			// decrement cancelled quantity
 			$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() - $qty );
 		} else if ( $cancellation_line_item->quantity() == $qty ) {
+			// decrement cancelled quantity in case anyone still has the object kicking around
+			$cancellation_line_item->set_quantity( $cancellation_line_item->quantity() - $qty );
 			// delete because quantity will end up as 0
 			$cancellation_line_item->delete();
+			// and attempt to destroy the object,
+			// even though PHP won't actually destroy it until it needs the memory
+			unset( $cancellation_line_item );
 		} else {
 			// what ?!?! negative quantity ?!?!
 			throw new EE_Error(
@@ -1312,16 +1317,25 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function visualize( EE_Line_Item $line_item, $indentation = 0 ){
-		echo "\n<br />";
+		echo defined('EE_TESTS_DIR') ? "\n" : '<br />';
+		if ( ! $indentation ) {
+			echo defined( 'EE_TESTS_DIR' ) ? "\n" : '<br />';
+		}
 		for( $i = 0; $i < $indentation; $i++ ){
-			echo " - ";
+			echo ". ";
 		}
-		if( $line_item->is_percent() ) {
-			$breakdown = $line_item->percent() . '%';
-		} else {
-			$breakdown = '$' . $line_item->unit_price() . "x" . $line_item->quantity();
+		$breakdown = '';
+		if ( $line_item->is_line_item()){
+			if ( $line_item->is_percent() ) {
+				$breakdown = "{$line_item->percent()}%";
+			} else {
+				$breakdown = '$' . "{$line_item->unit_price()} x {$line_item->quantity()}";
+			}
 		}
-		echo $line_item->name() . "( " . $line_item->ID() . " ) : " . $line_item->type() . " $" . $line_item->total() . "(" . $breakdown . ")";
+		echo $line_item->name() . " ( ID:{$line_item->ID()} ) : {$line_item->type()} " . '$' . "{$line_item->total()}";
+		if ( $breakdown ) {
+			echo " ( {$breakdown} )";
+		}
 		if( $line_item->is_taxable() ){
 			echo "  * taxable";
 		}
