@@ -493,7 +493,17 @@ class CptQueryModifier {
 	public function getEditPostLink( $url, $ID ) {
 		// need to make sure we only edit links if our cpt
 		global $post;
-		if ( ! $post instanceof \WP_Post || $post->post_type !== $this->post_type ) {
+		$cpt_details = $this->cptDetails();
+		//notice if the cpt is registered with `show_ui` set to true, we take that to mean that the WordPress core ui
+		//for interacting with the CPT is desired and there is no EE UI for interacting with the CPT in the admin.
+		if (
+			! $post instanceof \WP_Post
+			|| $post->post_type !== $this->post_type
+			|| (
+				isset( $cpt_details['args']['show_ui'] )
+				&& $cpt_details['args']['show_ui']
+			)
+		) {
 			return $url;
 		}
 		//k made it here so all is good.
