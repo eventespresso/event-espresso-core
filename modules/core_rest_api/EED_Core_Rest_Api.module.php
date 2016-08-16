@@ -97,11 +97,13 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * replace it with application passwords.
 	 */
 	public static function maybe_notify_of_basic_auth_removal() {
-		if( ! isset( $_SERVER['PHP_AUTH_USER'] )
-			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
-			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
-			return;
-		}
+		if( 
+			apply_filters( 
+			'FHEE__EED_Core_Rest_Api__maybe_notify_of_basic_auth_removal__override',
+				! isset( $_SERVER['PHP_AUTH_USER'] )
+				&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) 
+			) 
+		) {
 		//ok they're using the WP API with Basic Auth
 		$message = sprintf(
 			__( 'We noticed you\'re using the WP API, which is used by the Event Espresso 4 mobile apps. Because of security and compatibility concerns, we will soon be removing our default authentication mechanism, WP API Basic Auth, from Event Espresso. It is recommended you instead install the %1$sWP Application Passwords plugin%2$s and use it with the EE4 Mobile apps. See %3$sour mobile app documentation%2$s for more information. %4$sIf you have installed the WP API Basic Auth plugin separately, or are not using the Event Espresso 4 mobile apps, you can disregard this message.%4$sThe Event Espresso Team', 'event_espresso' ),
