@@ -11,6 +11,7 @@ use EventEspresso\core\libraries\rest_api\Model_Data_Translator;
  * @subpackage    
  * @author				Mike Nelson
  * @since		 	   $VID:$
+ * @group rest_api
  *
  */
 if( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
