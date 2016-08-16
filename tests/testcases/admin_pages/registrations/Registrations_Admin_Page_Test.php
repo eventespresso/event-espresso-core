@@ -100,15 +100,16 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		// echo "\n prev: " . $prev_month->format( 'M j, Y g:i a' );
 		// echo "\n next: " . $next_month->format( 'M j, Y g:i a' );
 		//let's setup some registrations to test.
-		$registrations = $this->factory->registration->create_many( 4 );
+		// first create a txn
+		/** @var EE_Transaction $transaction */
+		$transaction = $this->factory->transaction->create();
+		$registrations = $this->factory->registration->create_many( 4, array( 'TXN_ID' => $transaction->ID()) );
 		$this->assertCount(
 			4,
 			$registrations,
 			'there should be 4 registrations in total, not ' . count( $registrations )
 			. "\nHere are the registrations: " . $this->reg_debug( $registrations, true )
 		);
-		// create a txn
-		$transaction = $this->factory->transaction->create();
 		//create an event and add to the registrations
 		$event = $this->factory->event->create( array( 'EVT_wp_user' => 0 ) );
 		if ( $event instanceof EE_Event ) {
