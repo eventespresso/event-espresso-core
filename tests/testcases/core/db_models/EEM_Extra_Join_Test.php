@@ -19,6 +19,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 class EEM_Extra_Join_Test extends EE_UnitTestCase{
 
 	public function setUp() {
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		//for the testing's sake, we want events to be related to payment methods via a HABTM_Any relation
 		add_filter( 'FHEE__EEM_Event__construct__model_relations', array( $this, 'relate_events_to_payment_methods' ) );
 		add_filter( 'FHEE__EEM_Payment_Method__construct__model_relations', array( $this, 'relate_payment_methods_to_events' ) );
@@ -32,6 +33,7 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase{
 	 * @return mixed
 	 */
 	public function relate_events_to_payment_methods( $event_relations ) {
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		$event_relations[ 'Payment_Method' ] = new EE_HABTM_Any_Relation();
 		return $event_relations;
 	}
@@ -43,6 +45,7 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase{
 	 * @return mixed
 	 */
 	public function relate_payment_methods_to_events( $pm_relations ) {
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		$pm_relations[ 'Event' ] = new EE_HABTM_Any_Relation();
 		return $pm_relations;
 	}
@@ -53,12 +56,19 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase{
 	 * @group 9113
 	 */
 	public function test_get_related() {
+		// echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		$e = $this->new_model_obj_with_dependencies( 'Event' );
 		$pm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Invoice' ) );
 		//add a few extra events and payment methods, just to make sure we are
 		//only relating the things we intended
 		$this->new_model_obj_with_dependencies( 'Event' );
 		$this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Invoice' ) );
+
+		// $relation_settings = $e->get_model()->relation_settings();
+		// foreach ( $relation_settings as $model_name => $model_obj ) {
+		// 	echo '$model_name: ';
+		// 	var_dump( $model_name );
+		// }
 
 		$this->new_model_obj_with_dependencies(
 			'Extra_Join',
