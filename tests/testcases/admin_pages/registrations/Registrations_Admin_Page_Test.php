@@ -108,15 +108,17 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 			'there should be 4 registrations in total, not ' . count( $registrations )
 			. "\nHere are the registrations: " . $this->reg_debug( $registrations, true )
 		);
+		// create a txn
+		$transaction = $this->factory->transaction->create();
 		//create an event and add to the registrations
 		$event = $this->factory->event->create( array( 'EVT_wp_user' => 0 ) );
 		if ( $event instanceof EE_Event ) {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
+					$registration->_add_relation_to( $transaction, 'Transaction' );
+					$registration->_add_relation_to( $event, 'Event' );
 					$registration->set( 'STS_ID', EEM_Registration::status_id_pending_payment );
 					$registration->save();
-					$event->_add_relation_to( $registration, 'Registration' );
-					$event->save();
 				}
 			}
 		}
@@ -198,6 +200,8 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 		//first setup a registration
 		/** @var EE_Registration $testing_registration */
 		$testing_registration = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_pending_payment ) );
+		// and a txn
+		$testing_registration->_add_relation_to( $this->factory->transaction->create(), 'Transaction' );
 		$_REQUEST['_REG_ID'] = $testing_registration->ID();
 		$this->_load_requirements();
 		$success = $this->_admin_page->set_registration_status_from_request( EEM_Registration::status_id_not_approved );
@@ -220,13 +224,39 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase {
 	 * @throws \EE_Error
 	 */
 	public function test__set_registration_status_from_request_for_multiple_registrations() {
+		$txn = $this->factory->transaction->create();
+		$tli = EEH_Line_Item::create_total_line_item( $txn);
+		$tli->save();
+		$tkt = $this->factory->ticket_chained->create();
+		EEH_Line_Item::add_ticket_purchase( $tli, $tkt );
 		//basically the same as the prior test except here we're testing multiple registrations.
 		/** @var EE_Registration $registration_a */
-		$registration_a = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_cancelled ) );
+		$registration_a = $this->factory->registration->create(
+			array(
+				'STS_ID' => EEM_Registration::status_id_cancelled,
+				'TXN_ID' => $txn->ID(),
+				'TKT_ID' => $tkt->ID(),
+			)
+		);
+		$registration_a->save();
 		/** @var EE_Registration $registration_b */
-		$registration_b = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_pending_payment ) );
+		$registration_b = $this->factory->registration->create(
+			array(
+				'STS_ID' => EEM_Registration::status_id_pending_payment,
+				'TXN_ID' => $txn->ID(),
+				'TKT_ID' => $tkt->ID(),
+			)
+		);
+		$registration_b->save();
 		/** @var EE_Registration $registration_c */
-		$registration_c = $this->factory->registration->create( array( 'STS_ID' => EEM_Registration::status_id_not_approved ) );
+		$registration_c = $this->factory->registration->create(
+			array(
+				'STS_ID' => EEM_Registration::status_id_not_approved,
+				'TXN_ID' => $txn->ID(),
+				'TKT_ID' => $tkt->ID(),
+			)
+		);
+		$registration_c->save();
 
 		$expected_ids = array( $registration_a->ID(), $registration_b->ID(), $registration_c->ID() );
 		$_REQUEST['_REG_ID'] = $expected_ids;
