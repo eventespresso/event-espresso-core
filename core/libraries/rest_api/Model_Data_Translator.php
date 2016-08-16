@@ -39,16 +39,17 @@ class Model_Data_Translator {
 	 * @param \EE_Model_Field_Base $field_obj
 	 * @param mixed $original_value_maybe_array
 	 * @param string  $requested_version
+	 * @param string $timezone_string treat values as being in this timezone
 	 * @return mixed
 	 */
-	public static function prepare_field_values_from_json( $field_obj, $original_value_maybe_array, $requested_version ) {
+	public static function prepare_field_values_from_json( $field_obj, $original_value_maybe_array, $requested_version, $timezone_string = 'UTC' ) {
 		if( is_array( $original_value_maybe_array ) ) {
 			$new_value_maybe_array = array();
 			foreach( $original_value_maybe_array as $array_key => $array_item ) {
-				$new_value_maybe_array[ $array_key ] = Model_Data_Translator::prepare_field_value_from_json( $field_obj, $array_item, $requested_version );
+				$new_value_maybe_array[ $array_key ] = Model_Data_Translator::prepare_field_value_from_json( $field_obj, $array_item, $requested_version, $timezone_string );
 			}
 		} else {
-			$new_value_maybe_array = Model_Data_Translator::prepare_field_value_from_json( $field_obj, $original_value_maybe_array, $requested_version );
+			$new_value_maybe_array = Model_Data_Translator::prepare_field_value_from_json( $field_obj, $original_value_maybe_array, $requested_version, $timezone_string );
 		}
 		return $new_value_maybe_array;
 	}
@@ -78,15 +79,23 @@ class Model_Data_Translator {
 	 * @param \EE_Model_Field_Base $field_obj
 	 * @param mixed $original_value
 	 * @param string $requested_version
+	 * @param string $timezone_string treat values as being in this timezone
 	 * @return mixed
 	 */
-	public static function prepare_field_value_from_json( $field_obj, $original_value, $requested_version ) {
+	public static function prepare_field_value_from_json( $field_obj, $original_value, $requested_version, $timezone_string = 'UTC' ) {
 		$new_value = null;
 		if( $field_obj instanceof \EE_Infinite_Integer_Field
 			&& in_array( $original_value, array( null, '' ), true ) ) {
 			$new_value = EE_INF;
 		} elseif( $field_obj instanceof \EE_Datetime_Field ) {
-			$new_value = rest_parse_date( $original_value );
+			//treat the provided value as being in this timezone
+			$offset_secs_string = $field_obj->get_timezone_offset( new \DateTimeZone( $timezone_string ) );
+			$offset_secs = (int) substr( $offset_secs_string, 1 );
+			$offset_sign = substr( $offset_secs_string, 0, 1 ) ? substr( $offset_secs_string, 0, 1 ) : '+';
+			$offset_string = str_pad( floor( abs( $offset_secs ) / HOUR_IN_SECONDS ), 2,'0', STR_PAD_LEFT ) 
+				. ':' 
+				. str_pad( ( abs( $offset_secs ) % HOUR_IN_SECONDS ) / MINUTE_IN_SECONDS, 2, '0', STR_PAD_LEFT );
+			$new_value = rest_parse_date( $original_value . $offset_sign . $offset_string  );
 		} else {
 			$new_value = $original_value;
 		}
@@ -137,10 +146,27 @@ class Model_Data_Translator {
 	public static function prepare_conditions_query_params_for_models( $inputted_query_params_of_this_type, \EEM_Base $model, $requested_version ) {
 		$query_param_for_models = array();
 		foreach( $inputted_query_params_of_this_type as $query_param_key => $query_param_value ) {
+			$query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key );
 			$field = Model_Data_Translator::deduce_field_from_query_param( 
-				Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $query_param_key ), 
+				$query_param_sans_stars, 
 				$model
 			);
+			//double-check is it a *_gmt field?
+			$char_pos_of_gmt = strlen( $query_param_sans_stars ) - strlen( '_gmt' );
+			if( ! $field instanceof \EE_Model_Field_Base
+				&& strpos( $query_param_sans_stars, '_gmt' ) == $char_pos_of_gmt ) {
+				//yep, take off '_gmt', and find the field
+				$query_param_sans_gmt_and_sans_stars = substr( $query_param_sans_stars, 0, $char_pos_of_gmt );
+				$query_param_key = str_replace( $query_param_sans_stars, $query_param_sans_gmt_and_sans_stars, $query_param_key );
+				$field = Model_Data_Translator::deduce_field_from_query_param( 
+					$query_param_sans_gmt_and_sans_stars, 
+					$model
+				);
+				$timezone = 'UTC';
+			} else {
+				//so it's not a GMT field. Set the timezone on the model to the default
+				$timezone = \EEH_DTT_Helper::get_valid_timezone_string();
+			}
 			if( $field instanceof \EE_Model_Field_Base ) {
 				//did they specify an operator?
 				if( is_array( $query_param_value ) ) {
@@ -148,10 +174,10 @@ class Model_Data_Translator {
 					$translated_value = array( $op );
 					if( isset( $query_param_value[ 1 ] ) ) {
 						$value = $query_param_value[ 1 ];
-						$translated_value[1] = Model_Data_Translator::prepare_field_values_from_json( $field, $value, $requested_version );
+						$translated_value[1] = Model_Data_Translator::prepare_field_values_from_json( $field, $value, $requested_version, $timezone );
 					}
 				} else {
-					$translated_value  = Model_Data_Translator::prepare_field_value_from_json( $field, $query_param_value, $requested_version );
+					$translated_value  = Model_Data_Translator::prepare_field_value_from_json( $field, $query_param_value, $requested_version, $timezone );
 				}
 				$query_param_for_models[ $query_param_key ] = $translated_value;
 			} else {
