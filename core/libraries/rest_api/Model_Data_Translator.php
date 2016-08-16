@@ -92,9 +92,20 @@ class Model_Data_Translator {
 			$offset_secs_string = $field_obj->get_timezone_offset( new \DateTimeZone( $timezone_string ) );
 			$offset_secs = (int) substr( $offset_secs_string, 1 );
 			$offset_sign = substr( $offset_secs_string, 0, 1 ) ? substr( $offset_secs_string, 0, 1 ) : '+';
-			$offset_string = str_pad( floor( abs( $offset_secs ) / HOUR_IN_SECONDS ), 2,'0', STR_PAD_LEFT ) 
+			$offset_string = 
+				str_pad( 
+					floor( $offset_secs / HOUR_IN_SECONDS ), 
+					2,
+					'0', 
+					STR_PAD_LEFT 
+				) 
 				. ':' 
-				. str_pad( ( abs( $offset_secs ) % HOUR_IN_SECONDS ) / MINUTE_IN_SECONDS, 2, '0', STR_PAD_LEFT );
+				. str_pad( 
+					( $offset_secs % HOUR_IN_SECONDS ) / MINUTE_IN_SECONDS, 
+					2, 
+					'0', 
+					STR_PAD_LEFT 
+				);
 			$new_value = rest_parse_date( $original_value . $offset_sign . $offset_string  );
 		} else {
 			$new_value = $original_value;
