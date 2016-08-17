@@ -29,9 +29,9 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 	protected $_value_field_name;
 
 	/**
-	 * @var array $_select_columns
+	 * @var array $_extra_select_columns
 	 */
-	protected $_select_columns = array();
+	protected $_extra_select_columns = array();
 
 
 
@@ -74,9 +74,9 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 			'display_field_name',
 			$model->get_a_field_of_type( 'EE_Text_Field_Base' )->get_name()
 		);
-		$this->_select_columns = EEH_Array::is_set(
+		$this->_extra_select_columns = EEH_Array::is_set(
 			$input_settings,
-			'select_columns',
+			'extra_select_columns',
 			array()
 		);
 		$this->_add_validation_strategy(
@@ -93,11 +93,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		$default_select2_args = array(
 			'ajax' => array(
 				'url' => $rest_controller->get_versioned_link_to(
-					EEH_Array::is_set(
-						$input_settings,
-						'endpoint',
-						EEH_Inflector::pluralize_and_lower( $this->_model_name )
-					)
+					EEH_Inflector::pluralize_and_lower( $this->_model_name )
 				),
 				'dataType' => 'json',
 				'delay' => '250',
@@ -109,11 +105,12 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 					),
 					'display_field' => $this->_display_field_name,
 					'value_field' => $this->_value_field_name,
-					'nonce' => wp_create_nonce( 'wp_rest' )
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+					'locale' => str_replace( '_', '-', strtolower( get_locale() ) )
 				),
 			),
 			'cache' => true,
-			'width' => '100',
+			'width' => '100'
 		);
 		$select2_args = array_replace_recursive(
 			$default_select2_args,
@@ -142,8 +139,8 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		$values_for_options = (array)$value;
 		$value_field = $this->_get_model()->field_settings_for( $this->_value_field_name );
 		$display_field = $this->_get_model()->field_settings_for( $this->_display_field_name );
-		$this->_select_columns[] = $value_field->get_qualified_column() . ' AS ' . $this->_value_field_name;
-		$this->_select_columns[] = $display_field->get_qualified_column() . ' AS ' . $this->_display_field_name;
+		$this->_extra_select_columns[] = $value_field->get_qualified_column() . ' AS ' . $this->_value_field_name;
+		$this->_extra_select_columns[] = $display_field->get_qualified_column() . ' AS ' . $this->_display_field_name;
 		$display_values = $this->_get_model()->get_all_wpdb_results(
 			array(
 				array(
@@ -151,7 +148,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 				)
 			),
 			ARRAY_A,
-			implode( ',', $this->_select_columns )
+			implode( ',', $this->_extra_select_columns )
 		);
 		$select_options = array();
 		if( is_array( $select_options ) ) {
