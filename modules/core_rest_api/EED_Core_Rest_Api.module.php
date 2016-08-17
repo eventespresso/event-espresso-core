@@ -97,8 +97,13 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * replace it with application passwords.
 	 */
 	public static function maybe_notify_of_basic_auth_removal() {
-		if( ! isset( $_SERVER['PHP_AUTH_USER'] )
-			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+		if( 
+			apply_filters( 
+				'FHEE__EED_Core_Rest_Api__maybe_notify_of_basic_auth_removal__override',
+				! isset( $_SERVER['PHP_AUTH_USER'] )
+			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) 
+			) 
+		) {
 			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
 			return;
 		}
