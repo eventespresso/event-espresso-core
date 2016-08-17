@@ -62,7 +62,12 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base{
 		$query_params = EEH_Array::is_set(
 			$input_settings,
 			'query_params',
-			array( 'limit' => 10, 'caps' => EEM_Base::caps_read_admin )
+			array()
+		);
+		// make sure limit and caps are always set
+		$query_params = array_merge(
+			array( 'limit' => 10, 'caps' => EEM_Base::caps_read_admin ),
+			$query_params
 		);
 		$this->_value_field_name = EEH_Array::is_set(
 			$input_settings,
