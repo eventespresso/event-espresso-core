@@ -373,7 +373,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 
 		}
-		return $set_column_values;//validation fo this data to be performed by the model before insertion.
+		return array_map( 'trim', $set_column_values );//validation fo this data to be performed by the model before insertion.
 	}
 
 
