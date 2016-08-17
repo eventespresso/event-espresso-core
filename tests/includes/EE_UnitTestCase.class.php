@@ -65,7 +65,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	public function setUp() {
-		EE_Registry::reset( true );
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -134,6 +133,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	public function tearDown(){
 		parent::tearDown();
+		EE_Registry::reset( true );
 		global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
 		$wp_filter = $this->wp_filters_saved[ 'wp_filter' ];
 		$wp_actions = $this->wp_filters_saved[ 'wp_actions' ];
