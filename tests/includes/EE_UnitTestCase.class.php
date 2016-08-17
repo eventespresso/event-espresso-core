@@ -65,6 +65,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	public function setUp() {
+		// if you get fatal errors or memory overruns or other nasty fun like that,
+		// then uncomment the following line and you'll get a list of test case classes being run
+		// echo "\n " . __LINE__ . ") " . __METHOD__ . '() TEST CASE: ' . get_class( $this ) . "()";
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
