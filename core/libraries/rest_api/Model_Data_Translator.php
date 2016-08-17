@@ -197,11 +197,10 @@ class Model_Data_Translator {
 				$model
 			);
 			//double-check is it a *_gmt field?
-			$char_pos_of_gmt = strlen( $query_param_sans_stars ) - strlen( '_gmt' );
 			if( ! $field instanceof \EE_Model_Field_Base
-				&& strpos( $query_param_sans_stars, '_gmt' ) == $char_pos_of_gmt ) {
+				&& substr( $query_param_sans_stars, -4, 4 ) === '_gmt' ) {
 				//yep, take off '_gmt', and find the field
-				$query_param_sans_gmt_and_sans_stars = substr( $query_param_sans_stars, 0, $char_pos_of_gmt );
+				$query_param_sans_gmt_and_sans_stars = substr( $query_param_sans_stars, 0, strrpos( $query_param_sans_stars, '_gmt' ) );
 				$query_param_key = str_replace( $query_param_sans_stars, $query_param_sans_gmt_and_sans_stars, $query_param_key );
 				$field = Model_Data_Translator::deduce_field_from_query_param(
 					$query_param_sans_gmt_and_sans_stars,
