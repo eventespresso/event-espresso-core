@@ -77,6 +77,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		);
 		$this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
 		parent::setUp();
+		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
 		//reset wpdb's list of queries executed so it only stores those from the current test
 		$wpdb->queries = array();
@@ -98,6 +99,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		// load scenarios
 		require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
 		$this->scenarios = new EE_Test_Scenario_Factory( $this );
+		EE_Registry::reset();
 
 		//IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
 		//updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
@@ -144,7 +146,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if( ! empty( $notices[ 'errors' ] ) ){
 			$this->fail(  $notices['errors'] );
 		}
-
 	}
 
 	/**
