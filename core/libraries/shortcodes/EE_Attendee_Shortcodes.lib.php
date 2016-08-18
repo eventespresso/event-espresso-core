@@ -59,6 +59,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			'[REGISTRATION_CODE]' => __('Unique Registration Code for the registration', 'event_espresso'),
 			'[REGISTRATION_STATUS_ID]' => __('Parses to the registration status for the attendee', 'event_espresso'),
 			'[REGISTRATION_STATUS_LABEL]' => __('Parses to the status label for the registrant', 'event_espresso'),
+			'[REGISTRATION_TOTAL_AMOUNT_PAID]' => __( 'Parses to the total amount paid for this registration.', 'event_espresso' ),
 			'[FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso'),
 			'[PHONE_NUMBER]' => __('The Phone Number for the Registration.', 'event_espresso'),
 			'[ADDRESS]' => __('The Address for the Registration', 'event_espresso'),
@@ -170,6 +171,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[REGISTRATION_STATUS_LABEL]' :
 				return $registration->pretty_status();
+				break;
+
+			case '[REGISTRATION_TOTAL_AMOUNT_PAID]' :
+				return $registration->pretty_paid();
 				break;
 
 		}
