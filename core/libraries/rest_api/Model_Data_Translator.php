@@ -283,15 +283,12 @@ class Model_Data_Translator {
 	 * @param array $field_names
 	 * @return array of field names (possibly include model prefixes)
 	 */
-	public static function prepare_field_names_from_json( $field_names ) {
-		if( is_array( $field_names ) ) {
-			$new_array = array();
-			foreach( $field_names as $key => $field_name ) {
-				$new_array[ $key ] = Model_Data_Translator::prepare_field_name_from_json( $field_name );
-			}
-			return $new_array;
+	public static function prepare_field_names_from_json( array $field_names ) {
+		$new_array = array();
+		foreach( $field_names as $key => $field_name ) {
+			$new_array[ $key ] = Model_Data_Translator::prepare_field_name_from_json( $field_name );
 		}
-		return $field_names;
+		return $new_array;
 	}
 	
 	/**
@@ -300,15 +297,12 @@ class Model_Data_Translator {
 	 * @param array $field_names_as_keys
 	 * @return array
 	 */
-	public static function prepare_field_names_in_array_keys_from_json( $field_names_as_keys ) {
-		if( is_array( $field_names_as_keys ) ) {
-			$new_array = array();
-			foreach( $field_names_as_keys as $field_name => $value ) {
-				$new_array[ Model_Data_Translator::prepare_field_name_from_json( $field_name ) ] = $value;
-			}
-			return $new_array;
+	public static function prepare_field_names_in_array_keys_from_json( array $field_names_as_keys ) {
+		$new_array = array();
+		foreach( $field_names_as_keys as $field_name => $value ) {
+			$new_array[ Model_Data_Translator::prepare_field_name_from_json( $field_name ) ] = $value;
 		}
-		return $field_names_as_keys;
+		return $new_array;
 	}
 
 
