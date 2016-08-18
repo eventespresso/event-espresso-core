@@ -95,8 +95,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$payment = ! $payment instanceof EE_Payment && is_array( $this->_extra_data ) &&  isset( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data']->payment: $payment;
 
 
-		if ( ! $transaction instanceof EE_Transaction )
+		if ( ! $transaction instanceof EE_Transaction ) {
 			return '';
+		}
 
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
@@ -169,6 +170,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[AMOUNT_PAID]" :
+				//if there is no payment object then lets get the latest payment related to the transaction
+				$payment = ! $payment instanceof EE_Payment ? $transaction->last_payment() : $payment;
 				$amount = $payment instanceof EE_Payment ? $payment->amount() : 0;
 				return EEH_Template::format_currency( $amount );
 				break;
