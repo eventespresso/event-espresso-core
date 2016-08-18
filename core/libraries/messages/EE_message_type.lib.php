@@ -679,7 +679,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'grand_total_line_item' => $this->_data->grand_total_line_item,
 			'txn' => $this->_data->txn,
 			'payments' => $this->_data->payments,
-			'payment' => isset($this->_data->payment) ? $this->_data->payment : NULL,
+			'payment' => isset( $this->_data->payment ) && $this->_data->payment instanceof EE_Payment ? $this->_data->payment : null,
 			'reg_objs' => $this->_data->reg_objs,
 			'registrations' => $this->_data->registrations,
 			'datetimes' => $this->_data->datetimes,
@@ -688,7 +688,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'questions' => $this->_data->questions,
 			'answers' => $this->_data->answers,
 			'txn_status' => $this->_data->txn_status,
-			'total_ticket_count' => $this->_data->total_ticket_count
+			'total_ticket_count' => $this->_data->total_ticket_count,
 			);
 
 		if ( is_array( $this->_data->primary_attendee_data ) ) {
