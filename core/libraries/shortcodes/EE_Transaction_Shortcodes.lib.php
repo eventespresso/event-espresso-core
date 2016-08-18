@@ -66,7 +66,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TXN_STATUS_ID]' => esc_html__( 'The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresso' ),
 			'[PAYMENT_STATUS]' => esc_html__( 'The transaction status for the transaction. This parses to the same value as the [TXN_STATUS] shortcode and still remains here for legacy support.', 'event_espresso' ),
 			'[PAYMENT_GATEWAY]' => esc_html__( 'The payment gateway used for the transaction', 'event_espresso' ),
-			'[AMOUNT_PAID]' => esc_html__( 'The amount paid with a payment', 'event_espresso' ),
+			'[AMOUNT_PAID]' => esc_html__( 'The amount paid or refunded.  This will only have a value if there was a payment or refund at the time of generating the message.', 'event_espresso' ),
+			'[LAST_AMOUNT_PAID]' => esc_html__( 'This is the last payment or refund made on the transaction related to the message being generated.', 'event_espresso' ),
 			'[TOTAL_AMOUNT_PAID]' => esc_html__( 'This parses to the total amount paid over all payments', 'event_espresso' ),
 			'[TOTAL_OWING]' => esc_html__( 'The total owing on a transaction with no attributes.', 'event_espresso' ),
 			'[TXN_SUBTOTAL]' => esc_html__( 'The subtotal for all txn line items.', 'event_espresso' ),
@@ -170,11 +171,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[AMOUNT_PAID]' :
-				//if there is no payment object then lets get the latest payment related to the transaction
-				$payment = ! $payment instanceof EE_Payment ? $transaction->last_payment() : $payment;
-				$amount = $payment instanceof EE_Payment ? $payment->amount() : 0;
-				return EEH_Template::format_currency( $amount );
+				return $payment instanceof EE_Payment
+					? EEH_Template::format_currency( $payment->amount() )
+					: EEH_Template::format_currency( 0 );
 				break;
+
+			case '[LAST_AMOUNT_PAID]' :
+				$last_payment = $transaction->last_payment();
+				return $last_payment instanceof EE_Payment
+					? EEH_Template::format_currency( $last_payment->amount() )
+					: EEH_Template::format_currency( 0 );
 
 			case '[TOTAL_AMOUNT_PAID]' :
 				return EEH_Template::format_currency( $transaction->paid() );
