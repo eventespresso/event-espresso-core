@@ -88,4 +88,25 @@ class Model_Data_Translator_Test extends EE_UnitTestCase{
 		//not a real model field. It just indicates to treat the time already being in UTC
 		$this->assertEquals( $now_utc_time, date( 'Y-m-d H:i:s', $model_data[ 'EVT_modified' ] ) );
 	}
+	
+	public function test_is_gmt_date_field_name__success() {
+		$this->assertTrue( Model_Data_Translator::is_gmt_date_field_name( 'Event.EVT_created_gmt' ) );
+	}
+	public function test_is_gmt_date_field_name__fail() {
+		$this->assertFalse( Model_Data_Translator::is_gmt_date_field_name( 'Event.EVT_created' ) );
+	}
+	public function test_is_gmt_date_field_name__fail_tiny_input() {
+		$this->assertFalse( Model_Data_Translator::is_gmt_date_field_name( 'foo' ) );
+	}
+	
+	public function test_remove_gmt_from_field_name() {
+		$this->assertEquals(
+			'Event.EVT_created',
+			Model_Data_Translator::remove_gmt_from_field_name( 'Event.EVT_created_gmt' ) );
+	}
+	public function test_remove_gmt_from_field_name__no_gmt_anyways() {
+		$this->assertEquals(
+			'Event.EVT_created',
+			Model_Data_Translator::remove_gmt_from_field_name( 'Event.EVT_created' ) );
+	}
 }

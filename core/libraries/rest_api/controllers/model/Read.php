@@ -760,6 +760,12 @@ class Read extends Base {
 			$order_by = null;
 		}
 		if( $order_by !== null ){
+			if( is_array( $order_by ) ) {
+				$order_by = Model_Data_Translator::prepare_field_names_in_array_keys_from_json( $order_by );
+			} else {
+				//it's a single item
+				$order_by = Model_Data_Translator::prepare_field_name_from_json( $order_by );
+			}
 			$model_query_params[ 'order_by' ] =  $order_by;
 		}
 		if ( isset( $query_parameters[ 'group_by' ] ) ) {
@@ -769,6 +775,9 @@ class Read extends Base {
 		}else{
 			$group_by = array_keys( $model->get_combined_primary_key_fields() );
 		}
+		//make sure they're all real names
+		$group_by = Model_Data_Translator::prepare_field_names_from_json( $group_by );
+		
 		if( $group_by !== null ){
 			$model_query_params[ 'group_by' ] = $group_by;
 		}

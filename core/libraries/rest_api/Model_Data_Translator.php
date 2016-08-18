@@ -198,12 +198,11 @@ class Model_Data_Translator {
 			);
 			//double-check is it a *_gmt field?
 			if( ! $field instanceof \EE_Model_Field_Base
-				&& substr( $query_param_sans_stars, -4, 4 ) === '_gmt' ) {
+				&& Model_Data_Translator::is_gmt_date_field_name(  $query_param_sans_stars ) ) {
 				//yep, take off '_gmt', and find the field
-				$query_param_sans_gmt_and_sans_stars = substr( $query_param_sans_stars, 0, strrpos( $query_param_sans_stars, '_gmt' ) );
-				$query_param_key = str_replace( $query_param_sans_stars, $query_param_sans_gmt_and_sans_stars, $query_param_key );
+				$query_param_key = Model_Data_Translator::remove_gmt_from_field_name( $query_param_sans_stars );
 				$field = Model_Data_Translator::deduce_field_from_query_param(
-					$query_param_sans_gmt_and_sans_stars,
+					$query_param_key,
 					$model
 				);
 				$timezone = 'UTC';
@@ -231,7 +230,86 @@ class Model_Data_Translator {
 		}
 		return $query_param_for_models;
 	}
+	
+	/**
+	 * Mostly checks if the last 4 characters are "_gmt", indicating its a 
+	 * gmt date field name
+	 * @param string $field_name
+	 * @return boolean
+	 */
+	public static function is_gmt_date_field_name( $field_name ) {
+		return substr( 
+			Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $field_name ), 
+			-4, 
+			4 
+		) === '_gmt';
+	}
+	
+	/**
+	 * Removes the last "_gmt" part of a field name (and if there is no "_gmt" at the end, leave it alone)
+	 * @param string $field_name
+	 * @return string
+	 */
+	public static function remove_gmt_from_field_name( $field_name ) {
+		if( ! Model_Data_Translator::is_gmt_date_field_name(  $field_name ) ) {
+			return $field_name;
+		}
+		$query_param_sans_stars = Model_Data_Translator::remove_stars_and_anything_after_from_condition_query_param_key( $field_name );
+		$query_param_sans_gmt_and_sans_stars = substr( 
+			$query_param_sans_stars, 
+			0, 
+			strrpos( 
+				$field_name, 
+				'_gmt' 
+			) 
+		);
+		return str_replace( $query_param_sans_stars, $query_param_sans_gmt_and_sans_stars, $field_name );
+	}
+	
+	/**
+	 * Takes a field name from the REST API and prepares it for the model querying
+	 * @param string $field_name
+	 * @return string
+	 */
+	public static function prepare_field_name_from_json( $field_name ) {
+		if( Model_Data_Translator::is_gmt_date_field_name( $field_name ) ) {
+			return Model_Data_Translator::remove_gmt_from_field_name( $field_name );
+		}
+		return $field_name;
+	}
 
+	/**
+	 * Takes array of field names from REST API and prepares for models
+	 * @param array $field_names
+	 * @return array of field names (possibly include model prefixes)
+	 */
+	public static function prepare_field_names_from_json( $field_names ) {
+		if( is_array( $field_names ) ) {
+			$new_array = array();
+			foreach( $field_names as $key => $field_name ) {
+				$new_array[ $key ] = Model_Data_Translator::prepare_field_name_from_json( $field_name );
+			}
+			return $new_array;
+		}
+		return $field_names;
+	}
+	
+	/**
+	 * Takes array where array keys are field names (possibly with model path prefixes)
+	 * from the REST API and prepares them for model querying
+	 * @param array $field_names_as_keys
+	 * @return array
+	 */
+	public static function prepare_field_names_in_array_keys_from_json( $field_names_as_keys ) {
+		if( is_array( $field_names_as_keys ) ) {
+			$new_array = array();
+			foreach( $field_names_as_keys as $field_name => $value ) {
+				$new_array[ Model_Data_Translator::prepare_field_name_from_json( $field_name ) ] = $value;
+			}
+			return $new_array;
+		}
+		return $field_names_as_keys;
+	}
 
 
 	/**
