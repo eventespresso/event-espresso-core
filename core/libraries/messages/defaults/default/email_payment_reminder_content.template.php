@@ -45,9 +45,6 @@
 											<strong><?php _e( 'Total Cost:', 'event_espresso' ); ?></strong> [TOTAL_COST]
 										</li>
 										<li>
-											<strong><?php _e( 'Payment Amount:', 'event_espresso' ); ?></strong> [AMOUNT_PAID]
-										</li>
-										<li>
 											<strong><?php _e( 'Amount Due:', 'event_espresso' ); ?></strong> [TOTAL_OWING]
 										</li>
 									</ul>
