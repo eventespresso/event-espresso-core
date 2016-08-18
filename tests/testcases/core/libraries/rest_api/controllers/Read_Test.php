@@ -321,7 +321,7 @@ class Read_Test extends \EE_UnitTestCase{
 				  array (
 					0 =>
 					array (
-					  'href' => 'http://example.org/?rest_route=/ee/v4.8.29/events/7',
+					  'href' => 'http://example.org/?rest_route=/ee/v4.8.29/events/' . $event_id,
 					),
 				  ),
 				  'collection' =>
