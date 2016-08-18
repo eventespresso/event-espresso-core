@@ -52,7 +52,8 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			'[RECIPIENT_ZIP_PC]' => __('The ZIP (or Postal) Code for the recipient of the message.', 'event_espresso'),
 			'[RECIPIENT_ADDRESS_STATE]' => __('The state/province for the recipient of the message.', 'event_espresso' ),
 			'[RECIPIENT_COUNTRY]' => __('The country for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ANSWER_*]' => __('This is a special dynamic shortcode.  After the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' )
+			'[RECIPIENT_ANSWER_*]' => __('This is a special dynamic shortcode.  After the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' ),
+			'[RECIPIENT_TOTAL_AMOUNT_PAID]' => esc_html__( 'If a single registration related to the recipient is available, that is used to retrieve the total amount that has been paid for this recipient.  Otherwise the value of 0 is printed.', 'event_espresso' )
 			);
 	}
 
@@ -127,6 +128,11 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			case '[RECIPIENT_COUNTRY]' :
 				$country_obj = $attendee->country_obj();
 				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
+				break;
+			case '[RECIPIENT_TOTAL_AMOUNT_PAID]' :
+				return $this->_recipient->reg_obj instanceof EE_Registration
+					? $this->_recipient->reg_obj->pretty_paid()
+					: 0;
 				break;
 		}
 
