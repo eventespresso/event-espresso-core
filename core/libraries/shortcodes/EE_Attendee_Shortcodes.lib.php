@@ -84,25 +84,39 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 	protected function _parser( $shortcode ) {
 
 
-		$this->_xtra = ! empty( $this->_extra_data ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : null;
+		$this->_xtra = ! empty( $this->_extra_data ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+			? $this->_extra_data['data']
+			: null;
 
 		//incoming object should only be a registration object.
-		$registration = ! $this->_data instanceof EE_Registration ? null : $this->_data;
+		$registration = ! $this->_data instanceof EE_Registration
+			? null
+			: $this->_data;
 
 		if ( ! $registration instanceof EE_Registration ) {
 			//let's attempt to get the txn_id for the error message.
-			$txn_id = isset( $this->_xtra->txn ) && $this->_xtra->txn instanceof EE_Transaction ? $this->_xtra->txn->ID() : esc_html__( 'Unknown', 'event_espresso' );
+			$txn_id = isset( $this->_xtra->txn ) && $this->_xtra->txn instanceof EE_Transaction
+				? $this->_xtra->txn->ID()
+				: esc_html__( 'Unknown', 'event_espresso' );
 			$msg = esc_html__( 'There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.', 'event_espresso' );
-			$dev_msg = sprintf( esc_html__( 'The transaction ID for this request is: %s', 'event_espresso' ), $txn_id );
+			$dev_msg = sprintf(
+				esc_html__( 'The transaction ID for this request is: %s', 'event_espresso' ),
+				$txn_id
+			);
 			throw new EE_Error( "{$msg}||{$msg} {$dev_msg}" );
 		}
 
 		//attendee obj for this registration
-		$attendee = isset( $this->_xtra->registrations[ $registration->ID() ]['att_obj'] ) ?  $this->_xtra->registrations[ $registration->ID() ]['att_obj'] : null ;
+		$attendee = isset( $this->_xtra->registrations[ $registration->ID() ]['att_obj'] )
+			?  $this->_xtra->registrations[ $registration->ID() ]['att_obj']
+			: null ;
 
 		if ( ! $attendee instanceof EE_Attendee ) {
 			$msg = esc_html__( 'There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.', 'event_espresso' );
-			$dev_msg = sprintf( esc_html__( 'The registration ID for this request is: %s', 'event_espresso' ), $registration->ID() );
+			$dev_msg = sprintf(
+				esc_html__( 'The registration ID for this request is: %s', 'event_espresso' ),
+				$registration->ID()
+			);
 			throw new EE_Error( "{$msg}||{$msg} {$dev_msg}" );
 		}
 
