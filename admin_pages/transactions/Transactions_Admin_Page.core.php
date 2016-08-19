@@ -1041,9 +1041,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 								}
                                 try {
                                     $event = $registration->event();
-                                    $event_name = $event instanceof EE_Event
-                                        ? $event->get('EVT_name') . ' - ' . $item->get('LIN_name')
-                                        : '';
+                                    $event_name =  $event->get('EVT_name') . ' - ' . $item->get('LIN_name');
                                 } catch (Exception $e) {
                                     EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
                                     $event_name = esc_html__('Unknown', 'event_espresso');
