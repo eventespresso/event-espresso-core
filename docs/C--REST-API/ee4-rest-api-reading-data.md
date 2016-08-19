@@ -265,7 +265,7 @@ The EE4 JSON REST API is very extendible by addons, so client code should expect
 ]
 ```
 
-Also, it is planned to maintain the API for each version of core from 4.8.29 onwards. This means that although EE core might be on version 4.10.34, you should still be able to send requests to `http://demoee.org/demo/wp-json/ee/v4.8.29/events` and expect to see the same data in the same format as when EE core was at version 4.8.29. To get data in it's true format as stored in the database, however, you would send your requests the version of the EE4 REST API with the highest version number. You can find out which versions are supported by looking at the index page's "ee", "served_core_versions" parameter. Here is a sample value:
+Also, it is planned to maintain the API for each version of core from 4.8.29 onwards. This means that although EE core might be on version 4.10.34, you should still be able to send requests to `http://demoee.org/demo/wp-json/ee/v4.8.29/events` and expect to see the same data in the same format as when EE core was at version 4.8.29 (although that versioned route might have additional properties added in future versions; eg version 4.9.9 adds `EVT_created_gmt` to all events listed on `http://demoee.org/wp-json/ee/v4.8.27/events`). To get data in it's true format as stored in the database, however, you would send your requests the version of the EE4 REST API with the highest version number. You can find out which versions are supported by looking at the index page's "ee", "served_core_versions" parameter. Here is a sample value:
 
 ```json
 "ee": {
@@ -295,7 +295,9 @@ Also, it is planned to maintain the API for each version of core from 4.8.29 onw
     },
 ```
 
-Also notice that only the routes for the latest served version of the API is listed in the index, all others aren't included. This is done to encourage you to use the latest version of the API.
+Also notice that only the routes for the latest served version of the API is listed in the index, all others aren't included. This is done to encourage you to use the latest version of the API. 
+
+
 
 
 ### Compatibility with the EE4 JSON REST API Add-on
