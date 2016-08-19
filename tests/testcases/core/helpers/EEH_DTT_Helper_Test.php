@@ -285,6 +285,35 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * @since 4.9.0.rc.025
+	 */
+	public function test_get_timezone_string_for_display() {
+		$offsets_to_test = array(
+			0 => 'UTC+0:00',
+			1 => 'UTC+1:00',
+			'-1.5' => 'UTC-1:30',
+			'1.25' => 'UTC+1:15'
+		);
+		$original_timezone_string = get_option( 'timezone_string' );
+		$original_offset = get_option( 'gmt_offset' );
+		//first test when there is an actual timezone_string
+		update_option( 'timezone_string', 'America/New_York' );
+		$this->assertEquals( 'New York', EEH_DTT_Helper::get_timezone_string_for_display() );
+
+		//clear out timezone string and do offset tests
+		update_option( 'timezone_string', '' );
+		foreach ( $offsets_to_test as $offset => $expected ) {
+			update_option( 'gmt_offset', $offset );
+			$this->assertEquals( $expected, EEH_DTT_Helper::get_timezone_string_for_display() );
+		}
+
+		//restore original timezone_string and offset
+		update_option( 'gmt_offset', $original_offset );
+		update_option( 'timezone_string', $original_timezone_string );
+	}
+
+
 }
 // End of file EEH_DTT_Helper_Test.php
 // Location: /EEH_DTT_Helper_Test.php

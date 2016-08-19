@@ -182,7 +182,7 @@ class Read extends Base {
 	 *
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function get_entities_from_model( $model, $request) {
 		$query_params = $this->create_model_query_params( $model, $request->get_params() );
@@ -216,7 +216,6 @@ class Read extends Base {
 
 	/**
 	 * Gets the collection for given relation object
-	 *
 	 * The same as Read::get_entities_from_model(), except if the relation
 	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
 	 * the join-model-object into the results
@@ -224,7 +223,7 @@ class Read extends Base {
 	 * @param string $id the ID of the thing we are fetching related stuff from
 	 * @param \EE_Model_Relation_Base $relation
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function get_entities_from_relation( $id,  $relation, $request ) {
 		$context = $this->validate_context( $request->get_param( 'caps' ));
@@ -426,11 +425,22 @@ class Read extends Base {
 					'pretty' => $field_obj->prepare_for_pretty_echoing( $field_value )
 				);
 			} elseif ( $field_obj instanceof \EE_Datetime_Field ) {
-				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
-					$field_obj,
-					$field_value,
-					$this->get_model_version_info()->requested_version()
-				);
+				if( $field_value instanceof \DateTime ) {
+					$timezone = $field_value->getTimezone();
+					$field_value->setTimezone( new \DateTimeZone( 'UTC' ) );
+					$result[ $field_name . '_gmt' ] = Model_Data_Translator::prepare_field_value_for_json(
+						$field_obj,
+						$field_value,
+						$this->get_model_version_info()->requested_version()
+					);
+					$field_value->setTimezone( $timezone );
+					$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
+						$field_obj,
+						$field_value,
+						$this->get_model_version_info()->requested_version()
+					);
+				}
+
 			} else {
 				$result[ $field_name ] = Model_Data_Translator::prepare_field_value_for_json(
 					$field_obj,
@@ -459,7 +469,7 @@ class Read extends Base {
 	/**
 	 * Gets links we want to add to the response
 	 *
-*@global \WP_REST_Server $wp_rest_server
+	 * @global \WP_REST_Server $wp_rest_server
 	 * @param \EEM_Base $model
 	 * @param array $db_row
 	 * @param array $entity_array
@@ -583,10 +593,10 @@ class Read extends Base {
 	/**
 	 * Gets the calculated fields for the response
 	 *
-	 * @param \EEM_Base        $model
+	 * @param \EEM_Base $model
 	 * @param array            $wpdb_row
 	 * @param \WP_REST_Request $rest_request
-	 * @return array the _calculations item in the entity
+	 * @return \stdClass the _calculations item in the entity
 	 */
 	protected function _get_entity_calculations( $model, $wpdb_row, $rest_request ) {
 		$calculated_fields = $this->explode_and_get_items_prefixed_with(
@@ -649,14 +659,14 @@ class Read extends Base {
 		}
 	}
 
-//	public function
 
 
 	/**
 	 * Gets the one model object with the specified id for the specified model
+	 *
 	 * @param \EEM_Base $model
 	 * @param \WP_REST_Request $request
-	 * @return array
+	 * @return array|\WP_Error
 	 */
 	public function get_entity_from_model( $model, $request ) {
 		$query_params = array( array( $model->primary_key_name() => $request->get_param( 'id' ) ),'limit' => 1);
@@ -750,6 +760,12 @@ class Read extends Base {
 			$order_by = null;
 		}
 		if( $order_by !== null ){
+			if( is_array( $order_by ) ) {
+				$order_by = Model_Data_Translator::prepare_field_names_in_array_keys_from_json( $order_by );
+			} else {
+				//it's a single item
+				$order_by = Model_Data_Translator::prepare_field_name_from_json( $order_by );
+			}
 			$model_query_params[ 'order_by' ] =  $order_by;
 		}
 		if ( isset( $query_parameters[ 'group_by' ] ) ) {
@@ -758,6 +774,10 @@ class Read extends Base {
 			$group_by = $query_parameters[ 'groupby' ];
 		}else{
 			$group_by = array_keys( $model->get_combined_primary_key_fields() );
+		}
+		//make sure they're all real names
+		if( is_array( $group_by ) ) {
+			$group_by = Model_Data_Translator::prepare_field_names_from_json( $group_by );
 		}
 		if( $group_by !== null ){
 			$model_query_params[ 'group_by' ] = $group_by;
