@@ -2440,7 +2440,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$_where = array();
 
-		if ( isset( $this->_req_data['s'] ) ) {
+		if ( ! empty( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
@@ -2469,10 +2469,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( $trash ) {
 			$_where['status'] = array( '!=', 'publish' );
-			$all_attendees = $count ? $ATT_MDL->count( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
+			$all_attendees = $count ? $ATT_MDL->count( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit), 'ATT_ID', true ): $ATT_MDL->get_all( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
 		} else {
 			$_where['status'] = array( 'IN', array( 'publish' ) );
-			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
+			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit ), 'ATT_ID' , true ) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
 		}
 
 		return $all_attendees;

@@ -500,10 +500,19 @@ abstract class SequentialStepFormManager {
 	 * @return string
 	 */
 	public function displayProgressSteps( $return_as_string = true ) {
+		$progress_steps = apply_filters(
+			'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_SequentialStepFormManager__displayProgressSteps__before_steps',
+			''
+		);
+		$progress_steps .= $this->progress_step_manager->displaySteps();
+		$progress_steps .= apply_filters(
+			'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_SequentialStepFormManager__displayProgressSteps__after_steps',
+			''
+		);
 		if ( $return_as_string ) {
-			return $this->progress_step_manager->displaySteps();
+			return $progress_steps;
 		}
-		echo $this->progress_step_manager->displaySteps();
+		echo $progress_steps;
 		return '';
 	}
 
