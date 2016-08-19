@@ -59,6 +59,11 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
 
 
+	/**
+	 * @access protected
+	 * @param  string $shortcode the shortcode to be parsed.
+	 * @return string parsed shortcode
+	 */
 	protected function _parser( $shortcode ) {
 
 		//make sure we end up with a copy of the EE_Messages_Addressee object

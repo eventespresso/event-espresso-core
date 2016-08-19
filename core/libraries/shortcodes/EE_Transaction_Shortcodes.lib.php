@@ -31,6 +31,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
+	/**
+	 * EE_Transaction_Shortcodes constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 	}
@@ -60,7 +63,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_PAYEE_ADDRESS]' => esc_html__( 'This will parse to either: the value of the "Company Address" field in the invoice payment method settings; if that is blank, then the value of the Company Address in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
 			'[INVOICE_PAYMENT_INSTRUCTIONS]' => esc_html__( 'This will parse to the value of the "Payment Instructions" field found on the Invoice payment methods settings page', 'event_espresso' ),
 			'[INVOICE_PAYEE_EMAIL]' => esc_html__( 'This will parse to either: the value of the "Company Email" field in the invoice payment method settings; if that is blank, then the value of the Company Email in the "Your Organization Settings", if that is blank then an empty string.', 'event_espresso' ),
-			'[INVOICE_PAYEE_TAX_NUMBER_*]' => sprintf( esc_html__( 'This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: %1$s[INVOICE_PAYEE_TAX_NUMBER_* prefix="GST:"]%2$s and that will ouptut: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ), '<code>', '</code>' ),
+			'[INVOICE_PAYEE_TAX_NUMBER_*]' => sprintf( esc_html__( 'This will parse to either: the value of the "Company Tax Number" field in the invoice payment method settings; if that is blank, then the value of the Company Tax Number in the "Your Organization Settings", if that is blank then an empty string. Note this is also a special dynamic shortcode. You can use the "prefix" parameter to indicate what text you want to use as a prefix before this tax number.  It defaults to "VAT/Tax Number:". To change this prefix you do the following format for this shortcode: %1$s[INVOICE_PAYEE_TAX_NUMBER_* prefix="GST:"]%2$s and that will output: GST: 12345t56.  If you have no tax number in your settings, then no prefix will be output either.', 'event_espresso' ), '<code>', '</code>' ),
 			'[TOTAL_COST]' => esc_html__( 'The total cost for the transaction', 'event_espresso' ),
 			'[TXN_STATUS]' => esc_html__( 'The transaction status for the transaction.', 'event_espresso' ),
 			'[TXN_STATUS_ID]' => esc_html__( 'The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresso' ),
@@ -72,9 +75,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TOTAL_OWING]' => esc_html__( 'The total owing on a transaction with no attributes.', 'event_espresso' ),
 			'[TXN_SUBTOTAL]' => esc_html__( 'The subtotal for all txn line items.', 'event_espresso' ),
 			'[TXN_TAX_SUBTOTAL]' => esc_html__( 'The subtotal for all tax line items.', 'event_espresso' ),
-			'[OWING_STATUS_MESSAGE_*]' => esc_html__( 'A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso' ) . '<p></ul>' .
-				'<li><strong>still_owing</strong>:' . esc_html__( 'If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( esc_html__( '%sPlease make a payment.%s', 'event_espresso' ),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
-				'<li><strong>none_owing</strong>:' . esc_html__( 'If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso' ) . '</li></ul></p>',
+			'[OWING_STATUS_MESSAGE_*]' => esc_html__( 'A dynamic shortcode for adjusting how total owing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso' ) . '<p></ul>' .
+				'<li><strong>still_owing</strong>:' . esc_html__( 'If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount owing). The default is:', 'event_espresso' ) . sprintf( esc_html__( '%sPlease make a payment.%s', 'event_espresso' ),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
+				'<li><strong>none_owing</strong>:' . esc_html__( 'If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total owing.', 'event_espresso' ) . '</li></ul></p>',
 			'[TXN_TOTAL_TICKETS]' => esc_html__( 'The total number of all tickets purchased in a transaction', 'event_espresso' ),
 			'[TKT_QTY_PURCHASED]' => sprintf( esc_html__( 'The total number of all tickets purchased in a transaction. %1$sNOTE: This shortcode is good to use in the "[TICKET_LIST]" field but has been deprecated from all other contexts in favor of the more explicit [TXN_TOTAL_TICKETS] shortcode.%2$s', 'event_espresso' ), '<strong>', '</strong>' ),
 			'[TRANSACTION_ADMIN_URL]' => esc_html__( 'The url to the admin page for this transaction', 'event_espresso' ),
@@ -85,6 +88,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	}
 
 
+
+	/**
+	 * @access protected
+	 * @param  string $shortcode the shortcode to be parsed.
+	 * @return string parsed shortcode
+	 */
 	protected function _parser( $shortcode ) {
 
 		//attempt to get the transaction.  Since this is potentially used in more fields, we may have to look in the _extra_data for the transaction.
@@ -233,7 +242,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		if ( strpos( $shortcode, '[OWING_STATUS_MESSAGE_*' ) !== false ) {
-			return $this->_get_custom_total_oweing( $shortcode );
+			return $this->_get_custom_total_owing( $shortcode );
 		}
 
 		if ( strpos( $shortcode, '[INVOICE_PAYEE_TAX_NUMBER_*' ) !== false ) {
@@ -262,7 +271,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @return string parsed.
 	 */
-	private function _get_custom_total_oweing( $shortcode ) {
+	private function _get_custom_total_owing( $shortcode ) {
 		$valid_shortcodes = array( 'transaction' );
 		$attrs = $this->_get_shortcode_attrs( $shortcode );
 
@@ -282,6 +291,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 
+	/**
+	 * @param EE_Transaction $transaction
+	 * @return string
+	 */
 	private function _get_payment_gateway( $transaction ) {
 		$pm = $this->_get_payment_method( $transaction );
 		return $pm instanceof EE_Payment_Method ? $pm->name() : '';
@@ -290,7 +303,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * This retrieves a logo to be used for the invoice from whatever is set on the invoice logo settings page.  If its not present then the organization logo is used if its found (set on the organzation settings page).
+	 * This retrieves a logo to be used for the invoice from whatever is set on the invoice logo settings page.  If its not present then the organization logo is used if its found (set on the organization settings page).
 	 *
 	 * @since 4.5.0
 	 *
@@ -321,7 +334,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		//image tags have been requested.
 		$image_size = getimagesize( $invoice_logo_url );
 
-		//if image is wider than 200px, set the wideth to 200
+		//if image is wider than 200px, set the width to 200
 		if ( $image_size[0] > 300 ) {
 			$image_width = 300;
 		} else {
@@ -352,8 +365,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		return $payee_name;
 	}
 
+
+
 	/**
 	 * gets the payment method for this transaction. Otherwise gets a default one.
+	 *
+	 * @param EE_Transaction|null $transaction
+	 * @return \EE_Payment_Method|mixed|null|void
 	 */
 	private function _get_payment_method( $transaction = null ){
 		if ( $transaction instanceof EE_Transaction ) {
@@ -521,16 +539,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @return string
 	 */
-	private function _get_receipt_url( EE_Transaction $transaction ) {
-		//get primary_registration
-		$reg = $this->_data->primary_reg_obj;
-
-		if ( ! $reg instanceof EE_Registration ) {
-			return '';
-		}
-
-		return $reg->receipt_url();
-	}
+	// private function _get_receipt_url( EE_Transaction $transaction ) {
+	// 	//get primary_registration
+	// 	$reg = $this->_data->primary_reg_obj;
+	//
+	// 	if ( ! $reg instanceof EE_Registration ) {
+	// 		return '';
+	// 	}
+	//
+	// 	return $reg->receipt_url();
+	// }
 
 
 
