@@ -150,7 +150,11 @@ class Model_Data_Translator {
 	 *
 	 * @param \EE_Model_Field_Base $field_obj
 	 * @param mixed                $original_value
+<<<<<<< HEAD
 	 * @param string               $requested_version
+=======
+	 * @param                      $requested_version
+>>>>>>> master
 	 * @return mixed
 	 */
    public static function prepare_field_value_for_json( $field_obj, $original_value, $requested_version ) {
@@ -308,12 +312,12 @@ class Model_Data_Translator {
 
 	/**
 	 * Prepares an array of model query params for use in the REST API
-	 * @param array     $model_query_params
+	 * @param array $model_query_params
 	 * @param \EEM_Base $model
 	 * @param string    $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4 REST API
 	 * @return array which can be passed into the EE4 REST API when querying a model resource
 	 */
-	public static function prepare_query_params_for_rest_api( $model_query_params, \EEM_Base $model, $requested_version = null ) {
+	public static function prepare_query_params_for_rest_api( array $model_query_params, \EEM_Base $model,  $requested_version = null ) {
 		if( $requested_version === null ) {
 			$requested_version = \EED_Core_Rest_Api::latest_rest_api_version() ;
 		}

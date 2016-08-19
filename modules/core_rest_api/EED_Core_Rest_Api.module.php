@@ -97,8 +97,13 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * replace it with application passwords.
 	 */
 	public static function maybe_notify_of_basic_auth_removal() {
-		if( ! isset( $_SERVER['PHP_AUTH_USER'] )
-			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+		if( 
+			apply_filters( 
+				'FHEE__EED_Core_Rest_Api__maybe_notify_of_basic_auth_removal__override',
+				! isset( $_SERVER['PHP_AUTH_USER'] )
+			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) 
+			) 
+		) {
 			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
 			return;
 		}
@@ -339,7 +344,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 //							),
 			);
 			//@todo: also handle  DELETE for a single item
-			foreach ( $model->relation_settings() as $relation_name => $relation_obj ) {
+			foreach ( $model_version_info->relation_settings( $model ) as $relation_name => $relation_obj ) {
 				$related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
 					$relation_name,
 					$relation_obj
@@ -568,22 +573,10 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * @return array
 	 */
 	public static function hide_old_endpoints( $route_data ) {
-		//allow API clients to override which endpoints get hidden, in case
-		//they want to discover particular endpoints
-		//also, we don't have access to the request so we have to just grab it from the superglobal
-		$force_show_ee_namespace = ltrim(
-			EEH_Array::is_set( $_REQUEST, 'force_show_ee_namespace', '' ),
-			'/'
-		);
-		
 		foreach( EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls ) {
 			foreach( $relative_urls as $endpoint => $routes ) {
 				foreach( $routes as $route ) {
-					//by default, hide "hidden_endpoint"s, unless the request indicates
-					//to $force_show_ee_namespace, in which case only show that one
-					//namespace's endpoints (and hide all others)
-					if( ( $route[ 'hidden_endpoint' ] && $force_show_ee_namespace === '' )
-						|| ( $force_show_ee_namespace !== null && $force_show_ee_namespace !== $namespace ) ) {
+					if( $route[ 'hidden_endpoint' ] ) {
 						$full_route = '/' . ltrim( $namespace, '/' ) . '/' . ltrim( $endpoint, '/' );
 						unset( $route_data[ $full_route ] );
 					}

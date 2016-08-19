@@ -14,6 +14,7 @@ $registrations = is_array( $registrations ) ? $registrations : array();
 $reg_count = count( $registrations );
 $reg_cntr = 0;
 $event_name = '';
+$wait_list = false;
 foreach ( $registrations as $registration ) {
 	if ( $registration instanceof EE_Registration ) {
 		if ( $event_name != $registration->event_name() && ! empty( $event_name )) { ?>
@@ -66,6 +67,11 @@ foreach ( $registrations as $registration ) {
 				</td>
 				<td width="35%" class="jst-left">
 					<?php $registration->e_pretty_status( TRUE )?>
+					<?php
+						if ( $registration->status_ID() === EEM_Registration::status_id_wait_list ) {
+							$wait_list = true;
+						}
+					?>
 				</td>
 			</tr>
             <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_table_row', $registration ); ?>
@@ -87,8 +93,27 @@ foreach ( $registrations as $registration ) {
 		<a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?></a>
 	</p>
 <?php } ?>
+	<?php if ( $wait_list ) { ?>
 
-    <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_details' ); ?>
+			<?php
+			echo apply_filters(
+				'AFEE__thank_you_page_registration_details_template__wait_list_notice',
+				sprintf(
+					__(
+						'%1$sre: Wait List Registrations%2$sPlease note that the total cost listed below in the Transaction Details is for ALL registrations, including those that are on the wait list, even though they can not be currently paid for. If any spaces become available however, you may be notified by the Event admin and have the opportunity to secure the remaining tickets by making a payment for them.%3$s',
+						'event_espresso'
+					),
+					'<h6 class="" style="margin-bottom:.25em;"><span class="dashicons dashicons-clipboard ee-icon-size-16 purple-text"></span>',
+					'</h6 ><p class="ee-wait-list-notice">',
+					'</p ><br />'
+				)
+			);
+			?>
+
+	<?php } ?>
+
+
+	<?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_details' ); ?>
 
 </div>
 <!-- end of .registration-details -->
