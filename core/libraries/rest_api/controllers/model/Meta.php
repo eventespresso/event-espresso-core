@@ -120,7 +120,7 @@ class Meta extends Base {
 			'documentation_url' => 'https://github.com/eventespresso/event-espresso-core/tree/master/docs/C--REST-API',
 			'addons' => $addons,
 			'maintenance_mode' => \EE_Maintenance_Mode::instance()->real_level(),
-			'served_core_versions' => array_keys( \EED_Core_Rest_Api::versions_served() )
+			'served_core_versions' => array_keys( \EED_Core_Rest_Api::versions_served() ),
 		);
 		$rest_response_obj->set_data( $response_data );
 		return $rest_response_obj;
