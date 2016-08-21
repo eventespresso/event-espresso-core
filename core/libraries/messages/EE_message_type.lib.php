@@ -635,7 +635,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @param EE_Messages_incoming_data $data
 	 * @param string                    $context Limit addressees to specific context.
 	 * @return array   An array indexed by context where each context is an array of EE_Messages_Addressee objects for
-	 *                                           that context
+	 *                 that context
 	 */
 	public function get_addressees( EE_Messages_incoming_data $data, $context = '' ) {
 		//override _data
