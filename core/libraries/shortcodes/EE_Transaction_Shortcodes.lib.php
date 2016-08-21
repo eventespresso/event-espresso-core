@@ -334,7 +334,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		//image tags have been requested.
 		$image_size = getimagesize( $invoice_logo_url );
 
-		//if image is wider than 200px, set the width to 200
+		//if image is wider than 300px, set the width to 300
 		if ( $image_size[0] > 300 ) {
 			$image_width = 300;
 		} else {
@@ -371,7 +371,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 * gets the payment method for this transaction. Otherwise gets a default one.
 	 *
 	 * @param EE_Transaction|null $transaction
-	 * @return \EE_Payment_Method|mixed|null|void
+	 * @return \EE_Payment_Method|null
 	 */
 	private function _get_payment_method( $transaction = null ){
 		if ( $transaction instanceof EE_Transaction ) {
