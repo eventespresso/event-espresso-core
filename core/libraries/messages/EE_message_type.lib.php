@@ -209,8 +209,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * This allows each message type to set what alternate messenger&message type combination can be used for fallback
 	 * default templates if there are no specific ones defined for this messenger and message type.  Should be in the
-	 * format: array( 'messenger' => 'message_type', 'another_messenger' => another_message_type ); This is set in the
-	 * message type constructor.
+	 * format:
+	 * array(
+	 *      'messenger' => 'message_type',
+	 *      'another_messenger' => another_message_type
+	 * );
+	 * This is set in the message type constructor.
 	 *
 	 * @var array
 	 */
