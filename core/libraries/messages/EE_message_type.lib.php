@@ -176,18 +176,19 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * This is used to designate the generating and alternative sending messengers for a message type.  It is set via
 	 * set_with_messengers() on construct. Note, generating messenger also acts as a sending messenger for this message
 	 * type.  However ONLY the generating messengers are used for creating templates for this message type. Should be
-	 * in this format: {
-	 *
-	 * @type string $generating_messenger the name of the generating messenger.  Generating
-	 *                                    messengers are used for generating templates,
-	 *                                    doing validation and defining valid shortcodes. {
-	 * @type string $sending_messenger    values are the name(s) for the sending
-	 *                                    messengers.  sending messengers are
-	 *                                    just valid delivery vehicles that will utilize
-	 *                                    the templates (and generated EE_message
-	 *                                    objects from the generating messengers).
-	 *                                    }
-	 *                                    }
+	 * in this format:
+	 * {
+	 *      @type string $generating_messenger  the name of the generating messenger.  Generating
+	 *                                          messengers are used for generating templates,
+	 *                                          doing validation and defining valid shortcodes.
+	 *      {
+	 *          @type string $sending_messenger     values are the name(s) for the sending
+	 *                                              messengers.  sending messengers are
+	 *                                              just valid delivery vehicles that will utilize
+	 *                                              the templates (and generated EE_message
+	 *                                              objects from the generating messengers).
+	 *      }
+	 * }
 	 * @since                             4.5.0
 	 * @var array
 	 */
