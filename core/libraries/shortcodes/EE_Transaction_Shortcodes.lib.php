@@ -531,28 +531,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	/**
-	 * Retrieves the url for generating the receipt associated with this transaction.
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param EE_Transaction $transaction
-	 *
-	 * @return string
-	 */
-	// private function _get_receipt_url( EE_Transaction $transaction ) {
-	// 	//get primary_registration
-	// 	$reg = $this->_data->primary_reg_obj;
-	//
-	// 	if ( ! $reg instanceof EE_Registration ) {
-	// 		return '';
-	// 	}
-	//
-	// 	return $reg->receipt_url();
-	// }
-
-
-
-	/**
 	 * This returns a subtotal.
 	 *
 	 * @param bool $tax if true then return the subtotal for tax otherwise return subtotal.
