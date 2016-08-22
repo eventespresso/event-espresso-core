@@ -109,7 +109,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 			$this->_get_contexts_for_message_types_dropdown_filter(),
 		);
 
-		//set filters to select inputs if they arent' empty
+		//set filters to select inputs if they aren't empty
 		foreach ( $select_inputs as $select_input ) {
 			if ( $select_input ) {
 				$filters[] = $select_input;
