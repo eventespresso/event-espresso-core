@@ -1032,20 +1032,17 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 							if ( ! $ticket instanceof EE_Ticket ) {
 								continue;
 							}
-							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ));
-
+							$event_name = $ticket->get_event_name();
+							$event_name = ! empty( $event_name )
+								? $event_name
+								: esc_html__( 'Unknown Event', 'event_espresso' );
+							$event_name .= ' - ' . $item->get( 'LIN_name' );
+							$ticket_price = EEH_Template::format_currency( $item->get( 'LIN_unit_price' ) );
 							$registrations = $ticket->get_many_related('Registration', array( array('TXN_ID' => $this->_transaction->ID() )));
 							foreach( $registrations as $registration ) {
 								if ( ! $registration instanceof EE_Registration ) {
 									continue;
 								}
-                                try {
-                                    $event = $registration->event();
-                                    $event_name =  $event->get('EVT_name') . ' - ' . $item->get('LIN_name');
-                                } catch (Exception $e) {
-                                    EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
-                                    $event_name = esc_html__('Unknown', 'event_espresso');
-                                }
 								$this->_template_args['event_attendees'][$registration->ID()]['STS_ID'] 			= $registration->status_ID();
 								$this->_template_args['event_attendees'][$registration->ID()]['att_num'] 			= $registration->count();
 								$this->_template_args['event_attendees'][$registration->ID()]['event_ticket_name'] 	= $event_name;
