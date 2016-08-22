@@ -21,6 +21,15 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 
+	/**
+	 * @see parent::get_priority() for documentation.
+	 * @return int
+	 */
+	public function get_priority() {
+		return EEM_Message::priority_medium;
+	}
+
+
 
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array(
@@ -29,7 +38,7 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 	}
 
 
-	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
+	protected function _get_admin_content_events_edit_for_messenger( EE_messenger $messenger ) {
 		//this is just a test
 		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
 	}
@@ -53,7 +62,9 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 					}
 
 					foreach ( $regs as $reg ) {
-						$this->_regs_for_sending[] = $reg->ID();
+						if ( $reg instanceof EE_Registration ) {
+							$this->_regs_for_sending[] = $reg->ID();
+						}
 					}
 					$this->_data = isset( $this->_data[1] ) ? array( $maybe_reg->transaction(), null, $this->_data[1] ) : array( $maybe_reg->transaction() );
 					$this->_data_handler = 'Gateways';
@@ -87,22 +98,6 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 		} else {
 			return $registration;
 		}
-	}
-
-
-
-	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
-		if ( $context == 'admin' ) {
-			//there should be a transaction and payment object in the incoming data.
-			if ( $this->_data instanceof EE_Messages_incoming_data && ! $this->_data instanceof EE_Messages_Preview_incoming_data ) {
-				$payment = $this->_data->payment;
-
-				if ( $payment instanceof EE_Payment ) {
-					return $payment->ID();
-				}
-			}
-		}
-		return 0;
 	}
 
 

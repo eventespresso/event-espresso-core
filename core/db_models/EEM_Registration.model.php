@@ -57,6 +57,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	const status_id_pending_payment = 'RPP';
 
 	/**
+	 * Status ID (STS_ID on esp_status table) to indicate registration is on the WAIT_LIST .
+	 * Payments are allowed.
+	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
+	 * No space reserved.
+	 * Registration is active
+	 */
+	const status_id_wait_list = 'RWL';
+
+	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
 	 * the TXN may or may not be completed ( paid in full )
 	 * Payments are allowed.
@@ -92,7 +101,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *    Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * @return \EEM_Registration
 	 */
-	protected function __construct( $timezone ) {
+	protected function __construct( $timezone = null ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 
@@ -129,6 +138,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'Checkin'=>new EE_Has_Many_Relation(),
 			'Registration_Payment' => new EE_Has_Many_Relation(),
 			'Payment'=>new EE_HABTM_Relation( 'Registration_Payment' ),
+			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletes even if there are messages in the queue related
 		);
 		$this->_model_chain_to_wp_user = 'Event';
 
@@ -138,11 +148,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 	reg_statuses_that_allow_payment
-	 * 	a filterable list of registration statuses that allow a registrant to make a payment
+	 * reg_statuses_that_allow_payment
+	 * a filterable list of registration statuses that allow a registrant to make a payment
 	 *
-	 *	@access public
-	 *	@return array
+	 * @access public
+	 * @return array
 	 */
 	public static function reg_statuses_that_allow_payment() {
 		return apply_filters(
@@ -150,6 +160,48 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			array(
 				EEM_Registration::status_id_approved,
 				EEM_Registration::status_id_pending_payment,
+				EEM_Registration::status_id_wait_list,
+			)
+		);
+	}
+
+
+
+	/**
+	 * inactive_reg_statuses
+	 * a filterable list of registration statuses that are not considered active
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function active_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_approved,
+				EEM_Registration::status_id_pending_payment,
+				EEM_Registration::status_id_wait_list,
+				EEM_Registration::status_id_not_approved,
+			)
+		);
+	}
+
+
+
+	/**
+	 * inactive_reg_statuses
+	 * a filterable list of registration statuses that are not considered active
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function inactive_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_incomplete,
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
 			)
 		);
 	}
@@ -183,7 +235,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//and the table hasn't actually been created, this could have an error
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		EE_Registry::instance()->load_helper( 'Activation' );
 		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
@@ -286,7 +337,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'REG_date' );
 
 		$results = $this->_get_all_wpdb_results(
@@ -320,7 +370,6 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
 
 		//prepare the query interval for displaying offset
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 		$query_interval = EEH_DTT_Helper::get_sql_query_interval_for_offset( $this->get_timezone(), 'dates.REG_date' );
 
 		//inner date query

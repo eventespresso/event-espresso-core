@@ -39,7 +39,7 @@ class Model_Version_Info {
 	 *
 	 * @var array
 	 */
-	protected $_model_changes = null;
+	protected $_model_changes = array();
 
 	/**
 	 *
@@ -88,13 +88,19 @@ class Model_Version_Info {
 	protected $_cached_fields_on_models = array();
 
 
-	public function __construct( $requested_version ) {
+
+    /**
+     * Model_Version_Info constructor.
+     *
+     * @param array $requested_version
+     */
+    public function __construct( $requested_version ) {
 		$this->_requested_version = $requested_version;
 		$this->_model_changes = array(
 			'4.8.29' => array(
 				//first version where the REST API is in EE core, so no need
 				//to specify how its different from the previous
-			)
+			),
 		);
 
 		//setup data for "extra" fields added onto resources which don't actually exist on models
@@ -202,7 +208,11 @@ class Model_Version_Info {
 					}
 				}
 			}
-			$this->_cached_models_for_requested_version = $all_models_in_current_version;
+			$this->_cached_models_for_requested_version = apply_filters(
+			    'FHEE__EventEspresso_core_libraries_rest_api__models_for_requested_version',
+                $all_models_in_current_version,
+                $this
+            );
 		}
 		return $this->_cached_models_for_requested_version;
 	}

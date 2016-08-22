@@ -49,6 +49,8 @@ class EE_Brewing_Regular extends EE_Base {
 			add_filter( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register', array( $this, 'caf_payment_methods' ) );
 			// caffeinated constructed
 			do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
+			//seeing how this is caf, which isn't put on WordPress.org, we can have affiliate links without a disclaimer
+			add_filter( 'FHEE__ee_show_affiliate_links', '__return_false' );
 		}
 	}
 
@@ -85,7 +87,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$price_type_table = $wpdb->prefix."esp_price_type";
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ($wpdb->get_var("SHOW TABLES LIKE '$price_type_table'") == $price_type_table) {
+		if ( EEH_Activation::table_exists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';//include trashed price types
 			$tax_price_type_count = $wpdb->get_var( $SQL );

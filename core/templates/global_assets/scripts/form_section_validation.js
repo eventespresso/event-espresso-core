@@ -37,21 +37,34 @@ jQuery(document).ready(function($){
 
 		/**
 		 *	@function initialize
+		 *  @param {object} form_data
 		 */
 		initialize : function( form_data ) {
-            // reset previous form validation rules
-            EEFV.reset_validation_rules();
 			EEFV.initialize_datepicker_inputs();
+			EEFV.initialize_select_reveal_inputs( form_data );
 			EEFV.validation_rules_array = form_data;
 			EEFV.setup_validation_rules( form_data );
 			EEFV.add_custom_validators();
+			//add a trigger so anyone can know when forms are getting re-initialized
+			jQuery(document).trigger( 'EEFV:initialize', form_data );
+			//let's execute a trigger for each form in the localized data. This way
+			//client code doesn't need to manually loop over it all
+			$.each( form_data, function( html_id, form_data_for_specific_section ){
+				jQuery(document).trigger( 
+					'EEFV:initialize_specific_form', 
+					{ 
+						'html_id' : html_id, 
+						'form_data' : form_data_for_specific_section 
+					} 
+				);
+			});
 		},
 
 
 
         /**
          *	@function reset_validation_rules
-         */
+		 */
         reset_validation_rules : function() {
 			EEFV.remove_previous_validation_rules();
 			EEFV.validation_rules_per_html_form = {};
@@ -102,9 +115,64 @@ jQuery(document).ready(function($){
 			 */
 		},
 
+		/**
+		 * Find each select_reveal input in the form_data, and reveal the section corresponding
+		 * to its currently selected value, and setup a callback so that when the selection
+		 * changes, the section revealed also changes
+		 * @param {object} form_sections_to_validate property names are form section ids, values are objects:
+		 *	which should have a property name "other_data", whose values is an object which:
+		 *		has property names of each select_reveal input id, whose value is an object which:
+		 *			has property names of the select's option values, and property values are related sections to show/hide
+		 *			based on the select_reveal's value
+		 * @returns void
+		 */
+		initialize_select_reveal_inputs : function( form_sections_to_validate ) {
+			//for each form...
+			$.each( form_sections_to_validate, function( index, form_data ){
+				if (
+					typeof form_data.other_data !== 'undefined'
+					&& typeof form_data.other_data.select_reveal_inputs !== 'undefined'
+				) {
+					//for each select_reveal input...
+					$.each( form_data.other_data.select_reveal_inputs , function( select_reveal_input_id, select_option_to_section_to_reveal_id ) {
+						//define a callback for revealing/hiding the sections related to this select_reveal input
+						var reveal_now = function( event ) {
+							var current_selection = $('#' + event.currentTarget.id ).val();
+							//show the selected section, hide others
+							for( var value in select_option_to_section_to_reveal_id ) {
+								var section_to_show_or_hide_selector = '#' +  select_option_to_section_to_reveal_id[ value ];
+								if( value === current_selection ) {
+									$( section_to_show_or_hide_selector ).show();
+								} else {
+									$( section_to_show_or_hide_selector ).hide();
+								}
+							}
+						};
+						//update what's shown or hidden when the select_reveal's value changes
+						$('#' + select_reveal_input_id ).change(
+							{ select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id },
+							reveal_now
+						);
+						//and start off with it showing the right value
+						reveal_now(
+							{
+								currentTarget: {
+									id: select_reveal_input_id
+								},
+								data: {
+									select_option_to_section_to_reveal_id : select_option_to_section_to_reveal_id
+								}
+							}
+						);
+					});
+				}
+			});
+		},
+
 
 		/**
 		 *	@function setup_validation_rules
+		 *	@param {object} form_sections_to_validate
 		 */
 		setup_validation_rules : function( form_sections_to_validate ) {
 			//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate', form_sections_to_validate, true );
@@ -130,9 +198,16 @@ jQuery(document).ready(function($){
 						}
 						// remove the non-js-generated server-side validation errors
 						// because we will allow jquery validate to populate them
-						html_form.find( '.ee-error-label' ).remove();
 						// need to call validate() before doing anything else, i know, seems counter intuitive...
-						EEFV.form_validators[ form_id ] = html_form.validate();
+						EEFV.form_validators[ form_id ] = html_form.validate(
+							{
+								errorPlacement:function( error, input ) {
+									//remove error inputs added server-side,
+									//this new error overrides it
+									input.siblings('label.error').remove();
+									error.appendTo(input.parent());
+								}
+							});
 						// now add form section's validation rules
 						EEFV.add_rules( form_data.form_section_id, form_data.validation_rules );
 						// and cache incoming form sections and rules so that they can be later removed if necessary
@@ -148,6 +223,8 @@ jQuery(document).ready(function($){
 
 		/**
 		 *	@function apply_rules
+		 *  @param {string} form_id
+		 *  @param {object} form_data
 		 */
 		add_rules : function( form_id, form_data ) {
 			//EEFV.console_log( 'EEFV.apply_rules', '', true );
@@ -172,7 +249,11 @@ jQuery(document).ready(function($){
 		remove_previous_validation_rules : function() {
 			// remove any previously applied validation rules for each html form
 			$.each( EEFV.validation_rules_per_html_form, function( form_section_id, form_data ){
-				if ( typeof form_section_id !== 'undefined' && typeof $( form_section_id ).attr('id') !== 'undefined' && typeof form_data !== 'undefined' ) {
+				if (
+					typeof form_section_id !== 'undefined'
+					&& typeof $( form_section_id ).attr('id') !== 'undefined'
+					&& typeof form_data !== 'undefined'
+				) {
 					EEFV.remove_rules( form_data );
 				}
 			});
@@ -182,6 +263,7 @@ jQuery(document).ready(function($){
 
 		/**
 		 *	@function apply_rules
+		 *  @param {object} form_data
 		 */
 		remove_rules : function( form_data ) {
 			//EEFV.console_log( 'EEFV.remove_rules', '', true );
@@ -256,6 +338,7 @@ jQuery(document).ready(function($){
 		 * Verifies that an email is valid.
 		 * Does not grok i18n domains. Not RFC compliant.
 		 *
+		 * @function is_email
 		 * @param {string} $email Email address to verify.
 		 * @return {boolean} Either false or the valid email address.
 		 */
@@ -322,6 +405,7 @@ jQuery(document).ready(function($){
 
 		/**
 		 * trims leading and trailing hyphens and whitespace
+		 * @function string_trim
 		 * @param  {string} stringToTrim
 		 * @param  {string} regex
 		 */
@@ -341,6 +425,8 @@ jQuery(document).ready(function($){
 		/**
 		 * for generating a random string to make an ID for an html form
 		 * if it doesn't have one already
+		 * @function generate_random_string
+		 * @param {number} n
 		 */
 		generate_random_string : function( n ) {
 			if( ! n ) {

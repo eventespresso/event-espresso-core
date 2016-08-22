@@ -1,6 +1,9 @@
 <?php
 //echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
-if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive() && espresso_display_venue_in_event_list() ) ) :
+if (
+	( is_single() && espresso_display_venue_in_event_details() )
+	|| ( is_archive() && espresso_display_venue_in_event_list() )
+) :
 	global $post;
 	do_action( 'AHEE_event_details_before_venue_details', $post );
 	$venue_name = espresso_venue_name( 0, 'details', FALSE );
@@ -21,6 +24,11 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 		<span class="small-text"><strong><?php _e( 'Venue Phone:', 'event_espresso' ); ?></strong></span> <?php echo $venue_phone; ?>
 	</p>
 <?php endif;  ?>
+<?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
+	<p>
+		<span class="small-text"><strong><?php _e( 'Venue Website:', 'event_espresso' ); ?></strong></span> <?php echo $venue_website; ?>
+	</p>
+<?php endif; ?>
 <?php  if ( espresso_venue_has_address( $post->ID )) : ?>
 	<strong><span class="dashicons dashicons-location-alt"></span><?php _e( 'Address:', 'event_espresso' ); ?></strong>
 	<?php espresso_venue_address( 'inline' ); ?>
@@ -50,5 +58,16 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || ( is_archive
 <!-- .espresso-venue-dv -->
 <?php
 do_action( 'AHEE_event_details_after_venue_details', $post );
+else :
+	if ( espresso_venue_is_password_protected() ) :
+?>
+	<div class="espresso-venue-dv  espresso-password-protected-venue-dv" >
+		<h3 class="event-venues-h3 ee-event-h3">
+			<?php _e( 'Location', 'event_espresso' );?>
+		</h3>
+		<?php echo espresso_password_protected_venue_form(); ?>
+	</div>
+<?php
+	endif;
 endif;
 ?>

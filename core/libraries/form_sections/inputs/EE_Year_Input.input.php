@@ -26,7 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Year_Input extends EE_Select_Input{
 
-	function __construct( $input_settings = array(), $four_digit_year = true, $years_behind = 1, $years_ahead = 15 ){
+	function __construct( $input_settings = array(), $four_digit_year = true, $years_behind = 100, $years_ahead = 0 ){
 		if($four_digit_year){
 			$current_year_int = intval(date('Y'));
 		}else{

@@ -2,6 +2,8 @@
 /**
  * Class EE_Object_Repository_Mock
  *
+ * Description
+ *
  * @package 			Event Espresso
  * @subpackage 	core
  * @author 				Brent Christensen
@@ -11,7 +13,7 @@
 class EE_Object_Repository_Mock extends EE_Object_Repository {
 
 	/**
-	 * EE_Object_Repository_Mock constructor.
+	 * EE_Object_Collection_Mock constructor.
 	 */
 	public function __construct() {
 		$this->interface = 'EE_Ticket';
@@ -21,4 +23,4 @@ class EE_Object_Repository_Mock extends EE_Object_Repository {
 
 }
 // End of file EE_Object_Repository_Mock.php
-// Location: /tests/mocks/core/EE_Object_Repository_Mock.php
+// Location: /tests/mocks/EE_Object_Repository_Mock.php

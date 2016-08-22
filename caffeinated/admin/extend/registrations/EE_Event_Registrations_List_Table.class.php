@@ -85,8 +85,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_hidden_columns = array();
 
 		$this->_evt = EEM_Event::instance()->get_one_by_ID($evt_id);
-		$this->_dtts_for_event = !empty($evt_id) ? $this->_evt->datetimes_ordered() : array();
-
+		$this->_dtts_for_event = $this->_evt instanceof EE_Event ? $this->_evt->datetimes_ordered() : array();
 	}
 
 
@@ -107,7 +106,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _get_table_filters() {
 		$filters = $where = array();
 
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
@@ -261,6 +259,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . esc_attr__('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
+
+
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
 	}
 
@@ -277,9 +277,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column_Event(EE_Registration $item) {
-		$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
-		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );
-		$event_label = EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . esc_attr__( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
+		try {
+			$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
+			$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );
+			$event_label = EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . esc_attr__( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
+		} catch( \EventEspresso\core\exceptions\EntityNotFoundException $e ) {
+			$event_label = esc_html__( 'Unknown', 'event_espresso' );
+		}
+
 		return $event_label;
 	}
 

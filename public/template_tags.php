@@ -29,8 +29,6 @@
  */
 function is_espresso_event( $event = NULL ) {
 	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
-		// load event view helper
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		// extract EE_Event object from passed param regardless of what it is (within reason of course)
 		$event = EEH_Event_View::get_event( $event );
 		// do we have a valid event ?
@@ -91,8 +89,6 @@ function is_espresso_event_taxonomy() {
  */
 function is_espresso_venue( $venue = NULL ) {
 	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
-		// load event view helper
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		// extract EE_Venue object from passed param regardless of what it is (within reason of course)
 		$venue = EEH_Venue_View::get_venue( $venue, FALSE );
 		// do we have a valid event ?
@@ -275,7 +271,6 @@ if ( ! function_exists( 'espresso_event_reg_button' )) {
 	 * @return string
 	 */
 	function espresso_event_reg_button( $btn_text_if_active = NULL, $btn_text_if_inactive = FALSE, $EVT_ID = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		$event_status = EEH_Event_View::event_active_status( $EVT_ID );
 		switch ( $event_status ) {
 			case EE_Datetime::sold_out :
@@ -319,7 +314,6 @@ if ( ! function_exists( 'espresso_display_ticket_selector' )) {
 	 * @return boolean
 	 */
 	function espresso_display_ticket_selector( $EVT_ID = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		return EEH_Event_View::display_ticket_selector( $EVT_ID );
 	}
 }
@@ -335,7 +329,6 @@ if ( ! function_exists( 'espresso_event_status_banner' )) {
 	 * @return string
 	 */
 	function espresso_event_status_banner( $EVT_ID = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		return EEH_Event_View::event_status( $EVT_ID );
 	}
 }
@@ -351,7 +344,6 @@ if ( ! function_exists( 'espresso_event_status' )) {
 	 * @return string
 	 */
 	function espresso_event_status( $EVT_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_active_status( $EVT_ID );
 			return '';
@@ -372,7 +364,6 @@ if ( ! function_exists( 'espresso_event_categories' )) {
 	 * @return string
 	 */
 	function espresso_event_categories( $EVT_ID = 0, $hide_uncategorized = TRUE, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
 			return '';
@@ -393,7 +384,6 @@ if ( ! function_exists( 'espresso_event_tickets_available' )) {
 	 * @return string
 	 */
 	function espresso_event_tickets_available( $EVT_ID = 0, $echo = TRUE, $format = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		$tickets = EEH_Event_View::event_tickets_available( $EVT_ID );
 		if ( is_array( $tickets ) && ! empty( $tickets )) {
 			// if formatting then $html will be a string, else it will be an array of ticket objects
@@ -431,7 +421,6 @@ if ( ! function_exists( 'espresso_event_date_obj' )) {
 	 * @return object
 	 */
 	function espresso_event_date_obj( $EVT_ID = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		return EEH_Event_View::get_primary_date_obj( $EVT_ID );
 	}
 }
@@ -453,7 +442,6 @@ if ( ! function_exists( 'espresso_event_date' )) {
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_date__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date__time_format', $time_format );
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if($echo){
 			echo EEH_Event_View::the_event_date( $date_format, $time_format, $EVT_ID );
 			return '';
@@ -484,7 +472,6 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_list_of_event_dates__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		if ( ! $format ) {
 			return apply_filters( 'FHEE__espresso_list_of_event_dates__datetimes', $datetimes );
@@ -538,7 +525,6 @@ if ( ! function_exists( 'espresso_event_end_date' )) {
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_end_date__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_end_date__time_format', $time_format );
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if($echo){
 			echo EEH_Event_View::the_event_end_date( $date_format, $time_format, $EVT_ID );
 			return '';
@@ -557,10 +543,10 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 	 * @param string $single_date_format
 	 * @param string $single_time_format
 	 * @param bool   $EVT_ID
+	 * @param bool   $echo
 	 * @return string
 	 */
 	function espresso_event_date_range( $date_format = '', $time_format = '', $single_date_format = '', $single_time_format = '', $EVT_ID = FALSE, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		// set and filter date and time formats when a range is returned
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
@@ -602,7 +588,6 @@ if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
 	 * @return string
 	 */
 	function espresso_event_date_as_calendar_page( $EVT_ID = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		EEH_Event_View::event_date_as_calendar_page( $EVT_ID );
 	}
 }
@@ -619,7 +604,6 @@ if ( ! function_exists( 'espresso_event_link_url' )) {
 	 * @return string
 	 */
 	function espresso_event_link_url( $EVT_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_link_url( $EVT_ID );
 			return '';
@@ -639,7 +623,6 @@ if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
 	 * @return    boolean
 	 */
 	function espresso_event_has_content_or_excerpt( $EVT_ID = FALSE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		return EEH_Event_View::event_has_content_or_excerpt( $EVT_ID );
 	}
 }
@@ -657,7 +640,6 @@ if ( ! function_exists( 'espresso_event_content_or_excerpt' )) {
 	 * @return string
 	 */
 	function espresso_event_content_or_excerpt( $num_words = 55, $more = NULL, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_content_or_excerpt( $num_words, $more );
 			return '';
@@ -677,7 +659,6 @@ if ( ! function_exists( 'espresso_event_phone' )) {
 	 * @return string
 	 */
 	function espresso_event_phone( $EVT_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::event_phone( $EVT_ID );
 			return '';
@@ -698,7 +679,6 @@ if ( ! function_exists( 'espresso_edit_event_link' )) {
 	 * @return string
 	 */
 	function espresso_edit_event_link( $EVT_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Event_View' );
 		if ( $echo ) {
 			echo EEH_Event_View::edit_event_link( $EVT_ID );
 			return '';
@@ -731,8 +711,7 @@ if ( ! function_exists( 'espresso_organization_address' )) {
 	 */
 	function espresso_organization_address( $type = 'inline' ) {
 		if ( EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ) {
-			EE_Registry::instance()->load_helper( 'Formatter' );
-			$address = new EE_Generic_Address(
+			$address = new EventEspresso\core\domain\entities\GenericAddress(
 				EE_Registry::instance()->CFG->organization->address_1,
 				EE_Registry::instance()->CFG->organization->address_2,
 				EE_Registry::instance()->CFG->organization->city,
@@ -879,7 +858,6 @@ if ( ! function_exists( 'espresso_event_venues' )) {
 	 * @return array  all venues related to an event
 	 */
 	function espresso_event_venues() {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		return EEH_Venue_View::get_event_venues();
 	}
 }
@@ -896,7 +874,6 @@ if ( ! function_exists( 'espresso_venue_id' )) {
 	 * @return    string
 	 */
 	function espresso_venue_id( $EVT_ID = 0 ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		$venue = EEH_Venue_View::get_venue( $EVT_ID );
 		return $venue instanceof EE_Venue ? $venue->ID() : 0;
 	}
@@ -914,8 +891,37 @@ if ( ! function_exists( 'espresso_is_venue_private' ) ) {
 	 * @return bool | null
 	 */
 	function espresso_is_venue_private( $VNU_ID = 0 ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		return EEH_Venue_View::is_venue_private( $VNU_ID );
+	}
+}
+
+
+
+if ( ! function_exists( 'espresso_venue_is_password_protected' ) ) {
+	/**
+	 * returns true or false if a venue is password protected or not
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 * @return string
+	 */
+	function espresso_venue_is_password_protected( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::is_venue_password_protected( $VNU_ID );
+	}
+}
+
+
+
+if ( ! function_exists( 'espresso_password_protected_venue_form' ) ) {
+	/**
+	 * Returns a password form if venue is password protected.
+	 *
+	 * @param int     $VNU_ID optional, the venue id to check.
+	 * @return string
+	 */
+	function espresso_password_protected_venue_form( $VNU_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		return EEH_Venue_View::password_protected_venue_form( $VNU_ID );
 	}
 }
 
@@ -933,7 +939,6 @@ if ( ! function_exists( 'espresso_venue_name' )) {
 	 * @return    string
 	 */
 	function espresso_venue_name( $VNU_ID = 0, $link_to = 'details', $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if($echo){
 			echo EEH_Venue_View::venue_name( $link_to, $VNU_ID );
 			return '';
@@ -955,7 +960,6 @@ if ( ! function_exists( 'espresso_venue_link' )) {
 	 *  @return 	string
 	 */
 	function espresso_venue_link( $VNU_ID = 0, $text = '' ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		return EEH_Venue_View::venue_details_link( $VNU_ID, $text );
 	}
 }
@@ -972,7 +976,6 @@ if ( ! function_exists( 'espresso_venue_description' )) {
 	 * @return    string
 	 */
 	function espresso_venue_description( $VNU_ID = FALSE, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if($echo){
 			echo EEH_Venue_View::venue_description( $VNU_ID );
 			return '';
@@ -992,12 +995,11 @@ if ( ! function_exists( 'espresso_venue_excerpt' )) {
 	 * @return    string
 	 */
 	function espresso_venue_excerpt( $VNU_ID = 0,  $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
-			echo EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+			echo EEH_Venue_View::venue_excerpt( $VNU_ID );
 			return '';
 		}
-		return EEH_Venue_View::venue_excerpt( $VNU_ID,  $echo );
+		return EEH_Venue_View::venue_excerpt( $VNU_ID );
 	}
 }
 
@@ -1014,7 +1016,6 @@ if ( ! function_exists( 'espresso_venue_categories' )) {
 	 * @return string
 	 */
 	function espresso_venue_categories( $VNU_ID = 0, $hide_uncategorized = TRUE,  $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_categories( $VNU_ID, $hide_uncategorized );
 			return '';
@@ -1035,7 +1036,6 @@ if ( ! function_exists( 'espresso_venue_address' )) {
 	 * @return string
 	 */
 	function espresso_venue_address( $type = 'multiline', $VNU_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_address( $type, $VNU_ID );
 			return '';
@@ -1056,7 +1056,6 @@ if ( ! function_exists( 'espresso_venue_raw_address' )) {
 	 * @return string
 	 */
 	function espresso_venue_raw_address( $type = 'multiline', $VNU_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_address( $type, $VNU_ID, FALSE, FALSE );
 			return '';
@@ -1075,7 +1074,6 @@ if ( ! function_exists( 'espresso_venue_has_address' )) {
 	 * @return bool
 	 */
 	function espresso_venue_has_address( $VNU_ID = 0 ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		return EEH_Venue_View::venue_has_address( $VNU_ID );
 	}
 }
@@ -1093,7 +1091,6 @@ if ( ! function_exists( 'espresso_venue_gmap' )) {
 	 * @return string
 	 */
 	function espresso_venue_gmap( $VNU_ID = 0, $map_ID = FALSE, $gmap = array(), $echo = TRUE  ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_gmap( $VNU_ID, $map_ID, $gmap );
 			return '';
@@ -1112,7 +1109,6 @@ if ( ! function_exists( 'espresso_venue_phone' )) {
 	 * @return string
 	 */
 	function espresso_venue_phone( $VNU_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_phone( $VNU_ID );
 			return '';
@@ -1132,7 +1128,6 @@ if ( ! function_exists( 'espresso_venue_website' )) {
 	 * @return string
 	 */
 	function espresso_venue_website( $VNU_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if ( $echo ) {
 			echo EEH_Venue_View::venue_website_link( $VNU_ID );
 			return '';
@@ -1152,7 +1147,6 @@ if ( ! function_exists( 'espresso_edit_venue_link' )) {
 	 * @return string
 	 */
 	function espresso_edit_venue_link( $VNU_ID = 0, $echo = TRUE ) {
-		EE_Registry::instance()->load_helper( 'Venue_View' );
 		if($echo){
 			echo EEH_Venue_View::edit_venue_link( $VNU_ID );
 			return '';

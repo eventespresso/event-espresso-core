@@ -31,12 +31,13 @@ class EEH_Array extends EEH_Base {
 	}
 
 	/**
-	 * Given that $arr is an array, determines if it's associative or numerically-indexed
-	 * @param array $arr
+	 * Given that $arr is an array, determines if it's associative or numerically AND sequentially indexed
+	 *
+	 * @param array $array
 	 * @return boolean
 	 */
-	public static function is_associative_array($arr){
-		return  array_keys($arr) !== range(0, count($arr) - 1);
+	public static function is_associative_array( array $array ) {
+		return array_keys( $array ) !== range( 0, count( $array ) - 1 );
 	}
 
 	/**
@@ -83,7 +84,7 @@ class EEH_Array extends EEH_Base {
 	/**
 	 * Exactly like `maybe_unserialize`, but also accounts for a WP bug: http://core.trac.wordpress.org/ticket/26118
 	 * @param mixed $value usually a string, but could be an array or object
-	 * @return mixed the UNserialized data
+	 * @return mixed the UN-serialized data
 	 */
 	public static function maybe_unserialize( $value ) {
 		$data = maybe_unserialize($value);
@@ -136,4 +137,65 @@ class EEH_Array extends EEH_Base {
 			return $target_array;
 		}
 	}
+
+
+
+	/**
+	 * array_merge() is slow and should never be used while looping over data
+	 * if you don't need to preserve keys from all arrays, then using a foreach loop is much faster
+	 * so really this acts more like array_replace( $array1, $array2 )
+	 * or a union with the arrays flipped ( $array2 + $array1 )
+	 * this saves a few lines of code and improves readability
+	 *
+	 * @param array $array1
+	 * @param array $array2
+	 * @return array
+	 */
+	public static function merge_arrays_and_overwrite_keys( array $array1, array $array2 ) {
+		foreach ( $array2 as $key => $value ) {
+			$array1[ $key ] = $value;
+		}
+		return $array1;
+	}
+
+
+
+	/**
+	 * given a flat array like $array = array('A', 'B', 'C')
+	 * will convert into a multidimensional array like $array[A][B][C]
+	 * if $final_value is provided and is anything other than null,
+	 * then that will be set as the value for the innermost array key
+	 * like so: $array[A][B][C] = $final_value
+	 *
+	 * @param array $flat_array
+	 * @param mixed $final_value
+	 * @return array
+	 */
+	public static function convert_array_values_to_keys( array $flat_array, $final_value = null ) {
+		$multidimensional = array();
+		$reference = &$multidimensional;
+		foreach ( $flat_array as $key ) {
+			$reference[ $key ] = array();
+			$reference = &$reference[ $key ];
+		}
+		if ( $final_value !== null ) {
+			$reference = $final_value;
+		}
+		return $multidimensional;
+	}
+
+
+
+	/**
+	 * @see http://stackoverflow.com/questions/173400/how-to-check-if-php-array-is-associative-or-sequential
+	 * @param array $array
+	 * @return bool
+	 */
+	public static function is_array_numerically_and_sequentially_indexed(array $array) {
+		return ! empty($array) ? array_keys($array) === range(0, count($array) - 1) : true;
+	}
+
+
+
+
 } //end EEH_Template class

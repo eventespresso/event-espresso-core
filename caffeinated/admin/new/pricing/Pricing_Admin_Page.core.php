@@ -538,7 +538,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// grab price ID
 		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		switch( $this->_req_action ) {
+			case 'add_new_price' :
+				$this->_admin_page_title = esc_html__( 'Add New Price', 'event_espresso' );
+				break;
+			case 'edit_price' :
+				$this->_admin_page_title = esc_html__( 'Edit Price', 'event_espresso' );
+				break;
+			default :
+				$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		}
 		// add PRC_ID to title if editing
 		$this->_admin_page_title = $PRC_ID ? $this->_admin_page_title . ' # ' . $PRC_ID : $this->_admin_page_title;
 
@@ -979,7 +988,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		// grab price type ID
 		$PRT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
-		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		switch( $this->_req_action ) {
+			case 'add_new_price_type' :
+				$this->_admin_page_title = esc_html__( 'Add New Price Type', 'event_espresso' );
+				break;
+			case 'edit_price_type' :
+				$this->_admin_page_title = esc_html__( 'Edit Price Type', 'event_espresso' );
+				break;
+			default :
+				$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
+		}
 		// add PRT_ID to title if editing
 		$this->_admin_page_title = $PRT_ID ? $this->_admin_page_title . ' # ' . $PRT_ID : $this->_admin_page_title;
 

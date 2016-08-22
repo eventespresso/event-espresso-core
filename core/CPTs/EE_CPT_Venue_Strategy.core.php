@@ -62,9 +62,7 @@ class EE_CPT_Venue_Strategy {
 	 */
 	public function the_posts( $posts, WP_Query $wp_query) {
 		// automagically load the EEH_Venue_View helper so that it's functions are available
-		EE_Registry::instance()->load_helper('Venue_View');
 		if ( isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) && EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
-			EE_Registry::instance()->load_helper( 'Maps' );
 			EEH_Maps::espresso_google_map_js();
 		}
 		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );

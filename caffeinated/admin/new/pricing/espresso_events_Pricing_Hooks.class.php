@@ -58,7 +58,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			return;
 		}
 
-		EE_Registry::instance()->load_helper( 'DTT_Helper' );
 
 		//if we were going to add our own metaboxes we'd use the below.
 		$this->_metaboxes = array(
@@ -258,7 +257,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTM->get_raw('DTT_EVT_start') > $DTM->get_raw('DTT_EVT_end') ) {
 				$DTM->set('DTT_EVT_end', $DTM->get('DTT_EVT_start') );
-				EE_Registry::instance()->load_helper('DTT_Helper');
 				$DTM = EEH_DTT_Helper::date_time_add($DTM, 'DTT_EVT_end', 'days');
 				$DTM->save();
 			}
@@ -323,7 +321,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$old_tickets = isset( $data['ticket_IDs'] ) ? explode(',', $data['ticket_IDs'] ) : array();
 
 		//load money helper
-		EE_Registry::instance()->load_helper( 'Money' );
 
 		foreach ( $data['edit_tickets'] as $row => $tkt ) {
 
@@ -461,7 +458,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date') ) {
 				$TKT->set('TKT_end_date', $TKT->get('TKT_start_date') );
-				EE_Registry::instance()->load_helper('DTT_Helper');
 				$TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
 			}
 
@@ -946,7 +942,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 */
 	protected function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
 
-		// if the incomign $dtt object is NOT an instance of EE_Datetime then force default to true.
+		// if the incoming $dtt object is NOT an instance of EE_Datetime then force default to true.
 		$default = ! $dtt instanceof EE_Datetime ? true : false;
 
 		$template_args = array(
@@ -962,8 +958,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_order' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
-			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable'
-			);
+			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable',
+		    'reg_list_url' => $default || ! $dtt->event() instanceof \EE_Event
+                ? ''
+                : EE_Admin_Page::add_query_args_and_nonce(
+                    array( 'event_id' => $dtt->event()->ID(), 'datetime_id' => $dtt->ID() ),
+                    REG_ADMIN_URL
+                )
+		);
 
 		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon' ? ' style="display:none"' : '';
 

@@ -17,14 +17,28 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	public function __construct( $validation_error_message = NULL ) {
 		if ( ! $validation_error_message ) {
-			global $allowedposttags;
 			$validation_error_message = sprintf(
 				__( 'Only the following HTML tags are allowed:%1$s%2$s', "event_espresso" ),
 				'<br />',
-				implode( ",", array_keys( $allowedposttags ) )
+				$this->get_list_of_allowed_tags()
 			);
 		}
 		parent::__construct( $validation_error_message );
+	}
+
+
+
+	/**
+	 * get_list_of_allowed_tags
+	 *
+	 * generates and returns a string that lists the top-level HTML tags that are allowable for this input
+	 *
+	 * @return string
+	 */
+	public function get_list_of_allowed_tags() {
+		global $allowedposttags;
+		ksort( $allowedposttags );
+		return implode( ', ', array_keys( $allowedposttags ) );
 	}
 
 

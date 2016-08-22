@@ -483,7 +483,9 @@ class EE_Data_Migration_Manager{
 	public function migration_step( $step_size = 0 ){
 
 		//bandaid fix for issue https://events.codebasehq.com/projects/event-espresso/tickets/7535
-		remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
+		if ( class_exists( 'EE_CPT_Strategy' ) ) {
+			remove_action( 'pre_get_posts', array( EE_CPT_Strategy::instance(), 'pre_get_posts' ), 5 );
+		}
 
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
@@ -954,7 +956,6 @@ class EE_Data_Migration_Manager{
 	 * in the queue, calls EE_System::initialize_db_if_no_migrations_required().
 	 */
 	public function initialize_db_for_enqueued_ee_plugins() {
-//		EE_Registry::instance()->load_helper( 'Debug_Tools' );
 //		EEH_Debug_Tools::instance()->start_timer( 'initialize_db_for_enqueued_ee_plugins' );
 		$queue = $this->get_db_initialization_queue();
 		foreach( $queue as $plugin_slug ) {
