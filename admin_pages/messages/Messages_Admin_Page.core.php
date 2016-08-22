@@ -207,22 +207,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		) {
 			return '';
 		}
-
 		//merge in default
 		$messenger_options = array_merge(
 			array( 'none_selected' => __( 'Show All Messengers', 'event_espresso' ) ),
 			$messenger_options
 		);
-
-		$input_attributes = array(
-			'html_name' => 'ee_messenger_filter_by',
-			'html_id' => 'ee_messenger_filter_by',
-			'html_class' => 'wide',
-			'default' => isset( $this->_req_data['ee_messenger_filter_by'] )
-				? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
-				: 'none_selected'
+		$input = new EE_Select_Input(
+			$messenger_options,
+			array(
+				'html_name'  => 'ee_messenger_filter_by',
+				'html_id'    => 'ee_messenger_filter_by',
+				'html_class' => 'wide',
+				'default'    => isset( $this->_req_data['ee_messenger_filter_by'] )
+					? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
+					: 'none_selected'
+			)
 		);
-		$input = new EE_Select_Input( $messenger_options, $input_attributes );
 		return $input->get_html_for_input();
 	}
 
@@ -243,22 +243,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		) {
 			return '';
 		}
-
 		//merge in default
 		$message_type_options = array_merge(
 			array( 'none_selected' => __( 'Show All Message Types', 'event_espresso' ) ),
 			$message_type_options
 		);
-
-		$input_attributes = array(
-			'html_name' => 'ee_message_type_filter_by',
-			'html_id' => 'ee_message_type_filter_by',
-			'html_calss' => 'wide',
-			'default' => isset( $this->_req_data['ee_message_type_filter_by'] )
-				? sanitize_title( $this->_req_data['ee_message_type_filter_by'] )
-				: 'none_selected'
+		$input = new EE_Select_Input(
+			$message_type_options,
+			array(
+				'html_name'  => 'ee_message_type_filter_by',
+				'html_id'    => 'ee_message_type_filter_by',
+				'html_class' => 'wide',
+				'default'    => isset( $this->_req_data['ee_message_type_filter_by'] )
+					? sanitize_title( $this->_req_data['ee_message_type_filter_by'] )
+					: 'none_selected',
+			)
 		);
-		$input = new EE_Select_Input( $message_type_options, $input_attributes );
 		return $input->get_html_for_input();
 	}
 
@@ -279,22 +279,22 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		) {
 			return '';
 		}
-
 		//merge in default
 		$context_options = array_merge(
 			array( 'none_selected' => __( 'Show all Contexts', 'event_espresso' ) ),
 			$context_options
 		);
-
-		$input_attributes = array(
-			'html_name' => 'ee_context_filter_by',
-			'html_id' => 'ee_context_filter_by',
-			'html_class' => 'wide',
-			'default' => isset( $this->_req_data['ee_context_filter_by'] )
-			? sanitize_title( $this->_req_data['ee_context_filter_by'] )
-			: 'none_selected'
+		$input = new EE_Select_Input(
+			$context_options,
+			array(
+				'html_name'  => 'ee_context_filter_by',
+				'html_id'    => 'ee_context_filter_by',
+				'html_class' => 'wide',
+				'default'    => isset( $this->_req_data['ee_context_filter_by'] )
+					? sanitize_title( $this->_req_data['ee_context_filter_by'] )
+					: 'none_selected',
+			)
 		);
-		$input = new EE_Select_Input( $context_options, $input_attributes );
 		return $input->get_html_for_input();
 	}
 
