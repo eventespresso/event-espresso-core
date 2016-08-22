@@ -107,59 +107,74 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	}
 
 
-
 	/**
-	 * get_messengers_for_list_table
-	 *
+	 * @deprecated 4.9.9.rc.014
 	 * @return array
-	 * @throws \EE_Error
 	 */
 	public function get_messengers_for_list_table() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__( 'This method is no longer in use.  There is no replacement for it. The method was used to generate a set of
+			values for use in creating a messenger filter dropdown which is now generated differently via
+			 Messages_Admin_Page::get_messengers_select_input', 'event_espresso' ),
+			'4.9.9.rc.014'
+		);
+
 		$m_values = array();
 		$active_messengers = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_messenger' ) );
 		//setup messengers for selects
 		$i = 1;
 		foreach ( $active_messengers as $active_messenger ) {
 			if ( $active_messenger instanceof EE_Message ) {
-				$m_values[ $i ]['id'] = $active_messenger->messenger();
+				$m_values[ $i ]['id']   = $active_messenger->messenger();
 				$m_values[ $i ]['text'] = ucwords( $active_messenger->messenger_label() );
-				$i++;
+				$i ++;
 			}
 		}
 		return $m_values;
 	}
 
 
-
 	/**
-	 * get_message_types_for_list_table
-	 *
+	 * @deprecated 4.9.9.rc.014
 	 * @return array
-	 * @throws \EE_Error
 	 */
 	public function get_message_types_for_list_table() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__( 'This method is no longer in use.  There is no replacement for it. The method was used to generate a set of
+			values for use in creating a message type filter dropdown which is now generated differently via
+			 Messages_Admin_Page::get_message_types_select_input', 'event_espresso' ),
+			'4.9.9.rc.014'
+		);
+
 		$mt_values = array();
 		$active_messages = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_message_type' ) );
 		$i = 1;
 		foreach ( $active_messages as $active_message ) {
 			if ( $active_message instanceof EE_Message ) {
-				$mt_values[ $i ]['id'] = $active_message->message_type();
+				$mt_values[ $i ]['id']   = $active_message->message_type();
 				$mt_values[ $i ]['text'] = ucwords( $active_message->message_type_label() );
-				$i++;
+				$i ++;
 			}
 		}
 		return $mt_values;
 	}
 
 
-
 	/**
-	 * get_contexts_for_message_types_for_list_table
-	 *
+	 * @deprecated 4.9.9.rc.014
 	 * @return array
-	 * @throws \EE_Error
 	 */
 	public function get_contexts_for_message_types_for_list_table() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			__( 'This method is no longer in use.  There is no replacement for it. The method was used to generate a set of
+			values for use in creating a message type context filter dropdown which is now generated differently via
+			 Messages_Admin_Page::get_contexts_for_message_types_select_input', 'event_espresso' ),
+			'4.9.9.rc.014'
+		);
+
 		$contexts = array();
 		$active_message_contexts = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_context' ) );
 		foreach ( $active_message_contexts as $active_message ) {
@@ -174,6 +189,113 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		return $contexts;
+	}
+
+
+	/**
+	 * Generate select input with provided messenger options array.
+	 *
+	 * @param array  $messenger_options  Array of messengers indexed by messenger slug and values are the messenger labels.
+	 *
+	 * @return string
+	 */
+	public function get_messengers_select_input( $messenger_options ) {
+		//if empty or just one value then just return an empty string
+		if ( empty( $messenger_options )
+		     || ! is_array( $messenger_options )
+		     ||  count( $messenger_options ) === 1
+		) {
+			return '';
+		}
+
+		//merge in default
+		$messenger_options = array_merge(
+			array( 'none_selected' => __( 'Show All Messengers', 'event_espresso' ) ),
+			$messenger_options
+		);
+
+		$input_attributes = array(
+			'html_name' => 'ee_messenger_filter_by',
+			'html_id' => 'ee_messenger_filter_by',
+			'html_class' => 'wide',
+			'default' => isset( $this->_req_data['ee_messenger_filter_by'] )
+				? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
+				: 'none_selected'
+		);
+		$input = new EE_Select_Input( $messenger_options, $input_attributes );
+		return $input->get_html_for_input();
+	}
+
+
+	/**
+	 * Generate select input with provided message type options array.
+	 *
+	 * @param array $message_type_options Array of message types indexed by message type slug, and values are the
+	 *                                    message type labels
+	 *
+	 * @return string
+	 */
+	public function get_message_types_select_input( $message_type_options ) {
+		//if empty or count of options is 1 then just return an empty string
+		if ( empty( $message_type_options )
+			|| ! is_array( $message_type_options )
+			|| count( $message_type_options ) === 1
+		) {
+			return '';
+		}
+
+		//merge in default
+		$message_type_options = array_merge(
+			array( 'none_selected' => __( 'Show All Message Types', 'event_espresso' ) ),
+			$message_type_options
+		);
+
+		$input_attributes = array(
+			'html_name' => 'ee_message_type_filter_by',
+			'html_id' => 'ee_message_type_filter_by',
+			'html_calss' => 'wide',
+			'default' => isset( $this->_req_data['ee_message_type_filter_by'] )
+				? sanitize_title( $this->_req_data['ee_message_type_filter_by'] )
+				: 'none_selected'
+		);
+		$input = new EE_Select_Input( $message_type_options, $input_attributes );
+		return $input->get_html_for_input();
+	}
+
+
+	/**
+	 * Generate select input with provide message type contexts array.
+	 *
+	 * @param array $context_options Array of message type contexts indexed by context slug, and values are the
+	 *                               context label.
+	 *
+	 * @return string
+	 */
+	public function get_contexts_for_message_types_select_input( $context_options ) {
+		//if empty or count of options is one then just return empty string
+		if ( empty( $context_options )
+			|| ! is_array( $context_options )
+			|| count( $context_options ) === 1
+		) {
+			return '';
+		}
+
+		//merge in default
+		$context_options = array_merge(
+			array( 'none_selected' => __( 'Show all Contexts', 'event_espresso' ) ),
+			$context_options
+		);
+
+		$input_attributes = array(
+			'html_name' => 'ee_context_filter_by',
+			'html_id' => 'ee_context_filter_by',
+			'html_class' => 'wide',
+			'default' => isset( $this->_req_data['ee_context_filter_by'] )
+			? sanitize_title( $this->_req_data['ee_context_filter_by'] )
+			: 'none_selected'
+		);
+		$input = new EE_Select_Input( $context_options, $input_attributes );
+		return $input->get_html_for_input();
 	}
 
 
