@@ -57,6 +57,15 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	const status_id_pending_payment = 'RPP';
 
 	/**
+	 * Status ID (STS_ID on esp_status table) to indicate registration is on the WAIT_LIST .
+	 * Payments are allowed.
+	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
+	 * No space reserved.
+	 * Registration is active
+	 */
+	const status_id_wait_list = 'RWL';
+
+	/**
 	 * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
 	 * the TXN may or may not be completed ( paid in full )
 	 * Payments are allowed.
@@ -92,7 +101,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 *    Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
 	 * @return \EEM_Registration
 	 */
-	protected function __construct( $timezone ) {
+	protected function __construct( $timezone = null ) {
 		$this->singular_item = __('Registration','event_espresso');
 		$this->plural_item = __('Registrations','event_espresso');
 
@@ -139,11 +148,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 	reg_statuses_that_allow_payment
-	 * 	a filterable list of registration statuses that allow a registrant to make a payment
+	 * reg_statuses_that_allow_payment
+	 * a filterable list of registration statuses that allow a registrant to make a payment
 	 *
-	 *	@access public
-	 *	@return array
+	 * @access public
+	 * @return array
 	 */
 	public static function reg_statuses_that_allow_payment() {
 		return apply_filters(
@@ -151,6 +160,48 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			array(
 				EEM_Registration::status_id_approved,
 				EEM_Registration::status_id_pending_payment,
+				EEM_Registration::status_id_wait_list,
+			)
+		);
+	}
+
+
+
+	/**
+	 * inactive_reg_statuses
+	 * a filterable list of registration statuses that are not considered active
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function active_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_approved,
+				EEM_Registration::status_id_pending_payment,
+				EEM_Registration::status_id_wait_list,
+				EEM_Registration::status_id_not_approved,
+			)
+		);
+	}
+
+
+
+	/**
+	 * inactive_reg_statuses
+	 * a filterable list of registration statuses that are not considered active
+	 *
+	 * @access public
+	 * @return array
+	 */
+	public static function inactive_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
+			array(
+				EEM_Registration::status_id_incomplete,
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
 			)
 		);
 	}

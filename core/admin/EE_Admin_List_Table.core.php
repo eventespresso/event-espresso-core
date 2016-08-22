@@ -771,8 +771,20 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$action_class = ! empty( $action_class ) ? ' class="' . $action_class . '"' : '';
 		$action_id = ! empty( $action_id ) ? ' id="' . $action_id . '"' : '';
 		$content .= ! empty( $action_container ) ? '<' . $action_container . $action_class . $action_id . '>' : '';
-		$content .= apply_filters( 'FHEE__EE_Admin_List_Table___action_string__action_items', $action_items, $item, $this );
-		$content .= ! empty( $container ) ? '</' . $container . '>' : '';
+        try {
+            $content .= apply_filters(
+                'FHEE__EE_Admin_List_Table___action_string__action_items',
+                $action_items,
+                $item,
+                $this
+            );
+        } catch (\Exception $e) {
+            if (WP_DEBUG) {
+                \EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__ );
+            }
+            $content .= $action_items;
+        }
+		$content .= ! empty( $action_container ) ? '</' . $action_container . '>' : '';
 		return $content;
 	}
 }

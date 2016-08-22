@@ -19,13 +19,20 @@ define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin' . DS . 'new_addon' . D
  */
 Class  EE_New_Addon extends EE_Addon {
 
+	/**
+	 * this is not the place to perform any logic or add any other filter or action callbacks
+	 * this is just to bootstrap your addon; and keep in mind the addon might be DE-registered
+	 * in which case your callbacks should probably not be executed.
+	 * EED_New_Addon is the place for most filter and action callbacks (relating
+	 * the the primary business logic of your addon) to be placed
+	 */
 	public static function register_addon() {
 		// register addon via Plugin API
 		EE_Register_Addon::register(
 			'New_Addon',
 			array(
 				'version' 					=> EE_NEW_ADDON_VERSION,
-				'plugin_slug' 			=> 'new_addon',
+				'plugin_slug' 			=> 'espresso_new_addon',
 				'min_core_version' => EE_NEW_ADDON_CORE_VERSION_REQUIRED,
 				'main_file_path' 		=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,

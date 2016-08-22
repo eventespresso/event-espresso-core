@@ -107,6 +107,10 @@ class EEM_Status extends EEM_Base {
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')
   			),
+	  		EEM_Registration::status_id_wait_list => array(
+	  			__('wait list', 'event_espresso'),
+	  			__('wait list', 'event_espresso')
+  			),
 	  		EEM_Transaction::overpaid_status_code => array(
 	  			__('overpaid', 'event_espresso'),
 	  			__('overpaid', 'event_espresso')

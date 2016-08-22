@@ -97,8 +97,13 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 * replace it with application passwords.
 	 */
 	public static function maybe_notify_of_basic_auth_removal() {
-		if( ! isset( $_SERVER['PHP_AUTH_USER'] )
-			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) ) {
+		if( 
+			apply_filters( 
+				'FHEE__EED_Core_Rest_Api__maybe_notify_of_basic_auth_removal__override',
+				! isset( $_SERVER['PHP_AUTH_USER'] )
+			&& ! isset( $_SERVER['HTTP_AUTHORIZATION'] ) 
+			) 
+		) {
 			//sure it's a WP API request, but they aren't using basic auth, so don't bother them
 			return;
 		}
@@ -185,7 +190,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function invalidate_cached_route_data() {
 		//delete the saved EE REST API routes
-		delete_option( EED_Core_Rest_Api::saved_routes_option_names );
+		foreach( EED_Core_Rest_Api::versions_served() as $version => $hidden ){
+			delete_option( EED_Core_Rest_Api::saved_routes_option_names . $version );
+		}
 	}
 
 	/**
@@ -337,7 +344,7 @@ class EED_Core_Rest_Api extends \EED_Module {
 //							),
 			);
 			//@todo: also handle  DELETE for a single item
-			foreach ( $model->relation_settings() as $relation_name => $relation_obj ) {
+			foreach ( $model_version_info->relation_settings( $model ) as $relation_name => $relation_obj ) {
 				$related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
 					$relation_name,
 					$relation_obj
@@ -511,6 +518,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 					'methods' => WP_REST_Server::READABLE,
 					'hidden_endpoint' => $hidden_endpoint
 				),
+			),
+			'site_info' => array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\config\Read',
+						'handle_request_site_info' ),
+					'methods' => WP_REST_Server::READABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+				)
 			)
 		);
 	}

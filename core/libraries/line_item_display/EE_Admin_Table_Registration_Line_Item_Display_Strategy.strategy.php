@@ -67,14 +67,14 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
 		$name_html .=  sprintf(
 			_x( '%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
 			'<span class="ee-line-item-related-parent-object">',
-			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type() : __( 'Item:', 'event_espresso' ),
+			$line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type_i18n() : __( 'Item:', 'event_espresso' ),
 			$parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
 			'</span>'
 		);
 		$html .= EEH_HTML::td( $name_html, '', 'jst-left' );
 
 		//Type Column
-		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type() . '<br />' : '';
+		$type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() . '<br />' : '';
 		$code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
 		$type_html .= ! empty( $code ) ? '<span class="ee-line-item-id">' . sprintf( __( 'Code: %s', 'event_espresso' ), $code ) . '</span>' : '';
 		$html .= EEH_HTML::td( $type_html, '', 'jst-left' );
@@ -141,9 +141,9 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
 		$registration = isset( $options['EE_Registration'] ) ? $options['EE_Registration'] : null;
 		$registration_total = $registration instanceof EE_Registration ? $registration->pretty_final_price() : 0;
 		//if no valid registration object then we're not going to show the approximate text.
-		$total_match = $registration instanceof EE_Registration ? $registration->final_price() == $line_item->total() : true;
-
-
+		$total_match = $registration instanceof EE_Registration
+			? $registration->final_price() === $line_item->total()
+			: true;
 
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'admin-primary-mbox-total-tr' );

@@ -284,19 +284,15 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	 * Finds a unique slug for this event, given its name (we could have simply used
 	 * the old unique_identifier column, but it added a long string of seemingly random characters onto the end
 	 * and really wasn't that pretty for a slug, so we decided we'd make our own slug again)
-	 *
-	 * @param string $event_name
-	 * @param string $old_identifier
+	 * @param string $event_name (the name of the event for reading by humans)
+	 * @param string $old_identifier the old EE3 identifier (a long unique string)
+	 * @param string $new_post_status a post status
 	 * @return string
 	 */
-	private function _find_unique_slug($event_name, $old_identifier = ''){
+	private function _find_unique_slug($event_name, $old_identifier = '', $new_post_status = 'publish'){
 		$count = 0;
 		$original_name = $event_name ? sanitize_title($event_name) : $old_identifier;
-		$event_slug = $original_name;
-		while( $this->_other_post_exists_with_that_slug($event_slug) && $count<50){
-			$event_slug = sanitize_title($original_name."-".++$count);
-		}
-		return $event_slug;
+		return wp_unique_post_slug($original_name, 0, $new_post_status, 'espresso_events', 0 );
 	}
 
 	/**
@@ -318,7 +314,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	 * @param $old_event
 	 * @return int
 	 */
-	private function _insert_cpt( $old_event){
+	private function _insert_cpt( $old_event ){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
 		//for reference, 3.1 event stati available for setting are:
@@ -355,7 +351,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$cols_n_values = array(
 			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
 			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
-			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
+			'post_name'=>$this->_find_unique_slug($old_event['event_name'], $old_event['event_identifier'], $post_status ),//EVT_slug
 			'post_date'=>$old_event['submitted'],//EVT_created NOT
 			'post_date_gmt'=>get_gmt_from_date($old_event['submitted']),
 			'post_excerpt'=>'',//EVT_short_desc
