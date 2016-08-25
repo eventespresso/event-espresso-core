@@ -1138,6 +1138,14 @@ class EE_Registry {
 	public function reset_model( $model_name ) {
 		$model_class_name = strpos( $model_name, 'EEM_' ) !== 0 ? "EEM_{$model_name}" : $model_name;
 		if( ! isset( $this->LIB->{$model_class_name} ) || ! $this->LIB->{$model_class_name} instanceof EEM_Base ) {
+			if ( isset( $this->LIB->{$model_class_name} )) {
+				echo "\n " . __LINE__ . ") " . __METHOD__ . "()";
+				echo "\n model_name: " . $model_name;
+				echo "\n model_class_name: " . $model_class_name;
+				echo "\n IS SET BUT IS NOT INSTANCE OF EEM_Base !!!";
+				echo "\n this->LIB->{model_class_name} \n";
+				var_dump( $this->LIB->{$model_class_name} );
+			}
 			return null;
 		}
 		//get that model reset it and make sure we nuke the old reference to it
