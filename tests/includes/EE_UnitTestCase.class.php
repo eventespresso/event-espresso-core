@@ -64,8 +64,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 
+	public static function setUpBeforeClass() {
+		parent::setUpBeforeClass();
+		echo "\n" . get_called_class() . "\n";
+
+	}
+
+
+
 	public function setUp() {
-		echo ' ' . get_called_class() . '::' . $this->getName() . "()\n";
+		echo ' ' . $this->getName() . "()\n";
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
