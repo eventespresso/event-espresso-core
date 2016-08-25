@@ -65,6 +65,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	public function setUp() {
+		echo ' ' . $this->get_called_class() . '::' . $this->getName() . "()\n";
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -83,7 +84,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		//the accidental txn commit indicator option shouldn't be set from the previous test
 		update_option( 'accidental_txn_commit_indicator', TRUE );
 
-//		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -105,7 +105,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		// 'user_has_cap' filter to do this
 		$_wp_test_version = getenv( 'WP_VERSION' );
 		if ( $_wp_test_version && $_wp_test_version == '4.1' ) {
-			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, $WP_User ) {
+			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, WP_User $WP_User ) {
 				$WP_User->get_role_caps();
 
 				return $WP_User->allcaps;
@@ -143,7 +143,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$notices = EE_Error::get_notices( false, false, true );
 		EE_Error::reset_notices();
 		if( ! empty( $notices[ 'errors' ] ) ){
-			$this->fail(  $notices['errors'] );
+			$this->fail(
+				sprintf(
+					'The following error(s) occurred during test "%1$s" : %2$s',
+					$this->get_called_class() . '::' . $this->getName() . '()',
+					"\n" . $notices['errors']
+				)
+			);
 		}
 	}
 
