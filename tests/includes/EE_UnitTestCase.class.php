@@ -65,7 +65,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 	public function setUp() {
-		echo ' ' . $this->get_called_class() . '::' . $this->getName() . "()\n";
+		echo ' ' . get_called_class() . '::' . $this->getName() . "()\n";
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -146,7 +146,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$this->fail(
 				sprintf(
 					'The following error(s) occurred during test "%1$s" : %2$s',
-					$this->get_called_class() . '::' . $this->getName() . '()',
+					get_called_class() . '::' . $this->getName() . '()',
 					"\n" . $notices['errors']
 				)
 			);
