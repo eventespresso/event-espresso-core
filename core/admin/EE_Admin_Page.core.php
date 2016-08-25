@@ -1992,7 +1992,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// if there is then we go ahead and process the metabox loader.
 			foreach ( $this->_route_config['metaboxes'] as $metabox_callback ) {
 				// first check for Closures
-				if ( is_callable( $metabox_callback ) ) {
+				if ( $metabox_callback instanceof Closure ) {
 					$result = $metabox_callback();
 				} else if ( is_array( $metabox_callback ) && isset( $metabox_callback[0], $metabox_callback[1] ) ) {
 					$result = call_user_func( array( $metabox_callback[0], $metabox_callback[1] ) );
