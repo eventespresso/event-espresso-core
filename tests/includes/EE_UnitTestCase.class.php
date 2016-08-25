@@ -66,7 +66,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	public static function setUpBeforeClass() {
 		parent::setUpBeforeClass();
-		echo "\n" . get_called_class() . "\n";
+		echo "\n\n" . get_called_class() . "\n";
 
 	}
 
@@ -151,13 +151,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$notices = EE_Error::get_notices( false, false, true );
 		EE_Error::reset_notices();
 		if( ! empty( $notices[ 'errors' ] ) ){
-			$this->fail(
-				sprintf(
-					'The following error(s) occurred during test "%1$s" : %2$s',
-					get_called_class() . '::' . $this->getName() . '()',
-					"\n" . $notices['errors']
-				)
+			$error_message = sprintf(
+				'The following error(s) occurred during test "%1$s" : %2$s',
+				get_called_class() . '::' . $this->getName() . '()',
+				"\n" . $notices['errors']
 			);
+			$this->fail( $error_message );
+			throw new Exception( $error_message );
 		}
 	}
 
