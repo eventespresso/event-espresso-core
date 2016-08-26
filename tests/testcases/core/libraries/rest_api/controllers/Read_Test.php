@@ -242,12 +242,21 @@ class Read_Test extends \EE_UnitTestCase{
 	 * This helps prevent accidental changes
 	 */
 	public function test_handle_request_get_one__event() {
-
 		\EED_Core_Rest_Api::set_hooks_for_changes();
 		//set a weird timezone
 		update_option( 'gmt_offset', '-04:30' );
 		$this->set_current_user_to_new();
-		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		$current_time_mysql_gmt = current_time( 'Y-m-d\TH:i:s', true );
+		$current_time_mysql =  current_time( 'Y-m-d\TH:i:s' );
+		//these model objects were instantiated when the tests started, so their
+		//default time is actually quite old now (at least a few seconds, possibly a minute or two)
+		//so make sure we're creating the event with the CURRENT current time
+		$event = $this->new_model_obj_with_dependencies( 'Event',
+			array(
+				'EVT_created' => $current_time_mysql_gmt,
+				'EVT_modified' => $current_time_mysql_gmt,
+				'EVT_visible_on' => $current_time_mysql_gmt,
+			));
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
 				array(
@@ -259,12 +268,12 @@ class Read_Test extends \EE_UnitTestCase{
 		$result = $response->get_data();
 		$this->assertTrue( is_array( $result ) );
 		//compare all the times, realizing that _gmt times should be in UTC, others in the site's timezone
-		$this->assertDateWithinOneMinute( $result[ 'EVT_created' ], current_time( 'Y-m-d\TH:i:s' ), 'Y-m-d\TH:i:s');
-		$this->assertDateWithinOneMinute( $result[ 'EVT_modified' ], current_time( 'Y-m-d\TH:i:s' ), 'Y-m-d\TH:i:s');
-		$this->assertDateWithinOneMinute( $result[ 'EVT_visible_on' ], current_time( 'Y-m-d\TH:i:s' ), 'Y-m-d\TH:i:s');
-		$this->assertDateWithinOneMinute( $result[ 'EVT_created_gmt' ], current_time( 'Y-m-d\TH:i:s', true ), 'Y-m-d\TH:i:s');
-		$this->assertDateWithinOneMinute( $result[ 'EVT_modified_gmt' ], current_time( 'Y-m-d\TH:i:s', true ), 'Y-m-d\TH:i:s');
-		$this->assertDateWithinOneMinute( $result[ 'EVT_visible_on_gmt' ], current_time( 'Y-m-d\TH:i:s', true ), 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_created' ], $current_time_mysql, 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_modified' ], $current_time_mysql, 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_visible_on' ], $current_time_mysql, 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_created_gmt' ], $current_time_mysql_gmt, 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_modified_gmt' ], $current_time_mysql_gmt, 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_visible_on_gmt' ], $current_time_mysql_gmt, 'Y-m-d\TH:i:s');
 		//and let's just double-check the site's timezone isn't UTC, which would make it impossible to know if timezone offsets
 		//are being applied properly or not
 		$this->assertNotEquals(
