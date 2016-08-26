@@ -11,11 +11,6 @@ class Checkin_Test extends \EE_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
-		//reset the defaults for checkin models' CHK_timestamp
-		//because if it was constructed when the unit tests started,
-		//that might have been a few minutes ago
-		//and we'd like it to use more a more CURRENT current time
-		\EEM_Checkin::reset();
 		if ( ! class_exists( 'WP_Rest_Request' ) ) {
 			$this->markTestSkipped(
 				'Test being run on a version of WP that does not have the REST framework installed'
