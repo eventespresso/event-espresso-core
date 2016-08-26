@@ -26,6 +26,13 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase{
 		EEM_Payment_Method::reset();
 	}
 
+	public function tearDown() {
+		parent::tearDown();
+		// reset those models so they don't adversely affect other tests
+		EEM_Event::reset();
+		EEM_Payment_Method::reset();
+	}
+
 
 
 	/**
