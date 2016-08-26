@@ -242,7 +242,7 @@ class Read_Test extends \EE_UnitTestCase{
 	 * This helps prevent accidental changes
 	 */
 	public function test_handle_request_get_one__event() {
-
+		\EEM_Event::reset();
 		\EED_Core_Rest_Api::set_hooks_for_changes();
 		//set a weird timezone
 		update_option( 'gmt_offset', '-04:30' );
@@ -732,3 +732,4 @@ class Read_Test extends \EE_UnitTestCase{
 }
 
 // End of file Read_Test.php
+// Location: testcases/core/libraries/rest_api/controllers/Read_Test.php
