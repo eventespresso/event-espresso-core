@@ -64,16 +64,21 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 
-	public static function setUpBeforeClass() {
-		parent::setUpBeforeClass();
-		echo "\n\n" . get_called_class() . "\n";
-
-	}
+	/**
+	 * basically used for displaying the test case class while tests are running.
+	 * this can be helpful if you are getting weird errors happening,
+	 * but the test name is not being reported anywhere.
+	 * Just uncomment this method as well as the first line of setUp() below.
+	 */
+	// public static function setUpBeforeClass() {
+	// 	parent::setUpBeforeClass();
+	// 	echo "\n\n" . get_called_class() . "\n";
+	// }
 
 
 
 	public function setUp() {
-		echo ' ' . $this->getName() . "()\n";
+		// echo ' ' . $this->getName() . "()\n";
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -156,7 +161,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				"\n" . $notices['errors']
 			);
 			$this->fail( $error_message );
-			throw new Exception( $error_message );
+			// if you need a stack trace for the above, then uncomment the following
+			// it won't be entirely accurate, but might help
+			// throw new Exception( $error_message );
 		}
 	}
 
