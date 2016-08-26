@@ -19,8 +19,11 @@ class EEM_Extra_Join_Test extends EE_UnitTestCase{
 		//for the testing's sake, we want events to be related to payment methods via a HABTM_Any relation
 		add_filter( 'FHEE__EEM_Event__construct__model_relations', array( $this, 'relate_events_to_payment_methods' ) );
 		add_filter( 'FHEE__EEM_Payment_Method__construct__model_relations', array( $this, 'relate_payment_methods_to_events' ) );
-		// do another soft reset on the registry now so those filters take effect
-		EE_Registry::reset();
+		// do another reset on the registry now
+		EE_Registry::reset(true);
+		// then reload those models so those filters take effect
+		EEM_Event::reset();
+		EEM_Payment_Method::reset();
 	}
 
 
