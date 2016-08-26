@@ -35,6 +35,8 @@ class EE_Select2_Display_Strategy extends EE_Select_Display_Strategy{
 	 * the select2 css
 	 */
 	public function enqueue_js() {
+		// need to first deregister the select2 script in case some other plugin **cough cough Toolset Types cough**
+		// is carelessly registering an older version of Select2 on admin pages that don't even belong to them
 		wp_deregister_script( 'select2' );
 		wp_deregister_style( 'select2' );
 		wp_register_script( 'select2', EE_GLOBAL_ASSETS_URL . 'scripts/select2.min.js', array(), '4.0.2', true );
