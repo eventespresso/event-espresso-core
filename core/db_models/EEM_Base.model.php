@@ -1919,15 +1919,15 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error( sprintf( __( 'WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"', 'event_espresso' ), $wpdb_method, var_export( $arguments_to_provide, true ) ) );
 			}
 		}elseif( $result === false ) {
-			EE_Error::add_error( 
-				sprintf( 
+			EE_Error::add_error(
+				sprintf(
 					__( 'A database error has occurred. Turn on WP_DEBUG for more information.||A database error occurred doing wpdb method "%1$s", with arguments "%2$s". The error was "%3$s"', 'event_espresso' ),
 					$wpdb_method,
 					var_export( $arguments_to_provide, true ),
 					$wpdb->last_error
-				), 
-				__FILE__, 
-				__FUNCTION__, 
+				),
+				__FILE__,
+				__FUNCTION__,
 				__LINE__
 			);
 		}
@@ -4220,6 +4220,29 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+
+
+	/**
+	 * if a valid identifier is provided, then that entity is unset from the entity map,
+	 * if no identifier is provided, then the entire entity map is emptied
+	 *
+	 * @param int|string $id the ID of the model object
+	 * @return boolean
+	 */
+	public function clear_entity_map( $id = null ) {
+		if ( empty( $id ) ) {
+			$this->_entity_map[ EEM_Base::$_model_query_blog_id ] = array();
+			return true;
+		}
+		if ( isset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] ) ) {
+			unset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] );
+			return true;
+		}
+		return false;
+	}
+
+
+
 	/**
 	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.
 	 *
@@ -4580,7 +4603,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return array( $this->primary_key_name() => $this->get_primary_key_field());
 	}
-	
+
 
 
 
