@@ -252,12 +252,14 @@ class Read_Test extends \EE_UnitTestCase{
 		//these model objects were instantiated when the tests started, so their
 		//default time is actually quite old now (at least a few seconds, possibly a minute or two)
 		//so make sure we're creating the event with the CURRENT current time
-		$event = $this->new_model_obj_with_dependencies( 'Event',
-			array(
-				'EVT_created' => $current_time_mysql_gmt,
-				'EVT_modified' => $current_time_mysql_gmt,
-				'EVT_visible_on' => $current_time_mysql_gmt,
-			));
+		$event = $this->new_model_obj_with_dependencies( 'Event'
+//			,
+//			array(
+//				'EVT_created' => $current_time_mysql_gmt,
+//				'EVT_modified' => $current_time_mysql_gmt,
+//				'EVT_visible_on' => $current_time_mysql_gmt,
+//			)
+		);
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
 		$req->set_url_params(
 				array(

@@ -40,8 +40,8 @@ abstract class EE_Model_Field_Base{
 		$this->_nullable = $nullable;
 		$this->_default_value = $default_value;
 	}
-
-
+	
+	
 
 	/**
 	 * @param $table_alias
