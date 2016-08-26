@@ -242,7 +242,7 @@ class Read_Test extends \EE_UnitTestCase{
 	 * This helps prevent accidental changes
 	 */
 	public function test_handle_request_get_one__event() {
-		\EEM_Event::reset();
+		$original_gmt_offset = get_option( 'gmt_offset' );
 		\EED_Core_Rest_Api::set_hooks_for_changes();
 		//set a weird timezone
 		update_option( 'gmt_offset', '-04:30' );
@@ -462,6 +462,8 @@ class Read_Test extends \EE_UnitTestCase{
 			),
 			$result
 		);
+		// reset timezone
+		update_option( 'gmt_offset', $original_gmt_offset );
 	}
 
 	public function test_handle_request_get_one__registration_include_attendee(){
