@@ -568,7 +568,10 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * @throws \EE_Error
 	 */
 	public function display() {
-		$form_html = '';
+		$form_html = apply_filters(
+			'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__display__before_form',
+			''
+		);
 		$form_config = $this->formConfig();
 		if (
 			$form_config === FormHandler::ADD_FORM_TAGS_AND_SUBMIT
@@ -583,6 +586,10 @@ abstract class FormHandler implements FormHandlerInterface{
 		) {
 			$form_html .= $this->form()->form_close();
 		}
+		$form_html .= apply_filters(
+			'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__display__after_form',
+			''
+		);
 		return $form_html;
 	}
 
@@ -593,7 +600,7 @@ abstract class FormHandler implements FormHandlerInterface{
 	 * returns true or false depending on whether the form was processed successfully or not
 	 *
 	 * @param array $submitted_form_data
-	 * @return bool
+	 * @return array
 	 * @throws \EE_Error
 	 * @throws \LogicException
 	 * @throws InvalidFormSubmissionException

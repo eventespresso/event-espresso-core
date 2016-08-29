@@ -4229,6 +4229,29 @@ abstract class EEM_Base extends EE_Base{
 		}
 	}
 
+
+
+	/**
+	 * if a valid identifier is provided, then that entity is unset from the entity map,
+	 * if no identifier is provided, then the entire entity map is emptied
+	 *
+	 * @param int|string $id the ID of the model object
+	 * @return boolean
+	 */
+	public function clear_entity_map( $id = null ) {
+		if ( empty( $id ) ) {
+			$this->_entity_map[ EEM_Base::$_model_query_blog_id ] = array();
+			return true;
+		}
+		if ( isset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] ) ) {
+			unset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] );
+			return true;
+		}
+		return false;
+	}
+
+
+
 	/**
 	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.
 	 *

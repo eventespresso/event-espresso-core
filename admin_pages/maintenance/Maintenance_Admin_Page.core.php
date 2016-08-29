@@ -323,14 +323,33 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * a tab with options for reseting and/or deleting EE data
+	 * a tab with options for resetting and/or deleting EE data
+	 *
+	 * @throws \EE_Error
 	 */
 	public function _data_reset_and_delete(){
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_data_reset_and_delete.template.php';
-		$this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button( 'reset_capabilities', 'reset_capabilities', array(),  'button button-primary' );
-		$this->_template_args['delete_db_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'delete_db'), EE_MAINTENANCE_ADMIN_URL);
-		$this->_template_args['reset_db_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
+		$this->_template_args['reset_capabilities_button'] = $this->get_action_link_or_button(
+			'reset_capabilities',
+			'reset_capabilities',
+			array(),
+			'button button-primary',
+			'',
+			false
+		);
+		$this->_template_args['delete_db_url'] = EE_Admin_Page::add_query_args_and_nonce(
+			array( 'action' => 'delete_db' ),
+			EE_MAINTENANCE_ADMIN_URL
+		);
+		$this->_template_args['reset_db_url'] = EE_Admin_Page::add_query_args_and_nonce(
+			array( 'action' => 'reset_db' ),
+			EE_MAINTENANCE_ADMIN_URL
+		);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			$this->_template_path,
+			$this->_template_args,
+			true
+		);
 		$this->display_admin_page_with_sidebar();
 	}
 

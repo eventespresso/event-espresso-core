@@ -375,18 +375,19 @@ class EE_Register_CPTs {
 	function register_taxonomy( $taxonomy_name, $singular_name, $plural_name, $override_args = array() ){
 
 		$args = array(
-		'hierarchical'      => true,
-		'labels'            => array(
-			'name'=>  $plural_name,
-			'singular_name'=>$singular_name
-		),
-		'show_ui'           => true,
-		'show_admin_column' => true,
-		'query_var'         => true,
-		'show_in_nav_menus' => false,
-		'map_meta_cap' => true
-		//'rewrite'           => array( 'slug' => 'genre' ),
-	);
+			'hierarchical'      => true,
+			'labels'            => array(
+				'name'=>  $plural_name,
+				'singular_name'=>$singular_name
+			),
+			'show_ui'           => true,
+			'show_ee_ui'        => true,
+			'show_admin_column' => true,
+			'query_var'         => true,
+			'show_in_nav_menus' => false,
+			'map_meta_cap' => true
+			//'rewrite'           => array( 'slug' => 'genre' ),
+		);
 
 	  if($override_args){
 		  if(isset($override_args['labels'])){
@@ -439,6 +440,7 @@ class EE_Register_CPTs {
 		'public' => true,
 		'publicly_queryable' => true,
 		'show_ui' => false,
+		'show_ee_ui' => true,
 		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,

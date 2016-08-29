@@ -61,7 +61,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 */
 	protected $_template_args = array();
 
-	//this will hold the list table object for a given view.
+	/**
+	 * this will hold the list table object for a given view.
+	 *
+	 * @var EE_Admin_List_Table $_list_table_object
+	 */
 	protected $_list_table_object;
 
 	//bools
@@ -2199,23 +2203,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
 	/**
 	 * Sets the _template_args arguments used by the _publish_post_box shortcut
-	 *
 	 * Note: currently there is no validation for this.  However if you want the delete button, the
 	 * save, and save and close buttons to work properly, then you will want to include a
 	 * values for the name and id arguments.
-	 *
-	 * @todo  Add in validation for name/id arguments.
-	 *
-	 * @param	string	$name		key used for the action ID (i.e. event_id)
-	 * @param	int		$id	id attached to the item published
-	 * @param	bool|string	$delete	page route callback for the delete action
-	 * @param	string $save_close_redirect_URL	custom URL to redirect to after Save & Close has been completed
-	 * @param	boolean	$both_btns	whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
-	 */
-	protected function _set_publish_post_box_vars( $name = NULL, $id = 0, $delete = false, $save_close_redirect_URL = '', $both_btns = TRUE ) {
 
+	 *
+*@todo  Add in validation for name/id arguments.
+	 * @param    string  $name                    key used for the action ID (i.e. event_id)
+	 * @param    int     $id                      id attached to the item published
+	 * @param    string  $delete                  page route callback for the delete action
+	 * @param    string  $save_close_redirect_URL custom URL to redirect to after Save & Close has been completed
+	 * @param    boolean $both_btns               whether to display BOTH the "Save & Close" and "Save" buttons or just the Save button
+	 * @throws \EE_Error
+	 */
+	protected function _set_publish_post_box_vars(
+		$name = '',
+		$id = 0,
+		$delete = '',
+		$save_close_redirect_URL = '',
+		$both_btns = true
+	) {
 		// if Save & Close, use a custom redirect URL or default to the main page?
 		$save_close_redirect_URL = ! empty( $save_close_redirect_URL ) ? $save_close_redirect_URL : $this->_admin_base_url;
 		// create the Save & Close and Save buttons
@@ -2225,9 +2235,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		if ( $delete && ! empty( $id )  ) {
-			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
+			//make sure we have a default if just true is sent.
+			$delete = ! empty($delete) ? $delete : 'delete';
 			$delete_link_args = array( $name => $id );
-			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
+			$delete = $this->get_action_link_or_button(
+				$delete,
+				$delete,
+				$delete_link_args,
+				'submitdelete deletion',
+				'',
+				false
+			);
 		}
 
 		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
@@ -2445,16 +2463,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
-
 	/**
 	 * This is used to display caf preview pages.
 	 *
 	 * @since 4.3.2
-	 *
 	 * @param string $utm_campaign_source what is the key used for google analytics link
-	 * @param bool   $display_sidebar whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
+	 * @param bool   $display_sidebar     whether to use the sidebar template or the full template for the page.  TRUE = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
 	 * @return void
+	 * @throws \EE_Error
 	 */
 	public function display_admin_caf_preview_page( $utm_campaign_source = '', $display_sidebar = TRUE ) {
 		//let's generate a default preview action button if there isn't one already present.
@@ -2469,9 +2485,22 @@ abstract class EE_Admin_Page extends EE_BASE {
 			),
 		'http://eventespresso.com/pricing/'
 		);
-		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', $buy_now_url, true ) : $this->_template_args['preview_action_button'];
+		$this->_template_args['preview_action_button'] = ! isset( $this->_template_args['preview_action_button'] )
+			? $this->get_action_link_or_button(
+				'',
+				'buy_now',
+				array(),
+				'button-primary button-large',
+				$buy_now_url,
+				true
+			)
+			: $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			$template_path,
+			$this->_template_args,
+			true
+		);
 		$this->_display_admin_page( $display_sidebar );
 	}
 
@@ -3053,54 +3082,68 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 
-
 	/**
 	 * get_action_link_or_button
 	 * returns the button html for adding, editing, or deleting an item (depending on given type)
 	 *
-	 * @param string $action use this to indicate which action the url is generated with.
-	 * @param string $type accepted strings must be defined in the $_labels['button'] array(as the key) property.
-	 * @param array $extra_request if the button requires extra params you can include them in $key=>$value pairs.
-	 * @param string $class Use this to give the class for the button. Defaults to 'button-primary'
-	 * @param string $base_url If this is not provided the _admin_base_url will be used as the default for the button base_url.  Otherwise this value will be used.
+	 * @param string $action        use this to indicate which action the url is generated with.
+	 * @param string $type          accepted strings must be defined in the $_labels['button'] array(as the key) property.
+	 * @param array  $extra_request if the button requires extra params you can include them in $key=>$value pairs.
+	 * @param string $class         Use this to give the class for the button. Defaults to 'button-primary'
+	 * @param string $base_url      If this is not provided
+	 *                              the _admin_base_url will be used as the default for the button base_url.
+	 *                              Otherwise this value will be used.
 	 * @param bool   $exclude_nonce If true then no nonce will be in the generated button link.
-	 *
-	 * @throws EE_Error
-	 *
-	 * @return string html for button
+	 * @return string
+	 * @throws \EE_Error
 	 */
-	public function get_action_link_or_button($action, $type = 'add', $extra_request = array(), $class = 'button-primary', $base_url = FALSE, $exclude_nonce = false ) {
+	public function get_action_link_or_button(
+		$action,
+		$type = 'add',
+		$extra_request = array(),
+		$class = 'button-primary',
+		$base_url = '',
+		$exclude_nonce = false
+	) {
 		//first let's validate the action (if $base_url is FALSE otherwise validation will happen further along)
-		if ( !isset($this->_page_routes[$action]) && !$base_url )
-			throw new EE_Error( sprintf( __('There is no page route for given action for the button.  This action was given: %s', 'event_espresso'), $action) );
-
-		if ( !isset( $this->_labels['buttons'][$type] ) )
-			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
-
+		if ( empty( $base_url ) && ! isset( $this->_page_routes[ $action ] ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'There is no page route for given action for the button.  This action was given: %s',
+						'event_espresso'
+					),
+					$action
+				)
+			);
+		}
+		if ( ! isset( $this->_labels['buttons'][ $type ] ) ) {
+			throw new EE_Error(
+				sprintf(
+					__(
+						'There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.',
+						'event_espresso'
+					),
+					$type
+				)
+			);
+		}
 		//finally check user access for this button.
-		$has_access = $this->check_user_access( $action, TRUE );
+		$has_access = $this->check_user_access( $action, true );
 		if ( ! $has_access ) {
 			return '';
 		}
-
-		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
-
+		$_base_url = ! $base_url ? $this->_admin_base_url : $base_url;
 		$query_args = array(
-			'action' => $action  );
-
+			'action' => $action
+		);
 		//merge extra_request args but make sure our original action takes precedence and doesn't get overwritten.
-		if ( !empty($extra_request) )
+		if ( ! empty( $extra_request ) ) {
 			$query_args = array_merge( $extra_request, $query_args );
-
+		}
 		$url = self::add_query_args_and_nonce( $query_args, $_base_url, false, $exclude_nonce );
-
-		$button = EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][$type], $class );
-
-		return $button;
+		return EEH_Template::get_button_or_link( $url, $this->_labels['buttons'][ $type ], $class );
 	}
-
-
-
 
 
 
