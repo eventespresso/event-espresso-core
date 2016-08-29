@@ -1,4 +1,5 @@
-<?php use EventEspresso\core\exceptions\InvalidEntityException;
+<?php use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
+use EventEspresso\core\exceptions\InvalidEntityException;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
@@ -776,13 +777,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// grab the cart grand total
 			$cart_total = $this->checkout->cart->get_cart_grand_total();
 			// create new TXN
-			return EE_Transaction::new_instance( array(
-				'TXN_timestamp' 	=> time(),
-				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
-				'TXN_total' 				=> $cart_total > 0 ? $cart_total : 0,
-				'TXN_paid' 				=> 0,
-				'STS_ID' 					=> EEM_Transaction::failed_status_code,
-			));
+			return EE_Transaction::new_instance(
+				array(
+					'TXN_reg_steps' => $this->checkout->initialize_txn_reg_steps_array(),
+					'TXN_total'     => $cart_total > 0 ? $cart_total : 0,
+					'TXN_paid'      => 0,
+					'STS_ID'        => EEM_Transaction::failed_status_code,
+				)
+			);
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
 		}
@@ -871,16 +873,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
                     // override capabilities for frontend registrations
                     if ( ! is_admin()) {
                         $CreateRegistrationCommand->setCapCheck(
-                            new \EventEspresso\core\domain\services\capabilities\PublicCapabilities('',
-                                'create_new_registration')
+	                        new PublicCapabilities( '', 'create_new_registration' )
                         );
                     }
 					$registration = EE_Registry::instance()->BUS->execute( $CreateRegistrationCommand );
 					if ( ! $registration instanceof EE_Registration ) {
-						throw new InvalidEntityException(
-							is_object( $registration ) ? get_class( $registration ) : gettype( $registration ),
-							'EE_Registration'
-						);
+						throw new InvalidEntityException( $registration, 'EE_Registration' );
 					}
 					$registrations[ $registration->ID() ] = $registration;
 				}
