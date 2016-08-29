@@ -242,11 +242,16 @@ class Read_Test extends \EE_UnitTestCase{
 	}
 
 	/**
-	 * @group current
+	 * Verifies the format of the response hasn't changed (unless of course we actually
+	 * DO change it, in which case this unit test will need to be updated to
+	 * include the known modifications).
+	 * This helps prevent accidental changes
 	 */
 	public function test_handle_request_get_one__event() {
 
 		\EED_Core_Rest_Api::set_hooks_for_changes();
+		//set a weird timezone
+		update_option( 'gmt_offset', '-04:30' );
 		$this->set_current_user_to_new();
 		$event = $this->new_model_obj_with_dependencies( 'Event' );
 		$req = new \WP_REST_Request( 'GET', \EED_Core_Rest_Api::ee_api_namespace . '4.8.29/events/' . $event->ID() );
@@ -259,46 +264,200 @@ class Read_Test extends \EE_UnitTestCase{
 
 		$result = $response->get_data();
 		$this->assertTrue( is_array( $result ) );
-		unset( $result[ 'EVT_created' ] );
-		unset( $result[ 'EVT_modified' ] );
-		unset( $result[ 'EVT_visible_on' ] );
-		unset( $result[ '_links' ] );
+		//compare all the times, realizing that _gmt times should be in UTC, others in the site's timezone
+		$this->assertDateWithinOneMinute( $result[ 'EVT_created' ], current_time( 'Y-m-d\TH:i:s' ), 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_modified' ], current_time( 'Y-m-d\TH:i:s' ), 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_visible_on' ], current_time( 'Y-m-d\TH:i:s' ), 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_created_gmt' ], current_time( 'Y-m-d\TH:i:s', true ), 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_modified_gmt' ], current_time( 'Y-m-d\TH:i:s', true ), 'Y-m-d\TH:i:s');
+		$this->assertDateWithinOneMinute( $result[ 'EVT_visible_on_gmt' ], current_time( 'Y-m-d\TH:i:s', true ), 'Y-m-d\TH:i:s');
+		//and let's just double-check the site's timezone isn't UTC, which would make it impossible to know if timezone offsets
+		//are being applied properly or not
+		$this->assertNotEquals(
+			$result[ 'EVT_created' ],
+			$result[ 'EVT_created_gmt' ],
+			'There is no timezone offset, so its impossible to know if the timezone offset is being applied properly'
+		);
+		$properties_we_cant_compare_exactly = array(
+			'EVT_created',
+			'EVT_modified',
+			'EVT_visible_on',
+			'EVT_created_gmt',
+			'EVT_modified_gmt',
+			'EVT_visible_on_gmt'
+		);
+		foreach( $properties_we_cant_compare_exactly as $property_name ) {
+			unset( $result[ $property_name ] );
+		}
+		$event_id = $event->ID();
+		$site_url = site_url();
 		$this->assertEquals(
-			array (
-				'EVT_ID' => $event->get( 'EVT_ID' ),
-				'EVT_name' => $event->get( 'EVT_name' ) ,
-				'EVT_desc' => array(
-					'raw' => $event->get( 'EVT_desc' ),
+			array(
+				'EVT_ID'                          => $event->get( 'EVT_ID' ),
+				'EVT_name'                        => $event->get( 'EVT_name' ),
+				'EVT_desc'                        => array(
+					'raw'      => $event->get( 'EVT_desc' ),
 					'rendered' => $event->get_pretty( 'EVT_desc' )
-					),
-				'EVT_slug' => $event->get( 'EVT_slug' ) ,
-				'EVT_short_desc' => $event->get( 'EVT_short_desc' ) ,
-				'parent' => $event->get( 'parent' ) ,
-				'EVT_order' => $event->get( 'EVT_order' ) ,
-				'status' => array(
-					'raw' => $event->get( 'status' ),
+				),
+				'EVT_slug'                        => $event->get( 'EVT_slug' ),
+				'EVT_short_desc'                  => $event->get( 'EVT_short_desc' ),
+				'parent'                          => $event->get( 'parent' ),
+				'EVT_order'                       => $event->get( 'EVT_order' ),
+				'status'                          => array(
+					'raw'    => $event->get( 'status' ),
 					'pretty' => $event->get_pretty( 'status' )
-					),
-				'comment_status' => $event->get( 'comment_status' ) ,
-				'ping_status' => $event->get( 'ping_status' ) ,
-				'EVT_display_desc' => $event->get( 'EVT_display_desc' ) ,
-				'EVT_display_ticket_selector' => $event->get( 'EVT_display_ticket_selector' ) ,
-				'EVT_additional_limit' => $event->get( 'EVT_additional_limit' ) ,
+				),
+				'comment_status'                  => $event->get( 'comment_status' ),
+				'ping_status'                     => $event->get( 'ping_status' ),
+				'EVT_display_desc'                => $event->get( 'EVT_display_desc' ),
+				'EVT_display_ticket_selector'     => $event->get( 'EVT_display_ticket_selector' ),
+				'EVT_additional_limit'            => $event->get( 'EVT_additional_limit' ),
 				'EVT_default_registration_status' => array(
-					'raw' => $event->get( 'EVT_default_registration_status' ),
+					'raw'    => $event->get( 'EVT_default_registration_status' ),
 					'pretty' => $event->get_pretty( 'EVT_default_registration_status' )
-					),
-				'EVT_member_only' => $event->get( 'EVT_member_only' ) ,
-				'EVT_phone' => $event->get( 'EVT_phone' ) ,
-				'EVT_allow_overflow' => $event->get( 'EVT_allow_overflow' ) ,
-				'EVT_external_URL' => $event->get( 'EVT_external_URL' ) ,
-				'EVT_donations' => $event->get( 'EVT_donations' ) ,
-				'featured_image_url' => null,
-				'EVT_timezone_string' => '',
-				'link' => get_permalink( $event->ID() ),
-			  ),
-				$result
-				);
+				),
+				'EVT_member_only'                 => $event->get( 'EVT_member_only' ),
+				'EVT_phone'                       => $event->get( 'EVT_phone' ),
+				'EVT_allow_overflow'              => $event->get( 'EVT_allow_overflow' ),
+				'EVT_external_URL'                => $event->get( 'EVT_external_URL' ),
+				'EVT_donations'                   => $event->get( 'EVT_donations' ),
+				'featured_image_url'              => null,
+				'EVT_timezone_string'             => '',
+				'link'                            => get_permalink( $event->ID() ),
+				'_links'                          => array(
+					'self'                                                  =>
+						array(
+							0 =>
+								array(
+									'href' => $site_url . '/?rest_route=/ee/v4.8.29/events/' . $event_id,
+								),
+						),
+					'collection'                                            =>
+						array(
+							0 =>
+								array(
+									'href' => $site_url . '/?rest_route=/ee/v4.8.29/events',
+								),
+						),
+					'https://api.eventespresso.com/registrations'           =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/registrations',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/datetimes'               =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/datetimes',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/question_groups'         =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/question_groups',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/venues'                  =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url . '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/venues',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/term_taxonomies'         =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/term_taxonomies',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/message_template_groups' =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/message_template_groups',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/attendees'               =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/attendees',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/wp_user'                 =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url . '/?rest_route=/ee/v4.8.29/events/' . $event_id . '/wp_user',
+									'single' => true,
+								),
+						),
+					'https://api.eventespresso.com/post_metas'              =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/post_metas',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/extra_metas'             =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/extra_metas',
+									'single' => false,
+								),
+						),
+					'https://api.eventespresso.com/change_logs'             =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/change_logs',
+									'single' => false,
+								),
+						),
+				)
+			),
+			$result
+		);
 	}
 
 	public function test_handle_request_get_one__registration_include_attendee(){

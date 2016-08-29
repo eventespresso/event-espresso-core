@@ -877,7 +877,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$EVT_ID
 				)
 			) {
-				$this->_admin_page_title .= $this->get_action_link_or_button(
+				$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
 					'new_registration',
 					'add-registrant',
 					array( 'event_id' => $EVT_ID ),
@@ -2085,6 +2085,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//remove relation to transaction for these registrations if NOT the existing registrations
 			$registration->_remove_relations('Transaction');
 
+			//delete permanently any related messages.
+			$registration->delete_related_permanently('Message');
+
 			//now delete this registration permanently
 			$registration->delete_permanently();
 		}
@@ -2096,6 +2099,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//we need to remove all the relationships on the transaction
 		$TXN->delete_related_permanently('Payment');
 		$TXN->delete_related_permanently('Extra_Meta');
+		$TXN->delete_related_permanently('Message');
 
 		//now we can delete this REG permanently (and the transaction of course)
 		$REG->delete_related_permanently('Transaction');
@@ -2440,7 +2444,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$_where = array();
 
-		if ( isset( $this->_req_data['s'] ) ) {
+		if ( ! empty( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'Registration.Event.EVT_name' => array( 'LIKE', $sstr),
@@ -2469,10 +2473,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( $trash ) {
 			$_where['status'] = array( '!=', 'publish' );
-			$all_attendees = $count ? $ATT_MDL->count( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit)): $ATT_MDL->get_all( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
+			$all_attendees = $count ? $ATT_MDL->count( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit), 'ATT_ID', true ): $ATT_MDL->get_all( array($_where,'order_by'=>array($orderby=>$sort), 'limit'=>$limit));
 		} else {
 			$_where['status'] = array( 'IN', array( 'publish' ) );
-			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit)) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
+			$all_attendees = $count ? $ATT_MDL->count( array($_where, 'order_by'=>array($orderby=>$sort),'limit'=>$limit ), 'ATT_ID' , true ) : $ATT_MDL->get_all( array($_where, 'order_by'=>array($orderby=>$sort), 'limit'=>$limit) );
 		}
 
 		return $all_attendees;

@@ -364,7 +364,7 @@ final class EE_System {
 			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( 'Core' );
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
-			add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee' ), 9 );
+			add_action( 'AHEE__EE_System__initialize_last', array( $this, 'redirect_to_about_ee' ), 9 );
 		}
 	}
 

@@ -37,42 +37,61 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _init_props() {
-		$this->label = __('Recipient Details Shortcodes', 'event_espresso');
-		$this->description = __('All shortcodes specific to recipient registration data', 'event_espresso');
+		$this->label = esc_html__( 'Recipient Details Shortcodes', 'event_espresso' );
+		$this->description = esc_html__( 'All shortcodes specific to recipient registration data', 'event_espresso' );
 		$this->_shortcodes = array(
-			'[RECIPIENT_FNAME]' => __('Parses to the first name of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_LNAME]' => __('Parses to the last name of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_EMAIL]' => __('Parses to the email address of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_REGISTRATION_CODE]' => __('Parses to the registration code of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_EDIT_REGISTRATION_LINK]' => __('Parses to a link for frontend editing of the registration for the recipient.', 'event_espresso'),
-			'[RECIPIENT_PHONE_NUMBER]' => __('The Phone Number for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ADDRESS]' => __('The Address for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ADDRESS2]' => __('Whatever was in the address 2 field for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_CITY]' => __('The city for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ZIP_PC]' => __('The ZIP (or Postal) Code for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ADDRESS_STATE]' => __('The state/province for the recipient of the message.', 'event_espresso' ),
-			'[RECIPIENT_COUNTRY]' => __('The country for the recipient of the message.', 'event_espresso'),
-			'[RECIPIENT_ANSWER_*]' => __('This is a special dynamic shortcode.  After the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' )
+			'[RECIPIENT_FNAME]' => esc_html__( 'Parses to the first name of the recipient for the message.', 'event_espresso' ),
+			'[RECIPIENT_LNAME]' => esc_html__( 'Parses to the last name of the recipient for the message.', 'event_espresso' ),
+			'[RECIPIENT_EMAIL]' => esc_html__( 'Parses to the email address of the recipient for the message.', 'event_espresso' ),
+			'[RECIPIENT_REGISTRATION_CODE]' => esc_html__( 'Parses to the registration code of the recipient for the message.', 'event_espresso' ),
+			'[RECIPIENT_EDIT_REGISTRATION_LINK]' => esc_html__( 'Parses to a link for frontend editing of the registration for the recipient.', 'event_espresso' ),
+			'[RECIPIENT_PHONE_NUMBER]' => esc_html__( 'The Phone Number for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_ADDRESS]' => esc_html__( 'The Address for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_ADDRESS2]' => esc_html__( 'Whatever was in the address 2 field for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_CITY]' => esc_html__( 'The city for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_ZIP_PC]' => esc_html__( 'The ZIP (or Postal) Code for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_ADDRESS_STATE]' => esc_html__( 'The state/province for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_COUNTRY]' => esc_html__( 'The country for the recipient of the message.', 'event_espresso' ),
+			'[RECIPIENT_ANSWER_*]' => esc_html__( 'This is a special dynamic shortcode.  After the "*", add the exact text of an existing question, and if there is an answer for that question for this recipient, then it will be output in place of this shortcode.', 'event_espresso' ),
+			'[RECIPIENT_TOTAL_AMOUNT_PAID]' => esc_html__( 'If a single registration related to the recipient is available, that is used to retrieve the total amount that has been paid for this recipient.  Otherwise the value of 0 is printed.', 'event_espresso' )
 			);
 	}
 
 
 
+	/**
+	 * @access protected
+	 * @param  string $shortcode the shortcode to be parsed.
+	 * @return string parsed shortcode
+	 */
 	protected function _parser( $shortcode ) {
 
 		//make sure we end up with a copy of the EE_Messages_Addressee object
-		$this->_recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
-		$this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $this->_recipient;
-		$this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $this->_recipient;
+		$this->_recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
+		$this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee
+		                    && is_array( $this->_data )
+		                    && isset( $this->_data['data'] )
+		                    && $this->_data['data'] instanceof EE_Messages_Addressee
+			? $this->_data['data'] :
+			$this->_recipient;
+		$this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee
+		                    && ! empty( $this->_extra_data['data'] )
+		                    && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+			? $this->_extra_data['data']
+			: $this->_recipient;
 
-		if ( ! $this->_recipient instanceof EE_Messages_Addressee )
+		if ( ! $this->_recipient instanceof EE_Messages_Addressee ) {
 			return '';
+		}
 
 		$attendee = $this->_recipient->att_obj;
-		if ( ! $attendee instanceof EE_Attendee )
+		if ( ! $attendee instanceof EE_Attendee ) {
 			return '';
+		}
 
-		$this->_registrations_for_recipient = isset( $this->_recipient->attendees[ $attendee->ID() ]['reg_objs'] ) ? $this->_recipient->attendees[ $attendee->ID() ]['reg_objs'] : array();
+		$this->_registrations_for_recipient = isset( $this->_recipient->attendees[ $attendee->ID() ]['reg_objs'] )
+			? $this->_recipient->attendees[ $attendee->ID() ]['reg_objs']
+			: array();
 
 		switch ( $shortcode ) {
 			case '[RECIPIENT_FNAME]' :
@@ -88,14 +107,16 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[RECIPIENT_REGISTRATION_CODE]' :
-				if ( ! $this->_recipient->reg_obj instanceof EE_Registration )
+				if ( ! $this->_recipient->reg_obj instanceof EE_Registration ) {
 					return '';
+				}
 				return $this->_get_reg_code();
 				break;
 
 			case '[RECIPIENT_EDIT_REGISTRATION_LINK]' :
-				if ( ! $this->_recipient->reg_obj instanceof EE_Registration )
+				if ( ! $this->_recipient->reg_obj instanceof EE_Registration ) {
 					return '';
+				}
 				return $this->_recipient->reg_obj->edit_attendee_information_url();
 				break;
 
@@ -128,6 +149,11 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				$country_obj = $attendee->country_obj();
 				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
 				break;
+			case '[RECIPIENT_TOTAL_AMOUNT_PAID]' :
+				return $this->_recipient->reg_obj instanceof EE_Registration
+					? $this->_recipient->reg_obj->pretty_paid()
+					: 0;
+				break;
 		}
 
 		if ( strpos( $shortcode, '[RECIPIENT_ANSWER_*' ) !== false ) {
@@ -141,8 +167,12 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			}
 
 			foreach ( $this->_recipient->questions as $ansid => $question ) {
-				if ( $question instanceof EE_Question && $question->display_text() == $shortcode && isset( $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid] ) ) {
-					return $this->_recipient->registrations[$this->_recipient->reg_obj->ID()]['ans_objs'][$ansid]->get_pretty( 'ANS_value', 'no_wpautop' );
+				if (
+					$question instanceof EE_Question
+					&& $question->display_text() == $shortcode
+					&& isset( $this->_recipient->registrations[ $this->_recipient->reg_obj->ID() ]['ans_objs'][ $ansid ] )
+				) {
+					return $this->_recipient->registrations[ $this->_recipient->reg_obj->ID() ]['ans_objs'][ $ansid ]->get_pretty( 'ANS_value', 'no_wpautop' );
 				}
 			}
 		}
@@ -219,7 +249,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				$reg_code[] = $reg->reg_code();
 			}
 		}
-		return implode(', ', $reg_code );
+		return implode( ', ', $reg_code );
 	}
 
 

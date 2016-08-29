@@ -190,7 +190,9 @@ class EED_Core_Rest_Api extends \EED_Module {
 	 */
 	public static function invalidate_cached_route_data() {
 		//delete the saved EE REST API routes
-		delete_option( EED_Core_Rest_Api::saved_routes_option_names );
+		foreach( EED_Core_Rest_Api::versions_served() as $version => $hidden ){
+			delete_option( EED_Core_Rest_Api::saved_routes_option_names . $version );
+		}
 	}
 
 	/**
@@ -516,6 +518,15 @@ class EED_Core_Rest_Api extends \EED_Module {
 					'methods' => WP_REST_Server::READABLE,
 					'hidden_endpoint' => $hidden_endpoint
 				),
+			),
+			'site_info' => array(
+				array(
+					'callback' => array(
+						'EventEspresso\core\libraries\rest_api\controllers\config\Read',
+						'handle_request_site_info' ),
+					'methods' => WP_REST_Server::READABLE,
+					'hidden_endpoint' => $hidden_endpoint,
+				)
 			)
 		);
 	}
