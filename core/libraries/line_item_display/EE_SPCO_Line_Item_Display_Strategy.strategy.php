@@ -333,7 +333,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		if ( $line_item->is_percent() ) {
 			$html .= EEH_HTML::td(
 				EEH_Template::format_currency(
-					( $line_item->percent() / 100 ) * $parent_line_item->unit_price() / $parent_line_item->quantity(),
+					$line_item->total() / $parent_line_item->quantity(),
 					false, false
 				),
 				'',  'item_c jst-rght'
