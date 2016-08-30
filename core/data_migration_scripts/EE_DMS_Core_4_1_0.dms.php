@@ -1067,10 +1067,12 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	private function _find_available_country_iso($num_letters = 2){
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
+		$attempts = 0;
 		do{
 			$current_iso = strtoupper(wp_generate_password($num_letters, false));
 			$country_with_that_iso = $wpdb->get_var($wpdb->prepare("SELECT count(CNT_ISO) FROM ".$country_table." WHERE CNT_ISO=%s",$current_iso));
-		}while(intval($country_with_that_iso));
+			$attempts++;
+		}while( intval($country_with_that_iso) && $attempts < 200 );
 		return $current_iso;
 	}
 
