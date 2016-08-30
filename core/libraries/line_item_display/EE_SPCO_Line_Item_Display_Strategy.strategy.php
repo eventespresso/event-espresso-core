@@ -86,16 +86,19 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				if ( $line_item->OBJ_type() == 'Ticket' ) {
 					// item row
 					$html .= $this->_ticket_row( $line_item, $options );
-					// got any kids?
-					foreach ( $line_item->children() as $child_line_item ) {
-						$this->display_line_item( $child_line_item, $options );
-					}
 				} else {
 					// item row
 					$html .= $this->_item_row( $line_item, $options );
+				}
+				if (
+					apply_filters(
+						'FHEE__EE_SPCO_Line_Item_Display_Strategy__display_line_item__display_sub_line_items',
+						true
+					)
+				) {
 					// got any kids?
 					foreach ( $line_item->children() as $child_line_item ) {
-						$this->display_line_item( $child_line_item, $options );
+						$html .= $this->display_line_item( $child_line_item, $options );
 					}
 				}
 				break;
@@ -318,9 +321,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 	 */
 	private function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
 		// start of row
-		$html = EEH_HTML::tr( '', 'item sub-item-row' );
+		$html = EEH_HTML::tr( '', '', 'item sub-item-row' );
 		// name && desc
-		$name_and_desc = $line_item->name();
+		$name_and_desc = EEH_HTML::span('', '', 'sub-item-row-bullet dashicons dashicons-arrow-right' ) . $line_item->name();
 		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>' : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item' );
@@ -330,8 +333,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		} else {
 			$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		}
+		// quantity td
+		$html .= EEH_HTML::td( $line_item->quantity(), '', 'item_l jst-rght' );
 		// total td
-		$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'item_r jst-rght' );
+		$html .= EEH_HTML::td(
+			EEH_Template::format_currency( $line_item->total(), false, false ),
+			'',
+			'item_r jst-rght'
+		);
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
