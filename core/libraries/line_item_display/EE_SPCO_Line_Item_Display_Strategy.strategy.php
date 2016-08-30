@@ -333,14 +333,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		} else {
 			$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		}
-		// quantity td
-		$html .= EEH_HTML::td( $line_item->quantity(), '', 'item_l jst-rght' );
-		// total td
-		$html .= EEH_HTML::td(
-			EEH_Template::format_currency( $line_item->total(), false, false ),
-			'',
-			'item_r jst-rght'
-		);
+		// no quantity td
+		$html .= EEH_HTML::td();
+		// no total td
+		$html .= EEH_HTML::td();
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;
