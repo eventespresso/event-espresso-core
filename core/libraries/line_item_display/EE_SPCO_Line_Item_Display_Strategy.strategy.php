@@ -65,11 +65,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 
 	/**
-	 * @param EE_Line_Item $line_item
-	 * @param array        $options
+	 * @param EE_Line_Item  $line_item
+	 * @param array         $options
+	 * @param \EE_Line_Item $parent_line_item
 	 * @return mixed
 	 */
-	public function display_line_item( EE_Line_Item $line_item, $options = array() ) {
+	public function display_line_item( EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null ) {
 
 		$html = '';
 		// set some default options and merge with incoming
@@ -98,13 +99,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				) {
 					// got any kids?
 					foreach ( $line_item->children() as $child_line_item ) {
-						$html .= $this->display_line_item( $child_line_item, $options );
+						$html .= $this->display_line_item( $child_line_item, $options, $line_item );
 					}
 				}
 				break;
 
 			case EEM_Line_Item::type_sub_line_item:
-				$html .= $this->_sub_item_row( $line_item, $options );
+				$html .= $this->_sub_item_row( $line_item, $options, $parent_line_item );
 				break;
 
 			case EEM_Line_Item::type_sub_total:
@@ -313,13 +314,14 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 
 	/**
-	 * 	_sub_item_row
+	 *    _sub_item_row
 	 *
-	 * @param EE_Line_Item $line_item
-	 * @param array        $options
+	 * @param EE_Line_Item  $line_item
+	 * @param array         $options
+	 * @param \EE_Line_Item $parent_line_item
 	 * @return mixed
 	 */
-	private function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
+	private function _sub_item_row( EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null ) {
 		// start of row
 		$html = EEH_HTML::tr( '', '', 'item sub-item-row' );
 		// name && desc
@@ -329,7 +331,13 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
 		if ( $line_item->is_percent() ) {
-			$html .= EEH_HTML::td( $line_item->percent() . '%', '',  'item_c' );
+			$html .= EEH_HTML::td(
+				EEH_Template::format_currency(
+					( $line_item->percent() / 100 ) * $parent_line_item->unit_price() / $parent_line_item->quantity(),
+					false, false
+				),
+				'',  'item_c jst-rght'
+			);
 		} else {
 			$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		}
