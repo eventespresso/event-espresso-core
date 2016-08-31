@@ -145,7 +145,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			case '[EVENT_IMAGE]' :
 				$image = $this->_event->feature_image_url(array(600,300) );
 				// @todo: eventually we should make this an attribute shortcode so that em can send along what size they want returned.
-				return !empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '" />' : '';
+				return ! empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '" />' : '';
 				break;
 
 			case '[EVENT_FACEBOOK_URL]' :
@@ -188,7 +188,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			//pull the meta value from the event post
 			$event_meta = $this->_event->get_post_meta( $shortcode, true );
 
-			return !empty( $event_meta ) ? $this->_event->get_post_meta( $shortcode, true ) : '';
+			return ! empty( $event_meta ) ? $this->_event->get_post_meta( $shortcode, true ) : '';
 
 		}
 
@@ -217,7 +217,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			$image = $this->_event->feature_image_url( $size );
 
-			return !empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '"' . $width . $height . '/>' : '';
+			return ! empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '"' . $width . $height . '/>' : '';
 			break;
 		}
 
