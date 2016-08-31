@@ -455,3 +455,7 @@
 	background:#ccc !important;
 	box-shadow:none !important;
 }
+
+.sub-item-row {
+	font-size:.9em;
+}
