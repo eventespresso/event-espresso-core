@@ -1072,6 +1072,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			$current_iso = strtoupper(wp_generate_password($num_letters, false));
 			$country_with_that_iso = $wpdb->get_var($wpdb->prepare("SELECT count(CNT_ISO) FROM ".$country_table." WHERE CNT_ISO=%s",$current_iso));
 			$attempts++;
+		//keep going until we find an available country code, or we arbitrarily
+		//decide we've tried this enough. Somehow they have way too many countries
+		//(probably because they're mis-using the EE3 country_id like a custom question)
 		}while( intval($country_with_that_iso) && $attempts < 200 );
 		return $current_iso;
 	}
