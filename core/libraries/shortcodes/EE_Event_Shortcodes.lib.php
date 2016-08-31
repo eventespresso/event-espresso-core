@@ -202,13 +202,13 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 		if ( strpos( $shortcode, '[EVENT_IMAGE_*' ) !== false ) {
 			$attrs = $this->_get_shortcode_attrs( $shortcode );
-			$width = empty( $attrs['width'] ) ? '' : 'width="' . $attrs['width'] . '"'; 
-			$height = empty( $attrs['height'] ) ? '' : 'height="'. $attrs['height'] .'"'; 
+			$width = empty( $attrs['width'] ) ? '' : ' width="' . $attrs['width'] . '"'; 
+			$height = empty( $attrs['height'] ) ? '' : ' height="'. $attrs['height'] .'"'; 
 
 			//Size may be set to a string such as 'tumbnail' or "width, height" eg - '200,200'
 			if ( ! empty( $attrs['size'] ) ) {
 				$size = explode( ',', $attrs['size'] );
-				if ( count($size) === 1) {
+				if ( count($size) === 1 ) {
 					$size = $size[0];
 				}
 			} else {
