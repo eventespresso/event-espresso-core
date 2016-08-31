@@ -111,6 +111,33 @@ class EE_Transaction_Payments {
 
 
 	/**
+	 * recalculate_transaction_total
+	 *
+	 * @access private
+	 * @param EE_Transaction $transaction
+	 * @param bool           $update_txn
+	 * @return bool true if TXN total was updated, false if not
+	 * @throws \EE_Error
+	 */
+	public function recalculate_transaction_total( EE_Transaction $transaction, $update_txn = true ) {
+		$total_line_item = $transaction->total_line_item();
+		if ( ! $total_line_item instanceof EE_Line_Item ) {
+			EE_Error::add_error(
+				sprintf( __( 'The Total Line Item for Transaction %1$d\'s was not found or is invalid.', 'event_espresso' ), $transaction->ID() ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		$new_total = $total_line_item->recalculate_total_including_taxes();
+		$transaction->set_total( $new_total );
+		if ( $update_txn ) {
+			return $transaction->save() ? true : false;
+		}
+	}
+
+
+
+	/**
 	 * Updates the provided EE_Transaction with all the applicable payments
 	 * returns a boolean for whether the TXN was saved to the db
 	 * (meaning a status change occurred)

@@ -381,7 +381,15 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			if ( ! $registration instanceof EE_Registration ) {
 				throw new EE_Error( __( 'An invalid registration was received.', 'event_espresso' ) );
 			}
-			EEH_Debug_Tools::log( __CLASS__, __FUNCTION__, __LINE__, array( $registration->transaction(), $additional_details ), false, 'EE_Transaction: ' . $registration->transaction()->ID() );
+			EE_Registry::instance()->load_helper( 'Debug_Tools' );
+			EEH_Debug_Tools::log(
+				__CLASS__,
+				__FUNCTION__,
+				__LINE__,
+				array( $registration->transaction(), $additional_details ),
+				false,
+				'EE_Transaction: ' . $registration->transaction()->ID()
+			);
 			do_action(
 				'AHEE__EE_Registration_Processor__trigger_registration_update_notifications',
 				$registration,
@@ -498,6 +506,73 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * update_registration_after_being_canceled_or_declined
+	 *
+	 * @param \EE_Registration 	$registration
+	 * @param array            	$closed_reg_statuses
+	 * @param bool        		$update_reg
+	 * @return bool
+	 */
+	public function update_registration_after_being_canceled_or_declined(
+		EE_Registration $registration,
+		$closed_reg_statuses = array(),
+		$update_reg = true
+	) {
+		// these reg statuses should not be considered in any calculations involving monies owing
+		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses
+			: EEM_Registration::closed_reg_statuses();
+		if ( ! in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+			return false;
+		}
+		$registration->set_final_price(0);
+		if ( $update_reg ) {
+			$registration->save();
+		}
+		return true;
+	}
+
+
+
+	/**
+	 * update_canceled_or_declined_registration_after_being_reinstated
+	 *
+	 * @param \EE_Registration $registration
+	 * @param array            $closed_reg_statuses
+	 * @param bool             $update_reg
+	 * @return bool
+	 * @throws \EE_Error
+	 */
+	public function update_canceled_or_declined_registration_after_being_reinstated(
+		EE_Registration $registration,
+		$closed_reg_statuses = array(),
+		$update_reg = true
+	) {
+		// these reg statuses should not be considered in any calculations involving monies owing
+		$closed_reg_statuses = ! empty( $closed_reg_statuses ) ? $closed_reg_statuses
+			: EEM_Registration::closed_reg_statuses();
+		if ( in_array( $registration->status_ID(), $closed_reg_statuses ) ) {
+			return false;
+		}
+		$ticket = $registration->ticket();
+		if ( ! $ticket instanceof EE_Ticket ) {
+			throw new EE_Error(
+				sprintf(
+					__( 'The Ticket for Registration %1$d was not found or is invalid.',
+						'event_espresso' ),
+					$registration->ticket_ID()
+				)
+			);
+		}
+		$registration->set_final_price( $ticket->price() );
+		if ( $update_reg ) {
+			$registration->save();
+		}
+		return true;
+	}
+
+
+
+	/**
 	 * generate_ONE_registration_from_line_item
 	 * Although a ticket line item may have a quantity greater than 1,
 	 * this method will ONLY CREATE ONE REGISTRATION !!!
@@ -577,37 +652,6 @@ class EE_Registration_Processor extends EE_Processor_Base {
 			'5.0.0'
 		);
 		return new RegUrlLink($att_nmbr, $item);
-	}
-
-
-
-	/**
-	 * generates reg code
-	 *
-	 * @deprecated
-	 * @since 4.9.1
-	 * @param \EE_Registration $registration
-	 * @return string
-	 * @throws \EE_Error
-	 */
-	public function generate_reg_code(EE_Registration $registration)
-	{
-		EE_Error::doing_it_wrong(
-			__CLASS__ . '::' . __FUNCTION__,
-			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
-				'EventEspresso\core\domain\entities\RegCode'),
-			'4.9.1',
-			'5.0.0'
-		);
-		return apply_filters(
-			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
-			new RegCode(
-				RegUrlLink::fromRegistration($registration),
-				$registration->transaction(),
-				$registration->ticket()
-			),
-			$registration
-		);
 	}
 
 
