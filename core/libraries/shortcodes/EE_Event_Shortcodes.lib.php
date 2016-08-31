@@ -218,7 +218,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			$image = $this->_event->feature_image_url( $size );
 
 			return ! empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '"' . $width . $height . '/>' : '';
-			break;
 		}
 
 		return '';
