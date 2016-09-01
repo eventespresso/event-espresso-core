@@ -1101,24 +1101,44 @@ class EE_Registry implements ResettableInterface {
 		$instance->CART = null;
 		$instance->MRM = null;
 		//handle of objects cached on LIB
-		foreach ( $instance->LIB as $class_name => $class ) {
-			if ( isset( $instance->LIB->{$class_name} ) ) {
-				if ( $instance->LIB->{$class_name} instanceof ResettableInterface ) {
-					if ( $instance->LIB->{$class_name} instanceof EEM_Base ) {
-						if ( $reset_models ) {
-							$instance->LIB->{$class_name}->reset();
-						}
-						continue;
-					}
-					$instance->LIB->{$class_name}->reset();
-					continue;
-				}
-				if ( ! $instance->LIB->{$class_name} instanceof InterminableInterface ) {
-					unset( $instance->LIB->{$class_name} );
+		foreach ( array( 'LIB', 'modules', 'shortcodes' ) as $cache ) {
+			foreach ( $instance->{$cache} as $class_name => $class ) {
+				if ( EE_Registry::_reset_and_unset_object( $class, $reset_models )) {
+					unset( $instance->{$cache}->{$class_name} );
 				}
 			}
 		}
 		return $instance;
+	}
+
+
+
+	/**
+	 * if passed object implements ResettableInterface, then call it's reset() method
+	 * if passed object implements InterminableInterface, then return false,
+	 * to indicate that it should NOT be cleared from the Registry cache
+	 *
+	 * @param      $object
+	 * @param bool $reset_models
+	 * @return bool returns true if cached object should be unset
+	 */
+	private static function _reset_and_unset_object( $object, $reset_models ) {
+		static $count = 0;
+		$count++;
+		if ( $object instanceof ResettableInterface ) {
+			if ( $object instanceof EEM_Base ) {
+				if ( $reset_models ) {
+					$object->reset();
+				}
+				return false;
+			}
+			$object->reset();
+			return false;
+		}
+		if ( ! $object instanceof InterminableInterface ) {
+			return true;
+		}
+		return false;
 	}
 
 
