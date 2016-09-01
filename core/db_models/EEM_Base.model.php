@@ -1014,9 +1014,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
 	 * null is returned.
+
 	 *
-	 * @param array $query_params like EEM_Base's $query_params variable.
-	 * @return EE_Base_Class | NULL
+*@param array $query_params like EEM_Base's $query_params variable.
+	 * @return EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
 	 * @throws \EE_Error
 	 */
 	public function get_one($query_params = array()){
@@ -1810,7 +1811,11 @@ abstract class EEM_Base extends EE_Base{
 			foreach($objects_for_deletion as  $delete_object){
 				$values_for_each_cpk_for_a_row = array();
 				foreach($fields as $cpk_field){
-					$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()."=".$delete_object[$cpk_field->get_qualified_column()];
+					if ( $cpk_field instanceof EE_Model_Field_Base ){
+						$values_for_each_cpk_for_a_row[] = $cpk_field->get_qualified_column()
+						                                   . "="
+						                                   . $delete_object[ $cpk_field->get_qualified_column() ];
+					}
 				}
 				$ways_to_identify_a_row[] = "(".implode(" AND ",$values_for_each_cpk_for_a_row).")";
 			}
@@ -2379,12 +2384,16 @@ abstract class EEM_Base extends EE_Base{
 	 * saved to the DB would break some uniqueness requirement, like a primary key
 	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
 	 * can be either an EE_Base_Class or an array of fields n values
+	 *
 	 * @param EE_Base_Class|array $obj_or_fields_array
-	 * @param boolean $include_primary_key whether to use the model object's primary key when looking for conflicts
-	 * (ie, if false, we ignore the model object's primary key when finding "conflicts".
-	 * If true, it's also considered). Only works for INT primary key- STRING primary keys cannot be ignored
+	 * @param boolean       $include_primary_key       whether to use the model object's primary key
+	 *                                                 when looking for conflicts
+	 *                                                 (ie, if false, we ignore the model object's primary key
+	 *                                                 when finding "conflicts". If true, it's also considered).
+	 *                                                 Only works for INT primary key,
+	 *                                                 STRING primary keys cannot be ignored
 	 * @throws EE_Error
-	 * @return EE_Base_Class
+	 * @return EE_Base_Class|array
 	 */
 	public function get_one_conflicting($obj_or_fields_array, $include_primary_key = true ){
 		if($obj_or_fields_array instanceof EE_Base_Class){
@@ -3893,7 +3902,7 @@ abstract class EEM_Base extends EE_Base{
 	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Answer that would be ANS_ID field object
 	 * @param $field_obj
-	 * @return EE_Model_Field_Base
+	 * @return boolean
 	 */
 	public function is_primary_key_field( $field_obj ){
 		return $field_obj instanceof EE_Primary_Key_Field_Base ? TRUE : FALSE;
@@ -4219,6 +4228,29 @@ abstract class EEM_Base extends EE_Base{
 			return $object;
 		}
 	}
+
+
+
+	/**
+	 * if a valid identifier is provided, then that entity is unset from the entity map,
+	 * if no identifier is provided, then the entire entity map is emptied
+	 *
+	 * @param int|string $id the ID of the model object
+	 * @return boolean
+	 */
+	public function clear_entity_map( $id = null ) {
+		if ( empty( $id ) ) {
+			$this->_entity_map[ EEM_Base::$_model_query_blog_id ] = array();
+			return true;
+		}
+		if ( isset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] ) ) {
+			unset( $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] );
+			return true;
+		}
+		return false;
+	}
+
+
 
 	/**
 	 * Public wrapper for _deduce_fields_n_values_from_cols_n_values.

@@ -1795,7 +1795,10 @@ class EE_Core_Config extends EE_Config_Base {
 	 */
 	public function reg_page_url() {
 		if ( ! $this->reg_page_url ) {
-			$this->reg_page_url = get_permalink( $this->reg_page_id ) . '#checkout';
+			$this->reg_page_url = add_query_arg(
+				array( 'uts' => time() ),
+				get_permalink( $this->reg_page_id )
+			) . '#checkout';
 		}
 		return $this->reg_page_url;
 	}

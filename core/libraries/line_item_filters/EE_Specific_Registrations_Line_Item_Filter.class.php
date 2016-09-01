@@ -18,17 +18,23 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  */
 class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 /**
-	 * array of line item codes and their corresponding quantities for
-	 * registrations that owe money and can pay at this moment
-	 * @type array $_counts_per_line_item_code
+	 * array of line item codes and their corresponding quantities for registrations
+	 *
+*@type array $_line_item_registrations
 	 */
-	protected $_counts_per_line_item_code = array();
+	protected $_line_item_registrations = array();
 
 	/**
 	 * Just kept in case we want it someday. Currently unused
 	 * @var EE_Registration[]
 	 */
 	protected $_registrations = array();
+
+	/**
+	 * these reg statuses should NOT increment the line item quantity
+	 * @var array
+	 */
+	protected $_closed_reg_statuses = array();
 
 
 
@@ -38,23 +44,31 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 */
 	public function __construct( $registrations ) {
 		$this->_registrations = $registrations;
-		$this->_calculate_counts_per_line_item_code( $registrations );
+		$this->_calculate_registrations_per_line_item_code( $registrations );
+		// these reg statuses should NOT increment the line item quantity
+		$this->_closed_reg_statuses = EEM_Registration::closed_reg_statuses();
 	}
 
 	/**
-	 * sets the _counts_per_line_item_code from the provided registrations
+	 * sets the _line_item_registrations from the provided registrations
+	 *
 	 * @param EE_Registration[] $registrations
 	 * @return void
 	 */
-	protected function _calculate_counts_per_line_item_code( $registrations ) {
+	protected function _calculate_registrations_per_line_item_code( $registrations ) {
 		foreach( $registrations as $registration ) {
-			$line_item_code = EEM_Line_Item::instance()->get_var( EEM_Line_Item::instance()->line_item_for_registration_query_params( $registration, array( 'limit' => 1 ) ), 'LIN_code' );
+			$line_item_code = EEM_Line_Item::instance()->get_var(
+				EEM_Line_Item::instance()->line_item_for_registration_query_params(
+					$registration,
+					array( 'limit' => 1 )
+				),
+				'LIN_code'
+			);
 			if( $line_item_code ) {
-				if( ! isset( $this->_counts_per_line_item_code[ $line_item_code ] ) ) {
-					$this->_counts_per_line_item_code[ $line_item_code ] = 1;
-				}else{
-					$this->_counts_per_line_item_code[ $line_item_code ]++;
+				if( ! isset( $this->_line_item_registrations[ $line_item_code ] ) ) {
+					$this->_line_item_registrations[ $line_item_code ] = array();
 				}
+				$this->_line_item_registrations[ $line_item_code ][ $registration->ID() ] = $registration;
 			}
 		}
 	}
@@ -68,7 +82,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * @return \EEI_Line_Item
 	 */
 	public function process( EEI_Line_Item $line_item ) {
-		$this->_filter_billable_line_item( $line_item );
+		$this->_adjust_line_item_quantity( $line_item );
 		if( ! $line_item->children() ) {
 			return $line_item;
 		}
@@ -90,8 +104,10 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			 * so it reflects only that portion of the surcharge/discount shared by these
 			 * registrations
 			 */
-			if( $child_line_item->type() === EEM_Line_Item::type_line_item &&
-					$child_line_item->OBJ_type() !== 'Ticket' ) {
+			if(
+				$child_line_item->type() === EEM_Line_Item::type_line_item
+				&& $child_line_item->OBJ_type() !== 'Ticket'
+			) {
 				if( $running_total_of_children ) {
 					$percent_of_running_total = $original_li_total / $running_total_of_children;
 				} else {
@@ -102,8 +118,10 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
 				}
-			}elseif( $line_item->type() === EEM_Line_Item::type_line_item &&
-					$line_item->OBJ_type() === 'Ticket' ) {
+			} else if (
+				$line_item->type() === EEM_Line_Item::type_line_item
+				&& $line_item->OBJ_type() === 'Ticket'
+			) {
 				//make sure this item's quantity matches its parent
 				if( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_quantity( $line_item->quantity() );
@@ -130,15 +148,24 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * @param EEI_Line_Item $line_item
 	 * @return EEI_Line_Item
 	 */
-	protected function _filter_billable_line_item( EEI_Line_Item $line_item ) {
+	protected function _adjust_line_item_quantity( EEI_Line_Item $line_item ) {
 		// is this a ticket ?
 		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
+			$quantity = 0;
 			// if this ticket is billable at this moment, then we should have a positive quantity
-			if ( isset( $this->_counts_per_line_item_code[ $line_item->code() ] )) {
-				// set quantity based on number of billable registrations for this ticket
-				$quantity = $this->_counts_per_line_item_code[ $line_item->code() ];
-			} else {
-				$quantity = 0;
+			if (
+				isset( $this->_line_item_registrations[ $line_item->code() ] )
+				&& is_array( $this->_line_item_registrations[ $line_item->code() ] )
+			) {
+				// set quantity based on number of open registrations for this ticket
+				foreach ( $this->_line_item_registrations[ $line_item->code() ] as $registration ) {
+					if (
+						$registration instanceof EE_Registration
+						&& ! in_array( $registration->status_ID(), $this->_closed_reg_statuses )
+					) {
+						$quantity++;
+					}
+				}
 			}
 			$line_item->set_quantity( $quantity );
 			$line_item->set_total( $line_item->unit_price() * $line_item->quantity() );

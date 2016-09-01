@@ -139,8 +139,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 				'MSG_subject' => new EE_Maybe_Serialized_Text_Field( 'MSG_subject', __( 'Subject', 'event_espresso' ), true, '' ),
 				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), false, self::priority_low, $allowed_priority ),
 				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), false, self::status_incomplete, 'Status' ),
-				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), false, time() ),
-				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), true, time() )
+				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), false, EE_Datetime_Field::now ),
+				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), true, EE_Datetime_Field::now )
 			)
 		);
 		$this->_model_relations = array(

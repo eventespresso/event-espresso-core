@@ -1056,7 +1056,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= $attendee->ID();
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= $attendee->full_name();
 									$this->_template_args['event_attendees'][$registration->ID()]['email']		= '<a href="mailto:' . $attendee->email() . '?subject=' . $event_name . esc_html__(' Event', 'event_espresso') . '">' . $attendee->email() . '</a>';
-									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	=  implode(',<br>', $attendee->full_address_as_array() );
+									$this->_template_args['event_attendees'][$registration->ID()]['address'] 	= EEH_Address::format( $attendee, 'inline', false, false );
 								} else {
 									$this->_template_args['event_attendees'][$registration->ID()]['att_id'] 	= '';
 									$this->_template_args['event_attendees'][$registration->ID()]['attendee'] 	= '';

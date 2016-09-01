@@ -207,21 +207,25 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase {
 					}
 					$expected = $expected_datetime->format( 'Y-m-d H:i:s' );
 					$actual = $actual_datetime->get_DateTime_object( 'DTT_EVT_start' )->format( 'Y-m-d H:i:s' );
-					// compare
-					if ( $expected !== $actual ) {
-						$this->fail(
-							sprintf(
-								__( 'The %1$s method failed to produce correct results for the the period interval %2$s for timezone "%6$s" and UTC offset "%7$s" .%3$sExpected value: %4$s%3$sActual value: %5$s%3$s', 'event_espresso' ),
-								$increment_datetimes ? 'EEH_DTT_Helper::date_time_add()' : 'EEH_DTT_Helper::date_time_subtract()',
-								$period_interval,
-								"\n",
-								$expected,
-								$actual,
-								$timezone_string,
-								$gmt_offset
-							)
-						);
-					}
+					$this->assertDateWithinOneMinute(
+						$expected,
+						$actual,
+						'Y-m-d H:i:s',
+						sprintf(
+							__(
+								'The %1$s method failed to produce correct results for the the period interval %2$s for timezone "%6$s" and UTC offset "%7$s" .%3$sExpected value: %4$s%3$sActual value: %5$s%3$s',
+								'event_espresso'
+							),
+							$increment_datetimes ? 'EEH_DTT_Helper::date_time_add()'
+								: 'EEH_DTT_Helper::date_time_subtract()',
+							$period_interval,
+							"\n",
+							$expected,
+							$actual,
+							$timezone_string,
+							$gmt_offset
+						)
+					);
 					unset( $expected_datetime );
 					unset( $actual_datetime );
 				}

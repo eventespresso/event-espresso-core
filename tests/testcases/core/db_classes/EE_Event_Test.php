@@ -16,6 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core/db_classes
  */
 class EE_Event_Test extends EE_UnitTestCase{
+
 	public function test_primary_datetime(){
 		$e = EE_Event::new_instance(array('EVT_name'=>'power1'));
 		$e->save();
@@ -24,6 +25,7 @@ class EE_Event_Test extends EE_UnitTestCase{
 		$primary_datetime = $e->primary_datetime();
 		$this->assertEquals($d,$primary_datetime);
 	}
+
 	public function test_datetimes_ordered(){
 		$e = EE_Event::new_instance(array('EVT_name'=>'power1'));
 		$e->save();
@@ -225,29 +227,17 @@ class EE_Event_Test extends EE_UnitTestCase{
 			$event->get_active_status( true ),
 			$scenario->name . ' active_status after an additional 2 ticket sales'
 		);
-		// now sell 2 more tickets
-		$scenario->run_additional_logic( array( 'qty' => 2 ) );
-		$this->assertEquals(
-			$scenario->get_expected( 'total_remaining_spaces_2' ),
-			$event->spaces_remaining_for_sale(),
-			'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
-		);
-		$this->assertEquals(
-			EE_Datetime::upcoming,
-			$event->get_active_status( true ),
-			$scenario->name . ' active_status after an additional 2 ticket sales'
-		);
-		// now sell 2 more tickets
-		$scenario->run_additional_logic( array( 'qty' => 2 ) );
+		// now sell the last 4 tickets
+		$scenario->run_additional_logic( array( 'qty' => 4 ) );
 		$this->assertEquals(
 			$scenario->get_expected( 'total_remaining_spaces_0' ),
 			$event->spaces_remaining_for_sale(),
-			'Testing ' . $scenario->name . ' after selling an additional 2 tickets'
+			'Testing ' . $scenario->name . ' after selling the last 4 tickets'
 		);
 		$this->assertEquals(
 			EE_Datetime::sold_out,
 			$event->get_active_status( true ),
-			$scenario->name . ' active_status after additional 6 ticket sales'
+			$scenario->name . ' active_status after selling the last 4 tickets'
 		);
 	}
 

@@ -115,7 +115,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
 				'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('Ticket ID','event_espresso'), false, 0, 'Ticket'),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Registration::status_id_incomplete, 'Status'),
-				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, time(), $timezone ),
+				'REG_date'=>new EE_Datetime_Field('REG_date', __('Time registration occurred','event_espresso'), false, EE_Datetime_Field::now, $timezone ),
 				'REG_final_price'=>new EE_Money_Field('REG_final_price', __('Registration\'s share of the transaction total','event_espresso'), false, 0),
 				'REG_paid'=>new EE_Money_Field('REG_paid', __('Amount paid to date towards registration','event_espresso'), false, 0),
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
@@ -198,6 +198,26 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
 			array(
 				EEM_Registration::status_id_incomplete,
+				EEM_Registration::status_id_cancelled,
+				EEM_Registration::status_id_declined,
+			)
+		);
+	}
+
+
+
+	/**
+	 *    closed_reg_statuses
+	 * 	a filterable list of registration statuses that are considered "closed"
+	 * meaning they should not be considered in any calculations involving monies owing
+	 *
+	 *	@access public
+	 *	@return array
+	 */
+	public static function closed_reg_statuses() {
+		return apply_filters(
+			'FHEE__EEM_Registration__closed_reg_statuses',
+			array(
 				EEM_Registration::status_id_cancelled,
 				EEM_Registration::status_id_declined,
 			)
