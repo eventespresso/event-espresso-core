@@ -65,11 +65,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 
 	/**
-	 * @param EE_Line_Item $line_item
-	 * @param array        $options
+	 * @param EE_Line_Item  $line_item
+	 * @param array         $options
+	 * @param \EE_Line_Item $parent_line_item
 	 * @return mixed
 	 */
-	public function display_line_item( EE_Line_Item $line_item, $options = array() ) {
+	public function display_line_item( EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null ) {
 
 		$html = '';
 		// set some default options and merge with incoming
@@ -86,22 +87,25 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 				if ( $line_item->OBJ_type() == 'Ticket' ) {
 					// item row
 					$html .= $this->_ticket_row( $line_item, $options );
-					// got any kids?
-					foreach ( $line_item->children() as $child_line_item ) {
-						$this->display_line_item( $child_line_item, $options );
-					}
 				} else {
 					// item row
 					$html .= $this->_item_row( $line_item, $options );
+				}
+				if (
+					apply_filters(
+						'FHEE__EE_SPCO_Line_Item_Display_Strategy__display_line_item__display_sub_line_items',
+						true
+					)
+				) {
 					// got any kids?
 					foreach ( $line_item->children() as $child_line_item ) {
-						$this->display_line_item( $child_line_item, $options );
+						$html .= $this->display_line_item( $child_line_item, $options, $line_item );
 					}
 				}
 				break;
 
 			case EEM_Line_Item::type_sub_line_item:
-				$html .= $this->_sub_item_row( $line_item, $options );
+				$html .= $this->_sub_item_row( $line_item, $options, $parent_line_item );
 				break;
 
 			case EEM_Line_Item::type_sub_total:
@@ -271,7 +275,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 		// start of row
 		$row_class = $options['odd'] ? 'item odd' : 'item';
 		$html = EEH_HTML::tr( '', '', $row_class );
-		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type() . ': ' : '';
+		$obj_name = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() . ': ' : '';
 		// name && desc
 		$name_and_desc = apply_filters(
 			'FHEE__EE_SPCO_Line_Item_Display_Strategy__item_row__name',
@@ -310,28 +314,37 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display {
 
 
 	/**
-	 * 	_sub_item_row
+	 *    _sub_item_row
 	 *
-	 * @param EE_Line_Item $line_item
-	 * @param array        $options
+	 * @param EE_Line_Item  $line_item
+	 * @param array         $options
+	 * @param \EE_Line_Item $parent_line_item
 	 * @return mixed
 	 */
-	private function _sub_item_row( EE_Line_Item $line_item, $options = array() ) {
+	private function _sub_item_row( EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null ) {
 		// start of row
-		$html = EEH_HTML::tr( '', 'item sub-item-row' );
+		$html = EEH_HTML::tr( '', '', 'item sub-item-row' );
 		// name && desc
-		$name_and_desc = $line_item->name();
+		$name_and_desc = EEH_HTML::span('', '', 'sub-item-row-bullet dashicons dashicons-arrow-right' ) . $line_item->name();
 		$name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>' : '';
 		// name td
 		$html .= EEH_HTML::td( /*__FUNCTION__ .*/ $name_and_desc, '',  'item_l sub-item' );
 		// discount/surcharge td
 		if ( $line_item->is_percent() ) {
-			$html .= EEH_HTML::td( $line_item->percent() . '%', '',  'item_c' );
+			$html .= EEH_HTML::td(
+				EEH_Template::format_currency(
+					$line_item->total() / $parent_line_item->quantity(),
+					false, false
+				),
+				'',  'item_c jst-rght'
+			);
 		} else {
 			$html .= EEH_HTML::td( $line_item->unit_price_no_code(), '',  'item_c jst-rght' );
 		}
-		// total td
-		$html .= EEH_HTML::td( EEH_Template::format_currency( $line_item->total(), false, false ), '',  'item_r jst-rght' );
+		// no quantity td
+		$html .= EEH_HTML::td();
+		// no total td
+		$html .= EEH_HTML::td();
 		// end of row
 		$html .= EEH_HTML::trx();
 		return $html;

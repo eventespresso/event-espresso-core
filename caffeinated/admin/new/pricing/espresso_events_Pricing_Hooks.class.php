@@ -942,7 +942,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	 */
 	protected function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
 
-		// if the incomign $dtt object is NOT an instance of EE_Datetime then force default to true.
+		// if the incoming $dtt object is NOT an instance of EE_Datetime then force default to true.
 		$default = ! $dtt instanceof EE_Datetime ? true : false;
 
 		$template_args = array(
@@ -958,8 +958,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_order' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
-			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable'
-			);
+			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable',
+		    'reg_list_url' => $default || ! $dtt->event() instanceof \EE_Event
+                ? ''
+                : EE_Admin_Page::add_query_args_and_nonce(
+                    array( 'event_id' => $dtt->event()->ID(), 'datetime_id' => $dtt->ID() ),
+                    REG_ADMIN_URL
+                )
+		);
 
 		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon' ? ' style="display:none"' : '';
 

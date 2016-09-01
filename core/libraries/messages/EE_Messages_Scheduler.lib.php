@@ -96,11 +96,12 @@ class EE_Messages_Scheduler extends EE_BASE {
 
 
 
-
-
 	/**
-	 * This returns the request params used for a scheduled message task request.
-	 * @param string $task  The task the request is for.
+	 * This returns
+	 * the request params used for a scheduled message task request.
+	 *
+	 * @param string $task The task the request is for.
+	 * @return array
 	 */
 	public static function get_request_params( $task ) {
 		//transient is used for flood control on msg_cron_trigger requests
@@ -136,7 +137,15 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__generation wp cron event
 	 */
 	public static function batch_generation() {
-		EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
+		 */
+		if (
+			! apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'generate' );
+		}
 	}
 
 
@@ -146,7 +155,15 @@ class EE_Messages_Scheduler extends EE_BASE {
 	 * Callback for scheduled AHEE__EE_Messages_Scheduler__sending
 	 */
 	public static function batch_sending() {
-		EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
+		/**
+		 * @see filter usage in EE_Messages_Queue::initiate_request_by_priority()
+		 */
+		if (
+			! apply_filters( 'FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false )
+			|| ! EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
+		) {
+			EE_Messages_Scheduler::initiate_immediate_request_on_cron( 'send' );
+		}
 	}
 
 } //end EE_Messages_Scheduler

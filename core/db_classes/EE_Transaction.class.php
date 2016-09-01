@@ -646,27 +646,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 
 	/**
-	 * Updates the transaction's status and total_paid based on all the payments
-	 * that apply to it
-	 *
-	 * @deprecated
-	 * @return boolean
-	 * @throws \EE_Error
-	 */
-	public function update_based_on_payments(){
-		EE_Error::doing_it_wrong(
-			__CLASS__ . '::' . __FUNCTION__,
-			sprintf( __( 'This method is deprecated. Please use "%s" instead', 'event_espresso' ), 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()' ),
-			'4.6.0'
-		);
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this );
-	}
-
-
-
-	/**
 	 * @return string
 	 * @throws \EE_Error
 	 */
@@ -783,12 +762,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * Gets the total line item (which is a parent of all other related line items,
 	 * meaning it takes them all into account on its total)
 	 *
-	 * @return EE_Line_Item
+	 * @param bool $create_if_not_found
+	 * @return \EE_Line_Item
 	 * @throws \EE_Error
 	 */
-	public function total_line_item() {
+	public function total_line_item( $create_if_not_found = true ) {
 		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
-		if( ! $item ){
+		if( ! $item && $create_if_not_found ){
 			$item = EEH_Line_Item::create_total_line_item( $this );
 		}
 		return $item;
@@ -924,6 +904,60 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 		return EEM_Line_Item::instance()->get_all_non_ticket_line_items_for_transaction( $this->ID() );
 	}
 
+
+
+	/**
+	 * possibly toggles TXN status
+	 *
+	 * @param  boolean $update whether to save the TXN
+	 * @return boolean whether the TXN was saved
+	 * @throws \RuntimeException
+	 */
+	public function update_status_based_on_total_paid($update = true)
+	{
+		// set transaction status based on comparison of TXN_paid vs TXN_total
+		if (EEH_Money::compare_floats($this->paid(), $this->total(), '>')) {
+			$new_txn_status = EEM_Transaction::overpaid_status_code;
+		} else if (EEH_Money::compare_floats($this->paid(), $this->total())) {
+			$new_txn_status = EEM_Transaction::complete_status_code;
+		} else if (EEH_Money::compare_floats($this->paid(), $this->total(), '<')) {
+			$new_txn_status = EEM_Transaction::incomplete_status_code;
+		} else {
+			throw new RuntimeException(
+				__('The total paid calculation for this transaction is inaccurate.', 'event_espresso')
+			);
+		}
+		if ($new_txn_status !== $this->status_ID()) {
+			$this->set_status($new_txn_status);
+			if ($update) {
+				return $this->save() ? true : false;
+			}
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * Updates the transaction's status and total_paid based on all the payments
+	 * that apply to it
+	 *
+	 * @deprecated
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	public function update_based_on_payments()
+	{
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()'),
+			'4.6.0'
+		);
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
+		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment($this);
+	}
 
 
 

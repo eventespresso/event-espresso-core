@@ -196,6 +196,10 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 				$total_line_item = $transaction->total_line_item();
 				foreach ($total_line_item->get_items() as $line_item) {
+					//ignore line items with a quantity of 0
+					if( $line_item->quantity() == 0 ){
+						continue;
+					}
 					$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
 					$order_description .= $line_item->desc().', ';
 				}

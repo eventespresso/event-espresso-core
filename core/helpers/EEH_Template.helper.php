@@ -415,7 +415,8 @@ class EEH_Template {
 			return '';
 		}
 		//ensure amount is float
-		$amount = (float) $amount;
+		$amount = apply_filters( 'FHEE__EEH_Template__format_currency__raw_amount', (float) $amount );
+		$CNT_ISO = apply_filters( 'FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount );
 		// filter raw amount (allows 0.00 to be changed to "free" for example)
 		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
 		// still a number or was amount converted to a string like "free" ?
@@ -442,6 +443,9 @@ class EEH_Template {
 				}else{
 					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
+
+				// filter to allow global setting of display_code
+				$display_code = apply_filters( 'FHEE__EEH_Template__format_currency__display_code', $display_code );
 
 				// add currency code ?
 				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
@@ -476,15 +480,29 @@ class EEH_Template {
 
 	/**
 	 * This helper just returns a button or link for the given parameters
+	 *
 	 * @param  string $url   the url for the link
 	 * @param  string $label What is the label you want displayed for the button
 	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param string  $icon
-	 * @return string 	the html output for the button
+	 * @param string  $title
+	 * @return string the html output for the button
 	 */
-	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
-		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
-		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '', $title = '' ) {
+		$icon_html = '';
+		if ( ! empty( $icon ) ) {
+			$dashicons = preg_split( "(ee-icon |dashicons )", $icon );
+			$dashicons = array_filter( $dashicons );
+			$count = count( $dashicons );
+			$icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
+			foreach ( $dashicons as $dashicon ) {
+				$type = strpos( $dashicon, 'ee-icon' ) !== false ? 'ee-icon ' : 'dashicons ';
+				$icon_html .= '<span class="' . $type . $dashicon . '"></span>';
+			}
+			$icon_html .= $count > 1 ? '</span>' : '';
+		}
+		$label = ! empty( $icon ) ? $icon_html . $label : $label;
+		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
 		return $button;
 	}
 

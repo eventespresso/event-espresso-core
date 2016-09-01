@@ -37,12 +37,12 @@ class EEM_Currency extends EEM_Base{
 		);
 		$this->_fields = array(
 			'Currency'=>array(
-				'CUR_code'=> new EE_Primary_Key_String_Field('CUR_code', __('Currency COde','event_espresso')),
+				'CUR_code'=> new EE_Primary_Key_String_Field('CUR_code', __('Currency Code','event_espresso')),
 				'CUR_single' => new EE_Plain_Text_Field('CUR_single', __('Currency Name Singular','event_espresso'), false),
 				'CUR_plural' => new EE_Plain_Text_Field('CUR_plural', __('Currency Name Plural','event_espresso'), false),
 				'CUR_sign' => new EE_Plain_Text_Field('CUR_sign', __('Currency Sign','event_espresso'), false),
 				'CUR_dec_plc' => new EE_Integer_Field('CUR_dec_plc', __('Currency Decimal Places','event_espresso'), false, 2),
-				'CUR_active'=>new EE_Boolean_Field('CUR_active', __("Active?", 'event_espresso'), false,true),
+				'CUR_active'=>new EE_Boolean_Field('CUR_active', __('Active?', 'event_espresso'), false,true),
 			));
 		$this->_model_relations = array(
 			'Payment_Method'=>new EE_HABTM_Relation('Currency_Payment_Method'),

@@ -101,100 +101,19 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 	 */
 	protected function _get_table_filters() {
 		$filters = array();
-		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		//setup messengers for selects
-		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
-		//lets do the same for message types
-		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
-		//and the same for contexts
-		$contexts = $this->get_admin_page()->get_contexts_for_message_types_for_list_table();
-		$i = 1;
-		$labels = $c_values = array();
-		foreach ( $contexts as $context => $label ) {
-			//some message types may have the same label for a different context, so we're grouping these together so the end user
-			//doesn't get confused.
-			if ( isset( $labels[ $label ] ) ) {
-				$c_values[ $labels[ $label ] ]['id'] .= ',' . $context;
-				continue;
+
+		//get select_inputs
+		$select_inputs = array(
+			$this->_get_messengers_dropdown_filter(),
+			$this->_get_message_types_dropdown_filter(),
+			$this->_get_contexts_for_message_types_dropdown_filter(),
+		);
+
+		//set filters to select inputs if they aren't empty
+		foreach ( $select_inputs as $select_input ) {
+			if ( $select_input ) {
+				$filters[] = $select_input;
 			}
-			$c_values[ $i ]['id'] = $context;
-			$c_values[ $i ]['text'] = $label;
-			$labels[ $label ] = $i;
-			$i++;
-		}
-
-		$msgr_default[0] = array(
-			'id' => 'none_selected',
-			'text' => __( 'All Messengers', 'event_espresso' )
-		);
-
-		$mt_default[0] = array(
-			'id' => 'none_selected',
-			'text' => __( 'All Message Types', 'event_espresso' )
-		);
-
-		$c_default[0] = array(
-			'id' => 'none_selected',
-			'text' => __( 'All Contexts', 'event_espresso ' )
-		);
-
-		$msgr_filters = count( $m_values ) > 1
-			? array_merge( $msgr_default, $m_values )
-			: $m_values;
-		$mt_filters = ! empty( $mt_values ) && count( $mt_values ) > 1
-			? array_merge( $mt_default, $mt_values )
-			: (array) $mt_values;
-		$c_filters = ! empty( $c_values ) && count( $c_values ) > 1
-			? array_merge( $c_default, $c_values )
-			: (array) $c_values;
-
-		if ( empty( $msgr_filters ) ) {
-			$msgr_filters[0] = array(
-				'id'   => 'none_selected',
-				'text' => __( 'No Messengers active', 'event_espresso' )
-			);
-		}
-
-		if ( empty( $mt_filters ) ) {
-			$mt_filters[0] = array(
-				'id'   => 'none_selected',
-				'text' => __( 'No Message Types active', 'event_espresso' )
-			);
-		}
-
-		if ( empty( $c_filters ) ) {
-			$c_filters[0] = array(
-				'id'   => 'none_selected',
-				'text' => __( 'No Contexts (because no message types active)', 'event_espresso' )
-			);
-		}
-
-		if ( count ( $msgr_filters ) > 1 ) {
-			$filters[] = EEH_Form_Fields::select_input(
-				'ee_messenger_filter_by',
-				array_values( $msgr_filters ),
-				isset( $this->_req_data['ee_messenger_filter_by'] )
-					? sanitize_title( $this->_req_data['ee_messenger_filter_by'] )
-					: ''
-			);
-		}
-		if ( count( $mt_filters ) > 1 ) {
-		$filters[] = EEH_Form_Fields::select_input(
-				'ee_message_type_filter_by',
-				array_values( $mt_filters ),
-				isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_title(
-					$this->_req_data['ee_message_type_filter_by']
-				) : ''
-			);
-		}
-		if ( count( $c_filters ) > 1 ) {
-			$filters[] = EEH_Form_Fields::select_input(
-				'ee_context_filter_by',
-				array_values( $c_filters ),
-				isset( $this->_req_data['ee_context_filter_by'] ) ? sanitize_text_field(
-					$this->_req_data['ee_context_filter_by']
-				) : ''
-			);
 		}
 		return $filters;
 	}
@@ -402,8 +321,10 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		}
 
 		//account for debug only status.  We don't show Messages with the EEM_Message::status_debug_only to clients when
-		//`WP_DEBUG` is false.
-		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+		//the messages system is in debug mode.
+		//Note: for backward compat with previous iterations, this is necessary because there may be EEM_Message::status_debug_only
+		//messages in the database.
+		if ( ! EEM_Message::debug() ) {
 			$query_params[0]['AND*debug_only_conditional'] = array(
 				'STS_ID' => array( '!=', EEM_Message::status_debug_only )
 			);
@@ -442,6 +363,67 @@ class EE_Message_List_Table extends EE_Admin_List_Table {
 		return $count
 			? EEM_Message::instance()->count( $query_params, null, true )
 			: EEM_Message::instance()->get_all( $query_params );
+	}
 
+
+	/**
+	 * Generate dropdown filter select input for messengers.
+	 * @return string
+	 */
+	protected function _get_messengers_dropdown_filter() {
+		$messenger_options = array();
+		$active_messages_grouped_by_messenger = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_messenger' ) );
+
+		//setup array of messenger options
+		foreach ( $active_messages_grouped_by_messenger as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$messenger_options[ $active_message->messenger() ] = ucwords( $active_message->messenger_label() );
+			}
+		}
+		return $this->get_admin_page()->get_messengers_select_input( $messenger_options );
+	}
+
+
+
+	/**
+	 * Generate dropdown filter select input for message types
+	 * @return string
+	 */
+	protected function _get_message_types_dropdown_filter() {
+		$message_type_options = array();
+		$active_messages_grouped_by_message_type = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_message_type' ) );
+
+		//setup array of message type options
+		foreach ( $active_messages_grouped_by_message_type as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$message_type_options[ $active_message->message_type() ] = ucwords( $active_message->message_type_label() );
+			}
+		}
+		return $this->get_admin_page()->get_message_types_select_input( $message_type_options );
+	}
+
+
+	/**
+	 * Generate dropdown filter select input for message type contexts
+	 * @return string
+	 */
+	protected function _get_contexts_for_message_types_dropdown_filter() {
+		$context_options = array();
+		$active_messages_grouped_by_context = EEM_Message::instance()->get_all( array( 'group_by' => 'MSG_context' ) );
+
+		//setup array of context options
+		foreach ( $active_messages_grouped_by_context as $active_message ) {
+			if ( $active_message instanceof EE_Message ) {
+				$message_type = $active_message->message_type_object();
+				if ( $message_type instanceof EE_message_type ) {
+					foreach ( $message_type->get_contexts() as $context => $context_details ) {
+						if ( isset( $context_details['label'] ) ) {
+							$context_options[ $context ] = $context_details['label'];
+						}
+					}
+				}
+			}
+		}
+		return $this->get_admin_page()->get_contexts_for_message_types_select_input( $context_options );
 	}
 } //end EE_Message_List_Table class

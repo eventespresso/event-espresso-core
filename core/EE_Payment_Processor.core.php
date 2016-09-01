@@ -182,7 +182,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
 	 * If a payment is found for the IPN info, it is saved.
 	 *
-	 * @param                   $_req_data
+	 * @param array             $_req_data eg $_REQUEST
 	 * @param EE_Transaction|int $transaction          optional (or a transactions id)
 	 * @param EE_Payment_Method $payment_method       (or a slug or id of one)
 	 * @param boolean           $update_txn           whether or not to call
@@ -201,7 +201,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
 		$separate_IPN_request = true
 	) {
 		EE_Registry::instance()->load_model( 'Change_Log' );
-		$_req_data = $this->_remove_unusable_characters_from_array( $_req_data );
+		$_req_data = $this->_remove_unusable_characters_from_array( (array)$_req_data );
 		EE_Processor_Base::set_IPN( $separate_IPN_request );
 		$obj_for_log = null;
 		if( $transaction instanceof EE_Transaction ){

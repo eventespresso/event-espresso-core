@@ -52,7 +52,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 	/**
 	 * indicates an attempt was a made to send this message
-	 * at the scheduled time, but it failed at the time modified.  This differs from MDO status in that it will ALWAYs
+	 * at the scheduled time, but it failed at the time modified.  This differs from MDO status in that it will ALWAYS
 	 * appear to the end user.
 	 */
 	const status_failed = 'MFL';
@@ -82,8 +82,12 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 
 	/**
-	 * This is for failed messages that are only displayed when `WP_DEBUG` is true.  Usually this is used for more informational
-	 * messages that may not indicate anything is broken.
+	 * This is used for more informational messages that may not indicate anything is broken but still cannot be generated
+	 * or sent correctly. An example of a message that would get flagged this way would be when a not approved message was queued
+	 * for generation, but at time of generation, the attached registration(s) are approved. So the message queued for generation
+	 * is no longer valid.  Messages for this status will only persist in the db and be viewable in the message activity
+	 * list table when the messages system is in debug mode.
+	 * @see EEM_Message::debug()
 	 */
 	const status_debug_only = 'MDO';
 
@@ -135,8 +139,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 				'MSG_subject' => new EE_Maybe_Serialized_Text_Field( 'MSG_subject', __( 'Subject', 'event_espresso' ), true, '' ),
 				'MSG_priority' => new EE_Enum_Integer_Field( 'MSG_priority', __( 'Priority', 'event_espresso' ), false, self::priority_low, $allowed_priority ),
 				'STS_ID' => new EE_Foreign_Key_String_Field( 'STS_ID', __( 'Status', 'event_espresso' ), false, self::status_incomplete, 'Status' ),
-				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), false, time() ),
-				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), true, time() )
+				'MSG_created' => new EE_Datetime_Field( 'MSG_created', __( 'Created', 'event_espresso' ), false, EE_Datetime_Field::now ),
+				'MSG_modified' => new EE_Datetime_Field( 'MSG_modified', __( 'Modified', 'event_espresso' ), true, EE_Datetime_Field::now )
 			)
 		);
 		$this->_model_relations = array(
@@ -322,8 +326,9 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 
 
 
-
-
+	/**
+	 * @return string
+	 */
 	public function get_pretty_label_for_results() {
 		$expected_vars = $this->_expected_vars_for_query_inject();
 		$pretty_label = '';
@@ -411,6 +416,42 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter {
 			'TXN_ID' => 'Transaction',
 			'EVT_ID' => 'Event',
 		);
+	}
+
+
+
+
+	/**
+	 * This returns whether EEM_Message is in debug mode or not.
+	 *
+	 * Currently "debug mode" is used to control the handling of the EEM_Message::debug_only status when generating/sending
+	 * messages.
+	 *
+	 * Debug mode can be set by either:
+	 *
+	 * 1. Sending in a value for the $set_debug argument
+	 * 2. Defining `EE_DEBUG_MESSAGES` constant in wp-config.php
+	 * 3. Overriding the above via the provided filter.
+	 *
+	 * @param bool|null     $set_debug  If provided, then the debug mode will be set internally until reset via the provided
+	 *                                  boolean. When no argument is provided (default null) then the debug mode will be returned.
+	 *
+	 * @return bool         true means Messages is in debug mode.  false means messages system is not in debug mode.
+	 */
+	public static function debug( $set_debug = null ) {
+		static $is_debugging = null;
+
+		//initialize (use constant if set).
+		if ( is_null( $set_debug ) && is_null( $is_debugging ) ) {
+			$is_debugging = defined( 'EE_DEBUG_MESSAGES' ) && EE_DEBUG_MESSAGES;
+		}
+
+		if ( ! is_null( $set_debug ) ) {
+			$is_debugging = filter_var( $set_debug, FILTER_VALIDATE_BOOLEAN );
+		}
+
+		//return filtered value
+		return apply_filters( 'FHEE__EEM_Message__debug', $is_debugging );
 	}
 
 

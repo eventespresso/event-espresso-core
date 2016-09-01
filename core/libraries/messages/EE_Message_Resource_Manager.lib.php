@@ -131,7 +131,7 @@ class EE_Message_Resource_Manager {
 
 
 	/**
-	 * @return EE_Messenger_Collection
+	 * @return void
 	 */
 	protected function _initialize_collections() {
 		if ( $this->_initialized ) {
@@ -339,7 +339,7 @@ class EE_Message_Resource_Manager {
 	 *
 	 * @since 4.9.0
 	 * @param string $messenger_name The messenger being checked
-	 * @return EE_message_type[]    (or empty array if none present)
+	 * @return EE_message_type[]|array    (empty array if no active_message_types)
 	 */
 	public function get_active_message_types_for_messenger( $messenger_name ) {
 		$message_types = array();
@@ -510,7 +510,7 @@ class EE_Message_Resource_Manager {
 	 * @return array
 	 */
 	public function get_has_activated_messengers_option( $reset = false ) {
-		if ( $reset ) {
+		if ( $reset || empty( $this->_has_activated_messengers_and_message_types ) ) {
 			$this->_has_activated_messengers_and_message_types = get_option( 'ee_has_activated_messenger', array() );
 		}
 		return $this->_has_activated_messengers_and_message_types;
@@ -527,6 +527,10 @@ class EE_Message_Resource_Manager {
 	 * @return bool FALSE if not updated, TRUE if updated.
 	 */
 	public function update_has_activated_messengers_option( $has_activated_messengers = array() ) {
+		//make sure the option has been retrieved from first so we don't overwrite it accidentally.
+		if ( empty( $has_activated_messengers ) && empty( $this->_has_activated_messengers_and_message_types ) ) {
+			$this->get_has_activated_messengers_option();
+		}
 		$has_activated_messengers = empty( $has_activated_messengers )
 			? $this->_has_activated_messengers_and_message_types
 			: $has_activated_messengers;
@@ -820,6 +824,12 @@ class EE_Message_Resource_Manager {
 	 * @param string        $message_type_name
 	 */
 	protected function _set_messenger_has_activated_message_type( EE_messenger $messenger, $message_type_name ) {
+
+		//if _has_activated_messengers_and_message_types is empty then lets ensure its initialized
+		if ( empty( $this->_has_activated_messengers_and_message_types ) ) {
+			$this->get_has_activated_messengers_option();
+		}
+
 		// make sure this messenger has a record in the has_activated array
 		if ( ! isset( $this->_has_activated_messengers_and_message_types[ $messenger->name ] ) ) {
 			$this->_has_activated_messengers_and_message_types[ $messenger->name ] = array();
@@ -870,7 +880,8 @@ class EE_Message_Resource_Manager {
 	 * @return void
 	 */
 	public function deactivate_messenger( $messenger_name ) {
-		if ( $messenger_name instanceof EE_messenger ) {
+        $this->_initialize_collections();
+        if ( $messenger_name instanceof EE_messenger ) {
 			$messenger_name = $messenger_name->name;
 		}
 		unset( $this->_active_messengers[ $messenger_name ] );
@@ -886,16 +897,23 @@ class EE_Message_Resource_Manager {
 	 * @param  string $message_type_name name of message type being deactivated
 	 */
 	public function deactivate_message_type( $message_type_name ) {
+        $this->_initialize_collections();
 		if ( $message_type_name instanceof EE_message_type ) {
 			$message_type_name = $message_type_name->name;
 		}
-		foreach ( $this->_active_message_types as $messenger => $settings ) {
+		foreach ( $this->_active_message_types as $messenger_name => $settings ) {
 			unset(
-				$this->_active_message_types[ $messenger ]['settings'][ $messenger . '-message_types' ][ $message_type_name ]
+				$this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ]
 			);
+
+			//we always record (even on deactivation) that a message type has been activated because there should at
+			//least be a record in the "has_activated" option that it WAS active at one point.
+			$messenger = $this->get_messenger( $messenger_name );
+			$this->_set_messenger_has_activated_message_type( $messenger, $message_type_name );
 		}
 		$this->_message_template_group_model->deactivate_message_template_groups_for( '', $message_type_name );
 		$this->update_active_messengers_option();
+		$this->update_has_activated_messengers_option();
 	}
 
 
@@ -909,6 +927,7 @@ class EE_Message_Resource_Manager {
 	 * @param string $messenger_name     Name of messenger the message type is being deactivated for.
 	 */
 	public function deactivate_message_type_for_messenger( $message_type_name, $messenger_name ) {
+        $this->_initialize_collections();
 		if ( $this->is_message_type_active_for_messenger( $messenger_name, $message_type_name ) ) {
 			unset( $this->_active_message_types[ $messenger_name ]['settings'][ $messenger_name . '-message_types' ][ $message_type_name ] );
 		}

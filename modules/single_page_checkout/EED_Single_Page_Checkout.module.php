@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
+use EventEspresso\core\exceptions\InvalidEntityException;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * Single Page Checkout (SPCO)
  *
@@ -774,13 +777,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// grab the cart grand total
 			$cart_total = $this->checkout->cart->get_cart_grand_total();
 			// create new TXN
-			return EE_Transaction::new_instance( array(
-				'TXN_timestamp' 	=> time(),
-				'TXN_reg_steps' 		=> $this->checkout->initialize_txn_reg_steps_array(),
-				'TXN_total' 				=> $cart_total > 0 ? $cart_total : 0,
-				'TXN_paid' 				=> 0,
-				'STS_ID' 					=> EEM_Transaction::failed_status_code,
-			));
+			return EE_Transaction::new_instance(
+				array(
+					'TXN_reg_steps' => $this->checkout->initialize_txn_reg_steps_array(),
+					'TXN_total'     => $cart_total > 0 ? $cart_total : 0,
+					'TXN_paid'      => 0,
+					'STS_ID'        => EEM_Transaction::failed_status_code,
+				)
+			);
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
 		}
@@ -855,15 +859,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				//do the following for each ticket of this type they selected
 				for ( $x = 1; $x <= $line_item->quantity(); $x++ ) {
 					$att_nmbr++;
-					$registration = $registration_processor->generate_ONE_registration_from_line_item(
-						$line_item,
-						$transaction,
-						$att_nmbr,
-						$this->checkout->total_ticket_count
-					);
-					if ( $registration instanceof EE_Registration ) {
-						$registrations[ $registration->ID() ] = $registration;
+                    /** @var EventEspresso\core\services\commands\registration\CreateRegistrationCommand $CreateRegistrationCommand */
+                    $CreateRegistrationCommand = EE_Registry::instance()
+                        ->create(
+                           'EventEspresso\core\services\commands\registration\CreateRegistrationCommand',
+                           array(
+	                           $transaction,
+	                           $line_item,
+	                           $att_nmbr,
+	                           $this->checkout->total_ticket_count
+                           )
+                        );
+                    // override capabilities for frontend registrations
+                    if ( ! is_admin()) {
+                        $CreateRegistrationCommand->setCapCheck(
+	                        new PublicCapabilities( '', 'create_new_registration' )
+                        );
+                    }
+					$registration = EE_Registry::instance()->BUS->execute( $CreateRegistrationCommand );
+					if ( ! $registration instanceof EE_Registration ) {
+						throw new InvalidEntityException( $registration, 'EE_Registration' );
 					}
+					$registrations[ $registration->ID() ] = $registration;
 				}
 			}
 			$registration_processor->fix_reg_final_price_rounding_issue( $transaction );
@@ -879,7 +896,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @access public
 	 * @param EE_Registration $reg_A
 	 * @param EE_Registration $reg_B
-	 * @return array()
+	 * @return int
 	 */
 	public static function sort_registrations_by_REG_count( EE_Registration $reg_A, EE_Registration $reg_B ) {
 		// this shouldn't ever happen within the same TXN, but oh well
@@ -1324,7 +1341,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function unlock_transaction() {
-		$this->checkout->transaction->unlock();
+		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+			$this->checkout->transaction->unlock();
+		}
 	}
 
 

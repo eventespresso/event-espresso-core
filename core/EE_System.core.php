@@ -366,7 +366,7 @@ final class EE_System implements ResettableInterface {
 			EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for( 'Core' );
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
-			add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee' ), 9 );
+			add_action( 'AHEE__EE_System__initialize_last', array( $this, 'redirect_to_about_ee' ), 9 );
 		}
 	}
 
@@ -1280,8 +1280,6 @@ final class EE_System implements ResettableInterface {
 				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery' ), '1.15.0', TRUE );
 				wp_register_script( 'jquery-validate-extra-methods', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js', array( 'jquery', 'jquery-validate' ), '1.15.0', TRUE );
 			}
-			wp_register_script( 'select2', EE_GLOBAL_ASSETS_URL . 'scripts/select2.min.js', array(), '4.0.2', true );
-			wp_register_style( 'select2', EE_GLOBAL_ASSETS_URL . 'css/select2.min.css', array(), '4.0.2', 'all' );
 		}
 	}
 

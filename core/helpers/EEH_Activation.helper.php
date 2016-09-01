@@ -1196,7 +1196,7 @@ class EEH_Activation implements ResettableInterface {
 
 			$table_name = EEM_Status::instance()->table();
 
-			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
+			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO $table_name
@@ -1219,6 +1219,7 @@ class EEH_Activation implements ResettableInterface {
 					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
 					('RIC', 'INCOMPLETE', 'registration', 0, NULL, 1),
+					('RWL', 'WAIT_LIST', 'registration', 0, NULL, 1),
 					('TFL', 'FAILED', 'transaction', 0, NULL, 0),
 					('TAB', 'ABANDONED', 'transaction', 0, NULL, 0),
 					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),
@@ -1714,6 +1715,19 @@ class EEH_Activation implements ResettableInterface {
 	}
 
 	/**
+	 * Gets the mysql error code from the last used query by wpdb
+	 * @return int mysql error code, see https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
+	 */
+	public static function last_wpdb_error_code() {
+		global $wpdb;
+		if( $wpdb->use_mysqli ) {
+			return mysqli_errno( $wpdb->dbh );
+		} else {
+			return mysql_errno( $wpdb->dbh );
+		}
+	}
+
+	/**
 	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
 	 * @global wpdb $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
@@ -1733,11 +1747,32 @@ class EEH_Activation implements ResettableInterface {
 		$new_error = $wpdb->last_error;
 		$wpdb->last_error = $old_error;
 		$EZSQL_ERROR = $ezsql_error_cache;
-		if( empty( $new_error ) ){
-			return TRUE;
-		}else{
-			return FALSE;
+		//if there was a table doesn't exist error
+		if( ! empty( $new_error ) ) {
+			if(
+				in_array(
+					EEH_Activation::last_wpdb_error_code(),
+					array(
+						1051, //bad table
+						1109, //unknown table
+						117, //no such table
+					)
+				)
+				||
+				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
+			) {
+				return false;
+			} else {
+				//log this because that's weird. Just use the normal PHP error log
+				error_log(
+					sprintf(
+						__( 'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)', 'event_espresso' ),
+					$new_error
+					)
+				);
+			}
 		}
+		return true;
 	}
 
 	/**
