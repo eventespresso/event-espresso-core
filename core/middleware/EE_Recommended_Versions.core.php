@@ -25,21 +25,10 @@ class EE_Recommended_Versions extends EE_Middleware {
 	public function handle_request( EE_Request $request, EE_Response $response ) {
 		$this->_request = $request;
 		$this->_response = $response;
-		//$this->_response->add_output( "\n\t IN >>  " . __CLASS__ );
-		//$this->_response->set_notice( 1, 'hey look at this' );
 		// check required WP version
 		if ( ! $this->_minimum_wp_version_required() ) {
 			$this->_request->un_set( 'activate', true );
 			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
-			//$this->_response->add_output( "\n<br />" . 'minimum_wp_version_error' );
-			$this->_response->terminate_request();
-			$this->_response->deactivate_plugin();
-		}
-		// check required PHP version
-		if ( ! $this->_minimum_php_version_required() ) {
-			$this->_request->un_set( 'activate', true );
-			add_action( 'admin_notices', array( $this, 'minimum_php_version_error' ), 1 );
-			//$this->_response->add_output( "\n<br />" . 'minimum_php_version_error' );
 			$this->_response->terminate_request();
 			$this->_response->deactivate_plugin();
 		}
@@ -48,7 +37,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 			$this->_display_minimum_recommended_php_version_notice();
 		}
 		$this->_response = $this->process_request_stack( $this->_request, $this->_response );
-		//$this->_response->add_output( "\n\t OUT << " . __CLASS__ );
 		return $this->_response;
 	}
 
@@ -94,18 +82,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 
 
 	/**
-	 *    _minimum_php_version_required
-	 *
-	 * @access private
-	 * @return boolean
-	 */
-	private function _minimum_php_version_required() {
-		return $this->_check_php_version( EE_MIN_PHP_VER_REQUIRED );
-	}
-
-
-
-	/**
 	 *    _minimum_php_version_recommended
 	 *
 	 * @access private
@@ -134,31 +110,6 @@ class EE_Recommended_Versions extends EE_Middleware {
 					$wp_version,
 					'<br/>',
 					'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
-				);
-				?>
-			</p>
-		</div>
-		<?php
-	}
-
-
-
-	/**
-	 *    minimum_php_version_error
-	 *
-	 * @return void
-	 */
-	public function minimum_php_version_error() {
-		?>
-		<div class="error">
-			<p>
-				<?php
-				printf(
-					__( 'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.', 'event_espresso' ),
-					EE_MIN_PHP_VER_REQUIRED,
-					PHP_VERSION,
-					'<br/>',
-					'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
 				);
 				?>
 			</p>
