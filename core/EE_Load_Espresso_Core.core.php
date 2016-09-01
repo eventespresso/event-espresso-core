@@ -47,11 +47,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 
 
 
-	/**
-	 * @access 	public
-	 */
-	public function __construct() {
-	}
 
 
 
@@ -69,9 +64,6 @@ class EE_Load_Espresso_Core implements EEI_Request_Decorator, EEI_Request_Stack_
 	public function handle_request( EE_Request $request, EE_Response $response ) {
 		$this->request = $request;
 		$this->response = $response;
-		// PSR4 Autoloaders
-		espresso_load_required( 'EE_Psr4AutoloaderInit', EE_CORE . 'EE_Psr4AutoloaderInit.core.php' );
-		EE_Psr4AutoloaderInit::initialize_psr4_loader();
 		// info about how to load classes required by other classes
 		$this->dependency_map = $this->_load_dependency_map();
 		// central repository for classes
