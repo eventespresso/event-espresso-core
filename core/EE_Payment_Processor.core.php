@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 EE_Registry::instance()->load_class( 'Processor_Base' );
 /**
  *
@@ -11,7 +13,7 @@ EE_Registry::instance()->load_class( 'Processor_Base' );
  * @author			Mike Nelson
  *
  */
-class EE_Payment_Processor extends EE_Processor_Base implements EventEspresso\core\interfaces\ResettableInterface {
+class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterface {
 	/**
      * 	@var EE_Payment_Processor $_instance
 	 * 	@access 	private

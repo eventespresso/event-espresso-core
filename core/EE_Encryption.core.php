@@ -1,4 +1,6 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if (!defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * EE_Encryption class
  *
@@ -11,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Encryption implements EventEspresso\core\interfaces\InterminableInterface {
+class EE_Encryption implements InterminableInterface {
 
   // instance of the EE_Encryption object
 	protected static $_instance = null;
@@ -23,10 +25,10 @@ class EE_Encryption implements EventEspresso\core\interfaces\InterminableInterfa
 
 
 	/**
-	 * 	private constructor to prevent direct creation
+	 * private constructor to prevent direct creation
+	 *
 	 * @Constructor
 	 * @access private
-	 * @return \EE_Encryption
 	 */
   private function __construct() {
 		define( 'ESPRESSO_ENCRYPT', true );

@@ -1,4 +1,6 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if (!defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  *
  * Event Espresso
@@ -26,7 +28,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  *
  * ------------------------------------------------------------------------
  */
- class EE_Cart implements EventEspresso\core\interfaces\ResettableInterface {
+ class EE_Cart implements ResettableInterface {
 
 	/**
 	 * 	instance of the EE_Cart object

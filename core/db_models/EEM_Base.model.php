@@ -1,4 +1,6 @@
 <?php
+use EventEspresso\core\interfaces\ResettableInterface;
+
 /**
  *
  * Class EEM_Base
@@ -23,11 +25,11 @@
  * @since 				EE4
  *
  */
-abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces\ResettableInterface {
+abstract class EEM_Base extends EE_Base implements ResettableInterface {
 
 	//admin posty
 	//basic -> grants access to mine -> if they don't have it, select none
-	//*_others -> grants access to others that arent private, and all mine -> if they don't have it, select mine
+	//*_others -> grants access to others that aren't private, and all mine -> if they don't have it, select mine
 	//*_private -> grants full access -> if dont have it, select all mine and others' non-private
 	//*_published -> grants access to published -> if they dont have it, select non-published
 	//*_global/default/system -> grants access to global items -> if they don't have it, select non-global
@@ -36,8 +38,8 @@ abstract class EEM_Base extends EE_Base implements EventEspresso\core\interfaces
 
 	//frontend posty
 	//by default has access to published
-	//basic -> grants access to mine that arent published, and all published
-	//*_others ->grants access to others that arent private, all mine
+	//basic -> grants access to mine that aren't published, and all published
+	//*_others ->grants access to others that aren't private, all mine
 	//*_private -> grants full access
 
 	//frontend non-posty

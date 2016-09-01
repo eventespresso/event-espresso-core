@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  *
  * Event Espresso
@@ -24,7 +26,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Maintenance_Mode implements EventEspresso\core\interfaces\ResettableInterface {
+class EE_Maintenance_Mode implements ResettableInterface {
 
 	/**
 	 * constants available to client code for interpreting the values of EE_Maintenance_Mode::level().

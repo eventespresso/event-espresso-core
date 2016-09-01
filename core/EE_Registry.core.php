@@ -1,4 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
+use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\interfaces\ResettableInterface;
+
 /**
  * EE_Registry Class
  *
@@ -8,7 +13,7 @@
  * @subpackage            core
  * @author                    Brent Christensen
  */
-class EE_Registry implements EventEspresso\core\interfaces\ResettableInterface {
+class EE_Registry implements ResettableInterface {
 
 	/**
 	 *    EE_Registry Object
@@ -1098,7 +1103,7 @@ class EE_Registry implements EventEspresso\core\interfaces\ResettableInterface {
 		//handle of objects cached on LIB
 		foreach ( $instance->LIB as $class_name => $class ) {
 			if ( isset( $instance->LIB->{$class_name} ) ) {
-				if ( $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\ResettableInterface ) {
+				if ( $instance->LIB->{$class_name} instanceof ResettableInterface ) {
 					if ( $instance->LIB->{$class_name} instanceof EEM_Base ) {
 						if ( $reset_models ) {
 							$instance->LIB->{$class_name}->reset();
@@ -1108,7 +1113,7 @@ class EE_Registry implements EventEspresso\core\interfaces\ResettableInterface {
 					$instance->LIB->{$class_name}->reset();
 					continue;
 				}
-				if ( ! $instance->LIB->{$class_name} instanceof EventEspresso\core\interfaces\InterminableInterface ) {
+				if ( ! $instance->LIB->{$class_name} instanceof InterminableInterface ) {
 					unset( $instance->LIB->{$class_name} );
 				}
 			}

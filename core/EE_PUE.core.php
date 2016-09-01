@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * EE_PUE
  *
@@ -6,7 +8,7 @@
  * @subpackage	includes/core/
  * @author		Darren Ethier
  */
-class EE_PUE implements EventEspresso\core\interfaces\InterminableInterface {
+class EE_PUE implements InterminableInterface {
 
 
 	/**

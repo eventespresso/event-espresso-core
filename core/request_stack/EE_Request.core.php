@@ -1,4 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+
+use EventEspresso\core\interfaces\InterminableInterface;
 /**
  * class EE_Request
  *
@@ -8,7 +10,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Request implements EventEspresso\core\interfaces\InterminableInterface {
+class EE_Request implements InterminableInterface {
 
 	/**
 	 * @access private

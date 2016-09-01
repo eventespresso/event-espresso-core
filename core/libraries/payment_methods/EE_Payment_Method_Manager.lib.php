@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  *
  * Class EE_Payment_Method_Manager
@@ -12,7 +14,7 @@
  * @since       4.5
  *
  */
-class EE_Payment_Method_Manager implements EventEspresso\core\interfaces\ResettableInterface {
+class EE_Payment_Method_Manager implements ResettableInterface {
 
 	/**
 	 * 	instance of the EE_Payment_Method_Manager object

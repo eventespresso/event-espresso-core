@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\interfaces\ResettableInterface;
 
 /**
  *
@@ -21,7 +22,7 @@
  * to indicate it successfully migrate some data, and has nothing left to do; or EE_Data_Migration_Manager::status_fatal_error to indicate
  * an error occurred which means the ajax script should probably stop executing.
  */
-class EE_Data_Migration_Manager implements EventEspresso\core\interfaces\ResettableInterface {
+class EE_Data_Migration_Manager implements ResettableInterface {
 
 	/**
 	 *

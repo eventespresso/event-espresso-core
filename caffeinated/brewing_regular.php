@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\core\interfaces\InterminableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to define and use the hook in a specific caffeinated/whatever class or file.
  */
@@ -15,7 +17,7 @@ define( 'EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
  * @subpackage	/caffeinated/brewing_regular.php
  * @author		Darren Ethier
  */
-class EE_Brewing_Regular extends EE_Base implements EventEspresso\core\interfaces\InterminableInterface {
+class EE_Brewing_Regular extends EE_Base implements InterminableInterface {
 
 	/**
 	 * EE_Brewing_Regular constructor.

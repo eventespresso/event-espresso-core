@@ -1,4 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+
+use EventEspresso\core\Psr4Autoloader;
+
 /**
  * Class EE_Psr4AutoloaderInit
  *
@@ -36,7 +41,7 @@ class EE_Psr4AutoloaderInit {
 		if ( ! $initialized ) {
 			// instantiate PSR4 autoloader
 			espresso_load_required( 'Psr4Autoloader', EE_CORE . 'Psr4Autoloader.php' );
-			EE_Psr4AutoloaderInit::$psr4_loader = new \EventEspresso\core\Psr4Autoloader();
+			EE_Psr4AutoloaderInit::$psr4_loader = new Psr4Autoloader();
 			// register the autoloader
 			EE_Psr4AutoloaderInit::$psr4_loader->register();
 			// register the base directories for the namespace prefix

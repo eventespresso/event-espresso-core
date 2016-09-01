@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
+<?php use EventEspresso\core\interfaces\ResettableInterface;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {exit('No direct script access allowed');}
 /**
  * EEH_Activation Helper
  *
@@ -6,7 +8,7 @@
  * @subpackage	/helpers/
  * @author		Brent Christensen
  */
-class EEH_Activation implements EventEspresso\core\interfaces\ResettableInterface {
+class EEH_Activation implements ResettableInterface {
 
 	/**
 	 * constant used to indicate a cron task is no longer in use
