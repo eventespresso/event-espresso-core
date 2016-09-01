@@ -1,4 +1,4 @@
-<?php use EventEspresso\core\interfaces\InterminableInterface;
+<?php
 use EventEspresso\core\interfaces\ResettableInterface;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
@@ -24,7 +24,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Admin implements ResettableInterface, InterminableInterface {
+final class EE_Admin implements ResettableInterface {
 
 	/**
 	 * @access private
