@@ -1129,11 +1129,12 @@ class EE_Registry implements ResettableInterface {
 			if ( $object instanceof EEM_Base ) {
 				if ( $reset_models ) {
 					$object->reset();
+					return true;
 				}
 				return false;
 			}
 			$object->reset();
-			return false;
+			return true;
 		}
 		if ( ! $object instanceof InterminableInterface ) {
 			return true;
