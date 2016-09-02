@@ -307,8 +307,24 @@ jQuery(document).ready(function($) {
 
 
 
-
-
+	/**
+	 * when a Country select dropdown changes, find its corresponding state select dropdown
+	 * and hide all option groups that do not correspond to the selected country
+	 */
+	$( '.ee-country-select-js' ).change(
+		function () {
+			var country_select_id = $( this ).attr( 'id' ),
+				selected_country  = $( this ).find( "option:selected" ).text(),
+				state_select_id   = country_select_id.replace( 'country', 'state' ),
+				state_select      = $( '#' + state_select_id );
+			if ( state_select.length ) {
+				$( 'span > optgroup', state_select ).unwrap();
+				if ( selected_country !== '%' ) {
+					$( 'optgroup:not([label="' + selected_country + '"])', state_select ).wrap( '<span/>' );
+				}
+			}
+		}
+	);
 
 });
 
