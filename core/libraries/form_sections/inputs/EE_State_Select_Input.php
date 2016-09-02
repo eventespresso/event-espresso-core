@@ -18,10 +18,9 @@ class EE_State_Select_Input extends EE_Select_Input{
 			$this->get_state_answer_options( $state_options ),
 			$this
 		);
-		if ( ! isset( $input_settings['html_class'] ) ) {
-			$input_settings['html_class'] = '';
-		}
-		$input_settings['html_class'] .= ' ee-state-select-js';
+		$input_settings['html_class'] = isset( $input_settings['html_class'] )
+			? $input_settings['html_class'] . ' ee-state-select-js'
+			: 'ee-state-select-js';
 		parent::__construct( $state_options, $input_settings );
 	}
 
