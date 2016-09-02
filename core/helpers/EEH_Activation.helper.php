@@ -1049,35 +1049,34 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-
-					case 'state':
-							$QST_values = array(
-									'QST_display_text' => __( 'State/Province', 'event_espresso' ),
-									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
-									'QST_system' => 'state',
-									'QST_type' => 'STATE',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 7,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => self::get_default_creator_id(),
-									'QST_deleted' => 0
-								);
+					case 'country' :
+						$QST_values = array(
+							'QST_display_text'  => __( 'Country', 'event_espresso' ),
+							'QST_admin_label'   => __( 'Country - System Question', 'event_espresso' ),
+							'QST_system'        => 'country',
+							'QST_type'          => 'COUNTRY',
+							'QST_required'      => 0,
+							'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+							'QST_order'         => 7,
+							'QST_admin_only'    => 0,
+							'QST_wp_user'       => self::get_default_creator_id(),
+							'QST_deleted'       => 0,
+						);
 						break;
 
-					case 'country' :
-							$QST_values = array(
-									'QST_display_text' => __( 'Country', 'event_espresso' ),
-									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
-									'QST_system' => 'country',
-									'QST_type' => 'COUNTRY',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 8,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => self::get_default_creator_id(),
-									'QST_deleted' => 0
-								);
+					case 'state':
+						$QST_values = array(
+							'QST_display_text'  => __( 'State/Province', 'event_espresso' ),
+							'QST_admin_label'   => __( 'State/Province - System Question', 'event_espresso' ),
+							'QST_system'        => 'state',
+							'QST_type'          => 'STATE',
+							'QST_required'      => 0,
+							'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+							'QST_order'         => 8,
+							'QST_admin_only'    => 0,
+							'QST_wp_user'       => self::get_default_creator_id(),
+							'QST_deleted'       => 0
+						);
 						break;
 
 					case 'zip':
