@@ -43,6 +43,7 @@ class EE_Payment_Processor extends EE_Processor_Base {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Payment_Processor__construct' );
+		add_action( 'http_api_curl', array( $this, '_curl_requests_to_paypal_use_tls' ), 10, 3 );
 	}
 
 
@@ -691,7 +692,19 @@ class EE_Payment_Processor extends EE_Processor_Base {
 			}
 		}
 	}
-
-
-
+	
+	/**
+ 	 * Force posts to PayPal to use TLS v1.2. See:
+ 	 * https://core.trac.wordpress.org/ticket/36320
+ 	 * https://core.trac.wordpress.org/ticket/34924#comment:15
+ 	 * https://www.paypal-knowledge.com/infocenter/index?page=content&widgetview=true&id=FAQ1914&viewlocale=en_US
+	 * This will affect paypal standard, pro, express, and payflow.
+ 	 */
+ 	public static function _curl_requests_to_paypal_use_tls( $handle, $r, $url ) {
+ 		if ( strstr( $url, 'https://' ) && strstr( $url, '.paypal.com' ) ) {
+			//Use the value of the constant CURL_SSLVERSION_TLSv1 = 1
+			//instead of the constant because it might not be defined
+ 			curl_setopt( $handle, CURLOPT_SSLVERSION, 1 );
+ 		}
+ 	}
  }
