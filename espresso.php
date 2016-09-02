@@ -42,6 +42,13 @@
  *
  */
 
+if ( ! defined('EE_MIN_WP_VER_REQUIRED') ) {
+	define( 'EE_MIN_WP_VER_REQUIRED', '4.1' );
+	define( 'EE_MIN_WP_VER_RECOMMENDED', '4.4.2' );
+	define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
+	define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.44' );
+}
+
 if ( function_exists( 'espresso_version' ) ) {
 
 	/**
@@ -51,13 +58,40 @@ if ( function_exists( 'espresso_version' ) ) {
 	function espresso_duplicate_plugin_error() {
 		?>
 		<div class="error">
-			<p><?php _e( 'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.', 'event_espresso' ); ?></p>
+			<p><?php esc_html_e( 'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.', 'event_espresso' ); ?></p>
 		</div>
 		<?php
 		espresso_deactivate_plugin( plugin_basename( __FILE__ ) );
 	}
 	add_action( 'admin_notices', 'espresso_duplicate_plugin_error', 1 );
 
+} else if ( version_compare( PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '<' ) ) {
+	/**
+	 * espresso_minimum_php_version_error
+	 * displays if EE is activated on a server running an incompatible version of PHP
+	 */
+	function espresso_minimum_php_version_error() {
+		?>
+		<div class="error">
+			<p>
+			<?php
+				printf(
+					esc_html__(
+						'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
+						'event_espresso'
+					),
+					EE_MIN_PHP_VER_REQUIRED,
+					PHP_VERSION,
+					'<br/>',
+					'<a href="http://php.net/downloads.php">http://php.net/downloads.php</a>'
+				);
+			?>
+			</p>
+		</div>
+		<?php
+		espresso_deactivate_plugin( plugin_basename( __FILE__ ) );
+	}
+	add_action( 'admin_notices', 'espresso_minimum_php_version_error', 1 );
 } else {
 
 	/**
@@ -72,10 +106,6 @@ if ( function_exists( 'espresso_version' ) ) {
 
 	// define versions
 	define( 'EVENT_ESPRESSO_VERSION', espresso_version() );
-	define( 'EE_MIN_WP_VER_REQUIRED', '4.1' );
-	define( 'EE_MIN_WP_VER_RECOMMENDED', '4.4.2' );
-	define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
-	define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.44' );
 	define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 	define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 	//used to be DIRECTORY_SEPARATOR, but that caused issues on windows
@@ -131,14 +161,14 @@ if ( function_exists( 'espresso_version' ) ) {
 	// define upload paths
 	$uploads = wp_upload_dir();
 	// define the uploads directory and URL
-	define( 'EVENT_ESPRESSO_UPLOAD_DIR', $uploads[ 'basedir' ] . DS . 'espresso' . DS );
-	define( 'EVENT_ESPRESSO_UPLOAD_URL', $uploads[ 'baseurl' ] . DS . 'espresso' . DS );
+	define( 'EVENT_ESPRESSO_UPLOAD_DIR', $uploads['basedir'] . DS . 'espresso' . DS );
+	define( 'EVENT_ESPRESSO_UPLOAD_URL', $uploads['baseurl'] . DS . 'espresso' . DS );
 	// define the templates directory and URL
-	define( 'EVENT_ESPRESSO_TEMPLATE_DIR', $uploads[ 'basedir' ] . DS . 'espresso' . DS . 'templates' . DS );
-	define( 'EVENT_ESPRESSO_TEMPLATE_URL', $uploads[ 'baseurl' ] . DS . 'espresso' . DS . 'templates' . DS );
+	define( 'EVENT_ESPRESSO_TEMPLATE_DIR', $uploads['basedir'] . DS . 'espresso' . DS . 'templates' . DS );
+	define( 'EVENT_ESPRESSO_TEMPLATE_URL', $uploads['baseurl'] . DS . 'espresso' . DS . 'templates' . DS );
 	// define the gateway directory and URL
-	define( 'EVENT_ESPRESSO_GATEWAY_DIR', $uploads[ 'basedir' ] . DS . 'espresso' . DS . 'gateways' . DS );
-	define( 'EVENT_ESPRESSO_GATEWAY_URL', $uploads[ 'baseurl' ] . DS . 'espresso' . DS . 'gateways' . DS );
+	define( 'EVENT_ESPRESSO_GATEWAY_DIR', $uploads['basedir'] . DS . 'espresso' . DS . 'gateways' . DS );
+	define( 'EVENT_ESPRESSO_GATEWAY_URL', $uploads['baseurl'] . DS . 'espresso' . DS . 'gateways' . DS );
 	// languages folder/path
 	define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 'languages' . DS );
 	define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
@@ -147,14 +177,15 @@ if ( function_exists( 'espresso_version' ) ) {
 		define( 'DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts' . DS );
 	}
 	//ajax constants
-	define( 'EE_FRONT_AJAX', isset( $_REQUEST[ 'ee_front_ajax' ] ) || isset( $_REQUEST[ 'data' ][ 'ee_front_ajax' ] ) ? true : false );
-	define( 'EE_ADMIN_AJAX', isset( $_REQUEST[ 'ee_admin_ajax' ] ) || isset( $_REQUEST[ 'data' ][ 'ee_admin_ajax' ] ) ? true : false );
+	define( 'EE_FRONT_AJAX', isset( $_REQUEST['ee_front_ajax'] ) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? true : false );
+	define( 'EE_ADMIN_AJAX', isset( $_REQUEST['ee_admin_ajax'] ) || isset( $_REQUEST['data']['ee_admin_ajax'] ) ? true : false );
 	//just a handy constant occasionally needed for finding values representing infinity in the DB
 	//you're better to use this than its straight value (currently -1) in case you ever
 	//want to change its default value! or find when -1 means infinity
 	define( 'EE_INF_IN_DB', -1 );
-	define( 'EE_INF', INF > (float)PHP_INT_MAX ? INF : PHP_INT_MAX );
+	define( 'EE_INF', INF > (float) PHP_INT_MAX ? INF : PHP_INT_MAX );
 	define( 'EE_DEBUG', false );
+
 
 	/**
 	 *    espresso_plugin_activation
@@ -195,7 +226,7 @@ if ( function_exists( 'espresso_version' ) ) {
 		if ( is_readable( EE_CORE . 'EE_Error.core.php' ) ) {
 			require_once( EE_CORE . 'EE_Error.core.php' );
 		} else {
-			wp_die( __( 'The EE_Error core class could not be loaded.', 'event_espresso' ) );
+			wp_die( esc_html__( 'The EE_Error core class could not be loaded.', 'event_espresso' ) );
 		}
 	}
 
@@ -218,19 +249,23 @@ if ( function_exists( 'espresso_version' ) ) {
 		if ( is_readable( $full_path_to_file ) ) {
 			require_once( $full_path_to_file );
 		} else {
-			throw new EE_Error ( sprintf(
-				__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
-				$classname
-			) );
+			throw new EE_Error (
+				sprintf(
+					esc_html__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
+					$classname
+				)
+			);
 		}
 	}
 
 	espresso_load_required( 'EEH_Base', EE_CORE . 'helpers' . DS . 'EEH_Base.helper.php' );
 	espresso_load_required( 'EEH_File', EE_CORE . 'helpers' . DS . 'EEH_File.helper.php' );
+	// PSR4 Autoloaders
+	espresso_load_required( 'EE_Psr4AutoloaderInit', EE_CORE . 'EE_Psr4AutoloaderInit.core.php' );
+	EE_Psr4AutoloaderInit::initialize_psr4_loader();
+	// bootstrap EE
 	espresso_load_required( 'EE_Bootstrap', EE_CORE . 'EE_Bootstrap.core.php' );
 	new EE_Bootstrap();
-
-
 
 }
 
@@ -253,3 +288,5 @@ if ( ! function_exists( 'espresso_deactivate_plugin' ) ) {
 		deactivate_plugins( $plugin_basename );
 	}
 }
+
+
