@@ -434,6 +434,18 @@ class EED_Ticket_Selector extends  EED_Module {
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
+			} else {
+				$html = apply_filters(
+					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
+					sprintf(
+						__( '%1$sSold Out%2$s', 'event_espresso' ),
+						'<h2 class="no-ticket-selector-h2 pink-text">',
+						'</h2>'
+					),
+					self::$_event
+				);
+				$html .= '<div class="clear"></div></form>';
+				return $html;
 			}
 		}
 		return '';
@@ -913,6 +925,9 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	/**
+	 * @return string
+	 */
 	public static function no_tkt_slctr_end_dv() {
 		return '<div class="clear"></div></div>';
 	}

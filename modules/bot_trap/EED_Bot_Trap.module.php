@@ -112,7 +112,7 @@ class EED_Bot_Trap  extends EED_Module {
 	 */
 	public static function generate_bot_trap() {
 		$do_not_enter = esc_html__( 'please do not enter anything in this input', 'event_espresso' );
-		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin-left:-999em;">';
+		$html = '<div id="tkt-slctr-request-processor-dv" style="float:left; margin:0 0 0 -999em; height: 0;">';
 		$html .= '<label for="tkt-slctr-request-processor-email">' . $do_not_enter  . '</label>';
 		$html .= '<input type="email" name="tkt-slctr-request-processor-email" value=""/>';
 		$html .= '<input type="hidden" name="tkt-slctr-request-processor-token" value="';
