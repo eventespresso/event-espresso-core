@@ -1,8 +1,7 @@
 <?php
+use EventEspresso\core\Psr4Autoloader;
 
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
-
-use EventEspresso\core\Psr4Autoloader;
 
 /**
  * Class EE_Psr4AutoloaderInit
