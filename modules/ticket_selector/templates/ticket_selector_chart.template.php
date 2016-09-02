@@ -15,18 +15,20 @@ if ( ! $ticket_count ) {
 }
 
 $required_ticket_sold_out = FALSE;
-$template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
+$template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector )
+	? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
+	: new EE_Ticket_Selector_Config();
+
 ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
-		//	d( $ticket );
-		$max =$ticket->max();
+		$max = min( $ticket->max(), $max_atndz );
 		$min = 0;
 		$remaining = $ticket->remaining();
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
-			$max = min( $remaining, $max_atndz );
+			$max = min( $remaining, $max );
 			// but... we also want to restrict the number of tickets by the ticket max setting,
 			// however, the max still can't be higher than what was just set above
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
@@ -75,6 +77,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			break;
 			// onsale
 			case EE_Ticket::onsale :
+			default :
 				$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
 				$status_class = 'ticket-on-sale';
 			break;
@@ -90,7 +93,22 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		 *
 		 * @var string|bool
 		 */
-		if ( false !== ( $new_row_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+		if (
+			false !== (
+				$new_row_content = apply_filters(
+					'FHEE__ticket_selector_chart_template__do_ticket_entire_row',
+					false,
+					$ticket,
+					$max,
+					$min,
+					$required_ticket_sold_out,
+					$ticket_price,
+					$ticket_bundle,
+					$ticket_status,
+					$status_class
+				)
+			)
+		) {
 			echo $new_row_content;
 			continue;
 		}

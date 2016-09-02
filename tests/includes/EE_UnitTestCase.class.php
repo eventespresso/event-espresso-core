@@ -64,7 +64,21 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 
 
+	/**
+	 * basically used for displaying the test case class while tests are running.
+	 * this can be helpful if you are getting weird errors happening,
+	 * but the test name is not being reported anywhere.
+	 * Just uncomment this method as well as the first line of setUp() below.
+	 */
+	// public static function setUpBeforeClass() {
+	// 	parent::setUpBeforeClass();
+	// 	echo "\n\n" . get_called_class() . "\n";
+	// }
+
+
+
 	public function setUp() {
+		// echo ' ' . $this->getName() . "()\n";
 		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
 		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -76,14 +90,12 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		);
 		$this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
 		parent::setUp();
-		EE_Registry::reset( TRUE );
 		$auto_made_thing_seed = 1;
 		//reset wpdb's list of queries executed so it only stores those from the current test
 		$wpdb->queries = array();
 		//the accidental txn commit indicator option shouldn't be set from the previous test
 		update_option( 'accidental_txn_commit_indicator', TRUE );
 
-//		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -98,19 +110,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		// load scenarios
 		require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
 		$this->scenarios = new EE_Test_Scenario_Factory( $this );
-		EE_Registry::reset();
 
 		//IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
 		//updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
 		// 'user_has_cap' filter to do this
 		$_wp_test_version = getenv( 'WP_VERSION' );
 		if ( $_wp_test_version && $_wp_test_version == '4.1' ) {
-			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, $WP_User ) {
+			add_filter( 'user_has_cap', function ( $all_caps, $caps, $args, WP_User $WP_User ) {
 				$WP_User->get_role_caps();
 
 				return $WP_User->allcaps;
 			}, 10, 4 );
 		}
+		EE_Registry::reset( true );
 	}
 
 
@@ -133,6 +145,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	public function tearDown(){
 		parent::tearDown();
+		EE_Registry::reset( true );
 		global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
 		$wp_filter = $this->wp_filters_saved[ 'wp_filter' ];
 		$wp_actions = $this->wp_filters_saved[ 'wp_actions' ];
@@ -143,7 +156,15 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$notices = EE_Error::get_notices( false, false, true );
 		EE_Error::reset_notices();
 		if( ! empty( $notices[ 'errors' ] ) ){
-			$this->fail(  $notices['errors'] );
+			$error_message = sprintf(
+				'The following error(s) occurred during test "%1$s" : %2$s',
+				get_called_class() . '::' . $this->getName() . '()',
+				"\n" . $notices['errors']
+			);
+			$this->fail( $error_message );
+			// if you need a stack trace for the above, then uncomment the following
+			// it won't be entirely accurate, but might help
+			// throw new Exception( $error_message );
 		}
 	}
 
@@ -544,26 +565,47 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 
+
 	/**
-	 * @param string $expected_date  The expected date string in the given full_format date string format.
-	 * @param string $actual_date    The actual date string in the given full_format date string format.
-	 * @param $full_format
+	 * @param string $expected_date The expected date string in the given full_format date string format.
+	 * @param string $actual_date   The actual date string in the given full_format date string format.
+	 * @param        $full_format
+	 * @param string $custom_error_message
+	 * @throws \EE_Error
 	 */
 	public function assertDateWithinOneMinute( $expected_date, $actual_date, $full_format, $custom_error_message = '' ) {
 		//take the incoming date strings convert to datetime objects and verify they are within one minute of each other
 		$expected_date_obj = date_create_from_format( $full_format, $expected_date );
 		$actual_date_obj = date_create_from_format( $full_format, $actual_date );
 		$date_parsing_error = '';
-		if( ! $expected_date_obj instanceof DateTime ) {
-			$date_parsing_error = sprintf(__( 'Expected date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $expected_date, true ), $full_format );
+		if ( ! $expected_date_obj instanceof DateTime ) {
+			$date_parsing_error = sprintf(
+				__( 'Expected date %1$s could not be parsed into format %2$s', 'event_espresso' ),
+				print_r( $expected_date, true ),
+				$full_format
+			);
 		}
-		if( ! $actual_date_obj instanceof DateTime ) {
-			$date_parsing_error = sprintf(__( 'Actual date %1$s could not be parsed into format %2$s', 'event_espresso'), print_r( $actual_date, true ), $full_format );
+		if ( ! $actual_date_obj instanceof DateTime ) {
+			$date_parsing_error = sprintf(
+				__( 'Actual date %1$s could not be parsed into format %2$s', 'event_espresso' ),
+				print_r( $actual_date, true ),
+				$full_format
+			);
 		}
 		if( $date_parsing_error ) {
 			throw new EE_Error( $date_parsing_error );
 		}
 		$difference = $actual_date_obj->format('U') - $expected_date_obj->format('U');
+		$custom_error_message = ! empty( $custom_error_message )
+			? $custom_error_message
+			: sprintf(
+				__(
+					'The expected date "%1$s" differs from the actual date "%2$s" by more than one minute',
+					'event_espresso'
+				),
+				print_r( $expected_date, true ),
+				print_r( $actual_date, true )
+			);
 		$this->assertTrue( $difference < 60, $custom_error_message );
 	}
 
