@@ -24,10 +24,9 @@ class EE_Country_Select_Input extends EE_Select_Input{
 			$this->get_country_answer_options( $country_options ),
 			$this
 		);
-		if ( ! isset( $input_settings['html_class'] ) ) {
-			$input_settings['html_class'] = '';
-		}
-		$input_settings['html_class'] .= ' ee-country-select-js';
+		$input_settings['html_class'] = isset( $input_settings['html_class'] )
+			? $input_settings['html_class'] . ' ee-country-select-js'
+			: 'ee-country-select-js';
 		parent::__construct( $country_options, $input_settings );
 	}
 
