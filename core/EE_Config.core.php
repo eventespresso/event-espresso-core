@@ -171,7 +171,6 @@ final class EE_Config implements ResettableInterface {
 	 *    class constructor
 	 *
 	 * @access    private
-	 * @return \EE_Config
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin', $this );
@@ -377,7 +376,6 @@ final class EE_Config implements ResettableInterface {
 	 *    update_espresso_config
 	 *
 	 * @access   public
-	 * @return   bool
 	 */
 	protected function _reset_espresso_addon_config() {
 		$this->_addon_option_names = array();
@@ -755,7 +753,9 @@ final class EE_Config implements ResettableInterface {
 		// check if config object has been added to db by seeing if config option name is in $this->_addon_option_names array
 		if ( ! isset( $this->_addon_option_names[ $config_option_name ] ) ) {
 			// save new config to db
-			return $this->set_config( $section, $name, $config_class, $config_obj );
+			if( $this->set_config( $section, $name, $config_class, $config_obj ) ) {
+				return true;
+			}
 		} else {
 			// first check if the record already exists
 			$existing_config = get_option( $config_option_name );
@@ -1730,7 +1730,6 @@ class EE_Core_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
 		// set default organization settings
@@ -2084,7 +2083,6 @@ class EE_Organization_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Organization_Config
 	 */
 	public function __construct() {
 		// set default organization settings
@@ -2181,7 +2179,6 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *
 	 * @access    public
 	 * @param string $CNT_ISO
-	 * @return \EE_Currency_Config
 	 */
 	public function __construct( $CNT_ISO = '' ) {
 		// get country code from organization settings or use default
@@ -2354,7 +2351,6 @@ class EE_Registration_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Registration_Config
 	 */
 	public function __construct() {
 		// set default registration settings
@@ -2475,7 +2471,6 @@ class EE_Admin_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Admin_Config
 	 */
 	public function __construct() {
 		// set default general admin settings
@@ -2570,13 +2565,17 @@ class EE_Template_Config extends EE_Config_Base {
 	 */
 	public $EED_Events_Archive;
 
+	/**
+	 * @var EE_Ticket_Selector_Config $EED_Ticket_Selector
+	 */
+	public $EED_Ticket_Selector;
+
 
 
 	/**
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Template_Config
 	 */
 	public function __construct() {
 		// set default template settings
@@ -2588,6 +2587,7 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->current_espresso_theme = 'Espresso_Arabica_2014';
 		$this->EED_Event_Single = null;
 		$this->EED_Events_Archive = null;
+		$this->EED_Ticket_Selector = null;
 	}
 
 }
@@ -2685,7 +2685,6 @@ class EE_Map_Config extends EE_Config_Base {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @return \EE_Map_Config
 	 */
 	public function __construct() {
 		// set default map settings

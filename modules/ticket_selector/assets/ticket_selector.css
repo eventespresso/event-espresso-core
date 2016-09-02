@@ -331,6 +331,13 @@
 	margin: 0;
 }
 
+.event-tickets .no-ticket-selector-h2 {
+	margin: 0;
+	position: relative;
+	text-align: center;
+	top: 0;
+}
+
 
 @media (max-width: 600px) {
 
