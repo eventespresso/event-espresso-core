@@ -113,7 +113,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed
-		if ( $old_STS_ID !== $new_STS_ID  ) {
+		if (
+			$this->ID() // ensure registration is in the db
+			&& $old_STS_ID != $new_STS_ID // and that status has actually changed
+			&& ! empty( $old_STS_ID ) // and that old status is actually set
+			&& ! empty( $new_STS_ID ) // as well as the new status
+		) {
 			// TO approved
 			if ( $new_STS_ID === EEM_Registration::status_id_approved ) {
 				// reserve a space by incrementing ticket and datetime sold values
@@ -127,9 +132,46 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 			}
 			// update status
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );
+			/** @type EE_Registration_Processor $registration_processor */
+			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
+			/** @type EE_Transaction_Processor $transaction_processor */
+			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
+			/** @type EE_Transaction_Payments $transaction_payments */
+			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
+			// these reg statuses should not be considered in any calculations involving monies owing
+			$closed_reg_statuses = ! empty( $closed_reg_statuses )
+				? $closed_reg_statuses
+				: EEM_Registration::closed_reg_statuses();
+			if (
+				in_array( $new_STS_ID, $closed_reg_statuses )
+				&& ! in_array( $old_STS_ID, $closed_reg_statuses )
+			) {
+				// cancelled or declined registration
+				$registration_processor->update_registration_after_being_canceled_or_declined(
+					$this,
+					$closed_reg_statuses
+				);
+				$transaction_processor->update_transaction_after_canceled_or_declined_registration(
+					$this,
+					$closed_reg_statuses,
+					false
+				);
+			} else if (
+				in_array( $old_STS_ID, $closed_reg_statuses )
+				&& ! in_array( $new_STS_ID, $closed_reg_statuses )
+			) {
+				// reinstating cancelled or declined registration
+				$registration_processor->update_canceled_or_declined_registration_after_being_reinstated(
+					$this,
+					$closed_reg_statuses
+				);
+				$transaction_processor->update_transaction_after_reinstating_canceled_registration( $this );
+			}
+			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
+			$transaction_payments->update_transaction_status_based_on_total_paid( $this->transaction(), true );
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 			return TRUE;
-		}else{
+		} else {
 			//even though the old value matches the new value, it's still good to
 			//allow the parent set method to have a say
 			parent::set( 'STS_ID', $new_STS_ID, $use_default );

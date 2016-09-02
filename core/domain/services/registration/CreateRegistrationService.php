@@ -54,7 +54,6 @@ class CreateRegistrationService extends DomainService
                 'TXN_ID'          => $transaction->ID(),
                 'TKT_ID'          => $ticket->ID(),
                 'STS_ID'          => \EEM_Registration::status_id_incomplete,
-                'REG_date'        => time(),
                 'REG_final_price' => $this->resolveFinalPrice($transaction, $ticket, $ticket_line_item),
                 'REG_session'     => \EE_Registry::instance()->SSN->id(),
                 'REG_count'       => $reg_count,
