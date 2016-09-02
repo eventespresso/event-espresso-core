@@ -1,6 +1,4 @@
 <?php
-use EventEspresso\core\interfaces\ResettableInterface;
-
 if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
@@ -24,7 +22,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed
  *
  * ------------------------------------------------------------------------
  */
-final class EE_Admin implements ResettableInterface {
+final class EE_Admin {
 
 	/**
 	 * @access private
