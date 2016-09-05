@@ -43,6 +43,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			'[RECIPIENT_FNAME]' => esc_html__( 'Parses to the first name of the recipient for the message.', 'event_espresso' ),
 			'[RECIPIENT_LNAME]' => esc_html__( 'Parses to the last name of the recipient for the message.', 'event_espresso' ),
 			'[RECIPIENT_EMAIL]' => esc_html__( 'Parses to the email address of the recipient for the message.', 'event_espresso' ),
+			'[RECIPIENT_REGISTRATION_ID]' => esc_html__( 'Parses to the registration ID of the recipient for the message.', 'event_espresso' ),
 			'[RECIPIENT_REGISTRATION_CODE]' => esc_html__( 'Parses to the registration code of the recipient for the message.', 'event_espresso' ),
 			'[RECIPIENT_EDIT_REGISTRATION_LINK]' => esc_html__( 'Parses to a link for frontend editing of the registration for the recipient.', 'event_espresso' ),
 			'[RECIPIENT_PHONE_NUMBER]' => esc_html__( 'The Phone Number for the recipient of the message.', 'event_espresso' ),
@@ -104,6 +105,13 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
 			case '[RECIPIENT_EMAIL]' :
 				return $attendee->email();
+				break;
+
+			case '[RECIPIENT_REGISTRATION_ID]' :
+				if ( ! $this->_recipient->reg_obj instanceof EE_Registration ) {
+					return '';
+				}
+				return $this->_get_reg_id();
 				break;
 
 			case '[RECIPIENT_REGISTRATION_CODE]' :
@@ -247,6 +255,60 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		foreach ( $this->_registrations_for_recipient as $reg ) {
 			if ( $reg instanceof EE_Registration ) {
 				$reg_code[] = $reg->reg_code();
+			}
+		}
+		return implode( ', ', $reg_code );
+	}
+
+
+	/**
+	 * returns the reg ID for the recipient depending on the context and whether the recipient has multiple
+	 * registrations or not.
+	 *
+	 * @return int
+	 */
+	protected function _get_reg_id() {
+
+		//if only one related registration for the recipient then just return that reg code.
+		if ( count( $this->_registrations_for_recipient ) <= 1 )  {
+			return $this->_recipient->reg_obj->ID();
+		}
+
+		//k more than one registration so let's see if we can get specific to context
+		//are we parsing event_list?
+		if ( $this->_data instanceof EE_Event ) {
+			$reg_code = array();
+			//loop through registrations for recipient and see if there is a match for this event
+			foreach ( $this->_registrations_for_recipient as $reg ) {
+				if ( $reg instanceof EE_Registration && $reg->event_ID() == $this->_data->ID() ) {
+					$reg_code[] = $reg->ID();
+				}
+			}
+			return implode( ', ', $reg_code );
+		}
+
+		//are we parsing ticket list?
+		if ( $this->_data instanceof EE_Ticket ) {
+			$reg_code = array();
+			//loop through each registration for recipient and see if there is a match for this ticket
+			foreach ( $this->_registrations_for_recipient as $reg ) {
+				if ( $reg instanceof EE_Registration && $reg->ticket_ID() == $this->_data->ID() ) {
+					$reg_code = $reg->ID();
+				}
+			}
+			return implode( ', ', $reg_code );
+		}
+
+		//do we have a specific reg_obj?  Let's use it
+		if ( $this->_data instanceof EE_Messages_Addressee && $this->_data->reg_obj instanceof EE_Registration ) {
+			return $this->_data->reg_obj->ID();
+		}
+
+		//not able to determine the single reg code so let's return a comma delimited list of reg codes.
+		$reg_code = array();
+		foreach ( $this->_registrations_for_recipient as $reg ) {
+			if ( $reg instanceof EE_Registration ) {
+				$reg_code[] = $reg->ID();
 			}
 		}
 		return implode( ', ', $reg_code );
