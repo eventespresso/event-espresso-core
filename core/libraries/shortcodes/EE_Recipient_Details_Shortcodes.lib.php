@@ -265,7 +265,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 	 * returns the reg ID for the recipient depending on the context and whether the recipient has multiple
 	 * registrations or not.
 	 *
-	 * @return int
+	 * @return int|string
 	 */
 	protected function _get_reg_id() {
 
