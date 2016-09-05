@@ -18,12 +18,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 abstract class CommandHandler implements CommandHandlerInterface
 {
 
-    /**
-     * @param \EventEspresso\core\services\commands\CommandInterface $command
-     * @return mixed
-     */
-    abstract public function handle(CommandInterface $command);
-
 }
 // End of file CommandHandler.php
 // Location: /CommandHandler.php

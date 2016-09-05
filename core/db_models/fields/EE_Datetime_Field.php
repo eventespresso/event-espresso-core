@@ -97,6 +97,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @var int
 	 */
 	protected $_blog_offset = NULL;
+	
+	/**
+	 * Const for using in the default value. If the field's default is set to this,
+	 * then we will return the time of calling `get_default_value()`, not
+	 * just the current time at construction
+	 */
+	const now = 'now';
 
 
 
@@ -641,5 +648,16 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		return $dateTime->format( 'T' );
 	}
 
+	/**
+	 * Overrides the parent to allow for having a dynamic "now" value
+	 * @return 
+	 */
+	public function get_default_value() {
+		if( $this->_default_value === EE_Datetime_Field::now ) {
+			return time();
+		} else {
+			return parent::get_default_value();
+		}
+	}
 
 }
