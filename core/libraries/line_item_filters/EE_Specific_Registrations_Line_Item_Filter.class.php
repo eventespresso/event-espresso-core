@@ -123,7 +123,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				&& $line_item->OBJ_type() === 'Ticket'
 			) {
 				//make sure this item's quantity matches its parent
-				if( ! $child_line_item->is_percent() ) {
+				if( ! $child_line_item->is_percent() && ! $child_line_item->is_cancelled() ) {
 					$child_line_item->set_quantity( $line_item->quantity() );
 					$child_line_item->set_total( $child_line_item->unit_price() * $child_line_item->quantity() );
 				}
