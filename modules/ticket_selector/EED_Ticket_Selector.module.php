@@ -42,6 +42,14 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	private static $_available_spaces = array();
 
+	/**
+	* max attendees that can register for event at one time
+	*
+	* @access private
+	* @var int
+	*/
+	private static $_max_atndz = EE_INF;
+
 
 
 
@@ -334,7 +342,11 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
+		\EED_Ticket_Selector::$_max_atndz = apply_filters(
+			'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets',
+			self::$_event->additional_limit()
+		);
+		$template_args['max_atndz'] = \EED_Ticket_Selector::$_max_atndz;
 		if ( $template_args['max_atndz'] < 1 ) {
 			$sales_closed_msg = __( 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.', 'event_espresso' );
 			if ( current_user_can( 'edit_post', self::$_event->ID() )) {
@@ -434,7 +446,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
-			} else {
+			} else if ( self::$_event instanceof EE_Event && \EED_Ticket_Selector::$_max_atndz === 1 && self::$_event->is_sold_out() ) {
 				$html = apply_filters(
 					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
 					sprintf(
