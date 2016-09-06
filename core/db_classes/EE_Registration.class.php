@@ -168,7 +168,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 				$transaction_processor->update_transaction_after_reinstating_canceled_registration( $this );
 			}
 			$transaction_payments->recalculate_transaction_total( $this->transaction(), false );
-			$transaction_payments->update_transaction_status_based_on_total_paid( $this->transaction(), true );
+			$this->transaction()->update_status_based_on_total_paid();
 			do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 			return TRUE;
 		} else {
