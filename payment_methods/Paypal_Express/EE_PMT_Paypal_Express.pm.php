@@ -119,7 +119,6 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base {
 		
 		return false;
 	}
-
 }
 
 // End of file EE_PMT_Paypal_Express.pm.php
