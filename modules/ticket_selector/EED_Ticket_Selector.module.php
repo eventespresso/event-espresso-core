@@ -469,6 +469,8 @@ class EED_Ticket_Selector extends  EED_Module {
 				);
 				$html .= '<div class="clear"></div></form>';
 				return $html;
+			} else {
+				return '<div class="clear"></div></form>';
 			}
 		}
 		return '';
