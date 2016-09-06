@@ -461,8 +461,9 @@ class EED_Ticket_Selector extends  EED_Module {
 				$html = apply_filters(
 					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
 					sprintf(
-						__( '%1$sThis event is currently sold out, however, tickets could become available again at any time due to cancellations, etc. So please check back again soon if this is important to you. %2$s', 'event_espresso' ),
+						__( '%1$s"%2$s" is currently sold out. Please check back again later, as spots may become available.%3$s', 'event_espresso' ),
 						'<p class="no-ticket-selector-msg important-notice">',
+						EED_Ticket_Selector::$_event->name(),
 						'</p>'
 					),
 					EED_Ticket_Selector::$_event
