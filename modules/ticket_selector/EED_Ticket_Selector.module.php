@@ -434,19 +434,30 @@ class EED_Ticket_Selector extends  EED_Module {
 				$btn_text = apply_filters(
 					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
 					__('Register Now', 'event_espresso' ),
-					self::$_event
+					EED_Ticket_Selector::$_event
 				);
-				$external_url = self::$_event->external_url();
-				$html = '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"';
+				$external_url = EED_Ticket_Selector::$_event->external_url();
+				$html = '<input id="ticket-selector-submit-'. EED_Ticket_Selector::$_event->ID() .'-btn"';
 				$html .= ' class="ticket-selector-submit-btn ';
 				$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
 				$html .= ' type="submit" value="' . $btn_text . '" />';
-				$html .= apply_filters( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', self::$_event );
+				$html .= apply_filters(
+					'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+					'',
+					EED_Ticket_Selector::$_event
+				);
 				$html .= '<div class="clear"><br/></div></form>';
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
-			} else if ( self::$_event instanceof EE_Event && \EED_Ticket_Selector::$_max_atndz === 1 && self::$_event->is_sold_out() ) {
+			} else if (
+				EED_Ticket_Selector::$_event instanceof EE_Event
+				// if $_max_atndz === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+				&& EED_Ticket_Selector::$_max_atndz === 1
+				// and the event is sold out
+				&& EED_Ticket_Selector::$_event->is_sold_out()
+			) {
+				// then instead of a View Details or Submit button, just display a "Sold Out" message
 				$html = apply_filters(
 					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
 					sprintf(
@@ -454,7 +465,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						'<h2 class="no-ticket-selector-h2 pink-text">',
 						'</h2>'
 					),
-					self::$_event
+					EED_Ticket_Selector::$_event
 				);
 				$html .= '<div class="clear"></div></form>';
 				return $html;
