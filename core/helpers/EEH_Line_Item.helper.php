@@ -411,6 +411,11 @@ class EEH_Line_Item {
 			$ticket_line_item->add_child_line_item( $cancellation_line_item );
 		}
 		if ( $ticket_line_item->save_this_and_descendants() > 0 ) {
+			// decrement parent line item quantity
+			$event_line_item = $ticket_line_item->parent();
+			if ( $event_line_item instanceof EE_Line_Item && $event_line_item->OBJ_type() === 'Event' ) {
+				$event_line_item->set_quantity( $event_line_item->quantity() - $qty );
+			}
 			EEH_Line_Item::get_grand_total_and_recalculate_everything( $ticket_line_item );
 			return true;
 		}
@@ -474,6 +479,11 @@ class EEH_Line_Item {
 		// increment ticket quantity
 		$ticket_line_item->set_quantity( $ticket_line_item->quantity() + $qty );
 		if ( $ticket_line_item->save_this_and_descendants() > 0 ) {
+			// increment parent line item quantity
+			$event_line_item = $ticket_line_item->parent();
+			if ( $event_line_item instanceof EE_Line_Item && $event_line_item->OBJ_type() === 'Event' ) {
+				$event_line_item->set_quantity( $event_line_item->quantity() + $qty );
+			}
 			EEH_Line_Item::get_grand_total_and_recalculate_everything( $ticket_line_item );
 			return true;
 		}
