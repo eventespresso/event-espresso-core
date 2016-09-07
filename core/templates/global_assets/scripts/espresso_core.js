@@ -316,11 +316,60 @@ jQuery(document).ready(function($) {
 			var country_select_id = $( this ).attr( 'id' ),
 				selected_country  = $( this ).find( "option:selected" ).text(),
 				state_select_id   = country_select_id.replace( 'country', 'state' ),
-				state_select      = $( '#' + state_select_id );
-			if ( state_select.length ) {
-				$( 'span > optgroup', state_select ).unwrap();
+				$state_select     = $( '#' + state_select_id ),
+				selected_state    = null,
+				valid_option      = false;
+			if ( $state_select.length ) {
+				// grab the currently selected state (if there is one)
+				selected_state = $state_select.find( ":selected" ).val();
+				// remove span tags from all optgroups
+				$( 'span > optgroup', $state_select ).unwrap();
+				// if a valid country is selected
 				if ( selected_country !== '%' ) {
-					$( 'optgroup:not([label="' + selected_country + '"])', state_select ).wrap( '<span/>' );
+					// wrap all unselected optgroup with span tags which effectively hides them in the dropdown
+					$( 'optgroup:not([label="' + selected_country + '"])', $state_select ).wrap( '<span></span>' );
+					// if a valid corresponding state select exists
+					if ( selected_state.length ) {
+						// loop through all of its optgroups
+						$state_select.find( 'optgroup' ).each(
+							function () {
+								// if this optgroup is not hidden (wrapped in  a span)
+								if ( $(this).parent().prop( "tagName" ) == 'SELECT' ) {
+									// then loop through each of its options
+									$( this ).find( 'option' ).each(
+										function () {
+											// was this option match the previously selected state ?
+											if ( $( this ).val() == selected_state ) {
+												valid_option = true;
+												// make sure it's set as the selected option
+												$state_select.val( selected_state ).change();
+											}
+										}
+									);
+								}
+							}
+						);
+					}
+					// if the previously selected state is not valid
+					if ( ! valid_option ) {
+						// makes sure no option is selected
+						$( "option:selected", $state_select ).prop( "selected", false );
+						// then find the empty placeholder, unwrap it, and select it
+						$state_select
+							.find( 'optgroup[label=""]' )
+							.unwrap()
+							.find( 'option[value=""]' )
+							.attr( 'selected', 'selected' );
+						// select it again to be sure
+						$state_select.val('')
+					} else {
+						// previously selected state IS valid
+						// so make sure the empty placeholder is unselected
+						$state_select
+							.find( 'optgroup[label=""]' )
+							.find( 'option[value=""]' )
+							.removeAttr( 'selected' );
+					}
 				}
 			}
 		}
