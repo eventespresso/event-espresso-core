@@ -52,6 +52,9 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 	 * @return string[]
 	 */
 	public function unnormalize( $normalized_values ) {
+		if( $normalized_values === null ) {
+			$normalized_values = array();
+		}
 		if( ! is_array( $normalized_values ) ){
 			$normalized_values = array( $normalized_values );
 		}
