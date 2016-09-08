@@ -1,4 +1,6 @@
 <?php
+use \EventEspresso\core\exceptions\SendMessageException;
+
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
@@ -601,15 +603,32 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * Sets up the message for sending.
+	 *
 	 * @param  EE_message $message the message object that contains details about the message.
 	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
+	 *
 	 * @return bool Very important that all messengers return bool for successful send or not.  Error messages can be
 	 *              added to EE_Error.
+	 *              true = message sent successfully
+	 *              false = message not sent but can be retried (i.e. the failure might be just due to communication issues at the time of send).
+	 *              Throwing a SendMessageException means the message failed sending and cannot be retried.
+	 *
+	 * @throws SendMessageException
 	 */
-	public function send_message( $message, EE_message_type $message_type ) {
-		$this->_validate_and_setup( $message );
-		$this->_incoming_message_type = $message_type;
-		return $this->_send_message();
+	final public function send_message( $message, EE_message_type $message_type ) {
+		try {
+			$this->_validate_and_setup( $message );
+			$this->_incoming_message_type = $message_type;
+			$response = $this->_send_message();
+			if ( $response instanceof WP_Error ) {
+				EE_Error::add_error( $response->get_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+				$response = false;
+			}
+		} catch ( \Exception $e ) {
+			//convert to an instance of SendMessageException
+			throw new SendMessageException( $e->getMessage() );
+		}
+		return $response;
 	}
 
 
