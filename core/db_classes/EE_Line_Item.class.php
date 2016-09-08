@@ -887,7 +887,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 		if(
 			! $this->is_line_item() &&
 			! $this->is_sub_line_item() &&
-			! $this->is_cancellation()
+			! $this->is_cancellation() &&
+			$this->OBJ_type() !== 'Event'
 		) {
 			$this->set_quantity( 1 );
 			if( ! $this->is_percent() ) {
