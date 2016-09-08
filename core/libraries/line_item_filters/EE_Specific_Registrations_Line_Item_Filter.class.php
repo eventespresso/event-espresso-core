@@ -31,6 +31,11 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	protected $_registrations = array();
 
 	/**
+	 * @var EE_Registration
+	 */
+	protected $_current_registration;
+
+	/**
 	 * these reg statuses should NOT increment the line item quantity
 	 * @var array
 	 */
@@ -90,12 +95,12 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 		$running_total_of_children = 0;
 		//the new running total (only taking the specified ticket quantities into account)
 		$running_total_of_children_under_consideration = 0;
+		// let's also track the quantity of tickets that pertain to the registrations
+		$total_child_ticket_quantity = 0;
 		foreach ( $line_item->children() as $child_line_item ) {
-			if( $child_line_item->is_percent() ) {
-				$original_li_total = $running_total_of_children * $child_line_item->percent() / 100;
-			}else{
-				$original_li_total = $child_line_item->unit_price() * $child_line_item->quantity();
-			}
+			$original_li_total = $child_line_item->is_percent()
+				? $running_total_of_children * $child_line_item->percent() / 100
+				: $child_line_item->unit_price() * $child_line_item->quantity();
 
 			$this->process( $child_line_item );
 			/*
@@ -123,19 +128,35 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				&& $line_item->OBJ_type() === 'Ticket'
 			) {
 				//make sure this item's quantity matches its parent
-				if( ! $child_line_item->is_percent() && ! $child_line_item->is_cancelled() ) {
+				if(
+					! $child_line_item->is_percent()
+					&& ! (
+						$child_line_item->is_cancelled()
+						&& ! (
+							$child_line_item->is_cancelled()
+							&& $this->_current_registration instanceof EE_Registration
+							&& in_array( $this->_current_registration->status_ID(), $this->_closed_reg_statuses )
+						)
+					)
+				) {
 					$child_line_item->set_quantity( $line_item->quantity() );
 					$child_line_item->set_total( $child_line_item->unit_price() * $child_line_item->quantity() );
 				}
 			}
 			$running_total_of_children += $original_li_total;
 			$running_total_of_children_under_consideration += $child_line_item->total();
+			if ( $child_line_item->OBJ_type() == 'Ticket' ) {
+				$total_child_ticket_quantity += $child_line_item->quantity();
+			}
 		}
 		$line_item->set_total( $running_total_of_children_under_consideration );
 		if( $line_item->quantity() ) {
 			$line_item->set_unit_price( $running_total_of_children_under_consideration / $line_item->quantity() );
 		} else {
 			$line_item->set_unit_price( 0 );
+		}
+		if ( $line_item->OBJ_type() == 'Event' ) {
+			$line_item->set_quantity( $total_child_ticket_quantity );
 		}
 		return $line_item;
 	}
@@ -151,6 +172,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	protected function _adjust_line_item_quantity( EEI_Line_Item $line_item ) {
 		// is this a ticket ?
 		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
+			$this->_current_registration = null;
 			$quantity = 0;
 			// if this ticket is billable at this moment, then we should have a positive quantity
 			if (
@@ -161,9 +183,9 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				foreach ( $this->_line_item_registrations[ $line_item->code() ] as $registration ) {
 					if (
 						$registration instanceof EE_Registration
-						&& ! in_array( $registration->status_ID(), $this->_closed_reg_statuses )
 					) {
 						$quantity++;
+						$this->_current_registration = $registration;
 					}
 				}
 			}
