@@ -74,6 +74,9 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 				break;
 
 			case EEM_Line_Item::type_sub_total:
+				if ( $line_item->quantity() === 0 ) {
+					return $html;
+				}
 				//loop through children
 				$child_line_items = $line_item->children();
 				//loop through children
