@@ -3,19 +3,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
  * EE_messenger class
  *
  * Abstract class for setting up messengers.
@@ -264,8 +251,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * We just deliver the messages don't kill us!!  This method will need to be modified by child classes for whatever action is taken to actually send a message.
-	 * @return bool | WP_Error
-	 * @todo  at some point we may want to return success or fail so we know whether a message has gone off okay and we can assemble reporting.
+	 *
+	 * @return bool|WP_Error
+	 * @throw \Exception
 	 */
 	abstract protected function _send_message();
 
