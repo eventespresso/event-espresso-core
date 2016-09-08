@@ -107,7 +107,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets TXN_ID
 	 * @param int $TXN_ID
-	 * @return boolean
 	 */
 	public function set_TXN_ID( $TXN_ID ) {
 		$this->set( 'TXN_ID', $TXN_ID );
@@ -132,7 +131,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets name
 	 * @param string $name
-	 * @return boolean
 	 */
 	public function set_name( $name ) {
 		$this->set( 'LIN_name', $name );
@@ -153,7 +151,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets desc
 	 * @param string $desc
-	 * @return boolean
 	 */
 	public function set_desc( $desc ) {
 		$this->set( 'LIN_desc', $desc );
@@ -174,7 +171,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets quantity
 	 * @param int $quantity
-	 * @return boolean
 	 */
 	function set_quantity( $quantity ) {
 		$this->set( 'LIN_quantity', max( $quantity, 0 ) );
@@ -195,7 +191,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets item_id
 	 * @param string $item_id
-	 * @return boolean
 	 */
 	public function set_OBJ_ID( $item_id ) {
 		$this->set( 'OBJ_ID', $item_id );
@@ -244,7 +239,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets item_type
 	 * @param string $OBJ_type
-	 * @return boolean
 	 */
 	public function set_OBJ_type( $OBJ_type ) {
 		$this->set( 'OBJ_type', $OBJ_type );
@@ -264,8 +258,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 
 	/**
 	 * Sets unit_price
+	 *
 	 * @param float $unit_price
-	 * @return boolean
 	 */
 	public function set_unit_price( $unit_price ) {
 		$this->set( 'LIN_unit_price', $unit_price );
@@ -313,7 +307,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets percent (between 100-0.01)
 	 * @param float $percent
-	 * @return boolean
 	 */
 	public function set_percent( $percent ) {
 		$this->set( 'LIN_percent', $percent );
@@ -334,7 +327,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets total
 	 * @param float $total
-	 * @return boolean
 	 */
 	public function set_total( $total ) {
 		$this->set( 'LIN_total', $total );
@@ -375,7 +367,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets parent
 	 * @param int $parent
-	 * @return boolean
 	 */
 	public function set_parent_ID( $parent ) {
 		$this->set( 'LIN_parent', $parent );
@@ -396,7 +387,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets type
 	 * @param string $type
-	 * @return boolean
 	 */
 	public function set_type( $type ) {
 		$this->set( 'LIN_type', $type );
@@ -454,7 +444,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets code
 	 * @param string $code
-	 * @return boolean
 	 */
 	public function set_code( $code ) {
 		$this->set( 'LIN_code', $code );
@@ -475,7 +464,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	/**
 	 * Sets is_taxable
 	 * @param boolean $is_taxable
-	 * @return boolean
 	 */
 	public function set_is_taxable( $is_taxable ) {
 		$this->set( 'LIN_is_taxable', $is_taxable );
