@@ -124,6 +124,7 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function add_ticket_purchase( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ){
+		echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		if ( ! $total_line_item instanceof EE_Line_Item || ! $total_line_item->is_total() ) {
 			throw new EE_Error( sprintf( __( 'A valid line item total is required in order to add tickets. A line item of type "%s" was passed.', 'event_espresso' ), $ticket->ID(), $total_line_item->ID() ) );
 		}
@@ -133,7 +134,9 @@ class EEH_Line_Item {
 		if ( ! $line_item instanceof EE_Line_Item ) {
 			$line_item = self::create_ticket_line_item( $total_line_item, $ticket, $qty );
 		}
+		echo "\n {$line_item->name()} line_item->total(): " . $line_item->total() . "\n";
 		$total_line_item->recalculate_total_including_taxes();
+		echo "\n {$line_item->name()} line_item->total(): " . $line_item->total() . "\n";
 		return $line_item;
 	}
 
@@ -162,6 +165,7 @@ class EEH_Line_Item {
 			}
 		}
 		if ( $line_item instanceof EE_Line_Item ) {
+			echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 			EEH_Line_Item::increment_quantity( $line_item, $qty );
 			return $line_item;
 		}
@@ -253,6 +257,7 @@ class EEH_Line_Item {
 	 * @throws \EE_Error
 	 */
 	public static function create_ticket_line_item( EE_Line_Item $total_line_item, EE_Ticket $ticket, $qty = 1 ) {
+		echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() \n";
 		$datetimes = $ticket->datetimes();
 		$first_datetime = reset( $datetimes );
 		if( $first_datetime instanceof EE_Datetime && $first_datetime->event() instanceof EE_Event ) {
@@ -263,6 +268,9 @@ class EEH_Line_Item {
 		$event = sprintf( _x( '(For %1$s)', '(For Event Name)', 'event_espresso' ), $first_datetime_name );
 		// get event subtotal line
 		$events_sub_total = self::get_event_line_item_for_ticket( $total_line_item, $ticket );
+		echo "\n events_sub_total->name(): " . $events_sub_total->name() . "\n";
+		echo "\n ticket->name(): " . $ticket->name() . "\n";
+		echo "\n ticket->price(): " . $ticket->price() . "\n";
 		// add $ticket to cart
 		$line_item = EE_Line_Item::new_instance( array(
 			'LIN_name'       	=> $ticket->name(),

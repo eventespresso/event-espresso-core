@@ -870,7 +870,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
         /**
          * @group 4710
          */
-        function test_recalculating_tax_after_ticket_cancellation() {
+        function test_recalculate_total_including_taxes_after_ticket_cancellation() {
         	// create txn with one $10 ticket that is taxable at default 15% rate
             $transaction = $this->new_typical_transaction( array( 'taxable_tickets' => 1 ) );
 	        $registrations = $transaction->registrations();
@@ -888,16 +888,29 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	        // EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
 	        // now retrieve the line item for the ticket
 	        $ticket_line_items = EEH_Line_Item::get_ticket_line_items( $total_line_item );
+	        $this->assertCount( 1, $ticket_line_items );
 	        $ticket_line_item = reset( $ticket_line_items );
 	        $this->assertInstanceOf( 'EE_Line_Item', $ticket_line_item );
 	        // and check its quantity
 	        $this->assertEquals( 0, $ticket_line_item->quantity() );
 	        EEH_Line_Item::visualize( $total_line_item );
+	        unset( $ticket_line_items );
+	        unset( $ticket_line_item );
+	        echo "\n\n now add a new $15 ticket: \n";
 	        // now add a new ticket
 	        $ticket2 = $this->new_ticket( array( 'ticket_price' => 15 ) );
 	        $this->assertEquals( 15, $ticket2->price() );
 	        EEH_Line_Item::add_ticket_purchase( $total_line_item, $ticket2 );
 	        EEH_Line_Item::visualize( $total_line_item );
+	        $ticket_line_items = EEH_Line_Item::get_ticket_line_items( $total_line_item );
+	        $this->assertCount( 2, $ticket_line_items );
+	        // find ticket 2
+	        foreach ( $ticket_line_items as $ticket_line_item ) {
+	        	if ( $ticket_line_item->OBJ_type() === 'Ticket' && $ticket_line_item->OBJ_ID() === $ticket2->ID() ) {
+			        $this->assertEquals( $ticket2->price(), $ticket_line_item->total() );
+		        }
+	        }
+	        $this->assertEquals( 15, $total_line_item->total() );
         }
 
 
