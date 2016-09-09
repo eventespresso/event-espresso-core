@@ -278,9 +278,10 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	 * @since 4.6.x
 	 */
 	function test_get_formats_for_with_exception() {
+		EEM_Datetime::reset();
 		//test expected exception for invalid field
 		$this->setExpectedException( 'EE_Error' );
-		$formats = EEM_Datetime::instance()->get_formats_for( 'Bogus_Field' );
+		EEM_Datetime::instance()->get_formats_for( 'Bogus_Field' );
 	}
 
 
@@ -291,6 +292,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	 * @since 4.6.x
 	 */
 	function test_get_formats_for_with_valid_field() {
+		EEM_Datetime::reset();
 		//first test default field setup
 		$formats = EEM_Datetime::instance()->get_formats_for( 'DTT_EVT_start' );
 		$this->assertContains('F j, Y', $formats);
@@ -310,6 +312,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	 * @since 4.6.x
 	 */
 	function test_current_time_for_query() {
+		EEM_Datetime::reset();
 		//baseline DateTime object for testing
 		$now = new DateTime( "now" );
 		$DateTimeZone = new DateTimeZone( 'America/Vancouver' );
@@ -338,6 +341,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	 * @since 4.6.x
 	 */
 	function test_convert_datetime_for_query() {
+		EEM_Datetime::reset();
 		//baselines for testing with
 		//baseline DateTime object for testing
 		$now = new DateTime( "now" );
@@ -824,19 +828,19 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$e2 = $this->new_model_obj_with_dependencies( 'Event', array() );
 		$this->assertEquals( array( $e1->ID(), $e2->ID() ), EEM_Event::instance()->get_IDs( array( $e1, $e2 ), true ) );
 	}
-	
+
 	/**
 	 * @group 9389
 	 */
 	function test_get_all__automatic_group_by() {
 		$this->assertEquals( 2, EEM_Question_Group::instance()->count() );
-		$qsgs = EEM_Question_Group::instance()->get_all( 
+		$qsgs = EEM_Question_Group::instance()->get_all(
 			array(
 				'force_join' => array( 'Question' ),
 				'limit' => array( 2, 2 ),//grab 2 but offset by 2
 			)
 		);
-		//so there are only 2 question groups, and we offset by 2. 
+		//so there are only 2 question groups, and we offset by 2.
 		//so we shouldn't see any right?
 		$this->assertEmpty( $qsgs );
 	}
@@ -865,8 +869,8 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		//make sure we restore the models to blog 1 for future tests.
 		EEM_Base::set_model_query_blog_id(1);
 	}
-        
- 
+
+
 }
 
 // End of file EEM_Base_Test.php

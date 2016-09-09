@@ -762,12 +762,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * Gets the total line item (which is a parent of all other related line items,
 	 * meaning it takes them all into account on its total)
 	 *
-	 * @return EE_Line_Item
+	 * @param bool $create_if_not_found
+	 * @return \EE_Line_Item
 	 * @throws \EE_Error
 	 */
-	public function total_line_item() {
+	public function total_line_item( $create_if_not_found = true ) {
 		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
-		if( ! $item ){
+		if( ! $item && $create_if_not_found ){
 			$item = EEH_Line_Item::create_total_line_item( $this );
 		}
 		return $item;

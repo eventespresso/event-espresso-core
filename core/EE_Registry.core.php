@@ -365,7 +365,7 @@ class EE_Registry {
 	 * @access    public
 	 * @param string $class_name - class name for the DMS ie: EE_DMS_Core_4_2_0
 	 * @param mixed $arguments
-	 * @return EE_Data_Migration_Script_Base
+	 * @return EE_Data_Migration_Script_Base|mixed
 	 */
 	public function load_dms( $class_name, $arguments = array() ) {
 		// retrieve instantiated class
@@ -672,7 +672,7 @@ class EE_Registry {
 	 * @access protected
 	 * @param string $class_name
 	 * @param string $class_prefix
-	 * @return null|object
+	 * @return mixed
 	 */
 	protected function _get_cached_class( $class_name, $class_prefix = '' ) {
 		if ( isset( $this->_class_abbreviations[ $class_name ] ) ) {
@@ -1136,11 +1136,13 @@ class EE_Registry {
 	 * @throws \EE_Error
 	 */
 	public function reset_model( $model_name ) {
-		$model = $this->load_model( $model_name );
-		$model_class_name = get_class( $model );
+		$model_class_name = strpos( $model_name, 'EEM_' ) !== 0 ? "EEM_{$model_name}" : $model_name;
+		if( ! isset( $this->LIB->{$model_class_name} ) || ! $this->LIB->{$model_class_name} instanceof EEM_Base ) {
+			return null;
+		}
 		//get that model reset it and make sure we nuke the old reference to it
-		if ( $model instanceof $model_class_name && is_callable( array( $model_class_name, 'reset' ))) {
-			$this->LIB->{$model_class_name} = $model::reset();
+		if ( $this->LIB->{$model_class_name} instanceof $model_class_name && is_callable( array( $model_class_name, 'reset' ))) {
+			$this->LIB->{$model_class_name} = $this->LIB->{$model_class_name}->reset();
 		} else {
 			throw new EE_Error( sprintf( __( 'Model %s does not have a method "reset"', 'event_espresso' ), $model_name ) );
 		}

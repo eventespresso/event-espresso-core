@@ -61,6 +61,11 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
 			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
+			'[EVENT_IMAGE_*]' => sprintf(
+				__( 'This will parse to the Feature image for the event, %1$ssize%2$s can be set to determine the size of the image loaded by the shortcode. The %1$swidth%2$s and/or %1$sheight%2$s can also be set to determine the width and height of the image when output. By default the shortcode will load the %1$sthumbnail%2$s image size.', 'event_espresso' ),
+				'<code>',
+				'</code>'
+				),
 			'[EVENT_TOTAL_AVAILABLE_SPACES_*]' => sprintf(
 				__( 'This will parse to the total available spaces for an event. Calculating total spaces is approximate because it is dependent on the complexity of limits on your event.  There are two methods of calculation (which can be indicated by the %1$smethod%2$s param on the shortcode).  %1$scurrent%2$s which will do a more accurate calculation of total available spaces based on current sales, and %1$sfull%2$s which will be the maximum total available spaces that is on the event in optimal conditions. The shortcode will default to current.', 'event_espresso' ),
 				'<code>',
@@ -140,7 +145,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			case '[EVENT_IMAGE]' :
 				$image = $this->_event->feature_image_url(array(600,300) );
 				// @todo: eventually we should make this an attribute shortcode so that em can send along what size they want returned.
-				return !empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '" />' : '';
+				return ! empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '" />' : '';
 				break;
 
 			case '[EVENT_FACEBOOK_URL]' :
@@ -183,7 +188,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			//pull the meta value from the event post
 			$event_meta = $this->_event->get_post_meta( $shortcode, true );
 
-			return !empty( $event_meta ) ? $this->_event->get_post_meta( $shortcode, true ) : '';
+			return ! empty( $event_meta ) ? $this->_event->get_post_meta( $shortcode, true ) : '';
 
 		}
 
@@ -193,6 +198,26 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			$method = $method === 'current';
 			$available = $this->_event->total_available_spaces($method);
 			return $available === EE_INF ? '&infin;' : $available;
+		}
+
+		if ( strpos( $shortcode, '[EVENT_IMAGE_*' ) !== false ) {
+			$attrs = $this->_get_shortcode_attrs( $shortcode );
+			$width = empty( $attrs['width'] ) ? '' : ' width="' . $attrs['width'] . '"'; 
+			$height = empty( $attrs['height'] ) ? '' : ' height="'. $attrs['height'] .'"'; 
+
+			//Size may be set to a string such as 'tumbnail' or "width, height" eg - '200,200'
+			if ( ! empty( $attrs['size'] ) ) {
+				$size = explode( ',', $attrs['size'] );
+				if ( count($size) === 1 ) {
+					$size = $size[0];
+				}
+			} else {
+				$size = 'thumbnail';
+			}
+
+			$image = $this->_event->feature_image_url( $size );
+
+			return ! empty( $image ) ? '<img src="' . $image . '" alt="' . sprintf( esc_attr__( '%s Feature Image', 'event_espresso'), $this->_event->get('EVT_name') ) . '"' . $width . $height . '/>' : '';
 		}
 
 		return '';
