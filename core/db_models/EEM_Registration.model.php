@@ -169,7 +169,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * inactive_reg_statuses
-	 * a filterable list of registration statuses that are not considered active
+	 * a filterable list of registration statuses that are considered active
 	 *
 	 * @access public
 	 * @return array
