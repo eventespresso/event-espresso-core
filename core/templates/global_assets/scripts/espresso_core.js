@@ -315,17 +315,100 @@ jQuery(document).ready(function($) {
 		function () {
 			var country_select_id = $( this ).attr( 'id' ),
 				selected_country  = $( this ).find( "option:selected" ).text(),
-				state_select_id   = country_select_id.replace( 'country', 'state' ),
-				$state_select     = $( '#' + state_select_id ),
+				state_select_id   = '',
+				$state_select      = null,
 				selected_state    = null,
 				valid_option      = false;
+
+			// console_log( 'country_select_id', country_select_id, true );
+			// console_log( 'selected_country', selected_country, false );
+			// console_log( 'state_select_id', state_select_id, false );
+			// console_log( 'country_select_id.indexOf( country )', ~country_select_id.indexOf( 'country' ), false );
+
+			// is this country question a system question ?
+			if ( ~country_select_id.indexOf( 'country' ) ) {
+				// good, then just swap 'country' for 'state' to get the corresponding state select id
+				state_select_id = country_select_id.replace( 'country', 'state' );
+			} else {
+				// no ??? dang... now we have to try and find the corresponding state question.
+				var $state_div = $(this).parent().next('.ee-state-select-js-input-dv');
+				if ( ! $state_div.length ) {
+					// console.log( 'State Select div not found after Country Select div' );
+					$state_div = $( this ).parent().prev( '.ee-state-select-js-input-dv' );
+				}
+				if ( ! $state_div.length ) {
+					console.log(
+						'Can not find corresponding State select for Country select with id: '
+						+ country_select_id + '. Ideally the State question should be immediately after the Country question.'
+					);
+				}
+				$state_select = $state_div.find('.ee-state-select-js');
+				state_select_id = $state_select.attr( 'id' );
+				if ( ! $state_select.length ) {
+					// going to keep the following commented out code in case we need to support
+					// country <=> state question pairs that are not immediately next to each other
+					// var search_id_parts = country_select_id.split( '-' );
+					// console_log( 'search_id_parts', search_id_parts, false );
+					// var search_id = '',
+					// 	select_id = '';
+					// // event id should be next
+					// if ( typeof search_id_parts[ 1 ] === 'undefined' || typeof search_id_parts[ 2 ] === 'undefined' ) {
+						console.log(
+							'Invalid "country_select_id"! Can not find corresponding State select for Country select with id: '
+							+ country_select_id
+						);
+						return;
+					// }
+					// something like: 'ee_reg_qstn' + '-' + event_id + '-'
+					// search_id = search_id_parts[ 0 ] + '-' + search_id_parts[ 1 ] + '-';
+					// // search_id += search_id_parts[ 2 ];
+					//
+					// console_log( 'search_id', search_id, false );
+					// $( '.ee-state-select-js' ).each(
+					// 	function () {
+					// 		select_id = $( this ).attr( 'id' );
+					// 		console_log( 'select_id', select_id, true );
+					// 		console_log( "~select_id.indexOf( 'state' )", ~select_id.indexOf( 'state' ), false );
+					// 		console_log(
+					// 			"~select_id.indexOf( 'nsmf_new_state' )",
+					// 			~select_id.indexOf( 'nsmf_new_state' ),
+					// 			false
+					// 		);
+					// 		console_log( "~select_id.indexOf( 'search_id' )", ~select_id.indexOf( search_id ), false );
+					// 		// skip any state system questions
+					// 		if ( ~select_id.indexOf( 'state' )
+					// 			 || ~select_id.indexOf( 'nsmf_new_state' )
+					// 			 || !~select_id.indexOf( search_id ) ) {
+					// 			console.log( 'NOT A MATCH' );
+					// 			return true;
+					// 		}
+					// 		console_log( 'MATCH select_id', select_id, false );
+					// 		var select_id_parts = select_id.split( '-' );
+					// 		if ( typeof select_id_parts[ 1 ]
+					// 			 === 'undefined'
+					// 			 || typeof select_id_parts[ 2 ]
+					// 				=== 'undefined' ) {
+					// 			return true;
+					// 		}
+					// 		select_id              = select_id_parts[ 0 ] + '-' + select_id_parts[ 1 ] + '-';
+					// 		var select_question_id = select_id_parts[ 2 ];
+					// 	}
+					// );
+				}
+			}
+			if ( $state_select === null && state_select_id !== '' ) {
+				// console_log( 'state_select_id', state_select_id, false );
+				$state_select = $( '#' + state_select_id );
+			}
+
 			if ( $state_select.length ) {
 				// grab the currently selected state (if there is one)
 				selected_state = $state_select.find( ":selected" ).val();
+				// console_log( 'selected_state', selected_state, false );
 				// remove span tags from all optgroups
 				$( 'span > optgroup', $state_select ).unwrap();
 				// if a valid country is selected
-				if ( selected_country !== '%' ) {
+				if ( selected_country !== '' ) {
 					// wrap all unselected optgroup with span tags which effectively hides them in the dropdown
 					$( 'optgroup:not([label="' + selected_country + '"])', $state_select ).wrap( '<span></span>' );
 					// if a valid corresponding state select exists
@@ -350,11 +433,12 @@ jQuery(document).ready(function($) {
 							}
 						);
 					}
+					// console_log( 'valid_option', valid_option, false );
 					// if the previously selected state is not valid
 					if ( ! valid_option ) {
 						// makes sure no option is selected
 						$( "option:selected", $state_select ).prop( "selected", false );
-						// then find the empty placeholder, unwrap it, and select it
+						// then find the empty placeholder and select it
 						$state_select
 							.find( 'optgroup[label=""]' )
 							.unwrap()
@@ -370,6 +454,17 @@ jQuery(document).ready(function($) {
 							.find( 'option[value=""]' )
 							.removeAttr( 'selected' );
 					}
+				} else {
+					// console.log( JSON.stringify( 'NO COUNTRY SELECTED', null, 4 ) );
+					// unwrap any wrapped elements
+					$state_select.find( 'optgroup' ).each(
+						function () {
+							// console_log( 'optgroup', $( this ).val(), false );
+							if ( $( this ).parent().prop( "tagName" ) == 'SPAN' ) {
+								$( this ).unwrap();
+							}
+						}
+					);
 				}
 			}
 		}
