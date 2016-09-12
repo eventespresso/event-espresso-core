@@ -652,7 +652,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * When needed, hook this into a EE_Error::add_error() notice.
 	 *
 	 * @access protected
-	 * @return string
+	 * @return void
 	 */
 	protected function _edit_event_warning() {
 		// we don't want to add warnings during these requests
@@ -702,6 +702,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * @return array
+	 */
 	protected function _event_legend_items() {
 		$items = array(
 			'view_details' => array(
@@ -799,12 +802,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * This contains the logic for showing the events_overview list
 	 *
 	 * @access protected
-	 * @return string html for generated table
+	 * @return void
 	 */
 	protected function _events_overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), esc_html__("View Event Archive Page", "event_espresso"), 'button' ) .
-		$this->_display_legend($this->_event_legend_items());
+		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link(
+			get_post_type_archive_link('espresso_events'),
+			esc_html__("View Event Archive Page", "event_espresso"),
+			'button'
+		);
+		$this->_template_args['after_list_table'] .= $this->_display_legend($this->_event_legend_items());
 		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->display_admin_list_table_page_with_no_sidebar();
 	}
@@ -812,7 +819,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
 	 * this allows for extra misc actions in the default WP publish box
-	 * @return string html to add
+	 * @return void
 	 */
 	public function extra_misc_actions_publish_box() {
 		$this->_generate_publish_box_extra_content();
@@ -820,11 +827,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
+	/**
+	 * @param string $post_id
+	 * @param object $post
+	 */
 	protected function _insert_update_cpt_item( $post_id, $post ) {
 
 		if ( $post instanceof WP_Post && $post->post_type !== 'espresso_events' ) {
-			//getout we're not processing an event save.
+			//get out we're not processing an event save.
 			return;
 		}
 
@@ -871,9 +881,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
 	/**
 	 * @see parent::restore_item()
+	 * @param int $post_id
+	 * @param int $revision_id
 	 */
 	protected function _restore_cpt_item( $post_id, $revision_id ) {
 		//copy existing event meta to new post
@@ -891,11 +902,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 	/**
 	 * Attach the venue to the Event
-	 * @param  object $evtobj Event Object to add the venue to
+	 * @param  \EE_Event $evtobj Event Object to add the venue to
 	 * @param  array  $data   The request data from the form
 	 * @return bool           Success or fail.
 	 */
-	protected function _default_venue_update( $evtobj, $data ) {
+	protected function _default_venue_update( \EE_Event $evtobj, $data ) {
 		require_once( EE_MODELS . 'EEM_Venue.model.php' );
 		$venue_model = EE_Registry::instance()->load_model('Venue');
 		$rows_affected = NULL;
@@ -952,7 +963,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * Handles saving everything related to Tickets (datetimes, tickets, prices)
 	 * @param  EE_Event $evtobj The Event object we're attaching data to
 	 * @param  array    $data   The request data from the form
-	 * @return bool             success or fail
+	 * @return array
 	 */
 	protected function _default_tickets_update( EE_Event $evtobj, $data ) {
 		$success = true;
@@ -1455,7 +1466,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'disabled' => $skeleton || ( !empty( $ticket ) && ! $ticket->get('TKT_deleted' ) ) ? '' : ' disabled=disabled'
 			);
 
-		$price = $ticket->ID() !== 0 ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none')) : EE_Registry::instance()->load_model('Price')->create_default_object();
+		$price = $ticket->ID() !== 0
+			? $ticket->get_first_related('Price', array('default_where_conditions' => 'none'))
+			: EE_Registry::instance()->load_model('Price')->create_default_object();
 
 
 		$price_args = array(
@@ -1475,7 +1488,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		if ( empty( $template_args['TKT_end_date'] ) ) {
 			//get the earliest datetime (if present);
-			$earliest_dtt = $this->_cpt_model_obj->ID() > 0 ? $this->_cpt_model_obj->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
+			$earliest_dtt = $this->_cpt_model_obj->ID() > 0
+				? $this->_cpt_model_obj->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) )
+				: NULL;
 
 			if ( !empty( $earliest_dtt ) )
 				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
@@ -1484,7 +1499,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$template_args = array_merge( $template_args, $price_args );
-		$template = apply_filters( 'FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
+		$template = apply_filters(
+			'FHEE__Events_Admin_Page__get_ticket_row__template',
+			EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php',
+			$ticket
+		);
 		return EEH_Template::display_template($template, $template_args, TRUE);
 	}
 
@@ -1514,16 +1533,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_ticket_selector'] = EEH_Form_Fields::select_input('display_ticket_selector', $yes_no_values, $this->_cpt_model_obj->display_ticket_selector(), '', '', false);
 		$template_args['additional_registration_options'] = apply_filters( 'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options', '', $template_args, $yes_no_values, $default_reg_status_values );
-		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
-		EEH_Template::display_template($templatepath, $template_args);
+		EEH_Template::display_template(
+			EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php',
+			$template_args
+		);
 	}
-
-
-
-	/** end metaboxes * */
-	/*	 * **************** *
-
-
 
 
 	/**
@@ -1531,10 +1545,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * This method simply returns all the events (for the given _view and paging)
 	 *
 	 * @access public
-	 *
-	 * @param int $per_page count of items per page (20 default);
-	 * @param int $current_page what is the current page being viewed.
-	 * @param bool $count if TRUE then we just return a count of ALL events matching the given _view.  If FALSE then we return an array of event objects that match the given _view and paging parameters.
+	 * @param int  $per_page     count of items per page (20 default);
+	 * @param int  $current_page what is the current page being viewed.
+	 * @param bool $count        if TRUE then we just return a count of ALL events matching the given _view.
+	 *                           If FALSE then we return an array of event objects
+	 *                           that match the given _view and paging parameters.
 	 * @return array an array of event objects.
 	 */
 	public function get_events($per_page = 10, $current_page = 1, $count = FALSE) {
@@ -1667,7 +1682,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	//handling for WordPress CPT actions (trash, restore, delete)
+	/**
+	 * handling for WordPress CPT actions (trash, restore, delete)
+	 *
+	 * @param string $post_id
+	 */
 	public function trash_cpt_item( $post_id ) {
 		$this->_req_data['EVT_ID'] = $post_id;
 		$this->_trash_or_restore_event( 'trash', FALSE );
@@ -1675,13 +1694,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
+	/**
+	 * @param string $post_id
+	 */
 	public function restore_cpt_item( $post_id ) {
 		$this->_req_data['EVT_ID'] = $post_id;
 		$this->_trash_or_restore_event( 'draft', FALSE );
 	}
 
 
+
+	/**
+	 * @param string $post_id
+	 */
 	public function delete_cpt_item( $post_id ) {
 		$this->_req_data['EVT_ID'] = $post_id;
 		$this->_delete_event( FALSE );
@@ -1694,7 +1719,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 *
 	 * @access protected
 	 * @param  string $event_status
-	 * @return void
+	 * @param bool    $redirect_after
 	 */
 	protected function _trash_or_restore_event($event_status = 'trash', $redirect_after = TRUE ) {
 		//determine the event id and set to array.
@@ -1721,6 +1746,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $redirect_after )
 			$this->_redirect_after_action($success, 'Event', $action, array('action' => 'default'));
 	}
+
+
 
 	/**
 	 * _trash_or_restore_events
@@ -1759,6 +1786,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_redirect_after_action($success, 'Events', $action, array('action' => 'default'));
 	}
+
+
 
 	/**
 	 * _trash_or_restore_events
@@ -2023,7 +2052,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 *
 	 * 	This generates the Default Settings Tab
 	 *
-	 * 	@return string html for the settings page
+	 * 	@return void
 	 */
 	protected function _default_event_settings() {
 
@@ -2060,9 +2089,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 	/**
-	 * 		_update_default_event_settings
-	 * 		@access protected
-	 * 		@return array
+	 * _update_default_event_settings
+	 *
+	 * @access protected
+	 * @return void
 	 */
 	protected function _update_default_event_settings() {
 
@@ -2138,7 +2168,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	}
 
 
-	protected function _category_details($view) {
+
+	/**
+	 * @param $view
+	 */
+	protected function _category_details( $view) {
 
 		//load formatter helper
 		//load field generator helper
@@ -2163,6 +2197,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * @return mixed
+	 */
 	protected function _category_details_content() {
 		$editor_args['category_desc'] = array(
 			'type' => 'wp_editor',
@@ -2218,17 +2255,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
-
-	protected function _delete_category($cat_id) {
-		global $wpdb;
+	/**
+	 * @param $cat_id
+	 */
+	protected function _delete_category( $cat_id) {
 		$cat_id = absint( $cat_id );
 		wp_delete_term( $cat_id, 'espresso_event_categories' );
 	}
 
 
 
-	protected function _insert_or_update_category($new_category) {
+	/**
+	 * @param $new_category
+	 */
+	protected function _insert_or_update_category( $new_category) {
 
 		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
 		$success = 0; //we already have a success message so lets not send another.
@@ -2247,6 +2287,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * @param bool $update
+	 * @return bool|mixed|string
+	 */
 	private function _insert_category( $update = FALSE ) {
 		$cat_id = $update ? $this->_req_data['EVT_CAT_ID'] : '';
 		$category_name= isset( $this->_req_data['category_name'] ) ? $this->_req_data['category_name'] : '';
@@ -2268,7 +2312,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if(isset($this->_req_data['category_identifier'])){
 			$term_args['slug'] = $this->_req_data['category_identifier'];
 		}
-		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
+		$insert_ids = $update
+			? wp_update_term( $cat_id, 'espresso_event_categories', $term_args )
+			: wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
 			$msg = esc_html__( 'An error occurred and the category has not been saved to the database.', 'event_espresso' );
@@ -2284,9 +2330,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-
+	/**
+	 * @param int  $per_page
+	 * @param int  $current_page
+	 * @param bool $count
+	 * @return \EE_Base_Class[]|int
+	 */
 	public function get_categories( $per_page = 10, $current_page = 1, $count = FALSE ) {
-		global $wpdb;
 
 		//testing term stuff
 		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';
@@ -2310,7 +2360,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'force_join' => array('Term')
 			);
 
-		$categories = $count ? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' ) :EEM_Term_Taxonomy::instance()->get_all( $query_params );
+		$categories = $count
+			? EEM_Term_Taxonomy::instance()->count( $query_params, 'term_id' )
+			: EEM_Term_Taxonomy::instance()->get_all( $query_params );
 
 		return $categories;
 	}
