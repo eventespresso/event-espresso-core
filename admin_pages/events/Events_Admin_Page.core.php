@@ -54,6 +54,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected $_event_model;
 
 
+
+	/**
+	 * @var EE_Event
+	 */
+	protected $_cpt_model_obj = false;
+
+
+
 	protected function _init_page_props() {
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
@@ -2026,16 +2034,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			array(
 				EEM_Registration::status_id_cancelled,
 				EEM_Registration::status_id_declined,
-				EEM_Registration::status_id_incomplete
+				EEM_Registration::status_id_incomplete,
+				EEM_Registration::status_id_wait_list,
 			),
 			// translated
 			TRUE
 		);
-		$this->_template_args['default_reg_status'] = isset( EE_Registry::instance()->CFG->registration->default_STS_ID ) ? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID ) : EEM_Registration::status_id_pending_payment;
+		$this->_template_args['default_reg_status'] = isset(
+			EE_Registry::instance()->CFG->registration->default_STS_ID
+		) && in_array(
+			EE_Registry::instance()->CFG->registration->default_STS_ID,
+			$this->_template_args['reg_status_array']
+		)
+			? sanitize_text_field( EE_Registry::instance()->CFG->registration->default_STS_ID )
+			: EEM_Registration::status_id_pending_payment;
 
 		$this->_set_add_edit_form_tags('update_default_event_settings');
 		$this->_set_publish_post_box_vars(NULL, FALSE, FALSE, NULL, FALSE);
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template(EVENTS_TEMPLATE_PATH . 'event_settings.template.php', $this->_template_args, TRUE);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template(
+			EVENTS_TEMPLATE_PATH . 'event_settings.template.php',
+			$this->_template_args,
+			true
+		);
 		$this->display_admin_page_with_sidebar();
 	}
 
