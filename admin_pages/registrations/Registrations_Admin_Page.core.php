@@ -2453,7 +2453,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				//process ticket selection
 				$success = EED_Ticket_Selector::instance()->process_ticket_selections();
 				if ( $success ) {
-					EE_Error::add_success( __( 'Tickets Selected. Now complete the registration.', 'event_espresso' ) );
+					EE_Error::add_success( esc_html__( 'Tickets Selected. Now complete the registration.', 'event_espresso' ) );
 				} else {
 					$query_args['step_error'] = $this->_req_data['step_error'] = TRUE;
 				}
