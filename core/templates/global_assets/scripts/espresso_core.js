@@ -343,8 +343,7 @@ jQuery(document).ready(function($) {
 					);
 				}
 				$state_select = $state_div.find('.ee-state-select-js');
-				state_select_id = $state_select.attr( 'id' );
-				if ( ! $state_select.length ) {
+				if ( $state_select === null || ! $state_select.length ) {
 					// going to keep the following commented out code in case we need to support
 					// country <=> state question pairs that are not immediately next to each other
 					// var search_id_parts = country_select_id.split( '-' );
@@ -395,8 +394,9 @@ jQuery(document).ready(function($) {
 					// 	}
 					// );
 				}
+				state_select_id = $state_select.attr( 'id' );
 			}
-			if ( $state_select === null && state_select_id !== '' ) {
+			if ( ( $state_select === null || ! $state_select.length ) && state_select_id !== '' ) {
 				// console_log( 'state_select_id', state_select_id, false );
 				$state_select = $( '#' + state_select_id );
 			}
