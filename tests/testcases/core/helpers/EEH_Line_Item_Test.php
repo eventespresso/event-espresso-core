@@ -84,8 +84,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 // 		$this->assertEquals( 1, count( EEH_Line_Item::get_ticket_line_items( $total_line_item ) ) );
 // 		// now add a different ticket
 // 		$new_ticket = $this->new_ticket( array(
-// 			'ticket_price'  		=> 10,
-// 			'ticket_taxable' 	=> false,
+// 			'TKT_price'  		=> 10,
+// 			'TKT_taxable' 	=> false,
 // 			'datetimes'         	=> 1
 // 		) );
 // 		$new_ticket->save();
@@ -864,12 +864,12 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 //                 }
 //             }
 //         }
-
-
-
-        /**
-         * @group 4710
-         */
+//
+//
+//
+//        /**
+//         * @group 4710
+//         */
         function test_recalculate_total_including_taxes_after_ticket_cancellation() {
         	// create txn with one $10 ticket that is taxable at default 15% rate
             $transaction = $this->new_typical_transaction( array( 'taxable_tickets' => 1 ) );
