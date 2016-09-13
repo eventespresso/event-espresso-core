@@ -433,7 +433,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					EE_Error::add_attention(
 						sprintf(
 							esc_html__(
-								'The status for Transaction #%1$d has been updated from "Abandoned" to "%2$s", because at least one payment has been made towards it.',
+								'The status for Transaction #%1$d has been updated from "Abandoned" to "%2$s", because at least one payment has been made towards it. If the payment appears in the "Payment Details" table below, you may need to edit its status and/or other details as well.',
 								'event_espresso'
 							),
 							$this->_transaction->ID(),
