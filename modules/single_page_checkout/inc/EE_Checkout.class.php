@@ -768,14 +768,8 @@ class EE_Checkout {
 	public function track_transaction_and_registration_status_updates() {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
-			/** @type EE_Transaction_Payments $transaction_payments */
-			$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// has there been a TXN status change during this checkout?
-			if ( $transaction_payments->txn_status_updated() || $transaction_processor->txn_status_updated() ) {
-				$this->txn_status_updated = true;
-			}
+			$this->txn_status_updated = $this->transaction->txn_status_updated();
 			/** @type EE_Registration_Processor $registration_processor */
 			$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 			// grab the saved registrations from the transaction
@@ -1225,7 +1219,7 @@ class EE_Checkout {
 					$this->current_step->slug() : '',
 				'current_step->completed' => $this->current_step instanceof EE_SPCO_Reg_Step ?
 					$this->current_step->completed() : '',
-				'txn_status_updated' => $this->txn_status_updated,
+				'txn_status_updated' => $this->transaction->txn_status_updated(),
 				'reg_status_updated' => $this->reg_status_updated,
 				'reg_url_link' => $this->reg_url_link,
 				'REQ' => $display_request ? $_REQUEST : '',
