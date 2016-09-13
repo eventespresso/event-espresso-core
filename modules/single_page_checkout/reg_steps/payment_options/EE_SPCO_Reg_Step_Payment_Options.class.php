@@ -125,7 +125,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *
 	 * @access    public
 	 * @param    EE_Checkout $checkout
-	 * @return    \EE_SPCO_Reg_Step_Payment_Options
 	 */
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'payment_options';
@@ -887,7 +886,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 *
 	 * @access        private
 	 * @param string $selected_method_of_payment
-	 * @return        EE_Billing_Info_Form
+	 * @return  void
 	 */
 	private function _save_selected_method_of_payment( $selected_method_of_payment = '' ) {
 		$selected_method_of_payment = ! empty( $selected_method_of_payment )
@@ -1690,10 +1689,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( $payment instanceof EE_Payment ) {
 			// store that for later
 			$this->checkout->payment = $payment;
-			/** @type EE_Transaction_Processor $transaction_processor */
-			$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 			// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
-			$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
+			$this->checkout->transaction->toggle_failed_transaction_status();
 			$payment_status = $payment->status();
 			if (
 				$payment_status === EEM_Payment::status_id_approved
@@ -1726,7 +1723,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment_method_billing_info = $this->_payment_method_billing_info(
 			$this->_get_payment_method_for_selected_method_of_payment()
 		);
-		$html = $payment_method_billing_info->get_html_and_js();
+		$html = $payment_method_billing_info->get_html();
 		$html .= $this->checkout->redirect_form;
 		EE_Registry::instance()->REQ->add_output( $html );
 		return true;
@@ -1826,10 +1823,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// because saving an object clears it's cache, we need to do the chevy shuffle
 		// grab the primary_registration object
 		$primary_registration = $this->checkout->transaction->primary_registration();
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 		// at this point we'll consider a TXN to not have been failed
-		$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
+		$this->checkout->transaction->toggle_failed_transaction_status();
 		// save the TXN ( which clears cached copy of primary_registration)
 		$this->checkout->transaction->save();
 		// grab TXN ID and save it to the primary_registration
@@ -2398,10 +2393,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				// this could be PayPal sending back duplicate requests (ya they do that)
 				// or it **could** mean someone is simply registering AGAIN after having just done so
 				// so now we need to determine if this current TXN looks valid or not
-				/** @type EE_Transaction_Processor $transaction_processor */
-				$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 				// has this step even been started ?
-				if ( $transaction_processor->reg_step_completed( $this->checkout->transaction, $this->slug() === false )
+				if ( $this->checkout->transaction->reg_step_completed( $this->slug() === false )
 				) {
 					// really? you're half way through this reg step, but you never started it ?
 					$invalid_TXN = true;
@@ -2410,10 +2403,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $invalid_TXN ) {
 				// is the valid TXN completed ?
 				if ( $valid_TXN instanceof EE_Transaction ) {
-					/** @type EE_Transaction_Processor $transaction_processor */
-					$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 					// has this step even been started ?
-					$reg_step_completed = $transaction_processor->reg_step_completed( $valid_TXN, $this->slug() );
+					$reg_step_completed = $valid_TXN->reg_step_completed( $this->slug() );
 					if ( $reg_step_completed !== false && $reg_step_completed !== true ) {
 						// so it **looks** like this is a double request from PayPal
 						// so let's try to pick up where we left off
