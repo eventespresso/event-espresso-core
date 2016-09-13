@@ -46,50 +46,50 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'func'       => '_duplicate_event',
 				'capability' => 'ee_edit_event',
 				'obj_id'     => $evt_id,
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'ticket_list_table'        => array(
 				'func'       => '_tickets_overview_list_table',
-				'capability' => 'ee_read_default_tickets'
+				'capability' => 'ee_read_default_tickets',
 			),
 			'trash_ticket'             => array(
 				'func'       => '_trash_or_restore_ticket',
 				'capability' => 'ee_delete_default_ticket',
 				'obj_id'     => $tkt_id,
 				'noheader'   => true,
-				'args'       => array( 'trash' => true )
+				'args'       => array( 'trash' => true ),
 			),
 			'trash_tickets'            => array(
 				'func'       => '_trash_or_restore_ticket',
 				'capability' => 'ee_delete_default_tickets',
 				'noheader'   => true,
-				'args'       => array( 'trash' => true )
+				'args'       => array( 'trash' => true ),
 			),
 			'restore_ticket'           => array(
 				'func'       => '_trash_or_restore_ticket',
 				'capability' => 'ee_delete_default_ticket',
 				'obj_id'     => $tkt_id,
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'restore_tickets'          => array(
 				'func'       => '_trash_or_restore_ticket',
 				'capability' => 'ee_delete_default_tickets',
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'delete_ticket'            => array(
 				'func'       => '_delete_ticket',
 				'capability' => 'ee_delete_default_ticket',
 				'obj_id'     => $tkt_id,
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'delete_tickets'           => array(
 				'func'       => '_delete_ticket',
 				'capability' => 'ee_delete_default_tickets',
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'import_page'              => array(
 				'func'       => '_import_page',
-				'capability' => 'import'
+				'capability' => 'import',
 			),
 			'import'                   => array(
 				'func'       => '_import_events',
@@ -104,23 +104,23 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'export_events'            => array(
 				'func'       => '_events_export',
 				'capability' => 'export',
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'export_categories'        => array(
 				'func'       => '_categories_export',
 				'capability' => 'export',
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'sample_export_file'       => array(
 				'func'       => '_sample_export_file',
 				'capability' => 'export',
-				'noheader'   => true
+				'noheader'   => true,
 			),
 			'update_template_settings' => array(
 				'func'       => '_update_template_settings',
 				'capability' => 'manage_options',
-				'noheader'   => true
-			)
+				'noheader'   => true,
+			),
 		);
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
 		//partial route/config override
@@ -141,44 +141,29 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'ticket_list_table' => array(
 					'nav'           => array(
 						'label' => esc_html__( 'Default Tickets', 'event_espresso' ),
-						'order' => 60
+						'order' => 60,
 					),
 					'list_table'    => 'Tickets_List_Table',
-					'require_nonce' => false
-				)
+					'require_nonce' => false,
+				),
 			);
 		}
 		//template settings
 		$new_page_config['template_settings'] = array(
 			'nav'           => array(
 				'label' => esc_html__( 'Templates', 'event_espresso' ),
-				'order' => 30
+				'order' => 30,
 			),
 			'metaboxes'     => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 			'help_tabs'     => array(
 				'general_settings_templates_help_tab' => array(
 					'title'    => esc_html__( 'Templates', 'event_espresso' ),
-					'filename' => 'general_settings_templates'
-				)
+					'filename' => 'general_settings_templates',
+				),
 			),
 			'help_tour'     => array( 'Templates_Help_Tour' ),
-			'require_nonce' => false
+			'require_nonce' => false,
 		);
-//		$new_page_config['import_page'] = array(
-//				'nav' => array(
-//					'label' => __('Import', 'event_espresso'),
-//					'order' => 30
-//				),
-//				'help_tabs' => array(
-//					'import_help_tab' => array(
-//						'title' => __('Event Espresso Import', 'event_espresso'),
-//						'filename' => 'import_page'
-//						)
-//					),
-//				'help_tour' => array('Event_Import_Help_Tour'),
-//				'metaboxes' => $default_espresso_boxes,
-//				'require_nonce' => FALSE
-//		);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		//add filters and actions
 		//modifying _views
@@ -232,7 +217,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'event_ends_on'          => esc_html__( 'Event Ends on', 'event_espresso' ),
 				'event_datetime_actions' => esc_html__( 'Actions', 'event_espresso' ),
 				'event_clone_dt_msg'     => esc_html__( 'Clone this Event Date and Time', 'event_espresso' ),
-				'remove_event_dt_msg'    => esc_html__( 'Remove this Event Time', 'event_espresso' )
+				'remove_event_dt_msg'    => esc_html__( 'Remove this Event Time', 'event_espresso' ),
 			)
 		);
 	}
@@ -240,7 +225,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	/**
-	 * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle accordingly.
+	 * This will be used to listen for any heartbeat data packages coming via the WordPress heartbeat API and handle
+	 * accordingly.
 	 *
 	 * @param array $response The existing heartbeat response array.
 	 * @param array $data     The incoming data package.
@@ -303,8 +289,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'label'       => esc_html__( 'All', 'event_espresso' ),
 				'count'       => 0,
 				'bulk_action' => array(
-					'trash_tickets' => esc_html__( 'Move to Trash', 'event_espresso' )
-				)
+					'trash_tickets' => esc_html__( 'Move to Trash', 'event_espresso' ),
+				),
 			),
 			'trashed' => array(
 				'slug'        => 'trashed',
@@ -312,9 +298,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				'count'       => 0,
 				'bulk_action' => array(
 					'restore_tickets' => esc_html__( 'Restore from Trash', 'event_espresso' ),
-					'delete_tickets'  => esc_html__( 'Delete Permanently', 'event_espresso' )
-				)
-			)
+					'delete_tickets'  => esc_html__( 'Delete Permanently', 'event_espresso' ),
+				),
+			),
 		);
 	}
 
@@ -387,46 +373,25 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 	protected function _set_list_table_views_default() {
 		parent::_set_list_table_views_default();
-		// $export_label = esc_html__( 'Export Events', 'event_espresso' );
-		// if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
-			// $this->_views['all']['bulk_action']['export_events'] = $export_label;
-			// $this->_views['draft']['bulk_action']['export_events'] = $export_label;
-			// if ( EE_Registry::instance()->CAP->current_user_can(
-			// 	'ee_delete_events',
-			// 	'espresso_events_trash_events'
-			// )
-			// ) {
-			// 	// $this->_views['trash']['bulk_action']['export_events'] = $export_label;
-			// }
-		// }
 		$new_views = array(
 			'today' => array(
 				'slug'        => 'today',
 				'label'       => esc_html__( 'Today', 'event_espresso' ),
 				'count'       => $this->total_events_today(),
 				'bulk_action' => array(
-					// 'export_events' => esc_html__('Export Events', 'event_espresso'),
-					'trash_events' => esc_html__( 'Move to Trash', 'event_espresso' )
-				)
+					'trash_events' => esc_html__( 'Move to Trash', 'event_espresso' ),
+				),
 			),
 			'month' => array(
 				'slug'        => 'month',
 				'label'       => esc_html__( 'This Month', 'event_espresso' ),
 				'count'       => $this->total_events_this_month(),
 				'bulk_action' => array(
-					// 'export_events' => esc_html__('Export Events', 'event_espresso'),
-					'trash_events' => esc_html__( 'Move to Trash', 'event_espresso' )
-				)
-			)
+					'trash_events' => esc_html__( 'Move to Trash', 'event_espresso' ),
+				),
+			),
 		);
 		$this->_views = array_merge( $this->_views, $new_views );
-	}
-
-
-
-	protected function _set_list_table_views_category_list() {
-		parent::_set_list_table_views_category_list();
-		// $this->_views['all']['bulk_action']['export_categories'] = __('Export Categories', 'event_espresso');
 	}
 
 
@@ -438,11 +403,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	public function extra_list_table_actions( array $action_links, \EE_Event $event ) {
 		if (
-		EE_Registry::instance()->CAP->current_user_can(
-			'ee_read_registrations',
-			'espresso_registrations_reports',
-			$event->ID()
-		)
+			EE_Registry::instance()->CAP->current_user_can(
+				'ee_read_registrations',
+				'espresso_registrations_reports',
+				$event->ID()
+			)
 		) {
 			$reports_query_args = array(
 				'action' => 'reports',
@@ -474,14 +439,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return mixed
 	 */
 	public function additional_legend_items( $items ) {
-		if ( EE_Registry::instance()->CAP->current_user_can(
-			'ee_read_registrations',
-			'espresso_registrations_reports'
-		)
+		if (
+			EE_Registry::instance()->CAP->current_user_can(
+				'ee_read_registrations',
+				'espresso_registrations_reports'
+			)
 		) {
 			$items['reports'] = array(
 				'class' => 'dashicons dashicons-chart-bar',
-				'desc'  => esc_html__( 'Event Reports', 'event_espresso' )
+				'desc'  => esc_html__( 'Event Reports', 'event_espresso' ),
 			);
 		}
 		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_global_messages', 'view_filtered_messages' ) ) {
@@ -661,7 +627,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		if ( $new_event->ID() ) {
 			$redirect_args = array(
 				'post'   => $new_event->ID(),
-				'action' => 'edit'
+				'action' => 'edit',
 			);
 			EE_Error::add_success(
 				esc_html__(
@@ -671,7 +637,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			);
 		} else {
 			$redirect_args = array(
-				'action' => 'default'
+				'action' => 'default',
 			);
 			EE_Error::add_error(
 				esc_html__( 'Not able to duplicate event.  Something went wrong.', 'event_espresso' ),
@@ -765,7 +731,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_request_args = array(
 			'export'       => 'report',
 			'action'       => 'categories',
-			'category_ids' => $this->_req_data['EVT_CAT_ID']
+			'category_ids' => $this->_req_data['EVT_CAT_ID'],
 		);
 		$this->_req_data = array_merge( $this->_req_data, $new_request_args );
 		if ( is_readable( EE_CLASSES . 'EE_Export.class.php' ) ) {
@@ -870,7 +836,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function registration_options_meta_box() {
 		$yes_no_values = array(
 			array( 'id' => true, 'text' => esc_html__( 'Yes', 'event_espresso' ) ),
-			array( 'id' => false, 'text' => esc_html__( 'No', 'event_espresso' ) )
+			array( 'id' => false, 'text' => esc_html__( 'No', 'event_espresso' ) ),
 		);
 		$default_reg_status_values = EEM_Registration::reg_status_array(
 			array(
@@ -1028,7 +994,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'UTC'
 		);
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array( $start, $end ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array( $start, $end ) ),
 		);
 		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
@@ -1060,7 +1026,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'UTC'
 		);
 		$where = array(
-			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array( $start, $end ) )
+			'Datetime.DTT_EVT_start' => array( 'BETWEEN', array( $start, $end ) ),
 		);
 		$count = EEM_Event::instance()->count( array( $where, 'caps' => 'read_admin' ), 'EVT_ID', true );
 		return $count;
@@ -1113,7 +1079,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			: $per_page;
 		$_where = array(
 			'TKT_is_default' => 1,
-			'TKT_deleted'    => $trashed
+			'TKT_deleted'    => $trashed,
 		);
 		$offset = ( $current_page - 1 ) * $per_page;
 		$limit = array( $offset, $per_page );
@@ -1121,14 +1087,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
 				'TKT_name'        => array( 'LIKE', $sstr ),
-				'TKT_description' => array( 'LIKE', $sstr )
+				'TKT_description' => array( 'LIKE', $sstr ),
 			);
 		}
 		$query_params = array(
 			$_where,
 			'order_by' => $orderby,
 			'limit'    => $limit,
-			'group_by' => 'TKT_ID'
+			'group_by' => 'TKT_ID',
 		);
 		if ( $count ) {
 			return EEM_Ticket::instance()->count_deleted_and_undeleted( array( $_where ) );
@@ -1177,7 +1143,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$action_desc = $trash ? 'moved to the trash' : 'restored';
 		$query_args = array(
 			'action' => 'ticket_list_table',
-			'status' => $trash ? '' : 'trashed'
+			'status' => $trash ? '' : 'trashed',
 		);
 		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args );
 	}
@@ -1207,7 +1173,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$action_desc = 'deleted';
 		$query_args = array(
 			'action' => 'ticket_list_table',
-			'status' => 'trashed'
+			'status' => 'trashed',
 		);
 		//fail safe.  If the default ticket count === 1 then we need to redirect to event overview.
 		if ( EEM_Ticket::instance()->count_deleted_and_undeleted(
