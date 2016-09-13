@@ -550,6 +550,10 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 
+	/********************************** DEPRECATED METHODS **********************************/
+
+
+
 	/**
 	 * @deprecated
 	 * @return string
@@ -590,6 +594,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * @deprecated
 	 * @return string
 	 */
 	public function new_txn_status() {
@@ -607,6 +612,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
+	 * @deprecated
 	 * @param string $new_txn_status
 	 */
 	public function set_new_txn_status( $new_txn_status ) {
@@ -626,6 +632,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * reg_status_updated
 	 *
+	 * @deprecated
 	 * @return bool
 	 */
 	public function txn_status_updated() {
