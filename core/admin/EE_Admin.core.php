@@ -732,11 +732,7 @@ final class EE_Admin {
 	 *  @return 	string
 	 */
 	public function espresso_admin_footer() {
-		return sprintf(
-			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
-			'<a href="https://eventespresso.com/" title="',
-			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
-		);
+		return \EEH_Template::powered_by_event_espresso( 'aln-cntr' );
 	}
 
 
