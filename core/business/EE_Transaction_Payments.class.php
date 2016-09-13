@@ -306,7 +306,7 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @return string
 	 */
 	public function old_txn_status() {
@@ -316,7 +316,7 @@ class EE_Transaction_Payments {
 				'This logic has been moved into \EE_Transaction::old_txn_status(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		return $this->_old_txn_status;
 	}
@@ -324,7 +324,7 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param string $old_txn_status
 	 */
 	public function set_old_txn_status( $old_txn_status ) {
@@ -334,7 +334,7 @@ class EE_Transaction_Payments {
 				'This logic has been moved into \EE_Transaction::set_old_txn_status(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		// only set the first time
 		if ( $this->_old_txn_status === null ) {
@@ -345,7 +345,7 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @return string
 	 */
 	public function new_txn_status() {
@@ -355,7 +355,7 @@ class EE_Transaction_Payments {
 				'This logic has been removed. Please just use \EE_Transaction::status_ID() instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		return $this->_new_txn_status;
 	}
@@ -363,7 +363,7 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param string $new_txn_status
 	 */
 	public function set_new_txn_status( $new_txn_status ) {
@@ -373,7 +373,7 @@ class EE_Transaction_Payments {
 				'This logic has been removed. Please just use \EE_Transaction::set_status() instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		$this->_new_txn_status = $new_txn_status;
 	}
@@ -381,7 +381,7 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @return bool
 	 */
 	public function txn_status_updated() {
@@ -391,7 +391,7 @@ class EE_Transaction_Payments {
 				'This logic has been moved into \EE_Transaction::txn_status_updated(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
 	}
