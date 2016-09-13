@@ -8,7 +8,6 @@
 
 $row = 1;
 $max = 1;
-$cols = 2;
 $ticket_count = count( $tickets );
 $ticket_status_display = '';
 if ( ! $ticket_count ) {
@@ -24,6 +23,7 @@ ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
+		$cols = 2;
 		$max = $ticket->max();
 		$min = 0;
 		$remaining = $ticket->remaining();
