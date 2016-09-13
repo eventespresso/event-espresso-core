@@ -197,7 +197,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 				}
 			} else if (
 				// if SPCO revisit and TXN status has changed due to a payment
-				$is_revisit && ( $this->checkout->txn_status_updated || $this->checkout->any_reg_status_updated() )
+				$is_revisit && ( $this->checkout->transaction->txn_status_updated() || $this->checkout->any_reg_status_updated() )
 			) {
 				// send out notifications
 				add_filter( 'FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true', 10 );
