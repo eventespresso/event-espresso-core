@@ -15,13 +15,15 @@ if ( ! $ticket_count ) {
 }
 
 $required_ticket_sold_out = FALSE;
-$template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector ) ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector : new EE_Ticket_Selector_Config();
+$template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector )
+	? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
+	: new EE_Ticket_Selector_Config();
+
 ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
-		//	d( $ticket );
-		$max =$ticket->max();
+		$max = $ticket->max();
 		$min = 0;
 		$remaining = $ticket->remaining();
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
@@ -75,6 +77,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			break;
 			// onsale
 			case EE_Ticket::onsale :
+			default :
 				$ticket_status = '<span class="ticket-on-sale">' . $ticket->ticket_status( TRUE ) . '</span>';
 				$status_class = 'ticket-on-sale';
 			break;
@@ -90,7 +93,22 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		 *
 		 * @var string|bool
 		 */
-		if ( false !== ( $new_row_content = apply_filters( 'FHEE__ticket_selector_chart_template__do_ticket_entire_row', false, $ticket, $max, $min, $required_ticket_sold_out, $ticket_price, $ticket_bundle, $ticket_status, $status_class ) ) ) {
+		if (
+			false !== (
+				$new_row_content = apply_filters(
+					'FHEE__ticket_selector_chart_template__do_ticket_entire_row',
+					false,
+					$ticket,
+					$max,
+					$min,
+					$required_ticket_sold_out,
+					$ticket_price,
+					$ticket_bundle,
+					$ticket_status,
+					$status_class
+				)
+			)
+		) {
 			echo $new_row_content;
 			continue;
 		}
@@ -427,9 +445,9 @@ $ticket_row_html = ob_get_clean();
 // if there is only ONE ticket with a max qty of ONE, and it is free... then not much need for the ticket selector
 $hide_ticket_selector = $ticket_count == 1 && $max == 1 && $ticket->is_free() ? true : false;
 $hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_selector', $hide_ticket_selector, $EVT_ID );
-//EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
-//EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
-//EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
+// EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
+// EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
+// EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
 remove_filter(
 	'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
