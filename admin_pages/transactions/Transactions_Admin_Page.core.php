@@ -406,51 +406,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
-
-		if ( $this->_transaction->status_ID() === EEM_Transaction::abandoned_status_code ) {
-			$this->_verify_abandoned_transaction_status();
-		}
+		$this->_transaction->verify_abandoned_transaction_status();
 
 	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = esc_html__('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  esc_html__(' could not be retrieved.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
-	}
-
-
-
-	/**
-	 * checks if a TXN has any related payments, and if so,
-	 * updates the TXN status based on the amount paid
-	 */
-	protected function _verify_abandoned_transaction_status() {
-		$payments = $this->_transaction->get_many_related('Payment');
-		if ( ! empty( $payments )) {
-			foreach ( $payments as $payment ) {
-				if ( $payment instanceof EE_Payment ) {
-					// kk this TXN should NOT be abandoned
-					$this->_transaction->update_status_based_on_total_paid();
-					EE_Error::add_attention(
-						sprintf(
-							esc_html__(
-								'The status for Transaction #%1$d has been updated from "Abandoned" to "%2$s", because at least one payment has been made towards it. If the payment appears in the "Payment Details" table below, you may need to edit its status and/or other details as well.',
-								'event_espresso'
-							),
-							$this->_transaction->ID(),
-							$this->_transaction->pretty_status()
-						)
-					);
-					// get final reg step status
-					$finalized = $this->_transaction->final_reg_step_completed();
-					// if the 'finalize_registration' step has been initiated (has a timestamp)
-					// but has not yet been fully completed (TRUE)
-					if ( is_int( $finalized ) && $finalized !== false && $finalized !== true ) {
-						$this->_transaction->set_reg_step_completed( 'finalize_registration' );
-						$this->_transaction->save();
-					}
-				}
-			}
-		}
 	}
 
 

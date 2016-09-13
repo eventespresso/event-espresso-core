@@ -1295,5 +1295,45 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	}
 
 
+
+	/**
+	 * checks if an Abandoned TXN has any related payments, and if so,
+	 * updates the TXN status based on the amount paid
+	 */
+	public function verify_abandoned_transaction_status() {
+		if ( $this->status_ID() !== EEM_Transaction::abandoned_status_code ) {
+			return;
+		}
+		$payments = $this->get_many_related( 'Payment' );
+		if ( ! empty( $payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( $payment instanceof EE_Payment ) {
+					// kk this TXN should NOT be abandoned
+					$this->update_status_based_on_total_paid();
+					if ( is_admin() && ! ( defined('DOING_AJAX') && DOING_AJAX ) ) {
+						EE_Error::add_attention(
+							sprintf(
+								esc_html__(
+									'The status for Transaction #%1$d has been updated from "Abandoned" to "%2$s", because at least one payment has been made towards it. If the payment appears in the "Payment Details" table below, you may need to edit its status and/or other details as well.',
+									'event_espresso'
+								),
+								$this->ID(),
+								$this->pretty_status()
+							)
+						);
+					}
+					// get final reg step status
+					$finalized = $this->final_reg_step_completed();
+					// if the 'finalize_registration' step has been initiated (has a timestamp)
+					// but has not yet been fully completed (TRUE)
+					if ( is_int( $finalized ) && $finalized !== false && $finalized !== true ) {
+						$this->set_reg_step_completed( 'finalize_registration' );
+						$this->save();
+					}
+				}
+			}
+		}
+	}
+
 }/* End of file EE_Transaction.class.php */
 /* Location: includes/classes/EE_Transaction.class.php */
