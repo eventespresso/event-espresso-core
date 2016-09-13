@@ -831,7 +831,46 @@ class EEH_Template {
 	}
 
 
+
+	/**
+	 * @param string $wrap_class
+	 * @param string $wrap_id
+	 * @return string
+	 */
+	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '' ) {
+		$attributes = ! empty( $wrap_id ) ? " id=\"{$wrap_id}\"" : '';
+		$attributes .= ! empty( $wrap_class )
+		? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
+		: ' class="powered-by-event-espresso-credit"';
+
+		$url = add_query_arg(
+			array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id() ),
+			'https://eventespresso.com/'
+		);
+		$url = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso__url', $url );
+		$powered_by = is_admin() && ! ( defined('DOING_AJAX') && DOING_AJAX )
+			? EVENT_ESPRESSO_POWERED_BY
+			: 'Event Espresso';
+		return (string) apply_filters(
+			'FHEE__EEH_Template__powered_by_event_espresso__html',
+			sprintf(
+			__(
+				'%1$sEvent Registration Powered by Event Espresso%2$sEvent Registration and Ticketing%3$s Powered by %4$sEvent Espresso - Event Registration and Management System for WordPress%5$s',
+				'event_espresso'
+			),
+			"<div{$attributes}><a href=\"{$url}\" title=\"",
+			'" target="_blank">',
+			'</a>',
+			"<a href=\"{$url}\" title=\"",
+			'" target="_blank">' . $powered_by . '</a></div>'
+			)
+		);
+	}
+
+
+
 } //end EEH_Template class
+
 
 //function convert_zero_to_free( $amount, $return_raw ) {
 //	// we don't want to mess with requests for unformatted values because those may get used in calculations
