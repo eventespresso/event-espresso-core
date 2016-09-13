@@ -898,7 +898,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 	        $ticket_line_item = null;
 	        echo "\n\n now add a new $15 ticket: \n";
 	        // now add a new ticket
-	        $ticket2 = $this->new_ticket( array( 'ticket_price' => 15 ) );
+	        $ticket2 = $this->new_ticket( array( 'TKT_price' => 15, 'TKT_taxable' => false ) );
 	        $this->assertEquals( 15, $ticket2->price() );
 	        EEH_Line_Item::add_ticket_purchase( $total_line_item, $ticket2 );
 	        EEH_Line_Item::visualize( $total_line_item );
