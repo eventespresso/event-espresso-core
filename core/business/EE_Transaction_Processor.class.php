@@ -555,7 +555,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @return string
 	 */
 	public function old_txn_status() {
@@ -565,7 +565,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::old_txn_status(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		return $this->_old_txn_status;
 	}
@@ -573,7 +573,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param string $old_txn_status
 	 */
 	public function set_old_txn_status( $old_txn_status ) {
@@ -583,7 +583,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::set_old_txn_status(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		// only set the first time
 		if ( $this->_old_txn_status === null ) {
@@ -594,7 +594,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @return string
 	 */
 	public function new_txn_status() {
@@ -604,7 +604,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been removed. Please just use \EE_Transaction::status_ID() instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		return $this->_new_txn_status;
 	}
@@ -612,7 +612,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param string $new_txn_status
 	 */
 	public function set_new_txn_status( $new_txn_status ) {
@@ -622,7 +622,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been removed. Please just use \EE_Transaction::set_status() instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		$this->_new_txn_status = $new_txn_status;
 	}
@@ -632,7 +632,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	/**
 	 * reg_status_updated
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @return bool
 	 */
 	public function txn_status_updated() {
@@ -642,7 +642,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::txn_status_updated(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11'
+			'4.9.12'
 		);
 		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
 	}
@@ -650,12 +650,12 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 
 
 	/**
-	 * @deprecated
 	 * all_reg_steps_completed
 	 * returns:
 	 *    true if ALL reg steps have been marked as completed
 	 *        or false if any step is not completed
-
+	 *
+	 * @deprecated 4.9.12
 	 * @param EE_Transaction $transaction
 	 * @return boolean
 	 */
@@ -666,7 +666,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::all_reg_steps_completed(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->all_reg_steps_completed();
@@ -681,7 +681,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *        or false if any other step is not completed
 	 *        or false if ALL steps are completed including the exception you are testing !!!
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param EE_Transaction $transaction
 	 * @param string         $exception
 	 * @return boolean
@@ -693,7 +693,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::all_reg_steps_completed_except(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->all_reg_steps_completed_except( $exception );
@@ -708,7 +708,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *        or false if any step is not completed
 	 *    or false if ALL steps are completed including the final step !!!
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param EE_Transaction $transaction
 	 * @return boolean
 	 */
@@ -719,7 +719,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::all_reg_steps_completed_except_final_step(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->all_reg_steps_completed_except_final_step();
@@ -734,7 +734,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *    a Unix timestamp if it has been initialized but not yet completed,
 	 *    or false if it has not yet been initialized
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param EE_Transaction $transaction
 	 * @param string         $reg_step_slug
 	 * @return boolean | int
@@ -746,7 +746,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::reg_step_completed(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->reg_step_completed( $reg_step_slug );
@@ -761,7 +761,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 *    a Unix timestamp if it has been initialized but not yet completed,
 	 *    or false if it has not yet been initialized
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @param EE_Transaction $transaction
 	 * @return boolean | int
 	 */
@@ -772,7 +772,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::final_reg_step_completed(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->final_reg_step_completed();
@@ -784,7 +784,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * set_reg_step_initiated
 	 * given a valid TXN_reg_step, this sets it's value to a unix timestamp
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @access public
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
@@ -798,7 +798,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::set_reg_step_initiated(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->set_reg_step_initiated( $reg_step_slug );
@@ -810,7 +810,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * set_reg_step_completed
 	 * given a valid TXN_reg_step, this sets the step as completed
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @access public
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
@@ -824,7 +824,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::set_reg_step_completed(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->set_reg_step_completed( $reg_step_slug );
@@ -836,7 +836,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * set_reg_step_completed
 	 * given a valid TXN_reg_step slug, this sets the step as NOT completed
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @access public
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
@@ -850,7 +850,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::set_reg_step_not_completed(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->set_reg_step_not_completed( $reg_step_slug );
@@ -864,7 +864,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * given a valid TXN_reg_step slug, this will remove (unset)
 	 * the reg step from the TXN reg step array
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @access public
 	 * @param \EE_Transaction $transaction
 	 * @param string          $reg_step_slug
@@ -877,7 +877,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::remove_reg_step(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		$transaction->remove_reg_step( $reg_step_slug );
@@ -890,7 +890,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * upgrades a TXNs status from failed to abandoned,
 	 * meaning that contact information has been captured for at least one registrant
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @access public
 	 * @param EE_Transaction $transaction
 	 * @return    boolean
@@ -903,7 +903,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::toggle_failed_transaction_status(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->toggle_failed_transaction_status();
@@ -915,7 +915,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 	 * toggle_abandoned_transaction_status
 	 * upgrades a TXNs status from failed or abandoned to incomplete
 	 *
-	 * @deprecated
+	 * @deprecated 4.9.12
 	 * @access public
 	 * @param  EE_Transaction $transaction
 	 * @return boolean
@@ -927,7 +927,7 @@ class EE_Transaction_Processor extends EE_Processor_Base {
 				'This logic has been moved into \EE_Transaction::toggle_abandoned_transaction_status(), please use that method instead.',
 				'event_espresso'
 			),
-			'4.9.11',
+			'4.9.12',
 			'5.0.0'
 		);
 		return $transaction->toggle_abandoned_transaction_status();
