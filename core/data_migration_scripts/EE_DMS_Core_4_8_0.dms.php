@@ -696,7 +696,6 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 			array( 'HM', 'HMD', 0, 'Heard Island and McDonald Islands', 'AUD', 'Dollar', 'Dollars', '$', 1,  2, '+891', 0, 0 ),
 			array( 'PS', 'PSE', 0, 'Palestinian Territory', 'ILS', 'Shekel', 'Shekels', '₪', 1,  2, '+970', 0, 0 ),
 			array( 'GS', 'SGS', 0, 'South Georgia and the South Sandwich Islands', 'GBP', 'Pound', 'Pounds', '£', 1,  2, '+500', 0, 0 ),
-			array( 'TL', 'TLS', 0, 'Timor-Leste', 'USD', 'Dollar', 'Dollars', '$', 1,  2, '+670', 0, 0 ),
 			array( 'UM', 'UMI', 0, 'United States Minor Outlying Islands', 'USD', 'Dollar', 'Dollars', '$', 1,  2, '+1', 0, 0 ),
 		);
 		global $wpdb;
