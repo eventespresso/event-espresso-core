@@ -73,17 +73,3 @@ input[type="submit"] {
 input:hover[type="submit"] {
 	opacity: 0.9;
 }
-
-.powered-by-event-espresso-credit {
-	color: #747B7D;
-	font-size: 10px;
-	text-align: right;
-}
-.powered-by-event-espresso-credit a {
-	border-bottom: 1px dotted #A1B1BE;
-	color: #4792BB;;
-	text-decoration: none;
-}
-.powered-by-event-espresso-credit a:hover {
-	color: #7FA900;
-}
