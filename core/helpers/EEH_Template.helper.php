@@ -854,15 +854,13 @@ class EEH_Template {
 		return (string) apply_filters(
 			'FHEE__EEH_Template__powered_by_event_espresso__html',
 			sprintf(
-			__(
-				'%1$sEvent Registration Powered by Event Espresso%2$sEvent Registration and Ticketing%3$s Powered by %4$sEvent Espresso - Event Registration and Management System for WordPress%5$s',
-				'event_espresso'
-			),
-			"<div{$attributes}><a href=\"{$url}\" title=\"",
-			'" target="_blank">',
-			'</a>',
-			"<a href=\"{$url}\" title=\"",
-			'" target="_blank">' . $powered_by . '</a></div>'
+				esc_html_x(
+					'%1$sOnline event registration and ticketing powered by %2$s',
+					'Online event registration and ticketing powered by [link to eventespresso.com]',
+					'event_espresso'
+				),
+				"<div{$attributes}>",
+				"<a href=\"{$url}\" target=\"_blank\">{$powered_by}</a></div>"
 			)
 		);
 	}
