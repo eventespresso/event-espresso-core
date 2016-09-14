@@ -565,6 +565,22 @@ class Read extends Base {
 			//specific fields from a related model?
 			//or did they specify to calculate a field from a related model?
 			if( $related_fields_to_include || $related_fields_to_calculate ) {
+				if( ! $relation_obj->get_other_model()->has_primary_key_field() ) {
+					$alternative_model = __( 'Unknown', 'event_espresso' );
+					foreach( $model->relation_settings() as $maybe_relation_using_this_model_as_join ) {
+						if( $maybe_relation_using_this_model_as_join instanceof \EE_HABTM_Relation 
+							&& $maybe_relation_using_this_model_as_join->get_join_model() === $relation_obj->get_other_model() ) {
+							$alternative_model = $maybe_relation_using_this_model_as_join->get_other_model()->get_this_model_name();
+						}
+					}
+					throw new \EE_Error( 
+						sprintf(
+							__( 'Sorry, you cannot include the related model %1$s because it has no primary key, and so should only be used as a joining model. Consider instead including the model %2$s. Notice that the fields from %1$s are added onto the %2$s entities when querying across the join.', 'event_espresso' ),
+							$relation_obj->get_other_model()->get_this_model_name(),
+							$alternative_model
+						)
+					);
+				}
 				//if so, we should include at least some part of the related model
 				$pretend_related_request = new \WP_REST_Request();
 				$pretend_related_request->set_query_params(

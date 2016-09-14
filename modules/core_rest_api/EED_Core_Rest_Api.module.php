@@ -303,6 +303,16 @@ class EED_Core_Rest_Api extends \EED_Module {
 		$model_routes = array();
 		foreach ( $models_to_register as $model_name => $model_classname ) {
 			$model = \EE_Registry::instance()->load_model( $model_name );
+			//if a model doesn't have a primary key, then it should really only be used
+			//as a join table. Remember even if it does have an extra column which isn't a foreign
+			//key, its value is still available when querying across the relation.
+			//Eg, if you want to see Term_Relationship.term_order, you can find it
+			//using either wp-json/ee/v4.8.36/events/1/term_taxonomies, in which case
+			//it will be added to each term_taxonomy entity; or via wp-json/ee/v4.8.36/term_taxonomies/1/events
+			//in which case it will be added to each event entity
+			if( ! $model->has_primary_key_field() ) {
+				continue;
+			}
 			//yes we could just register one route for ALL models, but then they wouldn't show up in the index
 			$plural_model_route = EEH_Inflector::pluralize_and_lower( $model_name );
 			$singular_model_route = $plural_model_route . '/(?P<id>\d+)' ;
@@ -345,6 +355,11 @@ class EED_Core_Rest_Api extends \EED_Module {
 			);
 			//@todo: also handle  DELETE for a single item
 			foreach ( $model_version_info->relation_settings( $model ) as $relation_name => $relation_obj ) {
+				//don't include endpoints for things with no primary key, they should
+				//really just be used as join tables
+				if( ! $relation_obj->get_other_model()->has_primary_key_field() ) {
+					continue;
+				}
 				$related_model_name_endpoint_part = EventEspresso\core\libraries\rest_api\controllers\model\Read::get_related_entity_name(
 					$relation_name,
 					$relation_obj
