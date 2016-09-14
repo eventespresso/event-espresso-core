@@ -1848,10 +1848,22 @@ abstract class EEM_Base extends EE_Base{
 			$pk_field_obj = $this->get_primary_key_field();
 			$column_to_count = $pk_field_obj->get_qualified_column();
 		}else{//there's no primary key
-			$column_to_count = '*';
+			//if we're counting distinct items, and there's no primary key, 
+			//we need to list out the columns for dinstinction;
+			//otherwise we can just use star
+			if( $distinct ) {
+				$columns_to_use = array();
+				foreach( $this->get_combined_primary_key_fields() as $field_obj ) {
+					$columns_to_use[] = $field_obj->get_qualified_column();
+				}
+				$column_to_count = implode(',', $columns_to_use );				
+			} else {
+				$column_to_count = '*';
+			}
+			
 		}
-
-		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
+		
+		$column_to_count = $distinct ? "DISTINCT " . $column_to_count : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		return (int)$this->_do_wpdb_query( 'get_var', array( $SQL) );
 	}
