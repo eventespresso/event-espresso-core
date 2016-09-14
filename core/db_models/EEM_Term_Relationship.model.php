@@ -76,6 +76,7 @@ class EEM_Term_Relationship extends EEM_Base {
 		}
 
 		parent::__construct( $timezone );
+		add_filter( 'FHEE__Read__create_model_query_params', array( 'EEM_Term_Relationship', 'rest_api_query_params' ), 10, 3 );
 	}
 
 	/**
@@ -142,6 +143,24 @@ from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_opera
 			$this->update_term_taxonomy_counts();
 		}
 		return $count;
+	}
+	
+	/**
+	 * Makes sure that during REST API queries, we only return term relationships
+	 * for term taxonomies which should be shown in the rest api
+	 * @param array $model_query_params
+	 * @param array $querystring_query_params
+	 * @param EEM_Base $model
+	 * @return array
+	 */
+	public static function rest_api_query_params( $model_query_params, $querystring_query_params, $model ) {
+		if( $model === EEM_Term_Relationship::instance() ) {
+			$taxonomies = get_taxonomies( array( 'show_in_rest' => true) );
+			if( ! empty( $taxonomies ) ) {
+				$model_query_params[0][ 'Term_Taxonomy.taxonomy' ] = array( 'IN', $taxonomies );
+			}
+		}
+		return $model_query_params;
 	}
 
 
