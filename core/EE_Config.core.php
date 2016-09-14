@@ -2566,11 +2566,6 @@ class EE_Template_Config extends EE_Config_Base {
 	 */
 	public $EED_Events_Archive;
 
-	/**
-	 * @var EE_Ticket_Selector_Config $EED_Ticket_Selector
-	 */
-	public $EED_Ticket_Selector;
-
 
 
 	/**
