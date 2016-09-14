@@ -295,8 +295,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	function test_espresso_admin_footer() {
 		$actual = EE_Admin::instance()->espresso_admin_footer();
 		//assert contains powered by text.
-		$this->assertContains('Event Registration Powered by Event Espresso', $actual);
-
+		$this->assertContains('Online event registration and ticketing powered by ', $actual);
 		//assert contains eventespresso.com link
 		$this->assertContains('https://eventespresso.com/', $actual);
 	}
