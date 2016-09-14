@@ -64,15 +64,32 @@ class Capabilities {
 	 * @param \EEM_Base $model
 	 * @param string $request_type one of the return values from EEM_Base::valid_cap_contexts()
 	 * @param Model_Version_Info $model_version_info
+	 * @param string $primary_key_string result of EEM_Base::get_index_primary_key_string(), so that we can use this
+	 * with models that have no primary key 
 	 * @return array ready for converting into json
 	 */
-	public static function filter_out_inaccessible_entity_fields( $entity,  $model, $request_type, $model_version_info ) {
-		//we only care to do this for frontend reads and when the user can't edit the item
-		if(  $request_type !== \EEM_Base::caps_read ||
-				$model->exists( array(
-					array( $model->primary_key_name() => $entity[ $model->primary_key_name() ] ),
-					'default_where_conditions' => 'none',
-					'caps' => \EEM_Base::caps_edit ) ) ) {
+	public static function filter_out_inaccessible_entity_fields( $entity,  $model, $request_type, $model_version_info, $primary_key_string = null ) {
+		//if they didn't provide the primary key string, we'll just hope we can figure it out
+		//from the entity (alhtough it's preferred client code does it, because the entity might be missing
+		//necessary fields for creating the primary key string, or they could be named differently)
+		if( $primary_key_string === null ) {
+			$primary_key_string = $model->get_index_primary_key_string( 
+				$model->deduce_fields_n_values_from_cols_n_values( $entity )
+			);
+		}
+//we only care to do this for frontend reads and when the user can't edit the item
+		if(  $request_type !== \EEM_Base::caps_read 
+			|| $model->exists( 
+				$model->alter_query_params_to_restrict_by_ID(
+					$primary_key_string,
+					array(
+						'default_where_conditions' => 'none',
+						'caps' => \EEM_Base::caps_edit 
+					) 
+				) 
+			)
+		)
+		{
 			return $entity;
 		}
 		foreach( $model->field_settings() as $field_name => $field_obj ){
