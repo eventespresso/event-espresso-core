@@ -682,7 +682,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 			array( 'IM', 'IMN', 0, 'Isle of Man', 'GBP', 'Pound', 'Pounds', '£', 1, 2,  '+44', 0, 0  ),
 			array( 'JE', 'JEY', 0, 'Jersey', 'GBP', 'Pound', 'Pounds', '£', 1, 2, '+44', 0, 0 ),
 			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0 ),
-			array( 'MN', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 0 ),
+			array( 'ME', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 0 ),
 			array( 'RS', 'SRB', 0, 'Serbia', 'RSD', 'Dinar', 'Dinars', '', 0, 2, '+941', 1, 0 ),
 			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '£', 1, 2, '+211', 0, 0 ),
 			array( 'SX', 'SXM', 0, 'Sint Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 0 ),
