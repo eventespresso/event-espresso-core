@@ -427,6 +427,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function display_ticket_selector_submit() {
 		if ( ! is_admin() ) {
+			// standard TS displayed with submit button, ie: "Register Now"
 			if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) ) {
 				$btn_text = apply_filters(
 					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
@@ -443,13 +444,14 @@ class EED_Ticket_Selector extends  EED_Module {
 					'',
 					EED_Ticket_Selector::$_event
 				);
-				$html .= '<div class="clear"><br/></div></form>';
+				$html .= \EED_Ticket_Selector::tkt_slctr_end_dv() . '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
 				return $html;
 			} else if ( is_archive() ) {
-				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
+				// event list, no tickets available so display event's "View Details" button
+				return \EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
 			} else if (
 				EED_Ticket_Selector::$_event instanceof EE_Event
-				// if $_max_atndz === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+				// a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
 				&& EED_Ticket_Selector::$_max_atndz === 1
 				// and the event is sold out
 				&& EED_Ticket_Selector::$_event->is_sold_out()
@@ -466,17 +468,39 @@ class EED_Ticket_Selector extends  EED_Module {
 					),
 					EED_Ticket_Selector::$_event
 				);
-				$html .= '<div class="clear"></div></div></form>';
+				// sold out DWMTS event, no TS, no submit or view details button, but has additional content
+				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv() . \EED_Ticket_Selector::ticket_selector_form_close();
 				return $html;
 			} else if ( apply_filters( 'FHEE__EE_Ticket_Selector__no_ticket_selector_submit', false ) ) {
-				return '<div class="clear"></div></form>';
+				// NOT a DWMTS event, TS displayed, BUT no tickets are available, so NO submit button
+				return \EED_Ticket_Selector::tkt_slctr_end_dv() . \EED_Ticket_Selector::ticket_selector_form_close();
 			} else {
-				return '<div class="clear"></div></div></form>';
+				// DWMTS event, no TS, no submit or view details button, and no additional content
+				return \EED_Ticket_Selector::no_tkt_slctr_end_dv() . \EED_Ticket_Selector::ticket_selector_form_close();
 			}
 		}
 		return '';
 	}
 
+
+
+	/**
+	 * @return string
+	 */
+	public static function tkt_slctr_end_dv() {
+		// standard TS displayed, appears after a "Register Now" or "view Details" button
+		return '<div class="clear"></div>';
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public static function no_tkt_slctr_end_dv() {
+		// DWMTS event, no TS, appears after a "Register Now" or "view Details" button
+		return '<div class="clear"></div></div>';
+	}
 
 
 
@@ -490,8 +514,6 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function ticket_selector_form_close() {
 		return '</form>';
 	}
-
-
 
 
 
@@ -947,15 +969,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			wp_register_script( 'ticket_selector_embed', TICKET_SELECTOR_ASSETS_URL . 'ticket-selector-embed.js', array( 'ee-dialog' ), EVENT_ESPRESSO_VERSION, true );
 			wp_enqueue_script( 'ticket_selector_embed' );
 		}
-	}
-
-
-
-	/**
-	 * @return string
-	 */
-	public static function no_tkt_slctr_end_dv() {
-		return '<div class="clear"></div></div>';
 	}
 
 
