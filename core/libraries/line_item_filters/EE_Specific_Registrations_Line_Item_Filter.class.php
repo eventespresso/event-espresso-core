@@ -112,7 +112,8 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			$original_li_total = $child_line_item->is_percent()
 				? $running_total_of_children * $child_line_item->percent() / 100
 				: $child_line_item->unit_price() * $child_line_item->quantity();
-			echo "\n{$spacer}CHILD {$child_line_item->name()} original_li_total : " . $original_li_total;
+			echo "\n{$spacer}CHILD {$child_line_item->name()} original_li_total : {$original_li_total}";
+			echo "\n{$spacer} = (unit_price*quantity) {$child_line_item->unit_price()} * {$child_line_item->quantity()}";
 			$this->process( $child_line_item );
 			// If this line item is a normal line item that isn't for a ticket,
 			// we want to modify its total (and unit price if not a percentage line item)
@@ -167,6 +168,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			echo "\n{$spacer} running_total_of_children_under_consideration for {$line_item->name()}: {$running_total_of_children_under_consideration}";
 			if ( $child_line_item->OBJ_type() == 'Ticket' ) {
 				$total_child_ticket_quantity += $child_line_item->quantity();
+				echo "\n{$spacer} total_child_ticket_quantity for {$line_item->name()}: {$total_child_ticket_quantity}";
 			}
 			$spacer = substr( $spacer, 0, -4 );
 		}
@@ -182,6 +184,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 		$indent--;
 		if ( $line_item->OBJ_type() == 'Event' ) {
 			$line_item->set_quantity( $total_child_ticket_quantity );
+			echo "\n{$spacer} * SET {$line_item->name()} quantity to {$total_child_ticket_quantity} (total_child_ticket_quantity)";
 		}
 		return $line_item;
 	}
