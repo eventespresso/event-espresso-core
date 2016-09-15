@@ -989,7 +989,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Alters query parameters to only get items with this ID are returned.
-	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string()
+	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string(),
+	 * or could just be a simple primary key ID
 	 *
 	 * @param int   $id
 	 * @param array $query_params
@@ -1000,7 +1001,8 @@ abstract class EEM_Base extends EE_Base{
 		if( ! isset( $query_params[ 0 ] ) ) {
 			$query_params[ 0 ] = array();
 		}
-		if( $this->has_primary_key_field ( ) ) {
+		$conditions_from_id = $this->parse_index_primary_key_string( $id );
+		if( $conditions_from_id === null ) {
 			$query_params[ 0 ][ $this->primary_key_name() ] = $id ;
 		}else{
 			//no primary key, so the $id must be from the get_index_primary_key_string()
