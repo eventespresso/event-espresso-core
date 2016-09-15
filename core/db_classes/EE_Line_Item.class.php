@@ -858,27 +858,26 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 	public function recalculate_pre_tax_total() {
 		$total = 0;
 		$my_children = $this->children();
-		// completely ignore tax totals, tax sub-totals, and cancelled line items, when calculating the pre-tax-total
-		if ( $this->is_tax_sub_total() || $this->is_tax() || $this->is_cancelled() ) {
-			return 0;
-		} elseif (
-			empty( $my_children )
-			&& ( $this->is_sub_line_item() || $this->is_line_item() )
-		) {
+		$has_children = ! empty( $my_children );
+		if ( $has_children && $this->is_line_item() ) {
+			$total = $this->_recalculate_pretax_total_for_line_item( $total, $my_children );
+		} elseif ( ! $has_children && ( $this->is_sub_line_item() || $this->is_line_item() ) ) {
 			$total = $this->unit_price() * $this->quantity();
 		} elseif( $this->is_sub_total() || $this->is_total() ) {
 			$total = $this->_recalculate_pretax_total_for_subtotal( $total, $my_children );
-		} elseif ( ! empty( $my_children ) && $this->is_line_item() ) {
-			$total = $this->_recalculate_pretax_total_for_line_item( $total, $my_children );
+		} elseif ( $this->is_tax_sub_total() || $this->is_tax() || $this->is_cancelled() ) {
+			// completely ignore tax totals, tax sub-totals, and cancelled line items, when calculating the pre-tax-total
+			return 0;
 		}
-		//ensure all non-line items and non-sub-line-items have a quantity of 1
+		// ensure all non-line items and non-sub-line-items have a quantity of 1 (except for Events)
 		if(
 			! $this->is_line_item() &&
 			! $this->is_sub_line_item() &&
-			! $this->is_cancellation() &&
-			$this->OBJ_type() !== 'Event'
+			! $this->is_cancellation()
 		) {
-			$this->set_quantity( 1 );
+			if ( $this->OBJ_type() !== 'Event' ) {
+				$this->set_quantity( 1 );
+			}
 			if( ! $this->is_percent() ) {
 				$this->set_unit_price( $this->total() );
 			}
@@ -890,7 +889,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item {
 			$this->set_total( $total );
 			//if not a percent line item, make sure we keep the unit price in sync
 			if(
-				! empty( $my_children )
+				$has_children
 				&& $this->is_line_item()
 				&& ! $this->is_percent()
 			) {

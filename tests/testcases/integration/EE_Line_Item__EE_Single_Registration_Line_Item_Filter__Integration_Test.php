@@ -34,8 +34,6 @@ class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test ex
 				),
 			)
 		);
-		echo "\n\n " . __LINE__ . ") " . __METHOD__ . '() : $event_line_item' . "\n";
-		var_dump( $event_line_item );
 		$this->new_model_obj_with_dependencies(
 			'Line_Item',
 			array(
@@ -49,41 +47,33 @@ class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test ex
 				'LIN_order' => count( $event_line_item->children() )
 			)
 		);
-		$transaction->total_line_item()->recalculate_total_including_taxes();
+		$total_line_item = $transaction->total_line_item();
+		$total_line_item->recalculate_total_including_taxes();
 		//and add an unrelated purchase
-		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Transaction-Wide Discount', -5 );
-
-		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
+		EEH_Line_Item::add_unrelated_item( $total_line_item, 'Transaction-Wide Discount', -5 );
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $total_line_item );
 		// honestly the easiest way to confirm the total was right is to visualize the tree
-		echo "\n\n " . __LINE__ . ') : visualize( $transaction->total_line_item() )';
-		EEH_Line_Item::visualize( $transaction->total_line_item() );
-		echo "\n\n " . __LINE__ . ') : $totals' . "\n";
-		var_dump( $totals );
+		// echo "\n\n " . __LINE__ . ') : visualize( $total_line_item )';
+		// EEH_Line_Item::visualize( $total_line_item );
+		// echo "\n\n " . __LINE__ . ') : $totals' . "\n";
+		// var_dump( $totals );
 
 		//for each registration on the transaction, verify the REG_final_price
 		//indicated by EEH_Line_Item::calculate_reg_final_prices_per_line_item matches
 		//what the line item filters would have returned
 		EEH_Autoloader::register_line_item_filter_autoloaders();
 		foreach( $transaction->registrations() as $registration ) {
-			echo "\n\n\n\n PROCESSING REGISTRATION : " . $registration->ID();
 			$ticket_line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $registration );
-			echo "\n\n ticket_line_item->ID(): " . $ticket_line_item->ID() . "\n";
 			$reg_final_price_from_line_item_helper = $totals[ $ticket_line_item->ID() ];
-			echo "\n " . __LINE__ . ') : $reg_final_price_from_line_item_helper' . "\n";
-			var_dump( $reg_final_price_from_line_item_helper );
-			echo "\n";
 			//now get the line item filter's final price
 			$filters = new EE_Line_Item_Filter_Collection();
 			$filters->add( new EE_Single_Registration_Line_Item_Filter( $registration ) );
-			$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item()  );
+			$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $total_line_item  );
 			$filtered_line_item_tree = $line_item_filter_processor->process();
-			echo "\n\n " . __LINE__ . ') : visualize( $filtered_line_item_tree )';
-			EEH_Line_Item::visualize( $filtered_line_item_tree );
-			echo "\n";
-			echo "\n " . __LINE__ . ') : $filtered_line_item_tree->total()' . "\n";
-			var_dump( $filtered_line_item_tree->total() );
-			// $reg_final_price_from_line_item_filter = $filtered_line_item_tree->total();
-			// $this->assertLessThan( 0.2, abs( $reg_final_price_from_line_item_filter - $reg_final_price_from_line_item_helper ) );
+			// echo "\n\n " . __LINE__ . ') : visualize( $filtered_line_item_tree )';
+			// EEH_Line_Item::visualize( $filtered_line_item_tree );
+			$reg_final_price_from_line_item_filter = $filtered_line_item_tree->total();
+			$this->assertLessThan( 0.2, abs( $reg_final_price_from_line_item_filter - $reg_final_price_from_line_item_helper ) );
 		}
 	}
 
@@ -92,67 +82,68 @@ class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test ex
 	 * but makes sure the tickets have sub-prices, because that has shown to have some
 	 * bugs with calculations so far
 	 */
-// 	function test_REG_final_price_matches_total_of_filtering_line_item_tree__with_sub_line_items() {
-// 		$transaction = $this->new_typical_transaction(
-// 			array(
-// 				'ticket_types' => 2,
-// 				'fixed_ticket_price_modifiers' => 2,
-// 			)
-// 		);
-// 		//add another ticket purchase for one of the same events
-// 		$event1 = EEM_Event::instance()->get_one(
-// 			array( array( 'Registration.TXN_ID' => $transaction->ID() ) )
-// 		);
-// 		$event_line_item = EEM_Line_Item::instance()->get_one(
-// 			array(
-// 				array(
-// 					'TXN_ID' => $transaction->ID(),
-// 					'OBJ_type' => 'Event',
-// 					'OBJ_ID' => $event1->ID()
-// 				)
-// 			)
-// 		);
-// 		$this->new_model_obj_with_dependencies(
-// 			'Line_Item',
-// 			array(
-// 				'LIN_type' => EEM_Line_Item::type_line_item,
-// 				'LIN_name' => 'event discount',
-// 				'LIN_total' => -8,
-// 				'LIN_unit_price' => -8,
-// 				'LIN_quantity' => 1,
-// 				'LIN_parent' => $event_line_item->ID(),
-// 				'LIN_percent' => null,
-// 				'LIN_order' => count( $event_line_item->children() )
-// 			)
-// 		);
-// 		$transaction->total_line_item()->recalculate_pre_tax_total();
-// 		//and add an unrelated purchase
-// 		EEH_Line_Item::add_unrelated_item( $transaction->total_line_item(), 'Transaction-Wide Discount', -5 );
-//
-// 		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $transaction->total_line_item() );
-//
-// 		//		honestly the easiest way to confirm the total was right is to visualize the tree
-// //		var_dump( $totals );
-// //		EEH_Line_Item::visualize( $transaction->total_line_item() );
-//
-// 		//for each registration on the transaction, verify the REG_final_price
-// 		//indicated by EEH_Line_Item::calculate_reg_final_prices_per_line_item matches
-// 		//what the line item filters would have returned
-// 		EEH_Autoloader::register_line_item_filter_autoloaders();
-// 		foreach( $transaction->registrations() as $registration ) {
-// 			$ticket_line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $registration );
-// 			$reg_final_price_from_line_item_helper = $totals[ $ticket_line_item->ID() ];
-//
-// 			//now get the line item filter's final price
-// 			$filters = new EE_Line_Item_Filter_Collection();
-// 			$filters->add( new EE_Single_Registration_Line_Item_Filter( $registration ) );
-// 			$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $transaction->total_line_item()  );
-// 			$filtered_line_item_tree = $line_item_filter_processor->process();
-// 			$reg_final_price_from_line_item_filter = $filtered_line_item_tree->total();
-//
-// 			$this->assertLessThan( 0.2, abs( $reg_final_price_from_line_item_filter - $reg_final_price_from_line_item_helper ) );
-// 		}
-// 	}
+	function test_REG_final_price_matches_total_of_filtering_line_item_tree__with_sub_line_items() {
+		$transaction = $this->new_typical_transaction(
+			array(
+				'ticket_types' => 2,
+				'fixed_ticket_price_modifiers' => 2,
+			)
+		);
+		//add another ticket purchase for one of the same events
+		$event1 = EEM_Event::instance()->get_one(
+			array( array( 'Registration.TXN_ID' => $transaction->ID() ) )
+		);
+		$event_line_item = EEM_Line_Item::instance()->get_one(
+			array(
+				array(
+					'TXN_ID' => $transaction->ID(),
+					'OBJ_type' => 'Event',
+					'OBJ_ID' => $event1->ID()
+				)
+			)
+		);
+		$this->new_model_obj_with_dependencies(
+			'Line_Item',
+			array(
+				'LIN_type' => EEM_Line_Item::type_line_item,
+				'LIN_name' => 'event discount',
+				'LIN_total' => -8,
+				'LIN_unit_price' => -8,
+				'LIN_quantity' => 1,
+				'LIN_parent' => $event_line_item->ID(),
+				'LIN_percent' => null,
+				'LIN_order' => count( $event_line_item->children() )
+			)
+		);
+		$total_line_item = $transaction->total_line_item();
+		$total_line_item->recalculate_total_including_taxes();
+		//and add an unrelated purchase
+		EEH_Line_Item::add_unrelated_item( $total_line_item, 'Transaction-Wide Discount', -5 );
+
+		$totals = EEH_Line_Item::calculate_reg_final_prices_per_line_item( $total_line_item );
+
+		//		honestly the easiest way to confirm the total was right is to visualize the tree
+//		var_dump( $totals );
+//		EEH_Line_Item::visualize( $total_line_item );
+
+		//for each registration on the transaction, verify the REG_final_price
+		//indicated by EEH_Line_Item::calculate_reg_final_prices_per_line_item matches
+		//what the line item filters would have returned
+		EEH_Autoloader::register_line_item_filter_autoloaders();
+		foreach( $transaction->registrations() as $registration ) {
+			$ticket_line_item = EEM_Line_Item::instance()->get_line_item_for_registration( $registration );
+			$reg_final_price_from_line_item_helper = $totals[ $ticket_line_item->ID() ];
+
+			//now get the line item filter's final price
+			$filters = new EE_Line_Item_Filter_Collection();
+			$filters->add( new EE_Single_Registration_Line_Item_Filter( $registration ) );
+			$line_item_filter_processor = new EE_Line_Item_Filter_Processor( $filters, $total_line_item  );
+			$filtered_line_item_tree = $line_item_filter_processor->process();
+			$reg_final_price_from_line_item_filter = $filtered_line_item_tree->total();
+
+			$this->assertLessThan( 0.2, abs( $reg_final_price_from_line_item_filter - $reg_final_price_from_line_item_helper ) );
+		}
+	}
 
 
 
