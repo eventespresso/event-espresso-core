@@ -1,32 +1,32 @@
 <?php
-if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 
+
+
 /**
- *
  * EE_Specific_Registrations_Line_Item_Filter
- *
  * Modifies the line item quantities to reflect only those items for the specified registrations.
  * Also, modifies NON-ticket regular line items (eg flat discounts and percent surcharges, etc)
  * to only show the share for the specified ticket quantities
  *
- * @package			Event Espresso
+ * @package               Event Espresso
  * @subpackage
- * @author				Mike Nelson
- *
+ * @author                Mike Nelson
  */
 class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Base {
 
 	/**
 	 * array of line item codes and their corresponding quantities for registrations
 	 *
-	*@type array $_line_item_registrations
+	 * @type array $_line_item_registrations
 	 */
 	protected $_line_item_registrations = array();
 
 	/**
 	 * Just kept in case we want it someday. Currently unused
+	 *
 	 * @var EE_Registration[]
 	 */
 	protected $_registrations = array();
@@ -38,6 +38,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 
 	/**
 	 * these reg statuses should NOT increment the line item quantity
+	 *
 	 * @var array
 	 */
 	protected $_closed_reg_statuses = array();
@@ -46,6 +47,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 
 	/**
 	 * EE_Billable_Line_Item_Filter constructor.
+	 *
 	 * @param EE_Registration[] $registrations
 	 */
 	public function __construct( $registrations ) {
@@ -55,6 +57,8 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 		$this->_closed_reg_statuses = EEM_Registration::closed_reg_statuses();
 	}
 
+
+
 	/**
 	 * sets the _line_item_registrations from the provided registrations
 	 *
@@ -62,7 +66,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * @return void
 	 */
 	protected function _calculate_registrations_per_line_item_code( $registrations ) {
-		foreach( $registrations as $registration ) {
+		foreach ( $registrations as $registration ) {
 			$line_item_code = EEM_Line_Item::instance()->get_var(
 				EEM_Line_Item::instance()->line_item_for_registration_query_params(
 					$registration,
@@ -70,8 +74,8 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				),
 				'LIN_code'
 			);
-			if( $line_item_code ) {
-				if( ! isset( $this->_line_item_registrations[ $line_item_code ] ) ) {
+			if ( $line_item_code ) {
+				if ( ! isset( $this->_line_item_registrations[ $line_item_code ] ) ) {
 					$this->_line_item_registrations[ $line_item_code ] = array();
 				}
 				$this->_line_item_registrations[ $line_item_code ][ $registration->ID() ] = $registration;
@@ -85,12 +89,12 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * Creates a duplicate of the line item tree, except only includes billable items
 	 * and the portion of line items attributed to billable things
 	 *
-	 * @param EEI_Line_Item      $line_item
+	 * @param EEI_Line_Item $line_item
 	 * @return \EEI_Line_Item
 	 */
 	public function process( EEI_Line_Item $line_item ) {
 		$this->_adjust_line_item_quantity( $line_item );
-		if( ! $line_item->children() ) {
+		if ( ! $line_item->children() ) {
 			return $line_item;
 		}
 		//the original running total (taking ALL tickets into account)
@@ -100,11 +104,9 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 		// let's also track the quantity of tickets that pertain to the registrations
 		$total_child_ticket_quantity = 0;
 		foreach ( $line_item->children() as $child_line_item ) {
-
 			$original_li_total = $child_line_item->is_percent()
 				? $running_total_of_children * $child_line_item->percent() / 100
 				: $child_line_item->unit_price() * $child_line_item->quantity();
-
 			$this->process( $child_line_item );
 			// If this line item is a normal line item that isn't for a ticket,
 			// we want to modify its total (and unit price if not a percentage line item)
@@ -155,7 +157,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			}
 		}
 		$line_item->set_total( $running_total_of_children_under_consideration );
-		if( $line_item->quantity() ) {
+		if ( $line_item->quantity() ) {
 			$line_item->set_unit_price( $running_total_of_children_under_consideration / $line_item->quantity() );
 		} else {
 			$line_item->set_unit_price( 0 );
@@ -171,6 +173,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	/**
 	 * Adjusts quantities for line items for tickets according to the registrations provided
 	 * in the constructor
+	 *
 	 * @param EEI_Line_Item $line_item
 	 * @return EEI_Line_Item
 	 */
