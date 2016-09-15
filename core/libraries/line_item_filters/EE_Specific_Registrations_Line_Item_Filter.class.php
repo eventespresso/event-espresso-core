@@ -112,6 +112,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			$original_li_total = $child_line_item->is_percent()
 				? $running_total_of_children * $child_line_item->percent() / 100
 				: $child_line_item->unit_price() * $child_line_item->quantity();
+			echo "\n{$spacer}CHILD {$child_line_item->name()} original_li_total : " . $original_li_total;
 			$this->process( $child_line_item );
 			// If this line item is a normal line item that isn't for a ticket,
 			// we want to modify its total (and unit price if not a percentage line item)
@@ -121,15 +122,11 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				&& $child_line_item->OBJ_type() !== 'Ticket'
 			) {
 				echo "\n{$spacer}{$line_item->name()} CHILD {$child_line_item->name()} IS NOT A TICKET";
-				echo "\n{$spacer} original_li_total : " . $original_li_total;
-				echo "\n{$spacer} running_total_of_children : " . $running_total_of_children;
 				if ( $running_total_of_children ) {
 					$percent_of_running_total = $original_li_total / $running_total_of_children;
 				} else {
 					$percent_of_running_total = 0;
 				}
-				echo "\n{$spacer} running_total_of_children_under_consideration : "
-				     . $running_total_of_children_under_consideration;
 				echo "\n{$spacer} percent_of_running_total : " . $percent_of_running_total;
 				$child_line_item->set_total(
 					$running_total_of_children_under_consideration * $percent_of_running_total
@@ -165,7 +162,9 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				}
 			}
 			$running_total_of_children += $original_li_total;
+			echo "\n{$spacer} running_total_of_children for {$line_item->name()}: " . $running_total_of_children;
 			$running_total_of_children_under_consideration += $child_line_item->total();
+			echo "\n{$spacer} running_total_of_children_under_consideration for {$line_item->name()}: {$running_total_of_children_under_consideration}";
 			if ( $child_line_item->OBJ_type() == 'Ticket' ) {
 				$total_child_ticket_quantity += $child_line_item->quantity();
 			}
