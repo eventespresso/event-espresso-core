@@ -77,7 +77,7 @@ class Capabilities {
 				$model->deduce_fields_n_values_from_cols_n_values( $entity )
 			);
 		}
-//we only care to do this for frontend reads and when the user can't edit the item
+		//we only care to do this for frontend reads and when the user can't edit the item
 		if(  $request_type !== \EEM_Base::caps_read 
 			|| $model->exists( 
 				$model->alter_query_params_to_restrict_by_ID(
