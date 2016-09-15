@@ -383,8 +383,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * are a row from the posts table. If we're missing any fields required for the model,
 	 * we just fetch the entire entry from the DB (ie, if you want to use this to save DB queries,
 	 * make sure you are attaching all the model's fields onto the post)
+	 *
 	 * @param WP_Post|array $post
-	 * @return EE_CPT_Base
+	 * @return EE_Base_Class|EE_Soft_Delete_Base_Class
 	 */
 	public function instantiate_class_from_post_object_orig($post){
 		$post = (array)$post;
