@@ -125,6 +125,7 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => true,
+					'show_in_rest' => true,
 					'capabilities' => array(
 						'manage_terms' => 'ee_manage_event_categories',
 						'edit_terms' => 'ee_edit_event_category',
@@ -139,6 +140,7 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
+					'show_in_rest' => true,
 					'capabilities' => array(
 						'manage_terms' => 'ee_manage_venue_categories',
 						'edit_terms' => 'ee_edit_venue_category',
@@ -153,6 +155,7 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_ui'=>false,
+					'show_in_rest' => true,
 					'capabilities' => array(
 						'manage_terms' => 'ee_read_event_type',
 						'edit_terms' => 'ee_edit_event_type',
