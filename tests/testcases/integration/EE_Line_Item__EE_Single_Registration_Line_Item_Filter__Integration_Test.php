@@ -34,6 +34,8 @@ class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test ex
 				),
 			)
 		);
+		echo "\n\n " . __LINE__ . ") " . __METHOD__ . '() : $event_line_item' . "\n";
+		var_dump( $event_line_item );
 		$this->new_model_obj_with_dependencies(
 			'Line_Item',
 			array(
