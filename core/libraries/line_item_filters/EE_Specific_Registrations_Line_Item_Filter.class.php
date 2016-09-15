@@ -92,11 +92,14 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * @param EEI_Line_Item $line_item
 	 * @return \EEI_Line_Item
 	 */
-	public function process( EEI_Line_Item $line_item ) {
-		$this->_adjust_line_item_quantity( $line_item );
+	public function process( EEI_Line_Item $line_item, $indent = 0 ) {
+		$spacer = str_repeat( "    ", $indent );
+		$this->_adjust_line_item_quantity( $line_item, $spacer );
 		if ( ! $line_item->children() ) {
 			return $line_item;
 		}
+		$indent++;
+		echo "\n{$spacer}PROCESS : " . $line_item->name();
 		//the original running total (taking ALL tickets into account)
 		$running_total_of_children = 0;
 		//the new running total (only taking the specified ticket quantities into account)
@@ -104,10 +107,11 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 		// let's also track the quantity of tickets that pertain to the registrations
 		$total_child_ticket_quantity = 0;
 		foreach ( $line_item->children() as $child_line_item ) {
+			$spacer .= "    ";
 			$original_li_total = $child_line_item->is_percent()
 				? $running_total_of_children * $child_line_item->percent() / 100
 				: $child_line_item->unit_price() * $child_line_item->quantity();
-			$this->process( $child_line_item );
+			$this->process( $child_line_item, $indent );
 			// If this line item is a normal line item that isn't for a ticket,
 			// we want to modify its total (and unit price if not a percentage line item)
 			// so it reflects only that portion of the surcharge/discount shared by these registrations
@@ -115,21 +119,33 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				$child_line_item->type() === EEM_Line_Item::type_line_item
 				&& $child_line_item->OBJ_type() !== 'Ticket'
 			) {
+				echo "\n{$spacer}{$line_item->name()} CHILD {$child_line_item->name()} IS NOT A TICKET";
+				echo "\n{$spacer} original_li_total : " . $original_li_total;
+				echo "\n{$spacer} running_total_of_children : " . $running_total_of_children;
 				if ( $running_total_of_children ) {
 					$percent_of_running_total = $original_li_total / $running_total_of_children;
 				} else {
 					$percent_of_running_total = 0;
 				}
+				echo "\n{$spacer} running_total_of_children_under_consideration : "
+				     . $running_total_of_children_under_consideration;
+				echo "\n{$spacer} percent_of_running_total : " . $percent_of_running_total;
 				$child_line_item->set_total(
 					$running_total_of_children_under_consideration * $percent_of_running_total
 				);
+				echo "\n{$spacer} * SET CHILD TOTAL : " . $child_line_item->name() . " to " . $child_line_item->total();
 				if ( ! $child_line_item->is_percent() ) {
 					$child_line_item->set_unit_price( $child_line_item->total() / $child_line_item->quantity() );
+					echo "\n{$spacer} * SET CHILD UNIT PRICE : "
+					     . $child_line_item->name()
+					     . " to "
+					     . $child_line_item->total();
 				}
 			} else if (
 				$line_item->type() === EEM_Line_Item::type_line_item
 				&& $line_item->OBJ_type() === 'Ticket'
 			) {
+				echo "\n{$spacer}{$line_item->name()} CHILD {$child_line_item->name()} = Ticket";
 				//make sure this item's quantity and total matches its parent
 				if (
 					// but not if it's a percentage modifier
@@ -139,7 +155,6 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 						$child_line_item->is_cancelled()
 						&& ! (
 							// unless it IS a cancellation and the current registration is cancelled
-							// in which case we DO want to set it's quantity and total
 							$child_line_item->is_cancelled()
 							&& $this->_current_registration instanceof EE_Registration
 							&& in_array( $this->_current_registration->status_ID(), $this->_closed_reg_statuses )
@@ -148,6 +163,10 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 				) {
 					$child_line_item->set_quantity( $line_item->quantity() );
 					$child_line_item->set_total( $child_line_item->unit_price() * $child_line_item->quantity() );
+					echo "\n{$spacer} * SET CHILD TOTAL : "
+					     . $child_line_item->name()
+					     . " to "
+					     . $child_line_item->total();
 				}
 			}
 			$running_total_of_children += $original_li_total;
@@ -155,12 +174,19 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 			if ( $child_line_item->OBJ_type() == 'Ticket' ) {
 				$total_child_ticket_quantity += $child_line_item->quantity();
 			}
+			$spacer = substr( $spacer, 0, -4 );
 		}
 		$line_item->set_total( $running_total_of_children_under_consideration );
+		echo "\n{$spacer} * SET TOTAL : "
+		     . $line_item->name()
+		     . " to "
+		     . $running_total_of_children_under_consideration;
 		if ( $line_item->quantity() ) {
 			$line_item->set_unit_price( $running_total_of_children_under_consideration / $line_item->quantity() );
+			echo "\n{$spacer} * SET UNIT PRICE : " . $line_item->name() . " to " . $line_item->unit_price();
 		} else {
 			$line_item->set_unit_price( 0 );
+			echo "\n{$spacer} * ZERO UNIT PRICE : " . $line_item->name() . " to " . $line_item->unit_price();
 		}
 		if ( $line_item->OBJ_type() == 'Event' ) {
 			$line_item->set_quantity( $total_child_ticket_quantity );
@@ -177,7 +203,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 	 * @param EEI_Line_Item $line_item
 	 * @return EEI_Line_Item
 	 */
-	protected function _adjust_line_item_quantity( EEI_Line_Item $line_item ) {
+	protected function _adjust_line_item_quantity( EEI_Line_Item $line_item, $spacer ) {
 		// is this a ticket ?
 		if ( $line_item->type() === EEM_Line_Item::type_line_item && $line_item->OBJ_type() == 'Ticket' ) {
 			$this->_current_registration = null;
@@ -194,6 +220,7 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
 					) {
 						$quantity++;
 						$this->_current_registration = $registration;
+						echo "\n{$spacer}current reg status : " . $this->_current_registration->status_ID();
 					}
 				}
 			}
