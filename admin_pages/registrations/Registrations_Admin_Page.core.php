@@ -2495,10 +2495,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						return;
 					}
 				}
-				/** @type EE_Transaction_Payments $transaction_payments */
-				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				// maybe update status, and make sure to save transaction if not done already
-				if ( ! $transaction_payments->update_transaction_status_based_on_total_paid( $transaction )) {
+				if ( ! $transaction->update_status_based_on_total_paid() ) {
 					$transaction->save();
 				}
 				EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
