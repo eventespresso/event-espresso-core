@@ -1,7 +1,7 @@
 <?php
 namespace EventEspresso\core\services\database;
 
-defined('EVENT_ESPRESSO_VERSION')|| exit('No direct script access allowed');
+defined( 'EVENT_ESPRESSO_VERSION') || exit('No direct script access allowed');
 /**
  *
  * Class TableManager
@@ -16,40 +16,58 @@ defined('EVENT_ESPRESSO_VERSION')|| exit('No direct script access allowed');
  */
 class TableManager extends \EE_Base {
 
-    /**
-     * @param string $tableName
+	/**
+	 * @var TableAnalysis $table_analysis
+	 */
+	private $table_analysis;
+
+
+
+	/**
+	 * TableManager constructor.
+	 *
+	 * @param TableAnalysis $TableAnalysis
+	 */
+	public function __construct( TableAnalysis $TableAnalysis ) {
+		$this->table_analysis = $TableAnalysis;
+	}
+
+
+
+	/**
+     * @param string $table_name
      * @param string $columnName
      * @param string $columnInfo
      * @return bool|false|int
      */
-    public function addColumn( $tableName, $columnName, $columnInfo='INT UNSIGNED NOT NULL' )
+    public function addColumn( $table_name, $columnName, $columnInfo='INT UNSIGNED NOT NULL' )
 	{
 		if( apply_filters( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', FALSE ) ){
 			return FALSE;
 		}
 		global $wpdb;
-		$full_table_name = \EE_Registry::instance()->load_service( 'TableAnalysis' )->ensureTableNameHasPrefix( $tableName );
-		$columns = $this->getTableColumns($tableName);
+		$full_table_name = $this->table_analysis->ensureTableNameHasPrefix( $table_name );
+		$columns = $this->getTableColumns($table_name);
 		if( !in_array( $columnName, $columns)){
 			$alter_query="ALTER TABLE $full_table_name ADD $columnName $columnInfo";
 			return $wpdb->query($alter_query);
 		}
 		return TRUE;
 	}
-	
+
 	/**
 	 * Gets the name of all columns on teh table
-	 * @global type $wpdb
-	 * @param type $tableName
+	 * @global \wpdb $wpdb
+	 * @param string $table_name
 	 * @return array
 	 */
-	public function getTableColumns( $tableName ) 
+	public function getTableColumns( $table_name )
 	{
 		global $wpdb;
-		$tableName = $this->ensureTableNameHasPrefix( $tableName );
+		$table_name = $this->table_analysis->ensureTableNameHasPrefix( $table_name );
 		$fieldArray = array();
-		if ( ! empty( $tableName )) {
-			$columns = $wpdb->get_results("SHOW COLUMNS FROM $tableName ");
+		if ( ! empty( $table_name )) {
+			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
 			if ($columns !== FALSE) {
 				foreach( $columns as $column ){
 					$fieldArray[] = $column->Field;
@@ -58,61 +76,65 @@ class TableManager extends \EE_Base {
 		}
 		return $fieldArray;
 	}
-	
+
 	/**
 	 * Drops the specified table from the database
-	 * @global \WPDB $wpdb
-	 * @param type $tableName
+	 *
+	 * @global \wpdb $wpdb
+	 * @param string $table_name
 	 * @return int
 	 */
-	public function dropTable( $tableName )
+	public function dropTable( $table_name )
 	{
 		global $wpdb;
-		if (  \EE_Registry::instance()->load_service( 'TableAnalysis' )->table_exists( $tableName ) ) {
-			$tableName = \EE_Registry::instance()->load_service( 'TableAnalysis' )->ensureTableNameHasPrefix( $tableName );
-			return $wpdb->query( "DROP TABLE IF EXISTS $tableName" );
+		if (  $this->table_analysis->tableExists( $table_name ) ) {
+			$table_name = $this->table_analysis->ensureTableNameHasPrefix( $table_name );
+			return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * Drops the specified index from the specified table
-	 * @global \WPDB $wpdb
-	 * @param type $tableName
-	 * @param type $indexName
+	 *
+	 * @global \wpdb $wpdb
+	 * @param string $table_name
+	 * @param string $indexName
 	 * @return int
 	 */
-	public function dropIndex( $tableName, $indexName )
+	public function dropIndex( $table_name, $indexName )
 	{
 		if( apply_filters( 'FHEE__EEH_Activation__drop_index__short_circuit', FALSE ) ){
 			return FALSE;
 		}
 		global $wpdb;
-		$tableName = \EE_Registry::instance()->load_service( 'TableAnalysis' )->ensureTableNameHasPrefix( $tableName );
-		$index_exists_query = "SHOW INDEX FROM $tableName WHERE Key_name = '$indexName'";
+		$table_name = $this->table_analysis->ensureTableNameHasPrefix( $table_name );
+		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$indexName'";
 		if (
-			\EE_Registry::instance()->load_service( 'TableAnalysis' )->tableExists(  $tableName )
-			&& $wpdb->get_var( $index_exists_query ) === $tableName //using get_var with the $index_exists_query returns the table's name
+			$this->table_analysis->tableExists(  $table_name )
+			&& $wpdb->get_var( $index_exists_query ) === $table_name //using get_var with the $index_exists_query returns the table's name
 		) {
-			return $wpdb->query( "ALTER TABLE $tableName DROP INDEX $indexName" );
+			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $indexName" );
 		}
 		return 0;
 	}
-	
+
 	/**
 	 * Just creates the requested table
-	 * @param string $tableName 
+	 * @param string $table_name
 	 * @param string $createSql defining the table's columns and indexes
 	 * @param string $engine (no need to specify "ENGINE=", that's implied)
 	 * @return void
 	 * @throws \EE_Error
 	 */
-	public function createTable( $tableName, $createSql, $engine = 'MyISAM' )
+	public function createTable( $table_name, $createSql, $engine = 'MyISAM' )
 	{
 		// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
 		if ( preg_match( '((((.*?))(,\s))+)', $createSql, $valid_column_data ) ) {
-			$tableName = \EE_Registry::instance()->load_service( 'TableAnalysis' )->ensureTableNameHasPrefix( $tableName );
-			$SQL = "CREATE TABLE $tableName ( $createSql ) ENGINE=$engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+			$table_name = $this->table_analysis->ensureTableNameHasPrefix( $table_name );
+			$SQL = "CREATE TABLE $table_name ( $createSql ) ENGINE=$engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
+			/** @var \wpdb $wpdb */
+			global $wpdb;
 			//get $wpdb to echo errors, but buffer them. This way at least WE know an error
 			//happened. And then we can choose to tell the end user
 			$old_show_errors_policy = $wpdb->show_errors( TRUE );
