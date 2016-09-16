@@ -556,7 +556,7 @@ class EE_Html_messenger extends EE_messenger {
 			apply_filters( 'FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true )
 			&& ( $incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt' )
 		) {
-			$content .= \EEH_Template::powered_by_event_espresso( 'aln-cntr' );
+			$content .= \EEH_Template::powered_by_event_espresso( 'aln-cntr' ) . EEH_HTML::div( EEH_HTML::p('&nbsp;') );
 		}
 		return $content;
 	}
