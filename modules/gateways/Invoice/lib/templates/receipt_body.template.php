@@ -279,10 +279,6 @@ $tax_total_line_item;
 					<?php }?>
 				</table>
 				<?php } ?>
-
-				<?php if($shameless_plug){
-					echo \EEH_Template::powered_by_event_espresso( 'aln-cntr' );
-				} ?>
 			</div>
 		</div>
 	</div>
