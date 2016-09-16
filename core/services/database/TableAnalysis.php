@@ -16,31 +16,44 @@ namespace EventEspresso\core\services\database;
  */
 class TableAnalysis extends \EE_Base {
 	/**
-	 * Returns the table name which will definetely have the wpdb prefix on the front,
+	 * Returns the table name which will definitely have the wpdb prefix on the front,
 	 * except if it currently has the wpdb->base_prefix on the front, in which case
 	 * it will have the wpdb->base_prefix on it
-	 * @global \EventEspresso\core\services\database\type $wpdb
-	 * @param string $tableName
+	 *
+	 * @global \wpdb $wpdb
+	 * @param string $table_name
 	 * @return string $tableName, having ensured it has the wpdb prefix on the front
 	 */
-	public function ensureTableNameHasPrefix( $tableName ) 
+	public function ensureTableNameHasPrefix( $table_name )
 	{
 		global $wpdb;
-		return strpos( $tableName, $wpdb->base_prefix ) === 0 ? $tableName : $wpdb->prefix . $tableName;
+		return strpos( $table_name, $wpdb->base_prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
 	}
-	
-	public function tableIsEmpty( $tableName ) 
+
+
+
+	/**
+	 * @param $table_name
+	 * @return bool
+	 */
+	public function tableIsEmpty( $table_name )
 	{
 		global $wpdb;
-		$tableName = $this->ensureTableNameHasPrefix( $tableName );
-		if ( $this->table_exists( $tableName ) ) {
-			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $tableName" );
+		$table_name = $this->ensureTableNameHasPrefix( $table_name );
+		if ( $this->tableExists( $table_name ) ) {
+			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
 			return absint( $count ) === 0 ? true : false;
 		}
 		return false;
 	}
-	
-	public function tableExists( $tableName ) 
+
+
+
+	/**
+	 * @param $table_name
+	 * @return bool
+	 */
+	public function tableExists( $table_name )
 	{
 		global $wpdb, $EZSQL_ERROR;
 		$table_name = $this->ensureTableNameHasPrefix( $table_name );
