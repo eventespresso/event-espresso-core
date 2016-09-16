@@ -1595,10 +1595,9 @@ class EEH_Activation {
 						//only delete global EE tables when deleting the main site's tables
 						if ( strpos( $table->get_table_name(), 'esp_' )
 							&& 
-							( ! $table->is_global()
-								|| ! is_multisite()
-								|| is_main_site()
-								
+							( 
+								is_main_site()//main site? nuke them all
+								|| ! $table->is_global()//not main site,but not global either. nuke it
 							)
 						) {
 							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
