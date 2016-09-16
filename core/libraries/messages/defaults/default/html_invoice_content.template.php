@@ -118,6 +118,7 @@
 			</tr>
 		</tfoot>
 	</table>
+	<?php echo \EEH_Template::powered_by_event_espresso( 'aln-cntr' ); ?>
 </div>
 <div class="print_button_div noPrint">
 	[INVOICE_RECEIPT_SWITCHER_BUTTON] [DISPLAY_PDF_BUTTON]
