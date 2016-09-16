@@ -37,8 +37,8 @@ class EE_Brewing_Regular extends EE_Base {
 			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ));
 			// load caff init
 			add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'caffeinated_init' ));
-			// make it so the PDF receipt doesn't show our shameless plug
-			add_filter( 'FHEE_Invoice__send_invoice__shameless_plug', '__return_false' );
+			// remove the "powered by" credit link from receipts and invoices
+			add_filter( 'FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', '__return_false' );
 			// add caffeinated modules
 			add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
 			// load caff scripts
