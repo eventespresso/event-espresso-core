@@ -42,15 +42,14 @@ class EEH_Activation {
 
 	/**
 	 *    _ensure_table_name_has_prefix
-	 *
+	 * @deprecated instead use TableManager::ensureTableNameHasPrefix()
 	 * @access public
 	 * @static
 	 * @param $table_name
 	 * @return string
 	 */
 	public static function ensure_table_name_has_prefix( $table_name ) {
-		global $wpdb;
-		return strpos( $table_name, $wpdb->base_prefix ) === 0 ? $table_name : $wpdb->prefix . $table_name;
+		return EE_Registry::instance()->load_service( 'TableManager' )->ensureTableNameHasPrefix( $table_name );
 	}
 
 
@@ -626,9 +625,10 @@ class EEH_Activation {
 		}
 		/** @var WPDB $wpdb */
 		global $wpdb;
-		$wp_table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
+		$tableAnalysis = EE_Registry::instance()->load_service( 'TableAnalysis' );
+		$wp_table_name = $tableAnalysis->ensureTableNameHasPrefix( $table_name );
 		// do we need to first delete an existing version of this table ?
-		if ( $drop_pre_existing_table && EEH_Activation::table_exists( $wp_table_name ) ){
+		if ( $drop_pre_existing_table && $tableAnalysis->tableExists( $wp_table_name ) ){
 			// ok, delete the table... but ONLY if it's empty
 			$deleted_safely = EEH_Activation::delete_db_table_if_empty( $wp_table_name );
 			// table is NOT empty, are you SURE you want to delete this table ???
@@ -646,32 +646,8 @@ class EEH_Activation {
 								TRUE );
 			}
 		}
-		// does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
-		if ( preg_match( '((((.*?))(,\s))+)', $sql, $valid_column_data ) ) {
-			$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
-			//get $wpdb to echo errors, but buffer them. This way at least WE know an error
-			//happened. And then we can choose to tell the end user
-			$old_show_errors_policy = $wpdb->show_errors( TRUE );
-			$old_error_suppression_policy = $wpdb->suppress_errors( FALSE );
-			ob_start();
-			dbDelta( $SQL );
-			$output = ob_get_contents();
-			ob_end_clean();
-			$wpdb->show_errors( $old_show_errors_policy );
-			$wpdb->suppress_errors( $old_error_suppression_policy );
-			if( ! empty( $output ) ){
-				throw new EE_Error( $output	);
-			}
-		} else {
-			throw new EE_Error(
-				sprintf(
-					__( 'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s', 'event_espresso' ),
-					'<br />',
-					$sql
-				)
-			);
-		}
-
+		$engine = str_replace( 'ENGINE=', '', $engine );
+		EE_Registry::instance()->load_service( 'TableManager' )->createTable( $table_name, $sql, $engine );
 	}
 
 
@@ -700,25 +676,14 @@ class EEH_Activation {
 	 * get_fields_on_table
 	 * Gets all the fields on the database table.
 	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@param string $table_name, without prefixed $wpdb->prefix
-	 * 	@return array of database column names
+	 * @access public
+	 * @deprecated instead use EventEspresso\core\services\database\TableManager::getTableColumns()
+	 * @static
+	 * @param string $table_name, without prefixed $wpdb->prefix
+	 * @return array of database column names
 	 */
 	public static function get_fields_on_table( $table_name = NULL ) {
-		global $wpdb;
-		$table_name= EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		if ( ! empty( $table_name )) {
-			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
-			if ($columns !== FALSE) {
-				$field_array = array();
-				foreach($columns as $column ){
-					$field_array[] = $column->Field;
-				}
-				return $field_array;
-			}
-		}
-		return array();
+		return EE_Registry::instance()->load_service( 'TableManager' )->getTableColumns( $table_name );
 	}
 
 
@@ -726,19 +691,14 @@ class EEH_Activation {
 	/**
 	 * db_table_is_empty
 	 *
-	 * @access public
+	 * @access public\
+	 * @deprecated instead use EventEspresso\core\services\database\TableAnalysis::tableIsEmpty()
 	 * @static
 	 * @param string $table_name
 	 * @return bool
 	 */
 	public static function db_table_is_empty( $table_name ) {
-		global $wpdb;
-		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		if ( EEH_Activation::table_exists( $table_name ) ) {
-			$count = $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
-			return absint( $count ) === 0 ? true : false;
-		}
-		return false;
+		return EE_Registry::instance()->load_service( 'TableAnalysis' )->tableIsEmpty( $table_name );
 	}
 
 
@@ -752,8 +712,8 @@ class EEH_Activation {
 	 * @return bool | int
 	 */
 	public static function delete_db_table_if_empty( $table_name ) {
-		if ( EEH_Activation::db_table_is_empty( $table_name ) ) {
-			return EEH_Activation::delete_unused_db_table( $table_name );
+		if ( EE_Registry::instance()->load_service( 'TableAnalysis' )->tableIsEmpty( $table_name ) ) {
+			return EE_Registry::instance()->load_service( 'TableManager' )->dropTable( $table_name );
 		}
 		return false;
 	}
@@ -765,16 +725,12 @@ class EEH_Activation {
 	 *
 	 * @access public
 	 * @static
+	 * @deprecated instead use EventEspresso\core\services\database\TableManager::dropTable()
 	 * @param string $table_name
 	 * @return bool | int
 	 */
 	public static function delete_unused_db_table( $table_name ) {
-		global $wpdb;
-		if ( EEH_Activation::table_exists( $table_name ) ) {
-			$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
-			return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
-		}
-		return false;
+		return EE_Registry::instance()->load_service( 'TableManager' )->dropTable( $table_name );
 	}
 
 
@@ -784,24 +740,13 @@ class EEH_Activation {
 	 *
 	 * @access public
 	 * @static
+	 * @deprecated instead use EventEspresso\core\services\database\TableManager::dropIndex()
 	 * @param string $table_name
 	 * @param string $index_name
 	 * @return bool | int
 	 */
 	public static function drop_index( $table_name, $index_name ) {
-		if( apply_filters( 'FHEE__EEH_Activation__drop_index__short_circuit', FALSE ) ){
-			return FALSE;
-		}
-		global $wpdb;
-		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		$index_exists_query = "SHOW INDEX FROM $table_name WHERE Key_name = '$index_name'";
-		if (
-			EEH_Activation::table_exists(  $table_name )
-			&& $wpdb->get_var( $index_exists_query ) === $table_name //using get_var with the $index_exists_query returns the table's name
-		) {
-			return $wpdb->query( "ALTER TABLE $table_name DROP INDEX $index_name" );
-		}
-		return TRUE;
+		return EE_Registry::instance()->load_service( 'TableManager' )->dropIndex( $table_name, $index_name );
 	}
 
 
@@ -1728,49 +1673,12 @@ class EEH_Activation {
 	/**
 	 * Checks that the database table exists. Also works on temporary tables (for unit tests mostly).
 	 * @global wpdb $wpdb
+	 * @deprecated instead use EventEspresso\core\services\database\TableAnalysis::tableExists()
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @return boolean
 	 */
 	public static function table_exists( $table_name ){
-		global $wpdb, $EZSQL_ERROR;
-		$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
-		//ignore if this causes an sql error
-		$old_error = $wpdb->last_error;
-		$old_suppress_errors = $wpdb->suppress_errors();
-		$old_show_errors_value = $wpdb->show_errors( FALSE );
-		$ezsql_error_cache = $EZSQL_ERROR;
-		$wpdb->get_results( "SELECT * from $table_name LIMIT 1");
-		$wpdb->show_errors( $old_show_errors_value );
-		$wpdb->suppress_errors( $old_suppress_errors );
-		$new_error = $wpdb->last_error;
-		$wpdb->last_error = $old_error;
-		$EZSQL_ERROR = $ezsql_error_cache;
-		//if there was a table doesn't exist error
-		if( ! empty( $new_error ) ) {
-			if(
-				in_array(
-					EEH_Activation::last_wpdb_error_code(),
-					array(
-						1051, //bad table
-						1109, //unknown table
-						117, //no such table
-					)
-				)
-				||
-				preg_match( '~^Table .* doesn\'t exist~', $new_error ) //in case not using mysql and error codes aren't reliable, just check for this error string
-			) {
-				return false;
-			} else {
-				//log this because that's weird. Just use the normal PHP error log
-				error_log(
-					sprintf(
-						__( 'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)', 'event_espresso' ),
-					$new_error
-					)
-				);
-			}
-		}
-		return true;
+		return EE_Registry::instance()->load_service( 'TableAnalysis' )->tableExists( $table_name );
 	}
 
 	/**

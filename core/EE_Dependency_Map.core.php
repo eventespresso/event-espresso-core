@@ -487,7 +487,8 @@ class EE_Dependency_Map {
 			'CancelRegistrationAndTicketLineItemCommandHandler'                   => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
 			'UpdateRegistrationAndTransactionAfterChangeCommandHandler'           => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
 			'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
-			'TableManager'                                                        => '\EventEspresso\core\services\database\TableManager',
+			'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
+			'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis', 
 		);
 	}
 
