@@ -131,7 +131,6 @@
 					<td class="venue-details-part venue-image-dv">[GOOGLE_MAP_IMAGE]</td>
 				</tr>
 			</table>
-			<?php echo \EEH_Template::powered_by_event_espresso( 'aln-cntr' ); ?>
 		</div>
 	</div>
 </div>
