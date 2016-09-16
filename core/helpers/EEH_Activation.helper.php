@@ -1592,7 +1592,7 @@ class EEH_Activation {
 				$model_obj = call_user_func( array( $model_name, 'instance' ));
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
-						//only nuke non-global EE tables; unless its the main site
+						//only delete global EE tables when deleting the main site's tables
 						if ( strpos( $table->get_table_name(), 'esp_' )
 							&& 
 							( ! $table->is_global()
