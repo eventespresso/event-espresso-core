@@ -53,7 +53,12 @@ class EE_Html_messenger extends EE_messenger  {
 			'plural' => __('html', 'event_espresso')
 			);
 		$this->activate_on_install = TRUE;
-
+		// add the "powered by EE" credit link to the HTML receipt and invoice
+		add_filter(
+			'FHEE__EE_Html_messenger___send_message__main_body',
+			array( $this, 'add_powered_by_credit_link_to_receipt_and_invoice' ),
+			10, 3
+		);
 		parent::__construct();
 	}
 
@@ -372,12 +377,43 @@ class EE_Html_messenger extends EE_messenger  {
 	 */
 	protected function _send_message() {
 		$this->_template_args = array(
-			'page_title' => html_entity_decode( stripslashes( $this->_subject ), ENT_QUOTES, "UTF-8"),
-			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
-			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
-			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
-			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
-			);
+			'page_title' => html_entity_decode( stripslashes( $this->_subject ), ENT_QUOTES, "UTF-8" ),
+			'base_css'   => $this->get_variation(
+				$this->_tmp_pack,
+				$this->_incoming_message_type->name,
+				true,
+				'base',
+				$this->_variation
+			),
+			'print_css'  => $this->get_variation(
+				$this->_tmp_pack,
+				$this->_incoming_message_type->name,
+				true,
+				'print',
+				$this->_variation
+			),
+			'main_css'   => $this->get_variation(
+				$this->_tmp_pack,
+				$this->_incoming_message_type->name,
+				true,
+				'main',
+				$this->_variation
+			),
+			'main_body' => wpautop(
+				stripslashes_deep(
+					html_entity_decode(
+						apply_filters(
+							'FHEE__EE_Html_messenger___send_message__main_body',
+							$this->_content,
+							$this->_content,
+							$this->_incoming_message_type
+						),
+						ENT_QUOTES,
+						"UTF-8"
+					)
+				)
+			),
+		);
 
 		$this->_deregister_wp_hooks();
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
@@ -434,4 +470,29 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	protected function _set_admin_settings_fields() {}
+
+
+
+	/**
+	 * add the "powered by EE" credit link to the HTML receipt and invoice
+	 *
+	 * @param string           $content
+	 * @param string           $content
+	 * @param \EE_message_type $incoming_message_type
+	 * @return string
+	 */
+	public function add_powered_by_credit_link_to_receipt_and_invoice(
+		$content = '',
+		$content = '',
+		EE_message_type $incoming_message_type
+	) {
+		if (
+			apply_filters( 'FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true )
+			&& ( $incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt' )
+		) {
+			$content .= \EEH_Template::powered_by_event_espresso( 'aln-cntr' );
+		}
+		return $content;
+	}
+
 }
