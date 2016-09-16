@@ -250,17 +250,11 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		);
 	}
 	
-	/**
-	 * @group current
-	 */
 	function test_table_exists__success() {
 		$this->assertTrue( EEH_Activation::table_exists( 'posts' ) );
 		$this->assertTrue( EEH_Activation::table_exists( 'esp_attendee_meta' ) );
 	}
 	
-	/**
-	 * @group current
-	 */
 	function test_table_exists__false() {
 		$this->assertFalse( EEH_Activation::table_exists( 'monkeys' ) );
 	}

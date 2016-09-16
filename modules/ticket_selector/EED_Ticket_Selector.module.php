@@ -42,6 +42,14 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	private static $_available_spaces = array();
 
+	/**
+	* max attendees that can register for event at one time
+	*
+	* @access private
+	* @var int
+	*/
+	private static $_max_atndz = EE_INF;
+
 
 
 
@@ -334,7 +342,11 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
+		\EED_Ticket_Selector::$_max_atndz = apply_filters(
+			'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets',
+			self::$_event->additional_limit()
+		);
+		$template_args['max_atndz'] = \EED_Ticket_Selector::$_max_atndz;
 		if ( $template_args['max_atndz'] < 1 ) {
 			$sales_closed_msg = __( 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.', 'event_espresso' );
 			if ( current_user_can( 'edit_post', self::$_event->ID() )) {
@@ -422,18 +434,44 @@ class EED_Ticket_Selector extends  EED_Module {
 				$btn_text = apply_filters(
 					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
 					__('Register Now', 'event_espresso' ),
-					self::$_event
+					EED_Ticket_Selector::$_event
 				);
-				$external_url = self::$_event->external_url();
-				$html = '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"';
+				$external_url = EED_Ticket_Selector::$_event->external_url();
+				$html = '<input id="ticket-selector-submit-'. EED_Ticket_Selector::$_event->ID() .'-btn"';
 				$html .= ' class="ticket-selector-submit-btn ';
 				$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
 				$html .= ' type="submit" value="' . $btn_text . '" />';
-				$html .= apply_filters( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', self::$_event );
+				$html .= apply_filters(
+					'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+					'',
+					EED_Ticket_Selector::$_event
+				);
 				$html .= '<div class="clear"><br/></div></form>';
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
+			} else if (
+				EED_Ticket_Selector::$_event instanceof EE_Event
+				// if $_max_atndz === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+				&& EED_Ticket_Selector::$_max_atndz === 1
+				// and the event is sold out
+				&& EED_Ticket_Selector::$_event->is_sold_out()
+			) {
+				// then instead of a View Details or Submit button, just display a "Sold Out" message
+				$html = apply_filters(
+					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
+					sprintf(
+						__( '%1$s"%2$s" is currently sold out. Please check back again later, as spots may become available.%3$s', 'event_espresso' ),
+						'<p class="no-ticket-selector-msg important-notice">',
+						EED_Ticket_Selector::$_event->name(),
+						'</p>'
+					),
+					EED_Ticket_Selector::$_event
+				);
+				$html .= '<div class="clear"></div></form>';
+				return $html;
+			} else {
+				return '<div class="clear"></div></form>';
 			}
 		}
 		return '';
@@ -486,11 +524,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * 	process_ticket_selections
 	 *
 	 *	@access public
-	 * 	@access 		public
-	 * 	@return		array  or FALSE
+	 * 	@return array|boolean
 	 */
 	public function process_ticket_selections() {
-		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
+        do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! is_admin() && ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' ))) {
 			EE_Error::add_error(
@@ -914,6 +951,9 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	/**
+	 * @return string
+	 */
 	public static function no_tkt_slctr_end_dv() {
 		return '<div class="clear"></div></div>';
 	}

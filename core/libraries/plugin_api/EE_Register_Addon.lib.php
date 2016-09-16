@@ -191,6 +191,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'version' 								=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
 			// the minimum version of EE Core that the addon will work with
 			'min_core_version' 			=> isset( $setup_args['min_core_version'] ) ? (string)$setup_args['min_core_version'] : '',
+			// the minimum version of WordPress that the addon will work with
+			'min_wp_version' 			=> isset( $setup_args['min_wp_version'] ) ? (string)$setup_args['min_wp_version'] : EE_MIN_WP_VER_REQUIRED,
 			// full server path to main file (file loaded directly by WP)
 			'main_file_path' 					=> isset( $setup_args['main_file_path'] ) ? (string)$setup_args['main_file_path'] : '',
 			// path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
@@ -237,6 +239,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// full server path to main file (file loaded directly by WP)
 		$addon_settings['plugin_basename'] = plugin_basename( $addon_settings[ 'main_file_path' ] );
 
+		global $wp_version;
 		//check whether this addon version is compatible with EE core
 		if ( isset( EE_Register_Addon::$_incompatible_addons[ $addon_name ] ) &&
 				! self::_meets_min_core_version_requirement( EE_Register_Addon::$_incompatible_addons[ $addon_name ], $addon_settings[ 'version' ] ) ) {
@@ -246,14 +249,27 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				'<br />',
 				EE_Register_Addon::$_incompatible_addons[ $addon_name ]
 			);
-		} else if ( ! self::_meets_min_core_version_requirement( $setup_args[ 'min_core_version' ], espresso_version() ) ) {
+		} else if ( ! self::_meets_min_core_version_requirement( $addon_settings[ 'min_core_version' ], espresso_version() ) ) {
 			$incompatibility_message = sprintf(
-				__( 'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".', 'event_espresso' ),
+				__(
+					'The Event Espresso "%1$s" addon could not be activated because it requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-attempt activating "%1$s".',
+					'event_espresso'
+				),
 				$addon_name,
-				self::_effective_version( $setup_args[ 'min_core_version' ] ),
+				self::_effective_version( $addon_settings[ 'min_core_version' ] ),
 				self::_effective_version( espresso_version() ),
 				'<br />'
 			);
+		} else if (version_compare( $wp_version, $addon_settings['min_wp_version'], '<' )) {
+			$incompatibility_message = sprintf(
+				__(
+					'The Event Espresso "%1$s" addon could not be activated because it requires WordPress version "%2$s" or greater.%3$sPlease update your version of WordPress to use the "%1$s" addon and to keep your site secure.',
+					'event_espresso'
+				),
+				$addon_name,
+				$addon_settings['min_wp_version'],
+				'<br />'
+			);;
 		} else {
 			$incompatibility_message = '';
 		}

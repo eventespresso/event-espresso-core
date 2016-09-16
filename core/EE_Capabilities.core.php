@@ -363,8 +363,170 @@ final class EE_Capabilities extends EE_Base {
 				'ee_manage_event_types',
 				'ee_edit_event_type',
 				'ee_delete_event_type',
-				)
-			);
+				),
+			'ee_events_administrator' => array(
+			//core wp caps
+				'read',
+				'read_private_pages',
+				'read_private_posts',
+				'edit_users',
+				'edit_posts',
+				'edit_pages',
+				'edit_published_posts',
+				'edit_published_pages',
+				'edit_private_pages',
+				'edit_private_posts',
+				'edit_others_posts',
+				'edit_others_pages',
+				'publish_posts',
+				'publish_pages',
+				'delete_posts',
+				'delete_pages',
+				'delete_private_pages',
+				'delete_private_posts',
+				'delete_published_pages',
+				'delete_published_posts',
+				'delete_others_posts',
+				'delete_others_pages',
+				'manage_categories',
+				'manage_links',
+				'moderate_comments',
+				'unfiltered_html',
+				'upload_files',
+				'export',
+				'import',
+				'list_users',
+				'level_1', //required if user with this role shows up in author dropdowns
+			//basic ee access
+				'ee_read_ee',
+				//events
+				'ee_publish_events',
+				'ee_read_private_events',
+				'ee_read_others_events',
+				'ee_read_event',
+				'ee_read_events',
+				'ee_edit_event',
+				'ee_edit_events',
+				'ee_edit_published_events',
+				'ee_edit_others_events',
+				'ee_edit_private_events',
+				'ee_delete_published_events',
+				'ee_delete_private_events',
+				'ee_delete_event',
+				'ee_delete_events',
+				'ee_delete_others_events',
+				//event categories
+				'ee_manage_event_categories',
+				'ee_edit_event_category',
+				'ee_delete_event_category',
+				'ee_assign_event_category',
+				//venues
+				'ee_publish_venues',
+				'ee_read_venue',
+				'ee_read_venues',
+				'ee_read_others_venues',
+				'ee_read_private_venues',
+				'ee_edit_venue',
+				'ee_edit_venues',
+				'ee_edit_others_venues',
+				'ee_edit_published_venues',
+				'ee_edit_private_venues',
+				'ee_delete_venue',
+				'ee_delete_venues',
+				'ee_delete_others_venues',
+				'ee_delete_private_venues',
+				'ee_delete_published_venues',
+				//venue categories
+				'ee_manage_venue_categories',
+				'ee_edit_venue_category',
+				'ee_delete_venue_category',
+				'ee_assign_venue_category',
+				//contacts
+				'ee_read_contact',
+				'ee_read_contacts',
+				'ee_edit_contact',
+				'ee_edit_contacts',
+				'ee_delete_contact',
+				'ee_delete_contacts',
+				//registrations
+				'ee_read_registration',
+				'ee_read_registrations',
+				'ee_read_others_registrations',
+				'ee_edit_registration',
+				'ee_edit_registrations',
+				'ee_edit_others_registrations',
+				'ee_delete_registration',
+				'ee_delete_registrations',
+				//checkins
+				'ee_read_checkin',
+				'ee_read_others_checkins',
+				'ee_read_checkins',
+				'ee_edit_checkin',
+				'ee_edit_checkins',
+				'ee_edit_others_checkins',
+				'ee_delete_checkin',
+				'ee_delete_checkins',
+				'ee_delete_others_checkins',
+				//transactions && payments
+				'ee_read_transaction',
+				'ee_read_transactions',
+				'ee_edit_payments',
+				'ee_delete_payments',
+				//messages
+				'ee_read_message',
+				'ee_read_messages',
+				'ee_read_others_messages',
+				'ee_read_global_messages',
+				'ee_edit_global_messages',
+				'ee_edit_message',
+				'ee_edit_messages',
+				'ee_edit_others_messages',
+				'ee_delete_message',
+				'ee_delete_messages',
+				'ee_delete_others_messages',
+				'ee_delete_global_messages',
+				'ee_send_message',
+				//tickets
+				'ee_read_default_ticket',
+				'ee_read_default_tickets',
+				'ee_read_others_default_tickets',
+				'ee_edit_default_ticket',
+				'ee_edit_default_tickets',
+				'ee_edit_others_default_tickets',
+				'ee_delete_default_ticket',
+				'ee_delete_default_tickets',
+				'ee_delete_others_default_tickets',
+				//prices
+				'ee_edit_default_price',
+				'ee_edit_default_prices',
+				'ee_delete_default_price',
+				'ee_delete_default_prices',
+				'ee_edit_default_price_type',
+				'ee_edit_default_price_types',
+				'ee_delete_default_price_type',
+				'ee_delete_default_price_types',
+				'ee_read_default_prices',
+				'ee_read_default_price_types',
+				//registration form
+				'ee_edit_question',
+				'ee_edit_questions',
+				'ee_edit_system_questions',
+				'ee_read_questions',
+				'ee_delete_question',
+				'ee_delete_questions',
+				'ee_edit_question_group',
+				'ee_edit_question_groups',
+				'ee_read_question_groups',
+				'ee_edit_system_question_groups',
+				'ee_delete_question_group',
+				'ee_delete_question_groups',
+				//event_type taxonomy
+				'ee_assign_event_type',
+				'ee_manage_event_types',
+				'ee_edit_event_type',
+				'ee_delete_event_type',
+			)
+		);
 
 		$caps = apply_filters( 'FHEE__EE_Capabilities__init_caps_map__caps', $caps );
 		return $caps;
@@ -394,8 +556,9 @@ final class EE_Capabilities extends EE_Base {
 			foreach ( $caps_for_role as $cap ) {
 				//first check we haven't already added this cap before, or it's a reset
 				if ( $reset || ! isset( $caps_set_before[ $role ] ) || ! in_array( $cap, $caps_set_before[ $role ] ) ) {
-					$this->add_cap_to_role( $role, $cap );
-					$caps_set_before[ $role ][] = $cap;
+					if ( $this->add_cap_to_role( $role, $cap ) ) {
+						$caps_set_before[ $role ][] = $cap;
+					}
 				}
 			}
 		}
@@ -419,13 +582,25 @@ final class EE_Capabilities extends EE_Base {
 	 * @param string $role  A WordPress role the capability is being added to
 	 * @param string $cap   The capability being added to the role
 	 * @param bool $grant  Whether to grant access to this cap on this role.
-	 * @return void
+	 * @return bool
 	 */
 	public function add_cap_to_role( $role, $cap, $grant = true ) {
-		$role = get_role( $role );
-		if ( $role instanceof WP_Role ) {
-			$role->add_cap( $cap, $grant );
+		$role_object = get_role( $role );
+		//if the role isn't available then we create it.
+		if ( ! $role_object instanceof WP_Role ) {
+			//if a plugin wants to create a specific role name then they should create the role before
+			//EE_Capabilities does.  Otherwise this function will create the role name from the slug:
+			// - removes any `ee_` namespacing from the start of the slug.
+			// - replaces `_` with ` ` (empty space).
+			// - sentence case on the resulting string.
+			$role_label = ucwords( str_replace( '_', ' ', str_replace( 'ee_', '', $role ) ) );
+			$role_object = add_role( $role, $role_label );
 		}
+		if ( $role_object instanceof WP_Role ) {
+			$role_object->add_cap( $cap, $grant );
+			return true;
+		}
+		return false;
 	}
 
 
@@ -739,8 +914,16 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 				}
 			}
 		} else {
-			//not a cpt object so handled differently
-			if ( method_exists( $obj, 'wp_user' ) && $obj->wp_user() && $user_id == $obj->wp_user() ) {
+            //not a cpt object so handled differently
+            $has_cap = false;
+            try {
+                $has_cap = method_exists($obj, 'wp_user') && $obj->wp_user() && $user_id == $obj->wp_user();
+            } catch (Exception $e) {
+                if (WP_DEBUG) {
+                    EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+                }
+            }
+			if ($has_cap) {
 				$caps[] = $cap;
 			} else {
 				if ( ! empty( $this->others_cap ) ) {
@@ -846,8 +1029,16 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 				$caps[] = $cap;
 			}
 		} else {
-			//not a cpt object so handled differently
-			if ( method_exists( $obj, 'wp_user' ) && $obj->wp_user() && $user_id == $obj->wp_user() ) {
+            //not a cpt object so handled differently
+            $has_cap = false;
+            try {
+                $has_cap = method_exists($obj, 'wp_user') && $obj->wp_user() && $user_id == $obj->wp_user();
+            } catch (Exception $e) {
+                if (WP_DEBUG) {
+                    EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+                }
+            }
+			if ($has_cap) {
 				$caps[] = $cap;
 			} elseif ( ! empty( $this->private_cap ) ) {
 				$caps[] = $this->private_cap;

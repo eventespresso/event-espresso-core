@@ -1184,7 +1184,7 @@ class EEH_Activation {
 
 			$table_name = EEM_Status::instance()->table();
 
-			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
+			$SQL = "DELETE FROM $table_name WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'RWL', 'TAB', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN', 'RIC', 'MSN', 'MFL', 'MID', 'MRS', 'MIC' );";
 			$wpdb->query($SQL);
 
 			$SQL = "INSERT INTO $table_name
@@ -1207,6 +1207,7 @@ class EEH_Activation {
 					('RDC', 'DECLINED', 'registration', 0, NULL, 0),
 					('RNA', 'NOT_APPROVED', 'registration', 0, NULL, 1),
 					('RIC', 'INCOMPLETE', 'registration', 0, NULL, 1),
+					('RWL', 'WAIT_LIST', 'registration', 0, NULL, 1),
 					('TFL', 'FAILED', 'transaction', 0, NULL, 0),
 					('TAB', 'ABANDONED', 'transaction', 0, NULL, 0),
 					('TIN', 'INCOMPLETE', 'transaction', 0, NULL, 1),

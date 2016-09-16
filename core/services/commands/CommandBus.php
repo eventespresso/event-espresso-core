@@ -109,13 +109,6 @@ class CommandBus implements CommandBusInterface
         $middleware = function ($command) {
             // do nothing, just need an empty shell to pass along as the last middleware
         };
-
-	    /**
-	     * Note: Do not use this filter, it is experimental and likely will be removed/changed.
-	     * @fixes https://events.codebasehq.com/projects/event-espresso/tickets/9944
-	     */
-		$this->command_bus_middleware = apply_filters( 'FHEE__EventEspresso_core_services_commands_CommandBus__command_bus_middleware', $this->command_bus_middleware );
-
         while ($command_bus_middleware = array_pop($this->command_bus_middleware)) {
             if ( ! $command_bus_middleware instanceof CommandBusMiddlewareInterface) {
                 throw new InvalidCommandBusMiddlewareException($command_bus_middleware);

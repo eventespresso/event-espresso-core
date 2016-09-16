@@ -1,4 +1,9 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+use \EventEspresso\core\exceptions\SendMessageException;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 
 /**
  * This class is used for managing and interacting with the EE_messages Queue.  An instance
@@ -617,17 +622,29 @@ class EE_Messages_Queue {
 	/**
 	 * Executes the send method on the provided messenger
 	 *
-*@param EE_Message            $message
+	 * EE_Messengers are expected to:
+	 * - return true if the send was successful.
+	 * - return false if the send was unsuccessful but can be tried again.
+	 * - throw an Exception if the send was unsuccessful and cannot be tried again.
+	 *
+	 * @param EE_Message            $message
 	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
+	 *
 	 * @return bool true means all went well, false means, not so much.
 	 */
 	protected function _do_send( EE_Message $message, EE_messenger $messenger, EE_message_type $message_type ) {
-		if ( $messenger->send_message( $message, $message_type ) ) {
-			$message->set_STS_ID( EEM_Message::status_sent );
-			return true;
-		} else {
-			$message->set_STS_ID( EEM_Message::status_retry );
+		try {
+			if ( $messenger->send_message( $message, $message_type ) ) {
+				$message->set_STS_ID( EEM_Message::status_sent );
+				return true;
+			} else {
+				$message->set_STS_ID( EEM_Message::status_retry );
+				return false;
+			}
+		} catch( SendMessageException $e ) {
+			$message->set_STS_ID( EEM_Message::status_failed );
+			$message->set_error_message( $e->getMessage() );
 			return false;
 		}
 	}

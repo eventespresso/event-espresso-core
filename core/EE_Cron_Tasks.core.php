@@ -338,7 +338,7 @@ class EE_Cron_Tasks extends EE_Base {
 				// verify transaction
 				if ( $transaction instanceof EE_Transaction ) {
 					// don't finalize the TXN if it has already been completed
-					if ( $transaction_processor->all_reg_steps_completed( $transaction ) === true ) {
+					if ( $transaction->all_reg_steps_completed() === true ) {
 						continue;
 					}
 					// let's simulate an IPN here which will trigger any notifications that need to go out

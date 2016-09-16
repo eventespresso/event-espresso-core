@@ -2,6 +2,7 @@
 namespace EventEspresso\core\services\commands\registration;
 
 use EventEspresso\core\domain\services\capabilities\CapCheck;
+use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
 use EventEspresso\core\services\commands\CommandRequiresCapCheckInterface;
@@ -90,11 +91,14 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
 
 
     /**
-     * @return \EventEspresso\core\domain\services\capabilities\CapCheck
+     * @return \EventEspresso\core\domain\services\capabilities\CapCheckInterface
      */
     public function getCapCheck()
     {
-        return new CapCheck('ee_edit_registrations', 'create_new_registration');
+        if ( ! $this->cap_check instanceof CapCheckInterface) {
+            return new CapCheck('ee_edit_registrations', 'create_new_registration');
+        }
+        return $this->cap_check;
     }
 
 

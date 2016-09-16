@@ -42,6 +42,7 @@ class CoffeeShopTest extends EE_UnitTestCase
      */
     public function setUp()
     {
+    	parent::setUp();
         // instantiate the container
         $this->CoffeeShop = new CoffeeShop();
         // create a dependency injector class for resolving class constructor arguments
