@@ -213,13 +213,13 @@ class Read extends Base {
 		}
 		return $nice_results;
 	}
-	
+
 	/**
-	 * 
+
 	 * @param array $primary_model_query_params query params for finding the item from which relations will be based
-	 * @param \EE_Model_Relation $relation
-	 * @param \WP_Request $request
-	 * @return \WP_Error|
+	 * @param \EE_Model_Relation_Base $relation
+	 * @param \WP_REST_Request $request
+	 * @return \WP_Error|array
 	 */
 	protected function _get_entities_from_relation( $primary_model_query_params, $relation, $request ) {
 		$context = $this->validate_context( $request->get_param( 'caps' ));
@@ -229,7 +229,7 @@ class Read extends Base {
 			$primary_model_query_params[0] = array();
 		}
 		//check if they can access the 1st model object
-		$primary_model_query_params = array( 
+		$primary_model_query_params = array(
 			0 => $primary_model_query_params[0],
 			'limit' => 1
 		);
@@ -310,34 +310,37 @@ class Read extends Base {
 		}
 	}
 
+
+
 	/**
 	 * Gets the collection for given relation object
 	 * The same as Read::get_entities_from_model(), except if the relation
 	 * is a HABTM relation, in which case it merges any non-foreign-key fields from
 	 * the join-model-object into the results
 	 *
-	 * @param string $id the ID of the thing we are fetching related stuff from
+	 * @param string                  $id the ID of the thing we are fetching related stuff from
 	 * @param \EE_Model_Relation_Base $relation
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request        $request
 	 * @return array|\WP_Error
+	 * @throws \EE_Error
 	 */
 	public function get_entities_from_relation( $id, $relation, $request ) {
 		if( ! $relation->get_this_model()->has_primary_key_field() ) {
-			throw new \EE_Error( 
-				sprintf( 
-					__( 'Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s', 'event_espresso'), 
-					$relation->get_this_model()->get_this_model_name() 
-				) 
+			throw new \EE_Error(
+				sprintf(
+					__( 'Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s', 'event_espresso'),
+					$relation->get_this_model()->get_this_model_name()
+				)
 			);
 		}
-		return $this->_get_entities_from_relation( 
+		return $this->_get_entities_from_relation(
 			array(
-				array( 
-					$relation->get_this_model()->primary_key_name() => $id 
+				array(
+					$relation->get_this_model()->primary_key_name() => $id
 				)
-			), 
-			$relation, 
-			$request 
+			),
+			$relation,
+			$request
 		);
 	}
 
@@ -416,7 +419,7 @@ class Read extends Base {
 			$model,
 			$rest_request->get_param( 'caps' ),
 			$this->get_model_version_info(),
-			$model->get_index_primary_key_string( 
+			$model->get_index_primary_key_string(
 				$model->deduce_fields_n_values_from_cols_n_values($db_row )
 			)
 		);
