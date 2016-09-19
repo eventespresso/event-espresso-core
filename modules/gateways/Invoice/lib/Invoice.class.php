@@ -3,7 +3,7 @@
 /**
  * Class Invoice
  *
- * @deprecated 4.9.12
+ * @deprecated 4.9.13
  * @package       Event Espresso
  */
 class Invoice {
@@ -30,7 +30,7 @@ class Invoice {
 	/**
 	 * Invoice constructor.
 	 *
-	 * @deprecated 4.9.12
+	 * @deprecated 4.9.13
 	 * @param int $url_link
 	 */
 	public function __construct($url_link = 0) {
