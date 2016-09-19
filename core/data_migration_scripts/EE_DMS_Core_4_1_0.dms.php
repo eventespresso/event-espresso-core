@@ -382,7 +382,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		EEH_Activation::getTableManager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
