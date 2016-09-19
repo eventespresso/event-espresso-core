@@ -532,7 +532,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$ticket_table = $wpdb->prefix."esp_ticket";
-		if ( EEH_Activation::table_exists( $ticket_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $ticket_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
 			$tickets_exist = $wpdb->get_var($SQL);
@@ -547,7 +547,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 		}
 		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
 
-		if ( EEH_Activation::table_exists( $ticket_price_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $ticket_price_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
 			$ticket_prc_exist = $wpdb->get_var($SQL);

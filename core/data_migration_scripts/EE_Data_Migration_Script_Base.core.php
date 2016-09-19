@@ -72,7 +72,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
 	 * it's passed a string like '3.1.38B', it should return true.
 	 * If this DMS is to migrate data from an EE3 addon, you will probably want to use
-	 * EEH_Activation::table_exists() to check for old EE3 tables, and
+	 * EEH_Activation::getTableAnalysis()->tableExists() to check for old EE3 tables, and
 	 * EE_Data_Migration_Manager::get_migration_ran() to check that core was already
 	 * migrated from EE3 to EE4 (ie, this DMS probably relies on some migration data generated
 	 * during the Core 4.1.0 DMS. If core didn't run that DMS, you probably don't want
@@ -447,7 +447,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	protected function _old_table_exists( $table_name ) {
-		return EEH_Activation::table_exists( $table_name );
+		return EEH_Activation::getTableAnalysis()->tableExists( $table_name );
 	}
 
 

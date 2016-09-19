@@ -255,7 +255,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		//and the table hasn't actually been created, this could have an error
 		/** @type WPDB $wpdb */
 		global $wpdb;
-		if( EEH_Activation::table_exists( $wpdb->prefix . 'esp_status' ) ){
+		if( EEH_Activation::getTableAnalysis()->tableExists( $wpdb->prefix . 'esp_status' ) ){
 			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
 			$results = $wpdb->get_results( $SQL );
 			self::$_reg_status = array();

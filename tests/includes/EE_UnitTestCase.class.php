@@ -890,7 +890,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
 	function assertTableExists($table_name,$model_name = 'Unknown'){
-		if( ! EEH_Activation::table_exists( $table_name ) ){
+		if( ! EEH_Activation::getTableAnalysis()->tableExists( $table_name ) ){
 			global $wpdb;
 			$this->fail( $wpdb->last_error);
 		}
@@ -905,7 +905,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @param string $model_name the model's name (only used for error reporting)
 	 */
 	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
-		if( EEH_Activation::table_exists( $table_name ) ){
+		if( EEH_Activation::getTableAnalysis()->tableExists( $table_name ) ){
 			$this->fail(
 				sprintf(
 					__( 'Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso' ),

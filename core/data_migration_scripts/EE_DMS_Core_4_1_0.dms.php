@@ -557,7 +557,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
-		if ( EEH_Activation::table_exists( $state_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $state_table ) ) {
 
 			$SQL = "SELECT COUNT('STA_ID') FROM " . $state_table;
 			$states = $wpdb->get_var($SQL);
@@ -649,7 +649,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
-		if ( EEH_Activation::table_exists( $country_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $country_table ) ) {
 
 			$SQL = "SELECT COUNT('CNT_ISO') FROM " . $country_table;
 			$countries = $wpdb->get_var($SQL);
@@ -901,7 +901,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_type_table = $wpdb->prefix."esp_price_type";
 
-		if ( EEH_Activation::table_exists( $price_type_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
 			$price_types_exist = $wpdb->get_var( $SQL );
@@ -934,7 +934,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ( EEH_Activation::table_exists(  $price_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists(  $price_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
 			$prices_exist = $wpdb->get_var( $SQL );
@@ -960,7 +960,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$ticket_table = $wpdb->prefix."esp_ticket";
-		if ( EEH_Activation::table_exists( $ticket_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $ticket_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
 			$tickets_exist = $wpdb->get_var($SQL);
@@ -975,7 +975,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
 
-		if ( EEH_Activation::table_exists( $ticket_price_table ) ) {
+		if ( EEH_Activation::getTableAnalysis()->tableExists( $ticket_price_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
 			$ticket_prc_exist = $wpdb->get_var($SQL);

@@ -2188,7 +2188,7 @@ class EE_Currency_Config extends EE_Config_Base {
 		if (
 			! empty( $CNT_ISO )
 			&& EE_Maintenance_Mode::instance()->models_can_query()
-			&& EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() )
+			&& EEH_Activation::getTableAnalysis()->tableExists( EE_Registry::instance()->load_model( 'Country' )->table() )
 		) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
