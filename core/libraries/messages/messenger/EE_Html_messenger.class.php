@@ -517,6 +517,7 @@ class EE_Html_messenger extends EE_messenger {
 	 * Overwrite parent _get_main_template for display_html purposes.
 	 *
 	 * @since  4.5.0
+	 * @param bool $preview
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = false ) {
@@ -528,6 +529,9 @@ class EE_Html_messenger extends EE_messenger {
 
 
 
+	/**
+	 * @return string
+	 */
 	protected function _preview() {
 		return $this->_send_message();
 	}
@@ -543,18 +547,18 @@ class EE_Html_messenger extends EE_messenger {
 	 * add the "powered by EE" credit link to the HTML receipt and invoice
 	 *
 	 * @param string           $content
-	 * @param string           $content
+	 * @param string           $content_again
 	 * @param \EE_message_type $incoming_message_type
 	 * @return string
 	 */
 	public function add_powered_by_credit_link_to_receipt_and_invoice(
 		$content = '',
-		$content = '',
+		$content_again = '',
 		EE_message_type $incoming_message_type
 	) {
 		if (
-			apply_filters( 'FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true )
-			&& ( $incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt' )
+			( $incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt' )
+			&& apply_filters( 'FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true )
 		) {
 			$content .= \EEH_Template::powered_by_event_espresso( 'aln-cntr' ) . EEH_HTML::div( EEH_HTML::p('&nbsp;') );
 		}
