@@ -1626,7 +1626,7 @@ class EEH_Activation {
 			'esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
-			EEH_Activation::delete_db_table_if_empty( $table );
+			EEH_Activation::delete_unused_db_table( $table );
 		}
 
 
