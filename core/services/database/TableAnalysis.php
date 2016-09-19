@@ -33,7 +33,10 @@ class TableAnalysis extends \EE_Base {
 
 
 	/**
-	 * @param $table_name
+	 * Indicates whether or not the table has any entries. $table_name can
+	 * optionally start with $wpdb->prefix or not
+	 * @global \wpdb $wpdb
+	 * @param string $table_name
 	 * @return bool
 	 */
 	public function tableIsEmpty( $table_name )
@@ -50,6 +53,10 @@ class TableAnalysis extends \EE_Base {
 
 
 	/**
+	 * Indicates whether or not the table exists. $table_name can optionally
+	 * have the $wpdb->prefix on the beginning, or not.
+	 * @global \wpdb $wpdb
+	 * @global array EZSQL_Error
 	 * @param $table_name
 	 * @return bool
 	 */

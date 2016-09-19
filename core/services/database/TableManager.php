@@ -35,12 +35,12 @@ class TableManager extends \EE_Base {
 
 
 	/**
-     * @param string $table_name
-     * @param string $columnName
-     * @param string $columnInfo
+     * @param string $table_name which can optionally start with $wpdb->prefix or not
+     * @param string $column_name
+     * @param string $column_info
      * @return bool|false|int
      */
-    public function addColumn( $table_name, $columnName, $columnInfo='INT UNSIGNED NOT NULL' )
+    public function addColumn( $table_name, $column_name, $column_info='INT UNSIGNED NOT NULL' )
 	{
 		if( apply_filters( 'FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', FALSE ) ){
 			return FALSE;
@@ -48,15 +48,16 @@ class TableManager extends \EE_Base {
 		global $wpdb;
 		$full_table_name = $this->table_analysis->ensureTableNameHasPrefix( $table_name );
 		$columns = $this->getTableColumns($table_name);
-		if( !in_array( $columnName, $columns)){
-			$alter_query="ALTER TABLE $full_table_name ADD $columnName $columnInfo";
+		if( !in_array( $column_name, $columns)){
+			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
 			return $wpdb->query($alter_query);
 		}
 		return TRUE;
 	}
 
 	/**
-	 * Gets the name of all columns on teh table
+	 * Gets the name of all columns on the  table. $table_name can
+	 * optionally start with $wpdb->prefix or not
 	 * @global \wpdb $wpdb
 	 * @param string $table_name
 	 * @return array
@@ -78,7 +79,8 @@ class TableManager extends \EE_Base {
 	}
 
 	/**
-	 * Drops the specified table from the database
+	 * Drops the specified table from the database. $table_name can
+	 * optionally start with $wpdb->prefix or not
 	 *
 	 * @global \wpdb $wpdb
 	 * @param string $table_name
@@ -95,7 +97,8 @@ class TableManager extends \EE_Base {
 	}
 
 	/**
-	 * Drops the specified index from the specified table
+	 * Drops the specified index from the specified table. $table_name can
+	 * optionally start with $wpdb->prefix or not
 	 *
 	 * @global \wpdb $wpdb
 	 * @param string $table_name
@@ -120,7 +123,8 @@ class TableManager extends \EE_Base {
 	}
 
 	/**
-	 * Just creates the requested table
+	 * Just creates the requested table. $table_name can
+	 * optionally start with $wpdb->prefix or not
 	 * @param string $table_name
 	 * @param string $createSql defining the table's columns and indexes
 	 * @param string $engine (no need to specify "ENGINE=", that's implied)

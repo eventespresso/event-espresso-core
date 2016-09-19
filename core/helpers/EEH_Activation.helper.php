@@ -634,7 +634,9 @@ class EEH_Activation {
 
 
 	/**
-	 * 	used by EE and EE addons during plugin activation
+	 * used by EE and EE addons during plugin activation to create tables. 
+	 * Its a wrapper for EventEspresso\core\services\database\TableManager::createTable,
+	 * but includes extra logic regarding activations.
 	 *
 	 * 	@access public
 	 * 	@static
