@@ -406,6 +406,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    //get transaction object
 	    $this->_transaction = $TXN->get_one_by_ID($TXN_ID);
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
+		$this->_transaction->verify_abandoned_transaction_status();
 
 	 	if ( empty( $this->_transaction ) ) {
 	    	$error_msg = esc_html__('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  esc_html__(' could not be retrieved.', 'event_espresso');
