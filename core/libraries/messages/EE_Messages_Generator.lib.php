@@ -403,6 +403,7 @@ class EE_Messages_Generator {
 
 		//if templates are empty then get out because we can't generate anything.
 		if ( ! $templates ) {
+			$this->_error_msg[] = __( 'Unable to assemble messages because there are no templates retrieved for generating the messages with', 'event_espresso' );
 			return false;
 		}
 
