@@ -1,5 +1,7 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+use EventEspresso\core\services\database\TableManager;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
 
@@ -114,16 +116,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
 	/**
-	 * All children of this must call parent::__construct() at the end of their constructor or suffer the consequences!
+	 * All children of this must call parent::__construct()
+	 * at the end of their constructor or suffer the consequences!
+	 *
+	 * @param TableManager $table_manager
 	 */
-	public function __construct() {
+	public function __construct( TableManager $table_manager = null ) {
 		$this->_migration_stages = apply_filters('FHEE__'.get_class($this).'__construct__migration_stages',$this->_migration_stages);
 		foreach($this->_migration_stages as $migration_stage){
 			if ( $migration_stage instanceof EE_Data_Migration_Script_Stage ) {
 				$migration_stage->_construct_finalize($this);
 			}
 		}
-		parent::__construct();
+		parent::__construct( $table_manager );
 	}
 
 
