@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
 /**
@@ -34,7 +35,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * --that the instance of EE_Config have an property named 'gateway' which is a class with properties '-'payment_settings' and 'active_gateways'
  *	 which are both arrays
  * --a function named update_espresso_config() which saves the EE_Config object to the database
- * --...and all its subclasses... really, you're best off copying the whole thin gwhen 4.1 is released into this file and wrapping its declaration in if( ! class_exists()){...}
+ * --...and all its subclasses... really, you're best off copying the whole thing when 4.1 is released into this file and wrapping its declaration in if( ! class_exists()){...}
  */
 class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
@@ -43,9 +44,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * EE_DMS_Core_4_1_0 constructor.
 	 *
-	 * @param TableManager $table_manager
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct( TableManager $table_manager ) {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
@@ -67,7 +69,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_1_0_answers(),
 			new EE_DMS_4_1_0_checkins(),
 		);
-		parent::__construct( $table_manager );
+		parent::__construct( $table_manager, $table_analysis );
 	}
 	/**
 	 * Checks if this 3.1 Check-in table exists. If it doesn't we can't migrate Check-ins
@@ -566,7 +568,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $state_table ) ) {
+		if ( $this->table_analysis->tableExists( $state_table ) ) {
 
 			$SQL = "SELECT COUNT('STA_ID') FROM " . $state_table;
 			$states = $wpdb->get_var($SQL);
@@ -658,7 +660,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $country_table ) ) {
+		if ( $this->table_analysis->tableExists( $country_table ) ) {
 
 			$SQL = "SELECT COUNT('CNT_ISO') FROM " . $country_table;
 			$countries = $wpdb->get_var($SQL);
@@ -910,7 +912,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_type_table = $wpdb->prefix."esp_price_type";
 
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $price_type_table ) ) {
+		if ( $this->table_analysis->tableExists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
 			$price_types_exist = $wpdb->get_var( $SQL );
@@ -943,7 +945,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ( EEH_Activation::getTableAnalysis()->tableExists(  $price_table ) ) {
+		if ( $this->table_analysis->tableExists(  $price_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
 			$prices_exist = $wpdb->get_var( $SQL );
@@ -969,7 +971,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$ticket_table = $wpdb->prefix."esp_ticket";
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $ticket_table ) ) {
+		if ( $this->table_analysis->tableExists( $ticket_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
 			$tickets_exist = $wpdb->get_var($SQL);
@@ -984,7 +986,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
 
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $ticket_price_table ) ) {
+		if ( $this->table_analysis->tableExists( $ticket_price_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
 			$ticket_prc_exist = $wpdb->get_var($SQL);
