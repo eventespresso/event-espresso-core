@@ -288,12 +288,13 @@ class EE_Messages_Generator {
 				return $GRP;  //got it!
 			}
 
-			//nope don't have it yet.  Get from DB then add to repo
+			//nope don't have it yet.  Get from DB then add to repo if its not here, then that means the current GRP_ID
+			//is not valid, so we'll continue on in the code assuming there's NO GRP_ID.
 			$GRP = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 			if ( $GRP instanceof EE_Message_Template_Group ) {
 				$this->_template_collection->add( $GRP );
+				return $GRP;
 			}
-			return $GRP;
 		}
 
 		//whatcha still doing here?  Oh, no Message Template Group yet I see.  Okay let's see if we can get it for you.
