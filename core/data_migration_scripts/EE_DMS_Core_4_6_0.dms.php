@@ -1,5 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
+
 /**
  * meant to convert DBs between 4.6 and 4.6
  * mostly just
@@ -38,9 +40,10 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * return EE_DMS_Core_4_6_0
 	 *
-	 * @param TableManager $table_manager
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct( TableManager $table_manager ) {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.6.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
@@ -54,7 +57,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_6_0_payments(),
 			new EE_DMS_4_6_0_invoice_settings()
 		);
-		parent::__construct( $table_manager );
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
@@ -608,7 +611,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$table_name = $wpdb->prefix."esp_payment_method";
 		$user_id = EEH_Activation::get_default_creator_id();
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $table_name ) ) {
+		if ( $this->table_analysis->tableExists( $table_name ) ) {
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
@@ -675,7 +678,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$currency_table = $wpdb->prefix."esp_currency";
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $currency_table ) ) {
+		if ( $this->table_analysis->tableExists( $currency_table ) ) {
 
 			$SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
 			$countries = $wpdb->get_var($SQL);
