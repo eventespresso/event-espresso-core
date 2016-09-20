@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\database\TableManager;
 /**
  * meant to convert DBs between 4.2.x to 4.3.0
  * mostly just
@@ -25,7 +26,12 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 
 
-	public function __construct() {
+	/**
+	 * EE_DMS_Core_4_3_0 constructor.
+	 *
+	 * @param TableManager $table_manager
+	 */
+	public function __construct( TableManager $table_manager ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.3.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
@@ -33,7 +39,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_3_0_event_message_templates(),
 			new EE_DMS_4_3_0_critical_page_shortcode_tracking()
 		);
-		parent::__construct();
+		parent::__construct( $table_manager );
 	}
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
@@ -202,7 +208,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::getTableManager()->dropIndex( 'esp_message_template_group', 'EVT_ID' );
+		$this->table_manager->dropIndex( 'esp_message_template_group', 'EVT_ID' );
 
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -350,7 +356,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::getTableManager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		$this->table_manager->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
