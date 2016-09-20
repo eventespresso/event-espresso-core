@@ -54,7 +54,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if( $version_string <= '4.9.0' && $version_string >= '4.8.0' ){
+		if ( version_compare( $version_string, '4.9.0', '<=' ) && version_compare( $version_string, '4.8.0', '>=' ) ) {
 //			echo "$version_string can be migrated from";
 			return true;
 		} elseif( ! $version_string ){
@@ -182,7 +182,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				KEY EVT_ID (EVT_ID),
 				KEY DTT_is_primary (DTT_is_primary)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB' );
-		
+
 		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				DTT_ID int(10) unsigned NOT NULL,
@@ -191,7 +191,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				KEY DTT_ID (DTT_ID),
 				KEY TKT_ID (TKT_ID)";
 		$this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
-		
+
 		$table_name = 'esp_event_message_template';
 		$sql = "EMT_ID bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				EVT_ID bigint(20) unsigned NOT NULL DEFAULT 0,
@@ -328,7 +328,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 				KEY MSG_created (MSG_created),
 				KEY MSG_modified (MSG_modified)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
-		
+
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				GRP_ID int(10) unsigned NOT NULL,
@@ -633,7 +633,7 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 		$script_4_6_defaults = EE_Registry::instance()->load_dms('Core_4_6_0');
 		$script_4_6_defaults->add_default_admin_only_payments();
 		$script_4_6_defaults->insert_default_currencies();
-		
+
 		/** @var EE_DMS_Core_4_8_0 $script_4_8_defaults */
 		$script_4_8_defaults = EE_Registry::instance()->load_dms('Core_4_8_0');
 		$script_4_8_defaults->verify_new_countries();
