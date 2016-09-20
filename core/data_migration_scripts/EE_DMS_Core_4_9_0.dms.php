@@ -1,5 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
+
 /**
  * Meant to add the new ee_message table to the database.
  */
@@ -36,16 +38,17 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * return EE_DMS_Core_4_9_0
 	 *
-	 * @param TableManager $table_manager
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct( TableManager $table_manager ) {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.9.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_9_0_Email_System_Question(),
 			new EE_DMS_4_9_0_Answers_With_No_Registration(),
 		);
-		parent::__construct( $table_manager );
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
