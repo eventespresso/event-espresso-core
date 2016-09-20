@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -58,15 +59,22 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	protected $table_manager;
 
+	/**
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	protected $table_analysis;
+
 
 
 	/**
 	 * Just initializes the status of the migration
 	 *
-	 * @param TableManager $table_manager
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct( TableManager $table_manager = null ){
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ){
 		$this->table_manager = $table_manager;
+		$this->table_analysis = $table_analysis;
 		$this->set_status(EE_Data_Migration_Manager::status_continue);
 	}
 
