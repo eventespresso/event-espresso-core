@@ -119,6 +119,11 @@ class EE_Data_Migration_Manager{
 	protected $table_manager;
 
 	/**
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	protected $table_analysis;
+
+	/**
      * 	@var EE_Data_Migration_Manager $_instance
 	 * 	@access 	private
      */
@@ -178,6 +183,7 @@ class EE_Data_Migration_Manager{
 		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage', array(), TRUE );
 		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage_Table', array(), TRUE );
 		$this->table_manager = EE_Registry::instance()->create( 'TableManager', array(), true );
+		$this->table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 	}
 
 
@@ -408,7 +414,7 @@ class EE_Data_Migration_Manager{
 						! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
 					//we haven't ran this conversion script before
 					//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-					$script = new $classname( $this->table_manager );
+					$script = new $classname( $this->table_manager, $this->table_analysis );
 					/* @var $script EE_Data_Migration_Script_Base */
 					$can_migrate = $script->can_migrate_from_version($theoretical_database_state);
 					if($can_migrate){
