@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\database\TableManager;
 /**
  * meant to convert DBs between 4.1.x to 4.2.0
  * mostly just
@@ -26,14 +27,19 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 
 
 
-	public function __construct() {
+	/**
+	 * EE_DMS_Core_4_2_0 constructor.
+	 *
+	 * @param TableManager $table_manager
+	 */
+	public function __construct( TableManager $table_manager ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.2.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_2_0_question_group_questions(),
 			new EE_DMS_4_2_0_datetime_fields(),
 		);
-		parent::__construct();
+		parent::__construct( $table_manager );
 	}
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
@@ -342,7 +348,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::getTableManager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		$this->table_manager->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
