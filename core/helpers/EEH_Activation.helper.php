@@ -39,14 +39,14 @@ class EEH_Activation {
 	protected static $_initialized_db_content_already_in_this_request = false;
 
 	/**
-	 * @var \EventEspresso\core\services\database\TableAnalysis $TableAnalysis
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
 	 */
-	private static $TableAnalysis;
+	private static $table_analysis;
 
 	/**
-	 * @var \EventEspresso\core\services\database\TableManager $TableManager
+	 * @var \EventEspresso\core\services\database\TableManager $table_manager
 	 */
-	private static $TableManager;
+	private static $table_manager;
 
 
 
@@ -54,10 +54,10 @@ class EEH_Activation {
 	 * @return \EventEspresso\core\services\database\TableAnalysis
 	 */
 	public static function getTableAnalysis() {
-		if ( ! self::$TableAnalysis instanceof \EventEspresso\core\services\database\TableAnalysis ) {
-			self::$TableAnalysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
+		if ( ! self::$table_analysis instanceof \EventEspresso\core\services\database\TableAnalysis ) {
+			self::$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 		}
-		return self::$TableAnalysis;
+		return self::$table_analysis;
 	}
 
 
@@ -66,10 +66,10 @@ class EEH_Activation {
 	 * @return \EventEspresso\core\services\database\TableManager
 	 */
 	public static function getTableManager() {
-		if ( ! self::$TableManager instanceof \EventEspresso\core\services\database\TableManager ) {
-			self::$TableManager = EE_Registry::instance()->create( 'TableManager', array(), true );
+		if ( ! self::$table_manager instanceof \EventEspresso\core\services\database\TableManager ) {
+			self::$table_manager = EE_Registry::instance()->create( 'TableManager', array(), true );
 		}
-		return self::$TableManager;
+		return self::$table_manager;
 	}
 
 
@@ -634,7 +634,7 @@ class EEH_Activation {
 
 
 	/**
-	 * used by EE and EE addons during plugin activation to create tables. 
+	 * used by EE and EE addons during plugin activation to create tables.
 	 * Its a wrapper for EventEspresso\core\services\database\TableManager::createTable,
 	 * but includes extra logic regarding activations.
 	 *
