@@ -1,37 +1,48 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php
+use EventEspresso\core\services\database\TableAnalysis;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
 /**
- * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to define and use the hook in a specific caffeinated/whatever class or file.
+ * the purpose of this file is to simply contain any action/filter hook callbacks etc
+ * for specific aspects of EE related to caffeinated (regular) use.
+ * Before putting any code in here, First be certain that it isn't better to define
+ * and use the hook in a specific caffeinated/whatever class or file.
  */
+
+// defined some new constants related to caffeinated folder
+define( 'EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
+define( 'EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS );
+define( 'EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS );
+define( 'EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
+
+
+
 /**
- * Event Espresso
+ * EE_Brewing_Regular class.
+ * Just a wrapper to help namespace activity for the functionality of this file.
  *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author				Seth Shoultes
- * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
- * @ version		 	4.0
- *
- * ------------------------------------------------------------------------
- *
- * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionality of this file.
- *
- * @package		Event Espresso
+ * @package        Event Espresso
  * @subpackage	/caffeinated/brewing_regular.php
  * @author		Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
-// defined some new constants related to caffeinated folder
-define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
-define('EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS);
-define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
-define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
 class EE_Brewing_Regular extends EE_Base {
 
-	public function __construct() {
+	/**
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	protected $table_analysis;
+
+
+
+	/**
+	 * EE_Brewing_Regular constructor.
+	 *
+	 * @param \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	public function __construct( TableAnalysis $table_analysis ) {
+		$this->table_analysis = $table_analysis;
 		if ( defined( 'EE_CAFF_PATH' )) {
 			// activation
 			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ));
@@ -75,9 +86,10 @@ class EE_Brewing_Regular extends EE_Base {
 	 * Right now the only CAF content are these global prices. If there's more in the future, then
 	 * we should probably create a caf file to contain it all instead just a function like this.
 	 * Right now, we ASSUME the only price types in the system are default ones
-	 * @global type $wpdb
+	 *
+	 * @global wpdb $wpdb
 	 */
-	function initialize_caf_db_content(){
+	public function initialize_caf_db_content(){
 //		echo "initialize caf db content!";
 		global $wpdb;
 
@@ -87,7 +99,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$price_type_table = $wpdb->prefix."esp_price_type";
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ( EEH_Activation::getTableAnalysis()->tableExists( $price_type_table ) ) {
+		if ( $this->table_analysis->tableExists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';//include trashed price types
 			$tax_price_type_count = $wpdb->get_var( $SQL );
@@ -237,4 +249,6 @@ class EE_Brewing_Regular extends EE_Base {
 		return $payment_method_paths;
 	}
 }
-$brewing = new EE_Brewing_Regular();
+$brewing = new EE_Brewing_Regular(
+	EE_Registry::instance()->create( 'TableAnalysis', array(), true )
+);
