@@ -97,6 +97,7 @@ class EE_Data_Migration_Manager{
 	 * @var array
 	 */
 	private $_data_migration_class_to_filepath_map;
+
 	/**
 	 * the following 4 properties are fully set on construction.
 	 * Note: the first two apply to whether to continue running ALL migration scripts (ie, even though we're finished
@@ -104,16 +105,26 @@ class EE_Data_Migration_Manager{
 	 * data migration script
 	 * @var array
 	 */
-	var $stati_that_indicate_to_continue_migrations = array();
-	var $stati_that_indicate_to_stop_migrations = array();
-	var $stati_that_indicate_to_continue_single_migration_script = array();
-	var $stati_that_indicate_to_stop_single_migration_script = array();
+	public $stati_that_indicate_to_continue_migrations = array();
+
+	public $stati_that_indicate_to_stop_migrations = array();
+
+	public $stati_that_indicate_to_continue_single_migration_script = array();
+
+	public $stati_that_indicate_to_stop_single_migration_script = array();
+
+	/**
+	 * @var \EventEspresso\core\services\database\TableManager $table_manager
+	 */
+	protected $table_manager;
 
 	/**
      * 	@var EE_Data_Migration_Manager $_instance
 	 * 	@access 	private
      */
 	private static $_instance = NULL;
+
+
 
 	/**
 	 *@singleton method used to instantiate class object
@@ -166,6 +177,7 @@ class EE_Data_Migration_Manager{
 		EE_Registry::instance()->load_core( 'DMS_Unknown_1_0_0', array(), TRUE );
 		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage', array(), TRUE );
 		EE_Registry::instance()->load_core( 'Data_Migration_Script_Stage_Table', array(), TRUE );
+		$this->table_manager = EE_Registry::instance()->create( 'TableManager', array(), true );
 	}
 
 
@@ -396,7 +408,7 @@ class EE_Data_Migration_Manager{
 						! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
 					//we haven't ran this conversion script before
 					//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-					$script = new $classname;
+					$script = new $classname( $this->table_manager );
 					/* @var $script EE_Data_Migration_Script_Base */
 					$can_migrate = $script->can_migrate_from_version($theoretical_database_state);
 					if($can_migrate){
@@ -926,7 +938,7 @@ class EE_Data_Migration_Manager{
 		}elseif( $last_ran_script instanceof EE_Data_Migration_Script_Base ) {
 			$last_ran_script->reattempt();
 		}else{
-			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script ) ) );
+			throw new EE_Error( sprintf( __( 'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s', 'event_espresso' ), print_r( $last_ran_script, true ) ) );
 		}
 		return $this->_save_migrations_ran();
 	}
