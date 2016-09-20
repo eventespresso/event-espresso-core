@@ -62,7 +62,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.6.0' && $version_string >= '4.5.0' ){
+		if ( version_compare( $version_string, '4.6.0', '<=' ) && version_compare( $version_string, '4.5.0', '>=' ) ) {
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
@@ -609,8 +609,8 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
-			$default_admin_only_payment_methods = apply_filters( 
-					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods', 
+			$default_admin_only_payment_methods = apply_filters(
+					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods',
 					array(
 					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
 					__("Cash", 'event_espresso')=>  __("Cash Delivered Physically", 'event_espresso'),
