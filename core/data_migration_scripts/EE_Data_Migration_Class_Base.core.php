@@ -1,4 +1,6 @@
 <?php
+use EventEspresso\core\services\database\TableManager;
+
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
@@ -18,39 +20,53 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) {
 
 
 abstract class EE_Data_Migration_Class_Base{
+
 	/**
 	 * @var $records_to_migrate int count of all that have been migrated
 	 */
 	protected $_records_to_migrate = 0;
+
 	/**
 	 *
 	 * @var $records_migrated int
 	 */
 	protected $_records_migrated = 0;
 
-
 	/**
 	 * Whether this migration script is done or not. This COULD be deduced by
 	 * _records_to_migrate and _records_migrated, but that might nto be accurate
+	 *
 	 * @var string one of EE_Data_migration_Manager::status_* constants
 	 */
 	protected $_status = null;
+
 	/**
-	 *internationalized name of this class. Convention is to NOT restate that
+	 * internationalized name of this class. Convention is to NOT restate that
 	 * this class if a migration script or a migration script stage
+	 *
 	 * @var string (i18ned)
 	 */
 	protected $_pretty_name = null;
+
 	/**
-	 *
 	 * @var array
 	 */
 	protected $_errors = array();
+
+	/**
+	 * @var \EventEspresso\core\services\database\TableManager $table_manager
+	 */
+	protected $table_manager;
+
+
+
 	/**
 	 * Just initializes the status of the migration
-	 * @throws EE_Error
+	 *
+	 * @param TableManager $table_manager
 	 */
-	public function __construct(){
+	public function __construct( TableManager $table_manager = null ){
+		$this->table_manager = $table_manager;
 		$this->set_status(EE_Data_Migration_Manager::status_continue);
 	}
 
