@@ -248,9 +248,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return array
 	 */
 	protected function get_submitted_form_data_from_session() {
-		return EE_Registry::instance()->SSN->get_session_data(
-			\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
-		);
+		$session = EE_Registry::instance()->SSN;
+		if( $session instanceof EE_Session ) {
+			return $session->get_session_data(
+				\EE_Form_Section_Proper::SUBMITTED_FORM_DATA_SSN_KEY
+			);
+		} else {
+			return array();
+		}
 	}
 
 
