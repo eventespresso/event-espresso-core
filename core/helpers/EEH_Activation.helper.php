@@ -779,7 +779,7 @@ class EEH_Activation {
 	 * @return bool | int
 	 */
 	public static function delete_unused_db_table( $table_name ) {
-		global $wpdb;
+		global $wpdb;		
 		if ( EEH_Activation::table_exists( $table_name ) ) {
 			$table_name = EEH_Activation::ensure_table_name_has_prefix( $table_name );
 			return $wpdb->query( "DROP TABLE IF EXISTS $table_name" );
@@ -1592,7 +1592,14 @@ class EEH_Activation {
 				$model_obj = call_user_func( array( $model_name, 'instance' ));
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )) {
+						//only delete global EE tables when deleting the main site's tables
+						if ( strpos( $table->get_table_name(), 'esp_' )
+							&& 
+							( 
+								is_main_site()//main site? nuke them all
+								|| ! $table->is_global()//not main site,but not global either. nuke it
+							)
+						) {
 							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
 								case false :
 									$undeleted_tables[] = $table->get_table_name();
@@ -1619,7 +1626,7 @@ class EEH_Activation {
 			'esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
-			EEH_Activation::delete_db_table_if_empty( $table );
+			EEH_Activation::delete_unused_db_table( $table );
 		}
 
 
