@@ -23,12 +23,12 @@ ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
 	if ( $ticket instanceof EE_Ticket ) {
-		$max = min( $ticket->max(), $max_atndz );
+		$max = $ticket->max();
 		$min = 0;
 		$remaining = $ticket->remaining();
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
-			$max = min( $remaining, $max );
+			$max = min( $remaining, $max_atndz );
 			// but... we also want to restrict the number of tickets by the ticket max setting,
 			// however, the max still can't be higher than what was just set above
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
@@ -445,9 +445,9 @@ $ticket_row_html = ob_get_clean();
 // if there is only ONE ticket with a max qty of ONE, and it is free... then not much need for the ticket selector
 $hide_ticket_selector = $ticket_count == 1 && $max == 1 && $ticket->is_free() ? true : false;
 $hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_selector', $hide_ticket_selector, $EVT_ID );
-//EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
-//EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
-//EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
+// EEH_Debug_Tools::printr( $ticket_count, '$ticket_count', __FILE__, __LINE__ );
+// EEH_Debug_Tools::printr( $max, '$max', __FILE__, __LINE__ );
+// EEH_Debug_Tools::printr( $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
 //EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
 remove_filter(
 	'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',

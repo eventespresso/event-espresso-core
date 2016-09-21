@@ -106,9 +106,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			//ok so they've constructed this object after when they should have.
 			//just enqueue the generic form scripts and initialize the form immediately in the JS
 			\EE_Form_Section_Proper::wp_enqueue_scripts( true );
+			\EE_Form_Section_Proper::wp_deregister_conflicting_scripts();
 		} else {
 			add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
 			add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_enqueue_scripts' ));
+			add_action( 'wp_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_deregister_conflicting_scripts' ), 100 );
+			add_action( 'admin_enqueue_scripts', array( 'EE_Form_Section_Proper', 'wp_deregister_conflicting_scripts' ), 100 );
 		}
 		add_action( 'wp_footer', array( $this, 'ensure_scripts_localized' ), 1 );
 
@@ -559,6 +562,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			'ee_form_section_validation_init',
 			array( 'init' => $init_form_validation_automatically ? true : false )
 		);
+	}
+	
+	/**
+	 * Deregisters scripts known to conflict with EE4 forms scripts (but this 
+	 * should only be called when we are actually using EE4 forms scripts)
+	 */
+	public static function wp_deregister_conflicting_scripts() {
+		//jquery-form (included in WP core, but deprecated) also declares some of the same methods 
+		//as jquery validate
+		wp_deregister_script( 'jquery-form' );
 	}
 
 

@@ -656,6 +656,38 @@ class EE_Registration_Processor extends EE_Processor_Base {
 
 
 
+	/**
+	 * generates reg code
+	 *
+	 * @deprecated
+	 * @since 4.9.1
+	 * @param \EE_Registration $registration
+	 * @return string
+	 * @throws \EE_Error
+	 */
+	public function generate_reg_code( EE_Registration $registration ) {
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(
+				__( 'This method is deprecated. Please use "%s" instead', 'event_espresso' ),
+				'EventEspresso\core\domain\entities\RegCode'
+			),
+			'4.9.1',
+			'5.0.0'
+		);
+		return apply_filters(
+			'FHEE__EE_Registration_Processor___generate_reg_code__new_reg_code',
+			new RegCode(
+				RegUrlLink::fromRegistration( $registration ),
+				$registration->transaction(),
+				$registration->ticket()
+			),
+			$registration
+		);
+	}
+
+
+
 }
 // End of file EE_Registration_Processor.class.php
 // Location: /core/business/EE_Registration_Processor.class.php
