@@ -712,7 +712,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CNT_is_EU" => '%d',
 							"CNT_active" => '%d',
 						);
-		if ( $this->table_analysis->tableExists( $country_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $country_table ) ) {
 			foreach( $newer_countries as $country ) {
 				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
@@ -749,7 +749,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CUR_dec_plc" => '%d',
 							"CUR_active" => '%d',
 						);
-		if ( $this->table_analysis->tableExists( $currency_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $currency_table ) ) {
 			foreach( $newer_currencies as $currency ) {
 				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);

@@ -32,7 +32,7 @@ class EE_Brewing_Regular extends EE_Base {
 	/**
 	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
 	 */
-	protected $table_analysis;
+	protected $_table_analysis;
 
 
 
@@ -42,7 +42,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 * @param \EventEspresso\core\services\database\TableAnalysis $table_analysis
 	 */
 	public function __construct( TableAnalysis $table_analysis ) {
-		$this->table_analysis = $table_analysis;
+		$this->_table_analysis = $table_analysis;
 		if ( defined( 'EE_CAFF_PATH' )) {
 			// activation
 			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ));
@@ -99,7 +99,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$price_type_table = $wpdb->prefix."esp_price_type";
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ( $this->table_analysis->tableExists( $price_type_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';//include trashed price types
 			$tax_price_type_count = $wpdb->get_var( $SQL );
@@ -247,6 +247,23 @@ class EE_Brewing_Regular extends EE_Base {
 		$caf_payment_methods_paths = glob( EE_CAF_PAYMENT_METHODS . '*', GLOB_ONLYDIR );
 		$payment_method_paths = array_merge( $payment_method_paths, $caf_payment_methods_paths );
 		return $payment_method_paths;
+	}
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws \EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 
+			);
+		}
 	}
 }
 $brewing = new EE_Brewing_Regular(

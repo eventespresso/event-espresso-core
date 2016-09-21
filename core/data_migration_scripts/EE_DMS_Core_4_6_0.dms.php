@@ -273,7 +273,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
-		$this->table_manager->dropIndex( 'esp_message_template_group', 'EVT_ID' );
+		$this->_get_table_manager()->dropIndex( 'esp_message_template_group', 'EVT_ID' );
 
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -560,7 +560,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TKT_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-		$this->table_manager->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		$this->_get_table_manager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -611,7 +611,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$table_name = $wpdb->prefix."esp_payment_method";
 		$user_id = EEH_Activation::get_default_creator_id();
-		if ( $this->table_analysis->tableExists( $table_name ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $table_name ) ) {
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
@@ -678,7 +678,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$currency_table = $wpdb->prefix."esp_currency";
-		if ( $this->table_analysis->tableExists( $currency_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $currency_table ) ) {
 
 			$SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
 			$countries = $wpdb->get_var($SQL);

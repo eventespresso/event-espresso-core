@@ -455,7 +455,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean
 	 */
 	protected function _old_table_exists( $table_name ) {
-		return $this->table_analysis->tableExists( $table_name );
+		return $this->_get_table_analysis()->tableExists( $table_name );
 	}
 
 

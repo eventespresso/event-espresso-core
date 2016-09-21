@@ -57,12 +57,12 @@ abstract class EE_Data_Migration_Class_Base{
 	/**
 	 * @var \EventEspresso\core\services\database\TableManager $table_manager
 	 */
-	protected $table_manager;
+	protected $_table_manager;
 
 	/**
 	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
 	 */
-	protected $table_analysis;
+	protected $_table_analysis;
 
 
 
@@ -73,8 +73,8 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @param TableAnalysis $table_analysis
 	 */
 	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ){
-		$this->table_manager = $table_manager;
-		$this->table_analysis = $table_analysis;
+		$this->_table_manager = $table_manager;
+		$this->_table_analysis = $table_analysis;
 		$this->set_status(EE_Data_Migration_Manager::status_continue);
 	}
 
@@ -301,6 +301,42 @@ abstract class EE_Data_Migration_Class_Base{
 			}
 		}
 		return json_encode($fields_to_include);
+	}
+	
+	/**
+	 * Gets the table manager (or throws an exception if it cannot be retrieved)
+	 * @return TableManager
+	 * @throws EE_Error
+	 */
+	protected function _get_table_manager() {
+		if( $this->_table_manager instanceof TableManager ) {
+			return $this->_table_manager;
+		} else {
+			throw new EE_Error( 
+				sprintf( 
+					__( 'Table manager on migration class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 	
+			);
+		}
+	}
+	
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new EE_Error( 
+				sprintf( 
+					__( 'Table analysis class on migration class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 
+			);
+		}
 	}
 }
 // end of file: /core/EE_Data_Migration_Class_Base.core.php

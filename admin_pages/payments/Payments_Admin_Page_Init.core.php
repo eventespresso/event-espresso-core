@@ -1,4 +1,5 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
 if (!defined('EVENT_ESPRESSO_VERSION') ){
 	exit('NO direct script access allowed');
 }
@@ -17,7 +18,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 	/**
 	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
 	 */
-	protected $table_analysis;
+	protected $_table_analysis;
 
 
 
@@ -31,7 +32,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments' . DS );
 		define( 'EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates' . DS );
 		define( 'EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/' );
-		$this->table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
+		$this->_table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 		//check that there are active gateways on all admin page loads. but dont do it just yet
 //		echo "constructing payments admin page";die;
 		add_action('admin_notices',array($this,'check_payment_gateway_setup'));
@@ -77,7 +78,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		//because the tables are deleted just before this request runs. see https://events.codebasehq.com/projects/event-espresso/tickets/7539
 		if (
 			! EE_Maintenance_Mode::instance()->models_can_query()
-			|| ! $this->table_analysis->tableExists( EEM_Payment_Method::instance()->table() )
+			|| ! $this->_get_table_analysis()->tableExists( EEM_Payment_Method::instance()->table() )
 		) {
 			return;
 		}
@@ -91,6 +92,24 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 			echo '<div class="error">
 				 <p>'.  sprintf(__("There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s", "event_espresso"),"<a href='$url'>","</a>").'</p>
 			 </div>';
+		}
+	}
+	
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws \EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 
+			);
 		}
 	}
 

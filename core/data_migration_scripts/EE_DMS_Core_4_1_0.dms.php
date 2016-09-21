@@ -393,7 +393,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
-		$this->table_manager->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		$this->_get_table_manager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -568,7 +568,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
-		if ( $this->table_analysis->tableExists( $state_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $state_table ) ) {
 
 			$SQL = "SELECT COUNT('STA_ID') FROM " . $state_table;
 			$states = $wpdb->get_var($SQL);
@@ -660,7 +660,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
-		if ( $this->table_analysis->tableExists( $country_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $country_table ) ) {
 
 			$SQL = "SELECT COUNT('CNT_ISO') FROM " . $country_table;
 			$countries = $wpdb->get_var($SQL);
@@ -912,7 +912,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_type_table = $wpdb->prefix."esp_price_type";
 
-		if ( $this->table_analysis->tableExists( $price_type_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $price_type_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
 			$price_types_exist = $wpdb->get_var( $SQL );
@@ -945,7 +945,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$price_table = $wpdb->prefix."esp_price";
 
-		if ( $this->table_analysis->tableExists(  $price_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists(  $price_table ) ) {
 
 			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
 			$prices_exist = $wpdb->get_var( $SQL );
@@ -971,7 +971,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$ticket_table = $wpdb->prefix."esp_ticket";
-		if ( $this->table_analysis->tableExists( $ticket_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $ticket_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
 			$tickets_exist = $wpdb->get_var($SQL);
@@ -986,7 +986,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
 
-		if ( $this->table_analysis->tableExists( $ticket_price_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $ticket_price_table ) ) {
 
 			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
 			$ticket_prc_exist = $wpdb->get_var($SQL);
