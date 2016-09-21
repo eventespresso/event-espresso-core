@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\database\TableManager;
+use EventEspresso\core\services\database\TableAnalysis;
+
 /**
  *
  * Class which determines what data migration files CAN be run, and compares
