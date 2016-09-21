@@ -838,7 +838,9 @@ class EEH_Template {
 	 * @return string
 	 */
 	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '' ) {
+		$admin = is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
 		if (
+			! $admin &&
 			! apply_filters(
 				'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
 				EE_Registry::instance()->CFG->admin->show_reg_footer
@@ -846,7 +848,6 @@ class EEH_Template {
 		) {
 			return '';
 		}
-		$admin = is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
 		$attributes = ! empty( $wrap_id ) ? " id=\"{$wrap_id}\"" : '';
 		$wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
 		$attributes .= ! empty( $wrap_class )
