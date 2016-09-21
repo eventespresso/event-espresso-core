@@ -677,7 +677,7 @@ class EE_Messages_Generator {
 		//valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
 		//is already a ready data handler in the repository.
 		$this->_current_data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $data_handler_class_name, $generating_data ) );
-		if ( ! $this->_current_data_handler instanceof EE_messages_incoming_data ) {
+		if ( ! $this->_current_data_handler instanceof EE_Messages_incoming_data ) {
 			//no saved data_handler in the repo so let's set one up and add it to the repo.
 			try {
 				$this->_current_data_handler = new $data_handler_class_name( $generating_data );
