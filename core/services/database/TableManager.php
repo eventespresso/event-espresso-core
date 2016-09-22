@@ -113,6 +113,28 @@ class TableManager extends \EE_Base {
 		}
 		return 0;
 	}
+	
+	/**
+	 * Drops all the tables mentioned in a single MYSQL query. Double-checks
+	 * each table name provided has a wpdb prefix attached, and that it exists.
+	 * Returns the list actually deleted
+	 * @global WPDB $wpdb
+	 * @param array $table_names
+	 * @return array of table names which we deleted
+	 */
+	public function dropTables( $table_names )
+	{
+		$tables_to_delete = array();
+		foreach( $table_names as $table_name ) {
+			$table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix( $table_name );
+			if( $this->getTableAnalysis()->tableExists( $table_name ) ) {
+				$tables_to_delete[] = $table_name;
+			}
+		}
+		global $wpdb;
+		$wpdb->query( 'DROP TABLE ' . implode( ', ', $tables_to_delete ) );
+		return $tables_to_delete;
+	}
 
 	/**
 	 * Drops the specified index from the specified table. $table_name can

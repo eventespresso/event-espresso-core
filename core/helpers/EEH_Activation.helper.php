@@ -1554,7 +1554,13 @@ class EEH_Activation {
 				$model_obj = call_user_func( array( $model_name, 'instance' ));
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )) {
+						if ( strpos( $table->get_table_name(), 'esp_' )
+							&& 
+							( 
+								is_main_site()//main site? nuke them all
+								|| ! $table->is_global()//not main site,but not global either. nuke it
+							)
+						) {
 							$tables[] = $table->get_table_name();
 						}
 					}
@@ -1572,32 +1578,22 @@ class EEH_Activation {
 			'esp_rule'
 		);
 		foreach( $tables_without_models as $table ){
-			if ( \EEH_Activation::getTableAnalysis()->tableIsEmpty( $table ) ) {
-				$tables[] = $table;
-			}
+			$tables[] = $table;
 		}
-		return EEH_Activation::drop_tables( $tables );
+		return \EEH_Activation::getTableManager()->dropTables( $tables );
 	}
 
 	/**
 	 * Drops all the tables mentioned in a single MYSQL query. Double-checks
 	 * each table name provided has a wpdb prefix attached, and that it exists.
 	 * Returns the list actually deleted
+	 * @deprecated in 4.9.13. Instead use TableManager::dropTables()
 	 * @global WPDB $wpdb
 	 * @param array $table_names
 	 * @return array of table names which we deleted
 	 */
 	public static function drop_tables( $table_names ) {
-		$tables_to_delete = array();
-		foreach( $table_names as $key => $table_name ) {
-			$table_name = \EEH_Activation::getTableAnalysis()->ensureTableNameHasPrefix( $table_name );
-			if( \EEH_Activation::getTableAnalysis()->tableExists( $table_name ) ) {
-				$tables_to_delete[] = $table_name;
-			}
-		}
-		global $wpdb;
-		$wpdb->query( 'DROP TABLE ' . implode( ', ', $tables_to_delete ) );
-		return $tables_to_delete;
+		return \EEH_Activation::getTableManager()->dropTables( $table_names );
 	}
 	/**
 	 * plugin_uninstall

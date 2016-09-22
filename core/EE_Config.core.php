@@ -2515,6 +2515,15 @@ class EE_Admin_Config extends EE_Config_Base {
 
 
 
+	/**
+	 * @return string
+	 */
+	public function affiliate_id() {
+		return ! empty( $this->affiliate_id ) ? $this->affiliate_id : 'default';
+	}
+
+
+
 }
 
 

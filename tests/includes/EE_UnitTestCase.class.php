@@ -1027,9 +1027,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 */
 	public function new_ticket( $options = array() ) {
 		// grab ticket price or set to default of 16.50
-		$ticket_price = isset( $options[ 'ticket_price' ] ) && is_numeric( $options[ 'ticket_price' ] ) ? $options[ 'ticket_price' ] : 16.5;
+		$ticket_price = isset( $options[ 'TKT_price' ] ) && is_numeric( $options[ 'TKT_price' ] ) ? $options[ 'TKT_price' ] : 16.5;
 		// apply taxes? default = true
-		$ticket_taxable = isset( $options[ 'ticket_taxable' ] ) ? filter_var( $options[ 'ticket_taxable' ], FILTER_VALIDATE_BOOLEAN ) : true;
+		$ticket_taxable = isset( $options[ 'TKT_taxable' ] ) ? filter_var( $options[ 'TKT_taxable' ], FILTER_VALIDATE_BOOLEAN ) : true;
 		/** @type EE_Ticket $ticket */
 		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => $ticket_price, 'TKT_taxable' => $ticket_taxable ) );
 		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
@@ -1054,9 +1054,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				$ticket->_add_relation_to( $percent_surcharge, 'Price' );
 				$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
 			}
-		}
-
-		if ( isset( $options[ 'TKT_price' ] ) ) {
+		} else {
 			$ticket->set( 'TKT_price', $options['TKT_price'] );
 			//set the base price
 			$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'TKT_price' ], 'PRT_ID' => $base_price_type->ID() ) );
