@@ -2808,11 +2808,27 @@ class EE_Event_Single_Config extends EE_Config_Base {
  */
 class EE_Ticket_Selector_Config extends EE_Config_Base {
 
+	/*
+	 * @var boolean $show_ticket_sale_columns
+	 */
 	public $show_ticket_sale_columns;
 
+	/*
+	 * @var boolean $show_ticket_details
+	 */
 	public $show_ticket_details;
 
+	/*
+	 * @var boolean $show_expired_tickets
+	 */
 	public $show_expired_tickets;
+
+	/*
+	 * flag to indicate whether or not to display ticket prices with the taxes included
+	 *
+	 * @var boolean $ticket_price_includes_taxes
+	 */
+	public $ticket_price_includes_taxes;
 
 
 
@@ -2820,9 +2836,10 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *    class constructor
 	 */
 	public function __construct() {
-		$this->show_ticket_sale_columns = 1;
-		$this->show_ticket_details = 1;
-		$this->show_expired_tickets = 1;
+		$this->show_ticket_sale_columns = true;
+		$this->show_ticket_details = true;
+		$this->show_expired_tickets = true;
+		$this->ticket_price_includes_taxes = true;
 	}
 }
 
