@@ -561,9 +561,10 @@ class EE_Messages_Generator {
 			return false;
 		}
 
-		foreach( $addressees as $addressee_array ) {
+		foreach ( $addressees as $addressee_array ) {
 			foreach ( $addressee_array as $addressee ) {
 				if ( ! $addressee instanceof EE_Messages_Addressee ) {
+					do_action( 'AHEE__EE_Messages_Generator___valid_addressees__failed_addressee_array', $this->_generation_queue->get_message_repository()->current(), $addressees, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 					return false;
 				}
 			}
