@@ -8,7 +8,7 @@
  * @author     Darren Ethier
  * @since      4.9.0
  */
-class EE_Messages_Scheduler extends EE_BASE {
+class EE_Messages_Scheduler extends EE_Base {
 
 	/**
 	 * Number of seconds between batch sends/generates on the cron job.

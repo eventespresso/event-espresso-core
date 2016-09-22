@@ -1190,6 +1190,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
+			$this->_template_args['REG_ID'] = $this->_registration->ID();
 			$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		} else {

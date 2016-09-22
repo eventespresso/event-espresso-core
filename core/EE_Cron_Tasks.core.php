@@ -8,7 +8,7 @@
  * @author 				Brent Christensen
  *
  */
-class EE_Cron_Tasks extends EE_BASE {
+class EE_Cron_Tasks extends EE_Base {
 
 	/**
 	 * WordPress doesn't allow duplicate crons within 10 minutes of the original,

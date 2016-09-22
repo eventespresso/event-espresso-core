@@ -8,4 +8,5 @@
 	<a id="scroll-to-other-attendees" class="scroll-to" href="#other-attendees"><?php echo __( 'Scroll to Other Registrations in the Same Transaction', 'event_espresso' );?></a>
 <?php endif; ?>
 
+<?php do_action( 'AHEE__reg_status_change_buttons__after_header', $REG_ID ); ?>
 
