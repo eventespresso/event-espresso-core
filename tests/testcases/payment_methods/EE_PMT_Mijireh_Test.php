@@ -9,7 +9,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * EE_PMT_Mijireh_Test
  * Uses a filter to intercept HTTP requests that WOULD be sent to mijireh's server,
  * and instead handle them locally. If you want to run the live tests, run the group "live",
- * which will also run a test method on this testcase that will check some of our simulated responeses
+ * which will also run a test method on this testcase that will check some of our simulated responses
  * match mijireh's authentic ones
  * @package			Event Espresso
  * @subpackage
@@ -29,6 +29,7 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 	const cancel_url = 'http://mysite.com/cancel';
 	const mijireh_checkout_url_start = 'https://secure.mijireh.com/checkout/';
 	const access_key = '789a0b32d3d20d20514791a4';
+
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		parent::__construct($name, $data, $dataName);
 		$this->_test_settings = array(
@@ -40,7 +41,9 @@ class EE_PMT_Mijireh_Test extends EE_UnitTestCase{
 	public function setUp(){
 		parent::setUp();
 		//make sure caf payment methods are registered
-		new EE_Brewing_Regular();
+		new EE_Brewing_Regular(
+			EE_Registry::instance()->create( 'TableAnalysis', array(), true )
+		);
 		EE_Payment_Method_Manager::reset();
 	}
 
