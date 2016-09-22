@@ -154,7 +154,7 @@ class EE_Messages_Generator {
 				$msg->STS_ID() === EEM_Message::status_debug_only
 				&& ! EEM_Message::debug()
 			) {
-				do_action( 'AHEE__EE_Messages_Generator__generate__before_debug_delete', $msg, $this->_error_msg );
+				do_action( 'AHEE__EE_Messages_Generator__generate__before_debug_delete', $msg, $this->_error_msg, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 				$this->_generation_queue->get_message_repository()->delete();
 				$this->_generation_queue->get_message_repository()->set_current( $next_msg );
 				continue;
@@ -166,7 +166,7 @@ class EE_Messages_Generator {
 				if ( $msg->STS_ID() !== EEM_Message::status_debug_only ) {
 					$msg->set_STS_ID( EEM_Message::status_failed );
 				}
-				do_action( 'AHEE__EE_Messages_Generator__generate__processing_failed_message', $msg, $this->_error_msg );
+				do_action( 'AHEE__EE_Messages_Generator__generate__processing_failed_message', $msg, $this->_error_msg, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 				$msg->set_error_message(
 					__( 'Message failed to generate for the following reasons: ' )
 					. "\n"
@@ -174,7 +174,7 @@ class EE_Messages_Generator {
 				);
 				$msg->set_modified( time() );
 			} else {
-				do_action( 'AHEE__EE_Messages_Generator__generate__before_successful_generated_message_delete', $msg, $this->_error_msg );
+				do_action( 'AHEE__EE_Messages_Generator__generate__before_successful_generated_message_delete', $msg, $this->_error_msg, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 				//remove from db
 				$this->_generation_queue->get_message_repository()->delete();
 			}
