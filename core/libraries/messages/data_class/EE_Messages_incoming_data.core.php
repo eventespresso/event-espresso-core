@@ -539,22 +539,6 @@ abstract class EE_Messages_incoming_data {
 			return false;
 		}
 
-
-		//if there is a transaction object, it's status is TCM, the filtered_reg_status is RAP, and the registration
-		//status is RPP, then this registration will be considered a match to the filtered_reg_status property because
-		//a transaction that is completed means all its registrations should be approved (IF they are RPP).
-		//this is a workaround for a troubling bug
-		//@see https://events.codebasehq.com/projects/event-espresso/tickets/10098
-		//@see https://events.codebasehq.com/projects/saas/tickets/1125
-		if (
-			$this->txn instanceof EE_Transaction
-			&& $this->txn->status_ID() === EEM_Transaction::complete_status_code
-			&& $this->filtered_reg_status === EEM_Registration::status_id_approved
-			&& $registration->status_ID() === EEM_Registration::status_id_pending_payment
-		) {
-			return false;
-		}
-
 		//if we made it here then we just compare the filtered_reg_status with the registration status and return that
 		return $this->filtered_reg_status !== $registration->status_ID();
 	}
