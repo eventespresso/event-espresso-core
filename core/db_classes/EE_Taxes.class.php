@@ -11,7 +11,7 @@
  * @subpackage            includes/classes/EE_Taxes.class.php
  * @author                Brent Christensen
  */
-class EE_Taxes extends EE_BASE {
+class EE_Taxes extends EE_Base {
 
 	/**
 	 * This is used for when EE_Taxes is used statically by the admin
