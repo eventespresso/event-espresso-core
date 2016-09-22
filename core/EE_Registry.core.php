@@ -1157,7 +1157,7 @@ class EE_Registry {
 	 * run in a long running process (such as a worker queue system where workers execute a variety of jobs). This method should
 	 * not be called in normal requests.
 	 */
-	public static function clear_all_model_entities() {
+	public static function clear_all_model_entity_maps() {
 		$instance = self::instance();
 		foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
 			$model_class_name = strpos( $model_name, 'EEM_' ) !== 0 ? 'EEM_' . $model_name : $model_name;
