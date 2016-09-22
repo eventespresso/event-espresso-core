@@ -182,14 +182,14 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						$ticket_status_display = $ticket_status;
 					} else if ( $tkt_status == EE_Ticket::pending ) {
 						$ticket_status_display =
-					'<div class="ticket-pending-pg">
+					'<span class="ticket-pending-pg">
 						<span class="ticket-pending">'
 						. apply_filters( 'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg', __( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ))
 					. '</span><br/>
 						<span class="small-text">'
 						. $ticket->get_i18n_datetime( 'TKT_start_date', apply_filters( 'FHEE__EED_Ticket_Selector__display_goes_on_sale__date_format', $date_format ) )
 					. '</span>
-					</div>';
+					</span>';
 					// min qty purchasable is less than tickets available
 					} else if ( $ticket->min() > $remaining ) {
 						$ticket_status_display = '
