@@ -469,7 +469,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	/**
 	 * checks that when we reset a model, that it does so properly and
 	 * also returns the NEW model
-	 *
+	 * @group current
 	 * @author    Mike Nelson
 	 */
 	public function test_reset_model(){
@@ -479,9 +479,9 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertEquals($model_a, $model_a2);
 		$this->assertEquals($model_a2, $model_a3);
 		$model_b1 = EEM_Event::reset();
-		$this->assertNotSame( $model_a, $model_b1);
+		$this->assertEquals( $model_a, $model_b1);
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
-		$this->assertNotSame( $model_a, $model_b2);
+		$this->assertEquals( $model_a, $model_b2);
 	}
 
 

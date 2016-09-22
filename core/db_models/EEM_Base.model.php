@@ -615,7 +615,12 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public static function reset(  $timezone = NULL ){
 		if ( ! is_null( static::$_instance ) ) {
-			static::$_instance = null;
+			//let's try to NOT swap out the current instance for a new one
+			//because if someone has a reference to it, we can't remove their reference
+			//so it's best to keep using the same reference, but change the original object
+			$instance = static::$_instance;
+			$instance->__construct( $timezone );
+			$instance->clear_entity_map();
 
 			return self::instance( $timezone );
 		}
