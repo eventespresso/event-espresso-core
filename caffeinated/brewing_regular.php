@@ -1,4 +1,7 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php
+use EventEspresso\core\services\database\TableAnalysis;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 /**
@@ -6,6 +9,7 @@
  * related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to
  * define and use the hook in a specific caffeinated/whatever class or file.
  */
+
 // defined some new constants related to caffeinated folder
 define( 'EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
 define( 'EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS );
@@ -22,11 +26,17 @@ define( 'EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods' . DS );
  * @author         Darren Ethier
  */
 class EE_Brewing_Regular extends EE_BASE {
+	
+	/**
+	 * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+	 */
+	protected $_table_analysis;
 
 	/**
 	 * EE_Brewing_Regular constructor.
 	 */
-	public function __construct() {
+	public function __construct( TableAnalysis $table_analysis ) {
+		$this->_table_analysis = $table_analysis;
 		if ( defined( 'EE_CAFF_PATH' ) ) {
 			// activation
 			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ) );
@@ -79,13 +89,14 @@ class EE_Brewing_Regular extends EE_BASE {
 	 *
 	 * @global wpdb $wpdb
 	 */
-	function initialize_caf_db_content() {
+	public function initialize_caf_db_content(){
 		global $wpdb;
 		//use same method of getting creator id as the version introducing the change
-		$default_creator_id = apply_filters( 'FHEE__EE_DMS_Core_4_5_0__get_default_creator_id', get_current_user_id() );
-		$price_type_table = $wpdb->prefix . "esp_price_type";
-		$price_table = $wpdb->prefix . "esp_price";
-		if ( EEH_Activation::table_exists( $price_type_table ) ) {
+		$default_creator_id = apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
+		$price_type_table = $wpdb->prefix."esp_price_type";
+		$price_table = $wpdb->prefix."esp_price";
+		if ( $this->_get_table_analysis()->tableExists( $price_type_table ) ) {
+
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table . ' WHERE PBT_ID=4';//include trashed price types
 			$tax_price_type_count = $wpdb->get_var( $SQL );
 			if ( $tax_price_type_count <= 1 ) {
@@ -250,8 +261,24 @@ class EE_Brewing_Regular extends EE_BASE {
 		$payment_method_paths = array_merge( $payment_method_paths, $caf_payment_methods_paths );
 		return $payment_method_paths;
 	}
+	/**
+	 * Gets the injected table analyzer, or throws an exception
+	 * @return TableAnalysis
+	 * @throws \EE_Error
+	 */
+	protected function _get_table_analysis() {
+		if( $this->_table_analysis instanceof TableAnalysis ) {
+			return $this->_table_analysis;
+		} else {
+			throw new \EE_Error( 
+				sprintf( 
+					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'), 
+					get_class( $this ) 
+				) 
+			);
+		}
+	}
 }
-
-
-
-$brewing = new EE_Brewing_Regular();
+$brewing = new EE_Brewing_Regular(
+	EE_Registry::instance()->create( 'TableAnalysis', array(), true )
+);
