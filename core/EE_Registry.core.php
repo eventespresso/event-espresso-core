@@ -1150,24 +1150,6 @@ class EE_Registry {
 	}
 
 
-	/**
-	 * This method is used to clear the entity map on all instantiated EEM_ models.
-	 *
-	 * Do not use this unless you are really clear on its purpose.  It typically is only implemented in environments where code is being
-	 * executed in a long running process (such as a worker queue system where workers execute a variety of jobs). This method should
-	 * not be called in normal requests.
-	 */
-	public static function clear_all_model_entity_maps() {
-		$instance = self::instance();
-		foreach ( array_keys( $instance->non_abstract_db_models ) as $model_name ) {
-			$model_class_name = strpos( $model_name, 'EEM_' ) !== 0 ? 'EEM_' . $model_name : $model_name;
-			if ( isset( $instance->LIB->{$model_class_name} ) && $instance->LIB->{$model_class_name} instanceof EEM_Base ) {
-				$instance->LIB->{$model_class_name}->clear_entity_map();
-			}
-		}
-	}
-
-
 
 	/**
 	 * Resets the registry.
