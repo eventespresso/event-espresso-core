@@ -619,21 +619,19 @@ abstract class EEM_Base extends EE_Base{
 			//let's try to NOT swap out the current instance for a new one
 			//because if someone has a reference to it, we can't remove their reference
 			//so it's best to keep using the same reference, but change the original object
-			/** @var EEM_Base $instance */
-			$instance = static::$_instance;
 			//reset all its properties to their original values as defined in the class
-			$r = new ReflectionClass( get_class( $instance ) );
+			$r = new ReflectionClass( get_class( static::$_instance ) );
 			$static_properties = $r->getStaticProperties();
 			foreach( $r->getDefaultProperties() as $property => $value ) {
 				//don't set instance to null like it was originally,
 				//but it's static anyways, and we're ignoring static properties (for now at least)
 				if( ! isset( $static_properties[ $property ] ) ) {
-					$instance->$property = $value;
+					static::$_instance->{$property} = $value;
 				}
 			}
 			//and then directly call its constructor again, like we would if we 
 			//were creating a new one
-			$instance->__construct( $timezone );
+			static::$_instance->__construct( $timezone );
 			return self::instance();
 		}
 		return null;
