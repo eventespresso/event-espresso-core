@@ -247,6 +247,7 @@ class EE_Messages_Generator {
 
 		//if no addressees then get out because there is nothing to generation (possible bad data).
 		if ( ! $this->_valid_addressees( $addressees ) ) {
+			do_action( 'AHEE__EE_Messages_Generator___generate__invalid_addressees', $this->_generation_queue->get_message_repository()->current(), $addressees, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 			$this->_generation_queue->get_message_repository()->current()->set_STS_ID( EEM_Message::status_debug_only );
 			$this->_error_msg[] = __( 'This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
 			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.', 'event_espresso' );
@@ -564,7 +565,6 @@ class EE_Messages_Generator {
 		foreach ( $addressees as $addressee_array ) {
 			foreach ( $addressee_array as $addressee ) {
 				if ( ! $addressee instanceof EE_Messages_Addressee ) {
-					do_action( 'AHEE__EE_Messages_Generator___valid_addressees__failed_addressee_array', $this->_generation_queue->get_message_repository()->current(), $addressees, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 					return false;
 				}
 			}
