@@ -467,21 +467,33 @@ class EE_Registry_Test extends EE_UnitTestCase{
 
 
 	/**
-	 * checks that when we reset a model, that it does so properly and
-	 * also returns the NEW model
-	 * @group current
+	 * checks model resets happen properly: the model instance should NOT change
+	 * (in case code anywhere has a direct reference to it) but its properties
+	 * should be reset to their original settings
+	 * @group 10107
 	 * @author    Mike Nelson
 	 */
 	public function test_reset_model(){
 		$model_a = EE_Registry_Mock::instance()->load_model('Event');
 		$model_a2 = EE_Registry_Mock::instance()->load_model('Event');
 		$model_a3 = EEM_Event::instance();
+		//and put something in its entity map
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		$this->assertNotNull( $model_a->get_from_entity_map( $e->ID() ) );
 		$this->assertEquals($model_a, $model_a2);
 		$this->assertEquals($model_a2, $model_a3);
+		//let's set a differnet WP timezone. When the model is reset, it
+		//should automatically use this new timezone
+		$new_timezone_string = 'America/Detroit';
+		update_option( 'timezone_string', $new_timezone_string );
 		$model_b1 = EEM_Event::reset();
 		$this->assertEquals( $model_a, $model_b1);
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
 		$this->assertEquals( $model_a, $model_b2);
+		//verify the model now has the new wp timezone
+		$this->assertEquals( $new_timezone_string, $model_b1->get_timezone() );
+		//and that the model's entity map has been reset
+		$this->assertNull( $model_b1->get_from_entity_map( $e->ID() ) );
 	}
 
 
