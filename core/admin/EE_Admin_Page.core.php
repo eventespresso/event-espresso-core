@@ -3440,12 +3440,12 @@ abstract class EE_Admin_Page extends EE_Base {
 	/**
 	 * updates  espresso configuration settings
 	 *
-	 * @access 	protected
-	 * @param string $tab
-	 * @param array $data
-	 * @param string $file	file where error occurred
-	 * @param string $func function  where error occurred
-	 * @param string $line	line no where error occurred
+	 * @access    protected
+	 * @param string                   $tab
+	 * @param EE_Config_Base|EE_Config $config
+	 * @param string                   $file file where error occurred
+	 * @param string                   $func function  where error occurred
+	 * @param string                   $line line no where error occurred
 	 * @return boolean
 	 */
 	protected function _update_espresso_configuration( $tab, $config, $file = '', $func = '', $line = '' ) {
