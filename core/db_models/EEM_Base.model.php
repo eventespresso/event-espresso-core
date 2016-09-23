@@ -611,7 +611,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * resets the model and returns it
 	 * @param null | string $timezone
-	 * @return static|null (if the model was already instantiated, returns it, with 
+	 * @return EEM_Base|null (if the model was already instantiated, returns it, with 
 	 * all its properties reset; if it wasn't instantiated, returns null)
 	 */
 	public static function reset(  $timezone = NULL ){
