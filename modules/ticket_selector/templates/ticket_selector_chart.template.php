@@ -19,6 +19,10 @@ $template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EE
 	? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
 	: new EE_Ticket_Selector_Config();
 
+$tax_settings = isset ( EE_Registry::instance()->CFG->tax_settings )
+	? EE_Registry::instance()->CFG->tax_settings
+	: new EE_Tax_Config();
+
 // flag to indicate that at least one taxable ticket has been encountered
 $taxable_tickets = false;
 
@@ -44,7 +48,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$required_ticket_sold_out = $ticket->required() && ! $remaining ? $ticket->start_date() : $required_ticket_sold_out;
 		}
 
-		$ticket_price = $template_settings->ticket_price_includes_taxes
+		$ticket_price = $tax_settings->prices_displayed_including_taxes
 			? $ticket->get_ticket_total_with_taxes()
 			: $ticket->get_ticket_subtotal();
 		$taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
@@ -514,7 +518,7 @@ if ( ! $hide_ticket_selector ) {
 	</table>
 	<?php
 	if ( $taxable_tickets && apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', true ) ) {
-		if ( $template_settings->ticket_price_includes_taxes ) {
+		if ( $tax_settings->prices_displayed_including_taxes ) {
 			$ticket_price_includes_taxes = __( '* price includes taxes', 'event_espresso' );
 		} else {
 			$ticket_price_includes_taxes = __( '* price does not include taxes', 'event_espresso' );
