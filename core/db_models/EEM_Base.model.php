@@ -622,7 +622,7 @@ abstract class EEM_Base extends EE_Base{
 			$instance->__construct( $timezone );
 			$instance->clear_entity_map();
 
-			return self::instance( $timezone );
+			return self::instance();
 		}
 		return null;
 	}
