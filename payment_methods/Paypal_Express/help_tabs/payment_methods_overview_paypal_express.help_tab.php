@@ -2,11 +2,12 @@
 	<strong><?php _e( 'PayPal Express Checkout', 'event_espresso' ); ?></strong>
 </p>
 <p>
-	<?php _e('Adjust the settings for the PayPal Express Checkout.', 'event_espresso'); ?>
+	<?php _e('Please be sure to update the settings for the PayPal Express Checkout payment method.', 'event_espresso'); ?>
 </p>
 <p>
-	<a target="_blank" href="https://eventespresso.com/go/paypalstandard/"><?php _e('Click here to signup for an account with PayPal', 'event_espresso'); ?></a>
+	<?php printf( __('For more information on how to get your API credentials, please view the %1$sPayPal Documentation%2$s.', 'event_espresso'), '<a target="_blank" href="https://developer.paypal.com/docs/classic/api/apiCredentials/#create-an-api-signature">', '</a>' ); ?>
 </p>
+
 
 <p>
 	<strong><?php _e('PayPal Express Checkout Settings', 'event_espresso'); ?></strong>
@@ -29,5 +30,5 @@
 	<?php printf( __('For testing please use a %1$s PaypPal Sandbox account%2$s.', 'event_espresso'), '<a target="_blank" href="https://developer.paypal.com">', '</a>' ); ?>
 </p>
 <p>
-	<?php printf( __('%1$sClick here%2$s for more information on how to get your API credentials.', 'event_espresso'), '<a target="_blank" href="https://developer.paypal.com/docs/classic/api/apiCredentials/?mark=api%20signature#creating-an-api-signature">', '</a>' ); ?>
+	<?php printf( __('Don\'t have PayPal? %1$sSign up for an account%2$s to get start right away.', 'event_espresso'), '<a target="_blank" href="hhttps://eventespresso.com/go/paypalstandard/">', '</a>' ); ?>
 </p>
