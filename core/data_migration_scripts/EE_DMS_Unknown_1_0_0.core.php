@@ -1,5 +1,8 @@
 <?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) {
 	exit('No direct script access allowed');
 }
 
@@ -40,13 +43,15 @@ class EE_DMS_Unknown_1_0_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * All children of this must call parent::__construct() at the end of their constructor or suffer the consequences!
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct() {
-
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_migration_stages = array();
 		$this->_pretty_name = __("Fatal Uncatchable Error Occurred", "event_espresso");
 //		dd($this);
-		parent::__construct();
+		parent::__construct( $table_manager, $table_analysis );
 	}
 	public function migration_page_hooks() {
 

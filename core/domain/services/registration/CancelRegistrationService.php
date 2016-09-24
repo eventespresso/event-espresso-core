@@ -40,14 +40,16 @@ class CancelRegistrationService
 
 
 
-    /**
-     * @param \EE_Registration $registration
-     * @throws \EE_Error
-     */
-    public function cancelRegistrationAndTicketLineItem(\EE_Registration $registration)
+	/**
+	 * @param \EE_Registration $registration
+	 * @param bool             $cancel_ticket_line_item
+	 */
+    public function cancelRegistrationAndTicketLineItem(\EE_Registration $registration, $cancel_ticket_line_item = true)
     {
         // first cancel the original line item for the registration's ticket
-        $this->cancel_ticket_line_item_service->forRegistration($registration);
+	    if ( $cancel_ticket_line_item ) {
+		    $this->cancel_ticket_line_item_service->forRegistration( $registration );
+	    }
         $this->cancelRegistrationOnly($registration);
     }
 
