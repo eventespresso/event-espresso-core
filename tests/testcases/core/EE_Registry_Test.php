@@ -465,6 +465,26 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	}
 
 
+	/**
+	 * Checks to ensure that when we reset the registry with reset models to true, that the models are actually reset.
+	 * @group 10109
+	 */
+	public function test_reset_with_reset_models() {
+		$testing_model = EE_Registry_Mock::instance()->load_model( 'Event' );
+
+		//put something in the entity map
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		$this->assertNotNull( $testing_model->get_from_entity_map( $e->ID() ) );
+
+		//now let's do the full Registry reset including resetting the models.
+		EE_Registry_Mock::instance()->reset( false, true, true );
+
+		//after the reset, the entity map on the model SHOULD be empty.
+		$this->assertNull( EEM_Registration::instance()->get_from_entity_map( $e->ID() ) );
+		$this->assertNull( $testing_model->get_from_entity_map( $e->ID() ) );
+	}
+
+
 
 	/**
 	 * checks model resets happen properly: the model instance should NOT change
@@ -486,7 +506,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		//should automatically use this new timezone
 		$new_timezone_string = 'America/Detroit';
 		update_option( 'timezone_string', $new_timezone_string );
-		$model_b1 = EEM_Event::reset();
+		$model_b1 = EE_Registry::reset_model( 'Event' );
 		$this->assertEquals( $model_a, $model_b1);
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
 		$this->assertEquals( $model_a, $model_b2);
