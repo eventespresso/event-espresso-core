@@ -506,7 +506,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		//should automatically use this new timezone
 		$new_timezone_string = 'America/Detroit';
 		update_option( 'timezone_string', $new_timezone_string );
-		$model_b1 = EE_Registry::reset_model( 'Event' );
+		$model_b1 = EE_Registry_Mock::reset_model( 'Event' );
 		$this->assertEquals( $model_a, $model_b1);
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
 		$this->assertEquals( $model_a, $model_b2);
