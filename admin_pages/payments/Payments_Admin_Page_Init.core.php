@@ -134,8 +134,8 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 			}
 		}
 
-		// Not using PP Standard? Then display only PayPal Express, no not show PayPal Standard.
-		if ( apply_filters( 'FHEE__EE_PMT_Paypal_Express__register_payment_methods__show_paypal_standard', ! $ppstandard_active && ! $ppstandard_active_before ) ) {
+		// Not using PP Standard? Then display only PayPal Express, do not show PayPal Standard.
+		if ( apply_filters( 'FHEE__EE_PMT_Paypal_Express__register_payment_methods__hide_paypal_standard', ! $ppstandard_active && ! $ppstandard_active_before ) ) {
 			unset($payment_method_types['paypal_standard']);
 		}
 		return $payment_method_types;
