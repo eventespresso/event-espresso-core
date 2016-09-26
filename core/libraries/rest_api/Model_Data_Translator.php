@@ -150,11 +150,7 @@ class Model_Data_Translator {
 	 *
 	 * @param \EE_Model_Field_Base $field_obj
 	 * @param mixed                $original_value
-<<<<<<< HEAD
 	 * @param string               $requested_version
-=======
-	 * @param                      $requested_version
->>>>>>> master
 	 * @return mixed
 	 */
    public static function prepare_field_value_for_json( $field_obj, $original_value, $requested_version ) {
