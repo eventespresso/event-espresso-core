@@ -989,7 +989,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Alters query parameters to only get items with this ID are returned.
-	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string()
+	 * Takes into account that the ID might be a string produced by EEM_Base::get_index_primary_key_string(),
+	 * or could just be a simple primary key ID
 	 *
 	 * @param int   $id
 	 * @param array $query_params
@@ -1000,7 +1001,8 @@ abstract class EEM_Base extends EE_Base{
 		if( ! isset( $query_params[ 0 ] ) ) {
 			$query_params[ 0 ] = array();
 		}
-		if( $this->has_primary_key_field ( ) ) {
+		$conditions_from_id = $this->parse_index_primary_key_string( $id );
+		if( $conditions_from_id === null ) {
 			$query_params[ 0 ][ $this->primary_key_name() ] = $id ;
 		}else{
 			//no primary key, so the $id must be from the get_index_primary_key_string()
@@ -1847,11 +1849,24 @@ abstract class EEM_Base extends EE_Base{
 		}elseif($this->has_primary_key_field ()){
 			$pk_field_obj = $this->get_primary_key_field();
 			$column_to_count = $pk_field_obj->get_qualified_column();
-		}else{//there's no primary key
-			$column_to_count = '*';
+		}else{
+			//there's no primary key
+			//if we're counting distinct items, and there's no primary key,
+			//we need to list out the columns for distinction;
+			//otherwise we can just use star
+			if( $distinct ) {
+				$columns_to_use = array();
+				foreach( $this->get_combined_primary_key_fields() as $field_obj ) {
+					$columns_to_use[] = $field_obj->get_qualified_column();
+				}
+				$column_to_count = implode(',', $columns_to_use );
+			} else {
+				$column_to_count = '*';
+			}
+
 		}
 
-		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
+		$column_to_count = $distinct ? "DISTINCT " . $column_to_count : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
 		return (int)$this->_do_wpdb_query( 'get_var', array( $SQL) );
 	}
