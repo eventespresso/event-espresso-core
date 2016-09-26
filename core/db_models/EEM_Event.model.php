@@ -148,6 +148,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Datetime'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
+			'Term_Relationship' => new EE_Has_Many_Relation(),
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
 			'Attendee'=>new EE_HABTM_Relation('Registration'),
