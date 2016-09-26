@@ -174,7 +174,6 @@ class EED_Ticket_Selector extends  EED_Module {
 			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__eei18n_js_strings',
 			EE_Registry::localize_i18n_js_strings()
 		);
-		$template_args['powered_by'] = \EEH_Template::powered_by_event_espresso();
 		$template_args['js'] = apply_filters(
 			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
 			array(
@@ -448,6 +447,9 @@ class EED_Ticket_Selector extends  EED_Module {
 					EED_Ticket_Selector::$_event
 				);
 				$html .= '<div class="clear"><br/></div></form>';
+				if ( ! is_archive() ) {
+					$html .= \EEH_Template::powered_by_event_espresso();
+				}
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
