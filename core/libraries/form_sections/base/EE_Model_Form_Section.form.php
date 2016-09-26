@@ -266,6 +266,11 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				}
 			}
 		}
+		$defaults = apply_filters( 
+			'FHEE__EE_Model_Form_Section__populate_model_obj',
+			$defaults,
+			$this
+		);
 		$this->populate_defaults($defaults);
 	}
 
@@ -340,6 +345,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				$success = $this->_save_related_info($relation_name);
 			}
 		}
+		do_action( 'AHEE__EE_Model_Form_Section__save__done', $this, $success );
 		return $success;
 	}
 
