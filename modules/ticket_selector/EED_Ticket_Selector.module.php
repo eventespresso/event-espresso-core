@@ -42,6 +42,14 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	private static $_available_spaces = array();
 
+	/**
+	* max attendees that can register for event at one time
+	*
+	* @access private
+	* @var int
+	*/
+	private static $_max_atndz = EE_INF;
+
 
 
 
@@ -166,6 +174,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__eei18n_js_strings',
 			EE_Registry::localize_i18n_js_strings()
 		);
+		$template_args['powered_by'] = \EEH_Template::powered_by_event_espresso();
 		$template_args['js'] = apply_filters(
 			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
 			array(
@@ -334,7 +343,11 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
+		\EED_Ticket_Selector::$_max_atndz = apply_filters(
+			'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets',
+			self::$_event->additional_limit()
+		);
+		$template_args['max_atndz'] = \EED_Ticket_Selector::$_max_atndz;
 		if ( $template_args['max_atndz'] < 1 ) {
 			$sales_closed_msg = __( 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.', 'event_espresso' );
 			if ( current_user_can( 'edit_post', self::$_event->ID() )) {
@@ -422,30 +435,44 @@ class EED_Ticket_Selector extends  EED_Module {
 				$btn_text = apply_filters(
 					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
 					__('Register Now', 'event_espresso' ),
-					self::$_event
+					EED_Ticket_Selector::$_event
 				);
-				$external_url = self::$_event->external_url();
-				$html = '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn"';
+				$external_url = EED_Ticket_Selector::$_event->external_url();
+				$html = '<input id="ticket-selector-submit-'. EED_Ticket_Selector::$_event->ID() .'-btn"';
 				$html .= ' class="ticket-selector-submit-btn ';
 				$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
 				$html .= ' type="submit" value="' . $btn_text . '" />';
-				$html .= apply_filters( 'FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', self::$_event );
+				$html .= apply_filters(
+					'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+					'',
+					EED_Ticket_Selector::$_event
+				);
 				$html .= '<div class="clear"><br/></div></form>';
 				return $html;
 			} else if ( is_archive() ) {
 				return EED_Ticket_Selector::ticket_selector_form_close() . EED_Ticket_Selector::display_view_details_btn();
-			} else {
+			} else if (
+				EED_Ticket_Selector::$_event instanceof EE_Event
+				// if $_max_atndz === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+				&& EED_Ticket_Selector::$_max_atndz === 1
+				// and the event is sold out
+				&& EED_Ticket_Selector::$_event->is_sold_out()
+			) {
+				// then instead of a View Details or Submit button, just display a "Sold Out" message
 				$html = apply_filters(
 					'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
 					sprintf(
-						__( '%1$sSold Out%2$s', 'event_espresso' ),
-						'<h2 class="no-ticket-selector-h2 pink-text">',
-						'</h2>'
+						__( '%1$s"%2$s" is currently sold out. Please check back again later, as spots may become available.%3$s', 'event_espresso' ),
+						'<p class="no-ticket-selector-msg important-notice">',
+						EED_Ticket_Selector::$_event->name(),
+						'</p>'
 					),
-					self::$_event
+					EED_Ticket_Selector::$_event
 				);
 				$html .= '<div class="clear"></div></form>';
 				return $html;
+			} else {
+				return '<div class="clear"></div></form>';
 			}
 		}
 		return '';
