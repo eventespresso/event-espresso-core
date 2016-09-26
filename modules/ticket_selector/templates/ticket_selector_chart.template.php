@@ -457,6 +457,15 @@ remove_filter(
 	'FHEE__EE_Ticket_Selector__after_view_details_btn',
 	array( 'EED_Ticket_Selector', 'no_tkt_slctr_end_dv' )
 );
+/**
+* Filters the anchor ID used when redirecting to the Ticket Selector if no quantity selected
+*
+* @since 4.9.13
+*
+* @param string '#tkt-slctr-tbl-' . $EVT_ID The html ID to anchor to
+* @param int $EVT_ID The Event ID
+*/
+$anchor_id = apply_filters( 'FHEE__EE_Ticket_Selector__redirect_anchor_id', '#tkt-slctr-tbl-' . $EVT_ID, $EVT_ID );
 if ( ! $hide_ticket_selector ) {
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
@@ -505,7 +514,7 @@ if ( ! $hide_ticket_selector ) {
 	</table>
 
 	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . '#tkt-slctr-tbl-' . $EVT_ID; ?>" />
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>" />
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
@@ -526,7 +535,7 @@ if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
 <input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
 <input type="hidden" name="noheader" value="true"/>
-<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . '#tkt-slctr-tbl-' . $EVT_ID; ?>"/>
+<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>"/>
 <input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>"/>
 <input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>"/>
 <input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>"/>
