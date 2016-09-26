@@ -40,7 +40,7 @@ jQuery(document).ready(function($) {
 			return true;
 		} else {
 			e.preventDefault();
-			alert( EEDTicketSelectorMsg.zeroSelected );
+			alert( eei18n.EEDTicketSelectorMsg );
 			return false;
 		}
 	});
