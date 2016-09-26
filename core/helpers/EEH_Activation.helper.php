@@ -907,8 +907,8 @@ class EEH_Activation {
 			'address',
 			'address2',
 			'city',
-			'state',
 			'country',
+			'state',
 			'zip',
 			'phone'
 		);
@@ -1554,8 +1554,8 @@ class EEH_Activation {
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )
-							&& 
-							( 
+							&&
+							(
 								is_main_site()//main site? nuke them all
 								|| ! $table->is_global()//not main site,but not global either. nuke it
 							)
