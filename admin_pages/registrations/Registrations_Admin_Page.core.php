@@ -1190,6 +1190,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			// grab header
 			$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_header.template.php';
+			$this->_template_args['REG_ID'] = $this->_registration->ID();
 			$this->_template_args['admin_page_header'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 
 		} else {
@@ -2453,7 +2454,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				//process ticket selection
 				$success = EED_Ticket_Selector::instance()->process_ticket_selections();
 				if ( $success ) {
-					EE_Error::add_success( __( 'Tickets Selected. Now complete the registration.', 'event_espresso' ) );
+					EE_Error::add_success( esc_html__( 'Tickets Selected. Now complete the registration.', 'event_espresso' ) );
 				} else {
 					$query_args['step_error'] = $this->_req_data['step_error'] = TRUE;
 				}
@@ -2495,10 +2496,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						return;
 					}
 				}
-				/** @type EE_Transaction_Payments $transaction_payments */
-				$transaction_payments = EE_Registry::instance()->load_class( 'Transaction_Payments' );
 				// maybe update status, and make sure to save transaction if not done already
-				if ( ! $transaction_payments->update_transaction_status_based_on_total_paid( $transaction )) {
+				if ( ! $transaction->update_status_based_on_total_paid() ) {
 					$transaction->save();
 				}
 				EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );

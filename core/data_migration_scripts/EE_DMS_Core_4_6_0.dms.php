@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 /**
  * meant to convert DBs between 4.6 and 4.6
  * mostly just
@@ -36,8 +39,11 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * return EE_DMS_Core_4_6_0
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct() {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.6.0.P", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
@@ -51,7 +57,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 			new EE_DMS_4_6_0_payments(),
 			new EE_DMS_4_6_0_invoice_settings()
 		);
-		parent::__construct();
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
@@ -62,7 +68,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.6.0' && $version_string >= '4.5.0' ){
+		if ( version_compare( $version_string, '4.6.0', '<=' ) && version_compare( $version_string, '4.5.0', '>=' ) ) {
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
@@ -267,7 +273,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
-		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
+		$this->_get_table_manager()->dropIndex( 'esp_message_template_group', 'EVT_ID' );
 
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -554,7 +560,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TKT_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+		$this->_get_table_manager()->dropIndex( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -605,12 +611,12 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$table_name = $wpdb->prefix."esp_payment_method";
 		$user_id = EEH_Activation::get_default_creator_id();
-		if ( EEH_Activation::table_exists( $table_name ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $table_name ) ) {
 
 			$SQL = "SELECT COUNT( * ) FROM $table_name";
 			$existing_payment_methods = $wpdb->get_var($SQL);
-			$default_admin_only_payment_methods = apply_filters( 
-					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods', 
+			$default_admin_only_payment_methods = apply_filters(
+					'FHEE__EEH_Activation__add_default_admin_only_payments__default_admin_only_payment_methods',
 					array(
 					__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
 					__("Cash", 'event_espresso')=>  __("Cash Delivered Physically", 'event_espresso'),
@@ -672,7 +678,7 @@ class EE_DMS_Core_4_6_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$currency_table = $wpdb->prefix."esp_currency";
-		if ( EEH_Activation::table_exists( $currency_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $currency_table ) ) {
 
 			$SQL = "SELECT COUNT('CUR_code') FROM $currency_table";
 			$countries = $wpdb->get_var($SQL);
