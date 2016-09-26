@@ -39,7 +39,7 @@ class EE_Dependency_Map {
 	/**
 	 * @type EE_Dependency_Map $_instance
 	 */
-	protected static $_instance = null;
+	protected static $_instance;
 
 	/**
 	 * @type EE_Request $request
@@ -237,7 +237,6 @@ class EE_Dependency_Map {
 	 *
 	 * @param string $class_name
 	 * @param string $alias
-	 * @return bool
 	 */
 	public function add_alias( $class_name, $alias ) {
 		$this->_aliases[ $class_name ] = $alias;
@@ -270,7 +269,7 @@ class EE_Dependency_Map {
 	 *      to load an instance of 'some\namespace\classname'
 	 *
 	 * @param string $class_name
-	 * @return boolean
+	 * @return string
 	 */
 	public function get_alias( $class_name = '' ) {
 		return $this->has_alias( $class_name )
@@ -386,6 +385,39 @@ class EE_Dependency_Map {
 			'EventEspresso\core\domain\services\registration\CancelRegistrationService' => array(
 				'EventEspresso\core\domain\services\ticket\CancelTicketLineItemService' => EE_Dependency_Map::load_from_cache,
 			),
+			'EventEspresso\core\services\database\TableManager' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_Data_Migration_Class_Base' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_1_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_2_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_3_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_4_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_5_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_6_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_7_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_8_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
+			'EE_DMS_Core_4_9_0' => array(
+				'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+			),
 		);
 	}
 
@@ -487,7 +519,8 @@ class EE_Dependency_Map {
 			'CancelRegistrationAndTicketLineItemCommandHandler'                   => 'EventEspresso\core\services\commands\registration\CancelRegistrationAndTicketLineItemCommandHandler',
 			'UpdateRegistrationAndTransactionAfterChangeCommandHandler'           => 'EventEspresso\core\services\commands\registration\UpdateRegistrationAndTransactionAfterChangeCommandHandler',
 			'CreateTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CreateTicketLineItemCommand',
-			'CancelTicketLineItemCommandHandler'                                  => 'EventEspresso\core\services\commands\ticket\CancelTicketLineItemCommand',
+			'TableManager'                                                        => 'EventEspresso\core\services\database\TableManager',
+			'TableAnalysis'                                                       => 'EventEspresso\core\services\database\TableAnalysis',
 		);
 	}
 

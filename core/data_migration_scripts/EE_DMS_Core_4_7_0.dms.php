@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 /**
  * converts DBs to 4.7
  * Adds the esp_registration_payment table (indicating which registrations payments are for),
@@ -40,15 +43,18 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * return EE_DMS_Core_4_7_0
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct() {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.7.0.p", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price(),
 			new EE_DMS_4_7_0_Registration_Payments(),
 		);
-		parent::__construct();
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
@@ -65,8 +71,8 @@ class EE_DMS_Core_4_7_0 extends EE_Data_Migration_Script_Base{
 				&& version_compare( $version_string, '4.6.0', '>=' )
 			) || (
 				version_compare( $version_string, '4.7.0', '>=' )
-				&& ! EEH_Activation::table_exists( 'esp_registration_payment' )
-				&& EEH_Activation::table_exists( 'esp_registration' )
+				&& ! $this->_get_table_analysis()->tableExists( 'esp_registration_payment' )
+				&& $this->_get_table_analysis()->tableExists( 'esp_registration' )
 			)
 		) {
 			return true;

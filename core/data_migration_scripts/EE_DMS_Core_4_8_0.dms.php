@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 /**
  * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
  * going to be released before this version) to 4.8 (which basically supports promotions)
@@ -39,15 +42,18 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * return EE_DMS_Core_4_8_0
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct() {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.8.0.P (for promotions)", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_8_0_pretax_totals(),
 			new EE_DMS_4_8_0_event_subtotals(),
 		);
-		parent::__construct();
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
@@ -706,7 +712,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CNT_is_EU" => '%d',
 							"CNT_active" => '%d',
 						);
-		if ( EEH_Activation::table_exists( $country_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $country_table ) ) {
 			foreach( $newer_countries as $country ) {
 				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
@@ -743,7 +749,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CUR_dec_plc" => '%d',
 							"CUR_active" => '%d',
 						);
-		if ( EEH_Activation::table_exists( $currency_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $currency_table ) ) {
 			foreach( $newer_currencies as $currency ) {
 				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
