@@ -419,6 +419,35 @@ class PostShortcodeTracking {
 	}
 
 
+
+    /**
+     * @param string $shortcode
+     * @return array
+     */
+    public static function get_post_ids_for_shortcode($shortcode='')
+    {
+        $shortcode = strtoupper($shortcode);
+        $shortcode = strpos($shortcode, 'ESPRESSO_') !== 0 ? "ESPRESSO_{$shortcode}" : $shortcode;
+        $post_ids = array();
+        $page_for_posts = \EE_Config::get_page_for_posts();
+        // looking for any references to this post
+        foreach (\EE_Registry::CFG()->core->post_shortcodes as $post_name => $post_shortcodes) {
+            // if this is the "Posts Page" (blog), then skip it
+            if ($post_name === $page_for_posts) {
+                continue;
+            }
+            // loop thru shortcodes registered for each page, and grab post id for matches
+            foreach ((array) $post_shortcodes as $shortcode_class => $post_ID) {
+                if ($shortcode_class === $shortcode) {
+                    $post_ids[$post_ID] = $post_ID;
+                }
+            }
+        }
+        return $post_ids;
+    }
+
+
+
 }
 // End of file PostShortcodeTracking.php
 // Location: /PostShortcodeTracking.php
