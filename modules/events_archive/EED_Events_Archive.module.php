@@ -1,4 +1,6 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php use EventEspresso\modules\events_archive\EventsArchiveIframe;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -57,6 +59,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function set_hooks() {
 		EE_Config::register_route( EE_Registry::instance()->CFG->core->event_cpt_slug, 'Events_Archive', 'run' );
 		EE_Config::register_route( 'event_list', 'Events_Archive', 'event_list' );
+		EE_Config::register_route( 'iframe', 'Events_Archive', 'event_list_iframe', 'event_list' );
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
 	}
 
@@ -183,6 +186,18 @@ class EED_Events_Archive  extends EED_Module {
 		$this->set_config();
 		// load other required components
 		$this->load_event_list_assets();
+	}
+
+
+
+	/**
+	 * @access    public
+	 * @return    void
+	 * @throws \EE_Error
+	 */
+	public function event_list_iframe() {
+		$event_list_iframe = new EventsArchiveIframe( $this );
+		$event_list_iframe->display();
 	}
 
 
