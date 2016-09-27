@@ -229,7 +229,7 @@ class Iframe
      */
     public function getTemplate()
     {
-        return \EEH_Template::display_template(
+	    return \EEH_Template::display_template(
             __DIR__ . '\iframe_wrapper.template.php',
             array(
                 'title'             => apply_filters(
@@ -280,18 +280,33 @@ class Iframe
     public function localizeJsonVars()
     {
         $JSON = '';
-        $localized_vars = (array)$this->localized_vars;
-        foreach ($localized_vars as $var_name => $vars) {
-            foreach ($vars as $key => $value) {
-                if (is_scalar($value)) {
-                    $localized_vars[$var_name][$key] = html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
-                }
+        foreach ( (array) $this->localized_vars as $var_name => $vars) {
+            foreach ( (array) $vars as $key => $value) {
+	            $this->localized_vars[ $var_name ] = $this->encodeJsonVars( $value );
             }
-            $JSON .= "/* <![CDATA[ */ var $var_name = " . wp_json_encode($localized_vars[$var_name]) . '; /* ]]> */';
+	        $JSON .= "/* <![CDATA[ */ var {$var_name} = " . wp_json_encode( $this->localized_vars[ $var_name ] ) . '; /* ]]> */';
         }
         return $JSON;
     }
 
+
+
+	/**
+	 * @param bool|int|float|string|array $var
+	 * @return array
+	 */
+	public function encodeJsonVars( $var ) {
+		if ( is_array( $var ) ) {
+			$localized_vars = array();
+			foreach( (array) $var as $key => $value ) {
+				$localized_vars[ $key ] = $this->encodeJsonVars( $value );
+			}
+			return $localized_vars;
+		} else if ( is_scalar( $var ) ) {
+			return html_entity_decode( (string) $var, ENT_QUOTES, 'UTF-8' );
+		}
+		return null;
+	}
 
 
     /**
