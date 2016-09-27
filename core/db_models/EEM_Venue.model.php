@@ -72,7 +72,9 @@ class EEM_Venue extends EEM_CPT_Base {
 			'State'=>new EE_Belongs_To_Relation(),
 			'Country'=>new EE_Belongs_To_Relation(),
 			'Event_Venue'=>new EE_Has_Many_Relation(),
-			'WP_User' => new EE_Belongs_To_Relation()
+			'WP_User' => new EE_Belongs_To_Relation(),
+			'Term_Relationship' => new EE_Has_Many_Relation(),
+			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 		);
 		//this model is generally available for reading
 		$this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();

@@ -84,8 +84,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 1, count( EEH_Line_Item::get_ticket_line_items( $total_line_item ) ) );
 		// now add a different ticket
 		$new_ticket = $this->new_ticket( array(
-			'ticket_price'  		=> 10,
-			'ticket_taxable' 	=> false,
+			'TKT_price'  		=> 10,
+			'TKT_taxable' 	=> false,
 			'datetimes'         	=> 1
 		) );
 		$new_ticket->save();
@@ -845,26 +845,84 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 
 
 
-        /**
-         * @group 4710
-         */
-        function test_set_line_items_taxable() {
-            $t = $this->new_typical_transaction( array( 'taxable_tickets' => 0 ) );
-            EEH_Line_Item::add_unrelated_item( $t->total_line_item(), 'Exempt Line Item', 1, 'Description', 1, false, 'exempt_me');
-            $reg_line_items = EEH_Line_Item::get_descendants_of_type( $t->total_line_item(), EEM_Line_Item::type_line_item );
-            foreach( $reg_line_items as $line_item ) {
+    /**
+     * @group 4710
+     */
+    function test_set_line_items_taxable() {
+        $t = $this->new_typical_transaction( array( 'taxable_tickets' => 0 ) );
+        EEH_Line_Item::add_unrelated_item( $t->total_line_item(), 'Exempt Line Item', 1, 'Description', 1, false, 'exempt_me');
+        $reg_line_items = EEH_Line_Item::get_descendants_of_type( $t->total_line_item(), EEM_Line_Item::type_line_item );
+        foreach( $reg_line_items as $line_item ) {
+            $this->assertFalse( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
+        }
+        EEH_Line_Item::set_line_items_taxable( $t->total_line_item(), true, 'exempt_me' );
+        foreach( $reg_line_items as $line_item ) {
+            if( $line_item->code() == 'exempt_me' ) {
                 $this->assertFalse( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
-            }
-            EEH_Line_Item::set_line_items_taxable( $t->total_line_item(), true, 'exempt_me' );
-            foreach( $reg_line_items as $line_item ) {
-                if( $line_item->code() == 'exempt_me' ) {
-                    $this->assertFalse( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
-                } else {
-                    $this->assertTrue( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
-                }
+            } else {
+                $this->assertTrue( $line_item->is_taxable(), print_r( $line_item->model_field_array(), true ) );
             }
         }
+    }
 
+
+
+    function test_recalculate_total_including_taxes_after_ticket_cancellation() {
+        // create txn with one $10 ticket that is taxable at default 15% rate
+        $transaction = $this->new_typical_transaction( array( 'taxable_tickets' => 1 ) );
+        $registrations = $transaction->registrations();
+        $registration = reset( $registrations );
+        $this->assertInstanceOf( 'EE_Registration', $registration );
+        $ticket1 = $registration->ticket();
+        $this->assertEquals( 10, $ticket1->price() );
+        $total_line_item = $transaction->total_line_item();
+        $this->assertInstanceOf( 'EE_Line_Item', $total_line_item );
+        $this->assertEquals( 11.5, $total_line_item->total() );
+        // EEH_Line_Item::visualize( $total_line_item );
+        // now cancel the registration
+        $registration->set_status( \EEM_Registration::status_id_cancelled );
+        $registration->save();
+        // EEH_Line_Item::cancel_ticket_line_item( $ticket_line_item );
+        // now retrieve the line item for the ticket
+        $ticket_line_items = EEH_Line_Item::get_ticket_line_items( $total_line_item );
+        $this->assertCount( 1, $ticket_line_items );
+        $ticket_line_item = reset( $ticket_line_items );
+        $this->assertInstanceOf( 'EE_Line_Item', $ticket_line_item );
+        // and check its quantity
+        $this->assertEquals( 0, $ticket_line_item->quantity() );
+        // EEH_Line_Item::visualize( $total_line_item );
+        $ticket_line_items = array();
+        $ticket_line_item = null;
+        // echo "\n\n now add a new $15 ticket: \n";
+        // now add a new ticket
+        $ticket2 = $this->new_ticket( array( 'TKT_price' => 15, 'TKT_taxable' => false ) );
+        $this->assertEquals( 15, $ticket2->price() );
+        EEH_Line_Item::add_ticket_purchase( $total_line_item, $ticket2 );
+        // EEH_Line_Item::visualize( $total_line_item );
+        $ticket_line_items = EEH_Line_Item::get_ticket_line_items( $total_line_item );
+        $this->assertCount( 2, $ticket_line_items );
+        // find ticket 2
+        foreach ( $ticket_line_items as $ticket_line_item ) {
+            if ( $ticket_line_item->OBJ_type() === 'Ticket' && $ticket_line_item->OBJ_ID() === $ticket2->ID() ) {
+		        $this->assertEquals( $ticket2->price(), $ticket_line_item->total() );
+	        }
+        }
+        $this->assertEquals( 15, $total_line_item->total() );
+    }
+
+
+
+	public function test_event_subtotal_line_items() {
+		$transaction = $this->new_typical_transaction( array( 'ticket_types' => 2 ) );
+		/** @var EE_Line_Item $total_line_item */
+		$total_line_item = $transaction->total_line_item();
+		$total_line_item->recalculate_total_including_taxes();
+		// EEH_Line_Item::visualize( $total_line_item );
+		foreach ( EEH_Line_Item::get_event_subtotals( $total_line_item ) as $event_line_item ) {
+			$this->assertNotEquals( 0.0, $event_line_item->unit_price() );
+			$this->assertEquals( $event_line_item->unit_price(), ( $event_line_item->total() / $event_line_item->quantity() ) );
+		}
+	}
 
 }
 

@@ -456,6 +456,30 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			) ),
 			EEM_Transaction::instance()->alter_query_params_to_only_include_mine() );
 	}
+	
+	/**
+	 * @group 10083
+	 */
+	public function test_alter_query_params_to_restrict_by_ID__simple_id(){
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		$query_params = EEM_Event::instance()->alter_query_params_to_restrict_by_ID( $e->ID() );
+		$e_found = EEM_Event::instance()->get_one( $query_params );
+		$this->assertEquals( $e, $e_found );
+	}
+	
+	/**
+	 * @group 10083
+	 */
+	public function test_alter_query_params_to_restrict_by_ID__get_index_primary_key_string(){
+		$e = $this->new_model_obj_with_dependencies( 'Event' );
+		$query_params = EEM_Event::instance()->alter_query_params_to_restrict_by_ID( 
+			EEM_Event::instance()->get_index_primary_key_string( 
+				$e->model_field_array() 
+			) 
+		);
+		$e_found = EEM_Event::instance()->get_one( $query_params );
+		$this->assertEquals( $e, $e_found );
+	}
 
 	/**
 	 * Checks that we can correctly apply backend read caps where there is only
