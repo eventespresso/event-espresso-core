@@ -17,6 +17,15 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	const LOCK_EXPIRATION = 2;
 
 	/**
+	 * txn status upon initial construction.
+	 *
+	 * @var string
+	 */
+	protected $_old_txn_status;
+
+
+
+	/**
 	 * @param array  $props_n_values          incoming values
 	 * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
 	 *                                        used.)
@@ -27,9 +36,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = null, $date_formats = array() ) {
 		$has_object = parent::_check_for_object( $props_n_values, __CLASS__, $timezone, $date_formats );
-		return $has_object
+		$txn = $has_object
 			? $has_object
 			: new self( $props_n_values, false, $timezone, $date_formats );
+		if ( ! $has_object ) {
+			$txn->set_old_txn_status( $txn->status_ID() );
+		}
+		return $txn;
 	}
 
 
@@ -42,7 +55,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * @throws \EE_Error
 	 */
 	public static function new_instance_from_db( $props_n_values = array(), $timezone = null ) {
-		return new self( $props_n_values, TRUE, $timezone );
+		$txn = new self( $props_n_values, TRUE, $timezone );
+		$txn->set_old_txn_status( $txn->status_ID() );
+		return $txn;
 	}
 
 
@@ -646,27 +661,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 
 	/**
-	 * Updates the transaction's status and total_paid based on all the payments
-	 * that apply to it
-	 *
-	 * @deprecated
-	 * @return boolean
-	 * @throws \EE_Error
-	 */
-	public function update_based_on_payments(){
-		EE_Error::doing_it_wrong(
-			__CLASS__ . '::' . __FUNCTION__,
-			sprintf( __( 'This method is deprecated. Please use "%s" instead', 'event_espresso' ), 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()' ),
-			'4.6.0'
-		);
-		/** @type EE_Transaction_Processor $transaction_processor */
-		$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
-		return  $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment( $this );
-	}
-
-
-
-	/**
 	 * @return string
 	 * @throws \EE_Error
 	 */
@@ -783,12 +777,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 	 * Gets the total line item (which is a parent of all other related line items,
 	 * meaning it takes them all into account on its total)
 	 *
-	 * @return EE_Line_Item
+	 * @param bool $create_if_not_found
+	 * @return \EE_Line_Item
 	 * @throws \EE_Error
 	 */
-	public function total_line_item() {
+	public function total_line_item( $create_if_not_found = true ) {
 		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
-		if( ! $item ){
+		if( ! $item && $create_if_not_found ){
 			$item = EEH_Line_Item::create_total_line_item( $this );
 		}
 		return $item;
@@ -926,6 +921,419 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction {
 
 
 
+	/**
+	 * possibly toggles TXN status
+	 *
+	 * @param  boolean $update whether to save the TXN
+	 * @return boolean whether the TXN was saved
+	 * @throws \RuntimeException
+	 */
+	public function update_status_based_on_total_paid($update = true)
+	{
+		// set transaction status based on comparison of TXN_paid vs TXN_total
+		if (EEH_Money::compare_floats($this->paid(), $this->total(), '>')) {
+			$new_txn_status = EEM_Transaction::overpaid_status_code;
+		} else if (EEH_Money::compare_floats($this->paid(), $this->total())) {
+			$new_txn_status = EEM_Transaction::complete_status_code;
+		} else if (EEH_Money::compare_floats($this->paid(), $this->total(), '<')) {
+			$new_txn_status = EEM_Transaction::incomplete_status_code;
+		} else {
+			throw new RuntimeException(
+				__('The total paid calculation for this transaction is inaccurate.', 'event_espresso')
+			);
+		}
+		if ($new_txn_status !== $this->status_ID()) {
+			$this->set_status($new_txn_status);
+			if ($update) {
+				return $this->save() ? true : false;
+			}
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * Updates the transaction's status and total_paid based on all the payments
+	 * that apply to it
+	 *
+	 * @deprecated
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	public function update_based_on_payments()
+	{
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()'),
+			'4.6.0'
+		);
+		/** @type EE_Transaction_Processor $transaction_processor */
+		$transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
+		return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment($this);
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function old_txn_status() {
+		return $this->_old_txn_status;
+	}
+
+
+
+	/**
+	 * @param string $old_txn_status
+	 */
+	public function set_old_txn_status( $old_txn_status ) {
+		// only set the first time
+		if ( $this->_old_txn_status === null ) {
+			$this->_old_txn_status = $old_txn_status;
+		}
+	}
+
+
+
+	/**
+	 * reg_status_updated
+	 *
+	 * @return bool
+	 */
+	public function txn_status_updated() {
+		return $this->status_ID() !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
+	}
+
+
+
+	/**
+	 * _reg_steps_completed
+	 * if $check_all is TRUE, then returns TRUE if ALL reg steps have been marked as completed,
+	 * if a $reg_step_slug is provided, then this step will be skipped when testing for completion
+	 * if $check_all is FALSE and a $reg_step_slug is provided, then ONLY that reg step will be tested for completion
+	 *
+	 * @access private
+	 * @param string         $reg_step_slug
+	 * @param bool           $check_all
+	 * @return boolean | int
+	 */
+	private function _reg_steps_completed( $reg_step_slug = '', $check_all = true ) {
+		$reg_steps = $this->reg_steps();
+		if ( ! is_array( $reg_steps ) || empty( $reg_steps ) ) {
+			return false;
+		}
+		// loop thru reg steps array)
+		foreach ( $reg_steps as $slug => $reg_step_completed ) {
+			// if NOT checking ALL steps (only checking one step)
+			if ( ! $check_all ) {
+				// and this is the one
+				if ( $slug === $reg_step_slug ) {
+					return $reg_step_completed;
+				} else {
+					// skip to next reg step in loop
+					continue;
+				}
+			}
+			// $check_all must be true, else we would never have gotten to this point
+			if ( $slug === $reg_step_slug ) {
+				// if we reach this point, then we are testing either:
+				// all_reg_steps_completed_except() or
+				// all_reg_steps_completed_except_final_step(),
+				// and since this is the reg step EXCEPTION being tested
+				// we want to return true (yes true) if this reg step is NOT completed
+				// ie: "is everything completed except the final step?"
+				// "that is correct... the final step is not completed, but all others are."
+				return $reg_step_completed !== true ? true : false;
+			} else if ( $reg_step_completed !== true ) {
+				// if any reg step is NOT completed, then ALL steps are not completed
+				return false;
+			}
+		}
+		return true;
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed
+	 * returns:
+	 *    true if ALL reg steps have been marked as completed
+	 *        or false if any step is not completed
+	 *
+	 * @return boolean
+	 */
+	public function all_reg_steps_completed() {
+		return $this->_reg_steps_completed();
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed_except
+	 * returns:
+	 *        true if ALL reg steps, except a particular step that you wish to skip over, have been marked as completed
+	 *        or false if any other step is not completed
+	 *        or false if ALL steps are completed including the exception you are testing !!!
+	 *
+	 * @param string         $exception
+	 * @return boolean
+	 */
+	public function all_reg_steps_completed_except( $exception = '' ) {
+		return $this->_reg_steps_completed( $exception );
+	}
+
+
+
+	/**
+	 * all_reg_steps_completed_except
+	 * returns:
+	 *        true if ALL reg steps, except the final step, have been marked as completed
+	 *        or false if any step is not completed
+	 *    or false if ALL steps are completed including the final step !!!
+	 *
+	 * @return boolean
+	 */
+	public function all_reg_steps_completed_except_final_step() {
+		return $this->_reg_steps_completed( 'finalize_registration' );
+	}
+
+
+
+	/**
+	 * reg_step_completed
+	 * returns:
+	 *    true if a specific reg step has been marked as completed
+	 *    a Unix timestamp if it has been initialized but not yet completed,
+	 *    or false if it has not yet been initialized
+	 *
+	 * @param string         $reg_step_slug
+	 * @return boolean | int
+	 */
+	public function reg_step_completed( $reg_step_slug ) {
+		return $this->_reg_steps_completed( $reg_step_slug, false );
+	}
+
+
+
+	/**
+	 * completed_final_reg_step
+	 * returns:
+	 *    true if the finalize_registration reg step has been marked as completed
+	 *    a Unix timestamp if it has been initialized but not yet completed,
+	 *    or false if it has not yet been initialized
+	 *
+	 * @return boolean | int
+	 */
+	public function final_reg_step_completed() {
+		return $this->_reg_steps_completed( 'finalize_registration', false );
+	}
+
+
+
+	/**
+	 * set_reg_step_initiated
+	 * given a valid TXN_reg_step, this sets it's value to a unix timestamp
+	 *
+	 * @access public
+	 * @param string          $reg_step_slug
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	public function set_reg_step_initiated( $reg_step_slug ) {
+		return $this->_set_reg_step_completed_status( $reg_step_slug, time() );
+	}
+
+
+
+	/**
+	 * set_reg_step_completed
+	 * given a valid TXN_reg_step, this sets the step as completed
+	 *
+	 * @access public
+	 * @param string          $reg_step_slug
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	public function set_reg_step_completed( $reg_step_slug ) {
+		return $this->_set_reg_step_completed_status( $reg_step_slug, true );
+	}
+
+
+
+	/**
+	 * set_reg_step_completed
+	 * given a valid TXN_reg_step slug, this sets the step as NOT completed
+	 *
+	 * @access public
+	 * @param string          $reg_step_slug
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	public function set_reg_step_not_completed( $reg_step_slug ) {
+		return $this->_set_reg_step_completed_status( $reg_step_slug, false );
+	}
+
+
+
+	/**
+	 * set_reg_step_completed
+	 * given a valid reg step slug, this sets the TXN_reg_step completed status which is either:
+	 *
+	 * @access private
+	 * @param  string          $reg_step_slug
+	 * @param  boolean|int     $status
+	 * @return boolean
+	 * @throws \EE_Error
+	 */
+	private function _set_reg_step_completed_status( $reg_step_slug, $status ) {
+		// validate status
+		$status = is_bool( $status ) || is_int( $status ) ? $status : false;
+		// get reg steps array
+		$txn_reg_steps = $this->reg_steps();
+		// if reg step does NOT exist
+		if ( ! isset( $txn_reg_steps[ $reg_step_slug ] ) ) {
+			return false;
+		}
+		// if  we're trying to complete a step that is already completed
+		if ( $txn_reg_steps[ $reg_step_slug ] === true ) {
+			return true;
+		}
+		// if  we're trying to complete a step that hasn't even started
+		if ( $status === true && $txn_reg_steps[ $reg_step_slug ] === false ) {
+			return false;
+		}
+		// if current status value matches the incoming value (no change)
+		// type casting as int means values should collapse to either 0, 1, or a timestamp like 1234567890
+		if ( (int) $txn_reg_steps[ $reg_step_slug ] === (int) $status ) {
+			// this will happen in cases where multiple AJAX requests occur during the same step
+			return true;
+		}
+		// if we're trying to set a start time, but it has already been set...
+		if ( is_numeric( $status ) && is_numeric( $txn_reg_steps[ $reg_step_slug ] ) ) {
+			// skip the update below, but don't return FALSE so that errors won't be displayed
+			return true;
+		}
+		// update completed status
+		$txn_reg_steps[ $reg_step_slug ] = $status;
+		$this->set_reg_steps( $txn_reg_steps );
+		$this->save();
+		return true;
+	}
+
+
+
+	/**
+	 * remove_reg_step
+	 * given a valid TXN_reg_step slug, this will remove (unset)
+	 * the reg step from the TXN reg step array
+	 *
+	 * @access public
+	 * @param string          $reg_step_slug
+	 * @return void
+	 */
+	public function remove_reg_step( $reg_step_slug ) {
+		// get reg steps array
+		$txn_reg_steps = $this->reg_steps();
+		unset( $txn_reg_steps[ $reg_step_slug ] );
+		$this->set_reg_steps( $txn_reg_steps );
+	}
+
+
+
+	/**
+	 *    toggle_failed_transaction_status
+	 * upgrades a TXNs status from failed to abandoned,
+	 * meaning that contact information has been captured for at least one registrant
+	 *
+	 * @access public
+	 * @param bool $save
+	 * @return bool
+	 */
+	public function toggle_failed_transaction_status( $save = true ) {
+		// if TXN status is still set as "failed"...
+		if ( $this->status_ID() === EEM_Transaction::failed_status_code ) {
+			$this->set_status( EEM_Transaction::abandoned_status_code );
+			if ( $save ) {
+				$this->save();
+			}
+			return true;
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * toggle_abandoned_transaction_status
+	 * upgrades a TXNs status from failed or abandoned to incomplete
+	 *
+	 * @access public
+	 * @return boolean
+	 */
+	public function toggle_abandoned_transaction_status() {
+		// if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
+		$txn_status = $this->status_ID();
+		if (
+			$txn_status === EEM_Transaction::failed_status_code
+			|| $txn_status === EEM_Transaction::abandoned_status_code
+		) {
+			// if a contact record for the primary registrant has been created
+			if (
+				$this->primary_registration() instanceof EE_Registration
+				&& $this->primary_registration()->attendee() instanceof EE_Attendee
+			) {
+				$this->set_status( EEM_Transaction::incomplete_status_code );
+			} else {
+				// no contact record? yer abandoned!
+				$this->set_status( EEM_Transaction::abandoned_status_code );
+			}
+			return true;
+		}
+		return false;
+	}
+
+
+
+	/**
+	 * checks if an Abandoned TXN has any related payments, and if so,
+	 * updates the TXN status based on the amount paid
+	 */
+	public function verify_abandoned_transaction_status() {
+		if ( $this->status_ID() !== EEM_Transaction::abandoned_status_code ) {
+			return;
+		}
+		$payments = $this->get_many_related( 'Payment' );
+		if ( ! empty( $payments ) ) {
+			foreach ( $payments as $payment ) {
+				if ( $payment instanceof EE_Payment ) {
+					// kk this TXN should NOT be abandoned
+					$this->update_status_based_on_total_paid();
+					if ( is_admin() && ! ( defined('DOING_AJAX') && DOING_AJAX ) ) {
+						EE_Error::add_attention(
+							sprintf(
+								esc_html__(
+									'The status for Transaction #%1$d has been updated from "Abandoned" to "%2$s", because at least one payment has been made towards it. If the payment appears in the "Payment Details" table below, you may need to edit its status and/or other details as well.',
+									'event_espresso'
+								),
+								$this->ID(),
+								$this->pretty_status()
+							)
+						);
+					}
+					// get final reg step status
+					$finalized = $this->final_reg_step_completed();
+					// if the 'finalize_registration' step has been initiated (has a timestamp)
+					// but has not yet been fully completed (TRUE)
+					if ( is_int( $finalized ) && $finalized !== false && $finalized !== true ) {
+						$this->set_reg_step_completed( 'finalize_registration' );
+						$this->save();
+					}
+				}
+			}
+		}
+	}
 
 }/* End of file EE_Transaction.class.php */
 /* Location: includes/classes/EE_Transaction.class.php */

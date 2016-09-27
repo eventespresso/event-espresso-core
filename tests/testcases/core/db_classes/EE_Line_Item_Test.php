@@ -218,6 +218,66 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 	}
 	
 	/**
+	 * Create a line item tree which was originaly for 6 tickets and a discount,
+	 * but 2 got cancelled and so shouldn't count towards the grand total,
+	 * and so the ticket line item's quantity should be 4
+	 * @group 5580
+	 */
+	function test_recalculate_total_including_taxes__with_cancellations(){
+		$event_subtotal = EE_Line_Item::new_instance(
+				array(
+					'LIN_code'	=> 'event1',
+					'LIN_name' 	=> 'EventA',
+					'LIN_type'	=> EEM_Line_Item::type_sub_total,
+					'OBJ_type' 	=> 'Event',
+					'LIN_total' => 0,
+				));
+		$event_subtotal->save();
+		$normal_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => '12354',
+					'LIN_name' => 'ticketA',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => 'Ticket',
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 4,
+					'LIN_order' => 1,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$normal_line_item->save();
+		$cancellation_subitem = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'cancellationoruny',
+					'LIN_name' => 'cancellationOfA',
+					'LIN_type' => EEM_Line_Item::type_cancellation,
+					'OBJ_type' => '',//?
+					'LIN_unit_price' => 10,
+					'LIN_quantity' => 2,
+					'LIN_order' => 1,
+					'LIN_parent' => $normal_line_item->ID()
+				));
+		$percent_line_item = EE_Line_Item::new_instance(
+				array(
+					'LIN_code' => 'dscntfry',
+					'LIN_name' => 'Discounto',
+					'LIN_type' => EEM_Line_Item::type_line_item,
+					'OBJ_type' => '',
+					'LIN_unit_price' => null,
+					'LIN_quantity' => null,
+					'LIN_percent' => -25,
+					'LIN_order' => 1000,
+					'LIN_parent' => $event_subtotal->ID()
+				));
+		$percent_line_item->save();
+		$event_subtotal->recalculate_total_including_taxes();
+//		EEH_Line_Item::visualize( $event_subtotal );
+		$this->assertEquals( 40, $normal_line_item->total() );
+		$this->assertEquals( 30, $event_subtotal->total() );
+		$this->assertEquals( -10, $percent_line_item->total() );
+
+	}
+	
+	/**
 	 * @group 9439
 	 */
 	function test_recalculate_total_including_taxes__incorrect_total_with_specific_numbers_and_promotion() {
@@ -305,6 +365,7 @@ class EE_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 12.50, $total_li->total() );
 		$this->assertEquals( $pretax_subtotal->total(), $total_li->get_items_total() );
 	}
+
 	/**
 	 * @group 8464
 	 * Verifies that if the line item is for a relation that isn't currently defined

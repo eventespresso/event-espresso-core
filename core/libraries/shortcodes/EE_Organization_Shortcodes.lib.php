@@ -39,26 +39,26 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _init_props() {
-		$this->label = __('Organization Shortcodes', 'event_espresso');
-		$this->description = __('All shortcodes specific to organization related data', 'event_espresso');
+		$this->label = esc_html__('Organization Shortcodes', 'event_espresso');
+		$this->description = esc_html__('All shortcodes specific to organization related data', 'event_espresso');
 		$this->_shortcodes = array(
-			'[COMPANY]' => __('Event organization name', 'event_espresso'),
-			'[CO_ADD1]' => __('Address 1 value for the organization', 'event_espresso'),
-			'[CO_ADD2]' => __('Address 2 value for the organization', 'event_espresso'),
-			'[CO_CITY]' => __('City the organization is in', 'event_espresso'),
-			'[CO_STATE]' => __('State the organization is located in', 'event_espresso'),
-			'[CO_ZIP]' => __('The zip code for the organization', 'event_espresso'),
-			'[CO_LOGO]' => __('The logo image for the organization', 'event_espresso'),
-			'[CO_EMAIL]' => __('The primary email address for the organization', 'event_espresso'),
-			'[CO_PHONE]' => __('The phone number for the organization', 'event_espresso'),
-			'[CO_LOGO_URL]' => __('Just the link to the image used as the logo for the organization', 'event_espresso'),
-			'[CO_FACEBOOK_URL]' => __('Link to organization Facebook page', 'event_espresso'),
-			'[CO_TWITTER_URL]' => __('Link to organization Twitter page', 'event_espresso'),
-			'[CO_PINTEREST_URL]' => __('Link to organization Pinterest page', 'event_espresso'),
-			'[CO_GOOGLE_URL]' => __('Link to organization Google page', 'event_espresso'),
-			'[CO_LINKEDIN_URL]' => __('Link to organization LinkedIn page', 'event_espresso'),
-			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso'),
-			'[CO_TAX_NUMBER_*]' => __('This is the shortcode used for displaying any tax number for the company.  %1$sNote: This is a special dynamic shortcode.%2$s You can use the "prefix" parameter to indicate what the prefix for this tax number is.  It defaults to "VAT/Tax Number:".  To change this prefix you do the following format for this shortcode:  [CO_TAX_NUMBER_* prefix="GST: "] and that will output: GST: 12345t56.  Also take note that if you have NO number in your settings, the prefix is not output either.', 'event_espresso','<strong>','</strong>')
+			'[COMPANY]' => esc_html__('Event organization name', 'event_espresso'),
+			'[CO_ADD1]' => esc_html__('Address 1 value for the organization', 'event_espresso'),
+			'[CO_ADD2]' => esc_html__('Address 2 value for the organization', 'event_espresso'),
+			'[CO_CITY]' => esc_html__('City the organization is in', 'event_espresso'),
+			'[CO_STATE]' => esc_html__('State the organization is located in', 'event_espresso'),
+			'[CO_ZIP]' => esc_html__('The zip code for the organization', 'event_espresso'),
+			'[CO_LOGO]' => esc_html__('The logo image for the organization', 'event_espresso'),
+			'[CO_EMAIL]' => esc_html__('The primary email address for the organization', 'event_espresso'),
+			'[CO_PHONE]' => esc_html__('The phone number for the organization', 'event_espresso'),
+			'[CO_LOGO_URL]' => esc_html__('Just the link to the image used as the logo for the organization', 'event_espresso'),
+			'[CO_FACEBOOK_URL]' => esc_html__('Link to organization Facebook page', 'event_espresso'),
+			'[CO_TWITTER_URL]' => esc_html__('Link to organization Twitter page', 'event_espresso'),
+			'[CO_PINTEREST_URL]' => esc_html__('Link to organization Pinterest page', 'event_espresso'),
+			'[CO_GOOGLE_URL]' => esc_html__('Link to organization Google page', 'event_espresso'),
+			'[CO_LINKEDIN_URL]' => esc_html__('Link to organization LinkedIn page', 'event_espresso'),
+			'[CO_INSTAGRAM_URL]' => esc_html__('Link to organization Instagram page', 'event_espresso'),
+			'[CO_TAX_NUMBER_*]' => sprintf( esc_html__('This is the shortcode used for displaying any tax number for the company.  %1$sNote: This is a special dynamic shortcode.%2$s You can use the "prefix" parameter to indicate what the prefix for this tax number is.  It defaults to "VAT/Tax Number:".  To change this prefix you do the following format for this shortcode:  [CO_TAX_NUMBER_* prefix="GST: "] and that will output: GST: 12345t56.  Also take note that if you have NO number in your settings, the prefix is not output either.', 'event_espresso' ),'<strong>','</strong>')
 			);
 	}
 
@@ -146,7 +146,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			$attrs = $this->_get_shortcode_attrs( $shortcode );
 
 			//set custom attrs if present (or default)
-			$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __('VAT/Tax Number: ', 'event_espresso');
+			$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : esc_html__('VAT/Tax Number: ', 'event_espresso');
 			return $prefix . $tax_number;
 		}
 

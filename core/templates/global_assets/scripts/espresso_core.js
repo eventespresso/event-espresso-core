@@ -356,10 +356,62 @@ function dump(arr,level) {
 	return dumped_text;
 }
 
+/**
+ *  @function console_log
+ *  print to the browser console
+ * @param  {string} item_name
+ * @param  {*} value
+ * @param  {boolean} spacer
+ */
+function console_log( item_name, value, spacer ) {
+	if ( typeof value === 'object' ) {
+		console_log_object( item_name, value, 0 );
+	} else {
+		if ( spacer === true ) {
+			console.log( ' ' );
+		}
+		if ( typeof item_name !== 'undefined' && typeof value !== 'undefined' && value !== '' ) {
+			console.log( item_name + ' = ' + value );
+		} else if ( typeof item_name !== 'undefined' ) {
+			console.log( item_name );
+		}
+	}
+}
 
-//function getFunctionName() {
-//	var myName = arguments.callee.toString();
-//	myName = myName.substr('function '.length);
-//	myName = myName.substr(0, myName.indexOf('('));
-//	return myName;
-//}
+/**
+ * @function console_log_object
+ * print object to the browser console
+ * @param  {string} obj_name
+ * @param  {object} obj
+ * @param  {number} depth
+ */
+function console_log_object( obj_name, obj, depth ) {
+	depth      = typeof depth !== 'undefined' ? depth : 0;
+	var spacer = '';
+	for ( var i = 0; i < depth; i++ ) {
+		spacer = spacer + '    ';
+	}
+	if ( typeof obj === 'object' ) {
+		if ( !depth ) {
+			console.log( ' ' );
+		}
+		if ( typeof obj_name !== 'undefined' ) {
+			console.log( spacer + 'OBJ: ' + obj_name + ' : ' );
+		} else {
+			console.log( spacer + 'OBJ : ' );
+		}
+		jQuery.each(
+			obj, function ( index, value ) {
+				if ( typeof value === 'object' && depth < 6 ) {
+					depth++;
+					console_log_object( index, value, depth );
+				} else {
+					console.log( spacer + index + ' = ' + value );
+				}
+				depth = 0;
+			}
+		);
+	} else {
+		console_log( spacer + obj_name, obj, true );
+	}
+}

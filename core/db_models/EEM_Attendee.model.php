@@ -132,9 +132,9 @@ class EEM_Attendee extends EEM_CPT_Base {
 				'ATT_full_name'=>new EE_Plain_Text_Field('post_title', __("Attendee Full Name", "event_espresso"), false, __("Unknown", "event_espresso")),
 				'ATT_bio'=>new EE_Post_Content_Field('post_content', __("Attendee Biography", "event_espresso"), false, __("No Biography Provided", "event_espresso")),
 				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
-				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, time()),
+				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, EE_Datetime_Field::now ),
 				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
-				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), FALSE, time()),
+				'ATT_modified'=>new EE_Datetime_Field('post_modified', __("Time Attendee Last Modified", "event_espresso"), FALSE, EE_Datetime_Field::now ),
 				'ATT_author'=>new EE_WP_User_Field('post_author', __("Creator ID of the first Event attended", "event_espresso"), false ),
 				'ATT_parent'=>new EE_DB_Only_Int_Field('post_parent', __("Parent Attendee (unused)", "event_espresso"), false, 0),
 				'post_type'=>new EE_WP_Post_Type_Field('espresso_attendees'),// EE_DB_Only_Text_Field('post_type', __("Post Type of Attendee", "event_espresso"), false,'espresso_attendees'),
@@ -160,7 +160,9 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'Country'=>new EE_Belongs_To_Relation(),
 			'Event'=>new EE_HABTM_Relation('Registration', FALSE ),
 			'WP_User' => new EE_Belongs_To_Relation(),
-			'Message' => new EE_Has_Many_Any_Relation( false ) //allow deletion of attendees even if they have messages in the queue for them.
+			'Message' => new EE_Has_Many_Any_Relation( false ), //allow deletion of attendees even if they have messages in the queue for them.
+			'Term_Relationship' => new EE_Has_Many_Relation(),
+			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 		);
 		$this->_caps_slug = 'contacts';
 		parent::__construct( $timezone );

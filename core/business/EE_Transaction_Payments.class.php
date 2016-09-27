@@ -22,15 +22,13 @@ class EE_Transaction_Payments {
 	private static $_instance;
 
 	/**
-	 * initial txn status at the beginning of this request.
-	 *
+	 * @deprecated
 	 * @var string
 	 */
 	protected $_old_txn_status;
 
 	/**
-	 * txn status at the end of the request after all processing.
-	 *
+	 * @deprecated
 	 * @var string
 	 */
 	protected $_new_txn_status;
@@ -53,59 +51,29 @@ class EE_Transaction_Payments {
 
 
 	/**
-	 * @return EE_Transaction_Payments
-	 */
-	private function __construct() {
-	}
-
-
-
-	/**
-	 * @return string
-	 */
-	public function old_txn_status() {
-		return $this->_old_txn_status;
-	}
-
-
-
-	/**
-	 * @param string $old_txn_status
-	 */
-	public function set_old_txn_status( $old_txn_status ) {
-		// only set the first time
-		if ( $this->_old_txn_status === null ) {
-			$this->_old_txn_status = $old_txn_status;
-		}
-	}
-
-
-
-	/**
-	 * @return string
-	 */
-	public function new_txn_status() {
-		return $this->_new_txn_status;
-	}
-
-
-
-	/**
-	 * @param string $new_txn_status
-	 */
-	public function set_new_txn_status( $new_txn_status ) {
-		$this->_new_txn_status = $new_txn_status;
-	}
-
-
-
-	/**
-	 * reg_status_updated
+	 * recalculate_transaction_total
 	 *
-	 * @return bool
+	 * @access private
+	 * @param EE_Transaction $transaction
+	 * @param bool           $update_txn
+	 * @return bool true if TXN total was updated, false if not
+	 * @throws \EE_Error
 	 */
-	public function txn_status_updated() {
-		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null  ? true : false;
+	public function recalculate_transaction_total( EE_Transaction $transaction, $update_txn = true ) {
+		$total_line_item = $transaction->total_line_item();
+		if ( ! $total_line_item instanceof EE_Line_Item ) {
+			EE_Error::add_error(
+				sprintf( __( 'The Total Line Item for Transaction %1$d\'s was not found or is invalid.', 'event_espresso' ), $transaction->ID() ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		$new_total = $total_line_item->recalculate_total_including_taxes();
+		$transaction->set_total( $new_total );
+		if ( $update_txn ) {
+			return $transaction->save() ? true : false;
+		}
+		return false;
 	}
 
 
@@ -131,15 +99,13 @@ class EE_Transaction_Payments {
 			EE_Error::add_error( __( 'Please provide a valid EE_Transaction object.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return false;
 		}
-		// set incoming TXN_Status
-		$this->set_old_txn_status( $transaction->status_ID() );
 		// calculate total paid
 		$total_paid = $this->recalculate_total_payments_for_transaction( $transaction );
 		// if total paid has changed
 		if ( $total_paid !== false && (float)$total_paid !== $transaction->paid() ) {
 			$transaction->set_paid( $total_paid );
 			// maybe update status, and make sure to save transaction if not done already
-			if ( ! $this->update_transaction_status_based_on_total_paid( $transaction, $update_txn )) {
+			if ( ! $transaction->update_status_based_on_total_paid( $update_txn ) ) {
 				if ( $update_txn ) {
 					return $transaction->save() ? true : false;
 				}
@@ -181,51 +147,6 @@ class EE_Transaction_Payments {
 		);
 	}
 
-
-
-	/**
-	 * possibly toggles TXN status
-	 *
-	 * @param EE_Transaction $transaction
-	 * @param 	boolean $update_txn  	whether to save the TXN
-	 * @return 	boolean 	 	whether the TXN was saved
-	 * @throws \EE_Error
-	 */
-	public function update_transaction_status_based_on_total_paid( EE_Transaction $transaction, $update_txn = TRUE ) {
-		// verify transaction
-		if ( ! $transaction instanceof EE_Transaction ) {
-			EE_Error::add_error(
-				__( 'Please provide a valid EE_Transaction object.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
-		}
-		// set incoming TXN_Status
-		$this->set_old_txn_status( $transaction->status_ID() );
-		// set transaction status based on comparison of TXN_paid vs TXN_total
-		if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total(), '>' ) ){
-			$new_txn_status = EEM_Transaction::overpaid_status_code;
-		} else if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total() ) ) {
-			$new_txn_status = EEM_Transaction::complete_status_code;
-		} else if ( EEH_Money::compare_floats( $transaction->paid(), $transaction->total(), '<' ) ) {
-			$new_txn_status = EEM_Transaction::incomplete_status_code;
-		} else {
-			EE_Error::add_error(
-				__( 'The total paid calculation for this transaction is inaccurate.', 'event_espresso' ),
-				__FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
-		}
-		if ( $new_txn_status !== $transaction->status_ID() ) {
-			// set incoming TXN_Status
-			$this->set_new_txn_status( $new_txn_status );
-			$transaction->set_status( $new_txn_status );
-			if ( $update_txn ) {
-				return $transaction->save() ? TRUE : FALSE;
-			}
-		}
-		return FALSE;
-	}
 
 
 
@@ -345,6 +266,137 @@ class EE_Transaction_Payments {
 		}
 		return true;
 	}
+
+
+
+	/********************************** DEPRECATED METHODS **********************************/
+
+
+
+	/**
+	 * possibly toggles TXN status
+	 *
+	 * @deprecated 4.9.1
+	 * @param EE_Transaction $transaction
+	 * @param    boolean     $update_txn whether to save the TXN
+	 * @return    boolean        whether the TXN was saved
+	 * @throws \EE_Error
+	 */
+	public function update_transaction_status_based_on_total_paid(EE_Transaction $transaction, $update_txn = true)
+	{
+		EE_Error::doing_it_wrong(
+			__CLASS__ . '::' . __FUNCTION__,
+			sprintf(__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+				'EE_Transaction::update_status_based_on_total_paid()'),
+			'4.9.1',
+			'5.0.0'
+		);
+		// verify transaction
+		if ( ! $transaction instanceof EE_Transaction) {
+			EE_Error::add_error(
+				__('Please provide a valid EE_Transaction object.', 'event_espresso'),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return false;
+		}
+		// set transaction status based on comparison of TXN_paid vs TXN_total
+		return $transaction->update_status_based_on_total_paid($update_txn);
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.12
+	 * @return string
+	 */
+	public function old_txn_status() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			esc_html__(
+				'This logic has been moved into \EE_Transaction::old_txn_status(), please use that method instead.',
+				'event_espresso'
+			),
+			'4.9.12'
+		);
+		return $this->_old_txn_status;
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.12
+	 * @param string $old_txn_status
+	 */
+	public function set_old_txn_status( $old_txn_status ) {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			esc_html__(
+				'This logic has been moved into \EE_Transaction::set_old_txn_status(), please use that method instead.',
+				'event_espresso'
+			),
+			'4.9.12'
+		);
+		// only set the first time
+		if ( $this->_old_txn_status === null ) {
+			$this->_old_txn_status = $old_txn_status;
+		}
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.12
+	 * @return string
+	 */
+	public function new_txn_status() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			esc_html__(
+				'This logic has been removed. Please just use \EE_Transaction::status_ID() instead.',
+				'event_espresso'
+			),
+			'4.9.12'
+		);
+		return $this->_new_txn_status;
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.12
+	 * @param string $new_txn_status
+	 */
+	public function set_new_txn_status( $new_txn_status ) {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			esc_html__(
+				'This logic has been removed. Please just use \EE_Transaction::set_status() instead.',
+				'event_espresso'
+			),
+			'4.9.12'
+		);
+		$this->_new_txn_status = $new_txn_status;
+	}
+
+
+
+	/**
+	 * @deprecated 4.9.12
+	 * @return bool
+	 */
+	public function txn_status_updated() {
+		EE_Error::doing_it_wrong(
+			__METHOD__,
+			esc_html__(
+				'This logic has been moved into \EE_Transaction::txn_status_updated(), please use that method instead.',
+				'event_espresso'
+			),
+			'4.9.12'
+		);
+		return $this->_new_txn_status !== $this->_old_txn_status && $this->_old_txn_status !== null ? true : false;
+	}
+
+
 
 }
 // End of file EE_Transaction_Payments.class.php

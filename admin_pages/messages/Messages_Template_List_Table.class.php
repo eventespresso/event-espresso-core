@@ -98,44 +98,24 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
-
-
+	/**
+	 * @return array
+	 */
 	protected function _get_table_filters() {
 		$filters = array();
-		//setup messengers for selects
-		$m_values = $this->get_admin_page()->get_messengers_for_list_table();
-		//lets do the same for message types
-		$mt_values = $this->get_admin_page()->get_message_types_for_list_table();
 
-		$msgr_default[0] = array(
-			'id' => 'none_selected',
-			'text' => __( 'Show All Messengers', 'event_espresso' )
-			);
+		//get select inputs
+		$select_inputs = array(
+			$this->_get_messengers_dropdown_filter(),
+			$this->_get_message_types_dropdown_filter(),
+		);
 
-		$mt_default[0] = array(
-			'id' => 'none_selected',
-			'text' => __( 'Show All Message Types', 'event_espresso' )
-			);
-
-		$msgr_filters = ! empty( $m_values ) ? array_merge( $msgr_default, $m_values ) : array();
-		$mt_filters = ! empty( $mt_values ) ? array_merge( $mt_default, $mt_values ) : array();
-
-		if ( empty( $m_values ) ) {
-			$msgr_filters[0] = array(
-				'id'   => 'no_messenger_options',
-				'text' => __( 'No Messengers active', 'event_espresso' )
-			);
+		//set filters to select inputs if they aren't empty
+		foreach ( $select_inputs as $select_input ) {
+			if ( $select_input ) {
+				$filters[] = $select_input;
+			}
 		}
-
-		if ( empty( $mt_values ) ) {
-			$mt_filters[0] = array(
-				'id'   => 'no_message_type_options',
-				'text' => __( 'No Message Types active', 'event_espresso' )
-			);
-		}
-
-		$filters[] = EEH_Form_Fields::select_input( 'ee_messenger_filter_by', $msgr_filters, isset( $this->_req_data['ee_messenger_filter_by'] ) ? sanitize_key( $this->_req_data['ee_messenger_filter_by'] ) : '' );
-		$filters[] = EEH_Form_Fields::select_input( 'ee_message_type_filter_by', $mt_filters, isset( $this->_req_data['ee_message_type_filter_by'] ) ? sanitize_key( $this->_req_data['ee_message_type_filter_by'] ) : '' );
 		return $filters;
 	}
 
@@ -226,6 +206,64 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	function column_messages_sent($item) {
 		//todo: we need to obtain the messages sent and the link to the messages report table and output
 		return __('feature in progress', 'event_espresso');
+	}
+
+
+	/**
+	 * Generate dropdown filter select input for messengers
+	 * @return string
+	 */
+	protected function _get_messengers_dropdown_filter() {
+		$messenger_options = array();
+		$active_message_template_groups_grouped_by_messenger = EEM_Message_Template_Group::instance()->get_all(
+			array(
+				array(
+					'MTP_is_active' => true,
+					'MTP_is_global' => true,
+				),
+				'group_by' => 'MTP_messenger',
+			)
+		);
+
+		foreach ( $active_message_template_groups_grouped_by_messenger as $active_message_template_group ) {
+			if ( $active_message_template_group instanceof EE_Message_Template_Group ) {
+				$messenger = $active_message_template_group->messenger_obj();
+				$messenger_label = $messenger instanceof EE_messenger
+					? $messenger->label['singular']
+					: $active_message_template_group->messenger();
+				$messenger_options[ $active_message_template_group->messenger() ] = ucwords( $messenger_label );
+			}
+		}
+		return $this->get_admin_page()->get_messengers_select_input( $messenger_options );
+	}
+
+
+	/**
+	 * Generate dropdown filter select input for message types
+	 * @return string
+	 */
+	protected function _get_message_types_dropdown_filter() {
+		$message_type_options = array();
+		$active_message_template_groups_grouped_by_message_type = EEM_Message_Template_Group::instance()->get_all(
+			array(
+				array(
+					'MTP_is_active' => true,
+					'MTP_is_global' => true,
+				),
+				'group_by' => 'MTP_message_type',
+			)
+		);
+
+		foreach ( $active_message_template_groups_grouped_by_message_type as $active_message_template_group ) {
+			if ( $active_message_template_group instanceof EE_Message_Template_Group ) {
+				$message_type = $active_message_template_group->message_type_obj();
+				$message_type_label = $message_type instanceof EE_message_type
+					? $message_type->label['singular']
+					: $active_message_template_group->message_type();
+				$message_type_options[ $active_message_template_group->message_type() ] = ucwords( $message_type_label );
+			}
+		}
+		return $this->get_admin_page()->get_message_types_select_input( $message_type_options );
 	}
 
 }

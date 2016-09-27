@@ -480,15 +480,29 @@ class EEH_Template {
 
 	/**
 	 * This helper just returns a button or link for the given parameters
+	 *
 	 * @param  string $url   the url for the link
 	 * @param  string $label What is the label you want displayed for the button
 	 * @param  string $class what class is used for the button (defaults to 'button-primary')
 	 * @param string  $icon
-	 * @return string 	the html output for the button
+	 * @param string  $title
+	 * @return string the html output for the button
 	 */
-	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
-		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
-		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
+	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '', $title = '' ) {
+		$icon_html = '';
+		if ( ! empty( $icon ) ) {
+			$dashicons = preg_split( "(ee-icon |dashicons )", $icon );
+			$dashicons = array_filter( $dashicons );
+			$count = count( $dashicons );
+			$icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
+			foreach ( $dashicons as $dashicon ) {
+				$type = strpos( $dashicon, 'ee-icon' ) !== false ? 'ee-icon ' : 'dashicons ';
+				$icon_html .= '<span class="' . $type . $dashicon . '"></span>';
+			}
+			$icon_html .= $count > 1 ? '</span>' : '';
+		}
+		$label = ! empty( $icon ) ? $icon_html . $label : $label;
+		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
 		return $button;
 	}
 
@@ -817,7 +831,52 @@ class EEH_Template {
 	}
 
 
+
+	/**
+	 * @param string $wrap_class
+	 * @param string $wrap_id
+	 * @return string
+	 */
+	public static function powered_by_event_espresso( $wrap_class = '', $wrap_id = '' ) {
+		$admin = is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+		if (
+			! $admin &&
+			! apply_filters(
+				'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
+				EE_Registry::instance()->CFG->admin->show_reg_footer
+			)
+		) {
+			return '';
+		}
+		$attributes = ! empty( $wrap_id ) ? " id=\"{$wrap_id}\"" : '';
+		$wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
+		$attributes .= ! empty( $wrap_class )
+			? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
+			: ' class="powered-by-event-espresso-credit"';
+		$powered_by = $admin ? EVENT_ESPRESSO_POWERED_BY : 'Event Espresso';
+		$url = add_query_arg(
+			array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id() ),
+			'https://eventespresso.com/'
+		);
+		$url = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso__url', $url );
+		return (string) apply_filters(
+			'FHEE__EEH_Template__powered_by_event_espresso__html',
+			sprintf(
+				esc_html_x(
+					'%1$sOnline event registration and ticketing powered by %2$s',
+					'Online event registration and ticketing powered by [link to eventespresso.com]',
+					'event_espresso'
+				),
+				"<div{$attributes}>",
+				"<a href=\"{$url}\" target=\"_blank\">{$powered_by}</a></div>"
+			)
+		);
+	}
+
+
+
 } //end EEH_Template class
+
 
 //function convert_zero_to_free( $amount, $return_raw ) {
 //	// we don't want to mess with requests for unformatted values because those may get used in calculations

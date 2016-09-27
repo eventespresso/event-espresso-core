@@ -5,7 +5,7 @@
 <?php echo $attendee_notice; ?>
 <?php if ( !empty($attendees) ) : ?>
 	<div class="admin-primary-mbox-tbl-wrap">
-		<table class="admin-primary-mbox-tbl">
+		<table id="reg-admin-transaction-attendees-table" class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
 					<th class="jst-left"><?php _e( '#', 'event_espresso' );?></th>
@@ -21,7 +21,7 @@
 
 			<?php foreach ( $attendees as $att_nmbr => $attendee ) : ?>
 
-				<tr>
+				<tr class="ee-status-strip reg-status-<?php echo $attendee['STS_ID']; ?>" style="display: table-row;">
 					<td class="jst-left"><?php echo $att_nmbr;?></td>
 					<td class="jst-left"><?php echo $attendee['event_name'];?></td>
 					<td class="jst-left">
