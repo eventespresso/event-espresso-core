@@ -69,8 +69,17 @@
 }
 
 .ee-info-box {
-	padding    : 2em 1.5em; margin : 2em 0 1em;
-	background : #F0F8FB; border : 1px solid lightblue; border-radius : 3px;
+	background: #FFFFFF;
+	border: 1px solid lightblue;
+	margin: 0 0 1em;
+	padding: 1em 2em;
+}
+.ee-info-box h4 {
+	color: #0073AA;
+	margin: .5em 0 .25em;
+}
+.ee-info-box p {
+	margin: 0 0 1em;
 }
 
 .admin-state,
