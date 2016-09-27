@@ -1,3 +1,8 @@
+<?php
+/**
+ * @deprecated 4.9.13
+ */
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>

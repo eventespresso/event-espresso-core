@@ -196,6 +196,9 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 				$total_line_item = $transaction->total_line_item();
 				foreach ($total_line_item->get_items() as $line_item) {
+					if( $line_item->quantity() == 0 ){
+						continue;
+					}
 					$this->addLineItem(
 						$item_num++, 
 						$this->_format_line_item_name( $line_item, $payment ), 

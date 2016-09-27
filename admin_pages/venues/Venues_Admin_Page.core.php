@@ -553,7 +553,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _overview_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_venues'), __("View Venue Archive Page", "event_espresso"), 'button' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
+		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
 		$this->_search_btn_label = __('Venues', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
 	}
@@ -1243,7 +1243,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	protected function _category_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$this->_admin_page_title .= $this->get_action_link_or_button('add_category', 'add_category', array(), 'add-new-h2');
+		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
+		    'add_category',
+            'add_category',
+            array(),
+            'add-new-h2'
+        );
 		$this->_search_btn_label = __('Venue Categories', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
 	}

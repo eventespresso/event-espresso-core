@@ -40,7 +40,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 *
 	 * @access    public
 	 * @param    EE_Checkout $checkout
-	 * @return    \EE_SPCO_Reg_Step_Attendee_Information
 	 */
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'attendee_information';
@@ -452,7 +451,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * _auto_copy_attendee_info
 	 *
 	 * @access public
-	 * @return 	EE_Form_Section_Proper
+	 * @return EE_Form_Section_HTML
 	 */
 	private function _auto_copy_attendee_info() {
 		return new EE_Form_Section_HTML(
@@ -474,7 +473,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * _copy_attendee_info_inputs
 	 *
 	 * @access public
-	 * @return    EE_Form_Section_Proper
+	 * @return array
 	 * @throws \EE_Error
 	 */
 	private function _copy_attendee_info_inputs() {
@@ -576,7 +575,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			//remember system ID had a bug where sometimes it could be null
 			$answer_cache_id =$question->is_system_question()
 				? $question->system_ID() . '-' . $registration->reg_url_link()
-				: $question->ID() . '-' . $registration->reg_url_link();			
+				: $question->ID() . '-' . $registration->reg_url_link();
 			$registration->cache( 'Answer', $answer, $answer_cache_id );
 		}
 		return $this->_generate_question_input( $registration, $question, $answer );
@@ -636,16 +635,23 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		return $form_input;
 	}
 
+
+
 	/**
 	 * Gets the list of countries for the form input
 	 *
 	 * @param array|null      $countries_list
-	 * @param EE_Question     $question
-	 * @param EE_Registration $registration
+	 * @param \EE_Question     $question
+	 * @param \EE_Registration $registration
+	 * @param \EE_Answer      $answer
 	 * @return array 2d keys are country IDs, values are their names
-	 * @throws \EE_Error
 	 */
-	public function use_cached_countries_for_form_input( $countries_list, $question, $registration, $answer ) {
+	public function use_cached_countries_for_form_input(
+		$countries_list,
+		\EE_Question $question = null,
+		\EE_Registration $registration = null,
+		\EE_Answer $answer = null
+	) {
 		$country_options = array( '' => '' );
 		// get possibly cached list of countries
 		$countries = $this->checkout->action === 'process_reg_step'
@@ -683,12 +689,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * Gets the list of states for the form input
 	 *
 	 * @param array|null      $states_list
-	 * @param EE_Question     $question
-	 * @param EE_Registration $registration
+	 * @param \EE_Question     $question
+	 * @param \EE_Registration $registration
+	 * @param \EE_Answer      $answer
 	 * @return array 2d keys are state IDs, values are their names
-	 * @throws \EE_Error
 	 */
-	public function use_cached_states_for_form_input( $states_list, $question, $registration, $answer ) {
+	public function use_cached_states_for_form_input(
+		$states_list,
+		\EE_Question $question = null,
+		\EE_Registration $registration = null,
+		\EE_Answer $answer = null
+	) {
 		$state_options = array( '' => array( '' => ''));
 		$states = $this->checkout->action === 'process_reg_step'
 			? EEM_State::instance()->get_all_states()
@@ -1013,10 +1024,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$registration_processor = EE_Registry::instance()->load_class( 'Registration_Processor' );
 					// at this point, we should have enough details about the registrant to consider the registration NOT incomplete
 					$registration_processor->toggle_incomplete_registration_status_to_default( $registration, false );
-					/** @type EE_Transaction_Processor $transaction_processor */
-					$transaction_processor = EE_Registry::instance()->load_class( 'Transaction_Processor' );
 					// we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
-					$transaction_processor->toggle_failed_transaction_status( $this->checkout->transaction );
+					$this->checkout->transaction->toggle_failed_transaction_status();
 					// if we've gotten this far, then let's save what we have
 					$registration->save();
 					// add relation between TXN and registration

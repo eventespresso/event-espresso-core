@@ -1,4 +1,7 @@
 <?php
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 /**
  * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
  * going to be released before this version) to 4.8 (which basically supports promotions)
@@ -39,15 +42,18 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * return EE_DMS_Core_4_8_0
+	 *
+	 * @param TableManager  $table_manager
+	 * @param TableAnalysis $table_analysis
 	 */
-	public function __construct() {
+	public function __construct( TableManager $table_manager = null, TableAnalysis $table_analysis = null ) {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.8.0.P (for promotions)", "event_espresso");
 		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_8_0_pretax_totals(),
 			new EE_DMS_4_8_0_event_subtotals(),
 		);
-		parent::__construct();
+		parent::__construct( $table_manager, $table_analysis );
 	}
 
 
@@ -62,7 +68,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if( $version_string <= '4.8.0' && $version_string >= '4.7.0' ){
+		if ( version_compare( $version_string, '4.8.0', '<=' ) && version_compare( $version_string, '4.7.0', '>=' ) ) {
 //			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
@@ -664,7 +670,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 	public function migration_page_hooks(){
 
 	}
-	
+
 	/**
 	 * verifies each of the new countries exists that somehow we missed in 4.1
 	 */
@@ -682,7 +688,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 			array( 'IM', 'IMN', 0, 'Isle of Man', 'GBP', 'Pound', 'Pounds', '£', 1, 2,  '+44', 0, 0  ),
 			array( 'JE', 'JEY', 0, 'Jersey', 'GBP', 'Pound', 'Pounds', '£', 1, 2, '+44', 0, 0 ),
 			array( 'MF', 'MAF', 0, 'Saint Martin', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+590', 1, 0 ),
-			array( 'MN', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 0 ),
+			array( 'ME', 'MNE', 0, 'Montenegro', 'EUR', 'Euro', 'Euros', '€', 1,  2, '+382', 0, 0 ),
 			array( 'RS', 'SRB', 0, 'Serbia', 'RSD', 'Dinar', 'Dinars', '', 0, 2, '+941', 1, 0 ),
 			array( 'SS', 'SSD', 0, 'South Sudan', 'SSP', 'Pound', 'Pounds', '£', 1, 2, '+211', 0, 0 ),
 			array( 'SX', 'SXM', 0, 'Sint Maarten', 'ANG', 'Guilder', 'Guilders', 'ƒ', 1, 2, '+1', 1, 0 ),
@@ -706,7 +712,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CNT_is_EU" => '%d',
 							"CNT_active" => '%d',
 						);
-		if ( EEH_Activation::table_exists( $country_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $country_table ) ) {
 			foreach( $newer_countries as $country ) {
 				$SQL = "SELECT COUNT('CNT_ISO') FROM {$country_table} WHERE CNT_ISO='{$country[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);
@@ -743,7 +749,7 @@ class EE_DMS_Core_4_8_0 extends EE_Data_Migration_Script_Base{
 							"CUR_dec_plc" => '%d',
 							"CUR_active" => '%d',
 						);
-		if ( EEH_Activation::table_exists( $currency_table ) ) {
+		if ( $this->_get_table_analysis()->tableExists( $currency_table ) ) {
 			foreach( $newer_currencies as $currency ) {
 				$SQL = "SELECT COUNT('CUR_code') FROM {$currency_table} WHERE CUR_code='{$currency[0]}' LIMIT 1" ;
 				$countries = $wpdb->get_var($SQL);

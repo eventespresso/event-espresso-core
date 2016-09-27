@@ -154,6 +154,7 @@ class EE_Messages_Generator {
 				$msg->STS_ID() === EEM_Message::status_debug_only
 				&& ! EEM_Message::debug()
 			) {
+				do_action( 'AHEE__EE_Messages_Generator__generate__before_debug_delete', $msg, $this->_error_msg, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 				$this->_generation_queue->get_message_repository()->delete();
 				$this->_generation_queue->get_message_repository()->set_current( $next_msg );
 				continue;
@@ -165,6 +166,7 @@ class EE_Messages_Generator {
 				if ( $msg->STS_ID() !== EEM_Message::status_debug_only ) {
 					$msg->set_STS_ID( EEM_Message::status_failed );
 				}
+				do_action( 'AHEE__EE_Messages_Generator__generate__processing_failed_message', $msg, $this->_error_msg, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 				$msg->set_error_message(
 					__( 'Message failed to generate for the following reasons: ' )
 					. "\n"
@@ -172,6 +174,7 @@ class EE_Messages_Generator {
 				);
 				$msg->set_modified( time() );
 			} else {
+				do_action( 'AHEE__EE_Messages_Generator__generate__before_successful_generated_message_delete', $msg, $this->_error_msg, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 				//remove from db
 				$this->_generation_queue->get_message_repository()->delete();
 			}
@@ -244,6 +247,7 @@ class EE_Messages_Generator {
 
 		//if no addressees then get out because there is nothing to generation (possible bad data).
 		if ( ! $this->_valid_addressees( $addressees ) ) {
+			do_action( 'AHEE__EE_Messages_Generator___generate__invalid_addressees', $this->_generation_queue->get_message_repository()->current(), $addressees, $this->_current_messenger, $this->_current_message_type, $this->_current_data_handler );
 			$this->_generation_queue->get_message_repository()->current()->set_STS_ID( EEM_Message::status_debug_only );
 			$this->_error_msg[] = __( 'This is not a critical error but an informational notice. Unable to generate messages EE_Messages_Addressee objects.  There were no attendees prepared by the data handler.
 			  Sometimes this is because messages only get generated for certain registration statuses. For example, the ticket notice message type only goes to approved registrations.', 'event_espresso' );
@@ -288,12 +292,13 @@ class EE_Messages_Generator {
 				return $GRP;  //got it!
 			}
 
-			//nope don't have it yet.  Get from DB then add to repo
+			//nope don't have it yet.  Get from DB then add to repo if its not here, then that means the current GRP_ID
+			//is not valid, so we'll continue on in the code assuming there's NO GRP_ID.
 			$GRP = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 			if ( $GRP instanceof EE_Message_Template_Group ) {
 				$this->_template_collection->add( $GRP );
+				return $GRP;
 			}
-			return $GRP;
 		}
 
 		//whatcha still doing here?  Oh, no Message Template Group yet I see.  Okay let's see if we can get it for you.
@@ -402,6 +407,7 @@ class EE_Messages_Generator {
 
 		//if templates are empty then get out because we can't generate anything.
 		if ( ! $templates ) {
+			$this->_error_msg[] = __( 'Unable to assemble messages because there are no templates retrieved for generating the messages with', 'event_espresso' );
 			return false;
 		}
 
@@ -556,7 +562,7 @@ class EE_Messages_Generator {
 			return false;
 		}
 
-		foreach( $addressees as $addressee_array ) {
+		foreach ( $addressees as $addressee_array ) {
 			foreach ( $addressee_array as $addressee ) {
 				if ( ! $addressee instanceof EE_Messages_Addressee ) {
 					return false;
@@ -675,7 +681,7 @@ class EE_Messages_Generator {
 		//valid classname for the data handler.  Now let's setup the key for the data handler repository to see if there
 		//is already a ready data handler in the repository.
 		$this->_current_data_handler = $this->_data_handler_collection->get_by_key( $this->_data_handler_collection->get_key( $data_handler_class_name, $generating_data ) );
-		if ( ! $this->_current_data_handler instanceof EE_messages_incoming_data ) {
+		if ( ! $this->_current_data_handler instanceof EE_Messages_incoming_data ) {
 			//no saved data_handler in the repo so let's set one up and add it to the repo.
 			try {
 				$this->_current_data_handler = new $data_handler_class_name( $generating_data );

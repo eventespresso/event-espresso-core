@@ -115,9 +115,9 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_name'=>new EE_Plain_Text_Field( 'post_title', __( 'Event Name','event_espresso' ), FALSE, '' ),
 				'EVT_desc'=>new EE_Post_Content_Field( 'post_content', __( 'Event Description', 'event_espresso' ), FALSE, '' ),
 				'EVT_slug'=>new EE_Slug_Field( 'post_name', __( 'Event Slug', 'event_espresso' ), FALSE, '' ),
-				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, time()),
+				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, EE_Datetime_Field::now ),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Description', 'event_espresso' ), FALSE,'' ),
-				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), FALSE, time()),
+				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), FALSE, EE_Datetime_Field::now ),
 				'EVT_wp_user'=>new EE_WP_User_Field( 'post_author', __( 'Event Creator ID', 'event_espresso'), FALSE),
 				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), FALSE, 0 ),
 				'EVT_order'=>new EE_Integer_Field( 'menu_order', __( 'Event Menu Order', 'event_espresso' ), FALSE, 1 ),
@@ -129,7 +129,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVT_ID_fk'=>new EE_DB_Only_Int_Field( 'EVT_ID', __( 'Foreign key to Event ID from Event Meta table', 'event_espresso' ), FALSE ),
 				'EVT_display_desc'=>new EE_Boolean_Field( 'EVT_display_desc', __( 'Display Description Flag', 'event_espresso' ), FALSE, 1 ),
 				'EVT_display_ticket_selector'=>new EE_Boolean_Field( 'EVT_display_ticket_selector', __( 'Display Ticket Selector Flag', 'event_espresso' ), FALSE, 1 ),
-				'EVT_visible_on'=>new EE_Datetime_Field( 'EVT_visible_on', __( 'Event Visible Date', 'event_espresso' ), TRUE, time()),
+				'EVT_visible_on'=>new EE_Datetime_Field( 'EVT_visible_on', __( 'Event Visible Date', 'event_espresso' ), TRUE, EE_Datetime_Field::now ),
 				'EVT_additional_limit'=>new EE_Integer_Field( 'EVT_additional_limit', __( 'Limit of Additional Registrations on Same Transaction', 'event_espresso' ), TRUE, 10 ),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field(
 					'EVT_default_registration_status', __( 'Default Registration Status on this Event', 'event_espresso' ), FALSE, EEM_Event::$_default_reg_status, EEM_Registration::reg_status_array()
@@ -148,6 +148,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Datetime'=>new EE_Has_Many_Relation(),
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
+			'Term_Relationship' => new EE_Has_Many_Relation(),
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
 			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
 			'Attendee'=>new EE_HABTM_Relation('Registration'),
