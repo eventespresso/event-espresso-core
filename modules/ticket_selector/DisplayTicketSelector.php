@@ -34,9 +34,16 @@ class DisplayTicketSelector
      */
     protected $iframe = false;
 
+	/**
+	 * max attendees that can register for event at one time
+	 *
+	 * @var int $max_atndz
+	 */
+	private $max_atndz = EE_INF;
 
 
-    /**
+
+	/**
      * @param boolean $iframe
      */
     public function setIframe($iframe = true)
@@ -82,14 +89,15 @@ class DisplayTicketSelector
 
 
 
-    /**
-     *    creates buttons for selecting number of attendees for an event
-     *
-     * @access    public
-     * @param    \WP_Post|int $event
-     * @param    bool         $view_details
-     * @return    string
-     */
+	/**
+	 *    creates buttons for selecting number of attendees for an event
+	 *
+	 * @access    public
+	 * @param    \WP_Post|int $event
+	 * @param    bool         $view_details
+	 * @return    string
+	 * @throws \EE_Error
+	 */
     public function display($event = null, $view_details = false)
     {
         // reset filter for displaying submit button
@@ -168,11 +176,12 @@ class DisplayTicketSelector
             ) . '</span></div>';
         }
         // filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-        $template_args['max_atndz'] = apply_filters(
+	    $this->max_atndz = apply_filters(
             'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets',
             $this->event->additional_limit()
         );
-        if ($template_args['max_atndz'] < 1) {
+	    $template_args['max_atndz'] = $this->max_atndz;
+	    if ($template_args['max_atndz'] < 1) {
             $sales_closed_msg = __(
                 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.',
                 'event_espresso'
@@ -248,7 +257,7 @@ class DisplayTicketSelector
             \EE_Registry::instance()->load_helper('URL');
             $html = '<form method="GET" action="' . \EEH_URL::refactor_url($external_url) . '">';
             $query_args = \EEH_URL::get_query_string($external_url);
-            foreach ($query_args as $query_arg => $value) {
+            foreach ((array) $query_args as $query_arg => $value) {
                 $html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
             }
             return $html;
@@ -273,13 +282,14 @@ class DisplayTicketSelector
 
 
 
-    /**
-     *    displaySubmitButton
-     *
-     * @access        public
-     * @access        public
-     * @return        string
-     */
+	/**
+	 *    displaySubmitButton
+	 *
+	 * @access        public
+	 * @access        public
+	 * @return        string
+	 * @throws \EE_Error
+	 */
     public function displaySubmitButton()
     {
         if ( ! is_admin()) {
@@ -296,11 +306,38 @@ class DisplayTicketSelector
                 $html .= ' type="submit" value="' . $btn_text . '" />';
                 $html .= apply_filters('FHEE__EE_Ticket_Selector__after_ticket_selector_submit', '', $this->event);
                 $html .= '<div class="clear"><br/></div></form>';
-                return $html;
+	            if ( ! is_archive() ) {
+	            	$html .= \EEH_Template::powered_by_event_espresso();
+	            }
+	            return $html;
             } else if (is_archive()) {
                 return $this->formClose()
                        . $this->displayViewDetailsButton();
-            }
+            } else if (
+		        // if $_max_atndz === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+		        $this->max_atndz === 1
+		        // and the event is sold out
+		        && $this->event->is_sold_out()
+	        ) {
+		        // then instead of a View Details or Submit button, just display a "Sold Out" message
+		        $html = apply_filters(
+			        'FHEE__EE_Ticket_Selector__no_ticket_selector_submit',
+			        sprintf(
+				        __(
+					        '%1$s"%2$s" is currently sold out. Please check back again later, as spots may become available.%3$s',
+					        'event_espresso'
+				        ),
+				        '<p class="no-ticket-selector-msg important-notice">',
+				        $this->event->name(),
+				        '</p>'
+			        ),
+			        $this->event
+		        );
+		        $html .= '<div class="clear"></div></form>';
+		        return $html;
+	        } else {
+		        return '<div class="clear"></div></form>';
+	        }
         }
         return '';
     }
@@ -321,13 +358,14 @@ class DisplayTicketSelector
 
 
 
-    /**
-     *    displayViewDetailsButton
-     *
-     * @access        public
-     * @access        public
-     * @return        string
-     */
+	/**
+	 *    displayViewDetailsButton
+	 *
+	 * @access        public
+	 * @access        public
+	 * @return        string
+	 * @throws \EE_Error
+	 */
     public function displayViewDetailsButton()
     {
         if ( ! $this->event->get_permalink()) {
