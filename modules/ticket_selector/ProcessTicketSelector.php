@@ -34,7 +34,7 @@ class ProcessTicketSelector
      *
      * @access        public
      * @access        public
-     * @return        array  or FALSE
+     * @return        array|bool
      * @throws \EE_Error
      */
     public function process_ticket_selections()
@@ -229,7 +229,7 @@ class ProcessTicketSelector
      *    validate_post_data
      *
      * @access        private
-     * @return        array  or FALSE
+     * @return        array
      */
     private static function _validate_post_data()
     {
@@ -336,7 +336,7 @@ class ProcessTicketSelector
                 __FUNCTION__,
                 __LINE__
             );
-            return false;
+            return array();
         }
         //		d( $valid_data );
         //		die();
