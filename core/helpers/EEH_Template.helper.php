@@ -868,7 +868,7 @@ class EEH_Template {
 					'event_espresso'
 				),
 				"<div{$attributes}>",
-				"<a href=\"{$url}\" target=\"_blank\">{$powered_by}</a></div>"
+				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></div>"
 			)
 		);
 	}
