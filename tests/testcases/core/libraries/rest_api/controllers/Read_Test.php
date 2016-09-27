@@ -467,6 +467,17 @@ class Read_Test extends \EE_UnitTestCase{
 									'single' => false,
 								),
 						),
+					'https://api.eventespresso.com/term_relationships'             =>
+						array(
+							0 =>
+								array(
+									'href'   => $site_url
+									            . '/?rest_route=/ee/v4.8.29/events/'
+									            . $event_id
+									            . '/term_relationships',
+									'single' => false,
+								),
+						),
 				)
 			),
 			$result

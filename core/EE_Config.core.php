@@ -2175,8 +2175,11 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *
 	 * @access    public
 	 * @param string $CNT_ISO
+	 * @throws \EE_Error
 	 */
 	public function __construct( $CNT_ISO = '' ) {
+		/** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
+		$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
 		// get country code from organization settings or use default
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization )
 		           && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
@@ -2188,7 +2191,7 @@ class EE_Currency_Config extends EE_Config_Base {
 		if (
 			! empty( $CNT_ISO )
 			&& EE_Maintenance_Mode::instance()->models_can_query()
-			&& EEH_Activation::table_exists( EE_Registry::instance()->load_model( 'Country' )->table() )
+			&& $table_analysis->tableExists( EE_Registry::instance()->load_model( 'Country' )->table() )
 		) {
 			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
@@ -2508,6 +2511,15 @@ class EE_Admin_Config extends EE_Config_Base {
 			EE_Config::instance()->update_espresso_config( false, false );
 		}
 		return $this->debug_file_name;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function affiliate_id() {
+		return ! empty( $this->affiliate_id ) ? $this->affiliate_id : 'default';
 	}
 
 

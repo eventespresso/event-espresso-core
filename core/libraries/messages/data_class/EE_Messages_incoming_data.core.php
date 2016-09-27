@@ -350,8 +350,10 @@ abstract class EE_Messages_incoming_data {
 		if ( ! empty( $this->reg_objs ) ) {
 			$event_attendee_count = array();
 			foreach ( $this->reg_objs as $reg ) {
-				//account for filtered registrations by status.
-				if ( ! empty( $this->filtered_reg_status ) && $this->filtered_reg_status !== $reg->status_ID() ) {
+
+				if (
+					$this->_skip_registration_for_processing( $reg )
+				) {
 					continue;
 				}
 
@@ -522,6 +524,23 @@ abstract class EE_Messages_incoming_data {
 				);
 			}
 		}
+	}
+
+	/**
+	 * This simply considers whether the given registration should be processed or not based on comparison with the
+	 * filtered_reg_status property.
+	 *
+	 * @param EE_Registration $registration
+	 * @return bool  returning true means we DO want to skip processing.  returning false means we DON'T want to skip
+	 *               processing
+	 */
+	protected function _skip_registration_for_processing( EE_Registration $registration ) {
+		if ( empty( $this->filtered_reg_status ) ) {
+			return false;
+		}
+
+		//if we made it here then we just compare the filtered_reg_status with the registration status and return that
+		return $this->filtered_reg_status !== $registration->status_ID();
 	}
 
 

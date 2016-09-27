@@ -910,7 +910,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : null;
 		//active status dropdown
 		if ( $status !== 'draft' ) {
-			$filter[] = $this->active_status_dropdown(
+			$filters[] = $this->active_status_dropdown(
 				isset( $this->_req_data['active_status'] ) ? $this->_req_data['active_status'] : ''
 			);
 		}
