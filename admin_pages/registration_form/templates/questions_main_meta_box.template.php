@@ -14,6 +14,19 @@ $fields = $question->get_model()->field_settings();
 
 //does question have any answers? cause if it does then we have to disable type
 $has_answers = $question->has_answers();
+
+if ( $QST_system === 'country' ) {
+	echo EEH_HTML::div(
+		EEH_HTML::h4( '<span class="dashicons dashicons-info"></span>' . esc_html__( 'Did you know...', 'event_espresso' ) ) .
+		EEH_HTML::p(
+			esc_html__(
+				'If you add a State/Province Select input immediately after this Country Select input when building your registration form, then the State/Province Select input options will change to correspond with the choice made in this input. So for example, choosing "United States" in this Country Select input will populate the State/Province Select input with just the state options for the United States.',
+				'event_espresso'
+			)
+		),
+		'', 'ee-info-box'
+	);
+}
 ?>
 
 <div class="padding">
