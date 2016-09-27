@@ -1,4 +1,9 @@
-<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+<?php use EventEspresso\modules\ticket_selector\DisplayTicketSelector;
+use EventEspresso\modules\ticket_selector\ProcessTicketSelector;
+use EventEspresso\modules\ticket_selector\TicketSelectorIframe;
+use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
+
+if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 	exit( 'No direct script access allowed' );
 }
 
@@ -65,8 +70,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		EventEspresso\core\libraries\iframe_display\Iframe::addEventEditorIframeEmbedButton( 'ticket_selector' );
-	}
+	    EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton::addEventEditorIframeEmbedButton();
+    }
 
 
 
@@ -94,8 +99,8 @@ class EED_Ticket_Selector extends  EED_Module {
      */
     public static function ticketSelector()
     {
-        if ( ! EED_Ticket_Selector::$ticket_selector instanceof \EventEspresso\modules\ticket_selector\DisplayTicketSelector) {
-            EED_Ticket_Selector::$ticket_selector = new EventEspresso\modules\ticket_selector\DisplayTicketSelector();
+        if ( ! EED_Ticket_Selector::$ticket_selector instanceof DisplayTicketSelector) {
+            EED_Ticket_Selector::$ticket_selector = new DisplayTicketSelector();
         }
         return EED_Ticket_Selector::$ticket_selector;
     }
@@ -120,20 +125,21 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function ticket_selector_iframe() {
-		$ticket_selector_iframe = new EventEspresso\modules\ticket_selector\TicketSelectorIframe();
+		$ticket_selector_iframe = new TicketSelectorIframe();
 		$ticket_selector_iframe->display();
 	}
 
 
 
-	/**
-	 *    creates buttons for selecting number of attendees for an event
-	 *
-	 * @access 	public
-	 * @param 	WP_Post|int $event
-	 * @param 	bool 	$view_details
-	 * @return 	string
-	 */
+    /**
+     *    creates buttons for selecting number of attendees for an event
+     *
+     * @access    public
+     * @param    WP_Post|int $event
+     * @param    bool        $view_details
+     * @return    string
+     * @throws \EE_Error
+     */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
 		return EED_Ticket_Selector::ticketSelector()->display( $event, $view_details );
 	}
@@ -149,8 +155,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	 * @throws \EE_Error
 	 */
 	public function process_ticket_selections() {
-		$form = new EventEspresso\modules\ticket_selector\ProcessTicketSelector();
-		$form->process_ticket_selections();
+		$form = new ProcessTicketSelector();
+		return $form->process_ticket_selections();
 	}
 
 
@@ -181,6 +187,7 @@ class EED_Ticket_Selector extends  EED_Module {
     /**
      * @deprecated
      * @return string
+     * @throws \EE_Error
      */
     public static function display_view_details_btn()
     {
@@ -193,6 +200,7 @@ class EED_Ticket_Selector extends  EED_Module {
     /**
      * @deprecated
      * @return string
+     * @throws \EE_Error
      */
     public static function display_ticket_selector_submit()
     {
@@ -213,13 +221,7 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
         // todo add doing_it_wrong() notice during next major version
-        return \EventEspresso\core\libraries\iframe_display\Iframe::eventListIframeEmbedButton(
-            $permalink_string,
-            $id,
-            $new_title,
-            $new_slug,
-            'ticket_selector'
-        );
+        return TicketSelectorIframeEmbedButton::addEventEditorIframeEmbedButton();
     }
 
 
@@ -268,7 +270,7 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function load_tckt_slctr_assets_admin()
     {
         // todo add doing_it_wrong() notice during next major version
-        \EventEspresso\core\libraries\iframe_display\Iframe::EventsAdminEmbedButtonAssets();
+        TicketSelectorIframeEmbedButton::embedButtonAssets();
     }
 
 
