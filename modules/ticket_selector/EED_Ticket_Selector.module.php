@@ -150,12 +150,11 @@ class EED_Ticket_Selector extends  EED_Module {
 			)
 		);
 		EE_Registry::$i18n_js_strings[ 'ticket_selector_iframe' ] = true;
-		EE_Registry::$i18n_js_strings[ 'EEDTicketSelectorMsg' ] = __( 'Please choose at least one ticket before continuing.', 'event_espresso' );
+		EE_Registry::$i18n_js_strings[ 'EEDTicketSelectorMsg' ] = esc_html__( 'Please choose at least one ticket before continuing.', 'event_espresso' );
 		$template_args['eei18n'] = apply_filters(
 			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__eei18n_js_strings',
 			EE_Registry::localize_i18n_js_strings()
 		);
-		$template_args['powered_by'] = \EEH_Template::powered_by_event_espresso();
 		$template_args['js'] = apply_filters(
 			'FHEE__EED_Ticket_Selector__ticket_selector_iframe__js',
 			array(
@@ -447,6 +446,9 @@ class EED_Ticket_Selector extends  EED_Module {
 					? \EED_Ticket_Selector::no_tkt_slctr_end_dv()
 					: \EED_Ticket_Selector::clear_tkt_slctr();
 				$html .= '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
+				if ( ! is_archive() ) {
+					$html .= \EEH_Template::powered_by_event_espresso();
+				}
 				return $html;
 			} else if (
 				is_archive()

@@ -15,6 +15,9 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 
+	/**
+	 * @group html
+	 */
 	public function test_display_flat_array(){
 		$form = new EE_Form_Section_Proper( array(
 			'name' => 'form',
@@ -29,7 +32,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em">Baz</option>
 </select>';
-		$this->assertEquals( $expected_output, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output, $input->get_html_for_input() );
 		//now if we set the default, does it get selected?
 		$form->populate_defaults( array(
 			'input1' => "baz'em"
@@ -42,9 +45,13 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 	<option value="bar">Bar</option>
 	<option value="baz&#039;em" selected="selected">Baz</option>
 </select>';
-		$this->assertEquals( $expected_output2, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output2, $input->get_html_for_input() );
 
 	}
+	
+	/**
+	 * @group html
+	 */
 	public function test_display_flat_multidimensional_array(){
 		$input = new EE_Select_Input( array(
 					'code_var_names' => array(
@@ -69,7 +76,7 @@ class EE_Select_Display_Strategy_Test extends EE_UnitTestCase{
 		<option value="baboon">Baboon</option>
 	</optgroup>
 </select>';
-		$this->assertEquals( $expected_output, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output, $input->get_html_for_input() );
 
 
 	}
