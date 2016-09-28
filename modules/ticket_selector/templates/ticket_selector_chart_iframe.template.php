@@ -6,7 +6,6 @@
 
  * @type string $notices	HTML for notices and ajax gif
  * @type string $ticket_selector This is the html for the ticket selector.
- * @type string $powered_by credit link
  * @type array $css 		An array of css urls.
  * @type string $eei18n 	localized JSON vars
  * @type array $js 			An array of js urls.
@@ -33,6 +32,5 @@
 <body>
 	<?php echo $notices; ?>
 	<?php echo $ticket_selector; ?>
-	<?php echo $powered_by; ?>
 </body>
 </html>
