@@ -141,16 +141,6 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 									'display_html_label_text' => false
 								)
 							),
-							'ticket_price_includes_taxes' => new EE_Yes_No_Input(
-								array(
-									'html_label_text' => __( 'Ticket Prices Include Taxes?', 'event_espresso' ),
-									'html_help_text' => __( 'Indicate whether or not to display ticket prices in the ticket selector with the taxes included', 'event_espresso' ),
-									'default' => isset( EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->ticket_price_includes_taxes )
-										? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->ticket_price_includes_taxes
-										: true,
-									'display_html_label_text' => false
-								)
-							),
 						)
 					)
 				)
@@ -191,7 +181,6 @@ class EED_Ticket_Selector_Caff  extends EED_Ticket_Selector {
 					$CFG->EED_Ticket_Selector->show_ticket_sale_columns = $valid_data['appearance_settings']['show_ticket_sale_columns'];
 					$CFG->EED_Ticket_Selector->show_ticket_details = $valid_data['appearance_settings']['show_ticket_details'];
 					$CFG->EED_Ticket_Selector->show_expired_tickets = $valid_data['appearance_settings']['show_expired_tickets'];
-					$CFG->EED_Ticket_Selector->ticket_price_includes_taxes = $valid_data['appearance_settings']['ticket_price_includes_taxes'];
 				} else {
 					if ( $ticket_selector_form->submission_error_message() !== '' ) {
 						EE_Error::add_error( $ticket_selector_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
