@@ -19,6 +19,13 @@ $template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EE
 	? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
 	: new EE_Ticket_Selector_Config();
 
+$tax_settings = isset ( EE_Registry::instance()->CFG->tax_settings )
+	? EE_Registry::instance()->CFG->tax_settings
+	: new EE_Tax_Config();
+
+// flag to indicate that at least one taxable ticket has been encountered
+$taxable_tickets = false;
+
 ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
@@ -41,7 +48,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$required_ticket_sold_out = $ticket->required() && ! $remaining ? $ticket->start_date() : $required_ticket_sold_out;
 		}
 
-		$ticket_price = $ticket->get_ticket_total_with_taxes();
+		$ticket_price = $tax_settings->prices_displayed_including_taxes
+			? $ticket->get_ticket_total_with_taxes()
+			: $ticket->get_ticket_subtotal();
+		$taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
 		$ticket_bundle = FALSE;
 		$ticket_min = $ticket->min();
 		// for ticket bundles, set min and max qty the same
@@ -172,7 +182,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>
 					</td>
 					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?>&nbsp;<span class="smaller-text no-bold"><?php
+					<td class="tckt-slctr-tbl-td-price jst-rght"><?php
+						echo EEH_Template::format_currency( $ticket_price );
+						echo $ticket->taxable() ? '<span class="taxable-tickets-asterisk grey-text">*</span>' : '';
+						?>&nbsp;<span class="smaller-text no-bold"><?php
 						if ( $ticket_bundle ) {
 							echo apply_filters( 'FHEE__ticket_selector_chart_template__per_ticket_bundle_text', __( ' / bundle', 'event_espresso' ));
 						} else {
@@ -522,6 +535,16 @@ if ( ! $hide_ticket_selector ) {
 			<?php echo $ticket_row_html;?>
 		</tbody>
 	</table>
+	<?php
+	if ( $taxable_tickets && apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', true ) ) {
+		if ( $tax_settings->prices_displayed_including_taxes ) {
+			$ticket_price_includes_taxes = __( '* price includes taxes', 'event_espresso' );
+		} else {
+			$ticket_price_includes_taxes = __( '* price does not include taxes', 'event_espresso' );
+		}
+		echo '<p class="small-text lt-grey-text" style="text-align:right; margin: -1em 0 1em;">' . $ticket_price_includes_taxes . '</p>';
+	}
+	?>
 
 	<input type="hidden" name="noheader" value="true" />
 	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>" />
