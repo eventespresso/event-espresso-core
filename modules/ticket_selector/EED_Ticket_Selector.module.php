@@ -27,6 +27,11 @@ class EED_Ticket_Selector extends  EED_Module {
      */
     private static $ticket_selector;
 
+    /**
+     * @var EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton $iframe_embed_button
+     */
+    private static $iframe_embed_button;
+
 
 
 	/**
@@ -43,6 +48,19 @@ class EED_Ticket_Selector extends  EED_Module {
 		$this->set_config_class( 'EE_Ticket_Selector_Config' );
 		$this->set_config_name( 'EED_Ticket_Selector' );
 	}
+
+
+
+    /**
+     * @return \EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton
+     */
+    public static function getIframeEmbedButton()
+    {
+        if ( ! self::$iframe_embed_button instanceof TicketSelectorIframeEmbedButton) {
+            self::$iframe_embed_button = new TicketSelectorIframeEmbedButton();
+        }
+        return self::$iframe_embed_button;
+    }
 
 
 
@@ -70,7 +88,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-	    EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton::addEventEditorIframeEmbedButton();
+        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_events') {
+            $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
+            $iframe_embed_button->addEventEditorIframeEmbedButton();
+        }
     }
 
 
@@ -221,7 +242,11 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
     {
         // todo add doing_it_wrong() notice during next major version
-        return TicketSelectorIframeEmbedButton::addEventEditorIframeEmbedButton();
+        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_events') {
+            $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
+            $iframe_embed_button->addEventEditorIframeEmbedButton();
+        }
+        return '';
     }
 
 
@@ -270,7 +295,10 @@ class EED_Ticket_Selector extends  EED_Module {
     public static function load_tckt_slctr_assets_admin()
     {
         // todo add doing_it_wrong() notice during next major version
-        TicketSelectorIframeEmbedButton::embedButtonAssets();
+        if (\EE_Registry::instance()->REQ->get('page') === 'espresso_events') {
+            $iframe_embed_button = \EED_Ticket_Selector::getIframeEmbedButton();
+            $iframe_embed_button->embedButtonAssets();
+        }
     }
 
 
