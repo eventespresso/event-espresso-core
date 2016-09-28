@@ -858,7 +858,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			esc_html__("View Event Archive Page", "event_espresso"),
 			'button'
 		);
-        $this->_template_args['after_list_table'] .= EventListIframeEmbedButton::addEventListIframeEmbedButton();
+        $iframe_embed_button = new EventListIframeEmbedButton();
+        $this->_template_args['after_list_table'] .= $iframe_embed_button->addEventListIframeEmbedButtonSection();
 		$this->_template_args['after_list_table'] .= $this->_display_legend( $this->_event_legend_items() );
 		$this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
 				'create_new',
