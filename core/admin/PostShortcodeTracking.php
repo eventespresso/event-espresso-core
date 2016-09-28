@@ -421,25 +421,49 @@ class PostShortcodeTracking {
 
 
     /**
-     * @param string $shortcode
+     * @param array|string $shortcodes
+     * @param bool         $index_results if passing more than one shortcode for the $shortcodes parameter above,
+     *                                    then setting this to true, will return as associative array indexed by
+     *                                    the shortcodes. If false, then the returned array will be unindexed
      * @return array
      */
-    public static function get_post_ids_for_shortcode($shortcode='')
+    public static function get_post_ids_for_shortcode($shortcodes, $index_results = true)
     {
-        $shortcode = strtoupper($shortcode);
-        $shortcode = strpos($shortcode, 'ESPRESSO_') !== 0 ? "ESPRESSO_{$shortcode}" : $shortcode;
         $post_ids = array();
-        $page_for_posts = \EE_Config::get_page_for_posts();
-        // looking for any references to this post
-        foreach (\EE_Registry::CFG()->core->post_shortcodes as $post_name => $post_shortcodes) {
-            // if this is the "Posts Page" (blog), then skip it
-            if ($post_name === $page_for_posts) {
-                continue;
+        if ( is_array($shortcodes)) {
+            foreach ($shortcodes as $shortcode) {
+                $new_post_ids = PostShortcodeTracking::get_post_ids_for_shortcode(
+                    $shortcode,
+                    $index_results
+                );
+                foreach ($new_post_ids as $new_post_id) {
+                    if ($index_results) {
+                        $post_ids[$shortcode][$new_post_id] = $new_post_id;
+                    } else {
+                        $post_ids[$new_post_id] = $new_post_id;
+                    }
+                }
             }
-            // loop thru shortcodes registered for each page, and grab post id for matches
-            foreach ((array) $post_shortcodes as $shortcode_class => $post_ID) {
-                if ($shortcode_class === $shortcode) {
-                    $post_ids[$post_ID] = $post_ID;
+        } else {
+            $shortcode = strtoupper($shortcodes);
+            $shortcode = strpos($shortcode, 'ESPRESSO_') !== 0 ? "ESPRESSO_{$shortcode}" : $shortcode;
+            $page_for_posts = \EE_Config::get_page_for_posts();
+            // echo "\n page_for_posts: " . $page_for_posts;
+            // looking for any references to this post
+            foreach (\EE_Registry::CFG()->core->post_shortcodes as $post_name => $post_shortcodes) {
+                // echo "\n post_name: " . $post_name . "\n";
+                // if this is the "Posts Page" (blog), then skip it
+                if ($post_name === $page_for_posts) {
+                    continue;
+                }
+                // loop thru shortcodes registered for each page, and grab post id for matches
+                foreach ((array)$post_shortcodes as $post_shortcode => $post_ID) {
+                    // echo "\n post_shortcode: " . $post_shortcode;
+                    // echo "\n " . __LINE__ . ") " . __METHOD__ . '() : $post_ID' . "\n";
+                    // var_dump($post_ID);
+                    if ($post_shortcode === $shortcode) {
+                        $post_ids[$post_ID] = $post_ID;
+                    }
                 }
             }
         }
