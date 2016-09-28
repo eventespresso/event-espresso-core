@@ -1362,7 +1362,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			array(202, 'Taiwan', 'TW', 'TWN', 1),
 			array(203, 'Tanzania', 'TZ', 'TZA', 1),
 			array(204, 'Tajikistan', 'TJ', 'TJK', 1),
-			array(206, 'East Timor', 'TL', 'TLS', 1),
+			array(206, 'Timor-Leste', 'TL', 'TLS', 1),
 			array(207, 'Togo', 'TG', 'TGO', 1),
 			array(208, 'Tokelau', 'TK', 'TKL', 1),
 			array(209, 'Tonga', 'TO', 'TON', 1),
