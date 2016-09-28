@@ -19,6 +19,13 @@ $template_settings = isset ( EE_Registry::instance()->CFG->template_settings->EE
 	? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
 	: new EE_Ticket_Selector_Config();
 
+$tax_settings = isset ( EE_Registry::instance()->CFG->tax_settings )
+	? EE_Registry::instance()->CFG->tax_settings
+	: new EE_Tax_Config();
+
+// flag to indicate that at least one taxable ticket has been encountered
+$taxable_tickets = false;
+
 ob_start();
 
 foreach ( $tickets as $TKT_ID => $ticket ) {
@@ -41,7 +48,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$required_ticket_sold_out = $ticket->required() && ! $remaining ? $ticket->start_date() : $required_ticket_sold_out;
 		}
 
-		$ticket_price = $ticket->get_ticket_total_with_taxes();
+		$ticket_price = $tax_settings->prices_displayed_including_taxes
+			? $ticket->get_ticket_total_with_taxes()
+			: $ticket->get_ticket_subtotal();
+		$taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
 		$ticket_bundle = FALSE;
 		// for ticket bundles, set min and max qty the same
 		if ( $ticket->min() != 0 && $ticket->min() == $ticket->max() ) {
@@ -162,7 +172,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>
 					</td>
 					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?>&nbsp;<span class="smaller-text no-bold"><?php
+					<td class="tckt-slctr-tbl-td-price jst-rght"><?php
+						echo EEH_Template::format_currency( $ticket_price );
+						echo $ticket->taxable() ? '<span class="taxable-tickets-asterisk grey-text">*</span>' : '';
+						?>&nbsp;<span class="smaller-text no-bold"><?php
 						if ( $ticket_bundle ) {
 							echo apply_filters( 'FHEE__ticket_selector_chart_template__per_ticket_bundle_text', __( ' / bundle', 'event_espresso' ));
 						} else {
@@ -457,6 +470,15 @@ remove_filter(
 	'FHEE__EE_Ticket_Selector__after_view_details_btn',
 	array( 'EED_Ticket_Selector', 'no_tkt_slctr_end_dv' )
 );
+/**
+* Filters the anchor ID used when redirecting to the Ticket Selector if no quantity selected
+*
+* @since 4.9.13
+*
+* @param string '#tkt-slctr-tbl-' . $EVT_ID The html ID to anchor to
+* @param int $EVT_ID The Event ID
+*/
+$anchor_id = apply_filters( 'FHEE__EE_Ticket_Selector__redirect_anchor_id', '#tkt-slctr-tbl-' . $EVT_ID, $EVT_ID );
 if ( ! $hide_ticket_selector ) {
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
@@ -503,9 +525,19 @@ if ( ! $hide_ticket_selector ) {
 			<?php echo $ticket_row_html;?>
 		</tbody>
 	</table>
+	<?php
+	if ( $taxable_tickets && apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', true ) ) {
+		if ( $tax_settings->prices_displayed_including_taxes ) {
+			$ticket_price_includes_taxes = __( '* price includes taxes', 'event_espresso' );
+		} else {
+			$ticket_price_includes_taxes = __( '* price does not include taxes', 'event_espresso' );
+		}
+		echo '<p class="small-text lt-grey-text" style="text-align:right; margin: -1em 0 1em;">' . $ticket_price_includes_taxes . '</p>';
+	}
+	?>
 
 	<input type="hidden" name="noheader" value="true" />
-	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url();?>" />
+	<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>" />
 	<input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>" />
 	<input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>" />
 	<input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>" />
@@ -526,7 +558,7 @@ if ( $max_atndz > 0 && ! $hide_ticket_selector ) {
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
 <input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
 <input type="hidden" name="noheader" value="true"/>
-<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url(); ?>"/>
+<input type="hidden" name="tkt-slctr-return-url-<?php echo $EVT_ID ?>" value="<?php echo EEH_URL::filter_input_server_url() . $anchor_id; ?>"/>
 <input type="hidden" name="tkt-slctr-rows-<?php echo $EVT_ID; ?>" value="<?php echo $row - 1; ?>"/>
 <input type="hidden" name="tkt-slctr-max-atndz-<?php echo $EVT_ID; ?>" value="<?php echo $max_atndz; ?>"/>
 <input type="hidden" name="tkt-slctr-event-id" value="<?php echo $EVT_ID; ?>"/>
