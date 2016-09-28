@@ -1378,7 +1378,6 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				if ( $tax_form->is_valid() ) {
 					//grab validated data from form
 					$valid_data = $tax_form->valid_data();
-					\EEH_Debug_Tools::printr( $valid_data, '$valid_data', __FILE__, __LINE__ );
 					//set data on config
 					EE_Registry::instance()
 						->CFG
