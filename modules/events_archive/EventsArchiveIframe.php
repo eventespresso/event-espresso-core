@@ -57,7 +57,7 @@ class EventsArchiveIframe {
 		);
 		$iframe->addStylesheets(
 			apply_filters(
-				'FHEE__EventsArchiveIframe__event_list_iframe__css',
+				'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__css',
 				array(
 					'espresso_default' => is_readable( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )
 						? EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION
@@ -70,7 +70,7 @@ class EventsArchiveIframe {
 		);
 		$iframe->addScripts(
 			apply_filters(
-				'FHEE__EED_Ticket_Selector__event_list_iframe__js',
+				'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
 				array(
 					'gmap_api' => sprintf(
 						"https://maps.googleapis.com/maps/api/js?key=%s",
