@@ -37,9 +37,9 @@ class DisplayTicketSelector
 	/**
 	 * max attendees that can register for event at one time
 	 *
-	 * @var int $max_atndz
+	 * @var int $max_attendees
 	 */
-	private $max_atndz = EE_INF;
+	private $max_attendees = EE_INF;
 
 
 
@@ -85,6 +85,26 @@ class DisplayTicketSelector
             return false;
         }
         return true;
+    }
+
+
+
+    /**
+     * @return int
+     */
+    public function getMaxAttendees()
+    {
+        return $this->max_attendees;
+    }
+
+
+
+    /**
+     * @param int $max_attendees
+     */
+    public function setMaxAttendees($max_attendees)
+    {
+        $this->max_attendees = absint( $max_attendees );
     }
 
 
@@ -176,11 +196,13 @@ class DisplayTicketSelector
             ) . '</span></div>';
         }
         // filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-	    $this->max_atndz = apply_filters(
-            'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets',
-            $this->event->additional_limit()
+	    $this->setMaxAttendees(
+            apply_filters(
+                'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets',
+                $this->event->additional_limit()
+            )
         );
-	    $template_args['max_atndz'] = $this->max_atndz;
+	    $template_args['max_atndz'] = $this->getMaxAttendees();
 	    if ($template_args['max_atndz'] < 1) {
             $sales_closed_msg = __(
                 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.',
@@ -314,8 +336,8 @@ class DisplayTicketSelector
                 return $this->formClose()
                        . $this->displayViewDetailsButton();
             } else if (
-		        // if $_max_atndz === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
-		        $this->max_atndz === 1
+		        // if $this->max_attendees === 1 (ie: a "Dude Where's my Ticket Selector?" type event)
+                $this->getMaxAttendees() === 1
 		        // and the event is sold out
 		        && $this->event->is_sold_out()
 	        ) {
