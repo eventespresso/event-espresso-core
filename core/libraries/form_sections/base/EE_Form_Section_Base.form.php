@@ -100,7 +100,9 @@ abstract class EE_Form_Section_Base {
 	protected function _construct_finalize( $parent_form_section, $name ){
 		$this->_construction_finalized = TRUE;
 		$this->_parent_section = $parent_form_section;
-		$this->_name = $name;
+		if( $name !== null ) {
+			$this->_name = $name;
+		}
 	}
 	
 	/**
