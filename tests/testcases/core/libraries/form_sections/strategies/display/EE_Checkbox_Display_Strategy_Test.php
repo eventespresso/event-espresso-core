@@ -33,7 +33,7 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="form-input1-bazem" id="form-input1-bazem-lbl" class="ee-checkbox-label-after micro-lbl">
 	<input type="checkbox" name="form[input1][]" id="form-input1-bazem" class="" style="" value="baz&#039;em" >&nbsp;Baz
 </label>';
-		$this->assertEquals( $expected_output, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output, $input->get_html_for_input() );
 		//now if we set the default, does it get selected?
 		$form->populate_defaults( array(
 			'input1' => array( "baz'em", 'bar' )
@@ -50,7 +50,7 @@ class EE_Checkbox_Display_Strategy_Test extends EE_UnitTestCase{
 <label for="form-input1-bazem" id="form-input1-bazem-lbl" class="ee-checkbox-label-after micro-lbl">
 	<input type="checkbox" name="form[input1][]" id="form-input1-bazem" class="" style="" value="baz&#039;em" checked="checked" >&nbsp;Baz
 </label>';
-		$this->assertEquals( $expected_output2, $input->get_html_for_input() );
+		$this->assertHTMLEquals( $expected_output2, $input->get_html_for_input() );
 	}
 }
 
