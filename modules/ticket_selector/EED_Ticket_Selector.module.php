@@ -500,7 +500,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		$html = '<a class="ticket-selector-submit-btn button" href="';
 		$html .= apply_filters(
 			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_url',
-			EE_Registry::instance()->CFG->core->reg_page_url()
+			EE_Registry::instance()->CFG->core->reg_page_url(),
+            self::$_event
 		);
 		$html .= '">';
 		$html .= apply_filters(
