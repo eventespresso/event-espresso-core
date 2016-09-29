@@ -1,10 +1,17 @@
+#espresso-default-admin {
+    padding-top: 10px;
+    min-width: 763px;
+}
+#espresso-default-admin .postbox-container {
+    width: 100%;
+}
 #espresso-default-admin #post-body.columns-2 {
     margin-right: 300px;
 }
 
 @media only screen and (max-width: 850px) {
     #espresso-default-admin #post-body.columns-2 {
-        margin: 0px;
+        margin: 0;
     }
 }
 
