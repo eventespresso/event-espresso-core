@@ -776,6 +776,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}
 		}
 	}
+	
+	/**
+	 * Compares HTML, ignoring whitespace differences; also tries to make differences
+	 * more obvious for comparison in PHPUnit results.
+	 * Ideally this would actually parse the HTML, and just verify its functionality equivalent.
+	 * Eg, ignore case differences,unnecessary whitespace differences (eg '< br >' vs '<br>'),
+	 * attribute order differences, so this would only fail when there would be a noticeable
+	 * difference. The true ideal would be system testing using something codeception or something
+	 * @param string $expected
+	 * @param string $actual
+	 * @param string $error_message
+	 * @return void
+	 */
+	public function assertHTMLEquals( $expected, $actual, $error_message = null ) {
+		$expected_standardized_whitespace = preg_replace( '~(\\s)+~', PHP_EOL, $expected );
+		$actual_standardized_whitespace = preg_replace( '~(\\s)+~', PHP_EOL, $actual );
+		$this->assertEquals( $expected_standardized_whitespace, $actual_standardized_whitespace, $error_message );
+	}
 
 
 	/**
