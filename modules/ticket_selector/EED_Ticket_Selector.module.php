@@ -505,7 +505,8 @@ class EED_Ticket_Selector extends  EED_Module {
 		$html .= '">';
 		$html .= apply_filters(
 			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_txt',
-			__( 'Proceed to Registration', 'event_espresso' )
+			__( 'Proceed to Registration', 'event_espresso' ),
+            self::$_event
 		);
 		$html .= ' <span class="dashicons dashicons-arrow-right-alt2"></span>';
 		$html .= '</a>';
