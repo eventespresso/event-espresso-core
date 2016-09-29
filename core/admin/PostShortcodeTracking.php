@@ -326,17 +326,12 @@ class PostShortcodeTracking
         foreach ( \EE_Config::instance()->core->post_shortcodes as $post_name => $shortcodes ) {
             // are there any shortcodes to track ?
             if ( ! empty( $shortcodes ) ) {
+                // skip the posts page, because we want all shortcodes registered for it
+                if ( $post_name === $page_for_posts ) {
+                    continue;
+                }
                 // loop thru list of tracked shortcodes
                 foreach ( $shortcodes as $shortcode => $post_id ) {
-                    // if shortcode is for a critical page,
-                    // BUT this is NOT the corresponding critical page for that shortcode
-                    if ( $post_name === $page_for_posts ) {
-                        continue;
-                    }
-                    // skip the posts page, because we want all shortcodes registered for it
-                    if ( $post_name === $page_for_posts ) {
-                        continue;
-                    }
                     // make sure post still exists
                     $post = get_post( $post_id );
                     // check that the post name matches what we have saved
