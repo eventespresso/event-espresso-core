@@ -156,7 +156,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 					// Item quantity.
 					$token_request_dtls['L_PAYMENTREQUEST_0_QTY'.$item_num] = $line_item_quantity;
 					// Digital item is sold.
-					$token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Digital';
+					$token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY'.$item_num] = 'Physical';
 					$itemized_sum += $line_item->total();
 					++$item_num;
 				}
@@ -196,7 +196,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			// Item quantity.
 			$token_request_dtls['L_PAYMENTREQUEST_0_QTY0'] = 1;
 			// Digital item is sold.
-			$token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY0'] = 'Digital';
+			$token_request_dtls['L_PAYMENTREQUEST_0_ITEMCATEGORY0'] = 'Physical';
 			// Item's sales S/H and tax amount.
 			$token_request_dtls['PAYMENTREQUEST_0_ITEMAMT'] = $this->format_currency( $payment->amount() );
 			$token_request_dtls['PAYMENTREQUEST_0_TAXAMT'] = '0';
@@ -226,7 +226,9 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 		if ( $token_rstatus['status'] ) {
 			// We got the Token so we may continue with the payment and redirect the client.
 			$payment->set_details( $response_args );
-			$payment->set_redirect_url( 'https://www.sandbox.paypal.com/cgi-bin/webscr?useraction=commit&cmd=_express-checkout&token=' . $response_args['TOKEN'] );
+
+			$gateway_url = ( $this->_debug_mode ) ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
+			$payment->set_redirect_url( $gateway_url . '/incontext?useraction=commit&cmd=_express-checkout&token=' . $response_args['TOKEN'] );
 		} else {
 			if ( isset($response_args['L_ERRORCODE']) ) {
 				$payment->set_gateway_response( $response_args['L_ERRORCODE'] . '; ' . $response_args['L_SHORTMESSAGE'] );
