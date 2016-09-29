@@ -33,6 +33,12 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 	protected $_api_signature = null;
 
 	/**
+	 * Request Shipping address on PP checkout page.
+	 *  @var string
+	 */
+	protected $_request_shipping_addr = null;
+
+	/**
 	 * Business/personal logo.
 	 *  @var string
 	 */
@@ -204,7 +210,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			$token_request_dtls['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
 		}
 		// Automatically filling out shipping and contact information.
-		if ( $primary_attendee instanceof EEI_Attendee ) {
+		if ( $this->_request_shipping_addr && $primary_attendee instanceof EEI_Attendee ) {
 			$token_request_dtls['NOSHIPPING'] = '2';	//  If you do not pass the shipping address, PayPal obtains it from the buyer's account profile.
 			$token_request_dtls['PAYMENTREQUEST_0_SHIPTOSTREET'] = $primary_attendee->address();
 			$token_request_dtls['PAYMENTREQUEST_0_SHIPTOSTREET2'] = $primary_attendee->address2();
@@ -214,6 +220,11 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			$token_request_dtls['PAYMENTREQUEST_0_SHIPTOZIP'] = $primary_attendee->zip();
 			$token_request_dtls['PAYMENTREQUEST_0_EMAIL'] = $primary_attendee->email();
 			$token_request_dtls['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = $primary_attendee->phone();
+		} elseif ( ! $this->_request_shipping_addr ) {
+			// Do not request shipping details on the PP Checkout page.
+			$token_request_dtls['NOSHIPPING'] = '1';
+			$token_request_dtls['REQCONFIRMSHIPPING'] = '0';
+
 		}
 		// Used a business/personal logo on the PayPal page.
 		if ( ! empty($this->_image_url) ) {

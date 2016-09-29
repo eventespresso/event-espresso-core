@@ -25,6 +25,10 @@
 		<strong><?php _e( 'API Signature', 'event_espresso' ); ?></strong><br/>
 		<?php _e( 'Your PayPal Account Signature.' ); ?>
 	</li>
+	<li>
+		<strong><?php _e( 'Request Shipping Address', 'event_espresso' ); ?></strong><br/>
+		<?php _e( 'Indicates whether or not you require the buyer\'s shipping address on file with PayPal be a confirmed address.' ); ?>
+	</li>
 </ul>
 <p>
 	<?php printf( __('For testing please use a %1$s PaypPal Sandbox account%2$s.', 'event_espresso'), '<a target="_blank" href="https://developer.paypal.com">', '</a>' ); ?>

@@ -74,6 +74,14 @@ class EE_PMT_Paypal_Express extends EE_PMT_Base {
 							'required' => true
 						)
 					),
+					'request_shipping_addr' => new EE_Yes_No_Input(
+						array(
+							'html_label_text' => sprintf( __( 'Request Shipping Address %s', 'event_espresso' ), $this->get_help_tab_link() ),
+							'html_help_text'  => __( 'If set to "Yes", then a shipping address will be requested on the PayPal checkout page.', 'event_espresso' ),
+							'required' => true,
+							'default' => true,
+						)
+					),
 					'image_url' => new EE_Admin_File_Uploader_Input(
 						array(
 							'html_label_text' => sprintf( __( 'Image URL %s', 'event_espresso' ), $this->get_help_tab_link() ),
