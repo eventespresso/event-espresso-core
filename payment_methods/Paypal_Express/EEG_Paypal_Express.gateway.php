@@ -239,7 +239,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway {
 			$payment->set_details( $response_args );
 
 			$gateway_url = ( $this->_debug_mode ) ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
-			$payment->set_redirect_url( $gateway_url . '/incontext?useraction=commit&cmd=_express-checkout&token=' . $response_args['TOKEN'] );
+			$payment->set_redirect_url( $gateway_url . '/checkoutnow?useraction=commit&cmd=_express-checkout&token=' . $response_args['TOKEN'] );
 		} else {
 			if ( isset($response_args['L_ERRORCODE']) ) {
 				$payment->set_gateway_response( $response_args['L_ERRORCODE'] . '; ' . $response_args['L_SHORTMESSAGE'] );
