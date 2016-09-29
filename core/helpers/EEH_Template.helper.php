@@ -674,7 +674,7 @@ class EEH_Template {
 	}
 	else {
 		//simple value
-		echo $data;
+		echo esc_html( $data );
 	}
 	return ob_get_clean();
 }
