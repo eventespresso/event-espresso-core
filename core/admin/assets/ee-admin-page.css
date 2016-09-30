@@ -1,3 +1,20 @@
+#espresso-default-admin {
+    padding-top: 10px;
+    min-width: 763px;
+}
+#espresso-default-admin .postbox-container {
+    width: 100%;
+}
+#espresso-default-admin #post-body.columns-2 {
+    margin-right: 300px;
+}
+
+@media only screen and (max-width: 850px) {
+    #espresso-default-admin #post-body.columns-2 {
+        margin: 0;
+    }
+}
+
 .espresso-admin .add-new-h2,
 .espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
@@ -26,23 +43,17 @@
 	float        : right;
 }
 
-#poststuff .ee-nav-tabs .nav-tab-wrapper, .ee-nav-tabs .nav-tab-wrapper {
+.ee-nav-tabs .nav-tab-wrapper {
 	margin-bottom  : 0;
 	padding-bottom : 0;
 }
-
-#poststuff .ee-nav-tabs .nav-tab-content, .ee-nav-tabs .nav-tab-content {
+.ee-nav-tabs .nav-tab-content {
 	margin : 5px 5px 15px;
 }
-
-#poststuff .ee-nav-tabs-small .nav-tab, .ee-nav-tabs .nav-tab-content {
+.ee-nav-tabs .nav-tab-content {
 	font-size   : 12px;
 	height      : 18px;
 	line-height : 18px;
-}
-
-#poststuff .nav-tab-content {
-	height : 100%;
 }
 
 #post-body-content li.current a {
@@ -69,8 +80,17 @@
 }
 
 .ee-info-box {
-	padding    : 2em 1.5em; margin : 2em 0 1em;
-	background : #F0F8FB; border : 1px solid lightblue; border-radius : 3px;
+	background: #FFFFFF;
+	border: 1px solid lightblue;
+	margin: 0 0 1em;
+	padding: 1em 2em;
+}
+.ee-info-box h4 {
+	color: #0073AA;
+	margin: .5em 0 .25em;
+}
+.ee-info-box p {
+	margin: 0 0 1em;
 }
 
 .admin-state,

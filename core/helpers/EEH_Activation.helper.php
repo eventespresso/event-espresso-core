@@ -907,8 +907,8 @@ class EEH_Activation {
 			'address',
 			'address2',
 			'city',
-			'state',
 			'country',
+			'state',
 			'zip',
 			'phone'
 		);
@@ -1018,35 +1018,34 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-
-					case 'state':
-							$QST_values = array(
-									'QST_display_text' => __( 'State/Province', 'event_espresso' ),
-									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
-									'QST_system' => 'state',
-									'QST_type' => 'STATE',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 7,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => self::get_default_creator_id(),
-									'QST_deleted' => 0
-								);
+					case 'country' :
+						$QST_values = array(
+							'QST_display_text'  => __( 'Country', 'event_espresso' ),
+							'QST_admin_label'   => __( 'Country - System Question', 'event_espresso' ),
+							'QST_system'        => 'country',
+							'QST_type'          => 'COUNTRY',
+							'QST_required'      => 0,
+							'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+							'QST_order'         => 7,
+							'QST_admin_only'    => 0,
+							'QST_wp_user'       => self::get_default_creator_id(),
+							'QST_deleted'       => 0,
+						);
 						break;
 
-					case 'country' :
-							$QST_values = array(
-									'QST_display_text' => __( 'Country', 'event_espresso' ),
-									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
-									'QST_system' => 'country',
-									'QST_type' => 'COUNTRY',
-									'QST_required' => 0,
-									'QST_required_text' => __( 'This field is required', 'event_espresso' ),
-									'QST_order' => 8,
-									'QST_admin_only' => 0,
-									'QST_wp_user' => self::get_default_creator_id(),
-									'QST_deleted' => 0
-								);
+					case 'state':
+						$QST_values = array(
+							'QST_display_text'  => __( 'State/Province', 'event_espresso' ),
+							'QST_admin_label'   => __( 'State/Province - System Question', 'event_espresso' ),
+							'QST_system'        => 'state',
+							'QST_type'          => 'STATE',
+							'QST_required'      => 0,
+							'QST_required_text' => __( 'This field is required', 'event_espresso' ),
+							'QST_order'         => 8,
+							'QST_admin_only'    => 0,
+							'QST_wp_user'       => self::get_default_creator_id(),
+							'QST_deleted'       => 0
+						);
 						break;
 
 					case 'zip':
@@ -1555,8 +1554,8 @@ class EEH_Activation {
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )
-							&& 
-							( 
+							&&
+							(
 								is_main_site()//main site? nuke them all
 								|| ! $table->is_global()//not main site,but not global either. nuke it
 							)

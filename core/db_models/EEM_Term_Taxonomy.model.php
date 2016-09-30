@@ -90,8 +90,26 @@ class EEM_Term_Taxonomy extends EEM_Base {
 				));
 
 		parent::__construct( $timezone );
+		add_filter( 'FHEE__Read__create_model_query_params', array( 'EEM_Term_Taxonomy', 'rest_api_query_params' ), 10, 3 );
 	}
-
+	
+	/**
+	 * Makes sure that during REST API queries, we only return term-taxonomies 
+	 * for term taxonomies which should be shown in the rest api
+	 * @param array $model_query_params
+	 * @param array $querystring_query_params
+	 * @param EEM_Base $model
+	 * @return array
+	 */
+	public static function rest_api_query_params( $model_query_params, $querystring_query_params, $model ) {
+		if( $model === EEM_Term_Taxonomy::instance() ) {
+			$taxonomies = get_taxonomies( array( 'show_in_rest' => true) );
+			if( ! empty( $taxonomies ) ) {
+				$model_query_params[0][ 'taxonomy' ] = array( 'IN', $taxonomies );
+			}
+		}
+		return $model_query_params;
+	}
 }
 // End of file EEM_Term_Taxonomy.model.php
 // Location: /includes/models/EEM_Term_Taxonomy.model.php
