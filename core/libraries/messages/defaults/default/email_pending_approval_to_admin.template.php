@@ -1,1 +1,1 @@
-<?php _e('[EVENT_AUTHOR_FORMATTED_EMAIL]', 'event_espresso');
+[EVENT_AUTHOR_EMAIL]
