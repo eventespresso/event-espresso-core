@@ -922,12 +922,12 @@ abstract class EE_Admin_Page extends EE_Base {
                 $args['admin_page_object'] = $this;
             }
             if (
-                ! (
+                (
                     method_exists( $class, $method )
-                    && ( call_user_func_array( array( $class, $method ), $args ) )
-                ) || ! (
+                    && call_user_func_array( array( $class, $method ), $args ) === false
+                ) && (
                     function_exists( $func )
-                    && ( call_user_func_array( $func, array_merge( array( 'admin_page_object' => $this ), $args ) ) )
+                    && call_user_func_array( $func, array_merge( array( 'admin_page_object' => $this ), $args ) ) === false
                 )
             ) {
                 // user error msg
