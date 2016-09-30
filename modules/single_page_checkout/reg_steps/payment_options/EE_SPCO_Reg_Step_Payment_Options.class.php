@@ -1141,17 +1141,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// now generate billing form for selected method of payment
 		$payment_method_billing_form = $this->_get_billing_form_for_payment_method( $this->checkout->payment_method );
 		// fill form with attendee info if applicable
-        if (
-            apply_filters(
+		if (
+			$payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form
+		    && $this->checkout->transaction_has_primary_registrant()
+            && apply_filters(
                 'FHEE__EE_SPCO_Reg_Step_Payment_Options__get_billing_form_html_for_payment_method__populate_billing_form_from_attendee',
-                (
-                    $payment_method_billing_form instanceof EE_Billing_Attendee_Info_Form
-                    && $this->checkout->transaction_has_primary_registrant()
-                ),
-                $payment_method_billing_form,
-                $this->checkout
+                true
             )
-        ){
+		) {
 			$payment_method_billing_form->populate_from_attendee(
 				$this->checkout->transaction->primary_registration()->attendee()
 			);
