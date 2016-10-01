@@ -1,14 +1,14 @@
 <div class="padding">
 	<p>If you want to integrate with&nbsp;Event Espresso or participate in building code, then you're in the right place. The following resources can help you get started.</p>
-	<h3><strong>Developer Resources</strong></h3>
+	<h2><strong>Developer Resources</strong></h2>
 	<ul>
 		<li><a title="Event Espresso 4 Developer Documentation" href="http://developer.eventespresso.com/docs/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Event Espresso 4 Developer Documentation</a></li>
 		<li><a title="Event Espresso 4 Developer News" href="http://developer.eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Event Espresso 4 Developer News </a></li>
 		<li><a title="Become an Event Espresso Pro" href="https://eventespresso.com/developers/event-espresso-pros-application/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Apply</a> to be listed as a&nbsp;<a href="http://eventespresso.com/developers/event-espresso-pros/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab">Event Espresso Pro</a></li>
 
 	</ul>
-	
-	<h3>Event Espresso 4 Articles for Developers</h3>
+
+	<h2>Event Espresso 4 Articles for Developers</h2>
 	<ul>
 		<li><a href="https://eventespresso.com/2014/02/epsresso-brewery-custom-post-types-event-espresso/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Custom Post Types Usage</a></li>
 		<li><a href="https://eventespresso.com/2014/02/developers-corner-theming-event-espresso-4/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Theme Development</a></li>
@@ -18,7 +18,7 @@
 		<li><a href="http://developer.eventespresso.com/docs/using-ee4-model-objects/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">Database Model System</a> (used for intefacing with EE4 data via WordPress plugins and server side querying)</li>
 
 	</ul>
-	<h3>REST API Resources</h3>
+	<h2>REST API Resources</h2>
 	<ul>
 		<li><a href="https://eventespresso.com/2016/01/rest-api-now-in-ee4-core/">REST API: Now Included in Core!</a></li>
 		<li><a href="http://developer.eventespresso.com/docs/ee4-rest-api-introduction/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=ee_support_page&utm_content=developers_tab" target="_blank">REST API: Introduction</a></li>
