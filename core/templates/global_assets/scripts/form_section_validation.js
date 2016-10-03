@@ -519,6 +519,28 @@ jQuery(document).ready(function($){
 
 });
 
+//workaround for fixing how jquery-validate AND jquery-form both create a function
+//named resetForm. See https://github.com/jzaefferer/jquery-validation/issues/1540
+(function($) {
+
+var nativeValidatorResetForm = validator.resetForm;
+// monkey patch jquery.validates' resetForm
+validator.resetForm = function() {
+  // Back-up the jquery.forms' resetForm function
+  var resetForm = $.fn.resetForm;
+
+  // Delete it so jquery-validate will not find it
+  delete $.fn.resetForm;
+
+  // Reset the validation errors
+  nativeValidatorResetForm();
+
+  // And then restore it
+  $.fn.resetForm = resetForm;
+};
+
+} (jQuery));
+
 // example  ee_form_section_vars
 //var ee_form_section_vars = {
 //	"form_data":{

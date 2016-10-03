@@ -575,8 +575,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public static function wp_deregister_conflicting_scripts() {
 		//jquery-form (included in WP core, but deprecated) also declares some of the same methods 
-		//as jquery validate
-		wp_deregister_script( 'jquery-form' );
+		//as jquery validate. But we found a workaround in JS: https://github.com/jzaefferer/jquery-validation/issues/1540
+		//so it's ok. So currently there are no known conflicting scripts. Fingers crossed.
 	}
 
 
