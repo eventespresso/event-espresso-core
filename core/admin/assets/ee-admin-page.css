@@ -311,8 +311,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .edited-input { border : 1px solid #D54E21 !important; }
 .reminder-spn { display : inline-block; color : #D54E21; line-height : 1em; }
 
-.hide-if-no-js { display : none; }
-
 /**override .hide-if-no-js for feature image boxes**/
 #postimagediv .hide-if-no-js {
 	display : inherit;
