@@ -565,7 +565,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			array( 'init' => $init_form_validation_automatically ? true : false )
 		);
 	}
-	
+
 	/**
 	 * gets the variables used by form_section_validation.js.
 	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
