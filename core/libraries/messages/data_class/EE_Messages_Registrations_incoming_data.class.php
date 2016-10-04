@@ -74,6 +74,7 @@ class EE_Messages_Registrations_incoming_data extends EE_Messages_incoming_data 
 					if ( $registration instanceof EE_Registration ) {
 						return $registration->ID();
 					}
+					return false;
 				},
 				$registrations
 			)
