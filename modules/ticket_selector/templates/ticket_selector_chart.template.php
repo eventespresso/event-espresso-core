@@ -465,12 +465,12 @@ $ticket_row_html = ob_get_clean();
 // if there is only ONE ticket with a max qty of ONE, and it is free... then not much need for the ticket selector
 $hide_ticket_selector = $ticket_count === 1 && $max_atndz === 1 && $ticket->is_free() ? true : false;
 $hide_ticket_selector = apply_filters( 'FHEE__ticket_selector_chart_template__hide_ticket_selector', $hide_ticket_selector, $EVT_ID );
-// \EEH_Debug_Tools::printr( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ), 'display submit', __FILE__, __LINE__ );
+remove_all_filters( 'FHEE__EE_Ticket_Selector__hide_ticket_selector' );
+// EEH_Debug_Tools::printr( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ), 'display submit', __FILE__, __LINE__ );
 // EEH_Debug_Tools::printr( (string) $ticket_count, '$ticket_count', __FILE__, __LINE__ );
 // EEH_Debug_Tools::printr( (string) $max, '$max', __FILE__, __LINE__ );
 // EEH_Debug_Tools::printr( (string) $max_atndz, '$max_atndz', __FILE__, __LINE__ );
 // EEH_Debug_Tools::printr( (string) $hide_ticket_selector, '$hide_ticket_selector', __FILE__, __LINE__ );
-// EEH_Debug_Tools::printr( $table_style, '$table_style', __FILE__, __LINE__ );
 /**
 * Filters the anchor ID used when redirecting to the Ticket Selector if no quantity selected
 *
@@ -557,7 +557,10 @@ do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_
 ?>
 
 </div>
-<?php } else if ( isset( $TKT_ID ) ) { ?>
+<?php
+} else if ( isset( $TKT_ID ) ) {
+	add_filter( 'FHEE__EE_Ticket_Selector__hide_ticket_selector', '__return_true' );
+?>
 
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
 <input type="hidden" name="tkt-slctr-ticket-id-<?php echo $EVT_ID; ?>[]" value="<?php echo $TKT_ID; ?>"/>
