@@ -173,7 +173,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //	echo '<br/><b> $ticket->required() : ' .  $ticket->uses() . '</b>';
 					?>
 					</td>
-					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) && $max_atndz > 1 ) { ?>
+					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) ) { ?>
 					<td class="tckt-slctr-tbl-td-price jst-rght"><?php
 						echo EEH_Template::format_currency( $ticket_price );
 						echo $ticket->taxable() ? '<span class="taxable-tickets-asterisk grey-text">*</span>' : '';
@@ -492,7 +492,7 @@ if ( ! $hide_ticket_selector ) {
 				<th scope="col" class="ee-ticket-selector-ticket-details-th">
 					<?php echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_available_tickets', '', $EVT_ID ) ); ?>
 				</th>
-				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) && $max_atndz > 1 ) { ?>
+				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) ) { ?>
 				<th scope="col" class="ee-ticket-selector-ticket-price-th cntr">
 					<?php
 						/**
