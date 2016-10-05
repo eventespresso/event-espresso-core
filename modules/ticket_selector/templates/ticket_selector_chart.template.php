@@ -2,6 +2,8 @@
 /** @type int $EVT_ID */
 /** @type int $max_atndz */
 /** @type string $event_status */
+/** @type string $date_format */
+/** @type string $time_format */
 /** @type boolean $event_is_expired */
 /** @type EE_Ticket[] $tickets */
 /** @type EE_Event $event */
@@ -173,7 +175,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //	echo '<br/><b> $ticket->required() : ' .  $ticket->uses() . '</b>';
 					?>
 					</td>
-					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE ) ) { ?>
+					<?php
+					if (
+						apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )
+					) { ?>
 					<td class="tckt-slctr-tbl-td-price jst-rght"><?php
 						echo EEH_Template::format_currency( $ticket_price );
 						echo $ticket->taxable() ? '<span class="taxable-tickets-asterisk grey-text">*</span>' : '';
@@ -189,45 +194,61 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					<?php
 					$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;
 					$ticket_status_display = '';
-					// sold out or other status ?
-					if ( $tkt_status === EE_Ticket::sold_out || $remaining === 0 ) {
-						$ticket_status_display =  '<span class="sold-out">' . apply_filters( 'FHEE__ticket_selector_chart_template__ticket_sold_out_msg', __( 'Sold&nbsp;Out', 'event_espresso' )) . '</span>';
+					if ( $max_atndz === 0 ) {
+						// registration is CLOSED because admin set max attendees to ZERO
+						$ticket_status_display = '<span class="sold-out">' . apply_filters(
+													 'FHEE__ticket_selector_chart_template__ticket_closed_msg',
+													 __( 'Closed', 'event_espresso' )
+												 ) . '</span>';
+					} else if ( $tkt_status === EE_Ticket::sold_out || $remaining === 0 ) {
+						// SOLD OUT - no tickets remaining
+						$ticket_status_display = '<span class="sold-out">' . apply_filters(
+													'FHEE__ticket_selector_chart_template__ticket_sold_out_msg',
+													__( 'Sold&nbsp;Out', 'event_espresso' )
+												) . '</span>';
 					} else if ( $tkt_status === EE_Ticket::expired || $tkt_status === EE_Ticket::archived ) {
+						// expired or archived ticket
 						$ticket_status_display = $ticket_status;
 					} else if ( $tkt_status === EE_Ticket::pending ) {
-						$ticket_status_display =
-					'<span class="ticket-pending-pg">
+						// ticket not on sale yet
+						$ticket_status_display = '<span class="ticket-pending-pg">
 						<span class="ticket-pending">'
-						. apply_filters( 'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg', __( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ))
+						. apply_filters(
+							'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg',
+							__( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' )
+						 )
 					. '</span><br/>
 						<span class="small-text">'
-						. $ticket->get_i18n_datetime( 'TKT_start_date', apply_filters( 'FHEE__EED_Ticket_Selector__display_goes_on_sale__date_format', $date_format ) )
+						. $ticket->get_i18n_datetime(
+							'TKT_start_date',
+							apply_filters(
+								'FHEE__EED_Ticket_Selector__display_goes_on_sale__date_format',
+								$date_format
+							)
+						)
 					. '</span>
 					</span>';
-					// min qty purchasable is less than tickets available
 					} else if ( $ticket->min() > $remaining ) {
+						// min qty purchasable is less than tickets available
 						$ticket_status_display = '
 					<div class="archived-ticket-pg">
 						<span class="archived-ticket small-text">'
 						 . apply_filters( 'FHEE__ticket_selector_chart_template__ticket_not_available_msg', __( 'Not Available', 'event_espresso' ))
 					 . '</span><br/>
 					</div>';
-					// if only one attendee is allowed to register at a time
 					} else if ( $max_atndz  === 1 ) {
+						// only ONE attendee is allowed to register at a time
 						// display submit button since we have tickets available
 						add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
-				?>
-					<input type="radio" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct" value="<?php echo $row . '-'; ?>1" <?php echo $row === 1 ? ' checked="checked"' : ''; ?>  title=""/>
-			<?php
+					?>
+						<input type="radio" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct" value="<?php echo $row . '-'; ?>1" <?php echo $row === 1 ? ' checked="checked"' : ''; ?>  title=""/>
+					<?php
 						$hidden_input_qty = FALSE;
 
-					} else if ( $max_atndz  === 0 ) {
-						$ticket_status_display = '<span class="sold-out">' . apply_filters( 'FHEE__ticket_selector_chart_template__ticket_closed_msg', __( 'Closed', 'event_espresso' )) . '</span>';
-					} elseif ( $max > 0 ) {
+					} else if ( $max > 0 ) {
 						// display submit button since we have tickets available
 						add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
-
-				?>
+					?>
 					<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct" title="">
 					<?php
 						// this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
@@ -241,7 +262,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option>
 					<?php } ?>
 					</select>
-				<?php
+					<?php
 						$hidden_input_qty = FALSE;
 
 					}
@@ -556,7 +577,6 @@ if ( ! apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit'
 do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event );
 ?>
 
-</div>
 <?php
 } else if ( isset( $TKT_ID ) ) {
 	add_filter( 'FHEE__EE_Ticket_Selector__hide_ticket_selector', '__return_true' );
