@@ -848,6 +848,7 @@ class EEH_Template {
 		) {
 			return '';
 		}
+		$tag = $admin ? 'span' : 'div';
 		$attributes = ! empty( $wrap_id ) ? " id=\"{$wrap_id}\"" : '';
 		$wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
 		$attributes .= ! empty( $wrap_class )
@@ -867,8 +868,8 @@ class EEH_Template {
 					'Online event registration and ticketing powered by [link to eventespresso.com]',
 					'event_espresso'
 				),
-				"<div{$attributes}>",
-				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></div>"
+				"<{$tag}{$attributes}>",
+				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>"
 			)
 		);
 	}
