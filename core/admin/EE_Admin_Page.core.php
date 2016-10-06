@@ -925,10 +925,13 @@ abstract class EE_Admin_Page extends EE_Base {
                 (
                     method_exists( $class, $method )
                     && call_user_func_array( array( $class, $method ), $args ) === false
-                ) && (
+                ) || (
                     function_exists( $func )
                     && call_user_func_array( $func, array_merge( array( 'admin_page_object' => $this ), $args ) ) === false
-                )
+                ) || (
+					! method_exists(  $class, $method )
+					&& ! function_exists( $func ) 
+				)
             ) {
                 // user error msg
                 $error_msg = __( 'An error occurred. The  requested page route could not be found.', 'event_espresso' );
