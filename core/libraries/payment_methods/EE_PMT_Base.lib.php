@@ -278,7 +278,7 @@ abstract class EE_PMT_Base{
 		//that uses attendee info, populate it
 		if (
             apply_filters(
-                'FHEE__EE_PMT_Base__billing_form__populate_billing_form_fields_from_attendee',
+                'FHEE__populate_billing_form_fields_from_attendee',
                 (
                     $this->_billing_form instanceof EE_Billing_Attendee_Info_Form
                     && $transaction instanceof EE_Transaction
