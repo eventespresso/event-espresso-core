@@ -870,7 +870,9 @@ class EEH_Template {
 				),
 				"<{$tag}{$attributes}>",
 				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>"
-			)
+			),
+			$wrap_class,
+			$wrap_id
 		);
 	}
 
