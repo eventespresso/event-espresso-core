@@ -76,7 +76,6 @@ if ( function_exists( 'espresso_version' ) ) {
 	define( 'EE_MIN_WP_VER_RECOMMENDED', '4.4.2' );
 	define( 'EE_MIN_PHP_VER_REQUIRED', '5.3.0' );
 	define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4.44' );
-	define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 	define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 	//used to be DIRECTORY_SEPARATOR, but that caused issues on windows
 	if ( ! defined( 'DS' ) ) {

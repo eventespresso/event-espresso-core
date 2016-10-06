@@ -854,7 +854,7 @@ class EEH_Template {
 		$attributes .= ! empty( $wrap_class )
 			? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
 			: ' class="powered-by-event-espresso-credit"';
-		$powered_by = $admin ? EVENT_ESPRESSO_POWERED_BY : 'Event Espresso';
+		$powered_by = apply_filters( 'FHEE__EEH_Template__powered_by_event_espresso_text', $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso' );
 		$url = add_query_arg(
 			array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id() ),
 			'https://eventespresso.com/'
@@ -870,7 +870,9 @@ class EEH_Template {
 				),
 				"<{$tag}{$attributes}>",
 				"<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>"
-			)
+			),
+			$wrap_class,
+			$wrap_id
 		);
 	}
 
