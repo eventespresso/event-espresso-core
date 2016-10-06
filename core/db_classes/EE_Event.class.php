@@ -9,7 +9,7 @@
  * @subpackage 	includes/models/
  * @author 				Mike Nelson
  */
-class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Has_Icon {
+class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Links, EEI_Has_Icon, EEI_Event {
 
 	/**
 	 * cached value for the the logical active status for the event
