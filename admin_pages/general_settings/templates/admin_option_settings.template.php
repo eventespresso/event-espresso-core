@@ -1,3 +1,9 @@
+<?php
+/** @var array $template_args */
+/** @var string $show_reg_footer */
+/** @var string $affiliate_id */
+/** @var string $help_tour_activation */
+?>
 <div class="padding">
 
 	<?php do_action( 'AHEE__admin_option_settings__template__before', $template_args ); ?>
@@ -66,9 +72,9 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 <?php endif; */ ?>
 
 	<?php if ( EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'display_admin_settings_options_promote_and_affiliate' ) ) : ?>
-		<h3 class="ee-admin-settings-hdr">
+		<h2 class="ee-admin-settings-hdr">
 			<?php _e('Promote Event Espresso', 'event_espresso'); ?> <span id="affiliate_info"><?php echo EEH_Template::get_help_tab_link('affiliate_info'); ?></span>
-		</h3>
+		</h2>
 
 		<table class="form-table">
 			<tbody>
@@ -86,10 +92,12 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 
 				<tr>
 					<th>
-						<?php printf( __('Event Espresso %sAffiliate%s ID', 'event_espresso'), '<a href="http://eventespresso.com/affiliates/" target="_blank">', '</a>' ); ?>
-					</th>
+                        <label for="affiliate_id">
+                        <?php printf( __('Event Espresso %sAffiliate%s ID', 'event_espresso'), '<a href="http://eventespresso.com/affiliates/" target="_blank">', '</a>' ); ?>
+                        </label>
+                    </th>
 					<td>
-						<input name="affiliate_id" class="regular-text" type="text" value="<?php echo $affiliate_id; ?>" />
+						<input id="affiliate_id" name="affiliate_id" class="regular-text" type="text" value="<?php echo $affiliate_id; ?>" />
 						<br />
 						<p class="description">
 							<?php _e('Earn cash for promoting Event Espresso.', 'event_espresso'); ?>
@@ -101,9 +109,9 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 		</table>
 	<?php endif; ?>
 
-	<h3 class="ee-admin-settings-hdr">
+	<h2 class="ee-admin-settings-hdr">
 		<?php _e('Help Tour Global Activation', 'event_espresso'); ?> <span id="help_tour_activation"><?php echo EEH_Template::get_help_tab_link('help_tour_activation_info'); ?></span>
-	</h3>
+	</h2>
 
 	<table class="form-table">
 		<tbody>

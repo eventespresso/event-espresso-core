@@ -428,7 +428,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
 	/**
-	 * @return bool
+	 * @return float
 	 */
 	public function ticket_price() {
 		return $this->get( 'TKT_price' );

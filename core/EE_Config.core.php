@@ -83,6 +83,13 @@ final class EE_Config {
 	public $map_settings;
 
 	/**
+	 * settings pertaining to Taxes
+	 *
+	 * @var EE_Tax_Config
+	 */
+	public $tax_settings;
+
+	/**
 	 * @deprecated
 	 * @var EE_Gateway_Config
 	 */
@@ -309,6 +316,10 @@ final class EE_Config {
 			? $this->environment
 			: new EE_Environment_Config();
 		$this->environment = apply_filters( 'FHEE__EE_Config___initialize_config__environment', $this->environment );
+		$this->tax_settings = $this->tax_settings instanceof EE_Tax_Config
+			? $this->tax_settings
+			: new EE_Tax_Config();
+		$this->tax_settings = apply_filters( 'FHEE__EE_Config___initialize_config__tax_settings', $this->tax_settings );
 		$this->gateway = $this->gateway instanceof EE_Gateway_Config
 			? $this->gateway
 			: new EE_Gateway_Config();
@@ -2811,10 +2822,19 @@ class EE_Event_Single_Config extends EE_Config_Base {
  */
 class EE_Ticket_Selector_Config extends EE_Config_Base {
 
+	/*
+	 * @var boolean $show_ticket_sale_columns
+	 */
 	public $show_ticket_sale_columns;
 
+	/*
+	 * @var boolean $show_ticket_details
+	 */
 	public $show_ticket_details;
 
+	/*
+	 * @var boolean $show_expired_tickets
+	 */
 	public $show_expired_tickets;
 
 
@@ -2823,9 +2843,9 @@ class EE_Ticket_Selector_Config extends EE_Config_Base {
 	 *    class constructor
 	 */
 	public function __construct() {
-		$this->show_ticket_sale_columns = 1;
-		$this->show_ticket_details = 1;
-		$this->show_expired_tickets = 1;
+		$this->show_ticket_sale_columns = true;
+		$this->show_ticket_details = true;
+		$this->show_expired_tickets = true;
 	}
 }
 
@@ -2918,6 +2938,36 @@ class EE_Environment_Config extends EE_Config_Base {
 
 
 
+}
+
+
+
+/**
+ * Stores any options pertaining to taxes
+ *
+ * @since       4.9.13
+ * @package     Event Espresso
+ * @subpackage  config
+ */
+class EE_Tax_Config extends EE_Config_Base
+{
+
+    /*
+     * flag to indicate whether or not to display ticket prices with the taxes included
+     *
+     * @var boolean $prices_displayed_including_taxes
+     */
+    public $prices_displayed_including_taxes;
+
+
+
+    /**
+     *    class constructor
+     */
+    public function __construct()
+    {
+        $this->prices_displayed_including_taxes = true;
+    }
 }
 
 
