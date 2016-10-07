@@ -536,10 +536,10 @@ if ( ! $hide_ticket_selector ) {
 						*
 						* @since 4.7.2
 						*
-						* @param string 'Qty*' The translatable text to display in the table header for the Quantity of tickets
+						* @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
 						* @param int $EVT_ID The Event ID
 						*/
-						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty*', 'event_espresso' ), $EVT_ID ) );
+						echo esc_html( apply_filters( 'FHEE__ticket_selector_chart_template__table_header_qty', __( 'Qty', 'event_espresso' ), $EVT_ID ) );
 					?>
 				</th>
 			</tr>
