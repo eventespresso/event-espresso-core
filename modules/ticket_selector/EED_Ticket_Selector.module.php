@@ -443,11 +443,6 @@ class EED_Ticket_Selector extends  EED_Module {
 				);
 				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 				$html .= '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
-			} else if ( EE_Registry::instance()->SSN->cart() instanceof EE_Cart ) {
-				if ( ! EE_Registry::instance()->SSN->cart()->all_ticket_quantity_count() ) {
-					return '';
-				}
-				return EED_Ticket_Selector::display_proceed_btn_when_tickets_in_cart();
 			} else if (
 				// a "Dude Where's my Ticket Selector?" (DWMTS) type event (ie: $_max_atndz === 1)
 				EED_Ticket_Selector::$_max_atndz === 1
@@ -492,7 +487,31 @@ class EED_Ticket_Selector extends  EED_Module {
 	            $html .= \EEH_Template::powered_by_event_espresso();
             }
         }
-        return $html;
+		if (
+			EE_Registry::instance()->SSN->cart() instanceof EE_Cart
+			&& EE_Registry::instance()->SSN->cart()->all_ticket_quantity_count()
+		) {
+			$tickets_added = array();
+			$ticket_line_items = EE_Registry::instance()->SSN->cart()->get_tickets();
+			foreach ( $ticket_line_items as $ticket_line_item ) {
+				if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_type() === 'Ticket' ) {
+					$ticket = $ticket_line_item->ticket();
+					if (
+						$ticket instanceof EE_Ticket
+						&& $ticket->get_event_ID() === EED_Ticket_Selector::$_event->ID()
+					) {
+						$tickets_added[ $ticket->ID() ] = array(
+							'ticket' => $ticket,
+							'qty'    => $ticket_line_item->quantity(),
+						);
+					}
+				}
+			}
+			if ( ! empty( $tickets_added ) ) {
+				$html .= EED_Ticket_Selector::display_proceed_btn_when_tickets_in_cart( $tickets_added );
+			}
+		}
+		return $html;
     }
 
 
@@ -528,14 +547,32 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	 *    display_proceed_btn_when_tickets_in_cart
+	 * display_proceed_btn_when_tickets_in_cart
 	 *
-	 *	@access public
-	 * 	@access 		public
-	 * 	@return		string
+	 * @param array $tickets_added
+	 * @return string
 	 */
-	public static function display_proceed_btn_when_tickets_in_cart() {
-		$html = '<a class="ticket-selector-submit-btn button" href="';
+	public static function display_proceed_btn_when_tickets_in_cart( array $tickets_added ) {
+		if ( empty( $tickets_added ) ) {
+			return '';
+		}
+		$html = EEH_HTML::div( '', '', 'ticket-selector-proceed-to-registration-dv' );
+		$tickets = '<br>';
+		foreach ( $tickets_added as $details ) {
+			$ticket = $details['ticket'];
+			/** @var EE_Ticket $ticket */
+			$tickets .= $details['qty'] > 1 ? "{$details['qty']} x " : '';
+			$tickets .= $ticket->name() . '<br>';
+		}
+		$html .= apply_filters(
+			'FHEE__EED_Ticket_Selector__proceed_to_registration__items_in_cart_msg',
+			sprintf(
+				__( 'The following items have been added: %1$s', 'event_espresso' ),
+				$tickets
+			),
+			self::$_event
+		);
+		$html .= '<a class="ticket-selector-submit-btn button" href="';
 		$html .= apply_filters(
 			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_url',
 			EE_Registry::instance()->CFG->core->reg_page_url(),
@@ -566,7 +603,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			__( 'cancel ticket selection', 'event_espresso' )
 		);
 		$html .= '</a>';
-		$html .= '<div class="clear"><br/></div>';
+		$html .= '<div class="clear"></div>';
+		$html .= '</div>';
 		return $html;
 	}
 
