@@ -1,4 +1,4 @@
-<?php 
+<?php
 use EventEspresso\core\services\database\TableAnalysis;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
@@ -262,7 +262,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		/** @type WPDB $wpdb */
 		global $wpdb;
 		if( $this->_get_table_analysis()->tableExists( $wpdb->prefix . 'esp_status' ) ){
-			$SQL = 'SELECT STS_ID, STS_code FROM '. $wpdb->prefix . 'esp_status WHERE STS_type = "registration"';
+			$SQL = "SELECT STS_ID, STS_code FROM {$wpdb->prefix}esp_status WHERE STS_type = 'registration' ";
 			$results = $wpdb->get_results( $SQL );
 			self::$_reg_status = array();
 			foreach ( $results as $status ) {
@@ -273,7 +273,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		}
 
 	}
-	
+
 	/**
 	 * Gets the injected table analyzer, or throws an exception
 	 * @return TableAnalysis
@@ -283,11 +283,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		if( $this->_table_analysis instanceof TableAnalysis ) {
 			return $this->_table_analysis;
 		} else {
-			throw new \EE_Error( 
-				sprintf( 
-					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'), 
-					get_class( $this ) 
-				) 
+			throw new \EE_Error(
+				sprintf(
+					__( 'Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+					get_class( $this )
+				)
 			);
 		}
 	}
@@ -422,14 +422,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$inner_where = " WHERE";
 		//exclude events not authored by user if permissions in effect
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
-			$inner_date_query .= "LEFT JOIN $event_table ON ID = EVT_ID";
+			$inner_date_query .= "LEFT JOIN {$event_table} ON ID = EVT_ID";
 			$inner_where .= " post_author = " . get_current_user_id() . " AND";
 		}
-		$inner_where .= " REG_date >= '$sql_date'";
+		$inner_where .= " REG_date >= '{$sql_date}'";
 		$inner_date_query .= $inner_where;
 
 		//start main query
-		$select = "SELECT DATE($query_interval) as Registration_REG_date, ";
+		$select = "SELECT DATE({$query_interval}) as Registration_REG_date, ";
 		$join = '';
 		$join_parts = array();
 		$select_parts = array();
@@ -439,13 +439,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			if ( $STS_ID === EEM_Registration::status_id_incomplete ) {
 				continue;
 			}
-			$select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
-			$join_parts[] = "$registration_table AS $STS_code ON $STS_code.REG_date = dates.REG_date AND $STS_code.STS_ID = '$STS_ID'";
+			$select_parts[] = "COUNT({$STS_code}.REG_ID) as {$STS_ID}";
+			$join_parts[] = "{$registration_table} AS {$STS_code} ON {$STS_code}.REG_date = dates.REG_date AND {$STS_code}.STS_ID = '{$STS_ID}'";
 		}
 
 		//setup the selects
 		$select .= implode(', ', $select_parts );
-		$select .= " FROM ($inner_date_query) AS dates LEFT JOIN ";
+		$select .= " FROM ({$inner_date_query}) AS dates LEFT JOIN ";
 
 		//setup the joins
 		$join .= implode( " LEFT JOIN ", $join_parts );
@@ -513,14 +513,14 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period) );
 
 		//inner date query
-		$inner_date_query = "SELECT DISTINCT EVT_ID, REG_date from $registration_table ";
+		$inner_date_query = "SELECT DISTINCT EVT_ID, REG_date from {$registration_table} ";
 		$inner_where = " WHERE";
 		//exclude events not authored by user if permissions in effect
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_registrations', 'reg_per_event_report' ) ) {
-			$inner_date_query .= "LEFT JOIN $event_table ON ID = EVT_ID";
+			$inner_date_query .= "LEFT JOIN {$event_table} ON ID = EVT_ID";
 			$inner_where .= " post_author = " . get_current_user_id() . " AND";
 		}
-		$inner_where .= " REG_date >= '$sql_date'";
+		$inner_where .= " REG_date >= '{$sql_date}'";
 		$inner_date_query .= $inner_where;
 
 		//build main query
@@ -534,13 +534,13 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 			if ( $STS_ID === EEM_Registration::status_id_incomplete ) {
 				continue;
 			}
-			$select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
-			$join_parts[] = "$registration_table AS $STS_code ON $STS_code.EVT_ID = dates.EVT_ID AND $STS_code.STS_ID = '$STS_ID' AND $STS_code.REG_date = dates.REG_date";
+			$select_parts[] = "COUNT({$STS_code}.REG_ID) as {$STS_ID}";
+			$join_parts[] = "{$registration_table} AS {$STS_code} ON {$STS_code}.EVT_ID = dates.EVT_ID AND {$STS_code}.STS_ID = '{$STS_ID}' AND {$STS_code}.REG_date = dates.REG_date";
 		}
 
 		//setup the selects
 		$select .= implode( ', ', $select_parts );
-		$select .= " FROM ($inner_date_query) AS dates LEFT JOIN $event_table as Event ON Event.ID = dates.EVT_ID LEFT JOIN ";
+		$select .= " FROM ({$inner_date_query}) AS dates LEFT JOIN {$event_table} as Event ON Event.ID = dates.EVT_ID LEFT JOIN ";
 
 		//setup remaining joins
 		$join .= implode( " LEFT JOIN ", $join_parts );
