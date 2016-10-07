@@ -353,8 +353,15 @@
 
 .ticket-selector-proceed-to-registration-dv {
 	border: 1px solid #eee;
-	margin: -1em 0 2em;
+	margin: 1em 0 2em;
 	padding: 1em;
+}
+.ticket-selector-proceed-to-registration-dv .tkt-qty{
+	margin-left:1em;
+}
+
+.archive .ticket-selector-proceed-to-registration-dv {
+	margin-top: -1em;
 }
 
 @media (max-width: 600px) {
