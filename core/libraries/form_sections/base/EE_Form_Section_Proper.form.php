@@ -489,18 +489,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Returns the JS for validating the form (and subsections) inside script tags.
-	 * Also returns the HTML for the form, except for the form opening and closing tags
+	 * Returns the HTML for the form, except for the form opening and closing tags
 	 * (as the form section doesn't know where you necessarily want to send the information to),
-	 * and except for a submit button.
-	 *
-	 * @deprecated since 4.9.0. You should instead call enqueue_js during the "wp_enqueue_scripts"
-	 *             and get_html when you are about to display the form.
+	 * and except for a submit button. Enqueus JS and CSS; if called early enough we will
+	 * try to enqueue them in the header, otherwise they'll be enqueued in the footer.
+	 * Not doing_it_wrong because theoretically this CAN be used properly, 
+	 * provided its used during "wp_enqueue_scripts", or it doesn't need to enqueue
+	 * any CSS.
 	 * @throws \EE_Error
 	 */
 	public function get_html_and_js(){
-		//no doing_it_wrong yet because we ourselves are still doing it wrong...
-		//and theoretically this CAN be used properly, provided its used during "wp_enqueue_scripts"
 		$this->enqueue_js();
 		return $this->get_html();
 	}
@@ -524,7 +522,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * enqueues JS for the form
+	 * enqueues JS and CSS for the form.
+	 * It is preferred to call this before wp_enqueue_scripts so the
+	 * scripts and styles can be put in the header, but if called later
+	 * they will be put in the footer (which is OK for JS, but in HTML4 CSS should
+	 * only be in the header; but in HTML5 its ok in the body.
+	 * See http://stackoverflow.com/questions/4957446/load-external-css-file-in-body-tag.
+	 * So if your form enqueues CSS, it's preferred to call this before wp_enqueue_scripts.)
 	 *
 	 * @return string
 	 * @throws \EE_Error
