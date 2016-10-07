@@ -1,3 +1,20 @@
+#espresso-default-admin {
+    padding-top: 10px;
+    min-width: 763px;
+}
+#espresso-default-admin .postbox-container {
+    width: 100%;
+}
+#espresso-default-admin #post-body.columns-2 {
+    margin-right: 300px;
+}
+
+@media only screen and (max-width: 850px) {
+    #espresso-default-admin #post-body.columns-2 {
+        margin: 0;
+    }
+}
+
 .espresso-admin .add-new-h2,
 .espresso-admin .add-new-h2:active { margin-left:20px; top:0; }
 
@@ -299,8 +316,6 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .editable-input { border : 1px solid lightblue !important; }
 .edited-input { border : 1px solid #D54E21 !important; }
 .reminder-spn { display : inline-block; color : #D54E21; line-height : 1em; }
-
-.hide-if-no-js { display : none; }
 
 /**override .hide-if-no-js for feature image boxes**/
 #postimagediv .hide-if-no-js {
