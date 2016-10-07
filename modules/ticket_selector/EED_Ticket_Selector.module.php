@@ -425,22 +425,10 @@ class EED_Ticket_Selector extends  EED_Module {
         $html = '';
 		if ( ! is_admin() ) {
 			// standard TS displayed with submit button, ie: "Register Now"
-			if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false ) ) {
-				$btn_text = apply_filters(
-					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
-					__('Register Now', 'event_espresso' ),
-					EED_Ticket_Selector::$_event
-				);
-				$external_url = EED_Ticket_Selector::$_event->external_url();
-				$html .= '<input id="ticket-selector-submit-'. EED_Ticket_Selector::$_event->ID() .'-btn"';
-				$html .= ' class="ticket-selector-submit-btn ';
-				$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
-				$html .= ' type="submit" value="' . $btn_text . '" />';
-				$html .= apply_filters(
-					'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
-					'',
-					EED_Ticket_Selector::$_event
-				);
+			if (
+				apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', false )
+			) {
+				$html .= \EED_Ticket_Selector::display_register_now_button();
 				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 				$html .= '<br/>' . \EED_Ticket_Selector::ticket_selector_form_close();
 			} else if (
@@ -464,6 +452,13 @@ class EED_Ticket_Selector extends  EED_Module {
 					),
 					EED_Ticket_Selector::$_event
 				);
+				if ( apply_filters(
+					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+					false,
+					EED_Ticket_Selector::$_event
+				) ) {
+					$html .= \EED_Ticket_Selector::display_register_now_button();
+				}
 				// sold out DWMTS event, no TS, no submit or view details button, but has additional content
 				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 			} else if (
@@ -480,6 +475,13 @@ class EED_Ticket_Selector extends  EED_Module {
 				$html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 				$html .= EED_Ticket_Selector::display_view_details_btn();
 			} else {
+				if ( apply_filters(
+					'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+					false,
+					EED_Ticket_Selector::$_event
+				) ) {
+					$html .= \EED_Ticket_Selector::display_register_now_button();
+				}
 				// no submit or view details button, and no additional content
                 $html .= \EED_Ticket_Selector::no_tkt_slctr_end_dv();
 			}
@@ -487,30 +489,6 @@ class EED_Ticket_Selector extends  EED_Module {
 	            $html .= \EEH_Template::powered_by_event_espresso();
             }
         }
-		if (
-			EE_Registry::instance()->SSN->cart() instanceof EE_Cart
-			&& EE_Registry::instance()->SSN->cart()->all_ticket_quantity_count()
-		) {
-			$tickets_added = array();
-			$ticket_line_items = EE_Registry::instance()->SSN->cart()->get_tickets();
-			foreach ( $ticket_line_items as $ticket_line_item ) {
-				if ( $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->OBJ_type() === 'Ticket' ) {
-					$ticket = $ticket_line_item->ticket();
-					if (
-						$ticket instanceof EE_Ticket
-						&& $ticket->get_event_ID() === EED_Ticket_Selector::$_event->ID()
-					) {
-						$tickets_added[ $ticket->ID() ] = array(
-							'ticket' => $ticket,
-							'qty'    => $ticket_line_item->quantity(),
-						);
-					}
-				}
-			}
-			if ( ! empty( $tickets_added ) ) {
-				$html .= EED_Ticket_Selector::display_proceed_btn_when_tickets_in_cart( $tickets_added );
-			}
-		}
 		return $html;
     }
 
@@ -546,82 +524,6 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-	/**
-	 * display_proceed_btn_when_tickets_in_cart
-	 *
-	 * @param array $tickets_added
-	 * @return string
-	 */
-	public static function display_proceed_btn_when_tickets_in_cart( array $tickets_added ) {
-		if ( empty( $tickets_added ) ) {
-			return '';
-		}
-		$html = EEH_HTML::div( '', '', 'ticket-selector-proceed-to-registration-dv' );
-		$tickets = '';
-		foreach ( $tickets_added as $details ) {
-			$ticket = $details['ticket'];
-			/** @var EE_Ticket $ticket */
-			$tickets .= '<br><span class="sub-item-row-bullet dashicons dashicons-arrow-right"></span>' . $ticket->name();
-			$tickets .= " <span class=\"tkt-qty small-text lt-grey-text\">";
-			$tickets .= esc_html_x( 'qty: ', 'qty: (# of tickets)', 'event_espresso' );
-			$tickets .= "{$details['qty']} </span>";
-		}
-		$html .= apply_filters(
-			'FHEE__EED_Ticket_Selector__proceed_to_registration__items_in_cart_msg',
-			sprintf(
-				__( 'The following items have been added: %1$s', 'event_espresso' ),
-				$tickets
-			),
-			self::$_event
-		);
-		$html .= '<a class="ticket-selector-submit-btn button" href="';
-		$html .= apply_filters(
-			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_url',
-			EE_Registry::instance()->CFG->core->reg_page_url(),
-            self::$_event
-		);
-		$html .= '"';
-		$html .= self::$_in_iframe ? ' target="_blank">' : '>';
-		$html .= apply_filters(
-			'FHEE__EED_Ticket_Selector__proceed_to_registration_btn_txt',
-			__( 'Proceed to Registration', 'event_espresso' ),
-            self::$_event
-		);
-		$html .= ' <span class="dashicons dashicons-arrow-right-alt2"></span>';
-		$html .= '</a>';
-		$html .= '<div class="clear"></div>';
-		$cancel_query_args = array(
-			'ee'       => 'cancel_ticket_selections',
-			'noheader' => true
-		);
-		if ( is_archive() ) {
-			$cancel_url = get_post_type_archive_link( 'espresso_events' );
-		} else {
-			$cancel_url = EEH_Event_View::event_link_url( self::$_event->ID() );
-			$cancel_query_args['event_id'] = self::$_event->ID();
-		}
-		$cancel_url = is_archive()
-			? get_post_type_archive_link( 'espresso_events' )
-			: EEH_Event_View::event_link_url( self::$_event->ID() );
-		$cancel_url = add_query_arg(
-			$cancel_query_args,
-			$cancel_url
-		);
-		$cancel_url = wp_nonce_url( $cancel_url, 'cancel_ticket_selections', 'cancel_ticket_selections_nonce' );
-		$html .= '<a class="ticket-selector-submit-btn small-text" href="' . $cancel_url . '"';
-		$html .= self::$_in_iframe ? ' target="_blank">' : '>';
-		$html .= apply_filters(
-			'FHEE__EED_Ticket_Selector__cancel_ticket_selections_txt',
-			__( 'cancel ticket selection', 'event_espresso' )
-		);
-		$html .= '</a>';
-		$html .= '<div class="clear"></div>';
-		$html .= '</div>';
-		return $html;
-	}
-
-
-
 
 	/**
 	 * 	ticket_selector_form_close
@@ -632,6 +534,31 @@ class EED_Ticket_Selector extends  EED_Module {
 	 */
 	public static function ticket_selector_form_close() {
 		return '</form>';
+	}
+
+
+
+	/**
+	 * @return string
+	 * @throws \EE_Error
+	 */
+	public static function display_register_now_button(  ) {
+		$btn_text = apply_filters(
+			'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
+			__( 'Register Now', 'event_espresso' ),
+			EED_Ticket_Selector::$_event
+		);
+		$external_url = EED_Ticket_Selector::$_event->external_url();
+		$html = '<input id="ticket-selector-submit-' . EED_Ticket_Selector::$_event->ID() . '-btn"';
+		$html .= ' class="ticket-selector-submit-btn ';
+		$html .= empty( $external_url ) ? 'ticket-selector-submit-ajax"' : '"';
+		$html .= ' type="submit" value="' . $btn_text . '" />';
+		$html .= apply_filters(
+			'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
+			'',
+			EED_Ticket_Selector::$_event
+		);
+		return $html;
 	}
 
 
