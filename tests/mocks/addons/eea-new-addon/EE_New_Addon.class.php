@@ -6,8 +6,6 @@ define( 'EE_NEW_ADDON_PATH', plugin_dir_path( __FILE__ ) );
 define( 'EE_NEW_ADDON_URL', plugin_dir_url( __FILE__ ) );
 define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin' . DS . 'new_addon' . DS );
 
-
-
 /**
  *
  * Class  EE_New_Addon
